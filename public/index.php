@@ -9,7 +9,9 @@ defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 // Ensure library/ is on include_path
+// Ensure Core is on include_path to run Rubedo Core Classes
 set_include_path(implode(PATH_SEPARATOR, array(
+	realpath(APPLICATION_PATH . '/../Core'),
     realpath(APPLICATION_PATH . '/../library'),
     get_include_path(),
 )));
