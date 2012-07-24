@@ -1,0 +1,37 @@
+<?php
+	$doctypeHelper = new Zend_View_Helper_Doctype();
+	$doctypeHelper->doctype('XHTML1_RDFA');
+	echo $this->doctype();
+?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<?php
+    	$is_error = 'error' == Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+    	
+    	echo $this->headTitle();    
+    	
+    	$this->headMeta()->setProperty('og:title', 'Rubedo');
+        $this->headMeta()->setProperty('Content-Type', 'text/html; charset=UTF-8');
+    	
+    	echo $this->headMeta();
+    	
+        $this->headLink();
+ //       	->prependStylesheet("/static/css/style_zend.css", "screen");
+        	// @TODO: voir comment importer les styles pour IE6 et IE7
+        	
+        $this->headScript();
+//        	 ->appendFile("/static/js/jquery-1.7.1.min.js")
+
+        
+        echo $this->headLink();
+        if (! $is_error)
+        {
+        	echo $this->headScript();
+        }
+		?>
+	</head>
+	
+	<body>
+		<?php echo $this->layout()->content?>
+ 	</body>
+</html>
