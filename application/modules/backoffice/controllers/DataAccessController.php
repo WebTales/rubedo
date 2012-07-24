@@ -12,12 +12,32 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        //$mongo = new \Mongo("mongodb://localhost");
-    	$test = new DataAccess('things');
-    	/*$obj = array( "title" => "Calvin and Hobbes", "author" => "Bill Watterson" );
-    	Zend_Debug::dump($test->insert($obj));*/
-    	Zend_Debug::dump(iterator_to_array($test->find(array(),array('title','author'))));
-    	die();
+        $store = $this->getRequest()->getParam('store');
+
+
+        
+        $DataReader = new DataAccess($store);
+        
+        $dataStore = iterator_to_array($DataReader->find());
+       
+        
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        $this->getResponse()->setHeader('Content-Type',
+                "application/json",true);
+        
+
+        if(empty($dataStore)){
+        
+            $oldStore = file_get_contents(APPLICATION_PATH.'/rubedo-backoffice-ui/www/data/'.$store.'.json');
+            $this->getResponse()->setBody($oldStore);
+            /*$dataStore = json_decode(trim($oldStore),true);
+            var_dump($dataStore);die();*/
+        }else{
+            $this->getResponse()->setBody(json_encode($dataStore));
+        }
+        
+
     }
 
 
