@@ -87,26 +87,37 @@ class DataAccess implements IDataAccess
     }
 
     /**
-     * Do a fin request without filter on the current collection
+     * Do a find request on the current collection
      *
      * @return \MongoIterator
      */
-    public function find ()
+    public function find (array $query = array(),array $fields = array() )
     {
-        return $this->_collection->find()->limit(10);
+        return $this->_collection->find($query,$fields);
+    }
+    
+    /**
+     * Do a find request on the current collection
+     *
+     * @return \MongoIterator
+     */
+    public function findOne (array $query = array(),array $fields = array() )
+    {
+        return $this->_collection->findOne($query,$fields);
     }
 
     /**
      * Insert an objet in the current collection
      *
-     * @param array $obj            
+     * @param array $obj   
+     * @param bool $safe weither the update should wait for a server response         
      * @return array
      */
-    public function insert (array $obj)
+    public function insert (array $obj,$safe=true)
     {
         return $this->_collection->insert($obj, 
                 array(
-                        "safe" => true
+                        "safe" => $safe
                 ));
     }
 }

@@ -14,9 +14,9 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
     {
         //$mongo = new \Mongo("mongodb://localhost");
     	$test = new DataAccess('things');
-    	$obj = array( "title" => "Calvin and Hobbes", "author" => "Bill Watterson" );
-    	Zend_Debug::dump($test->insert($obj));
-    	Zend_Debug::dump(iterator_to_array($test->find()));
+    	/*$obj = array( "title" => "Calvin and Hobbes", "author" => "Bill Watterson" );
+    	Zend_Debug::dump($test->insert($obj));*/
+    	Zend_Debug::dump(iterator_to_array($test->find(array(),array('title','author'))));
     	die();
     }
 
