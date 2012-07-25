@@ -1,0 +1,114 @@
+<project name="rubedo" default="main" basedir="/Users/jbourdin/Projects/Rubedo">
+	<property file="./install/build.properties"/>
+	
+	<target name="prepare" depends="clean">
+    <mkdir dir="${dir.output}"/>
+    <mkdir dir="${dir.tmp}"/>
+  </target>
+  
+  <target name="clean">
+	<delete dir="${dir.output}"/>
+  </target>
+  
+  <target name="phpcs">
+    <mkdir dir="${phpcs.output.xml.dir}"/>
+    <mkdir dir="${phpcs.output.html.dir}"/>
+    <exec
+      command="${phpcs.exec} ${phpcs.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpcs.output.xml.file}"
+      tofile="${phpcs.output.html.file}"
+      style="${phpcs.style}"
+    />
+  </target>
+  
+  <target name="phpmd">
+    <mkdir dir="${phpmd.output.xml.dir}"/>
+    <mkdir dir="${phpmd.output.html.dir}"/>
+    <exec
+      command="${phpmd.exec} ${phpmd.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpmd.output.xml.file}"
+      tofile="${phpmd.output.html.file}"
+      style="${phpmd.style}"
+    />
+  </target>
+
+  <target name="phpcpd">
+    <mkdir dir="${phpcpd.output.xml.dir}"/>
+    <mkdir dir="${phpcpd.output.html.dir}"/>
+    <exec
+      command="${phpcpd.exec} ${phpcpd.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpcpd.output.xml.file}"
+      tofile="${phpcpd.output.html.file}"
+      style="${phpcpd.style}"
+    />
+  </target>
+
+  <target name="phpdoc">
+    <mkdir dir="${phpdoc.output.html.dir}"/>
+    <exec
+      command="${phpdoc.exec} ${phpdoc.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+  </target>
+  
+   <target name="phpdepend">
+    <mkdir dir="${phpdepend.output.xml.dir}"/>
+    <mkdir dir="${phpdepend.output.html.dir}"/>
+    <exec
+      command="${phpdepend.exec} ${phpdepend.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpdepend.output.xml.file}"
+      tofile="${phpdepend.output.html.file}"
+      style="${phpdepend.style}"
+    />
+  </target>
+
+  
+  <!-- <target name="phpunit">
+    <mkdir dir="${phpunit.output.xml.dir}"/>
+    <mkdir dir="${phpunit.output.html.dir}"/>
+    <exec
+      command="${phpunit.exec} ${phpunit.args}"
+      dir="${project.basedir}/test"
+      passthru="true"
+    />
+    <xslt
+      file="${phpunit.output.xml.file}"
+      tofile="${junit.output.xml.file}"
+      style="${junit.style}"
+    />
+  </target>-->
+
+
+	
+    <!-- Pull Git Release -->
+    <target name="git.pull">
+    <gitpull repository="." source="origin" /></target>
+   
+    <target name="gitui.pull">
+    <gitpull repository="application/rubedo-backoffice-ui" source="origin" /></target>
+
+
+    <target name="main" depends="git.pull,gitui.pull">
+        <echo>Tout est bon !</echo>
+	</target>
+        
+  	<target name="report" depends="prepare, phpcs, phpmd, phpdepend, phpcpd, phpdoc"/>
+    
+</project>
