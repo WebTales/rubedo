@@ -1,0 +1,63 @@
+[PHP]
+error_reporting  =  E_ALL
+display_errors = On
+display_startup_errors = On
+log_errors = On
+report_memleaks = On
+extension_dir = /usr/php-5.3/lib/php/extensions/no-debug-non-zts-20090626
+zend_extension=/usr/php-5.3/lib/php/extensions/no-debug-non-zts-20090626/xdebug.so
+allow_url_fopen = On
+allow_url_include = On
+safe_mode = Off
+short_open_tag = Off
+
+[Date]
+date.timezone = America/Buenos_Aires
+
+[suhosin]
+suhosin.executor.include.whitelist="phar"
+xdebug.auto_trace="0"
+xdebug.trace_output_dir="/tmp/xdebug"
+xdebug.trace_output_name="trace.%c"
+xdebug.trace_format="0"
+xdebug.trace_options="0"
+xdebug.collect_includes="1"
+xdebug.collect_params="0"
+xdebug.collect_return="0"
+xdebug.collect_vars="0"
+xdebug.default_enable="1"
+xdebug.extended_info="1"
+xdebug.manual_url="http://www.php.net"
+xdebug.max_nesting_level="100"
+xdebug.show_exception_trace="0"
+xdebug.show_local_vars="0"
+xdebug.show_mem_delta="0"
+xdebug.dump.COOKIE="NULL"
+xdebug.dump.ENV="NULL"
+xdebug.dump.FILES="NULL"
+xdebug.dump.GET="NULL"
+xdebug.dump.POST="NULL"
+xdebug.dump.REQUEST="NULL"
+xdebug.dump.SERVER="NULL"
+xdebug.dump.SESSION="NULL"
+xdebug.dump_globals="1"
+xdebug.dump_once="1"
+xdebug.dump_undefined="0"
+xdebug.profiler_enable="0"
+xdebug.profiler_output_dir="/tmp/profiler"
+xdebug.profiler_output_name="cachegrind.out.%t.%p"
+xdebug.profiler_enable_trigger="1"
+xdebug.profiler_append="0"
+xdebug.profiler_aggregate="0"
+xdebug.remote_enable="1"
+xdebug.remote_handler="dbgp"
+xdebug.remote_host="192.168.0.195"
+xdebug.remote_mode="req"
+xdebug.remote_port="9000"
+xdebug.remote_autostart=""
+xdebug.remote_log="/tmp/xdebug-remote.log"
+xdebug.idekey=""
+xdebug.var_display_max_data="512"
+xdebug.var_display_max_depth="2"
+xdebug.var_display_max_children="128"
+phar.readonly=false
