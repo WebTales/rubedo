@@ -6,32 +6,32 @@
  *
  * yet to be written
  *
- * @category   Rubedo
- * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license yet to be written
+ * @version $Id:
  */
 
 use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 
 /**
  * Controller dealing with the data access
- * 
- * Receveive Ajax Calls for read & write from the UI to the Mongo DB
- * 
- * 
- * @author jbourdin
  *
+ * Receveive Ajax Calls for read & write from the UI to the Mongo DB
+ *
+ *
+ * @author jbourdin
+ * @category Rubedo
+ * @package Rubedo
+ *         
  */
 class Backoffice_DataAccessController extends Zend_Controller_Action
 {
 
-
-
     /**
      * The default read Action
-     * 
+     *
      * Return the content of the collection base on the "store" parameter
      */
     public function indexAction ()
@@ -41,7 +41,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
         
         $dataReader = new DataAccess($store);
         
-        $dataStore = iterator_to_array($dataReader->find());
+        $dataStore = $dataReader->find();
         
         if (empty($dataStore)) {
             

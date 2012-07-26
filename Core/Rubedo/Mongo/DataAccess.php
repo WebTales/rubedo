@@ -17,34 +17,16 @@ namespace Rubedo\Mongo;
 use Rubedo\Interfaces\IDataAccess;
 
 /**
- * Class implementing actual access to mongoDb
+ * Class implementing the API to MongoDB
  *
  * @author jbourdin
- *        
+ * @category Rubedo
+ * @package Rubedo       
  */
 class DataAccess implements IDataAccess
 {
 
-    /**
-     * MongoDB Connection
-     *
-     * @var \Mongo
-     */
-    private $_mongo;
-
-    /**
-     * Object which represent the mongoDB Collection
-     *
-     * @var \MongoCollection
-     */
-    private $_collection;
-
-    /**
-     * Object which represent the mongoDB database
-     *
-     * @var \MongoDB
-     */
-    private $_dbName;
+   
 
     /**
      * Default value of the connection string
@@ -63,6 +45,13 @@ class DataAccess implements IDataAccess
      * @var string
      */
     private static $_defaultDb;
+    
+    /**
+     * QueryBuilder object used to do the read/write action to MongoDB
+     * 
+     * @var QueryBuilder
+     */
+    private $_mongoQueryBuilder;
 
     /**
      * Initialize a data service handler to read or write in a MongoDb
@@ -94,10 +83,10 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this->_mongo = new \Mongo($mongo);
-        $this->_dbName = $this->_mongo->$dbName;
-        $this->_collection = $this->_dbName->$collection;
+        $this->_mongoQueryBuilder = new QueryBuilder($collection, $dbName, $mongo);
     }
+
+    
 
     /**
      * Set the main MongoDB connection string
@@ -134,13 +123,13 @@ class DataAccess implements IDataAccess
      *            Request parameters array
      * @param array $fields
      *            Requested fields array
-     * @return \MongoCursor
+     * @return array
      */
     public function find (array $query = array(), array $fields = array())
     {
-        return $this->_collection->find($query, $fields);
+        return iterator_to_array($this->_mongoQueryBuilder->find($query, $fields));
     }
-
+    
     /**
      * Do a findone request on the current collection
      *
@@ -152,19 +141,19 @@ class DataAccess implements IDataAccess
      */
     public function findOne (array $query = array(), array $fields = array())
     {
-        return $this->_collection->findOne($query, $fields);
+        return $this->_mongoQueryBuilder->findOne($query, $fields);
     }
-
+    
     /**
      * Insert an objet in the current collection
      *
-     * @param array $obj            
+     * @param array $obj
      * @param bool $safe
      *            weither the update should wait for a server response
      * @return array
      */
     public function insert (array $obj, $safe = true)
     {
-        return $this->_collection->insert($obj, array("safe" => $safe));
+        return $this->_mongoQueryBuilder->insert($obj, array("safe" => $safe));
     }
 }

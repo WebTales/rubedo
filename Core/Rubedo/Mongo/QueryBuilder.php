@@ -99,30 +99,13 @@ class QueryBuilder
     }
 
     /**
+     *Getter of the mongo Connection Object
      *
-     * @return the $_adapter
+     * @return \Mongo
      */
     public function getAdapter ()
     {
         return $this->_adapter;
-    }
-
-    /**
-     *
-     * @return the $_parts
-     */
-    public function getParts ()
-    {
-        return $this->_parts;
-    }
-
-    /**
-     *
-     * @param multitype: $_parts            
-     */
-    public function setParts ($_parts)
-    {
-        $this->_parts = $_parts;
     }
 
     /**

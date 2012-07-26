@@ -19,7 +19,8 @@
  * Invoked when calling front office URL
  *
  * @author jbourdin
- *
+ * @category Rubedo
+ * @package Rubedo
  */
 class IndexController extends Zend_Controller_Action
 {

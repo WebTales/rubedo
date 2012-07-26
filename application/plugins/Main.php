@@ -19,7 +19,8 @@
  * Plugin to handle preMVC context
  * 
  * @author jbourdin
- *
+ * @category Rubedo
+ * @package Rubedo
  */
 class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
 {

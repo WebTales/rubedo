@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Rubedo
  *
@@ -6,19 +7,20 @@
  *
  * yet to be written
  *
- * @category   Rubedo
- * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license yet to be written
+ * @version $Id:
  */
 
 /**
  * CLI controller
  * Invoked when using php in command line mode
- * 
+ *
  * @author jbourdin
- *        
+ * @category Rubedo
+ * @package Rubedo
  */
 class Cli_IndexController extends Zend_Controller_Action
 {

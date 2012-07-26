@@ -21,7 +21,8 @@
  * Invoked when somthing failed and is catchable a the last moment
  *
  * @author jbourdin
- *
+ * @category Rubedo
+ * @package Rubedo
  */
 class ErrorController extends Zend_Controller_Action
 {

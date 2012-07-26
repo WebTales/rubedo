@@ -18,7 +18,8 @@
  * Application initialization class
  *
  * @author jbourdin
- *        
+ * @category Rubedo
+ * @package Rubedo       
  */
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {

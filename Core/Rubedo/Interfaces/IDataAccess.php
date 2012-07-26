@@ -19,7 +19,8 @@ namespace Rubedo\Interfaces;
  *
  *
  * @author jbourdin
- *        
+ * @category Rubedo
+ * @package Rubedo        
  */
 interface IDataAccess
 {

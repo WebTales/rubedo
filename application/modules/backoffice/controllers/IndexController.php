@@ -19,7 +19,8 @@
  * Invoked when calling /backoffice URL
  *
  * @author jbourdin
- *
+ * @category Rubedo
+ * @package Rubedo
  */
 class Backoffice_IndexController extends Zend_Controller_Action
 {
