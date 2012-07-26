@@ -1,26 +1,40 @@
 <?php
+/**
+ * Rubedo
+ *
+ * LICENSE
+ *
+ * yet to be written
+ *
+ * @category   Rubedo
+ * @package    Rubedo
+ * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license    yet to be written
+ * @version    $Id: 
+ */
+
 namespace Rubedo\Interfaces;
 
 /**
  * Interface of data access services
- * 
- * 
- * @author jbourdin
  *
+ *
+ * @author jbourdin
+ *        
  */
 interface IDataAccess
 {
 
     /**
-     * Initialize a data service handler to read or write in a DB Collection
+     * Initialize a data service handler to read or write in a DataBase
+     * Collection
+     *
      * @param string $connection
-     * @param string $db
+     *            connection string to the DB server
+     * @param string $dbName
+     *            name of the DB
      * @param string $collection
+     *            name of the DB
      */
-    public function __construct($collection,$db = null,$mongo = null);
-    
-
-    
+    public function __construct ($collection, $dbName = null, $mongo = null);
 }
-
-?>

@@ -1,4 +1,17 @@
 <?php
+/**
+ * Rubedo
+ *
+ * LICENSE
+ *
+ * yet to be written
+ *
+ * @category   Rubedo
+ * @package    Rubedo
+ * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license    yet to be written
+ * @version    $Id:
+ */
 
 use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 
@@ -12,29 +25,29 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
 
     public function indexAction ()
     {
-        $store = $this->getRequest()->getParam('store');
+        $store = $this->getRequest()
+            ->getParam('store');
         
-        $DataReader = new DataAccess($store);
+        $dataReader = new DataAccess($store);
         
-        $dataStore = iterator_to_array($DataReader->find());
-        
-        
+        $dataStore = iterator_to_array($dataReader->find());
         
         if (empty($dataStore)) {
-                       
-            $oldStore = file_get_contents(
-                    APPLICATION_PATH . '/rubedo-backoffice-ui/www/data/' . $store .
-                             '.json');
-            $this->getResponse()->setBody($oldStore);
-            //$dataStore = Zend_Json::decode($oldStore);
- 
-        }else{
-            $this->getResponse()->setBody(json_encode($dataStore));
+            
+            $oldStore = file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/data/' . $store . '.json');
+            $this->getResponse()
+                ->setBody($oldStore);
+            // $dataStore = Zend_Json::decode($oldStore);
+        } else {
+            $this->getResponse()
+                ->setBody(json_encode($dataStore));
         }
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setHeader('Content-Type', "application/json", 
-                true);
+        $this->getHelper('Layout')
+            ->disableLayout();
+        $this->getHelper('ViewRenderer')
+            ->setNoRender();
+        $this->getResponse()
+            ->setHeader('Content-Type', "application/json", true);
     }
 }
 
