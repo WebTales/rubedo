@@ -222,7 +222,7 @@ class QueryBuilder
      *            OPTIONAL The value to quote into the condition.
      * @param int $type
      *            OPTIONAL The type of the given value
-     * @return Zend_Db_Select This Zend_Db_Select object.
+     * @return QueryBuilder This.
      */
     public function where ($cond, $value = null, $type = null)
     {
@@ -243,7 +243,7 @@ class QueryBuilder
      *            OPTIONAL The value to quote into the condition.
      * @param int $type
      *            OPTIONAL The type of the given value
-     * @return Zend_Db_Select This Zend_Db_Select object.
+     * @return QueryBuilder This.
      *        
      * @see where()
      */
@@ -303,7 +303,7 @@ class QueryBuilder
      *            OPTIONAL The number of rows to return.
      * @param int $offset
      *            OPTIONAL Start returning after this many rows.
-     * @return Zend_Db_Select This Zend_Db_Select object.
+     * @return QueryBuilder This.
      */
     public function limit ($count = null, $offset = null)
     {
@@ -320,7 +320,7 @@ class QueryBuilder
      *            Limit results to this page number.
      * @param int $rowCount
      *            Use this many rows per page.
-     * @return Zend_Db_Select This Zend_Db_Select object.
+     * @return QueryBuilder This.
      */
     public function limitPage ($page, $rowCount)
     {
