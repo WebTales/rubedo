@@ -16,7 +16,6 @@
 /**
  * CLI controller
  * Invoked when using php in command line mode
- * Return response and Exit
  * 
  * @author jbourdin
  *        

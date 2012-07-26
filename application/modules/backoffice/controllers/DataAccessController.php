@@ -15,14 +15,25 @@
 
 use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 
+/**
+ * Controller dealing with the data access
+ * 
+ * Receveive Ajax Calls for read & write from the UI to the Mongo DB
+ * 
+ * 
+ * @author jbourdin
+ *
+ */
 class Backoffice_DataAccessController extends Zend_Controller_Action
 {
 
-    public function init ()
-    {
-        /* Initialize action controller here */
-    }
 
+
+    /**
+     * The default read Action
+     * 
+     * Return the content of the collection base on the "store" parameter
+     */
     public function indexAction ()
     {
         $store = $this->getRequest()

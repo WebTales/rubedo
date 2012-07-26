@@ -13,14 +13,22 @@
  * @version    $Id:
  */
 
+/**
+ * Back Office Defautl Controller
+ * 
+ * Invoked when calling /backoffice URL
+ *
+ * @author jbourdin
+ *
+ */
 class Backoffice_IndexController extends Zend_Controller_Action
 {
 
-    public function init ()
-    {
-        /* Initialize action controller here */
-    }
 
+
+    /**
+     * Default Action, return the Ext/Js HTML loader
+     */
     public function indexAction ()
     {
         $this->getHelper('Layout')
@@ -31,6 +39,9 @@ class Backoffice_IndexController extends Zend_Controller_Action
             ->setBody(file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/app.html'));
     }
 
+    /**
+     * Return the Ext/Js main JS
+     */
     public function appjsAction ()
     {
         $this->getHelper('Layout')
