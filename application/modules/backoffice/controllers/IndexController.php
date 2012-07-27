@@ -12,6 +12,7 @@
  * @license    yet to be written
  * @version    $Id:
  */
+use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 
 /**
  * Back Office Defautl Controller
@@ -32,6 +33,12 @@ class Backoffice_IndexController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
+        try{
+           $dataReader = new DataAccess('Pages');
+        }catch(\Exception $e){
+            throw new \Exception('Can\'t connect to MongoDB !');
+        }
+        
         $this->getHelper('Layout')
             ->disableLayout();
         $this->getHelper('ViewRenderer')

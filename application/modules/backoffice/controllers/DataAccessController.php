@@ -46,13 +46,18 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
         if (empty($dataStore)) {
             
             $oldStore = file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/data/' . $store . '.json');
+            $dataStore = Zend_Json::decode($oldStore);
+            foreach ($dataStore as $data) {
+                $dataReader->insert($data, true);
+            }
+            $dataStore = $dataReader->find();
             $this->getResponse()
-                ->setBody($oldStore);
-            // $dataStore = Zend_Json::decode($oldStore);
-        } else {
-            $this->getResponse()
-                ->setBody(json_encode($dataStore));
+                ->setBody(json_encode(array_values($dataStore)));
         }
+        
+        $this->getResponse()
+            ->setBody(json_encode(array_values($dataStore)));
+        
         $this->getHelper('Layout')
             ->disableLayout();
         $this->getHelper('ViewRenderer')
