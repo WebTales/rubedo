@@ -1,7 +1,8 @@
-<project name="rubedo" default="main" basedir="/Users/jbourdin/Projects/Rubedo">
+<project name="rubedo" default="main" basedir="../.">
 	<property file="./install/build.properties"/>
 	
-	<target name="prepare" depends="clean">
+	
+  <target name="prepare" depends="clean">
     <mkdir dir="${dir.output}"/>
     <mkdir dir="${dir.tmp}"/>
   </target>
@@ -99,7 +100,8 @@
 	
     <!-- Pull Git Release -->
     <target name="git.pull">
-    <gitpull repository="." source="origin" /></target>
+    <gitpull repository="." source="origin" />
+    </target>
    
     <target name="gitui.pull">
     <gitpull repository="application/rubedo-backoffice-ui" source="origin" /></target>
