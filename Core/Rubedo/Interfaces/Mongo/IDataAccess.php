@@ -33,7 +33,7 @@ interface IDataAccess
      * @param string $dbName name of the DB
      * @param string $connection connection string to the DB server
      */
-    public function __construct ($collection, $dbName = null, $connection = null);
+    public function init ($collection, $dbName = null, $connection = null);
 
     /**
      * Do a find request on the current collection

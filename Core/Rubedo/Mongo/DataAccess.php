@@ -59,7 +59,7 @@ class DataAccess implements IDataAccess
      * @param string $dbName name of the DB
      * @param string $mongo connection string to the DB server
      */
-    public function __construct ($collection, $dbName = null, $mongo = null)
+    public function init ($collection, $dbName = null, $mongo = null)
     {
         if (is_null($mongo)) {
             $mongo = self::$_defaultMongo;
