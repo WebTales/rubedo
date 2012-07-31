@@ -42,5 +42,25 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             Rubedo\Mongo\DataAccess::setDefaultDb($options['mongo']['db']);
         }
     }
+    
+    /**
+     * Load services parameter from application.ini to the service manager
+     */
+    protected function _initServices ()
+    {
+        $options = $this->getOption('services');
+        if (isset($options))
+        {
+            Rubedo\Services\Manager::setOptions($options);
+        } else
+        {
+            $defaultArray = array('logLevel' => 3, 'enableCache' => 1);
+            Rubedo\Services\Manager::setOptions($defaultArray);
+        }
+        $serviceOptions = Rubedo\Services\Manager::getOptions();
+        define('LOG_LEVEL', $serviceOptions['logLevel']);
+        define('ENABLE_CACHE', $serviceOptions['enableCache']);
+    
+    }
 }
 

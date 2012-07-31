@@ -14,7 +14,7 @@
  */
 namespace Rubedo\Services;
 
-use Rubedo, Rubedo\Interfaces\Services\IServicesManager;
+use Rubedo, Rubedo\Interfaces, Rubedo\Interfaces\Services\IServicesManager;
 
 /**
  * Service Manager Interface
@@ -153,10 +153,6 @@ final class Manager implements IServicesManager
         
         $serviceClassName = self::resolveName($serviceName);
         
-        if (! in_array('I' . $serviceName, class_implements($serviceClassName))) {
-            throw new \Exception($serviceClassName . ' don\'t implement I' . $serviceName);
-        }
-        
         return new self($serviceClassName, $serviceName);
     }
 
@@ -172,24 +168,24 @@ final class Manager implements IServicesManager
     {
         $options = self::$_servicesOptions;
         
-        return str_replace('_', '\\', $serviceName);
-        /*
-         * if (isset($options[$serviceName]['class'])) { } else { throw new
-         * \Exception('Classe name should be '); } if
-         * (isset($options[$serviceName]['bouchon']) && 1 ==
-         * $options[$serviceName]['bouchon'] && class_exists(
-         * 'Application_Model_Services_Bouchon_' . $serviceName)) {
-         * error_log($serviceName . ' : utilisation du bouchon'); return
-         * 'Application_Model_Services_Bouchon_' . $serviceName; } elseif
-         * (class_exists('Application_Model_Services_Implementation_' .
-         * $serviceName)) { return
-         * 'Application_Model_Services_Implementation_' . $serviceName; } else
-         * { throw new \Exception('Application_Model_Services_Implementation_'
-         * . $serviceName . ' n\'existe pas'); }
-         */
+        if (isset($options[$serviceName]['class'])) {
+            $className = $options[$serviceName]['class'];
+        } else {
+            throw new \Exception('Classe name for ' . $serviceName . ' service should be definid in config file');
+        }
+        if (! $interfaceName = Rubedo\Interfaces\config::getInterface($serviceName)) {
+            throw new \Exception($serviceName . ' isn\'t declared in service interface config');
+        }
+        if (! in_array($interfaceName, class_implements($className))) {
+            throw new \Exception($className . ' don\'t implement ' . $interfaceName);
+        }
+        
+        return $className;
     }
 
     /**
+     *
+     *
      *
      *
      * Call : magic method invoke when calling a none existing manager method,
@@ -205,21 +201,17 @@ final class Manager implements IServicesManager
             throw new \Exception('The method ' . $name . ' doesn\'t exist');
         }
         
-        // liste des injecteurs pouvant s'exécuter
-        /*
-         * $injecteurArray = array(
-         * 'Application_Model_Services_Injecteur_Log',
-         * 'Application_Model_Services_Injecteur_Acl',
-         * 'Application_Model_Services_Injecteur_Cache',
-         * 'Application_Model_Services_Injecteur_FilterOutput',
-         * 'Application_Model_Services_Injecteur_Transaction'); // on dépile
-         * le premier injecteur puis on instancie le pipeline $injecteurName =
-         * array_shift($injecteurArray); $injecteur = new
-         * $injecteurName($injecteurArray, $this->_currentOptions); $retour =
-         * $injecteur->Process($this->_object, $name, $arguments);
-         */
+        //list of concerns
+        $concernsArray = Rubedo\Interfaces\config::getConcerns();
         
-        $retour = call_user_func_array(array($this->_object,$name), $this->_object);
+        if (empty($concernsArray)) {
+            $retour = call_user_func_array(array($this->_object,$name), $arguments);
+        } else {
+            $concernName = array_shift($injecteurArray);
+            $concern = new $concernName($injecteurArray, $this->_currentOptions);
+            $retour =  $concern->Process($this->_object, $name, $arguments);
+        }
+        
         return $retour;
     }
 }

@@ -43,5 +43,22 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
             $request->setActionName('index');
         }
         
+        //ajoute en variable de classe métier l'objet gestionnaire de cache à durée de vie illimitée
+//         if(ENABLE_CACHE){
+//             Application_Model_Services_Injecteur_Cache::setCache(Zend_Controller_Front::getInstance()->getParam('bootstrap')
+//             ->getResource('cachemanager')
+//             ->getCache('unlimited'));
+//         }
+        
+        /*
+         * Processus d'authentification : on est admin pour le mode CLI, on fait appel au certificat sinon
+        */
+//         $authentificationService = Application_Model_Services_Manager::getService('Authentification');
+//         if(self::$_module === 'Cli'){
+//             $authentificationService->setRole('admin');
+//         }
+        
+//         define('USER_ROLE',$authentificationService->getRole());
+        
     }
 }

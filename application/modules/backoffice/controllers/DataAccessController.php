@@ -13,7 +13,7 @@
  * @version $Id:
  */
 
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
+use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
 
 /**
  * Controller providing CRUD API and dealing with the data access
@@ -67,7 +67,8 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
         
         // init the data access service
-        $this->_dataReader = new DataAccess($this->_store);
+        $this->_dataReader = Rubedo\Services\Manager::getService('MongoDataAccess');
+        $this->_dataReader->init($this->_store);
     }
 
     /**
@@ -104,7 +105,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
         // temp hack to use the json files of the UI prototype
         if (empty($dataStore)) {
             
-            $oldStore = file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/data/' . $store . '.json');
+            $oldStore = file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/data/' . $this->_store . '.json');
             $dataStore = Zend_Json::decode($oldStore);
             foreach ($dataStore as $data) {
                 $this->_dataReader->insert($data, true);
