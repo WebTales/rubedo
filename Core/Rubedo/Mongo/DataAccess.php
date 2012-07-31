@@ -14,19 +14,17 @@
  */
 namespace Rubedo\Mongo;
 
-use Rubedo\Interfaces\IDataAccess;
+use Rubedo\Interfaces\Mongo\IDataAccess;
 
 /**
  * Class implementing the API to MongoDB
  *
  * @author jbourdin
  * @category Rubedo
- * @package Rubedo       
+ * @package Rubedo
  */
 class DataAccess implements IDataAccess
 {
-
-   
 
     /**
      * Default value of the connection string
@@ -45,10 +43,10 @@ class DataAccess implements IDataAccess
      * @var string
      */
     private static $_defaultDb;
-    
+
     /**
      * QueryBuilder object used to do the read/write action to MongoDB
-     * 
+     *
      * @var QueryBuilder
      */
     private $_mongoQueryBuilder;
@@ -57,12 +55,9 @@ class DataAccess implements IDataAccess
      * Initialize a data service handler to read or write in a MongoDb
      * Collection
      *
-     * @param string $collection
-     *            name of the DB
-     * @param string $dbName
-     *            name of the DB
-     * @param string $mongo
-     *            connection string to the DB server
+     * @param string $collection name of the DB
+     * @param string $dbName name of the DB
+     * @param string $mongo connection string to the DB server
      */
     public function __construct ($collection, $dbName = null, $mongo = null)
     {
@@ -86,12 +81,10 @@ class DataAccess implements IDataAccess
         $this->_mongoQueryBuilder = new QueryBuilder($collection, $dbName, $mongo);
     }
 
-    
-
     /**
      * Set the main MongoDB connection string
      *
-     * @param string $mongo            
+     * @param string $mongo
      * @throws \Exception
      */
     public static function setDefaultMongo ($mongo)
@@ -105,7 +98,7 @@ class DataAccess implements IDataAccess
     /**
      * Set the main Database name
      *
-     * @param string $dbName            
+     * @param string $dbName
      * @throws \Exception
      */
     public static function setDefaultDb ($dbName)
@@ -119,41 +112,59 @@ class DataAccess implements IDataAccess
     /**
      * Do a find request on the current collection
      *
-     * @param array $query
-     *            Request parameters array
-     * @param array $fields
-     *            Requested fields array
+     * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function find (array $query = array(), array $fields = array())
+    public function read ()
     {
-        return iterator_to_array($this->_mongoQueryBuilder->find($query, $fields));
+        return iterator_to_array($this->_mongoQueryBuilder->find());
     }
-    
+
     /**
      * Do a findone request on the current collection
      *
-     * @param array $query
-     *            Request parameters array
-     * @param array $fields
-     *            Requested fields array
+     * @see \Rubedo\Interfaces\IDataAccess::findOne()
      * @return array
      */
-    public function findOne (array $query = array(), array $fields = array())
+    public function findOne ()
     {
-        return $this->_mongoQueryBuilder->findOne($query, $fields);
+        return $this->_mongoQueryBuilder->findOne();
     }
-    
+
     /**
-     * Insert an objet in the current collection
+     * Create an objet in the current collection
      *
-     * @param array $obj
-     * @param bool $safe
-     *            weither the update should wait for a server response
+     * @see \Rubedo\Interfaces\IDataAccess::create
+     * @param array $obj data object
+     * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function insert (array $obj, $safe = true)
+    public function create (array $obj, $safe = true)
     {
         return $this->_mongoQueryBuilder->insert($obj, array("safe" => $safe));
+    }
+
+    /**
+     * Update an objet in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::update
+     * @param array $obj data object
+     * @param bool $safe should we wait for a server response
+     * @return array
+     */
+    public function update (array $obj, $safe = true)
+    {
+    }
+
+    /**
+     * Update an objet in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::destroy
+     * @param array $obj data object
+     * @param bool $safe should we wait for a server response
+     * @return array
+     */
+    public function destroy (array $obj, $safe = true)
+    {
     }
 }
