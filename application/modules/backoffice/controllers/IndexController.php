@@ -34,7 +34,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
     public function indexAction ()
     {
         try{
-           $dataReader = new DataAccess('Pages');
+           new DataAccess('Pages');
         }catch(\Exception $e){
             throw new \Exception('Can\'t connect to MongoDB !');
         }
