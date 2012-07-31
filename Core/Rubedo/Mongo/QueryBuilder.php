@@ -264,34 +264,6 @@ class QueryBuilder
      */
     public function order ($spec)
     {
-        if (! is_array($spec)) {
-            $spec = array($spec);
-        }
-        
-        // force 'ASC' or 'DESC' on each order spec, default is ASC.
-        foreach ($spec as $val) {
-            if ($val instanceof Zend_Db_Expr) {
-                $expr = $val->__toString();
-                if (empty($expr)) {
-                    continue;
-                }
-                $this->_parts[self::ORDER][] = $val;
-            } else {
-                if (empty($val)) {
-                    continue;
-                }
-                $direction = self::SQL_ASC;
-                if (preg_match('/(.*\W)(' . self::SQL_ASC . '|' . self::SQL_DESC . ')\b/si', $val, $matches)) {
-                    $val = trim($matches[1]);
-                    $direction = $matches[2];
-                }
-                if (preg_match('/\(.*\)/', $val)) {
-                    $val = new Zend_Db_Expr($val);
-                }
-                $this->_parts[self::ORDER][] = array($val,$direction);
-            }
-        }
-        
         return $this;
     }
 
@@ -343,8 +315,7 @@ class QueryBuilder
     {
         $part = strtolower($part);
         if (! array_key_exists($part, $this->_parts)) {
-            require_once 'Zend/Db/Select/Exception.php';
-            throw new Zend_Db_Select_Exception("Invalid Select part '$part'");
+            throw new \Exception("Invalid Select part '$part'");
         }
         return $this->_parts[$part];
     }
@@ -408,8 +379,7 @@ class QueryBuilder
     protected function _where ($condition, $value = null, $type = null, $bool = true)
     {
         if (count($this->_parts[self::UNION])) {
-            require_once 'Zend/Db/Select/Exception.php';
-            throw new Zend_Db_Select_Exception("Invalid use of where clause with " . self::SQL_UNION);
+            throw new \Exception("Invalid use of where clause");
         }
         
         if ($value !== null) {
