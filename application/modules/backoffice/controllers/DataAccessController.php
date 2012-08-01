@@ -108,7 +108,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
             $oldStore = file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/data/' . $this->_store . '.json');
             $dataStore = Zend_Json::decode($oldStore);
             foreach ($dataStore as $data) {
-                $this->_dataReader->insert($data, true);
+                $this->_dataReader->create($data, true);
             }
             $dataStore = $this->_dataReader->read();
         }
