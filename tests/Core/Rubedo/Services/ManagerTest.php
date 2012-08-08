@@ -14,4 +14,11 @@ class ManagerTest extends PHPUnit_Framework_TestCase
 		Manager::setOptions($options);
 		$this->assertEquals($options, Manager::getOptions());
     }
+	
+	public function testMalformedOptions()
+    {
+        $options = 'nonArrayInput';
+		Manager::setOptions($options);
+		$this->assertEquals($options, Manager::getOptions());
+    }
 }

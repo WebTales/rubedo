@@ -71,21 +71,20 @@
 		style="${phpdepend.style}"
 		/>
 	</target>
-
-	<!-- <target name="phpunit">
-	<mkdir dir="${phpunit.output.xml.dir}"/>
-	<mkdir dir="${phpunit.output.html.dir}"/>
-	<exec
-	command="${phpunit.exec} ${phpunit.args}"
-	dir="${project.basedir}/test"
-	passthru="true"
-	/>
-	<xslt
-	file="${phpunit.output.xml.file}"
-	tofile="${junit.output.xml.file}"
-	style="${junit.style}"
-	/>
-	</target>-->
+	<target name="phpunit">
+		<mkdir dir="${phpunit.output.xml.dir}"/>
+		<mkdir dir="${phpunit.output.html.dir}"/>
+		<exec
+		command="phpunit  --verbose --process-isolation --configuration ${project.basedir}/tests/phpunit.xml --log-junit ${phpunit.output.xml.file} --verbose --testdox-html ${phpunit.output.html.dir}/index.html"
+		dir="${project.basedir}/tests"
+		passthru="true"
+		/>
+		<xslt
+		file="${phpunit.output.xml.file}"
+		tofile="${junit.output.xml.file}"
+		style="${junit.style}"
+		/>
+	</target>
 
 	<!-- Pull Git Release -->
 	<target name="git.pull">
@@ -97,6 +96,6 @@
 	<target name="main" depends="git.pull,gitui.pull">
 		<echo>Tout est bon !</echo>
 	</target>
-	<target name="report" depends="prepare, phpcs, phpmd, phpdepend, phpcpd, phpdoc"/>
+	<target name="report" depends="prepare, phpcs, phpmd, phpdepend, phpcpd, phpdoc, phpunit"/>
 
 </project>
