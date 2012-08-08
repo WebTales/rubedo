@@ -185,23 +185,4 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         $this -> assertEquals(42, $service -> fakeMethod());
     }
 
-    /**
-     * UnAuthorized Method call should be refused.
-     *
-     * @expectedException Rubedo\Exceptions\AccessRights
-     */
-    public function testUnauthorizedAccessMethod()
-    {
-        define('USER_ROLE', 'noaccess');
-        $options = array('TestService' => array('class' => 'TestService'));
-        Rubedo\Services\Manager::setOptions($options);
-        Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
-
-        $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Manager', $service);
-        $this -> assertInstanceOf('TestService', $service -> getServiceObj());
-        $service -> fakeMethod();
-
-    }
-
 }
