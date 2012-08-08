@@ -167,4 +167,8 @@ class DataAccess implements IDataAccess
     public function destroy (array $obj, $safe = true)
     {
     }
+	
+	public function drop(){
+		return $this->_mongoQueryBuilder->drop();
+	}
 }

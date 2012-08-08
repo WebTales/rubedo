@@ -438,4 +438,8 @@ class QueryBuilder
     {
         return $this->_collection->insert($obj, array("safe" => $safe));
     }
+	
+	public function drop(){
+		return $this->_collection->drop();
+	}
 }
