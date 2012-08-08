@@ -58,7 +58,7 @@ final class Manager implements IServicesManager
     public static function setOptions ($options)
     {
         if ('array' !== gettype($options)) {
-            throw new \Exception('Services parameters should be an array');
+            throw new \Rubedo\Exceptions\ServiceManager('Services parameters should be an array');
         }
         self::$_servicesOptions = $options;
     }
