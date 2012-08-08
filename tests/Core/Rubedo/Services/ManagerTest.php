@@ -154,6 +154,8 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * UnAuthorized Method call should be refused. 
+     *
      * @expectedException Rubedo\Exceptions\AccessRights
      */
     public function testUnauthorizedAccessMethod()
