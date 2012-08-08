@@ -29,6 +29,7 @@ use Rubedo, Rubedo\Interfaces, Rubedo\Interfaces\Services\IServicesManager;
 final class Manager implements IServicesManager
 {
 
+
     /**
      * Injected Dependancy : service object
      *
@@ -182,7 +183,7 @@ final class Manager implements IServicesManager
         if (isset($options[$serviceName]['class'])) {
             $className = $options[$serviceName]['class'];
         } else {
-            throw new \Rubedo\Exceptions\ServiceManager('Classe name for ' . $serviceName . ' service should be definid in config file');
+            throw new \Rubedo\Exceptions\ServiceManager('Classe name for ' . $serviceName . ' service should be defined in config file');
         }
         if (! $interfaceName = Rubedo\Interfaces\config::getInterface($serviceName)) {
             throw new \Rubedo\Exceptions\ServiceManager($serviceName . ' isn\'t declared in service interface config');
@@ -209,7 +210,7 @@ final class Manager implements IServicesManager
     public function __call ($name, $arguments)
     {
         if (! method_exists($this->_object, $name)) {
-            throw new \Exception('The method ' . $name . ' doesn\'t exist');
+            throw new \Rubedo\Exceptions\ServiceManager('The method ' . $name . ' doesn\'t exist');
         }
         
         //list of concerns
