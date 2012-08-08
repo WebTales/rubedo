@@ -64,13 +64,19 @@ class config
     protected static $concernArray = array(
     );
     
+     /**
+     * Public static method to clear concerns during service method call
+     */
+    final public static function clearConcerns(){
+        static::$concernArray = array();
+    }
     
     /**
      * Public static method to add new concern during service method call
      *
      * @param string $concernName Class name of the concern
     */
-    final public static function addConcerns($concernName){
+    final public static function addConcern($concernName){
         static::$concernArray[] = $concernName;
     }
     

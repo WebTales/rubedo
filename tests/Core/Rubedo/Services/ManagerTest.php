@@ -28,6 +28,20 @@ class TestServiceNoInterface
 {
 }
 
+class testConcern
+{
+    public function __construct($injecteurArray, $options)
+    {
+
+    }
+
+    public function process($object, $name, $arguments)
+    {
+        return call_user_func_array(array($object, $name), $arguments);
+    }
+
+}
+
 class ManagerTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
@@ -146,6 +160,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         $options = array('TestService' => array('class' => 'TestService'));
         Rubedo\Services\Manager::setOptions($options);
         Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
+        Rubedo\Interfaces\config::clearConcerns();
 
         $service = \Rubedo\Services\Manager::getService('TestService');
         $this -> assertInstanceOf('\\Rubedo\\Services\\Manager', $service);
@@ -154,7 +169,24 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * UnAuthorized Method call should be refused. 
+     * Valid nested method call with concerns
+     */
+    public function testValidMethodCallWithConcerns()
+    {
+        $options = array('TestService' => array('class' => 'TestService'));
+        Rubedo\Services\Manager::setOptions($options);
+        Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
+        Rubedo\Interfaces\config::clearConcerns();
+        Rubedo\Interfaces\config::addConcern('testConcern');
+
+        $service = \Rubedo\Services\Manager::getService('TestService');
+        $this -> assertInstanceOf('\\Rubedo\\Services\\Manager', $service);
+        $this -> assertInstanceOf('TestService', $service -> getServiceObj());
+        $this -> assertEquals(42, $service -> fakeMethod());
+    }
+
+    /**
+     * UnAuthorized Method call should be refused.
      *
      * @expectedException Rubedo\Exceptions\AccessRights
      */

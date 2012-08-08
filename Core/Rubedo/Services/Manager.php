@@ -219,8 +219,8 @@ final class Manager implements IServicesManager
         if (empty($concernsArray)) {
             $retour = call_user_func_array(array($this->_object,$name), $arguments);
         } else {
-            $concernName = array_shift($injecteurArray);
-            $concern = new $concernName($injecteurArray, $this->_currentOptions);
+            $concernName = array_shift($concernsArray);
+            $concern = new $concernName($concernsArray, $this->_currentOptions);
             $retour =  $concern->Process($this->_object, $name, $arguments);
         }
         
