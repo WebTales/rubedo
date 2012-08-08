@@ -49,7 +49,12 @@ class config
      * @return string contract of the service
      */
     final public static function getInterface($serviceName){
-        return static::$interfaceArray[$serviceName];
+        if(isset(static::$interfaceArray[$serviceName])){
+            return static::$interfaceArray[$serviceName];
+        }else{
+            return false;
+        }
+        
     }
     
     /**

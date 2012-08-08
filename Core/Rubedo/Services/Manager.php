@@ -34,21 +34,21 @@ final class Manager implements IServicesManager
      *
      * @var object
      */
-    private $_object;
+    protected $_object;
 
     /**
      * array of current service parameters
      *
      * @var array
      */
-    private static $_servicesOptions;
+    protected static $_servicesOptions;
 
     /**
      * current service name
      *
      * @var string
      */
-    private $_serviceName;
+    protected $_serviceName;
 
     /**
      * Setter of services parameters, to init them from bootstrap
@@ -105,12 +105,12 @@ final class Manager implements IServicesManager
     }
 
     /**
-     * private constructor : create manager object and nested service object
+     * protected constructor : create manager object and nested service object
      *
      * @param string $serviceClassName Name of nested class
      * @param string $serviceName Name of the service
      */
-    private function __construct ($serviceClassName, $serviceName)
+    protected function __construct ($serviceClassName, $serviceName)
     {
         $this->setServiceObj(new $serviceClassName());
         $this->_serviceName = $serviceName;
@@ -128,10 +128,21 @@ final class Manager implements IServicesManager
      *
      * @param object $obj
      */
-    private function setServiceObj ($obj)
+    protected function setServiceObj ($obj)
     {
         $this->_object = $obj;
         $this->_object->_service = $this;
+    }
+    
+     /**
+     * Dependancy getter : get the nested object and inform the nested object
+     * of the manager instance
+     *
+     * @return object $obj
+     */
+    public function getServiceObj ()
+    {
+        return $this->_object;
     }
 
     /**
@@ -146,7 +157,7 @@ final class Manager implements IServicesManager
     public static function getService ($serviceName)
     {
         if (gettype($serviceName) !== 'string') {
-            throw new \Exception('getService only accept string argument');
+            throw new \Rubedo\Exceptions\ServiceManager('getService only accept string argument');
         }
         
         $serviceName = ucfirst($serviceName);
@@ -164,17 +175,17 @@ final class Manager implements IServicesManager
      * @return string class to instanciate
      * @todo read dependancy from options
      */
-    private static function resolveName ($serviceName)
+    protected static function resolveName ($serviceName)
     {
         $options = self::$_servicesOptions;
         
         if (isset($options[$serviceName]['class'])) {
             $className = $options[$serviceName]['class'];
         } else {
-            throw new \Exception('Classe name for ' . $serviceName . ' service should be definid in config file');
+            throw new \Rubedo\Exceptions\ServiceManager('Classe name for ' . $serviceName . ' service should be definid in config file');
         }
         if (! $interfaceName = Rubedo\Interfaces\config::getInterface($serviceName)) {
-            throw new \Exception($serviceName . ' isn\'t declared in service interface config');
+            throw new \Rubedo\Exceptions\ServiceManager($serviceName . ' isn\'t declared in service interface config');
         }
         if (! in_array($interfaceName, class_implements($className))) {
             throw new \Exception($className . ' don\'t implement ' . $interfaceName);
