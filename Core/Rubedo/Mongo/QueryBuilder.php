@@ -439,6 +439,19 @@ class QueryBuilder
         return $this->_collection->insert($obj, array("safe" => $safe));
     }
 	
+     /**
+     * delete an objet in the current collection
+     *
+     * @param array $obj            
+     * @param bool $safe
+     *            weither the update should wait for a server response
+     * @return array
+     */
+    public function destroy (array $obj, $safe = true)
+    {
+        return $this->_collection->remove($obj, array("safe" => $safe));
+    }
+    
 	public function drop(){
 		return $this->_collection->drop();
 	}

@@ -53,7 +53,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
     {
         // refuse write action not send by POST
         if (!$this -> getRequest() -> isPost() && $this -> getRequest() -> getActionName() !== 'index') {
-            throw new \Exception('This action should be called by POST request');
+            //throw new \Exception('This action should be called by POST request');
         }
 
         // set the store value from the request is sent
@@ -129,16 +129,16 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * The destroy action of the CRUD API
      */
-    public function destroyAction()
+    public function deleteAction()
     {
-        $request = $this -> getRequest();
-        $returnArray = array();
-
-        Zend_Debug::dump($this -> getRequest() -> getParams());
-        Zend_Debug::dump($this -> getRequest() -> getPost());
-        Zend_Debug::dump($this -> getRequest() -> getRawBody());
-
-        // $this -> getResponse() -> setBody(json_encode($returnArray));
+        $deleteData = Zend_Json::decode($this -> getRequest() -> getRawBody());
+        
+        if(is_array($deleteData)){
+            $returnArray = $this -> _dataReader -> destroy($deleteData,true);
+        }else{
+            $returnArray = array('success'=>false,"msg"=>'No Data');
+        }
+        $this -> getResponse() -> setBody(json_encode($returnArray));
     }
 
     /**

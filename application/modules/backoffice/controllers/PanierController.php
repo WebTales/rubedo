@@ -26,7 +26,7 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_PanierDataController extends Backoffice_DataAccessController
+class Backoffice_PanierController extends Backoffice_DataAccessController
 {
     /**
      * Name of the store which is also to the collection name
@@ -34,6 +34,6 @@ class Backoffice_PanierDataController extends Backoffice_DataAccessController
      * @see Backoffice_DataAccessController::$_store
      * @var string
      */
-    protected $_store = 'PanierData';
+    protected $_store = 'Panier';
 
 }

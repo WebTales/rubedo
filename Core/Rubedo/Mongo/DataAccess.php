@@ -50,6 +50,21 @@ class DataAccess implements IDataAccess
      * @var QueryBuilder
      */
     private $_mongoQueryBuilder;
+    
+    /**
+     * Query Builder Class Name
+     * @var string
+     */
+    private $_queryBuilderClassName = 'Rubedo\\Mongo\\QueryBuilder';
+
+
+    /**
+     * Setter of the dependancy for the queryBuilder Objec
+     * @var string
+     */
+    public function setQueryBuilderClassName($className){
+        $this->_queryBuilderClassName = $className;
+    }
 
     /**
      * Initialize a data service handler to read or write in a MongoDb
@@ -78,7 +93,7 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this -> _mongoQueryBuilder = new QueryBuilder($collection, $dbName, $mongo);
+        $this -> _mongoQueryBuilder = new $this->_queryBuilderClassName ($collection, $dbName, $mongo);
     }
 
     /**
@@ -157,7 +172,7 @@ class DataAccess implements IDataAccess
     }
 
     /**
-     * Update an objet in the current collection
+     * Delete objets in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj data object
@@ -166,6 +181,7 @@ class DataAccess implements IDataAccess
      */
     public function destroy(array $obj, $safe = true)
     {
+        return $this -> _mongoQueryBuilder -> destroy($obj, array("safe" => $safe));
     }
 
     public function drop()
