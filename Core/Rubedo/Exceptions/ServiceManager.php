@@ -2,6 +2,7 @@
 
 namespace Rubedo\Exceptions;
 
-class ServiceManager extends \exception {
+class ServiceManager extends \exception
+{
 
 }

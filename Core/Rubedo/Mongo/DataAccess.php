@@ -59,16 +59,16 @@ class DataAccess implements IDataAccess
      * @param string $dbName name of the DB
      * @param string $mongo connection string to the DB server
      */
-    public function init ($collection, $dbName = null, $mongo = null)
+    public function init($collection, $dbName = null, $mongo = null)
     {
         if (is_null($mongo)) {
             $mongo = self::$_defaultMongo;
         }
-        
+
         if (is_null($dbName)) {
             $dbName = self::$_defaultDb;
         }
-        
+
         if (gettype($mongo) !== 'string') {
             throw new \Exception('$mongo should be a string');
         }
@@ -78,7 +78,7 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this->_mongoQueryBuilder = new QueryBuilder($collection, $dbName, $mongo);
+        $this -> _mongoQueryBuilder = new QueryBuilder($collection, $dbName, $mongo);
     }
 
     /**
@@ -87,7 +87,7 @@ class DataAccess implements IDataAccess
      * @param string $mongo
      * @throws \Exception
      */
-    public static function setDefaultMongo ($mongo)
+    public static function setDefaultMongo($mongo)
     {
         if (gettype($mongo) !== 'string') {
             throw new \Exception('$mongo should be a string');
@@ -101,7 +101,7 @@ class DataAccess implements IDataAccess
      * @param string $dbName
      * @throws \Exception
      */
-    public static function setDefaultDb ($dbName)
+    public static function setDefaultDb($dbName)
     {
         if (gettype($dbName) !== 'string') {
             throw new \Exception('$dbName should be a string');
@@ -115,9 +115,9 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read ()
+    public function read()
     {
-        return iterator_to_array($this->_mongoQueryBuilder->find());
+        return iterator_to_array($this -> _mongoQueryBuilder -> find());
     }
 
     /**
@@ -126,9 +126,9 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::findOne()
      * @return array
      */
-    public function findOne ()
+    public function findOne()
     {
-        return $this->_mongoQueryBuilder->findOne();
+        return $this -> _mongoQueryBuilder -> findOne();
     }
 
     /**
@@ -139,9 +139,9 @@ class DataAccess implements IDataAccess
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function create (array $obj, $safe = true)
+    public function create(array $obj, $safe = true)
     {
-        return $this->_mongoQueryBuilder->insert($obj, array("safe" => $safe));
+        return $this -> _mongoQueryBuilder -> insert($obj, array("safe" => $safe));
     }
 
     /**
@@ -152,7 +152,7 @@ class DataAccess implements IDataAccess
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function update (array $obj, $safe = true)
+    public function update(array $obj, $safe = true)
     {
     }
 
@@ -164,11 +164,13 @@ class DataAccess implements IDataAccess
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $safe = true)
+    public function destroy(array $obj, $safe = true)
     {
     }
-	
-	public function drop(){
-		return $this->_mongoQueryBuilder->drop();
-	}
+
+    public function drop()
+    {
+        return $this -> _mongoQueryBuilder -> drop();
+    }
+
 }

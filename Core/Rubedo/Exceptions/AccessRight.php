@@ -2,6 +2,7 @@
 
 namespace Rubedo\Exceptions;
 
-class AccessRight extends \exception {
+class AccessRight extends \exception
+{
 
 }
