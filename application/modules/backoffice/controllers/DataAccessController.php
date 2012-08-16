@@ -131,10 +131,15 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
      */
     public function deleteAction()
     {
-        $deleteData = Zend_Json::decode($this->getRequest()->getRawBody());
+        $data = $this->getRequest()->getParam('data');
 
-        if (is_array($deleteData)) {
-            $returnArray = $this->_dataReader->destroy($deleteData, true);
+        if (!is_null($data)) {
+            $deleteData = Zend_Json::decode($data);
+            if (is_array($deleteData)) {
+                $returnArray = $this->_dataReader->destroy($deleteData, true);
+            } else {
+                $returnArray = array('success' => false, "msg" => 'Not an array');
+            }
         } else {
             $returnArray = array('success' => false, "msg" => 'No Data');
         }
@@ -146,8 +151,19 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
      */
     public function createAction()
     {
-        $request = $this->getRequest();
-        $returnArray = array();
+        $data = $this->getRequest()->getParam('data');
+
+        if (!is_null($data)) {
+            $insertData = Zend_Json::decode($data);
+            if (is_array($insertData)) {
+                $returnArray = $this->_dataReader->create($insertData, true);
+            } else {
+                $returnArray = array('success' => false, "msg" => 'Not an array');
+            }
+        } else {
+            $returnArray = array('success' => false, "msg" => 'No Data');
+        }
+        $this->getResponse()->setBody(json_encode($returnArray));
     }
 
     /**
