@@ -45,13 +45,6 @@ class DataAccess implements IDataAccess
     private static $_defaultDb;
 
     /**
-     * QueryBuilder object used to do the read/write action to MongoDB
-     *
-     * @var QueryBuilder
-     */
-    private $_mongoQueryBuilder;
-
-    /**
      * Db Driver ClassName
      * @var string
      */
