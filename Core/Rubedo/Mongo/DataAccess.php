@@ -10,7 +10,7 @@
  * @package Rubedo
  * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license yet to be written
- * @version $Id:
+ * @version $Id$
  */
 namespace Rubedo\Mongo;
 
@@ -72,8 +72,8 @@ class DataAccess implements IDataAccess
     private $_dbName;
 
     /**
-     * Setter of the dependancy for the queryBuilder Objec
-     * @var string
+     * Setter of the dependancy for the Db Driver Objec
+     * @param string $className Name of the DB Driver
      */
     public function setdbDriverClassName($className)
     {
@@ -201,6 +201,10 @@ class DataAccess implements IDataAccess
         return $this->_collection->remove($obj, array("safe" => $safe));
     }
 
+
+	/**
+	 * Drop The current Collection
+	 */
     public function drop()
     {
         return $this->_collection->drop();
