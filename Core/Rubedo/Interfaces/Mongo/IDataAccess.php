@@ -61,7 +61,7 @@ interface IDataAccess
     /**
      * Update an objet in the current collection
      *
-     * @param criteria Update condition criteria
+     * @param array $criteria Update condition criteria
      * @param array $obj data object
      * @param bool $safe should we wait for a server response
      * @return array
