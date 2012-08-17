@@ -77,7 +77,7 @@ class DataAccess implements IDataAccess
      */
     public function setdbDriverClassName($className)
     {
-        $this->_dbDriverClassName = $className;
+        $this -> _dbDriverClassName = $className;
     }
 
     /**
@@ -107,9 +107,9 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this->_adapter = new $this -> _dbDriverClassName($mongo);
-        $this->_dbName = $this->_adapter->$dbName;
-        $this->_collection = $this->_dbName->$collection;
+        $this -> _adapter = new $this -> _dbDriverClassName($mongo);
+        $this -> _dbName = $this -> _adapter -> $dbName;
+        $this -> _collection = $this -> _dbName -> $collection;
 
     }
 
@@ -149,7 +149,7 @@ class DataAccess implements IDataAccess
      */
     public function read()
     {
-        return iterator_to_array($this->_collection->find());
+        return iterator_to_array($this -> _collection -> find());
     }
 
     /**
@@ -160,7 +160,7 @@ class DataAccess implements IDataAccess
      */
     public function findOne()
     {
-        return $this->_collection->findOne();
+        return $this -> _collection -> findOne();
     }
 
     /**
@@ -173,19 +173,25 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $safe = true)
     {
-        return $this->_collection->insert($obj, array("safe" => $safe));
+        $returnArray = $this -> _collection -> insert($obj, array("safe" => $safe));
+        if (isset($obj['_id'])) {
+            $returnArray['insertedId'] = $obj['_id'];
+        }
+        return $returnArray;
     }
 
     /**
      * Update an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::update
+     * @param criteria Update condition criteria
      * @param array $obj data object
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function update(array $obj, $safe = true)
+    public function update(array $criteria, array $obj, $safe = true)
     {
+        return $this -> _collection -> update($criteria, $obj, array("safe" => $safe));
     }
 
     /**
@@ -198,16 +204,15 @@ class DataAccess implements IDataAccess
      */
     public function destroy(array $obj, $safe = true)
     {
-        return $this->_collection->remove($obj, array("safe" => $safe));
+        return $this -> _collection -> remove($obj, array("safe" => $safe));
     }
 
-
-	/**
-	 * Drop The current Collection
-	 */
+    /**
+     * Drop The current Collection
+     */
     public function drop()
     {
-        return $this->_collection->drop();
+        return $this -> _collection -> drop();
     }
 
 }

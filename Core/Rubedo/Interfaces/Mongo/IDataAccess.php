@@ -61,11 +61,12 @@ interface IDataAccess
     /**
      * Update an objet in the current collection
      *
+     * @param criteria Update condition criteria
      * @param array $obj data object
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function update (array $obj, $safe = true);
+    public function update(array $criteria, array $obj, $safe = true);
 
     /**
      * Update an objet in the current collection
