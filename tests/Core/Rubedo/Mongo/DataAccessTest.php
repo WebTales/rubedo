@@ -2,23 +2,27 @@
 
 class DataAccessTest extends PHPUnit_Framework_TestCase
 {
+    protected static $phactory; 
+    
     public static function setUpBeforeClass()
     {
         \Rubedo\Mongo\DataAccess::getDefaultMongo();
         // create a db connection and tell Phactory to use it
         $mongo = new Mongo(\Rubedo\Mongo\DataAccess::getDefaultMongo());
-        Phactory::setDb($mongo->test_db);
+        $mongoDb = $mongo->test_db;
+        
+        static::$phactory = new \Phactory\Mongo\Phactory($mongoDb);
 
         // reset any existing blueprints and empty any tables Phactory has used
-        Phactory::reset();
+        static::$phactory->reset();
 
         // define default values for each user we will create
-        Phactory::define('item', array('name' => 'Test item $n'));
+        static::$phactory->define('item', array('name' => 'Test item $n'));
     }
 
     public function tearDown()
     {
-        Phactory::recall();
+        static::$phactory->recall();
     }
 
     public function setUp()
@@ -34,7 +38,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $items = array();
         for ($i = 0; $i < 3; $i++) {
-            $item = Phactory::create('item');
+            $item = static::$phactory->create('item');
             $item['id'] = (string)$item['_id'];
             unset($item['_id']);
             $items[] = $item;
@@ -64,7 +68,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($createArray["success"]);
         $writtenItem = $createArray["data"];
 
-        $readItems = array_values(iterator_to_array(Phactory::getDb()->items->find()));
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $this->assertEquals(1, count($readItems));
         $readItem = array_pop($readItems);
         $readItem['id'] = (string)$readItem['_id'];
@@ -78,7 +82,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $item = Phactory::create('item');
+        $item = static::$phactory->create('item');
 
         $nano = time_nanosleep(0, 100000);
         //délai de 100 micro secondes
@@ -97,7 +101,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($updateArray["success"]);
         $writtenItem = $updateArray["data"];
 
-        $readItems = array_values(iterator_to_array(Phactory::getDb()->items->find()));
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $this->assertEquals(1, count($readItems));
         $readItem = array_pop($readItems);
         $readItem['id'] = (string)$readItem['_id'];
@@ -114,13 +118,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $items = array();
         for ($i = 0; $i < 3; $i++) {
-            $item = Phactory::create('item');
+            $item = static::$phactory->create('item');
             $item['id'] = (string)$item['_id'];
             unset($item['_id']);
             $items[] = $item;
         }
 
-        $item = Phactory::create('item');
+        $item = static::$phactory->create('item');
 
         $nano = time_nanosleep(0, 100000);
         //délai de 100 micro secondes
@@ -137,10 +141,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($updateArray["success"]);
         
-        $readItems = array_values(iterator_to_array(Phactory::getDb()->items->find()));
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $this->assertEquals(3, count($readItems));
 
-        $readItem = Phactory::getDb()->items->findOne(array('_id' => new mongoId($itemId)));
+        $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new mongoId($itemId)));
 
         $this->assertNull($readItem);    }
 
