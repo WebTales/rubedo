@@ -37,11 +37,11 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
     {
         
         //switch to cli module if called by command line
-        if (strtolower(php_sapi_name()) == 'cli') {
+        /*if (strtolower(php_sapi_name()) == 'cli') {
             $request->setModuleName('cli');
             $request->setControllerKey('index');
             $request->setActionName('index');
-        }
+        }*/
         
         //ajoute en variable de classe métier l'objet gestionnaire de cache à durée de vie illimitée
 //         if(ENABLE_CACHE){
