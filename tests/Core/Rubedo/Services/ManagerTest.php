@@ -58,7 +58,6 @@ class ManagerTest extends PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        //isolation : no persistance of options between tests
         Rubedo\Services\Manager::setOptions(array());
         Rubedo\Interfaces\config::clearInterfaces();
         parent::tearDown();

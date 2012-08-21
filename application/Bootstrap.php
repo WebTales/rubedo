@@ -14,6 +14,8 @@
  * @version $Id$
  */
 
+require_once (APPLICATION_PATH . '/controllers/AbstractController.php');
+
 /**
  * Application initialization class
  *
@@ -29,7 +31,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initMongoDataStream()
     {
-        $options = $this -> getOption('datastream');
+        $options = $this->getOption('datastream');
         if (isset($options)) {
             $connectionString = 'mongodb://';
             if (!empty($options['mongo']['login'])) {
@@ -48,7 +50,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initServices()
     {
-        $options = $this -> getOption('services');
+        $options = $this->getOption('services');
         if (isset($options)) {
             Rubedo\Services\Manager::setOptions($options);
         } else {
@@ -57,7 +59,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         }
         $serviceOptions = Rubedo\Services\Manager::getOptions();
         /*define('LOG_LEVEL', $serviceOptions['logLevel']);
-        define('ENABLE_CACHE', $serviceOptions['enableCache']);*/
+         define('ENABLE_CACHE', $serviceOptions['enableCache']);*/
 
     }
 

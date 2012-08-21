@@ -28,7 +28,10 @@ class config
      * Class property which contains a hash table service name => interface name
      * @var array array service name => interface name
      */
-    protected static $_interfaceArray = array('MongoDataAccess' => 'Rubedo\\Interfaces\\Mongo\\IDataAccess', );
+    protected static $_interfaceArray = array(
+    'MongoDataAccess' 	=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
+	'Acl'				=>	'Rubedo\\Interfaces\\Acl\\IAcl',	
+	);
 
     /**
      * Public static method to add new service to the application

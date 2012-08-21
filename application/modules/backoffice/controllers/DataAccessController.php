@@ -26,7 +26,7 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
  * @package Rubedo
  *
  */
-class Backoffice_DataAccessController extends Zend_Controller_Action
+class Backoffice_DataAccessController extends AbstractController
 {
 
     /**
@@ -51,6 +51,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
      */
     public function init()
     {
+    	parent::init();
         // refuse write action not send by POST
         if (!$this -> getRequest() -> isPost() && $this -> getRequest() -> getActionName() !== 'index') {
             //throw new \Exception('This action should be called by POST request');
