@@ -60,6 +60,11 @@ class Backoffice_DataAccessController extends Zend_Controller_Action
         if (!isset($this -> _store)) {
             $this -> _store = $this -> getRequest() -> getParam('store');
         }
+		
+		if(!isset($this->_store)){
+			throw new Zend_Exception("No store parameter", 1);
+			
+		}
 
         // disable layout and set content type
         $this -> getHelper('Layout') -> disableLayout();
