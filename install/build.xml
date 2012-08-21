@@ -75,7 +75,7 @@
 		<mkdir dir="${phpunit.output.xml.dir}"/>
 		<mkdir dir="${phpunit.output.html.dir}"/>
 		<exec
-		command="phpunit  --verbose --process-isolation --configuration ${project.basedir}/tests/phpunit.xml --log-junit ${phpunit.output.xml.file} --verbose --testdox-html ${phpunit.output.html.dir}/index.html"
+		command="phpunit --configuration ${project.basedir}/tests/phpunit.xml --log-junit ${phpunit.output.xml.file} --testdox-html ${phpunit.output.html.dir}/index.html"
 		dir="${project.basedir}/tests"
 		passthru="true"
 		/>
