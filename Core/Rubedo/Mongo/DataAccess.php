@@ -77,7 +77,7 @@ class DataAccess implements IDataAccess
      */
     public function setdbDriverClassName($className)
     {
-        $this -> _dbDriverClassName = $className;
+        $this->_dbDriverClassName = $className;
     }
 
     /**
@@ -107,9 +107,9 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this -> _adapter = new $this -> _dbDriverClassName($mongo);
-        $this -> _dbName = $this -> _adapter -> $dbName;
-        $this -> _collection = $this -> _dbName -> $collection;
+        $this->_adapter = new $this -> _dbDriverClassName($mongo);
+        $this->_dbName = $this->_adapter->$dbName;
+        $this->_collection = $this->_dbName->$collection;
 
     }
 
@@ -149,7 +149,23 @@ class DataAccess implements IDataAccess
      */
     public function read()
     {
-        return iterator_to_array($this -> _collection -> find());
+        $data = iterator_to_array($this->_collection->find());
+        foreach ($data as &$value) {
+            $value['id'] = (string)$value['_id'];
+            unset($value['_id']);
+
+        }
+
+        $reponse = array();
+        $reponse['data'] = array_values($data);
+        $reponse['total'] = count($reponse['data']);
+        $reponse['success'] = TRUE;
+        $reponse['message'] = 'OK';
+
+        //temp : should be change when Read Api is set on each Store
+        $reponse = array_values($data);
+
+        return $reponse;
     }
 
     /**
@@ -160,7 +176,7 @@ class DataAccess implements IDataAccess
      */
     public function findOne()
     {
-        return $this -> _collection -> findOne();
+        return $this->_collection->findOne();
     }
 
     /**
@@ -173,7 +189,7 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $safe = true)
     {
-        $returnArray = $this -> _collection -> insert($obj, array("safe" => $safe));
+        $returnArray = $this->_collection->insert($obj, array("safe" => $safe));
         if (isset($obj['_id'])) {
             $returnArray['insertedId'] = $obj['_id'];
         }
@@ -184,14 +200,29 @@ class DataAccess implements IDataAccess
      * Update an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::update
-     * @param array $criteria Update condition criteria
      * @param array $obj data object
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function update(array $criteria, array $obj, $safe = true)
+    public function update(array $obj, $safe = true)
     {
-        return $this -> _collection -> update($criteria, $obj, array("safe" => $safe));
+        if (is_array($obj)) {
+            $id = $obj['id'];
+            unset($obj['id']);
+            $mongoID = new \MongoID($id);
+            $resultArray = $this->_collection->update(array('_id' => $mongoID), $obj, array("safe" => $safe));
+            if ($resultArray['ok'] == 1) {
+                $obj['id'] = $id;
+                $returnArray = array('success' => true, "data" => $obj);
+            } else {
+                $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+            }
+        } else {
+            $returnArray = array('success' => false, "msg" => 'Not an array');
+        }
+        return $returnArray;
+
+        return $this->_collection->update($criteria, $obj, array("safe" => $safe));
     }
 
     /**
@@ -204,7 +235,20 @@ class DataAccess implements IDataAccess
      */
     public function destroy(array $obj, $safe = true)
     {
-        return $this -> _collection -> remove($obj, array("safe" => $safe));
+        if (is_array($obj)) {
+            $id = $obj['id'];
+            $mongoID = new \MongoID($id);
+            $resultArray = $this->_collection->remove(array('_id' => $mongoID), array("safe" => $safe));
+            if ($resultArray['ok'] == 1) {
+                $returnArray = array('success' => true);
+            } else {
+                $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+            }
+        } else {
+            $returnArray = array('success' => false, "msg" => 'Not an array');
+        }
+
+        return $returnArray;
     }
 
     /**
@@ -212,7 +256,7 @@ class DataAccess implements IDataAccess
      */
     public function drop()
     {
-        return $this -> _collection -> drop();
+        return $this->_collection->drop();
     }
 
 }
