@@ -1,4 +1,17 @@
 <?php
+/**
+ * Rubedo
+ *
+ * LICENSE
+ *
+ * yet to be written
+ *
+ * @category Rubedo-Test
+ * @package Rubedo-Test
+ * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license yet to be written
+ * @version $Id$
+ */
 
 /**
  * Mock Service Interface for unit test
@@ -21,29 +34,45 @@ class TestService implements ITestService
 
 }
 
+/**
+ * Tests suite for the service manager
+ *
+ *
+ * @author jbourdin
+ * @category Rubedo-Test
+ * @package Rubedo-Test
+ */
 class ManagerTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Init
+     */
     public function setUp()
     {
-        $this -> bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
+        $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
         parent::setUp();
     }
 
-	public function tearDown(){
-		Rubedo\Services\Manager::setOptions(array());
-		Rubedo\Interfaces\config::clearInterfaces();
-		parent::tearDown();
-	}
+    /**
+     * Cleaning
+     */
+    public function tearDown()
+    {
+        //isolation : no persistance of options between tests
+        Rubedo\Services\Manager::setOptions(array());
+        Rubedo\Interfaces\config::clearInterfaces();
+        parent::tearDown();
+    }
 
     /**
-     * Test if setOptions normal result
+     * Test if setOptions correctly set an array of options
      */
     public function testConformOptions()
     {
         $options = array('fakeService' => array('fakeOptions1' => true, 'fakeOptions2' => 'value2'));
         \Rubedo\Services\Manager::setOptions($options);
-		$this->assertAttributeEquals($options, '_servicesOptions', '\\Rubedo\\Services\\Manager');
-        $this -> assertEquals($options, \Rubedo\Services\Manager::getOptions());
+        $this->assertAttributeEquals($options, '_servicesOptions', '\\Rubedo\\Services\\Manager');
+        $this->assertEquals($options, \Rubedo\Services\Manager::getOptions());
     }
 
     /**
@@ -67,8 +96,8 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
 
         $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
-		$this->assertAttributeInstanceOf('TestService', '_object', $service);
+        $this->assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
+        $this->assertAttributeInstanceOf('TestService', '_object', $service);
     }
 
     /**
@@ -100,7 +129,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testNonDeclaredInterfaceGetService()
     {
-        $classname = $this -> getMockClass('TestService');
+        $classname = $this->getMockClass('TestService');
         $options = array('TestService' => array('class' => $classname));
         \Rubedo\Services\Manager::setOptions($options);
         $service = \Rubedo\Services\Manager::getService('TestService');
@@ -113,31 +142,12 @@ class ManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testDontImplementdInterfaceGetService()
     {
-    	
+
         $options = array('TestService' => array('class' => 'stdClass'));
         Rubedo\Services\Manager::setOptions($options);
         Rubedo\Interfaces\config::addInterface('TestServiceNoInterface', 'ITestService');
 
         $service = \Rubedo\Services\Manager::getService('TestService');
-    }
-
-    
-
-    /**
-     * Valid nested method call with concerns
-     */
-    public function testValidMethodCallWithConcerns()
-    {
-        $options = array('TestService' => array('class' => 'TestService'));
-        Rubedo\Services\Manager::setOptions($options);
-        Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
-        Rubedo\Interfaces\config::clearConcerns();
-        Rubedo\Interfaces\config::addConcern('testConcern');
-
-        $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
-		$this->assertAttributeInstanceOf('TestService', '_object', $service);
-        $this -> assertEquals(42, $service -> fakeMethod());
     }
 
 }
