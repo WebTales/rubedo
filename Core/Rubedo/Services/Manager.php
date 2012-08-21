@@ -37,6 +37,31 @@ class Manager implements IServicesManager
     protected static $_servicesOptions;
 
     /**
+     * Array of mock service
+     */
+    protected static $_mockServicesArray = array();
+
+    /**
+     * Reset the mockObject array for isolation purpose
+     */
+    public function resetMocks()
+    {
+        self::$_mockServicesArray = array();
+    }
+
+    /**
+     * Set a mock service for testing purpose
+     *
+     * @var string $serviceName
+     * @var object $obj
+     */
+    public function setMockService($serviceName, $obj)
+    {
+        $serviceName = ucfirst($serviceName);
+        self::$_mockServicesArray[$serviceName] = $obj;
+    }
+
+    /**
      * Setter of services parameters, to init them from bootstrap
      *
      * @param array $options
@@ -72,6 +97,10 @@ class Manager implements IServicesManager
     {
         if (gettype($serviceName) !== 'string') {
             throw new \Rubedo\Exceptions\ServiceManager('getService only accept string argument');
+        }
+
+        if (isset(static::$_mockServicesArray[$serviceName])) {
+            return static::$_mockServicesArray[$serviceName];
         }
 
         $serviceName = ucfirst($serviceName);
