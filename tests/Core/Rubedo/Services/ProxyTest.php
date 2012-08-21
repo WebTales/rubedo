@@ -22,6 +22,9 @@ class ProxyTest extends PHPUnit_Framework_TestCase
         parent::setUp();
     }
 
+    /**
+     * Test Service Override
+     */
     public function testOverrideProxyClass()
     {
         $mock = $this->getMock('Rubedo\Mongo\DataAccess');

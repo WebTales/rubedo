@@ -10,7 +10,7 @@ interface ITestService
 }
 
 /**
- * Mock Valid Service Class
+ * Mock Valid Service Class for testing purpose
  */
 class TestService implements ITestService
 {
