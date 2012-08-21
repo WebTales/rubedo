@@ -62,6 +62,14 @@ class config
      */
     protected static $_concernArray = array();
 
+	/**
+     * Public static method to clear interface list
+     */
+    final public static function clearInterfaces()
+    {
+        static::$_interfaceArray = array();
+    }
+
     /**
      * Public static method to clear concerns during service method call
      */

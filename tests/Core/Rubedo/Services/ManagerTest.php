@@ -28,19 +28,7 @@ class TestServiceNoInterface
 {
 }
 
-class testConcern
-{
-    public function __construct($injecteurArray, $options)
-    {
 
-    }
-
-    public function process($object, $name, $arguments)
-    {
-        return call_user_func_array(array($object, $name), $arguments);
-    }
-
-}
 
 class ManagerTest extends PHPUnit_Framework_TestCase
 {
@@ -49,6 +37,12 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         $this -> bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
         parent::setUp();
     }
+
+	public function tearDown(){
+		Rubedo\Services\Manager::setOptions(array());
+		Rubedo\Interfaces\config::clearInterfaces();
+		parent::tearDown();
+	}
 
     /**
      * Test if setOptions normal result
@@ -135,39 +129,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         $service = \Rubedo\Services\Manager::getService('TestService');
     }
 
-    /**
-     * Failed method call : non existent method in nested object
-     *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
-     *
-     */
-    public function testInvalidMethodCall()
-    {
-        $options = array('TestService' => array('class' => 'TestService'));
-        Rubedo\Services\Manager::setOptions($options);
-        Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
-
-        $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
-		$this->assertAttributeInstanceOf('TestService', '_object', $service);
-        $service -> otherFakeMethod();
-    }
-
-    /**
-     * Valid nested method call
-     */
-    public function testValidMethodCall()
-    {
-        $options = array('TestService' => array('class' => 'TestService'));
-        Rubedo\Services\Manager::setOptions($options);
-        Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
-        Rubedo\Interfaces\config::clearConcerns();
-
-        $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
-		$this->assertAttributeInstanceOf('TestService', '_object', $service);
-        $this -> assertEquals(42, $service -> fakeMethod());
-    }
+    
 
     /**
      * Valid nested method call with concerns
