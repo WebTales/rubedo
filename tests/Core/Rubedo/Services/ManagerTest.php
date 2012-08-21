@@ -21,15 +21,6 @@ class TestService implements ITestService
 
 }
 
-/**
- * Mock Service Class Without Correct Interface
- */
-class TestServiceNoInterface
-{
-}
-
-
-
 class ManagerTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
@@ -122,7 +113,8 @@ class ManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testDontImplementdInterfaceGetService()
     {
-        $options = array('TestService' => array('class' => 'TestServiceNoInterface'));
+    	
+        $options = array('TestService' => array('class' => 'stdClass'));
         Rubedo\Services\Manager::setOptions($options);
         Rubedo\Interfaces\config::addInterface('TestServiceNoInterface', 'ITestService');
 
