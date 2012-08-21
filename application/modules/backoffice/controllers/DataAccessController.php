@@ -114,8 +114,13 @@ class Backoffice_DataAccessController extends AbstractController
 
         if (!is_null($data)) {
             $data = Zend_Json::decode($data);
+            if (is_array($data)) {
 
-            $returnArray = $this->_dataReader->destroy($data, true);
+                $returnArray = $this->_dataReader->destroy($data, true);
+
+            } else {
+                $returnArray = array('success' => false, "msg" => 'Not an array');
+            }
 
         } else {
             $returnArray = array('success' => false, "msg" => 'Invalid Data');
@@ -133,12 +138,7 @@ class Backoffice_DataAccessController extends AbstractController
         if (!is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
-                $resultArray = $this->_dataReader->create($insertData, true);
-                if ($resultArray['ok'] == 1) {
-                    unset($insertData['_id']);
-                    $insertData['id'] = (string)$resultArray['insertedId'];
-                    $returnArray = array('success' => true, "data" => $insertData);
-                }
+                $returnArray = $this->_dataReader->create($insertData, true);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');

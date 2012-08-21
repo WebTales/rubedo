@@ -45,12 +45,6 @@ class DataAccess implements IDataAccess
     private static $_defaultDb;
 
     /**
-     * Db Driver ClassName
-     * @var string
-     */
-    private $_dbDriverClassName = '\\Mongo';
-
-    /**
      * MongoDB Connection
      *
      * @var \Mongo
@@ -70,15 +64,6 @@ class DataAccess implements IDataAccess
      * @var \MongoDB
      */
     private $_dbName;
-
-    /**
-     * Setter of the dependancy for the Db Driver Objec
-     * @param string $className Name of the DB Driver
-     */
-    public function setdbDriverClassName($className)
-    {
-        $this->_dbDriverClassName = $className;
-    }
 
     /**
      * Initialize a data service handler to read or write in a MongoDb
@@ -107,7 +92,7 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this->_adapter = new $this -> _dbDriverClassName($mongo);
+        $this->_adapter = new \Mongo($mongo);
         $this->_dbName = $this->_adapter->$dbName;
         $this->_collection = $this->_dbName->$collection;
 
@@ -189,10 +174,15 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $safe = true)
     {
-        $returnArray = $this->_collection->insert($obj, array("safe" => $safe));
-        if (isset($obj['_id'])) {
-            $returnArray['insertedId'] = $obj['_id'];
+        $resultArray = $this->_collection->insert($obj, array("safe" => $safe));
+        if ($resultArray['ok'] == 1) {
+            $obj['id'] = (string)$obj['_id'];
+            unset($obj['_id']);
+            $returnArray = array('success' => true, "data" => $obj);
+        } else {
+            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
+
         return $returnArray;
     }
 
@@ -206,23 +196,18 @@ class DataAccess implements IDataAccess
      */
     public function update(array $obj, $safe = true)
     {
-        if (is_array($obj)) {
-            $id = $obj['id'];
-            unset($obj['id']);
-            $mongoID = new \MongoID($id);
-            $resultArray = $this->_collection->update(array('_id' => $mongoID), $obj, array("safe" => $safe));
-            if ($resultArray['ok'] == 1) {
-                $obj['id'] = $id;
-                $returnArray = array('success' => true, "data" => $obj);
-            } else {
-                $returnArray = array('success' => false, "msg" => $resultArray["err"]);
-            }
+        $id = $obj['id'];
+        unset($obj['id']);
+        $mongoID = new \MongoID($id);
+        $resultArray = $this->_collection->update(array('_id' => $mongoID), $obj, array("safe" => $safe));
+        if ($resultArray['ok'] == 1) {
+            $obj['id'] = $id;
+            $returnArray = array('success' => true, "data" => $obj);
         } else {
-            $returnArray = array('success' => false, "msg" => 'Not an array');
+            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
-        return $returnArray;
 
-        return $this->_collection->update($criteria, $obj, array("safe" => $safe));
+        return $returnArray;
     }
 
     /**
@@ -235,17 +220,13 @@ class DataAccess implements IDataAccess
      */
     public function destroy(array $obj, $safe = true)
     {
-        if (is_array($obj)) {
-            $id = $obj['id'];
-            $mongoID = new \MongoID($id);
-            $resultArray = $this->_collection->remove(array('_id' => $mongoID), array("safe" => $safe));
-            if ($resultArray['ok'] == 1) {
-                $returnArray = array('success' => true);
-            } else {
-                $returnArray = array('success' => false, "msg" => $resultArray["err"]);
-            }
+        $id = $obj['id'];
+        $mongoID = new \MongoID($id);
+        $resultArray = $this->_collection->remove(array('_id' => $mongoID), array("safe" => $safe));
+        if ($resultArray['ok'] == 1) {
+            $returnArray = array('success' => true);
         } else {
-            $returnArray = array('success' => false, "msg" => 'Not an array');
+            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
 
         return $returnArray;
