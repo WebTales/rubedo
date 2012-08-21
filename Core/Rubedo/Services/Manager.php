@@ -52,8 +52,8 @@ class Manager implements IServicesManager
     /**
      * Set a mock service for testing purpose
      *
-     * @var string $serviceName
-     * @var object $obj
+     * @param string $serviceName Name of the service overridden
+     * @param object $obj mock object substituted to the service
      */
     public function setMockService($serviceName, $obj)
     {
@@ -116,7 +116,6 @@ class Manager implements IServicesManager
      *
      * @param string $serviceName name of the service
      * @return string class to instanciate
-     * @todo read dependancy from options
      */
     protected static function resolveName($serviceName)
     {

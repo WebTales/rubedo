@@ -30,8 +30,7 @@ class Acl implements  IAcl
      * Check if the current user has access to a given resource for a given access mode
      *
      * @param string $resource resource name
-     * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param string $mode access mode (r|read,w|write,x|execute)
      * @return array
      */
     public function hasAccess($resource, $mode = 'x')

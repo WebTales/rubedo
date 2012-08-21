@@ -85,20 +85,20 @@ class Proxy implements IServicesProxy
      *
      * @param string $serviceClassName Name of nested class
      * @param string $serviceName Name of the service
-	 * @param object $serviceObject Override the service object
+     * @param object $serviceObject Override the service object
      */
     public function __construct($serviceClassName, $serviceName, $serviceObject = null)
     {
-    	if($serviceObject===null){
-        $this->setServiceObj(new $serviceClassName());
-		}elseif($serviceObject instanceof $serviceClassName){
-			$this->setServiceObj($serviceObject);
-		}else{
-			throw new \Rubedo\Exceptions\ServiceManager("Override Object not an instance of service Classe Name", 1);
-		}
+        if ($serviceObject === null) {
+            $this->setServiceObj(new $serviceClassName());
+        } elseif ($serviceObject instanceof $serviceClassName) {
+            $this->setServiceObj($serviceObject);
+        } else {
+            throw new \Rubedo\Exceptions\ServiceManager("Override Object not an instance of service Classe Name", 1);
+        }
         $this->_serviceName = $serviceName;
-		
-		$options = Manager::getOptions();
+
+        $options = Manager::getOptions();
 
         if (isset($options[$serviceName])) {
             $this->_currentOptions = $options[$serviceName];
@@ -136,7 +136,6 @@ class Proxy implements IServicesProxy
      *
      * @param string $name service method name
      * @param array $arguments service method array of arguments
-     * @todo implement concerns injection
      */
     public function __call($name, $arguments)
     {

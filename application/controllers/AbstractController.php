@@ -25,15 +25,20 @@
 abstract class AbstractController extends Zend_Controller_Action
 {
 
+    /**
+     * Shared init for all controller
+     *
+     * Implements Access Control
+     */
     public function init()
     {
         $serviceAcl = \Rubedo\Services\Manager::getService('Acl');
-		$hasAccess = $serviceAcl->hasAccess('controller.'.$this->getRequest()->getControllerName().'.'.$this->getRequest()->getActionName());
-		
-		if(!$hasAccess){
-			throw new \Zend_Acl_Exception("Access Refused To current Controller", 1);
-			
-		}
+        $hasAccess = $serviceAcl->hasAccess('controller.' . $this->getRequest()->getControllerName() . '.' . $this->getRequest()->getActionName());
+
+        if (!$hasAccess) {
+            throw new \Zend_Acl_Exception("Access Refused To current Controller", 1);
+
+        }
 
     }
 
