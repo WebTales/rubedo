@@ -66,6 +66,14 @@ class DataAccess implements IDataAccess
     private $_dbName;
 
     /**
+     * Getter of the DB connection string
+     * @return string DB connection String
+     */
+    public static function getDefaultMongo(){
+        return static::$_defaultMongo;
+    }
+
+    /**
      * Initialize a data service handler to read or write in a MongoDb
      * Collection
      *

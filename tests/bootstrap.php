@@ -13,3 +13,6 @@ require_once 'Zend/Loader/Autoloader.php';
 Zend_Loader_Autoloader::getInstance();
 require_once (APPLICATION_PATH . '/controllers/AbstractController.php');
 require_once (APPLICATION_PATH . '/../tests/application/AbstractControllerTest.php');
+
+require_once 'Phactory/lib/PhactoryMongo.php';
+
