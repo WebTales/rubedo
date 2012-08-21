@@ -1,22 +1,7 @@
 <?php
 
-class Backoffice_DataAccessControllerTest extends Zend_Test_PHPUnit_ControllerTestCase
+class Backoffice_DataAccessControllerTest extends AbstractControllerTest
 {
-
-    public function setUp()
-    {
-        $this->bootstrap = new Zend_Application('testing', APPLICATION_PATH . '/configs/application.ini');
-
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        $this->resetRequest();
-        $this->resetResponse();
-        Rubedo\Services\Manager::resetMocks();
-        parent::tearDown();
-    }
 
     public function testDispatchJson()
     {
