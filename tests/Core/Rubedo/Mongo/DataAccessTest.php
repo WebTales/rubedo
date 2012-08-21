@@ -44,8 +44,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
             $items[] = $item;
         }
 
-        $nano = time_nanosleep(0, 100000);
-        //délai de 100 micro secondes
 
         $readArray = $dataAccessObject->read();
 
@@ -62,8 +60,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item = array('name' => 'created item 1');
 
         $createArray = $dataAccessObject->create($item, true);
-        $nano = time_nanosleep(0, 100000);
-        //délai de 100 micro secondes
 
         $this->assertTrue($createArray["success"]);
         $writtenItem = $createArray["data"];
@@ -84,9 +80,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = static::$phactory->create('item');
 
-        $nano = time_nanosleep(0, 100000);
-        //délai de 100 micro secondes
-
         $itemId = (string)$item['_id'];
 
         $item['id'] = $itemId;
@@ -94,9 +87,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['name'] .= ' updated';
 
         $updateArray = $dataAccessObject->update($item, true);
-
-        $nano = time_nanosleep(0, 100000);
-        //délai de 100 micro secondes
 
         $this->assertTrue($updateArray["success"]);
         $writtenItem = $updateArray["data"];
@@ -126,18 +116,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = static::$phactory->create('item');
 
-        $nano = time_nanosleep(0, 100000);
-        //délai de 100 micro secondes
-
         $itemId = (string)$item['_id'];
 
         $item['id'] = $itemId;
         unset($item['_id']);
 
         $updateArray = $dataAccessObject->destroy($item, true);
-
-        $nano = time_nanosleep(0, 100000);
-        //délai de 100 micro secondes
 
         $this->assertTrue($updateArray["success"]);
         
