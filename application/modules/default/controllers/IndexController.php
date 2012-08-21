@@ -22,7 +22,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class IndexController extends Zend_Controller_Action
+class IndexController extends AbstractController
 {
 
 

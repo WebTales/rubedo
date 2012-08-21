@@ -23,7 +23,7 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_IndexController extends Zend_Controller_Action
+class Backoffice_IndexController extends AbstractController
 {
 
 
