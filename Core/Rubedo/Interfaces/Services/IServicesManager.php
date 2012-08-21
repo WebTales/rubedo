@@ -34,27 +34,13 @@ interface IServicesManager
      * @param array $options
      */
     public static function setOptions($options);
-    
-    /**
-     * getter of services 
-     * 
-     * @return array array of all the services 
+	
+	/**
+     * getter of services parameters, to init them from bootstrap
+     *
      */
     public static function getOptions ();
     
-    /**
-     * Getter of the current service  parameters or the specified parameter
-     * 
-     * @param string $name optionnal parameter name
-     * @return mixed value or array of valuefor asked parameter
-     */
-    public function getCurrentOptions ($name = null);
-    
-    /**
-     * Getter of the current service name
-     * @return string
-     */
-    public function getServiceName();
     
     /**
      * Public static method to get an instance of the service given by its name
@@ -66,12 +52,5 @@ interface IServicesManager
      */
     public static function getService($serviceName);
     
-    /**
-     *
-     * Call : magic method invoke when calling a none existing manager method, proxy to the service object
-     *
-     * @param string $name service method name
-     * @param array $arguments service method array of arguments
-     */
-    public function __call($name, $arguments);
+    
 }

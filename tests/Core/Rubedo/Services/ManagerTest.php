@@ -57,6 +57,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     {
         $options = array('fakeService' => array('fakeOptions1' => true, 'fakeOptions2' => 'value2'));
         \Rubedo\Services\Manager::setOptions($options);
+		$this->assertAttributeEquals($options, '_servicesOptions', '\\Rubedo\\Services\\Manager');
         $this -> assertEquals($options, \Rubedo\Services\Manager::getOptions());
     }
 
@@ -81,8 +82,8 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
 
         $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Manager', $service);
-        $this -> assertInstanceOf('TestService', $service -> getServiceObj());
+        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
+		$this->assertAttributeInstanceOf('TestService', '_object', $service);
     }
 
     /**
@@ -147,8 +148,8 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
 
         $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Manager', $service);
-        $this -> assertInstanceOf('TestService', $service -> getServiceObj());
+        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
+		$this->assertAttributeInstanceOf('TestService', '_object', $service);
         $service -> otherFakeMethod();
     }
 
@@ -163,8 +164,8 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         Rubedo\Interfaces\config::clearConcerns();
 
         $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Manager', $service);
-        $this -> assertInstanceOf('TestService', $service -> getServiceObj());
+        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
+		$this->assertAttributeInstanceOf('TestService', '_object', $service);
         $this -> assertEquals(42, $service -> fakeMethod());
     }
 
@@ -180,8 +181,8 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         Rubedo\Interfaces\config::addConcern('testConcern');
 
         $service = \Rubedo\Services\Manager::getService('TestService');
-        $this -> assertInstanceOf('\\Rubedo\\Services\\Manager', $service);
-        $this -> assertInstanceOf('TestService', $service -> getServiceObj());
+        $this -> assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
+		$this->assertAttributeInstanceOf('TestService', '_object', $service);
         $this -> assertEquals(42, $service -> fakeMethod());
     }
 
