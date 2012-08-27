@@ -67,6 +67,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * test of the read feature
      *
      * Create 3 items through Phactory and read them with the service
+     * a version number is added on the fly
      */
     public function testRead()
     {
@@ -77,6 +78,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         for ($i = 0; $i < 3; $i++) {
             $item = static::$phactory->create('item');
             $item['id'] = (string)$item['_id'];
+            $item['version'] = 1;
             unset($item['_id']);
             $items[] = $item;
         }
@@ -164,6 +166,32 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test of the update feature without a version number
+     *
+     * Create an item with phactory
+     * Update it with the service
+     * @expectedException \Rubedo\Exceptions\DataAccess
+     */
+    public function testNoVersionUpdate()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $version = rand(1, 25);
+        $item = static::$phactory->create('item', array('version' => $version));
+
+        $itemId = (string)$item['_id'];
+        $name = $item['name'];
+
+        $item['id'] = $itemId;
+        unset($item['_id']);
+        unset($item['version']);
+        $item['name'] .= ' updated';
+
+        $updateArray = $dataAccessObject->update($item, true);
+    }
+
+    /**
      * Test of the update feature
      *
      * Create an item with phactory
@@ -215,7 +243,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
             $items[] = $item;
         }
 
-        $item = static::$phactory->create('item');
+        $item = static::$phactory->create('item',array('version'=>1));
 
         $itemId = (string)$item['_id'];
 
@@ -232,6 +260,37 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new mongoId($itemId)));
 
         $this->assertNull($readItem);
+    }
+    
+    /**
+     * Test of the Destroy Feature without a version parameter
+     * 
+     * Create items with Phactory
+     * Delete one with the service
+     * 
+     * @expectedException \Rubedo\Exceptions\DataAccess
+     */
+    public function testNoVersionDestroy()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+        for ($i = 0; $i < 3; $i++) {
+            $item = static::$phactory->create('item',array('version'=>1));
+            $item['id'] = (string)$item['_id'];
+            unset($item['_id']);
+            $items[] = $item;
+        }
+
+        $item = static::$phactory->create('item');
+
+        $itemId = (string)$item['_id'];
+
+        $item['id'] = $itemId;
+        unset($item['_id']);
+
+        $updateArray = $dataAccessObject->destroy($item, true);
     }
 
     /**
