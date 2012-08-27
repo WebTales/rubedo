@@ -170,7 +170,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Update it with the service and a false version number
      * Should fail
      *
-     * @expectedException \Rubedo\Exceptions\DataAccess
      */
     public function testConflictUpdate()
     {
@@ -189,7 +188,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['name'] .= ' updated';
 
         $updateArray = $dataAccessObject->update($item, true);
-
+        
+        $this->assertFalse($updateArray['success']);
+        $this->assertEquals('no record had been updated', $updateArray['msg']);
         
     }
 
@@ -240,7 +241,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Update it with the service and a false version number
      * Should fail
      *
-     * @expectedException \Rubedo\Exceptions\DataAccess
      */
     public function testConflictDestroy()
     {
@@ -263,6 +263,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
 
         $updateArray = $dataAccessObject->destroy($item, true);
+        $this->assertFalse($updateArray['success']);
+        $this->assertEquals('no record had been deleted', $updateArray['msg']);
     }
 
 }
