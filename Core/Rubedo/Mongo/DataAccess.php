@@ -69,7 +69,8 @@ class DataAccess implements IDataAccess
      * Getter of the DB connection string
      * @return string DB connection String
      */
-    public static function getDefaultMongo(){
+    public static function getDefaultMongo()
+    {
         return static::$_defaultMongo;
     }
 
@@ -146,6 +147,9 @@ class DataAccess implements IDataAccess
         foreach ($data as &$value) {
             $value['id'] = (string)$value['_id'];
             unset($value['_id']);
+            if(!isset($value['version'])){
+                $value['version'] = 1;
+            }
 
         }
 
@@ -182,6 +186,7 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $safe = true)
     {
+        $obj['version'] = 1;
         $resultArray = $this->_collection->insert($obj, array("safe" => $safe));
         if ($resultArray['ok'] == 1) {
             $obj['id'] = (string)$obj['_id'];
@@ -206,11 +211,23 @@ class DataAccess implements IDataAccess
     {
         $id = $obj['id'];
         unset($obj['id']);
+        if (!isset($obj['version'])) {
+            throw new \Rubedo\Exceptions\DataAccess('can\'t update an object without a version number.');
+        }
+        $oldVersion = $obj['version'];
+        $obj['version'] = $obj['version'] + 1;
         $mongoID = new \MongoID($id);
-        $resultArray = $this->_collection->update(array('_id' => $mongoID), $obj, array("safe" => $safe));
+        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), $obj, array("safe" => $safe));
+
         if ($resultArray['ok'] == 1) {
-            $obj['id'] = $id;
-            $returnArray = array('success' => true, "data" => $obj);
+            if ($resultArray['updatedExisting'] == true) {
+                $obj['id'] = $id;
+                unset($obj['_id']);
+                $returnArray = array('success' => true, "data" => $obj);
+            } else {
+                $returnArray = array('success' => false, "msg" => 'no record had been updated');
+            }
+
         } else {
             $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
@@ -229,14 +246,22 @@ class DataAccess implements IDataAccess
     public function destroy(array $obj, $safe = true)
     {
         $id = $obj['id'];
+        if (!isset($obj['version'])) {
+            throw new \Rubedo\Exceptions\DataAccess('can\'t destroy an object without a version number.');
+        }
+        $version = $obj['version'];
         $mongoID = new \MongoID($id);
-        $resultArray = $this->_collection->remove(array('_id' => $mongoID), array("safe" => $safe));
+        $resultArray = $this->_collection->remove(array('_id' => $mongoID, 'version' => $version), array("safe" => $safe));
         if ($resultArray['ok'] == 1) {
-            $returnArray = array('success' => true);
+            if ($resultArray['n'] == 1) {
+                $returnArray = array('success' => true);
+            } else {
+                $returnArray = array('success' => false, "msg" => 'no record had been deleted');
+            }
+
         } else {
             $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
-
         return $returnArray;
     }
 
