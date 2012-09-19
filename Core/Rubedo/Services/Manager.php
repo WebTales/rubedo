@@ -57,7 +57,6 @@ class Manager implements IServicesManager
      */
     public function setMockService($serviceName, $obj)
     {
-        $serviceName = ucfirst($serviceName);
         self::$_mockServicesArray[$serviceName] = $obj;
     }
 
@@ -102,8 +101,6 @@ class Manager implements IServicesManager
         if (isset(static::$_mockServicesArray[$serviceName])) {
             return static::$_mockServicesArray[$serviceName];
         }
-
-        $serviceName = ucfirst($serviceName);
 
         $serviceClassName = self::resolveName($serviceName);
 
