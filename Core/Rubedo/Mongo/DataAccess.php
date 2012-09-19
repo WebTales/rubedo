@@ -186,7 +186,13 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $safe = true)
     {
+    	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+    	$currentUser = $currentUserService->getCurrentUserSummary();
+		
         $obj['version'] = 1;
+		$obj['lastUpdateUser'] = $currentUser;
+		$obj['createUser'] = $currentUser;
+		
         $resultArray = $this->_collection->insert($obj, array("safe" => $safe));
         if ($resultArray['ok'] == 1) {
             $obj['id'] = (string)$obj['_id'];
@@ -209,6 +215,9 @@ class DataAccess implements IDataAccess
      */
     public function update(array $obj, $safe = true)
     {
+    	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+    	$currentUser = $currentUserService->getCurrentUserSummary();
+		
         $id = $obj['id'];
         unset($obj['id']);
         if (!isset($obj['version'])) {
@@ -216,6 +225,7 @@ class DataAccess implements IDataAccess
         }
         $oldVersion = $obj['version'];
         $obj['version'] = $obj['version'] + 1;
+        $obj['lastUpdateUser'] = $currentUser;
         $mongoID = new \MongoID($id);
         $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), $obj, array("safe" => $safe));
 
