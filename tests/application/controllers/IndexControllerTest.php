@@ -7,6 +7,13 @@ class IndexControllerTest extends AbstractControllerTest
 		$this->dispatch('/');
 	}
 
+	/**
+	 * check the service configuration by getservice method
+	 */
+	public function testServiceCurrentUser(){
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+    	//$currentUser = $currentUserService->getCurrentUserSummary();
+	}
 
 }
 

@@ -46,8 +46,7 @@ class CurrentUserTest extends PHPUnit_Framework_TestCase
 	 * check the service configuration by getservice method
 	 */
 	public function testConfiguredService(){
-		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-    	//$currentUser = $currentUserService->getCurrentUserSummary();
+		
 	}
 
    
