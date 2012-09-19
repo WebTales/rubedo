@@ -127,7 +127,7 @@ class Manager implements IServicesManager
             throw new \Rubedo\Exceptions\ServiceManager($serviceName . ' isn\'t declared in service interface config');
         }
         if (!in_array($interfaceName, class_implements($className))) {
-            throw new \Exception($className . ' don\'t implement ' . $interfaceName);
+            throw new \Rubedo\Exceptions\ServiceManager($className . ' don\'t implement ' . $interfaceName);
         }
 
         return $className;
