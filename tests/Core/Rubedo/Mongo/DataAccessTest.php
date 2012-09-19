@@ -52,6 +52,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         static::$phactory->recall();
+		Rubedo\Services\Manager::resetMocks();
     }
 
     /**
@@ -60,8 +61,20 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
-        parent::setUp();
+		$mockService = $this->getMock('Rubedo\User\CurrentUser');
+		Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
+		parent::setUp();
     }
+	
+	/**
+	 * Initialize a mock user service
+	 */
+	public function initUser(){
+		$this->_fakeUser = array('id' => 1,'login'=> (string) rand(21, 128));
+		$mockService = $this->getMock('Rubedo\User\CurrentUser');
+        $mockService->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue($this->_fakeUser));
+		Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
+	}
 
     /**
      * test of the read feature
@@ -98,6 +111,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      */
     public function testCreate()
     {
+    	$this->initUser();
+		
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
@@ -118,6 +133,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($writtenItem, $readItem);
 
         $origItem['version'] = 1;
+		$origItem['createUser'] = $this->_fakeUser;
+		$origItem['lastUpdateUser'] = $this->_fakeUser;
         unset($readItem['id']);
 
         $this->assertEquals($origItem,$readItem);
@@ -133,9 +150,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      */
     public function testUpdate()
     {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
+    	$this->initUser();
+		
         $version = rand(1, 25);
         $item = static::$phactory->create('item', array('version' => $version));
 
@@ -146,7 +162,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $item['name'] .= ' updated';
 
+		//actual begin of the application run
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
         $updateArray = $dataAccessObject->update($item, true);
+		//end of application run
 
         $this->assertTrue($updateArray["success"]);
         $writtenItem = $updateArray["data"];
@@ -161,6 +182,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($itemId, $readItem['id']);
 
         $targetItem = array('name' => $name . ' updated', 'id' => $itemId, 'version' => $version + 1);
+		$targetItem['lastUpdateUser'] = $this->_fakeUser;
 
         $this->assertEquals($targetItem, $readItem);
     }
@@ -201,6 +223,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      */
     public function testConflictUpdate()
     {
+    	
+		//$this->initUser();
+		
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
@@ -271,7 +296,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * @expectedException \Rubedo\Exceptions\DataAccess
      */
     public function testNoVersionDestroy()
-    {
+    {		
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
