@@ -35,6 +35,13 @@ interface ICurrentUser
     public function getCurrentUser();
 	
 	/**
+	 * Return the current user short info array
+	 * 
+	 * @return array
+	 */
+	public function getCurrentUserSummary();
+	
+	/**
 	 * Check if a user is authenticated
 	 * 
 	 * @return boolean

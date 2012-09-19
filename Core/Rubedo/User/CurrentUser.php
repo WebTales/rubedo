@@ -56,6 +56,15 @@ class CurrentUser implements ICurrentUser {
 		}
 		return self::$_currentUser;
 	}
+	
+	/**
+	 * Return the current user short info array
+	 * 
+	 * @return array
+	 */
+	public function getCurrentUserSummary(){
+		return $this->getCurrentUser();
+	}
 
 	/**
 	 * Check if a user is authenticated
