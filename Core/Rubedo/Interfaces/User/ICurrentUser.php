@@ -39,15 +39,12 @@ interface ICurrentUser
 	 * 
 	 * @return boolean
 	 */
-	public function isAuthenticated() {
-	}
+	public function isAuthenticated();
 	
 	/**
 	 * Fetch the current user information from the data storage
 	 * 
 	 * @return array
 	 */
-	public function fetchCurrentUser(){
-		
-	}
+	public function fetchCurrentUser();
 }
