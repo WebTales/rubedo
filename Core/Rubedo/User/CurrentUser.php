@@ -14,7 +14,7 @@
  */
 namespace Rubedo\User;
 
-use Rubedo\Interfaces\Services\ICurrentUser;
+use Rubedo\Interfaces\User\ICurrentUser;
 
 /**
  * Current User Service
