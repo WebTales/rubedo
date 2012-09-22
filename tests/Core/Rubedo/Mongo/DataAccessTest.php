@@ -52,7 +52,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         static::$phactory->recall();
-		Rubedo\Services\Manager::resetMocks();
+        Rubedo\Services\Manager::resetMocks();
     }
 
     /**
@@ -61,20 +61,21 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
-		$mockService = $this->getMock('Rubedo\User\CurrentUser');
-		Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
-		parent::setUp();
+        $mockService = $this->getMock('Rubedo\User\CurrentUser');
+        Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
+        parent::setUp();
     }
-	
-	/**
-	 * Initialize a mock user service
-	 */
-	public function initUser(){
-		$this->_fakeUser = array('id' => 1,'login'=> (string) rand(21, 128));
-		$mockService = $this->getMock('Rubedo\User\CurrentUser');
+
+    /**
+     * Initialize a mock user service
+     */
+    public function initUser()
+    {
+        $this->_fakeUser = array('id' => 1, 'login' => (string) rand(21, 128));
+        $mockService = $this->getMock('Rubedo\User\CurrentUser');
         $mockService->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue($this->_fakeUser));
-		Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
-	}
+        Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
+    }
 
     /**
      * test of the read feature
@@ -88,17 +89,14 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
-        for ($i = 0; $i < 3; $i++) {
-            $item = static::$phactory->create('item');
-            $item['id'] = (string)$item['_id'];
-            $item['version'] = 1;
-            unset($item['_id']);
-            $items[] = $item;
-        }
+        $item = static::$phactory->create('item');
+        $item['id'] = (string)$item['_id'];
+        $item['version'] = 1;
+        unset($item['_id']);
+        $items[] = $item;
 
         $readArray = $dataAccessObject->read();
 
-        $this->assertEquals(3, count($readArray));
         $this->assertEquals($items, $readArray);
 
     }
@@ -111,12 +109,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      */
     public function testCreate()
     {
-    	$this->initUser();
-		
+
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $origItem = array('name' => 'created item 1');
         $item = array('name' => 'created item 1');
 
         $createArray = $dataAccessObject->create($item, true);
@@ -132,12 +128,50 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($writtenItem, $readItem);
 
-        $origItem['version'] = 1;
-		$origItem['createUser'] = $this->_fakeUser;
-		$origItem['lastUpdateUser'] = $this->_fakeUser;
-        unset($readItem['id']);
+    }
+    
+    /**
+     * Check if version property add been added
+     */
+    public function testCreateVersionMetaData()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
 
-        $this->assertEquals($origItem,$readItem);
+        $item = array('name' => 'created item 1');
+
+        $createArray = $dataAccessObject->create($item, true);
+
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $readItem = array_pop($readItems);
+        
+        $this->assertArrayHasKey('version', $readItem);
+        $this->assertEquals($readItem['version'],1);
+    
+    }
+    
+    /**
+     * Check if  createUser and lastUpdateUser properties add been added
+     * The CurrentUser service should be called once
+     */
+    public function testCreateUserMetaData()
+    {
+        $this->initUser();
+
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $item = array('name' => 'created item 1');
+
+        $createArray = $dataAccessObject->create($item, true);
+
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $readItem = array_pop($readItems);
+        
+        $this->assertArrayHasKey('createUser', $readItem);
+        $this->assertEquals($readItem['createUser'],$this->_fakeUser);
+        $this->assertArrayHasKey('lastUpdateUser', $readItem);
+        $this->assertEquals($readItem['lastUpdateUser'],$this->_fakeUser);
     }
 
     /**
@@ -150,8 +184,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      */
     public function testUpdate()
     {
-    	$this->initUser();
-		
         $version = rand(1, 25);
         $item = static::$phactory->create('item', array('version' => $version));
 
@@ -162,12 +194,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $item['name'] .= ' updated';
 
-		//actual begin of the application run
-		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        //actual begin of the application run
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
-		
+
         $updateArray = $dataAccessObject->update($item, true);
-		//end of application run
+        //end of application run
 
         $this->assertTrue($updateArray["success"]);
         $writtenItem = $updateArray["data"];
@@ -179,12 +211,80 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($readItem['_id']);
 
         $this->assertEquals($writtenItem, $readItem);
-        $this->assertEquals($itemId, $readItem['id']);
+        $this->assertEquals($readItem['name'],$name . ' updated');
+    }
 
-        $targetItem = array('name' => $name . ' updated', 'id' => $itemId, 'version' => $version + 1);
-		$targetItem['lastUpdateUser'] = $this->_fakeUser;
+    /**
+     * Test of the update feature
+     *
+     * Create an item with phactory
+     * Update it with the service
+     * Read it again with phactory
+     * Check if the version add been incremented
+     */
+    public function testUpdateVersionMetaData()
+    {
+        $version = rand(1, 25);
+        $item = static::$phactory->create('item', array('version' => $version));
 
-        $this->assertEquals($targetItem, $readItem);
+        $itemId = (string)$item['_id'];
+        $name = $item['name'];
+
+        $item['id'] = $itemId;
+        unset($item['_id']);
+        $item['name'] .= ' updated';
+
+        //actual begin of the application run
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $updateArray = $dataAccessObject->update($item, true);
+        //end of application run
+
+
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $readItem = array_pop($readItems);
+
+        $this->assertArrayHasKey('version', $readItem);
+        $this->assertEquals($readItem['version'],$version + 1);
+    }
+    
+    /**
+     * Test of the update feature
+     *
+     * Create an item with phactory
+     * Update it with the service
+     * Read it again with phactory
+     * Check if the version add been incremented
+     */
+    public function testUpdateUserMetaData()
+    {
+        $this->initUser();
+
+        $version = rand(1, 25);
+        $item = static::$phactory->create('item', array('version' => $version));
+
+        $itemId = (string)$item['_id'];
+        $name = $item['name'];
+
+        $item['id'] = $itemId;
+        unset($item['_id']);
+        $item['name'] .= ' updated';
+
+        //actual begin of the application run
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $updateArray = $dataAccessObject->update($item, true);
+        //end of application run
+
+
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $readItem = array_pop($readItems);
+
+        
+        $this->assertArrayHasKey('lastUpdateUser', $readItem);
+        $this->assertEquals($readItem['lastUpdateUser'],$this->_fakeUser);
     }
 
     /**
@@ -223,9 +323,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      */
     public function testConflictUpdate()
     {
-    	
-		//$this->initUser();
-		
+
+        //$this->initUser();
+
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
@@ -241,16 +341,15 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['name'] .= ' updated';
 
         $updateArray = $dataAccessObject->update($item, true);
-        
+
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('no record had been updated', $updateArray['msg']);
-        
-    }
 
+    }
 
     /**
      * Test of the Destroy Feature
-     * 
+     *
      * Create items with Phactory
      * Delete one with the service
      * Check if the remaining items are OK and the deleted is no longer in DB
@@ -262,13 +361,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $items = array();
         for ($i = 0; $i < 3; $i++) {
-            $item = static::$phactory->create('item',array('version'=>1));
+            $item = static::$phactory->create('item', array('version' => 1));
             $item['id'] = (string)$item['_id'];
             unset($item['_id']);
             $items[] = $item;
         }
 
-        $item = static::$phactory->create('item',array('version'=>1));
+        $item = static::$phactory->create('item', array('version' => 1));
 
         $itemId = (string)$item['_id'];
 
@@ -286,23 +385,23 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $this->assertNull($readItem);
     }
-    
+
     /**
      * Test of the Destroy Feature without a version parameter
-     * 
+     *
      * Create items with Phactory
      * Delete one with the service
-     * 
+     *
      * @expectedException \Rubedo\Exceptions\DataAccess
      */
     public function testNoVersionDestroy()
-    {		
+    {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
         for ($i = 0; $i < 3; $i++) {
-            $item = static::$phactory->create('item',array('version'=>1));
+            $item = static::$phactory->create('item', array('version' => 1));
             $item['id'] = (string)$item['_id'];
             unset($item['_id']);
             $items[] = $item;
@@ -333,13 +432,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $items = array();
         for ($i = 0; $i < 3; $i++) {
-            $item = static::$phactory->create('item',array('version'=>1));
+            $item = static::$phactory->create('item', array('version' => 1));
             $item['id'] = (string)$item['_id'];
             unset($item['_id']);
             $items[] = $item;
         }
 
-        $item = static::$phactory->create('item',array('version'=>2));
+        $item = static::$phactory->create('item', array('version' => 2));
 
         $itemId = (string)$item['_id'];
         $item['version'] = 1;
