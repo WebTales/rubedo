@@ -16,7 +16,7 @@
 require_once('DataAccessController.php');
  
 /**
- * Controller providing CRUD API for the themes JSON
+ * Controller providing CRUD API for the field types JSON
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
