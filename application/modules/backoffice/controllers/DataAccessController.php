@@ -43,6 +43,13 @@ class Backoffice_DataAccessController extends AbstractController
      */
     protected $_dataReader;
 
+	/**
+     * temp data for tree view
+     *
+     * @var array
+     */
+	protected $_lostChildren = array();
+
     /**
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
@@ -104,6 +111,58 @@ class Backoffice_DataAccessController extends AbstractController
 
         $this->getResponse()->setBody(Zend_Json::encode($dataStore));
     }
+	
+	/**
+     * The read as tree Action
+     *
+     * Return the content of the collection, get filters from the request
+     * params
+     *
+     * @todo remove the temp hack when database starter is ready
+     */
+    public function treeAction()
+    {
+        //$dataStore = $this->_dataReader->drop();
+
+        $dataStore = $this->_dataReader->read();
+		
+		$this->_lostChildren = array();
+
+		foreach ($dataStore as $record) {
+			$id = $record['id'];
+			if(isset($record['parentId'])){
+				$parentId = $record['parentId'];
+				$this->_lostChildren["parentId"][$id] = $record; 
+			}else{
+				$rootId = $id;
+				$rootRecord = $record;
+			}
+		}
+		if(is_array($rootRecord)){
+			$result = array($this->_appendChild($rootRecord));
+		}else{
+			$result = array();
+		}
+		
+
+        $this->getResponse()->setBody(Zend_Json::encode($result));
+    }
+	
+	/**
+	 * recursive function to rebuild tree from flat data store
+	 * @param array $record root record of the tree
+	 * @return array complete tree array
+	 */
+	protected function _appendChild(array $record){
+		$id = $record['id'];
+		if(isset($this->_lostChildren[$id])){
+			$children = $this->_lostChildren[$id];
+			foreach($children as $child){
+				$record['children'][] = $this->_appendChild($child);
+			}
+		}
+		return $record;
+	}
 
     /**
      * The destroy action of the CRUD API
