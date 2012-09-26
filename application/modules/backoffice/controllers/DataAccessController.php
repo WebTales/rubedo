@@ -132,13 +132,14 @@ class Backoffice_DataAccessController extends AbstractController
 			$id = $record['id'];
 			if(isset($record['parentId'])){
 				$parentId = $record['parentId'];
-				$this->_lostChildren["parentId"][$id] = $record; 
+				$this->_lostChildren[$parentId][$id] = $record; 
 			}else{
 				$rootId = $id;
 				$rootRecord = $record;
 			}
 		}
-		if(is_array($rootRecord)){
+
+		if(isset($rootRecord)){
 			$result = array($this->_appendChild($rootRecord));
 		}else{
 			$result = array();
