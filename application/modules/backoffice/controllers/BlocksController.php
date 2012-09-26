@@ -26,7 +26,7 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_BlocsController extends Backoffice_DataAccessController
+class Backoffice_BlocksController extends Backoffice_DataAccessController
 {
     /**
      * Name of the store which is also to the collection name
