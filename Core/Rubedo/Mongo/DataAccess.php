@@ -73,6 +73,14 @@ class DataAccess implements IDataAccess
     {
         return static::$_defaultMongo;
     }
+	
+	/**
+     * temp data for tree view
+     *
+     * @var array
+     */
+	protected $_lostChildren = array();
+	
 
     /**
      * Initialize a data service handler to read or write in a MongoDb
@@ -164,6 +172,54 @@ class DataAccess implements IDataAccess
 
         return $reponse;
     }
+
+
+	/**
+     * Do a find request on the current collection and return content as tree
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::readTree()
+     * @return array
+     */
+	public function readTree(){
+		$dataStore = $this->read();
+		
+		$this->_lostChildren = array();
+
+		foreach ($dataStore as $record) {
+			$id = $record['id'];
+			if(isset($record['parentId'])){
+				$parentId = $record['parentId'];
+				$this->_lostChildren[$parentId][$id] = $record; 
+			}else{
+				$rootId = $id;
+				$rootRecord = $record;
+			}
+		}
+
+		if(isset($rootRecord)){
+			$result = $this->_appendChild($rootRecord);
+		}else{
+			$result = array();
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * recursive function to rebuild tree from flat data store
+	 * @param array $record root record of the tree
+	 * @return array complete tree array
+	 */
+	protected function _appendChild(array $record){
+		$id = $record['id'];
+		if(isset($this->_lostChildren[$id])){
+			$children = $this->_lostChildren[$id];
+			foreach($children as $child){
+				$record['children'][] = $this->_appendChild($child);
+			}
+		}
+		return $record;
+	}
 
     /**
      * Do a findone request on the current collection
