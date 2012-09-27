@@ -116,6 +116,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		//$dataStore = $this->_dataReader->drop();
 
 		$dataStore = $this -> _dataReader -> readTree();
+		$dataStore = array("expanded"=>true,"children"=>$dataStore);
 
 		$this -> getResponse() -> setBody(Zend_Json::encode($dataStore));
 	}

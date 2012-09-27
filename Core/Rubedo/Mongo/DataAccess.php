@@ -212,12 +212,14 @@ class DataAccess implements IDataAccess
 	 */
 	protected function _appendChild(array $record){
 		$id = $record['id'];
+		$record['children']=array();
 		if(isset($this->_lostChildren[$id])){
 			$children = $this->_lostChildren[$id];
 			foreach($children as $child){
 				$record['children'][] = $this->_appendChild($child);
 			}
 		}
+		unset($record['parentId']);
 		return $record;
 	}
 
@@ -244,7 +246,7 @@ class DataAccess implements IDataAccess
     {
     	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
     	$currentUser = $currentUserService->getCurrentUserSummary();
-		
+		unset($obj['leaf']);
         $obj['version'] = 1;
 		$obj['lastUpdateUser'] = $currentUser;
 		$obj['createUser'] = $currentUser;
@@ -276,6 +278,7 @@ class DataAccess implements IDataAccess
 		
         $id = $obj['id'];
         unset($obj['id']);
+		unset($obj['leaf']);
         if (!isset($obj['version'])) {
             throw new \Rubedo\Exceptions\DataAccess('can\'t update an object without a version number.');
         }
