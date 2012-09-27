@@ -191,7 +191,6 @@ class DataAccess implements IDataAccess
 				$parentId = $record['parentId'];
 				$this->_lostChildren[$parentId][$id] = $record; 
 			}else{
-				$rootId = $id;
 				$rootRecord = $record;
 			}
 		}
