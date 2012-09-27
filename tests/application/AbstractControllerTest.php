@@ -29,10 +29,10 @@ abstract class AbstractControllerTest extends Zend_Test_PHPUnit_ControllerTestCa
     public function setUp()
     {
         $this->bootstrap = new Zend_Application('testing', APPLICATION_PATH . '/configs/application.ini');
-		$mockServiceAccess = $this->getMock('Rubedo\Acl\Acl');
-        $mockServiceAccess->expects($this->atLeastOnce())->method('HasAccess')->will($this->returnValue(true));
+		//$mockServiceAccess = $this->getMock('Rubedo\Acl\Acl');
+        //$mockServiceAccess->expects($this->atLeastOnce())->method('HasAccess')->will($this->returnValue(true));
 
-        Rubedo\Services\Manager::setMockService('Acl', $mockServiceAccess);
+        //Rubedo\Services\Manager::setMockService('Acl', $mockServiceAccess);
         parent::setUp();
     }
 
