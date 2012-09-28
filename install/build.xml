@@ -97,5 +97,20 @@
 		<echo>Tout est bon !</echo>
 	</target>
 	<target name="report" depends="prepare, phpcs, phpmd, phpdepend, phpcpd, phpdoc, phpunit"/>
-
+		
+	<target name="restore-db">
+		<exec
+		command="mongorestore -d rubedo --drop rubedo"
+		dir="${project.basedir}/data/dump"
+		passthru="true"
+		/>
+	</target>
+	
+	<target name="dump-db">
+		<exec
+		command="mongodump -d rubedo"
+		dir="${project.basedir}/data"
+		passthru="true"
+		/>
+	</target>
 </project>
