@@ -188,7 +188,7 @@ class DataAccess implements IDataAccess
 
 		foreach ($dataStore as $record) {
 			$id = $record['id'];
-			if(isset($record['parentId'])){
+			if(isset($record['parentId']) && $record['parentId']!='root'){
 				$parentId = $record['parentId'];
 				$this->_lostChildren[$parentId][$id] = $record; 
 			}else{

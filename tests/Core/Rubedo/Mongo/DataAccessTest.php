@@ -589,6 +589,45 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	/**
      * test of the read as tree feature
      *
+     * ParentId root means the same as no parentId
+     */
+    public function testReadTreeRootWithParentCalledRoot()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+        $item = static::$phactory->create('item',array('parentId'=>'root','version'=>1));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		unset($item['parentId']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item2['id'] = (string)$item2['_id'];
+		
+		unset($item2['_id']);
+		unset($item2['parentId']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item2['id'],'version'=>1));
+		$item3['id'] = (string)$item3['_id'];
+		$item3['children'] = array();
+		unset($item3['_id']);
+		unset($item3['parentId']);
+        
+		$item2['children'] = array($item3);
+		
+        $items = $item;
+		$items['children'] = array($item2);
+
+        $readArray = $dataAccessObject->readTree();
+
+        $this->assertEquals($items, $readArray);
+
+    }
+	
+	/**
+     * test of the read as tree feature
+     *
      * Create 3 items through Phactory without parentID
 	 * readTree should fail as expected
 	 * 
