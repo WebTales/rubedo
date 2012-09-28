@@ -126,6 +126,9 @@ class Backoffice_DataAccessController extends AbstractController {
 		} else {
 			$returnArray = array('success' => false, "msg" => 'Invalid Data');
 		}
+		if(!$returnArray['success']){
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
 		$this -> getResponse() -> setBody(json_encode($returnArray));
 	}
 
@@ -145,6 +148,9 @@ class Backoffice_DataAccessController extends AbstractController {
 			}
 		} else {
 			$returnArray = array('success' => false, "msg" => 'No Data');
+		}
+		if(!$returnArray['success']){
+			$this -> getResponse() -> setHttpResponseCode(500);
 		}
 		$this -> getResponse() -> setBody(json_encode($returnArray));
 	}
@@ -167,6 +173,9 @@ class Backoffice_DataAccessController extends AbstractController {
 			}
 		} else {
 			$returnArray = array('success' => false, "msg" => 'No Data');
+		}
+		if(!$returnArray['success']){
+			$this -> getResponse() -> setHttpResponseCode(500);
 		}
 		$this -> getResponse() -> setBody(json_encode($returnArray));
 	}
