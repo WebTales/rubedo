@@ -85,21 +85,8 @@ class Backoffice_DataAccessController extends AbstractController {
 	 * @todo remove the temp hack when database starter is ready
 	 */
 	public function indexAction() {
-		//$dataStore = $this->_dataReader->drop();
 
 		$dataStore = $this -> _dataReader -> read();
-
-		// temp hack to use the json files of the UI prototype
-		if (empty($dataStore)) {
-
-			$oldStore = file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/data/' . $this -> _store . '.json');
-			$dataStore = Zend_Json::decode($oldStore);
-			//$dataStore = array($dataStore);
-			foreach ($dataStore as $data) {
-				$this -> _dataReader -> create($data, true);
-			}
-			$dataStore = $this -> _dataReader -> read();
-		}
 
 		$this -> getResponse() -> setBody(Zend_Json::encode($dataStore));
 	}
@@ -113,7 +100,6 @@ class Backoffice_DataAccessController extends AbstractController {
 	 * @todo remove the temp hack when database starter is ready
 	 */
 	public function treeAction() {
-		//$dataStore = $this->_dataReader->drop();
 
 		$dataStore = $this -> _dataReader -> readTree();
 		$dataStore = array("expanded"=>true,"children"=>$dataStore);
