@@ -507,5 +507,113 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('no record had been deleted', $updateArray['msg']);
     }
+	
+	/**
+     * test of the read as tree feature
+     *
+     * Create 3 items through Phactory and read them with the service
+	 * 2 levels of items, 2 child on second level
+     * check tree is as expected
+     */
+    public function testReadTreeOneLevelTwoElements()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+        $item = static::$phactory->create('item',array('version'=>1));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item2['id'] = (string)$item2['_id'];
+		$item2['children'] = array();
+		unset($item2['_id']);
+		unset($item2['parentId']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item3['id'] = (string)$item3['_id'];
+		$item3['children'] = array();
+		unset($item3['_id']);
+		unset($item3['parentId']);
+        
+        $items = $item;
+		$items['children'] = array($item2,$item3);
+
+        $readArray = $dataAccessObject->readTree();
+
+        $this->assertEquals($items, $readArray);
+
+    }
+	
+	/**
+     * test of the read as tree feature
+     *
+     * Create 3 items through Phactory and read them with the service
+	 * 3 levels of items, 1 child on second level, 1 on third
+     * check tree is as expected
+     */
+    public function testReadTreeTwoLevelOneElements()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+        $item = static::$phactory->create('item',array('version'=>1));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item2['id'] = (string)$item2['_id'];
+		
+		unset($item2['_id']);
+		unset($item2['parentId']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item2['id'],'version'=>1));
+		$item3['id'] = (string)$item3['_id'];
+		$item3['children'] = array();
+		unset($item3['_id']);
+		unset($item3['parentId']);
+        
+		$item2['children'] = array($item3);
+		
+        $items = $item;
+		$items['children'] = array($item2);
+
+        $readArray = $dataAccessObject->readTree();
+
+        $this->assertEquals($items, $readArray);
+
+    }
+	
+	/**
+     * test of the read as tree feature
+     *
+     * Create 3 items through Phactory without parentID
+	 * readTree should fail as expected
+	 * 
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+     */
+    public function testReadTreeMoreThanOneRoot()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+        $item = static::$phactory->create('item',array('version'=>1));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('version'=>1));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('version'=>1));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+        
+        $readArray = $dataAccessObject->readTree();
+
+    }
 
 }
