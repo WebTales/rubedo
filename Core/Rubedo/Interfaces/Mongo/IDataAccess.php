@@ -75,4 +75,11 @@ interface IDataAccess
      * @return array
      */
     public function destroy (array $obj, $safe = true);
+	
+	/**
+     * Do a find request on the current collection and return content as tree
+     *
+     * @return array
+     */
+	public function readTree();
 }
