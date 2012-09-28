@@ -42,6 +42,12 @@ class Backoffice_DataAccessController extends AbstractController {
 	 */
 	protected $_dataReader;
 
+	/**
+	 * should json be prettified
+	 * 
+	 * @var bool
+	 */
+	protected $_prettyJson = true;
 
 	/**
 	 * Disable layout & rendering, set content type to json
@@ -66,14 +72,27 @@ class Backoffice_DataAccessController extends AbstractController {
 
 		}
 
+		// init the data access service
+		$this -> _dataReader = Rubedo\Services\Manager::getService('MongoDataAccess');
+		$this -> _dataReader -> init($this -> _store);
+	}
+	
+	/**
+	 * Set the response body with Json content
+	 * Option : json is made human readable
+	 * @param mixed $data data to be json encoded
+	 */
+	private function _returnJson($data){
 		// disable layout and set content type
 		$this -> getHelper('Layout') -> disableLayout();
 		$this -> getHelper('ViewRenderer') -> setNoRender();
 		$this -> getResponse() -> setHeader('Content-Type', "application/json", true);
-
-		// init the data access service
-		$this -> _dataReader = Rubedo\Services\Manager::getService('MongoDataAccess');
-		$this -> _dataReader -> init($this -> _store);
+		
+		$returnValue = Zend_Json::encode($data);
+		if($this->_prettyJson){
+			$returnValue = Zend_Json::prettyPrint($returnValue);
+		}
+		$this -> getResponse() -> setBody($returnValue);
 	}
 
 	/**
@@ -88,7 +107,7 @@ class Backoffice_DataAccessController extends AbstractController {
 
 		$dataStore = $this -> _dataReader -> read();
 
-		$this -> getResponse() -> setBody(Zend_Json::encode($dataStore));
+		$this -> _returnJson($dataStore);
 	}
 
 	/**
@@ -104,7 +123,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		$dataStore = $this -> _dataReader -> readTree();
 		$dataStore = array("expanded"=>true,"children"=>$dataStore);
 
-		$this -> getResponse() -> setBody(Zend_Json::encode($dataStore));
+		$this -> _returnJson($dataStore);
 	}
 
 	/**
@@ -129,7 +148,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		if(!$returnArray['success']){
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
-		$this -> getResponse() -> setBody(json_encode($returnArray));
+		$this -> _returnJson($returnArray);
 	}
 
 	/**
@@ -152,7 +171,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		if(!$returnArray['success']){
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
-		$this -> getResponse() -> setBody(json_encode($returnArray));
+		$this -> _returnJson($returnArray);
 	}
 
 	/**
@@ -177,7 +196,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		if(!$returnArray['success']){
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
-		$this -> getResponse() -> setBody(json_encode($returnArray));
+		$this -> _returnJson($returnArray);
 	}
 
 }
