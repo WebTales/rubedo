@@ -184,6 +184,7 @@ class DataAccess implements IDataAccess
 		$dataStore = $this->read();
 		
 		$this->_lostChildren = array();
+		$rootAlreadyFound = false;
 
 		foreach ($dataStore as $record) {
 			$id = $record['id'];
@@ -192,6 +193,11 @@ class DataAccess implements IDataAccess
 				$this->_lostChildren[$parentId][$id] = $record; 
 			}else{
 				$rootRecord = $record;
+				if($rootAlreadyFound){
+					throw new \Rubedo\Exceptions\DataAccess('More than one root node found');
+				}else{
+					$rootAlreadyFound = true;
+				}
 			}
 		}
 
