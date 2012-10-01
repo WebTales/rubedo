@@ -128,13 +128,11 @@ class Backoffice_DataAccessController extends AbstractController {
 
 		$dataValues = $this -> _dataReader -> readTree();
 
-		$data = array("expanded" => true, "children" => $dataValues);
-
 		$response = array();
-		$response['data'] = array($data);
-		$response['success'] = TRUE;
-		$response['message'] = 'OK';
-		$response['total'] = 1;
+		$response["expanded"]	=	true;
+		$response['children'] 	= 	$dataValues;
+		$response['success'] 	= 	TRUE;
+		$response['message'] 	= 	'OK';
 
 		$this -> _returnJson($response);
 	}
