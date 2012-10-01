@@ -131,7 +131,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		$data = array("expanded" => true, "children" => $dataValues);
 
 		$response = array();
-		$response['data'] = $data;
+		$response['data'] = array($data);
 		$response['success'] = TRUE;
 		$response['message'] = 'OK';
 
