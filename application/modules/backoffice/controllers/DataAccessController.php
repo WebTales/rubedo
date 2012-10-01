@@ -134,6 +134,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		$response['data'] = array($data);
 		$response['success'] = TRUE;
 		$response['message'] = 'OK';
+		$response['total'] = 1;
 
 		$this -> _returnJson($response);
 	}
