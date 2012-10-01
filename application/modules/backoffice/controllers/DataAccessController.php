@@ -44,7 +44,7 @@ class Backoffice_DataAccessController extends AbstractController {
 
 	/**
 	 * should json be prettified
-	 * 
+	 *
 	 * @var bool
 	 */
 	protected $_prettyJson = true;
@@ -76,20 +76,20 @@ class Backoffice_DataAccessController extends AbstractController {
 		$this -> _dataReader = Rubedo\Services\Manager::getService('MongoDataAccess');
 		$this -> _dataReader -> init($this -> _store);
 	}
-	
+
 	/**
 	 * Set the response body with Json content
 	 * Option : json is made human readable
 	 * @param mixed $data data to be json encoded
 	 */
-	private function _returnJson($data){
+	private function _returnJson($data) {
 		// disable layout and set content type
 		$this -> getHelper('Layout') -> disableLayout();
 		$this -> getHelper('ViewRenderer') -> setNoRender();
 		$this -> getResponse() -> setHeader('Content-Type', "application/json", true);
-		
+
 		$returnValue = Zend_Json::encode($data);
-		if($this->_prettyJson){
+		if ($this -> _prettyJson) {
 			$returnValue = Zend_Json::prettyPrint($returnValue);
 		}
 		$this -> getResponse() -> setBody($returnValue);
@@ -105,9 +105,15 @@ class Backoffice_DataAccessController extends AbstractController {
 	 */
 	public function indexAction() {
 
-		$dataStore = $this -> _dataReader -> read();
+		$dataValues = $this -> _dataReader -> read();
 
-		$this -> _returnJson($dataStore);
+		$response = array();
+		$response['data'] = array_values($dataValues);
+		$response['total'] = count($response['data']);
+		$response['success'] = TRUE;
+		$response['message'] = 'OK';
+
+		$this -> _returnJson($response);
 	}
 
 	/**
@@ -120,10 +126,16 @@ class Backoffice_DataAccessController extends AbstractController {
 	 */
 	public function treeAction() {
 
-		$dataStore = $this -> _dataReader -> readTree();
-		$dataStore = array("expanded"=>true,"children"=>$dataStore);
+		$dataValues = $this -> _dataReader -> readTree();
 
-		$this -> _returnJson($dataStore);
+		$data = array("expanded" => true, "children" => $dataValues);
+
+		$response = array();
+		$response['data'] = $data;
+		$response['success'] = TRUE;
+		$response['message'] = 'OK';
+
+		$this -> _returnJson($response);
 	}
 
 	/**
@@ -145,7 +157,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		} else {
 			$returnArray = array('success' => false, "msg" => 'Invalid Data');
 		}
-		if(!$returnArray['success']){
+		if (!$returnArray['success']) {
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
 		$this -> _returnJson($returnArray);
@@ -168,7 +180,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		} else {
 			$returnArray = array('success' => false, "msg" => 'No Data');
 		}
-		if(!$returnArray['success']){
+		if (!$returnArray['success']) {
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
 		$this -> _returnJson($returnArray);
@@ -193,7 +205,7 @@ class Backoffice_DataAccessController extends AbstractController {
 		} else {
 			$returnArray = array('success' => false, "msg" => 'No Data');
 		}
-		if(!$returnArray['success']){
+		if (!$returnArray['success']) {
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
 		$this -> _returnJson($returnArray);

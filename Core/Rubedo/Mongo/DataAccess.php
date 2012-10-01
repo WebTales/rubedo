@@ -161,16 +161,9 @@ class DataAccess implements IDataAccess
 
         }
 
-        $reponse = array();
-        $reponse['data'] = array_values($data);
-        $reponse['total'] = count($reponse['data']);
-        $reponse['success'] = TRUE;
-        $reponse['message'] = 'OK';
+        $response = array_values($data);
 
-        //temp : should be change when Read Api is set on each Store
-        $reponse = array_values($data);
-
-        return $reponse;
+        return $response;
     }
 
 
