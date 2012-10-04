@@ -220,6 +220,28 @@ class DataAccess implements IDataAccess
 		unset($record['parentId']);
 		return $record;
 	}
+	
+	/**
+	 * Find child of a node tree
+	 * @param $parentId id of the parent node
+	 * @return array children array
+	 */
+	 public function readChild($parentId){
+	 	
+	 	$data = iterator_to_array($this->_collection->find(array('parentId'=>$parentId)));
+        foreach ($data as &$value) {
+            $value['id'] = (string)$value['_id'];
+            unset($value['_id']);
+            if(!isset($value['version'])){
+                $value['version'] = 1;
+            }
+
+        }
+
+        $response = array_values($data);
+
+        return $response;
+	 }
 
     /**
      * Do a findone request on the current collection

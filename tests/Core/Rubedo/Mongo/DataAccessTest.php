@@ -654,5 +654,41 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $readArray = $dataAccessObject->readTree();
 
     }
+	
+	
+	/**
+     * test of the children of a node in a tree
+     *
+     * Create 3 items through Phactory and read them with the service
+	 * 2 levels of items, 2 child on second level
+	 * Should return an array of items
+     */
+    public function testReadChild()
+    {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+        $item = static::$phactory->create('item',array('version'=>1));
+        $item['id'] = (string)$item['_id'];
+		$testId = $item['id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item2['id'] = (string)$item2['_id'];
+		
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+        		
+        $items = array($item2,$item3);
+
+        $readArray = $dataAccessObject->readChild($testId);
+
+        $this->assertEquals($items, $readArray);
+
+    }
 
 }

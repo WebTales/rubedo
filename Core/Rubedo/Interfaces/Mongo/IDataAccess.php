@@ -82,4 +82,11 @@ interface IDataAccess
      * @return array
      */
 	public function readTree();
+	
+	/**
+	 * Find child of a node tree
+	 * @param $parentId id of the parent node
+	 * @return array children array
+	 */
+	 public function readChild($parentId);
 }
