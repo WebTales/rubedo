@@ -101,7 +101,6 @@ class Backoffice_DataAccessController extends AbstractController {
 	 * Return the content of the collection, get filters from the request
 	 * params
 	 *
-	 * @todo remove the temp hack when database starter is ready
 	 */
 	public function indexAction() {
 
@@ -110,6 +109,27 @@ class Backoffice_DataAccessController extends AbstractController {
 		$response = array();
 		$response['data'] = array_values($dataValues);
 		$response['total'] = count($response['data']);
+		$response['success'] = TRUE;
+		$response['message'] = 'OK';
+
+		$this -> _returnJson($response);
+	}
+	
+	/**
+	 * read child action
+	 *
+	 * Return the children of a node
+	 *
+	 */
+	public function readChildAction() {
+
+		$parentId = $this->getRequest()->getParam('id','root');
+
+		$dataValues = $this -> _dataReader -> readChild($parentId);
+
+		$response = array();
+		$response['children'] = array_values($dataValues);
+		$response['total'] = count($response['children']);
 		$response['success'] = TRUE;
 		$response['message'] = 'OK';
 
