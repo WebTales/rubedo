@@ -123,7 +123,7 @@ class Backoffice_DataAccessController extends AbstractController {
 	 */
 	public function readChildAction() {
 
-		$parentId = $this->getRequest()->getParam('id','root');
+		$parentId = $this->getRequest()->getParam('node','root');
 
 		$dataValues = $this -> _dataReader -> readChild($parentId);
 
