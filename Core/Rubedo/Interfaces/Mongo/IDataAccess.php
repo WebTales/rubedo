@@ -89,4 +89,31 @@ interface IDataAccess
 	 * @return array children array
 	 */
 	 public function readChild($parentId);
+	 
+	 /**
+	  * Add a filter condition to the service
+	  * 
+	  * Filter should be 
+	  * array('field'=>'value') 
+	  * or
+	  * array('field'=>array('operator'=>value))
+	  * 
+	  * @param array $filter Native Mongo syntax filter array
+	  * @return bool
+	  */
+	 public function addFilter(array $filter);
+	 
+	 /**
+	  * Return the current array of conditions.
+	  * @return array
+	  */
+	 public function getFilterArray();
+	 
+	 /**
+	  * Unset all filter condition to the service  
+	  *
+	  * @return bool
+	  */
+	 public function clearFilter();
+	 
 }

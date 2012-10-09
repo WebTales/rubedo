@@ -756,5 +756,114 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($items, $readArray);
 
     }
+	
+	/**
+	 * Check if getFilterArray return an array
+	 */
+	public function testGetEmptyFilterArray(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$this->assertEquals('array',gettype($dataAccessObject->getFilterArray()));
+	}
+	
+	/**
+	 * Simple add filter and read it again test
+	 */
+	public function testAddFilter(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$filterExample = array('name'=>'value');
+		$dataAccessObject->addFilter($filterExample);
+		
+		$this->assertEquals(array($filterExample),$dataAccessObject->getFilterArray());
+		
+	}
+
+	/**
+	 * two conditions case for add filter
+	 */
+	public function testAddFilterTwoItems(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$filterExample = array('name'=>'value');
+		$filterExample2 = array('name2'=>'value2');
+		$dataAccessObject->addFilter($filterExample);
+		$dataAccessObject->addFilter($filterExample2);
+		
+		$this->assertEquals(array($filterExample,$filterExample2),$dataAccessObject->getFilterArray());
+		
+	}
+	
+	/**
+	 * Simple clear Filter Test
+	 */
+	public function testClearFilter(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$filterExample = array('name'=>'value');
+		$filterExample2 = array('name2'=>'value2');
+		$dataAccessObject->addFilter($filterExample);
+		$dataAccessObject->addFilter($filterExample2);
+		
+		$dataAccessObject->clearFilter();
+		
+		$this->assertEquals(array(),$dataAccessObject->getFilterArray());
+		
+	}
+	
+	/**
+	 * filter should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddFilterNotBeEmpty(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$filterExample = array();
+		$dataAccessObject->addFilter($filterExample);
+		
+	}
+	
+	/**
+	 * filter should not have more than one item
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddFilterNotTwoArgs(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$filterExample = array('toto','titi');
+		$dataAccessObject->addFilter($filterExample);
+		
+	}
+
+	/**
+	 * filter should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddFilterOnlyOneArrayChild(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$filterExample = array("key"=>array('titi','toto'));
+		$dataAccessObject->addFilter($filterExample);
+		
+	}
+	
+	/**
+	 * filter should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddFilterOnlyArrayOrScalarChild(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$filterExample = array("key"=> array(new stdClass()));
+		$dataAccessObject->addFilter($filterExample);
+		
+	}
 
 }
