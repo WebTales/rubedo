@@ -266,10 +266,19 @@ class DataAccess implements IDataAccess
     {
     	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
     	$currentUser = $currentUserService->getCurrentUserSummary();
+		
 		unset($obj['leaf']);
+		
         $obj['version'] = 1;
 		$obj['lastUpdateUser'] = $currentUser;
 		$obj['createUser'] = $currentUser;
+		
+		
+		$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+    	$currentTime = $currentTimeService->getCurrentTime();
+		
+		$obj['createDate'] = $currentTime;
+		$obj['lastUpdateDate'] = $currentTime;
 		
         $resultArray = $this->_collection->insert($obj, array("safe" => $safe));
         if ($resultArray['ok'] == 1) {

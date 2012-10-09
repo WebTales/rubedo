@@ -61,13 +61,18 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
-        $mockService = $this->getMock('Rubedo\User\CurrentUser');
-        Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
+        $mockUserService = $this->getMock('Rubedo\User\CurrentUser');
+        Rubedo\Services\Manager::setMockService('CurrentUser', $mockUserService);
+		
+		$mockTimeService = $this->getMock('Rubedo\Time\CurrentTime');
+        Rubedo\Services\Manager::setMockService('CurrentTime', $mockTimeService);
+		
+		
         parent::setUp();
     }
 
     /**
-     * Initialize a mock user service
+     * Initialize a mock CurrentUser service
      */
     public function initUser()
     {
@@ -75,6 +80,17 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $mockService = $this->getMock('Rubedo\User\CurrentUser');
         $mockService->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue($this->_fakeUser));
         Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
+    }
+	
+	/**
+     * Initialize a mock CurrentTime service
+     */
+    public function initTime()
+    {
+        $this->_fakeTime = time();
+        $mockService = $this->getMock('Rubedo\Time\CurrentTime');
+        $mockService->expects($this->once())->method('getCurrentTime')->will($this->returnValue($this->_fakeTime));
+        Rubedo\Services\Manager::setMockService('CurrentTime', $mockService);
     }
 
     /**
@@ -174,7 +190,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * Check if  createUser and lastUpdateUser properties add been added
+     * Check if  createUser and lastUpdateUser properties had been added
      * The CurrentUser service should be called once
      */
     public function testCreateUserMetaData()
@@ -197,6 +213,28 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($readItem['lastUpdateUser'],$this->_fakeUser);
     }
 
+	/**
+     * Check if  createDate and lastUpdateDate properties had been added
+     * The CurrentTime service should be called once
+     */
+    public function testCreateTimeMetaData()
+    {
+    	$this->initTime();
+		
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $item = array('name' => 'created item 1');
+
+        $createArray = $dataAccessObject->create($item, true);
+
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $readItem = array_pop($readItems);
+		$this->assertArrayHasKey('createDate', $readItem);
+		$this->assertEquals($readItem['createDate'],$this->_fakeTime);
+        $this->assertArrayHasKey('lastUpdateDate', $readItem);
+		$this->assertEquals($readItem['lastUpdateDate'],$this->_fakeTime);
+	}
     
 
 	/**
@@ -245,7 +283,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Create an item with phactory
      * Update it with the service
      * Read it again with phactory
-     * Check if the version add been incremented
+     * Check if the version had been incremented
      */
     public function testUpdateVersionMetaData()
     {
@@ -275,12 +313,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * Test of the update feature
-     *
-     * Create an item with phactory
-     * Update it with the service
-     * Read it again with phactory
-     * Check if the version add been incremented
+     * Check if lastUpdateUser property had been updated
+     * 
      */
     public function testUpdateUserMetaData()
     {
@@ -311,6 +345,15 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('lastUpdateUser', $readItem);
         $this->assertEquals($readItem['lastUpdateUser'],$this->_fakeUser);
     }
+	
+	/**
+     * Check if lastUpdateTime property had been updated
+     * 
+     */
+    public function testUpdateTimeMetaData()
+    {
+    	$this->fail('not implemented');
+	}
 
     /**
      * Test of the update feature without a version number
