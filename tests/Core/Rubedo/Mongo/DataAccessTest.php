@@ -119,9 +119,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	
 	/**
      * test of the read feature
-     *
-     * Create 3 items through Phactory and read them with the service
-     * a version number is added on the fly
+     *	Case with a simple filter
      */
     public function testReadWithFilter()
     {
@@ -139,6 +137,62 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->init('items', 'test_db');
 		
 		$dataAccessObject->addFilter(array('criteria'=>'jack'));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($items, $readArray);
+
+    }
+	
+	/**
+     * test of the read feature
+	 * Case of a lesser than filter
+     *
+     */
+    public function testReadWithFilterLesserThan()
+    {
+    	$items = array();
+        $item = static::$phactory->create('item',array('criteria'=>1));
+        $item['id'] = (string)$item['_id'];
+        $item['version'] = 1;
+        unset($item['_id']);
+        $items[] = $item;
+		
+		$otherItem = static::$phactory->create('item',array('criteria'=>2));
+		
+		
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->addFilter(array('criteria'=> array('$lte'=>1)));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($items, $readArray);
+
+    }
+	
+	/**
+     * test of the read feature
+	 * 	case with a regexp filter
+     *
+     */
+    public function testReadWithFilterRegexp()
+    {
+    	$items = array();
+        $item = static::$phactory->create('item',array('criteria'=>'mammouth'));
+        $item['id'] = (string)$item['_id'];
+        $item['version'] = 1;
+        unset($item['_id']);
+        $items[] = $item;
+		
+		$otherItem = static::$phactory->create('item',array('criteria'=>'bear'));
+		
+		
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->addFilter(array('criteria'=> array('$regex'=>new \MongoRegex('/mam.*/i'))));
 
         $readArray = $dataAccessObject->read();
 

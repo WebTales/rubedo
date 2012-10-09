@@ -401,7 +401,7 @@ class DataAccess implements IDataAccess {
 			}
 			if (is_array($value)) {
 				foreach ($value as $operator => $subvalue) {
-					if (!in_array(gettype($subvalue), array('string', 'float', 'integer'))) {
+					if (!in_array(gettype($subvalue), array('string', 'float', 'integer')) && !$subvalue instanceof \MongoRegex) {
 						throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
 					}
 
