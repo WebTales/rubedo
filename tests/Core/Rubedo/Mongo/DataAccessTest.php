@@ -214,7 +214,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-     * Check if  createDate and lastUpdateDate properties had been added
+     * Check if  createTime and lastUpdateTime properties had been added
      * The CurrentTime service should be called once
      */
     public function testCreateTimeMetaData()
@@ -230,10 +230,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
-		$this->assertArrayHasKey('createDate', $readItem);
-		$this->assertEquals($readItem['createDate'],$this->_fakeTime);
-        $this->assertArrayHasKey('lastUpdateDate', $readItem);
-		$this->assertEquals($readItem['lastUpdateDate'],$this->_fakeTime);
+		$this->assertArrayHasKey('createTime', $readItem);
+		$this->assertEquals($readItem['createTime'],$this->_fakeTime);
+        $this->assertArrayHasKey('lastUpdateTime', $readItem);
+		$this->assertEquals($readItem['lastUpdateTime'],$this->_fakeTime);
 	}
     
 
@@ -374,8 +374,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
         
-        $this->assertArrayHasKey('lastUpdateDate', $readItem);
-        $this->assertEquals($readItem['lastUpdateDate'],$this->_fakeTime);
+        $this->assertArrayHasKey('lastUpdateTime', $readItem);
+        $this->assertEquals($readItem['lastUpdateTime'],$this->_fakeTime);
 	}
 
     /**

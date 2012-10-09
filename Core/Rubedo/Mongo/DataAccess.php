@@ -264,12 +264,12 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $safe = true)
     {
-    	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-    	$currentUser = $currentUserService->getCurrentUserSummary();
-		
 		unset($obj['leaf']);
 		
         $obj['version'] = 1;
+		
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+    	$currentUser = $currentUserService->getCurrentUserSummary();
 		$obj['lastUpdateUser'] = $currentUser;
 		$obj['createUser'] = $currentUser;
 		
@@ -277,8 +277,8 @@ class DataAccess implements IDataAccess
 		$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
     	$currentTime = $currentTimeService->getCurrentTime();
 		
-		$obj['createDate'] = $currentTime;
-		$obj['lastUpdateDate'] = $currentTime;
+		$obj['createTime'] = $currentTime;
+		$obj['lastUpdateTime'] = $currentTime;
 		
         $resultArray = $this->_collection->insert($obj, array("safe" => $safe));
         if ($resultArray['ok'] == 1) {
@@ -302,23 +302,23 @@ class DataAccess implements IDataAccess
      */
     public function update(array $obj, $safe = true)
     {
-    	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-    	$currentUser = $currentUserService->getCurrentUserSummary();
-		
-		$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
-    	$currentTime = $currentTimeService->getCurrentTime();
-		
         $id = $obj['id'];
         unset($obj['id']);
 		unset($obj['leaf']);
         if (!isset($obj['version'])) {
             throw new \Rubedo\Exceptions\DataAccess('can\'t update an object without a version number.');
         }
+
         $oldVersion = $obj['version'];
         $obj['version'] = $obj['version'] + 1;
+		
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+    	$currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
 		
-		$obj['lastUpdateDate'] = $currentTime;
+		$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+    	$currentTime = $currentTimeService->getCurrentTime();
+		$obj['lastUpdateTime'] = $currentTime;
 		
         $mongoID = new \MongoID($id);
         $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), $obj, array("safe" => $safe));
