@@ -199,6 +199,34 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($items, $readArray);
 
     }
+	
+		/**
+     * test of the read feature
+     *	Case with a simple filter
+     */
+    public function testReadWithTwoFilter()
+    {
+    	$items = array();
+        $item = static::$phactory->create('item',array('criteria'=>'jack','otherCriteria'=>1));
+        $item['id'] = (string)$item['_id'];
+        $item['version'] = 1;
+        unset($item['_id']);
+        $items[] = $item;
+		
+		$otherItem = static::$phactory->create('item',array('criteria'=>'john','otherCriteria'=>1));
+		$againAnotherItem = static::$phactory->create('item',array('criteria'=>'jack','otherCriteria'=>2));
+		
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->addFilter(array('criteria'=>'jack'));
+		$dataAccessObject->addFilter(array('otherCriteria'=>1));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($items, $readArray);
+
+    }
 
     /**
      * Test of the create feature
