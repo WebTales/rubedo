@@ -305,6 +305,9 @@ class DataAccess implements IDataAccess
     	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
     	$currentUser = $currentUserService->getCurrentUserSummary();
 		
+		$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+    	$currentTime = $currentTimeService->getCurrentTime();
+		
         $id = $obj['id'];
         unset($obj['id']);
 		unset($obj['leaf']);
@@ -314,6 +317,9 @@ class DataAccess implements IDataAccess
         $oldVersion = $obj['version'];
         $obj['version'] = $obj['version'] + 1;
         $obj['lastUpdateUser'] = $currentUser;
+		
+		$obj['lastUpdateDate'] = $currentTime;
+		
         $mongoID = new \MongoID($id);
         $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), $obj, array("safe" => $safe));
 
