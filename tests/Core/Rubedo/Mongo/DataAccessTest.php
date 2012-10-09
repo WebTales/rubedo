@@ -116,6 +116,35 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($items, $readArray);
 
     }
+	
+	/**
+     * test of the read feature
+     *
+     * Create 3 items through Phactory and read them with the service
+     * a version number is added on the fly
+     */
+    public function testReadWithFilter()
+    {
+    	$items = array();
+        $item = static::$phactory->create('item',array('criteria'=>'jack'));
+        $item['id'] = (string)$item['_id'];
+        $item['version'] = 1;
+        unset($item['_id']);
+        $items[] = $item;
+		
+		$otherItem = static::$phactory->create('item');
+		
+		
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->addFilter(array('criteria'=>'jack'));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($items, $readArray);
+
+    }
 
     /**
      * Test of the create feature
@@ -776,7 +805,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$filterExample = array('name'=>'value');
 		$dataAccessObject->addFilter($filterExample);
 		
-		$this->assertEquals(array($filterExample),$dataAccessObject->getFilterArray());
+		$this->assertEquals($filterExample,$dataAccessObject->getFilterArray());
 		
 	}
 
@@ -789,10 +818,11 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$filterExample = array('name'=>'value');
 		$filterExample2 = array('name2'=>'value2');
+		$filters = array_merge($filterExample,$filterExample2);
 		$dataAccessObject->addFilter($filterExample);
 		$dataAccessObject->addFilter($filterExample2);
 		
-		$this->assertEquals(array($filterExample,$filterExample2),$dataAccessObject->getFilterArray());
+		$this->assertEquals($filters,$dataAccessObject->getFilterArray());
 		
 	}
 	

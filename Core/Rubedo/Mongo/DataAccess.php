@@ -151,7 +151,10 @@ class DataAccess implements IDataAccess {
 	 * @return array
 	 */
 	public function read() {
-		$data = iterator_to_array($this -> _collection -> find());
+		$filter = $this->getFilterArray();
+		
+		
+		$data = iterator_to_array($this -> _collection -> find($filter));
 		foreach ($data as &$value) {
 			$value['id'] = (string)$value['_id'];
 			unset($value['_id']);
@@ -389,7 +392,7 @@ class DataAccess implements IDataAccess {
 		}
 
 		foreach ($filter as $name => $value) {
-			if (!in_array(gettype($value), array('array', 'string', 'float', 'int'))) {
+			if (!in_array(gettype($value), array('array', 'string', 'float', 'integer'))) {
 				throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
 			}
 			if (is_array($value) && count($value) !== 1) {
@@ -398,18 +401,19 @@ class DataAccess implements IDataAccess {
 			}
 			if (is_array($value)) {
 				foreach ($value as $operator => $subvalue) {
-					if (!in_array(gettype($value), array('string', 'float', 'int'))) {
+					if (!in_array(gettype($value), array('string', 'float', 'integer'))) {
 						throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
 					}
 
 				}
 
 			}
+			//add validated input
+			$this -> _filterArray[$name] = $value;	
 
 		}
 
-		//add validated input
-		$this -> _filterArray[] = $filter;
+		
 	}
 
 	/**
