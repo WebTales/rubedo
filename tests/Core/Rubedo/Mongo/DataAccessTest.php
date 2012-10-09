@@ -352,7 +352,30 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      */
     public function testUpdateTimeMetaData()
     {
-    	$this->fail('not implemented');
+    	$this->initTime();
+		
+		$version = rand(1, 25);
+        $item = static::$phactory->create('item', array('version' => $version));
+
+        $itemId = (string)$item['_id'];
+        $name = $item['name'];
+
+        $item['id'] = $itemId;
+        unset($item['_id']);
+        $item['name'] .= ' updated';
+
+        //actual begin of the application run
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $updateArray = $dataAccessObject->update($item, true);
+        //end of application run
+        
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $readItem = array_pop($readItems);
+        
+        $this->assertArrayHasKey('lastUpdateDate', $readItem);
+        $this->assertEquals($readItem['lastUpdateDate'],$this->_fakeTime);
 	}
 
     /**
