@@ -189,7 +189,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$otherItem = static::$phactory->create('item',array('criteria'=>'bear'));
 		
-		
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
@@ -201,7 +200,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     }
 	
-		/**
+	/**
      * test of the read feature
      *	Case with a simple filter
      */
@@ -899,6 +898,41 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $expectedResult = array($item3);
 
 		$dataAccessObject->addFilter(array('name' => $item3['name']));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * test readChild with a greater than filter
+	 * 
+	 * Case with a greater than filter
+	 */
+	public function testReadChildWithFilterGreaterThan()
+	{
+       	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item2);
+
+		$dataAccessObject->addFilter(array('version'=> array('$gt'=>1)));
 		
 		$readArray = $dataAccessObject->readChild($testId);
 		
