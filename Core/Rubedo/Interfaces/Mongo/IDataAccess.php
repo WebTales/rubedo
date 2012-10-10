@@ -116,4 +116,30 @@ interface IDataAccess
 	  */
 	 public function clearFilter();
 	 
+	 /**
+	  * Add a sort condition to the service
+	  * 
+	  * Sort should be 
+	  * array('field'=>'value') 
+	  * or
+	  * array('field'=>array('operator'=>value))
+	  * 
+	  * @param array $sort Native Mongo syntax sort array
+	  * @return bool
+	  */
+	 public function addSort(array $sort);
+	 
+	 /**
+	  * Return the current array of conditions.
+	  * @return array
+	  */
+	 public function getSortArray();
+	 
+	 /**
+	  * Unset all sort condition to the service  
+	  *
+	  * @return bool
+	  */
+	 public function clearSort();
+	 
 }

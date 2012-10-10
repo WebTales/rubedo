@@ -1137,5 +1137,115 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$dataAccessObject->addFilter($filterExample);
 		
 	}
+	
+	/**
+	 * Check if getSortArray return an array
+	 */
+	public function testGetEmptySortArray(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$this->assertEquals('array',gettype($dataAccessObject->getSortArray()));
+	}
+	
+	/**
+	 * Simple add sort and read it again test
+	 */
+	public function testAddSort(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('name'=>1);
+		$dataAccessObject->addSort($sortExample);
+		
+		$this->assertEquals($sortExample,$dataAccessObject->getSortArray());
+		
+	}
+
+	/**
+	 * two conditions case for add sort
+	 */
+	public function testAddSortTwoItems(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('name'=>1);
+		$sortExample2 = array('firstname'=>1);
+		$sorts = array_merge($sortExample,$sortExample2);
+		$dataAccessObject->addSort($sortExample);
+		$dataAccessObject->addSort($sortExample2);
+		
+		$this->assertEquals($sorts,$dataAccessObject->getSortArray());
+		
+	}
+	
+	/**
+	 * Simple clear Sort Test
+	 */
+	public function testClearSort(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('name'=>1);
+		$sortExample2 = array('firstname'=>1);
+		$dataAccessObject->addSort($sortExample);
+		$dataAccessObject->addSort($sortExample2);
+		
+		$dataAccessObject->clearSort();
+		
+		$this->assertEquals(array(),$dataAccessObject->getSortArray());
+		
+	}
+	
+	/**
+	 * sort should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortNotBeEmpty(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array();
+		$dataAccessObject->addSort($sortExample);
+		
+	}
+	
+	/**
+	 * sort should not have more than one item
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortNotTwoArgs(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('toto','titi');
+		$dataAccessObject->addSort($sortExample);
+		
+	}
+
+	/**
+	 * sort should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortOnlyOneArrayChild(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array("key"=>array('titi','toto'));
+		$dataAccessObject->addSort($sortExample);
+		
+	}
+	
+	/**
+	 * sort should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortOnlyArrayOrScalarChild(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array("key"=> array(new stdClass()));
+		$dataAccessObject->addSort($sortExample);
+		
+	}
 
 }

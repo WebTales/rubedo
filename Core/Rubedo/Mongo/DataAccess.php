@@ -70,6 +70,13 @@ class DataAccess implements IDataAccess {
 	 * @var array
 	 */
 	protected $_filterArray = array();
+	
+	/**
+	 * Sort condition to be used when reading
+	 *
+	 * @var array
+	 */
+	protected $_sortArray = array();
 
 	/**
 	 * Getter of the DB connection string
@@ -151,10 +158,10 @@ class DataAccess implements IDataAccess {
 	 * @return array
 	 */
 	public function read() {
-		
 		$filter = $this->getFilterArray();
 		
 		$data = iterator_to_array($this -> _collection -> find($filter));
+		
 		foreach ($data as &$value) {
 			$value['id'] = (string)$value['_id'];
 			unset($value['_id']);
@@ -444,5 +451,66 @@ class DataAccess implements IDataAccess {
 	public function getFilterArray() {
 		return $this -> _filterArray;
 	}
+	
+	/**
+	 * Add a sort condition to the service
+	 *
+	 * Sort should be
+	 * array('field'=>'value')
+	 * or
+	 * array('field'=>array('operator'=>value))
+	 *
+	 * @param array $sort Native Mongo syntax sort array
+	 * @return bool
+	 */
+	public function addSort(array $sort) {
+		//check valid input
+		if (count($sort) !== 1) {
+			throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
+
+		}
+
+		foreach ($sort as $name => $value) {
+			if (!in_array(gettype($value), array('array', 'string', 'float', 'integer'))) {
+				throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
+			}
+			if (is_array($value) && count($value) !== 1) {
+				throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
+
+			}
+			if (is_array($value)) {
+				foreach ($value as $operator => $subvalue) {
+					if (!in_array(gettype($subvalue), array('string', 'float', 'integer'))) {
+						throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
+					}
+
+				}
+
+			}
+			//add validated input
+			$this -> _sortArray[$name] = $value;	
+
+		}
+
+		
+	}
+
+	/**
+	 * Unset all sort condition to the service
+	 *
+	 * @return bool
+	 */
+	public function clearSort() {
+		$this -> _sortArray = array();
+	}
+	
+	/**
+	 * Return the current array of conditions.
+	 * @return array
+	 */
+	public function getSortArray() {
+		return $this -> _sortArray;
+	}
+	
 
 }
