@@ -151,8 +151,8 @@ class DataAccess implements IDataAccess {
 	 * @return array
 	 */
 	public function read() {
-		$filter = $this->getFilterArray();
 		
+		$filter = $this->getFilterArray();
 		
 		$data = iterator_to_array($this -> _collection -> find($filter));
 		foreach ($data as &$value) {
@@ -229,16 +229,23 @@ class DataAccess implements IDataAccess {
 	 * @return array children array
 	 */
 	public function readChild($parentId) {
+		$filter = $this->getFilterArray();
 
-		$data = iterator_to_array($this -> _collection -> find(array('parentId' => $parentId)));
-		foreach ($data as &$value) {
-			$value['id'] = (string)$value['_id'];
-			unset($value['_id']);
-			if (!isset($value['version'])) {
-				$value['version'] = 1;
-			}
-
+		if(empty($filter)){
+			$data = iterator_to_array($this -> _collection -> find(array('parentId' => $parentId)));
+		}else{
+			$data = iterator_to_array($this -> _collection -> find(array('parentId' => $parentId, 
+																		'$and' => array($filter))));
 		}
+		
+		foreach ($data as &$value) {
+				$value['id'] = (string)$value['_id'];
+				unset($value['_id']);
+				if (!isset($value['version'])) {
+					$value['version'] = 1;
+				}
+	
+			}
 
 		$response = array_values($data);
 

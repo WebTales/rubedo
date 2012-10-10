@@ -124,14 +124,15 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     public function testReadWithFilter()
     {
     	$items = array();
+		
         $item = static::$phactory->create('item',array('criteria'=>'jack'));
         $item['id'] = (string)$item['_id'];
         $item['version'] = 1;
         unset($item['_id']);
+		
         $items[] = $item;
 		
 		$otherItem = static::$phactory->create('item');
-		
 		
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
@@ -846,19 +847,20 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
+		
         $item = static::$phactory->create('item',array('version'=>1));
         $item['id'] = (string)$item['_id'];
-		$testId = $item['id'];
 		unset($item['_id']);
 		
 		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
 		$item2['id'] = (string)$item2['_id'];
-		
 		unset($item2['_id']);
 		
 		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
 		$item3['id'] = (string)$item3['_id'];
 		unset($item3['_id']);
+		
+		$testId = $item['id'];
         		
         $items = array($item2,$item3);
 
@@ -867,6 +869,41 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($items, $readArray);
 
     }
+	
+	/**
+	 * test readChild with a filter
+	 * 
+	 * Case with a simple filter
+	 */
+	public function testReadChildWithFilter()
+	{
+       	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'item2'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'item3'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3);
+
+		$dataAccessObject->addFilter(array('name' => $item3['name']));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
 	
 	/**
 	 * Check if getFilterArray return an array
