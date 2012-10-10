@@ -940,6 +940,42 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	}
 	
 	/**
+     * test readChild with a regexp filter
+	 * 
+	 * Case with a regexp filter
+     */
+    public function testReadChildWithFilterRegexp()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $items = array();
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Update'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Creation'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item2);
+
+		$dataAccessObject->addFilter(array('name'=> array('$regex' => new \MongoRegex('/Up.*/i'))));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+	
+	/**
 	 * Check if getFilterArray return an array
 	 */
 	public function testGetEmptyFilterArray(){
