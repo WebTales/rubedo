@@ -878,8 +878,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	{
        	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
-
-        $items = array();
 		
         $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
         $item['id'] = (string)$item['_id'];
@@ -913,8 +911,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	{
        	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
-
-        $items = array();
 		
         $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
         $item['id'] = (string)$item['_id'];
@@ -948,8 +944,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     {
     	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
-
-        $items = array();
 		
         $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
         $item['id'] = (string)$item['_id'];
@@ -984,8 +978,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     {
     	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
-
-        $items = array();
 		
         $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
         $item['id'] = (string)$item['_id'];
@@ -1011,6 +1003,30 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expectedResult, $readArray);
 
     }
+
+	/**
+	 * test of findOne
+	 */
+	public function testFindOne()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('version'=>1, 'name'=>'item2'));
+        $item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$expectedResult = array($item);
+		
+		$value = array('name' => $item['name']);
+		$readArray = $dataAccessObject->findOne($value);
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
 	
 	/**
 	 * Check if getFilterArray return an array

@@ -47,7 +47,7 @@ interface IDataAccess
      *
      * @return array
      */
-    public function findOne ();
+    public function findOne ($value);
 
     /**
      * Create an objet in the current collection

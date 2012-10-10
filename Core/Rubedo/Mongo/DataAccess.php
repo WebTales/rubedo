@@ -258,8 +258,13 @@ class DataAccess implements IDataAccess {
 	 * @see \Rubedo\Interfaces\IDataAccess::findOne()
 	 * @return array
 	 */
-	public function findOne() {
-		return $this -> _collection -> findOne();
+	public function findOne($value) {
+		$data = $this -> _collection -> findOne($value);
+		
+		$data['id'] = (string)$data['_id'];
+		unset($data['_id']);
+		
+		return array($data);
 	}
 
 	/**
