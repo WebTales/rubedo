@@ -227,6 +227,38 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($items, $readArray);
 
     }
+	
+		
+	/**
+	 * Test read with a sort
+	 * 
+	 * Case with a simple sort by user name
+	 */
+	public function testReadWithSort()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('user'=>'john', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('user'=>'marie', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('user'=>'alice', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+
+		$dataAccessObject->addSort(array('user' => 1));
+
+		$expectedResult = array($item3, $item, $item2);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
 
     /**
      * Test of the create feature
