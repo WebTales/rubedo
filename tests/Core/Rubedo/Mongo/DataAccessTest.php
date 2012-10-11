@@ -1617,5 +1617,94 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$dataAccessObject->addToFieldList(array());
 		
 	}
+	
+	/**
+	 * Simple test to add a field in the excludeFieldList array and read it after
+	 */
+	public function testAddExcludeFieldInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password' => true);
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals($excludeFieldExemple, $readArray);
+	}
+	
+	/**
+	 * Simple test to add two fields in the excludeFieldList array and read it after
+	 */
+	public function testAddTwoExcludeFieldsInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password' => true);
+		$excludeFieldExemple2 = array('dateOfBirth' => true);
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple2);
+		
+		$expectedResult = array_merge($excludeFieldExemple, $excludeFieldExemple2);
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Remove one field in the excludeFieldList array
+	 */
+	public function testRemoveExcludeField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password' => true);
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		$dataAccessObject->removeFromExcludeFieldList(array('password' => true));
+		
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals(array(), $readArray);
+	}
+	
+	/**
+	 * Clear the exclude field list
+	 */
+	 public function testClearExcludeFieldList()
+	 {
+	 	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->clearExcludeFieldList();
+	 }
+
+	/**
+	 * excludeFieldList can't be an array in another array
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddExcludeFieldOnlyStringOrBool(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array("key"=> array(new stdClass()));
+		$dataAccessObject->addToFieldList($excludeFieldExemple);
+		
+	}
+	
+	/**
+	 * excludeFieldList can't be an empty array
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddExcludeFieldNotempty(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->addToExcludeFieldList(array());
+		
+	}
 
 }
