@@ -263,6 +263,7 @@ class DataAccess implements IDataAccess {
 	 * Do a findone request on the current collection
 	 *
 	 * @see \Rubedo\Interfaces\IDataAccess::findOne()
+	 * @param array $value search condition
 	 * @return array
 	 */
 	public function findOne($value) {
