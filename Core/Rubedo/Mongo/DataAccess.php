@@ -239,12 +239,15 @@ class DataAccess implements IDataAccess {
 	 */
 	public function readChild($parentId) {
 		$filter = $this->getFilterArray();
+		$sort = $this->getSortArray();
 
 		if(empty($filter)){
-			$data = iterator_to_array($this -> _collection -> find(array('parentId' => $parentId)));
+			$data = iterator_to_array($this -> _collection 	-> find(array('parentId' => $parentId))
+															->sort($sort));
 		}else{
-			$data = iterator_to_array($this -> _collection -> find(array('parentId' => $parentId, 
-																		'$and' => array($filter))));
+			$data = iterator_to_array($this -> _collection 	-> find(array('parentId' => $parentId, 
+																		'$and' => array($filter)))
+															->sort($sort));
 		}
 		
 		foreach ($data as &$value) {
