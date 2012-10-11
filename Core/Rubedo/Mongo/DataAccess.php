@@ -84,6 +84,13 @@ class DataAccess implements IDataAccess {
 	 * @var array
 	 */
 	protected $_fieldList = array();
+	
+	/**
+	 * Fields used when reading
+	 *
+	 * @var array
+	 */
+	protected $_excludeFieldList = array();
 
 	/**
 	 * Getter of the DB connection string
@@ -596,5 +603,65 @@ class DataAccess implements IDataAccess {
 		$this -> _fieldList = array();
 	}
 	
+	/**
+	 * Add to the exclude field list the array passed in argument
+	 * 
+	 * @param array $excludeFieldList
+	 * @return bool
+	 */
+	public function addToExcludeFieldList($excludeFieldList){
+		//check valid input
+		if (count($excludeFieldList) !== 1) {
+			throw new \Rubedo\Exceptions\DataAccess("Invalid exclude field list array", 1);
+		}
 
+		foreach ($excludeFieldList as $name => $value) {
+			if (!in_array(gettype($value), array('string', 'boolean'))) {
+				throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
+			}
+			
+			//add validated input
+			$this -> _excludeFieldList[$name] = $value;
+		}
+	}
+	
+	/**
+	 * Give the fields into the excludeFieldList array
+	 * 
+	 * @return bool
+	 */
+	public function getExcludeFieldList()
+	{
+		return $this -> _excludeFieldList;
+	}
+	
+	/**
+	 * Allow to remove one field in the current excludeFieldList array
+	 * 
+	 * @param array $excludeFieldToRemove
+	 * @return bool
+	 */
+	public function removeFromExcludeFieldList($fieldToRemove)
+	{
+		$fields = array_keys($this->_excludeFieldList);
+		$toRemove = array_keys($fieldToRemove);
+		$toRemove = $toRemove[0];
+		
+		for($i=0; $i<count($fields); $i++){
+			if($toRemove == $fields[$i]){
+				unset($this->_excludeFieldList[$toRemove]);
+			}
+		}
+				
+	}
+	
+	/**
+	 * Clear the excludeFieldList array
+	 * 
+	 * @return bool
+	 */
+	public function clearExcludeFieldList()
+	{
+		$this -> _excludeFieldList = array();
+	}
 }
