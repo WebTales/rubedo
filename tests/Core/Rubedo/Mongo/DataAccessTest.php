@@ -1538,7 +1538,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$fieldExemple = array('name' => true);
 		
-		$dataAccessObject->addToFieldList($fieldExemple);
+		$dataAccessObject->addToFieldList(array('name'));
 		
 		$readArray = $dataAccessObject->getFieldList();
 		
@@ -1555,8 +1555,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$fieldExemple = array('name' => true);
 		$fieldExemple2 = array('firstname' => true);
 		
-		$dataAccessObject->addToFieldList($fieldExemple);
-		$dataAccessObject->addToFieldList($fieldExemple2);
+		$dataAccessObject->addToFieldList(array('name' ));
+		$dataAccessObject->addToFieldList(array('firstname'));
 		
 		$expectedResult = array_merge($fieldExemple, $fieldExemple2);
 		$readArray = $dataAccessObject->getFieldList();
@@ -1571,11 +1571,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	{
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
-		
-		$fieldExemple = array('name' => true);
-		
-		$dataAccessObject->addToFieldList($fieldExemple);
-		$dataAccessObject->removeFromFieldList(array('name' => true));
+				
+		$dataAccessObject->addToFieldList(array('name'));
+		$dataAccessObject->removeFromFieldList(array('name'));
 		
 		$readArray = $dataAccessObject->getFieldList();
 		
@@ -1603,18 +1601,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$fieldExample = array("key"=> array(new stdClass()));
 		$dataAccessObject->addToFieldList($fieldExample);
-		
-	}
-	
-	/**
-	 * fieldList can't be an empty array
-	 * @expectedException \Rubedo\Exceptions\DataAccess
-	 */
-	public function testAddFieldNotempty(){
-		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-		
-		$dataAccessObject->addToFieldList(array());
 		
 	}
 	
@@ -1705,6 +1691,35 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$dataAccessObject->addToExcludeFieldList(array());
 		
+	}
+	
+	/**
+	 * Test if the function getHash work and check the result with
+	 * checkHash
+	 */
+	public function testHash(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$hash = $dataAccessObject->getHash("password", "salt");
+		
+		$result = $dataAccessObject->checkHash($hash, "password", "salt");
+		
+		$this->assertEquals($result, true);
+	}
+	
+	/**
+	 * Test if the function checkHash detect a wrong case
+	 */
+	public function testBadCheckHash(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$hash = $dataAccessObject->getHash("password", "blabla");
+		
+		$result = $dataAccessObject->checkHash($hash, "password", "salt");
+		
+		$this->assertEquals($result, false);
 	}
 
 }
