@@ -159,8 +159,10 @@ class DataAccess implements IDataAccess {
 	 */
 	public function read() {
 		$filter = $this->getFilterArray();
+		$sort = $this->getSortArray();
 		
-		$data = iterator_to_array($this -> _collection -> find($filter));
+		$data = iterator_to_array($this -> _collection 	-> find($filter)
+														-> sort($sort));
 		
 		foreach ($data as &$value) {
 			$value['id'] = (string)$value['_id'];
@@ -263,6 +265,7 @@ class DataAccess implements IDataAccess {
 	 * Do a findone request on the current collection
 	 *
 	 * @see \Rubedo\Interfaces\IDataAccess::findOne()
+	 * @param array $value search condition
 	 * @return array
 	 */
 	public function findOne($value) {
