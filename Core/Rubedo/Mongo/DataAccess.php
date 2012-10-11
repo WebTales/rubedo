@@ -547,12 +547,8 @@ class DataAccess implements IDataAccess {
 		}
 
 		foreach ($fieldList as $name => $value) {
-			if (!in_array(gettype($value), array('array', 'string', 'float', 'integer', 'boolean'))) {
-				throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
-			}
-			if (is_array($value) && count($value) !== 1) {
-				throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
-
+			if (!in_array(gettype($value), array('string', 'boolean'))) {
+				throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
 			}
 			
 			//add validated input

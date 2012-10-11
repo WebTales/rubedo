@@ -1532,7 +1532,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Simple test to add a field in the array and read it after
 	 */
-	public function testAddFieldList(){
+	public function testAddFieldInList(){
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
@@ -1543,6 +1543,25 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$readArray = $dataAccessObject->getFieldList();
 		
 		$this->assertEquals($fieldExemple, $readArray);
+	}
+	
+	/**
+	 * Simple test to add two fields in the array and read it after
+	 */
+	public function testAddTwoFieldsInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$fieldExemple = array('name' => true);
+		$fieldExemple2 = array('firstname' => true);
+		
+		$dataAccessObject->addToFieldList($fieldExemple);
+		$dataAccessObject->addToFieldList($fieldExemple2);
+		
+		$expectedResult = array_merge($fieldExemple, $fieldExemple2);
+		$readArray = $dataAccessObject->getFieldList();
+		
+		$this->assertEquals($expectedResult, $readArray);
 	}
 	
 	/**
@@ -1573,5 +1592,30 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$dataAccessObject->clearFieldList();
 	 }
+
+	/**
+	 * fieldList can't be an array in another array
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddFieldOnlyStringOrBool(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$fieldExample = array("key"=> array(new stdClass()));
+		$dataAccessObject->addToFieldList($fieldExample);
+		
+	}
+	
+	/**
+	 * fieldList can't be an empty array
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddFieldNotempty(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->addToFieldList(array());
+		
+	}
 
 }
