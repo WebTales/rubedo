@@ -39,7 +39,7 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 	 * The default read Action
 	 *
 	 * Return the content of the collection, get filters from the request
-	 * params
+	 * params, get sort from request params
 	 *
 	 */
 	public function indexAction() {
@@ -58,7 +58,7 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 			$sort = Zend_Json::decode($sortJson);
 			foreach ($sort as $value) {
 
-					$this -> _dataReader -> addSort(array($value["property"] => $value["direction"]));				
+					$this -> _dataReader -> addSort(array($value["property"] => strtolower($value["direction"])));				
 
 			}
 		}		
