@@ -1138,6 +1138,152 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expectedResult, $readArray);
 
     }
+	
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with ascendant sort
+     */
+    public function testReadChildWithAscSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Update'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2, 'name'=>'Creation'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3, $item2);
+
+		$dataAccessObject->addSort(array('version' => 'asc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+	
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with descendant sort
+     */
+    public function testReadChildWithDescSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Update'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Creation'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3, $item2);
+
+		$dataAccessObject->addSort(array('version' => 'desc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+	
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with two ascendant sort
+     */
+    public function testReadChildWithTwoAscSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Creation'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Update'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2, 'name'=>'Creation'));
+		$item4['id'] = (string)$item4['_id'];
+		unset($item4['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item4, $item2, $item3);
+
+		$dataAccessObject->addSort(array('version' => 'asc'));
+		$dataAccessObject->addSort(array('name' => 'asc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with two descendant sort
+     */
+    public function testReadChildWithTwoDescSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Creation'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Update'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2, 'name'=>'Creation'));
+		$item4['id'] = (string)$item4['_id'];
+		unset($item4['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3, $item2, $item4);
+
+		$dataAccessObject->addSort(array('version' => 'desc'));
+		$dataAccessObject->addSort(array('name' => 'desc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
 
 	/**
 	 * test of findOne
