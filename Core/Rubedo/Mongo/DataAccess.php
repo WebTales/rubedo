@@ -490,6 +490,15 @@ class DataAccess implements IDataAccess {
 				}
 
 			}
+			
+			if($value === 'asc')
+			{
+				$value = 1;
+			}else if($value === 'desc')
+			{
+				$value = -1;
+			}
+			
 			//add validated input
 			$this -> _sortArray[$name] = $value;	
 
