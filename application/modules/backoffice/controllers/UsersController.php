@@ -53,6 +53,15 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 
 			}
 		}
+		$sortJson = $this -> getRequest() -> getParam('sort');
+		if (isset($sortJson)) {
+			$sort = Zend_Json::decode($sortJson);
+			foreach ($sort as $value) {
+
+					$this -> _dataReader -> addSort(array($value["property"] => $value["direction"]));				
+
+			}
+		}		
 		$dataValues = $this -> _dataReader -> read();
 
 		$response = array();
