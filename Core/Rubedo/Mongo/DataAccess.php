@@ -417,7 +417,6 @@ class DataAccess implements IDataAccess {
      * array('field'=>array('operator'=>value))
      *
      * @param array $filter Native Mongo syntax filter array
-     * @return bool
      */
     public function addFilter(array $filter) {
         //check valid input
@@ -452,8 +451,6 @@ class DataAccess implements IDataAccess {
 
     /**
      * Unset all filter condition to the service
-     *
-     * @return bool
      */
     public function clearFilter() {
         $this->_filterArray = array();
@@ -476,7 +473,6 @@ class DataAccess implements IDataAccess {
      * array('field'=>array('operator'=>value))
      *
      * @param array $sort Native Mongo syntax sort array
-     * @return bool
      */
     public function addSort(array $sort) {
         //check valid input
@@ -550,7 +546,7 @@ class DataAccess implements IDataAccess {
 
     /**
      * Give the fields into the fieldList array
-     *
+     * @return array
      */
     public function getFieldList() {
         return $this->_fieldList;
@@ -574,7 +570,6 @@ class DataAccess implements IDataAccess {
     /**
      * Clear the fieldList array
      *
-     * @return bool
      */
     public function clearFieldList() {
         $this->_fieldList = array();
@@ -584,7 +579,6 @@ class DataAccess implements IDataAccess {
      * Add to the exclude field list the array passed in argument
      *
      * @param array $excludeFieldList
-     * @return bool
      */
     public function addToExcludeFieldList($excludeFieldList) {
         //check valid input
@@ -604,8 +598,6 @@ class DataAccess implements IDataAccess {
 
     /**
      * Give the fields into the excludeFieldList array
-     *
-     * @return bool
      */
     public function getExcludeFieldList() {
         return $this->_excludeFieldList;
@@ -615,7 +607,6 @@ class DataAccess implements IDataAccess {
      * Allow to remove one field in the current excludeFieldList array
      *
      * @param array $excludeFieldToRemove
-     * @return bool
      */
     public function removeFromExcludeFieldList($fieldToRemove) {
         $fields = array_keys($this->_excludeFieldList);
@@ -632,8 +623,6 @@ class DataAccess implements IDataAccess {
 
     /**
      * Clear the excludeFieldList array
-     *
-     * @return bool
      */
     public function clearExcludeFieldList() {
         $this->_excludeFieldList = array();
