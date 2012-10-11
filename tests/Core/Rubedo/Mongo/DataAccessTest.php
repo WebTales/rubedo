@@ -1528,5 +1528,50 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$dataAccessObject->addSort($sortExample);
 		
 	}
+	
+	/**
+	 * Simple test to add a field in the array and read it after
+	 */
+	public function testAddFieldList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$fieldExemple = array('name' => true);
+		
+		$dataAccessObject->addToFieldList($fieldExemple);
+		
+		$readArray = $dataAccessObject->getFieldList();
+		
+		$this->assertEquals($fieldExemple, $readArray);
+	}
+	
+	/**
+	 * Remove one field in the fieldList array
+	 */
+	public function testRemoveField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$fieldExemple = array('name' => true);
+		
+		$dataAccessObject->addToFieldList($fieldExemple);
+		$dataAccessObject->removeFromFieldList(array('name' => true));
+		
+		$readArray = $dataAccessObject->getFieldList();
+		
+		$this->assertEquals(array(), $readArray);
+	}
+	
+	/**
+	 * Clear the field list
+	 */
+	 public function testClearFieldList()
+	 {
+	 	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->clearFieldList();
+	 }
 
 }
