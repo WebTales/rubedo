@@ -82,7 +82,7 @@ class Backoffice_DataAccessController extends AbstractController {
 	 * Option : json is made human readable
 	 * @param mixed $data data to be json encoded
 	 */
-	private function _returnJson($data) {
+	protected function _returnJson($data) {
 		// disable layout and set content type
 		$this -> getHelper('Layout') -> disableLayout();
 		$this -> getHelper('ViewRenderer') -> setNoRender();
