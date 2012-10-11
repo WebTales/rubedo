@@ -77,6 +77,13 @@ class DataAccess implements IDataAccess {
 	 * @var array
 	 */
 	protected $_sortArray = array();
+	
+	/**
+	 * Fields used when reading
+	 *
+	 * @var array
+	 */
+	protected $_fieldList = array();
 
 	/**
 	 * Getter of the DB connection string
@@ -487,7 +494,7 @@ class DataAccess implements IDataAccess {
 			if (is_array($value)) {
 				foreach ($value as $operator => $subvalue) {
 					if (!in_array(gettype($subvalue), array('string', 'float', 'integer'))) {
-						throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
+						throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
 					}
 
 				}
@@ -525,6 +532,72 @@ class DataAccess implements IDataAccess {
 	 */
 	public function getSortArray() {
 		return $this -> _sortArray;
+	}
+	
+	/**
+	 * Add to the field list the array passed in argument
+	 * 
+	 * @param array $fieldList
+	 * @return bool
+	 */
+	public function addToFieldList($fieldList){
+		//check valid input
+		if (count($fieldList) !== 1) {
+			throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
+		}
+
+		foreach ($fieldList as $name => $value) {
+			if (!in_array(gettype($value), array('array', 'string', 'float', 'integer', 'boolean'))) {
+				throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
+			}
+			if (is_array($value) && count($value) !== 1) {
+				throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
+
+			}
+			
+			//add validated input
+			$this -> _fieldList[$name] = $value;
+		}
+	}
+	
+	/**
+	 * Give the fields into the fieldList array
+	 * 
+	 * @return bool
+	 */
+	public function getFieldList()
+	{
+		return $this -> _fieldList;
+	}
+	
+	/**
+	 * Allow to remove one field in the current array
+	 * 
+	 * @param array $fieldToRemove
+	 * @return bool
+	 */
+	public function removeFromFieldList($fieldToRemove)
+	{
+		$fields = array_keys($this->_fieldList);
+		$toRemove = array_keys($fieldToRemove);
+		$toRemove = $toRemove[0];
+		
+		for($i=0; $i<count($fields); $i++){
+			if($toRemove == $fields[$i]){
+				unset($this->_fieldList[$toRemove]);
+			}
+		}
+				
+	}
+	
+	/**
+	 * Clear the fieldList array
+	 * 
+	 * @return bool
+	 */
+	public function clearFieldList()
+	{
+		$this -> _fieldList = array();
 	}
 	
 
