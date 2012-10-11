@@ -13,8 +13,8 @@
  * @version $Id$
  */
 
-require_once('DataAccessController.php');
- 
+require_once ('DataAccessController.php');
+
 /**
  * Controller providing CRUD API for the users JSON
  *
@@ -26,14 +26,42 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_UsersController extends Backoffice_DataAccessController
-{
-    /**
-     * Name of the store which is also to the collection name
-     * 
-     * @see Backoffice_DataAccessController::$_store
-     * @var string
-     */
-    protected $_store = 'Users';
+class Backoffice_UsersController extends Backoffice_DataAccessController {
+	/**
+	 * Name of the store which is also to the collection name
+	 *
+	 * @see Backoffice_DataAccessController::$_store
+	 * @var string
+	 */
+	protected $_store = 'Users';
+
+	/**
+	 * The default read Action
+	 *
+	 * Return the content of the collection, get filters from the request
+	 * params
+	 *
+	 */
+	public function indexAction() {
+		$filterJson = $this -> getRequest() -> getParam('filter');
+		if (isset($filterJson)) {
+			$filters = Zend_Json::decode($filterJson);
+			foreach ($filters as $value) {
+				if ($value["operator"] == 'like') {
+					$this -> _dataReader -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
+				}
+
+			}
+		}
+		$dataValues = $this -> _dataReader -> read();
+
+		$response = array();
+		$response['data'] = array_values($dataValues);
+		$response['total'] = count($response['data']);
+		$response['success'] = TRUE;
+		$response['message'] = 'OK';
+
+		$this -> _returnJson($response);
+	}
 
 }
