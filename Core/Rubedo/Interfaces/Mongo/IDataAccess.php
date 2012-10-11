@@ -43,10 +43,12 @@ interface IDataAccess
     public function read ();
 
     /**
-     * Do a findone request on the current collection
-     *
-     * @return array
-     */
+	 * Do a findone request on the current collection
+	 *
+	 * @see \Rubedo\Interfaces\IDataAccess::findOne()
+	 * @param array $value search condition
+	 * @return array
+	 */
     public function findOne ($value);
 
     /**
