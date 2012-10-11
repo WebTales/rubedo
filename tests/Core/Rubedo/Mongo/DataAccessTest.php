@@ -232,9 +232,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Test read with a sort
 	 * 
-	 * Case with a simple sort by user name
+	 * Case with a simple ascendant sort by user name
 	 */
-	public function testReadWithSort()
+	public function testReadWithAscSort()
 	{
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
@@ -251,7 +251,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$item3['id'] = (string)$item3['_id'];
 		unset($item3['_id']);
 
-		$dataAccessObject->addSort(array('user' => 1));
+		$dataAccessObject->addSort(array('user' => 'asc'));
 
 		$expectedResult = array($item3, $item, $item2);
 
@@ -261,11 +261,42 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * Test read with a sort
+	 * 
+	 * Case with a simple descendant sort by user name
+	 */
+	public function testReadWithDescSort()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('user'=>'john', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('user'=>'marie', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('user'=>'alice', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+
+		$dataAccessObject->addSort(array('user' => 'desc'));
+
+		$expectedResult = array($item2, $item, $item3);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
 	 * Test read with two sort
 	 * 
-	 * Case with two sort by user name and user first name
+	 * Case with two ascendant sort by user name and user first name
 	 */
-	public function testReadWithTwoSort()
+	public function testReadWithTwoAscSort()
 	{
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
@@ -286,10 +317,46 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$item4['id'] = (string)$item4['_id'];
 		unset($item4['_id']);
 
-		$dataAccessObject->addSort(array('name' => 1));
-		$dataAccessObject->addSort(array('firstname' => 1));
+		$dataAccessObject->addSort(array('name' => 'asc'));
+		$dataAccessObject->addSort(array('firstname' => 'asc'));
 
 		$expectedResult = array($item4, $item3, $item, $item2);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+
+	/**
+	 * Test read with two sort
+	 * 
+	 * Case with two descendant sort by user name and user first name
+	 */
+	public function testReadWithTwoDescSort()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('name'=>'alice', 'firstname' => 'wonderland', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item',array('name'=>'alice', 'firstname' => 'ecila', 'version' => '1'));
+		$item4['id'] = (string)$item4['_id'];
+		unset($item4['_id']);
+
+		$dataAccessObject->addSort(array('name' => 'desc'));
+		$dataAccessObject->addSort(array('firstname' => 'desc'));
+
+		$expectedResult = array($item2, $item, $item3, $item4);
 
         $readArray = $dataAccessObject->read();
 
