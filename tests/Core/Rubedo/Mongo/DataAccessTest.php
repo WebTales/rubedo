@@ -1814,34 +1814,5 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$dataAccessObject->addToExcludeFieldList(array());
 		
 	}
-	
-	/**
-	 * Test if the function getHash work and check the result with
-	 * checkHash
-	 */
-	public function testHash(){
-		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-		
-		$hash = $dataAccessObject->getHash("password", "salt");
-		
-		$result = $dataAccessObject->checkHash($hash, "password", "salt");
-		
-		$this->assertEquals($result, true);
-	}
-	
-	/**
-	 * Test if the function checkHash detect a wrong case
-	 */
-	public function testBadCheckHash(){
-		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-		
-		$hash = $dataAccessObject->getHash("password", "blabla");
-		
-		$result = $dataAccessObject->checkHash($hash, "password", "salt");
-		
-		$this->assertEquals($result, false);
-	}
 
 }
