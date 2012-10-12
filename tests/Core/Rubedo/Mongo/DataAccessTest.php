@@ -1365,6 +1365,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
 		$dataAccessObject->addToFieldList($includedFields);
 		
+		//contain the expected result of readChild fonction
 		$expectedResult = array(array('name' => 'Update', 'id' => $item3['id'], 'version' => $item3['version']), array('name' => 'Creation', 'id' => $item2['id'], 'version' => $item2['version']));
 		$readArray = $dataAccessObject->readChild($item['id']);
 
