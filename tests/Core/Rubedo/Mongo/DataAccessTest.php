@@ -362,6 +362,62 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedResult, $readArray);
 	}
+	
+	/**
+	 * test if read function works fine with imposed fields
+	 * 
+	 * The result doesn't contain the password and first name field
+	 */
+	public function testReadWithIncludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$includedFields = array('name');
+
+		$dataAccessObject->addToFieldList($includedFields);
+		
+		$expectedResult = array(array('name' => 'john', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'id' => $item2['id'], 'version' => $item2['version']));
+		$readArray = $dataAccessObject->read();
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * test if read function works fine with imposed fields
+	 * 
+	 * The result doesn't contain only the password field
+	 */
+	public function testReadWithExcludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$includedFields = array('password');
+
+		$dataAccessObject->addToExcludeFieldList($includedFields);
+		
+		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
+		$readArray = $dataAccessObject->read();
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
 
     /**
      * Test of the create feature
@@ -1286,6 +1342,62 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * test if readChild function works fine with imposed fields
+	 */
+	public function testReadChildWithIncludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Creation'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Update'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$includedFields = array('name');
+
+		$dataAccessObject->addToFieldList($includedFields);
+		
+		$expectedResult = array(array('name' => 'Update', 'id' => $item3['id'], 'version' => $item3['version']), array('name' => 'Creation', 'id' => $item2['id'], 'version' => $item2['version']));
+		$readArray = $dataAccessObject->readChild($item['id']);
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * test if readChild function works fine with imposed fields
+	 */
+	public function testReadChildWithExcludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$includedFields = array('password');
+
+		$dataAccessObject->addToExcludeFieldList($includedFields);
+		
+		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
+		$readArray = $dataAccessObject->read();
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
+
+	/**
 	 * test of findOne
 	 */
 	public function testFindOne()
@@ -1605,56 +1717,59 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	}
 	
 	/**
-	 * Simple test to add a field in the excludeFieldList array and read it after
+	 * Simple test to add a field list in the excludeFieldList array and read it after
 	 */
 	public function testAddExcludeFieldInList(){
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
-		$excludeFieldExemple = array('password' => true);
+		$excludeFieldExemple = array('password', 'dateOfBirth');
 		
 		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
 		
-		$readArray = $dataAccessObject->getExcludeFieldList();
-		
-		$this->assertEquals($excludeFieldExemple, $readArray);
-	}
-	
-	/**
-	 * Simple test to add two fields in the excludeFieldList array and read it after
-	 */
-	public function testAddTwoExcludeFieldsInList(){
-		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-		
-		$excludeFieldExemple = array('password' => true);
-		$excludeFieldExemple2 = array('dateOfBirth' => true);
-		
-		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
-		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple2);
-		
-		$expectedResult = array_merge($excludeFieldExemple, $excludeFieldExemple2);
+		$expectedResult = array('password' => false, 'dateOfBirth' => false);
 		$readArray = $dataAccessObject->getExcludeFieldList();
 		
 		$this->assertEquals($expectedResult, $readArray);
 	}
 	
 	/**
-	 * Remove one field in the excludeFieldList array
+	 * Simple test to add two fields list in the excludeFieldList array and read it after
+	 */
+	public function testAddTwoExcludeFieldsInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password', 'dateOfBirth');
+		$excludeFieldExemple2 = array('firstname', 'age');
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple2);
+		
+		$expectedResult = array('password' => false, 'dateOfBirth' => false, 'firstname' => false, 'age' => false);
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Remove a field list in the excludeFieldList array
 	 */
 	public function testRemoveExcludeField()
 	{
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
-		$excludeFieldExemple = array('password' => true);
+		$excludeFieldExemple = array('password', 'firstname');
 		
 		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
-		$dataAccessObject->removeFromExcludeFieldList(array('password' => true));
 		
+		$dataAccessObject->removeFromExcludeFieldList(array('firstname'));
+		
+		$expectedResult = array('password' => false);
 		$readArray = $dataAccessObject->getExcludeFieldList();
 		
-		$this->assertEquals(array(), $readArray);
+		$this->assertEquals($expectedResult, $readArray);
 	}
 	
 	/**
@@ -1665,7 +1780,15 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	 	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
+		$excludeFieldExemple = array('password', 'firstname');
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		
 		$dataAccessObject->clearExcludeFieldList();
+		
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals(array(), $readArray);
 	 }
 
 	/**
@@ -1676,9 +1799,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
-		$excludeFieldExemple = array("key"=> array(new stdClass()));
+		$excludeFieldExemple = array("key" => array('toto', 'titi'));
 		$dataAccessObject->addToFieldList($excludeFieldExemple);
-		
 	}
 	
 	/**
