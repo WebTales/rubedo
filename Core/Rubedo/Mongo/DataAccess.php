@@ -694,14 +694,15 @@ class DataAccess implements IDataAccess {
     }
 
     /**
-     * Hash a string and its salt
+     * Hash a password
      *
-     * @param $msg contains the string destined to be hashed
-     * @param $salt
-     * @return $hash is the final string with the message and its salt hashed
+     * @param $pwd password
+     * @return $hash password hashed
+	 * 
+	 * @todo add hash_pdkdf2() function to the project and start test
      */
-    public function getHash($msg, $salt) {
-        $hash = sha1($msg . $salt);
+    public function hashPassword($pwd) {
+        $hash = hash_pbkdf2('sha512', $pwd, 'salt', 10);
 
         return $hash;
     }
@@ -711,11 +712,12 @@ class DataAccess implements IDataAccess {
      * If they are the same, the function return true
      *
      * @param $hash is the string already hashed
-     * @param $msg is the string destined to be hashed with the salt
-     * @param $salt is the salt for the $msg string
+     * @param $pwd password to hash
+	 * 
+	 * @todo add hash_pdkdf2() function to the project and start test
      */
-    public function checkHash($hash, $msg, $salt) {
-        $hash2 = sha1($msg . $salt);
+    public function checkHashPassword($hash, $pwd) {
+       	$hash2 = hash_pbkdf2('sha512', $pwd, 'salt', 10);
 
         if ($hash === $hash2) {
             return true;
