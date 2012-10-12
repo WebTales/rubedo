@@ -195,22 +195,24 @@ interface IDataAccess
     public function clearExcludeFieldList();
 	
 	/**
-     * Hash a string and its salt
+     * Hash a password
      *
-     * @param $msg contains the string destined to be hashed
-     * @param $salt
-     * @return $hash is the final string with the message and its salt hashed
+     * @param $pwd password
+     * @return $hash password hashed
+	 * 
+	 * @todo add hash_pdkdf2() function to the project and start test
      */
-    public function getHash($msg, $salt);
+    public function hashPassword($pwd);
 	
 	/**
      * Compare the hashed string with a string hashed in the functions
      * If they are the same, the function return true
      *
      * @param $hash is the string already hashed
-     * @param $msg is the string destined to be hashed with the salt
-     * @param $salt is the salt for the $msg string
+     * @param $pwd password to hash
+	 * 
+	 * @todo add hash_pdkdf2() function to the project and start test
      */
-    public function checkHash($hash, $msg, $salt);
+    public function checkHashPassword($hash, $pwd);
 	 
 }
