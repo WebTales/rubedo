@@ -382,8 +382,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		unset($item2['_id']);
 		
 		$includedFields = array('name');
+		$sort = array('name' => 'asc');
 
 		$dataAccessObject->addToFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
 		
 		$expectedResult = array(array('name' => 'john', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'id' => $item2['id'], 'version' => $item2['version']));
 		$readArray = $dataAccessObject->read();
@@ -410,8 +412,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		unset($item2['_id']);
 		
 		$includedFields = array('password');
+		$sort = array('name' => 'asc');
 
 		$dataAccessObject->addToExcludeFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
 		
 		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
 		$readArray = $dataAccessObject->read();
@@ -1362,11 +1366,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		unset($item3['_id']);
 		
 		$includedFields = array('name');
+		$sort = array('name' => 'asc');
 
 		$dataAccessObject->addToFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
 		
 		//contain the expected result of readChild fonction
-		$expectedResult = array(array('name' => 'Update', 'id' => $item3['id'], 'version' => $item3['version']), array('name' => 'Creation', 'id' => $item2['id'], 'version' => $item2['version']));
+		$expectedResult = array(array('name' => 'Creation', 'id' => $item2['id'], 'version' => $item2['version']), array('name' => 'Update', 'id' => $item3['id'], 'version' => $item3['version']));
 		$readArray = $dataAccessObject->readChild($item['id']);
 
 		$this->assertEquals($expectedResult, $readArray);
@@ -1389,8 +1395,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		unset($item2['_id']);
 		
 		$includedFields = array('password');
+		$sort = array('name' => 'asc');
 
 		$dataAccessObject->addToExcludeFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
 		
 		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
 		$readArray = $dataAccessObject->read();
