@@ -172,11 +172,26 @@ class DataAccess implements IDataAccess {
      * @return array
      */
     public function read() {
+    	//get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
+		$includedFields = $this->getFieldList();
+		$excludedFields = $this->getExcludeFieldList();
+		$fieldRule = array_merge($includedFields, $excludedFields);
+		
+		//get enforced Rules
+		$filter = $this->_getLocalFilter($filter);
+		
+		//get the cursor
+		$cursor = $this->_collection->find($filter, $fieldRule);
+		
+		//apply sort, paging, filter
+		$cursor->sort($sort);
 
-        $data = iterator_to_array($this->_collection->find($filter)->sort($sort));
+		//switch from cursor to actual array
+        $data = iterator_to_array($cursor);
 
+		//iterate throught data to convert ID to string and add version nulmber if none
         foreach ($data as &$value) {
             $value['id'] = (string)$value['_id'];
             unset($value['_id']);
@@ -186,10 +201,20 @@ class DataAccess implements IDataAccess {
 
         }
 
+		//return data as simple array with no keys
         $response = array_values($data);
 
         return $response;
     }
+
+	/**
+	 * overrideable method to add filter depending on inherited class to handle specific rules
+	 * @param array current filter
+	 * @return array overriden filter
+	 */
+	protected function _getLocalFilter($filter){
+		return $filter;
+	}
 
     /**
      * Do a find request on the current collection and return content as tree
@@ -251,15 +276,30 @@ class DataAccess implements IDataAccess {
      * @return array children array
      */
     public function readChild($parentId) {
+    	//get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
-
+		$includedFields = $this->getFieldList();
+		$excludedFields = $this->getExcludeFieldList();
+		$fieldRule = array_merge($includedFields, $excludedFields);
+		
+		//get enforced Rules
+		$filter = $this->_getLocalFilter($filter);
+		
+		//get the cursor
         if (empty($filter)) {
-            $data = iterator_to_array($this->_collection->find(array('parentId' => $parentId))->sort($sort));
+            $cursor = $this->_collection->find(array('parentId' => $parentId), $fieldRule);
         } else {
-            $data = iterator_to_array($this->_collection->find(array('parentId' => $parentId, '$and' => array($filter)))->sort($sort));
+            $cursor = $this->_collection->find(array('parentId' => $parentId, '$and' => array($filter)), $fieldRule);
         }
+		
+		//apply sort, paging, filter
+		$cursor->sort($sort);
+		
+		//switch from cursor to actual array
+        $data = iterator_to_array($cursor);
 
+		//iterate throught data to convert ID to string and add version nulmber if none
         foreach ($data as &$value) {
             $value['id'] = (string)$value['_id'];
             unset($value['_id']);
@@ -269,6 +309,7 @@ class DataAccess implements IDataAccess {
 
         }
 
+		//return data as simple array with no keys
         $response = array_values($data);
 
         return $response;
@@ -403,6 +444,7 @@ class DataAccess implements IDataAccess {
 
     /**
      * Drop The current Collection
+	 * @deprecated
      */
     public function drop() {
         return $this->_collection->drop();
@@ -580,19 +622,20 @@ class DataAccess implements IDataAccess {
      *
      * @param array $excludeFieldList
      */
-    public function addToExcludeFieldList($excludeFieldList) {
-        //check valid input
-        if (count($excludeFieldList) !== 1) {
-            throw new \Rubedo\Exceptions\DataAccess("Invalid exclude field list array", 1);
-        }
+    public function addToExcludeFieldList(array $excludeFieldList) {
+		
+		if (count($excludeFieldList) === 0) {
+            throw new \Rubedo\Exceptions\DataAccess("Invalid excluded fields list array", 1);
 
-        foreach ($excludeFieldList as $name => $value) {
-            if (!in_array(gettype($value), array('string', 'boolean'))) {
+        }
+		
+        foreach ($excludeFieldList as $value) {
+            if (!in_array(gettype($value), array('string'))) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
             }
 
             //add validated input
-            $this->_excludeFieldList[$name] = $value;
+            $this->_excludeFieldList[$value] = false;
         }
     }
 
@@ -608,17 +651,13 @@ class DataAccess implements IDataAccess {
      *
      * @param array $excludeFieldToRemove
      */
-    public function removeFromExcludeFieldList($fieldToRemove) {
-        $fields = array_keys($this->_excludeFieldList);
-        $toRemove = array_keys($fieldToRemove);
-        $toRemove = $toRemove[0];
-
-        for ($i = 0; $i < count($fields); $i++) {
-            if ($toRemove == $fields[$i]) {
-                unset($this->_excludeFieldList[$toRemove]);
+    public function removeFromExcludeFieldList(array $fieldToRemove) {
+		foreach ($fieldToRemove as $value) {
+            if (!is_string($value)) {
+                throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string paramter", 1);
             }
+            unset($this->_excludeFieldList[$value]);
         }
-
     }
 
     /**

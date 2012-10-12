@@ -144,4 +144,73 @@ interface IDataAccess
 	  */
 	 public function clearSort();
 	 
+	 /**
+     * Add to the field list the array passed in argument
+     *
+     * @param array $fieldList
+     */
+    public function addToFieldList(array $fieldList);
+	
+	/**
+     * Give the fields into the fieldList array
+     * @return array
+     */
+    public function getFieldList();
+	
+	/**
+     * Allow to remove one field in the current array
+     *
+     * @param array $fieldToRemove
+     */
+    public function removeFromFieldList(array $fieldToRemove);
+	
+	/**
+     * Clear the fieldList array
+     *
+     */
+    public function clearFieldList();
+	
+	/**
+     * Add to the exclude field list the array passed in argument
+     *
+     * @param array $excludeFieldList
+     */
+    public function addToExcludeFieldList(array $excludeFieldList);
+	
+	/**
+     * Give the fields into the excludeFieldList array
+     */
+    public function getExcludeFieldList();
+	
+	/**
+     * Allow to remove one field in the current excludeFieldList array
+     *
+     * @param array $excludeFieldToRemove
+     */
+    public function removeFromExcludeFieldList(array $fieldToRemove);
+	
+	/**
+     * Clear the excludeFieldList array
+     */
+    public function clearExcludeFieldList();
+	
+	/**
+     * Hash a string and its salt
+     *
+     * @param $msg contains the string destined to be hashed
+     * @param $salt
+     * @return $hash is the final string with the message and its salt hashed
+     */
+    public function getHash($msg, $salt);
+	
+	/**
+     * Compare the hashed string with a string hashed in the functions
+     * If they are the same, the function return true
+     *
+     * @param $hash is the string already hashed
+     * @param $msg is the string destined to be hashed with the salt
+     * @param $salt is the salt for the $msg string
+     */
+    public function checkHash($hash, $msg, $salt);
+	 
 }
