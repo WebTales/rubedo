@@ -177,10 +177,14 @@ class DataAccess implements IDataAccess {
         $sort = $this->getSortArray();
 		$includedFields = $this->getFieldList();
 		$excludedFields = $this->getExcludeFieldList();
-		$fieldRule = array_merge($includedFields, $excludedFields);
 		
 		//get enforced Rules
 		$filter = $this->_getLocalFilter($filter);
+		$includedFields = $this->_getLocalIncludeFieldList($includedFields);
+		$excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
+		
+		//merge the two fields array to obtain only one array with all the conditions
+		$fieldRule = array_merge($includedFields, $excludedFields);
 		
 		//get the cursor
 		$cursor = $this->_collection->find($filter, $fieldRule);
@@ -214,6 +218,24 @@ class DataAccess implements IDataAccess {
 	 */
 	protected function _getLocalFilter($filter){
 		return $filter;
+	}
+	
+	/**
+	 * overrideable method to add an included fields list depending on inherited class to handle specific rules
+	 * @param array current included fields list
+	 * @return array overriden included fields list
+	 */
+	protected function _getLocalIncludeFieldList($includeFieldList){
+		return $includeFieldList;
+	}
+	
+	/**
+	 * overrideable method to add an excluded fields list depending on inherited class to handle specific rules
+	 * @param array current excluded fields list
+	 * @return array overriden excluded fields list
+	 */
+	protected function _getLocalExcludeFieldList($excludeFieldList){
+		return $excludeFieldList;
 	}
 
     /**
@@ -281,10 +303,14 @@ class DataAccess implements IDataAccess {
         $sort = $this->getSortArray();
 		$includedFields = $this->getFieldList();
 		$excludedFields = $this->getExcludeFieldList();
-		$fieldRule = array_merge($includedFields, $excludedFields);
 		
 		//get enforced Rules
 		$filter = $this->_getLocalFilter($filter);
+		$includedFields = $this->_getLocalIncludeFieldList($includedFields);
+		$excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
+		
+		//merge the two fields array to obtain only one array with all the conditions
+		$fieldRule = array_merge($includedFields, $excludedFields);
 		
 		//get the cursor
         if (empty($filter)) {
