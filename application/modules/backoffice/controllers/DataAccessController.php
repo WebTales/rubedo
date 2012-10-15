@@ -107,7 +107,10 @@ class Backoffice_DataAccessController extends AbstractController {
 		if (isset($filterJson)) {
 			$filters = Zend_Json::decode($filterJson);
 			foreach ($filters as $value) {
-				if ($value["operator"] == 'like') {
+				if (!(isset($value["operator"]))) {
+					$this -> _dataReader -> addFilter(array($value["property"] => $value["value"]));					
+				}
+				else if ($value["operator"] == 'like') {
 					$this -> _dataReader -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
 				}
 

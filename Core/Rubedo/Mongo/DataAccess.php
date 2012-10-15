@@ -494,7 +494,7 @@ class DataAccess implements IDataAccess {
         }
 
         foreach ($filter as $name => $value) {
-            if (!in_array(gettype($value), array('array', 'string', 'float', 'integer'))) {
+            if (!in_array(gettype($value), array('array', 'string', 'float', 'integer', 'boolean'))) {
                 throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
