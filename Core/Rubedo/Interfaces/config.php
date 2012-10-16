@@ -32,7 +32,8 @@ class config
     'MongoDataAccess' 	=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
 	'Acl'				=>	'Rubedo\\Interfaces\\Acl\\IAcl',
 	'CurrentUser'		=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
-	'CurrentTime'		=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',	
+	'CurrentTime'		=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',
+	'Url'				=>	'Rubedo\\Interfaces\\Router\\IUrl'	
 	);
 
     /**
