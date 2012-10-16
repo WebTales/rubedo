@@ -46,10 +46,6 @@ class IndexController extends AbstractController {
 	 * Main Action : render the Front Office view
 	 */
 	public function indexAction() {
-		
-		
-		$this->getHelper('ViewRenderer')->setNoRender();
-		$this->getHelper('Layout')->disableLayout();
 
 		$calledUri = $this->getRequest()->getRequestUri();
 		$this->_pageParams = $this->_serviceUrl->getPageInfo($calledUri);

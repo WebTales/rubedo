@@ -41,6 +41,13 @@ class Url implements  IUrl {
 
 		$page = "index";
 		
+		$matches = array();
+		$regex = '~/index/([^/?]*)~i';
+		if(preg_match($regex, $url,$matches)){
+			$page = $matches[1];
+		}
+
+		
 		switch($page) {
 			case "index" :
 				$this->_pageInfo['template'] = 'index.html';
