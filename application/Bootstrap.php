@@ -60,15 +60,28 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
 	}
 
+	/**
+	 * Load router configuration with specific rules
+	 */
 	protected function _initRouter() {
 		$front = $this->bootstrap('FrontController')->getResource('FrontController');
+
 		/**
 		 * @var Zend_Controller_Router_Rewrite
 		 */
 		$router = $front->getRouter();
 
+		//default front office route : should be called only if no module is specified
 		$route = new Zend_Controller_Router_Route_Regex('(?:(?!backoffice).)+', array('controller' => 'index', 'action' => 'index'));
 		$router->addRoute('rewrite', $route);
+
+		//legacy json access. Should be removed when all store API had been updated
+		$route = new Zend_Controller_Router_Route_Regex('backoffice/data/([a-zA-Z]*).json', array('controller' => 'data-access', 'action' => 'index', 'module' => 'backoffice'), array('1' => 'store'));
+		$router->addRoute('json', $route);
+
+		//static route to return app.js
+		$route = new Zend_Controller_Router_Route_Static('backoffice/app.js', array('controller' => 'index', 'action' => 'appjs', 'module' => 'backoffice'));
+		$router->addRoute('appjs', $route);
 
 	}
 
