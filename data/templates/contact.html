@@ -1,0 +1,16 @@
+{% extends "contact_mask.html" %}
+{% import 'breadcrumb/index.html' as fil %}
+{% import 'simplecontent/index.html' as content %}
+{% import 'iframe/index.html' as iframe %}
+
+{% block breadcrumb %}
+{{ fil.ariane(liens) }}
+{% endblock %}
+
+{% block arg1 %}
+	{{ content.render_content(bloc1) }}
+{% endblock %}
+
+{% block arg2 %}
+	{{ iframe.render_iframe(bloc2) }}
+{% endblock %}
