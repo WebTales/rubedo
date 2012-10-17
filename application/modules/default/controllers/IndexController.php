@@ -30,6 +30,29 @@ class IndexController extends AbstractController {
 	 */
 	protected $_pageParams = array();
 
+		/**
+		 * URL service
+		 * @var \Rubedo\Interfaces\Router\IUrl
+		 */
+		protected $_serviceUrl;
+		
+		/**
+		 * page info service
+		 * @var \Rubedo\Interfaces\Router\IPageInfo
+		 */
+		protected $_servicePageInfo;
+		
+		/**
+		 * FO Templates service
+		 * @var \Rubedo\Interfaces\Templates\IFrontOfficeTemplates
+		 */
+		protected $_serviceTemplate;
+		
+		/**
+		 * Block service
+		 * @var \Rubedo\Interfaces\Content\IBlock
+		 */
+		protected $_serviceBlock;
 
 	/**
 	 * Main Action : render the Front Office view
@@ -39,6 +62,7 @@ class IndexController extends AbstractController {
 		$this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
 		$this->_servicePageInfo = Rubedo\Services\Manager::getService('PageInfo');
 		$this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
+		$this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
 		
 		$defaultNamespace = new Zend_Session_Namespace('Default');
 		$lang = $defaultNamespace->lang;
@@ -57,16 +81,20 @@ class IndexController extends AbstractController {
 		$twigVar['lang'] = $lang;
 		
 		foreach($this->_pageParams['blocks'] as $block) {
-			$helper= 'helper'.$block['Module'];
-			$output = $block['Output'];
-			$input = $block['Input'];
-			$twigVar[$output] = $this->_helper->$helper($input);
+			$twigVar = array_merge($twigVar,$this->_serviceBlock->getBlockData($block,$this));
 		}
 		
 		$content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
 	
 		$this->getResponse()->appendBody($content, 'default');
 
+	}
+
+	/**
+	 * @todo delete this ASAP : use model class instead of HELPERS !!!
+	 */
+	public function getProtectedHelper(){
+		return $this->_helper;
 	}
 
 }
