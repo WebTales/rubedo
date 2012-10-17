@@ -34,6 +34,7 @@ class config
 	'CurrentUser'			=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
 	'CurrentTime'			=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',
 	'Url'					=>	'Rubedo\\Interfaces\\Router\\IUrl',
+	'PageInfo'					=>	'Rubedo\\Interfaces\\Router\\IPageInfo',
 	'FrontOfficeTemplates'	=>	'Rubedo\Interfaces\Templates\IFrontOfficeTemplates',
 	);
 
