@@ -72,9 +72,6 @@ class IndexController extends AbstractController {
 		$pageId = $this->_serviceUrl->getPageId($calledUri);
 		$this->_pageParams = $this->_servicePage->getPageInfo($pageId);
 		
-		$defaultNamespace = new Zend_Session_Namespace('Default');
-		$lang = $defaultNamespace->lang;
-		
 		
 		$twigVar = array();
 		$twigVar['theme'] = $defaultNamespace->themeCSS;
@@ -83,7 +80,7 @@ class IndexController extends AbstractController {
 		foreach($this->_pageParams['blocks'] as $block) {
 			$twigVar = array_merge($twigVar,$this->_serviceBlock->getBlockData($block,$this));
 		}
-		
+		//die();
 		$content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
 	
 		$this->getResponse()->appendBody($content, 'default');
