@@ -39,9 +39,25 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 			$connectionString .= $options['mongo']['server'];
 			Rubedo\Mongo\DataAccess::setDefaultMongo($connectionString);
 
-			Rubedo\Mongo\DataAccess::setDefaultDb($options['mongo']['db']);
-		}
-	}
+            Rubedo\Mongo\DataAccess::setDefaultDb($options['mongo']['db']);
+        }
+    }
+	
+    /**
+     * Init the ES info by setting static values in the Search class
+     */
+    protected function _initElasticSearchStream()
+    {
+        $options = $this->getOption('searchstream');
+        if (isset($options)) {
+
+            Rubedo\Elastic\DataSearch::setDefaultHost($options['elastic']['host']);
+            Rubedo\Elastic\DataSearch::setDefaultPort((int) $options['elastic']['port']);
+			
+        }
+    }
+
+
 
 	/**
 	 * Load services parameter from application.ini to the service manager
