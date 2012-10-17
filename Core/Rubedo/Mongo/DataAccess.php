@@ -23,7 +23,8 @@ use Rubedo\Interfaces\Mongo\IDataAccess;
  * @category Rubedo
  * @package Rubedo
  */
-class DataAccess implements IDataAccess {
+class DataAccess implements IDataAccess
+{
 
     /**
      * Default value of the connection string
@@ -172,30 +173,30 @@ class DataAccess implements IDataAccess {
      * @return array
      */
     public function read() {
-    	//get the UI parameters
+        //get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
-		$includedFields = $this->getFieldList();
-		$excludedFields = $this->getExcludeFieldList();
-		
-		//get enforced Rules
-		$filter = $this->_getLocalFilter($filter);
-		$includedFields = $this->_getLocalIncludeFieldList($includedFields);
-		$excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
-		
-		//merge the two fields array to obtain only one array with all the conditions
-		$fieldRule = array_merge($includedFields, $excludedFields);
-		
-		//get the cursor
-		$cursor = $this->_collection->find($filter, $fieldRule);
-		
-		//apply sort, paging, filter
-		$cursor->sort($sort);
+        $includedFields = $this->getFieldList();
+        $excludedFields = $this->getExcludeFieldList();
 
-		//switch from cursor to actual array
+        //get enforced Rules
+        $filter = $this->_getLocalFilter($filter);
+        $includedFields = $this->_getLocalIncludeFieldList($includedFields);
+        $excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
+
+        //merge the two fields array to obtain only one array with all the conditions
+        $fieldRule = array_merge($includedFields, $excludedFields);
+
+        //get the cursor
+        $cursor = $this->_collection->find($filter, $fieldRule);
+
+        //apply sort, paging, filter
+        $cursor->sort($sort);
+
+        //switch from cursor to actual array
         $data = iterator_to_array($cursor);
 
-		//iterate throught data to convert ID to string and add version nulmber if none
+        //iterate throught data to convert ID to string and add version nulmber if none
         foreach ($data as &$value) {
             $value['id'] = (string)$value['_id'];
             unset($value['_id']);
@@ -205,38 +206,38 @@ class DataAccess implements IDataAccess {
 
         }
 
-		//return data as simple array with no keys
+        //return data as simple array with no keys
         $response = array_values($data);
 
         return $response;
     }
 
-	/**
-	 * overrideable method to add filter depending on inherited class to handle specific rules
-	 * @param array current filter
-	 * @return array overriden filter
-	 */
-	protected function _getLocalFilter($filter){
-		return $filter;
-	}
-	
-	/**
-	 * overrideable method to add an included fields list depending on inherited class to handle specific rules
-	 * @param array current included fields list
-	 * @return array overriden included fields list
-	 */
-	protected function _getLocalIncludeFieldList($includeFieldList){
-		return $includeFieldList;
-	}
-	
-	/**
-	 * overrideable method to add an excluded fields list depending on inherited class to handle specific rules
-	 * @param array current excluded fields list
-	 * @return array overriden excluded fields list
-	 */
-	protected function _getLocalExcludeFieldList($excludeFieldList){
-		return $excludeFieldList;
-	}
+    /**
+     * overrideable method to add filter depending on inherited class to handle specific rules
+     * @param array current filter
+     * @return array overriden filter
+     */
+    protected function _getLocalFilter($filter) {
+        return $filter;
+    }
+
+    /**
+     * overrideable method to add an included fields list depending on inherited class to handle specific rules
+     * @param array current included fields list
+     * @return array overriden included fields list
+     */
+    protected function _getLocalIncludeFieldList($includeFieldList) {
+        return $includeFieldList;
+    }
+
+    /**
+     * overrideable method to add an excluded fields list depending on inherited class to handle specific rules
+     * @param array current excluded fields list
+     * @return array overriden excluded fields list
+     */
+    protected function _getLocalExcludeFieldList($excludeFieldList) {
+        return $excludeFieldList;
+    }
 
     /**
      * Do a find request on the current collection and return content as tree
@@ -298,34 +299,34 @@ class DataAccess implements IDataAccess {
      * @return array children array
      */
     public function readChild($parentId) {
-    	//get the UI parameters
+        //get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
-		$includedFields = $this->getFieldList();
-		$excludedFields = $this->getExcludeFieldList();
-		
-		//get enforced Rules
-		$filter = $this->_getLocalFilter($filter);
-		$includedFields = $this->_getLocalIncludeFieldList($includedFields);
-		$excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
-		
-		//merge the two fields array to obtain only one array with all the conditions
-		$fieldRule = array_merge($includedFields, $excludedFields);
-		
-		//get the cursor
+        $includedFields = $this->getFieldList();
+        $excludedFields = $this->getExcludeFieldList();
+
+        //get enforced Rules
+        $filter = $this->_getLocalFilter($filter);
+        $includedFields = $this->_getLocalIncludeFieldList($includedFields);
+        $excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
+
+        //merge the two fields array to obtain only one array with all the conditions
+        $fieldRule = array_merge($includedFields, $excludedFields);
+
+        //get the cursor
         if (empty($filter)) {
             $cursor = $this->_collection->find(array('parentId' => $parentId), $fieldRule);
         } else {
             $cursor = $this->_collection->find(array('parentId' => $parentId, '$and' => array($filter)), $fieldRule);
         }
-		
-		//apply sort, paging, filter
-		$cursor->sort($sort);
-		
-		//switch from cursor to actual array
+
+        //apply sort, paging, filter
+        $cursor->sort($sort);
+
+        //switch from cursor to actual array
         $data = iterator_to_array($cursor);
 
-		//iterate throught data to convert ID to string and add version nulmber if none
+        //iterate throught data to convert ID to string and add version nulmber if none
         foreach ($data as &$value) {
             $value['id'] = (string)$value['_id'];
             unset($value['_id']);
@@ -335,7 +336,7 @@ class DataAccess implements IDataAccess {
 
         }
 
-		//return data as simple array with no keys
+        //return data as simple array with no keys
         $response = array_values($data);
 
         return $response;
@@ -470,7 +471,7 @@ class DataAccess implements IDataAccess {
 
     /**
      * Drop The current Collection
-	 * @deprecated
+     * @deprecated
      */
     public function drop() {
         return $this->_collection->drop();
@@ -649,12 +650,12 @@ class DataAccess implements IDataAccess {
      * @param array $excludeFieldList
      */
     public function addToExcludeFieldList(array $excludeFieldList) {
-		
-		if (count($excludeFieldList) === 0) {
+
+        if (count($excludeFieldList) === 0) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid excluded fields list array", 1);
 
         }
-		
+
         foreach ($excludeFieldList as $value) {
             if (!in_array(gettype($value), array('string'))) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
@@ -678,7 +679,7 @@ class DataAccess implements IDataAccess {
      * @param array $excludeFieldToRemove
      */
     public function removeFromExcludeFieldList(array $fieldToRemove) {
-		foreach ($fieldToRemove as $value) {
+        foreach ($fieldToRemove as $value) {
             if (!is_string($value)) {
                 throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string paramter", 1);
             }
@@ -698,8 +699,8 @@ class DataAccess implements IDataAccess {
      *
      * @param $pwd password
      * @return $hash password hashed
-	 * 
-	 * @todo add hash_pdkdf2() function to the project and start test
+     *
+     * @todo add hash_pdkdf2() function to the project and start test
      */
     public function hashPassword($pwd) {
         $hash = hash_pbkdf2('sha512', $pwd, 'salt', 10);
@@ -713,11 +714,11 @@ class DataAccess implements IDataAccess {
      *
      * @param $hash is the string already hashed
      * @param $pwd password to hash
-	 * 
-	 * @todo add hash_pdkdf2() function to the project and start test
+     *
+     * @todo add hash_pdkdf2() function to the project and start test
      */
     public function checkHashPassword($hash, $pwd) {
-       	$hash2 = hash_pbkdf2('sha512', $pwd, 'salt', 10);
+        $hash2 = hash_pbkdf2('sha512', $pwd, 'salt', 10);
 
         if ($hash === $hash2) {
             return true;
