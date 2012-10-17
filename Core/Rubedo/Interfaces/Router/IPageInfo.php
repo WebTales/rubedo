@@ -27,9 +27,9 @@ Interface IPageInfo {
 	/**
 	 * Return page infos based on its ID
 	 *
-	 * @param string $url requested URL
+	 * @param string|int $pageId requested URL
 	 * @return array
 	 */
-	public function getPageInfo($url);
+	public function getPageInfo($pageId);
 
 }

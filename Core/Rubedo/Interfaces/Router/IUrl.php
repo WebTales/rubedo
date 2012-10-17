@@ -25,11 +25,11 @@ namespace Rubedo\Interfaces\Router;
 Interface IUrl {
 
 	/**
-	 * Return page infos based on request URL
+	 * Return page id based on request URL
 	 *
 	 * @param string $url requested URL
-	 * @return array
+	 * @return string|int 
 	 */
-	public function getPageInfo($url);
+	public function getPageId($url);
 
 }

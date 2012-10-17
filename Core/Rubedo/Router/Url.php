@@ -26,18 +26,12 @@ use Rubedo\Interfaces\Router\IUrl;
 class Url implements  IUrl {
 
 	/**
-	 * Current page parameters
-	 * @var array
-	 */
-	protected $_pageInfo = array();
-
-	/**
-	 * Return page infos based on request URL
+	 * Return page id based on request URL
 	 *
 	 * @param string $url requested URL
-	 * @return array
+	 * @return string|int 
 	 */
-	public function getPageInfo($url) {
+	public function getPageId($url){
 
 		$page = "index";
 		
@@ -46,52 +40,8 @@ class Url implements  IUrl {
 		if(preg_match($regex, $url,$matches)){
 			$page = $matches[1];
 		}
-
 		
-		switch($page) {
-			case "index" :
-				$this->_pageInfo['template'] = 'index.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'HeadLine', 'Input' => null, 'Output' => 'headline_content'), array('Module' => 'ContentList', 'Input' => null, 'Output' => 'contentlist_content'), array('Module' => 'Carrousel', 'Input' => null, 'Output' => 'carousel_content'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "contact" :
-				$this->_pageInfo['template'] = 'contact.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'SimpleContent', 'Input' => '300', 'Output' => 'bloc1'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'IFrame', 'Input' => null, 'Output' => 'bloc2'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "responsive" :
-				$this->_pageInfo['template'] = 'responsive.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "accessible" :
-				$this->_pageInfo['template'] = 'page.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "performant" :
-				$this->_pageInfo['template'] = 'page.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "ergonomic" :
-				$this->_pageInfo['template'] = 'page.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "rich" :
-				$this->_pageInfo['template'] = 'page.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_whoarewe'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "extensible" :
-				$this->_pageInfo['template'] = 'page.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "solid" :
-				$this->_pageInfo['template'] = 'page.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-			case "durable" :
-				$this->_pageInfo['template'] = 'page.html';
-				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-				break;
-		}
-
-		return $this->_pageInfo;
+		return $page;
 	}
 
 }

@@ -32,23 +32,14 @@ class PageInfo implements  IPageInfo {
 	protected $_pageInfo = array();
 
 	/**
-	 * Return page infos based on request URL
+	 * Return page infos based on its ID
 	 *
-	 * @param string $url requested URL
+	 * @param string|int $pageId requested URL
 	 * @return array
 	 */
-	public function getPageInfo($url) {
+	public function getPageInfo($pageId) {
 
-		$page = "index";
-		
-		$matches = array();
-		$regex = '~/index/([^/?]*)~i';
-		if(preg_match($regex, $url,$matches)){
-			$page = $matches[1];
-		}
-
-		
-		switch($page) {
+		switch($pageId) {
 			case "index" :
 				$this->_pageInfo['template'] = 'index.html';
 				$this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'HeadLine', 'Input' => null, 'Output' => 'headline_content'), array('Module' => 'ContentList', 'Input' => null, 'Output' => 'contentlist_content'), array('Module' => 'Carrousel', 'Input' => null, 'Output' => 'carousel_content'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));

@@ -30,25 +30,23 @@ class IndexController extends AbstractController {
 	 */
 	protected $_pageParams = array();
 
-	public function init() {
-		parent::init();
-
-		$this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
-		$this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
-		
-		$defaultNamespace = new Zend_Session_Namespace('Default');
-		$lang = $defaultNamespace->lang;
-		$this->_serviceTemplate->init($lang);
-
-	}
 
 	/**
 	 * Main Action : render the Front Office view
 	 */
 	public function indexAction() {
 
+		$this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
+		$this->_servicePageInfo = Rubedo\Services\Manager::getService('PageInfo');
+		$this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
+		
+		$defaultNamespace = new Zend_Session_Namespace('Default');
+		$lang = $defaultNamespace->lang;
+		$this->_serviceTemplate->init($lang);
+
 		$calledUri = $this->getRequest()->getRequestUri();
-		$this->_pageParams = $this->_serviceUrl->getPageInfo($calledUri);
+		$pageId = $this->_serviceUrl->getPageId($calledUri);
+		$this->_pageParams = $this->_servicePageInfo->getPageInfo($pageId);
 		
 		$defaultNamespace = new Zend_Session_Namespace('Default');
 		$lang = $defaultNamespace->lang;
