@@ -23,30 +23,49 @@ use Rubedo\Interfaces\Templates\IFrontOfficeTemplates;
  * @category Rubedo
  * @package Rubedo
  */
-class FrontOfficeTemplates implements  IFrontOfficeTemplates {
+class FrontOfficeTemplates implements  IFrontOfficeTemplates
+{
 
-	protected $_twig;
+    /**
+     * twig environnelent object
+     * @var \Twig_Environment
+     */
+    protected $_twig;
 
-	protected $_options = array();
+    /**
+     * Twig options array
+     * @var array
+     */
+    protected $_options = array();
 
-	public function init($lang) {
-		$this->_options = array('templateDir' => APPLICATION_PATH . "/../data/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
-		if(isset($this->_service)) {
-			$this->_options = $this->_service->getCurrentOptions();
-		}
+    /**
+     * initialise Twig Context
+     * @param string $lang current language
+     */
+    public function init($lang = 'default') {
+        $this->_options = array('templateDir' => APPLICATION_PATH . "/../data/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
+        if(isset($this->_service)) {
+            $this->_options = $this->_service->getCurrentOptions();
+        }
 
-		$loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
-		$this->_twig = new \Twig_Environment($loader, $this->_options);
-		$this->_twig->addExtension(new \Twig_Extension_Translate($lang));
+        $loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
+        $this->_twig = new \Twig_Environment($loader, $this->_options);
+        $this->_twig->addExtension(new \Twig_Extension_Translate($lang));
 
-		$this->_twig->addExtension(new \Twig_Extension_Highlight());
+        $this->_twig->addExtension(new \Twig_Extension_Highlight());
 
-		$this->_twig->addExtension(new \Twig_Extension_Intl());
-	}
+        $this->_twig->addExtension(new \Twig_Extension_Intl());
+    }
 
-	public function render($template, array $vars) {
-		$templateObj = $this->_twig->loadTemplate($template);
-		return $templateObj->render($vars);
-	}
+    /**
+     * render a twig template given an array of data
+     * @param string $template template name
+     * @param array $vars array of data to be rendered
+     * @return string HTML produced by twig
+     */
+    public function render($template, array $vars) {
+        $templateObj = $this->_twig->loadTemplate($template);
+        return $templateObj->render($vars);
+    }
 
 }

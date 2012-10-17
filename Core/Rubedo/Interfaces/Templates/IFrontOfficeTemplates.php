@@ -22,6 +22,7 @@ namespace Rubedo\Interfaces\Templates;
  * @category Rubedo
  * @package Rubedo
  */
-Interface IFrontOfficeTemplates {
+Interface IFrontOfficeTemplates
+{
 
 }
