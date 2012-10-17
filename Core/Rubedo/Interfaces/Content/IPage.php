@@ -12,17 +12,17 @@
  * @license yet to be written
  * @version $Id$
  */
-namespace Rubedo\Interfaces\Router;
+namespace Rubedo\Interfaces\Content;
 
 /**
- * Front Office URL service
+ * Page service
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-Interface IPageInfo {
+Interface IPage {
 
 	/**
 	 * Return page infos based on its ID

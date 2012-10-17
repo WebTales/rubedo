@@ -12,18 +12,18 @@
  * @license yet to be written
  * @version $Id$
  */
-namespace Rubedo\Router;
+namespace Rubedo\Content;
 
-use Rubedo\Interfaces\Router\IPageInfo;
+use Rubedo\Interfaces\Content\IPage;
 /**
- * Front Office URL service
+ * Page service
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-class PageInfo implements  IPageInfo
+class Page implements  IPage
 {
 
     /**

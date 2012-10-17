@@ -38,9 +38,9 @@ class IndexController extends AbstractController {
 		
 		/**
 		 * page info service
-		 * @var \Rubedo\Interfaces\Router\IPageInfo
+		 * @var \Rubedo\Interfaces\Content\IPage
 		 */
-		protected $_servicePageInfo;
+		protected $_servicePage;
 		
 		/**
 		 * FO Templates service
@@ -60,7 +60,7 @@ class IndexController extends AbstractController {
 	public function indexAction() {
 
 		$this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
-		$this->_servicePageInfo = Rubedo\Services\Manager::getService('PageInfo');
+		$this->_servicePage = Rubedo\Services\Manager::getService('Page');
 		$this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
 		$this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
 		
@@ -70,7 +70,7 @@ class IndexController extends AbstractController {
 
 		$calledUri = $this->getRequest()->getRequestUri();
 		$pageId = $this->_serviceUrl->getPageId($calledUri);
-		$this->_pageParams = $this->_servicePageInfo->getPageInfo($pageId);
+		$this->_pageParams = $this->_servicePage->getPageInfo($pageId);
 		
 		$defaultNamespace = new Zend_Session_Namespace('Default');
 		$lang = $defaultNamespace->lang;
