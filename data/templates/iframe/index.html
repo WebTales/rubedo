@@ -1,0 +1,6 @@
+{% macro render_iframe(data) %}
+<div id="{{ data.id }}">
+	<h2>{{ data.title }}</h2>
+	<iframe width="{{ data.width }}" height="{{ data.height }}" frameborder="{{ data.frameborder }}" scrolling="{{ data.scrolling }}" marginheight="{{ data.marginheight }}" marginwidth="{{ data.marginwidth }}" src="{{ data.src }}"></iframe>
+</div>	 
+{% endmacro %}

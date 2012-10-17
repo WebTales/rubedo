@@ -124,14 +124,15 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     public function testReadWithFilter()
     {
     	$items = array();
+		
         $item = static::$phactory->create('item',array('criteria'=>'jack'));
         $item['id'] = (string)$item['_id'];
         $item['version'] = 1;
         unset($item['_id']);
+		
         $items[] = $item;
 		
 		$otherItem = static::$phactory->create('item');
-		
 		
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
@@ -188,7 +189,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$otherItem = static::$phactory->create('item',array('criteria'=>'bear'));
 		
-		
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
@@ -200,7 +200,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     }
 	
-		/**
+	/**
      * test of the read feature
      *	Case with a simple filter
      */
@@ -227,6 +227,201 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($items, $readArray);
 
     }
+	
+		
+	/**
+	 * Test read with a sort
+	 * 
+	 * Case with a simple ascendant sort by user name
+	 */
+	public function testReadWithAscSort()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('user'=>'john', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('user'=>'marie', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('user'=>'alice', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+
+		$dataAccessObject->addSort(array('user' => 'asc'));
+
+		$expectedResult = array($item3, $item, $item2);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Test read with a sort
+	 * 
+	 * Case with a simple descendant sort by user name
+	 */
+	public function testReadWithDescSort()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('user'=>'john', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('user'=>'marie', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('user'=>'alice', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+
+		$dataAccessObject->addSort(array('user' => 'desc'));
+
+		$expectedResult = array($item2, $item, $item3);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Test read with two sort
+	 * 
+	 * Case with two ascendant sort by user name and user first name
+	 */
+	public function testReadWithTwoAscSort()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('name'=>'alice', 'firstname' => 'wonderland', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item',array('name'=>'alice', 'firstname' => 'ecila', 'version' => '1'));
+		$item4['id'] = (string)$item4['_id'];
+		unset($item4['_id']);
+
+		$dataAccessObject->addSort(array('name' => 'asc'));
+		$dataAccessObject->addSort(array('firstname' => 'asc'));
+
+		$expectedResult = array($item4, $item3, $item, $item2);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+
+	/**
+	 * Test read with two sort
+	 * 
+	 * Case with two descendant sort by user name and user first name
+	 */
+	public function testReadWithTwoDescSort()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('name'=>'alice', 'firstname' => 'wonderland', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item',array('name'=>'alice', 'firstname' => 'ecila', 'version' => '1'));
+		$item4['id'] = (string)$item4['_id'];
+		unset($item4['_id']);
+
+		$dataAccessObject->addSort(array('name' => 'desc'));
+		$dataAccessObject->addSort(array('firstname' => 'desc'));
+
+		$expectedResult = array($item2, $item, $item3, $item4);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * test if read function works fine with imposed fields
+	 * 
+	 * The result doesn't contain the password and first name field
+	 */
+	public function testReadWithIncludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$includedFields = array('name');
+		$sort = array('name' => 'asc');
+
+		$dataAccessObject->addToFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
+		
+		$expectedResult = array(array('name' => 'john', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'id' => $item2['id'], 'version' => $item2['version']));
+		$readArray = $dataAccessObject->read();
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * test if read function works fine with imposed fields
+	 * 
+	 * The result doesn't contain only the password field
+	 */
+	public function testReadWithExcludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$includedFields = array('password');
+		$sort = array('name' => 'asc');
+
+		$dataAccessObject->addToExcludeFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
+		
+		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
+		$readArray = $dataAccessObject->read();
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
 
     /**
      * Test of the create feature
@@ -846,19 +1041,20 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
+		
         $item = static::$phactory->create('item',array('version'=>1));
         $item['id'] = (string)$item['_id'];
-		$testId = $item['id'];
 		unset($item['_id']);
 		
 		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
 		$item2['id'] = (string)$item2['_id'];
-		
 		unset($item2['_id']);
 		
 		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
 		$item3['id'] = (string)$item3['_id'];
 		unset($item3['_id']);
+		
+		$testId = $item['id'];
         		
         $items = array($item2,$item3);
 
@@ -867,6 +1063,372 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($items, $readArray);
 
     }
+	
+	/**
+	 * test readChild with a filter
+	 * 
+	 * Case with a simple filter
+	 */
+	public function testReadChildWithFilter()
+	{
+       	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'item2'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'item3'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3);
+
+		$dataAccessObject->addFilter(array('name' => $item3['name']));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * test readChild with a greater than filter
+	 * 
+	 * Case with a greater than filter
+	 */
+	public function testReadChildWithFilterGreaterThan()
+	{
+       	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item2);
+
+		$dataAccessObject->addFilter(array('version'=> array('$gt'=>1)));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+     * test readChild with a regexp filter
+	 * 
+	 * Case with a regexp filter
+     */
+    public function testReadChildWithFilterRegexp()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Update'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Creation'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item2);
+
+		$dataAccessObject->addFilter(array('name'=> array('$regex' => new \MongoRegex('/Up.*/i'))));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+	
+	/**
+     * test readChild with two filter
+	 * 
+	 * Case with two filter
+     */
+    public function testReadChildWithTwoFilter()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Update'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Creation'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3);
+
+		$dataAccessObject->addFilter(array('version'=> array('$lte'=>5)));
+		$dataAccessObject->addFilter(array('name'=> array('$regex' => new \MongoRegex('/Cre.*/i'))));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+	
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with ascendant sort
+     */
+    public function testReadChildWithAscSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Update'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2, 'name'=>'Creation'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3, $item2);
+
+		$dataAccessObject->addSort(array('version' => 'asc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+	
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with descendant sort
+     */
+    public function testReadChildWithDescSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Update'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Creation'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3, $item2);
+
+		$dataAccessObject->addSort(array('version' => 'desc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+	
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with two ascendant sort
+     */
+    public function testReadChildWithTwoAscSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Creation'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Update'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2, 'name'=>'Creation'));
+		$item4['id'] = (string)$item4['_id'];
+		unset($item4['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item4, $item2, $item3);
+
+		$dataAccessObject->addSort(array('version' => 'asc'));
+		$dataAccessObject->addSort(array('name' => 'asc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+
+	/**
+     * test readChild with sort
+	 * 
+	 * Case with two descendant sort
+     */
+    public function testReadChildWithTwoDescSort()
+    {
+    	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Creation'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>3, 'name'=>'Update'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>2, 'name'=>'Creation'));
+		$item4['id'] = (string)$item4['_id'];
+		unset($item4['_id']);
+		
+		$testId = $item['id'];
+        		
+        $expectedResult = array($item3, $item2, $item4);
+
+		$dataAccessObject->addSort(array('version' => 'desc'));
+		$dataAccessObject->addSort(array('name' => 'desc'));
+		
+		$readArray = $dataAccessObject->readChild($testId);
+		
+		$this->assertEquals($expectedResult, $readArray);
+
+    }
+
+	/**
+	 * test if readChild function works fine with imposed fields
+	 */
+	public function testReadChildWithIncludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Creation'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'],'version'=>1, 'name'=>'Update'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$includedFields = array('name');
+		$sort = array('name' => 'asc');
+
+		$dataAccessObject->addToFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
+		
+		//contain the expected result of readChild fonction
+		$expectedResult = array(array('name' => 'Creation', 'id' => $item2['id'], 'version' => $item2['version']), array('name' => 'Update', 'id' => $item3['id'], 'version' => $item3['version']));
+		$readArray = $dataAccessObject->readChild($item['id']);
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * test if readChild function works fine with imposed fields
+	 */
+	public function testReadChildWithExcludedField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$includedFields = array('password');
+		$sort = array('name' => 'asc');
+
+		$dataAccessObject->addToExcludeFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
+		
+		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
+		$readArray = $dataAccessObject->read();
+
+		$this->assertEquals($expectedResult, $readArray);
+	}
+
+	/**
+	 * test of findOne
+	 */
+	public function testFindOne()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+        $item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('version'=>1, 'name'=>'item2'));
+        $item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$expectedResult = array($item);
+		
+		$value = array('name' => $item['name']);
+		$readArray = $dataAccessObject->findOne($value);
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
 	
 	/**
 	 * Check if getFilterArray return an array
@@ -975,6 +1537,290 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
 		$filterExample = array("key"=> array(new stdClass()));
 		$dataAccessObject->addFilter($filterExample);
+		
+	}
+	
+	/**
+	 * Check if getSortArray return an array
+	 */
+	public function testGetEmptySortArray(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$this->assertEquals('array',gettype($dataAccessObject->getSortArray()));
+	}
+	
+	/**
+	 * Simple add sort and read it again test
+	 */
+	public function testAddSort(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('name'=>1);
+		$dataAccessObject->addSort($sortExample);
+		
+		$this->assertEquals($sortExample,$dataAccessObject->getSortArray());
+		
+	}
+
+	/**
+	 * two conditions case for add sort
+	 */
+	public function testAddSortTwoItems(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('name'=>1);
+		$sortExample2 = array('firstname'=>1);
+		$sorts = array_merge($sortExample,$sortExample2);
+		$dataAccessObject->addSort($sortExample);
+		$dataAccessObject->addSort($sortExample2);
+		
+		$this->assertEquals($sorts,$dataAccessObject->getSortArray());
+		
+	}
+	
+	/**
+	 * Simple clear Sort Test
+	 */
+	public function testClearSort(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('name'=>1);
+		$sortExample2 = array('firstname'=>1);
+		$dataAccessObject->addSort($sortExample);
+		$dataAccessObject->addSort($sortExample2);
+		
+		$dataAccessObject->clearSort();
+		
+		$this->assertEquals(array(),$dataAccessObject->getSortArray());
+		
+	}
+	
+	/**
+	 * sort should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortNotBeEmpty(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array();
+		$dataAccessObject->addSort($sortExample);
+		
+	}
+	
+	/**
+	 * sort should not have more than one item
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortNotTwoArgs(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array('toto','titi');
+		$dataAccessObject->addSort($sortExample);
+		
+	}
+
+	/**
+	 * sort should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortOnlyOneArrayChild(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array("key"=>array('titi','toto'));
+		$dataAccessObject->addSort($sortExample);
+		
+	}
+	
+	/**
+	 * sort should not be empty
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddSortOnlyArrayOrScalarChild(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$sortExample = array("key"=> array(new stdClass()));
+		$dataAccessObject->addSort($sortExample);
+		
+	}
+	
+	/**
+	 * Simple test to add a field in the array and read it after
+	 */
+	public function testAddFieldInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$fieldExemple = array('name' => true);
+		
+		$dataAccessObject->addToFieldList(array('name'));
+		
+		$readArray = $dataAccessObject->getFieldList();
+		
+		$this->assertEquals($fieldExemple, $readArray);
+	}
+	
+	/**
+	 * Simple test to add two fields in the array and read it after
+	 */
+	public function testAddTwoFieldsInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$fieldExemple = array('name' => true);
+		$fieldExemple2 = array('firstname' => true);
+		
+		$dataAccessObject->addToFieldList(array('name' ));
+		$dataAccessObject->addToFieldList(array('firstname'));
+		
+		$expectedResult = array_merge($fieldExemple, $fieldExemple2);
+		$readArray = $dataAccessObject->getFieldList();
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Remove one field in the fieldList array
+	 */
+	public function testRemoveField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+				
+		$dataAccessObject->addToFieldList(array('name'));
+		$dataAccessObject->removeFromFieldList(array('name'));
+		
+		$readArray = $dataAccessObject->getFieldList();
+		
+		$this->assertEquals(array(), $readArray);
+	}
+	
+	/**
+	 * Clear the field list
+	 */
+	 public function testClearFieldList()
+	 {
+	 	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->clearFieldList();
+	 }
+
+	/**
+	 * fieldList can't be an array in another array
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddFieldOnlyStringOrBool(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$fieldExample = array("key"=> array(new stdClass()));
+		$dataAccessObject->addToFieldList($fieldExample);
+		
+	}
+	
+	/**
+	 * Simple test to add a field list in the excludeFieldList array and read it after
+	 */
+	public function testAddExcludeFieldInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password', 'dateOfBirth');
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		
+		$expectedResult = array('password' => false, 'dateOfBirth' => false);
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Simple test to add two fields list in the excludeFieldList array and read it after
+	 */
+	public function testAddTwoExcludeFieldsInList(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password', 'dateOfBirth');
+		$excludeFieldExemple2 = array('firstname', 'age');
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple2);
+		
+		$expectedResult = array('password' => false, 'dateOfBirth' => false, 'firstname' => false, 'age' => false);
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Remove a field list in the excludeFieldList array
+	 */
+	public function testRemoveExcludeField()
+	{
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password', 'firstname');
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		
+		$dataAccessObject->removeFromExcludeFieldList(array('firstname'));
+		
+		$expectedResult = array('password' => false);
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Clear the exclude field list
+	 */
+	 public function testClearExcludeFieldList()
+	 {
+	 	$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array('password', 'firstname');
+		
+		$dataAccessObject->addToExcludeFieldList($excludeFieldExemple);
+		
+		$dataAccessObject->clearExcludeFieldList();
+		
+		$readArray = $dataAccessObject->getExcludeFieldList();
+		
+		$this->assertEquals(array(), $readArray);
+	 }
+
+	/**
+	 * excludeFieldList can't be an array in another array
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddExcludeFieldOnlyStringOrBool(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$excludeFieldExemple = array("key" => array('toto', 'titi'));
+		$dataAccessObject->addToFieldList($excludeFieldExemple);
+	}
+	
+	/**
+	 * excludeFieldList can't be an empty array
+	 * @expectedException \Rubedo\Exceptions\DataAccess
+	 */
+	public function testAddExcludeFieldNotempty(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$dataAccessObject->addToExcludeFieldList(array());
 		
 	}
 

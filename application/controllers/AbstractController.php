@@ -22,24 +22,25 @@
  * @category Rubedo
  * @package Rubedo
  */
-abstract class AbstractController extends Zend_Controller_Action
-{
+abstract class AbstractController extends Zend_Controller_Action {
 
-    /**
-     * Shared init for all controller
-     *
-     * Implements Access Control
-     */
-    public function init()
-    {
-        $serviceAcl = \Rubedo\Services\Manager::getService('Acl');
-        $hasAccess = $serviceAcl->hasAccess('controller.' . $this->getRequest()->getControllerName() . '.' . $this->getRequest()->getActionName());
+	/**
+	 * Shared init for all controller
+	 *
+	 * Implements Access Control
+	 */
+	public function init() {
+		$serviceAcl = \Rubedo\Services\Manager::getService('Acl');
+		$hasAccess = $serviceAcl->hasAccess('controller.' . $this->getRequest()->getControllerName() . '.' . $this->getRequest()->getActionName());
 
-        if (!$hasAccess) {
-            throw new \Zend_Acl_Exception("Access Refused To current Controller", 1);
+		if(!$hasAccess) {
+			throw new \Zend_Acl_Exception("Access Refused To current Controller", 1);
 
-        }
+		}
 
-    }
+		$this->getHelper('ViewRenderer')->setNoRender();
+		$this->getHelper('Layout')->disableLayout();
+
+	}
 
 }

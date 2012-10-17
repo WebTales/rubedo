@@ -13,8 +13,8 @@
  * @version $Id$
  */
 
-require_once('DataAccessController.php');
- 
+require_once ('DataAccessController.php');
+
 /**
  * Controller providing CRUD API for the users JSON
  *
@@ -26,14 +26,15 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_UsersController extends Backoffice_DataAccessController
-{
-    /**
-     * Name of the store which is also to the collection name
-     * 
-     * @see Backoffice_DataAccessController::$_store
-     * @var string
-     */
-    protected $_store = 'Users';
+class Backoffice_UsersController extends Backoffice_DataAccessController {
+	/**
+	 * Name of the store which is also to the collection name
+	 *
+	 * @see Backoffice_DataAccessController::$_store
+	 * @var string
+	 */
+	protected $_store = 'Users';
+
+
 
 }

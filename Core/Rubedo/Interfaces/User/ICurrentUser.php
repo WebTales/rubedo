@@ -27,31 +27,31 @@ namespace Rubedo\Interfaces\User;
  */
 interface ICurrentUser
 {
-	/**
-	 * Return the authenticated user array
-	 * 
-	 * @return array
-	 */
+    /**
+     * Return the authenticated user array
+     *
+     * @return array
+     */
     public function getCurrentUser();
-	
-	/**
-	 * Return the current user short info array
-	 * 
-	 * @return array
-	 */
-	public function getCurrentUserSummary();
-	
-	/**
-	 * Check if a user is authenticated
-	 * 
-	 * @return boolean
-	 */
-	public function isAuthenticated();
-	
-	/**
-	 * Fetch the current user information from the data storage
-	 * 
-	 * @return array
-	 */
-	public function fetchCurrentUser();
+
+    /**
+     * Return the current user short info array
+     *
+     * @return array
+     */
+    public function getCurrentUserSummary();
+
+    /**
+     * Check if a user is authenticated
+     *
+     * @return boolean
+     */
+    public function isAuthenticated();
+
+    /**
+     * Fetch the current user information from the data storage
+     *
+     * @return array
+     */
+    public function fetchCurrentUser();
 }

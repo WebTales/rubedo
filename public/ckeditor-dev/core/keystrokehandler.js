@@ -1,0 +1,131 @@
+﻿/**
+ * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.html or http://ckeditor.com/license
+ */
+
+/**
+ * Controls keystrokes typing in an editor instance.
+ *
+ * @class
+ * @constructor Creates a keystrokeHandler class instance.
+ * @param {CKEDITOR.editor} editor The editor instance.
+ */
+CKEDITOR.keystrokeHandler = function( editor ) {
+	if ( editor.keystrokeHandler )
+		return editor.keystrokeHandler;
+
+	/**
+	 * List of keystrokes associated to commands. Each entry points to the
+	 * command to be executed.
+	 */
+	this.keystrokes = {};
+
+	/**
+	 * List of keystrokes that should be blocked if not defined at
+	 * {@link #keystrokes}. In this way it is possible to block the default
+	 * browser behavior for those keystrokes.
+	 */
+	this.blockedKeystrokes = {};
+
+	this._ = {
+		editor: editor
+	};
+
+	return this;
+};
+
+(function() {
+	var cancel;
+
+	var onKeyDown = function( event ) {
+			// The DOM event object is passed by the "data" property.
+			event = event.data;
+
+			var keyCombination = event.getKeystroke();
+			var command = this.keystrokes[ keyCombination ];
+			var editor = this._.editor;
+
+			cancel = ( editor.fire( 'key', { keyCode: keyCombination } ) === false );
+
+			if ( !cancel ) {
+				if ( command ) {
+					var data = { from: 'keystrokeHandler' };
+					cancel = ( editor.execCommand( command, data ) !== false );
+				}
+
+				if ( !cancel )
+					cancel = !!this.blockedKeystrokes[ keyCombination ];
+			}
+
+			if ( cancel )
+				event.preventDefault( true );
+
+			return !cancel;
+		};
+
+	var onKeyPress = function( event ) {
+			if ( cancel ) {
+				cancel = false;
+				event.data.preventDefault( true );
+			}
+		};
+
+	CKEDITOR.keystrokeHandler.prototype = {
+		/**
+		 * Attaches this keystroke handle to a DOM object. Keystrokes typed
+		 * over this object will get handled by this keystrokeHandler.
+		 *
+		 * @param {CKEDITOR.dom.domObject} domObject The DOM object to attach to.
+		 */
+		attach: function( domObject ) {
+			// For most browsers, it is enough to listen to the keydown event
+			// only.
+			domObject.on( 'keydown', onKeyDown, this );
+
+			// Some browsers instead, don't cancel key events in the keydown, but in the
+			// keypress. So we must do a longer trip in those cases.
+			if ( CKEDITOR.env.opera || ( CKEDITOR.env.gecko && CKEDITOR.env.mac ) )
+				domObject.on( 'keypress', onKeyPress, this );
+		}
+	};
+})();
+
+/**
+ * A list associating keystrokes to editor commands. Each element in the list
+ * is an array where the first item is the keystroke, and the second is the
+ * name of the command to be executed.
+ *
+ *		// This is actually the default value.
+ *		config.keystrokes = [
+ *			[ CKEDITOR.ALT + 121, 'toolbarFocus' ],				// ALT + F10
+ *			[ CKEDITOR.ALT + 122, 'elementsPathFocus' ],		// ALT + F11
+ *
+ *			[ CKEDITOR.SHIFT + 121, 'contextMenu' ],			// SHIFT + F10
+ *
+ *			[ CKEDITOR.CTRL + 90, 'undo' ],						// CTRL + Z
+ *			[ CKEDITOR.CTRL + 89, 'redo' ],						// CTRL + Y
+ *			[ CKEDITOR.CTRL + CKEDITOR.SHIFT + 90, 'redo' ],	// CTRL + SHIFT + Z
+ *
+ *			[ CKEDITOR.CTRL + 76, 'link' ],						// CTRL + L
+ *
+ *			[ CKEDITOR.CTRL + 66, 'bold' ],						// CTRL + B
+ *			[ CKEDITOR.CTRL + 73, 'italic' ],					// CTRL + I
+ *			[ CKEDITOR.CTRL + 85, 'underline' ],				// CTRL + U
+ *
+ *			[ CKEDITOR.ALT + 109, 'toolbarCollapse' ]			// ALT + -
+ *		];
+ *
+ * @cfg {Array} [keystrokes=see an example]
+ * @member CKEDITOR.config
+ */
+
+/**
+ * Fired when any keyboard key (or combination) is pressed into the editing area.
+ *
+ * @event key
+ * @member CKEDITOR.editor
+ * @param data
+ * @param {Number} data.keyCode A number representing the key code (or combination).
+ * It is the sum of the current key code and the {@link CKEDITOR#CTRL}, {@link CKEDITOR#SHIFT}
+ * and {@link CKEDITOR#ALT} constants, if those are pressed.
+ */

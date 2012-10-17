@@ -82,7 +82,7 @@ class Backoffice_DataAccessController extends AbstractController {
 	 * Option : json is made human readable
 	 * @param mixed $data data to be json encoded
 	 */
-	private function _returnJson($data) {
+	protected function _returnJson($data) {
 		// disable layout and set content type
 		$this -> getHelper('Layout') -> disableLayout();
 		$this -> getHelper('ViewRenderer') -> setNoRender();
@@ -99,11 +99,32 @@ class Backoffice_DataAccessController extends AbstractController {
 	 * The default read Action
 	 *
 	 * Return the content of the collection, get filters from the request
-	 * params
+	 * params, get sort from request params
 	 *
 	 */
 	public function indexAction() {
+		$filterJson = $this -> getRequest() -> getParam('filter');
+		if (isset($filterJson)) {
+			$filters = Zend_Json::decode($filterJson);
+			foreach ($filters as $value) {
+				if (!(isset($value["operator"]))) {
+					$this -> _dataReader -> addFilter(array($value["property"] => $value["value"]));					
+				}
+				else if ($value["operator"] == 'like') {
+					$this -> _dataReader -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
+				}
 
+			}
+		}
+		$sortJson = $this -> getRequest() -> getParam('sort');
+		if (isset($sortJson)) {
+			$sort = Zend_Json::decode($sortJson);
+			foreach ($sort as $value) {
+
+					$this -> _dataReader -> addSort(array($value["property"] => strtolower($value["direction"])));				
+
+			}
+		}		
 		$dataValues = $this -> _dataReader -> read();
 
 		$response = array();

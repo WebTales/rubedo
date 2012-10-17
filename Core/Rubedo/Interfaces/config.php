@@ -29,11 +29,16 @@ class config
      * @var array array service name => interface name
      */
     protected static $_interfaceArray = array(
-    'MongoDataAccess' 	=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess',
-    'ElasticDataSearch' => 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
-	'Acl'				=>	'Rubedo\\Interfaces\\Acl\\IAcl',
-	'CurrentUser'		=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
-	'CurrentTime'		=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',	
+
+	    'MongoDataAccess' 		=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
+	    'ElasticDataSearch' => 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
+	    'Acl'					=>	'Rubedo\\Interfaces\\Acl\\IAcl',
+		'CurrentUser'			=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
+		'CurrentTime'			=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',
+		'Url'					=>	'Rubedo\\Interfaces\\Router\\IUrl',
+		'PageInfo'				=>	'Rubedo\\Interfaces\\Router\\IPageInfo',
+		'FrontOfficeTemplates'	=>	'Rubedo\\Interfaces\\Templates\\IFrontOfficeTemplates',
+		'Block'					=>	'Rubedo\\Interfaces\\Content\\IBlock',
 	);
 
     /**
