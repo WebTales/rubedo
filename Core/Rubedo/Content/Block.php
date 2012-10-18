@@ -118,10 +118,8 @@ class Block implements IBlock
      */
     protected function getCarrousel() {
 
-        $defaultNamespace = new \Zend_Session_Namespace('Default');
-        if (!isset($defaultNamespace->lang))
-            $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;   
+        $session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');  
 		
 		$headerId = '507ff6a8add92a5809000000';
 		$header = $this->getContentById($headerId);
@@ -216,10 +214,8 @@ class Block implements IBlock
         $fr = array('title' => 'Plan d\'accès', 'width' => 526, 'height' => 366, 'frameborder' => 0, 'scrolling' => 'no', 'marginheight' => 0, 'marginwidth' => 0, 'src' => 'http://maps.google.fr/maps?georestrict=input_srcid:d6c0e9367f692930&hl=fr&ie=UTF8&view=map&cid=4303835548001045871&q=Incubateur+Centrale+Paris&ved=0CBkQpQY&ei=gILZTMuBH8Xujgf2ypj_CA&hq=Incubateur+Centrale+Paris&hnear=&iwloc=A&sll=46.75984,1.738281&sspn=11.232446,19.753418&output=embed', );
         $en = array('title' => 'Area map', 'width' => 526, 'height' => 366, 'frameborder' => 0, 'scrolling' => 'no', 'marginheight' => 0, 'marginwidth' => 0, 'src' => 'http://maps.google.fr/maps?georestrict=input_srcid:d6c0e9367f692930&hl=en&ie=UTF8&view=map&cid=4303835548001045871&q=Incubateur+Centrale+Paris&ved=0CBkQpQY&ei=gILZTMuBH8Xujgf2ypj_CA&hq=Incubateur+Centrale+Paris&hnear=&iwloc=A&sll=46.75984,1.738281&sspn=11.232446,19.753418&output=embed', );
 
-        $defaultNamespace = new \Zend_Session_Namespace('Default');
-        if (!isset($defaultNamespace->lang))
-            $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;
+        $session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');
 
         $output = $$lang;
         $output['id'] = $id;
@@ -247,10 +243,9 @@ class Block implements IBlock
         $fr = array( array('id' => 1, 'type' => 'link', 'caption' => 'A propos', 'href' => '#about', 'colapse' => true, 'modal' => true, 'icon' => 'icon-info-sign'), array('id' => 2, 'type' => 'link', 'caption' => 'Contact', 'href' => '/index/contact', 'colapse' => true, 'modal' => false, 'icon' => 'icon-envelope'), array('id' => 3, 'type' => 'dropdown', 'caption' => 'Rubedo à la loupe', 'colapse' => true, 'modal' => false, 'icon' => 'icon-zoom-in', 'list' => array( array('caption' => 'Mobilité', 'href' => '/index/responsive'), array('caption' => 'Accessibilité', 'href' => '/index/accessible'), array('caption' => 'Performances', 'href' => '/index/performant'), array('caption' => 'Ergonomie', 'href' => '/index/ergonomic'), array('caption' => 'Richesse', 'href' => '/index/rich'), array('caption' => 'Extensibilité', 'href' => '/index/extensible'), array('caption' => 'Robustesse', 'href' => '/index/solid'), array('caption' => 'Pérénité', 'href' => '/index/durable'))));
         $en = array( array('id' => 1, 'type' => 'link', 'caption' => 'About', 'href' => '#about', 'colapse' => true, 'modal' => true, 'icon' => 'icon-info-sign'), array('id' => 2, 'type' => 'link', 'caption' => 'Contact', 'href' => '/index/contact', 'colapse' => true, 'modal' => false, 'icon' => 'icon-envelope'), array('id' => 3, 'type' => 'dropdown', 'caption' => 'Close-up on Rubedo', 'colapse' => true, 'modal' => false, 'icon' => 'icon-zoom-in', 'list' => array( array('caption' => 'Mobile', 'href' => '/index/responsive'), array('caption' => 'Accessible', 'href' => '/index/accessible'), array('caption' => 'Performant', 'href' => '/index/performant'), array('caption' => 'Ergonomic', 'href' => '/index/ergonomic'), array('caption' => 'Rich', 'href' => '/index/rich'), array('caption' => 'Extensible', 'href' => '/index/extensible'), array('caption' => 'Solid', 'href' => '/index/solid'), array('caption' => 'Durable', 'href' => '/index/durable'))));
 
-        $defaultNamespace = new \Zend_Session_Namespace('Default');
-        if (!isset($defaultNamespace->lang))
-            $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;
+		$session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');
+		
 
         $output["id"] = $id;
         $output["responsive"] = $responsive;
@@ -371,10 +366,8 @@ class Block implements IBlock
             case 2 :
         }
 
-        $defaultNamespace = new \Zend_Session_Namespace('Default');
-        if (!isset($defaultNamespace->lang))
-            $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;
+        $session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');
 
         $output = $$lang;
         $output['id'] = $id;
@@ -390,10 +383,8 @@ class Block implements IBlock
 	 */
     protected function getSimpleContent($block_id) {
 
-        $defaultNamespace = new \Zend_Session_Namespace('Default');
-        if (!isset($defaultNamespace->lang))
-            $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;
+        $session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');
 
         $output = \DataController::getXMLAction($block_id, $lang);
         $output["id"] = $block_id;
