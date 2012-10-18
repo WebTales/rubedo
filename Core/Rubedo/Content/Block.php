@@ -162,16 +162,10 @@ class Block implements IBlock
     }
 
     protected function getHeadLine() {
-
-        $id = 99;
-        // block_id
-
-        $defaultNamespace = new \Zend_Session_Namespace('Default');
-        if (!isset($defaultNamespace->lang))
-            $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;
-
-        $output = \DataController::getXMLAction($id, $lang);
+		
+		$mongoId = '507fd4feadd92aa602000000';
+		$content = $this->getContentById('507fd4feadd92aa602000000');
+		$output = $content['champs'];
         $output["id"] = $id;
 
         return $output;
