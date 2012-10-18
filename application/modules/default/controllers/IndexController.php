@@ -65,15 +65,16 @@ class IndexController extends AbstractController
         $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
         $this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
 
-        $session = Manager::getService('Session');
+        $session = Rubedo\Services\Manager::getService('Session');
         $lang = $session->get('lang','fr');
+		$this->_serviceTemplate->init($lang);
 
         $calledUri = $this->getRequest()->getRequestUri();
         $pageId = $this->_serviceUrl->getPageId($calledUri);
         $this->_pageParams = $this->_servicePage->getPageInfo($pageId);
 
         $twigVar = array();
-        $twigVar['theme'] = $session->get('themeCSS');
+        $twigVar['theme'] = $session->get('themeCSS','default');
         $twigVar['lang'] = $lang;
 
         foreach ($this->_pageParams['blocks'] as $block) {
