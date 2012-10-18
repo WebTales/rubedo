@@ -22,76 +22,76 @@
  * @category Rubedo
  * @package Rubedo
  */
-class IndexController extends AbstractController {
+class IndexController extends AbstractController
+{
 
-	/**
-	 * Current front office page parameters
-	 * @var array
-	 */
-	protected $_pageParams = array();
+    /**
+     * Current front office page parameters
+     * @var array
+     */
+    protected $_pageParams = array();
 
-		/**
-		 * URL service
-		 * @var \Rubedo\Interfaces\Router\IUrl
-		 */
-		protected $_serviceUrl;
-		
-		/**
-		 * page info service
-		 * @var \Rubedo\Interfaces\Content\IPage
-		 */
-		protected $_servicePage;
-		
-		/**
-		 * FO Templates service
-		 * @var \Rubedo\Interfaces\Templates\IFrontOfficeTemplates
-		 */
-		protected $_serviceTemplate;
-		
-		/**
-		 * Block service
-		 * @var \Rubedo\Interfaces\Content\IBlock
-		 */
-		protected $_serviceBlock;
+    /**
+     * URL service
+     * @var \Rubedo\Interfaces\Router\IUrl
+     */
+    protected $_serviceUrl;
 
-	/**
-	 * Main Action : render the Front Office view
-	 */
-	public function indexAction() {
+    /**
+     * page info service
+     * @var \Rubedo\Interfaces\Content\IPage
+     */
+    protected $_servicePage;
 
-		$this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
-		$this->_servicePage = Rubedo\Services\Manager::getService('Page');
-		$this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
-		$this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
-		
-		$defaultNamespace = new Zend_Session_Namespace('Default');
-		$lang = $defaultNamespace->lang;
-		$this->_serviceTemplate->init($lang);
+    /**
+     * FO Templates service
+     * @var \Rubedo\Interfaces\Templates\IFrontOfficeTemplates
+     */
+    protected $_serviceTemplate;
 
-		$calledUri = $this->getRequest()->getRequestUri();
-		$pageId = $this->_serviceUrl->getPageId($calledUri);
-		$this->_pageParams = $this->_servicePage->getPageInfo($pageId);
-		
-		
-		$twigVar = array();
-		$twigVar['theme'] = $defaultNamespace->themeCSS;
-		$twigVar['lang'] = $lang;
-		
-		foreach($this->_pageParams['blocks'] as $block) {
-			$twigVar = array_merge($twigVar,$this->_serviceBlock->getBlockData($block,$this));
-		}
-		//die();
-		$content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
-	
-		$this->getResponse()->appendBody($content, 'default');
+    /**
+     * Block service
+     * @var \Rubedo\Interfaces\Content\IBlock
+     */
+    protected $_serviceBlock;
 
-	}
+    /**
+     * Main Action : render the Front Office view
+     */
+    public function indexAction() {
 
-	/**
-	 * @todo delete this ASAP : use model class instead of HELPERS !!!
-	 */
-	public function getProtectedHelper(){
-		return $this->_helper;
-	}
+        $this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
+        $this->_servicePage = Rubedo\Services\Manager::getService('Page');
+        $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
+        $this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
+
+        $defaultNamespace = new Zend_Session_Namespace('Default');
+        $lang = $defaultNamespace->lang;
+        $this->_serviceTemplate->init($lang);
+
+        $calledUri = $this->getRequest()->getRequestUri();
+        $pageId = $this->_serviceUrl->getPageId($calledUri);
+        $this->_pageParams = $this->_servicePage->getPageInfo($pageId);
+
+        $twigVar = array();
+        $twigVar['theme'] = $defaultNamespace->themeCSS;
+        $twigVar['lang'] = $lang;
+
+        foreach ($this->_pageParams['blocks'] as $block) {
+            $twigVar = array_merge($twigVar, $this->_serviceBlock->getBlockData($block, $pageId, $this));
+        }
+        //die();
+        $content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
+
+        $this->getResponse()->appendBody($content, 'default');
+
+    }
+
+    /**
+     * @todo delete this ASAP : use model class instead of HELPERS !!!
+     */
+    public function getProtectedHelper() {
+        return $this->_helper;
+    }
 
 }
