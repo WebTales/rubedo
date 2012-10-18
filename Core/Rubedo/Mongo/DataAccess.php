@@ -355,7 +355,7 @@ class DataAccess implements IDataAccess
         $data['id'] = (string)$data['_id'];
         unset($data['_id']);
 
-        return array($data);
+        return $data;
     }
 
     /**
@@ -364,7 +364,7 @@ class DataAccess implements IDataAccess
      * @return array
      */
     public function findById($contentId) {
-        return $this->findOne(array('id' => $contentId));
+        return $this->findOne(array('_id' => new \MongoId($contentId)));
     }
 
     /**

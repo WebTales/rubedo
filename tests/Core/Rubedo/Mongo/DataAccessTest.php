@@ -1422,7 +1422,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item2['id'] = (string)$item2['_id'];
 		unset($item2['_id']);
 		
-		$expectedResult = array($item);
+		$expectedResult = $item;
 		
 		$value = array('name' => $item['name']);
 		$readArray = $dataAccessObject->findOne($value);
