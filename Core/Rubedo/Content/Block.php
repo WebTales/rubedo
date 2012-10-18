@@ -32,6 +32,8 @@ Use Rubedo\Services\Manager;
 class Block implements IBlock
 {
     /**
+	 * Read service to access data in mongoDB
+	 *
      * @param  \Rubedo\Interfaces\Mongo\IDataAccess
      */
     protected $_dataReader;
@@ -82,7 +84,12 @@ class Block implements IBlock
 
         return array($output => $content);
     }
-
+	
+	/**
+	 * Get content by mongoId
+	 * @param int $contentId
+	 * @return array
+	 */
     public function getContentById($contentId) {
         $this->_dataReader = Manager::getService('MongoDataAccess');
         $this->_dataReader->init('Contents');
@@ -90,10 +97,15 @@ class Block implements IBlock
         return $content;
     }
 
-    public function getArrayOfContentByIds($ArrayId) {
+	/**
+	 * Get an array of contents by an array of mongoId
+	 * @param array $arrayId
+	 * @return array
+	 */
+    public function getArrayOfContentByIds($arrayId) {
         $this->_dataReader = Manager::getService('MongoDataAccess');
         $this->_dataReader->init('Contents');
-        $filterArray = array('id' => array('$in' => $ArrayId));
+        $filterArray = array('id' => array('$in' => $arrayId));
         $this->_dataReader->addFilter($filterArray);
         $contentArray = $this->_dataReader->read();
         return $contentArray;
@@ -141,6 +153,10 @@ class Block implements IBlock
         return $output;
     }
 
+	/**
+	 * Return data for breadcrumb block 
+	 * @return array
+	 */
     protected function getBreadCrumb() {
 
         $links = array( array('libelle' => 'Accueil', 'controller' => 'index', 'current' => false), array('libelle' => $this->_page, 'controller' => '#', 'current' => true));
@@ -148,6 +164,10 @@ class Block implements IBlock
         return ($links);
     }
 
+	/**
+	 * Return data for content list block 
+	 * @return array
+	 */
     protected function getContentList() {
         // get data
         $output = array();
@@ -172,6 +192,10 @@ class Block implements IBlock
 		return $data;
     }
 
+	/**
+	 * Return data for headline block 
+	 * @return array
+	 */
     protected function getHeadLine() {
 		
 		$mongoId = '507fd4feadd92aa602000000';
@@ -183,6 +207,10 @@ class Block implements IBlock
 
     }
 
+	/**
+	 * Return data for iframe block 
+	 * @return array
+	 */
     protected function getIFrame() {
         $id = 98324;
         $fr = array('title' => 'Plan d\'accès', 'width' => 526, 'height' => 366, 'frameborder' => 0, 'scrolling' => 'no', 'marginheight' => 0, 'marginwidth' => 0, 'src' => 'http://maps.google.fr/maps?georestrict=input_srcid:d6c0e9367f692930&hl=fr&ie=UTF8&view=map&cid=4303835548001045871&q=Incubateur+Centrale+Paris&ved=0CBkQpQY&ei=gILZTMuBH8Xujgf2ypj_CA&hq=Incubateur+Centrale+Paris&hnear=&iwloc=A&sll=46.75984,1.738281&sspn=11.232446,19.753418&output=embed', );
@@ -200,6 +228,10 @@ class Block implements IBlock
 
     }
 
+	/**
+	 * Return data for navBar block 
+	 * @return array
+	 */
     protected function getNavBar() {
         // images examples
         // TODO : load data from services
@@ -230,6 +262,11 @@ class Block implements IBlock
         return $output;
     }
 
+	/**
+	 * Return data for popin block 
+	 * @param string $block_id
+	 * @return array
+	 */
     protected function getPopIn($block_id) {
         switch($block_id) {
             case 1 :
@@ -346,6 +383,11 @@ class Block implements IBlock
 
     }
 
+	/**
+	 * Return data for simple content block 
+	 * @param string $block_id
+	 * @return array
+	 */
     protected function getSimpleContent($block_id) {
 
         $defaultNamespace = new \Zend_Session_Namespace('Default');
