@@ -31,9 +31,10 @@ class config
     protected static $_interfaceArray = array(
 
 	    'MongoDataAccess' 		=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
-	    'ElasticDataSearch' => 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
+	    'ElasticDataSearch' 	=> 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
 	    'Acl'					=>	'Rubedo\\Interfaces\\Acl\\IAcl',
 		'CurrentUser'			=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
+		'Session'				=>	'Rubedo\\Interfaces\\User\\ISession',
 		'CurrentTime'			=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',
 		'Url'					=>	'Rubedo\\Interfaces\\Router\\IUrl',
 		'Page'					=>	'Rubedo\\Interfaces\\Content\\IPage',
