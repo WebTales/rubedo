@@ -30,9 +30,8 @@ class DetailController extends AbstractController
 		
 		$id = $this->_getParam('id');
 		
-		$defaultNamespace = new Zend_Session_Namespace('Default');
-		if (!isset($defaultNamespace->lang)) $defaultNamespace->lang="fr";
-		$lang = $defaultNamespace->lang;
+		$session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');
 		
 		if (file_exists('data/'.$lang.'/'.$id.'.xml')) {
 			$twigVar['content'] =  DataController::getXMLAction($id,$lang);

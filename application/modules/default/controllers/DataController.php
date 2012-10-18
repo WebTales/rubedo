@@ -9,8 +9,8 @@ class DataController extends AbstractController
     {
 
 		// get current language
-		$defaultNamespace = new Zend_Session_Namespace('Default');
-		$lang = $defaultNamespace->lang;
+		$session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');
 		
 		// get data	
 		$postId = explode("_", $this->_request->getPost('id'));
