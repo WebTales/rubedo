@@ -19,6 +19,7 @@ namespace Rubedo\Content;
 require_once (APPLICATION_PATH . '/modules/default/controllers/DataController.php');
 
 Use Rubedo\Interfaces\Content\IBlock;
+Use Rubedo\Services\Manager;
 /**
  * Block Content Service
  *
@@ -31,6 +32,11 @@ Use Rubedo\Interfaces\Content\IBlock;
 class Block implements IBlock
 {
     /**
+     * @param  \Rubedo\Interfaces\Mongo\IDataAccess
+     */
+    protected $_dataReader;
+
+    /**
      * Return the data associated to a block given by config array
      * @param array $blockConfig bloc options (type, filter params...)
      * @param array $page parent page info
@@ -38,6 +44,7 @@ class Block implements IBlock
      * @return array block data to be rendered
      */
     public function getBlockData($blockConfig, $page, $parentController) {
+
         $this->_page = $page;
         $helper = 'helper' . $blockConfig['Module'];
         $output = $blockConfig['Output'];
@@ -69,11 +76,27 @@ class Block implements IBlock
                 break;
 
             default :
-                $content = $parentController->getProtectedHelper()->$helper($input);
+                $content = null;
                 break;
         }
 
         return array($output => $content);
+    }
+
+    public function getContentById($contentId) {
+        $this->_dataReader = Manager::getService('MongoDataAccess');
+        $this->_dataReader->init('Contents');
+        $content = $this->_dataReader->findById($contentId);
+        return $content;
+    }
+
+    public function getArrayOfContentByIds($ArrayId) {
+        $this->_dataReader = Manager::getService('MongoDataAccess');
+        $this->_dataReader->init('Contents');
+        $filterArray = array('id' => array('$in' => $ArrayId));
+        $this->_dataReader->addFilter($filterArray);
+        $contentArray = $this->_dataReader->read();
+        return $contentArray;
     }
 
     /**
@@ -94,8 +117,22 @@ class Block implements IBlock
         $output["title"] = $title['title'];
         $output["id"] = "200";
         $data = array();
-        for ($i = 0; $i <= 4; $i++)
-            $data[] = \DataController::getXMLAction($id[$i], $lang);
+
+        $this->_dataReader = Manager::getService('MongoDataAccess');
+        $this->_dataReader->init('Contents');
+        $filterArray = array('typeId' => '507fcc1cadd92af204000000');
+        $this->_dataReader->addFilter($filterArray);
+        $filterArray = array('etat' => 'publié');
+        $this->_dataReader->addFilter($filterArray);
+
+        $contentArray = $this->_dataReader->read();
+        foreach ($contentArray as $vignette) {
+            $fields = $vignette['champs'];
+            $fields['title'] = $fields['text'];
+            unset($fields['text']);
+            $data[] = $fields;
+        }
+
         $output["data"] = $data;
 
         return $output;
