@@ -359,6 +359,15 @@ class DataAccess implements IDataAccess
     }
 
     /**
+     * Find an item given by its literral ID
+     * @param string $contentId
+     * @return array
+     */
+    public function findById($contentId) {
+        return $this->findOne(array('id' => $contentId));
+    }
+
+    /**
      * Create an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
@@ -504,12 +513,34 @@ class DataAccess implements IDataAccess
             }
             if (is_array($value)) {
                 foreach ($value as $operator => $subvalue) {
-                    if (!in_array(gettype($subvalue), array('string', 'float', 'integer')) && !$subvalue instanceof \MongoRegex) {
+                    if (!in_array(gettype($subvalue), array('array', 'string', 'float', 'integer')) && !$subvalue instanceof \MongoRegex) {
                         throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
                     }
 
                 }
 
+            }
+            if ($name === 'id') {
+                $name = '_id';
+                if (is_string($value)) {
+                    $value = new \MongoID($value);
+                } elseif (is_array($value)) {
+                    if (isset($value['$in'])) {
+                        foreach ($value['$in'] as $key => $localId) {
+                            $value['$in'][$key] = new \MongoID($localId);
+                        }
+                    }
+                    if (isset($value['$nin'])) {
+                        foreach ($value['$nin'] as $key => $localId) {
+                            $value['$nin'][$key] = new \MongoID($localId);
+                        }
+                    }
+                    if (isset($value['$all'])) {
+                        foreach ($value['$all'] as $key => $localId) {
+                            $value['$all'][$key] = new \MongoID($localId);
+                        }
+                    }
+                }
             }
             //add validated input
             $this->_filterArray[$name] = $value;
