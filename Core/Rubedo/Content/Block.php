@@ -105,21 +105,23 @@ class Block implements IBlock
      * @return array
      */
     protected function getCarrousel() {
-        // get data
-
-        $id = array("201", "202", "203", "204", "205");
 
         $defaultNamespace = new \Zend_Session_Namespace('Default');
         if (!isset($defaultNamespace->lang))
             $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;
-        $title = \DataController::getXMLAction("200", $lang);
-        $output["title"] = $title['title'];
-        $output["id"] = "200";
-        $data = array();
+        $lang = $defaultNamespace->lang;   
+		
+		$headerId = '507ff6a8add92a5809000000';
+		$header = $this->getContentById($headerId);
+		$output["title"] = $header['text'];
+        $output["id"] = $headerId;
+        $data = array();     
 
         $this->_dataReader = Manager::getService('MongoDataAccess');
         $this->_dataReader->init('Contents');
+		
+
+		
         $filterArray = array('typeId' => '507fcc1cadd92af204000000');
         $this->_dataReader->addFilter($filterArray);
         $filterArray = array('etat' => 'publié');
@@ -130,6 +132,7 @@ class Block implements IBlock
             $fields = $vignette['champs'];
             $fields['title'] = $fields['text'];
             unset($fields['text']);
+			$fields['id'] = (string) $vignette['id'];
             $data[] = $fields;
         }
 
@@ -148,17 +151,25 @@ class Block implements IBlock
     protected function getContentList() {
         // get data
         $output = array();
-        $id = array("111", "112", "113", "114", "115", "116", "117", "118");
+		
+		$this->_dataReader = Manager::getService('MongoDataAccess');
+        $this->_dataReader->init('Contents');
+        $filterArray = array('typeId' => '507fea58add92a5108000000');
+        $this->_dataReader->addFilter($filterArray);
+        $filterArray = array('etat' => 'publié');
+        $this->_dataReader->addFilter($filterArray);
+		$this->_dataReader->addSort(array('text'=>'asc'));
 
-        $defaultNamespace = new \Zend_Session_Namespace('Default');
-        if (!isset($defaultNamespace->lang))
-            $defaultNamespace->lang = "fr";
-        $lang = $defaultNamespace->lang;
-
-        for ($i = 0; $i <= 7; $i++)
-            $output[] = \DataController::getXMLAction($id[$i], $lang);
-
-        return $output;
+		
+		$contentArray = $this->_dataReader->read();
+        foreach ($contentArray as $vignette) {
+            $fields = $vignette['champs'];
+            $fields['title'] = $fields['text'];
+            unset($fields['text']);
+			$fields['id'] = (string) $vignette['id'];
+            $data[] = $fields;
+        }
+		return $data;
     }
 
     protected function getHeadLine() {
@@ -166,7 +177,7 @@ class Block implements IBlock
 		$mongoId = '507fd4feadd92aa602000000';
 		$content = $this->getContentById('507fd4feadd92aa602000000');
 		$output = $content['champs'];
-        $output["id"] = $id;
+        $output["id"] = $mongoId;
 
         return $output;
 
