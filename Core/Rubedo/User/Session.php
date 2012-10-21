@@ -28,7 +28,7 @@ use Rubedo\Interfaces\User\ISession;
 class Session implements ISession
 {
 
-    protected static $_sessionName = 'default';
+    protected static $_sessionName = 'Default';
 
     protected $_sessionObject = null;
 
