@@ -1,0 +1,122 @@
+{% macro render_navbar(data) %}
+<div id="menu" class="navbar {% if data.position != 'none' %}navbar-{{ data.position }}{% endif %}">
+  <div class="navbar-inner">
+  	{% if data.responsive %}
+  	<div class="container-fluid">
+	<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	</a>
+	{% endif %}
+	<a class="brand" href="/">{{ data['brand'] }}</a>
+	{% if data.responsive %}
+	<!-- Everything you want hidden at 940px or less, place within here -->
+	<div class="nav-collapse">
+	{% endif %}
+    {% for component in data['components'] %} <!-- navbar component -->
+    <ul class="nav"> <!-- nav bar -->      	
+    {% if component.type == 'link' %} <!-- link component -->
+      <li {% if component.active %}class="active"{% endif %}> <!-- active link -->
+      	<a {% if component.modal %}data-toggle="modal"{% endif %} href="{{ component.href }}">
+        	{% if component.icon %}<i class="{{ component.icon }}"></i> {% endif %} <!-- icon -->
+   			{{ component.caption }}
+      	</a>
+      </li>
+    {% endif %} <!-- /link component -->
+    {% if component.type == 'dropdown' %} <!-- dropdown component -->
+	  <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        	{% if component.icon %}<i class="{{ component.icon }}"></i> {% endif %} <!-- icon -->
+        	{{ component.caption }} <b class="caret"></b>
+        </a>
+	    <ul class="dropdown-menu">
+	      {% for item in component['list'] %}
+	      <li>
+	      	<a href="{{ item.href }}">{{ item.caption }}</a>
+	      </li>
+	      {% endfor %}
+	    </ul>
+    </li>
+  	{% endif %} <!-- /dropdown component -->
+    </ul> <!-- /nav bar --> 
+    {% endfor %} <!-- /navbar component -->
+    {% for option in data['options'] %}
+    {% if option == 'langselector' %}
+   	<!-- langselector component -->
+       <div class="btn-group pull-right">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="icon-flag"></i> {{ "language"|trans }} 
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" id="langChooser">
+          <li><a href="fr">{{"french"|trans}}</a></li>
+          <li><a href="en">{{"english"|trans}}</a></li>
+        </ul>
+      </div>
+    <!-- /langselector component -->
+    {% endif %}
+    {% if option == 'themechooser' %}
+   	<!-- themechooser component-->
+      <div class="btn-group pull-right">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="icon-eye-open"></i> {{"change_theme"|trans}}
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" id="themeChooser">
+          <li><a href="default">{{"default"|trans}}</a></li>
+          <li class="divider"></li>
+          <li><a href="amelia">Amelia</a></li>
+          <li><a href="cerulean">Cerulean</a></li>
+          <li><a href="cyborg">Cyborg</a></li>
+          <li><a href="journal">Journal</a></li>
+          <li><a href="readable">Readable</a></li>
+          <li><a href="simplex">Simplex</a></li>
+          <li><a href="slate">Slate</a></li>
+          <li><a href="spacelab">Spacelab</a></li>
+          <li><a href="spruce">Spruce</a></li>
+          <li><a href="superhero">Superhero</a></li>
+          <li><a href="united">United</a></li>
+        </ul>
+      </div> 
+    <!-- /themechooser component-->
+    {% endif %}
+    {% if option == 'loginform' %}
+   	<!-- loginform component -->
+   	<!--
+      <div class="btn-group pull-right">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="icon-user"></i> Jbourdin
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#">{{"my_account"|trans}}</a></li>
+          <li class="divider"></li>
+          <li><a href="#">{{"sign_out"|trans}}</a></li>
+        </ul>
+      </div>
+      -->
+      <div class="btn-group pull-right" id="connect-btn"></div>
+      
+    <!-- /loginform component -->
+    {% endif %}
+    {% if option == 'search' %}
+    <!-- search component-->
+    	<div class="btn-group pull-right">
+	    	<form class="form-search" action="/result/index">
+			  <input type="text" class="input-medium search-query" name="search">
+			  <button type="submit" class="btn">{{"search"|trans}}</button>
+			</form>
+		</div>
+		
+	<!-- /search component-->
+    {% endif %}
+    {% endfor %}
+    {% if data.responsive %}
+ 	</div>
+ 	</div>
+  	{% endif %}
+  </div>
+</div>
+{% endmacro %}

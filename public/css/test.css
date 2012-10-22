@@ -1,0 +1,111 @@
+body {
+	background-color: #1E1913;
+	color: #FFFFFF;
+	font: normal 100% Cambria, Georgia, Serif;
+}
+
+#page {
+	width: 90%;	
+	margin: 0 auto 0;
+}
+
+#header {
+	background-color: #1E1930;
+	height: 350px;
+	background: url("../images/bandeau.jpg") no-repeat center 135px;
+}
+
+#menu {
+	position: relative;
+	top: 130px;
+	width: 70%;
+	height: 30px;
+	margin: 0 auto 0;
+}
+
+#menu ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#menu li {
+	float: left;
+	width: 20%;
+	text-align: center;
+	display: inline;
+}
+
+#menu a {
+	color: #221;
+	background-color: #F90;
+	font-family: Verdana, sans-serif;
+	font-size: 0.90em;
+	text-shadow: 0 1px 0 #D80;
+	line-height: 29px;
+	text-transform: uppercase;
+	text-decoration: none;
+	display: block;
+	border-bottom: 1px solid #C93;
+	border-top: 1px solid #FC7;
+}
+
+#menu a:hover,
+#menu a:focus {
+	background: #FFBB44;
+	border-top: 1px solid #FC7;
+	border-bottom: 1px solid #C93;
+}
+#menu .current a,
+#menu .current a:hover {
+	color: #FFF;
+	text-shadow: 0 1px 0 #D80;
+}
+
+#menu .current li a {
+	color: #221;
+	text-shadow: 0 1px 0 #FB6;
+}
+
+#main {
+
+
+
+}
+
+h1 {
+	font-family: Calibri, sans-serif;
+	font-size: 1.5em;
+	font-style: italic;
+	font-weight: bold;
+}
+
+h1 a {
+	font-family: Calibri, sans-serif;
+	font-size: 0.5em;
+	font-weight: normal;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	text-decoration: none;
+	
+}
+
+img {
+	max-width: 100%;
+}
+
+@media (max-width: 768px) {
+	#menu {
+		width: 35%;
+		margin: 0 30px 0;
+	}
+	
+	#menu li { float:none; }
+	#menu a	{ padding: 0 20px; text-align:left; }
+	
+}
+
+@media (max-width: 600px) {
+	#menu { margin: 0; width: 100%; }
+	#menu a { text-align:center; }
+}

@@ -1,0 +1,15 @@
+{% macro ariane(liens) %}
+
+	  <div class="row-fluid">
+        <div class="span12">
+            <ul class="breadcrumb">
+            	{% for lien in liens %}
+				<li {% if lien.current %}class="active"{% endif %}>
+                  <a href="/{{ lien.controller }}">{{ lien.libelle }}</a> <span class="divider">/</span>
+                </li>
+				{% endfor %}
+            </ul>
+        </div>
+      </div>
+      
+{% endmacro %}

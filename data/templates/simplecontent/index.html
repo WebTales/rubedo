@@ -1,0 +1,7 @@
+{% macro render_content(content) %}
+<h2 class="editable" id="{{ content.id }}_title">{{ content.title|raw }}</h2>
+<div class="editable" id="{{ content.id }}_paragraph">{{ content.paragraph|raw }}</div>
+{% if (content.link) %}
+<div class="editable" id="{{ content.id }}_link">{{ content.link|raw }}</div>
+{% endif %}
+{% endmacro %}

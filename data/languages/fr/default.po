@@ -1,0 +1,152 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rubedo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-10-06 16:55+0100\n"
+"PO-Revision-Date: 2012-10-06 16:56+0100\n"
+"Last-Translator: Nicolas Trenti <nicolas.trenti@webtales.fr>\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: translate\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: C:\\projets\\rubedo-frontoffice-ui\\cache\\twig\n"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/09/35/0e847a619661afdaede53b275e3d.php:78
+msgid "identifier_error"
+msgstr "Identifiants incorrects"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/09/35/0e847a619661afdaede53b275e3d.php:88
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:266
+msgid "my_account"
+msgstr "Mon compte"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/09/35/0e847a619661afdaede53b275e3d.php:90
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:271
+msgid "sign_out"
+msgstr "Se déconnecter"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/09/35/0e847a619661afdaede53b275e3d.php:106
+msgid "sign_in"
+msgstr "Connexion"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/1c/fa/5fcafd6ed1a2246f1ab94cb2ab8a.php:93
+msgid "close"
+msgstr "Fermer"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:37
+msgid "full_text_search"
+msgstr "Recherche plein texte"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:48
+msgid "ok"
+msgstr "Ok"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:54
+msgid "content_type"
+msgstr "Type de contenu"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:103
+msgid "author"
+msgstr "Auteur"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:152
+msgid "date"
+msgstr "Date"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:210
+msgid "no_result"
+msgstr "Aucun résultat."
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:222
+msgid "there_are"
+msgstr "Il y a"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:224
+msgid "there_is"
+msgstr "Il y a"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:232
+msgid "result_pl"
+msgstr "résultats"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:234
+msgid "result_sg"
+msgstr "résultat"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:246
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:283
+msgid "order_by_relevance"
+msgstr "Tri par pertinence"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:256
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:296
+msgid "order_by_date"
+msgstr "Tri par date"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:266
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:309
+msgid "order_by_author"
+msgstr "Tri par rédacteur"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:324
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:367
+msgid "all_on_one_page"
+msgstr "Tout sur une page"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:333
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:346
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:353
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:360
+msgid "by_page"
+msgstr "par page"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:419
+msgid "published_by"
+msgstr "Publié par"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/6e/c2/7ebab56fe1a88cff2cf116a1687a.php:424
+msgid "on"
+msgstr "le"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:197
+msgid "language"
+msgstr "Langue"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:204
+msgid "french"
+msgstr "Français"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:208
+msgid "english"
+msgstr "Anglais"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:225
+msgid "change_theme"
+msgstr "Changer de thème"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:232
+msgid "default"
+msgstr "Défaut"
+
+#: C:\projets\rubedo-frontoffice-ui\cache\twig/74/7a/4d4e56ab1773f6bc77244d2afe3c.php:292
+msgid "search"
+msgstr "Rechercher"
+
+#~ msgid "on_the"
+#~ msgstr "le"
+
+#~ msgid "your_search"
+#~ msgstr "Votre recherche"
+
+#~ msgid "title"
+#~ msgstr "Titre"
+
+#~ msgid "type"
+#~ msgstr "Type de contenu"
+
+#~ msgid "click_to_edit"
+#~ msgstr "Cliquer pour modifier"

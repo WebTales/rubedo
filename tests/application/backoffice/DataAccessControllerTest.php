@@ -31,17 +31,21 @@ class Backoffice_DataAccessControllerTest extends AbstractControllerTest
     {
         $mockService = $this->getMock('Rubedo\Mongo\DataAccess');
         $mockService->expects($this->once())->method('Read')->will($this->returnValue(array('id' => 1)));
+		//$mockService->expects($this->once())->method('addSort')->with($this->equalTo(array('name'=>'desc')));
 
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
 
         $front = Zend_Controller_Front::getInstance();
         $front->setParam('noErrorHandler', true);
+		
+		$this->getRequest()->setParam('sort', Zend_Json::encode(array('name'=>'desc')));
 
         $this->dispatch('/backoffice/data-access/index/store/fake');
 
         $this->assertModule('backoffice');
         $this->assertController('data-access');
         $this->assertAction('index');
+		$this->assertEquals('fake',$this->getRequest()->getParam('store'));
     }
 
     /**

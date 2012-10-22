@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content type="techno" id="202">
+  <title>MongoDB</title>
+  <lang>fr</lang>
+  <status>valid</status>
+  <version>1</version>
+  <dcreat/>
+  <authorcreat/>
+  <dmod/>
+  <authormod/>
+  <dpub>2012-09-03</dpub>
+  <deopub/>
+  <author>Didier Fanchon</author>
+  <taxonomy/>
+  <img>
+  	<![CDATA[<p><img alt="mongoDB" src="/img/mongoDB-logo.png" /></p>]]>
+  </img>
+  <description>
+  	<![CDATA[<p>La base documentaire NoSQL</p>
+
+<p>Edit&eacute; et support&eacute; par 10gen</p>]]>
+  </description>
+  <link/>
+  <canonical_url/>
+</content>

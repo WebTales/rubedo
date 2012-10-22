@@ -1,0 +1,10 @@
+{% macro render_headline(data) %}
+<div class="block headline">
+<div class="hero-unit">
+	<h1 class="editable" id="{{ data.id }}_title">{{ data.title|raw }}</h1>
+	<h2 class="editable" id="{{ data.id }}_subtitle">{{ data.subtitle|raw }}</h2>
+	<div class="editable" id="{{ data.id }}_paragraph">{{ data.paragraph|raw }}</div>
+	<div class="editable" id="{{ data.id }}_link">{{ data.link|raw }}</div>
+ </div>
+</div>
+{% endmacro %}
