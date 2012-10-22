@@ -145,6 +145,25 @@ interface IDataAccess
 	 public function clearSort();
 	 
 	 /**
+	 * Add a pagination condition
+     *
+     * @param $firstResult is the number of the first result displayed
+	 * @param $numberOfResults is the number of results displayed
+	 */
+	public function addPagination($firstResult, $numberOfResults);
+	
+	/**
+	 * Unset all pagination condition
+	 */
+	public function clearPagination();
+	
+	/**
+	 * Return the current array of conditions.
+     * @return array
+	 */
+	public function getPaginationArray();
+	 
+	 /**
      * Add to the field list the array passed in argument
      *
      * @param array $fieldList
