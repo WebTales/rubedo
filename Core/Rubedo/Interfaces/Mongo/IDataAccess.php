@@ -164,13 +164,6 @@ interface IDataAccess
 	public function getPaginationArray();
 
     /**
-     * Find child of a node tree
-     * @param $parentId id of the parent node
-     * @return array children array
-     */
-    public function readChild($parentId);
-
-    /**
      * Add to the field list the array passed in argument
      *
      * @param array $fieldList
