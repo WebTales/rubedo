@@ -77,6 +77,13 @@ class DataAccess implements IDataAccess {
      * @var array
      */
     protected $_sortArray = array();
+	
+	/**
+	 * Pagination conditions to be used when reading
+	 * 
+	 * @var array
+	 */
+	protected $_paginationArray = array();
 
     /**
      * Fields used when reading
@@ -175,6 +182,7 @@ class DataAccess implements IDataAccess {
     	//get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
+		$pagination = $this->getPaginationArray();
 		$includedFields = $this->getFieldList();
 		$excludedFields = $this->getExcludeFieldList();
 		
@@ -191,6 +199,12 @@ class DataAccess implements IDataAccess {
 		
 		//apply sort, paging, filter
 		$cursor->sort($sort);
+		if(!empty($pagination['firstResult'])){
+			$cursor->skip($pagination['firstResult']);
+		}
+		if(!empty($pagination['numberOfResults'])){
+			$cursor->limit($pagination['numberOfResults']);
+		}
 
 		//switch from cursor to actual array
         $data = iterator_to_array($cursor);
@@ -594,6 +608,32 @@ class DataAccess implements IDataAccess {
     public function getSortArray() {
         return $this->_sortArray;
     }
+	
+	/**
+	 * Add a pagination condition
+     *
+     * @param $firstResult is the number of the first result displayed
+	 * @param $numberOfResults is the number of results displayed
+	 */
+	public function addPagination($firstResult, $numberOfResults){
+		$this->_paginationArray['firstResult'] = $firstResult;
+		$this->_paginationArray['numberOfResults'] = $numberOfResults;
+	}
+	
+	/**
+	 * Unset all pagination condition
+	 */
+	public function clearPagination(){
+		$this->_paginationArray = array();
+	}
+	
+	/**
+	 * Return the current array of conditions.
+     * @return array
+	 */
+	public function getPaginationArray(){
+		return $this->_paginationArray;
+	}
 
     /**
      * Add to the field list the array passed in argument
