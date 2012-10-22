@@ -422,6 +422,86 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($expectedResult, $readArray);
 	}
+	
+	/**
+	 * Test if the pagination return expected results in function of the conditions 
+	 */
+	public function testReadWithPagination(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john','version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$sort = array('name' => 'asc');
+		
+		$dataAccessObject->addSort($sort);
+		$dataAccessObject->addPagination(1, 1);
+		$readArray = $dataAccessObject->read();
+		
+		$this->assertEquals(array($item2), $readArray);
+	}
+	
+	/**
+	 * Test if the pagination works without firstResult parameter
+	 * 
+	 * It allows you to start at 0, the default value
+	 */
+	public function testReadWithPaginationAndDefaultFirstResult(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john','version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$sort = array('name' => 'asc');
+		
+		$dataAccessObject->addSort($sort);
+		$dataAccessObject->addPagination(NULL, 1);
+		$readArray = $dataAccessObject->read();
+		
+		$this->assertEquals(array($item), $readArray);
+	}
+	
+	/**
+	 * Test if the pagination works without numberOfResults parameter
+	 * 
+	 * It allows you to don't limit the number of results
+	 */
+	public function testReadWithPaginationAndDefaultNumberOfResults(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item',array('name'=>'john','version' => '1'));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item',array('name'=>'marie', 'version' => '1'));
+		$item2['id'] = (string)$item2['_id'];
+		unset($item2['_id']);
+		
+		$item3 = static::$phactory->create('item',array('name'=>'carle', 'version' => '1'));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$sort = array('name' => 'asc');
+		
+		$dataAccessObject->addSort($sort);
+		$dataAccessObject->addPagination(1, NULL);
+		$readArray = $dataAccessObject->read();
+		
+		$this->assertEquals(array($item, $item2), $readArray);
+	}
 
     /**
      * Test of the create feature
@@ -1346,7 +1426,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-	 * test if readChild function works fine with imposed fields
+	 * test if readChild function works fine with included fields
 	 */
 	public function testReadChildWithIncludedField()
 	{
@@ -1379,29 +1459,33 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 	}
 	
 	/**
-	 * test if readChild function works fine with imposed fields
+	 * test if readChild function works fine with excluded fields
 	 */
 	public function testReadChildWithExcludedField()
 	{
 		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 		
-		$item = static::$phactory->create('item',array('name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
-		$item['id'] = (string)$item['_id'];
+		$item = static::$phactory->create('item',array('version'=>1, 'name'=>'item1'));
+        $item['id'] = (string)$item['_id'];
 		unset($item['_id']);
 		
-		$item2 = static::$phactory->create('item',array('name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+		$item2 = static::$phactory->create('item',array('parentId'=>$item['id'], 'name'=>'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => 1));
 		$item2['id'] = (string)$item2['_id'];
 		unset($item2['_id']);
 		
-		$includedFields = array('password');
+		$item3 = static::$phactory->create('item',array('parentId'=>$item['id'], 'name'=>'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => 1));
+		$item3['id'] = (string)$item3['_id'];
+		unset($item3['_id']);
+		
+		$excludedFields = array('password', 'parentId');
 		$sort = array('name' => 'asc');
 
-		$dataAccessObject->addToExcludeFieldList($includedFields);
+		$dataAccessObject->addToExcludeFieldList($excludedFields);
 		$dataAccessObject->addSort($sort);
 		
-		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
-		$readArray = $dataAccessObject->read();
+		$expectedResult = array(array('name' => 'john', 'firstname' => 'carter', 'id' => $item2['id'], 'version' => $item2['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item3['id'], 'version' => $item3['version']));
+		$readArray = $dataAccessObject->readChild($item['id']);
 
 		$this->assertEquals($expectedResult, $readArray);
 	}
@@ -1648,6 +1732,35 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		$sortExample = array("key"=> array(new stdClass()));
 		$dataAccessObject->addSort($sortExample);
 		
+	}
+	
+	/**
+	 * Test to add a pagination
+	 */
+	public function testAddPagination(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$expectedResult = array('firstResult' => 0, 'numberOfResults' => 2);
+		$dataAccessObject->addPagination(0, 2);
+		
+		$this->assertEquals($expectedResult, $dataAccessObject->getPaginationArray());
+	}
+	
+	/**
+	 * Test to clear the current pagination
+	 */
+	public function testClearPagination(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$expectedResult = array('firstResult' => 10, 'numberOfResults' => 5);
+		
+		$dataAccessObject->addPagination(0, 2);
+		$dataAccessObject->clearPagination();
+		$dataAccessObject->addPagination(10, 5);
+		
+		$this->assertEquals($expectedResult, $dataAccessObject->getPaginationArray());
 	}
 	
 	/**
