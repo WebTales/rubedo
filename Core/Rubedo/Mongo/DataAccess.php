@@ -80,11 +80,18 @@ class DataAccess implements IDataAccess
     protected $_sortArray = array();
 	
 	/**
-	 * Pagination conditions to be used when reading
+	 * Number of the first result
 	 * 
-	 * @var array
+	 * @var integer
 	 */
-	protected $_paginationArray = array();
+	protected $_firstResult = 0;
+	
+	/**
+	 * Number of results
+	 * 
+	 * @var integer
+	 */
+	protected $_numberOfResults = 0;
 
     /**
      * Fields used when reading
@@ -183,7 +190,8 @@ class DataAccess implements IDataAccess
         //get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
-		$pagination = $this->getPaginationArray();
+		$firstResult = $this->getFirstResult();
+		$numberOfResults = $this->getNumberOfResults();
 		$includedFields = $this->getFieldList();
 		$excludedFields = $this->getExcludeFieldList();
 		
@@ -200,13 +208,9 @@ class DataAccess implements IDataAccess
 		
 		//apply sort, paging, filter
 		$cursor->sort($sort);
-		if(!empty($pagination['firstResult'])){
-			$cursor->skip($pagination['firstResult']);
-		}
-		if(!empty($pagination['numberOfResults'])){
-			$cursor->limit($pagination['numberOfResults']);
-		}
-
+		$cursor->skip($firstResult);
+		$cursor->limit($numberOfResults);
+			
         //switch from cursor to actual array
         $data = iterator_to_array($cursor);
 
@@ -642,29 +646,59 @@ class DataAccess implements IDataAccess
     }
 	
 	/**
-	 * Add a pagination condition
+	 * Set the number of the first result displayed
      *
      * @param $firstResult is the number of the first result displayed
+	 */
+	public function setFirstResult($firstResult){
+		 if (gettype($firstResult) !== 'integer'){
+		 	throw new \Rubedo\Exceptions\DataAccess("firstResult should be an integer", 1);
+		 }
+		
+		$this->_firstResult = $firstResult;
+	}
+	
+	/**
+	 * Set the number of results displayed
+     *
 	 * @param $numberOfResults is the number of results displayed
 	 */
-	public function addPagination($firstResult, $numberOfResults){
-		$this->_paginationArray['firstResult'] = $firstResult;
-		$this->_paginationArray['numberOfResults'] = $numberOfResults;
+	public function setNumberOfResults($numberOfResults){
+		if (gettype($numberOfResults) !== 'integer'){
+		 	throw new \Rubedo\Exceptions\DataAccess("numberOfResults should be an integer", 1);
+		 }
+		
+		$this->_numberOfResults = $numberOfResults;
 	}
 	
 	/**
-	 * Unset all pagination condition
+	 * Set to zer the number of the first result displayed
 	 */
-	public function clearPagination(){
-		$this->_paginationArray = array();
+	public function clearFirstResult(){
+		$this->_firstResult = 0;
 	}
 	
 	/**
-	 * Return the current array of conditions.
-     * @return array
+	 * Set to zero (unlimited) the number of results displayed
 	 */
-	public function getPaginationArray(){
-		return $this->_paginationArray;
+	public function clearNumberOfResults(){
+		$this->_numberOfResults = 0;
+	}
+	
+	/**
+	 * Return the current number of the first result displayed
+     * @return integer
+	 */
+	public function getFirstResult(){
+		return $this->_firstResult;
+	}
+	
+	/**
+	 * Return the current number of results displayed
+     * @return integer
+	 */
+	public function getNumberOfResults(){
+		return $this->_numberOfResults;
 	}
 
     /**
