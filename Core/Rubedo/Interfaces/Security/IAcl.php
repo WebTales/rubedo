@@ -12,7 +12,7 @@
  * @license yet to be written
  * @version $Id$
  */
-namespace Rubedo\Interfaces\Acl;
+namespace Rubedo\Interfaces\Security;
 
 /**
  * Interface of Access Control List Implementation

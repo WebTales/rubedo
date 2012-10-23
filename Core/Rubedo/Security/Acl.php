@@ -12,9 +12,9 @@
  * @license yet to be written
  * @version $Id$
  */
-namespace Rubedo\Acl;
+namespace Rubedo\Security;
 
-use Rubedo\Interfaces\Acl\IAcl;
+use Rubedo\Interfaces\Security\IAcl;
 /**
  * Interface of Access Control List Implementation
  *
