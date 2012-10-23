@@ -773,10 +773,13 @@ class DataAccess implements IDataAccess
      *
      * @todo add hash_pdkdf2() function to the project and start test
      */
-    public function hashPassword($pwd) {
-        $hash = hash_pbkdf2('sha512', $pwd, 'salt', 10);
+    public function hashPassword($pwd,$salt) {
+    	
+    	for ($i=0; $i < 10; $i++) { 
+			$pwd = hash('sha512', $salt.$pwd);
+		}
 
-        return $hash;
+        return $pwd;
     }
 
     /**

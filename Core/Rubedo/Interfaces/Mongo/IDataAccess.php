@@ -217,11 +217,12 @@ interface IDataAccess
      * Hash a password
      *
      * @param $pwd password
+	 * @param $salt grain of salt to protect against rainbow tables
      * @return $hash password hashed
      *
-     * @todo add hash_pdkdf2() function to the project and start test
+     * @todo move to a specific service
      */
-    public function hashPassword($pwd);
+    public function hashPassword($pwd,$salt);
 
     /**
      * Compare the hashed string with a string hashed in the functions
@@ -230,7 +231,7 @@ interface IDataAccess
      * @param $hash is the string already hashed
      * @param $pwd password to hash
      *
-     * @todo add hash_pdkdf2() function to the project and start test
+     * @todo move to a specific service
      */
     public function checkHashPassword($hash, $pwd);
 
