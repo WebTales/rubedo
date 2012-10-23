@@ -14,9 +14,7 @@
  */
 
 /**
- * Front Office Defautl Controller
- *
- * Invoked when calling front office URL
+ * Theme default controller
  *
  * @author jbourdin
  * @category Rubedo
