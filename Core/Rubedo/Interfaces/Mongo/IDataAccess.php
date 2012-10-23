@@ -22,8 +22,7 @@ namespace Rubedo\Interfaces\Mongo;
  * @category Rubedo
  * @package Rubedo
  */
-interface IDataAccess
-{
+interface IDataAccess {
 
     /**
      * Initialize a data service handler to read or write in a DataBase
@@ -83,85 +82,102 @@ interface IDataAccess
      *
      * @return array
      */
-	public function readTree();
-	
-	/**
-	 * Find child of a node tree
-	 * @param $parentId id of the parent node
-	 * @return array children array
-	 */
-	 public function readChild($parentId);
-	 
-	 /**
-	  * Add a filter condition to the service
-	  * 
-	  * Filter should be 
-	  * array('field'=>'value') 
-	  * or
-	  * array('field'=>array('operator'=>value))
-	  * 
-	  * @param array $filter Native Mongo syntax filter array
-	  * @return bool
-	  */
-	 public function addFilter(array $filter);
-	 
-	 /**
-	  * Return the current array of conditions.
-	  * @return array
-	  */
-	 public function getFilterArray();
-	 
-	 /**
-	  * Unset all filter condition to the service  
-	  *
-	  * @return bool
-	  */
-	 public function clearFilter();
-	 
-	 /**
-	  * Add a sort condition to the service
-	  * 
-	  * Sort should be 
-	  * array('field'=>'value') 
-	  * or
-	  * array('field'=>array('operator'=>value))
-	  * 
-	  * @param array $sort Native Mongo syntax sort array
-	  * @return bool
-	  */
-	 public function addSort(array $sort);
-	 
-	 /**
-	  * Return the current array of conditions.
-	  * @return array
-	  */
-	 public function getSortArray();
-	 
-	 /**
-	  * Unset all sort condition to the service  
-	  *
-	  * @return bool
-	  */
-	 public function clearSort();
-	 
-	 /**
-	 * Add a pagination condition
+    public function readTree();
+
+    /**
+     * Find child of a node tree
+     * @param $parentId id of the parent node
+     * @return array children array
+     */
+    public function readChild($parentId);
+
+    /**
+     * Add a filter condition to the service
+     *
+     * Filter should be
+     * array('field'=>'value')
+     * or
+     * array('field'=>array('operator'=>value))
+     *
+     * @param array $filter Native Mongo syntax filter array
+     * @return bool
+     */
+    public function addFilter(array $filter);
+
+    /**
+     * Return the current array of conditions.
+     * @return array
+     */
+    public function getFilterArray();
+
+    /**
+     * Unset all filter condition to the service
+     *
+     * @return bool
+     */
+    public function clearFilter();
+
+    /**
+     * Add a sort condition to the service
+     *
+     * Sort should be
+     * array('field'=>'value')
+     * or
+     * array('field'=>array('operator'=>value))
+     *
+     * @param array $sort Native Mongo syntax sort array
+     * @return bool
+     */
+    public function addSort(array $sort);
+
+    /**
+     * Return the current array of conditions.
+     * @return array
+     */
+    public function getSortArray();
+
+    /**
+     * Unset all sort condition to the service
+     *
+     * @return bool
+     */
+    public function clearSort();
+
+    /**
+     * Set the number of the first result displayed
      *
      * @param $firstResult is the number of the first result displayed
+     */
+    public function setFirstResult($firstResult);
+
+	/**
+	 * Set the number of results displayed
+     *
 	 * @param $numberOfResults is the number of results displayed
 	 */
-	public function addPagination($firstResult, $numberOfResults);
+	public function setNumberOfResults($numberOfResults);
+
+    /**
+	 * Set to zer the number of the first result displayed
+	 */
+	public function clearFirstResult();
 	
 	/**
-	 * Unset all pagination condition
+	 * Set to zero (unlimited) the number of results displayed
 	 */
-	public function clearPagination();
+	public function clearNumberOfResults();
 	
 	/**
-	 * Return the current array of conditions.
-     * @return array
+	 * Return the current number of the first result displayed
+     * @return integer
 	 */
-	public function getPaginationArray();
+	public function getFirstResult();
+	
+	/**
+	 * Return the current number of results displayed
+     * @return integer
+	 */
+	public function getNumberOfResults();
 
     /**
      * Add to the field list the array passed in argument
@@ -217,12 +233,12 @@ interface IDataAccess
      * Hash a password
      *
      * @param $pwd password
-	 * @param $salt grain of salt to protect against rainbow tables
+     * @param $salt grain of salt to protect against rainbow tables
      * @return $hash password hashed
      *
      * @todo move to a specific service
      */
-    public function hashPassword($pwd,$salt);
+    public function hashPassword($pwd, $salt);
 
     /**
      * Compare the hashed string with a string hashed in the functions
