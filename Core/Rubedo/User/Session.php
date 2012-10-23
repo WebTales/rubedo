@@ -37,12 +37,11 @@ class Session implements ISession
             $this->_sessionObject = new \Zend_Session_Namespace(static::$_sessionName);
 
         }
-
         return $this->_sessionObject;
     }
 
     public function set($name, $value) {
-        $this->_sessionObject->$name = $value;
+        $this->getSessionObject()->$name = $value;
     }
 
     public function get($name,$defaultValue = null) {
