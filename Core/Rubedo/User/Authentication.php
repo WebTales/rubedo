@@ -28,31 +28,20 @@ use Rubedo\Interfaces\User\IAuthentication;
 class Authentication implements IAuthentication
 {
 
-	function Authentication(){
-		$this->_session = Rubedo\Services\Manager::getService('Session');
-	}
-
     public function authenticate($login, $password){
-    	if($login === "admin" && $password === "pwd"){
-    		$this->_session->set('user', 'Mickael Goncalves');
-    		return true;
-    	}
+    	return true;
     }
 	
 	public function getIdentity(){
-    	return $this->_session->get('user');
+    	return "Mickael Goncalves";
     }
 	
 	public function hasIdentity(){
-    	if(!empty($this->_session->get('user'))){
-    		return true;
-    	}else{
-    		return false;
-    	}
+    	return true;
     }
 	
 	public function clearIdentity(){
-    	$this->_session->set('user', '');
+    	return true;
     }
 
 }

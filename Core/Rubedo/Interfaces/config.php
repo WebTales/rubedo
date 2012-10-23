@@ -35,6 +35,7 @@ class config
 	    'Acl'					=>	'Rubedo\\Interfaces\\Acl\\IAcl',
 		'CurrentUser'			=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
 		'Session'				=>	'Rubedo\\Interfaces\\User\\ISession',
+		'Authentication'		=>	'Rubedo\\Interfaces\\User\\IAuthentication',
 		'CurrentTime'			=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',
 		'Url'					=>	'Rubedo\\Interfaces\\Router\\IUrl',
 		'Page'					=>	'Rubedo\\Interfaces\\Content\\IPage',
