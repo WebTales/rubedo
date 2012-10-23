@@ -21,7 +21,7 @@ namespace Rubedo\Interfaces\User;
  *
  * Authenticate user and get information about him
  *
- * @author mgoncalves
+ * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */

@@ -1,16 +1,43 @@
 <?php
+/**
+ * Rubedo
+ *
+ * LICENSE
+ *
+ * yet to be written
+ *
+ * @category   Rubedo
+ * @package    Rubedo
+ * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license    yet to be written
+ * @version    $Id:
+ */
 
+/**
+ * Front Office Defautl Controller
+ *
+ * Invoked when calling front office URL
+ *
+ * @author jbourdin
+ * @category Rubedo
+ * @package Rubedo
+ */
 class XhrThemeController extends AbstractController {
     /**
      * @param 	Rubedo\Interfaces\User\ISession
-     *
      */
     protected $_session;
-
+	
+	/**
+	 * Init the session service
+	 */
     public function init() {
         $this->_session = Rubedo\Services\Manager::getService('Session');
     }
-
+	
+	/**
+	 * Allow to define the current theme
+	 */
     public function defineThemeAction() {
 
         $theme = $this->getRequest()->getParam('theme', "default");
