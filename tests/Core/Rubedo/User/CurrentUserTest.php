@@ -13,8 +13,6 @@
  * @version $Id$
  */
 
-
-
 /**
  * Tests suite for the service current user
  *
@@ -23,13 +21,11 @@
  * @category Rubedo-Test
  * @package Rubedo-Test
  */
-class CurrentUserTest extends PHPUnit_Framework_TestCase
-{
+class CurrentUserTest extends PHPUnit_Framework_TestCase {
     /**
      * Init
      */
-    public function setUp()
-    {
+    public function setUp() {
         $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
         parent::setUp();
     }
@@ -37,18 +33,15 @@ class CurrentUserTest extends PHPUnit_Framework_TestCase
     /**
      * Cleaning
      */
-    public function tearDown()
-    {
+    public function tearDown() {
         parent::tearDown();
     }
-	
-	/**
-	 * check the service configuration by getservice method
-	 */
-	public function testConfiguredService(){
-		
-	}
 
-   
+    /**
+     * check the service configuration by getservice method
+     */
+    public function testConfiguredService() {
+
+    }
 
 }
