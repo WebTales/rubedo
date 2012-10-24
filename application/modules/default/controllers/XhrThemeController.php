@@ -41,7 +41,7 @@ class XhrThemeController extends AbstractController {
         $theme = $this->getRequest()->getParam('theme', "default");
         $this->_session->set('themeCSS', $theme);
 
-        $response['theme'] = $this->_session->get('themeCSS');
+        $response['success'] = $this->_session->get('themeCSS');
 		
         return $this->_helper->json($response);
     }

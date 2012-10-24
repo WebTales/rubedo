@@ -33,6 +33,11 @@ class XhrAuthenticationController extends AbstractController {
         $this->_auth = Rubedo\Services\Manager::getService('Authentication');
     }
 	
+	/**
+	 * Login or not the user and return a boolean
+	 * 
+	 * @return bool
+	 */
 	public function loginAction(){
         $login = $this->getRequest()->getParam('login');
 		$password = $this->getRequest()->getParam('password');
@@ -48,6 +53,11 @@ class XhrAuthenticationController extends AbstractController {
 		}
 	}
 	
+	/**
+	 * Logout the user and return a boolean
+	 * 
+	 * @return bool
+	 */
 	public function logoutAction(){
 		$logout = $this->_auth->clearIdentity();
 		

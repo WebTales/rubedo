@@ -37,11 +37,10 @@ class XhrLanguageController extends AbstractController {
 	 * Allow to define the current language
 	 */
     public function defineLanguageAction() {
-
         $language = $this->getRequest()->getParam('language', 'default');
         $this->_session->set('lang', $language);
 
-        $response['language'] = $this->_session->get('lang');
+        $response['success'] = $this->_session->get('lang');
 		
         return $this->_helper->json($response);
     }
