@@ -50,6 +50,7 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
         $user = array('login' => 'johnDoe', 'salt' => 'grainDeSel', 'password' => 'expected');
 
         $mockService = $this->getMock('Rubedo\Mongo\DataAccess');
+		$mockService->expects($this->once())->method('init')->with($this->equalTo('Users'));
         $mockService->expects($this->once())->method('addFilter')->with($this->equalTo(array('login' => $login)));
 
         $mockService->expects($this->once())->method('read')->will($this->returnValue(array($user)));
