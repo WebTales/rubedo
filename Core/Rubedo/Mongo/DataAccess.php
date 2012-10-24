@@ -718,7 +718,10 @@ class DataAccess implements IDataAccess
      * @param array $fieldList
      */
     public function addToFieldList(array $fieldList) {
-
+		if (count($fieldList) === 0) {
+            throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
+        }
+		
         foreach ($fieldList as $value) {
             if (!is_string($value)) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
@@ -745,7 +748,7 @@ class DataAccess implements IDataAccess
     public function removeFromFieldList(array $fieldToRemove) {
         foreach ($fieldToRemove as $value) {
             if (!is_string($value)) {
-                throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string paramter", 1);
+                throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string parameter", 1);
             }
             unset($this->_fieldList[$value]);
         }
@@ -769,7 +772,6 @@ class DataAccess implements IDataAccess
 
         if (count($excludeFieldList) === 0) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid excluded fields list array", 1);
-
         }
 
         foreach ($excludeFieldList as $value) {
