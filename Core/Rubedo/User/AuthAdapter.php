@@ -74,7 +74,7 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface {
 		$targetHash = $user['password'];
 		unset($user['password']);
 		
-		if($hashService->checkPassword($targerHash,$this->_password,$salt)){
+		if($hashService->checkPassword($targetHash,$this->_password,$salt)){
 			$this->_authenticateResultInfo['code'] = \Zend_Auth_Result::SUCCESS;
         	$this->_authenticateResultInfo['messages'][] = 'Authentication successful.';
 			$this->_authenticateResultInfo['identity'] = $user;
@@ -100,7 +100,7 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface {
 		if(!is_string($password)){
  			throw new \Rubedo\Exceptions\Authentication('$password should be a string', 1);
  		}
-		
+		$this->_authenticateResultInfo['identity'] = null;
 		$this->_login = $name;
 		$this->_password = $password;
  	}

@@ -48,16 +48,26 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
 	 * check the service configuration by getservice method
 	 */
 	public function testValidLogin(){
+		$user = array('login'=>'johnDoe','salt'=>'grainDeSel','password'=>'expected');
 		
 		$mockService = $this->getMock('Rubedo\Mongo\DataAccess');
-        //$mockService->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue($this->_fakeUser));
+        $mockService->expects($this->once())->method('read')->will($this->returnValue(array($user)));
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
+		
+		$mockService = $this->getMock('Rubedo\Security\Hash');
+        $mockService->expects($this->once())->method('checkPassword')->will($this->returnValue(true));
+        Rubedo\Services\Manager::setMockService('Hash', $mockService);
 		
 		$login = "johnDoe";
 		$password = "verySecret";
 		
 		$authAdapter = new Rubedo\User\AuthAdapter($login,$password);
 		$result = $authAdapter->authenticate();
+		
+		unset($user['password']);
+		$this->assertInstanceOf('\Zend_Auth_Result', $result);
+		$this->assertEquals($user, $result->getIdentity());
+		$this->assertEquals(\Zend_Auth_Result::SUCCESS, $result->getCode());
 	}
 
    
