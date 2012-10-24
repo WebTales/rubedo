@@ -229,26 +229,4 @@ interface IDataAccess {
      */
     public function clearExcludeFieldList();
 
-    /**
-     * Hash a password
-     *
-     * @param $pwd password
-     * @param $salt grain of salt to protect against rainbow tables
-     * @return $hash password hashed
-     *
-     * @todo move to a specific service
-     */
-    public function hashPassword($pwd, $salt);
-
-    /**
-     * Compare the hashed string with a string hashed in the functions
-     * If they are the same, the function return true
-     *
-     * @param $hash is the string already hashed
-     * @param $pwd password to hash
-     *
-     * @todo move to a specific service
-     */
-    public function checkHashPassword($hash, $pwd);
-
 }

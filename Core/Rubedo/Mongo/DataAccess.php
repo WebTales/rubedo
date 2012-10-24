@@ -799,40 +799,4 @@ class DataAccess implements IDataAccess
         $this->_excludeFieldList = array();
     }
 
-    /**
-     * Hash a password
-     *
-     * @param $pwd password
-     * @return $hash password hashed
-     *
-     * @todo add hash_pdkdf2() function to the project and start test
-     */
-    public function hashPassword($pwd,$salt) {
-    	
-    	for ($i=0; $i < 10; $i++) { 
-			$pwd = hash('sha512', $salt.$pwd);
-		}
-
-        return $pwd;
-    }
-
-    /**
-     * Compare the hashed string with a string hashed in the functions
-     * If they are the same, the function return true
-     *
-     * @param $hash is the string already hashed
-     * @param $pwd password to hash
-     *
-     * @todo add hash_pdkdf2() function to the project and start test
-     */
-    public function checkHashPassword($hash, $pwd) {
-        $hash2 = hash_pbkdf2('sha512', $pwd, 'salt', 10);
-
-        if ($hash === $hash2) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 }

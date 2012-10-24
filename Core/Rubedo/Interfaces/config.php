@@ -33,6 +33,7 @@ class config
 	    'MongoDataAccess' 		=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
 	    'ElasticDataSearch' 	=> 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
 	    'Acl'					=>	'Rubedo\\Interfaces\\Security\\IAcl',
+	    'Hash'					=>	'Rubedo\\Interfaces\\Security\\IHash',
 		'CurrentUser'			=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
 		'Session'				=>	'Rubedo\\Interfaces\\User\\ISession',
 		'Authentication'		=>	'Rubedo\\Interfaces\\User\\IAuthentication',
