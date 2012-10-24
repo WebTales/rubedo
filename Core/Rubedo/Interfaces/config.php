@@ -28,9 +28,14 @@ class config
      * Class property which contains a hash table service name => interface name
      * @var array array service name => interface name
      */
-    protected static $_interfaceArray = array(
-
-	    'MongoDataAccess' 		=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
+    protected static $_interfaceArray = array();
+	
+	/**
+     * Class property which contains the defautl value for $_interfaceArray
+     * @var array array service name => interface name
+     */
+	protected static $_defaultInterfaceArray = array(
+		'MongoDataAccess' 		=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
 	    'ElasticDataSearch' 	=> 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
 	    'Acl'					=>	'Rubedo\\Interfaces\\Security\\IAcl',
 	    'Hash'					=>	'Rubedo\\Interfaces\\Security\\IHash',
@@ -82,6 +87,14 @@ class config
     final public static function clearInterfaces()
     {
         static::$_interfaceArray = array();
+    }
+	
+	/**
+     * Public static method to init interface list
+     */
+    public static function initInterfaces()
+    {
+        static::$_interfaceArray = static::$_defaultInterfaceArray;
     }
 
     /**

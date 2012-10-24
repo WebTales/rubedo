@@ -57,6 +57,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
      */
     public function setUp() {
         $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
+		$this->bootstrap->bootstrap();
         $mockUserService = $this->getMock('Rubedo\User\CurrentUser');
         Rubedo\Services\Manager::setMockService('CurrentUser', $mockUserService);
 
@@ -1094,7 +1095,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $testId = $item['id'];
 
         $items = array($item2, $item3);
-
+		$dataAccessObject->addSort(array('name'=>'asc'));
         $readArray = $dataAccessObject->readChild($testId);
 
         $this->assertEquals($items, $readArray);
