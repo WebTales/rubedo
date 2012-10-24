@@ -27,21 +27,37 @@ use Rubedo\Interfaces\User\IAuthentication;
  */
 class Authentication implements IAuthentication
 {
+	/**
+	 * embed zend_auth
+	 * 
+	 * @param Zend_Auth
+	 */
+	static protected $_zendAuth;
+	
+	protected function _getZendAuth(){
+		if(!isset(static::$_zendAuth)){
+			static::$_zendAuth = \Zend_Auth::getInstance();
+		}
+		
+		return static::$_zendAuth = new \Zend_Auth();
+	}
 
     public function authenticate($login, $password){
-    	return true;
+    	$authAdapter = new \Rubedo\User\AuthAdapter($login,$password);
+		$result = $this->_getZendAuth()->authenticate($authAdapter);
+    	return $result->isValid();
     }
 	
 	public function getIdentity(){
-    	return "Mickael Goncalves";
+    	return $this->_getZendAuth()->getIdentity();
     }
 	
 	public function hasIdentity(){
-    	return true;
+    	return $this->_getZendAuth()->hasIdentity();
     }
 	
 	public function clearIdentity(){
-    	return true;
+    	return $this->_getZendAuth()->clearIdentity();
     }
 
 }
