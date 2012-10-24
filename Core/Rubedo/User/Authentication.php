@@ -39,7 +39,7 @@ class Authentication implements IAuthentication
 			static::$_zendAuth = \Zend_Auth::getInstance();
 		}
 		
-		return static::$_zendAuth = new \Zend_Auth();
+		return static::$_zendAuth;
 	}
 
     public function authenticate($login, $password){
