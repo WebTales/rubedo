@@ -34,6 +34,6 @@ class Backoffice_FieldTypesController extends Backoffice_DataAccessController
      * @see Backoffice_DataAccessController::$_store
      * @var string
      */
-    protected $_store = 'TypesChamps';
+    protected $_store = 'FieldTypes';
 
 }

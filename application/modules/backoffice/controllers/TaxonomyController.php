@@ -34,6 +34,6 @@ class Backoffice_TaxonomyController extends Backoffice_DataAccessController
      * @see Backoffice_DataAccessController::$_store
      * @var string
      */
-    protected $_store = 'Taxonomie';
+    protected $_store = 'Taxonomy';
 
 }
