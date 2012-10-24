@@ -31,31 +31,32 @@ interface IHash {
      * Hash the string given in parameter
      *
      * @param $string is the string destined to be hashed
+	 * @param $salt is the string hashed with the string
      *
      * @return $hash The string hashed
      */
-    public function hashString($string);
+    public function hashString($string, $salt);
 
     /**
      * Hash a password
      *
-     * @param $pwd password
+     * @param $password password
      * @param $salt is the string hashed with the password
      *
      * @return $hash password hashed
      */
-    public function derivatePassword($pwd, $salt);
+    public function derivatePassword($password, $salt);
 
     /**
      * Compare the password already hashed with a string hashed in the function
      * If they are equals, the function return true
      *
      * @param $hash is the string already hashed
-     * @param $pwd password to hash
+     * @param $password password to hash
      * @param $salt is the string hashed with the password
      *
      * @return bool
      */
-    public function checkPassword($hash, $pwd, $salt);
+    public function checkPassword($hash, $password, $salt);
 
 }
