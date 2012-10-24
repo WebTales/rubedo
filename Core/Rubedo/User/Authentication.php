@@ -59,5 +59,11 @@ class Authentication implements IAuthentication
 	public function clearIdentity(){
     	return $this->_getZendAuth()->clearIdentity();
     }
+	
+	public function forceReAuth($login, $password){
+    	$authAdapter = new \Rubedo\User\AuthAdapter($login,$password);
+		$result = $authAdapter->authenticate($authAdapter);
+    	return $result->isValid();
+    }
 
 }
