@@ -368,7 +368,18 @@ class DataAccess implements IDataAccess
      * @return array
      */
     public function findOne($value) {
-        $data = $this->_collection->findOne($value);
+    	//get the UI parameters
+    	$includedFields = $this->getFieldList();
+		$excludedFields = $this->getExcludeFieldList();
+		
+		//get enforced Rules
+		$includedFields = $this->_getLocalIncludeFieldList($includedFields);
+		$excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
+		
+		//merge the two fields array to obtain only one array with all the conditions
+        $fieldRule = array_merge($includedFields, $excludedFields);
+		
+        $data = $this->_collection->findOne($value, $fieldRule);
 
         $data['id'] = (string)$data['_id'];
         unset($data['_id']);

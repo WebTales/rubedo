@@ -1460,6 +1460,58 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($expectedResult, $readArray);
     }
+	
+	/**
+	 * Test included fields with findOne
+	 */
+	public function testFindOneWithIncludedField(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
+        $item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+
+        $item2 = static::$phactory->create('item', array('version' => 1, 'name' => 'item2'));
+        $item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+		$includedFields = array('name');
+		$dataAccessObject->addToFieldList($includedFields);
+		
+        $expectedResult = array('name' => $item['name'], 'id' => $item['id']);
+
+        $value = array('name' => $item['name']);
+        $readArray = $dataAccessObject->findOne($value);
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+	
+	/**
+	 * Test excluded fields with findOne
+	 */
+	public function testFindOneWithExcludedField(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
+        $item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+
+        $item2 = static::$phactory->create('item', array('version' => 1, 'name' => 'item2'));
+        $item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+		$excludedFields = array('version');
+		$dataAccessObject->addToExcludeFieldList($excludedFields);
+		
+        $expectedResult = array('name' => $item['name'], 'id' => $item['id']);
+
+        $value = array('name' => $item['name']);
+        $readArray = $dataAccessObject->findOne($value);
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
 
     /**
      * Check if getFilterArray return an array
