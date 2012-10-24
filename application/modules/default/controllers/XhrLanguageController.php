@@ -22,7 +22,9 @@
  */
 class XhrLanguageController extends AbstractController {
     /**
-     * @param 	Rubedo\Interfaces\User\ISession
+     * Variable for Session service
+	 * 
+	 * @param 	Rubedo\Interfaces\User\ISession
      */
     protected $_session;
 	

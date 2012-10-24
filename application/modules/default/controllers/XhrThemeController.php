@@ -22,7 +22,9 @@
  */
 class XhrThemeController extends AbstractController {
     /**
-     * @param 	Rubedo\Interfaces\User\ISession
+     * variable for the Session service
+	 * 
+	 * @param 	Rubedo\Interfaces\User\ISession
      */
     protected $_session;
 	

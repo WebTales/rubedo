@@ -22,7 +22,9 @@
  */
 class XhrAuthenticationController extends AbstractController {
     /**
-     * @param 	Rubedo\Interfaces\User\IAuthentication
+     * Variable for Authentication service
+	 * 
+	 * @param 	Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
 	

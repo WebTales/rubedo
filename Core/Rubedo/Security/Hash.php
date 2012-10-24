@@ -26,7 +26,10 @@ use Rubedo\Interfaces\Security\IHash;
  * @package Rubedo
  */
 class Hash implements IHash {
-
+	
+	/**
+	 * Contain the current algo for the hash
+	 */
     private $_algo = 'sha512';
 
     /**

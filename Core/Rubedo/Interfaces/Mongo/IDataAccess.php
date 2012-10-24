@@ -220,7 +220,7 @@ interface IDataAccess {
     /**
      * Allow to remove one field in the current excludeFieldList array
      *
-     * @param array $excludeFieldToRemove
+     * @param array $fieldToRemove
      */
     public function removeFromExcludeFieldList(array $fieldToRemove);
 
