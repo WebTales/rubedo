@@ -71,6 +71,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 			Rubedo\Services\Manager::setOptions($defaultArray);
 		}
 		$serviceOptions = Rubedo\Services\Manager::getOptions();
+		
+		Rubedo\Interfaces\config::initInterfaces();
 		/*define('LOG_LEVEL', $serviceOptions['logLevel']);
 		 define('ENABLE_CACHE', $serviceOptions['enableCache']);*/
 
