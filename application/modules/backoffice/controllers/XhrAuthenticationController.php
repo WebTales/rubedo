@@ -49,8 +49,7 @@ class Backoffice_XhrAuthenticationController extends AbstractController {
 		if($loginResult){
 			 $this->_helper->redirector->gotoUrl("/backoffice/");
 		}else{
-			$response['success'] = false;
-			return $this->_helper->json($response);
+			$this->_helper->redirector->gotoUrl("/backoffice/login?error=badLogin");
 		}
 	}
 	
