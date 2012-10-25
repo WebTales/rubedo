@@ -54,7 +54,7 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
     public function authenticate() {
         $dataService = \Rubedo\Services\Manager::getService('MongoDataAccess');
         $dataService->init('Users');
-		$dataService->addToFieldList(array('id','login','password','salt'));
+		$dataService->addToFieldList(array('login','password','salt'));
 
         $hashService = \Rubedo\Services\Manager::getService('Hash');
 
