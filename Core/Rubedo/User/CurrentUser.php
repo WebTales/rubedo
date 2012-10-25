@@ -65,18 +65,15 @@ class CurrentUser implements ICurrentUser
      */
     public function getCurrentUserSummary() {
         $userInfos = $this->getCurrentUser();
-        return array('id' => $userInfos['id'], 'login' => $userInfos['login'], 'fullName' => $userInfos['fullName']);
+        return array('id' => $userInfos['id'], 'login' => $userInfos['login'], 'fullName' => $userInfos['name']);
     }
 
     /**
      * Check if a user is authenticated
      *
-     * @todo real implemtation unreachable until ready
      * @return boolean
      */
-    public function isAuthenticated() {
-    	return true;
-		
+    public function isAuthenticated() {		
     	$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
 		return $serviceAuth->hasIdentity();
     }
@@ -84,12 +81,9 @@ class CurrentUser implements ICurrentUser
     /**
      * Fetch the current user information from the data storage
      *
-     * @todo real implemtation unreachable until ready
      * @return array
      */
-    public function fetchCurrentUser() {
-    	return array('id' => 1, 'login' => 'jbourdin', 'fullName' => 'Julien Bourdin');
-		
+    public function fetchCurrentUser() {		
     	$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');	
     	$sessionUser = $serviceAuth->getIdentity();
 		
