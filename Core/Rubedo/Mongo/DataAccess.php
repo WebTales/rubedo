@@ -726,6 +726,9 @@ class DataAccess implements IDataAccess
             if (!is_string($value)) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
             }
+			if ($value === "id") {
+				throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
+			}
 
             //add validated input
             $this->_fieldList[$value] = true;
@@ -773,11 +776,15 @@ class DataAccess implements IDataAccess
         if (count($excludeFieldList) === 0) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid excluded fields list array", 1);
         }
+		
 
         foreach ($excludeFieldList as $value) {
             if (!in_array(gettype($value), array('string'))) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
             }
+			if ($value === "id") {
+				throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
+			}
 
             //add validated input
             $this->_excludeFieldList[$value] = false;

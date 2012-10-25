@@ -1889,6 +1889,19 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->addToFieldList($fieldExample);
 
     }
+	
+	/**
+     * id field is included by default
+     * @expectedException \Rubedo\Exceptions\DataAccess
+     */
+    public function testAddIdField() {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $fieldExample = array("id");
+        $dataAccessObject->addToFieldList($fieldExample);
+
+    }
 
     /**
      * Simple test to add a field list in the excludeFieldList array and read it after
@@ -1984,6 +1997,19 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->addToExcludeFieldList(array());
+
+    }
+	
+	/**
+     * id field can't be excluded
+     * @expectedException \Rubedo\Exceptions\DataAccess
+     */
+    public function testAddExcludedIdField() {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $excludedFieldExample = array("id");
+        $dataAccessObject->addToFieldList($excludedFieldExample);
 
     }
 
