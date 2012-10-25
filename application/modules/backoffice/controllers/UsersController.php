@@ -55,10 +55,13 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 	    $caracters = array_slice($caracters, 0, 10);
 	    $salt = implode('', $caracters);
 		
-		if (!empty($password) && !empty($id)) {
+		if (!empty($password) && !empty($id) && !empty($version)) {
 			$password = $hashService->derivatePassword($password, $salt);
 			
-			$insertData = array('id' => $id, 'password' => $password, 'salt' => $salt, 'version' => $version);
+			$insertData['id'] = $id;
+			$insertData['version'] = (int) $version;
+			$insertData['password'] = $password;
+			$insertData['salt'] = $salt;
 			
 			$result = $this->_dataReader->update($insertData, true);
 			
@@ -66,9 +69,10 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 				$message['success'] = true;
 			} else if($result['success'] == false){
 				$message['success'] = false;
+				$message['error'] = $result['msg'];
 			}
 			
-			return $message;
+			return $this->_helper->json($message);
 		} else {
 			$returnArray = array('success' => false, "msg" => 'No Data');
 		}
