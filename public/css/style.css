@@ -72,3 +72,9 @@ table {
 .button {
 	height: 30px;
 }
+
+.error {
+	color: red;
+	font-weight: bold;
+	margin-top: 20px;
+}
