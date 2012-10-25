@@ -460,7 +460,7 @@ class DataAccess implements IDataAccess
         $obj['lastUpdateTime'] = $currentTime;
 
         $mongoID = new \MongoID($id);
-        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), $obj, array("safe" => $safe));
+        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), array('$set' => $obj), array("safe" => $safe));
 
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
