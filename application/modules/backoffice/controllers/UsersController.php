@@ -36,42 +36,39 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 	protected $_store = 'Users';
 	
 	/**
-     * Object which represent the mongoDB Collection
-     *
-     * @var \MongoCollection
-     */
-    private $_collection;
+	 * Data Access Service
+	 *
+	 * @var DataAccess
+	 */
+	protected $_dataReader;
 
 	public function changePasswordAction(){
 		$hashService = \Rubedo\Services\Manager::getService('Hash');
 		
 		$password = $_POST['password'];
 		$id = $_POST['id'];
-		$salt = rand();
+		$version = $_POST['version'];
+		
+		// Create a random string for the salt
+		$caracters = str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmonopqrstuvwxyz123456789');
+	    shuffle($caracters);
+	    $caracters = array_slice($caracters, 0, 10);
+	    $salt = implode('', $caracters);
 		
 		if (!empty($password) && !empty($id)) {
 			$password = $hashService->derivatePassword($password, $salt);
 			
-			$insertData['password'] = $password;
-			$insertData['salt'] = $salt;
-			$insertData['_id'] = $id;
-
-	        if(!isset($insertData['version'])){
-	        	$insertData['version'] = 1;
-	        } else {
-	        	$insertData['version'] += 1;
-	        }
-	
-	        $resultArray = $this->_collection->insert($insertData, array("safe" => $safe));
-	        if ($resultArray['ok'] == 1) {
-	            $insertData['id'] = (string)$insertData['_id'];
-	            unset($insertData['_id']);
-	            $returnArray = array('success' => true);
-	        } else {
-	            $returnArray = array('success' => false);
-	        }
-	
-	        return $returnArray;
+			$insertData = array('id' => $id, 'password' => $password, 'salt' => $salt, 'version' => $version);
+			
+			$result = $this->_dataReader->update($insertData, true);
+			
+			if($result['success'] == true){
+				$message['success'] = true;
+			} else if($result['success'] == false){
+				$message['success'] = false;
+			}
+			
+			return $message;
 		} else {
 			$returnArray = array('success' => false, "msg" => 'No Data');
 		}
