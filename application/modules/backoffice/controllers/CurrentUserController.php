@@ -103,7 +103,7 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 				if($result){
 					$userId = $result['id'];
 
-					if($userId === $insertData['userId']){
+					if($userId === $insertData['id']){
 						$returnArray = $this -> _dataReader -> update($insertData, true);
 					} else {
 						$returnArray = array('success' => false, 'message' => 'Bad id');
