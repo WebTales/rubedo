@@ -50,14 +50,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     {
         $options = $this->getOption('searchstream');
         if (isset($options)) {
-
-            Rubedo\Elastic\DataSearch::setDefaultHost($options['elastic']['host']);
-            Rubedo\Elastic\DataSearch::setDefaultPort((int) $options['elastic']['port']);
-			
+			Rubedo\Elastic\DataSearch::setOptions($options['elastic']);
         }
     }
-
-
 
 	/**
 	 * Load services parameter from application.ini to the service manager

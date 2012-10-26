@@ -30,9 +30,8 @@ interface IDataSearch
      *
      * @param string $host http host name
      * @param string $port http port 
-     * @param string $index index name
      */
-    public function init ($index = null, $host = null, $port= null);
+    public function init ($host = null, $port= null);
 
     /**
      * Create ES type for new content type
@@ -41,7 +40,7 @@ interface IDataSearch
 	 * @param array $data new content type
      * @return array
      */
-    public function createContentType ($id, $data);
+    public function createContentType ($contentType);
 	
     /**
      * Update ES type for new content type
