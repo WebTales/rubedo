@@ -26,9 +26,25 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 class Backoffice_LoginController extends Zend_Controller_Action
 {
 
+	/**
+     * Variable for Authentication service
+	 * 
+	 * @param 	Rubedo\Interfaces\User\IAuthentication
+     */
+    protected $_auth;
+	
+	/**
+	 * Init the authentication service
+	 */
+    public function init() {
+        $this->_auth = Rubedo\Services\Manager::getService('Authentication');
+    }
+
     public function indexAction ()
     {
-        
+        if($this->_auth->getIdentity()){
+			$this->_helper->redirector->gotoUrl("/backoffice/");
+		}
     }
 	
 }
