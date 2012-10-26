@@ -70,9 +70,14 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 		
 		$this->_dataReader->addToExcludeFieldList(array('password', 'salt'));
 		$this->_dataReader->addFilter(array('id' => $userId));
-		$readArray = $this->_dataReader->read();
+		$dataValues = $this->_dataReader->read();
 		
-		$this->_returnJson($readArray);
+		$response['data'] = array_values($dataValues);
+		$response['total'] = count($response['data']);
+		$response['success'] = TRUE;
+		$response['message'] = 'OK';
+		
+		$this->_returnJson($response);
 	}
 	
 	/**
@@ -89,7 +94,33 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 	 * Update the current values for the user
 	 */
 	public function updateAction() {
-	 	
+	 	$data = $this -> getRequest() -> getParam('data');
+
+		if (!is_null($data)) {
+			$insertData = Zend_Json::decode($data);
+			if (is_array($insertData)) {
+				$result = $this->_auth->getIdentity();
+				if($result){
+					$userId = $result['id'];
+
+					if($userId === $insertData['userId']){
+						$returnArray = $this -> _dataReader -> update($insertData, true);
+					} else {
+						$returnArray = array('success' => false, 'message' => 'Bad id');
+					}
+				} else {
+					$returnArray = array('success' => false, "msg" => 'No user connected');
+				}
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Not an array');
+			}
+		} else {
+			$returnArray = array('success' => false, "msg" => 'No Data');
+		}
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		$this -> _returnJson($returnArray);
 	}
 	
 	/**
