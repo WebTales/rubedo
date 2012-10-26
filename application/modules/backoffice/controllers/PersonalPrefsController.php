@@ -34,7 +34,27 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
      * @see Backoffice_DataAccessController::$_store
      * @var string
      */
-    protected $_store = 'PersonalPrefs';
+    protected $_store = 'Icons';
+	
+	/**
+	 * Data Access Service
+	 *
+	 * @var DataAccess
+	 */
+	protected $_dataReader;
+	
+	/**
+     * Variable for Authentication service
+	 * 
+	 * @param 	Rubedo\Interfaces\User\IAuthentication
+     */
+	protected $_auth;
+	
+	public function init(){
+		parent::init();
+		
+		$this->_auth = \Rubedo\Services\Manager::getService('Authentication');
+	}
 
 	/**
 	 * Get graphics preferences of the current user
@@ -65,41 +85,33 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 	}
 	
 	/**
-	 * Create new preferences in mongoDB
+	 * Create a new icon in mongoDB
 	 * 
 	 * @return array
 	 */
 	public function createAction() {
-		$data = $this->getRequest()->getParam('data');
-		$result = $this->_auth->getIdentity();
-		
-		if($result){
-			if(!is_null($data)){
-				$insertData = Zend_Json::decode($data);
-				if (is_array($insertData)) {
-					$insertData['userId'] = $result['id'];
-					
-					$result = $this->_dataReader->create($insertData, true);
-					
-					if($result) {
-						$response['success'] = true;
-					} else {
-						$response['success'] = false;
-						$response['message'] = 'creation failed';
-					}
+		$data = $this -> getRequest() -> getParam('data');
+
+		if (!is_null($data)) {
+			$insertData = Zend_Json::decode($data);
+			if (is_array($insertData)) {
+				$result = $this->_auth->getIdentity();
+				if($result){
+					$userId = $result['id'];
+					$insertData['userId'] = $userId;
+					$returnArray = $this -> _dataReader -> create($insertData, true);
 				} else {
-					$response['success'] = false;
-					$response['message'] = 'Json invalid format, it should be an array';
+					$returnArray = array('success' => false, "msg" => 'No user connected');
 				}
-			}else{
-				$response['success'] = false;
-				$response['message'] = 'No data in the json';
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Not an array');
 			}
 		} else {
-			$response['success'] = FALSE;
-			$response['message'] = 'No user connected';
+			$returnArray = array('success' => false, "msg" => 'No Data');
 		}
-		
-		$this -> _returnJson($response);
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		$this -> _returnJson($returnArray);
 	}
 }
