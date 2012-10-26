@@ -134,12 +134,12 @@ class Block implements IBlock
 		
         $filterArray = array('typeId' => '507fcc1cadd92af204000000');
         $this->_dataReader->addFilter($filterArray);
-        $filterArray = array('etat' => 'publié');
+        $filterArray = array('status' => 'publié');
         $this->_dataReader->addFilter($filterArray);
 
         $contentArray = $this->_dataReader->read();
         foreach ($contentArray as $vignette) {
-            $fields = $vignette['champs'];
+            $fields = $vignette['fields'];
             $fields['title'] = $fields['text'];
             unset($fields['text']);
 			$fields['id'] = (string) $vignette['id'];
@@ -174,14 +174,14 @@ class Block implements IBlock
         $this->_dataReader->init('Contents');
         $filterArray = array('typeId' => '507fea58add92a5108000000');
         $this->_dataReader->addFilter($filterArray);
-        $filterArray = array('etat' => 'publié');
+        $filterArray = array('status' => 'publié');
         $this->_dataReader->addFilter($filterArray);
 		$this->_dataReader->addSort(array('text'=>'asc'));
 
 		
 		$contentArray = $this->_dataReader->read();
         foreach ($contentArray as $vignette) {
-            $fields = $vignette['champs'];
+            $fields = $vignette['fields'];
             $fields['title'] = $fields['text'];
             unset($fields['text']);
 			$fields['id'] = (string) $vignette['id'];
@@ -198,7 +198,7 @@ class Block implements IBlock
 		
 		$mongoId = '507fd4feadd92aa602000000';
 		$content = $this->getContentById('507fd4feadd92aa602000000');
-		$output = $content['champs'];
+		$output = $content['fields'];
         $output["id"] = $mongoId;
 
         return $output;
