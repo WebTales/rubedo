@@ -50,6 +50,9 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
      */
 	protected $_auth;
 	
+	/**
+	 * Initialise the controller
+	 */
 	public function init(){
 		parent::init();
 		
@@ -118,7 +121,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 	/**
 	 * Update the current values in mongoDB
 	 */
-	 public function updateAction() {
+	public function updateAction() {
 	 	$data = $this -> getRequest() -> getParam('data');
 
 		if (!is_null($data)) {
@@ -146,5 +149,5 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
 		$this -> _returnJson($returnArray);
-	 }
+	}
 }
