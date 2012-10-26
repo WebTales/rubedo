@@ -63,4 +63,43 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 		
 		$this -> _returnJson($response);
 	}
+	
+	/**
+	 * Create new preferences in mongoDB
+	 * 
+	 * @return array
+	 */
+	public function createAction() {
+		$data = $this->getRequest()->getParam('data');
+		$result = $this->_auth->getIdentity();
+		
+		if($result){
+			if(!is_null($data)){
+				$insertData = Zend_Json::decode($data);
+				if (is_array($insertData)) {
+					$insertData['userId'] = $result['id'];
+					
+					$result = $this->_dataReader->create($insertData, true);
+					
+					if($result) {
+						$response['success'] = true;
+					} else {
+						$response['success'] = false;
+						$response['message'] = 'creation failed';
+					}
+				} else {
+					$response['success'] = false;
+					$response['message'] = 'Json invalid format, it should be an array';
+				}
+			}else{
+				$response['success'] = false;
+				$response['message'] = 'No data in the json';
+			}
+		} else {
+			$response['success'] = FALSE;
+			$response['message'] = 'No user connected';
+		}
+		
+		$this -> _returnJson($response);
+	}
 }
