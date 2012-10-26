@@ -49,27 +49,23 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
 	 * @return array
 	 */
 	public function indexAction() {
-		$response = array();	
+		$response = array();
+		$auth = \Rubedo\Services\Manager::getService('Authentication');
 			
-		if($_SESSION['id']){
-			$userId = $_SESSION['id'];
+		$result = $auth->getIdentity();
+		
+		if($result){
+			$this -> _dataReader -> addFilter(array('userId' => $result['id']));
 			
-			if(!empty($userId)){
-				$this -> _dataReader -> addFilter(array('userId' => $userId));
-				
-				$dataValues = $this -> _dataReader -> read();
+			$dataValues = $this -> _dataReader -> read();
 
-				$response['data'] = array_values($dataValues);
-				$response['total'] = count($response['data']);
-				$response['success'] = TRUE;
-				$response['message'] = 'OK';
-			} else {
-				$response['success'] = FALSE;
-				$response['message'] = '$userId should not be empty';
-			}
+			$response['data'] = array_values($dataValues);
+			$response['total'] = count($response['data']);
+			$response['success'] = TRUE;
+			$response['message'] = 'OK';
 		} else {
 			$response['success'] = FALSE;
-			$response['message'] = 'No index id set in the session.';
+			$response['message'] = 'No user connected';
 		}
 		
 		$this -> _returnJson($response);
