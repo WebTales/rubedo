@@ -129,7 +129,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 					$userId = $result['id'];
 
 					if($userId === $insertData['userId']){
-						$returnArray = $this -> _dataReader -> create($insertData, true);
+						$returnArray = $this -> _dataReader -> update($insertData, true);
 					} else {
 						$returnArray = array('success' => false, 'message' => 'Bad id');
 					}
