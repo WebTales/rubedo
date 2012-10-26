@@ -15,15 +15,15 @@
 use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 
 /**
- * Login Defautl Controller
+ * Logout Defautl Controller
  * 
- * Invoked when calling /backoffice/login URL
+ * Invoked when calling /backoffice/logout URL
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_LoginController extends Zend_Controller_Action
+class Backoffice_LogoutController extends Zend_Controller_Action
 {
 
 	/**
@@ -43,7 +43,11 @@ class Backoffice_LoginController extends Zend_Controller_Action
     public function indexAction ()
     {
         if($this->_auth->getIdentity()){
-			$this->_helper->redirector->gotoUrl("/backoffice/");
+			$result = $this->_auth->clearIdentity();
+
+			$response['success'] =true;
+			
+			return $this->_helper->json($response);
 		}
     }
 	
