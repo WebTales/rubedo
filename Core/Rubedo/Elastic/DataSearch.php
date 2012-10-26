@@ -153,21 +153,30 @@ class DataSearch implements IDataSearch
 	 * @param array $data new content type
      * @return array
      */
-    public function createContentType ($contentType) {
+    public function createContentType ($contentType, $overwrite=false) {
     	
 		// Unicity type id check
 		$id = $contentType["id"];
-		
+		$type = $contentType["type"];
+
 		$mapping = $this->_content_index->getMapping();
 		if (array_key_exists($id,$mapping[self::$_content_index])) {
-			throw new \Exception('$id type already exists');
+			if (!$overwrite) {
+				// throw exception
+				throw new \Exception("$type type already exists");
+			} else {
+				// delete existing content type
+				$this->deleteContentType($id);
+			}
 		}
 
 		// Create mapping
 		$indexMapping = array();
 		
 		foreach($contentType["fields"] as $field) {
+
 			if ($field['config']['searchable']) {
+				//print_r($field);
 				$name = $field['config']['name'];
 				if ($field['config']['resumed']) {
 					$store = 'yes';
@@ -176,60 +185,66 @@ class DataSearch implements IDataSearch
 				}				
 				switch($field['cType']) {
 					case 'checkbox' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'combo' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'datefield' :
-						$indexMapping[] = array( $name => array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => $store);
 						break;
 					case 'field' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'htmleditor' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'CKEField' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'numberfield' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'radio' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
-					case 'textarea' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+					case 'textareafield' :
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'textfield' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'timefield' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'ratingField' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'slider' :
-						$indexMapping[] = array( $name => array('type' => 'string', 'store' => $store));
+						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
 						break;
 					case 'document' :
-						$indexMapping[] = array( $name => array('type' => 'attachment', 'store' => 'no'));
+						$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
 						break;
-					case 'default' :
+					default :
 						throw new \Exception("unknown ".$field['cType']." type");
 						break;
 				}
 			}
 		}	
-
-		// Create new type
-		$type = new \Elastica_Type($this->_content_index, $id);
 		
-		// Set mapping
-		$type->setMapping($indexMapping);
- 	
+		// If there is no searchable field, the new type is not created
+		if (!empty($indexMapping)) {
+			// Create new type
+			$type = new \Elastica_Type($this->_content_index, $id);
+			
+			// Set mapping
+			$type->setMapping($indexMapping);
+			//print_r($indexMapping);
+			return array_flip(array_keys($indexMapping));
+		} else {
+			return array();
+		}
     }
 	
     /**
@@ -253,7 +268,7 @@ class DataSearch implements IDataSearch
      */
     public function deleteContentType ($id) {
     	
-    	$type = new Elastica_Type($this->_content_index, $id);
+    	$type = new \Elastica_Type($this->_content_index, $id);
     	$type->delete();
 		
     }
@@ -280,7 +295,8 @@ class DataSearch implements IDataSearch
 			$contentData[$field] = (string) $var;
 		}
 		$contentData['type'] = (string) $type;
-		$currentDocument = new Elastica_Document($lang.'_'.$id, $contentData);
+		//$currentDocument = new \Elastica_Document($lang.'_'.$id, $contentData);
+		$currentDocument = new \Elastica_Document($id, $contentData);
 		
 		if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
 			$currentDocument->addFile('file', $contentData['attachment']);
@@ -352,4 +368,46 @@ class DataSearch implements IDataSearch
     	
     }
 
+    /**
+     * Reindex all content
+     *      
+     * @return array
+     */
+    public function indexAllContent () {
+			
+		$ct = new \Rubedo\Mongo\DataAccess();
+		$ct->init("ContentTypes");
+			
+		$result = array();
+				
+		// For every content type
+		$contentTypeList = $ct->read();
+		
+		foreach($contentTypeList as $contentType) {
+			// Create content type with overwrite set to true
+			$fieldsToIndex = $this->createContentType($contentType,TRUE);
+			if (!empty($fieldsToIndex)) {
+				// If mapping completed, we can index content
+				$c = new \Rubedo\Mongo\DataAccess();
+				$c->init("Contents");
+				// Get content from type
+				$filter = array("typeId"=>$contentType["id"]);
+				$c->addFilter($filter);
+				$contentList = $c->read();
+				$contentCount = 0;
+				foreach($contentList as $content) {
+					// Only searchable fields get indexed
+					$data = array_intersect_key($content["fields"], $fieldsToIndex);
+					// Push content to index
+					$this->createContent($contentType["id"], $contentType["id"], $data);
+					$contentCount++;
+				}
+				$result[$contentType["type"]]=$contentCount;
+				
+			}
+		}
+		
+		return($result);
+    }
+	
 }

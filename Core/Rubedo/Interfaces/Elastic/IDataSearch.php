@@ -111,5 +111,12 @@ interface IDataSearch
      * @return array
      */
     public function deleteDocument ($id);
-	
+
+    /**
+     * Reindex all content
+     *      
+     * @return array
+     */
+    public function indexAllContent ();
+		
 }
