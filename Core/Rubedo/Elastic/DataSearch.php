@@ -60,13 +60,20 @@ class DataSearch implements IDataSearch
      * @var \Elastica_Client
      */
     private $_client;
+	
+    /**
+     * Configuration options
+     *
+     * @var array
+     */
+    private static $_options;
 
     /**
      * Object which represent the content ES index
      *
      * @var \Elastica_Index
      */
-    private $_content_index;
+    private static $_content_index = "content";
 
     /**
      * Object which represent the default ES index param
@@ -74,7 +81,7 @@ class DataSearch implements IDataSearch
      * @var \Elastica_Index
      */
     // TODO : get params into .ini
-    private $_content_index_param = array('index' => array(
+    private static $_content_index_param = array('index' => array(
 		'number_of_shards' => 1, 
 		'number_of_replicas' => 0 ));
 		
@@ -83,7 +90,7 @@ class DataSearch implements IDataSearch
      *
      * @var \Elastica_Index
      */
-    private $_document_index;
+    private static $_document_index = "document";
 
     /**
      * Object which represent the default document ES index param
@@ -91,7 +98,7 @@ class DataSearch implements IDataSearch
      * @var \Elastica_Index
      */
      // TODO : get params into .ini
-    private $_document_index_param = array('index' => array(
+    private static $_document_index_param = array('index' => array(
 		'number_of_shards' => 1, 
 		'number_of_replicas' => 0 ));
 	
@@ -101,43 +108,27 @@ class DataSearch implements IDataSearch
 	 * @see \Rubedo\Interfaces\IDataSearch::init()
      * @param string $host http host name
      * @param string $port http port 
-     * @param string $index index name
      */
-    public function init($index = null, $host = null, $port= null)
+    public function init($host = null, $port= null)
     {
         if (is_null($host)) {
-            $host = self::$_defaultHost;
+            $host = self::$_options['host'];
         }
 
         if (is_null($port)) {
-            $port = self::$_defaultPort;
+            $port = self::$_options['port'];
         }
 
-        if (gettype($host) !== 'string') {
-            throw new \Exception('$host should be a string');
-			if (!preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $host)) {
-				throw new \Exception('$host is not a valid hostname');
-			}
-        }
-		
-        if (gettype($port) !== 'integer') {
-            throw new \Exception('$port should be a integer');
-        }
-		
-        if (gettype($index) !== 'string') {
-            throw new \Exception('$index should be a string');
-        }
-		
         $this->_client = new \Elastica_Client();
 		
-		$this->_content_index = $this->_client->getIndex(self::$_content_index);
+		$this->_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
 		
 		// Create content index if not exists
 		if (!$this->_content_index->exists()) {
 			$this->_content_index->create(self::$_content_index_param,true);
 		}
 		
-		$this->_document_index = $this->_client->getIndex(self::$_document_index);
+		$this->_document_index = $this->_client->getIndex(self::$_options['documentIndex']);
 		
 		// Create document index if not exists
 		if (!$this->_document_index->exists()) {
@@ -145,63 +136,13 @@ class DataSearch implements IDataSearch
 		}
     }
 
-    /**
+	 /**
      * Set the main hostname for ES connection
      *
      * @param string $host
-     * @throws \Exception
      */
-    public static function setDefaultHost($host)
-    {
-        if (gettype($host) !== 'string') {
-            throw new \Exception('$host should be a string');
-			if (!preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $host)) {
-				throw new \Exception('$host is not a valid hostname');
-			}
-        }
-        self::$_defaultHost = $host;
-    }
-
-    /**
-     * Set the main port ES for ES connection
-     *
-     * @param string $port
-     * @throws \Exception
-     */
-    public static function setDefaultPort($port)
-    {
-        if (!is_int($port)) {
-            throw new \Exception('$port should be an integer');
-        }
-        self::$_defaultPort= $port;
-    }
-	
-    /**
-     * Set the main content Index
-     *
-     * @param string $index
-     * @throws \Exception
-     */
-    public static function setDefaultContentIndex($index)
-    {
-        if (gettype($index) !== 'string') {
-            throw new \Exception('$index should be a string');
-        }
-        self::$_content_index= $index;
-    }
-	
-    /**
-     * Set the main document Index
-     *
-     * @param string $index
-     * @throws \Exception
-     */
-    public static function setDefaultDocumentIndex($index)
-    {
-        if (gettype($index) !== 'string') {
-            throw new \Exception('$index should be a string');
-        }
-        self::$_document_index= $index;
+    public static function setOptions(array $options) {
+        self::$_options = $options;
     }
 
     /**
@@ -212,9 +153,11 @@ class DataSearch implements IDataSearch
 	 * @param array $data new content type
      * @return array
      */
-    public function createContentType ($id, $data) {
+    public function createContentType ($contentType) {
     	
 		// Unicity type id check
+		$id = $contentType["id"];
+		
 		$mapping = $this->_content_index->getMapping();
 		if (array_key_exists($id,$mapping[self::$_content_index])) {
 			throw new \Exception('$id type already exists');
@@ -223,10 +166,10 @@ class DataSearch implements IDataSearch
 		// Create mapping
 		$indexMapping = array();
 		
-		foreach($data as $field) {
-			if ($field['searchable']) {
-				$name = $field['name'];
-				if ($field['resume']) {
+		foreach($contentType["fields"] as $field) {
+			if ($field['config']['searchable']) {
+				$name = $field['config']['name'];
+				if ($field['config']['resumed']) {
 					$store = 'yes';
 				} else {
 					$store = 'no';
@@ -282,7 +225,7 @@ class DataSearch implements IDataSearch
 		}	
 
 		// Create new type
-		$type = new Elastica_Type($this->_content_index, $id);
+		$type = new \Elastica_Type($this->_content_index, $id);
 		
 		// Set mapping
 		$type->setMapping($indexMapping);
