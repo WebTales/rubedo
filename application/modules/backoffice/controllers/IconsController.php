@@ -43,7 +43,14 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
 	 */
 	protected $_dataReader;
 	
+	/**
+	 * Get icons preferences of the current user
+	 * 
+	 * @return array
+	 */
 	public function indexAction() {
+		$response = array();	
+			
 		if($_SESSION['id']){
 			$userId = $_SESSION['id'];
 			
@@ -52,15 +59,20 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
 				
 				$dataValues = $this -> _dataReader -> read();
 
-				$response = array();
 				$response['data'] = array_values($dataValues);
 				$response['total'] = count($response['data']);
 				$response['success'] = TRUE;
 				$response['message'] = 'OK';
-		
-				$this -> _returnJson($response);
+			} else {
+				$response['success'] = FALSE;
+				$response['message'] = '$userId should not be empty';
 			}
+		} else {
+			$response['success'] = FALSE;
+			$response['message'] = 'No index id set in the session.';
 		}
+		
+		$this -> _returnJson($response);
 	}
 
 }
