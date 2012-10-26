@@ -113,5 +113,38 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
 		}
 		$this -> _returnJson($returnArray);
 	}
+	
+	/**
+	 * Update the current values in mongoDB
+	 */
+	 public function updateAction() {
+	 	$data = $this -> getRequest() -> getParam('data');
+
+		if (!is_null($data)) {
+			$insertData = Zend_Json::decode($data);
+			if (is_array($insertData)) {
+				$result = $this->_auth->getIdentity();
+				if($result){
+					$userId = $result['id'];
+
+					if($userId === $insertData['userId']){
+						$returnArray = $this -> _dataReader -> create($insertData, true);
+					} else {
+						$returnArray = array('success' => false, 'message' => 'Bad id');
+					}
+				} else {
+					$returnArray = array('success' => false, "msg" => 'No user connected');
+				}
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Not an array');
+			}
+		} else {
+			$returnArray = array('success' => false, "msg" => 'No Data');
+		}
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		$this -> _returnJson($returnArray);
+	 }
 
 }
