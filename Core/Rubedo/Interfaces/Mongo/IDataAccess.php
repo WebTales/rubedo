@@ -22,8 +22,7 @@ namespace Rubedo\Interfaces\Mongo;
  * @category Rubedo
  * @package Rubedo
  */
-interface IDataAccess
-{
+interface IDataAccess {
 
     /**
      * Initialize a data service handler to read or write in a DataBase
@@ -145,6 +144,42 @@ interface IDataAccess
     public function clearSort();
 
     /**
+     * Set the number of the first result displayed
+     *
+     * @param $firstResult is the number of the first result displayed
+     */
+    public function setFirstResult($firstResult);
+
+	/**
+	 * Set the number of results displayed
+     *
+	 * @param $numberOfResults is the number of results displayed
+	 */
+	public function setNumberOfResults($numberOfResults);
+
+    /**
+	 * Set to zer the number of the first result displayed
+	 */
+	public function clearFirstResult();
+	
+	/**
+	 * Set to zero (unlimited) the number of results displayed
+	 */
+	public function clearNumberOfResults();
+	
+	/**
+	 * Return the current number of the first result displayed
+     * @return integer
+	 */
+	public function getFirstResult();
+	
+	/**
+	 * Return the current number of results displayed
+     * @return integer
+	 */
+	public function getNumberOfResults();
+
+    /**
      * Add to the field list the array passed in argument
      *
      * @param array $fieldList
@@ -185,7 +220,7 @@ interface IDataAccess
     /**
      * Allow to remove one field in the current excludeFieldList array
      *
-     * @param array $excludeFieldToRemove
+     * @param array $fieldToRemove
      */
     public function removeFromExcludeFieldList(array $fieldToRemove);
 
@@ -193,26 +228,5 @@ interface IDataAccess
      * Clear the excludeFieldList array
      */
     public function clearExcludeFieldList();
-
-    /**
-     * Hash a password
-     *
-     * @param $pwd password
-     * @return $hash password hashed
-     *
-     * @todo add hash_pdkdf2() function to the project and start test
-     */
-    public function hashPassword($pwd);
-
-    /**
-     * Compare the hashed string with a string hashed in the functions
-     * If they are the same, the function return true
-     *
-     * @param $hash is the string already hashed
-     * @param $pwd password to hash
-     *
-     * @todo add hash_pdkdf2() function to the project and start test
-     */
-    public function checkHashPassword($hash, $pwd);
 
 }

@@ -34,7 +34,54 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 	 * @var string
 	 */
 	protected $_store = 'Users';
+	
+	/**
+	 * Data Access Service
+	 *
+	 * @var DataAccess
+	 */
+	protected $_dataReader;
 
-
+	public function changePasswordAction(){
+		$hashService = \Rubedo\Services\Manager::getService('Hash');
+		
+		$password = $_POST['password'];
+		$id = $_POST['id'];
+		$version = $_POST['version'];
+		
+		// Create a random string for the salt
+		$caracters = str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmonopqrstuvwxyz123456789');
+	    shuffle($caracters);
+	    $caracters = array_slice($caracters, 0, 10);
+	    $salt = implode('', $caracters);
+		
+		if (!empty($password) && !empty($id) && !empty($version)) {
+			$password = $hashService->derivatePassword($password, $salt);
+			
+			$insertData['id'] = $id;
+			$insertData['version'] = (int) $version;
+			$insertData['password'] = $password;
+			$insertData['salt'] = $salt;
+			
+			$result = $this->_dataReader->update($insertData, true);
+			
+			if($result['success'] == true){
+				$message['success'] = true;
+			} else if($result['success'] == false){
+				$message['success'] = false;
+				$message['error'] = $result['msg'];
+			}
+			
+			return $this->_helper->json($message);
+		} else {
+			$returnArray = array('success' => false, "msg" => 'No Data');
+		}
+		
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		return $this->_helper->json($returnArray);
+	}
 
 }

@@ -38,6 +38,12 @@ class Backoffice_IndexController extends AbstractController
         }catch(\Exception $e){
             throw new \Exception('Can\'t connect to MongoDB !');
         }
+		
+		$this->_auth = Rubedo\Services\Manager::getService('Authentication');
+		
+		if(!$this->_auth->getIdentity()){
+			$this->_helper->redirector->gotoUrl("/backoffice/login");
+		}
         
         $this->getHelper('Layout')
             ->disableLayout();

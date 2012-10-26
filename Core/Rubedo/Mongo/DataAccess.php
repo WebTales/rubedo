@@ -78,6 +78,20 @@ class DataAccess implements IDataAccess
      * @var array
      */
     protected $_sortArray = array();
+	
+	/**
+	 * Number of the first result
+	 * 
+	 * @var integer
+	 */
+	protected $_firstResult = 0;
+	
+	/**
+	 * Number of results
+	 * 
+	 * @var integer
+	 */
+	protected $_numberOfResults = 0;
 
     /**
      * Fields used when reading
@@ -176,23 +190,27 @@ class DataAccess implements IDataAccess
         //get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
-        $includedFields = $this->getFieldList();
-        $excludedFields = $this->getExcludeFieldList();
-
-        //get enforced Rules
-        $filter = $this->_getLocalFilter($filter);
-        $includedFields = $this->_getLocalIncludeFieldList($includedFields);
-        $excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
-
-        //merge the two fields array to obtain only one array with all the conditions
-        $fieldRule = array_merge($includedFields, $excludedFields);
-
-        //get the cursor
-        $cursor = $this->_collection->find($filter, $fieldRule);
-
-        //apply sort, paging, filter
-        $cursor->sort($sort);
-
+		$firstResult = $this->getFirstResult();
+		$numberOfResults = $this->getNumberOfResults();
+		$includedFields = $this->getFieldList();
+		$excludedFields = $this->getExcludeFieldList();
+		
+		//get enforced Rules
+		$filter = $this->_getLocalFilter($filter);
+		$includedFields = $this->_getLocalIncludeFieldList($includedFields);
+		$excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
+		
+		//merge the two fields array to obtain only one array with all the conditions
+		$fieldRule = array_merge($includedFields, $excludedFields);
+		
+		//get the cursor
+		$cursor = $this->_collection->find($filter, $fieldRule);
+		
+		//apply sort, paging, filter
+		$cursor->sort($sort);
+		$cursor->skip($firstResult);
+		$cursor->limit($numberOfResults);
+			
         //switch from cursor to actual array
         $data = iterator_to_array($cursor);
 
@@ -350,12 +368,32 @@ class DataAccess implements IDataAccess
      * @return array
      */
     public function findOne($value) {
-        $data = $this->_collection->findOne($value);
+    	//get the UI parameters
+    	$includedFields = $this->getFieldList();
+		$excludedFields = $this->getExcludeFieldList();
+		
+		//get enforced Rules
+		$includedFields = $this->_getLocalIncludeFieldList($includedFields);
+		$excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
+		
+		//merge the two fields array to obtain only one array with all the conditions
+        $fieldRule = array_merge($includedFields, $excludedFields);
+		
+        $data = $this->_collection->findOne($value, $fieldRule);
 
         $data['id'] = (string)$data['_id'];
         unset($data['_id']);
 
-        return array($data);
+        return $data;
+    }
+
+    /**
+     * Find an item given by its literral ID
+     * @param string $contentId
+     * @return array
+     */
+    public function findById($contentId) {
+        return $this->findOne(array('_id' => new \MongoId($contentId)));
     }
 
     /**
@@ -422,7 +460,7 @@ class DataAccess implements IDataAccess
         $obj['lastUpdateTime'] = $currentTime;
 
         $mongoID = new \MongoID($id);
-        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), $obj, array("safe" => $safe));
+        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), array('$set' => $obj), array("safe" => $safe));
 
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
@@ -504,12 +542,34 @@ class DataAccess implements IDataAccess
             }
             if (is_array($value)) {
                 foreach ($value as $operator => $subvalue) {
-                    if (!in_array(gettype($subvalue), array('string', 'float', 'integer')) && !$subvalue instanceof \MongoRegex) {
+                    if (!in_array(gettype($subvalue), array('array', 'string', 'float', 'integer')) && !$subvalue instanceof \MongoRegex) {
                         throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
                     }
 
                 }
 
+            }
+            if ($name === 'id') {
+                $name = '_id';
+                if (is_string($value)) {
+                    $value = new \MongoID($value);
+                } elseif (is_array($value)) {
+                    if (isset($value['$in'])) {
+                        foreach ($value['$in'] as $key => $localId) {
+                            $value['$in'][$key] = new \MongoID($localId);
+                        }
+                    }
+                    if (isset($value['$nin'])) {
+                        foreach ($value['$nin'] as $key => $localId) {
+                            $value['$nin'][$key] = new \MongoID($localId);
+                        }
+                    }
+                    if (isset($value['$all'])) {
+                        foreach ($value['$all'] as $key => $localId) {
+                            $value['$all'][$key] = new \MongoID($localId);
+                        }
+                    }
+                }
             }
             //add validated input
             $this->_filterArray[$name] = $value;
@@ -595,6 +655,62 @@ class DataAccess implements IDataAccess
     public function getSortArray() {
         return $this->_sortArray;
     }
+	
+	/**
+	 * Set the number of the first result displayed
+     *
+     * @param $firstResult is the number of the first result displayed
+	 */
+	public function setFirstResult($firstResult){
+		 if (gettype($firstResult) !== 'integer'){
+		 	throw new \Rubedo\Exceptions\DataAccess("firstResult should be an integer", 1);
+		 }
+		
+		$this->_firstResult = $firstResult;
+	}
+	
+	/**
+	 * Set the number of results displayed
+     *
+	 * @param $numberOfResults is the number of results displayed
+	 */
+	public function setNumberOfResults($numberOfResults){
+		if (gettype($numberOfResults) !== 'integer'){
+		 	throw new \Rubedo\Exceptions\DataAccess("numberOfResults should be an integer", 1);
+		 }
+		
+		$this->_numberOfResults = $numberOfResults;
+	}
+	
+	/**
+	 * Set to zer the number of the first result displayed
+	 */
+	public function clearFirstResult(){
+		$this->_firstResult = 0;
+	}
+	
+	/**
+	 * Set to zero (unlimited) the number of results displayed
+	 */
+	public function clearNumberOfResults(){
+		$this->_numberOfResults = 0;
+	}
+	
+	/**
+	 * Return the current number of the first result displayed
+     * @return integer
+	 */
+	public function getFirstResult(){
+		return $this->_firstResult;
+	}
+	
+	/**
+	 * Return the current number of results displayed
+     * @return integer
+	 */
+	public function getNumberOfResults(){
+		return $this->_numberOfResults;
+	}
 
     /**
      * Add to the field list the array passed in argument
@@ -602,11 +718,17 @@ class DataAccess implements IDataAccess
      * @param array $fieldList
      */
     public function addToFieldList(array $fieldList) {
-
+		if (count($fieldList) === 0) {
+            throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
+        }
+		
         foreach ($fieldList as $value) {
             if (!is_string($value)) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
             }
+			if ($value === "id") {
+				throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
+			}
 
             //add validated input
             $this->_fieldList[$value] = true;
@@ -629,7 +751,7 @@ class DataAccess implements IDataAccess
     public function removeFromFieldList(array $fieldToRemove) {
         foreach ($fieldToRemove as $value) {
             if (!is_string($value)) {
-                throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string paramter", 1);
+                throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string parameter", 1);
             }
             unset($this->_fieldList[$value]);
         }
@@ -653,13 +775,16 @@ class DataAccess implements IDataAccess
 
         if (count($excludeFieldList) === 0) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid excluded fields list array", 1);
-
         }
+		
 
         foreach ($excludeFieldList as $value) {
             if (!in_array(gettype($value), array('string'))) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
             }
+			if ($value === "id") {
+				throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
+			}
 
             //add validated input
             $this->_excludeFieldList[$value] = false;
@@ -676,7 +801,7 @@ class DataAccess implements IDataAccess
     /**
      * Allow to remove one field in the current excludeFieldList array
      *
-     * @param array $excludeFieldToRemove
+     * @param array $fieldToRemove
      */
     public function removeFromExcludeFieldList(array $fieldToRemove) {
         foreach ($fieldToRemove as $value) {
@@ -692,39 +817,6 @@ class DataAccess implements IDataAccess
      */
     public function clearExcludeFieldList() {
         $this->_excludeFieldList = array();
-    }
-
-    /**
-     * Hash a password
-     *
-     * @param $pwd password
-     * @return $hash password hashed
-     *
-     * @todo add hash_pdkdf2() function to the project and start test
-     */
-    public function hashPassword($pwd) {
-        $hash = hash_pbkdf2('sha512', $pwd, 'salt', 10);
-
-        return $hash;
-    }
-
-    /**
-     * Compare the hashed string with a string hashed in the functions
-     * If they are the same, the function return true
-     *
-     * @param $hash is the string already hashed
-     * @param $pwd password to hash
-     *
-     * @todo add hash_pdkdf2() function to the project and start test
-     */
-    public function checkHashPassword($hash, $pwd) {
-        $hash2 = hash_pbkdf2('sha512', $pwd, 'salt', 10);
-
-        if ($hash === $hash2) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

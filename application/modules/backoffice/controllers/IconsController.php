@@ -35,5 +35,44 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
      * @var string
      */
     protected $_store = 'Icons';
+	
+	/**
+	 * Data Access Service
+	 *
+	 * @var DataAccess
+	 */
+	protected $_dataReader;
+	
+	/**
+	 * Get icons preferences of the current user
+	 * 
+	 * @return array
+	 */
+	public function indexAction() {
+		$response = array();	
+			
+		if($_SESSION['id']){
+			$userId = $_SESSION['id'];
+			
+			if(!empty($userId)){
+				$this -> _dataReader -> addFilter(array('userId' => $userId));
+				
+				$dataValues = $this -> _dataReader -> read();
+
+				$response['data'] = array_values($dataValues);
+				$response['total'] = count($response['data']);
+				$response['success'] = TRUE;
+				$response['message'] = 'OK';
+			} else {
+				$response['success'] = FALSE;
+				$response['message'] = '$userId should not be empty';
+			}
+		} else {
+			$response['success'] = FALSE;
+			$response['message'] = 'No index id set in the session.';
+		}
+		
+		$this -> _returnJson($response);
+	}
 
 }

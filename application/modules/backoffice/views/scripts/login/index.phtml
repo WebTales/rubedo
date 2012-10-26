@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" />
+    <title>Rubedo Connexion</title>
+    <script src="extjs-4.1.0/ext-all-debug.js"></script>
+    <link rel="stylesheet" href="extjs-4.1.0/resources/css/ext-all-gray.css" id="theme">
+    <script type="text/javascript">
+    	Ext.Loader.setConfig({
+    enabled: false});
+
+Ext.application({
+    views: [
+        'ConnectionViewport'
+    ],
+    autoCreateViewport: true,
+    name: 'Connector'
+});
+    	
+    	
+Ext.define('Connector.view.Viewport', {
+    extend: 'Ext.container.Viewport',
+    alias: 'widget.ConnectionViewport',
+
+    hidden: false,
+    renderTo: Ext.getBody(),
+    id: 'ConnectionViewport',
+    style: 'background: url(resources/images/logo.png)  center no-repeat;',
+    layout: {
+        align: 'center',
+        pack: 'center',
+        type: 'vbox'
+    },
+
+    initComponent: function() {
+        var me = this;
+
+        Ext.applyIf(me, {
+            items: [
+                {
+                    xtype: 'form',
+                    frame: true,
+                    height: 151,
+                    width: 400,
+                    bodyPadding: 10,
+                    icon: 'resources/images/lock.png',
+                    title: 'Connexion',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            anchor: '90%',
+                            style: 'float: left;',
+                            name: 'login',
+                            fieldLabel: 'Compte utilisateur ',
+                            labelWidth: 120,
+                            allowBlank: false,
+                            blankText: 'Ce champ est obligatoire'
+                        },
+                        {
+                            xtype: 'button',
+                            style: 'float: right;',
+                            handleMouseEvents: false,
+                            icon: 'resources/images/info.png',
+                            text: '',
+                            tooltip: 'Votre login utilisateur'
+                        },
+                        {
+                            xtype: 'textfield',
+                            anchor: '90%',
+                            margin: '0 0 10 0',
+                            style: 'float: left;',
+                            inputType: 'password',
+                            name: 'password',
+                            fieldLabel: 'Mot de passe ',
+                            labelWidth: 120,
+                            allowBlank: false,
+                            blankText: 'Ce champ est obligatoire'
+                        },
+                        {
+                            xtype: 'button',
+                            style: 'float: right;',
+                            handleMouseEvents: false,
+                            icon: 'resources/images/info.png',
+                            text: '',
+                            tooltip: 'Votre mot de passe'
+                        },
+                        {
+                            xtype: 'button',
+                            anchor: '50%',
+                            margin: '0 10 0 0',
+                            icon: 'resources/images/user_add.png',
+                            scale: 'large',
+                            text: 'Inscription',
+                            tooltip: 'Créer un nouveau comte utilisateur'
+                        },
+                        {
+                            xtype: 'button',
+                            handler: function(button, event) {
+                                var myForm = button.up().getForm();
+                                if (myForm.isValid()) {
+
+
+                                    myForm.submit({
+                                        url:"xhr-authentication/login",
+                                        success: function(form, action) {
+										window.location.href = 'index';
+                                        },
+                                        failure: function(form, action) {
+                                            switch (action.failureType) {
+                                                case Ext.form.action.Action.CLIENT_INVALID:
+                                                Ext.Msg.alert('Erreur', 'Formulaire invalide');
+                                                break;
+                                                case Ext.form.action.Action.CONNECT_FAILURE:
+                                                Ext.Msg.alert('Erreur', 'Erreur Ajax');
+                                                break;
+                                                case Ext.form.action.Action.SERVER_INVALID:
+                                                Ext.Msg.alert('Erreur', 'Compte utilisateur ou mot de passe erronï¿½');
+                                            }
+                                        }
+                                    }); 
+                                }
+                            },
+                            anchor: '50%',
+                            margin: '0 0 0 10',
+                            icon: 'resources/images/accept.png',
+                            scale: 'large',
+                            text: 'Valider',
+                            tooltip: 'Envoyer les données et se connecter'
+                        }
+                    ]
+                }
+            ]
+        });
+
+        me.callParent(arguments);
+    }
+
+});
+    </script>
+</head>
+<body></body>
+</html>

@@ -25,65 +25,74 @@ use Rubedo\Interfaces\User\ICurrentUser;
  * @category Rubedo
  * @package Rubedo
  */
-class CurrentUser implements ICurrentUser {
+class CurrentUser implements ICurrentUser
+{
 
-	/**
-	 * Current User Object
-	 * 
-	 * Static : do not do an authentication and a data fetch each time the service is instanciated
-	 *
-	 * @var array
-	 */
-	protected static $_currentUser = null;
+    /**
+     * Current User Object
+     *
+     * Static : do not do an authentication and a data fetch each time the service is instanciated
+     *
+     * @var array
+     */
+    protected static $_currentUser = null;
 
-	/**
-	 * Current User Id
-	 *
-	 * @var int
-	 */
-	protected static $_currentUserId = null;
+    /**
+     * Current User Id
+     *
+     * @var int
+     */
+    protected static $_currentUserId = null;
 
-	/**
-	 * Return the authenticated user array
-	 *
-	 * @return array
-	 */
-	public function getCurrentUser() {
-		if (!isset(self::$_currentUser)) {
-			if ($this -> isAuthenticated()) {
-				self::$_currentUser = $this -> fetchCurrentUser();
-			}
-		}
-		return self::$_currentUser;
-	}
-	
-	/**
-	 * Return the current user short info array
-	 * 
-	 * @return array
-	 */
-	public function getCurrentUserSummary(){
-		return $this->getCurrentUser();
-	}
+    /**
+     * Return the authenticated user array
+     *
+     * @return array
+     */
+    public function getCurrentUser() {
+        if (!isset(self::$_currentUser)) {
+            if ($this->isAuthenticated()) {
+                self::$_currentUser = $this->fetchCurrentUser();
+            }
+        }
+        return self::$_currentUser;
+    }
 
-	/**
-	 * Check if a user is authenticated
-	 *
-	 * @todo to be implemented
-	 * @return boolean
-	 */
-	public function isAuthenticated() {
-		return true;
-	}
+    /**
+     * Return the current user short info array
+     *
+     * @return array
+     */
+    public function getCurrentUserSummary() {
+        $userInfos = $this->getCurrentUser();
+        return array('id' => $userInfos['id'], 'login' => $userInfos['login'], 'fullName' => $userInfos['name']);
+    }
 
-	/**
-	 * Fetch the current user information from the data storage
-	 *
-	 * @todo to be implemented
-	 * @return array
-	 */
-	public function fetchCurrentUser() {
-		return array('id' => 1, 'login' => 'jbourdin', 'fullName' => 'Julien Bourdin');
-	}
+    /**
+     * Check if a user is authenticated
+     *
+     * @return boolean
+     */
+    public function isAuthenticated() {		
+    	$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+		return $serviceAuth->hasIdentity();
+    }
+
+    /**
+     * Fetch the current user information from the data storage
+     *
+     * @return array
+     */
+    public function fetchCurrentUser() {		
+    	$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');	
+    	$sessionUser = $serviceAuth->getIdentity();
+		
+		$serviceReader = \Rubedo\Services\Manager::getService('MongoDataAccess');
+		$serviceReader->init('Users');
+		$serviceReader->addToExcludeFieldList(array('password'));
+		
+		$user = $serviceReader->findById($sessionUser['id']);
+		return $user;
+    }
 
 }

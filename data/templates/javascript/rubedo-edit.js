@@ -141,7 +141,7 @@ function undo(editor) {
 }
 
 function save(id,data) {
-	$.post("/data/save", { 'id': id, 'data': data},
+	$.post("/backoffice/contents/update", { 'id': id, 'data': data},
    function(result) {
    });
 }

@@ -66,6 +66,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 			Rubedo\Services\Manager::setOptions($defaultArray);
 		}
 		$serviceOptions = Rubedo\Services\Manager::getOptions();
+		
+		Rubedo\Interfaces\config::initInterfaces();
 		/*define('LOG_LEVEL', $serviceOptions['logLevel']);
 		 define('ENABLE_CACHE', $serviceOptions['enableCache']);*/
 
@@ -83,7 +85,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 		$router = $front->getRouter();
 
 		//default front office route : should be called only if no module is specified
-		$route = new Zend_Controller_Router_Route_Regex('(?:(?!backoffice|theme|lang|result|detail|javascritp|access).)+', array('controller' => 'index', 'action' => 'index'));
+		$route = new Zend_Controller_Router_Route_Regex('(?:(?!backoffice|theme|lang|result|detail|javascritp|access|xhr).)+', array('controller' => 'index', 'action' => 'index'));
 		$router->addRoute('rewrite', $route);
 
 		//legacy json access. Should be removed when all store API had been updated
