@@ -35,5 +35,32 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
      * @var string
      */
     protected $_store = 'Icons';
+	
+	/**
+	 * Data Access Service
+	 *
+	 * @var DataAccess
+	 */
+	protected $_dataReader;
+	
+	public function indexAction() {
+		if($_SESSION['id']){
+			$userId = $_SESSION['id'];
+			
+			if(!empty($userId)){
+				$this -> _dataReader -> addFilter(array('userId' => $userId));
+				
+				$dataValues = $this -> _dataReader -> read();
+
+				$response = array();
+				$response['data'] = array_values($dataValues);
+				$response['total'] = count($response['data']);
+				$response['success'] = TRUE;
+				$response['message'] = 'OK';
+		
+				$this -> _returnJson($response);
+			}
+		}
+	}
 
 }
