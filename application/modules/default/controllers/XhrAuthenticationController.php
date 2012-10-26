@@ -41,16 +41,27 @@ class XhrAuthenticationController extends AbstractController {
 	 * @return bool
 	 */
 	public function loginAction(){
-        $login = $this->getRequest()->getParam('login');
-		$password = $this->getRequest()->getParam('password');
-		
-		$loginResult = $this->_auth->authenticate($login, $password);
-		
-		if($loginResult){
-			$response['success'] = true;
-			return $this->_helper->json($response);
-		}else{
-			$response['success'] = false;
+		if(isset($_GET['login']) && isset($_GET['password'])){
+			$login = $_GET['login'];
+			$password = $_GET['password'];
+			if(!empty($login) && !empty($password)){
+				$loginResult = $this->_auth->authenticate($login, $password);
+				
+				if($loginResult){
+					$response['success'] = true;
+					return $this->_helper->json($response);
+				}else{
+					$response['success'] = false;
+					return $this->_helper->json($response);
+				}
+			} else {
+				$response['succes'] = false;
+				$response['message'] = 'The login and the password should not be empty';
+				return $this->_helper->json($response);
+			}
+		} else {
+			$response['succes'] = false;
+			$response['message'] = 'The login and the password should be sent in a POST request !';
 			return $this->_helper->json($response);
 		}
 	}
