@@ -44,35 +44,107 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
 	protected $_dataReader;
 	
 	/**
+     * Variable for Authentication service
+	 * 
+	 * @param 	Rubedo\Interfaces\User\IAuthentication
+     */
+	protected $_auth;
+	
+	public function init(){
+		parent::init();
+		
+		$this->_auth = \Rubedo\Services\Manager::getService('Authentication');
+	}
+	
+	/**
 	 * Get icons preferences of the current user
 	 * 
 	 * @return array
 	 */
 	public function indexAction() {
-		$response = array();	
+		$response = array();
+		
+		$result = $this->_auth->getIdentity();
+		
+		if($result){
+			$this -> _dataReader -> addFilter(array('userId' => $result['id']));
 			
-		if($_SESSION['id']){
-			$userId = $_SESSION['id'];
-			
-			if(!empty($userId)){
-				$this -> _dataReader -> addFilter(array('userId' => $userId));
-				
-				$dataValues = $this -> _dataReader -> read();
+			$dataValues = $this -> _dataReader -> read();
 
-				$response['data'] = array_values($dataValues);
-				$response['total'] = count($response['data']);
-				$response['success'] = TRUE;
-				$response['message'] = 'OK';
-			} else {
-				$response['success'] = FALSE;
-				$response['message'] = '$userId should not be empty';
-			}
+			$response['data'] = array_values($dataValues);
+			$response['total'] = count($response['data']);
+			$response['success'] = TRUE;
+			$response['message'] = 'OK';
 		} else {
 			$response['success'] = FALSE;
-			$response['message'] = 'No index id set in the session.';
+			$response['message'] = 'No user connected';
 		}
 		
 		$this -> _returnJson($response);
 	}
+	
+	/**
+	 * Create a new icon in mongoDB
+	 * 
+	 * @return array
+	 */
+	public function createAction() {
+		$data = $this -> getRequest() -> getParam('data');
+
+		if (!is_null($data)) {
+			$insertData = Zend_Json::decode($data);
+			if (is_array($insertData)) {
+				$result = $this->_auth->getIdentity();
+				if($result){
+					$userId = $result['id'];
+					$insertData['userId'] = $userId;
+					$returnArray = $this -> _dataReader -> create($insertData, true);
+				} else {
+					$returnArray = array('success' => false, "msg" => 'No user connected');
+				}
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Not an array');
+			}
+		} else {
+			$returnArray = array('success' => false, "msg" => 'No Data');
+		}
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		$this -> _returnJson($returnArray);
+	}
+	
+	/**
+	 * Update the current values in mongoDB
+	 */
+	 public function updateAction() {
+	 	$data = $this -> getRequest() -> getParam('data');
+
+		if (!is_null($data)) {
+			$insertData = Zend_Json::decode($data);
+			if (is_array($insertData)) {
+				$result = $this->_auth->getIdentity();
+				if($result){
+					$userId = $result['id'];
+
+					if($userId === $insertData['userId']){
+						$returnArray = $this -> _dataReader -> update($insertData, true);
+					} else {
+						$returnArray = array('success' => false, 'message' => 'Bad id');
+					}
+				} else {
+					$returnArray = array('success' => false, "msg" => 'No user connected');
+				}
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Not an array');
+			}
+		} else {
+			$returnArray = array('success' => false, "msg" => 'No Data');
+		}
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		$this -> _returnJson($returnArray);
+	 }
 
 }

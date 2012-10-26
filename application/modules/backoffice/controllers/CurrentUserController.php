@@ -26,7 +26,7 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
+class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 {
     /**
      * Name of the store which is also to the collection name
@@ -34,7 +34,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
      * @see Backoffice_DataAccessController::$_store
      * @var string
      */
-    protected $_store = 'PersonalPrefs';
+    protected $_store = 'Users';
 	
 	/**
 	 * Data Access Service
@@ -60,66 +60,38 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 	}
 
 	/**
-	 * Get graphics preferences of the current user
+	 * Get informations of the user
 	 * 
 	 * @return array
 	 */
 	public function indexAction() {
-		$response = array();
-		$auth = \Rubedo\Services\Manager::getService('Authentication');
-			
-		$result = $auth->getIdentity();
+		$result = $this->_auth->getIdentity();
+		$userId = $result['id'];
 		
-		if($result){
-			$this -> _dataReader -> addFilter(array('userId' => $result['id']));
-			
-			$dataValues = $this -> _dataReader -> read();
-
-			$response['data'] = array_values($dataValues);
-			$response['total'] = count($response['data']);
-			$response['success'] = TRUE;
-			$response['message'] = 'OK';
-		} else {
-			$response['success'] = FALSE;
-			$response['message'] = 'No user connected';
-		}
+		$this->_dataReader->addToExcludeFieldList(array('password', 'salt'));
+		$this->_dataReader->addFilter(array('id' => $userId));
+		$dataValues = $this->_dataReader->read();
 		
-		$this -> _returnJson($response);
+		$response['data'] = array_values($dataValues);
+		$response['total'] = count($response['data']);
+		$response['success'] = TRUE;
+		$response['message'] = 'OK';
+		
+		$this->_returnJson($response);
 	}
 	
 	/**
-	 * Create preferences in mongoDB
+	 * Unable the creation of users
 	 * 
 	 * @return array
 	 */
 	public function createAction() {
-		$data = $this -> getRequest() -> getParam('data');
-
-		if (!is_null($data)) {
-			$insertData = Zend_Json::decode($data);
-			if (is_array($insertData)) {
-				$result = $this->_auth->getIdentity();
-				if($result){
-					$userId = $result['id'];
-					$insertData['userId'] = $userId;
-					$returnArray = $this -> _dataReader -> create($insertData, true);
-				} else {
-					$returnArray = array('success' => false, "msg" => 'No user connected');
-				}
-			} else {
-				$returnArray = array('success' => false, "msg" => 'Not an array');
-			}
-		} else {
-			$returnArray = array('success' => false, "msg" => 'No Data');
-		}
-		if (!$returnArray['success']) {
-			$this -> getResponse() -> setHttpResponseCode(500);
-		}
+		$returnArray = array('success' => false, 'message' => 'Not authorized to create a user');
 		$this -> _returnJson($returnArray);
 	}
 
 	/**
-	 * Update the current values in mongoDB
+	 * Update the current values for the user
 	 */
 	public function updateAction() {
 	 	$data = $this -> getRequest() -> getParam('data');
@@ -131,7 +103,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 				if($result){
 					$userId = $result['id'];
 
-					if($userId === $insertData['userId']){
+					if($userId === $insertData['id']){
 						$returnArray = $this -> _dataReader -> update($insertData, true);
 					} else {
 						$returnArray = array('success' => false, 'message' => 'Bad id');
@@ -148,6 +120,16 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 		if (!$returnArray['success']) {
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
+		$this -> _returnJson($returnArray);
+	}
+	
+	/**
+	 * Unable the suppression of a user
+	 * 
+	 * @return array
+	 */
+	public function deleteAction(){
+		$returnArray = array('success' => false, 'message' => 'Not authorized to delete a user');
 		$this -> _returnJson($returnArray);
 	}
 }
