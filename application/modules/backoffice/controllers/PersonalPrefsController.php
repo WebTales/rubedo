@@ -34,7 +34,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
      * @see Backoffice_DataAccessController::$_store
      * @var string
      */
-    protected $_store = 'Icons';
+    protected $_store = 'PersonalPrefs';
 	
 	/**
 	 * Data Access Service
@@ -85,7 +85,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 	}
 	
 	/**
-	 * Create a new icon in mongoDB
+	 * Create preferences in mongoDB
 	 * 
 	 * @return array
 	 */
