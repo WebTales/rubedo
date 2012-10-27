@@ -137,7 +137,7 @@ class DataSearch implements IDataSearch
     }
 
 	 /**
-     * Set the main hostname for ES connection
+     * Set the options for ES connection
      *
      * @param string $host
      */
@@ -146,268 +146,128 @@ class DataSearch implements IDataSearch
     }
 
     /**
-     * Create ES type for new content type
+     * ES search
      *     
-	 * @see \Rubedo\Interfaces\IDataSearch::createContentType()
-	 * @param string $id content type id
-	 * @param array $data new content type
-     * @return array
+	 * @see \Rubedo\Interfaces\IDataSearch::search()
+	 * @param string $terms terms to search
+	 * @param string $type optional content type filter
+	 * @param string $lang optional lang filter
+	 * @param string $author optional author filter
+	 * @param string $date optional date filter
+	 * @param string $pager optional pager, default set to 10
+	 * @param string $orderBy optional  orderBy, default sort on score
+	 * @param string $pageSize optional page size, "all" for everything
+     * @return Elastica_ResultSet
      */
-    public function createContentType ($contentType, $overwrite=false) {
+    public function search ($terms, $type=null, $lang=null, $author=null, $date=null, $pager=null, $orderBy=null, $pageSize=null) {
     	
-		// Unicity type id check
-		$id = $contentType["id"];
-		$type = $contentType["type"];
-
-		$mapping = $this->_content_index->getMapping();
-		if (array_key_exists($id,$mapping[self::$_content_index])) {
-			if (!$overwrite) {
-				// throw exception
-				throw new \Exception("$type type already exists");
-			} else {
-				// delete existing content type
-				$this->deleteContentType($id);
-			}
-		}
-
-		// Create mapping
-		$indexMapping = array();
-		
-		foreach($contentType["fields"] as $field) {
-
-			if ($field['config']['searchable']) {
-				//print_r($field);
-				$name = $field['config']['name'];
-				if ($field['config']['resumed']) {
-					$store = 'yes';
-				} else {
-					$store = 'no';
-				}				
-				switch($field['cType']) {
-					case 'checkbox' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'combo' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'datefield' :
-						$indexMapping[$name] = array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => $store);
-						break;
-					case 'field' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'htmleditor' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'CKEField' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'numberfield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'radio' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'textareafield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'textfield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'timefield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'ratingField' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'slider' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'document' :
-						$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
-						break;
-					default :
-						throw new \Exception("unknown ".$field['cType']." type");
-						break;
-				}
-			}
-		}	
-		
-		// If there is no searchable field, the new type is not created
-		if (!empty($indexMapping)) {
-			// Create new type
-			$type = new \Elastica_Type($this->_content_index, $id);
-			
-			// Set mapping
-			$type->setMapping($indexMapping);
-			//print_r($indexMapping);
-			return array_flip(array_keys($indexMapping));
-		} else {
-			return array();
-		}
-    }
-	
-    /**
-     * Update ES type for existing content type
-     *     
-	 * @see \Rubedo\Interfaces\IDataSearch::updateContentType()
-	 * @param string $id content type id
-	 * @param array $data new content type data
-     * @return array
-     */
-    public function updateContentType ($id, $data) {
-    	
-    }
-	
-    /**
-     * Delete ES type for existing content type
-     *     
-	 * @see \Rubedo\Interfaces\IDataSearch::deleteContentType()
-	 * @param string $id content type id
-     * @return array
-     */
-    public function deleteContentType ($id) {
-    	
-    	$type = new \Elastica_Type($this->_content_index, $id);
-    	$type->delete();
-		
-    }
-	
-    /**
-     * Index new content
-     *    
-	 * @see \Rubedo\Interfaces\IDataSearch::createContent()
-	 * @param string $id new content id
-	 * @param string $type new content type
-	 * @param array $data new content data
-     * @return array
-     */
-    public function createContent ($id, $type, $data) {
-    		
-		// Load content type 
-    	$contentType = $this->_content_index
-    						->getType($type);
-							
-		// Build content document to index	
-		$contentData = array();
-		
-		foreach($data as $field => $var) {
-			$contentData[$field] = (string) $var;
-		}
-		$contentData['type'] = (string) $type;
-		//$currentDocument = new \Elastica_Document($lang.'_'.$id, $contentData);
-		$currentDocument = new \Elastica_Document($id, $contentData);
-		
-		if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
-			$currentDocument->addFile('file', $contentData['attachment']);
+		// set default options
+		if (is_null($lang)) {
+			$defaultNamespace = new \Zend_Session_Namespace('Default');
+			$lang = $defaultNamespace->lang;
 		}
 		
-		// Add content to content type index
-		$contentType->addDocument($currentDocument);
-
-		// Refresh index
-		$contentType->getIndex()->refresh();    
-    	
-    }
-	
-    /**
-     * Update index for existing content
-     *     
-	 * @see \Rubedo\Interfaces\IDataSearch::updateContent()
-	 * @param string $id content id
-	 * @param array $data new content data
-     * @return array
-     */
-    public function updateContent ($id, $data) {
-    	
-    }
-	
-    /**
-     * Delete existing content from index
-     *     
-	 * @see \Rubedo\Interfaces\IDataSearch::deleteContent()
-	 * @param string $id content id
-     * @return array
-     */
-    public function deleteContent ($id) {
-    	
-    }
-	
-    /**
-     * Index new DAM document
-     *   
-	 * @see \Rubedo\Interfaces\IDataSearch::createDocument()
-	 * @param string $id document id  
-	 * @param array $data new document data
-     * @return array
-     */
-    public function createDocument ($id,$data) {
-    	
-    }
-	
-    /**
-     * Update index for existing DAM document
-     *     
-	 * @see \Rubedo\Interfaces\IDataSearch::updateDocument()
-	 * @param string $id document id  
-	 * @param array $data new document data
-     * @return array
-     */
-    public function updateDocument ($id, $data) {
-    	
-    }
-	
-    /**
-     * Delete index type for existing DAM document
-     *     
-	 * @see \Rubedo\Interfaces\IDataSearch::deleteDocument()
-	 * @param string $id document id  
-     * @return array
-     */
-    public function deleteDocument ($id) {
-    	
-    }
-
-    /**
-     * Reindex all content
-     *      
-     * @return array
-     */
-    public function indexAllContent () {
-			
-		$ct = new \Rubedo\Mongo\DataAccess();
-		$ct->init("ContentTypes");
-			
-		$result = array();
+		if (is_null($pager)) $pager = 0;
+		
+		if (is_null($orderBy)) $orderBy = "_score";
+		
+		if (is_null($pageSize)) $pageSize = 10;
 				
-		// For every content type
-		$contentTypeList = $ct->read();
-		
-		foreach($contentTypeList as $contentType) {
-			// Create content type with overwrite set to true
-			$fieldsToIndex = $this->createContentType($contentType,TRUE);
-			if (!empty($fieldsToIndex)) {
-				// If mapping completed, we can index content
-				$c = new \Rubedo\Mongo\DataAccess();
-				$c->init("Contents");
-				// Get content from type
-				$filter = array("typeId"=>$contentType["id"]);
-				$c->addFilter($filter);
-				$contentList = $c->read();
-				$contentCount = 0;
-				foreach($contentList as $content) {
-					// Only searchable fields get indexed
-					$data = array_intersect_key($content["fields"], $fieldsToIndex);
-					// Push content to index
-					$this->createContent($contentType["id"], $contentType["id"], $data);
-					$contentCount++;
-				}
-				$result[$contentType["type"]]=$contentCount;
-				
+		try{
+
+			// Build global filter
+			
+			$globalFilter = new \Elastica_Filter_And();
+						
+			// filter on lang
+			if ($lang != '') {
+				$langFilter = new \Elastica_Filter_Term();
+        		$langFilter->setTerm('lang', $lang);
+				$globalFilter->addFilter($langFilter);
+        	}
+			
+			// filter on type
+			if ($type != '') {
+				$typeFilter = new \Elastica_Filter_Term();
+        		$typeFilter->setTerm('type', $type);
+				$globalFilter->addFilter($typeFilter);
 			}
-		}
-		
-		return($result);
+			
+			// filter on author
+			if ($author != '') {
+				$authorFilter = new \Elastica_Filter_Term();
+        		$authorFilter->setTerm('author', $author);
+				$globalFilter->addFilter($authorFilter);
+			}
+			
+			// filter on date
+			if ($date!= '') {
+				$dateFilter = new \Elastica_Filter_Range();
+				$d = $date/1000;
+				$dateFrom = $dateTo = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d))*1000;  
+				$dateTo = mktime(0, 0, 0, date('m',$d)+1, date('d',$d), date('Y',$d))*1000;  
+        		$dateFilter->addField('dpub', array('from' => $dateFrom, "to" => $dateTo));
+				$globalFilter->addFilter($dateFilter);
+			}			
+			
+			// Set query on terms
+			$elasticaQueryString = new \Elastica_Query_QueryString($terms."*");
+			
+			$elasticaQuery = new \Elastica_Query();
+			
+			$elasticaQuery->setQuery($elasticaQueryString);
+			
+			// Apply filters if needed
+			$elasticaQuery->setFilter($globalFilter);
+						
+			// Define the type facet.
+			$elasticaFacetType = new \Elastica_Facet_Terms('typeFacet');
+			$elasticaFacetType->setField('type');
+			$elasticaFacetType->setSize(10);
+			$elasticaFacetType->setOrder('reverse_count');
+			$elasticaFacetType->setFilter($globalFilter);
+						
+			// Add type facet to the search query object.
+			$elasticaQuery->addFacet($elasticaFacetType);
+			
+			// Define the author facet.
+			$elasticaFacetAuthor = new \Elastica_Facet_Terms('authorFacet');
+			$elasticaFacetAuthor->setField('author');
+			$elasticaFacetAuthor->setSize(5);
+			$elasticaFacetAuthor->setOrder('reverse_count');
+			$elasticaFacetAuthor->setFilter($globalFilter);
+						
+			// Add that facet to the search query object.
+			$elasticaQuery->addFacet($elasticaFacetAuthor);
+
+			// Define the date facet.
+			$elasticaFacetDate = new \Elastica_Facet_DateHistogram('dateFacet');
+			$elasticaFacetDate->setField('dpub');
+			$elasticaFacetDate->setInterval('month');
+			$elasticaFacetDate->setFilter($globalFilter);
+												
+			// Add that facet to the search query object.
+			$elasticaQuery->addFacet($elasticaFacetDate);
+			
+			// Add pagination 		
+			if ($pageSize!="all") {
+				$elasticaQuery->setSize($pageSize)->setFrom($pager*$pageSize);
+			} 
+						
+			// add sort
+			$elasticaQuery->setSort(array($orderBy =>"desc"));
+			
+			// run query
+			$elasticaResultSet = $this->_content_index->search($elasticaQuery);
+			
+			// Return resultset
+			return($elasticaResultSet);
+				
+		} catch (Exception $e) {
+            var_dump($e->getMessage());
+			exit;
+        }    	
+
     }
 	
 }

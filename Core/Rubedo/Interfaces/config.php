@@ -37,6 +37,7 @@ class config
 	protected static $_defaultInterfaceArray = array(
 		'MongoDataAccess' 		=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
 	    'ElasticDataSearch' 	=> 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
+	    'ElasticDataIndex' 		=> 	'Rubedo\\Interfaces\\Elastic\\IDataIndex', 
 	    'Acl'					=>	'Rubedo\\Interfaces\\Security\\IAcl',
 	    'Hash'					=>	'Rubedo\\Interfaces\\Security\\IHash',
 		'CurrentUser'			=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
