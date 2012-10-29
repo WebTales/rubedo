@@ -76,7 +76,14 @@ Ext.define('Connector.view.Viewport', {
                             fieldLabel: 'Mot de passe ',
                             labelWidth: 120,
                             allowBlank: false,
-                            blankText: 'Ce champ est obligatoire'
+                            blankText: 'Ce champ est obligatoire',
+                            listeners: {
+                            	specialkey: function(field,e){
+                            		if (e.getKey() == e.ENTER) {
+                            			Ext.getCmp("submitBtn").fireEvent("click",Ext.getCmp("submitBtn"));
+                            		}
+                            	}
+                            }
                         },
                         {
                             xtype: 'button',
@@ -98,7 +105,9 @@ Ext.define('Connector.view.Viewport', {
                         },
                         {
                             xtype: 'button',
-                            handler: function(button, event) {
+                            id:'submitBtn',
+                            listeners:{
+                            click: function(button, event) {
                                 var myForm = button.up().getForm();
                                 if (myForm.isValid()) {
 
@@ -122,7 +131,7 @@ Ext.define('Connector.view.Viewport', {
                                         }
                                     }); 
                                 }
-                            },
+                            }},
                             anchor: '50%',
                             margin: '0 0 0 10',
                             icon: 'resources/images/accept.png',
