@@ -37,37 +37,41 @@
     			event.preventDefault(); 
     		});
             $('#themeChooser a').click(function(event) {
-                $.getJSON('/theme/choose/css/'+$(this).attr('href'), function(data) {
+                $.getJSON('/xhr-theme/define-theme?theme='+$(this).attr('href'), function(data) {
                     if (data.success) location.reload();
                 });
                 event.preventDefault(); 
             });
             $('#langChooser a').click(function(event) {
             	
-                $.getJSON('/lang/choose/lg/'+$(this).attr('href'), function(data) {
+                $.getJSON('/xhr-language/define-language?language='+$(this).attr('href'), function(data) {
                     if (data.success) location.reload();
                 });
                 event.preventDefault(); 
             });
 		    $('#connect').submit(function() {
-    	       	$.getJSON('/access/login/username/'+$('#inputEmail').val()+'/password/'+$('#inputPassword').val(), function(data) {
-        	        if (data.success) {
-            	    	$(this).modal('hide');
-                		location.reload();
-                	} else {
-                		$("#connect-msg").html('{{"identifier_error"|trans}}');
-                	}
-            	});
+            	$.post('/xhr-authentication/login', 
+            		{"login":$('#inputEmail').val(),"password":$('#inputPassword').val()},
+            		function(data) {
+	        	        if (data.success) {
+	            	    	$(this).modal('hide');
+	                		location.reload();
+	                	} else {
+	                		$("#connect-msg").html('{{"identifier_error"|trans}}');
+	                	}
+	            	},
+	            	"json"
+            	);
 				return false;
 			});		
-	        $.getJSON('/access/loggedIn/', function(data) {
+	        $.getJSON('/xhr-authentication/is-logged-in', function(data) {
     	        if (data.loggedIn) {
     	        	$('#connect-btn').html('<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> '+data.username+' <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">{{"my_account"|trans}}</a></li><li class="divider"></li><li><a href="#" id="logout">{{"sign_out"|trans}}</a></li></ul>');	
 					$.getScript('/javascript/get/script/rubedo-edit', function() {
             							
 					});   
 					$('#logout').click(function() {
-					    $.getJSON('/access/logout/', function(data) {
+					    $.getJSON('/xhr-authentication/logout/', function(data) {
 					        if (data.success) {
 					    		location.reload();
 					    	}
