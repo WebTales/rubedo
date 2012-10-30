@@ -2,7 +2,7 @@
 
 //require_once 'elastica/bootstrap.php';
 
-class DataController extends AbstractController
+class DataController extends Zend_Controller_Action
 {
 
     public function saveAction()

@@ -20,7 +20,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class XhrThemeController extends AbstractController {
+class XhrThemeController extends Zend_Controller_Action {
     /**
      * variable for the Session service
 	 * 

@@ -2,7 +2,7 @@
 
 require_once '/elastica/bootstrap.php';
 
-class DetailController extends AbstractController
+class DetailController extends Zend_Controller_Action
 {
 
 	public $page;

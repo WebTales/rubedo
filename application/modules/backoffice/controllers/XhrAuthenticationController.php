@@ -20,56 +20,53 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_XhrAuthenticationController extends AbstractController {
+class Backoffice_XhrAuthenticationController extends AbstractController
+{
     /**
      * Variable for Authentication service
-	 * 
-	 * @param 	Rubedo\Interfaces\User\IAuthentication
+     *
+     * @param 	Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
-	
-	/**
-	 * Init the authentication service
-	 */
+
+    /**
+     * Init the authentication service
+     */
     public function init() {
         $this->_auth = Rubedo\Services\Manager::getService('Authentication');
     }
-	
-	/**
-	 * Login or not the user and return a boolean
-	 * 
-	 * @return bool
-	 */
-	public function loginAction(){
+
+    /**
+     * Login or not the user and return a boolean
+     *
+     * @return bool
+     */
+    public function loginAction() {
         $login = $_POST['login'];
-		$password = $_POST['password'];
-		
-		$loginResult = $this->_auth->authenticate($login, $password);
-		
-		if($loginResult){
-			 $response['success'] = true;
-			return $this->_helper->json($response);
-		}else{
-			$response['success'] = false;
-			return $this->_helper->json($response);
-		}
-	}
-	
-	/**
-	 * Logout the user and return a boolean
-	 * 
-	 * @return bool
-	 */
-	public function logoutAction(){
-		$logout = $this->_auth->clearIdentity();
-		
-		if($logout){
-			$response['success'] = true;
-			return $this->_helper->json($response);
-		}else{
-			$response['success'] = false;
-			return $this->_helper->json($response);
-		}
-	}
+        $password = $_POST['password'];
+
+        $loginResult = $this->_auth->authenticate($login, $password);
+
+        if ($loginResult) {
+            $response['success'] = true;
+            return $this->_helper->json($response);
+        } else {
+            $response['success'] = false;
+            return $this->_helper->json($response);
+        }
+    }
+
+    /**
+     * Logout the user and return a boolean
+     *
+     * @return bool
+     */
+    public function logoutAction() {
+        $logout = $this->_auth->clearIdentity();
+
+        $response['success'] = true;
+        return $this->_helper->json($response);
+
+    }
 
 }

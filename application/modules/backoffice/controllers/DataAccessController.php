@@ -26,7 +26,7 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
  * @package Rubedo
  *
  */
-class Backoffice_DataAccessController extends AbstractController {
+class Backoffice_DataAccessController extends Zend_Controller_Action {
 
 	/**
 	 * Name of the store which is also to the collection name

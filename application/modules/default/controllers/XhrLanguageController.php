@@ -20,7 +20,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class XhrLanguageController extends AbstractController {
+class XhrLanguageController extends Zend_Controller_Action {
     /**
      * Variable for Session service
 	 * 

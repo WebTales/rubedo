@@ -1,6 +1,6 @@
 <?php
 
-class JavascriptController extends AbstractController
+class JavascriptController extends Zend_Controller_Action
 {
 	
     public function getAction()

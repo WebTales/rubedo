@@ -2,7 +2,7 @@
 
 require_once '/elastica/bootstrap.php';
 
-class ResultController extends AbstractController
+class ResultController extends Zend_Controller_Action
 {
 
 	public $page;

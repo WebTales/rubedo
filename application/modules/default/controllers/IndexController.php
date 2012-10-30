@@ -22,7 +22,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class IndexController extends AbstractController
+class IndexController extends Zend_Controller_Action
 {
 
     /**
@@ -83,6 +83,10 @@ class IndexController extends AbstractController
         //die();
         $content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
 
+
+		$this->getHelper('ViewRenderer')->setNoRender();
+		$this->getHelper('Layout')->disableLayout();
+		
         $this->getResponse()->appendBody($content, 'default');
 
     }

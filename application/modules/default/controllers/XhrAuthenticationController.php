@@ -20,7 +20,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class XhrAuthenticationController extends AbstractController
+class XhrAuthenticationController extends Zend_Controller_Action
 {
     /**
      * Variable for Authentication service
