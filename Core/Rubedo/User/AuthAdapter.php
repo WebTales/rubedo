@@ -58,7 +58,9 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
 
         $hashService = \Rubedo\Services\Manager::getService('Hash');
 
-        $dataService->addFilter(array('login' => $this->_login));
+		$loginCond = array(array('login' => $this->_login),array('email' => $this->_login));
+
+        $dataService->addOrFilter($loginCond);
         $resultIdentities = $dataService->read();
 
         if (count($resultIdentities) < 1) {
