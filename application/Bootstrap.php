@@ -14,7 +14,6 @@
  * @version $Id$
  */
 
-require_once (APPLICATION_PATH . '/controllers/AbstractController.php');
 
 /**
  * Application initialization class
