@@ -20,67 +20,79 @@
  * @category Rubedo
  * @package Rubedo
  */
-class XhrAuthenticationController extends AbstractController {
+class XhrAuthenticationController extends AbstractController
+{
     /**
      * Variable for Authentication service
-	 * 
-	 * @param 	Rubedo\Interfaces\User\IAuthentication
+     *
+     * @param 	Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
-	
-	/**
-	 * Init the authentication service
-	 */
+
+    /**
+     * Init the authentication service
+     */
     public function init() {
         $this->_auth = Rubedo\Services\Manager::getService('Authentication');
     }
-	
-	/**
-	 * Login or not the user and return a boolean
-	 * 
-	 * @return bool
-	 */
-	public function loginAction(){
-		if(isset($_GET['login']) && isset($_GET['password'])){
-			$login = $_GET['login'];
-			$password = $_GET['password'];
-			if(!empty($login) && !empty($password)){
-				$loginResult = $this->_auth->authenticate($login, $password);
-				
-				if($loginResult){
-					$response['success'] = true;
-					return $this->_helper->json($response);
-				}else{
-					$response['success'] = false;
-					return $this->_helper->json($response);
-				}
-			} else {
-				$response['succes'] = false;
-				$response['message'] = 'The login and the password should not be empty';
-				return $this->_helper->json($response);
-			}
-		} else {
-			$response['succes'] = false;
-			$response['message'] = 'The login and the password should be sent in a POST request !';
-			return $this->_helper->json($response);
-		}
-	}
-	
-	/**
-	 * Logout the user and return a boolean
-	 * 
-	 * @return bool
-	 */
-	public function logoutAction(){
-		$logout = $this->_auth->clearIdentity();
-		
-		if($logout){
-			$response['success'] = true;
-			return $this->_helper->json($response);
-		}else{
-			$response['success'] = false;
-			return $this->_helper->json($response);
-		}
-	}
+
+    /**
+     * Log in the user and set a json response with a boolean and a message
+     *
+     */
+    public function loginAction() {
+        $login = $this->getRequest()->getParam('login');
+        $password = $this->getRequest()->getParam('password');
+        if ($this->getRequest()->isPost()) {
+
+            if (!empty($login) && !empty($password)) {
+                $loginResult = $this->_auth->authenticate($login, $password);
+
+                if ($loginResult) {
+                    $response['success'] = true;
+                } else {
+                    $response['success'] = false;
+                    $response['message'] = 'Wrong crendentials';
+                }
+            } else {
+                $response['succes'] = false;
+                $response['message'] = 'The login and the password should not be empty';
+            }
+        } else {
+            $response['succes'] = false;
+            $response['message'] = 'The login and the password should be sent in a POST request !';
+
+        }
+        return $this->_helper->json($response);
+    }
+
+    /**
+     * Log out the user and set a json response with a boolean
+     *
+     */
+    public function logoutAction() {
+        $logout = $this->_auth->clearIdentity();
+
+        $response['success'] = true;
+        return $this->_helper->json($response);
+
+    }
+
+    /**
+     * check if a user is connected and return its login if true (json array)
+     */
+    public function isLoggedInAction() {
+        $currentUserService = Rubedo\Services\Manager::getService('CurrentUser');
+
+        if (!$currentUserService->isAuthenticated()) {
+            $response['loggedIn'] = false;
+        } else {
+            $response['loggedIn'] = true;
+            $user = $currentUserService->getCurrentUserSummary();
+            $response['username'] = $user['login'];
+        }
+
+        return $this->_helper->json($response);
+    }
 
 }
