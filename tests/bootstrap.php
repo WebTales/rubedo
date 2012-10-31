@@ -12,5 +12,4 @@ set_include_path(implode(PATH_SEPARATOR, array(realpath(APPLICATION_PATH . '/../
 require_once 'Zend/Loader/Autoloader.php';
 Zend_Loader_Autoloader::getInstance();
 
-require_once (APPLICATION_PATH . '/controllers/AbstractController.php');
 require_once (APPLICATION_PATH . '/../tests/application/AbstractControllerTest.php');
