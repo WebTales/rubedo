@@ -134,7 +134,7 @@ class Block implements IBlock
 		
         $filterArray = array('typeId' => '507fcc1cadd92af204000000');
         $this->_dataReader->addFilter($filterArray);
-        $filterArray = array('status' => 'publié');
+        $filterArray = array('status' => 'published');
         $this->_dataReader->addFilter($filterArray);
 
         $contentArray = $this->_dataReader->read();
@@ -174,7 +174,7 @@ class Block implements IBlock
         $this->_dataReader->init('Contents');
         $filterArray = array('typeId' => '507fea58add92a5108000000');
         $this->_dataReader->addFilter($filterArray);
-        $filterArray = array('status' => 'publié');
+        $filterArray = array('status' => 'published');
         $this->_dataReader->addFilter($filterArray);
 		$this->_dataReader->addSort(array('text'=>'asc'));
 
