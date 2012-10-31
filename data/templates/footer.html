@@ -66,8 +66,8 @@
 			});		
 	        $.getJSON('/xhr-authentication/is-logged-in', function(data) {
     	        if (data.loggedIn) {
-    	        	$('#connect-btn').html('<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> '+data.username+' <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">{{"my_account"|trans}}</a></li><li class="divider"></li><li><a href="#" id="logout">{{"sign_out"|trans}}</a></li></ul>');	
-					$.getScript('/javascript/get/script/rubedo-edit', function() {
+    	        	$('#connect-btn').html('<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> '+data.username+' <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">{{"my_account"|trans}}</a></li><li class="divider"></li><li><a href="/backoffice/" >{{"access_back_office"|trans}}</a></li><li class="divider"></li><li><a href="#" id="logout">{{"sign_out"|trans}}</a></li></ul>');	
+					$.getScript('/xhr-javascript/get-script?script=rubedo-edit', function() {
             							
 					});   
 					$('#logout').click(function() {
