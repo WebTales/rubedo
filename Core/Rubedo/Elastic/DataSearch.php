@@ -163,8 +163,8 @@ class DataSearch implements IDataSearch
     	
 		// set default options
 		if (is_null($lang)) {
-			$defaultNamespace = new \Zend_Session_Namespace('Default');
-			$lang = $defaultNamespace->lang;
+        	$session = Manager::getService('Session');
+        	$lang = $session->get('lang','fr');
 		}
 		
 		if (is_null($pager)) $pager = 0;

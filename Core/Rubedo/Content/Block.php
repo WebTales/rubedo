@@ -76,7 +76,9 @@ class Block implements IBlock
             case 'SimpleContent' :
                 $content = $this->getSimpleContent($input);
                 break;
-
+            case 'Search' :
+                $content = $this->getSearch($parentController);
+                break;
             default :
                 $content = null;
                 break;
@@ -393,4 +395,155 @@ class Block implements IBlock
 
     }
 
+	/**
+	 * Return data for search block 
+	 * @return array
+	 */
+    protected function getSearch($parentController) {
+    	
+		// get query
+		$terms = $parentController->getRequest()->getParam('query');
+
+		// get type filter
+		$type = $parentController->getRequest()->getParam('type');
+
+		// get lang filter
+        $session = Manager::getService('Session');
+        $lang = $session->get('lang','fr');
+
+		// get author filter
+		$author = $parentController->getRequest()->getParam('author');
+	
+		// get date filter
+		$date = $parentController->getRequest()->getParam('date');		
+		
+		// get pager
+		$pager = $parentController->getRequest()->getParam('pager');
+		if ($pager == '') $pager = 0;
+		
+		// get orderBy
+		$orderBy = $parentController->getRequest()->getParam('orderby');
+		if ($orderBy == '') $orderBy = "_score";
+		
+		// get page size
+		$pageSize = $parentController->getRequest()->getParam('pagesize');
+		if ($pageSize == '') $pageSize = 10;
+		
+		$query = new \Rubedo\Elastic\DataSearch();
+		$query->init();
+
+		$elasticaResultSet = $query->search($terms, $type, $lang, $author, $date, $pager, $orderBy, $pageSize);
+
+		// Get total hits
+		$nbResults 	= $elasticaResultSet->getTotalHits();
+		if ($pageSize!="all") {
+			$pageCount = intval($nbResults / $pageSize)+1;
+		} else {
+			$pageCount = 1;
+		}
+		
+		// Get facets from the result of the search query
+		$elasticaFacets = $elasticaResultSet->getFacets();
+	
+		$elasticaResults = $elasticaResultSet->getResults();
+				
+		$results = array();
+		
+		foreach($elasticaResults as $result) {
+
+			$data = $result->getData();
+			$resultType = $result->getType();
+			$lang_id = explode('_',$result->getId());
+			$id = $lang_id[1];
+			
+			$score = $result->getScore();
+			
+			if (!is_float($score)) $score = 1;
+			
+			//$url = $data['canonical_url'];
+			//if ($url == '') {
+				// no canonical url
+				// redirect to default detail page
+				$url = '/detail/index/id/'.$id;
+			//}
+			
+			$results[] = array(
+				'id' => $id,
+				'url' => $url,
+				'score' => $score,
+				'title' => $data['title'],
+				'description' => $data['description'],
+				'author' => $data['author'],
+				'type' => $resultType, 
+				'dpub' => $data['dpub'],
+				);
+		}
+		
+		$output['searchTerms'] = $terms;
+		$output['results'] = $results;
+		$output['nbResults'] = $nbResults;
+		$output['pager'] = $pager;
+		$output['pageCount'] = $pageCount;
+		$output['pageSize'] = $pageSize;
+		$output['orderBy'] = $orderBy;
+		
+		$output['typeFacets'] = $elasticaFacets['typeFacet']['terms'];
+		$output['authorFacets'] = $elasticaFacets['authorFacet']['terms'];
+		$output['dateFacets'] = $elasticaFacets['dateFacet']['entries'];
+		
+		$output['type'] = $type;
+		$output['lang'] = $lang;
+		$output['author'] = $author;
+		$output['date'] = $date;
+		
+		$output['termSearchRoot'] = '/index/search?query='.$terms;
+		$output['typeSearchRoot'] = $output['termSearchRoot'];
+		$output['authorSearchRoot'] = $output['termSearchRoot'];
+		$output['dateSearchRoot'] = $output['termSearchRoot'];
+		$output['orderBySearchRoot'] = $output['termSearchRoot'];
+		$output['pageSizeSearchRoot'] = $output['termSearchRoot'];
+		$output['searchRoot'] = $output['termSearchRoot'];
+
+		if ($author != '') {
+			$output['typeSearchRoot'].='&author='.$author;
+			$output['dateSearchRoot'].='&author='.$author;
+			$output['orderBySearchRoot'].='&author='.$author;
+			$output['pageSizeSearchRoot'].='&author='.$author;
+			$output['searchRoot'].='&author='.$author;
+		}
+
+		if ($type != '') {
+			$output['authorSearchRoot'].='&type='.$type;
+			$output['dateSearchRoot'].='&type='.$type;
+			$output['orderBySearchRoot'].='&type='.$type;
+			$output['pageSizeSearchRoot'].='&type='.$type;
+			$output['searchRoot'].='&type='.$type;
+		}		
+
+		if ($date != '') {
+			$output['typeSearchRoot'].='&date='.$date;
+			$output['authorSearchRoot'].='&date='.$date;
+			$output['orderBySearchRoot'].='&date='.$date;
+			$output['pageSizeSearchRoot'].='&date='.$date;
+			$output['searchRoot'].='&date='.$date;
+		}	
+		
+		if ($orderBy != '') {
+			$output['typeSearchRoot'].='&orderby='.$orderBy;
+			$output['dateSearchRoot'].='&orderby='.$orderBy;
+			$output['authorSearchRoot'].='&orderby='.$orderBy;
+			$output['pageSizeSearchRoot'].='&orderby='.$orderBy;
+			$output['searchRoot'].='&orderby='.$orderBy;
+		}	
+
+		if ($pageSize != '') {
+			$output['typeSearchRoot'].='&pagesize='.$pageSize;
+			$output['dateSearchRoot'].='&pagesize='.$pageSize;
+			$output['authorSearchRoot'].='&pagesize='.$pageSize;
+			$output['orderBySearchRoot'].='&pagesize='.$pageSize;
+			$output['searchRoot'].='&pagesize='.$pageSize;
+		}
+
+		return($output);	
+    }
 }
