@@ -107,7 +107,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 		if (isset($filterJson)) {
 			$filters = Zend_Json::decode($filterJson);
 			foreach ($filters as $value) {
-				if (!(isset($value["operator"]))) {
+				if ((!(isset($value["operator"])))||($value["operator"]=="eq")) {
 					$this -> _dataReader -> addFilter(array($value["property"] => $value["value"]));					
 				}
 				else if ($value["operator"] == 'like') {
