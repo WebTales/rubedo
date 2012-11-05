@@ -1552,6 +1552,43 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($filters, $dataAccessObject->getFilterArray());
 
     }
+	
+	/**
+	 * Test addOrFilter with one condition array
+	 */
+	public function testAddOrFilter(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$orFilter = array('login' => 'test', 'email' => 'test@webtales.fr');
+		
+		$dataAccessObject->addOrFilter($orFilter);
+		$readArray = $dataAccessObject->getFilterArray();
+		
+		$result = $readArray['$or'];
+		
+		$this->assertEquals($orFilter, $result);
+	}
+	
+	/**
+	 * Test addOrFilter with two condition array
+	 */
+	public function testAddTwoOrFilter(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$orFilter1 = array('login' => 'test', 'email' => 'test@webtales.fr');
+		$orFilter2 = array('createDate' => '05/11/12', 'name' => 'rubedo');
+		
+		$dataAccessObject->addOrFilter($orFilter1);
+		$dataAccessObject->addOrFilter($orFilter2);
+		$expectedResult = array_merge($orFilter1, $orFilter2);
+		
+		$readArray = $dataAccessObject->getFilterArray();
+		$result = $readArray['$or'];
+		
+		$this->assertEquals($expectedResult, $result);
+	}
 
     /**
      * Simple clear Filter Test

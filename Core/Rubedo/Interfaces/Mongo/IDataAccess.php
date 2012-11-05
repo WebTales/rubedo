@@ -104,6 +104,15 @@ interface IDataAccess {
      */
     public function addFilter(array $filter);
 
+	/**
+     * Add a OR filter condition to the service
+     *
+     * Filter should be an array of array('field'=>'value')
+     *
+     * @param array $filter Native Mongo syntax filter array
+     */
+    public function addOrFilter(array $condArray);
+
     /**
      * Return the current array of conditions.
      * @return array
