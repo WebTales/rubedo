@@ -714,7 +714,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $item = static::$phactory->create('item', array('version' => $version));
 
         $itemId = (string)$item['_id'];
-        $name = $item['name'];
 
         $item['id'] = $itemId;
         unset($item['_id']);
@@ -725,14 +724,46 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->init('items', 'test_db');
 
         $updateArray = $dataAccessObject->update($item, true);
+    }
+	
+	/**
+	 * Test to update an item with forbiden values like createUser or createTime
+	 */
+	public function testUpdateWithForbidenKeys(){
+		$version = rand(1, 25);
+        $item = static::$phactory->create('item', array('version' => $version));
+
+        $itemId = (string)$item['_id'];
+        $name = $item['name'];
+
+        $item['id'] = $itemId;
+        unset($item['_id']);
+        $item['name'] .= ' updated';
+		$item['createUser'] = 'test';
+		$item['createTime'] = 'test';
+
+        //actual begin of the application run
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $updateArray = $dataAccessObject->update($item, true);
         //end of application run
 
-        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
-        $readItem = array_pop($readItems);
+        $this->assertTrue($updateArray["success"]);
+        $writtenItem = $updateArray["data"];
 
-        $this->assertArrayHasKey('lastUpdateTime', $readItem);
-        $this->assertEquals($readItem['lastUpdateTime'], $this->_fakeTime);
-    }
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $this->assertEquals(1, count($readItems));
+        $readItem = array_pop($readItems);
+        $readItem['id'] = (string)$readItem['_id'];
+        unset($readItem['_id']);
+
+        $this->assertEquals($writtenItem, $readItem);
+        $this->assertEquals($readItem['name'], $name . ' updated');
+		
+		$this->assertFalse(isset($readItem['createUser']));
+		$this->assertFalse(isset($readItem['createTime']));
+	}
 
     /**
      * Test of the update feature without a version number
