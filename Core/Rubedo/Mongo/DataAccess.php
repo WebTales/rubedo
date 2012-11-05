@@ -537,7 +537,6 @@ class DataAccess implements IDataAccess
         //check valid input
         if (count($filter) !== 1) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
-
         }
 
         foreach ($filter as $name => $value) {
@@ -585,7 +584,9 @@ class DataAccess implements IDataAccess
         }
 
     }
-
+	
+	
+	
     /**
      * Add a OR filter condition to the service
      *

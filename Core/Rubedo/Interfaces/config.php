@@ -36,6 +36,7 @@ class config
      */
 	protected static $_defaultInterfaceArray = array(
 		'MongoDataAccess' 		=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
+		'MongoWorkflowDataAccess'=>	'Rubedo\\Interfaces\\Mongo\\IWorkflowDataAccess', 
 	    'ElasticDataSearch' 	=> 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
 	    'ElasticDataIndex' 		=> 	'Rubedo\\Interfaces\\Elastic\\IDataIndex', 
 	    'Acl'					=>	'Rubedo\\Interfaces\\Security\\IAcl',
