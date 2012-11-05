@@ -203,7 +203,6 @@ class DataAccess implements IDataAccess
         //merge the two fields array to obtain only one array with all the conditions
         $fieldRule = array_merge($includedFields, $excludedFields);
 
-
         //get the cursor
         $cursor = $this->_collection->find($filter, $fieldRule);
 
@@ -461,17 +460,15 @@ class DataAccess implements IDataAccess
         $obj['lastUpdateTime'] = $currentTime;
 
         $mongoID = new \MongoID($id);
-		
-		$updateArray = array();
-		foreach($obj as $key => $value){
-			if(in_array($key,array('createUser','createTime'))){
-				continue;
-			}else{
-				$updateArray[$key] = $value;
-			}
-		}
-		
-        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), array('$set' => $updateArray), array("safe" => $safe));
+
+        $updateArray = array();
+        foreach ($obj as $key => $value) {
+            if (in_array($key, array('createUser', 'createTime'))) {
+                unset($obj[$key]);
+            }
+        }
+
+        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), array('$set' => $obj), array("safe" => $safe));
 
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
