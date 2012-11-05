@@ -43,7 +43,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 		static::$phactory->define('fields',array('name' => 'Test item'));
 			
         // define default values for each user we will create
-        static::$phactory->define('item',array(), array('live'=>static::$phactory->embedsOne('fields'),'workspace'=>static::$phactory->embedsOne('fields')));
+        static::$phactory->define('item',array('version'=>1), array('live'=>static::$phactory->embedsOne('fields'),'workspace'=>static::$phactory->embedsOne('fields')));
     }
 
     /**
@@ -152,6 +152,8 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $items[] = $targetItem;
 
         $readArray = $dataAccessObject->read();
+		
+		Zend_Debug::dump($readArray);
 
         $this->assertEquals($items, $readArray);
 
@@ -225,22 +227,34 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
      * Check if the version add been incremented
      */
     public function testUpdate() {
-        /*$version = rand(1, 25);
-        $item = static::$phactory->create('item', array('version' => $version));
-
-        $itemId = (string)$item['_id'];
-        $name = $item['name'];
-
-        $item['id'] = $itemId;
-        unset($item['_id']);
-        $item['name'] .= ' updated';
-
-        //actual begin of the application run
+    	$this->initUser();
+		$this->initTime();
         $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
         $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setWorkspace();
+		
+        $items = array();
+		
+		//create 2 sub Documents, one for live, one for draft and global content
+		$fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
+		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
+        $item = static::$phactory->createWithAssociations('item',array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
 
-        $updateArray = $dataAccessObject->update($item, true);
-        //end of application run
+        $item['id'] = (string)$item['_id'];
+  		$item['workspace']['label'] = 'test draft updated';
+		unset($item['_id']);
+		
+		$inputItem = array('id'=>$item['id'],'version'=>$item['version'],'name'=>'Test item','label'=>'test draft updated');
+		        
+        $updateArray = $dataAccessObject->update($inputItem, true);
+		
+		$item['version']++;
+		$item['lastUpdateUser']=$this->_fakeUser;
+		$item['lastUpdateTime']=$this->_fakeTime;
+		
+		$inputItem['version']++;
+		$inputItem['lastUpdateUser']=$this->_fakeUser;
+		$inputItem['lastUpdateTime']=$this->_fakeTime;
 
         $this->assertTrue($updateArray["success"]);
         $writtenItem = $updateArray["data"];
@@ -251,8 +265,8 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $readItem['id'] = (string)$readItem['_id'];
         unset($readItem['_id']);
 
-        $this->assertEquals($writtenItem, $readItem);
-        $this->assertEquals($readItem['name'], $name . ' updated');*/
+        $this->assertEquals($item, $readItem);
+        $this->assertEquals($writtenItem, $inputItem);
     }
 
    
