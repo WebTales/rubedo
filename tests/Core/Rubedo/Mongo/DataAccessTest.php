@@ -554,6 +554,30 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($readItem['version'], 1);
 
     }
+	
+	/**
+	 * Try to create an item with forbiden keys like lastUpdateUSer or lastUpdateTime
+	 */
+	public function testCreateWithForbidenKeys(){
+		$this->initUser();
+		$this->initTime();
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $item = array('name' => 'created item 1', 'lastUpdateUser' => 'test', 'lastUpdateTime' => 'test');
+
+        $createArray = $dataAccessObject->create($item, true);
+
+        $this->assertTrue($createArray["success"]);
+        $writtenItem = $createArray["data"];
+
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $this->assertEquals(1, count($readItems));
+        $readItem = array_pop($readItems);
+		
+		$this->assertNotEquals($readItem['lastUpdateUser'],'test');
+		$this->assertNotEquals($readItem['lastUpdateTime'],'test');
+	}
 
     /**
      * Check if  createUser and lastUpdateUser properties had been added
@@ -727,7 +751,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
     }
 	
 	/**
-	 * Test to update an item with forbiden values like createUser or createTime
+	 * Test to update an item with forbiden keys like createUser or createTime
 	 */
 	public function testUpdateWithForbidenKeys(){
 		$version = rand(1, 25);
