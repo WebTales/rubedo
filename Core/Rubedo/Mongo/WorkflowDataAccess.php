@@ -27,46 +27,82 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 {
 	protected $_currentWs = "live";
 	
+	protected $_metaDataFields = array('id', 'idLabel', 'typeId', 'createTime', 'createUser', 'lastUpdateTime', 'lastUpdateUser', 'version', 'online');
+	
+	protected function _inputObjectFilter($obj){
+		foreach ($obj as $key => $value) {
+			if(in_array($key, $this->_metaDataFields)){
+				continue;
+			}
+			$obj[$this->_currentWs][$key]=$value;
+			unset($obj[$key]);
+		}
+		
+		return $obj;
+	}
+	
+	protected function _outputObjectFilter($obj){
+		foreach ($obj[$this->_currentWs] as $key => $value){
+			$obj[$key] = $value;
+		}
+		unset($obj['live']);
+		unset($obj['workspace']);
+		
+		return $obj;
+	}
+	
+	/**
+	 * Set the current workspace to workspace
+	 */
 	public function setWorkspace(){
 		$this->_currentWs = 'workspace';
 	}
 	
+	/**
+	 * Set the current workspace to live
+	 */
 	public function setLive(){
 		$this->_currentWs = 'live';
 	}
 	
+	/**
+	 * Publish a content
+	 */
 	public function publish($objectId){
 		
 	}
-
+	
+	/**
+	 * Allow to read in the current collection
+	 * 
+	 * @return array
+	 */
 	public function read(){
 		$content = parent::read();
-		//do filters
-		foreach ($content as $key => $value) {
-			foreach ($value[$this->_currentWs] as $subkey => $subvalue){
-				$content[$key][$subkey] = $subvalue;
-			}
-			unset($content[$key]['live']);
-			unset($content[$key]['workspace']); 	
-		}
 		
+		$content[0] = $this->_outputObjectFilter($content[0]);
 		
 		return $content;
 	}
 	
+	/**
+	 * Allow to update an element in the current collection
+	 * 
+	 * @return bool
+	 */
 	public function update(array $obj, $safe = true){
-		//do filters
+		$obj = $this->_inputObjectFilter($obj);
+		
 		$result = parent::update($obj, $safe);
-		//do post filter
+		
+		$result['data'] = $this->_outputObjectFilter($result['data']);
+		
+		/*if($workspace == 'workspace' && $obj[$workspace]['status']=='published'){
+			//do publish action
+			//call version service
+		}*/
+		
 		return $result;
-	}
-	
-	protected function _inputObjectFilter($obj){
-		
-	}
-	
-	protected function _outputObjectFilter($obj){
-		
 	}
 
 }
