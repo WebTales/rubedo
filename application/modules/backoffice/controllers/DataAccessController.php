@@ -178,6 +178,73 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 
 		$this -> _returnJson($response);
 	}
+	
+	/**
+	 * Delete all the childrens of the parent given in paremeter
+	 * 
+	 * @param $parentID is the id given to find the childrens
+	 * @return array
+	 */
+	public function deleteChildAction($parentId = NULL){
+			
+		if($parentId === NULL){	
+			$data = $this -> getRequest() -> getParam('data');
+			
+			if (!is_null($data)) {
+				$data = Zend_Json::decode($data);
+				
+				if (is_array($data)) {
+						
+					$parentId = $data['id'];
+					
+					//Get the childrens of the current parent
+					$childrensArray = $this->_dataReader->readChild($parentId);
+
+					//Delete all the childrens
+					if(count($childrensArray) != 0){
+						foreach ($childrensArray as $key => $value) {
+							self::deleteChildAction($value['id']);
+						}
+					}
+					//Delete the parent
+					$returnArray = $this -> _dataReader -> destroy($data, true);
+					
+				} else {
+					$returnArray = array('success' => false, "msg" => 'Not an array');
+				}
+	
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Invalid Data');
+			}
+			if (!$returnArray['success']) {
+				$this -> getResponse() -> setHttpResponseCode(500);
+			}
+			
+		} else {
+			
+			//Read in db the values for the parent id
+			$value = array('_id' => $parentId);
+			$data = $this->_dataReader->findOne($value);
+			
+			//Get the childrens of the current parent
+			$childrensArray = $this->_dataReader->readChild($parentId);
+			
+			//Delete all the childrens
+			if(count($childrensArray) != 0){
+				foreach ($childrensArray as $key => $value) {
+					self::deleteChildAction($value['id']);
+				}
+			}
+			//Delete the parent
+			$returnArray = $this -> _dataReader -> destroy($data, true);
+					
+			if (!$returnArray['success']) {
+				$this -> getResponse() -> setHttpResponseCode(500);
+			}
+		}
+		
+		$this -> _returnJson($returnArray);
+	}
 
 	/**
 	 * The read as tree Action
