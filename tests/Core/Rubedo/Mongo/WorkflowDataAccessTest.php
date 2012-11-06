@@ -185,8 +185,66 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($expectedResult, $readArray);
     }
+	
+	/**
+	 * Try to read with a sort
+	 */
+	public function testReadWithSort(){
+		$dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setLive();
 
-   
+        $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
+		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		
+		$item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+		
+		$item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test live'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test live'));
+
+        $dataAccessObject->addSort(array('id' => 'asc'));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+
+	/**
+     * test if read function works fine with imposed fields
+     *
+     * The result doesn't contain the password and first name field
+     */
+    public function testReadWithIncludedField() {
+        $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setLive();
+
+        $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
+		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		
+		$item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+		
+		$item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+        $includedFields = array('live.name');
+
+        $dataAccessObject->addToFieldList($includedFields);
+		
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item'));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+    }
 
     /**
      * Test of the create feature
@@ -237,12 +295,13 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 
         $item['id'] = (string)$item['_id'];
   		$item['workspace']['label'] = 'test draft updated';
+		$item['live']['label'] = 'test draft updated';
 		unset($item['_id']);
 		
 		$inputItem = array('id'=>$item['id'],'version'=>$item['version'],'name'=>'Test item','label'=>'test draft updated');
 		        
         $updateArray = $dataAccessObject->update($inputItem, true);
-		
+
 		$item['version']++;
 		$item['lastUpdateUser']=$this->_fakeUser;
 		$item['lastUpdateTime']=$this->_fakeTime;
@@ -259,7 +318,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $readItem = array_pop($readItems);
         $readItem['id'] = (string)$readItem['_id'];
         unset($readItem['_id']);
-
+		
         $this->assertEquals($item, $readItem);
         $this->assertEquals($writtenItem, $inputItem);
     }
@@ -295,7 +354,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($updateArray["success"]);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
-		Zend_Debug::dump($updateArray);
+
         $this->assertEquals(2, count($readItems));
 
         $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new mongoId($itemId)));

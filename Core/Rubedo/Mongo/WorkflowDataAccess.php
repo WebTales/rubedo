@@ -34,7 +34,8 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 			if(in_array($key, $this->_metaDataFields)){
 				continue;
 			}
-			$obj[$this->_currentWs][$key]=$value;
+			$obj['live'][$key]=$value;
+			$obj['workspace'][$key]=$value;
 			unset($obj[$key]);
 		}
 		
@@ -42,12 +43,13 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	}
 	
 	protected function _outputObjectFilter($obj){
-		foreach ($obj[$this->_currentWs] as $key => $value){
-			$obj[$key] = $value;
+		if(isset($obj['live']) || isset($obj['workspace'])){
+			foreach ($obj[$this->_currentWs] as $key => $value){
+				$obj[$key] = $value;
+			}
+			unset($obj['live']);
+			unset($obj['workspace']);
 		}
-		unset($obj['live']);
-		unset($obj['workspace']);
-		
 		return $obj;
 	}
 	
@@ -76,8 +78,19 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	 * Allow to read in the current collection
 	 * 
 	 * @return array
+	 * @todo add sort, excluded fields ...
 	 */
 	public function read(){
+		/*$fieldArray = parent::getFieldList();
+		
+		foreach ($fieldArray as $key => $value) {
+			if(in_array($key, $this->_metaDataFields)){
+				continue;
+			}
+			$obj[$this->_currentWs][$key]=$value;
+			unset($fieldArray[$key]);
+		}*/
+		
 		$content = parent::read();
 		
 		foreach ($content as $key => $value) {
