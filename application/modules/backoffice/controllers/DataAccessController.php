@@ -94,6 +94,30 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 		}
 		$this -> getResponse() -> setBody($returnValue);
 	}
+	
+	/**
+	 * 
+	 */
+	protected function _deleteChild($parent){
+		
+		//Get the childrens of the current parent
+		$childrensArray = $this->_dataReader->readChild($parent['id']);
+		
+		//Delete all the childrens
+		if(count($childrensArray) != 0){
+			foreach ($childrensArray as $key => $value) {
+				self::_deleteChild($value);
+			}
+		}
+		//Delete the parent
+		$returnArray = $this -> _dataReader -> destroy($parent, true);
+				
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		return $returnArray;
+	}
 
 	/**
 	 * The default read Action
@@ -182,65 +206,47 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 	/**
 	 * Delete all the childrens of the parent given in paremeter
 	 * 
-	 * @param $parentID is the id given to find the childrens
 	 * @return array
 	 */
-	public function deleteChildAction($parentId = NULL){
+	public function deleteChildAction(){
+		$data = $this -> getRequest() -> getParam('data');
+		
+		if (!is_null($data)) {
+			$data = Zend_Json::decode($data);
 			
-		if($parentId === NULL){	
-			$data = $this -> getRequest() -> getParam('data');
-			
-			if (!is_null($data)) {
-				$data = Zend_Json::decode($data);
-				
-				if (is_array($data)) {
-						
-					$parentId = $data['id'];
+			if (is_array($data)) {
 					
-					//Get the childrens of the current parent
-					$childrensArray = $this->_dataReader->readChild($parentId);
+				$parentId = $data['id'];
+				
+				//Get the childrens of the current parent
+				$childrensArray = $this->_dataReader->readChild($parentId);
 
-					//Delete all the childrens
-					if(count($childrensArray) != 0){
-						foreach ($childrensArray as $key => $value) {
-							self::deleteChildAction($value['id']);
+				//Delete all the childrens
+				if(count($childrensArray) != 0){
+					foreach ($childrensArray as $key => $value) {
+						$result = $this->_deleteChild($value);
+						if($result['success'] == true){
+							continue;
 						}
 					}
-					//Delete the parent
+				}
+				
+				//Delete the parent
+				if($result['success'] == true){
 					$returnArray = $this -> _dataReader -> destroy($data, true);
-					
 				} else {
-					$returnArray = array('success' => false, "msg" => 'Not an array');
+					$returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
 				}
-	
+				
 			} else {
-				$returnArray = array('success' => false, "msg" => 'Invalid Data');
+				$returnArray = array('success' => false, "msg" => 'Not an array');
 			}
-			if (!$returnArray['success']) {
-				$this -> getResponse() -> setHttpResponseCode(500);
-			}
-			
+
 		} else {
-			
-			//Read in db the values for the parent id
-			$value = array('_id' => $parentId);
-			$data = $this->_dataReader->findOne($value);
-			
-			//Get the childrens of the current parent
-			$childrensArray = $this->_dataReader->readChild($parentId);
-			
-			//Delete all the childrens
-			if(count($childrensArray) != 0){
-				foreach ($childrensArray as $key => $value) {
-					self::deleteChildAction($value['id']);
-				}
-			}
-			//Delete the parent
-			$returnArray = $this -> _dataReader -> destroy($data, true);
-					
-			if (!$returnArray['success']) {
-				$this -> getResponse() -> setHttpResponseCode(500);
-			}
+			$returnArray = array('success' => false, "msg" => 'Invalid Data');
+		}
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
 		}
 		
 		$this -> _returnJson($returnArray);
