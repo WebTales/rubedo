@@ -52,4 +52,11 @@ interface IWorkflowDataAccess extends IDataAccess{
 	 * @return bool
 	 */
 	public function update(array $obj, $safe = true);
+	
+	/**
+	 * Allow to create an item in the current collection
+	 * 
+	 * @return array
+	 */
+	public function create(array $obj, $safe = true);
 }

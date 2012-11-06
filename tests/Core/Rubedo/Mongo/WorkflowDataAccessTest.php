@@ -152,8 +152,6 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $items[] = $targetItem;
 
         $readArray = $dataAccessObject->read();
-		
-		Zend_Debug::dump($readArray);
 
         $this->assertEquals($items, $readArray);
 
@@ -196,23 +194,18 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
      */
     public function testCreate() {
 
-        /*$dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
         $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setWorkspace();
 
-        $item = array('name' => 'created item 1');
+        $item = array('name' => 'item', 'live' => array('name' => 'test live', 'label' => 'live'), 'workspace' => array('name' => 'test draft', 'label' => 'draft'));
 
         $createArray = $dataAccessObject->create($item, true);
-
+		
         $this->assertTrue($createArray["success"]);
-        $writtenItem = $createArray["data"];
+        $expectedResult = array('name' => 'test draft', 'label' => 'draft', 'version' => $createArray['data']['version'], 'lastUpdateUser' => NULL, 'createUser' => NULL, 'createTime' => NULL,	'lastUpdateTime' => NULL, 'id' => $createArray['data']['id']);
 
-        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
-        $this->assertEquals(1, count($readItems));
-        $readItem = array_pop($readItems);
-        $readItem['id'] = (string)$readItem['_id'];
-        unset($readItem['_id']);
-
-        $this->assertEquals($writtenItem, $readItem);*/
+        $this->assertEquals($expectedResult, $createArray['data']);
 
     }
 

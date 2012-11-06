@@ -104,5 +104,18 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		
 		return $result;
 	}
+	
+	/**
+	 * Allow to create an item in the current collection
+	 * 
+	 * @return array
+	 */
+	public function create(array $obj, $safe = true){
+		$result = parent::create($obj, $safe);
+		
+		$result['data'] = $this->_outputObjectFilter($result['data']);
+		
+		return $result;
+	}
 
 }
