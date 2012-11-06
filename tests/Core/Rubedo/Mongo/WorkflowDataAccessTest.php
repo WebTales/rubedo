@@ -162,26 +162,28 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
      *	Case with a simple filter
      */
     public function testReadWithFilter() {
-       /* $items = array();
-
-        $item = static::$phactory->create('item', array('criteria' => 'jack'));
-        $item['id'] = (string)$item['_id'];
-        $item['version'] = 1;
-        unset($item['_id']);
-
-        $items[] = $item;
-
-        $otherItem = static::$phactory->create('item');
-
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
         $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setWorkspace();
 
-        $dataAccessObject->addFilter(array('criteria' => 'jack'));
+        $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
+		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		
+		$item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+		
+		$item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test draft'));
+
+        $dataAccessObject->addFilter(array('id' => $item['id']));
 
         $readArray = $dataAccessObject->read();
 
-        $this->assertEquals($items, $readArray);*/
-
+        $this->assertEquals($expectedResult, $readArray);
     }
 
    
@@ -272,34 +274,33 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
      * Check if the remaining items are OK and the deleted is no longer in DB
      */
     public function testDestroy() {
-        /*$dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $items = array();
-        for ($i = 0; $i < 3; $i++) {
-            $item = static::$phactory->create('item', array('version' => 1));
-            $item['id'] = (string)$item['_id'];
-            unset($item['_id']);
-            $items[] = $item;
-        }
-
-        $item = static::$phactory->create('item', array('version' => 1));
-
-        $itemId = (string)$item['_id'];
-
-        $item['id'] = $itemId;
+        $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item 1'));
+        $item['id'] = (string)$item['_id'];
         unset($item['_id']);
+		
+		$item2 = static::$phactory->create('item', array('version' => 1, 'name' => 'item 2'));
+        $item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, true);
+        $item3 = static::$phactory->create('item', array('version' => 1, 'name' => 'item 3'));
+        $itemId = (string)$item3['_id'];
+        $item3['id'] = $itemId;
+        unset($item3['_id']);
+
+        $updateArray = $dataAccessObject->destroy($item3, true);
 
         $this->assertTrue($updateArray["success"]);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
-        $this->assertEquals(3, count($readItems));
+		Zend_Debug::dump($updateArray);
+        $this->assertEquals(2, count($readItems));
 
         $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new mongoId($itemId)));
 
-        $this->assertNull($readItem);*/
+        $this->assertNull($readItem);
     }
 
    

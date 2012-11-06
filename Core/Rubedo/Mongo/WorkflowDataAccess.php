@@ -80,7 +80,9 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	public function read(){
 		$content = parent::read();
 		
-		$content[0] = $this->_outputObjectFilter($content[0]);
+		foreach ($content as $key => $value) {
+			$content[$key] = $this->_outputObjectFilter($content[$key]);
+		}
 		
 		return $content;
 	}
