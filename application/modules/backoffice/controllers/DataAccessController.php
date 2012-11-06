@@ -96,7 +96,10 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 	}
 	
 	/**
+	 * Recursive function for deleteChildrenAction
 	 * 
+	 * @param $parent is an array with the data of the parent
+	 * @return bool
 	 */
 	protected function _deleteChild($parent){
 		
