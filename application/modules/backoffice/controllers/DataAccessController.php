@@ -210,6 +210,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 	 */
 	public function deleteChildAction(){
 		$data = $this -> getRequest() -> getParam('data');
+		$result = array('success' => true);
 		
 		if (!is_null($data)) {
 			$data = Zend_Json::decode($data);
