@@ -25,10 +25,22 @@ use Rubedo\Interfaces\Mongo\IWorkflowDataAccess;
  */
 class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 {
+	/**
+	 * Contain the current workspace
+	 */	
 	protected $_currentWs = "live";
 	
+	/**
+	 * Contain common fields
+	 */
 	protected $_metaDataFields = array('_id', 'id', 'idLabel', 'typeId', 'createTime', 'createUser', 'lastUpdateTime', 'lastUpdateUser', 'version', 'online');
 	
+	/**
+	 * Changes the array to obtain workspace and live blocks
+	 * 
+	 * @param $obj is an array
+	 * @return array
+	 */
 	protected function _inputObjectFilter($obj){
 		foreach ($obj as $key => $value) {
 			if(in_array($key, $this->_metaDataFields)){
@@ -42,6 +54,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		return $obj;
 	}
 	
+	/**
+	 * Changes the array to keep the response usable by the BO
+	 * 
+	 * @param $obj is an array
+	 * @return array
+	 */
 	protected function _outputObjectFilter($obj){
 		if(isset($obj['live']) || isset($obj['workspace'])){
 			foreach ($obj[$this->_currentWs] as $key => $value){
@@ -53,42 +71,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		return $obj;
 	}
 	
-	protected function _adaptFields($fieldsArray){
-		if(count($fieldsArray) != 0){
-			$this->clearFieldList();
-			$newArray = array();
-			
-			foreach ($fieldsArray as $key => $value) {
-				if(in_array($key, $this->_metaDataFields)){
-					continue;
-				}
-				$newKey = $this->_currentWs.".".$key;
-				$newArray[] = $newKey;
-			}
-			
-			unset($fieldsArray);
-			$this->addToFieldList($newArray);
-		}
-	}
-	
-	protected function _adaptExcludeFields($fieldsArray){
-		if(count($fieldsArray) != 0){
-			$this->clearExcludeFieldList();
-			$newArray = array();
-			
-			foreach ($fieldsArray as $key => $value) {
-				if(in_array($key, $this->_metaDataFields)){
-					continue;
-				}
-				$newKey = $this->_currentWs.".".$key;
-				$newArray[] = $newKey;
-			}
-			
-			unset($fieldsArray);
-			$this->addToExcludeFieldList($newArray);
-		}
-	}
-	
+	/**
+	 * Adapt filter for the workflow
+	 * 
+	 * @param $filter is the current filter
+	 * @return array compatible with the data in mongoDb
+	 */
 	protected function _adaptFilter($filterArray){
 		if(count($filterArray) == 1){
 			$this->clearFilter();
@@ -109,6 +97,79 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 			
 			$this->addFilter($filterArray);
 			return $filterArray;
+		}
+	}
+	
+	/**
+	 * Adapt sort for the workflow
+	 * 
+	 * @param $sort is the current sort
+	 * @return array compatible with the data in mongoDb
+	 */
+	protected function _adaptSort($sortArray){
+		if(count($sortArray) != 0){
+			$this->clearSort();
+				
+			foreach ($sortArray as $key => $value) {
+				if(in_array($key, $this->_metaDataFields)){
+					continue;
+				}
+				$newKey = $this->_currentWs.".".$key;
+				$sortArray[$newKey] = $value;
+				unset($sortArray[$key]);
+			}
+			
+			$this->addSort($sortArray);
+		}
+	}
+	
+	/**
+	 * Adapt fields for the workflow
+	 * 
+	 * @param $fieldsArray is the current included fields
+	 * @return array compatible with the data in mongoDb
+	 */
+	protected function _adaptFields($fieldsArray){
+		if(count($fieldsArray) != 0){
+			$this->clearFieldList();
+			$newArray = array();
+			
+			foreach ($fieldsArray as $key => $value) {
+				if(in_array($key, $this->_metaDataFields)){
+					$newArray[] = $key;
+				} else {
+					$newKey = $this->_currentWs.".".$key;
+					$newArray[] = $newKey;
+				}
+			}
+			
+			unset($fieldsArray);
+			$this->addToFieldList($newArray);
+		}
+	}
+	
+	/**
+	 * Adapt excluded fields for the workflow
+	 * 
+	 * @param $fieldsArray is the current excluded fields
+	 * @return array compatible with the data in mongoDb
+	 */
+	protected function _adaptExcludeFields($fieldsArray){
+		if(count($fieldsArray) != 0){
+			$this->clearExcludeFieldList();
+			$newArray = array();
+			
+			foreach ($fieldsArray as $key => $value) {
+				if(in_array($key, $this->_metaDataFields)){
+					$newArray[] = $key;
+				} else {
+					$newKey = $this->_currentWs.".".$key;
+					$newArray[] = $newKey;
+				}
+			}
+			
+			unset($fieldsArray);
+			$this->addToExcludeFieldList($newArray);
 		}
 	}
 	
@@ -142,6 +203,8 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		//Adaptation of the conditions for the workflow
 		$filter = $this->getFilterArray();
 		$this->_adaptFilter($filter);
+		$sort = $this->getSortArray();
+		$this->_adaptSort($sort);
 		$includedFields = $this->getFieldList();
 		$this->_adaptFields($includedFields);
 		$excludedFields = $this->getExcludeFieldList();
