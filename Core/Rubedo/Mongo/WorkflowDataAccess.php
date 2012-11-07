@@ -53,6 +53,48 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		return $obj;
 	}
 	
+	protected function _adaptFields($fieldsArray){
+		if(count($fieldsArray) != 0){
+			$this->clearFieldList();
+			$newArray = array();
+			
+			foreach ($fieldsArray as $key => $value) {
+				if(in_array($key, $this->_metaDataFields)){
+					continue;
+				}
+				$newKey = $this->_currentWs.".".$key;
+				$newArray[] = $newKey;
+			}
+			
+			unset($fieldsArray);
+			$this->addToFieldList($newArray);
+		}
+	}
+	
+	protected function _adaptFilter($filterArray){
+		if(count($filterArray) == 1){
+			$this->clearFilter();
+			
+			foreach ($filterArray as $key => $value) {
+				if($key == '_id'){
+					$filterArray['id'] = (string) $value;
+					unset($filterArray['_id']);
+					continue;
+				}	
+					
+				if(in_array($key, $this->_metaDataFields)){
+					continue;
+				}
+				$newKey = $this->_currentWs.".".$key;
+				$filterArray[$newKey] = $value;
+				unset($filterArray[$key]);
+			}
+			
+			$this->addFilter($filterArray);
+			return $filterArray;
+		}
+	}
+	
 	/**
 	 * Set the current workspace to workspace
 	 */
@@ -78,18 +120,13 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	 * Allow to read in the current collection
 	 * 
 	 * @return array
-	 * @todo add sort, excluded fields ...
 	 */
 	public function read(){
-		/*$fieldArray = parent::getFieldList();
-		
-		foreach ($fieldArray as $key => $value) {
-			if(in_array($key, $this->_metaDataFields)){
-				continue;
-			}
-			$obj[$this->_currentWs][$key]=$value;
-			unset($fieldArray[$key]);
-		}*/
+		//Adaptation of the conditions for the workflow
+		$filter = $this->getFilterArray();
+		$this->_adaptFilter($filter);
+		$includedFields = $this->getFieldList();
+		$this->_adaptFields($includedFields);
 		
 		$content = parent::read();
 		

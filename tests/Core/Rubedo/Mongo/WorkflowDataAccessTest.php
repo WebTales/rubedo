@@ -178,8 +178,9 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         unset($item2['_id']);
 		
 		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test draft'));
-
-        $dataAccessObject->addFilter(array('id' => $item['id']));
+		
+		$filter = array('id' => $item['id']);
+        $result = $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->read();
 
@@ -222,7 +223,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
     public function testReadWithIncludedField() {
         $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
         $dataAccessObject->init('items', 'test_db');
-		$dataAccessObject->setLive();
+		$dataAccessObject->setWorkspace();
 
         $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
 		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
@@ -235,9 +236,11 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 		$item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 		
-        $includedFields = array('live.name');
+        $includedFields = array('name');
+		$sort = array('id' => 'asc');
 
         $dataAccessObject->addToFieldList($includedFields);
+		$dataAccessObject->addSort($sort);
 		
 		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item'));
 
