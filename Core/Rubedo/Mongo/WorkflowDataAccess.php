@@ -46,8 +46,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 			if(in_array($key, $this->_metaDataFields)){
 				continue;
 			}
-			$obj['live'][$key]=$value;
-			$obj['workspace'][$key]=$value;
+			$obj[$this->_currentWs][$key]=$value;
 			unset($obj[$key]);
 		}
 		
@@ -116,10 +115,10 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 				}
 				$newKey = $this->_currentWs.".".$key;
 				$sortArray[$newKey] = $value;
+				
+				$this->addSort(array($newKey => $sortArray[$newKey]));
 				unset($sortArray[$key]);
 			}
-			
-			$this->addSort($sortArray);
 		}
 	}
 	
@@ -231,10 +230,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		
 		$result['data'] = $this->_outputObjectFilter($result['data']);
 		
-		/*if($workspace == 'workspace' && $obj[$workspace]['status']=='published'){
-			//do publish action
-			//call version service
-		}*/
+		if(isset($obj[$this->_currentWs]['status'])){
+			if($this->_currentWs == 'workspace' && $obj[$this->_currentWs]['status']=='published'){
+				//do publish action
+				//call version service
+			}
+		}
 		
 		return $result;
 	}
