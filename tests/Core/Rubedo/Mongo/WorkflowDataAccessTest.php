@@ -249,6 +249,40 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expectedResult, $readArray);
     }
 
+	/**
+     * test if read function works fine with imposed fields
+     *
+     * The result doesn't contain the password and first name field
+     */
+    public function testReadWithExcludedField() {
+        $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setWorkspace();
+
+        $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
+		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		
+		$item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+		
+		$item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+        $excludedFields = array('label');
+		$sort = array('id' => 'asc');
+
+        $dataAccessObject->addToExcludeFieldList($excludedFields);
+		$dataAccessObject->addSort($sort);
+		
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item'));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+    }
+
     /**
      * Test of the create feature
      *

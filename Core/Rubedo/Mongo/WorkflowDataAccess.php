@@ -27,7 +27,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 {
 	protected $_currentWs = "live";
 	
-	protected $_metaDataFields = array('id', 'idLabel', 'typeId', 'createTime', 'createUser', 'lastUpdateTime', 'lastUpdateUser', 'version', 'online');
+	protected $_metaDataFields = array('_id', 'id', 'idLabel', 'typeId', 'createTime', 'createUser', 'lastUpdateTime', 'lastUpdateUser', 'version', 'online');
 	
 	protected function _inputObjectFilter($obj){
 		foreach ($obj as $key => $value) {
@@ -71,6 +71,24 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		}
 	}
 	
+	protected function _adaptExcludeFields($fieldsArray){
+		if(count($fieldsArray) != 0){
+			$this->clearExcludeFieldList();
+			$newArray = array();
+			
+			foreach ($fieldsArray as $key => $value) {
+				if(in_array($key, $this->_metaDataFields)){
+					continue;
+				}
+				$newKey = $this->_currentWs.".".$key;
+				$newArray[] = $newKey;
+			}
+			
+			unset($fieldsArray);
+			$this->addToExcludeFieldList($newArray);
+		}
+	}
+	
 	protected function _adaptFilter($filterArray){
 		if(count($filterArray) == 1){
 			$this->clearFilter();
@@ -79,7 +97,6 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 				if($key == '_id'){
 					$filterArray['id'] = (string) $value;
 					unset($filterArray['_id']);
-					continue;
 				}	
 					
 				if(in_array($key, $this->_metaDataFields)){
@@ -127,6 +144,8 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		$this->_adaptFilter($filter);
 		$includedFields = $this->getFieldList();
 		$this->_adaptFields($includedFields);
+		$excludedFields = $this->getExcludeFieldList();
+		$this->_adaptExcludeFields($excludedFields);
 		
 		$content = parent::read();
 		
