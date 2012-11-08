@@ -247,6 +247,33 @@ class DataAccess implements IDataAccess
     protected function _getLocalIncludeFieldList($includeFieldList) {
         return $includeFieldList;
     }
+	
+	/**
+	 * Recursive function for deleteChildrenAction
+	 * 
+	 * @param $parent is an array with the data of the parent
+	 * @return bool
+	 */
+	protected function _deleteChild($parent){
+		
+		//Get the childrens of the current parent
+		$childrensArray = $this->readChild($parent['id']);
+		
+		//Delete all the childrens
+		if(count($childrensArray) != 0){
+			foreach ($childrensArray as $key => $value) {
+				self::_deleteChild($value);
+			}
+		}
+		//Delete the parent
+		$returnArray = $this->destroy($parent, true);
+				
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		return $returnArray;
+	}
 
     /**
      * overrideable method to add an excluded fields list depending on inherited class to handle specific rules
@@ -514,6 +541,41 @@ class DataAccess implements IDataAccess
         }
         return $returnArray;
     }
+	
+	/**
+	 * Delete the childrens of the parent given in parameter
+	 * 
+	 * @param $data contain the datas of the parent in database
+	 * @return array with the result of the operation
+	 */
+	public function deleteChild($data){
+		$parentId = $data['id'];
+		$error = false;
+				
+		//Get the childrens of the current parent
+		$childrensArray = $this->readChild($parentId);
+		
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+		}
+		
+		//Delete all the childrens
+		foreach ($childrensArray as $key => $value) {
+			$result = $this->_deleteChild($value);
+			if($result['success'] == false){
+				$error = true;
+			}
+		}
+		
+		//Delete the parent
+		if($error == false){
+			$returnArray = $this->destroy($data, true);
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
+		}
+		
+		return $returnArray;
+	}
 
     /**
      * Drop The current Collection
