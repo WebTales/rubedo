@@ -249,7 +249,7 @@ class DataAccess implements IDataAccess
     }
 	
 	/**
-	 * Recursive function for deleteChildrenAction
+	 * Recursive function for deleteChildren
 	 * 
 	 * @param $parent is an array with the data of the parent
 	 * @return bool
@@ -260,11 +260,14 @@ class DataAccess implements IDataAccess
 		$childrensArray = $this->readChild($parent['id']);
 		
 		//Delete all the childrens
-		if(count($childrensArray) != 0){
-			foreach ($childrensArray as $key => $value) {
-				self::_deleteChild($value);
-			}
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
 		}
+		
+		foreach ($childrensArray as $key => $value) {
+			self::_deleteChild($value);
+		}
+		
 		//Delete the parent
 		$returnArray = $this->destroy($parent, true);
 				
@@ -273,6 +276,39 @@ class DataAccess implements IDataAccess
 		}
 		
 		return $returnArray;
+	}
+	
+	/**
+	 * Recursive function for deleteVocabulary
+	 * 
+	 * @param $parent is an array with the data of the vocabulary
+	 * @return bool
+	 */
+	protected function _deleteVocabulary($parent){
+		
+		$filter = array('vocabularyId' => $parent['id']);
+		$this->addFilter($filter);
+		
+		//Get the childrens of the current parent
+		$childrensArray = $this->read();
+		
+		//Delete all the childrens
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+		}
+		
+		foreach ($childrensArray as $key => $value) {
+			self::_deleteChild($value);
+		}
+		
+		//Delete the parent
+		$returnArray = $this->destroy($parent, true);
+				
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		return $childrensArray;
 	}
 
     /**
@@ -562,6 +598,40 @@ class DataAccess implements IDataAccess
 		//Delete all the childrens
 		foreach ($childrensArray as $key => $value) {
 			$result = $this->_deleteChild($value);
+			if($result['success'] == false){
+				$error = true;
+			}
+		}
+		
+		//Delete the parent
+		if($error == false){
+			$returnArray = $this->destroy($data, true);
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
+		}
+		
+		return $returnArray;
+	}
+	
+	public function deleteVocabulary($data){
+		$parentId = $data['id'];
+		$error = false;
+		
+		//Add a filter to only get the childrens of the current vocabulary
+		$filter = array('vocabularyId' => $parentId);
+		$this->addFilter($filter);
+				
+		//Get the childrens of the current parent
+		$childrensArray = $this->read();
+		
+		//Check if $data is an array
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+		}
+		
+		//Delete all the childrens
+		foreach ($childrensArray as $key => $value) {
+			$result = $this->_deleteVacabulary($value);
 			if($result['success'] == false){
 				$error = true;
 			}
