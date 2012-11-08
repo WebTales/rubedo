@@ -1,184 +1,63 @@
 <!DOCTYPE html>
 <html lang="en, fr">
-  <head>
-    <meta charset="utf-8">
-    <title>Rubedo Project, from WebTales</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="The Rubedo Project, open-source CMS with Zend Framework, MongoDB and Ext-JS">
-    <meta name="author" content="WebTales">
+	<head>
+		<meta charset="utf-8">
+		<title>Rubedo Project, from WebTales</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="The Rubedo Project, open-source CMS with Zend Framework, MongoDB and Ext-JS">
+		<meta name="author" content="WebTales">
 
-    <!-- Le styles -->
-    <link href="/css/{% if theme != ''%}{{theme}}.{% else %}default.{% endif %}bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="/css/rubedo.css" rel="stylesheet">
-    <!--<link rel="stylesheet" type="text/css" href="/extjs-4.1.1/resources/css/ext-all.css">-->
+		<!-- Le styles -->
+		<link href="/css/{% if theme != ''%}{{theme}}.{% else %}default.{% endif %}bootstrap.min.css" rel="stylesheet">
+		<link href="/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="/css/rubedo.css" rel="stylesheet">
+		<!--<link rel="stylesheet" type="text/css" href="/extjs-4.1.1/resources/css/ext-all.css">-->
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-  </head>
+		<!-- Le fav and touch icons -->
+		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+	</head>
 
-  <body>
-  	<div id="topSpace" class="navbar navbar-fixed-top"></div> 	
-  	<div class="container-fluid">
+	<body>
+		<div class="container-fluid">
 
-	<div class="modal hide" id="addContentForm" style="width:660px;height:390px;">
-	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal">×</button>
-	    <h3>Ajouter un </h3>
-	  </div>
-	  <div class="modal-body">
-	  </div>
-	</div>	  
-	<div class="btn-group hide" id="blockToolBar" style="position: absolute; z-index: 999;">
-	  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-	    <i class="icon-plus"></i>
-	    <span class="caret"></span>
-	  </a>
-	  <ul class="dropdown-menu" id="contentType">
-          <li><a href="article">Article</a></li>
-          <li><a href="news">News</a></li>
-	  </ul>
-	</div>
-	
-	<div class="navbar hide navbar-fixed-top" id="contentToolBar">
-  		<div class="navbar-inner">
-		  	<div class="container-fluid">
-				<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				</a>
-	    		<a class="brand" href="#">Administration</a>
-	    		<div id='viewmode'>
-					<div class="btn-group pull-left">
-					  <a class="btn" href="#" id="btn-edit">
-					    <i class="icon-edit"></i> Editer la page
-					  </a>
-					</div>
-					<span class="label label-success pull-right">Consultation</span>
-				</div>
-				<div id='editmode' class='hide'>	
+			{% for blocs in structure %}
+			<div class="row-fluid">
+				{% include blocs.template with blocs.data only %}
+			</div>
+			{% endfor %}
 
-					  <a class="btn pull-left" href="#" id="btn-cancel">
-					    <i class="icon-remove"></i> Annuler
-					  </a>
-					  <a class="btn pull-left" href="#" id="btn-save">
-					    <i class="icon-ok"></i> Sauvegarder les modifications
-					  </a>
+		</div><!--/.fluid-container-->
 
-					<span class="label label-warning pull-right">Edition</span>
-				</div>
-  			</div>
-		</div>
-	</div>
+		<!-- Le javascript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="/js/jquery.js"></script>
+		<script src="/js/bootstrap-transition.js"></script>
+		<script src="/js/bootstrap-alert.js"></script>
+		<script src="/js/bootstrap-modal.js"></script>
+		<script src="/js/bootstrap-dropdown.js"></script>
+		<script src="/js/bootstrap-scrollspy.js"></script>
+		<script src="/js/bootstrap-tab.js"></script>
+		<script src="/js/bootstrap-tooltip.js"></script>
+		<script src="/js/bootstrap-popover.js"></script>
+		<script src="/js/bootstrap-button.js"></script>
+		<script src="/js/bootstrap-collapse.js"></script>
+		<script src="/js/bootstrap-carousel.js"></script>
+		<script src="/js/bootstrap-typeahead.js"></script>
+		<script src="/ckeditor-dev/ckeditor.js"></script>
+		<!--<script src="/extjs-4.1.1/ext-all.js"></script>-->
+		<!--<script src="/js/jquery.jeditable.mini.js"></script>-->
 
-{% block breadcrumb %}{% endblock %}
-<div class="row-fluid">
-  <div class="span8">
-		{% for blocs in structure %}
-            {% include blocs.template with blocs.data only %}
-        {% endfor %}
-  </div>
-</div>
-
-<hr>
-      
-      <footer align="center">
-        <p>&copy; WebTales 2012. Le projet Rubedo est supporté par <a href="http://www.centraleparis-incubateur.fr" target="_blank"><img src="/img/incubateur_centrale.png"></a></p>
-      </footer>
-
-    </div><!--/.fluid-container-->
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/js/jquery.js"></script>
-    <script src="/js/bootstrap-transition.js"></script>
-    <script src="/js/bootstrap-alert.js"></script>
-    <script src="/js/bootstrap-modal.js"></script>
-    <script src="/js/bootstrap-dropdown.js"></script>
-    <script src="/js/bootstrap-scrollspy.js"></script>
-    <script src="/js/bootstrap-tab.js"></script>
-    <script src="/js/bootstrap-tooltip.js"></script>
-    <script src="/js/bootstrap-popover.js"></script>
-    <script src="/js/bootstrap-button.js"></script>
-    <script src="/js/bootstrap-collapse.js"></script>
-    <script src="/js/bootstrap-carousel.js"></script>
-    <script src="/js/bootstrap-typeahead.js"></script>
-    <script src="/ckeditor-dev/ckeditor.js"></script> 
-    <!--<script src="/extjs-4.1.1/ext-all.js"></script>-->
-    <!--<script src="/js/jquery.jeditable.mini.js"></script>-->
-    
-
-    <script type="text/javascript">
-    
-    	$(document).ready(function() {
-    		$('#contentType a').click(function(event) {
-    			$('#addContentForm').modal();
-    			<!-- todo : put real url for editing contents -->
-				var url = 'http://rubedo-bo.local/test.html';
-    			$('#addContentForm .modal-body').html('<iframe width="100%" height="100%" frameborder="0" scrolling="no" allowtransparency="true" src="' + url + '"></iframe>');				
-    			event.preventDefault(); 
-    		});
-            $('#themeChooser a').click(function(event) {
-                $.getJSON('/xhr-theme/define-theme?theme='+$(this).attr('href'), function(data) {
-                    if (data.success) location.reload();
-                });
-                event.preventDefault(); 
-            });
-            $('#langChooser a').click(function(event) {
-            	
-                $.getJSON('/xhr-language/define-language?language='+$(this).attr('href'), function(data) {
-                    if (data.success) location.reload();
-                });
-                event.preventDefault(); 
-            });
-		    $('#connect').submit(function() {
-            	$.post('/xhr-authentication/login', 
-            		{"login":$('#inputEmail').val(),"password":$('#inputPassword').val()},
-            		function(data) {
-	        	        if (data.success) {
-	            	    	$(this).modal('hide');
-	                		location.reload();
-	                	} else {
-	                		$("#connect-msg").html('{{"identifier_error"|trans}}');
-	                	}
-	            	},
-	            	"json"
-            	);
-				return false;
-			});	
-				/*
-	        $.getJSON('/xhr-authentication/is-logged-in', function(data) {
-    	        if (data.loggedIn) {
-    	        	$('#connect-btn').html('<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> '+data.username+' <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">{{"my_account"|trans}}</a></li><li class="divider"></li><li><a href="/backoffice/" >{{"access_back_office"|trans}}</a></li><li class="divider"></li><li><a href="#" id="logout">{{"sign_out"|trans}}</a></li></ul>');	
-					$.getScript('/xhr-javascript/get-script?script=rubedo-edit', function() {
-            							
-					});   
-					$('#logout').click(function() {
-					    $.getJSON('/xhr-authentication/logout/', function(data) {
-					        if (data.success) {
-					    		location.reload();
-					    	}
-						});
-						return false;
-					});      		
-            	} else {
-            		$('#connect-btn').html('<a class="btn" data-toggle="modal" href="#connect"><i class="icon-user"></i> {{"sign_in"|trans}}</a>');
-            	}
-        	});	
-        		*/	
-		});
-   </script>
-  </body>
+		<script type="text/javascript">				
+		</script>
+	</body>
 </html>
