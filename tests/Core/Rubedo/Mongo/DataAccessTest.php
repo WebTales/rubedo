@@ -1287,6 +1287,39 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expectedResult, $readArray);
 
     }
+	
+	/**
+	 * Try to delete a parent and all its childrens
+	 */
+	public function testDeleteChild(){
+		$dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		
+		$item = static::$phactory->create('item', array('version' => 1, 'name' => 'parent'));
+        $item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+
+        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'child1'));
+        $item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+
+        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'child2'));
+        $item3['id'] = (string)$item3['_id'];
+        unset($item3['_id']);
+		
+		$item4 = static::$phactory->create('item', array('version' => 1, 'name' => 'parent2'));
+        $item4['id'] = (string)$item4['_id'];
+        unset($item4['_id']);
+		
+		$resultArray = $dataAccessObject->deleteChild($item);
+		
+		$this->assertTrue($resultArray['success']);
+		
+		$expectedResult = array($item4);
+		$readArray = $dataAccessObject->read();
+		
+		$this->assertEquals($expectedResult, $readArray);
+	} 
 
     /**
      * test readChild with sort

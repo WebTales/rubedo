@@ -94,33 +94,6 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 		}
 		$this -> getResponse() -> setBody($returnValue);
 	}
-	
-	/**
-	 * Recursive function for deleteChildrenAction
-	 * 
-	 * @param $parent is an array with the data of the parent
-	 * @return bool
-	 */
-	protected function _deleteChild($parent){
-		
-		//Get the childrens of the current parent
-		$childrensArray = $this->_dataReader->readChild($parent['id']);
-		
-		//Delete all the childrens
-		if(count($childrensArray) != 0){
-			foreach ($childrensArray as $key => $value) {
-				self::_deleteChild($value);
-			}
-		}
-		//Delete the parent
-		$returnArray = $this -> _dataReader -> destroy($parent, true);
-				
-		if (!$returnArray['success']) {
-			$this -> getResponse() -> setHttpResponseCode(500);
-		}
-		
-		return $returnArray;
-	}
 
 	/**
 	 * The default read Action
@@ -220,27 +193,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			
 			if (is_array($data)) {
 					
-				$parentId = $data['id'];
-				
-				//Get the childrens of the current parent
-				$childrensArray = $this->_dataReader->readChild($parentId);
-
-				//Delete all the childrens
-				if(count($childrensArray) != 0){
-					foreach ($childrensArray as $key => $value) {
-						$result = $this->_deleteChild($value);
-						if($result['success'] == true){
-							continue;
-						}
-					}
-				}
-				
-				//Delete the parent
-				if($result['success'] == true){
-					$returnArray = $this -> _dataReader -> destroy($data, true);
-				} else {
-					$returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
-				}
+				$returnArray = $this->_dataReader->deleteChild($data);
 				
 			} else {
 				$returnArray = array('success' => false, "msg" => 'Not an array');
