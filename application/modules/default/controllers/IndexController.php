@@ -80,6 +80,16 @@ class IndexController extends Zend_Controller_Action
         foreach ($this->_pageParams['blocks'] as $block) {
             $twigVar = array_merge($twigVar, $this->_serviceBlock->getBlockData($block, $pageId, $this));
         }
+		
+		if($pageId == "newpage"){
+			$newTwigVar['structure'] = array(
+											array('template'=>'blocs/carrousel.html','data'=>array('items'=>$twigVar['carousel_content'])),
+											array('template'=>'blocs/contentlist.html','data'=>array('contents'=>$twigVar['contentlist_content'])),
+											);
+			$twigVar  = $newTwigVar;
+		}
+		
+		//Zend_Debug::dump($twigVar);
         //die();
         $content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
 
