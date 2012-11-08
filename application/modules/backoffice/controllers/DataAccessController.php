@@ -143,6 +143,28 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 	 *
 	 */
 	public function readChildAction() {
+		$filterJson = $this -> getRequest() -> getParam('filter');
+		if (isset($filterJson)) {
+			$filters = Zend_Json::decode($filterJson);
+			foreach ($filters as $value) {
+				if ((!(isset($value["operator"])))||($value["operator"]=="eq")) {
+					$this -> _dataReader -> addFilter(array($value["property"] => $value["value"]));					
+				}
+				else if ($value["operator"] == 'like') {
+					$this -> _dataReader -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
+				}
+
+			}
+		}
+		$sortJson = $this -> getRequest() -> getParam('sort');
+		if (isset($sortJson)) {
+			$sort = Zend_Json::decode($sortJson);
+			foreach ($sort as $value) {
+
+					$this -> _dataReader -> addSort(array($value["property"] => strtolower($value["direction"])));				
+
+			}
+		}
 
 		$parentId = $this->getRequest()->getParam('node','root');
 
@@ -155,6 +177,36 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 		$response['message'] = 'OK';
 
 		$this -> _returnJson($response);
+	}
+	
+	/**
+	 * Delete all the childrens of the parent given in paremeter
+	 * 
+	 * @return array
+	 */
+	public function deleteChildAction(){
+		$data = $this -> getRequest() -> getParam('data');
+		$result = array('success' => true);
+		
+		if (!is_null($data)) {
+			$data = Zend_Json::decode($data);
+			
+			if (is_array($data)) {
+					
+				$returnArray = $this->_dataReader->deleteChild($data);
+				
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Not an array');
+			}
+
+		} else {
+			$returnArray = array('success' => false, "msg" => 'Invalid Data');
+		}
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		$this -> _returnJson($returnArray);
 	}
 
 	/**
@@ -238,6 +290,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			if (is_array($updateData)) {
 
 				$returnArray = $this -> _dataReader -> update($updateData, true);
+				
 
 			} else {
 				$returnArray = array('success' => false, "msg" => 'Not an array');

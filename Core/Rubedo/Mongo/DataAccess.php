@@ -247,6 +247,69 @@ class DataAccess implements IDataAccess
     protected function _getLocalIncludeFieldList($includeFieldList) {
         return $includeFieldList;
     }
+	
+	/**
+	 * Recursive function for deleteChildren
+	 * 
+	 * @param $parent is an array with the data of the parent
+	 * @return bool
+	 */
+	protected function _deleteChild($parent){
+		
+		//Get the childrens of the current parent
+		$childrensArray = $this->readChild($parent['id']);
+		
+		//Delete all the childrens
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+		}
+		
+		foreach ($childrensArray as $key => $value) {
+			self::_deleteChild($value);
+		}
+		
+		//Delete the parent
+		$returnArray = $this->destroy($parent, true);
+				
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		return $returnArray;
+	}
+	
+	/**
+	 * Recursive function for deleteVocabulary
+	 * 
+	 * @param $parent is an array with the data of the vocabulary
+	 * @return bool
+	 */
+	protected function _deleteVocabulary($parent){
+		
+		$filter = array('vocabularyId' => $parent['id']);
+		$this->addFilter($filter);
+		
+		//Get the childrens of the current parent
+		$childrensArray = $this->read();
+		
+		//Delete all the childrens
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+		}
+		
+		foreach ($childrensArray as $key => $value) {
+			self::_deleteChild($value);
+		}
+		
+		//Delete the parent
+		$returnArray = $this->destroy($parent, true);
+				
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		return $childrensArray;
+	}
 
     /**
      * overrideable method to add an excluded fields list depending on inherited class to handle specific rules
@@ -514,6 +577,75 @@ class DataAccess implements IDataAccess
         }
         return $returnArray;
     }
+	
+	/**
+	 * Delete the childrens of the parent given in parameter
+	 * 
+	 * @param $data contain the datas of the parent in database
+	 * @return array with the result of the operation
+	 */
+	public function deleteChild($data){
+		$parentId = $data['id'];
+		$error = false;
+				
+		//Get the childrens of the current parent
+		$childrensArray = $this->readChild($parentId);
+		
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+		}
+		
+		//Delete all the childrens
+		foreach ($childrensArray as $key => $value) {
+			$result = $this->_deleteChild($value);
+			if($result['success'] == false){
+				$error = true;
+			}
+		}
+		
+		//Delete the parent
+		if($error == false){
+			$returnArray = $this->destroy($data, true);
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
+		}
+		
+		return $returnArray;
+	}
+	
+	public function deleteVocabulary($data){
+		$parentId = $data['id'];
+		$error = false;
+		
+		//Add a filter to only get the childrens of the current vocabulary
+		$filter = array('vocabularyId' => $parentId);
+		$this->addFilter($filter);
+				
+		//Get the childrens of the current parent
+		$childrensArray = $this->read();
+		
+		//Check if $data is an array
+		if(!is_array($childrensArray)){
+			throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+		}
+		
+		//Delete all the childrens
+		foreach ($childrensArray as $key => $value) {
+			$result = $this->_deleteVacabulary($value);
+			if($result['success'] == false){
+				$error = true;
+			}
+		}
+		
+		//Delete the parent
+		if($error == false){
+			$returnArray = $this->destroy($data, true);
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
+		}
+		
+		return $returnArray;
+	}
 
     /**
      * Drop The current Collection
@@ -537,7 +669,6 @@ class DataAccess implements IDataAccess
         //check valid input
         if (count($filter) !== 1) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
-
         }
 
         foreach ($filter as $name => $value) {
@@ -585,7 +716,9 @@ class DataAccess implements IDataAccess
         }
 
     }
-
+	
+	
+	
     /**
      * Add a OR filter condition to the service
      *

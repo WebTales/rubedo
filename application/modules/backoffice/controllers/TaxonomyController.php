@@ -35,5 +35,39 @@ class Backoffice_TaxonomyController extends Backoffice_DataAccessController
      * @var string
      */
     protected $_store = 'Taxonomy';
+	
+	public function init(){
+		parent::init();
+		$this->_termsService =  Rubedo\Services\Manager::getService('MongoDataAccess');
+		$this->_termsService -> init('TaxonomyTerms');
+	}
+	
+	/**
+	 * The destroy action of the CRUD API
+	 */
+	public function deleteVocabularyAction() {
+		$data = $this -> getRequest() -> getParam('data');
+		$error = false;
+		
+		if (!is_null($data)) {
+			$data = Zend_Json::decode($data);
+			if (is_array($data)) {
+				
+				$returnArray = $this->_dataReader->deleteVocabulary($data);
+				
+			} else {
+				$returnArray = array('success' => false, "msg" => 'Not an array');
+			}
+
+		} else {
+			$returnArray = array('success' => false, "msg" => 'Invalid Data');
+		}
+
+		if (!$returnArray['success']) {
+			$this -> getResponse() -> setHttpResponseCode(500);
+		}
+		
+		$this -> _returnJson($returnArray);
+	}
 
 }
