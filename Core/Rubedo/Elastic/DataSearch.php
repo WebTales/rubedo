@@ -15,6 +15,7 @@
 namespace Rubedo\Elastic;
 
 use Rubedo\Interfaces\Elastic\IDataSearch;
+use Rubedo\Services\Manager;
 
 /**
  * Class implementing the Rubedo API to Elastic Search using Elastica API
