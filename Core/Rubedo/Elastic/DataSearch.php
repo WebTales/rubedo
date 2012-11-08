@@ -119,7 +119,10 @@ class DataSearch implements IDataSearch
             $port = self::$_options['port'];
         }
 
-        $this->_client = new \Elastica_Client();
+
+        $this->_client = new \Elastica_Client(array('port'=>$port,'host'=>$host));
+		
+		
 		
 		$this->_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
 		
