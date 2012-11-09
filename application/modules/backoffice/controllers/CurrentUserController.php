@@ -28,20 +28,9 @@ require_once('DataAccessController.php');
  */
 class Backoffice_CurrentUserController extends Zend_Controller_Action
 {
-    /**
-     * Name of the store which is also to the collection name
-     * 
-     * @see Backoffice_DataAccessController::$_store
-     * @var string
-     */
-    protected $_store = 'Users';
+    
 	
-	/**
-	 * Data Access Service
-	 *
-	 * @var DataAccess
-	 */
-	protected $_dataService;
+
 	
 	/**
      * Variable for Authentication service
@@ -65,18 +54,14 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
 	 * @return array
 	 */
 	public function indexAction() {
-		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-		
-		$result = $this->_auth->getIdentity();
-		$userId = $result['id'];
-		
-		$response = $currentUserService->getCurrentUser($userId);
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');		
+		$response = $currentUserService->getCurrentUser();
 		
 		if(!is_null($response)){
 			$newResponse['success'] = true;
 			$newResponse['data'] = $response;
 		} else {
-			$newResponse['sucess'] = true;
+			$newResponse['sucess'] = false;
 		}
 		
 		$this->_helper->json($newResponse);
