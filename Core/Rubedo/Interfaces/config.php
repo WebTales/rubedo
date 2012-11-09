@@ -49,6 +49,7 @@ class config
 		'Page'					=>	'Rubedo\\Interfaces\\Content\\IPage',
 		'FrontOfficeTemplates'	=>	'Rubedo\\Interfaces\\Templates\\IFrontOfficeTemplates',
 		'Block'					=>	'Rubedo\\Interfaces\\Content\\IBlock',
+		'Users'					=>	'Rubedo\\Interfaces\\Collection\\IUsers',
 	);
 
     /**

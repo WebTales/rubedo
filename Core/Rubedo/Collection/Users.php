@@ -26,5 +26,20 @@ use Rubedo\Mongo\DataAccess;
  */
 class Users extends AbstractCollection implements IUsers
 {
-
+	/**
+	 * @todo implements that
+	 */
+	public function changePassword(){
+		
+	}
+	
+	public function __construct(){
+		$this->_collectionName = 'Users';
+		parent::__construct();
+	}
+	
+	protected function _init(){
+		parent::_init();
+		$this->_dataService->addToExcludeFieldList(array('password'));
+	}
 }

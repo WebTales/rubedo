@@ -974,5 +974,9 @@ class DataAccess implements IDataAccess
     public function clearExcludeFieldList() {
         $this->_excludeFieldList = array();
     }
+	
+	public function getRegex($expr){
+		return new \MongoRegex($expr);
+	}
 
 }

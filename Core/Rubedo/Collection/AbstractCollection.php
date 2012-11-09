@@ -27,22 +27,31 @@ use Rubedo\Mongo\DataAccess;
 abstract class AbstractCollection implements IAbstractCollection
 {
 
+	protected $_collectionName;
+	
+	protected $_dataService;
+	
+	protected function _init(){
+		// init the data access service
+        $this->_dataService = new DataAccess();
+        $this->_dataService->init($this->_collectionName);
+	}
+
+	public function __construct(){
+		$this->_init();
+	}
     /**
      * Do a find request on the current collection
      *
      * @return array
      */
     public function getList($filters = null, $sort = null) {
-        // init the data access service
-        $dataService = new DataAccess();
-        $dataService->init('Users');
-
         if (isset($filters)) {
             foreach ($filters as $value) {
                 if ((!(isset($value["operator"]))) || ($value["operator"] == "eq")) {
-                    $dataService->addFilter(array($value["property"] => $value["value"]));
+                    $this->_dataService->addFilter(array($value["property"] => $value["value"]));
                 } else if ($value["operator"] == 'like') {
-                    $dataService->addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
+                    $this->_dataService->addFilter(array($value["property"] => array('$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i'))));
                 }
 
             }
@@ -50,11 +59,11 @@ abstract class AbstractCollection implements IAbstractCollection
         if (isset($sort)) {
             foreach ($sort as $value) {
 
-                $dataService->addSort(array($value["property"] => strtolower($value["direction"])));
+                $this->_dataService->addSort(array($value["property"] => strtolower($value["direction"])));
 
             }
         }
-        $dataValues = $dataService->read();
+        $dataValues = $this->_dataService->read();
 		
 		return $dataValues;
 
@@ -66,7 +75,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function findById($contentId) {
-        //return $this->findOne(array('_id' => new \MongoId($contentId)));
+        return $this->_dataService->findById($contentId);
     }
 
     /**
@@ -78,7 +87,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function create(array $obj, $safe = true) {
-
+        return $this->_dataService->create($obj, $safe);
     }
 
     /**
@@ -90,7 +99,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function update(array $obj, $safe = true) {
-
+        return $this->_dataService->update($obj, $safe);
     }
 
     /**
@@ -102,7 +111,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function destroy(array $obj, $safe = true) {
-
+        return $this->_dataService->destroy($obj, $safe);
     }
 
 }
