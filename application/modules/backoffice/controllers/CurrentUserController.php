@@ -26,7 +26,7 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_CurrentUserController extends Backoffice_DataAccessController
+class Backoffice_CurrentUserController extends Zend_Controller_Action
 {
     /**
      * Name of the store which is also to the collection name
@@ -41,7 +41,7 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 	 *
 	 * @var DataAccess
 	 */
-	protected $_dataReader;
+	protected $_dataService;
 	
 	/**
      * Variable for Authentication service
@@ -82,15 +82,6 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 		$this->_returnJson($newResponse);
 	}
 	
-	/**
-	 * Unable the creation of users
-	 * 
-	 * @return array
-	 */
-	public function createAction() {
-		$returnArray = array('success' => false, 'message' => 'Not authorized to create a user');
-		$this -> _returnJson($returnArray);
-	}
 
 	/**
 	 * Update the current values for the user
@@ -125,14 +116,5 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 		}
 		$this -> _returnJson($returnArray);
 	}
-	
-	/**
-	 * Unable the suppression of a user
-	 * 
-	 * @return array
-	 */
-	public function deleteAction(){
-		$returnArray = array('success' => false, 'message' => 'Not authorized to delete a user');
-		$this -> _returnJson($returnArray);
-	}
+
 }

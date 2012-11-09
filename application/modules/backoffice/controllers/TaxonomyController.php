@@ -53,7 +53,7 @@ class Backoffice_TaxonomyController extends Backoffice_DataAccessController
 			$data = Zend_Json::decode($data);
 			if (is_array($data)) {
 				
-				$returnArray = $this->_dataReader->deleteVocabulary($data);
+				$returnArray = $this->_dataService->deleteVocabulary($data);
 				
 			} else {
 				$returnArray = array('success' => false, "msg" => 'Not an array');

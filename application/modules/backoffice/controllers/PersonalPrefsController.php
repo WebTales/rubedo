@@ -41,7 +41,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 	 *
 	 * @var DataAccess
 	 */
-	protected $_dataReader;
+	protected $_dataService;
 	
 	/**
      * Variable for Authentication service
@@ -71,9 +71,9 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 		$result = $auth->getIdentity();
 		
 		if($result){
-			$this -> _dataReader -> addFilter(array('userId' => $result['id']));
+			$this -> _dataService -> addFilter(array('userId' => $result['id']));
 			
-			$dataValues = $this -> _dataReader -> read();
+			$dataValues = $this -> _dataService -> read();
 
 			$response['data'] = array_values($dataValues);
 			$response['total'] = count($response['data']);
@@ -102,7 +102,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 				if($result){
 					$userId = $result['id'];
 					$insertData['userId'] = $userId;
-					$returnArray = $this -> _dataReader -> create($insertData, true);
+					$returnArray = $this -> _dataService -> create($insertData, true);
 				} else {
 					$returnArray = array('success' => false, "msg" => 'No user connected');
 				}
@@ -132,7 +132,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 					$userId = $result['id'];
 
 					if($userId === $insertData['userId']){
-						$returnArray = $this -> _dataReader -> update($insertData, true);
+						$returnArray = $this -> _dataService -> update($insertData, true);
 					} else {
 						$returnArray = array('success' => false, 'message' => 'Bad id');
 					}

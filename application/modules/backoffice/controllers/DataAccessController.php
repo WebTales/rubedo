@@ -40,7 +40,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 	 *
 	 * @var DataAccess
 	 */
-	protected $_dataReader;
+	protected $_dataService;
 
 	/**
 	 * should json be prettified
@@ -62,19 +62,6 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			//throw new \Exception('This action should be called by POST request');
 		}
 
-		// set the store value from the request is sent
-		if (!isset($this -> _store)) {
-			$this -> _store = $this -> getRequest() -> getParam('store');
-		}
-
-		if (!isset($this -> _store)) {
-			throw new Zend_Exception("No store parameter", 1);
-
-		}
-
-		// init the data access service
-		$this -> _dataReader = Rubedo\Services\Manager::getService('MongoDataAccess');
-		$this -> _dataReader -> init($this -> _store);
 	}
 
 	/**
@@ -102,30 +89,21 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 	 * params, get sort from request params
 	 *
 	 */
-	public function indexAction() {
+	public function indexAction(){
 		$filterJson = $this -> getRequest() -> getParam('filter');
 		if (isset($filterJson)) {
 			$filters = Zend_Json::decode($filterJson);
-			foreach ($filters as $value) {
-				if ((!(isset($value["operator"])))||($value["operator"]=="eq")) {
-					$this -> _dataReader -> addFilter(array($value["property"] => $value["value"]));					
-				}
-				else if ($value["operator"] == 'like') {
-					$this -> _dataReader -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
-				}
-
-			}
+		}else{
+			$filters = null;
 		}
 		$sortJson = $this -> getRequest() -> getParam('sort');
 		if (isset($sortJson)) {
 			$sort = Zend_Json::decode($sortJson);
-			foreach ($sort as $value) {
-
-					$this -> _dataReader -> addSort(array($value["property"] => strtolower($value["direction"])));				
-
-			}
-		}		
-		$dataValues = $this -> _dataReader -> read();
+		}else{
+			$sort = null;
+		}
+				
+		$dataValues = $this -> _dataService -> getList($filters,$sort);
 
 		$response = array();
 		$response['data'] = array_values($dataValues);
@@ -148,10 +126,10 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			$filters = Zend_Json::decode($filterJson);
 			foreach ($filters as $value) {
 				if ((!(isset($value["operator"])))||($value["operator"]=="eq")) {
-					$this -> _dataReader -> addFilter(array($value["property"] => $value["value"]));					
+					$this -> _dataService -> addFilter(array($value["property"] => $value["value"]));					
 				}
 				else if ($value["operator"] == 'like') {
-					$this -> _dataReader -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
+					$this -> _dataService -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
 				}
 
 			}
@@ -161,14 +139,14 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			$sort = Zend_Json::decode($sortJson);
 			foreach ($sort as $value) {
 
-					$this -> _dataReader -> addSort(array($value["property"] => strtolower($value["direction"])));				
+					$this -> _dataService -> addSort(array($value["property"] => strtolower($value["direction"])));				
 
 			}
 		}
 
 		$parentId = $this->getRequest()->getParam('node','root');
 
-		$dataValues = $this -> _dataReader -> readChild($parentId);
+		$dataValues = $this -> _dataService -> readChild($parentId);
 
 		$response = array();
 		$response['children'] = array_values($dataValues);
@@ -193,7 +171,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			
 			if (is_array($data)) {
 					
-				$returnArray = $this->_dataReader->deleteChild($data);
+				$returnArray = $this->_dataService->deleteChild($data);
 				
 			} else {
 				$returnArray = array('success' => false, "msg" => 'Not an array');
@@ -219,7 +197,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 	 */
 	public function treeAction() {
 
-		$dataValues = $this -> _dataReader -> readTree();
+		$dataValues = $this -> _dataService -> readTree();
 
 		$response = array();
 		$response["expanded"]	=	true;
@@ -240,7 +218,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			$data = Zend_Json::decode($data);
 			if (is_array($data)) {
 
-				$returnArray = $this -> _dataReader -> destroy($data, true);
+				$returnArray = $this -> _dataService -> destroy($data, true);
 
 			} else {
 				$returnArray = array('success' => false, "msg" => 'Not an array');
@@ -264,7 +242,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 		if (!is_null($data)) {
 			$insertData = Zend_Json::decode($data);
 			if (is_array($insertData)) {
-				$returnArray = $this -> _dataReader -> create($insertData, true);
+				$returnArray = $this -> _dataService -> create($insertData, true);
 
 			} else {
 				$returnArray = array('success' => false, "msg" => 'Not an array');
@@ -289,7 +267,7 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 			$updateData = Zend_Json::decode($data);
 			if (is_array($updateData)) {
 
-				$returnArray = $this -> _dataReader -> update($updateData, true);
+				$returnArray = $this -> _dataService -> update($updateData, true);
 				
 
 			} else {
