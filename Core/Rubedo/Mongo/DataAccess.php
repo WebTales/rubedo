@@ -468,7 +468,6 @@ class DataAccess implements IDataAccess
      * @return array
      */
     public function create(array $obj, $safe = true) {
-        unset($obj['leaf']);
 
         $obj['version'] = 1;
 
@@ -506,7 +505,6 @@ class DataAccess implements IDataAccess
     public function update(array $obj, $safe = true) {
         $id = $obj['id'];
         unset($obj['id']);
-        unset($obj['leaf']);
         if (!isset($obj['version'])) {
             throw new \Rubedo\Exceptions\DataAccess('can\'t update an object without a version number.');
         }

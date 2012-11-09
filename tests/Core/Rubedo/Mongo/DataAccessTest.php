@@ -515,26 +515,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
 
     }
 
-    /**
-     * Test of the create feature : "leaf" property should be ignored
-     *
-     * Create an item through the service and read it with Phactory
-     * Check if a version property add been added
-     */
-    public function testCreateNoLeaf() {
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $item = array('name' => 'created item 1', 'leaf' => 'toto');
-
-        $createArray = $dataAccessObject->create($item, true);
-
-        $writtenItem = $createArray["data"];
-
-        $this->assertFalse(isset($writtenItem['leaf']));
-
-    }
 
     /**
      * Check if version property add been added
@@ -847,37 +828,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
 
     }
 
-    /**
-     * Test of the update feature : leaf property should be ignored
-     *
-     * Create an item with phactory
-     * Update it with the service
-     * Read it again with phactory
-     * Check if the version add been incremented
-     */
-    public function testUpdateNoLeaf() {
-        $version = rand(1, 25);
-        $item = static::$phactory->create('item', array('version' => $version));
 
-        $itemId = (string)$item['_id'];
-        $name = $item['name'];
-
-        $item['id'] = $itemId;
-        unset($item['_id']);
-        $item['name'] .= ' updated';
-        $item['leaf'] = 'true';
-
-        //actual begin of the application run
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $updateArray = $dataAccessObject->update($item, true);
-        //end of application run
-
-        $writtenItem = $updateArray["data"];
-
-        $this->assertFalse(isset($writtenItem['leaf']));
-    }
 
     /**
      * Test of the Destroy Feature
