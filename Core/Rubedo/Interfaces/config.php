@@ -60,6 +60,8 @@ class config
 		'Icons'						=>	'Rubedo\\Interfaces\\Collection\\IIcons',
 		'Medias'					=>	'Rubedo\\Interfaces\\Collection\\IMedias',
 		'Panier'					=>	'Rubedo\\Interfaces\\Collection\\IPanier',
+		'PersonalPrefs'				=>	'Rubedo\\Interfaces\\Collection\\IPersonalPrefs',
+		'Sites'						=>	'Rubedo\\Interfaces\\Collection\\ISites',
 	);
 
     /**
