@@ -1,48 +1,26 @@
-<div class="span9">
-	<div class="block headline">
-		<div class="hero-unit">
-			<h1 class="editable" id="507fd4feadd92aa602000000_title"></h1>
-			<h2 class="editable" id="507fd4feadd92aa602000000_subtitle">Redécouvrez la gestion de contenus</h2>
-			<div class="editable" id="507fd4feadd92aa602000000_paragraph">
-				<p>
-					<span class="label label-info">Rubedo</span> est un outils de gestion de contenus open-source construit sur les plus puissantes technologies du moment. Il s'inscrit en rupture avec ses prestigieux prédécesseurs dont le socle technique et les concepts vieillissants ne suffisent plus à adresser les enjeux du web de demain.
-				</p>
-			</div>
-			<div class="editable" id="507fd4feadd92aa602000000_link">
-				<p>
-					<a class="btn btn-primary btn-large" href="#">Accéder à la démo »</a>
-				</p>
-			</div>
-		</div>
-	</div>
-
-</div>
-<div class="span3">
-	<div class="block carousel">
-		<h2 class="editable" id="{{items['id']}}_title">{{items['title']}}</h2>
-		<div id="myCarousel" class="carousel slide">
-			<div class="carousel-inner">
-				{% for item in items['data'] %}
-				<div class="item {% if loop.first %}active{% endif %}">
-					<div class="editable" id="{{item.id}}_img">
-						{{ item.img | raw}}
-					</div>
-					<div class="carousel-caption" style:"margin-top: 100px;">
-						<h4 class="editable" id="{{item.id}}_title">{{ item.title }}</h4>
-						<p>
-							&nbsp;
-						</p>
-						<div class="editable" id="{{item.id}}_description">
-							{{ item.description | raw}}
-						</div>
+<div class="block carousel">
+	<h2 class="editable" id="{{items['id']}}_title">{{items['title']}}</h2>
+	<div id="myCarousel" class="carousel slide">
+		<div class="carousel-inner">
+			{% for item in items['data'] %}
+			<div class="item {% if loop.first %}active{% endif %}">
+				<div class="editable" id="{{item.id}}_img">
+					{{ item.img | raw}}
+				</div>
+				<div class="carousel-caption" style:"margin-top: 100px;">
+					<h4 class="editable" id="{{item.id}}_title">{{ item.title }}</h4>
+					<p>
+						&nbsp;
+					</p>
+					<div class="editable" id="{{item.id}}_description">
+						{{ item.description | raw}}
 					</div>
 				</div>
-				{% endfor %}
 			</div>
-			<!-- Carousel nav -->
-			<a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-			<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+			{% endfor %}
 		</div>
+		<!-- Carousel nav -->
+		<a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+		<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
 	</div>
-
 </div>

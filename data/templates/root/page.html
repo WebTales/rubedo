@@ -27,36 +27,306 @@
 	</head>
 
 	<body>
-		<div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
-					<a class="brand" href="#">Project name</a>
-					<div class="nav-collapse collapse">
-						<ul class="nav">
-							<li class="active">
-								<a href="#">Home</a>
-							</li>
-							<li>
-								<a href="#about">About</a>
-							</li>
-							<li>
-								<a href="#contact">Contact</a>
-							</li>
-						</ul>
-					</div><!--/.nav-collapse -->
+		<div id="topSpace" class="navbar navbar-fixed-top"></div>
+		<div class="container-fluid">
+			<div id="menu" class="navbar navbar-static-top">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
+						<a class="brand" href="/">Rubedo</a>
+						<!-- Everything you want hidden at 940px or less, place within here -->
+						<div class="nav-collapse">
+							<!-- navbar component -->
+							<ul class="nav">
+								<!-- nav bar -->
+								<!-- link component -->
+								<li >
+									<!-- active link -->
+									<a data-toggle="modal" href="#about"> <i class="icon-info-sign"></i> <!-- icon --> A propos </a>
+								</li>
+								<!-- /link component -->
+								<!-- /dropdown component -->
+							</ul>
+							<!-- /nav bar -->
+							<!-- navbar component -->
+							<ul class="nav">
+								<!-- nav bar -->
+								<!-- link component -->
+								<li >
+									<!-- active link -->
+									<a  href="/index/contact"> <i class="icon-envelope"></i> <!-- icon --> Contact </a>
+								</li>
+								<!-- /link component -->
+								<!-- /dropdown component -->
+							</ul>
+							<!-- /nav bar -->
+							<!-- navbar component -->
+							<ul class="nav">
+								<!-- nav bar -->
+								<!-- /link component -->
+								<!-- dropdown component -->
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-zoom-in"></i> <!-- icon --> Rubedo à la loupe <b class="caret"></b> </a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="/index/responsive">Mobilité</a>
+										</li>
+										<li>
+											<a href="/index/accessible">Accessibilité</a>
+										</li>
+										<li>
+											<a href="/index/performant">Performances</a>
+										</li>
+										<li>
+											<a href="/index/ergonomic">Ergonomie</a>
+										</li>
+										<li>
+											<a href="/index/rich">Richesse</a>
+										</li>
+										<li>
+											<a href="/index/extensible">Extensibilité</a>
+										</li>
+										<li>
+											<a href="/index/solid">Robustesse</a>
+										</li>
+										<li>
+											<a href="/index/durable">Pérénité</a>
+										</li>
+									</ul>
+								</li>
+								<!-- /dropdown component -->
+							</ul>
+							<!-- /nav bar -->
+							<!-- /navbar component -->
+							<!-- loginform component -->
+							<!--
+							<div class="btn-group pull-right">
+							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="icon-user"></i> Jbourdin
+							<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+							<li><a href="#">Mon compte</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Se déconnecter</a></li>
+							</ul>
+							</div>
+							-->
+							<div class="btn-group pull-right" id="connect-btn"></div>
+
+							<!-- /loginform component -->
+							<!-- langselector component -->
+							<div class="btn-group pull-right">
+								<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <i class="icon-flag"></i> Langue <span class="caret"></span> </a>
+								<ul class="dropdown-menu" id="langChooser">
+									<li>
+										<a href="fr">Français</a>
+									</li>
+									<li>
+										<a href="en">Anglais</a>
+									</li>
+								</ul>
+							</div>
+							<!-- /langselector component -->
+							<!-- themechooser component-->
+							<div class="btn-group pull-right">
+								<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <i class="icon-eye-open"></i> Changer de thème <span class="caret"></span> </a>
+								<ul class="dropdown-menu" id="themeChooser">
+									<li>
+										<a href="default">Défaut</a>
+									</li>
+									<li class="divider"></li>
+									<li>
+										<a href="amelia">Amelia</a>
+									</li>
+									<li>
+										<a href="cerulean">Cerulean</a>
+									</li>
+									<li>
+										<a href="cyborg">Cyborg</a>
+									</li>
+									<li>
+										<a href="journal">Journal</a>
+									</li>
+									<li>
+										<a href="readable">Readable</a>
+									</li>
+									<li>
+										<a href="simplex">Simplex</a>
+									</li>
+									<li>
+										<a href="slate">Slate</a>
+									</li>
+									<li>
+										<a href="spacelab">Spacelab</a>
+									</li>
+									<li>
+										<a href="spruce">Spruce</a>
+									</li>
+									<li>
+										<a href="superhero">Superhero</a>
+									</li>
+									<li>
+										<a href="united">United</a>
+									</li>
+								</ul>
+							</div>
+							<!-- /themechooser component-->
+							<!-- search component-->
+							<div class="btn-group pull-right">
+								<form class="form-search" action="/index/search">
+									<input type="text" class="input-medium search-query" name="query">
+									<button type="submit" class="btn">
+										Rechercher
+									</button>
+								</form>
+							</div>
+
+							<!-- /search component-->
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="container-fluid">
 
-			{% for blocs in structure %}
-			<div class="row-fluid">
-				{% include blocs.template with blocs.data only %}
+			<div class="modal hide fade" id="about">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						×
+					</button>
+					<h3>A propos</h3>
+				</div>
+
+				<div class="modal-body">
+					<p>
+						Rubedo est un logiciel open-source de gestion de contenus, développé et maintenu par la société WebTales.
+					</p>
+					<p>
+						Rubedo est en phase active de développement.
+					</p>
+					<p>
+						Le projet est soutenu par l'incubateur de l'Ecole Centrale Paris, et hébergé dans ses locaux.
+					</p>
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal">Fermer</a>
+				</div>
+
 			</div>
-			{% endfor %}
 
-			<hr />
+			<div class="modal hide fade" id="connect">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						×
+					</button>
+					<h3>Connexion</h3>
+				</div>
+
+				<form class="form-horizontal" id="connect">
+					<div class="control-group">
+						<label class="control-label" for="inputEmail">E-mail</label>
+						<div class="controls">
+							<input type="text" id="inputEmail" placeholder="Email" value="julien.bourdin@webtales.fr">
+							<span class="help-inline" id="connect-msg"></span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="inputPassword">Mot de passe</label>
+						<div class="controls">
+							<input type="password" id="inputPassword" placeholder="Password" value="webtales">
+						</div>
+					</div>
+					<div class="control-group">
+						<div class="controls">
+							<label class="checkbox">
+								<input type="checkbox">
+								Maintenir la connexion </label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">
+							Se connecter
+						</button>
+						<button type="button" class="btn" data-dismiss="modal">
+							Annuler
+						</button>
+					</div>
+				</form>
+
+			</div>
+
+			<div class="modal hide fade" id="confirm">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						×
+					</button>
+					<h3>Alerte</h3>
+				</div>
+
+				<div class="modal-body">
+					<p>
+						Vous êtes sur le point de perdre toutes les modifications effectuées
+					</p>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" id="cancel-confirm" data-dismiss="modal">
+						Confirmer
+					</button>
+					<a href="#" class="btn" data-dismiss="modal">Annuler</a>
+				</div>
+
+			</div>
+
+			<div class="modal hide" id="addContentForm" style="width:660px;height:390px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						×
+					</button>
+					<h3>Ajouter un </h3>
+				</div>
+				<div class="modal-body"></div>
+			</div>
+			<div class="btn-group hide" id="blockToolBar" style="position: absolute; z-index: 999;">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <i class="icon-plus"></i> <span class="caret"></span> </a>
+				<ul class="dropdown-menu" id="contentType">
+					<li>
+						<a href="article">Article</a>
+					</li>
+					<li>
+						<a href="news">News</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="navbar hide navbar-fixed-top" id="contentToolBar">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
+						<a class="brand" href="#">Administration</a>
+						<div id='viewmode'>
+							<div class="btn-group pull-left">
+								<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i> Editer la page </a>
+							</div>
+							<span class="label label-success pull-right">Consultation</span>
+						</div>
+						<div id='editmode' class='hide'>
+
+							<a class="btn pull-left" href="#" id="btn-cancel"> <i class="icon-remove"></i> Annuler </a>
+							<a class="btn pull-left" href="#" id="btn-save"> <i class="icon-ok"></i> Sauvegarder les modifications </a>
+
+							<span class="label label-warning pull-right">Edition</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container-fluid">
+				{% for items in structure %}
+					{% include 'root/row.html' with items only %}
+				{% endfor %}
+			</div>
+			<hr>
+
 			<footer align="center">
 				<p>
 					&copy; WebTales 2012. Le projet Rubedo est supporté par <a href="http://www.centraleparis-incubateur.fr" target="_blank"><img src="/img/incubateur_centrale.png"></a>
@@ -85,6 +355,64 @@
 		<!--<script src="/extjs-4.1.1/ext-all.js"></script>-->
 		<!--<script src="/js/jquery.jeditable.mini.js"></script>-->
 
-		<script type="text/javascript"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('#contentType a').click(function(event) {
+					$('#addContentForm').modal();
+					<!-- todo : put real url for editing contents -->
+					var
+					url = 'http://rubedo-bo.local/test.html';
+					$('#addContentForm .modal-body').html('<iframe width="100%" height="100%" frameborder="0" scrolling="no" allowtransparency="true" src="' + url + '"></iframe>');
+					event.preventDefault();
+				});
+				$('#themeChooser a').click(function(event) {
+					$.getJSON('/xhr-theme/define-theme?theme=' + $(this).attr('href'), function(data) {
+						if (data.success)
+							location.reload();
+					});
+					event.preventDefault();
+				});
+				$('#langChooser a').click(function(event) {
+
+					$.getJSON('/xhr-language/define-language?language=' + $(this).attr('href'), function(data) {
+						if (data.success)
+							location.reload();
+					});
+					event.preventDefault();
+				});
+				$('#connect').submit(function() {
+					$.post('/xhr-authentication/login', {
+						"login" : $('#inputEmail').val(),
+						"password" : $('#inputPassword').val()
+					}, function(data) {
+						if (data.success) {
+							$(this).modal('hide');
+							location.reload();
+						} else {
+							$("#connect-msg").html('Identifiants incorrects');
+						}
+					}, "json");
+					return false;
+				});
+				$.getJSON('/xhr-authentication/is-logged-in', function(data) {
+					if (data.loggedIn) {
+						$('#connect-btn').html('<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> ' + data.username + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">Mon compte</a></li><li class="divider"></li><li><a href="/backoffice/" >Accès Back Office</a></li><li class="divider"></li><li><a href="#" id="logout">Se déconnecter</a></li></ul>');
+						$.getScript('/xhr-javascript/get-script?script=rubedo-edit', function() {
+
+						});
+						$('#logout').click(function() {
+							$.getJSON('/xhr-authentication/logout/', function(data) {
+								if (data.success) {
+									location.reload();
+								}
+							});
+							return false;
+						});
+					} else {
+						$('#connect-btn').html('<a class="btn" data-toggle="modal" href="#connect"><i class="icon-user"></i> Connexion</a>');
+					}
+				});
+			});
+		</script>
 	</body>
 </html>
