@@ -62,6 +62,7 @@ class config
 		'Panier'					=>	'Rubedo\\Interfaces\\Collection\\IPanier',
 		'PersonalPrefs'				=>	'Rubedo\\Interfaces\\Collection\\IPersonalPrefs',
 		'Sites'						=>	'Rubedo\\Interfaces\\Collection\\ISites',
+		'Taxonomy'					=>	'Rubedo\\Interfaces\\Collection\\ITaxonomy',
 	);
 
     /**
