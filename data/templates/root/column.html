@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en, fr">
+	<head>
+		<meta charset="utf-8">
+		<title>Rubedo Project, from WebTales</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="The Rubedo Project, open-source CMS with Zend Framework, MongoDB and Ext-JS">
+		<meta name="author" content="WebTales">
+
+		<!-- Le styles -->
+		<link href="/css/{% if theme != ''%}{{theme}}.{% else %}default.{% endif %}bootstrap.min.css" rel="stylesheet">
+		<link href="/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="/css/rubedo.css" rel="stylesheet">
+		<!--<link rel="stylesheet" type="text/css" href="/extjs-4.1.1/resources/css/ext-all.css">-->
+
+		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<!-- Le fav and touch icons -->
+		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+	</head>
+
+	<body>
+		<div class="container-fluid">
+
+			{% for blocs in structure %}
+			<div class="row-fluid">
+				{% include blocs.template with blocs.data only %}
+			</div>
+			{% endfor %}
+
+		</div><!--/.fluid-container-->
+
+		<!-- Le javascript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="/js/jquery.js"></script>
+		<script src="/js/bootstrap-transition.js"></script>
+		<script src="/js/bootstrap-alert.js"></script>
+		<script src="/js/bootstrap-modal.js"></script>
+		<script src="/js/bootstrap-dropdown.js"></script>
+		<script src="/js/bootstrap-scrollspy.js"></script>
+		<script src="/js/bootstrap-tab.js"></script>
+		<script src="/js/bootstrap-tooltip.js"></script>
+		<script src="/js/bootstrap-popover.js"></script>
+		<script src="/js/bootstrap-button.js"></script>
+		<script src="/js/bootstrap-collapse.js"></script>
+		<script src="/js/bootstrap-carousel.js"></script>
+		<script src="/js/bootstrap-typeahead.js"></script>
+		<script src="/ckeditor-dev/ckeditor.js"></script>
+		<!--<script src="/extjs-4.1.1/ext-all.js"></script>-->
+		<!--<script src="/js/jquery.jeditable.mini.js"></script>-->
+
+		<script type="text/javascript">				
+		</script>
+	</body>
+</html>

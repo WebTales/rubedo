@@ -83,8 +83,8 @@ class IndexController extends Zend_Controller_Action
 		
 		if($pageId == "newpage"){
 			$newTwigVar['structure'] = array(
-											array('template'=>'blocs/carrousel.html','data'=>array('items'=>$twigVar['carousel_content'])),
-											array('template'=>'blocs/contentlist.html','data'=>array('contents'=>$twigVar['contentlist_content'])),
+											array('template'=>'root/blocks/carrousel.html','data'=>array('items'=>$twigVar['carousel_content'])),
+											array('template'=>'root/blocks/contentlist.html','data'=>array('contents'=>$twigVar['contentlist_content'])),
 											);
 			$twigVar  = $newTwigVar;
 		}
