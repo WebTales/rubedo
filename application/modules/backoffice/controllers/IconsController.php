@@ -29,58 +29,18 @@ require_once('DataAccessController.php');
 class Backoffice_IconsController extends Backoffice_DataAccessController
 {
     /**
-     * Name of the store which is also to the collection name
-     * 
-     * @see Backoffice_DataAccessController::$_store
-     * @var string
-     */
-    protected $_store = 'Icons';
-	
-	/**
-	 * Data Access Service
-	 *
-	 * @var DataAccess
-	 */
-	protected $_dataService;
-	
-	/**
      * Variable for Authentication service
 	 * 
 	 * @param 	Rubedo\Interfaces\User\IAuthentication
      */
-	protected $_auth;
-	
-	public function init(){
+	protected $_auth;	
+		
+    public function init(){
 		parent::init();
 		
+		// init the data access service
+		$this -> _dataService = Rubedo\Services\Manager::getService('Icons');
 		$this->_auth = \Rubedo\Services\Manager::getService('Authentication');
-	}
-	
-	/**
-	 * Get icons preferences of the current user
-	 * 
-	 * @return array
-	 */
-	public function indexAction() {
-		$response = array();
-		
-		$result = $this->_auth->getIdentity();
-		
-		if($result){
-			$this -> _dataService -> addFilter(array('userId' => $result['id']));
-			
-			$dataValues = $this -> _dataService -> read();
-
-			$response['data'] = array_values($dataValues);
-			$response['total'] = count($response['data']);
-			$response['success'] = TRUE;
-			$response['message'] = 'OK';
-		} else {
-			$response['success'] = FALSE;
-			$response['message'] = 'No user connected';
-		}
-		
-		$this -> _returnJson($response);
 	}
 	
 	/**
