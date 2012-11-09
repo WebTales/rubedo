@@ -65,19 +65,21 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 	 * @return array
 	 */
 	public function indexAction() {
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+		
 		$result = $this->_auth->getIdentity();
 		$userId = $result['id'];
 		
-		$this->_dataReader->addToExcludeFieldList(array('password', 'salt'));
-		$this->_dataReader->addFilter(array('id' => $userId));
-		$dataValues = $this->_dataReader->read();
+		$response = $currentUserService->getCurrentUser($userId);
 		
-		$response['data'] = array_values($dataValues);
-		$response['total'] = count($response['data']);
-		$response['success'] = TRUE;
-		$response['message'] = 'OK';
+		if(!is_null($response)){
+			$newResponse['success'] = true;
+			$newResponse['data'] = $response;
+		} else {
+			$newResponse['sucess'] = true;
+		}
 		
-		$this->_returnJson($response);
+		$this->_returnJson($newResponse);
 	}
 	
 	/**
