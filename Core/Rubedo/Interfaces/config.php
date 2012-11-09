@@ -51,7 +51,9 @@ class config
 		'Block'					=>	'Rubedo\\Interfaces\\Content\\IBlock',
 		'Users'					=>	'Rubedo\\Interfaces\\Collection\\IUsers',
 		'Masks'					=>	'Rubedo\\Interfaces\\Collection\\IMasks',
-		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
+		'Blocks'				=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
+		'Contents'				=>	'Rubedo\\Interfaces\\Collection\\IContents',
+		'ContentTypes'			=>	'Rubedo\\Interfaces\\Collection\\IContentTypes',
 	);
 
     /**
