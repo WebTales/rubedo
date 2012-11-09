@@ -12,16 +12,24 @@
  * @license yet to be written
  * @version $Id$
  */
-namespace Rubedo\Interfaces\Collection;
+namespace Rubedo\Collection;
+
+use Rubedo\Interfaces\Collection\IMedias;
 
 /**
- * Interface of service handling Icons
- *
+ * Service to handle Medias
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-interface IIcons extends IAbstractCollection{
+class Medias extends AbstractCollection implements IMedias
+{
+	
+
+	public function __construct(){
+		$this->_collectionName = 'Medias';
+		parent::__construct();
+	}
 	
 }

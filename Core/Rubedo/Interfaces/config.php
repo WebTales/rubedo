@@ -58,6 +58,8 @@ class config
 		'FieldTypes'				=>	'Rubedo\\Interfaces\\Collection\\IFieldTypes',
 		'Groups'					=>	'Rubedo\\Interfaces\\Collection\\IGroups',
 		'Icons'						=>	'Rubedo\\Interfaces\\Collection\\IIcons',
+		'Medias'					=>	'Rubedo\\Interfaces\\Collection\\IMedias',
+		'Panier'					=>	'Rubedo\\Interfaces\\Collection\\IPanier',
 	);
 
     /**
