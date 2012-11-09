@@ -79,7 +79,7 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
 			$newResponse['sucess'] = true;
 		}
 		
-		$this->_returnJson($newResponse);
+		$this->_helper->json($newResponse);
 	}
 	
 
@@ -114,7 +114,7 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
 		if (!$returnArray['success']) {
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
-		$this -> _returnJson($returnArray);
+		$this->_helper->json($returnArray);
 	}
 
 }

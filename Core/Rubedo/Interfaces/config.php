@@ -50,6 +50,8 @@ class config
 		'FrontOfficeTemplates'	=>	'Rubedo\\Interfaces\\Templates\\IFrontOfficeTemplates',
 		'Block'					=>	'Rubedo\\Interfaces\\Content\\IBlock',
 		'Users'					=>	'Rubedo\\Interfaces\\Collection\\IUsers',
+		'Masks'					=>	'Rubedo\\Interfaces\\Collection\\IMasks',
+		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
 	);
 
     /**
