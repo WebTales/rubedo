@@ -96,6 +96,7 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 	 * Update the current values for the user
 	 */
 	public function updateAction() {
+		$usersService = \Rubedo\Services\Manager::getService('Users');
 	 	$data = $this -> getRequest() -> getParam('data');
 
 		if (!is_null($data)) {
@@ -106,7 +107,7 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 					$userId = $result['id'];
 
 					if($userId === $insertData['id']){
-						$returnArray = $this -> _dataReader -> update($insertData, true);
+						$returnArray = $usersService->update($insertData, true);
 					} else {
 						$returnArray = array('success' => false, 'message' => 'Bad id');
 					}
