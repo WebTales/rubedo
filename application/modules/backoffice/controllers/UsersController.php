@@ -41,6 +41,13 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 	 * @var DataAccess
 	 */
 	protected $_dataReader;
+	
+	public function init(){
+		parent::init();
+		
+		// init the data access service
+		$this -> _dataReader = Rubedo\Services\Manager::getService('Users');
+	}
 
 	public function changePasswordAction(){
 		$hashService = \Rubedo\Services\Manager::getService('Hash');
@@ -82,6 +89,31 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 		}
 		
 		return $this->_helper->json($returnArray);
+	}
+
+	public function indexAction(){
+		$filterJson = $this -> getRequest() -> getParam('filter');
+		if (isset($filterJson)) {
+			$filters = Zend_Json::decode($filterJson);
+		}else{
+			$filters = null;
+		}
+		$sortJson = $this -> getRequest() -> getParam('sort');
+		if (isset($sortJson)) {
+			$sort = Zend_Json::decode($sortJson);
+		}else{
+			$sort = null;
+		}
+				
+		$dataValues = $this -> _dataReader -> getList($filters,$sort);
+
+		$response = array();
+		$response['data'] = array_values($dataValues);
+		$response['total'] = count($response['data']);
+		$response['success'] = TRUE;
+		$response['message'] = 'OK';
+
+		$this -> _returnJson($response);
 	}
 
 }
