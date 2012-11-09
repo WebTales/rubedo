@@ -22,19 +22,12 @@
  */
 class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
 {
-    /**
-     * Variable for Authentication service
-     *
-     * @param 	Rubedo\Interfaces\User\IAuthentication
-     */
-    protected $_auth;
-
-    /**
-     * Init the authentication service
-     */
-    public function init() {
-        $this->_auth = Rubedo\Services\Manager::getService('Authentication');
-    }
+    public function init(){
+		parent::init();
+		
+		// init the data access service
+		$this -> _dataService = Rubedo\Services\Manager::getService('Authentication');
+	}
 
     /**
      * Login or not the user and return a boolean
@@ -45,7 +38,7 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
         $login = $_POST['login'];
         $password = $_POST['password'];
 
-        $loginResult = $this->_auth->authenticate($login, $password);
+        $loginResult = $this->_dataService->authenticate($login, $password);
 
         if ($loginResult) {
             $response['success'] = true;
@@ -62,7 +55,7 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
      * @return bool
      */
     public function logoutAction() {
-        $logout = $this->_auth->clearIdentity();
+        $logout = $this->_dataService->clearIdentity();
 
         $response['success'] = true;
         return $this->_helper->json($response);

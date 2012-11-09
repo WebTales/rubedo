@@ -63,6 +63,9 @@ class config
 		'PersonalPrefs'				=>	'Rubedo\\Interfaces\\Collection\\IPersonalPrefs',
 		'Sites'						=>	'Rubedo\\Interfaces\\Collection\\ISites',
 		'Taxonomy'					=>	'Rubedo\\Interfaces\\Collection\\ITaxonomy',
+		'TaxonomyTerms'				=>	'Rubedo\\Interfaces\\Collection\\ITaxonomyTerms',
+		'Themes'					=>	'Rubedo\\Interfaces\\Collection\\IThemes',
+		'Wallpapers'				=>	'Rubedo\\Interfaces\\Collection\\IWallpapers',
 	);
 
     /**
