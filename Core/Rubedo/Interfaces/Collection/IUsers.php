@@ -24,5 +24,5 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface IUsers extends IAbstractCollection{
 	
-	public function changePassword();
+	public function changePassword($password,$version,$id);
 }

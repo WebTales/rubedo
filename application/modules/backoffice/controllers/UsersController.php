@@ -52,31 +52,20 @@ class Backoffice_UsersController extends Backoffice_DataAccessController {
 	public function changePasswordAction(){
 		$hashService = \Rubedo\Services\Manager::getService('Hash');
 		
-		$password = $_POST['password'];
-		$id = $_POST['id'];
-		$version = $_POST['version'];
+		$password = $this -> getRequest() -> getParam('password');
+		$id = $this -> getRequest() -> getParam('id');
+		$version = $this -> getRequest() -> getParam('version');
 		
-		// Create a random string for the salt
-		$caracters = str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmonopqrstuvwxyz123456789');
-	    shuffle($caracters);
-	    $caracters = array_slice($caracters, 0, 10);
-	    $salt = implode('', $caracters);
 		
 		if (!empty($password) && !empty($id) && !empty($version)) {
-			$password = $hashService->derivatePassword($password, $salt);
 			
-			$insertData['id'] = $id;
-			$insertData['version'] = (int) $version;
-			$insertData['password'] = $password;
-			$insertData['salt'] = $salt;
 			
-			$result = $this->_dataReader->update($insertData, true);
+			$result = $this->_dataReader->changePassword($password,$version,$id);
 			
-			if($result['success'] == true){
+			if($result == true){
 				$message['success'] = true;
-			} else if($result['success'] == false){
+			} else{
 				$message['success'] = false;
-				$message['error'] = $result['msg'];
 			}
 			
 			return $this->_helper->json($message);

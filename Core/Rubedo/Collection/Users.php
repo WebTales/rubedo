@@ -29,8 +29,29 @@ class Users extends AbstractCollection implements IUsers
 	/**
 	 * @todo implements that
 	 */
-	public function changePassword(){
+	public function changePassword($password,$version,$id){
+		$hashService = \Rubedo\Services\Manager::getService('Hash');
 		
+		$salt = $hashService->generateRandomString();
+		
+		if (!empty($password) && !empty($id) && !empty($version)) {
+			$password = $hashService->derivatePassword($password, $salt);
+			
+			$insertData['id'] = $id;
+			$insertData['version'] = (int) $version;
+			$insertData['password'] = $password;
+			$insertData['salt'] = $salt;
+			
+			$result = $this->_dataService->update($insertData, true);
+			
+			if($result['success'] == true){
+				return true;
+			} else{
+				return false;
+			}
+		}else{
+			return false;
+		}
 	}
 	
 	public function __construct(){
