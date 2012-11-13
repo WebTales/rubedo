@@ -17,11 +17,41 @@
 
 /**
  * Plugin to handle preMVC context
- * 
+ *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
 class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
 {
+    /**
+     * Called before an action is dispatched by Zend_Controller_Dispatcher.
+     *
+	 * Apply access right control
+     *
+     * @param  Zend_Controller_Request_Abstract $request
+     * @return void
+     */
+    public function preDispatch(Zend_Controller_Request_Abstract $request) {
+        $controller = $request->getControllerName();
+        $action = $request->getActionName();
+        $module = $request->getModuleName();
+
+        $ressourceName = 'controller.' . $controller . '.' . $action . '.' . $module;
+
+		if(($module == 'default' || !isset($module)) && (($action == 'index' && $controller == 'index') || ($action == 'error' && $controller == 'error'))){
+			$hasAccess = true;
+		}else{
+			$aclService = \Rubedo\Services\Manager::getService('Acl');
+        	$hasAccess = $aclService->hasAccess($ressourceName);
+		}
+		
+		if(!$hasAccess){
+			throw new \Zend_Acl_Exception("can't access $ressourceName");
+		}
+
+        
+		
+    }
+
 }
