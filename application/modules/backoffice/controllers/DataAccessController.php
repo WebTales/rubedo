@@ -16,7 +16,7 @@
 use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
 
 /**
- * Controller providing CRUD API and dealing with the data access
+ * Abstract Controller providing CRUD API and dealing with the data access
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
@@ -26,7 +26,7 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
  * @package Rubedo
  *
  */
-class Backoffice_DataAccessController extends Zend_Controller_Action
+abstract class Backoffice_DataAccessController extends Zend_Controller_Action
 {
 
     /**
