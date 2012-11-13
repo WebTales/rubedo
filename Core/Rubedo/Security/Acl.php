@@ -30,12 +30,28 @@ class Acl implements  IAcl
      * Check if the current user has access to a given resource for a given access mode
      *
      * @param string $resource resource name
-     * @param string $mode access mode (r|read,w|write,x|execute)
-     * @return array
+     * @return boolean
      */
-    public function hasAccess($resource, $mode = 'x')
-    {
+    public function hasAccess($resource) {
         return true;
+    }
+
+    /**
+     * For a given list of ressource, build an array of authorized ressources
+     * @param array $ressourceArray array of ressources
+     * @return array the array of boolean with ressource as key name
+     */
+    public function accessList(array $ressourceArray) {
+        $aclArray = array();
+        if (isset($this->_service)) {
+            $object = $this->_service;
+        } else {
+            $object = $this;
+        }
+        foreach ($ressourceArray as $value) {
+            $aclArray[$value] = $object->hasAccess($value);
+        }
+		return $aclArray;
     }
 
 }

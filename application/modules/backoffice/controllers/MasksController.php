@@ -28,12 +28,12 @@ require_once('DataAccessController.php');
  */
 class Backoffice_MasksController extends Backoffice_DataAccessController
 {
-    /**
-     * Name of the store which is also to the collection name
-     * 
-     * @see Backoffice_DataAccessController::$_store
-     * @var string
-     */
-    protected $_store = 'Masques';
+	
+	public function init(){
+		parent::init();
+		
+		// init the data access service
+		$this -> _dataService = Rubedo\Services\Manager::getService('Masks');
+	}
 
 }
