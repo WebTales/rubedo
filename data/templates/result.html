@@ -60,7 +60,7 @@
 								{% if search.orderBy == "_score" %}
 								{{"order_by_relevance"|trans}}
 								{% endif %}
-								{% if search.orderBy == "dpub" %}
+								{% if search.orderBy == "lastUpdateTime" %}
 							    {{"order_by_date"|trans}}
 							    {% endif %}
 							    {% if search.orderBy == "author" %}
@@ -72,8 +72,8 @@
 								{% if search.orderBy != "_score" %}
 								<li><a href="{{ search.orderBySearchRoot }}&orderby=_score">{{"order_by_relevance"|trans}}</a></li>
 								{% endif %}
-								{% if search.orderBy != "dpub" %}
-							    <li><a href="{{ search.orderBySearchRoot }}&orderby=dpub">{{"order_by_date"|trans}}</a></li>
+								{% if search.orderBy != "lastUpdateTime" %}
+							    <li><a href="{{ search.orderBySearchRoot }}&orderby=lastUpdateTime">{{"order_by_date"|trans}}</a></li>
 							    {% endif %}
 							    {% if search.orderBy != "author" %}
 							    <li><a href="{{ search.orderBySearchRoot }}&orderby=author">{{"order_by_author"|trans}}</a></li>
@@ -110,9 +110,9 @@
 						</div>
 						&nbsp;<span class="label">{{ result.type|raw }}</span>
 						<br />
-						{{ result.description|raw }}
+						{{ result.abstract|raw }}
 						<br />
-						{{"published_by"|trans}} <a href="#">{{ result.author|raw }}</a> {{"on"|trans}} {{ (result.dpub)|localizeddate('long', 'none', lang) }}.
+						{{"published_by"|trans}} <a href="#">{{ result.author|raw }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}.
 					</td>
 				</tr>
 				{% endfor %}

@@ -1,7 +1,5 @@
 <?php
 
-require_once '/elastica/bootstrap.php';
-
 class ResultController extends Zend_Controller_Action
 {
 
@@ -11,22 +9,6 @@ class ResultController extends Zend_Controller_Action
 	
     public function init()
     {
-
-		$this->blocks = array(
-			array('Module'=>'NavBar','Input'=>null,'Output'=>'navbar_content'),
-			array('Module'=>'BreadCrumb','Input'=>null,'Output'=>'liens'),
-			array('Module'=>'PopIn','Input'=>1,'Output'=>'popin_about'),
-			array('Module'=>'PopIn','Input'=>2,'Output'=>'popin_connect'),
-			array('Module'=>'PopIn','Input'=>3,'Output'=>'popin_confirm')
-		);
-		
-		$twigVar = array();
-		foreach($this->blocks as $block) {
-			$helper= 'helper'.$block['Module'];
-			$output = $block['Output'];
-			$input = $block['Input'];
-			$twigVar[$output] = $this->_helper->$helper($input);
-		}
 
 		// get terms
 		$terms = $this->_getParam('search');
