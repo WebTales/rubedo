@@ -26,22 +26,11 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_CurrentUserController extends Backoffice_DataAccessController
+class Backoffice_CurrentUserController extends Zend_Controller_Action
 {
-    /**
-     * Name of the store which is also to the collection name
-     * 
-     * @see Backoffice_DataAccessController::$_store
-     * @var string
-     */
-    protected $_store = 'Users';
+    
 	
-	/**
-	 * Data Access Service
-	 *
-	 * @var DataAccess
-	 */
-	protected $_dataReader;
+
 	
 	/**
      * Variable for Authentication service
@@ -65,35 +54,25 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 	 * @return array
 	 */
 	public function indexAction() {
-		$result = $this->_auth->getIdentity();
-		$userId = $result['id'];
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');		
+		$response = $currentUserService->getCurrentUser();
 		
-		$this->_dataReader->addToExcludeFieldList(array('password', 'salt'));
-		$this->_dataReader->addFilter(array('id' => $userId));
-		$dataValues = $this->_dataReader->read();
+		if(!is_null($response)){
+			$newResponse['success'] = true;
+			$newResponse['data'] = $response;
+		} else {
+			$newResponse['sucess'] = false;
+		}
 		
-		$response['data'] = array_values($dataValues);
-		$response['total'] = count($response['data']);
-		$response['success'] = TRUE;
-		$response['message'] = 'OK';
-		
-		$this->_returnJson($response);
+		$this->_helper->json($newResponse);
 	}
 	
-	/**
-	 * Unable the creation of users
-	 * 
-	 * @return array
-	 */
-	public function createAction() {
-		$returnArray = array('success' => false, 'message' => 'Not authorized to create a user');
-		$this -> _returnJson($returnArray);
-	}
 
 	/**
 	 * Update the current values for the user
 	 */
 	public function updateAction() {
+		$usersService = \Rubedo\Services\Manager::getService('Users');
 	 	$data = $this -> getRequest() -> getParam('data');
 
 		if (!is_null($data)) {
@@ -104,7 +83,7 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 					$userId = $result['id'];
 
 					if($userId === $insertData['id']){
-						$returnArray = $this -> _dataReader -> update($insertData, true);
+						$returnArray = $usersService->update($insertData, true);
 					} else {
 						$returnArray = array('success' => false, 'message' => 'Bad id');
 					}
@@ -120,16 +99,7 @@ class Backoffice_CurrentUserController extends Backoffice_DataAccessController
 		if (!$returnArray['success']) {
 			$this -> getResponse() -> setHttpResponseCode(500);
 		}
-		$this -> _returnJson($returnArray);
+		$this->_helper->json($returnArray);
 	}
-	
-	/**
-	 * Unable the suppression of a user
-	 * 
-	 * @return array
-	 */
-	public function deleteAction(){
-		$returnArray = array('success' => false, 'message' => 'Not authorized to delete a user');
-		$this -> _returnJson($returnArray);
-	}
+
 }

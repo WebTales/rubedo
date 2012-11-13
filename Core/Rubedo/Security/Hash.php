@@ -96,4 +96,18 @@ class Hash implements IHash {
         }
     }
 
+
+	public function generateRandomString($length = 10){
+		// Create a random string for the salt
+		$characters = str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmonopqrstuvwxyz123456789');
+		$nbChar = count($characters);
+	    //shuffle($caracters);
+		for($i = 0;$i < $length;$i++){
+			$resultArray[]= $characters[rand(0,$nbChar-1)];
+		}
+	    //$caracters = array_slice($caracters, 0, $length);
+	    $salt = implode('', $resultArray);
+		
+		return $salt;
+	}
 }
