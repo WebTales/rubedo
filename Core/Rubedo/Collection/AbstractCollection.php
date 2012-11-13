@@ -117,7 +117,9 @@ abstract class AbstractCollection implements IAbstractCollection
 
     /**
      * Find child of a node tree
-     * @param $parentId id of the parent node
+     * @param string $parentId id of the parent node
+     * @param array $filters array of data filters (mongo syntax)
+     * @param array $sort  array of data sorts (mongo syntax)
      * @return array children array
      */
     public function readChild($parentId, $filters = null, $sort = null) {
@@ -128,14 +130,12 @@ abstract class AbstractCollection implements IAbstractCollection
                 } else if ($value["operator"] == 'like') {
                     $this->_dataService->addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
                 }
-
             }
         }
+
         if (isset($sort)) {
             foreach ($sort as $value) {
-
                 $this->_dataService->addSort(array($value["property"] => strtolower($value["direction"])));
-
             }
         }
 

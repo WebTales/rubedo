@@ -64,5 +64,12 @@ interface IAbstractCollection {
      * @return array
      */
     public function destroy(array $obj, $safe = true);
+	
+	/**
+     * Find child of a node tree
+     * @param $parentId id of the parent node
+     * @return array children array
+     */
+    public function readChild($parentId, $filters = null, $sort = null);
 
 }
