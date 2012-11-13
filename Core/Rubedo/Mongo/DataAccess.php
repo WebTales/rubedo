@@ -528,8 +528,14 @@ class DataAccess implements IDataAccess
                 unset($obj[$key]);
             }
         }
+		
+		$updateCondition = array('_id' => $mongoID, 'version' => $oldVersion);
+		
+		if(is_array($this->_filterArray)){
+			$updateCondition = array_merge($this->_filterArray,$updateCondition);
+		}
 
-        $resultArray = $this->_collection->update(array('_id' => $mongoID, 'version' => $oldVersion), array('$set' => $obj), array("safe" => $safe));
+        $resultArray = $this->_collection->update($updateCondition, array('$set' => $obj), array("safe" => $safe));
 
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
@@ -562,7 +568,14 @@ class DataAccess implements IDataAccess
         }
         $version = $obj['version'];
         $mongoID = new \MongoID($id);
-        $resultArray = $this->_collection->remove(array('_id' => $mongoID, 'version' => $version), array("safe" => $safe));
+		
+		$updateCondition = array('_id' => $mongoID, 'version' => $oldVersion);
+		
+		if(is_array($this->_filterArray)){
+			$updateCondition = array_merge($this->_filterArray,$updateCondition);
+		}
+		
+        $resultArray = $this->_collection->remove($updateCondition, array("safe" => $safe));
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
                 $returnArray = array('success' => true);
