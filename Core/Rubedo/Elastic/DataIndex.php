@@ -180,6 +180,7 @@ class DataIndex implements IDataIndex
 				$name = $field['config']['name'];
 				if ($field['config']['resumed']) {
 					$store = 'yes';
+					$name = 'abstract';
 				} else {
 					$store = 'no';
 				}				
@@ -233,6 +234,13 @@ class DataIndex implements IDataIndex
 			}
 		}	
 		
+		// Add systems metadata : TODO update model text to title
+		
+		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => 'yes');
+		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["author"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["type"] = array('type' => 'string', 'store' => 'yes');
+				
 		// If there is no searchable field, the new type is not created
 		if (!empty($indexMapping)) {
 			// Create new type
@@ -283,7 +291,7 @@ class DataIndex implements IDataIndex
      * @return array
      */
     public function createContent ($id, $type, $data) {
-    		
+    		//print_r($data);
 		// Load content type 
     	$contentType = $this->_content_index
     						->getType($type);
@@ -374,6 +382,12 @@ class DataIndex implements IDataIndex
      * @return array
      */
     public function indexAllContent () {
+		
+		// Destroy and re-create content and document index
+		$this->_content_index->delete();
+		$this->_content_index->create(self::$_content_index_param,true);
+		$this->_document_index->delete();
+		$this->_document_index->create(self::$_document_index_param,true);
 			
 		$ct = new \Rubedo\Mongo\DataAccess();
 		$ct->init("ContentTypes");
@@ -382,11 +396,19 @@ class DataIndex implements IDataIndex
 				
 		// For every content type
 		$contentTypeList = $ct->read();
-		
+
 		foreach($contentTypeList as $contentType) {
 			// Create content type with overwrite set to true
 			$fieldsToIndex = $this->createContentType($contentType,TRUE);
 			if (!empty($fieldsToIndex)) {
+				// Search abstract field
+				$abstract="";
+				foreach($contentType["fields"] as $field) {
+					if ($field['config']['resumed']) {
+						$abstract = $field['config']['name'];
+						break;
+					} 	
+				}
 				// If mapping completed, we can index content
 				$c = new \Rubedo\Mongo\DataAccess();
 				$c->init("Contents");
@@ -396,10 +418,21 @@ class DataIndex implements IDataIndex
 				$contentList = $c->read();
 				$contentCount = 0;
 				foreach($contentList as $content) {
+					//print_r($content);
 					// Only searchable fields get indexed
 					$data = array_intersect_key($content["fields"], $fieldsToIndex);
+					$data = array_merge($data, array_intersect_key($content, $fieldsToIndex));
+					// Add abstract if exists
+					if ($abstract!="") {
+						$data["abstract"]=$content['fields'][$abstract];
+					} else {
+						$data["abstract"]="";
+					}
+					
+					// Add author : TODO => add to real field to model
+					$data["author"]="Admin";
 					// Push content to index
-					$this->createContent($contentType["id"], $contentType["id"], $data);
+					$this->createContent($content["id"], $contentType["type"], $data);
 					$contentCount++;
 				}
 				$result[$contentType["type"]]=$contentCount;

@@ -182,8 +182,9 @@ class DataSearch implements IDataSearch
 			// Build global filter
 			
 			$globalFilter = new \Elastica_Filter_And();
+			$setFilter = false;
 						
-			// filter on lang
+			// filter on lang TOTO add lang filter
 			if ($lang != '') {
 				$langFilter = new \Elastica_Filter_Term();
         		$langFilter->setTerm('lang', $lang);
@@ -222,7 +223,7 @@ class DataSearch implements IDataSearch
 			$elasticaQuery->setQuery($elasticaQueryString);
 			
 			// Apply filters if needed
-			$elasticaQuery->setFilter($globalFilter);
+			if ($setFilter) $elasticaQuery->setFilter($globalFilter);
 						
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('typeFacet');
@@ -246,7 +247,7 @@ class DataSearch implements IDataSearch
 
 			// Define the date facet.
 			$elasticaFacetDate = new \Elastica_Facet_DateHistogram('dateFacet');
-			$elasticaFacetDate->setField('dpub');
+			$elasticaFacetDate->setField('lastUpdateTime');
 			$elasticaFacetDate->setInterval('month');
 			$elasticaFacetDate->setFilter($globalFilter);
 												
@@ -260,13 +261,14 @@ class DataSearch implements IDataSearch
 						
 			// add sort
 			$elasticaQuery->setSort(array($orderBy =>"desc"));
-			
+
 			// run query
 			$elasticaResultSet = $this->_content_index->search($elasticaQuery);
 			
 			// Return resultset
+			print_r($elasticaResultSet);
 			return($elasticaResultSet);
-				
+			
 		} catch (Exception $e) {
             var_dump($e->getMessage());
 			exit;

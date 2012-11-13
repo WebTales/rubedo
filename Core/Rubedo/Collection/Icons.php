@@ -36,6 +36,11 @@ class Icons extends AbstractCollection implements IIcons
 		$this->_userId = $currentUser['id'];
 	}
 	
+    public function create(array $obj, $safe = true) {
+    	$obj['userId']= $this->_userId;
+        return parent::create($obj, $safe);
+    }
+	
 	public function getList($filters = null, $sort = null){
 		$this->_dataService->addFilter(array('userId' => $this->_userId));
 		return parent::getList($filters, $sort);
