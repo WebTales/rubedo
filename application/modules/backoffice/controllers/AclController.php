@@ -28,14 +28,14 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
  */
 class Backoffice_AclController extends Zend_Controller_Action
 {
-	/**
+    /**
      * should json be prettified
      *
      * @var bool
      */
     protected $_prettyJson = true;
-	
-	/**
+
+    /**
      * Set the response body with Json content
      * Option : json is made human readable
      * @param mixed $data data to be json encoded
@@ -52,17 +52,20 @@ class Backoffice_AclController extends Zend_Controller_Action
         }
         $this->getResponse()->setBody($returnValue);
     }
-	
-	function indexAction(){
-		$AclArray = array();
-		$dataJson = $this->getRequest()->getParam('data');
-		if(isset($dataJson)){
-			$dataArray = Zend_Json::decode($dataJson);
-			foreach($dataArray as $key => $value){
-				$AclArray[$key] = true;
-			}
-		}
-		
-		return $this->_returnJson($AclArray);
-	}
+
+    function indexAction() {
+        $AclArray = array();
+        $dataJson = $this->getRequest()->getParam('data');
+        if (isset($dataJson)) {
+            $dataArray = Zend_Json::decode($dataJson);
+            if (is_array($dataArray)) {
+                foreach ($dataArray as $key => $value) {
+                    $AclArray[$key] = true;
+                }
+            }
+        }
+
+        return $this->_returnJson($AclArray);
+    }
+
 }
