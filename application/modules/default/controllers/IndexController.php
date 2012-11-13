@@ -87,7 +87,7 @@ class IndexController extends Zend_Controller_Action
             $newTwigVar['structure'][] = array('nested' => array(1 => array('params' => array('span' => 12), 'nested' => array( array('template' => 'root/blocks/contentlist.html', 'data' => array('contents' => $twigVar['contentlist_content'])))), ));
 			
 			$newTwigVar['theme'] = $twigVar['theme'];
-			
+			$newTwigVar["navbar_content"] = $twigVar["navbar_content"];
             /*
              $newTwigVar['structure'] = array(
              array('template'=>'root/blocks/carrousel.html','data'=>array('items'=>$twigVar['carousel_content'])),
@@ -97,6 +97,8 @@ class IndexController extends Zend_Controller_Action
              */
             $twigVar = $newTwigVar;
         }
+
+
 
         //Zend_Debug::dump($twigVar,$this->_pageParams['template']);
         //die();
