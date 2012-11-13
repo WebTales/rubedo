@@ -67,7 +67,9 @@ interface IAbstractCollection {
 	
 	/**
      * Find child of a node tree
-     * @param $parentId id of the parent node
+     * @param string $parentId id of the parent node
+	 * @param array $filters array of data filters (mongo syntax) 
+	 * @param array $sort  array of data sorts (mongo syntax)
      * @return array children array
      */
     public function readChild($parentId, $filters = null, $sort = null);
