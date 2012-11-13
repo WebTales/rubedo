@@ -429,7 +429,7 @@ class Block implements IBlock
 		$pageSize = $parentController->getRequest()->getParam('pagesize');
 		if ($pageSize == '') $pageSize = 10;
 		
-		$query = new \Rubedo\Elastic\DataSearch();
+		$query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
 		$query->init();
 
 		$elasticaResultSet = $query->search($terms, $type, $lang, $author, $date, $pager, $orderBy, $pageSize);
@@ -444,7 +444,7 @@ class Block implements IBlock
 		
 		// Get facets from the result of the search query
 		$elasticaFacets = $elasticaResultSet->getFacets();
-	
+
 		$elasticaResults = $elasticaResultSet->getResults();
 				
 		$results = array();
@@ -453,8 +453,9 @@ class Block implements IBlock
 
 			$data = $result->getData();
 			$resultType = $result->getType();
-			$lang_id = explode('_',$result->getId());
-			$id = $lang_id[1];
+			//$lang_id = explode('_',$result->getId());
+			//$id = $lang_id[1];
+			$id="0";
 			
 			$score = $result->getScore();
 			
@@ -464,18 +465,19 @@ class Block implements IBlock
 			//if ($url == '') {
 				// no canonical url
 				// redirect to default detail page
-				$url = '/detail/index/id/'.$id;
+				//$url = '/detail/index/id/'.$id;
+				$url="#";
 			//}
 			
 			$results[] = array(
 				'id' => $id,
 				'url' => $url,
 				'score' => $score,
-				'title' => $data['title'],
-				'description' => $data['description'],
+				'title' => $data['text'],
+				'abstract' => $data['abstract'],
 				'author' => $data['author'],
 				'type' => $resultType, 
-				'dpub' => $data['dpub'],
+				'lastUpdateTime' => $data['lastUpdateTime'],
 				);
 		}
 		
@@ -545,5 +547,6 @@ class Block implements IBlock
 		}
 
 		return($output);	
+
     }
 }
