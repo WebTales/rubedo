@@ -30,14 +30,24 @@ class Icons extends AbstractCollection implements IIcons
 	public function __construct(){
 		$this->_collectionName = 'Icons';
 		parent::__construct();
+		
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+		$currentUser = $currentUserService->getCurrentUserSummary();
+		$this->_userId = $currentUser['id'];
 	}
 	
 	public function getList($filters = null, $sort = null){
-		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-		$currentUser = $currentUserService->getCurrentUserSummary();
-		$userId = $currentUser['id'];
-		$this->_dataService->addFilter(array('userId' => $userId));
+		$this->_dataService->addFilter(array('userId' => $this->_userId));
 		return parent::getList($filters, $sort);
 	}
 	
+	public function update(array $obj, $safe = true){
+		$this->_dataService->addFilter(array('userId' => $this->_userId));
+		return parent::update($obj,$safe);
+	}
+	
+	public function destroy(array $obj, $safe = true){
+		$this->_dataService->addFilter(array('userId' => $this->_userId));
+		return parent::destroy($obj,$safe);
+	}
 }
