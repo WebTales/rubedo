@@ -16,6 +16,7 @@ namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IAbstractCollection;
 use Rubedo\Mongo\DataAccess;
+use Rubedo\Services\Manager;
 
 /**
  * Class implementing the API to MongoDB
@@ -33,7 +34,7 @@ abstract class AbstractCollection implements IAbstractCollection
 
     protected function _init() {
         // init the data access service
-        $this->_dataService = new DataAccess();
+        $this->_dataService = Manager::getService('MongoDataAccess');
         $this->_dataService->init($this->_collectionName);
     }
 
