@@ -569,7 +569,7 @@ class DataAccess implements IDataAccess
         $version = $obj['version'];
         $mongoID = new \MongoID($id);
 		
-		$updateCondition = array('_id' => $mongoID, 'version' => $oldVersion);
+		$updateCondition = array('_id' => $mongoID, 'version' => $version);
 		
 		if(is_array($this->_filterArray)){
 			$updateCondition = array_merge($this->_filterArray,$updateCondition);
