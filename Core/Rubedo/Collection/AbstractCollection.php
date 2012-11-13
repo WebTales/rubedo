@@ -27,19 +27,20 @@ use Rubedo\Mongo\DataAccess;
 abstract class AbstractCollection implements IAbstractCollection
 {
 
-	protected $_collectionName;
-	
-	protected $_dataService;
-	
-	protected function _init(){
-		// init the data access service
+    protected $_collectionName;
+
+    protected $_dataService;
+
+    protected function _init() {
+        // init the data access service
         $this->_dataService = new DataAccess();
         $this->_dataService->init($this->_collectionName);
-	}
+    }
 
-	public function __construct(){
-		$this->_init();
-	}
+    public function __construct() {
+        $this->_init();
+    }
+
     /**
      * Do a find request on the current collection
      *
@@ -64,8 +65,8 @@ abstract class AbstractCollection implements IAbstractCollection
             }
         }
         $dataValues = $this->_dataService->read();
-		
-		return $dataValues;
+
+        return $dataValues;
 
     }
 
@@ -112,6 +113,33 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function destroy(array $obj, $safe = true) {
         return $this->_dataService->destroy($obj, $safe);
+    }
+
+    /**
+     * Find child of a node tree
+     * @param $parentId id of the parent node
+     * @return array children array
+     */
+    public function readChild($parentId, $filters = null, $sort = null) {
+        if (isset($filters)) {
+            foreach ($filters as $value) {
+                if ((!(isset($value["operator"]))) || ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(array($value["property"] => $value["value"]));
+                } else if ($value["operator"] == 'like') {
+                    $this->_dataService->addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
+                }
+
+            }
+        }
+        if (isset($sort)) {
+            foreach ($sort as $value) {
+
+                $this->_dataService->addSort(array($value["property"] => strtolower($value["direction"])));
+
+            }
+        }
+
+        return $this->_dataService->readChild($parentId);
     }
 
 }

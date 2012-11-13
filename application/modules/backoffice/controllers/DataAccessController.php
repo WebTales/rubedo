@@ -124,29 +124,19 @@ class Backoffice_DataAccessController extends Zend_Controller_Action {
 		$filterJson = $this -> getRequest() -> getParam('filter');
 		if (isset($filterJson)) {
 			$filters = Zend_Json::decode($filterJson);
-			foreach ($filters as $value) {
-				if ((!(isset($value["operator"])))||($value["operator"]=="eq")) {
-					$this -> _dataService -> addFilter(array($value["property"] => $value["value"]));					
-				}
-				else if ($value["operator"] == 'like') {
-					$this -> _dataService -> addFilter(array($value["property"] => array('$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i'))));
-				}
-
-			}
+		}else{
+			$filters = null;
 		}
 		$sortJson = $this -> getRequest() -> getParam('sort');
 		if (isset($sortJson)) {
 			$sort = Zend_Json::decode($sortJson);
-			foreach ($sort as $value) {
-
-					$this -> _dataService -> addSort(array($value["property"] => strtolower($value["direction"])));				
-
-			}
+		}else{
+			$sort = null;
 		}
 
 		$parentId = $this->getRequest()->getParam('node','root');
 
-		$dataValues = $this -> _dataService -> readChild($parentId);
+		$dataValues = $this -> _dataService -> readChild($parentId,$filters,$sort);
 
 		$response = array();
 		$response['children'] = array_values($dataValues);
