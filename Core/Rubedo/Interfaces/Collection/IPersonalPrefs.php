@@ -23,7 +23,5 @@ namespace Rubedo\Interfaces\Collection;
  * @package Rubedo
  */
 interface IPersonalPrefs extends IAbstractCollection{
-	
-	public function read();
-	
+		
 }
