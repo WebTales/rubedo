@@ -27,84 +27,12 @@ require_once('DataAccessController.php');
  *
  */
 class Backoffice_IconsController extends Backoffice_DataAccessController
-{
-    /**
-     * Variable for Authentication service
-	 * 
-	 * @param 	Rubedo\Interfaces\User\IAuthentication
-     */
-	protected $_auth;	
-		
+{			
     public function init(){
 		parent::init();
 		
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('Icons');
-		$this->_auth = \Rubedo\Services\Manager::getService('Authentication');
 	}
-	
-	/**
-	 * Create a new icon in mongoDB
-	 * 
-	 * @return array
-	 */
-	public function createAction() {
-		$data = $this -> getRequest() -> getParam('data');
-
-		if (!is_null($data)) {
-			$insertData = Zend_Json::decode($data);
-			if (is_array($insertData)) {
-				$result = $this->_auth->getIdentity();
-				if($result){
-					$userId = $result['id'];
-					$insertData['userId'] = $userId;
-					$returnArray = $this -> _dataService -> create($insertData, true);
-				} else {
-					$returnArray = array('success' => false, "msg" => 'No user connected');
-				}
-			} else {
-				$returnArray = array('success' => false, "msg" => 'Not an array');
-			}
-		} else {
-			$returnArray = array('success' => false, "msg" => 'No Data');
-		}
-		if (!$returnArray['success']) {
-			$this -> getResponse() -> setHttpResponseCode(500);
-		}
-		$this -> _returnJson($returnArray);
-	}
-	
-	/**
-	 * Update the current values in mongoDB
-	 */
-	 public function updateAction() {
-	 	$data = $this -> getRequest() -> getParam('data');
-
-		if (!is_null($data)) {
-			$insertData = Zend_Json::decode($data);
-			if (is_array($insertData)) {
-				$result = $this->_auth->getIdentity();
-				if($result){
-					$userId = $result['id'];
-
-					if($userId === $insertData['userId']){
-						$returnArray = $this -> _dataService -> update($insertData, true);
-					} else {
-						$returnArray = array('success' => false, 'message' => 'Bad id');
-					}
-				} else {
-					$returnArray = array('success' => false, "msg" => 'No user connected');
-				}
-			} else {
-				$returnArray = array('success' => false, "msg" => 'Not an array');
-			}
-		} else {
-			$returnArray = array('success' => false, "msg" => 'No Data');
-		}
-		if (!$returnArray['success']) {
-			$this -> getResponse() -> setHttpResponseCode(500);
-		}
-		$this -> _returnJson($returnArray);
-	 }
 
 }
