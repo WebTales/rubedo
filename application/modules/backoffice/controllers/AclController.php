@@ -59,9 +59,8 @@ class Backoffice_AclController extends Zend_Controller_Action
         if (isset($dataJson)) {
             $dataArray = Zend_Json::decode($dataJson);
             if (is_array($dataArray)) {
-                foreach ($dataArray as $key => $value) {
-                    $AclArray[$key] = true;
-                }
+            	$aclService = \Rubedo\Services\Manager::getService('Acl');
+				$AclArray = $aclService->accessList(array_keys($dataArray));
             }
         }
 
