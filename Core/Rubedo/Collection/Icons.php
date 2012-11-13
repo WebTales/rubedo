@@ -32,13 +32,12 @@ class Icons extends AbstractCollection implements IIcons
 		parent::__construct();
 	}
 	
-	public function read(){
+	public function getList($filters = null, $sort = null){
 		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-		$result = $currentUserService->getCurrentUserSummary();
-		$userId = $result['id'];
-		$this->_dataService->addFilter(array('id' => $userId));
-		$read = parent::read();
-		return $read;
+		$currentUser = $currentUserService->getCurrentUserSummary();
+		$userId = $currentUser['id'];
+		$this->_dataService->addFilter(array('userId' => $userId));
+		return parent::getList($filters, $sort);
 	}
 	
 }

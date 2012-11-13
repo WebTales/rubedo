@@ -24,6 +24,5 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface IIcons extends IAbstractCollection{
 	
-	public function read();
 	
 }
