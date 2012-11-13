@@ -1,6 +1,6 @@
-<div id="menu" class="navbar {% if data.position != 'none' %}navbar-{{ data.position }}{% endif %}">
+<div id="menu" class="navbar {% if position != 'none' %}navbar-{{ position }}{% endif %}">
   <div class="navbar-inner">
-  	{% if data.responsive %}
+  	{% if responsive %}
   	<div class="container-fluid">
 	<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
 	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
@@ -9,12 +9,12 @@
 	<span class="icon-bar"></span>
 	</a>
 	{% endif %}
-	<a class="brand" href="/">{{ data['brand'] }}</a>
-	{% if data.responsive %}
+	<a class="brand" href="/">{{ brand }}</a>
+	{% if responsive %}
 	<!-- Everything you want hidden at 940px or less, place within here -->
 	<div class="nav-collapse">
 	{% endif %}
-    {% for component in data['components'] %} <!-- navbar component -->
+    {% for component in components %} <!-- navbar component -->
     <ul class="nav"> <!-- nav bar -->      	
     {% if component.type == 'link' %} <!-- link component -->
       <li {% if component.active %}class="active"{% endif %}> <!-- active link -->
@@ -41,7 +41,7 @@
   	{% endif %} <!-- /dropdown component -->
     </ul> <!-- /nav bar --> 
     {% endfor %} <!-- /navbar component -->
-    {% for option in data['options'] %}
+    {% for option in options %}
     {% if option == 'langselector' %}
    	<!-- langselector component -->
        <div class="btn-group pull-right">
@@ -112,7 +112,7 @@
 	<!-- /search component-->
     {% endif %}
     {% endfor %}
-    {% if data.responsive %}
+    {% if responsive %}
  	</div>
  	</div>
   	{% endif %}
