@@ -60,7 +60,7 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
 
     public function init() {
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Contents');
+        $this->_dataService = Rubedo\Services\Manager::getService('NestedContents');
 		
 		$this->_parentId = $this->getRequest()->getParam('parentId');
 
