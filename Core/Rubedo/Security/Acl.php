@@ -77,7 +77,10 @@ class Acl implements  IAcl
 										'write.ui.contents.pendingToDraft',
 										'write.ui.contents.pendingToPublished',
 										'write.ui.contents.putOnline',
-										'write.ui.contents.putOffline');
+										'write.ui.contents.putOffline',
+										'read.ui.masks',
+										'read.ui.users',
+										'read.ui.contentTypes',);
 		$aclArray['admin']=array(		'read.ui.taxonomy',
 										'write.ui.taxonomy',
 										'read.ui.contentTypes',
