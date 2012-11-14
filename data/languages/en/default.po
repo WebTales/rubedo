@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rubedo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-30 14:56+0100\n"
-"PO-Revision-Date: 2012-10-30 14:57+0100\n"
-"Last-Translator: Julien Bourdin <julien.bourdin@webtales.fr>\n"
+"POT-Creation-Date: 2012-11-14 13:09+0100\n"
+"PO-Revision-Date: 2012-11-14 13:09+0100\n"
+"Last-Translator: Nicolas Trenti <nicolas.trenti@webtales.fr>\n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -14,107 +14,132 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Generator: Poedit 1.5.4\n"
-"X-Poedit-SearchPath-0: /Users/jbourdin/Projects/rubedo/cache/twig\n"
+"X-Poedit-SearchPath-0: c:/projets/rubedo/cache/twig\n"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/8c/1d/95ed02bfe04de976dc5ad52fe4d8.php:80
+#: c:/projets/rubedo/cache/twig/a5/b0/798689775d8b92663f287cb54583.php:80
 msgid "identifier_error"
 msgstr "Wrong id"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/8c/1d/95ed02bfe04de976dc5ad52fe4d8.php:92
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:266
+#: c:/projets/rubedo/cache/twig/a5/b0/798689775d8b92663f287cb54583.php:92
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:266
 msgid "my_account"
 msgstr "My account"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/8c/1d/95ed02bfe04de976dc5ad52fe4d8.php:94
+#: c:/projets/rubedo/cache/twig/a5/b0/798689775d8b92663f287cb54583.php:94
 msgid "access_back_office"
 msgstr "Access to BackOffice"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/8c/1d/95ed02bfe04de976dc5ad52fe4d8.php:96
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:271
+#: c:/projets/rubedo/cache/twig/a5/b0/798689775d8b92663f287cb54583.php:96
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:271
 msgid "sign_out"
 msgstr "Sign out"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/8c/1d/95ed02bfe04de976dc5ad52fe4d8.php:112
+#: c:/projets/rubedo/cache/twig/a5/b0/798689775d8b92663f287cb54583.php:112
 msgid "sign_in"
 msgstr "Sign in"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:197
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:37
+msgid "full_text_search"
+msgstr "Full text search"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:48
+msgid "ok"
+msgstr "Ok"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:54
+msgid "content_type"
+msgstr "Content type"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:103
+msgid "author"
+msgstr "Author"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:152
+msgid "date"
+msgstr "Date"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:210
+msgid "no_result"
+msgstr "No results."
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:222
+msgid "there_are"
+msgstr "There are"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:224
+msgid "there_is"
+msgstr "There is"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:232
+msgid "result_pl"
+msgstr "results"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:234
+msgid "result_sg"
+msgstr "result"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:246
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:283
+msgid "order_by_relevance"
+msgstr "Sort by relevance"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:256
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:296
+msgid "order_by_date"
+msgstr "Sort by date"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:266
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:309
+msgid "order_by_author"
+msgstr "Sort by author"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:324
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:367
+msgid "all_on_one_page"
+msgstr "All on one page"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:333
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:346
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:353
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:360
+msgid "by_page"
+msgstr "by page"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:414
+msgid "published_by"
+msgstr "Published by"
+
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:419
+#: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:446
+msgid "on"
+msgstr "on"
+
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:197
 msgid "language"
 msgstr "Language"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:204
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:204
 msgid "french"
 msgstr "French"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:208
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:208
 msgid "english"
 msgstr "English"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:225
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:225
 msgid "change_theme"
 msgstr "Change theme"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:232
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:232
 msgid "default"
 msgstr "Default"
 
-#: /Users/jbourdin/Projects/rubedo/cache/twig/a7/de/793f0063fa1bb4947e36659f4403.php:292
+#: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:292
 msgid "search"
 msgstr "Search"
 
 #~ msgid "close"
 #~ msgstr "Close"
-
-#~ msgid "full_text_search"
-#~ msgstr "Full text search"
-
-#~ msgid "ok"
-#~ msgstr "Ok"
-
-#~ msgid "content_type"
-#~ msgstr "Content type"
-
-#~ msgid "author"
-#~ msgstr "Author"
-
-#~ msgid "date"
-#~ msgstr "Date"
-
-#~ msgid "no_result"
-#~ msgstr "No results."
-
-#~ msgid "there_are"
-#~ msgstr "There are"
-
-#~ msgid "there_is"
-#~ msgstr "There is"
-
-#~ msgid "result_pl"
-#~ msgstr "results"
-
-#~ msgid "result_sg"
-#~ msgstr "result"
-
-#~ msgid "order_by_relevance"
-#~ msgstr "Sort by relevance"
-
-#~ msgid "order_by_date"
-#~ msgstr "Sort by date"
-
-#~ msgid "order_by_author"
-#~ msgstr "Sort by author"
-
-#~ msgid "all_on_one_page"
-#~ msgstr "All on one page"
-
-#~ msgid "by_page"
-#~ msgstr "by page"
-
-#~ msgid "published_by"
-#~ msgstr "Published by"
-
-#~ msgid "on"
-#~ msgstr "on"
 
 #~ msgid "on_the"
 #~ msgstr "on the"

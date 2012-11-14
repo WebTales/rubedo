@@ -26,7 +26,7 @@ class Twig_Extension_Highlight extends Twig_Extension
     }
 	
 	/**
-	 * Delegates translation to Zend_Translate
+	 * Highlights searched expression
 	 * 
 	 * @param sentence content in which the expression is searched
 	 * @param expr expression to highlight

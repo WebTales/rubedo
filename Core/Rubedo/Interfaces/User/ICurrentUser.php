@@ -54,4 +54,11 @@ interface ICurrentUser
      * @return array
      */
     public function fetchCurrentUser();
+	
+	/**
+	 * return the groups of the current user.
+	 * 
+	 * @return array
+	 */
+	public function getGroups();
 }
