@@ -236,10 +236,10 @@ class DataIndex implements IDataIndex
 		
 		// Add systems metadata : TODO update model text to title
 		
-		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => 'yes');
+		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
-		$indexMapping["author"] = array('type' => 'string', 'store' => 'yes');
-		$indexMapping["type"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["type"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 				
 		// If there is no searchable field, the new type is not created
 		if (!empty($indexMapping)) {
