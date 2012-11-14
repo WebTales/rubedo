@@ -15,6 +15,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\INestedContents;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle contents
