@@ -23,6 +23,7 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
+ * @todo not yet implemented
  */
 class NestedContents implements INestedContents
 {
@@ -68,6 +69,13 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function create($parentContentId, array $obj, $safe = true) {
+    	return array('success' => true);
+    	/*$parentContent = $this->_dataService->findById($parentContentId);
+		
+		$updateObj = array();
+		
+    	$updateObj['id'] = $parentContent['id'];*/
+		//$push
     }
 
     /**
@@ -79,6 +87,7 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function update($parentContentId, array $obj, $safe = true) {
+    	return array('success' => true);
     }
 
     /**
@@ -90,6 +99,7 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function destroy($parentContentId, array $obj, $safe = true) {
+    	return array('success' => true);
     }
 
 }
