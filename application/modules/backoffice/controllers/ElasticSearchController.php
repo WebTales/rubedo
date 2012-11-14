@@ -31,8 +31,14 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action
 	public function indexAction() {
 		$es = Rubedo\Services\Manager::getService('ElasticDataSearch');
 		$es->init();		
-		$return = $es->search($this->_request->getPost('query')."*") ;
-		$this->_helper->json($return);
+		$elasticaResultSet = $es->search($this->_request->getPost('query')."*") ;
+		$elasticaResults = $elasticaResultSet->getResults();
+		$results = array();
+		foreach($elasticaResults as $result) {
+			$results[] = (array) $result;
+		}
+		
+		$this->_helper->json($results);
 		
 	}
 
