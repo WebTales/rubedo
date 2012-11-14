@@ -61,6 +61,8 @@ class Acl implements  IAcl
 		$aclArray['redacteur']=array('read.ui.contents',
 										'write.ui.contents',
 										'read.ui.contents.draft',
+										'read.ui.contents.pending',
+										'read.ui.contents.published',
 										'write.ui.contents.draft',
 										'write.ui.contents.draftToPending');
 		$aclArray['valideur']=array(	'read.ui.contents',
