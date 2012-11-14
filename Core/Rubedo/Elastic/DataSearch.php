@@ -185,17 +185,21 @@ class DataSearch implements IDataSearch
 			$setFilter = false;
 						
 			// filter on lang TOTO add lang filter
+			/*
 			if ($lang != '') {
 				$langFilter = new \Elastica_Filter_Term();
         		$langFilter->setTerm('lang', $lang);
 				$globalFilter->addFilter($langFilter);
+				$setFilter = true;
         	}
+			 */
 			
 			// filter on type
 			if ($type != '') {
 				$typeFilter = new \Elastica_Filter_Term();
         		$typeFilter->setTerm('type', $type);
 				$globalFilter->addFilter($typeFilter);
+				$setFilter = true;
 			}
 			
 			// filter on author
@@ -203,6 +207,7 @@ class DataSearch implements IDataSearch
 				$authorFilter = new \Elastica_Filter_Term();
         		$authorFilter->setTerm('author', $author);
 				$globalFilter->addFilter($authorFilter);
+				$setFilter = true;
 			}
 			
 			// filter on date
@@ -211,8 +216,9 @@ class DataSearch implements IDataSearch
 				$d = $date/1000;
 				$dateFrom = $dateTo = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d))*1000;  
 				$dateTo = mktime(0, 0, 0, date('m',$d)+1, date('d',$d), date('Y',$d))*1000;  
-        		$dateFilter->addField('dpub', array('from' => $dateFrom, "to" => $dateTo));
+        		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
 				$globalFilter->addFilter($dateFilter);
+				$setFilter = true;
 			}			
 			
 			// Set query on terms
@@ -224,13 +230,13 @@ class DataSearch implements IDataSearch
 			
 			// Apply filters if needed
 			if ($setFilter) $elasticaQuery->setFilter($globalFilter);
-						
+		
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('typeFacet');
 			$elasticaFacetType->setField('type');
 			$elasticaFacetType->setSize(10);
 			$elasticaFacetType->setOrder('reverse_count');
-			$elasticaFacetType->setFilter($globalFilter);
+			if ($setFilter) $elasticaFacetType->setFilter($globalFilter);
 						
 			// Add type facet to the search query object.
 			$elasticaQuery->addFacet($elasticaFacetType);
@@ -240,7 +246,7 @@ class DataSearch implements IDataSearch
 			$elasticaFacetAuthor->setField('author');
 			$elasticaFacetAuthor->setSize(5);
 			$elasticaFacetAuthor->setOrder('reverse_count');
-			$elasticaFacetAuthor->setFilter($globalFilter);
+			if ($setFilter) $elasticaFacetAuthor->setFilter($globalFilter);
 						
 			// Add that facet to the search query object.
 			$elasticaQuery->addFacet($elasticaFacetAuthor);
@@ -249,7 +255,7 @@ class DataSearch implements IDataSearch
 			$elasticaFacetDate = new \Elastica_Facet_DateHistogram('dateFacet');
 			$elasticaFacetDate->setField('lastUpdateTime');
 			$elasticaFacetDate->setInterval('month');
-			$elasticaFacetDate->setFilter($globalFilter);
+			if ($setFilter) $elasticaFacetDate->setFilter($globalFilter);
 												
 			// Add that facet to the search query object.
 			$elasticaQuery->addFacet($elasticaFacetDate);
@@ -266,7 +272,6 @@ class DataSearch implements IDataSearch
 			$elasticaResultSet = $this->_content_index->search($elasticaQuery);
 			
 			// Return resultset
-			print_r($elasticaResultSet);
 			return($elasticaResultSet);
 			
 		} catch (Exception $e) {
