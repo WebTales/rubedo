@@ -87,9 +87,7 @@ class CurrentUser implements ICurrentUser
         $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
         $sessionUser = $serviceAuth->getIdentity();
 
-        $serviceReader = \Rubedo\Services\Manager::getService('MongoDataAccess');
-        $serviceReader->init('Users');
-        $serviceReader->addToExcludeFieldList(array('password'));
+        $serviceReader = \Rubedo\Services\Manager::getService('Users');
 
         $user = $serviceReader->findById($sessionUser['id']);
         return $user;
@@ -119,4 +117,23 @@ class CurrentUser implements ICurrentUser
         return $groups;
     }
 
+	/**
+	 * Change the password of the current user
+	 * 
+	 * @param string $oldPass current password
+	 * @param string $newPass new password
+	 */
+	public function changePassword($oldPass,$newPass){
+		$user = $this->getCurrentUser();
+
+		$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+		if($serviceAuth->forceReAuth($user['login'], $oldPass)){
+			$serviceUser = \Rubedo\Services\Manager::getService('Users');
+			return $serviceUser->changePassword($newPass,$user['version'],$user['id']);
+		}else{
+			return false;
+		}
+		
+		
+	}
 }
