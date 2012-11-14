@@ -27,10 +27,20 @@ use Rubedo\Services\Manager;
  */
 abstract class AbstractCollection implements IAbstractCollection
 {
-
+	/**
+	 * name of the collection
+	 * 
+	 * @var string
+	 */
     protected $_collectionName;
 
+	/**
+	 * data access service
+	 * 
+	 * @var\Rubedo\Mongo\DataAccess
+	 */
     protected $_dataService;
+	 
 
     protected function _init() {
         // init the data access service
@@ -45,6 +55,8 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Do a find request on the current collection
      *
+	 * @param array $filters filter the list with mongo syntax
+	 * @param array $sort sort the list with mongo syntax
      * @return array
      */
     public function getList($filters = null, $sort = null) {

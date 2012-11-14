@@ -27,6 +27,8 @@ interface IAbstractCollection {
     /**
      * Do a find request on the current collection
      *
+	 * @param array $filters filter the list with mongo syntax
+	 * @param array $sort sort the list with mongo syntax
      * @return array
      */
     public function getList($filters = null, $sort = null);
