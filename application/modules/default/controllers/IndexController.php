@@ -77,14 +77,16 @@ class IndexController extends Zend_Controller_Action
         $twigVar['theme'] = $session->get('themeCSS', 'default');
         $twigVar['lang'] = $lang;
 
+
+				
         foreach ($this->_pageParams['blocks'] as $block) {
             $twigVar = array_merge($twigVar, $this->_serviceBlock->getBlockData($block, $pageId, $this));
         }
 
         if ($pageId == "newpage") {
-            $newTwigVar['structure'] = array();
-            $newTwigVar['structure'][] = array('nested' => array(1 => array('params' => array('span' => 9), 'nested' => array( array('template' => 'root/blocks/headline.html', 'data' => array()))), 2 => array('params' => array('span' => 3), 'nested' => array( array('template' => 'root/blocks/carrousel.html', 'data' => array('items' => $twigVar['carousel_content']))))));
-            $newTwigVar['structure'][] = array('nested' => array(1 => array('params' => array('span' => 12), 'nested' => array( array('template' => 'root/blocks/contentlist.html', 'data' => array('contents' => $twigVar['contentlist_content'])))), ));
+            $newTwigVar['rows'] = array();
+            $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 9, 'blocks' => array( array('template' => 'root/blocks/headline.html', 'data' => array()))), 2 => array('span' => 3, 'blocks' => array( array('template' => 'root/blocks/carrousel.html', 'data' => array('items' => $twigVar['carousel_content']))))));
+            $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 12, 'blocks' => array( array('template' => 'root/blocks/contentlist.html', 'data' => array('contents' => $twigVar['contentlist_content'])))), ));
 			
 			$newTwigVar['theme'] = $twigVar['theme'];
 			$newTwigVar["navbar_content"] = $twigVar["navbar_content"];
@@ -97,11 +99,6 @@ class IndexController extends Zend_Controller_Action
              */
             $twigVar = $newTwigVar;
         }
-
-
-
-        //Zend_Debug::dump($twigVar,$this->_pageParams['template']);
-        //die();
 
         $content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
 

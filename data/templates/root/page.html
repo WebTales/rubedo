@@ -187,9 +187,11 @@
 			{% block pageMainContent %}
 
 			<div class="container-fluid">
-				{% for items in structure %}
-				{% include 'root/row.html' with items only %}
-				{% endfor %}
+				{% if rows %}
+					{% for row in rows %}
+							{% include 'root/row.html' with row only %}
+					{% endfor %}
+				{% endif %}
 			</div>
 			{% endblock %}
 

@@ -1,6 +1,8 @@
 <div class="row-fluid">
 	<!-- process columns -->
-	{% for items in nested %}
-		{% include 'root/column.html' with items only %}
-	{% endfor %}
+	{% if columns %}
+		{% for column in columns %}
+			{% include 'root/column.html' with column only %}
+		{% endfor %}
+	{% endif %}
 </div>

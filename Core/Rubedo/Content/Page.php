@@ -39,7 +39,7 @@ class Page implements  IPage
      * @return array
      */
     public function getPageInfo($pageId) {
-
+		
         switch($pageId) {
             case "index" :
                 $this->_pageInfo['template'] = 'index.html';
@@ -92,6 +92,7 @@ class Page implements  IPage
                 									array('Module' => 'HeadLine', 'Input' => null, 'Output' => 'headline_content'), 
                 									array('Module' => 'ContentList', 'Input' => null, 'Output' => 'contentlist_content'), 
                 									array('Module' => 'Carrousel', 'Input' => null, 'Output' => 'carousel_content'));
+				break;
         }
 
         return $this->_pageInfo;

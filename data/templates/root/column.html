@@ -1,6 +1,13 @@
-<div class="{% if params.span > 0 %}span{{params.span}}{% endif %} {% if params.offest > 0 %}offset{{params.offest}}{% endif %}">
+<div class="{% if span > 0 %}span{{span}}{% endif %}{% if offset > 0 %} offset{{offset}}{% endif %}">
 	<!-- process nested rows & blocks -->
-	{% for blocs in nested %}
-		{% include [blocs.template,'root/block.html'] with blocs.data only %}
-	{% endfor %}
+	{% if blocks %}
+		{% for block in blocks %}
+			{% include [block.template,'root/block.html'] with block.data only %}
+		{% endfor %}
+	{% endif %}
+	{% if rows %}
+		{% for row in rows %}
+				{% include 'root/row.html' with row only %}
+		{% endfor %}
+	{% endif %}
 </div>
