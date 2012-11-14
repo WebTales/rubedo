@@ -33,8 +33,91 @@ class Acl implements  IAcl
      * @return boolean
      */
     public function hasAccess($resource) {
-        return true;
+		
+		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+		$groups = $currentUserService->getGroups();
+		
+		foreach($groups as $group){
+			if($this->groupHasAccess($resource, $group)){
+				return true;
+			}
+		}
+
+        return false;
     }
+	
+	/**
+	 * 
+	 * @todo real access implementation
+	 */
+	protected function groupHasAccess($resource, $groupId){
+		if(strpos($resource,'execute')!==false){
+			return true;
+		}
+		
+		$aclArray = array();
+		
+		$aclArray['public']=array();
+		$aclArray['redacteur']=array('read.ui.contents',
+										'write.ui.contents',
+										'read.ui.contents.draft',
+										'read.ui.contents.pending',
+										'read.ui.contents.published',
+										'write.ui.contents.draft',
+										'write.ui.contents.draftToPending');
+		$aclArray['valideur']=array(	'read.ui.contents',
+										'write.ui.contents',
+										'read.ui.contents.draft',
+										'read.ui.contents.pending',
+										'read.ui.contents.published',
+										'write.ui.contents.draft',
+										'write.ui.contents.pending',
+										'write.ui.contents.published',
+										'write.ui.contents.draftToPending',
+										'write.ui.contents.pendingToDraft',
+										'write.ui.contents.pendingToPublished',
+										'write.ui.contents.putOnline',
+										'write.ui.contents.putOffline');
+		$aclArray['admin']=array(		'read.ui.taxonomy',
+										'write.ui.taxonomy',
+										'read.ui.contentTypes',
+										'write.ui.contentTypes',
+										'read.ui.contents',
+										'write.ui.contents',
+										'read.ui.contents.draft',
+										'read.ui.contents.pending',
+										'read.ui.contents.published',
+										'write.ui.contents.draft',
+										'write.ui.contents.pending',
+										'write.ui.contents.published',
+										'write.ui.contents.draftToPending',
+										'write.ui.contents.pendingToDraft',
+										'write.ui.contents.pendingToPublished',
+										'write.ui.contents.putOnline',
+										'write.ui.contents.putOffline',
+										'read.ui.masks',
+										'write.ui.masks',
+										'read.ui.users',
+										'write.ui.users',
+										'exe.ui.elasticSearch',
+										//'read.ui.pages',
+										//'write.ui.pages',
+										'read.ui.medias',
+										'write.ui.medias',
+										'read.ui.groups',
+										'write.ui.groups',
+										//'read.ui.workflows',
+										//'write.ui.workflows'
+										);
+
+
+		if(in_array($resource, $aclArray[$groupId])){
+			return true;
+		}else{
+			return false;
+		}
+				
+	}
 
     /**
      * For a given list of ressource, build an array of authorized ressources

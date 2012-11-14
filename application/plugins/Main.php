@@ -37,7 +37,7 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
         $action = $request->getActionName();
         $module = $request->getModuleName();
 
-        $ressourceName = 'controller.' . $controller . '.' . $action . '.' . $module;
+        $ressourceName = 'execute.controller.' . $controller . '.' . $action . '.' . $module;
 
 		if(($module == 'default' || !isset($module)) && (($action == 'index' && $controller == 'index') || ($action == 'error' && $controller == 'error'))){
 			$hasAccess = true;

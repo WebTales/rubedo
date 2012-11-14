@@ -73,9 +73,9 @@ class CurrentUser implements ICurrentUser
      *
      * @return boolean
      */
-    public function isAuthenticated() {		
-    	$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
-		return $serviceAuth->hasIdentity();
+    public function isAuthenticated() {
+        $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+        return $serviceAuth->hasIdentity();
     }
 
     /**
@@ -83,16 +83,57 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function fetchCurrentUser() {		
-    	$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');	
-    	$sessionUser = $serviceAuth->getIdentity();
-		
-		$serviceReader = \Rubedo\Services\Manager::getService('MongoDataAccess');
-		$serviceReader->init('Users');
-		$serviceReader->addToExcludeFieldList(array('password'));
-		
-		$user = $serviceReader->findById($sessionUser['id']);
-		return $user;
+    public function fetchCurrentUser() {
+        $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+        $sessionUser = $serviceAuth->getIdentity();
+
+        $serviceReader = \Rubedo\Services\Manager::getService('Users');
+
+        $user = $serviceReader->findById($sessionUser['id']);
+        return $user;
     }
 
+    /**
+     * return the groups of the current user.
+     *
+     * @todo to be implemented with real groups !
+     * @return array
+     */
+    public function getGroups() {
+        $user = $this->getCurrentUser();
+        $groups = array();
+        switch($user['login']) {
+            case 'admin' :
+                $groups[] = 'admin';
+            case 'valideur' :
+                $groups[] = 'valideur';
+            case 'redacteur' :
+                $groups[] = 'redacteur';
+            default :
+                $groups[] = 'public';
+                break;
+        }
+
+        return $groups;
+    }
+
+	/**
+	 * Change the password of the current user
+	 * 
+	 * @param string $oldPass current password
+	 * @param string $newPass new password
+	 */
+	public function changePassword($oldPass,$newPass){
+		$user = $this->getCurrentUser();
+
+		$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+		if($serviceAuth->forceReAuth($user['login'], $oldPass)){
+			$serviceUser = \Rubedo\Services\Manager::getService('Users');
+			return $serviceUser->changePassword($newPass,$user['version'],$user['id']);
+		}else{
+			return false;
+		}
+		
+		
+	}
 }

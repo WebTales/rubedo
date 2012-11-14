@@ -27,17 +27,22 @@ use Rubedo\Mongo\DataAccess;
 class Users extends AbstractCollection implements IUsers
 {
 	/**
-	 * @todo implements that
+	 * Change the password of the user given by its id
+	 * Check version conflict
+	 * 
+	 * @param string $$password new password
+	 * @param int $version version number
+	 * @param string $userId id of the user to be changed
 	 */
-	public function changePassword($password,$version,$id){
+	public function changePassword($password,$version,$userId){
 		$hashService = \Rubedo\Services\Manager::getService('Hash');
 		
 		$salt = $hashService->generateRandomString();
 		
-		if (!empty($password) && !empty($id) && !empty($version)) {
+		if (!empty($password) && !empty($userId) && !empty($version)) {
 			$password = $hashService->derivatePassword($password, $salt);
 			
-			$insertData['id'] = $id;
+			$insertData['id'] = $userId;
 			$insertData['version'] = (int) $version;
 			$insertData['password'] = $password;
 			$insertData['salt'] = $salt;
@@ -54,11 +59,17 @@ class Users extends AbstractCollection implements IUsers
 		}
 	}
 	
+	/**
+	 * Set the collection name
+	 */
 	public function __construct(){
 		$this->_collectionName = 'Users';
 		parent::__construct();
 	}
 	
+	/**
+	 * ensure that no password field is sent outside of the service layer
+	 */
 	protected function _init(){
 		parent::_init();
 		$this->_dataService->addToExcludeFieldList(array('password'));

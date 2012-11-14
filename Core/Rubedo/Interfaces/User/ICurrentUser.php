@@ -54,4 +54,19 @@ interface ICurrentUser
      * @return array
      */
     public function fetchCurrentUser();
+	
+	/**
+	 * return the groups of the current user.
+	 * 
+	 * @return array
+	 */
+	public function getGroups();
+	
+	/**
+	 * Change the password of the current user
+	 * 
+	 * @param string $oldPass current password
+	 * @param string $newPass new password
+	 */
+	public function changePassword($oldPass,$newPass);
 }
