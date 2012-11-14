@@ -492,7 +492,6 @@ class Block implements IBlock
 		$output['typeFacets'] = $elasticaFacets['typeFacet']['terms'];
 		$output['authorFacets'] = $elasticaFacets['authorFacet']['terms'];
 		$output['dateFacets'] = $elasticaFacets['dateFacet']['entries'];
-		
 		$output['type'] = $type;
 		$output['lang'] = $lang;
 		$output['author'] = $author;
