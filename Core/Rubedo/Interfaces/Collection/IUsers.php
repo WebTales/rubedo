@@ -24,5 +24,13 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface IUsers extends IAbstractCollection{
 	
-	public function changePassword($password,$version,$id);
+	/**
+	 * Change the password of the user given by its id
+	 * Check version conflict
+	 * 
+	 * @param string $$password new password
+	 * @param int $version version number
+	 * @param string $userId id of the user to be changed
+	 */
+	public function changePassword($password,$version,$userId);
 }
