@@ -156,17 +156,16 @@ class DataIndex implements IDataIndex
     public function createContentType ($contentType, $overwrite=false) {
     	
 		// Unicity type id check
-		$id = $contentType["id"];
 		$type = $contentType["type"];
 
 		$mapping = $this->_content_index->getMapping();
-		if (array_key_exists($id,$mapping[self::$_content_index])) {
+		if (array_key_exists($type,$mapping[self::$_content_index])) {
 			if (!$overwrite) {
 				// throw exception
 				throw new \Exception("$type type already exists");
 			} else {
 				// delete existing content type
-				$this->deleteContentType($id);
+				$this->deleteContentType($type);
 			}
 		}
 
@@ -174,9 +173,10 @@ class DataIndex implements IDataIndex
 		$indexMapping = array();
 		
 		foreach($contentType["fields"] as $field) {
-
+			
+			// Only searchable fields get indexed
 			if ($field['config']['searchable']) {
-				//print_r($field);
+
 				$name = $field['config']['name'];
 				if ($field['config']['resumed']) {
 					$store = 'yes';
@@ -234,9 +234,8 @@ class DataIndex implements IDataIndex
 			}
 		}	
 		
-		// Add systems metadata : TODO update model text to title
-		
-		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
+		// Add systems metadata : TODO update model text to title	
+		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'format' => 'YYYY-mm-dd', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["type"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
@@ -244,11 +243,12 @@ class DataIndex implements IDataIndex
 		// If there is no searchable field, the new type is not created
 		if (!empty($indexMapping)) {
 			// Create new type
-			$type = new \Elastica_Type($this->_content_index, $id);
+			$type = new \Elastica_Type($this->_content_index, $type);
 			
 			// Set mapping
 			$type->setMapping($indexMapping);
-			//print_r($indexMapping);
+			
+			// Return indexed field list
 			return array_flip(array_keys($indexMapping));
 		} else {
 			return array();
@@ -291,19 +291,20 @@ class DataIndex implements IDataIndex
      * @return array
      */
     public function createContent ($id, $type, $data) {
-    		//print_r($data);
+
 		// Load content type 
     	$contentType = $this->_content_index
     						->getType($type);
-							
+		
 		// Build content document to index	
 		$contentData = array();
 		
 		foreach($data as $field => $var) {
 			$contentData[$field] = (string) $var;
+			// Date format fix
+			if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
 		}
 		$contentData['type'] = (string) $type;
-		//$currentDocument = new \Elastica_Document($lang.'_'.$id, $contentData);
 		$currentDocument = new \Elastica_Document($id, $contentData);
 		
 		if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
@@ -389,7 +390,7 @@ class DataIndex implements IDataIndex
 		$this->_document_index->delete();
 		$this->_document_index->create(self::$_document_index_param,true);
 			
-		$ct = new \Rubedo\Mongo\DataAccess();
+		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
 		$ct->init("ContentTypes");
 			
 		$result = array();
@@ -418,7 +419,6 @@ class DataIndex implements IDataIndex
 				$contentList = $c->read();
 				$contentCount = 0;
 				foreach($contentList as $content) {
-					//print_r($content);
 					// Only searchable fields get indexed
 					$data = array_intersect_key($content["fields"], $fieldsToIndex);
 					$data = array_merge($data, array_intersect_key($content, $fieldsToIndex));

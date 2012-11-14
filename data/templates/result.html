@@ -38,11 +38,11 @@
 		  		{% if (search.date == '') %}
 		  		<ul>
 				{% for facet in search.dateFacets %}
-					<li><a href="{{ search.dateSearchRoot }}&date={{ facet.time }}">{{ (facet.time/1000)|date("m/Y") }} ({{ facet.count }})</a></li>
+					<li><a href="{{ search.dateSearchRoot }}&date={{ facet.time }}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a></li>
 				{% endfor %}
 				</ul>
 				{% else %}
-				<p style="padding-left: 20px">{{(facet.date/1000)|date("m/Y")}} <a href="{{ search.dateSearchRoot }}"><i class="icon-remove-sign"></i></a></p>
+				<p style="padding-left: 20px">{{ (search.date/1000)|date("Y") }} <a href="{{ search.dateSearchRoot }}"><i class="icon-remove-sign"></i></a></p>
 				{% endif %}
 		</div>  		
 		<div class="span9">
