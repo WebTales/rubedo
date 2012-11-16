@@ -97,7 +97,7 @@ class NestedContents implements INestedContents
         $obj['id'] = (string)$objId;
 
         unset($obj['parentContentId']);
-        unset($obj['version']);
+		$obj['version'] = 1;
 
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
@@ -131,7 +131,10 @@ class NestedContents implements INestedContents
      */
     public function update($parentContentId, array $obj, $safe = true) {
         unset($obj['parentContentId']);
-        unset($obj['version']);
+
+		$oldVersion = $obj['version'];
+		
+		$obj['version']++;
 
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
@@ -152,7 +155,7 @@ class NestedContents implements INestedContents
         }
 
         $data = array('$set' => $updateArray);
-        $updateCond = array('_id' => $this->_dataService->getId($parentContentId), 'nestedContents.id' => $obj['id']);
+        $updateCond = array('_id' => $this->_dataService->getId($parentContentId), 'nestedContents' => array('$elemMatch' => array('id'=>$obj['id'],'version'=>$oldVersion)));
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
 
