@@ -130,34 +130,34 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function update($parentContentId, array $obj, $safe = true) {
-        $subContent = $this->findById($parentContentId, $obj['id']);
-
-        if (!isset($subContent)) {
-            return array('success' => false, 'msg' => 'can\'t find previous version');
-        }
-
-        unset($subContent['index']);
         unset($obj['parentContentId']);
         unset($obj['version']);
 
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
-        $obj['createUser'] = $subContent['createUser'];
 
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
 
-        $obj['createTime'] = $subContent['createTime'];
         $obj['lastUpdateTime'] = $currentTime;
 
-        $data = array('$set' => array('nestedContents.$' => $obj));
+        $updateArray = array();
+
+        foreach ($obj as $key => $value) {
+            if (in_array($key, array('createUser', 'createTime'))) {
+                continue;
+            }
+            $updateArray['nestedContents.$.' . $key] = $value;
+        }
+
+        $data = array('$set' => $updateArray);
         $updateCond = array('_id' => $this->_dataService->getId($parentContentId), 'nestedContents.id' => $obj['id']);
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
 
         if ($returnArray['success'] == true) {
-            $returnArray['data'] = $obj;
+            unset($returnArray['data']);
         }
 
         return $returnArray;
@@ -173,7 +173,7 @@ class NestedContents implements INestedContents
      */
     public function destroy($parentContentId, array $obj, $safe = true) {
 
-        $data = array('$pull' => array('nestedContents' => array('id'=>$obj['id'])));
+        $data = array('$pull' => array('nestedContents' => array('id' => $obj['id'])));
         $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
