@@ -25,11 +25,18 @@ use Rubedo\Interfaces\Collection\IContents;
  */
 class Contents extends AbstractCollection implements IContents
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'Contents';
-		parent::__construct();
-	}
-	
+    public function __construct() {
+        $this->_collectionName = 'Contents';
+        parent::__construct();
+    }
+
+    /**
+     * ensure that no nested contents are requested directly
+     */
+    protected function _init() {
+        parent::_init();
+        $this->_dataService->addToExcludeFieldList(array('nestedContents'));
+    }
+
 }
