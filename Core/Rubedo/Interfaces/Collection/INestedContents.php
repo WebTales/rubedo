@@ -62,5 +62,13 @@ interface INestedContents
      * @return array
      */
     public function destroy($parentContentId, array $obj, $safe = true);
+	
+	/**
+	 * Find a nested content by its id and its parentId
+	 * 
+	 * @param string $parentContentId id of the parent content
+	 * @param string $subContentId id of the content we are looking for
+	 */
+    public function findById($parentContentId, $subContentId);
 
 }

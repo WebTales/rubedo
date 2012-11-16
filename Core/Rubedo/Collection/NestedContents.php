@@ -41,6 +41,9 @@ class NestedContents implements INestedContents
      */
     protected $_dataService;
 
+    /**
+     * Set collection Name to Contents and init a mongo service with this collection
+     */
     public function __construct() {
         // init the data access service
         $this->_collectionName = 'Contents';
@@ -64,6 +67,25 @@ class NestedContents implements INestedContents
             return array();
         }
         return array_values($content['nestedContents']);
+    }
+
+    /**
+     * Find a nested content by its id and its parentId
+     *
+     * @param string $parentContentId id of the parent content
+     * @param string $subContentId id of the content we are looking for
+     */
+    public function findById($parentContentId, $subContentId) {
+        $cursor = $this->_dataService->customFind(array('_id' => $this->_dataService->getId($parentContentId)), array('nestedContents.' . $subContentId));
+        if ($cursor->count() == 0) {
+            return null;
+        }
+        $content = $cursor->getNext();
+        if (!isset($content['nestedContents'])) {
+            return null;
+        }
+        //\Zend_Debug::dump($content['nestedContents']);
+        return array_pop($content['nestedContents']);
     }
 
     /**
@@ -96,8 +118,9 @@ class NestedContents implements INestedContents
         $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
-
-        $returnArray['data'] = $returnArray['data']['$set']['nestedContents.' . (string)$objId];
+        if ($returnArray['success'] == true) {
+            $returnArray['data'] = $obj;
+        }
 
         return $returnArray;
     }
@@ -111,7 +134,35 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function update($parentContentId, array $obj, $safe = true) {
-        return array('success' => true);
+        $subContent = $this->findById($parentContentId, $obj['id']);
+        if (!isset($subContent)) {
+            return array('success' => false, 'msg' => 'can\'t find previous version');
+        }
+
+        unset($obj['parentContentId']);
+        unset($obj['version']);
+
+        $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+        $currentUser = $currentUserService->getCurrentUserSummary();
+        $obj['lastUpdateUser'] = $currentUser;
+        $obj['createUser'] = $subContent['createUser'];
+
+        $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+        $currentTime = $currentTimeService->getCurrentTime();
+
+        $obj['createTime'] = $subContent['createTime'];
+        $obj['lastUpdateTime'] = $currentTime;
+
+        $data = array('$set' => array('nestedContents.' . $obj['id'] => $obj));
+        $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
+
+        $returnArray = $this->_dataService->customUpdate($data, $updateCond);
+
+        if ($returnArray['success'] == true) {
+            $returnArray['data'] = $obj;
+        }
+
+        return $returnArray;
     }
 
     /**
@@ -123,7 +174,13 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function destroy($parentContentId, array $obj, $safe = true) {
-        return array('success' => true);
+
+        $data = array('$unset' => array('nestedContents.' . $obj['id'] => true));
+        $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
+
+        $returnArray = $this->_dataService->customUpdate($data, $updateCond);
+
+        return array('success' => $returnArray['success']);
     }
 
 }
