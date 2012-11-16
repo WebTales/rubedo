@@ -52,11 +52,9 @@ class NestedContents implements INestedContents
      * Do a find request on nested contents of a given content
      *
      * @param string $parentContentId parent id of nested contents
-     * @param array $filters filter the list with mongo syntax
-     * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($parentContentId, $filters = null, $sort = null) {
+    public function getList($parentContentId) {
         $cursor = $this->_dataService->customFind(array('_id' => $this->_dataService->getId($parentContentId)), array('nestedContents'));
         if ($cursor->count() == 0) {
             return array();
