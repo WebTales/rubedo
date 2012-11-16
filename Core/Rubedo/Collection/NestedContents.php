@@ -76,15 +76,11 @@ class NestedContents implements INestedContents
      * @param string $subContentId id of the content we are looking for
      */
     public function findById($parentContentId, $subContentId) {
-        $cursor = $this->_dataService->customFind(array('_id' => $this->_dataService->getId($parentContentId)), array('nestedContents.' . $subContentId));
+        $cursor = $this->_dataService->customFind(array('_id' => $this->_dataService->getId($parentContentId), 'nestedContents.id' => $subContentId), array('nestedContents.$'));
         if ($cursor->count() == 0) {
             return null;
         }
         $content = $cursor->getNext();
-        if (!isset($content['nestedContents'])) {
-            return null;
-        }
-        //\Zend_Debug::dump($content['nestedContents']);
         return array_pop($content['nestedContents']);
     }
 
@@ -114,7 +110,7 @@ class NestedContents implements INestedContents
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
 
-        $data = array('$set' => array('nestedContents.' . (string)$objId => $obj));
+        $data = array('$push' => array('nestedContents' => $obj));
         $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
@@ -135,10 +131,12 @@ class NestedContents implements INestedContents
      */
     public function update($parentContentId, array $obj, $safe = true) {
         $subContent = $this->findById($parentContentId, $obj['id']);
+
         if (!isset($subContent)) {
             return array('success' => false, 'msg' => 'can\'t find previous version');
         }
 
+        unset($subContent['index']);
         unset($obj['parentContentId']);
         unset($obj['version']);
 
@@ -153,8 +151,8 @@ class NestedContents implements INestedContents
         $obj['createTime'] = $subContent['createTime'];
         $obj['lastUpdateTime'] = $currentTime;
 
-        $data = array('$set' => array('nestedContents.' . $obj['id'] => $obj));
-        $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
+        $data = array('$set' => array('nestedContents.$' => $obj));
+        $updateCond = array('_id' => $this->_dataService->getId($parentContentId), 'nestedContents.id' => $obj['id']);
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
 
@@ -175,7 +173,7 @@ class NestedContents implements INestedContents
      */
     public function destroy($parentContentId, array $obj, $safe = true) {
 
-        $data = array('$unset' => array('nestedContents.' . $obj['id'] => true));
+        $data = array('$pull' => array('nestedContents' => array('id'=>$obj['id'])));
         $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
