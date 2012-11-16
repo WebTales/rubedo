@@ -57,7 +57,15 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function getList($parentContentId, $filters = null, $sort = null) {
-
+        $cursor = $this->_dataService->customFind(array('_id' => $this->_dataService->getId($parentContentId)), array('nestedContents'));
+        if ($cursor->count() == 0) {
+            return array();
+        }
+        $content = $cursor->getNext();
+        if (!isset($content['nestedContents'])) {
+            return array();
+        }
+        return array_values($content['nestedContents']);
     }
 
     /**
@@ -69,13 +77,31 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function create($parentContentId, array $obj, $safe = true) {
-    	return array('success' => true);
-    	/*$parentContent = $this->_dataService->findById($parentContentId);
-		
-		$updateObj = array();
-		
-    	$updateObj['id'] = $parentContent['id'];*/
-		//$push
+        $objId = $this->_dataService->getId();
+        $obj['id'] = (string)$objId;
+
+        unset($obj['parentContentId']);
+        unset($obj['version']);
+
+        $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+        $currentUser = $currentUserService->getCurrentUserSummary();
+        $obj['lastUpdateUser'] = $currentUser;
+        $obj['createUser'] = $currentUser;
+
+        $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+        $currentTime = $currentTimeService->getCurrentTime();
+
+        $obj['createTime'] = $currentTime;
+        $obj['lastUpdateTime'] = $currentTime;
+
+        $data = array('$set' => array('nestedContents.' . (string)$objId => $obj));
+        $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
+
+        $returnArray = $this->_dataService->customUpdate($data, $updateCond);
+
+        $returnArray['data'] = $returnArray['data']['$set']['nestedContents.' . (string)$objId];
+
+        return $returnArray;
     }
 
     /**
@@ -87,7 +113,7 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function update($parentContentId, array $obj, $safe = true) {
-    	return array('success' => true);
+        return array('success' => true);
     }
 
     /**
@@ -99,7 +125,7 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function destroy($parentContentId, array $obj, $safe = true) {
-    	return array('success' => true);
+        return array('success' => true);
     }
 
 }
