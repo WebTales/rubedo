@@ -15,65 +15,60 @@
 namespace Rubedo\Interfaces\Collection;
 
 /**
- * Abstract interface for the service handling collections
+ * Interface of service handling Contents
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-interface IAbstractCollection {
+interface INestedContents
+{
 
     /**
-     * Do a find request on the current collection
+     * Do a find request on nested contents of a given content
      *
-	 * @param array $filters filter the list with mongo syntax
-	 * @param array $sort sort the list with mongo syntax
+     * @param string $parentContentId parent id of nested contents
      * @return array
      */
-    public function getList($filters = null, $sort = null);
-
-    /**
-     * Find an item given by its literral ID
-     * @param string $contentId
-     * @return array
-     */
-    public function findById($contentId);
+    public function getList($parentContentId);
 
     /**
      * Create an objet in the current collection
      *
+     * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $safe = true);
+    public function create($parentContentId, array $obj, $safe = true);
 
     /**
      * Update an objet in the current collection
      *
+     * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function update(array $obj, $safe = true);
+    public function update($parentContentId, array $obj, $safe = true);
 
     /**
      * Delete objets in the current collection
      *
+     * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $safe = true);
+    public function destroy($parentContentId, array $obj, $safe = true);
 	
 	/**
-     * Find child of a node tree
-     * @param string $parentId id of the parent node
-	 * @param array $filters array of data filters (mongo syntax) 
-	 * @param array $sort  array of data sorts (mongo syntax)
-     * @return array children array
-     */
-    public function readChild($parentId, $filters = null, $sort = null);
+	 * Find a nested content by its id and its parentId
+	 * 
+	 * @param string $parentContentId id of the parent content
+	 * @param string $subContentId id of the content we are looking for
+	 */
+    public function findById($parentContentId, $subContentId);
 
 }

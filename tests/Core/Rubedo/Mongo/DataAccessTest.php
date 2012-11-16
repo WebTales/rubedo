@@ -679,13 +679,15 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Check if lastUpdateUser property had been updated
+	 * Check if createUser is preserved
      *
      */
     public function testUpdateUserMetaData() {
         $this->initUser();
 
         $version = rand(1, 25);
-        $item = static::$phactory->create('item', array('version' => $version));
+		$testUser = array('test','shouldNotChange');
+        $item = static::$phactory->create('item', array('version' => $version,'createUser'=>$testUser));
 
         $itemId = (string)$item['_id'];
         $name = $item['name'];
@@ -706,6 +708,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
 
         $this->assertArrayHasKey('lastUpdateUser', $readItem);
         $this->assertEquals($readItem['lastUpdateUser'], $this->_fakeUser);
+		$this->assertEquals($readItem['createUser'], $testUser);
     }
 
     /**
@@ -714,9 +717,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
      */
     public function testUpdateTimeMetaData() {
         $this->initTime();
-
+		$testTime = array('test','shouldNotChange');
         $version = rand(1, 25);
-        $item = static::$phactory->create('item', array('version' => $version));
+        $item = static::$phactory->create('item', array('version' => $version,'createTime'=>$testTime));
 
         $itemId = (string)$item['_id'];
 
@@ -729,6 +732,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->init('items', 'test_db');
 
         $updateArray = $dataAccessObject->update($item, true);
+		
+		$readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $readItem = array_pop($readItems);
+
+        $this->assertArrayHasKey('lastUpdateTime', $readItem);
+		$this->assertEquals($readItem['lastUpdateTime'], $this->_fakeTime);
+		$this->assertEquals($readItem['createTime'], $testTime);
     }
 	
 	/**

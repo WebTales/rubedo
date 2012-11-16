@@ -66,6 +66,7 @@ class config
 		'TaxonomyTerms'				=>	'Rubedo\\Interfaces\\Collection\\ITaxonomyTerms',
 		'Themes'					=>	'Rubedo\\Interfaces\\Collection\\IThemes',
 		'Wallpapers'				=>	'Rubedo\\Interfaces\\Collection\\IWallpapers',
+		'NestedContents'			=>	'Rubedo\\Interfaces\\Collection\\INestedContents',
 	);
 
     /**

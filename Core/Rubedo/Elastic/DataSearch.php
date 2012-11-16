@@ -214,7 +214,7 @@ class DataSearch implements IDataSearch
 			if ($date!= '') {
 				$dateFilter = new \Elastica_Filter_Range();
 				$d = $date/1000;
-				$dateFrom = $dateTo = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d))*1000;  
+				$dateFrom = $dateTo = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d))*1000; 
 				$dateTo = mktime(0, 0, 0, date('m',$d)+1, date('d',$d), date('Y',$d))*1000;  
         		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
 				$globalFilter->addFilter($dateFilter);
