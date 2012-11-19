@@ -1,0 +1,173 @@
+<div class="span3 well well-large">
+	<p>
+		<i class="icon-search"></i> {{"full_text_search"|trans}}
+	</p>
+	<p>
+		<form class="form-search" action="{{baseUrl}}">
+			<input type="text" class="input-medium search-query" name="query" size="10" value="{{ data.searchTerms }}">
+			<button type="submit" class="btn">
+				{{"ok"|trans}}
+			</button>
+		</form>
+	</p>
+	<p>
+		<i class="icon-file"></i> {{"content_type"|trans}}
+	</p>
+	{% if (data.type == '') %}
+	<ul>
+		{% for facet in data.typeFacets %}
+		<li>
+			<a href="{{ data.typeSearchRoot }}&type={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+		</li>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<p style="padding-left: 20px">
+		{{data.type}} <a href="{{ data.typeSearchRoot }}"><i class="icon-remove-sign"></i></a>
+	</p>
+	{% endif %}
+	<p>
+		<i class="icon-user"></i> {{"author"|trans}}
+	</p>
+	{% if (data.author == '') %}
+	<ul>
+		{% for facet in data.authorFacets %}
+		<li>
+			<a href="{{ data.authorSearchRoot }}&author={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+		</li>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<p style="padding-left: 20px">
+		{{data.author}} <a href="{{ data.authorSearchRoot }}"><i class="icon-remove-sign"></i></a>
+	</p>
+	{% endif %}
+	<p>
+		<i class="icon-calendar"></i> {{"date"|trans}}
+	</p>
+	{% if (data.date == '') %}
+	<ul>
+		{% for facet in data.dateFacets %}
+		<li>
+			<a href="{{ data.dateSearchRoot }}&date={{ facet.time }}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
+		</li>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<p style="padding-left: 20px">
+		{{ (data.date/1000)|date("Y") }} <a href="{{ data.dateSearchRoot }}"><i class="icon-remove-sign"></i></a>
+	</p>
+	{% endif %}
+</div>
+<div class="span9">
+	{% if data.nbResults == 0 %}
+	<div class="alert alert-error">
+		{{"no_result"|trans}}
+	</div>
+	{% else %}
+	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand">{% if data.nbResults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ data.nbResults }}</span> {% if data.nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
+			<ul class="nav pull-right">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if data.orderBy == "_score" %}
+					{{"order_by_relevance"|trans}}
+					{% endif %}
+					{% if data.orderBy == "lastUpdateTime" %}
+					{{"order_by_date"|trans}}
+					{% endif %}
+					{% if data.orderBy == "author" %}
+					{{"order_by_author"|trans}}
+					{% endif %} <b class="caret"></b> </a>
+					<ul class="dropdown-menu">
+						{% if data.orderBy != "_score" %}
+						<li>
+							<a href="{{ data.orderBySearchRoot }}&orderby=_score">{{"order_by_relevance"|trans}}</a>
+						</li>
+						{% endif %}
+						{% if data.orderBy != "lastUpdateTime" %}
+						<li>
+							<a href="{{ data.orderBySearchRoot }}&orderby=lastUpdateTime">{{"order_by_date"|trans}}</a>
+						</li>
+						{% endif %}
+						{% if data.orderBy != "author" %}
+						<li>
+							<a href="{{ data.orderBySearchRoot }}&orderby=author">{{"order_by_author"|trans}}</a>
+						</li>
+						{% endif %}
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if data.pageSize=="all" %}
+					{{"all_on_one_page"|trans}}
+					{% else %}
+					{{ data.pageSize }} {{"by_page"|trans}}
+					{% endif %} <b class="caret"></b> </a>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="{{ data.pageSizeSearchRoot }}&pagesize=10">10 {{"by_page"|trans}}</a>
+						</li>
+						<li>
+							<a href="{{ data.pageSizeSearchRoot }}&pagesize=20">20 {{"by_page"|trans}}</a>
+						</li>
+						<li>
+							<a href="{{ data.pageSizeSearchRoot }}&pagesize=50">50 {{"by_page"|trans}}</a>
+						</li>
+						<li>
+							<a href="{{ data.pageSizeSearchRoot }}&pagesize=all">{{"all_on_one_page"|trans}}</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<table class="table">
+		{% for result in data.results %}
+		<tr>
+			<td><h3><a href="#">{{ result.title|raw }}</a></h3>
+			<div class="progress progress-success" style="width:50px; float: left;">
+				<div class="bar" style="width: {{ result.score*100 }}%;">
+					{{ result.score*100 }}%
+				</div>
+			</div> &nbsp;<span class="label">{{ result.type|raw }}</span>
+			<br />
+			{{ result.abstract|raw }}
+			<br />
+			{{"published_by"|trans}} <a href="#">{{ result.author|raw }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% if data.pageCount > 1 %}
+	<div class="pagination pagination-centered">
+		<ul>
+			<li class="disabled">
+				<a href="#">Page {{ data.pager+1 }} {{"on"|trans}} {{ data.pageCount }}</a>
+			</li>
+			{% if data.pager==0 %}
+			<li class="disabled">
+				<a href="#"><<</a>
+			</li>
+			{% else %}
+			<li>
+				<a href="{{ data.searchRoot }}&pager={{ data.pager-1 }}"><<</a>
+			</li>
+			{% endif %}
+			{% for i in range(0, data.pageCount-1) %}
+			<li {% if pager==i %}class="disabled"{% endif %}>
+				<a href="{{ data.searchRoot }}&pager={{ i }}">{{ i+1 }}</a>
+			</li>
+			{% endfor %}
+			{% if data.pager==data.pageCount-1 %}
+			<li class="disabled">
+				<a href="#">>></a>
+			</li>
+			{% else %}
+			<li>
+				<a href="{{ data.searchRoot }}&pager={{ data.pager+1 }}">>></a>
+			</li>
+			{% endif %}
+		</ul>
+	</div>
+	{% endif %}
+	{% endif %}
+</div>

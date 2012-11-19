@@ -85,8 +85,9 @@ class IndexController extends Zend_Controller_Action
 
         if ($pageId == "newpage") {
             $newTwigVar['rows'] = array();
-            $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 9, 'blocks' => array( array('template' => 'root/blocks/headline.html', 'data' => array()))), 2 => array('span' => 3, 'blocks' => array( array('template' => 'root/blocks/carrousel.html', 'data' => array('items' => $twigVar['carousel_content']))))));
-            $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 12, 'blocks' => array( array('template' => 'root/blocks/contentlist.html', 'data' => array('contents' => $twigVar['contentlist_content'])))), ));
+            $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 9, 'blocks' => array( array('template' => 'root/blocks/headline.html', 'data' => array()))), 
+            													2 => array('span' => 3, 'blocks' => array( array('template' => 'root/blocks/carrousel.html', 'data' => array('data' => $twigVar['carousel_content']))))));
+            $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 12, 'blocks' => array( array('template' => 'root/blocks/contentlist.html', 'data' => array('data' => $twigVar['contentlist_content'])))), ));
 			
 			$newTwigVar['theme'] = $twigVar['theme'];
 			$newTwigVar["navbar_content"] = $twigVar["navbar_content"];

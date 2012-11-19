@@ -50,8 +50,9 @@ class Blocks_CarrouselController extends Blocks_AbstractController
             $data[] = $fields;
         }
 
-        $output["data"] = $data;
+        $output["items"] = $data;
 
+		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');
         $template = "root/blocks/carrousel.html";
 
         $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css', '/css/default.bootstrap.min.css');
