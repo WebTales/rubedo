@@ -84,9 +84,14 @@ class IndexController extends Zend_Controller_Action
         }
 
         if ($pageId == "newpage") {
+        	
+			$headlineContentArray = $this->_serviceBlock->getBlockData(array('Module' => 'HeadLine', 'Input' => null, 'Output' => 'headline_content'), $pageId, $this);
+			$headlineContent = $headlineContentArray['headline_content'];
+			
             $newTwigVar['rows'] = array();
-            $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 9, 'blocks' => array( array('template' => 'root/blocks/headline.html', 'data' => array()))), 
-            													2 => array('span' => 3, 'blocks' => array( array('template' => 'root/blocks/carrousel.html', 'data' => array('data' => $twigVar['carousel_content']))))));
+            $newTwigVar['rows'][] = array('columns' => array(
+            		1 => array('span' => 9, 'blocks' => array( array('template' => 'root/blocks/singlecontent.html', 'data' => $headlineContent))), 
+            		2 => array('span' => 3, 'blocks' => array( array('template' => 'root/blocks/carrousel.html', 'data' => array('data' => $twigVar['carousel_content']) )))));
             $newTwigVar['rows'][] = array('columns' => array(1 => array('span' => 12, 'blocks' => array( array('template' => 'root/blocks/contentlist.html', 'data' => array('data' => $twigVar['contentlist_content'])))), ));
 			
 			$newTwigVar['theme'] = $twigVar['theme'];

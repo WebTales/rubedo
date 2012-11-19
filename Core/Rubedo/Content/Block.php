@@ -64,10 +64,11 @@ class Block implements IBlock
             case 'ContentList' :
                 $response = Action::getInstance()->action('index', 'content-list', 'blocks');
                 $content = $response->getBody('content');
-				
+
                 break;
             case 'HeadLine' :
-                $content = $this->getHeadLine();
+                $response = Action::getInstance()->action('index', 'content-single', 'blocks');
+                $content = $response->getBody('content');
                 break;
             case 'IFrame' :
                 $content = $this->getIFrame();
