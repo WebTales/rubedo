@@ -195,13 +195,12 @@ class DataAccess implements IDataAccess
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
 
-        //get enforced Rules
-        $filter = $this->_getLocalFilter($filter);
-        $includedFields = $this->_getLocalIncludeFieldList($includedFields);
-        $excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
-
         //merge the two fields array to obtain only one array with all the conditions
-        $fieldRule = array_merge($includedFields, $excludedFields);
+        if(!empty($includedFields) && !empty($excludedFields)){
+        	$fieldRule = $includedFields;
+        } else {
+        	$fieldRule = array_merge($includedFields, $excludedFields);
+        }
 
         //get the cursor
         $cursor = $this->_collection->find($filter, $fieldRule);
@@ -228,24 +227,6 @@ class DataAccess implements IDataAccess
         $response = array_values($data);
 
         return $response;
-    }
-
-    /**
-     * overrideable method to add filter depending on inherited class to handle specific rules
-     * @param array current filter
-     * @return array overriden filter
-     */
-    protected function _getLocalFilter($filter) {
-        return $filter;
-    }
-
-    /**
-     * overrideable method to add an included fields list depending on inherited class to handle specific rules
-     * @param array current included fields list
-     * @return array overriden included fields list
-     */
-    protected function _getLocalIncludeFieldList($includeFieldList) {
-        return $includeFieldList;
     }
 
     /**
@@ -309,15 +290,6 @@ class DataAccess implements IDataAccess
         }
 
         return $childrensArray;
-    }
-
-    /**
-     * overrideable method to add an excluded fields list depending on inherited class to handle specific rules
-     * @param array current excluded fields list
-     * @return array overriden excluded fields list
-     */
-    protected function _getLocalExcludeFieldList($excludeFieldList) {
-        return $excludeFieldList;
     }
 
     /**
@@ -386,14 +358,13 @@ class DataAccess implements IDataAccess
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
 
-        //get enforced Rules
-        $filter = $this->_getLocalFilter($filter);
-        $includedFields = $this->_getLocalIncludeFieldList($includedFields);
-        $excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
-
         //merge the two fields array to obtain only one array with all the conditions
-        $fieldRule = array_merge($includedFields, $excludedFields);
-
+        if(!empty($includedFields) && !empty($excludedFields)){
+        	$fieldRule = $includedFields;
+        } else {
+        	$fieldRule = array_merge($includedFields, $excludedFields);
+        }
+        
         //get the cursor
         if (empty($filter)) {
             $cursor = $this->_collection->find(array('parentId' => $parentId), $fieldRule);
@@ -435,12 +406,12 @@ class DataAccess implements IDataAccess
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
 
-        //get enforced Rules
-        $includedFields = $this->_getLocalIncludeFieldList($includedFields);
-        $excludedFields = $this->_getLocalExcludeFieldList($excludedFields);
-
         //merge the two fields array to obtain only one array with all the conditions
-        $fieldRule = array_merge($includedFields, $excludedFields);
+        if(!empty($includedFields) && !empty($excludedFields)){
+        	$fieldRule = $includedFields;
+        } else {
+        	$fieldRule = array_merge($includedFields, $excludedFields);
+        }
 
         $data = $this->_collection->findOne($value, $fieldRule);
 
