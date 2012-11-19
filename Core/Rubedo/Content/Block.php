@@ -62,7 +62,9 @@ class Block implements IBlock
                 $content = $response->getBody('content');
                 break;
             case 'ContentList' :
-                $content = $this->getContentList();
+                $response = Action::getInstance()->action('index', 'content-list', 'blocks');
+                $content = $response->getBody('content');
+                // $content = $this->getContentList();
                 break;
             case 'HeadLine' :
                 $content = $this->getHeadLine();

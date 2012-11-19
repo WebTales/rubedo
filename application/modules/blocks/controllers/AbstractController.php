@@ -55,7 +55,9 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
                     $this->view->headScript()->appendFile($value);
                 }
             }
+
             $this->getHelper('ViewRenderer')->setNoRender();
+
             $this->getResponse()->appendBody($content, 'default');
         }
     }
