@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en, fr">
+<html lang="{{lang}}">
 	<head>
 		{% block pageTitle %}
 		<title>Rubedo Project, from WebTales</title>
@@ -14,10 +14,10 @@
 		
 		{% block pageStyle %}
 		<!-- Le styles -->
-		<link href="/css/{% if theme != ''%}{{theme}}.{% else %}default.{% endif %}bootstrap.min.css" rel="stylesheet">
-		<link href="/css/bootstrap-responsive.css" rel="stylesheet">
-		<link href="/css/rubedo.css" rel="stylesheet">
-		<!--<link rel="stylesheet" type="text/css" href="/extjs-4.1.1/resources/css/ext-all.css">-->
+		{% for sheet in css %}
+			<link href="{{sheet}}" rel="stylesheet" />
+		{% endfor %}
+
 
 		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -83,7 +83,7 @@
 					<h3>Connexion</h3>
 				</div>
 
-				<form class="form-horizontal" id="connect">
+				<form class="form-horizontal" id="connectForm">
 					<div class="control-group">
 						<label class="control-label" for="inputEmail">E-mail</label>
 						<div class="controls">
@@ -198,9 +198,9 @@
 			{% block pageFooter %}
 			<hr>
 
-			<footer align="center">
+			<footer style="text-align : center">
 				<p>
-					&copy; WebTales 2012. Le projet Rubedo est supporté par <a href="http://www.centraleparis-incubateur.fr" target="_blank"><img src="/img/incubateur_centrale.png"></a>
+					&copy; WebTales 2012. Le projet Rubedo est supporté par <a href="http://www.centraleparis-incubateur.fr" target="_blank"><img src="/img/incubateur_centrale.png" alt="l'incubateur de centrale paris"/></a>
 				</p>
 			</footer>
 			{% endblock %}
@@ -211,19 +211,10 @@
 		<!-- Le javascript
 		================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
-		<script src="/js/jquery.js"></script>
-		<script src="/js/bootstrap-transition.js"></script>
-		<script src="/js/bootstrap-alert.js"></script>
-		<script src="/js/bootstrap-modal.js"></script>
-		<script src="/js/bootstrap-dropdown.js"></script>
-		<script src="/js/bootstrap-scrollspy.js"></script>
-		<script src="/js/bootstrap-tab.js"></script>
-		<script src="/js/bootstrap-tooltip.js"></script>
-		<script src="/js/bootstrap-popover.js"></script>
-		<script src="/js/bootstrap-button.js"></script>
-		<script src="/js/bootstrap-collapse.js"></script>
-		<script src="/js/bootstrap-carousel.js"></script>
-		<script src="/js/bootstrap-typeahead.js"></script>
+		{% for file in js %}
+			<script src="{{file}}"></script>
+		{% endfor %}
+		
 		<script src="/ckeditor-dev/ckeditor.js"></script>
 		<!--<script src="/extjs-4.1.1/ext-all.js"></script>-->
 		<!--<script src="/js/jquery.jeditable.mini.js"></script>-->
