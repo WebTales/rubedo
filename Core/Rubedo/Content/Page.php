@@ -95,7 +95,19 @@ class Page implements  IPage
 				break;
         }
 
+		$this->_pageInfo['css'] = array();
+		$this->_pageInfo['js'] = array();
+		$this->_pageInfo['title'] = '';
+
         return $this->_pageInfo;
     }
+
+	public function addCss($cssFile){
+		
+	}
+	
+	public function addJs($JsFile){
+		
+	}
 
 }

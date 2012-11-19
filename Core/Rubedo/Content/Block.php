@@ -58,12 +58,8 @@ class Block implements IBlock
                 $content = $this->getBreadCrumb();
                 break;
             case 'Carrousel' :
-
-                $response = Action::getInstance()->action('index', 'index', 'blocks');
-
+                $response = Action::getInstance()->action('index', 'carrousel', 'blocks');
                 $content = $response->getBody('content');
-
-                // $content = $this->getCarrousel();
                 break;
             case 'ContentList' :
                 $content = $this->getContentList();

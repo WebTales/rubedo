@@ -41,14 +41,11 @@
 
         
         echo $this->headLink();
-        if (! $is_error)
-        {
-        	echo $this->headScript();
-        }
 		?>
 	</head>
 	
 	<body>
 		<?php echo $this->layout()->content?>
+		<?php echo $this->headScript(); ?>
  	</body>
 </html>
