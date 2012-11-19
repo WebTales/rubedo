@@ -64,9 +64,9 @@ class Blocks_IndexController extends Zend_Controller_Action
 
         $beanObj = $this->getRequest()->getParam('beanObj');
 
-        if (isset($beanObj)) {
-            $beanObj->content = $output;
-            $beanObj->template = "root/blocks/carrousel.html";
+        if ($this->getResponse() instanceof \Rubedo\Controller\Response) {
+        	$this->getResponse()->setBody($output,'content');
+			$this->getResponse()->setBody("root/blocks/carrousel.html",'template');
         } else {
             $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
             $session = Rubedo\Services\Manager::getService('Session');

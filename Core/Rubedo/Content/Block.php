@@ -20,6 +20,8 @@ require_once (APPLICATION_PATH . '/modules/default/controllers/DataController.ph
 
 Use Rubedo\Interfaces\Content\IBlock;
 Use Rubedo\Services\Manager;
+Use Rubedo\Controller\Action;
+
 /**
  * Block Content Service
  *
@@ -56,15 +58,10 @@ class Block implements IBlock
                 $content = $this->getBreadCrumb();
                 break;
             case 'Carrousel' :
-                $actionHelper = new \Zend_View_Helper_Action();
 
-                $beanObj = new \stdClass();
-                $params = array();
-                $params['beanObj'] = $beanObj;
+                $response = Action::getInstance()->action('index', 'index', 'blocks');
 
-                $actionHelper->action('index', 'index', 'blocks', $params);
-
-                $content = $beanObj->content;
+                $content = $response->getBody('content');
 
                 // $content = $this->getCarrousel();
                 break;
