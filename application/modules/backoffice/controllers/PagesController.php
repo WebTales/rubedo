@@ -13,10 +13,10 @@
  * @version $Id$
  */
 
-require_once('DataAccessController.php'); 
+require_once('DataAccessController.php');
  
 /**
- * Controller providing CRUD API for the panier JSON
+ * Controller providing CRUD API for the Pages JSON
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
@@ -26,13 +26,13 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_PanierController extends Backoffice_DataAccessController
+class Backoffice_PagesController extends Backoffice_DataAccessController
 {
     public function init(){
 		parent::init();
 		
 		// init the data access service
-		$this -> _dataService = Rubedo\Services\Manager::getService('Panier');
+		$this -> _dataService = Rubedo\Services\Manager::getService('Pages');
 	}
 
 }

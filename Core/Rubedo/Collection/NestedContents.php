@@ -37,7 +37,7 @@ class NestedContents implements INestedContents
     /**
      * data access service
      *
-     * @var\Rubedo\Mongo\DataAccess
+     * @var \Rubedo\Mongo\DataAccess
      */
     protected $_dataService;
 

@@ -16,7 +16,7 @@
 require_once('DataAccessController.php');
  
 /**
- * Controller providing CRUD API for the PersonalPrefs JSON
+ * Controller providing CRUD API for the masks JSON
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
