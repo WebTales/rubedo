@@ -55,5 +55,4 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 		$this->_dataService->addFilter(array('userId' => $this->_userId));
 		return parent::destroy($obj,$safe);
 	}
-	
 }

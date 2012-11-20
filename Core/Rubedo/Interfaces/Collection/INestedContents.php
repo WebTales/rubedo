@@ -29,11 +29,9 @@ interface INestedContents
      * Do a find request on nested contents of a given content
      *
      * @param string $parentContentId parent id of nested contents
-     * @param array $filters filter the list with mongo syntax
-     * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($parentContentId, $filters = null, $sort = null);
+    public function getList($parentContentId);
 
     /**
      * Create an objet in the current collection
@@ -64,5 +62,13 @@ interface INestedContents
      * @return array
      */
     public function destroy($parentContentId, array $obj, $safe = true);
+	
+	/**
+	 * Find a nested content by its id and its parentId
+	 * 
+	 * @param string $parentContentId id of the parent content
+	 * @param string $subContentId id of the content we are looking for
+	 */
+    public function findById($parentContentId, $subContentId);
 
 }
