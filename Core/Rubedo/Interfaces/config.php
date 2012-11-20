@@ -67,6 +67,7 @@ class config
 		'Themes'					=>	'Rubedo\\Interfaces\\Collection\\IThemes',
 		'Wallpapers'				=>	'Rubedo\\Interfaces\\Collection\\IWallpapers',
 		'NestedContents'			=>	'Rubedo\\Interfaces\\Collection\\INestedContents',
+		'Pages'						=>	'Rubedo\\Interfaces\\Collection\\IPages'
 	);
 
     /**
