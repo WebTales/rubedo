@@ -58,17 +58,9 @@ class Page implements  IPage
         $pageService = Manager::getService('Masks');
 
         switch($pageId) {
-            case "index" :
-                $pageInfo['template'] = 'index.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'HeadLine', 'Input' => null, 'Output' => 'headline_content'), array('Module' => 'ContentList', 'Input' => null, 'Output' => 'contentlist_content'), array('Module' => 'Carrousel', 'Input' => null, 'Output' => 'carousel_content'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
             case "contact" :
                 $pageInfo['template'] = 'contact.html';
                 $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'SimpleContent', 'Input' => '300', 'Output' => 'bloc1'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'IFrame', 'Input' => null, 'Output' => 'bloc2'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
-            case "responsive" :
-                $pageInfo['template'] = 'responsive.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
                 break;
             case "accessible" :
                 $pageInfo['template'] = 'page.html';
@@ -98,12 +90,18 @@ class Page implements  IPage
                 $pageInfo['template'] = 'page.html';
                 $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
                 break;
+            case 'responsive' :
+                $pageInfo = $pageService->findById('50abb9259a199d040d000000');
+                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
+                $pageInfo['template'] = 'root/page.html';
+                //50abb9259a199d040d000000
+                break;
             case "search" :
                 $pageInfo = $pageService->findById('50ab7ee29a199dd107000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
                 break;
-            case "newpage" :
+            case "index" :
                 $pageInfo = $pageService->findById('50abb4e49a199d040c000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
@@ -136,7 +134,7 @@ class Page implements  IPage
     protected function _getBlocksInfos(array $blocks) {
         $returnArray = array();
         foreach ($blocks as $block) {
-	           $returnArray[]= Manager::getService('Block')->getBlockData($block);
+            $returnArray[] = Manager::getService('Block')->getBlockData($block);
         }
         return $returnArray;
     }

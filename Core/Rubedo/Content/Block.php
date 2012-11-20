@@ -54,7 +54,7 @@ class Block implements IBlock
                 $controller = 'content-single';
                 break;
             case 'carrousel' :
-				$controller = 'carrousel';
+                $controller = 'carrousel';
                 break;
             case 'accroches' :
                 $controller = 'content-list';
@@ -62,19 +62,22 @@ class Block implements IBlock
             case 'footer' :
                 $controller = 'footer';
                 break;
-			case 'recherche':
-				$controller = 'search';
-				break;
+            case 'recherche' :
+                $controller = 'search';
+                break;
+            case 'responsive' :
+                $controller = 'responsive';
+                break;
             default :
                 $data = array();
                 $template = 'root/block.html';
-				return array('data' => $data, 'template' => $template);
+                return array('data' => $data, 'template' => $template);
                 break;
         }
 
-		$response = Action::getInstance()->action('index', $controller, 'blocks');
-		$data = $response->getBody('content');
-       	$template = $response->getBody('template');
+        $response = Action::getInstance()->action('index', $controller, 'blocks');
+        $data = $response->getBody('content');
+        $template = $response->getBody('template');
         return array('data' => $data, 'template' => $template);
 
     }
