@@ -4,7 +4,7 @@
 
 <div class="block contentlist">
 	<div class="row-fluid">
-		{% for content in data['data'] %}
+		{% for content in data %}
 		<div class="span4">
 			<h2 class="editable" id="{{ content.id }}_title">{{ content.title|raw }}</h2>
 			<div class="editable" id="{{ content.id }}_paragraph">

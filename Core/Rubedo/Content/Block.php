@@ -48,35 +48,33 @@ class Block implements IBlock
     public function getBlockData($block) {
         switch($block['title']) {
             case 'menus' :
-                $response = Action::getInstance()->action('index', 'nav-bar', 'blocks');
-                $data = $response->getBody('content');
-                $template = 'root/blocks/navbar.html';
+                $controller = 'nav-bar';
                 break;
             case 'hero' :
-                $response = Action::getInstance()->action('index', 'content-single', 'blocks');
-                $data = $response->getBody('content');
-                $template = $response->getBody('template');
+                $controller = 'content-single';
                 break;
             case 'carrousel' :
-                $response = Action::getInstance()->action('index', 'carrousel', 'blocks');
-                $data = $response->getBody('content');
-                $template = $response->getBody('template');
+				$controller = 'carrousel';
                 break;
             case 'accroches' :
-                $response = Action::getInstance()->action('index', 'content-list', 'blocks');
-                $data = $response->getBody('content');
-                $template = $response->getBody('template');
+                $controller = 'content-list';
                 break;
             case 'footer' :
-                $response = Action::getInstance()->action('index', 'footer', 'blocks');
-                $data = $response->getBody('content');
-                $template = $response->getBody('template');
+                $controller = 'footer';
                 break;
+			case 'recherche':
+				$controller = 'search';
+				break;
             default :
                 $data = array();
                 $template = 'root/block.html';
+				return array('data' => $data, 'template' => $template);
                 break;
         }
+
+		$response = Action::getInstance()->action('index', $controller, 'blocks');
+		$data = $response->getBody('content');
+       	$template = $response->getBody('template');
         return array('data' => $data, 'template' => $template);
 
     }

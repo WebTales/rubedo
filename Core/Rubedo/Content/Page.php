@@ -99,18 +99,14 @@ class Page implements  IPage
                 $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
                 break;
             case "search" :
-                $pageInfo['template'] = 'result.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'), array('Module' => 'Search', 'Input' => null, 'Output' => 'search'));
-                break;
-            case "newpage" :
                 $pageInfo = $pageService->findById('50ab7ee29a199dd107000000');
-                //\Zend_Debug::dump($pageInfo['rows']);
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
-
-                //$page = $pageService->findById('50ab7ee29a199dd107000000');
-                //\Zend_Debug::dump($pageInfo);
-                //die();
+                break;
+            case "newpage" :
+                $pageInfo = $pageService->findById('50abb4e49a199d040c000000');
+                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
+                $pageInfo['template'] = 'root/page.html';
                 break;
         }
 

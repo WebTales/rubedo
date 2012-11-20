@@ -44,7 +44,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
             $session = Rubedo\Services\Manager::getService('Session');
             $lang = $session->get('lang', 'fr');
             $this->_serviceTemplate->init($lang);
-            $content = $this->_serviceTemplate->render($template, array('data' => $output));
+            $content = $this->_serviceTemplate->render($template, $output);
             if (is_array($css)) {
                 foreach ($css as $value) {
                     $this->view->headLink()->appendStylesheet($value);

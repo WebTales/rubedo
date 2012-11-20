@@ -4,7 +4,7 @@
 	</p>
 	<p>
 		<form class="form-search" action="{{baseUrl}}">
-			<input type="text" class="input-medium search-query" name="query" size="10" value="{{ data.searchTerms }}">
+			<input type="text" class="input-medium search-query" name="query" size="10" value="{{ searchTerms }}">
 			<button type="submit" class="btn">
 				{{"ok"|trans}}
 			</button>
@@ -13,108 +13,108 @@
 	<p>
 		<i class="icon-file"></i> {{"content_type"|trans}}
 	</p>
-	{% if (data.type == '') %}
+	{% if (type == '') %}
 	<ul>
-		{% for facet in data.typeFacets %}
+		{% for facet in typeFacets %}
 		<li>
-			<a href="{{ data.typeSearchRoot }}&type={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+			<a href="{{ typeSearchRoot }}&type={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
 		</li>
 		{% endfor %}
 	</ul>
 	{% else %}
 	<p style="padding-left: 20px">
-		{{data.type}} <a href="{{ data.typeSearchRoot }}"><i class="icon-remove-sign"></i></a>
+		{{type}} <a href="{{ typeSearchRoot }}"><i class="icon-remove-sign"></i></a>
 	</p>
 	{% endif %}
 	<p>
 		<i class="icon-user"></i> {{"author"|trans}}
 	</p>
-	{% if (data.author == '') %}
+	{% if (author == '') %}
 	<ul>
-		{% for facet in data.authorFacets %}
+		{% for facet in authorFacets %}
 		<li>
-			<a href="{{ data.authorSearchRoot }}&author={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+			<a href="{{ authorSearchRoot }}&author={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
 		</li>
 		{% endfor %}
 	</ul>
 	{% else %}
 	<p style="padding-left: 20px">
-		{{data.author}} <a href="{{ data.authorSearchRoot }}"><i class="icon-remove-sign"></i></a>
+		{{author}} <a href="{{ authorSearchRoot }}"><i class="icon-remove-sign"></i></a>
 	</p>
 	{% endif %}
 	<p>
 		<i class="icon-calendar"></i> {{"date"|trans}}
 	</p>
-	{% if (data.date == '') %}
+	{% if (date == '') %}
 	<ul>
-		{% for facet in data.dateFacets %}
+		{% for facet in dateFacets %}
 		<li>
-			<a href="{{ data.dateSearchRoot }}&date={{ facet.time }}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
+			<a href="{{ dateSearchRoot }}&date={{ facet.time }}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
 		</li>
 		{% endfor %}
 	</ul>
 	{% else %}
 	<p style="padding-left: 20px">
-		{{ (data.date/1000)|date("Y") }} <a href="{{ data.dateSearchRoot }}"><i class="icon-remove-sign"></i></a>
+		{{ (date/1000)|date("Y") }} <a href="{{ dateSearchRoot }}"><i class="icon-remove-sign"></i></a>
 	</p>
 	{% endif %}
 </div>
 <div class="span9">
-	{% if data.nbResults == 0 %}
+	{% if nbResults == 0 %}
 	<div class="alert alert-error">
 		{{"no_result"|trans}}
 	</div>
 	{% else %}
 	<div class="navbar">
 		<div class="navbar-inner">
-			<a class="brand">{% if data.nbResults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ data.nbResults }}</span> {% if data.nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
+			<a class="brand">{% if nbResults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ nbResults }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
 			<ul class="nav pull-right">
 				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if data.orderBy == "_score" %}
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if orderBy == "_score" %}
 					{{"order_by_relevance"|trans}}
 					{% endif %}
-					{% if data.orderBy == "lastUpdateTime" %}
+					{% if orderBy == "lastUpdateTime" %}
 					{{"order_by_date"|trans}}
 					{% endif %}
-					{% if data.orderBy == "author" %}
+					{% if orderBy == "author" %}
 					{{"order_by_author"|trans}}
 					{% endif %} <b class="caret"></b> </a>
 					<ul class="dropdown-menu">
-						{% if data.orderBy != "_score" %}
+						{% if orderBy != "_score" %}
 						<li>
-							<a href="{{ data.orderBySearchRoot }}&orderby=_score">{{"order_by_relevance"|trans}}</a>
+							<a href="{{ orderBySearchRoot }}&orderby=_score">{{"order_by_relevance"|trans}}</a>
 						</li>
 						{% endif %}
-						{% if data.orderBy != "lastUpdateTime" %}
+						{% if orderBy != "lastUpdateTime" %}
 						<li>
-							<a href="{{ data.orderBySearchRoot }}&orderby=lastUpdateTime">{{"order_by_date"|trans}}</a>
+							<a href="{{ orderBySearchRoot }}&orderby=lastUpdateTime">{{"order_by_date"|trans}}</a>
 						</li>
 						{% endif %}
-						{% if data.orderBy != "author" %}
+						{% if orderBy != "author" %}
 						<li>
-							<a href="{{ data.orderBySearchRoot }}&orderby=author">{{"order_by_author"|trans}}</a>
+							<a href="{{ orderBySearchRoot }}&orderby=author">{{"order_by_author"|trans}}</a>
 						</li>
 						{% endif %}
 					</ul>
 				</li>
 				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if data.pageSize=="all" %}
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if pageSize=="all" %}
 					{{"all_on_one_page"|trans}}
 					{% else %}
-					{{ data.pageSize }} {{"by_page"|trans}}
+					{{ pageSize }} {{"by_page"|trans}}
 					{% endif %} <b class="caret"></b> </a>
 					<ul class="dropdown-menu">
 						<li>
-							<a href="{{ data.pageSizeSearchRoot }}&pagesize=10">10 {{"by_page"|trans}}</a>
+							<a href="{{ pageSizeSearchRoot }}&pagesize=10">10 {{"by_page"|trans}}</a>
 						</li>
 						<li>
-							<a href="{{ data.pageSizeSearchRoot }}&pagesize=20">20 {{"by_page"|trans}}</a>
+							<a href="{{ pageSizeSearchRoot }}&pagesize=20">20 {{"by_page"|trans}}</a>
 						</li>
 						<li>
-							<a href="{{ data.pageSizeSearchRoot }}&pagesize=50">50 {{"by_page"|trans}}</a>
+							<a href="{{ pageSizeSearchRoot }}&pagesize=50">50 {{"by_page"|trans}}</a>
 						</li>
 						<li>
-							<a href="{{ data.pageSizeSearchRoot }}&pagesize=all">{{"all_on_one_page"|trans}}</a>
+							<a href="{{ pageSizeSearchRoot }}&pagesize=all">{{"all_on_one_page"|trans}}</a>
 						</li>
 					</ul>
 				</li>
@@ -122,7 +122,7 @@
 		</div>
 	</div>
 	<table class="table">
-		{% for result in data.results %}
+		{% for result in results %}
 		<tr>
 			<td><h3><a href="#">{{ result.title|raw }}</a></h3>
 			<div class="progress progress-success" style="width:50px; float: left;">
@@ -137,33 +137,33 @@
 		</tr>
 		{% endfor %}
 	</table>
-	{% if data.pageCount > 1 %}
+	{% if pageCount > 1 %}
 	<div class="pagination pagination-centered">
 		<ul>
 			<li class="disabled">
-				<a href="#">Page {{ data.pager+1 }} {{"on"|trans}} {{ data.pageCount }}</a>
+				<a href="#">Page {{ pager+1 }} {{"on"|trans}} {{ pageCount }}</a>
 			</li>
-			{% if data.pager==0 %}
+			{% if pager==0 %}
 			<li class="disabled">
 				<a href="#"><<</a>
 			</li>
 			{% else %}
 			<li>
-				<a href="{{ data.searchRoot }}&pager={{ data.pager-1 }}"><<</a>
+				<a href="{{ searchRoot }}&pager={{ pager-1 }}"><<</a>
 			</li>
 			{% endif %}
-			{% for i in range(0, data.pageCount-1) %}
+			{% for i in range(0, pageCount-1) %}
 			<li {% if pager==i %}class="disabled"{% endif %}>
-				<a href="{{ data.searchRoot }}&pager={{ i }}">{{ i+1 }}</a>
+				<a href="{{ searchRoot }}&pager={{ i }}">{{ i+1 }}</a>
 			</li>
 			{% endfor %}
-			{% if data.pager==data.pageCount-1 %}
+			{% if pager==pageCount-1 %}
 			<li class="disabled">
 				<a href="#">>></a>
 			</li>
 			{% else %}
 			<li>
-				<a href="{{ data.searchRoot }}&pager={{ data.pager+1 }}">>></a>
+				<a href="{{ searchRoot }}&pager={{ pager+1 }}">>></a>
 			</li>
 			{% endif %}
 		</ul>
