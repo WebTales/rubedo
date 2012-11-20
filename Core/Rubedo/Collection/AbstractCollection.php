@@ -128,6 +128,10 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_dataService->destroy($obj, $safe);
     }
 
+	public function customDelete($deleteCond,$safe=true){
+		return $this->_dataService->customDelete($deleteCond,$safe);
+	}
+
     /**
      * Find child of a node tree
      * @param string $parentId id of the parent node

@@ -996,5 +996,9 @@ class DataAccess implements IDataAccess
         $cursor = $this->_collection->find($filter, $fieldRule);
         return $cursor;
     }
+	
+	public function customDelete($deleteCond,$safe=true){
+		return $this->_collection->remove($deleteCond,array('safe'=>$safe));
+	}
 
 }
