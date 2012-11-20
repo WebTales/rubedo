@@ -11,13 +11,12 @@
 		<meta name="description" content="The Rubedo Project, open-source CMS with Zend Framework, MongoDB and Ext-JS">
 		<meta name="author" content="WebTales">
 		{% endblock %}
-		
+
 		{% block pageStyle %}
 		<!-- Le styles -->
 		{% for sheet in css %}
-			<link href="{{sheet}}" rel="stylesheet" />
+		<link href="{{sheet}}" rel="stylesheet" />
 		{% endfor %}
-
 
 		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -42,11 +41,6 @@
 		{% endblock %}
 
 		<div class="container-fluid">
-
-			{% block pageMenuBar %}
-			{% include 'root/navbarContent.html' with navbar_content only %}
-
-			{% endblock %}
 
 			{% block pageModals %}
 
@@ -188,21 +182,11 @@
 
 			<div class="container-fluid">
 				{% if rows %}
-					{% for row in rows %}
-							{% include 'root/row.html' with row only %}
-					{% endfor %}
+				{% for row in rows %}
+				{% include 'root/row.html' with row only %}
+				{% endfor %}
 				{% endif %}
 			</div>
-			{% endblock %}
-
-			{% block pageFooter %}
-			<hr>
-
-			<footer style="text-align : center">
-				<p>
-					&copy; WebTales 2012. Le projet Rubedo est supporté par <a href="http://www.centraleparis-incubateur.fr" target="_blank"><img src="/img/incubateur_centrale.png" alt="l'incubateur de centrale paris"/></a>
-				</p>
-			</footer>
 			{% endblock %}
 
 		</div><!--/.fluid-container-->
@@ -212,9 +196,9 @@
 		================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
 		{% for file in js %}
-			<script src="{{file}}"></script>
+		<script src="{{file}}"></script>
 		{% endfor %}
-		
+
 		<script src="/ckeditor-dev/ckeditor.js"></script>
 		<!--<script src="/extjs-4.1.1/ext-all.js"></script>-->
 		<!--<script src="/js/jquery.jeditable.mini.js"></script>-->

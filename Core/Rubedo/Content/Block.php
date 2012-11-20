@@ -42,55 +42,43 @@ class Block implements IBlock
 
     /**
      * Return the data associated to a block given by config array
-     * @param array $blockConfig bloc options (type, filter params...)
-     * @param array $page parent page info
-     * @param Zend_Controller_Action $parentController
+     * @param array $block bloc options (type, filter params...)
      * @return array block data to be rendered
      */
-    public function getBlockData($blockConfig, $page, $parentController) {
-
-        $this->_page = $page;
-        $helper = 'helper' . $blockConfig['Module'];
-        $output = $blockConfig['Output'];
-        $input = $blockConfig['Input'];
-        switch($blockConfig['Module']) {
-            case 'BreadCrumb' :
-                $content = $this->getBreadCrumb();
+    public function getBlockData($block) {
+        switch($block['title']) {
+            case 'menus' :
+                $response = Action::getInstance()->action('index', 'nav-bar', 'blocks');
+                $data = $response->getBody('content');
+                $template = 'root/blocks/navbar.html';
                 break;
-            case 'Carrousel' :
-                $response = Action::getInstance()->action('index', 'carrousel', 'blocks');
-                $content = $response->getBody('content');
-                break;
-            case 'ContentList' :
-                $response = Action::getInstance()->action('index', 'content-list', 'blocks');
-                $content = $response->getBody('content');
-
-                break;
-            case 'HeadLine' :
+            case 'hero' :
                 $response = Action::getInstance()->action('index', 'content-single', 'blocks');
-                $content = $response->getBody('content');
+                $data = $response->getBody('content');
+                $template = $response->getBody('template');
                 break;
-            case 'IFrame' :
-                $content = $this->getIFrame();
+            case 'carrousel' :
+                $response = Action::getInstance()->action('index', 'carrousel', 'blocks');
+                $data = $response->getBody('content');
+                $template = $response->getBody('template');
                 break;
-            case 'NavBar' :
-                $content = $this->getNavBar();
+            case 'accroches' :
+                $response = Action::getInstance()->action('index', 'content-list', 'blocks');
+                $data = $response->getBody('content');
+                $template = $response->getBody('template');
                 break;
-            case 'PopIn' :
-                $content = $this->getPopIn($input);
-                break;
-            case 'SimpleContent' :
-                $content = $this->getSimpleContent($input);
-                break;
-            case 'Search' :
-                $content = $this->getSearch($parentController);
+            case 'footer' :
+                $response = Action::getInstance()->action('index', 'footer', 'blocks');
+                $data = $response->getBody('content');
+                $template = $response->getBody('template');
                 break;
             default :
-                $content = null;
+                $data = array();
+                $template = 'root/block.html';
                 break;
         }
+        return array('data' => $data, 'template' => $template);
 
-        return array($output => $content);
     }
 
     /**

@@ -29,11 +29,9 @@ interface IBlock
 {
     /**
      * Return the data associated to a block given by config array
-     * @param array $blockConfig bloc options (type, filter params...)
-     * @param array $page parent page info
-     * @param Zend_Controller_Action $parentController
+     * @param array $block bloc options (type, filter params...)
      * @return array block data to be rendered
      */
-    public function getBlockData($blockConfig, $page, $parentController);
+    public function getBlockData($block);
 
 }
