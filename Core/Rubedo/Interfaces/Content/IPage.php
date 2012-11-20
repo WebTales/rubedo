@@ -22,14 +22,63 @@ namespace Rubedo\Interfaces\Content;
  * @category Rubedo
  * @package Rubedo
  */
-Interface IPage {
+Interface IPage
+{
 
-	/**
-	 * Return page infos based on its ID
-	 *
-	 * @param string|int $pageId requested URL
-	 * @return array
-	 */
-	public function getPageInfo($pageId);
+    /**
+     * Return page infos based on its ID
+     *
+     * @param string|int $pageId requested URL
+     * @return array
+     */
+    public function getPageInfo($pageId);
+
+    /**
+     * append a css file to the file list
+     * @param string $cssFile URL of the CSS added
+     */
+    public function appendCss($cssFile);
+
+    /**
+     * clear the included css files list
+     */
+    public function clearCss();
+
+    /**
+     * Return the list of css files
+     * @return array list of URL
+     */
+    public function getCss();
+
+    /**
+     * append a js file to the file list
+     * @param string $jsFile URL of the js added
+     */
+    public function appendJs($jsFile);
+
+    /**
+     * clear the included js files list
+     */
+    public function clearJs();
+
+    /**
+     * Return the list of js files
+     * @return array list of URL
+     */
+    public function getJs();
+
+    /**
+     * set the page title
+     *
+     * @param string $pageTitle page title
+     */
+    public function setPageTitle($pageTitle);
+
+    /**
+     * get the page title
+     *
+     * @return string page title
+     */
+    public function getPageTitle();
 
 }

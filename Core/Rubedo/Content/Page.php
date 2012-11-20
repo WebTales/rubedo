@@ -25,6 +25,26 @@ use Rubedo\Interfaces\Content\IPage;
  */
 class Page implements  IPage
 {
+    /**
+     * CSS to be included in the page
+     *
+     * @var array
+     */
+    protected static $_css = array();
+
+    /**
+     * JS to be included in the page
+     *
+     * @var array
+     */
+    protected static $_js = array();
+
+    /**
+     * Page title
+     *
+     * @var string
+     */
+    protected static $_title = '';
 
     /**
      * Current page parameters
@@ -39,7 +59,7 @@ class Page implements  IPage
      * @return array
      */
     public function getPageInfo($pageId) {
-		
+
         switch($pageId) {
             case "index" :
                 $this->_pageInfo['template'] = 'index.html';
@@ -85,29 +105,81 @@ class Page implements  IPage
                 $this->_pageInfo['template'] = 'result.html';
                 $this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'), array('Module' => 'Search', 'Input' => null, 'Output' => 'search'));
                 break;
-			case "newpage" : 
-				$this->_pageInfo['template'] = 'root/page.html';
-                $this->_pageInfo['blocks'] = array( 
-                									array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'),
-                									array('Module' => 'HeadLine', 'Input' => null, 'Output' => 'headline_content'), 
-                									array('Module' => 'ContentList', 'Input' => null, 'Output' => 'contentlist_content'), 
-                									array('Module' => 'Carrousel', 'Input' => null, 'Output' => 'carousel_content'));
-				break;
+            case "newpage" :
+                $this->_pageInfo['template'] = 'root/page.html';
+                $this->_pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'HeadLine', 'Input' => null, 'Output' => 'headline_content'), array('Module' => 'ContentList', 'Input' => null, 'Output' => 'contentlist_content'), array('Module' => 'Carrousel', 'Input' => null, 'Output' => 'carousel_content'));
+                break;
         }
 
-		$this->_pageInfo['css'] = array();
-		$this->_pageInfo['js'] = array();
-		$this->_pageInfo['title'] = '';
+        $this->_pageInfo['css'] = array();
+        $this->_pageInfo['js'] = array();
+        $this->_pageInfo['title'] = '';
 
         return $this->_pageInfo;
     }
 
-	public function addCss($cssFile){
-		
-	}
-	
-	public function addJs($JsFile){
-		
-	}
+    /**
+     * append a css file to the file list
+     * @param string $cssFile URL of the CSS added
+     */
+    public function appendCss($cssFile) {
+        self::$_css[] = $cssFile;
+    }
+
+    /**
+     * clear the included css files list
+     */
+    public function clearCss() {
+        self::$_css = array();
+    }
+
+    /**
+     * Return the list of css files
+     * @return array list of URL
+     */
+    public function getCss() {
+        return self::$_css;
+    }
+
+    /**
+     * append a js file to the file list
+     * @param string $jsFile URL of the js added
+     */
+    public function appendJs($jsFile) {
+        self::$_js[] = $jsFile;
+    }
+
+    /**
+     * clear the included js files list
+     */
+    public function clearJs() {
+        self::$_js = array();
+    }
+
+    /**
+     * Return the list of js files
+     * @return array list of URL
+     */
+    public function getJs() {
+        return self::$_js;
+    }
+
+    /**
+     * set the page title
+     *
+     * @param string $pageTitle page title
+     */
+    public function setPageTitle($pageTitle) {
+        self::$_title = $pageTitle;
+    }
+
+    /**
+     * get the page title
+     *
+     * @return string page title
+     */
+    public function getPageTitle() {
+        return self::$_title;
+    }
 
 }

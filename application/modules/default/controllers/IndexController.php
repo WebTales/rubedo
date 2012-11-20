@@ -97,7 +97,7 @@ class IndexController extends Zend_Controller_Action
 
             $twigVar['title'] = 'Rubedo - Titre de page';
             $twigVar['css'] = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
-            $twigVar['css'][] = '/css/' . $session->get('themeCSS', 'default') . ".bootstrap.min.css";
+            $twigVar['css'][] = '/css/' . $twigVar['theme'] . ".bootstrap.min.css";
            
 		    $twigVar['js'] = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
 
@@ -110,13 +110,6 @@ class IndexController extends Zend_Controller_Action
 
         $this->getResponse()->appendBody($content, 'default');
 
-    }
-
-    /**
-     * @todo delete this ASAP : use model class instead of HELPERS !!!
-     */
-    public function getProtectedHelper() {
-        return $this->_helper;
     }
 
 }
