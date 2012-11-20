@@ -102,6 +102,8 @@ class Acl implements  IAcl
 										'write.ui.masks',
 										'read.ui.users',
 										'write.ui.users',
+										'read.ui.sites',
+										'write.ui.sites',
 										'exe.ui.elasticSearch',
 										//'read.ui.pages',
 										//'write.ui.pages',
