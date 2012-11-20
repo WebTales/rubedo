@@ -15,7 +15,7 @@
 use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 
 /**
- * Login Defautl Controller
+ * Login Default Controller
  * 
  * Invoked when calling /backoffice/login URL
  *
@@ -39,7 +39,10 @@ class Backoffice_LoginController extends Zend_Controller_Action
     public function init() {
         $this->_auth = Rubedo\Services\Manager::getService('Authentication');
     }
-
+	
+	/**
+	 * Redirect the user to the backoffice if he's connected
+	 */
     public function indexAction ()
     {
         if($this->_auth->getIdentity()){

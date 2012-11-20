@@ -39,7 +39,10 @@ class Backoffice_LogoutController extends Zend_Controller_Action
     public function init() {
         $this->_auth = Rubedo\Services\Manager::getService('Authentication');
     }
-
+	
+	/**
+	 * Redirect the user to the login page if he's not connected
+	 */
     public function indexAction ()
     {
         if($this->_auth->getIdentity()){

@@ -16,7 +16,7 @@
 require_once('DataAccessController.php');
  
 /**
- * Controller providing CRUD API for the Groups JSON
+ * Controller providing CRUD API for the taxonomyTerms JSON
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
