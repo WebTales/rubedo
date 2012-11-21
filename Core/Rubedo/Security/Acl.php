@@ -52,6 +52,9 @@ class Acl implements  IAcl
 	 */
 	protected function groupHasAccess($resource, $groupId){
 		if(strpos($resource,'execute')!==false){
+			if(strpos($resource,'backoffice')!==false && $groupId == 'public' && (strpos($resource,'index')===false && strpos($resource,'login')===false)){
+				return false;
+			}
 			return true;
 		}
 		
@@ -77,7 +80,10 @@ class Acl implements  IAcl
 										'write.ui.contents.pendingToDraft',
 										'write.ui.contents.pendingToPublished',
 										'write.ui.contents.putOnline',
-										'write.ui.contents.putOffline');
+										'write.ui.contents.putOffline',
+										'read.ui.masks',
+										'read.ui.users',
+										'read.ui.contentTypes',);
 		$aclArray['admin']=array(		'read.ui.taxonomy',
 										'write.ui.taxonomy',
 										'read.ui.contentTypes',

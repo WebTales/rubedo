@@ -50,6 +50,10 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
 
         $loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
         $this->_twig = new \Twig_Environment($loader, $this->_options);
+		
+		$this->_twig->addExtension(new \Twig_Extension_Debug());
+		
+		
         $this->_twig->addExtension(new \Twig_Extension_Translate($lang));
 
         $this->_twig->addExtension(new \Twig_Extension_Highlight());

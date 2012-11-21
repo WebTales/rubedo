@@ -13,6 +13,8 @@
  * @version    $Id:
  */
 
+Use Rubedo\Controller\Action;
+
 /**
  * Front Office Defautl Controller
  *
@@ -74,37 +76,29 @@ class IndexController extends Zend_Controller_Action
         $this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
 
         $session = Rubedo\Services\Manager::getService('Session');
-        $lang = $session->get('lang','fr');
-		$this->_serviceTemplate->init($lang);
+        $lang = $session->get('lang', 'fr');
+        $this->_serviceTemplate->init($lang);
 
         $calledUri = $this->getRequest()->getRequestUri();
         $pageId = $this->_serviceUrl->getPageId($calledUri);
         $this->_pageParams = $this->_servicePage->getPageInfo($pageId);
 
-        $twigVar = array();
-        $twigVar['theme'] = $session->get('themeCSS','default');
+        $twigVar = $this->_pageParams;
+        $twigVar['theme'] = $session->get('themeCSS', 'default');
         $twigVar['lang'] = $lang;
 
-        foreach ($this->_pageParams['blocks'] as $block) {
-            $twigVar = array_merge($twigVar, $this->_serviceBlock->getBlockData($block, $pageId, $this));
-        }
-        //die();
+        $twigVar['title'] = 'Rubedo - Titre de page';
+        $twigVar['css'] = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
+        $twigVar['css'][] = '/css/' . $twigVar['theme'] . ".bootstrap.min.css";
+
+        $twigVar['js'] = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
+
         $content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
 
+        $this->getHelper('ViewRenderer')->setNoRender();
+        $this->getHelper('Layout')->disableLayout();
 
-		$this->getHelper('ViewRenderer')->setNoRender();
-		$this->getHelper('Layout')->disableLayout();
-		
         $this->getResponse()->appendBody($content, 'default');
 
     }
-
-    /**
-     * @todo delete this ASAP : use model class instead of HELPERS !!!
-     */
-    public function getProtectedHelper() {
-        return $this->_helper;
-    }
-	
-
 }

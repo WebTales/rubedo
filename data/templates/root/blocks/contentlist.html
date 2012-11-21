@@ -1,0 +1,27 @@
+{% extends "root/block.html" %}
+
+{% block mainContent %}
+
+<div class="block contentlist">
+	<div class="row-fluid">
+		{% for content in data %}
+		<div class="span4">
+			<h2 class="editable" id="{{ content.id }}_title">{{ content.title|raw }}</h2>
+			<div class="editable" id="{{ content.id }}_paragraph">
+				{{ content.paragraph|raw }}
+			</div>
+			{% if (content.link) %}
+			<div class="editable" id="{{ content.id }}_link">
+				{{ content.link|raw }}
+			</div>
+			{% endif %}
+		</div>
+		{% if loop.index % 3 == 0 %}
+	</div>
+	<div class="row-fluid">
+		{% endif %}
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
