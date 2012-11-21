@@ -88,8 +88,10 @@ class IndexController extends Zend_Controller_Action
         $twigVar['lang'] = $lang;
 
         $twigVar['title'] = 'Rubedo - Titre de page';
-        $twigVar['css'] = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
+        
         $twigVar['css'][] = '/css/' . $twigVar['theme'] . ".bootstrap.min.css";
+        $twigVar['css'][] = '/css/bootstrap-responsive.css';
+        $twigVar['css'][] = '/css/rubedo.css';
 
         $twigVar['js'] = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
 
