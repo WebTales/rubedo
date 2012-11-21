@@ -71,9 +71,9 @@ class IndexController extends Zend_Controller_Action
 		
 		
         $this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
-        $this->_servicePage = Rubedo\Services\Manager::getService('Page');
+        $this->_servicePage = Rubedo\Services\Manager::getService('PageContent');
         $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
-        $this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
+        $this->_serviceBlock = Rubedo\Services\Manager::getService('BlockContent');
 
         $session = Rubedo\Services\Manager::getService('Session');
         $lang = $session->get('lang', 'fr');

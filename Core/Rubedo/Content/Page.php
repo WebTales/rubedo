@@ -115,7 +115,7 @@ class Page implements  IPage
     protected function _getBlocksInfos(array $blocks) {
         $returnArray = array();
         foreach ($blocks as $block) {
-            $returnArray[] = Manager::getService('Block')->getBlockData($block);
+            $returnArray[] = Manager::getService('BlockContent')->getBlockData($block);
         }
         return $returnArray;
     }
