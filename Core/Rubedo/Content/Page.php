@@ -59,57 +59,31 @@ class Page implements  IPage
 
         switch($pageId) {
             case "contact" :
-				$this->setPageTitle('Contact');
+                $this->setPageTitle('Contact');
                 $pageInfo = $pageService->findById('50acc4789a199dcf04000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-				
                 $pageInfo['template'] = 'root/page.html';
-                break;
-            case "accessible" :
-                $pageInfo['template'] = 'page.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
-            case "performant" :
-                $pageInfo['template'] = 'page.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
-            case "ergonomic" :
-                $pageInfo['template'] = 'page.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
-            case "rich" :
-                $pageInfo['template'] = 'page.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_whoarewe'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
-            case "extensible" :
-                $pageInfo['template'] = 'page.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
-            case "solid" :
-                $pageInfo['template'] = 'page.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
-                break;
-            case "durable" :
-                $pageInfo['template'] = 'page.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
                 break;
             case 'responsive' :
                 $this->setPageTitle('Responsive');
                 $pageInfo = $pageService->findById('50acac2b9a199dbd04000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
-
-                //50abb9259a199d040d000000
                 break;
             case "search" :
                 $this->setPageTitle('Recherche');
                 $pageInfo = $pageService->findById('50acaa0d9a199da404000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
-
                 break;
             case "index" :
                 $pageInfo = $pageService->findById('50aca84f9a199dd102000000');
+                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
+                $pageInfo['template'] = 'root/page.html';
+                break;
+            default :
+                $this->setPageTitle($pageId);
+                $pageInfo = $pageService->findById('50accfb79a199db007000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
                 break;

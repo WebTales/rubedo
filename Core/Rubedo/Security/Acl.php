@@ -52,7 +52,7 @@ class Acl implements  IAcl
 	 */
 	protected function groupHasAccess($resource, $groupId){
 		if(strpos($resource,'execute')!==false){
-			if(strpos($resource,'backoffice')!==false && $groupId == 'public'){
+			if(strpos($resource,'backoffice')!==false && $groupId == 'public' && (strpos($resource,'index')===false && strpos($resource,'login')===false)){
 				return false;
 			}
 			return true;
