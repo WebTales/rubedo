@@ -65,6 +65,9 @@ class Block implements IBlock
             case 'recherche' :
                 $controller = 'search';
                 break;
+            case 'breadcrumb' :
+                $controller = 'breadcrumbs';
+                break;
             case 'responsive' :
                 $controller = 'responsive';
                 break;

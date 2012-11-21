@@ -91,18 +91,22 @@ class Page implements  IPage
                 $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
                 break;
             case 'responsive' :
-                $pageInfo = $pageService->findById('50abb9259a199d040d000000');
+                $this->setPageTitle('Responsive');
+                $pageInfo = $pageService->findById('50acac2b9a199dbd04000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
+
                 //50abb9259a199d040d000000
                 break;
             case "search" :
-                $pageInfo = $pageService->findById('50ab7ee29a199dd107000000');
+                $this->setPageTitle('Recherche');
+                $pageInfo = $pageService->findById('50acaa0d9a199da404000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
+
                 break;
             case "index" :
-                $pageInfo = $pageService->findById('50abb4e49a199d040c000000');
+                $pageInfo = $pageService->findById('50aca84f9a199dd102000000');
                 $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
                 $pageInfo['template'] = 'root/page.html';
                 break;
@@ -121,9 +125,9 @@ class Page implements  IPage
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
-            if (is_array($column['bloc'])) {
-                $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['bloc']);
-                unset($returnArray[$key]['bloc']);
+            if (is_array($column['blocks'])) {
+                $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
+                //unset($returnArray[$key]['bloc']);
             } else {
                 $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
             }
