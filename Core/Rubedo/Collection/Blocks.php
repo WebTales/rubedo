@@ -28,7 +28,7 @@ class Blocks extends AbstractCollection implements IBlocks
 	
 
 	public function __construct(){
-		$this->_collectionName = 'Blocs';
+		$this->_collectionName = 'Blocks';
 		parent::__construct();
 	}
 	

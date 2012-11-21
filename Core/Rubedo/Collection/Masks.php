@@ -28,7 +28,7 @@ class Masks extends AbstractCollection implements IMasks
 	
 
 	public function __construct(){
-		$this->_collectionName = 'Masques';
+		$this->_collectionName = 'Masks';
 		parent::__construct();
 	}
 	
