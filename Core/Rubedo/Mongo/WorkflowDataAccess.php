@@ -60,13 +60,15 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	 * @return array
 	 */
 	protected function _outputObjectFilter($obj){
-		if(isset($obj['live']) || isset($obj['workspace'])){
+
+		if(isset($obj[$this->_currentWs])){
 			foreach ($obj[$this->_currentWs] as $key => $value){
 				$obj[$key] = $value;
 			}
 			unset($obj['live']);
 			unset($obj['workspace']);
 		}
+
 		return $obj;
 	}
 	
@@ -190,7 +192,19 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	 * Publish a content
 	 */
 	public function publish($objectId){
+		$obj = $this->_collection->findOne(array('_id' => $this->getId($objectId)));
+	
+		if(isset($obj['workspace'])){
+			$obj['live'] = $obj['workspace'];
+			
+			$updateCond = array('_id' => $this->getId($objectId));
 		
+			$returnArray = $this->customUpdate($obj, $updateCond);
+		} else {
+			$returnArray = array('success' => false);
+		}
+		
+		return $returnArray;
 	}
 	
 	/**
@@ -212,7 +226,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		$content = parent::read();
 		
 		foreach ($content as $key => $value) {
-			$content[$key] = $this->_outputObjectFilter($content[$key]);
+			$content[$key]= $this->_outputObjectFilter($value);
 		}
 		
 		return $content;
@@ -230,13 +244,6 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		
 		$result['data'] = $this->_outputObjectFilter($result['data']);
 		
-		if(isset($obj[$this->_currentWs]['status'])){
-			if($this->_currentWs == 'workspace' && $obj[$this->_currentWs]['status']=='published'){
-				//do publish action
-				//call version service
-			}
-		}
-		
 		return $result;
 	}
 	
@@ -246,11 +253,31 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	 * @return array
 	 */
 	public function create(array $obj, $safe = true){
+		$obj = $this->_inputObjectFilter($obj);
+		
+		if($this->_currentWs === 'workspace'){
+			$obj['live'] = array();
+		} else {
+			$obj['workspace'] = array();
+		}
 		$result = parent::create($obj, $safe);
 		
 		$result['data'] = $this->_outputObjectFilter($result['data']);
 		
 		return $result;
 	}
-
+	
+	/**
+     * Delete objets in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::destroy
+     * @param array $obj data object
+     * @param bool $safe should we wait for a server response
+     * @return array
+     */
+    public function destroy(array $obj, $safe = true) {
+        $result = parent::destroy($obj, $safe);
+		
+		return $result;
+    }
 }

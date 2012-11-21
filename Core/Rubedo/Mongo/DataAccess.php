@@ -56,7 +56,7 @@ class DataAccess implements IDataAccess
      *
      * @var \MongoCollection
      */
-    private $_collection;
+    protected $_collection;
 
     /**
      * Object which represent the mongoDB database

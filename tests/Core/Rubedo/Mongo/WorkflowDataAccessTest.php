@@ -40,7 +40,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         // reset any existing blueprints and empty any tables Phactory has used
         static::$phactory->reset();
 		
-		static::$phactory->define('fields',array('name' => 'Test item'));
+		static::$phactory->define('fields',array());
 			
         // define default values for each user we will create
         static::$phactory->define('item',array('version'=>1), array('live'=>static::$phactory->embedsOne('fields'),'workspace'=>static::$phactory->embedsOne('fields')));
@@ -113,7 +113,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $item['version'] = 1;
         unset($item['_id']);
 		
-		$targetItem = array('id'=>$item['id'],'version'=>$item['version'],'name'=>'Test item','label'=>'test live');
+		$targetItem = array('id'=>$item['id'],'version'=>$item['version'],'label'=>'test live');
 		
         $items[] = $targetItem;
 
@@ -147,7 +147,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $item['version'] = 1;
         unset($item['_id']);
 		
-		$targetItem = array('id'=>$item['id'],'version'=>$item['version'],'name'=>'Test item','label'=>'test draft');
+		$targetItem = array('id'=>$item['id'],'version'=>$item['version'],'label'=>'test draft');
 		
         $items[] = $targetItem;
 
@@ -177,7 +177,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 		$item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test draft'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test draft'));
 		
 		$filter = array('id' => $item['id']);
         $result = $dataAccessObject->addFilter($filter);
@@ -206,7 +206,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 		$item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test live'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test live'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test live'), array('id' => $item2['id'], 'version' => 1, 'label' => 'test live'));
 
         $dataAccessObject->addSort(array('id' => 'asc'));
 
@@ -234,7 +234,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 		$item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test live'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test live'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test live'), array('id' => $item2['id'], 'version' => 1, 'label' => 'test live'));
 
         $dataAccessObject->addSort(array('id' => 'asc'));
 		$dataAccessObject->addSort(array('name' => 'asc'));
@@ -271,7 +271,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->addToFieldList($includedFields);
 		$dataAccessObject->addSort($sort);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1), array('id' => $item2['id'], 'version' => 1));
 
         $readArray = $dataAccessObject->read();
 
@@ -305,7 +305,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->addToFieldList($includedFields);
 		$dataAccessObject->addSort($sort);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test draft'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item', 'label' => 'test draft'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test draft'), array('id' => $item2['id'], 'version' => 1, 'label' => 'test draft'));
 
         $readArray = $dataAccessObject->read();
 
@@ -339,7 +339,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->addToExcludeFieldList($excludedFields);
 		$dataAccessObject->addSort($sort);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1), array('id' => $item2['id'], 'version' => 1));
 
         $readArray = $dataAccessObject->read();
 
@@ -373,7 +373,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->addToExcludeFieldList($excludedFields);
 		$dataAccessObject->addSort($sort);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'name' => 'Test item'), array('id' => $item2['id'], 'version' => 1, 'name' => 'Test item'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1), array('id' => $item2['id'], 'version' => 1));
 
         $readArray = $dataAccessObject->read();
 
@@ -392,14 +392,22 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->init('items', 'test_db');
 		$dataAccessObject->setWorkspace();
 
-        $item = array('name' => 'item', 'live' => array('name' => 'test live', 'label' => 'live'), 'workspace' => array('name' => 'test draft', 'label' => 'draft'));
+        $item = array('name' => 'test draft', 'label' => 'draft');
 
         $createArray = $dataAccessObject->create($item, true);
 		
         $this->assertTrue($createArray["success"]);
-        $expectedResult = array('name' => 'test draft', 'label' => 'draft', 'version' => $createArray['data']['version'], 'lastUpdateUser' => NULL, 'createUser' => NULL, 'createTime' => NULL,	'lastUpdateTime' => NULL, 'id' => $createArray['data']['id']);
-
+		
+        $expectedResult = array('name' => 'test draft', 'label' => 'draft', 'version' => $createArray['data']['version'], 'lastUpdateUser' => null, 'createUser' => null, 'createTime' => null,	'lastUpdateTime' => null, 'id' => $createArray['data']['id']);
+		
+		$dataBaseResult = static::$phactory->get('items', array('version' => 1));
+		$dataBaseResult['id'] = (string)$dataBaseResult['_id'];
+		unset($dataBaseResult['_id']);
+		
+		$dataBaseExpectedResult = array('workspace' => array('name' => 'test draft', 'label' => 'draft'), 'live' => array(),'version' => $dataBaseResult['version'], 'lastUpdateUser' => null, 'createUser' => null, 'createTime' => null, 'lastUpdateTime' => null, 'id' => $dataBaseResult['id']);
+		
         $this->assertEquals($expectedResult, $createArray['data']);
+		$this->assertEquals($dataBaseExpectedResult, $dataBaseResult);
 
     }
 
@@ -432,7 +440,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
 		$item['live']['label'] = 'test live';
 		unset($item['_id']);
 		
-		$inputItem = array('id'=>$item['id'],'version'=>$item['version'],'name'=>'Test item','label'=>'test draft updated');
+		$inputItem = array('id'=>$item['id'],'version'=>$item['version'],'label'=>'test draft updated');
 		        
         $updateArray = $dataAccessObject->update($inputItem, true);
 
@@ -496,6 +504,25 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $this->assertNull($readItem);
     }
 
-   
+	/**
+	 * Test to publish a content
+	 */
+	public function testPublish(){
+		$dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setWorkspace();
+
+        $fieldsLive = static::$phactory->build('fields',array());
+		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft', 'password' => 'test'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
+		$item['id'] = (string)$item['_id'];
+		unset($item['_id']);
+		
+		$expectedResult = array('live' => array('label' => 'test draft', 'password' => 'test'), 'workspace' => array('label' => 'test draft', 'password' => 'test'));
+		
+		$result = $dataAccessObject->publish($item['id']);
+
+		$this->assertTrue($result['success']);
+	}
 
 }
