@@ -59,8 +59,11 @@ class Page implements  IPage
 
         switch($pageId) {
             case "contact" :
-                $pageInfo['template'] = 'contact.html';
-                $pageInfo['blocks'] = array( array('Module' => 'NavBar', 'Input' => null, 'Output' => 'navbar_content'), array('Module' => 'BreadCrumb', 'Input' => null, 'Output' => 'liens'), array('Module' => 'SimpleContent', 'Input' => '300', 'Output' => 'bloc1'), array('Module' => 'PopIn', 'Input' => 1, 'Output' => 'popin_about'), array('Module' => 'PopIn', 'Input' => 2, 'Output' => 'popin_connect'), array('Module' => 'IFrame', 'Input' => null, 'Output' => 'bloc2'), array('Module' => 'PopIn', 'Input' => 3, 'Output' => 'popin_confirm'));
+				$this->setPageTitle('Contact');
+                $pageInfo = $pageService->findById('50acc4789a199dcf04000000');
+                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
+				
+                $pageInfo['template'] = 'root/page.html';
                 break;
             case "accessible" :
                 $pageInfo['template'] = 'page.html';

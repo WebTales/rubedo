@@ -46,6 +46,8 @@ class Block implements IBlock
      * @return array block data to be rendered
      */
     public function getBlockData($block) {
+    	
+		$params= array();
         switch($block['title']) {
             case 'menus' :
                 $controller = 'nav-bar';
@@ -71,6 +73,13 @@ class Block implements IBlock
             case 'responsive' :
                 $controller = 'responsive';
                 break;
+			case 'map' :
+				$controller = 'iframe';
+				break;
+			case 'contact-info':
+				$controller = 'simple-content';
+				$params= array('content-id'=>'50accbfd9a199dde06000000');
+				break;
             default :
                 $data = array();
                 $template = 'root/block.html';
@@ -78,7 +87,7 @@ class Block implements IBlock
                 break;
         }
 
-        $response = Action::getInstance()->action('index', $controller, 'blocks');
+        $response = Action::getInstance()->action('index', $controller, 'blocks',$params);
         $data = $response->getBody('content');
         $template = $response->getBody('template');
         return array('data' => $data, 'template' => $template);
