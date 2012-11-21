@@ -23,7 +23,7 @@ use Rubedo\Interfaces\Collection\IContents;
  * @category Rubedo
  * @package Rubedo
  */
-class Contents extends AbstractCollection implements IContents
+class Contents extends WorkflowAbstractCollection implements IContents
 {
 
     public function __construct() {
