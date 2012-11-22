@@ -78,9 +78,18 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 			$this->_dataService->setWorkspace();
 		}
 		
-        $result = parent::create($obj, $safe);
+        $returnArray = parent::create($obj, $safe);
 		
-		return $result;
+		if($returnArray['data']['status'] === 'published'){
+			$result = $this->_dataService->publish($returnArray['data']['id']);
+			
+			if(!$result['success']){
+				$returnArray['success'] = false;
+				$returnArray['msg'] = "failed to publish the content";
+			}
+		}
+		
+		return $returnArray;
     }
 	
 	/**
@@ -95,9 +104,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 			$this->_dataService->setWorkspace();
 		}
 		
-        $result = parent::findById($contentId);
+        $returnArray = parent::findById($contentId);
 		
-		return $result;
+		return $returnArray;
     }
 	
 	/**
@@ -114,9 +123,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 			$this->_dataService->setWorkspace();
 		}
 		
-        $result = parent::getList($filters, $sort);
+        $returnArray = parent::getList($filters, $sort);
 		
-		return $result;
+		return $returnArray;
     }
 	
 	/**
@@ -133,9 +142,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 			$this->_dataService->setWorkspace();
 		}
 		
-        $result = parent::readChild($parentId, $filters, $sort);
+        $returnArray = parent::readChild($parentId, $filters, $sort);
 		
-		return $result;
+		return $returnArray;
     }
 
 }

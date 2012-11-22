@@ -59,4 +59,14 @@ interface IWorkflowDataAccess extends IDataAccess{
 	 * @return array
 	 */
 	public function create(array $obj, $safe = true);
+	
+	/**
+     * Delete objets in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::destroy
+     * @param array $obj data object
+     * @param bool $safe should we wait for a server response
+     * @return array
+     */
+    public function destroy(array $obj, $safe = true);
 }
