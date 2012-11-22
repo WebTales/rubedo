@@ -97,7 +97,6 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 			}
 			
 			$this->addFilter($filterArray);
-			return $filterArray;
 		}
 	}
 	

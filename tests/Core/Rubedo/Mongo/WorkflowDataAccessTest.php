@@ -161,25 +161,57 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
      * test of the read feature
      *	Case with a simple filter
      */
-    public function testReadWithFilter() {
+    public function testReadWithFilterWithUncommonFields() {
         $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
         $dataAccessObject->init('items', 'test_db');
 		$dataAccessObject->setWorkspace();
 
-        $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
-		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
-        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
-		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
-		
+        $fieldsLive1 = static::$phactory->build('fields',array('label'=>'test live 1'));
+		$fieldsDraft1 = static::$phactory->build('fields',array('label'=>'test draft 1'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive1,'workspace'=>$fieldsDraft1));
 		$item['id'] = (string)$item['_id'];
         unset($item['_id']);
 		
+		$fieldsLive2 = static::$phactory->build('fields',array('label'=>'test live 2'));
+		$fieldsDraft2 = static::$phactory->build('fields',array('label'=>'test draft 2'));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive2,'workspace'=>$fieldsDraft2));
 		$item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test draft'));
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test draft 1'));
 		
-		$filter = array('id' => $item['id']);
+		$filter = array('label' => $item['workspace']['label']);
+        $result = $dataAccessObject->addFilter($filter);
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+    }
+
+	/**
+     * test of the read feature
+     *	Case with a simple filter
+     */
+    public function testReadWithFilterWithCommonFields() {
+        $dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setWorkspace();
+
+        $fieldsLive1 = static::$phactory->build('fields',array('label'=>'test live 1'));
+		$fieldsDraft1 = static::$phactory->build('fields',array('label'=>'test draft 1'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive1,'workspace'=>$fieldsDraft1));
+		$item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+		
+		$fieldsLive2 = static::$phactory->build('fields',array('label'=>'test live 2'));
+		$fieldsDraft2 = static::$phactory->build('fields',array('label'=>'test draft 2'));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive2,'workspace'=>$fieldsDraft2));
+		$item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+		$expectedResult = array(array('id' => $item2['id'], 'version' => 1, 'label' => 'test draft 2'));
+		
+		$filter = array('id' => $item2['id']);
         $result = $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->read();
@@ -188,25 +220,55 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
     }
 	
 	/**
-	 * Try to read with a sort
+	 * Try to read with a sort on uncommon fields (id, createUser, LastUpdateTime ...)
 	 */
-	public function testReadWithSort(){
+	public function testReadWithSortWithUncommonFields(){
 		$dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
         $dataAccessObject->init('items', 'test_db');
 		$dataAccessObject->setLive();
 
-        $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
-		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
-        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
-		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
-		
+        $fieldsLive1 = static::$phactory->build('fields',array('label'=>'b'));
+		$fieldsDraft1 = static::$phactory->build('fields',array('label'=>'b'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive1,'workspace'=>$fieldsDraft1));
 		$item['id'] = (string)$item['_id'];
         unset($item['_id']);
 		
+		$fieldsLive2 = static::$phactory->build('fields',array('label'=>'a'));
+		$fieldsDraft2 = static::$phactory->build('fields',array('label'=>'a'));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive2,'workspace'=>$fieldsDraft2));
 		$item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test live'), array('id' => $item2['id'], 'version' => 1, 'label' => 'test live'));
+		$expectedResult = array(array('id' => $item2['id'], 'version' => 1, 'label' => 'a'), array('id' => $item['id'], 'version' => 1, 'label' => 'b'));
+
+        $dataAccessObject->addSort(array('label' => 'asc'));
+
+        $readArray = $dataAccessObject->read();
+
+        $this->assertEquals($expectedResult, $readArray);
+	}
+
+	/**
+	 * Try to read with a sort on common fields
+	 */
+	public function testReadWithSortWithCommonFields(){
+		$dataAccessObject = new \Rubedo\Mongo\WorkflowDataAccess();
+        $dataAccessObject->init('items', 'test_db');
+		$dataAccessObject->setLive();
+
+        $fieldsLive1 = static::$phactory->build('fields',array('label'=>'b'));
+		$fieldsDraft1 = static::$phactory->build('fields',array('label'=>'b'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive1,'workspace'=>$fieldsDraft1));
+		$item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+		
+		$fieldsLive2 = static::$phactory->build('fields',array('label'=>'a'));
+		$fieldsDraft2 = static::$phactory->build('fields',array('label'=>'a'));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive2,'workspace'=>$fieldsDraft2));
+		$item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+		
+		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'b'), array('id' => $item2['id'], 'version' => 1, 'label' => 'a'));
 
         $dataAccessObject->addSort(array('id' => 'asc'));
 
@@ -223,21 +285,28 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase {
         $dataAccessObject->init('items', 'test_db');
 		$dataAccessObject->setLive();
 
-        $fieldsLive = static::$phactory->build('fields',array('label'=>'test live'));
-		$fieldsDraft = static::$phactory->build('fields',array('label'=>'test draft'));
-        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
-		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive,'workspace'=>$fieldsDraft));
-		
+        $fieldsLive1 = static::$phactory->build('fields',array('label'=>'test live', 'name' => 'test'));
+		$fieldsDraft1 = static::$phactory->build('fields',array('label'=>'test draft', 'name' => 'test'));
+        $item = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive1,'workspace'=>$fieldsDraft1));
 		$item['id'] = (string)$item['_id'];
         unset($item['_id']);
 		
+		$fieldsLive2 = static::$phactory->build('fields',array('label'=>'test live', 'name' => 'test'));
+		$fieldsDraft2 = static::$phactory->build('fields',array('label'=>'test draft', 'name' => 'test'));
+		$item2 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive2,'workspace'=>$fieldsDraft2));
 		$item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 		
-		$expectedResult = array(array('id' => $item['id'], 'version' => 1, 'label' => 'test live'), array('id' => $item2['id'], 'version' => 1, 'label' => 'test live'));
+		$fieldsLive3 = static::$phactory->build('fields',array('label'=>'test live', 'name' => 'test 2'));
+		$fieldsDraft3 = static::$phactory->build('fields',array('label'=>'test draft', 'name' => 'test 2'));
+		$item3 = static::$phactory->createWithAssociations('item', array('live'=>$fieldsLive3,'workspace'=>$fieldsDraft3));
+		$item3['id'] = (string)$item3['_id'];
+        unset($item3['_id']);
+		
+		$expectedResult = array(array('id' => $item3['id'], 'version' => 1, 'label' => 'test live', 'name'=>'test 2'), array('id' => $item['id'], 'version' => 1, 'label' => 'test live', 'name'=>'test'), array('id' => $item2['id'], 'version' => 1, 'label' => 'test live', 'name'=>'test'));
 
+		$dataAccessObject->addSort(array('name' => 'desc'));
         $dataAccessObject->addSort(array('id' => 'asc'));
-		$dataAccessObject->addSort(array('name' => 'asc'));
 
         $readArray = $dataAccessObject->read();
 
