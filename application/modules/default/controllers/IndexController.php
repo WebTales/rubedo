@@ -71,9 +71,9 @@ class IndexController extends Zend_Controller_Action
 		
 		
         $this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
-        $this->_servicePage = Rubedo\Services\Manager::getService('Page');
+        $this->_servicePage = Rubedo\Services\Manager::getService('PageContent');
         $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
-        $this->_serviceBlock = Rubedo\Services\Manager::getService('Block');
+        $this->_serviceBlock = Rubedo\Services\Manager::getService('BlockContent');
 
         $session = Rubedo\Services\Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
@@ -88,8 +88,10 @@ class IndexController extends Zend_Controller_Action
         $twigVar['lang'] = $lang;
 
         $twigVar['title'] = 'Rubedo - Titre de page';
-        $twigVar['css'] = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
+        
         $twigVar['css'][] = '/css/' . $twigVar['theme'] . ".bootstrap.min.css";
+        $twigVar['css'][] = '/css/bootstrap-responsive.css';
+        $twigVar['css'][] = '/css/rubedo.css';
 
         $twigVar['js'] = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
 

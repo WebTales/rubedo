@@ -31,7 +31,7 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
      */
     public function indexAction() {
 
-		$links = array(array('libelle' => 'Accueil', 'controller' => 'index', 'current' => false), array('libelle' => Manager::getService('Page')->getPageTitle(), 'controller' => '#', 'current' => true));
+		$links = array(array('libelle' => 'Accueil', 'controller' => 'index', 'current' => false), array('libelle' => Manager::getService('PageContent')->getPageTitle(), 'controller' => '#', 'current' => true));
 		
         $output= array('liens' => $links);
 
