@@ -191,16 +191,33 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 	 * Publish a content
 	 */
 	public function publish($objectId){
+		$versioningService = \Rubedo\Services\Manager::getService('Versioning');
 		$obj = $this->_collection->findOne(array('_id' => $this->getId($objectId)));
-	
+		
 		if(isset($obj['workspace'])){
+			//define the publish values for the version handling
+			$version = $obj;
+			
+			//copy the workspace into the live
 			$obj['live'] = $obj['workspace'];
 			
 			$updateCond = array('_id' => $this->getId($objectId));
-		
+			
+			//update the content with the new values for the live array
 			$returnArray = $this->customUpdate($obj, $updateCond);
+			
+			//if the update is ok, the previous version of the live is stored in Versioning collection
+			if($returnArray['success']){
+				$result = $versioningService->addVersion($version);
+				if(!$result){
+					$returnArray['success'] = false;
+					unset($returnArray['data']);
+				}
+			} else {
+				$returnArray = array('success' => false, 'msg' => 'failed to update the version');
+			}
 		} else {
-			$returnArray = array('success' => false);
+			$returnArray = array('success' => false, 'msg' => 'failed to publish');
 		}
 		
 		return $returnArray;
@@ -241,9 +258,15 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 		
 		$result = parent::update($obj, $safe);
 		
-		$result['data'] = $this->_outputObjectFilter($result['data']);
+		if($result['success']){
+			$result['data'] = $this->_outputObjectFilter($result['data']);
+			return $result;
+		} else {
+			$result = array('success' => false);
+			return $result;
+		}
 		
-		return $result;
+		
 	}
 	
 	/**

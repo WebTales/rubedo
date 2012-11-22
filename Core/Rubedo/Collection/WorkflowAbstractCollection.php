@@ -50,14 +50,19 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		}
 		
 		$returnArray = parent::update($obj, $safe);
-		
-		if($returnArray['data']['status'] === 'published'){
-			$result = $this->_dataService->publish($returnArray['data']['id']);
-			
-			if(!$result['success']){
-				$returnArray['success'] = false;
-				$returnArray['msg'] = "failed to publish the content";
+		//var_dump($returnArray);die();
+		if($returnArray['success']){
+			if($returnArray['data']['status'] === 'published'){
+				$result = $this->_dataService->publish($returnArray['data']['id']);
+				
+				if(!$result['success']){
+					$returnArray['success'] = false;
+					$returnArray['msg'] = "failed to publish the content";
+					unset($returnArray['data']);
+				}
 			}
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'failed to update');
 		}
 		
 		return $returnArray;
@@ -80,12 +85,14 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		
         $returnArray = parent::create($obj, $safe);
 		
-		if($returnArray['data']['status'] === 'published'){
-			$result = $this->_dataService->publish($returnArray['data']['id']);
-			
-			if(!$result['success']){
-				$returnArray['success'] = false;
-				$returnArray['msg'] = "failed to publish the content";
+		if(isset($returnArray['data']['status'])){
+			if($returnArray['data']['status'] === 'published'){
+				$result = $this->_dataService->publish($returnArray['data']['id']);
+				
+				if(!$result['success']){
+					$returnArray['success'] = false;
+					$returnArray['msg'] = "failed to publish the content";
+				}
 			}
 		}
 		
