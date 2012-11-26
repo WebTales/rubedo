@@ -429,6 +429,15 @@ class DataAccess implements IDataAccess
     public function findById($contentId) {
         return $this->findOne(array('_id' => $this->getId($contentId)));
     }
+    
+    /**
+     * Find an item given by its name (find only one if many)
+     * @param string $name
+     * @return array
+     */
+    public function findByName($name){
+        return $this->findOne(array('text' => $name));
+    }
 
     /**
      * Create an objet in the current collection
