@@ -35,6 +35,10 @@ class Versioning extends AbstractCollection implements IVersioning
 		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
 		$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
 		
+		$createUser = null;
+		$createTime = null;
+		$version = null;
+		
 		$contentId = (string)$obj['_id'];
 		
 		$filter = array('contentId' => $contentId);
@@ -45,13 +49,23 @@ class Versioning extends AbstractCollection implements IVersioning
 		
 		$contentVersions = $this->_dataService->read();
 		
+		if(isset($obj['createUser'])){
+			$createUser = $obj['createUser'];
+		}
+		if(isset($obj['createTime'])){
+			$createTime = $obj['createTime'];
+		}
+		if(isset($obj['version'])){
+			$version = $obj['version'];
+		}
+		
 		$version = array(
 			'contentId' 			=> $contentId,
 			'publishUser' 			=> $currentUserService->getCurrentUserSummary(),
 			'publishTime'			=> $currentTime = $currentTimeService->getCurrentTime(),
-			'contentCreateUser'		=> $obj['createUser'],
-			'contentCreateTime'		=> $obj['createTime'],
-			'contentVersion'		=> $obj['version']
+			'contentCreateUser'		=> $createUser,
+			'contentCreateTime'		=> $createTime,
+			'contentVersion'		=> $version
 		);
 		
 		if(count($contentVersions) > 0){
