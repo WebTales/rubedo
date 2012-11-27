@@ -85,8 +85,8 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 
             foreach ($filterArray as $key => $value) {
                 if ($key == '_id') {
-                    $filterArray['id'] = (string)$value;
-                    unset($filterArray['_id']);
+                	$this->addFilter(array('id' => (string)$value));
+                    continue;
                 }
 
                 if (in_array($key, $this->_metaDataFields)) {
@@ -94,7 +94,6 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
                     continue;
                 }
                 $newKey = $this->_currentWs . "." . $key;
-                $filterArray[$newKey] = $value;
                 $this->addFilter(array($newKey => $value));
             }
         }
