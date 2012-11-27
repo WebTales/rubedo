@@ -95,7 +95,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
                 }
                 $newKey = $this->_currentWs . "." . $key;
                 $filterArray[$newKey] = $value;
-                $this->addFilter(array($newkey => $value));
+                $this->addFilter(array($newKey => $value));
             }
         }
     }
