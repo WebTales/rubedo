@@ -110,6 +110,10 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $this->clearSort();
 
             foreach ($sortArray as $key => $value) {
+            	 if ($key == '_id') {
+                	$this->addSort(array('id' => (string)$value));
+                    continue;
+                }
                 if (in_array($key, $this->_metaDataFields)) {
                     	$this->addSort(array($key => $value));
                     continue;
