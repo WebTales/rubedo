@@ -63,12 +63,6 @@ class IndexController extends Zend_Controller_Action
 	 * @todo remove test
      */
     public function indexAction() {
-    	/*	
-    	$nestedService = Rubedo\Services\Manager::getService('NestedContents');
-		Zend_Debug::dump($nestedService->findById('507ff6a8add92a5809000000','50ab509cc0e0510010000000'));
-		die();
-		*/
-		
 		
         $this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
         $this->_servicePage = Rubedo\Services\Manager::getService('PageContent');
