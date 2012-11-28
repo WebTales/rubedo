@@ -115,7 +115,9 @@ class Page implements  IPage
      */
     public function appendCss($cssFile)
     {
-        self::$_css[] = $cssFile;
+        if (!in_array($cssFile, self::$_css)) {
+            self::$_css[] = $cssFile;
+        }
     }
 
     /**
@@ -141,7 +143,9 @@ class Page implements  IPage
      */
     public function appendJs($jsFile)
     {
-        self::$_js[] = $jsFile;
+        if (!in_array($jsFile, self::$_js)) {
+            self::$_js[] = $jsFile;
+        }
     }
 
     /**
