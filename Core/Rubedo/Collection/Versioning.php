@@ -76,6 +76,11 @@ class Versioning extends AbstractCollection implements IVersioning
 			$version['publishVersion'] = 0;
 		}
 		
+		//delete the first version in the collection
+		if($version['publishVersion'] === 1){
+			$this->_dataService->destroy($contentVersions[0]);
+		}
+		
 		$returnArray = $this->_dataService->create($version);
 		
 		return $returnArray;
