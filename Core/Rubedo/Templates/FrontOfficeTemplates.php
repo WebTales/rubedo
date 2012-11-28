@@ -128,7 +128,7 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
         if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
             return '/' . $this->getCurrentTheme() . '/' . $path;
         } else {
-            return '/default/' . $path;
+            return '/root/' . $path;
         }
     }
 
