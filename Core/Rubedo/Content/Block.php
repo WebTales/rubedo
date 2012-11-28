@@ -47,7 +47,6 @@ class Block implements IBlock
      */
     public function getBlockData($block)
     {
-
         $params = array();
         switch($block['bType']) {
             case 'Bloc de navigation' :
@@ -69,29 +68,20 @@ class Block implements IBlock
                 $controller = 'breadcrumbs';
                 break;
             case 'Twig' :
-                if ($block['title'] == 'responsive') {
+                if ($block['configBloc']['fileName'] == 'responsive') {
                     $controller = 'responsive';
                 } else {
                     $controller = 'iframe';
                 }
 
                 break;
-            case null :
-                if ($block['title'] == 'hero') {
-                    $controller = 'content-single';
-                } elseif ($block['title'] == 'construction') {
-                    $controller = 'simple-content';
-                    $params = array('content-id' => '50acd0799a199d0708000000');
-                } elseif ($block['title'] == 'contact') {
-                    $controller = 'simple-content';
-                    $params = array('content-id' => '50accbfd9a199dde06000000');
-                } else {
-                    $controller = 'simple-content';
-                    $params = array('content-id' => '50acd0799a199d0708000000');
-                }
+            case 'Détail de contenu' :
+                $controller = (isset($block['configBloc']['displayType']) && $block['configBloc']['displayType'] == 'hero') ? 'content-single' : 'simple-content';
+                $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : '50acd0799a199d0708000000';
+                $params = array('content-id' => $contentId);
                 break;
             default :
-                \Zend_Debug::dump($block);
+                //\Zend_Debug::dump($block);
                 $data = array();
                 $template = 'root/block.html';
                 return array('data' => $data, 'template' => $template);
