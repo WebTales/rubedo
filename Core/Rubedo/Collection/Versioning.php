@@ -42,7 +42,7 @@ class Versioning extends AbstractCollection implements IVersioning
 		$contentId = (string)$obj['_id'];
 		
 		$filter = array('contentId' => $contentId);
-		$sort = array('version' => 'desc');
+		$sort = array('publishVersion' => 'desc');
 		
 		$this->_dataService->addFilter($filter);
 		$this->_dataService->addSort($sort);
@@ -69,7 +69,7 @@ class Versioning extends AbstractCollection implements IVersioning
 		);
 		
 		if(count($contentVersions) > 0){
-			$version['publishVersion'] = $contentVersions[0]['publishVersion']++;
+			$version['publishVersion'] = $contentVersions[0]['publishVersion'] + 1;
 			
 			$version = array_merge($version, $obj['live']);
 		} else {
