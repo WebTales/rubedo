@@ -199,10 +199,12 @@
 		<script src="{{file}}"></script>
 		{% endfor %}
 
+		{% if isLoggedIn %}
 		<script src="/ckeditor-dev/ckeditor.js"></script>
 		<!--<script src="/extjs-4.1.1/ext-all.js"></script>-->
 		<!--<script src="/js/jquery.jeditable.mini.js"></script>-->
-
+		{% endif %}
+		
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$('#contentType a').click(function(event) {
