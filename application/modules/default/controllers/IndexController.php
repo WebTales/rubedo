@@ -71,7 +71,6 @@ class IndexController extends Zend_Controller_Action
 
         $session = Rubedo\Services\Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
-        $this->_serviceTemplate->init($lang);
 
         $calledUri = $this->getRequest()->getRequestUri();
         $pageId = $this->_serviceUrl->getPageId($calledUri);

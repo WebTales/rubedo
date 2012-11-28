@@ -43,7 +43,6 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
             $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
             $session = Rubedo\Services\Manager::getService('Session');
             $lang = $session->get('lang', 'fr');
-            $this->_serviceTemplate->init($lang);
             $content = $this->_serviceTemplate->render($template, $output);
             if (is_array($css)) {
                 foreach ($css as $value) {
