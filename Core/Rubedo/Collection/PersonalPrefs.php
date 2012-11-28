@@ -41,9 +41,9 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         return parent::create($obj, $safe);
     }
 	
-	public function getList($filters = null, $sort = null){
+	public function getList($filters = null, $sort = null, $start = null, $limit = null){
 		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::getList($filters, $sort);
+		return parent::getList($filters, $sort, $start, $limit);
 	}
 	
 	public function update(array $obj, $safe = true){

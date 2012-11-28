@@ -60,7 +60,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null)
+    public function getList($filters = null, $sort = null, $start = null, $limit = null)
     {
         if (isset($filters)) {
             foreach ($filters as $value) {
@@ -79,6 +79,13 @@ abstract class AbstractCollection implements IAbstractCollection
 
             }
         }
+		if(isset($start)){
+			$this->_dataService->setFirstResult($start);
+		}
+		if(isset($limit)){
+			$this->_dataService->setNumberOfResults($limit);
+		}
+		
         $dataValues = $this->_dataService->read();
 
         return $dataValues;

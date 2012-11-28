@@ -122,14 +122,14 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 	 * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null, $live = true) {
+    public function getList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
     	if($live === true){
 			$this->_dataService->setLive();
 		} else {
 			$this->_dataService->setWorkspace();
 		}
-		
-        $returnArray = parent::getList($filters, $sort);
+
+        $returnArray = parent::getList($filters, $sort, $start, $limit);
 		
 		return $returnArray;
     }

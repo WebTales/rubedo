@@ -31,7 +31,7 @@ interface IAbstractCollection {
 	 * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null);
+    public function getList($filters = null, $sort = null, $start = null, $limit = null);
 
     /**
      * Find an item given by its literral ID
