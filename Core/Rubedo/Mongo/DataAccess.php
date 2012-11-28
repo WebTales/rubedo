@@ -412,6 +412,8 @@ class DataAccess implements IDataAccess
         } else {
         	$fieldRule = array_merge($includedFields, $excludedFields);
         }
+        
+       $value = array_merge($value,$this->getFilterArray());
 
         $data = $this->_collection->findOne($value, $fieldRule);
 
