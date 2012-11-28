@@ -25,6 +25,8 @@ namespace Rubedo\Security;
 class HtmlPurifier extends HtmlCleaner
 {
 
+    protected static $_purifier;
+
     /**
      * Clean a raw content to become a valid HTML content without threats
      *
@@ -34,20 +36,21 @@ class HtmlPurifier extends HtmlCleaner
     public function clean($html)
     {
         include_once ('HTMLPurifier/HTMLPurifier.auto.php');
+         if (!class_exists('\HTMLPurifier_Config')) {
+             return parent::clean($html);
+         }
+        if (!isset(self::$_purifier)) {
 
-        if (class_exists('\HTMLPurifier_Config')) {
             $config = \HTMLPurifier_Config::createDefault();
             $config->set('Core.Encoding', 'UTF-8');
             $config->set('Cache.SerializerPath', APPLICATION_PATH . "/../cache/htmlpurifier");
 
-            $purifier = new \HTMLPurifier($config);
+            self::$_purifier = new \HTMLPurifier($config);
 
-            $html = $purifier->purify($html);
-
-            return $html;
-        } else {
-            return parent::clean($html);
         }
+        $html = self::$_purifier->purify($html);
+
+        return $html;
 
     }
 
