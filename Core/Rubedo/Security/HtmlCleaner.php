@@ -25,5 +25,20 @@ use Rubedo\Interfaces\Security\IHtmlCleaner;
  * @package Rubedo
  */
 class HtmlCleaner implements IHtmlCleaner {
+    
+    /**
+     * Clean a raw content to become a valid HTML content without threats
+     * 
+     * @param string $html
+     * @return string
+     */
+    public function clean($html){
+        
+        $allowedTags = array('p','div','img','h2','h3','h4','h5','h6');
+        $allowedTagString = '<'.implode('><',$allowedTags).'>';
+        $html = strip_tags($html,$allowedTagString);
+        return $html;
+    }
 
+    
 }
