@@ -41,6 +41,7 @@ class config
 	    'ElasticDataIndex' 			=> 	'Rubedo\\Interfaces\\Elastic\\IDataIndex', 
 	    'Acl'						=>	'Rubedo\\Interfaces\\Security\\IAcl',
 	    'Hash'						=>	'Rubedo\\Interfaces\\Security\\IHash',
+	    'HtmlCleaner'               =>  'Rubedo\\Interfaces\\Security\\IHtmlCleaner',
 		'CurrentUser'				=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
 		'Session'					=>	'Rubedo\\Interfaces\\User\\ISession',
 		'Authentication'			=>	'Rubedo\\Interfaces\\User\\IAuthentication',
@@ -69,6 +70,7 @@ class config
 		'NestedContents'			=>	'Rubedo\\Interfaces\\Collection\\INestedContents',
 		'Pages'						=>	'Rubedo\\Interfaces\\Collection\\IPages',
 		'Versioning'				=>	'Rubedo\\Interfaces\\Collection\\IVersioning',
+		
 	);
 
     /**
