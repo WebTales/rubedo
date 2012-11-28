@@ -45,46 +45,53 @@ class Block implements IBlock
      * @param array $block bloc options (type, filter params...)
      * @return array block data to be rendered
      */
-    public function getBlockData($block) {
+    public function getBlockData($block)
+    {
 
         $params = array();
-        switch($block['title']) {
-            case 'menus' :
+        switch($block['bType']) {
+            case 'Bloc de navigation' :
                 $controller = 'nav-bar';
                 break;
-            case 'hero' :
-                $controller = 'content-single';
-                break;
-            case 'carrousel' :
+            case 'Carrousel' :
                 $controller = 'carrousel';
                 break;
-            case 'accroches' :
+            case 'Liste de Contenus' :
                 $controller = 'content-list';
                 break;
-            case 'footer' :
+            case 'Pied de page' :
                 $controller = 'footer';
                 break;
-            case 'recherche' :
+            case 'Résultat de recherche' :
                 $controller = 'search';
                 break;
-            case 'breadcrumb' :
+            case 'Fil d\'Ariane' :
                 $controller = 'breadcrumbs';
                 break;
-            case 'responsive' :
-                $controller = 'responsive';
+            case 'Twig' :
+                if ($block['title'] == 'responsive') {
+                    $controller = 'responsive';
+                } else {
+                    $controller = 'iframe';
+                }
+
                 break;
-            case 'map' :
-                $controller = 'iframe';
-                break;
-            case 'contact-info' :
-                $controller = 'simple-content';
-                $params = array('content-id' => '50accbfd9a199dde06000000');
-                break;
-            case 'construction' :
-                $controller = 'simple-content';
-                $params = array('content-id' => '50acd0799a199d0708000000');
+            case null :
+                if ($block['title'] == 'hero') {
+                    $controller = 'content-single';
+                } elseif ($block['title'] == 'construction') {
+                    $controller = 'simple-content';
+                    $params = array('content-id' => '50acd0799a199d0708000000');
+                } elseif ($block['title'] == 'contact') {
+                    $controller = 'simple-content';
+                    $params = array('content-id' => '50accbfd9a199dde06000000');
+                } else {
+                    $controller = 'simple-content';
+                    $params = array('content-id' => '50acd0799a199d0708000000');
+                }
                 break;
             default :
+                \Zend_Debug::dump($block);
                 $data = array();
                 $template = 'root/block.html';
                 return array('data' => $data, 'template' => $template);
@@ -103,7 +110,8 @@ class Block implements IBlock
      * @param int $contentId
      * @return array
      */
-    public function getContentById($contentId) {
+    public function getContentById($contentId)
+    {
         $this->_dataReader = Manager::getService('MongoDataAccess');
         $this->_dataReader->init('Contents');
         $content = $this->_dataReader->findById($contentId);
@@ -115,7 +123,8 @@ class Block implements IBlock
      * @param array $arrayId
      * @return array
      */
-    public function getArrayOfContentByIds($arrayId) {
+    public function getArrayOfContentByIds($arrayId)
+    {
         $this->_dataReader = Manager::getService('MongoDataAccess');
         $this->_dataReader->init('Contents');
         $filterArray = array('id' => array('$in' => $arrayId));
@@ -129,7 +138,8 @@ class Block implements IBlock
      *
      * @return array
      */
-    protected function getCarrousel() {
+    protected function getCarrousel()
+    {
 
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
@@ -166,7 +176,8 @@ class Block implements IBlock
      * Return data for breadcrumb block
      * @return array
      */
-    protected function getBreadCrumb() {
+    protected function getBreadCrumb()
+    {
 
         $links = array( array('libelle' => 'Accueil', 'controller' => 'index', 'current' => false), array('libelle' => $this->_page, 'controller' => '#', 'current' => true));
 
@@ -177,7 +188,8 @@ class Block implements IBlock
      * Return data for content list block
      * @return array
      */
-    protected function getContentList() {
+    protected function getContentList()
+    {
         // get data
         $output = array();
 
@@ -204,7 +216,8 @@ class Block implements IBlock
      * Return data for headline block
      * @return array
      */
-    protected function getHeadLine() {
+    protected function getHeadLine()
+    {
 
         $mongoId = '507fd4feadd92aa602000000';
         $content = $this->getContentById('507fd4feadd92aa602000000');
@@ -219,7 +232,8 @@ class Block implements IBlock
      * Return data for iframe block
      * @return array
      */
-    protected function getIFrame() {
+    protected function getIFrame()
+    {
         $id = 98324;
         $fr = array('title' => 'Plan d\'accès', 'width' => 526, 'height' => 366, 'frameborder' => 0, 'scrolling' => 'no', 'marginheight' => 0, 'marginwidth' => 0, 'src' => 'http://maps.google.fr/maps?georestrict=input_srcid:d6c0e9367f692930&hl=fr&ie=UTF8&view=map&cid=4303835548001045871&q=Incubateur+Centrale+Paris&ved=0CBkQpQY&ei=gILZTMuBH8Xujgf2ypj_CA&hq=Incubateur+Centrale+Paris&hnear=&iwloc=A&sll=46.75984,1.738281&sspn=11.232446,19.753418&output=embed', );
         $en = array('title' => 'Area map', 'width' => 526, 'height' => 366, 'frameborder' => 0, 'scrolling' => 'no', 'marginheight' => 0, 'marginwidth' => 0, 'src' => 'http://maps.google.fr/maps?georestrict=input_srcid:d6c0e9367f692930&hl=en&ie=UTF8&view=map&cid=4303835548001045871&q=Incubateur+Centrale+Paris&ved=0CBkQpQY&ei=gILZTMuBH8Xujgf2ypj_CA&hq=Incubateur+Centrale+Paris&hnear=&iwloc=A&sll=46.75984,1.738281&sspn=11.232446,19.753418&output=embed', );
@@ -238,7 +252,8 @@ class Block implements IBlock
      * Return data for navBar block
      * @return array
      */
-    protected function getNavBar() {
+    protected function getNavBar()
+    {
         // images examples
         // TODO : load data from services
         $id = "987194";
@@ -271,7 +286,8 @@ class Block implements IBlock
      * @param string $block_id
      * @return array
      */
-    protected function getPopIn($block_id) {
+    protected function getPopIn($block_id)
+    {
         switch($block_id) {
             case 1 :
                 $id = "about";
@@ -390,7 +406,8 @@ class Block implements IBlock
      * @param string $block_id
      * @return array
      */
-    protected function getSimpleContent($block_id) {
+    protected function getSimpleContent($block_id)
+    {
 
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
@@ -406,7 +423,8 @@ class Block implements IBlock
      * Return data for search block
      * @return array
      */
-    protected function getSearch($parentController) {
+    protected function getSearch($parentController)
+    {
 
         // get query
         $terms = $parentController->getRequest()->getParam('query');
