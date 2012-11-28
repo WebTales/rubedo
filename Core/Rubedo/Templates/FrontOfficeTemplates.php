@@ -38,20 +38,41 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
      */
     protected $_options = array();
 
+    /**
+     * Directory containing twig templates
+     *
+     * @var string
+     */
     protected static $templateDir = null;
-    
+
+    /**
+     * Current theme name
+     *
+     * @var string
+     */
     protected static $_currentTheme = null;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->_init();
+    }
 
     /**
      * initialise Twig Context
      * @param string $lang current language
      */
-    public function init($lang = 'default')
+    protected function _init()
     {
+
         $this->_options = array('templateDir' => APPLICATION_PATH . "/../data/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
         if (isset($this->_service)) {
             $this->_options = $this->_service->getCurrentOptions();
         }
+
+        $lang = Rubedo\Services\Manager::getService('Session')->get('lang', 'fr');
 
         $loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
         $this->_twig = new \Twig_Environment($loader, $this->_options);
@@ -77,6 +98,11 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
         return $templateObj->render($vars);
     }
 
+    /**
+     * return the template directory
+     *
+     * @return string
+     */
     public function getTemplateDir()
     {
         if (!isset(self::$templateDir)) {
@@ -90,6 +116,12 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
         return self::$templateDir;
     }
 
+    /**
+     * Return the actual path of a twig subpart in the current theme
+     *
+     * Check if it exist in current theme, return default path if not
+     * @return string
+     */
     public function getFileThemePath($path)
     {
         if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
@@ -98,8 +130,15 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
             return '/default/' . $path;
         }
     }
-    
-    public function getCurrentTheme(){
+
+    /**
+     * Get the current theme name
+     *
+     * @return string
+     */
+
+    public function getCurrentTheme()
+    {
         if (!isset(self::$templateDir)) {
 
             self::$_currentTheme = 'default';
@@ -107,84 +146,13 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
         return self::$_currentTheme;
     }
 
-    public function setCurrentTheme($theme){
-        self::$_currentTheme = $theme;
-    }
-
-    public static function parseJson($json, $template, $id)
-    {
-        $masque = json_decode(file_get_contents($json), TRUE);
-
-        $found = false;
-        foreach ($masque as $key => $val) {
-            if ($val['id'] == $id) {
-                $found = true;
-                $rows = $val['rows'];
-                break;
-            }
-        }
-
-        if ($found) {
-            $out = '<div class="container-fluid">' . "\n";
-            $out .= self::parseRows($rows, 1);
-            $out .= '</div>' . "\n";
-
-            $file = fopen($template, 'w+');
-
-            fputs($file, $out);
-
-            fclose($file);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     /**
-     * Parses a rows
-     *
-     * @param rows rows to parse
-     * @param t number of tabulations
-     * @return parsed content
+     * Set the current theme name
+     * @param string $theme
      */
-    public static function parseRows($rows, $t = 0)
+    public function setCurrentTheme($theme)
     {
-        $out = '';
-        foreach ($rows as $key => $val) {
-            $out .= self::tab($t) . '<div class="row-fluid">' . "\n";
-            $t++;
-            $cols = $val['columns'];
-            foreach ($cols as $key => $val) {
-                // in a column
-                $out .= self::tab($t) . '<div class="';
-                $t++;
-                if (isset($val['offset']) && $val['offset'] <> '0') {
-                    $out .= 'offset' . $val['offset'] . ' ';
-                }
-                $out .= 'span' . $val['span'] . '">' . "\n";
-                if (isset($val['rows']) && $val['rows'] != null) {
-                    // are there any rows in this column ?
-                    $out .= self::parseRows($val['rows'], $t);
-                } else {
-                    // put a block here
-                    // TODO : block identifier
-                    $out .= self::tab($t) . '{% block zone_x %}{% endblock %}' . "\n";
-                }
-                $t--;
-                $out .= self::tab($t) . '</div>' . "\n";
-            }
-            $t--;
-            $out .= self::tab($t) . '</div>' . "\n";
-        }
-        return $out;
-    }
-
-    public static function tab($n)
-    {
-        $out = '';
-        for ($i = 0; $i < $n; $i++)
-            $out .= "\t";
-        return $out;
+        self::$_currentTheme = $theme;
     }
 
 }
