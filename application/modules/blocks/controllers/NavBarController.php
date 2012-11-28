@@ -56,7 +56,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
 
         $output["data"] = $output;
 
-        $template = "root/blocks/navbar.html";
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html");
 
         $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css', '/css/default.bootstrap.min.css');
         $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );

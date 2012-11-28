@@ -53,7 +53,10 @@ class Blocks_CarrouselController extends Blocks_AbstractController
         $output["items"] = $data;
 
 		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');
-        $template = "root/blocks/carrousel.html";
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html");
+        
+        //\Zend_Debug::dump($template);
+        //die();
 
         $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css', '/css/default.bootstrap.min.css');
         $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
