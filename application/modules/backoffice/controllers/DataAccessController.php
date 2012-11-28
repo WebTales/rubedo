@@ -103,8 +103,20 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         } else {
             $sort = null;
         }
+		$startJson = $this->getRequest()->getParam('start');
+		if (isset($startJson)) {
+            $start = Zend_Json::decode($startJson);
+        } else {
+            $start = null;
+        }
+		$limitJson = $this->getRequest()->getParam('limit');
+		if (isset($limitJson)) {
+            $limit = Zend_Json::decode($limitJson);
+        } else {
+            $limit = null;
+        }
 
-        $dataValues = $this->_dataService->getList($filters, $sort);
+        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit);
 
         $response = array();
         $response['data'] = array_values($dataValues);
