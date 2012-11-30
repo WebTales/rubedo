@@ -73,7 +73,7 @@ class DataIndex implements IDataIndex
      *
      * @var \Elastica_Index
      */
-    private static $_content_index = "content";
+    private static $_content_index;
 
     /**
      * Object which represent the default ES index param
@@ -159,7 +159,7 @@ class DataIndex implements IDataIndex
 		$type = $contentType["type"];
 
 		$mapping = $this->_content_index->getMapping();
-		if (array_key_exists($type,$mapping[self::$_content_index])) {
+		if (array_key_exists($type,$mapping[self::$_options['contentIndex']])) {
 			if (!$overwrite) {
 				// throw exception
 				throw new \Exception("$type type already exists");
