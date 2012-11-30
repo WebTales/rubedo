@@ -53,41 +53,14 @@ class Page implements  IPage
      * @param string|int $pageId requested URL
      * @return array
      */
-    public function getPageInfo($pageId) {
+    public function getPageInfo($pageId)
+    {
 
-        $pageService = Manager::getService('Masks');
-
-        switch($pageId) {
-            case "contact" :
-                $this->setPageTitle('Contact');
-                $pageInfo = $pageService->findById('50acc4789a199dcf04000000');
-                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-                $pageInfo['template'] = 'root/page.html';
-                break;
-            case 'responsive' :
-                $this->setPageTitle('Responsive');
-                $pageInfo = $pageService->findById('50acac2b9a199dbd04000000');
-                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-                $pageInfo['template'] = 'root/page.html';
-                break;
-            case "search" :
-                $this->setPageTitle('Recherche');
-                $pageInfo = $pageService->findById('50acaa0d9a199da404000000');
-                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-                $pageInfo['template'] = 'root/page.html';
-                break;
-            case "index" :
-                $pageInfo = $pageService->findById('50aca84f9a199dd102000000');
-                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-                $pageInfo['template'] = 'root/page.html';
-                break;
-            default :
-                $this->setPageTitle($pageId);
-                $pageInfo = $pageService->findById('50accfb79a199db007000000');
-                $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-                $pageInfo['template'] = 'root/page.html';
-                break;
-        }
+        $pageService = Manager::getService('Pages');
+        $pageInfo = $pageService->findById($pageId);
+        $this->setPageTitle($pageInfo['text']);
+        $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
+        $pageInfo['template'] = 'root/page.html';
 
         $pageInfo['css'] = self::$_css;
         $pageInfo['js'] = self::$_js;
@@ -96,7 +69,8 @@ class Page implements  IPage
         return $pageInfo;
     }
 
-    protected function _getColumnsInfos(array $columns = null) {
+    protected function _getColumnsInfos(array $columns = null)
+    {
         if ($columns === null) {
             return null;
         }
@@ -112,7 +86,8 @@ class Page implements  IPage
         return $returnArray;
     }
 
-    protected function _getBlocksInfos(array $blocks) {
+    protected function _getBlocksInfos(array $blocks)
+    {
         $returnArray = array();
         foreach ($blocks as $block) {
             $returnArray[] = Manager::getService('BlockContent')->getBlockData($block);
@@ -120,7 +95,8 @@ class Page implements  IPage
         return $returnArray;
     }
 
-    protected function _getRowsInfos(array $rows = null) {
+    protected function _getRowsInfos(array $rows = null)
+    {
         if ($rows === null) {
             return null;
         }
@@ -137,14 +113,18 @@ class Page implements  IPage
      * append a css file to the file list
      * @param string $cssFile URL of the CSS added
      */
-    public function appendCss($cssFile) {
-        self::$_css[] = $cssFile;
+    public function appendCss($cssFile)
+    {
+        if (!in_array($cssFile, self::$_css)) {
+            self::$_css[] = $cssFile;
+        }
     }
 
     /**
      * clear the included css files list
      */
-    public function clearCss() {
+    public function clearCss()
+    {
         self::$_css = array();
     }
 
@@ -152,7 +132,8 @@ class Page implements  IPage
      * Return the list of css files
      * @return array list of URL
      */
-    public function getCss() {
+    public function getCss()
+    {
         return self::$_css;
     }
 
@@ -160,14 +141,18 @@ class Page implements  IPage
      * append a js file to the file list
      * @param string $jsFile URL of the js added
      */
-    public function appendJs($jsFile) {
-        self::$_js[] = $jsFile;
+    public function appendJs($jsFile)
+    {
+        if (!in_array($jsFile, self::$_js)) {
+            self::$_js[] = $jsFile;
+        }
     }
 
     /**
      * clear the included js files list
      */
-    public function clearJs() {
+    public function clearJs()
+    {
         self::$_js = array();
     }
 
@@ -175,7 +160,8 @@ class Page implements  IPage
      * Return the list of js files
      * @return array list of URL
      */
-    public function getJs() {
+    public function getJs()
+    {
         return self::$_js;
     }
 
@@ -184,7 +170,8 @@ class Page implements  IPage
      *
      * @param string $pageTitle page title
      */
-    public function setPageTitle($pageTitle) {
+    public function setPageTitle($pageTitle)
+    {
         self::$_title = $pageTitle;
     }
 
@@ -193,7 +180,8 @@ class Page implements  IPage
      *
      * @return string page title
      */
-    public function getPageTitle() {
+    public function getPageTitle()
+    {
         return self::$_title;
     }
 

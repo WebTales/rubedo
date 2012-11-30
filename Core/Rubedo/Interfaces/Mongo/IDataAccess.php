@@ -49,6 +49,20 @@ interface IDataAccess {
      * @return array
      */
     public function findOne($value);
+    
+    /**
+     * Find an item given by its literral ID
+     * @param string $contentId
+     * @return array
+     */
+    public function findById($contentId);
+    
+    /**
+     * Find an item given by its name (find only one if many)
+     * @param string $name
+     * @return array
+     */
+    public function findByName($name);
 
     /**
      * Create an objet in the current collection

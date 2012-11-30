@@ -50,14 +50,18 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		}
 		
 		$returnArray = parent::update($obj, $safe);
-		
-		if($returnArray['data']['status'] === 'published'){
-			$result = $this->_dataService->publish($returnArray['data']['id']);
-			
-			if(!$result['success']){
-				$returnArray['success'] = false;
-				$returnArray['msg'] = "failed to publish the content";
+		if($returnArray['success']){
+			if($returnArray['data']['status'] === 'published'){
+				$result = $this->_dataService->publish($returnArray['data']['id']);
+				
+				if(!$result['success']){
+					$returnArray['success'] = false;
+					$returnArray['msg'] = "failed to publish the content";
+					unset($returnArray['data']);
+				}
 			}
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'failed to update');
 		}
 		
 		return $returnArray;
@@ -78,9 +82,20 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 			$this->_dataService->setWorkspace();
 		}
 		
-        $result = parent::create($obj, $safe);
+        $returnArray = parent::create($obj, $safe);
 		
-		return $result;
+		if(isset($returnArray['data']['status'])){
+			if($returnArray['data']['status'] === 'published'){
+				$result = $this->_dataService->publish($returnArray['data']['id']);
+				
+				if(!$result['success']){
+					$returnArray['success'] = false;
+					$returnArray['msg'] = "failed to publish the content";
+				}
+			}
+		}
+		
+		return $returnArray;
     }
 	
 	/**
@@ -95,9 +110,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 			$this->_dataService->setWorkspace();
 		}
 		
-        $result = parent::findById($contentId);
+        $returnArray = parent::findById($contentId);
 		
-		return $result;
+		return $returnArray;
     }
 	
 	/**
@@ -107,16 +122,16 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 	 * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null, $live = true) {
+    public function getList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
     	if($live === true){
 			$this->_dataService->setLive();
 		} else {
 			$this->_dataService->setWorkspace();
 		}
+
+        $returnArray = parent::getList($filters, $sort, $start, $limit);
 		
-        $result = parent::getList($filters, $sort);
-		
-		return $result;
+		return $returnArray;
     }
 	
 	/**
@@ -133,9 +148,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 			$this->_dataService->setWorkspace();
 		}
 		
-        $result = parent::readChild($parentId, $filters, $sort);
+        $returnArray = parent::readChild($parentId, $filters, $sort);
 		
-		return $result;
+		return $returnArray;
     }
 
 }

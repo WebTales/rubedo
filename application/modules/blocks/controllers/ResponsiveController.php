@@ -34,7 +34,7 @@ class Blocks_ResponsiveController extends Blocks_AbstractController
         $output["items"] = null;
 
 		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');
-        $template = "root/blocks/responsive.html";
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/responsive.html");
 
         $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css', '/css/default.bootstrap.min.css');
         $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );

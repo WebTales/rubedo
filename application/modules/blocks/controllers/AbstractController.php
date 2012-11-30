@@ -33,17 +33,28 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     }
 
     protected function _sendResponse($output, $template, array $css = null, array $js = null) {
-
+        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
+        $this->_servicePage     = Manager::getService('PageContent');
+        
         if ($this->getResponse() instanceof \Rubedo\Controller\Response) {
             $this->getHelper('Layout')->disableLayout();
             $this->getHelper('ViewRenderer')->setNoRender();
             $this->getResponse()->setBody($output, 'content');
             $this->getResponse()->setBody($template, 'template');
+            if (is_array($css)) {
+                foreach ($css as $value) {
+                    $this->_servicePage->appendCss($value);
+                }
+            }
+            if (is_array($js)) {
+                foreach ($js as $value) {
+                    $this->_servicePage->appendJs($value);
+                }
+            }
         } else {
-            $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
+            
             $session = Rubedo\Services\Manager::getService('Session');
             $lang = $session->get('lang', 'fr');
-            $this->_serviceTemplate->init($lang);
             $content = $this->_serviceTemplate->render($template, $output);
             if (is_array($css)) {
                 foreach ($css as $value) {

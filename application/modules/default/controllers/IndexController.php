@@ -14,6 +14,7 @@
  */
 
 Use Rubedo\Controller\Action;
+Use Rubedo\Services\Manager;
 
 /**
  * Front Office Defautl Controller
@@ -59,48 +60,76 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * Main Action : render the Front Office view
-	 * 
-	 * @todo remove test
+     *
+     * @todo remove test
      */
-    public function indexAction() {
-    	/*	
-    	$nestedService = Rubedo\Services\Manager::getService('NestedContents');
-		Zend_Debug::dump($nestedService->findById('507ff6a8add92a5809000000','50ab509cc0e0510010000000'));
-		die();
-		*/
-		
-		
-        $this->_serviceUrl = Rubedo\Services\Manager::getService('Url');
-        $this->_servicePage = Rubedo\Services\Manager::getService('PageContent');
-        $this->_serviceTemplate = Rubedo\Services\Manager::getService('FrontOfficeTemplates');
-        $this->_serviceBlock = Rubedo\Services\Manager::getService('BlockContent');
+    public function indexAction()
+    {
+        //init service variables
+        $this->_serviceUrl      = Manager::getService('Url');
+        $this->_servicePage     = Manager::getService('PageContent');
+        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
+        $this->_serviceBlock    = Manager::getService('BlockContent');
+        $this->_session         = Manager::getService('Session');
+        
+        //context
+        $lang = $this->_session->get('lang', 'fr');
+        $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
+        $this->_serviceTemplate->setCurrentTheme($this->_session->get('themeCSS', 'default'));
 
-        $session = Rubedo\Services\Manager::getService('Session');
-        $lang = $session->get('lang', 'fr');
-        $this->_serviceTemplate->init($lang);
+        //Load the CSS files
+        $this->_servicePage->appendCss('/css/' . $this->_serviceTemplate->getCurrentTheme() . ".bootstrap.min.css");
+        $this->_servicePage->appendCss('/css/bootstrap-responsive.css');
+        $this->_servicePage->appendCss('/css/rubedo.css');
 
+        //load the javaScripts files
+        $this->_servicePage->appendJs('/js/jquery.js');
+        $this->_servicePage->appendJs('/js/bootstrap-transition.js');
+        $this->_servicePage->appendJs('/js/bootstrap-alert.js');
+        $this->_servicePage->appendJs('/js/bootstrap-modal.js');
+        $this->_servicePage->appendJs('/js/bootstrap-dropdown.js');
+        $this->_servicePage->appendJs('/js/bootstrap-scrollspy.js');
+        $this->_servicePage->appendJs('/js/bootstrap-tab.js');
+        $this->_servicePage->appendJs('/js/bootstrap-tooltip.js');
+        $this->_servicePage->appendJs('/js/bootstrap-popover.js');
+        $this->_servicePage->appendJs('/js/bootstrap-button.js');
+        $this->_servicePage->appendJs('/js/bootstrap-collapse.js');
+        $this->_servicePage->appendJs('/js/bootstrap-carousel.js');
+        $this->_servicePage->appendJs('/js/bootstrap-typeahead.js');
+        
+        if($isLoggedIn){
+            $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');   
+        }
+        
+        $this->_servicePage->appendJs('/js/scripts.js');
+
+        //find the page ID
         $calledUri = $this->getRequest()->getRequestUri();
         $pageId = $this->_serviceUrl->getPageId($calledUri);
+        
+        //build contents tree
         $this->_pageParams = $this->_servicePage->getPageInfo($pageId);
 
+        //Build Twig context
         $twigVar = $this->_pageParams;
-        $twigVar['theme'] = $session->get('themeCSS', 'default');
+        $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
+        $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
+        $twigVar['title'] = $this->_servicePage->getPageTitle();
+        $twigVar['css'] = $this->_servicePage->getCss();
+        $twigVar['js'] = $this->_servicePage->getJs();
+        $twigVar['isLoggedIn'] = $isLoggedIn;
 
-        $twigVar['title'] = 'Rubedo - Titre de page';
-        
-        $twigVar['css'][] = '/css/' . $twigVar['theme'] . ".bootstrap.min.css";
-        $twigVar['css'][] = '/css/bootstrap-responsive.css';
-        $twigVar['css'][] = '/css/rubedo.css';
-
-        $twigVar['js'] = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
-
+        //Render content with template
         $content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
 
+        //disable ZF view layer
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getHelper('Layout')->disableLayout();
 
+        //return the content
         $this->getResponse()->appendBody($content, 'default');
 
     }
+
 }

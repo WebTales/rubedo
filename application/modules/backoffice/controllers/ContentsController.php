@@ -55,8 +55,20 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         } else {
             $sort = null;
         }
+		$startJson = $this->getRequest()->getParam('start');
+		if (isset($startJson)) {
+            $start = Zend_Json::decode($startJson);
+        } else {
+            $start = null;
+        }
+		$limitJson = $this->getRequest()->getParam('limit');
+		if (isset($limitJson)) {
+            $limit = Zend_Json::decode($limitJson);
+        } else {
+            $limit = null;
+        }
 
-        $dataValues = $this->_dataService->getList($filters, $sort, false);
+        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit, false);
 
         $response = array();
         $response['data'] = array_values($dataValues);

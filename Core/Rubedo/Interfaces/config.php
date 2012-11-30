@@ -41,14 +41,15 @@ class config
 	    'ElasticDataIndex' 			=> 	'Rubedo\\Interfaces\\Elastic\\IDataIndex', 
 	    'Acl'						=>	'Rubedo\\Interfaces\\Security\\IAcl',
 	    'Hash'						=>	'Rubedo\\Interfaces\\Security\\IHash',
+	    'HtmlCleaner'               =>  'Rubedo\\Interfaces\\Security\\IHtmlCleaner',
 		'CurrentUser'				=>	'Rubedo\\Interfaces\\User\\ICurrentUser',
 		'Session'					=>	'Rubedo\\Interfaces\\User\\ISession',
 		'Authentication'			=>	'Rubedo\\Interfaces\\User\\IAuthentication',
 		'CurrentTime'				=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',
 		'Url'						=>	'Rubedo\\Interfaces\\Router\\IUrl',
-		'PageContent'						=>	'Rubedo\\Interfaces\\Content\\IPage',
+		'PageContent'				=>	'Rubedo\\Interfaces\\Content\\IPage',
 		'FrontOfficeTemplates'		=>	'Rubedo\\Interfaces\\Templates\\IFrontOfficeTemplates',
-		'BlockContent'						=>	'Rubedo\\Interfaces\\Content\\IBlock',
+		'BlockContent'				=>	'Rubedo\\Interfaces\\Content\\IBlock',
 		'Users'						=>	'Rubedo\\Interfaces\\Collection\\IUsers',
 		'Masks'						=>	'Rubedo\\Interfaces\\Collection\\IMasks',
 		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
@@ -67,7 +68,9 @@ class config
 		'Themes'					=>	'Rubedo\\Interfaces\\Collection\\IThemes',
 		'Wallpapers'				=>	'Rubedo\\Interfaces\\Collection\\IWallpapers',
 		'NestedContents'			=>	'Rubedo\\Interfaces\\Collection\\INestedContents',
-		'Pages'						=>	'Rubedo\\Interfaces\\Collection\\IPages'
+		'Pages'						=>	'Rubedo\\Interfaces\\Collection\\IPages',
+		'Versioning'				=>	'Rubedo\\Interfaces\\Collection\\IVersioning',
+		
 	);
 
     /**

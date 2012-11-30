@@ -412,6 +412,8 @@ class DataAccess implements IDataAccess
         } else {
         	$fieldRule = array_merge($includedFields, $excludedFields);
         }
+        
+       $value = array_merge($value,$this->getFilterArray());
 
         $data = $this->_collection->findOne($value, $fieldRule);
 
@@ -428,6 +430,15 @@ class DataAccess implements IDataAccess
      */
     public function findById($contentId) {
         return $this->findOne(array('_id' => $this->getId($contentId)));
+    }
+    
+    /**
+     * Find an item given by its name (find only one if many)
+     * @param string $name
+     * @return array
+     */
+    public function findByName($name){
+        return $this->findOne(array('text' => $name));
     }
 
     /**

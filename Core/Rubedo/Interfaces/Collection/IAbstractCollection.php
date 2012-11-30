@@ -31,7 +31,7 @@ interface IAbstractCollection {
 	 * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null);
+    public function getList($filters = null, $sort = null, $start = null, $limit = null);
 
     /**
      * Find an item given by its literral ID
@@ -39,6 +39,13 @@ interface IAbstractCollection {
      * @return array
      */
     public function findById($contentId);
+    
+     /**
+     * Find an item given by its name (find only one if many)
+     * @param string $name
+     * @return array
+     */
+    public function findByName($name);
 
     /**
      * Create an objet in the current collection
