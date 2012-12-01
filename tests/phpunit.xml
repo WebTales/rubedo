@@ -1,6 +1,5 @@
 <phpunit bootstrap="./bootstrap.php">
 	<testsuite name="Application Test Suite">
-		<directory>./application</directory>
 		<directory>./Core</directory>
 	</testsuite>
 	<testsuite name="Library Test Suite">
@@ -8,7 +7,7 @@
 	</testsuite>
 	<filter>
 		<whitelist>
-		<directory suffix=".php">../Core</directory>
+			<directory suffix=".php">../Core</directory>
 		</whitelist>
 	</filter>
 </phpunit>
