@@ -34,22 +34,22 @@ interface IDataIndex
     public function init ($host = null, $port= null);
 
     /**
-     * Create ES type for new content type
+     * Get ES type structure
+     *     
+	 * @param string $id content type id
+     * @return array
+     */
+    public function getTypeStructure ($id);
+
+    /**
+     * Index ES type for new or updated content type
      *     
 	 * @param string $id content type id
 	 * @param array $data new content type
+     * @param boolean $overwrite overwrite content type if it exists
      * @return array
      */
-    public function createContentType ($contentType);
-	
-    /**
-     * Update ES type for new content type
-     *     
-	 * @param string $id content type id
-	 * @param array $data new content type data
-     * @return array
-     */
-    public function updateContentType ($id, $data);
+    public function IndexContentType ($id, $data,$overwrite);
 	
     /**
      * Delete ES type for new content type
@@ -63,46 +63,29 @@ interface IDataIndex
      * Index new content
      *    
 	 * @param string $id new content id
-	 * @param string $type new content type
+	 * @param string $typeId new content type id
 	 * @param array $data new content data
      * @return array
      */
-    public function createContent ($id, $type, $data);
-	
-    /**
-     * Update index for existing content
-     *     
-	 * @param string $id content id
-	 * @param array $data new content data
-     * @return array
-     */
-    public function updateContent ($id, $data);
+    public function indexContent ($id, $typeId, $data);
 	
     /**
      * Delete existing content from index
-     *     
+	 * 
+	 * @param string $typeId content type id
 	 * @param string $id content id
      * @return array
      */
-    public function deleteContent ($id);
+    public function deleteContent ($typeId, $id);
 	
     /**
-     * Index new DAM document
+     * Index DAM document
      *   
 	 * @param string $id document id  
 	 * @param array $data new document data
      * @return array
      */
-    public function createDocument ($id,$data);
-	
-    /**
-     * Update index for existing DAM document
-     *     
-	 * @param string $id document id  
-	 * @param array $data new document data
-     * @return array
-     */
-    public function updateDocument ($id, $data);
+    public function indexDocument ($id,$data);
 	
     /**
      * Delete index type for existing DAM document

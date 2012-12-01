@@ -144,106 +144,146 @@ class DataIndex implements IDataIndex
     public static function setOptions(array $options) {
         self::$_options = $options;
     }
-	
+
     /**
-     * Create ES type for new content type
+     * Get ES type structure
      *     
-	 * @see \Rubedo\Interfaces\IDataIndex::createContentType()
+	 * @param string $id content type id
+     * @return array
+     */
+    public function getTypeStructure ($id) {
+    	
+		$returnArray=array();
+		$searchableFields=array('lastUpdateTime','text','type','author');
+    	
+		// Get content type config by id
+		$c = new \Rubedo\Mongo\DataAccess();
+		$c->init("ContentTypes");
+		$filter = array("id"=>$id);
+		$c->addFilter($filter);
+		$contentTypeConfig = $c->read();		
+
+		// Search abstract field
+		$abstract="";
+		$fields=$contentTypeConfig[0]["fields"];
+		foreach($fields as $field) {
+			if ($field['config']['resumed']) {
+				$abstract = $field['config']['name'];
+			}
+			if ($field['config']['searchable']) {
+				$searchableFields[] = $field['config']['name'];
+			}	
+		}    
+		
+		$returnArray['abstract']=$abstract;
+		$returnArray['searchableFields']=$searchableFields;
+		return $returnArray;	
+    }
+		
+    /**
+     * Index ES type for new or updated content type
+     *     
+	 * @see \Rubedo\Interfaces\IDataIndex:indexContentType()
 	 * @param string $id content type id
 	 * @param array $data new content type
      * @return array
      */
-    public function createContentType ($contentType, $overwrite=false) {
+    public function indexContentType($id, $data, $overwrite=false) {
     	
 		// Unicity type id check
-		$type = $contentType["type"];
 
 		$mapping = $this->_content_index->getMapping();
-		if (array_key_exists($type,$mapping[self::$_options['contentIndex']])) {
+		if (array_key_exists($id,$mapping[self::$_options['contentIndex']])) {
 			if (!$overwrite) {
 				// throw exception
-				throw new \Exception("$type type already exists");
+				throw new \Exception("$id type already exists");
 			} else {
 				// delete existing content type
-				$this->deleteContentType($type);
+				$this->deleteContentType($id);
 			}
 		}
 
 		// Create mapping
 		$indexMapping = array();
 		
-		foreach($contentType["fields"] as $field) {
-			
-			// Only searchable fields get indexed
-			if ($field['config']['searchable']) {
+		// If there is any fields get them mapped
+		if (is_array($data["fields"])) {
 
-				$name = $field['config']['name'];
-				if ($field['config']['resumed']) {
-					$store = 'yes';
-					$name = 'abstract';
-				} else {
-					$store = 'no';
-				}				
-				switch($field['cType']) {
-					case 'checkbox' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'combo' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'datefield' :
-						$indexMapping[$name] = array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => $store);
-						break;
-					case 'field' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'htmleditor' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'CKEField' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'numberfield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'radio' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'textareafield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'textfield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'timefield' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'ratingField' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'slider' :
-						$indexMapping[$name] = array('type' => 'string', 'store' => $store);
-						break;
-					case 'document' :
-						$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
-						break;
-					default :
-						throw new \Exception("unknown ".$field['cType']." type");
-						break;
+			foreach($data["fields"] as $key => $field) {
+				
+				// Only searchable fields get indexed
+				if ($field['config']['searchable']) {
+					
+					$name = $field['config']['fieldLabel'];
+					
+					//print_r($field);
+					if ($field['config']['resumed']) {
+						$store = 'yes';
+						$name = 'abstract';
+					} else {
+						$store = 'no';
+					}				
+					switch($field['cType']) {
+						case 'checkbox' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'combo' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'datefield' :
+							$indexMapping[$name] = array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => $store);
+							break;
+						case 'field' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'htmleditor' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'CKEField' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'numberfield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'radio' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'textareafield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'textfield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'timefield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'ratingField' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'slider' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'document' :
+							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
+							break;
+						default :
+							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
+							break;
+					}
 				}
-			}
-		}	
+			}	
+		}
 		
 		// Add systems metadata : TODO update model text to title	
 		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'format' => 'YYYY-mm-dd', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["type"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
-				
+		
 		// If there is no searchable field, the new type is not created
 		if (!empty($indexMapping)) {
 			// Create new type
-			$type = new \Elastica_Type($this->_content_index, $type);
+			$type = new \Elastica_Type($this->_content_index, $id);
 			
 			// Set mapping
 			$type->setMapping($indexMapping);
@@ -253,18 +293,6 @@ class DataIndex implements IDataIndex
 		} else {
 			return array();
 		}
-    }
-	
-    /**
-     * Update ES type for existing content type
-     *     
-	 * @see \Rubedo\Interfaces\IDataIndex::updateContentType()
-	 * @param string $id content type id
-	 * @param array $data new content type data
-     * @return array
-     */
-    public function updateContentType ($id, $data) {
-    	
     }
 	
     /**
@@ -282,29 +310,60 @@ class DataIndex implements IDataIndex
     }
 	
     /**
-     * Index new content
+     * Create or update index for existing content
      *    
-	 * @see \Rubedo\Interfaces\IDataIndex::createContent()
+	 * @see \Rubedo\Interfaces\IDataIndex::indexContent()
 	 * @param string $id new content id
-	 * @param string $type new content type
+	 * @param string $typeId new content type id
 	 * @param array $data new content data
      * @return array
      */
-    public function createContent ($id, $type, $data) {
+    public function indexContent ($id, $typeId = null, $data = null) {
 
-		// Load content type 
+		// retrieve type and data if null from content
+		
+		if (is_null($typeId)) {
+			$c = \Rubedo\Services\Manager::getService('MongoDataAccess');
+			$c->init("Contents");	
+			$filter = array("id"=>$id);
+			$c->addFilter($filter);
+			$content = $c->read();
+			$typeId = $content[0]['typeId'];
+			$data = $content[0];
+		}
+		
+		// Load ES type 
     	$contentType = $this->_content_index
-    						->getType($type);
+    						->getType($typeId);
 		
-		// Build content document to index	
+		// Get content type structure
+		$typeStructure = $this->getTypeStructure($typeId);
+	
+		// Add fields to index	
 		$contentData = array();
-		
-		foreach($data as $field => $var) {
-			$contentData[$field] = (string) $var;
+		//print_r($data);
+		foreach($data['workspace']['fields'] as $field => $var) {
+
+			// Add abstract if exists
+			if ($field==$typeStructure['abstract']) {
+				$contentData["abstract"] = (string) $var;
+			} else {
+				// only index searchable fields
+				if (in_array($field,$typeStructure['searchableFields']))  {	
+					$contentData[$field] = (string) $var;
+				}
+			}
 			// Date format fix
 			if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
 		}
-		$contentData['type'] = (string) $type;
+		
+		// Add default meta's
+		$contentData['type'] = (string) $typeId;
+		//$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
+		$contentData['status'] = (string) $data['workspace']['status'];
+		$contentData['author'] = (string) $data['lastUpdateUser']['fullName'];
+
+		//print_r($contentData);
 		$currentDocument = new \Elastica_Document($id, $contentData);
 		
 		if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
@@ -320,49 +379,27 @@ class DataIndex implements IDataIndex
     }
 	
     /**
-     * Update index for existing content
-     *     
-	 * @see \Rubedo\Interfaces\IDataIndex::updateContent()
-	 * @param string $id content id
-	 * @param array $data new content data
-     * @return array
-     */
-    public function updateContent ($id, $data) {
-    	
-    }
-	
-    /**
      * Delete existing content from index
      *     
 	 * @see \Rubedo\Interfaces\IDataIndex::deleteContent()
+	 * @param string $typeId content type id
 	 * @param string $id content id
      * @return array
      */
-    public function deleteContent ($id) {
-    	
+    public function deleteContent ($typeId, $id) {
+     	$type = new \Elastica_Type($this->_content_index, $typeId);
+    	$type->deleteById($id);   	
     }
 	
     /**
-     * Index new DAM document
+     * Index DAM document
      *   
-	 * @see \Rubedo\Interfaces\IDataIndex::createDocument()
+	 * @see \Rubedo\Interfaces\IDataIndex::indexDocument()
 	 * @param string $id document id  
 	 * @param array $data new document data
      * @return array
      */
-    public function createDocument ($id,$data) {
-    	
-    }
-	
-    /**
-     * Update index for existing DAM document
-     *     
-	 * @see \Rubedo\Interfaces\IDataIndex::updateDocument()
-	 * @param string $id document id  
-	 * @param array $data new document data
-     * @return array
-     */
-    public function updateDocument ($id, $data) {
+    public function indexDocument ($id,$data) {
     	
     }
 	
@@ -383,64 +420,40 @@ class DataIndex implements IDataIndex
      * @return array
      */
     public function indexAllContent () {
+    	
+		// Initialize result array
+		$result = array();
 		
 		// Destroy and re-create content and document index
 		$this->_content_index->delete();
 		$this->_content_index->create(self::$_content_index_param,true);
 		$this->_document_index->delete();
-		$this->_document_index->create(self::$_document_index_param,true);
+		$this->_document_index->create(self::$_document_index_param,true);	
 			
+		// Retreive all content types
 		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
 		$ct->init("ContentTypes");
-			
-		$result = array();
-				
-		// For every content type
 		$contentTypeList = $ct->read();
-
+		
 		foreach($contentTypeList as $contentType) {
 			// Create content type with overwrite set to true
-			$fieldsToIndex = $this->createContentType($contentType,TRUE);
-			if (!empty($fieldsToIndex)) {
-				// Search abstract field
-				$abstract="";
-				foreach($contentType["fields"] as $field) {
-					if ($field['config']['resumed']) {
-						$abstract = $field['config']['name'];
-						break;
-					} 	
-				}
-				// If mapping completed, we can index content
-				$c = new \Rubedo\Mongo\DataAccess();
-				$c->init("Contents");
-				// Get content from type
-				$filter = array("typeId"=>$contentType["id"]);
-				$c->addFilter($filter);
-				$contentList = $c->read();
-				$contentCount = 0;
-				foreach($contentList as $content) {
-					// Only searchable fields get indexed
-					$data = array_intersect_key($content["fields"], $fieldsToIndex);
-					$data = array_merge($data, array_intersect_key($content, $fieldsToIndex));
-					// Add abstract if exists
-					if ($abstract!="") {
-						$data["abstract"]=$content['fields'][$abstract];
-					} else {
-						$data["abstract"]="";
-					}
-					
-					// Add author : TODO => add to real field to model
-					$data["author"]="Admin";
-					// Push content to index
-					$this->createContent($content["id"], $contentType["type"], $data);
-					$contentCount++;
-				}
-				$result[$contentType["type"]]=$contentCount;
-				
+			$this->indexContentType($contentType["id"],$contentType,TRUE);
+			// Index all contents from type
+			$c = \Rubedo\Services\Manager::getService('MongoDataAccess');
+			$c->init("Contents");	
+			$filter = array("typeId"=>$contentType["id"]);
+			$c->addFilter($filter);
+			$contentList = $c->read();
+			$contentCount = 0;
+			foreach($contentList as $content) {
+				$this->indexContent($content["id"]);
+				$contentCount++;
 			}
+			$result[$contentType["type"]]=$contentCount;
+			
 		}
-		
 		return($result);
+
     }
 	
 }
