@@ -320,8 +320,7 @@ class DataIndex implements IDataIndex
      */
     public function indexContent ($id, $typeId = null, $data = null) {
 
-		// retrieve type and data if null from content
-		
+		// retrieve type id and content data if null
 		if (is_null($typeId)) {
 			$c = \Rubedo\Services\Manager::getService('MongoDataAccess');
 			$c->init("Contents");	
@@ -332,6 +331,14 @@ class DataIndex implements IDataIndex
 			$data = $content[0];
 		}
 		
+		// Retrieve type label
+		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
+		$ct->init("ContentTypes");	
+		$filter = array("id"=>$typeId);		
+		$ct->addFilter($filter);
+		$contentType = $ct->read();
+		$type = $contentType[0]['type'];
+					
 		// Load ES type 
     	$contentType = $this->_content_index
     						->getType($typeId);
@@ -356,10 +363,10 @@ class DataIndex implements IDataIndex
 			// Date format fix
 			if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
 		}
-		
+
 		// Add default meta's
-		$contentData['type'] = (string) $typeId;
-		//$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
+		$contentData['type'] = $type;
+		$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		$contentData['status'] = (string) $data['workspace']['status'];
 		$contentData['author'] = (string) $data['lastUpdateUser']['fullName'];
 
