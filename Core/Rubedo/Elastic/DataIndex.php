@@ -159,13 +159,11 @@ class DataIndex implements IDataIndex
 		// Get content type config by id
 		$c = new \Rubedo\Mongo\DataAccess();
 		$c->init("ContentTypes");
-		$filter = array("id"=>$id);
-		$c->addFilter($filter);
-		$contentTypeConfig = $c->read();		
+		$contentTypeConfig = $c->findById($id);
 
 		// Search abstract field
 		$abstract="";
-		$fields=$contentTypeConfig[0]["fields"];
+		$fields=$contentTypeConfig["fields"];
 		foreach($fields as $field) {
 			if ($field['config']['resumed']) {
 				$abstract = $field['config']['name'];
@@ -324,20 +322,18 @@ class DataIndex implements IDataIndex
 		if (is_null($typeId)) {
 			$c = \Rubedo\Services\Manager::getService('MongoDataAccess');
 			$c->init("Contents");	
-			$filter = array("id"=>$id);
-			$c->addFilter($filter);
-			$content = $c->read();
-			$typeId = $content[0]['typeId'];
-			$data = $content[0];
+			$data = $c->findById($id);
+			$typeId = $data['typeId'];
 		}
 		
 		// Retrieve type label
 		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
 		$ct->init("ContentTypes");	
-		$filter = array("id"=>$typeId);		
-		$ct->addFilter($filter);
-		$contentType = $ct->read();
-		$type = $contentType[0]['type'];
+		//$filter = array("id"=>$typeId);		
+		//$ct->addFilter($filter);
+		//$contentType = $ct->read();
+		$contentType = $ct->findById($typeId);
+		$type = $contentType['type'];
 					
 		// Load ES type 
     	$contentType = $this->_content_index
