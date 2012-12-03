@@ -75,7 +75,7 @@
 		<mkdir dir="${phpunit.output.xml.dir}"/>
 		<mkdir dir="${phpunit.output.html.dir}"/>
 		<exec
-		command="phpunit  --configuration ${project.basedir}/tests/phpunit.xml --log-junit ${phpunit.output.xml.file} --testdox-html ${phpunit.output.html.dir}/index.html"
+		command="phpunit  --colors --configuration ${project.basedir}/tests/phpunit.xml --log-junit ${phpunit.output.xml.file} --testdox-html ${phpunit.output.html.dir}/index.html"
 		dir="${project.basedir}/tests"
 		passthru="true"
 		/>
@@ -85,6 +85,17 @@
 		style="${junit.style}"
 		/>
 	</target>
+	
+	<target name="phpunitcoverage">
+		<mkdir dir="${phpunit.output.xml.dir}"/>
+		<mkdir dir="${phpunit.output.html.dir}"/>
+		<exec
+		command="phpunit  --colors --configuration ${project.basedir}/tests/phpunit.xml --coverage-html ${phpunit.output.xml.dir}/coverage/"
+		dir="${project.basedir}/tests"
+		passthru="true"
+		/>
+	</target>
+
 
 	<!-- Pull Git Release -->
 	<target name="git.pull">
