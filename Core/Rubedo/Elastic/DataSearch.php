@@ -197,7 +197,7 @@ class DataSearch implements IDataSearch
 			// filter on type
 			if ($type != '') {
 				$typeFilter = new \Elastica_Filter_Term();
-        		$typeFilter->setTerm('type', $type);
+        		$typeFilter->setTerm('contentType', $type);
 				$globalFilter->addFilter($typeFilter);
 				$setFilter = true;
 			}
@@ -233,7 +233,7 @@ class DataSearch implements IDataSearch
 		
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('typeFacet');
-			$elasticaFacetType->setField('type');
+			$elasticaFacetType->setField('contentType');
 			$elasticaFacetType->setSize(10);
 			$elasticaFacetType->setOrder('reverse_count');
 			if ($setFilter) $elasticaFacetType->setFilter($globalFilter);
@@ -272,6 +272,7 @@ class DataSearch implements IDataSearch
 			$elasticaResultSet = $this->_content_index->search($elasticaQuery);
 			
 			// Return resultset
+
 			return($elasticaResultSet);
 			
 		} catch (Exception $e) {

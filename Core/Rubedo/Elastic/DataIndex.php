@@ -214,7 +214,6 @@ class DataIndex implements IDataIndex
 					
 					$name = $field['config']['fieldLabel'];
 					
-					//print_r($field);
 					if ($field['config']['resumed']) {
 						$store = 'yes';
 						$name = 'abstract';
@@ -273,10 +272,10 @@ class DataIndex implements IDataIndex
 		}
 		
 		// Add systems metadata : TODO update model text to title	
-		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'format' => 'YYYY-mm-dd', 'store' => 'yes');
+		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["type"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		
 		// If there is no searchable field, the new type is not created
 		if (!empty($indexMapping)) {
@@ -329,9 +328,6 @@ class DataIndex implements IDataIndex
 		// Retrieve type label
 		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
 		$ct->init("ContentTypes");	
-		//$filter = array("id"=>$typeId);		
-		//$ct->addFilter($filter);
-		//$contentType = $ct->read();
 		$contentType = $ct->findById($typeId);
 		$type = $contentType['type'];
 					
@@ -344,7 +340,6 @@ class DataIndex implements IDataIndex
 	
 		// Add fields to index	
 		$contentData = array();
-		//print_r($data);
 		foreach($data['workspace']['fields'] as $field => $var) {
 
 			// Add abstract if exists
@@ -361,7 +356,7 @@ class DataIndex implements IDataIndex
 		}
 
 		// Add default meta's
-		$contentData['type'] = $type;
+		$contentData['contentType'] = $type;
 		$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		$contentData['status'] = (string) $data['workspace']['status'];
 		$contentData['author'] = (string) $data['lastUpdateUser']['fullName'];

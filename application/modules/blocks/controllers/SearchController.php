@@ -102,7 +102,7 @@ class Blocks_SearchController extends Blocks_AbstractController
             $url = "#";
             //}
 
-            $results[] = array('id' => $id, 'url' => $url, 'score' => $score, 'title' => $data['text'], 'abstract' => $data['abstract'], 'author' => $data['author'], 'type' => $resultType, 'lastUpdateTime' => $data['lastUpdateTime'], );
+            $results[] = array('id' => $id, 'url' => $url, 'score' => $score, 'title' => $data['text'], 'abstract' => $data['abstract'], 'author' => $data['author'], 'type' => $data['contentType'], 'lastUpdateTime' => $data['lastUpdateTime'], );
         }
 
 		$output['baseUrl'] = $this->view->baseUrl();
@@ -178,7 +178,8 @@ class Blocks_SearchController extends Blocks_AbstractController
         $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css', '/css/default.bootstrap.min.css');
         $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
 
-        $this->_sendResponse($output, $template, $css, $js);
+       $this->_sendResponse($output, $template, $css, $js);
+
     }
 
 }

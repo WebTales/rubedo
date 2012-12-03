@@ -1,7 +1,17 @@
 ﻿/**
- * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
+
+// This file contains style definitions that can be used by CKEditor plugins.
+//
+// The most common use for it is the "stylescombo" plugin, which shows a combo
+// in the editor toolbar, containing all styles. Other plugins instead, like
+// the div plugin, use a subset of the styles on their feature.
+//
+// If you don't have plugins that depend on this file, you can simply ignore it.
+// Otherwise it is strongly recommended to customize this file to match your
+// website requirements and design properly.
 
 CKEDITOR.stylesSet.add( 'default', [
 	/* Block Styles */
@@ -21,8 +31,17 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Address',			element: 'address' },
 	*/
 
-	{ name: 'Blue Title',		element: 'h3', styles: { 'color': 'Blue' } },
-	{ name: 'Red Title',		element: 'h3', styles: { 'color': 'Red' } },
+	{ name: 'Italic Title',		element: 'h2', styles: { 'font-style': 'italic' } },
+	{ name: 'Subtitle',			element: 'h3', styles: { 'color': '#aaa', 'font-style': 'italic' } },
+	{
+		name: 'Special Container',
+		element: 'div',
+		styles: {
+			padding: '5px 10px',
+			background: '#eee',
+			border: '1px solid #ccc'
+		}
+	},
 
 	/* Inline Styles */
 
@@ -62,22 +81,28 @@ CKEDITOR.stylesSet.add( 'default', [
 	/* Object Styles */
 
 	{
-		name: 'Image on Left',
+		name: 'Styled image (left)',
 		element: 'img',
-		attributes: {
-			'style': 'padding: 5px; margin-right: 5px',
-			'border': '2',
-			'align': 'left'
-		}
+		attributes: { 'class': 'left' }
 	},
 
 	{
-		name: 'Image on Right',
+		name: 'Styled image (right)',
 		element: 'img',
+		attributes: { 'class': 'right' }
+	},
+
+	{
+		name: 'Compact table',
+		element: 'table',
 		attributes: {
-			'style': 'padding: 5px; margin-left: 5px',
-			'border': '2',
-			'align': 'right'
+			cellpadding: '5',
+			cellspacing: '0',
+			border: '1',
+			bordercolor: '#ccc'
+		},
+		styles: {
+			'border-collapse': 'collapse'
 		}
 	},
 
@@ -85,4 +110,3 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Square Bulleted List',	element: 'ul',		styles: { 'list-style-type': 'square' } }
 ]);
 
-// %LEAVE_UNMINIFIED% %REMOVE_LINE%
