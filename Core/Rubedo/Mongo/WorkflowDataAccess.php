@@ -303,5 +303,21 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 
         return $result;
     }
+	
+	public function findOne($value){
+        //Adaptation of the conditions for the workflow
+        $filter = $this->getFilterArray();
+        $this->_adaptFilter($filter);
+        $sort = $this->getSortArray();
+        $this->_adaptSort($sort);
+        $includedFields = $this->getFieldList();
+        $this->_adaptFields($includedFields);
+        $excludedFields = $this->getExcludeFieldList();
+        $this->_adaptExcludeFields($excludedFields);
+
+        $data = parent::findOne($value);
+		
+		return $this->_outputObjectFilter($data);
+	}
 
 }
