@@ -61,7 +61,8 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
 		$loginCond = array(array('login' => $this->_login),array('email' => $this->_login));
 
         $dataService->addOrFilter($loginCond);
-        $resultIdentities = $dataService->read();
+        $resultIdentitiesArray = $dataService->read();
+		$resultIdentities = $resultIdentitiesArray['data'];
 
         if (count($resultIdentities) < 1) {
             $this->_authenticateResultInfo['code'] = \Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND;
