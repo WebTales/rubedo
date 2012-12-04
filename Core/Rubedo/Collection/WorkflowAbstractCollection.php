@@ -103,14 +103,14 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
      * @param string $contentId
      * @return array
      */
-    public function findById($contentId, $live = true) {
+    public function findById($contentId, $live = true,$raw = true) {
         if($live === true){
 			$this->_dataService->setLive();
 		} else {
 			$this->_dataService->setWorkspace();
 		}
 		
-        $returnArray = parent::findById($contentId);
+        $returnArray = $this->_dataService->findById($contentId,$raw);
 		
 		return $returnArray;
     }

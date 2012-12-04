@@ -159,5 +159,14 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         }
         $this->_returnJson($returnArray);
     }
+	
+	/**
+	 * Do a findOneAction 
+	 */
+	public function findOneAction(){
+		$contentId = $this->getRequest()->getParam('id');
+		$result=$this->_dataService->findById($contentId,false,false);
+		$this->_returnJson($result);	
+	}
 
 }
