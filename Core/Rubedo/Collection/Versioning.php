@@ -48,6 +48,7 @@ class Versioning extends AbstractCollection implements IVersioning
 		$this->_dataService->addSort($sort);
 		
 		$contentVersions = $this->_dataService->read();
+		$contentVersions = $contentVersions['data'];
 		
 		if(isset($obj['createUser'])){
 			$createUser = $obj['createUser'];
