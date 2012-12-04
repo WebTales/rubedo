@@ -47,13 +47,6 @@ interface ICurrentUser
      * @return boolean
      */
     public function isAuthenticated();
-
-    /**
-     * Fetch the current user information from the data storage
-     *
-     * @return array
-     */
-    public function fetchCurrentUser();
 	
 	/**
 	 * return the groups of the current user.

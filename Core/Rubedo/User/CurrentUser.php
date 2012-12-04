@@ -52,7 +52,7 @@ class CurrentUser implements ICurrentUser
     public function getCurrentUser() {
         if (!isset(self::$_currentUser)) {
             if ($this->isAuthenticated()) {
-                self::$_currentUser = $this->fetchCurrentUser();
+                self::$_currentUser = $this->_fetchCurrentUser();
             }
         }
         return self::$_currentUser;
@@ -83,7 +83,7 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function fetchCurrentUser() {
+    protected function _fetchCurrentUser() {
         $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
         $sessionUser = $serviceAuth->getIdentity();
 
