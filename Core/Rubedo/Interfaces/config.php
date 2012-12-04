@@ -49,7 +49,6 @@ class config
 		'Url'						=>	'Rubedo\\Interfaces\\Router\\IUrl',
 		'PageContent'				=>	'Rubedo\\Interfaces\\Content\\IPage',
 		'FrontOfficeTemplates'		=>	'Rubedo\\Interfaces\\Templates\\IFrontOfficeTemplates',
-		'BlockContent'				=>	'Rubedo\\Interfaces\\Content\\IBlock',
 		'Users'						=>	'Rubedo\\Interfaces\\Collection\\IUsers',
 		'Masks'						=>	'Rubedo\\Interfaces\\Collection\\IMasks',
 		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
