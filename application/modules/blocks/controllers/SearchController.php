@@ -175,7 +175,7 @@ class Blocks_SearchController extends Blocks_AbstractController
 		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html");
 
-        $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css', '/css/default.bootstrap.min.css');
+        $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
         $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
 
        $this->_sendResponse($output, $template, $css, $js);
