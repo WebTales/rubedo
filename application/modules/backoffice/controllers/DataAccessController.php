@@ -289,6 +289,6 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
 	 */
 	public function findOneAction($contentId){
 		$result=$this->_dataService->findById($contentId);
-		return json_encode($result);	
+		$this->_returnJson($result);	
 	}
 }
