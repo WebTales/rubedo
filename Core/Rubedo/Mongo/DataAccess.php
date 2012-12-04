@@ -821,6 +821,10 @@ class DataAccess implements IDataAccess
             } else if ($value === 'desc') {
                 $value = -1;
             }
+			//id isn't a mongo data, _id is
+			if($name ==='id'){
+				$name = '_id';
+			}
 
             //add validated input
             $this->_sortArray[$name] = $value;
