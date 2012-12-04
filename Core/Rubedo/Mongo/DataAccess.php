@@ -301,6 +301,7 @@ class DataAccess implements IDataAccess
      */
     public function readTree() {
         $dataStore = $this->read();
+		$dataStore = $dataStore['data'];
 
         $this->_lostChildren = array();
         $rootAlreadyFound = false;
