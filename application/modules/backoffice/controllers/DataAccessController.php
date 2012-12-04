@@ -39,7 +39,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * Data Access Service
      *
-     * @var DataAccess
+     * @var IAbstractCollection
      */
     protected $_dataService;
 
@@ -119,8 +119,8 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit);
 
         $response = array();
-        $response['data'] = array_values($dataValues);
-        $response['total'] = count($response['data']);
+        $response['total'] = $dataValues['count'];
+        $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
 

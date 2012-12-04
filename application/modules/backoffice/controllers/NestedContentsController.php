@@ -103,8 +103,8 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
         $dataValues = $this->_dataService->getList($this->_parentId, $filters, $sort);
 
         $response = array();
-        $response['data'] = $dataValues;
-        $response['total'] = count($response['data']);
+        $response['total'] = $dataValues['count'];
+        $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
 
