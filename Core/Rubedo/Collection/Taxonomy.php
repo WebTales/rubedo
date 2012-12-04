@@ -31,30 +31,6 @@ class Taxonomy extends AbstractCollection implements ITaxonomy {
         parent::__construct();
     }
 
-    /**
-     * Delete objets in the current collection
-     *
-     * @see \Rubedo\Interfaces\IDataAccess::destroy
-     * @param array $obj data object
-     * @param bool $safe should we wait for a server response
-     * @return array
-     */
-    public function destroy(array $obj, $safe = true) {
-        $termsService = Manager::getService('TaxonomyTerms');
-        $returnArray = $termsService->customDelete(array('vocabularyId' => $obj['id']));
-        if ($returnArray['ok'] == 1 && $returnArray['n'] > 0) {
-            $result = parent::destroy($obj, $safe);
-			if($result['success']==true){
-				$response = array('success' => true);
-			} else {
-				$response = array('success' => false);
-			}
-			
-        } else {
-        	$returnArray = array('success' => false);
-        }
-		
-		return $result;
-    }
+
 
 }
