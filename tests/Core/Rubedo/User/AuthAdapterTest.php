@@ -48,12 +48,13 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
         $password = "verySecret";
 
         $user = array('login' => 'johnDoe', 'salt' => 'grainDeSel', 'password' => 'expected','id'=>'69');
+		$dataUser = array('data'=>array($user));
 
         $mockService = $this->getMock('Rubedo\Mongo\DataAccess');
 		$mockService->expects($this->once())->method('init')->with($this->equalTo('Users'));
         $mockService->expects($this->once())->method('addOrFilter')->with($this->equalTo(array(array('login' => $login),array('email' => $login))));
 
-        $mockService->expects($this->once())->method('read')->will($this->returnValue(array($user)));
+        $mockService->expects($this->once())->method('read')->will($this->returnValue($dataUser));
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
 
         $mockService = $this->getMock('Rubedo\Security\Hash');
@@ -74,10 +75,11 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidPassword() {
         $user = array('login' => 'johnDoe', 'salt' => 'grainDeSel', 'password' => 'expected');
+		$dataUser = array('data'=>array($user));
 
         $mockService = $this->getMock('Rubedo\Mongo\DataAccess');
 
-        $mockService->expects($this->once())->method('read')->will($this->returnValue(array($user)));
+        $mockService->expects($this->once())->method('read')->will($this->returnValue($dataUser));
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
 
         $mockService = $this->getMock('Rubedo\Security\Hash');
@@ -102,7 +104,7 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
         $user = array('login' => 'johnDoe', 'salt' => 'grainDeSel', 'password' => 'expected');
 
         $mockService = $this->getMock('Rubedo\Mongo\DataAccess');
-        $mockService->expects($this->once())->method('read')->will($this->returnValue(array()));
+        $mockService->expects($this->once())->method('read')->will($this->returnValue(array('data'=>array())));
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
 
         $mockService = $this->getMock('Rubedo\Security\Hash');
