@@ -43,7 +43,7 @@ class Blocks_CarrouselController extends Blocks_AbstractController
         $filterArray[] = array('property' => 'status', 'value' => 'published');
 
         $contentArray = $this->_dataReader->getList($filterArray);
-        foreach ($contentArray as $vignette) {
+        foreach ($contentArray['data'] as $vignette) {
             $fields = $vignette['fields'];
             $fields['title'] = $fields['text'];
             unset($fields['text']);

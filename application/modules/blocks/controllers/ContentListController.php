@@ -44,7 +44,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $contentArray = $this->_dataReader->getList($filterArray,$sort);
 
 		
-        foreach ($contentArray as $vignette) {
+        foreach ($contentArray['data'] as $vignette) {
             $fields = $vignette['fields'];
             $fields['title'] = $fields['text'];
             unset($fields['text']);
