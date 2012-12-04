@@ -35,6 +35,7 @@ class Session implements ISession
 	/**
      * Returns a session object
      *
+	 * 
      * @return object
      */
     public function getSessionObject() {
@@ -58,9 +59,9 @@ class Session implements ISession
     /**
      * Return the session object requested by $name
      * 
-     * @param string $name
-	 * @param string $defaultValue
-     * @return string
+     * @param string $name name of the parameter
+	 * @param mixed $defaultValue default value in case of not set parameter in session
+     * @return mixed value in session
      */
     public function get($name,$defaultValue = null) {
 		if(!isset($this->getSessionObject()->$name)){
