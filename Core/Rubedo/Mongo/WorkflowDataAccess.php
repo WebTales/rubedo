@@ -242,12 +242,14 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         $this->_adaptExcludeFields($excludedFields);
 
         $content = parent::read();
-
+		$count = $content['count'];
+		$content = $content['data'];
+		
         foreach ($content as $key => $value) {
             $content[$key] = $this->_outputObjectFilter($value);
         }
 
-        return $content;
+        return array('count'=>$count,'data'=>$content);
     }
 
     /**
@@ -304,7 +306,19 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         return $result;
     }
 	
-	public function findOne($value){
+	/**
+     * Find an item given by its literral ID
+     * @param string $contentId
+     * @return array
+     */
+    public function findById($contentId,$raw=true) {
+        return $this->findOne(array('_id' => $this->getId($contentId)),$raw);
+    }
+	
+	public function findOne($value,$raw=true){
+		if($raw){
+			return parent::findOne($value);
+		}
         //Adaptation of the conditions for the workflow
         $filter = $this->getFilterArray();
         $this->_adaptFilter($filter);
