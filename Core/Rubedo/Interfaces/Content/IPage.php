@@ -24,15 +24,6 @@ namespace Rubedo\Interfaces\Content;
  */
 Interface IPage
 {
-
-    /**
-     * Return page infos based on its ID
-     *
-     * @param string|int $pageId requested URL
-     * @return array
-     */
-    public function getPageInfo($pageId);
-
     /**
      * append a css file to the file list
      * @param string $cssFile URL of the CSS added

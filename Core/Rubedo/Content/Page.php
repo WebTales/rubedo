@@ -47,67 +47,6 @@ class Page implements  IPage
      */
     protected static $_title = '';
 
-    /**
-     * Return page infos based on its ID
-     *
-     * @param string|int $pageId requested URL
-     * @return array
-     */
-    public function getPageInfo($pageId)
-    {
-
-        $pageService = Manager::getService('Pages');
-        $pageInfo = $pageService->findById($pageId);
-        $this->setPageTitle($pageInfo['text']);
-        $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-        $pageInfo['template'] = 'root/page.html';
-
-        $pageInfo['css'] = self::$_css;
-        $pageInfo['js'] = self::$_js;
-        $pageInfo['title'] = self::$_title;
-
-        return $pageInfo;
-    }
-
-    protected function _getColumnsInfos(array $columns = null)
-    {
-        if ($columns === null) {
-            return null;
-        }
-        $returnArray = $columns;
-        foreach ($columns as $key => $column) {
-            if (is_array($column['blocks'])) {
-                $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
-                //unset($returnArray[$key]['bloc']);
-            } else {
-                $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
-            }
-        }
-        return $returnArray;
-    }
-
-    protected function _getBlocksInfos(array $blocks)
-    {
-        $returnArray = array();
-        foreach ($blocks as $block) {
-            $returnArray[] = Manager::getService('BlockContent')->getBlockData($block);
-        }
-        return $returnArray;
-    }
-
-    protected function _getRowsInfos(array $rows = null)
-    {
-        if ($rows === null) {
-            return null;
-        }
-        $returnArray = $rows;
-        foreach ($rows as $key => $row) {
-            if (is_array($row['columns'])) {
-                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
-            }
-        }
-        return $returnArray;
-    }
 
     /**
      * append a css file to the file list
