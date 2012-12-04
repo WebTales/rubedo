@@ -27,5 +27,27 @@ namespace Rubedo\Interfaces\User;
  */
 interface ISession
 {
-    
+     /**
+     * Returns a session object
+     *
+     * @return object
+     */
+    public function getSessionObject();
+	
+	 /**
+     * Set the session object with name and value params
+     *
+	  * @param string $name
+	  * @param string $value
+     */
+	public function set($name, $value);
+	
+      /**
+     * Return the session object requested by $name
+     * 
+     * @param string $name
+	 * @param string $defaultValue
+     * @return string
+     */
+	public function get($name,$defaultValue = null);
 }

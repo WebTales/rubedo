@@ -25,5 +25,13 @@ namespace Rubedo\Interfaces\Security;
  * @package Rubedo
  */
 interface IHtmlCleaner {
+	
+	 /**
+     * Clean a raw content to become a valid HTML content without threats
+     * 
+     * @param string $html
+     * @return string
+     */
+	public function clean($html);
 
 }

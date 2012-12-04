@@ -31,7 +31,12 @@ class Session implements ISession
     protected static $_sessionName = 'Default';
 
     protected $_sessionObject = null;
-
+ 
+	/**
+     * Returns a session object
+     *
+     * @return object
+     */
     public function getSessionObject() {
         if (!$this->_sessionObject instanceof \Zend_Session_Namespace) {
             $this->_sessionObject = new \Zend_Session_Namespace(static::$_sessionName);
@@ -39,11 +44,24 @@ class Session implements ISession
         }
         return $this->_sessionObject;
     }
-
+	
+	 /**
+     * Set the session object with name and value params
+     *
+	  * @param string $name
+	  * @param string $value
+     */
     public function set($name, $value) {
         $this->getSessionObject()->$name = $value;
     }
 
+    /**
+     * Return the session object requested by $name
+     * 
+     * @param string $name
+	 * @param string $defaultValue
+     * @return string
+     */
     public function get($name,$defaultValue = null) {
 		if(!isset($this->getSessionObject()->$name)){
 			$this->getSessionObject()->$name = $defaultValue;
