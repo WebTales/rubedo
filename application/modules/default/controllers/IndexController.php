@@ -63,15 +63,13 @@ class IndexController extends Zend_Controller_Action
      *
      * @todo remove test
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         //init service variables
-        $this->_serviceUrl      = Manager::getService('Url');
-        $this->_servicePage     = Manager::getService('PageContent');
+        $this->_serviceUrl = Manager::getService('Url');
+        $this->_servicePage = Manager::getService('PageContent');
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
-        $this->_serviceBlock    = Manager::getService('BlockContent');
-        $this->_session         = Manager::getService('Session');
-        
+        $this->_session = Manager::getService('Session');
+
         //context
         $lang = $this->_session->get('lang', 'fr');
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
@@ -96,19 +94,19 @@ class IndexController extends Zend_Controller_Action
         $this->_servicePage->appendJs('/js/bootstrap-collapse.js');
         $this->_servicePage->appendJs('/js/bootstrap-carousel.js');
         $this->_servicePage->appendJs('/js/bootstrap-typeahead.js');
-        
-        if($isLoggedIn){
-            $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');   
+
+        if ($isLoggedIn) {
+            $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');
         }
-        
+
         $this->_servicePage->appendJs('/js/scripts.js');
 
         //find the page ID
         $calledUri = $this->getRequest()->getRequestUri();
         $pageId = $this->_serviceUrl->getPageId($calledUri);
-        
+
         //build contents tree
-        $this->_pageParams = $this->_servicePage->getPageInfo($pageId);
+        $this->_pageParams = $this->_getPageInfo($pageId);
 
         //Build Twig context
         $twigVar = $this->_pageParams;
@@ -129,6 +127,117 @@ class IndexController extends Zend_Controller_Action
 
         //return the content
         $this->getResponse()->appendBody($content, 'default');
+
+    }
+
+    /**
+     * Return page infos based on its ID
+     *
+     * @param string|int $pageId requested URL
+     * @return array
+     */
+    protected function _getPageInfo($pageId) {
+
+        $pageService = Manager::getService('Pages');
+        $pageInfo = $pageService->findById($pageId);
+        $this->_servicePage->setPageTitle($pageInfo['text']);
+        $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
+        $pageInfo['template'] = 'root/page.html';
+
+        $pageInfo['css'] = $this->_servicePage->getCSS();
+        $pageInfo['js'] = $this->_servicePage->getJs();;
+        $pageInfo['title'] = $this->_servicePage->getPageTitle();
+
+        return $pageInfo;
+    }
+
+    protected function _getColumnsInfos(array $columns = null) {
+        if ($columns === null) {
+            return null;
+        }
+        $returnArray = $columns;
+        foreach ($columns as $key => $column) {
+            if (is_array($column['blocks'])) {
+                $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
+                //unset($returnArray[$key]['bloc']);
+            } else {
+                $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
+            }
+        }
+        return $returnArray;
+    }
+
+    protected function _getBlocksInfos(array $blocks) {
+        $returnArray = array();
+        foreach ($blocks as $block) {
+            $returnArray[] = $this->_getBlockData($block);
+        }
+        return $returnArray;
+    }
+
+    protected function _getRowsInfos(array $rows = null) {
+        if ($rows === null) {
+            return null;
+        }
+        $returnArray = $rows;
+        foreach ($rows as $key => $row) {
+            if (is_array($row['columns'])) {
+                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
+            }
+        }
+        return $returnArray;
+    }
+
+    /**
+     * Return the data associated to a block given by config array
+     * @param array $block bloc options (type, filter params...)
+     * @return array block data to be rendered
+     */
+    protected function _getBlockData($block) {
+        $params = array();
+        switch($block['bType']) {
+            case 'Bloc de navigation' :
+                $controller = 'nav-bar';
+                break;
+            case 'Carrousel' :
+                $controller = 'carrousel';
+                break;
+            case 'Liste de Contenus' :
+                $controller = 'content-list';
+                break;
+            case 'Pied de page' :
+                $controller = 'footer';
+                break;
+            case 'Résultat de recherche' :
+                $controller = 'search';
+                break;
+            case 'Fil d\'Ariane' :
+                $controller = 'breadcrumbs';
+                break;
+            case 'Twig' :
+                if ($block['configBloc']['fileName'] == 'responsive') {
+                    $controller = 'responsive';
+                } else {
+                    $controller = 'iframe';
+                }
+
+                break;
+            case 'Détail de contenu' :
+                $controller = (isset($block['configBloc']['displayType']) && $block['configBloc']['displayType'] == 'hero') ? 'content-single' : 'simple-content';
+                $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : '50acd0799a199d0708000000';
+                $params = array('content-id' => $contentId);
+                break;
+            default :
+                $data = array();
+                $template = 'root/block.html';
+                return array('data' => $data, 'template' => $template);
+                break;
+        }
+
+        $response = Action::getInstance()->action('index', $controller, 'blocks', $params);
+        $data = $response->getBody('content');
+        $template = $response->getBody('template');
+        return array('data' => $data, 'template' => $template);
 
     }
 
