@@ -142,7 +142,7 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
 
     public function getCurrentTheme()
     {
-        if (!isset(self::$templateDir)) {
+        if (!isset(self::$_currentTheme)) {
 
             self::$_currentTheme = 'default';
         }
