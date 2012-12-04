@@ -13,8 +13,8 @@
  * @version $Id$
  */
 
-require_once('DataAccessController.php');
- 
+require_once ('DataAccessController.php');
+
 /**
  * Controller providing CRUD API for the field types JSON
  *
@@ -28,14 +28,14 @@ require_once('DataAccessController.php');
  */
 class Backoffice_ContentsController extends Backoffice_DataAccessController
 {
-    public function init(){
-		parent::init();
-		
-		// init the data access service
-		$this -> _dataService = Rubedo\Services\Manager::getService('Contents');
-	}
-	
-	/**
+    public function init() {
+        parent::init();
+
+        // init the data access service
+        $this->_dataService = Rubedo\Services\Manager::getService('Contents');
+    }
+
+    /**
      * The default read Action
      *
      * Return the content of the collection, get filters from the request
@@ -55,14 +55,14 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         } else {
             $sort = null;
         }
-		$startJson = $this->getRequest()->getParam('start');
-		if (isset($startJson)) {
+        $startJson = $this->getRequest()->getParam('start');
+        if (isset($startJson)) {
             $start = Zend_Json::decode($startJson);
         } else {
             $start = null;
         }
-		$limitJson = $this->getRequest()->getParam('limit');
-		if (isset($limitJson)) {
+        $limitJson = $this->getRequest()->getParam('limit');
+        if (isset($limitJson)) {
             $limit = Zend_Json::decode($limitJson);
         } else {
             $limit = null;
@@ -71,15 +71,15 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit, false);
 
         $response = array();
-        $response['data'] = array_values($dataValues);
-        $response['total'] = count($response['data']);
+        $response['total'] = $dataValues['count'];
+        $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
 
         $this->_returnJson($response);
     }
-	
-	/**
+
+    /**
      * read child action
      *
      * Return the children of a node
@@ -111,8 +111,8 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 
         $this->_returnJson($response);
     }
-	
-	/**
+
+    /**
      * The create action of the CRUD API
      */
     public function createAction() {
@@ -134,8 +134,8 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         }
         $this->_returnJson($returnArray);
     }
-	
-	/**
+
+    /**
      * The update action of the CRUD API
      */
     public function updateAction() {

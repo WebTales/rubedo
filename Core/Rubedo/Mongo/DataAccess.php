@@ -196,14 +196,15 @@ class DataAccess implements IDataAccess
         $excludedFields = $this->getExcludeFieldList();
 
         //merge the two fields array to obtain only one array with all the conditions
-        if(!empty($includedFields) && !empty($excludedFields)){
-        	$fieldRule = $includedFields;
+        if (!empty($includedFields) && !empty($excludedFields)) {
+            $fieldRule = $includedFields;
         } else {
-        	$fieldRule = array_merge($includedFields, $excludedFields);
+            $fieldRule = array_merge($includedFields, $excludedFields);
         }
 
         //get the cursor
         $cursor = $this->_collection->find($filter, $fieldRule);
+        $nbItems = $cursor->count();
 
         //apply sort, paging, filter
         $cursor->sort($sort);
@@ -224,9 +225,9 @@ class DataAccess implements IDataAccess
         }
 
         //return data as simple array with no keys
-        $response = array_values($data);
-
-        return $response;
+        $datas = array_values($data);
+		$returnArray = array("data"=>$datas,'count'=>$nbItems);
+        return $returnArray;
     }
 
     /**
@@ -359,12 +360,12 @@ class DataAccess implements IDataAccess
         $excludedFields = $this->getExcludeFieldList();
 
         //merge the two fields array to obtain only one array with all the conditions
-        if(!empty($includedFields) && !empty($excludedFields)){
-        	$fieldRule = $includedFields;
+        if (!empty($includedFields) && !empty($excludedFields)) {
+            $fieldRule = $includedFields;
         } else {
-        	$fieldRule = array_merge($includedFields, $excludedFields);
+            $fieldRule = array_merge($includedFields, $excludedFields);
         }
-        
+
         //get the cursor
         if (empty($filter)) {
             $cursor = $this->_collection->find(array('parentId' => $parentId), $fieldRule);
@@ -407,13 +408,13 @@ class DataAccess implements IDataAccess
         $excludedFields = $this->getExcludeFieldList();
 
         //merge the two fields array to obtain only one array with all the conditions
-        if(!empty($includedFields) && !empty($excludedFields)){
-        	$fieldRule = $includedFields;
+        if (!empty($includedFields) && !empty($excludedFields)) {
+            $fieldRule = $includedFields;
         } else {
-        	$fieldRule = array_merge($includedFields, $excludedFields);
+            $fieldRule = array_merge($includedFields, $excludedFields);
         }
-        
-       $value = array_merge($value,$this->getFilterArray());
+
+        $value = array_merge($value, $this->getFilterArray());
 
         $data = $this->_collection->findOne($value, $fieldRule);
 
@@ -431,13 +432,13 @@ class DataAccess implements IDataAccess
     public function findById($contentId) {
         return $this->findOne(array('_id' => $this->getId($contentId)));
     }
-    
+
     /**
      * Find an item given by its name (find only one if many)
      * @param string $name
      * @return array
      */
-    public function findByName($name){
+    public function findByName($name) {
         return $this->findOne(array('text' => $name));
     }
 
@@ -472,20 +473,20 @@ class DataAccess implements IDataAccess
         } else {
             $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
-		/*
- 		// if it is a content type creation, get it created as a ES collection
- 		 if ($this->_collection->getName()=="ContentTypes") {
- 		 	$ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
- 		 	$ElasticDataIndexService->init();
- 		 	$ElasticDataIndexService->createContentType ($obj['id'], $obj,TRUE);
-		 }
-		 */
- 		// if it is a content creation, get it updated as a ES collection
- 		 if ($this->_collection->getName()=="Contents" and $returnArray["success"]) {
- 		 	$ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
- 		 	$ElasticDataIndexService->init();
- 		 	$ElasticDataIndexService->indexContent($obj['id'], $obj['typeId'], $obj);
-		 } 		
+        /*
+         // if it is a content type creation, get it created as a ES collection
+         if ($this->_collection->getName()=="ContentTypes") {
+         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+         $ElasticDataIndexService->init();
+         $ElasticDataIndexService->createContentType ($obj['id'], $obj,TRUE);
+         }
+         */
+        // if it is a content creation, get it updated as a ES collection
+        if ($this->_collection->getName() == "Contents" and $returnArray["success"]) {
+            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+            $ElasticDataIndexService->init();
+            $ElasticDataIndexService->indexContent($obj['id'], $obj['typeId'], $obj);
+        }
         return $returnArray;
     }
 
@@ -545,18 +546,18 @@ class DataAccess implements IDataAccess
             $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
 
- 		// if it is a content type update, get it updated as a ES collection
- 		 if ($this->_collection->getName()=="ContentTypes" and $returnArray["success"]) {
- 		 	$ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
- 		 	$ElasticDataIndexService->init();
- 		 	$ElasticDataIndexService->indexContentType ($obj['id'], $obj,TRUE);
-		 }
- 		// if it is a content update, get it updated as a ES collection
- 		 if ($this->_collection->getName()=="Contents" and $returnArray["success"]) {
- 		 	$ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
- 		 	$ElasticDataIndexService->init();
- 		 	$ElasticDataIndexService->indexContent($obj['id'], $obj['typeId'], $obj);
-		 }
+        // if it is a content type update, get it updated as a ES collection
+        if ($this->_collection->getName() == "ContentTypes" and $returnArray["success"]) {
+            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+            $ElasticDataIndexService->init();
+            $ElasticDataIndexService->indexContentType($obj['id'], $obj, TRUE);
+        }
+        // if it is a content update, get it updated as a ES collection
+        if ($this->_collection->getName() == "Contents" and $returnArray["success"]) {
+            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+            $ElasticDataIndexService->init();
+            $ElasticDataIndexService->indexContent($obj['id'], $obj['typeId'], $obj);
+        }
 
         return $returnArray;
     }
@@ -594,18 +595,18 @@ class DataAccess implements IDataAccess
         } else {
             $returnArray = array('success' => false, "msg" => $resultArray["err"]);
         }
- 		// if it is a content type destroy, delete the ES type
- 		 if ($this->_collection->getName()=="ContentTypes" and $returnArray["success"]) {
- 		 	$ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
- 		 	$ElasticDataIndexService->init();
- 		 	$ElasticDataIndexService->deleteContentType ($obj['id'],TRUE);
-		 }
- 		// if it is a content destroy, delete the ES document
- 		 if ($this->_collection->getName()=="Contents" and $returnArray["success"]) {
- 		 	$ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
- 		 	$ElasticDataIndexService->init();
- 		 	$ElasticDataIndexService->deleteContent($obj['typeId'],$obj['id'],TRUE);
-		 }
+        // if it is a content type destroy, delete the ES type
+        if ($this->_collection->getName() == "ContentTypes" and $returnArray["success"]) {
+            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+            $ElasticDataIndexService->init();
+            $ElasticDataIndexService->deleteContentType($obj['id'], TRUE);
+        }
+        // if it is a content destroy, delete the ES document
+        if ($this->_collection->getName() == "Contents" and $returnArray["success"]) {
+            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+            $ElasticDataIndexService->init();
+            $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id'], TRUE);
+        }
         return $returnArray;
     }
 
@@ -1045,9 +1046,9 @@ class DataAccess implements IDataAccess
         $cursor = $this->_collection->find($filter, $fieldRule);
         return $cursor;
     }
-	
-	public function customDelete($deleteCond,$safe=true){
-		return $this->_collection->remove($deleteCond,array('safe'=>$safe));
-	}
+
+    public function customDelete($deleteCond, $safe = true) {
+        return $this->_collection->remove($deleteCond, array('safe' => $safe));
+    }
 
 }
