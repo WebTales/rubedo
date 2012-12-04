@@ -869,7 +869,7 @@ class DataAccess implements IDataAccess
     }
 
     /**
-     * Set to zer the number of the first result displayed
+     * Set to zero the number of the first result displayed
      */
     public function clearFirstResult() {
         $this->_firstResult = 0;
