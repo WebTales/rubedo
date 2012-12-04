@@ -69,12 +69,13 @@ class IndexController extends Zend_Controller_Action
         $this->_servicePage = Manager::getService('PageContent');
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_session = Manager::getService('Session');
-
+		
         //context
         $lang = $this->_session->get('lang', 'fr');
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $this->_serviceTemplate->setCurrentTheme($this->_session->get('themeCSS', 'default'));
-
+		
+		
         //Load the CSS files
         $this->_servicePage->appendCss('/css/' . $this->_serviceTemplate->getCurrentTheme() . ".bootstrap.min.css");
         $this->_servicePage->appendCss('/css/bootstrap-responsive.css');
@@ -144,10 +145,6 @@ class IndexController extends Zend_Controller_Action
         $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
         $pageInfo['template'] = 'root/page.html';
 
-        $pageInfo['css'] = $this->_servicePage->getCSS();
-        $pageInfo['js'] = $this->_servicePage->getJs();;
-        $pageInfo['title'] = $this->_servicePage->getPageTitle();
-
         return $pageInfo;
     }
 
@@ -159,7 +156,6 @@ class IndexController extends Zend_Controller_Action
         foreach ($columns as $key => $column) {
             if (is_array($column['blocks'])) {
                 $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
-                //unset($returnArray[$key]['bloc']);
             } else {
                 $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
             }
