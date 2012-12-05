@@ -82,5 +82,23 @@ class Backoffice_ImageController extends Zend_Controller_Action
     function getAction() {
         $this->_forward('index', 'image', 'default');
     }
+	
+	function getMetaAction(){
+		
+        $fileId = $this->getRequest()->getParam('file-id');
+
+        if (isset($fileId)) {
+            $fileService = Rubedo\Services\Manager::getService('Images');
+            $obj = $fileService->findById($fileId);
+			if(! $obj instanceof MongoGridFSFile){
+				throw new Zend_Controller_Exception("No Image Found", 1);
+			}
+			$this->_helper->json($obj->file);
+
+        } else {
+            throw new Zend_Controller_Exception("No Id Given", 1);
+
+        }
+	}
 
 }
