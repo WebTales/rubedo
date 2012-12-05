@@ -52,6 +52,7 @@ class config
 		'Users'						=>	'Rubedo\\Interfaces\\Collection\\IUsers',
 		'Masks'						=>	'Rubedo\\Interfaces\\Collection\\IMasks',
 		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
+		'ReusableElements'			=>	'Rubedo\\Interfaces\\Collection\\IReusableElements',
 		'Contents'					=>	'Rubedo\\Interfaces\\Collection\\IContents',
 		'ContentTypes'				=>	'Rubedo\\Interfaces\\Collection\\IContentTypes',
 		'Delegations'				=>	'Rubedo\\Interfaces\\Collection\\IDelegations',
