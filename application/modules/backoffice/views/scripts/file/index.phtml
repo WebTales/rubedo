@@ -1,0 +1,7 @@
+<h1>Upload de fichiers</h1>
+
+<form method="post" action="<?php echo $this->url(array('action'=>'put'));?>" enctype="multipart/form-data">
+  <input name='uploadfile' type="file" multiple=""/>
+  <br />
+  <input type="submit" name="submit" value="post"/>
+</form>

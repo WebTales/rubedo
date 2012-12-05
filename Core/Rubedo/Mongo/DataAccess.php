@@ -33,7 +33,7 @@ class DataAccess implements IDataAccess
      *
      * @var string
      */
-    private static $_defaultMongo;
+    protected static $_defaultMongo;
 
     /**
      * Default value of the database name
@@ -42,14 +42,14 @@ class DataAccess implements IDataAccess
      *
      * @var string
      */
-    private static $_defaultDb;
+    protected static $_defaultDb;
 
     /**
      * MongoDB Connection
      *
      * @var \Mongo
      */
-    private $_adapter;
+    protected $_adapter;
 
     /**
      * Object which represent the mongoDB Collection
@@ -63,7 +63,7 @@ class DataAccess implements IDataAccess
      *
      * @var \MongoDB
      */
-    private $_dbName;
+    protected $_dbName;
 
     /**
      * Filter condition to be used when reading
