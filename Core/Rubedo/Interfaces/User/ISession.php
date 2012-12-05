@@ -38,7 +38,7 @@ interface ISession
      * Set the session object with name and value params
      *
 	  * @param string $name
-	  * @param string $value
+	  * @param mixed $value 
      */
 	public function set($name, $value);
 	
