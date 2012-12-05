@@ -1,0 +1,12 @@
+{% extends "root/block.html" %}
+
+{% block mainContent %}
+
+<div class="block ">
+			<h2 class="editable" id="{{ data.id }}_text">{{ data.text|cleanHtml }}</h2>
+			<h3 class="editable" id="{{ data.id }}_subtitle">{{ data.subtitle|cleanHtml }}</h3>
+			<div class="editable" id="{{ data.id }}_paragraph">
+				{{ data.paragraph|cleanHtml }}
+			</div>
+		</div>
+{% endblock %}
