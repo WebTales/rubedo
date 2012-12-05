@@ -31,20 +31,22 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
      */
     public function indexAction() {
         $this->_dataReader = Manager::getService('Contents');
-
-
-       	$mongoId = $this->getRequest()->getParam('contentid','507fd4feadd92aa602000000');
+		$this->_typeReader = Manager::getService('ContentTypes');
+		
+       	$mongoId = $this->getRequest()->getParam('content-id');
         $content = $this->_dataReader->findById($mongoId,true,false);
         $data = $content['fields'];
         $data["id"] = $mongoId;
-		
-        $output["data"] = $data;
 
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/singlecontent.html");
+		$type=$this->_typeReader->findById($content['typeId'],true,false);
+		$templateName=preg_replace('#[^a-zA-Z]#', '', $type["type"]);
+		$templateName .= ".html";
+        $output["data"] = $data;
+		$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/".$templateName);
 
         $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
         $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
-
+		
         $this->_sendResponse($output, $template, $css, $js);
     }
 
