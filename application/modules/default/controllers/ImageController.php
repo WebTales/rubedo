@@ -38,7 +38,9 @@ class ImageController extends Zend_Controller_Action
         if (isset($fileId)) {
             $fileService = Rubedo\Services\Manager::getService('Images');
             $obj = $fileService->findById($fileId);
-
+			if(! $obj instanceof MongoGridFSFile){
+				throw new Zend_Controller_Exception("No Image Found", 1);
+			}
             $image = $obj->getBytes();
 
             $this->getResponse()->clearBody();
