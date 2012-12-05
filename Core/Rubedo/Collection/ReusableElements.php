@@ -17,7 +17,7 @@ namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IReusableElements;
 
 /**
- * Service to handle Users
+ * Service to handle Reusable Elements
  *
  * @author jbourdin
  * @category Rubedo
