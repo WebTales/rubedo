@@ -36,8 +36,8 @@ class Backoffice_FileController extends Zend_Controller_Action
         $files = array();
         foreach ($data as $value) {
             $metaData = $value->file;
-			$metaData['id']=(string)$metaData['_id'];
-			unset($metaData['_id']);
+            $metaData['id'] = (string)$metaData['_id'];
+            unset($metaData['_id']);
             $files[] = $metaData;
         }
         $this->view->files = $files;
@@ -53,8 +53,19 @@ class Backoffice_FileController extends Zend_Controller_Action
 
         $fileInfo = array_pop($adapter->getFileInfo());
 
+        /*
+         $finfo = finfo_open(FILEINFO_MIME);
+         if ($finfo){
+         $newInfos = finfo_file($finfo, $fileInfo['tmp_name']);
+         finfo_close($finfo);
+         }
+         \Zend_Debug::dump($newInfos);
+
+         */
+         
+
         $fileService = Rubedo\Services\Manager::getService('Images');
-        $obj = array('serverFilename' => $fileInfo['tmp_name'], 'filename' => $fileInfo['name']);
+        $obj = array('serverFilename' => $fileInfo['tmp_name'],'text'=>$fileInfo['name'], 'filename' => $fileInfo['name'], 'Content-Type' => $fileInfo['type']);
         $result = $fileService->create($obj);
         if ($result['success'] == true) {
             $this->redirect($this->_helper->url('index'));
@@ -68,12 +79,11 @@ class Backoffice_FileController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender();
 
         $fileId = $this->getRequest()->getParam('file-id');
-		$version = $this->getRequest()->getParam('file-version',1);
-		
+        $version = $this->getRequest()->getParam('file-version', 1);
 
         if (isset($fileId)) {
             $fileService = Rubedo\Services\Manager::getService('Images');
-            $result = $fileService->destroy(array('id'=>$fileId,'version' => $version));
+            $result = $fileService->destroy(array('id' => $fileId, 'version' => $version));
 
             if ($result['success'] == true) {
                 $this->redirect($this->_helper->url('index'));
@@ -86,7 +96,25 @@ class Backoffice_FileController extends Zend_Controller_Action
     }
 
     function getAction() {
-	        $this->_forward('index','image','default');
+        $this->_forward('index', 'image', 'default');
     }
+	
+	function getMetaAction(){
+		
+        $fileId = $this->getRequest()->getParam('file-id');
+
+        if (isset($fileId)) {
+            $fileService = Rubedo\Services\Manager::getService('Images');
+            $obj = $fileService->findById($fileId);
+			if(! $obj instanceof MongoGridFSFile){
+				throw new Zend_Controller_Exception("No Image Found", 1);
+			}
+			$this->_helper->json($obj->file);
+
+        } else {
+            throw new Zend_Controller_Exception("No Id Given", 1);
+
+        }
+	}
 
 }
