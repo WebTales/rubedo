@@ -116,5 +116,11 @@ class Backoffice_FileController extends Zend_Controller_Action
 
         }
 	}
+	
+	function dropAllFilesAction(){
+		$fileService = Rubedo\Services\Manager::getService('MongoFileAccess');
+		$fileService->init();
+		return $this->_helper->json($fileService->drop());
+	}
 
 }

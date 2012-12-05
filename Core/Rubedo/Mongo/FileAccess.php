@@ -196,4 +196,8 @@ class FileAccess extends DataAccess implements IFileAccess
         
         return $returnArray;
     }
+	
+	public function drop(){
+		return $this->_collection->drop();
+	}
 }
