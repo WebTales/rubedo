@@ -57,6 +57,7 @@ class Backoffice_FileController extends Zend_Controller_Action
         $fileService->init();
 		$filesArray = $fileService->read();
 		$data = $filesArray['data'];
+		$files = array();
 		foreach($data as $value){
 			$metaData = $value->file;
 			$files[] = (string) $metaData['_id'];
