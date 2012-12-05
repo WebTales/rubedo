@@ -103,14 +103,14 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         } else {
             $sort = null;
         }
-		$startJson = $this->getRequest()->getParam('start');
-		if (isset($startJson)) {
+        $startJson = $this->getRequest()->getParam('start');
+        if (isset($startJson)) {
             $start = Zend_Json::decode($startJson);
         } else {
             $start = null;
         }
-		$limitJson = $this->getRequest()->getParam('limit');
-		if (isset($limitJson)) {
+        $limitJson = $this->getRequest()->getParam('limit');
+        if (isset($limitJson)) {
             $limit = Zend_Json::decode($limitJson);
         } else {
             $limit = null;
@@ -283,35 +283,34 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         }
         $this->_returnJson($returnArray);
     }
-	
-	/**
-	 * Find an item given by its id
-	 * 
-	 * @return Json_object
-	 */
-	public function findOneAction(){
-		$contentId = $this->getRequest()->getParam('id');
-		
-		if(!is_null($contentId)){
-			
-			$return=$this->_dataService->findById($contentId);
-			
-			if(empty($return['id'])){
-				
-					$returnArray= array('success'=> false, "msg" => 'Object not found');
-				
-				}else {
-					
-					$returnArray=array('succes'=>true, 'data' => $return);
-			
-				}
-				
-		}else {
-			
-			$returnArray= array('success'=> false, "msg" => 'Missing param');
-			
-		}
-		
-			$this->_returnJson($returnArray);
-	}
+
+    /**
+     * Find an item given by its id
+     *
+     * @return Json_object
+     */
+    public function findOneAction() {
+        $contentId = $this->getRequest()->getParam('id');
+
+        if (!is_null($contentId)) {
+
+            $return = $this->_dataService->findById($contentId);
+
+            if (empty($return['id'])) {
+
+                $returnArray = array('success' => false, "msg" => 'Object not found');
+
+            } else {
+
+                $returnArray = array('succes' => true, 'data' => $return);
+            }
+
+        } else {
+
+            $returnArray = array('success' => false, "msg" => 'Missing param');
+        }
+
+        $this->_returnJson($returnArray);
+    }
+
 }
