@@ -160,4 +160,44 @@ class FileAccess extends DataAccess implements IFileAccess
         
         return $returnArray;
     }
+	
+	/**
+     * Delete objets in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::destroy
+     * @param array $obj data object
+     * @return array
+     */
+    public function destroy(array $obj,$safe = true) {
+        $id = $obj['id'];
+        //if (!isset($obj['version'])) {
+        //    throw new \Rubedo\Exceptions\DataAccess('can\'t destroy an object without a version number.');
+        //}
+        //$version = $obj['version'];
+        $mongoID = $this->getId($id);
+
+        $updateCondition = array('_id' => $mongoID);
+
+        if (is_array($this->_filterArray)) {
+            $updateCondition = array_merge($this->_filterArray, $updateCondition);
+        }
+
+        $resultArray = $this->_collection->remove($updateCondition, array("safe" => $safe));
+        if ($resultArray['ok'] == 1) {
+            if ($resultArray['n'] == 1) {
+                $returnArray = array('success' => true);
+            } else {
+                $returnArray = array('success' => false, "msg" => 'no record had been deleted');
+            }
+
+        } else {
+            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+        }
+        
+        return $returnArray;
+    }
+	
+	public function drop(){
+		return $this->_collection->drop();
+	}
 }

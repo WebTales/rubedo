@@ -71,6 +71,7 @@ class config
 		'NestedContents'			=>	'Rubedo\\Interfaces\\Collection\\INestedContents',
 		'Pages'						=>	'Rubedo\\Interfaces\\Collection\\IPages',
 		'Versioning'				=>	'Rubedo\\Interfaces\\Collection\\IVersioning',
+		'Images'					=>	'Rubedo\\Interfaces\\Collection\\IImages',
 		
 	);
 

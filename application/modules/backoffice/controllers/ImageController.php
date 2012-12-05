@@ -26,7 +26,7 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
  * @package Rubedo
  *
  */
-class Backoffice_FileController extends Zend_Controller_Action
+class Backoffice_ImageController extends Zend_Controller_Action
 {
 
     function indexAction() {
@@ -40,7 +40,7 @@ class Backoffice_FileController extends Zend_Controller_Action
             unset($metaData['_id']);
             $files[] = $metaData;
         }
-        $this->view->files = $files;
+        return $this->_helper->json(array('data' => $files, 'total' => $filesArray['count']));
     }
 
     function putAction() {
@@ -53,25 +53,11 @@ class Backoffice_FileController extends Zend_Controller_Action
 
         $fileInfo = array_pop($adapter->getFileInfo());
 
-        /*
-         $finfo = finfo_open(FILEINFO_MIME);
-         if ($finfo){
-         $newInfos = finfo_file($finfo, $fileInfo['tmp_name']);
-         finfo_close($finfo);
-         }
-         \Zend_Debug::dump($newInfos);
-
-         */
-         
-
         $fileService = Rubedo\Services\Manager::getService('Images');
         $obj = array('serverFilename' => $fileInfo['tmp_name'],'text'=>$fileInfo['name'], 'filename' => $fileInfo['name'], 'Content-Type' => $fileInfo['type']);
         $result = $fileService->create($obj);
-        if ($result['success'] == true) {
-            $this->redirect($this->_helper->url('index'));
-        } else {
-            $this->_helper->json($result);
-        }
+
+        $this->_helper->json($result);
     }
 
     function deleteAction() {
@@ -85,9 +71,7 @@ class Backoffice_FileController extends Zend_Controller_Action
             $fileService = Rubedo\Services\Manager::getService('Images');
             $result = $fileService->destroy(array('id' => $fileId, 'version' => $version));
 
-            if ($result['success'] == true) {
-                $this->redirect($this->_helper->url('index'));
-            }
+            $this->_helper->json($result);
 
         } else {
             throw new Zend_Controller_Exception("No Id Given", 1);
@@ -115,12 +99,6 @@ class Backoffice_FileController extends Zend_Controller_Action
             throw new Zend_Controller_Exception("No Id Given", 1);
 
         }
-	}
-	
-	function dropAllFilesAction(){
-		$fileService = Rubedo\Services\Manager::getService('MongoFileAccess');
-		$fileService->init();
-		return $this->_helper->json($fileService->drop());
 	}
 
 }
