@@ -54,7 +54,7 @@ class Backoffice_ImageController extends Zend_Controller_Action
         $fileInfo = array_pop($adapter->getFileInfo());
 
         $fileService = Rubedo\Services\Manager::getService('Images');
-        $obj = array('serverFilename' => $fileInfo['tmp_name'], 'filename' => $fileInfo['name'], 'Content-Type' => $fileInfo['type']);
+        $obj = array('serverFilename' => $fileInfo['tmp_name'],'text'=>$fileInfo['name'], 'filename' => $fileInfo['name'], 'Content-Type' => $fileInfo['type']);
         $result = $fileService->create($obj);
 
         $this->_helper->json($result);
