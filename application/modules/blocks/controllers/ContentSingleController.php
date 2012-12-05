@@ -34,7 +34,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
 
 
        	$mongoId = $this->getRequest()->getParam('contentid','507fd4feadd92aa602000000');
-        $content = $this->_dataReader->findById($mongoId);
+        $content = $this->_dataReader->findById($mongoId,true,false);
         $data = $content['fields'];
         $data["id"] = $mongoId;
 		
