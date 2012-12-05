@@ -219,8 +219,9 @@ class IndexController extends Zend_Controller_Action
 
                 break;
             case 'Détail de contenu' :
-                $controller = (isset($block['configBloc']['displayType']) && $block['configBloc']['displayType'] == 'hero') ? 'content-single' : 'simple-content';
-                $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : '50acd0799a199d0708000000';
+                $controller = 'content-single';
+				$contentIdParam = $this->getRequest()->getParam('content-id');
+                $contentId = $contentIdParam ? $contentIdParam : $block['configBloc']['contentId'];
                 $params = array('content-id' => $contentId);
                 break;
             default :
