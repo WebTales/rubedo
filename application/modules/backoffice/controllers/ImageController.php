@@ -29,6 +29,20 @@ use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
 class Backoffice_ImageController extends Zend_Controller_Action
 {
 
+	function indexAction(){
+		$fileService = Rubedo\Services\Manager::getService('Images');
+        $filesArray = $fileService->getList();
+        $data = $filesArray['data'];
+        $files = array();
+        foreach ($data as $value) {
+            $metaData = $value->file;
+            $metaData['id'] = (string)$metaData['_id'];
+            unset($metaData['_id']);
+            $files[] = $metaData;
+        }
+		return $this->_helper->json(array('data'=>$files,'total'=>$filesArray['count']));
+	}
+
     function putAction() {
         $adapter = new Zend_File_Transfer_Adapter_Http();
 
@@ -38,7 +52,8 @@ class Backoffice_ImageController extends Zend_Controller_Action
         }
 
         $fileInfo = array_pop($adapter->getFileInfo());
-
+		
+	
         $fileService = Rubedo\Services\Manager::getService('Images');
         $obj = array('serverFilename' => $fileInfo['tmp_name'], 'filename' => $fileInfo['name']);
         $result = $fileService->create($obj);
