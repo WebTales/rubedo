@@ -30,7 +30,17 @@ class Backoffice_FileController extends Zend_Controller_Action
 {
 
     function indexAction() {
-
+        $fileService = Rubedo\Services\Manager::getService('Images');
+        $filesArray = $fileService->getList();
+        $data = $filesArray['data'];
+        $files = array();
+        foreach ($data as $value) {
+            $metaData = $value->file;
+			$metaData['id']=(string)$metaData['_id'];
+			unset($metaData['_id']);
+            $files[] = $metaData;
+        }
+        $this->view->files = $files;
     }
 
     function putAction() {
@@ -43,50 +53,40 @@ class Backoffice_FileController extends Zend_Controller_Action
 
         $fileInfo = array_pop($adapter->getFileInfo());
 
-        $fileService = Rubedo\Services\Manager::getService('MongoFileAccess');
-        $fileService->init();
+        $fileService = Rubedo\Services\Manager::getService('Images');
         $obj = array('serverFilename' => $fileInfo['tmp_name'], 'filename' => $fileInfo['name']);
         $result = $fileService->create($obj);
-
-        $this->_helper->json($result);
-
+        if ($result['success'] == true) {
+            $this->redirect($this->_helper->url('index'));
+        } else {
+            $this->_helper->json($result);
+        }
     }
 
-    function listAction() {
-        $fileService = Rubedo\Services\Manager::getService('MongoFileAccess');
-        $fileService->init();
-		$filesArray = $fileService->read();
-		$data = $filesArray['data'];
-		$files = array();
-		foreach($data as $value){
-			$metaData = $value->file;
-			$files[] = (string) $metaData['_id'];
-		}
-		$this->view->files = $files;
-    }
-
-    function getAction() {
+    function deleteAction() {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
 
         $fileId = $this->getRequest()->getParam('file-id');
+		$version = $this->getRequest()->getParam('file-version',1);
 		
+
         if (isset($fileId)) {
-            $fileService = Rubedo\Services\Manager::getService('MongoFileAccess');
-            $fileService->init();
-            $obj = $fileService->findById($fileId);
+            $fileService = Rubedo\Services\Manager::getService('Images');
+            $result = $fileService->destroy(array('id'=>$fileId,'version' => $version));
 
-            $image = $obj->getBytes();
+            if ($result['success'] == true) {
+                $this->redirect($this->_helper->url('index'));
+            }
 
-            $this->getResponse()->clearBody();
-            $this->getResponse()->setHeader('Content-Type', 'image/jpeg');
-            $this->getResponse()->setBody($image);
+        } else {
+            throw new Zend_Controller_Exception("No Id Given", 1);
 
-        }else{
-        	throw new Zend_Controller_Exception("No Id Given", 1);
-			
         }
+    }
 
+    function getAction() {
+	        $this->_forward('index','image','default');
     }
 
 }
