@@ -51,7 +51,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		
 		$returnArray = parent::update($obj, $safe);
 		if($returnArray['success']){
-			if($returnArray['data']['status'] === 'published'){
+			if($returnArray['data']['status'] === 'published' && !$live){
 				$result = $this->_dataService->publish($returnArray['data']['id']);
 				
 				if(!$result['success']){
