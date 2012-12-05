@@ -37,6 +37,7 @@ class config
 	protected static $_defaultInterfaceArray = array(
 		'MongoDataAccess' 			=> 	'Rubedo\\Interfaces\\Mongo\\IDataAccess', 
 		'MongoWorkflowDataAccess'	=>	'Rubedo\\Interfaces\\Mongo\\IWorkflowDataAccess', 
+		'MongoFileAccess'			=>	'Rubedo\\Interfaces\\Mongo\\IFileAccess', 
 	    'ElasticDataSearch' 		=> 	'Rubedo\\Interfaces\\Elastic\\IDataSearch', 
 	    'ElasticDataIndex' 			=> 	'Rubedo\\Interfaces\\Elastic\\IDataIndex', 
 	    'Acl'						=>	'Rubedo\\Interfaces\\Security\\IAcl',
@@ -52,6 +53,7 @@ class config
 		'Users'						=>	'Rubedo\\Interfaces\\Collection\\IUsers',
 		'Masks'						=>	'Rubedo\\Interfaces\\Collection\\IMasks',
 		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
+		'ReusableElements'			=>	'Rubedo\\Interfaces\\Collection\\IReusableElements',
 		'Contents'					=>	'Rubedo\\Interfaces\\Collection\\IContents',
 		'ContentTypes'				=>	'Rubedo\\Interfaces\\Collection\\IContentTypes',
 		'Delegations'				=>	'Rubedo\\Interfaces\\Collection\\IDelegations',
