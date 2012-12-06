@@ -29,6 +29,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms {
         $this->_collectionName = 'TaxonomyTerms';
         parent::__construct();
     }
+	
+	protected static $_termsArray = array();
 
     public function getChildrens($parentId) {
 
@@ -93,5 +95,13 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms {
         return $returnArray;
 
     }
+	
+	public function getTerm($id){
+		if(!isset(self::$_termsArray[$id])){
+			$term = $this->findById($id);
+			self::$_termsArray[$id]=$term['text'];
+		}
+		return self::$_termsArray[$id];
+	}
 
 }
