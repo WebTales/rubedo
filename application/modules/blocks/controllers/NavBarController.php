@@ -47,20 +47,47 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
 
-        $output["id"] = $id;
-        $output["responsive"] = $responsive;
-        $output["position"] = $position;
-        $output["brand"] = $brand;
-        $output["options"] = $options;
-        $output["components"] = $$lang;
+        //$output["id"] = $id;
+        //$output["responsive"] = $responsive;
+        //$output["position"] = $position;
+        //$output["brand"] = $brand;
+        //$output["options"] = $options;
+        //$output["components"] = $$lang;
 
-        $output["data"] = $output;
+        $output['currentPage'] = $this->getRequest()->getParam('currentPage');
+        $output['rootPage'] = $this->getRequest()->getParam('rootPage');
+        $output['pages'] = array();
+
+        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage']);
+        foreach ($levelOnePages as $page) {
+            $tempArray = array();
+            $tempArray['url'] = $page['text'];
+            $tempArray['title'] = $page['title'];
+            $tempArray['id'] = $page['id'];
+            $levelTwoPages = Manager::getService('Pages')->readChild($page['id']);
+            if (count($levelTwoPages)) {
+                $tempArray['pages'] = array();
+                foreach ($levelTwoPages as $subPage) {
+                    $tempSubArray = array();
+                    $tempSubArray['url'] = $subPage['text'];
+                    $tempSubArray['title'] = $subPage['title'];
+                    $tempSubArray['id'] = $subPage['id'];
+					$tempArray['pages'][] = $tempSubArray;
+                }
+                
+            }
+
+            $output['pages'][] = $tempArray;
+        }
+
+        //Zend_Debug::dump($output['pages']);die();
+
+        $twigVar["data"] = $output;
 
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html");
 
-        $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
-        $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
-
+        $css = array();
+        $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
 

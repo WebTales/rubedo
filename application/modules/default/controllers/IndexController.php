@@ -57,6 +57,13 @@ class IndexController extends Zend_Controller_Action
      * @var \Rubedo\Interfaces\Content\IBlock
      */
     protected $_serviceBlock;
+	
+	/**
+	 * ID of the current page
+	 * 
+	 * @var string
+	 */
+	protected $_pageId;
 
     /**
      * Main Action : render the Front Office view
@@ -69,45 +76,27 @@ class IndexController extends Zend_Controller_Action
         $this->_servicePage = Manager::getService('PageContent');
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_session = Manager::getService('Session');
-		
+
         //context
         $lang = $this->_session->get('lang', 'fr');
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $this->_serviceTemplate->setCurrentTheme($this->_session->get('themeCSS', 'default'));
-		
-		
+
         //Load the CSS files
-        $this->_servicePage->appendCss('/css/' . $this->_serviceTemplate->getCurrentTheme() . ".bootstrap.min.css");
-        $this->_servicePage->appendCss('/css/bootstrap-responsive.css');
-        $this->_servicePage->appendCss('/css/rubedo.css');
 
         //load the javaScripts files
-        $this->_servicePage->appendJs('/js/jquery.js');
-        $this->_servicePage->appendJs('/js/bootstrap-transition.js');
-        $this->_servicePage->appendJs('/js/bootstrap-alert.js');
-        $this->_servicePage->appendJs('/js/bootstrap-modal.js');
-        $this->_servicePage->appendJs('/js/bootstrap-dropdown.js');
-        $this->_servicePage->appendJs('/js/bootstrap-scrollspy.js');
-        $this->_servicePage->appendJs('/js/bootstrap-tab.js');
-        $this->_servicePage->appendJs('/js/bootstrap-tooltip.js');
-        $this->_servicePage->appendJs('/js/bootstrap-popover.js');
-        $this->_servicePage->appendJs('/js/bootstrap-button.js');
-        $this->_servicePage->appendJs('/js/bootstrap-collapse.js');
-        $this->_servicePage->appendJs('/js/bootstrap-carousel.js');
-        $this->_servicePage->appendJs('/js/bootstrap-typeahead.js');
-
         if ($isLoggedIn) {
-            $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');
+            // $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');
         }
 
-        $this->_servicePage->appendJs('/js/scripts.js');
+        //$this->_servicePage->appendJs('/js/scripts.js');
 
         //find the page ID
         $calledUri = $this->getRequest()->getRequestUri();
-        $pageId = $this->_serviceUrl->getPageId($calledUri);
+        $this->_pageId = $this->_serviceUrl->getPageId($calledUri);
 
         //build contents tree
-        $this->_pageParams = $this->_getPageInfo($pageId);
+        $this->_pageParams = $this->_getPageInfo($this->_pageId);
 
         //Build Twig context
         $twigVar = $this->_pageParams;
@@ -194,6 +183,9 @@ class IndexController extends Zend_Controller_Action
         switch($block['bType']) {
             case 'Bloc de navigation' :
                 $controller = 'nav-bar';
+                $params['currentPage'] = $this->_pageId;
+                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil');
+
                 break;
             case 'Carrousel' :
                 $controller = 'carrousel';
@@ -211,16 +203,13 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'breadcrumbs';
                 break;
             case 'Twig' :
-                if ($block['configBloc']['fileName'] == 'responsive') {
-                    $controller = 'responsive';
-                } else {
-                    $controller = 'iframe';
-                }
+                $controller = 'twig';
+                $params['template'] = $block['configBloc']['fileName'];
 
                 break;
             case 'Détail de contenu' :
                 $controller = 'content-single';
-				$contentIdParam = $this->getRequest()->getParam('content-id');
+                $contentIdParam = $this->getRequest()->getParam('content-id');
                 $contentId = $contentIdParam ? $contentIdParam : $block['configBloc']['contentId'];
                 $params = array('content-id' => $contentId);
                 break;
