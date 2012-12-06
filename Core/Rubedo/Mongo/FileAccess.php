@@ -85,9 +85,12 @@ class FileAccess extends DataAccess implements IFileAccess
         $cursor->sort($sort);
         $cursor->skip($firstResult);
         $cursor->limit($numberOfResults);
-
+		
+		$data = array();
         //switch from cursor to actual array
-        $data = iterator_to_array($cursor);
+        foreach ($cursor as $key => $value) {
+            $data[]=$value;
+        }
 
 
         //return data as simple array with no keys

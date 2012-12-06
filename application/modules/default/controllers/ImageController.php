@@ -42,9 +42,17 @@ class ImageController extends Zend_Controller_Action
 				throw new Zend_Controller_Exception("No Image Found", 1);
 			}
             $image = $obj->getBytes();
-
+			
+			$meta = $obj->file;
+			$filename = $meta['filename'];
+			$nameSegment = explode('.',$filename);
+			$extension = array_pop($nameSegment);
+			
+			$type = strtolower($extension);
+			$type = ($type == 'jpg')?'jpeg':$type;
+			
             $this->getResponse()->clearBody();
-            $this->getResponse()->setHeader('Content-Type', 'image/jpeg');
+            $this->getResponse()->setHeader('Content-Type', 'image/'.$type);
             $this->getResponse()->setBody($image);
 
         } else {
