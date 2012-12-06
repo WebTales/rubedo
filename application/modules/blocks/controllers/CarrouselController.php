@@ -33,24 +33,38 @@ class Blocks_CarrouselController extends Blocks_AbstractController
     {
         $this->_dataReader = Manager::getService('Contents');
 
-        $headerId = '507ff6a8add92a5809000000';
-        $header = $this->_dataReader->findById($headerId);
-        $output["title"] = $header['text'];
-        $output["id"] = $headerId;
-        $data = array();
-
-        $filterArray[] = array('property' => 'typeId', 'value' => '507fcc1cadd92af204000000');
+		//Zend_Debug::dump(Manager::getService('TaxonomyTerms')->getList());
+		//die();
+		//50c0c9ad9a199d3610000001
+		
+        
+        $filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => '50c0caeb9a199d1e11000001');
+		//{"live.taxonomy.50c0cabc9a199dcc0f000002":"50c0caeb9a199d1e11000001"}
         $filterArray[] = array('property' => 'status', 'value' => 'published');
 
         $contentArray = $this->_dataReader->getList($filterArray);
+		
+		
         foreach ($contentArray['data'] as $vignette) {
             $fields = $vignette['fields'];
+			$terms = array_pop($vignette['taxonomy']);
+			$termsArray = array();
+			foreach ($terms as $term) {
+				if($term=='50c0caeb9a199d1e11000001'){
+					continue;
+				}
+				$termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+			}
+			$fields['terms']=$termsArray;
             $fields['title'] = $fields['text'];
             unset($fields['text']);
             $fields['id'] = (string)$vignette['id'];
             $data[] = $fields;
         }
-
+		
+		//Zend_debug::dump($data);
+		//die();
+		
         $output["items"] = $data;
 
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html");

@@ -2,50 +2,33 @@
 
 {% block mainContent %}
 <!-- carousel -->
-	<div class="slider-wrapper-post theme-default row" style="position:relative;">
-		<div id="sliders" class="nivoSlider span12" style="margin-bottom:0px;">
-
-			<a href="#" title="Standart post"><img src="/assets/zac_rucheres.jpg" alt="Standart post" title="#htmlcaption_193"
-			data-thumb="/assets/zac_rucheres_mini.jpg"  /></a>
-
-			<a href="#" title="Gallery post"><img src="/assets/bd_essonne.jpg" alt="Gallery post" title="#htmlcaption_179"
-			data-thumb="/assets/bd_essonne_mini.jpg"  /></a>
-
-			<a href="#" title="Gallery post"><img src="/assets/sms.jpg" alt="Gallery post" title="#htmlcaption_1"
-			data-thumb="/assets/sms_mini.jpg"  /></a>
-
-		</div>
-
-		<div class="nivo-html-caption" id="htmlcaption_193">
-			<a href="#" title="Standart post"> <h1>Réunion publique sur la Zac des Ruchères</h1>
-			<p>
-				Mercredi 14 novembre à 20h30 à la mairie, salle du Conseil municipal.
-			</p> </a>
-			<div class="cat-slider" style="position:absolute; top:0px; right:0; z-index:999; padding:5px; font-size:12px; color:#f8f8f8;">
-				News
-			</div>
-		</div>
-
-		<div class="nivo-html-caption" id="htmlcaption_179">
-			<a href="#" title="Gallery post"> <h1>15ème Festival BD’Essonne</h1>
-			<p>
-				Samedi 15 et dimanche 16 décembre de 10h à 18 - Gymnase Kervadec
-			</p> </a>
-			<div class="cat-slider" style="position:absolute; top:0px; right:0; z-index:999; padding:5px; font-size:12px; color:#f8f8f8;">
-				Culture
-			</div>
-		</div>
-
-		<div class="nivo-html-caption" id="htmlcaption_1">
-			<a href="#" title="Gallery post"> <h1>La Mairie vous informe en temps réel !</h1>
-			<p>
-				Inscrivez-vous gratuitement sur le site !
-			</p> </a>
-			<div class="cat-slider" style="position:absolute; top:0px; right:0; z-index:999; padding:5px; font-size:12px; color:#f8f8f8;">
-				Pratique
-			</div>
-		</div>
+<div class="slider-wrapper-post theme-default row" style="position:relative;">
+	
+	<div id="sliders" class="nivoSlider span12" style="margin-bottom:0px;">
+		
+		{% for slide in items %}
+		<a href="#" title="Standart post"><img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{slide.id}}"
+		data-thumb="/image?file-id={{slide.thumbnail}}"  /></a>
+		{% endfor %}
 
 	</div>
+	
+	{% for slide in items %}
+	<div class="nivo-html-caption" id="htmlcaption_{{slide.id}}">
+		<a href="#" title="{{slide.text}}"> <h1>{{slide.text}}</h1>
+		<p>
+			{{slide.summary}}
+		</p> </a>
+		<div class="cat-slider" style="position:absolute; top:0px; right:0; z-index:999; padding:5px; font-size:12px; color:#f8f8f8;">
+			{% for term in slide.terms %}
+			{% if not loop.first %}&nbsp;|&nbsp;{% endif %}{{term}}
+			{% endfor %}
+		</div>
+	</div>
+	{% endfor %}
+
+	
+
+</div>
 
 {% endblock %}
