@@ -1,137 +1,43 @@
-<div id="menu" class="navbar {% if position != 'none' %}navbar-{{ position }}{% endif %}">
-	<div class="navbar-inner">
-		{% if responsive %}
-		<div class="container-fluid">
-			<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
-			{% endif %}
-			<a class="brand" href="/">{{ brand }}</a>
-			{% if responsive %}
-			<!-- Everything you want hidden at 940px or less, place within here -->
-			<div class="nav-collapse">
-				{% endif %}
-				{% for component in components %} <!-- navbar component -->
-				<ul class="nav">
-					<!-- nav bar -->
-					{% if component.type == 'link' %} <!-- link component -->
-					<li {% if component.active %}class="active"{% endif %}>
-						<!-- active link -->
-						<a {% if component.modal %}data-toggle="modal"{% endif %} href="{{ component.href }}"> {% if component.icon %}<i class="{{ component.icon }}"></i> {% endif %} <!-- icon --> {{ component.caption }} </a>
+<!-- header	-->
+<div class="row">
+	<div class="span12">
+		<header class="header default">
+			<div class="row" id="header">
+				<div class="span8">
+					<div class="left logo">
+						<a href="/" title="Ma Ville - Accueil" rel="home"><img src="/assets/logo-ville.gif" alt="" /></a>
+					</div>
+				</div>
+				<div class="span4" id="header-search">
+					<div style="margin-top: 100px;margin-right:10px;">
+						<form class="form-search" action="/index/search">
+							<input type="text" class="input-medium search-query" name="query" value=" {{"search"|trans}}" id="s" />
+						</form>
+					</div>
+				</div>
+			</div>
+			<nav id="menu-top" class="row">
+				<ul id="mainmenu" class="menu span12">
+					<li id="menu-item-1" class="menu-item menu-item-type-post_type menu-item-object-page {% if currentPage == rootPage %}current-menu-item{% endif %} page_item {% if currentPage == rootPage %}current_page_item{% endif %}">
+						<a href="/">Accueil {{data.currentPage}}</a>
 					</li>
-					{% endif %} <!-- /link component -->
-					{% if component.type == 'dropdown' %} <!-- dropdown component -->
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> {% if component.icon %}<i class="{{ component.icon }}"></i> {% endif %} <!-- icon --> {{ component.caption }} <b class="caret"></b> </a>
-						<ul class="dropdown-menu">
-							{% for item in component['list'] %}
-							<li>
-								<a href="{{ item.href }}">{{ item.caption }}</a>
+					{% for page in pages %}
+					<li id="menu-item-243" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
+						<a href="{{page.url}}">{{page.title}}</a>
+						{% if page.pages %}
+						<ul class="sub-menu">
+							{% for subpage in page.pages %}
+							<li class="menu-item menu-item-type-custom menu-item-object-custom">
+								<a href="{{subpage.url}}">{{subpage.title}}</a>
 							</li>
 							{% endfor %}
+
 						</ul>
+						{% endif %}
 					</li>
-					{% endif %} <!-- /dropdown component -->
+					{% endfor %}
 				</ul>
-				<!-- /nav bar -->
-				{% endfor %} <!-- /navbar component -->
-				{% for option in options %}
-				{% if option == 'langselector' %}
-				<!-- langselector component -->
-				<div class="btn-group pull-right">
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <i class="icon-flag"></i> {{ "language"|trans }} <span class="caret"></span> </a>
-					<ul class="dropdown-menu" id="langChooser">
-						<li>
-							<a href="fr">{{"french"|trans}}</a>
-						</li>
-						<li>
-							<a href="en">{{"english"|trans}}</a>
-						</li>
-					</ul>
-				</div>
-				<!-- /langselector component -->
-				{% endif %}
-				{% if option == 'themechooser' %}
-				<!-- themechooser component-->
-				<div class="btn-group pull-right">
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <i class="icon-eye-open"></i> {{"change_theme"|trans}} <span class="caret"></span> </a>
-					<ul class="dropdown-menu" id="themeChooser">
-						<li>
-							<a href="default">{{"default"|trans}}</a>
-						</li>
-						<li class="divider"></li>
-						<li>
-							<a href="amelia">Amelia</a>
-						</li>
-						<li>
-							<a href="cerulean">Cerulean</a>
-						</li>
-						<li>
-							<a href="cyborg">Cyborg</a>
-						</li>
-						<li>
-							<a href="journal">Journal</a>
-						</li>
-						<li>
-							<a href="readable">Readable</a>
-						</li>
-						<li>
-							<a href="simplex">Simplex</a>
-						</li>
-						<li>
-							<a href="slate">Slate</a>
-						</li>
-						<li>
-							<a href="spacelab">Spacelab</a>
-						</li>
-						<li>
-							<a href="spruce">Spruce</a>
-						</li>
-						<li>
-							<a href="superhero">Superhero</a>
-						</li>
-						<li>
-							<a href="united">United</a>
-						</li>
-					</ul>
-				</div>
-				<!-- /themechooser component-->
-				{% endif %}
-				{% if option == 'loginform' %}
-				<!-- loginform component -->
-				<!--
-				<div class="btn-group pull-right">
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				<i class="icon-user"></i> Jbourdin
-				<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu">
-				<li><a href="#">{{"my_account"|trans}}</a></li>
-				<li class="divider"></li>
-				<li><a href="#">{{"sign_out"|trans}}</a></li>
-				</ul>
-				</div>
-				-->
-				<div class="btn-group pull-right" id="connect-btn"></div>
-
-				<!-- /loginform component -->
-				{% endif %}
-				{% if option == 'search' %}
-				<!-- search component-->
-				<div class="btn-group pull-right">
-					<form class="form-search" action="/index/search">
-						<input type="text" class="input-medium search-query" name="query">
-						<button type="submit" class="btn">
-							{{"search"|trans}}
-						</button>
-					</form>
-				</div>
-
-				<!-- /search component-->
-				{% endif %}
-				{% endfor %}
-				{% if responsive %}
-			</div>
-		</div>
-		{% endif %}
+			</nav>
+		</header>
 	</div>
 </div>
