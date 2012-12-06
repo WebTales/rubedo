@@ -31,29 +31,43 @@ class Blocks_ContentListController extends Blocks_AbstractController
      */
     public function indexAction() {
         $this->_dataReader = Manager::getService('Contents');
-
+		$this->_typeReader = Manager::getService('ContentTypes');
 
         $output = array();
 		
+		//$filterArray[] = array('property' => 'typeId', 'value' => '999999999999999999999999');
 		$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');
         $filterArray[] = array('property' => 'status', 'value' => 'published');
 		
         $sort = array();
-        $sort[] = array('property'=>'text', 'direction' => 'asc');
-
-        $contentArray = $this->_dataReader->getList($filterArray,$sort);
-
-		
+        $sort[] = array('property'=>'text', 'direction' => 'asc' );
+			
+            $pageData['limit']=6;
+		   $pageData['currentPage']=$this->getRequest()->getParam("page",1);
+				
+			$contentArray = $this->_dataReader->getList($filterArray,$sort,(($pageData['currentPage']-1)* $pageData['limit']), $pageData['limit']);
+			$nbItems=$contentArray["count"];
+			$pageData['nbPages']=(int)ceil(($nbItems)/$pageData['limit']);
+            $pageData['limitPage']=$pageData['currentPage']+9;
+			
+            $typeArray=$this-> _typeReader->getList();
+            $contentTypeArray=array();
+            foreach ($typeArray['data'] as $dataType) {
+			$contentTypeArray[(string)$dataType['id']]="root/blocks/shortsingle/".preg_replace('#[^a-zA-Z]#', '', $dataType['type']).".html";
+		}	
+			
         foreach ($contentArray['data'] as $vignette) {
             $fields = $vignette['fields'];
             $fields['title'] = $fields['text'];
             unset($fields['text']);
             $fields['id'] = (string)$vignette['id'];
+			$fields['type']=$contentTypeArray[(string)$vignette['typeId']];
             $data[] = $fields;
         }
 		
         $output["data"] = $data;
-
+		$output["page"]=$pageData;
+	//Zend_Debug::dump($output);die();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentlist.html");
 
         $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
