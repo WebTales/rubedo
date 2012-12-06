@@ -18,11 +18,11 @@
 			</div>
 			<nav id="menu-top" class="row">
 				<ul id="mainmenu" class="menu span12">
-					<li id="menu-item-1" class="menu-item menu-item-type-post_type menu-item-object-page {% if currentPage == rootPage %}current-menu-item{% endif %} page_item {% if currentPage == rootPage %}current_page_item{% endif %}">
+					<li id="menu-item-{{rootPage}}" class="menu-item menu-item-type-post_type menu-item-object-page {% if currentPage == rootPage %}current-menu-item{% endif %} page_item {% if currentPage == rootPage %}current_page_item{% endif %}">
 						<a href="/">Accueil {{data.currentPage}}</a>
 					</li>
 					{% for page in pages %}
-					<li id="menu-item-243" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
+					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
 						<a href="{{page.url}}">{{page.title}}</a>
 						{% if page.pages %}
 						<ul class="sub-menu">
