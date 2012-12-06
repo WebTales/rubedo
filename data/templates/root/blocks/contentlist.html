@@ -5,23 +5,31 @@
 <div class="block contentlist">
 	<div class="row-fluid">
 		{% for content in data %}
-		<div class="span4">
-			<h2 class="editable" id="{{ content.id }}_title">{{ content.title|cleanHtml }}</h2>
-			<div class="editable" id="{{ content.id }}_paragraph">
-				{{ content.paragraph|cleanHtml }}
-			</div>
-			{% if (content.link) %}
-			<div class="editable" id="{{ content.id }}_link">
-				{{ content.link|cleanHtml }}
-			</div>
-			{% endif %}
+		{% include content.type  %}
+			{% if loop.index % 3 == 0 %}
 		</div>
-		{% if loop.index % 3 == 0 %}
-	</div>
 	<div class="row-fluid">
 		{% endif %}
+
 		{% endfor %}
 	</div>
+	{%if page.nbPages > page.limit %}
+	<div class="pagination pagination-centered">
+		<ul>
+			{% if page.currentPage != 1%}
+	<li><a href="/index?page={{page.currentPage-9}}">{{page.currentPage-9}}</a></li>
+		<li><a href="/index?page={{page.currentPage-1}}">Prev</a></li>
+		{%endif%}
+	{% for  i in page.currentPage..page.limitPage %}
+	<li><a href="/index?page={{i}}">{{i}}</a></li>
+	{%endfor%}
+	{% if page.currentPage != page.nbPages %}
+	<li><a href="/index?page={{page.currentPage+1}}">Next</a></li>
+	<li><a href="/index?page={{page.currentPage+9}}">{{page.currentPage+18}}</a></li>
+	{%endif%}
+	</ul>
+	</div>
+	{%endif%}
 </div>
 
 {% endblock %}
