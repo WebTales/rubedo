@@ -186,18 +186,18 @@ class DataIndex implements IDataIndex
 	 * @param array $data new content type
      * @return array
      */
-    public function indexContentType($id, $data, $overwrite=false) {
+    public function indexContentType($id, $data, $overwrite=FALSE) {
     	
 		// Unicity type id check
 
 		$mapping = $this->_content_index->getMapping();
 		if (array_key_exists($id,$mapping[self::$_options['contentIndex']])) {
-			if (!$overwrite) {
-				// throw exception
-				throw new \Exception("$id type already exists");
-			} else {
+			if ($overwrite) {
 				// delete existing content type
 				$this->deleteContentType($id);
+			} else {
+				// throw exception
+				throw new \Exception("$id type already exists");
 			}
 		}
 
@@ -433,7 +433,7 @@ class DataIndex implements IDataIndex
 		$ct->init("ContentTypes");
 		$contentTypeList = $ct->read();
 		
-		foreach($contentTypeList as $contentType) {
+		foreach($contentTypeList["data"] as $contentType) {
 			// Create content type with overwrite set to true
 			$this->indexContentType($contentType["id"],$contentType,TRUE);
 			// Index all contents from type
@@ -443,7 +443,7 @@ class DataIndex implements IDataIndex
 			$c->addFilter($filter);
 			$contentList = $c->read();
 			$contentCount = 0;
-			foreach($contentList as $content) {
+			foreach($contentList["data"] as $content) {
 				$this->indexContent($content["id"]);
 				$contentCount++;
 			}
