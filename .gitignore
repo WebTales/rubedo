@@ -4,3 +4,8 @@ build
 .DS_Store
 library/Phactory
 cache
+library/HTMLPurifier
+.project
+.settings
+.zfproject.xml
+.buildpath
