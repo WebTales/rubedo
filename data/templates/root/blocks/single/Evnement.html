@@ -5,7 +5,11 @@
 <div class="block headline">
 	<div class="hero-unit">
 		<h1 class="editable" id="{{ data.id }}_text">{{ data.text|cleanHtml }}</h1>
+		{% if data.image %}
+		<br/>
 		<img src="/image?file-id={{data.image}}" alt="{{data.text}}" title="{{data.text}}"  />
+		{% endif %}
+		<br/>
 		<div class="editable" id="{{ data.id }}_body">
 			{{ data.body|cleanHtml }}
 		</div>

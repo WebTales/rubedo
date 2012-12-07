@@ -127,7 +127,7 @@
 		<table class="table">
 			{% for result in results %}
 			<tr>
-				<td><h3><a href="#">{{ result.title|raw }}</a></h3>
+				<td><h3><a href="/single?content-id={{result.id}}">{{ result.title|raw }}</a></h3>
 				<div class="progress progress-success" style="width:50px; float: left;">
 					<div class="bar" style="width: {{ result.score*100 }}%;">
 						{{ result.score*100 }}%
