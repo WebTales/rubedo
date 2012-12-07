@@ -16,17 +16,17 @@
 				<ul class="dropdown-menu">
 					{% if orderBy != "_score" %}
 					<li>
-						<a href="{{ orderBySearchRoot }}&orderby=_score">{{"order_by_relevance"|trans}}</a>
+						<a href="{{ orderBySearchRoot }}&amp;orderby=_score">{{"order_by_relevance"|trans}}</a>
 					</li>
 					{% endif %}
 					{% if orderBy != "lastUpdateTime" %}
 					<li>
-						<a href="{{ orderBySearchRoot }}&orderby=lastUpdateTime">{{"order_by_date"|trans}}</a>
+						<a href="{{ orderBySearchRoot }}&amp;orderby=lastUpdateTime">{{"order_by_date"|trans}}</a>
 					</li>
 					{% endif %}
 					{% if orderBy != "author" %}
 					<li>
-						<a href="{{ orderBySearchRoot }}&orderby=author">{{"order_by_author"|trans}}</a>
+						<a href="{{ orderBySearchRoot }}&amp;orderby=author">{{"order_by_author"|trans}}</a>
 					</li>
 					{% endif %}
 				</ul>
@@ -39,16 +39,16 @@
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&pagesize=10">10 {{"by_page"|trans}}</a>
+						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=10">10 {{"by_page"|trans}}</a>
 					</li>
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&pagesize=20">20 {{"by_page"|trans}}</a>
+						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=20">20 {{"by_page"|trans}}</a>
 					</li>
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&pagesize=50">50 {{"by_page"|trans}}</a>
+						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=50">50 {{"by_page"|trans}}</a>
 					</li>
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&pagesize=all">{{"all_on_one_page"|trans}}</a>
+						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=all">{{"all_on_one_page"|trans}}</a>
 					</li>
 				</ul>
 			</li>
@@ -60,14 +60,9 @@
 		<p>
 			<i class="icon-search"></i> {{"full_text_search"|trans}}
 		</p>
-		<p>
 			<form class="form-search" action="{{baseUrl}}">
-				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ searchTerms }}">
-				<button type="submit" class="btn">
-					{{"ok"|trans}}
-				</button>
+				<input type="text" class="input-medium search-query" name="query" size="10" value=" {{ searchTerms }}" placeholder=" {{"search"|trans}}">
 			</form>
-		</p>
 		<p>
 			<i class="icon-file"></i> {{"content_type"|trans}}
 		</p>
@@ -75,7 +70,7 @@
 		<ul>
 			{% for facet in typeFacets %}
 			<li>
-				<a href="{{ typeSearchRoot }}&type={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+				<a href="{{ typeSearchRoot }}&amp;type={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
 			</li>
 			{% endfor %}
 		</ul>
@@ -91,7 +86,7 @@
 		<ul>
 			{% for facet in authorFacets %}
 			<li>
-				<a href="{{ authorSearchRoot }}&author={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+				<a href="{{ authorSearchRoot }}&amp;author={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
 			</li>
 			{% endfor %}
 		</ul>
@@ -107,7 +102,7 @@
 		<ul>
 			{% for facet in dateFacets %}
 			<li>
-				<a href="{{ dateSearchRoot }}&date={{ facet.time }}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
+				<a href="{{ dateSearchRoot }}&amp;date={{ facet.time }}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
 			</li>
 			{% endfor %}
 		</ul>
@@ -127,15 +122,15 @@
 		<table class="table">
 			{% for result in results %}
 			<tr>
-				<td><h3><a href="/single?content-id={{result.id}}">{{ result.title|raw }}</a></h3>
+				<td><h3><a href="/single?content-id={{result.id}}">{{ result.title }}</a></h3>
 				<div class="progress progress-success" style="width:50px; float: left;">
-					<div class="bar" style="width: {{ result.score }}%;">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
 						{{ result.score }}%
 					</div>
-				</div> &nbsp;<span class="label">{{ result.type|raw }}</span>
+				</div> &nbsp;<span class="label">{{ result.type }}</span>
 				<br />
 				<br />
-				{{"published_by"|trans}} <a href="#">{{ result.author|raw }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				{{"published_by"|trans}} <a href="#">{{ result.author }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -151,12 +146,12 @@
 				</li>
 				{% else %}
 				<li>
-					<a href="{{ searchRoot }}&pager={{ pager-1 }}"><<</a>
+					<a href="{{ searchRoot }}&amp;pager={{ pager-1 }}"><<</a>
 				</li>
 				{% endif %}
 				{% for i in range(0, pageCount-1) %}
 				<li {% if pager==i %}class="disabled"{% endif %}>
-					<a href="{{ searchRoot }}&pager={{ i }}">{{ i+1 }}</a>
+					<a href="{{ searchRoot }}&amp;pager={{ i }}">{{ i+1 }}</a>
 				</li>
 				{% endfor %}
 				{% if pager==pageCount-1 %}
@@ -165,7 +160,7 @@
 				</li>
 				{% else %}
 				<li>
-					<a href="{{ searchRoot }}&pager={{ pager+1 }}">>></a>
+					<a href="{{ searchRoot }}&amp;pager={{ pager+1 }}">>></a>
 				</li>
 				{% endif %}
 			</ul>

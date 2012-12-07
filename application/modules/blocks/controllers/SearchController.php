@@ -87,7 +87,7 @@ class Blocks_SearchController extends Blocks_AbstractController
             $resultType = $result->getType();
             //$lang_id = explode('_',$result->getId());
             //$id = $lang_id[1];
-            $id = "0";
+            $id = $result->getId();
 
             $score = $result->getScore();
 
@@ -106,7 +106,8 @@ class Blocks_SearchController extends Blocks_AbstractController
             $results[] = array('id' => $id, 'url' => $url, 'score' => $score, 'title' => $data['text'], 'abstract' => $data['abstract'], 'author' => $data['author'], 'type' => $data['contentType'], 'lastUpdateTime' => $data['lastUpdateTime'], );
         }
 		
-		$output['baseUrl'] = $this->view->baseUrl();
+		$output['baseUrl'] = $this->view->baseUrl().'/search';
+		
 
         $output['searchTerms'] = $terms;
         $output['results'] = $results;
@@ -124,7 +125,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $output['author'] = $author;
         $output['date'] = $date;
 
-        $output['termSearchRoot'] = $output['baseUrl'].'?query=' . $terms;
+        $output['termSearchRoot'] = $output['baseUrl'].'?query=' . urlencode($terms);
         $output['typeSearchRoot'] = $output['termSearchRoot'];
         $output['authorSearchRoot'] = $output['termSearchRoot'];
         $output['dateSearchRoot'] = $output['termSearchRoot'];
