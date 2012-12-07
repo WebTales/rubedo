@@ -359,7 +359,7 @@ class DataIndex implements IDataIndex
 		$contentData['contentType'] = $type;
 		$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		$contentData['status'] = (string) $data['workspace']['status'];
-		$contentData['author'] = (string) $data['lastUpdateUser']['fullName'];
+		$contentData['author'] = (string) $data['createUser']['fullName'];
 
 		//print_r($contentData);
 		$currentDocument = new \Elastica_Document($id, $contentData);
