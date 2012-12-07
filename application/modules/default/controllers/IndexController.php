@@ -180,6 +180,7 @@ class IndexController extends Zend_Controller_Action
      */
     protected function _getBlockData($block) {
         $params = array();
+		$params['block-config']=$block['configBloc'];
         switch($block['bType']) {
             case 'Bloc de navigation' :
                 $controller = 'nav-bar';
@@ -192,6 +193,7 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Liste de Contenus' :
                 $controller = 'content-list';
+				
                 break;
             case 'Pied de page' :
                 $controller = 'footer';
