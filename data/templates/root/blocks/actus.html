@@ -44,7 +44,28 @@
 			{% endfor %}
 
 		</ul>
-
+		{%if page.limitPage > 1 %}
+		
+		<div class="pagination pagination-mini">
+			<ul>
+				{% if page.currentPage != 1%}
+				<li>
+					<a href="/?page={{page.currentPage-1}}"><<</a>
+				</li>
+				{%endif%}
+				{% for  i in 1..page.limitPage %}
+				<li {% if page.currentPage == i%}class="active"{%endif%}>
+					<a href="/?page={{i}}">{{i}}</a>
+				</li>
+				{%endfor%}
+				{% if page.currentPage != page.limitPage %}
+				<li>
+					<a href="/?page={{page.currentPage+1}}">>></a>
+				</li>
+				{%endif%}
+			</ul>
+		</div>
+		{%endif%}
 	</div>
 
 	<div class="tab-pane fade" id="Recent">

@@ -47,16 +47,15 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $sort = array();
         $sort[] = array('property' => 'text', 'direction' => 'asc');
 
-        $pageData['limit'] = isset($blockConfig)?3:6;
+        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
 
         $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
-		
-		
+
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $pageData['nbPages'] = (int)ceil(($nbItems) / $pageData['limit']);
-            $pageData['limitPage'] = $pageData['currentPage'] + 9;
+            $pageData['limitPage'] = min(array($pageData['nbPages'],3));
 
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
@@ -74,9 +73,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
             }
 
             $output["data"] = $data;
+            $output["page"] = $pageData;
         }
-        $output["page"] = $pageData;
-        
+
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html");
         } else {
@@ -84,9 +83,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
 
         }
 
-        $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
-        $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
-
+        $css = array();
+        $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
 
