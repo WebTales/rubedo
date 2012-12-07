@@ -31,22 +31,27 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
      */
     public function indexAction() {
         $this->_dataReader = Manager::getService('Contents');
-		$this->_typeReader = Manager::getService('ContentTypes');
-		
-       	$mongoId = $this->getRequest()->getParam('content-id');
-        $content = $this->_dataReader->findById($mongoId,true,false);
-        $data = $content['fields'];
-        $data["id"] = $mongoId;
+        $this->_typeReader = Manager::getService('ContentTypes');
 
-		$type=$this->_typeReader->findById($content['typeId'],true,false);
-		$templateName=preg_replace('#[^a-zA-Z]#', '', $type["type"]);
-		$templateName .= ".html";
-        $output["data"] = $data;
-		$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/".$templateName);
+        $mongoId = $this->getRequest()->getParam('content-id');
+        if (isset($mongoId) && $mongoId !=0) {
+            $content = $this->_dataReader->findById($mongoId, true, false);
+            $data = $content['fields'];
+            $data["id"] = $mongoId;
 
-        $css = array('/css/rubedo.css', '/css/bootstrap-responsive.css');
-        $js = array("/js/jquery.js", "/js/bootstrap-transition.js", "/js/bootstrap-alert.js", "/js/bootstrap-modal.js", "/js/bootstrap-dropdown.js", "/js/bootstrap-scrollspy.js", "/js/bootstrap-tab.js", "/js/bootstrap-tooltip.js", "/js/bootstrap-popover.js", "/js/bootstrap-button.js", "/js/bootstrap-collapse.js", "/js/bootstrap-carousel.js", "/js/bootstrap-typeahead.js", );
+            $type = $this->_typeReader->findById($content['typeId'], true, false);
+            $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
+            $templateName .= ".html";
+            $output["data"] = $data;
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
+        }else{
+        	$output= array();
+        	 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html");
+        }
 		
+        $css = array();
+        $js = array();
+
         $this->_sendResponse($output, $template, $css, $js);
     }
 

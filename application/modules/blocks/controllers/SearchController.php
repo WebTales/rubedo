@@ -104,7 +104,7 @@ class Blocks_SearchController extends Blocks_AbstractController
 
             $results[] = array('id' => $id, 'url' => $url, 'score' => $score, 'title' => $data['text'], 'abstract' => $data['abstract'], 'author' => $data['author'], 'type' => $data['contentType'], 'lastUpdateTime' => $data['lastUpdateTime'], );
         }
-
+		
 		$output['baseUrl'] = $this->view->baseUrl();
 
         $output['searchTerms'] = $terms;

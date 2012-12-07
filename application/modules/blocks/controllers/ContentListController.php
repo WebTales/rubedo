@@ -47,7 +47,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $sort = array();
         $sort[] = array('property' => 'text', 'direction' => 'asc');
 
-        $pageData['limit'] = 6;
+        $pageData['limit'] = isset($blockConfig)?3:6;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
 
         $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);

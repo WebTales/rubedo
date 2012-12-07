@@ -57,13 +57,13 @@ class IndexController extends Zend_Controller_Action
      * @var \Rubedo\Interfaces\Content\IBlock
      */
     protected $_serviceBlock;
-	
-	/**
-	 * ID of the current page
-	 * 
-	 * @var string
-	 */
-	protected $_pageId;
+
+    /**
+     * ID of the current page
+     *
+     * @var string
+     */
+    protected $_pageId;
 
     /**
      * Main Action : render the Front Office view
@@ -180,7 +180,7 @@ class IndexController extends Zend_Controller_Action
      */
     protected function _getBlockData($block) {
         $params = array();
-		$params['block-config']=$block['configBloc'];
+        $params['block-config'] = $block['configBloc'];
         switch($block['bType']) {
             case 'Bloc de navigation' :
                 $controller = 'nav-bar';
@@ -193,7 +193,7 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Liste de Contenus' :
                 $controller = 'content-list';
-				
+
                 break;
             case 'Pied de page' :
                 $controller = 'footer';
@@ -212,7 +212,11 @@ class IndexController extends Zend_Controller_Action
             case 'Détail de contenu' :
                 $controller = 'content-single';
                 $contentIdParam = $this->getRequest()->getParam('content-id');
-                $contentId = $contentIdParam ? $contentIdParam : $block['configBloc']['contentId'];
+                $contentId = $contentIdParam ? $contentIdParam : null;
+                if (!isset($contentId)) {
+                    $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : null;
+                }
+
                 $params = array('content-id' => $contentId);
                 break;
             default :
