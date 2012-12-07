@@ -357,9 +357,21 @@ class DataIndex implements IDataIndex
 
 		// Add default meta's
 		$contentData['contentType'] = $type;
-		$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
-		$contentData['status'] = (string) $data['workspace']['status'];
-		$contentData['author'] = (string) $data['createUser']['fullName'];
+		if (isset($data['lastUpdateTime'])) {
+			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
+		} else {
+			$contentData['lastUpdateTime'] = 0;
+		}
+		if (isset($data['status'])) {
+			$contentData['status'] = (string) $data['workspace']['status'];
+		} else {
+			$contentData['status'] = "unknown";
+		}
+		if (isset($data['createUser'])) {
+			$contentData['author'] = (string) $data['createUser']['fullName'];
+		} else {
+			$contentData['author'] = "unknown";
+		}
 
 		//print_r($contentData);
 		$currentDocument = new \Elastica_Document($id, $contentData);
