@@ -5,14 +5,31 @@
 <div class="block headline">
 	<div class="hero-unit">
 		<h1 class="editable" id="{{ data.id }}_text">{{ data.text|cleanHtml }}</h1>
+		<div class="entry-info">
+			{% if data.dateBegin %}
+			{% if data.dateEnd%}
+			Du {{data.dateBegin}} au {{data.dateEnd}}
+			{% else %}
+			A partir du {{data.dateBegin}}
+			{% endif %}
+			{% endif %}
+			{% if data.Location %}
+			{{data.Location}}
+			{% endif %}
+			{% if data.date %}
+			Le {{data.date}}
+			{% endif %}
+		</div>
 		{% if data.image %}
-		<br/>
+		<div style="float:right;margin:3%;">
 		<img src="/image?file-id={{data.image}}" alt="{{data.text}}" title="{{data.text}}"  />
+		</div>
 		{% endif %}
 		<br/>
 		<div class="editable" id="{{ data.id }}_body">
 			{{ data.body|cleanHtml }}
 		</div>
+		<div style="clear:both;"></div>
 	</div>
 </div>
 {% endblock %}
