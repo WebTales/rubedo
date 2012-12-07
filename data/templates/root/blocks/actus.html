@@ -22,7 +22,7 @@
 					<h2 class="post-title-small"><a href='/single?content-id={{content.id}}' title='Actu'>{{content.title}}</a></h2>
 				</header>
 				<div class="entry-content editable"  id="{{ content.id }}_summary">
-					{{content.summary}}
+					{{content.summary|cleanHtml}}
 				</div>
 				<div class="entry-info">
 					{% if content.dateBegin %}
