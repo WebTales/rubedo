@@ -93,7 +93,8 @@ class Blocks_SearchController extends Blocks_AbstractController
 
             if (!is_float($score))
                 $score = 1;
-
+			
+			$score = round ($score * 100);
             //$url = $data['canonical_url'];
             //if ($url == '') {
             // no canonical url
