@@ -44,33 +44,31 @@
 	</head>
 
 	<body style="background: #e3e3e8 url(/assets/bg.jpg) repeat-x top ">
-
-		<div class="container basis" style="position:relative; background:#ffffff;">
-
-			{% block pageContentToolBar %}
-			<div class="navbar hide navbar-fixed-top" id="contentToolBar">
-				<div class="navbar-inner">
-					<div class="container-fluid">
-						<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
-						<a class="brand" href="#">Administration</a>
-						<div id='viewmode'>
-							<div class="btn-group pull-left">
-								<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i> Editer la page </a>
-							</div>
-							<span class="label label-success pull-right">Consultation</span>
+		{% block pageContentToolBar %}
+		<div class="navbar hide navbar-fixed-top" id="contentToolBar">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
+					<a class="brand" href="#">Administration</a>
+					<div id='viewmode'>
+						<div class="btn-group pull-left">
+							<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i> Editer la page </a>
 						</div>
-						<div id='editmode' class='hide'>
+						<span class="label label-success pull-right">Consultation</span>
+					</div>
+					<div id='editmode' class='hide'>
 
-							<a class="btn pull-left" href="#" id="btn-cancel"> <i class="icon-remove"></i> Annuler </a>
-							<a class="btn pull-left" href="#" id="btn-save"> <i class="icon-ok"></i> Sauvegarder les modifications </a>
+						<a class="btn pull-left" href="#" id="btn-cancel"> <i class="icon-remove"></i> Annuler </a>
+						<a class="btn pull-left" href="#" id="btn-save"> <i class="icon-ok"></i> Sauvegarder les modifications </a>
 
-							<span class="label label-warning pull-right">Edition</span>
-						</div>
+						<span class="label label-warning pull-right">Edition</span>
 					</div>
 				</div>
 			</div>
-			{% endblock %}
+		</div>
+		{% endblock %}
+		<div class="container basis" style="position:relative; background:#ffffff;">
 
 			<!-- filet mignon -->
 			<div class="row top-bar" style=" margin-left:-30px; margin-right:-30px; padding-top:5px; padding-bottom:5px;"></div>

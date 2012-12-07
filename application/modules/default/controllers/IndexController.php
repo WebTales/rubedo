@@ -86,10 +86,10 @@ class IndexController extends Zend_Controller_Action
 
         //load the javaScripts files
         if ($isLoggedIn) {
-            // $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');
+            $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');
         }
 
-        //$this->_servicePage->appendJs('/js/scripts.js');
+        $this->_servicePage->appendJs('/js/scripts.js');
 
         //find the page ID
         $calledUri = $this->getRequest()->getRequestUri();

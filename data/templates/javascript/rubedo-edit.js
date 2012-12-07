@@ -1,8 +1,8 @@
 // navbar
-$('#menu').css('margin-top','60px');
+//jQuery('#menu').css('margin-top','60px');
 
-$('#contentToolBar').css('top','0');
-$('#contentToolBar').show();
+jQuery('#contentToolBar').css('top','0');
+jQuery('#contentToolBar').show();
 
 CKEDITOR.on( 'instanceCreated', function( event ) {
 	var editor = event.editor,element = editor.element;
@@ -64,25 +64,25 @@ CKEDITOR.on( 'instanceCreated', function( event ) {
 	}
 });
 
-$('#btn-edit').click(function (){
+jQuery('#btn-edit').click(function (){
 	swithToEditMode();
 });
 
-$('#btn-cancel').click(function (){
+jQuery('#btn-cancel').click(function (){
 	var changed = checkIfDirty();
 	if (changed) {
-		$('#confirm').modal();
+		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
 	}
 });
 
-$('#cancel-confirm').click(function() {
+jQuery('#cancel-confirm').click(function() {
 	undoAllChanges();
 	swithToViewMode();
 });
 
-$('#btn-save').click(function (){
+jQuery('#btn-save').click(function (){
 	// for every modified content
 	for(var i in CKEDITOR.instances) {
 		if (CKEDITOR.instances[i].checkDirty()) {
@@ -94,27 +94,27 @@ $('#btn-save').click(function (){
 	swithToViewMode();
 });
 
-$('.block').mouseover(function() {
-	$(this).css('cursor','pointer');
-	var position = $(this).offset();
-	$('#blockToolBar').css(position);
-	$('#blockToolBar').show();
+jQuery('.block').mouseover(function() {
+	jQuery(this).css('cursor','pointer');
+	var position = jQuery(this).offset();
+	jQuery('#blockToolBar').css(position);
+	jQuery('#blockToolBar').show();
 });
 
 function swithToEditMode() {
-	$('.editable').attr('contenteditable','true');
+	jQuery('.editable').attr('contenteditable','true');
 	CKEDITOR.inlineAll();
-	$('#viewmode').hide();
-	$('#editmode').show();
+	jQuery('#viewmode').hide();
+	jQuery('#editmode').show();
 }
 
 function swithToViewMode() {
 	for(var i in CKEDITOR.instances) {
 		CKEDITOR.instances[i].destroy(true);
 	} 
-	$('.editable').attr('contenteditable','false');
-	$('#viewmode').show();
-	$('#editmode').hide();	
+	jQuery('.editable').attr('contenteditable','false');
+	jQuery('#viewmode').show();
+	jQuery('#editmode').hide();	
 }
 
 function checkIfDirty() {
@@ -141,7 +141,7 @@ function undo(editor) {
 }
 
 function save(id,data) {
-	$.post("/xhr-edit", { 'id': id, 'data': data},
+	jQuery.post("/xhr-edit", { 'id': id, 'data': data},
    function(result) {
    });
 }
