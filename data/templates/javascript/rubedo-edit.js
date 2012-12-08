@@ -37,12 +37,13 @@ CKEDITOR.on( 'instanceCreated', function( event ) {
 		editor.on( 'configLoaded', function() {
 
 		// Remove unnecessary plugins to make the editor simpler.
-		editor.config.removePlugins = 'colorbutton,find,forms,iframe,removeformat,scayt,smiley,specialchar,wsc';
-		editor.config.extraPlugins ='stylesheetparser';
-		editor.config.contentsCss = '/css/default.bootstrap.min.css';
+		//editor.config.removePlugins = 'colorbutton,find,forms,iframe,removeformat,scayt,smiley,specialchar,wsc';
+		//editor.config.extraPlugins ='stylesheetparser';
+		//editor.config.contentsCss = '/css/default.bootstrap.min.css';
 		// Rearrange the layout of the toolbar.
+		/*
 		editor.config.toolbar = [
-			{ name: 'document', items : [ 'RubedoSave','RubedoDiscard','NewPage','Templates','Print'] },
+			{ name: 'document', items : [ 'NewPage','Templates','Print'] },
 			{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
 			{ name: 'editing', items : [ 'Find','Replace' ] },
 			{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike' ] },
@@ -51,7 +52,7 @@ CKEDITOR.on( 'instanceCreated', function( event ) {
 			{ name: 'styles', items : [ 'Styles','Format'] },
 			{ name: 'links', items : [ 'Link','Unlink','Anchor' ] },
 			{ name: 'insert', items : [ 'Image','Flash','Table','Forms','HorizontalRule'] }
-		];
+		];*/
 			
 		// file and media explorer
 		editor.config.filebrowserBrowseUrl = '/ckfinder/ckfinder.html';
