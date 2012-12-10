@@ -151,5 +151,16 @@ class HashTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(true, $result);
 
     }
+	
+	/**
+	 * Test the generation of a random string
+	 */
+	public function testGenerateRandomString() {
+		$hashService = \Rubedo\Services\Manager::getService('Hash');
+		
+		$result = $hashService->generateRandomString();
+		
+		$this->assertNotEmpty($result);
+	}
 
 }
