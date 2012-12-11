@@ -44,7 +44,7 @@ class Manager implements IServicesManager
     /**
      * Reset the mockObject array for isolation purpose
      */
-    public function resetMocks()
+    public static function resetMocks()
     {
         self::$_mockServicesArray = array();
     }
@@ -55,7 +55,7 @@ class Manager implements IServicesManager
      * @param string $serviceName Name of the service overridden
      * @param object $obj mock object substituted to the service
      */
-    public function setMockService($serviceName, $obj)
+    public static function setMockService($serviceName, $obj)
     {
         self::$_mockServicesArray[$serviceName] = $obj;
     }
