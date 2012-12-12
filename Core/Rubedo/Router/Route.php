@@ -57,7 +57,6 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
 	 * @return string Route path with user submitted parameters
 	 */
 	public function assemble($data = array(), $reset = false, $encode = false) {
-		// TODO Auto-generated method stub
 		$params = (!$reset) ? $this->_values : array();
 		foreach ($data as $key => $value) {
 			if ($value !== null) {
@@ -66,9 +65,9 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
 				unset($params[$key]);
 			}
 		}
-		$url = '';
+		$url = Manager::getService ( 'Url' )->getUrl($params,$encode);
 		
-		return ltrim($url, self::URI_DELIMITER);
+		return $url;
 		
 	}
 	

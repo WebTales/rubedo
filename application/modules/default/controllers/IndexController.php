@@ -91,12 +91,10 @@ class IndexController extends Zend_Controller_Action
 
         $this->_servicePage->appendJs('/js/scripts.js');
 
-        //find the page ID
-        $calledUri = $this->getRequest()->getRequestUri();
-        $this->_pageId = $this->_serviceUrl->getPageId($calledUri);
-
+        $this->_pageId = $this->getRequest()->getParam('pageId');
+        
         //build contents tree
-        $this->_pageParams = $this->_getPageInfo($this->_pageId);
+         $this->_pageParams = $this->_getPageInfo($this->_pageId);
 
         //Build Twig context
         $twigVar = $this->_pageParams;
