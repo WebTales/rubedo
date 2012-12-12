@@ -39,10 +39,75 @@ class CurrentUserTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * check the service configuration by getservice method
+     * Test isAuthenticated method with correct login
+	 * 
+	 * Should return true
      */
-    public function testConfiguredService() {
-
+    public function testIsAuthenticatedWithCorrectLogin() {
+    	$auth = new \Rubedo\User\Authentication();
+		$currentUser = new \Rubedo\User\CurrentUser();
+		
+		$auth->authenticate('admin', 'admin');
+		$result = $currentUser->isAuthenticated();
+		
+		$this->assertTrue($result);
+    }
+	
+	/**
+     * Test isAuthenticated method with correct login
+	 * 
+	 * Should return false
+     */
+    public function testIsAuthenticatedWithBadLogin() {
+    	$auth = new \Rubedo\User\Authentication();
+		$currentUser = new \Rubedo\User\CurrentUser();
+		
+		$auth->authenticate('admin', 'test');
+		$result = $currentUser->isAuthenticated();
+		
+		$this->assertFalse($result);
+    }
+	
+	/**
+     * Test if getCurrentUser return good values
+     */
+    public function testGetCurrentUser() {
+    	$auth = new \Rubedo\User\Authentication();
+		$currentUser = new \Rubedo\User\CurrentUser();
+		
+		$auth->authenticate('admin', 'admin');
+		$result = $currentUser->getCurrentUser();
+		
+		$this->assertEquals($result['login'], 'admin');
+		$this->assertEquals($result['name'], 'Admin');
+		$this->assertEquals($result['salt'], 'bc8LdoqHGE');
+    }
+	
+	/**
+     * Test if getCurrentUserSummary return good values
+     */
+    public function testGetCurrentUserSummary() {
+    	$auth = new \Rubedo\User\Authentication();
+		$currentUser = new \Rubedo\User\CurrentUser();
+		
+		$auth->authenticate('admin', 'admin');
+		$result = $currentUser->getCurrentUserSummary();
+		
+		$this->assertEquals($result['login'], 'admin');
+		$this->assertEquals($result['fullName'], 'Admin');
+    }
+	
+	/**
+     * Test if getGroups return good values
+     */
+    public function testGetGroups() {
+    	$auth = new \Rubedo\User\Authentication();
+		$currentUser = new \Rubedo\User\CurrentUser();
+		
+		$auth->authenticate('admin', 'admin');
+		$result = $currentUser->getGroups();
+		
+		$this->assertEquals($result, array('admin', 'valideur', 'redacteur', 'public'));
     }
 
 }

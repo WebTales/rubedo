@@ -27,12 +27,6 @@ namespace Rubedo\Interfaces\User;
  */
 interface ISession
 {
-     /**
-     * Returns a session object
-     *
-     * @return object
-     */
-    public function getSessionObject();
 	
 	 /**
      * Set the session object with name and value params

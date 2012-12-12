@@ -35,10 +35,9 @@ class Session implements ISession
 	/**
      * Returns a session object
      *
-	 * 
      * @return object
      */
-    public function getSessionObject() {
+    protected function _getSessionObject() {
         if (!$this->_sessionObject instanceof \Zend_Session_Namespace) {
             $this->_sessionObject = new \Zend_Session_Namespace(static::$_sessionName);
 
@@ -53,7 +52,7 @@ class Session implements ISession
 	  * @param string $value
      */
     public function set($name, $value) {
-        $this->getSessionObject()->$name = $value;
+        $this->_getSessionObject()->$name = $value;
     }
 
     /**
@@ -64,11 +63,11 @@ class Session implements ISession
      * @return mixed value in session
      */
     public function get($name,$defaultValue = null) {
-		if(!isset($this->getSessionObject()->$name)){
-			$this->getSessionObject()->$name = $defaultValue;
+		if(!isset($this->_getSessionObject()->$name)){
+			$this->_getSessionObject()->$name = $defaultValue;
 			return $defaultValue;
 		}else{
-			return $this->getSessionObject()->$name;
+			return $this->_getSessionObject()->$name;
 		}
     }
 
