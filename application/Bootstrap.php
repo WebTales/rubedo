@@ -49,8 +49,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     {
         $options = $this->getOption('searchstream');
         if (isset($options)) {
-			Rubedo\Elastic\DataSearch::setOptions($options['elastic']);
-			Rubedo\Elastic\DataIndex::setOptions($options['elastic']);
+			Rubedo\Elastic\DataAbstract::setOptions($options['elastic']);
         }
     }
 
