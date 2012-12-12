@@ -30,7 +30,6 @@ class Blocks_NavBarController extends Blocks_AbstractController
      * Default Action, return the Ext/Js HTML loader
      */
     public function indexAction() {
-        
         // images examples
         // TODO : load data from services
         $id = "987194";
@@ -62,7 +61,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage']);
         foreach ($levelOnePages as $page) {
             $tempArray = array();
-            $tempArray['url'] = $this->_helper->url->url(array('pageId'=>$page['id']));
+            $tempArray['url'] = $this->_helper->url->url(array('pageId'=>$page['id']),null,true);
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
             $levelTwoPages = Manager::getService('Pages')->readChild($page['id']);
@@ -70,7 +69,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {
                     $tempSubArray = array();
-                    $tempSubArray['url'] = $subPage['text'];
+                    $tempSubArray['url'] = $this->_helper->url->url(array('pageId'=>$subPage['id']),null,true);
                     $tempSubArray['title'] = $subPage['title'];
                     $tempSubArray['id'] = $subPage['id'];
 					$tempArray['pages'][] = $tempSubArray;

@@ -57,7 +57,13 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
 	 * @return string Route path with user submitted parameters
 	 */
 	public function assemble($data = array(), $reset = false, $encode = false) {
-		$params = (!$reset) ? $this->_values : array();
+	    if ($reset) {
+	        $params = array();
+	    } else {
+	        $params = \Zend_Controller_Front::getInstance()->getRequest()->getParams();
+	    }
+	    $data = array_merge($params, $data);
+
 		foreach ($data as $key => $value) {
 			if ($value !== null) {
 				$params[$key] = $value;
