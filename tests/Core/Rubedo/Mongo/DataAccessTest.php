@@ -1535,6 +1535,37 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedResult, $readArray);
     }
+	
+	/**
+     * Test findOne with included and excluded fields
+	 * 
+	 * The ecludedField array should be ignored
+     */
+    public function testFindOneWithIncludedAndExcludedFields() {
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1', 'value' => 'test1'));
+        $item['id'] = (string)$item['_id'];
+        unset($item['_id']);
+
+        $item2 = static::$phactory->create('item', array('version' => 1, 'name' => 'item2', 'value' => 'test2'));
+        $item2['id'] = (string)$item2['_id'];
+        unset($item2['_id']);
+
+        $includedFields = array('name', 'value');
+        $dataAccessObject->addToFieldList($includedFields);
+		
+		$excludedFields = array('value');
+        $dataAccessObject->addToExcludeFieldList($excludedFields);
+		
+        $expectedResult = array('id' => $item['id'], 'name' => $item['name'], 'value' => 'test1');
+
+        $value = array('name' => $item['name']);
+        $readArray = $dataAccessObject->findOne($value);
+
+        $this->assertEquals($expectedResult, $readArray);
+    }
 
     /**
      * Test excluded fields with findOne
