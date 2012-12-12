@@ -16,17 +16,17 @@
 				<ul class="dropdown-menu">
 					{% if orderBy != "_score" %}
 					<li>
-						<a href="{{ orderBySearchRoot }}&amp;orderby=_score">{{"order_by_relevance"|trans}}</a>
+						<a href="{{url({'orderby': '_score'})}}">{{"order_by_relevance"|trans}}</a>
 					</li>
 					{% endif %}
 					{% if orderBy != "lastUpdateTime" %}
 					<li>
-						<a href="{{ orderBySearchRoot }}&amp;orderby=lastUpdateTime">{{"order_by_date"|trans}}</a>
+						<a href="{{url({'orderby': 'lastUpdateTime'})}}">{{"order_by_date"|trans}}</a>
 					</li>
 					{% endif %}
 					{% if orderBy != "author" %}
 					<li>
-						<a href="{{ orderBySearchRoot }}&amp;orderby=author">{{"order_by_author"|trans}}</a>
+						<a href="{{url({'orderby': 'author'})}}">{{"order_by_author"|trans}}</a>
 					</li>
 					{% endif %}
 				</ul>
@@ -39,16 +39,16 @@
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=10">10 {{"by_page"|trans}}</a>
+						<a href="{{url({'pagesize': '10'})}}">10 {{"by_page"|trans}}</a>
 					</li>
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=20">20 {{"by_page"|trans}}</a>
+						<a href="{{url({'pagesize': '20'})}}">20 {{"by_page"|trans}}</a>
 					</li>
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=50">50 {{"by_page"|trans}}</a>
+						<a href="{{url({'pagesize': '50'})}}">50 {{"by_page"|trans}}</a>
 					</li>
 					<li>
-						<a href="{{ pageSizeSearchRoot }}&amp;pagesize=all">{{"all_on_one_page"|trans}}</a>
+						<a href="{{url({'pagesize': 'all'})}}">{{"all_on_one_page"|trans}}</a>
 					</li>
 				</ul>
 			</li>
@@ -60,7 +60,7 @@
 		<p>
 			<i class="icon-search"></i> {{"full_text_search"|trans}}
 		</p>
-			<form class="form-search" action="{{baseUrl}}">
+			<form class="form-search" action="{{url({},true)}}">
 				<input type="text" class="input-medium search-query" name="query" size="10" value=" {{ searchTerms }}" placeholder=" {{"search"|trans}}">
 			</form>
 		<p>
@@ -70,13 +70,13 @@
 		<ul>
 			{% for facet in typeFacets %}
 			<li>
-				<a href="{{ typeSearchRoot }}&amp;type={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+				<a href="{{url({'type': facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
 			</li>
 			{% endfor %}
 		</ul>
 		{% else %}
 		<p style="padding-left: 20px">
-			{{type}} <a href="{{ typeSearchRoot }}"><i class="icon-remove-sign"></i></a>
+			{{type}} <a href="{{url({'type': null})}}"><i class="icon-remove-sign"></i></a>
 		</p>
 		{% endif %}
 		<p>
@@ -86,13 +86,13 @@
 		<ul>
 			{% for facet in authorFacets %}
 			<li>
-				<a href="{{ authorSearchRoot }}&amp;author={{ facet.term }}">{{ facet.term }} ({{ facet.count }})</a>
+				<a href="{{url({'author': facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
 			</li>
 			{% endfor %}
 		</ul>
 		{% else %}
 		<p style="padding-left: 20px">
-			{{author}} <a href="{{ authorSearchRoot }}"><i class="icon-remove-sign"></i></a>
+			{{author}} <a href="{{url({'author': null})}}"><i class="icon-remove-sign"></i></a>
 		</p>
 		{% endif %}
 		<p>
@@ -102,13 +102,13 @@
 		<ul>
 			{% for facet in dateFacets %}
 			<li>
-				<a href="{{ dateSearchRoot }}&amp;date={{ facet.time }}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
+				<a href="{{url({'date': facet.term})}}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
 			</li>
 			{% endfor %}
 		</ul>
 		{% else %}
 		<p style="padding-left: 20px">
-			{{ (date/1000)|date("Y") }} <a href="{{ dateSearchRoot }}"><i class="icon-remove-sign"></i></a>
+			{{ (date/1000)|date("Y") }} <a href="{{url({'date': null})}}"><i class="icon-remove-sign"></i></a>
 		</p>
 		{% endif %}
 	</div>
@@ -146,12 +146,12 @@
 				</li>
 				{% else %}
 				<li>
-					<a href="{{ searchRoot }}&amp;pager={{ pager-1 }}"><<</a>
+					<a href="{{url({'pager': pager-1})}}"><<</a>
 				</li>
 				{% endif %}
 				{% for i in range(0, pageCount-1) %}
 				<li {% if pager==i %}class="disabled"{% endif %}>
-					<a href="{{ searchRoot }}&amp;pager={{ i }}">{{ i+1 }}</a>
+					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
 				</li>
 				{% endfor %}
 				{% if pager==pageCount-1 %}
@@ -160,7 +160,7 @@
 				</li>
 				{% else %}
 				<li>
-					<a href="{{ searchRoot }}&amp;pager={{ pager+1 }}">>></a>
+					<a href="{{url({'pager': pager+1})}}">>></a>
 				</li>
 				{% endif %}
 			</ul>
