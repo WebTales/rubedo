@@ -87,6 +87,8 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
         $this->_twig->addExtension(new \Twig_Extension_Intl());
         
         $this->_twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml',array('is_safe' => array('html'))));
+        
+        $this->_twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
     }
 
     /**
@@ -163,6 +165,10 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
      */
     public static function cleanHtml($html){
         return Manager::getService('HtmlCleaner')->clean($html);
+    }
+    
+    public static function url(array $urlOptions = array(), $reset = false, $encode = true){
+        return Manager::getService('Url')->url($urlOptions,null, $reset, $encode);
     }
 
 }

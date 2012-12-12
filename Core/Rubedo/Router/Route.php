@@ -58,7 +58,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
 	 */
 	public function assemble($data = array(), $reset = false, $encode = false) {
 	    if ($reset) {
-	        $params = array();
+	        $params = array('pageId'=>$this->_values["pageId"]);
 	    } else {
 	        $params = \Zend_Controller_Front::getInstance()->getRequest()->getParams();
 	    }

@@ -1,5 +1,4 @@
 <!-- actus -->
-
 <ul class="nav nav-tabs">
 	<li>
 		<a href="#Popular" data-toggle="tab"><span style="font-size:18px;text-transform:capitalize">A la une</span></a>
@@ -50,17 +49,17 @@
 			<ul>
 				{% if page.currentPage != 1%}
 				<li>
-					<a href="/?page={{page.currentPage-1}}"><<</a>
+					<a href="{{url({'page': page.currentPage-1},true)}}"><<</a>
 				</li>
 				{%endif%}
 				{% for  i in 1..page.limitPage %}
 				<li {% if page.currentPage == i%}class="active"{%endif%}>
-					<a href="/?page={{i}}">{{i}}</a>
+					<a href="{{url({'page': i},true)}}">{{i}}</a>
 				</li>
 				{%endfor%}
 				{% if page.currentPage != page.limitPage %}
 				<li>
-					<a href="/?page={{page.currentPage+1}}">>></a>
+					<a href="{{url({'page': page.currentPage+1},true)}}">>></a>
 				</li>
 				{%endif%}
 			</ul>
