@@ -54,7 +54,7 @@ class Url implements  IUrl
         }
        $page = Manager::getService('Pages')->findByName($page);
        if($page['id']==''){
-           return $this->getPageId('/construction');
+           return null;
        }
 
         return $page['id'];
