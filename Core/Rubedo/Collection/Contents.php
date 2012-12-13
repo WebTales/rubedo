@@ -118,7 +118,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         $fieldsList = array_keys($fieldsArray);
         $tempFields = array();
-        $tempFields['text'] = htmlspecialchars($obj['text']);
+        $tempFields['text'] = $obj['text'];
         
         foreach ($obj['fields'] as $key => $value) {
             if($key == 'text'){
@@ -129,13 +129,18 @@ class Contents extends WorkflowAbstractCollection implements IContents
             } else {
                 unset($missingField[$key]);
                 
-                switch ($fieldsArray[$key]['cType']) {
-                    case 'CKEField':
-                        $tempFields[$key] = Manager::getService('HtmlCleaner')->clean($value);
-                        break;
-                    default:
-                        $tempFields[$key] = htmlspecialchars($value);
-                        break;
+                if(isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true){
+                	$tempFields[$key]= array();
+                	if(!is_array($value)){
+                		$value = array($value);
+                	}
+                	foreach($value as $valueItem){
+                		$this->_validateFieldValue($valueItem, $fieldsArray[$key]['config']);
+                		$tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType']);
+                	}
+                }else{
+                	$this->_validateFieldValue($value, $fieldsArray[$key]['config']);
+                	$tempFields[$key]= $this->_filterFieldValue($value, $fieldsArray[$key]['cType']);
                 }
             }
         }
@@ -154,5 +159,40 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         
         return $obj;
+    }
+    
+    
+    /**
+     * Check if value is valid based on field config from type content
+     * 
+     * @param mixed $value data value
+     * @param array $config field config array
+     * @return boolean
+     */
+    protected function _validateFieldValue($value, $config){
+    	//if something wrong : write it in $this->_inputDataErrors
+    	return true;
+    }
+    
+    
+    /**
+     * Filter value based on field ctype
+     * 
+     * Mostly used for HTML fields
+     * 
+     * @param mixed $value data value
+     * @param string $cType field ctype
+     * @return mixed
+     */
+    protected function _filterFieldValue($value, $cType){
+    	switch ($cType) {
+    		case 'CKEField':
+    			$returnValue = Manager::getService('HtmlCleaner')->clean($value);
+    			break;
+    		default:
+    			$returnValue = $value;
+    			break;
+    	}
+    	return $returnValue;
     }
 }
