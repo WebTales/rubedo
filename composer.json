@@ -1,6 +1,10 @@
 {
     "name": "webtales/rubedo",
     "require": {
-        "twig/twig": "1.*"
-    }
+        "twig/twig": "1.*",
+        "ruflin/Elastica": "dev-master",
+        "chriskite/phactory": "dev-master",
+        "ezyang/htmlpurifier": "dev-master"
+    },
+    "minimum-stability": "stable" 
 }
