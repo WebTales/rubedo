@@ -1,0 +1,6 @@
+{
+    "name": "webtales/rubedo",
+    "require": {
+        "twig/twig": "1.*"
+    }
+}
