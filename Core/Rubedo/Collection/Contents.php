@@ -135,12 +135,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 		$value = array($value);
                 	}
                 	foreach($value as $valueItem){
-                		$this->_validateFieldValue($valueItem, $fieldsArray[$key]['config']);
+                		$this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'],$key);
                 		$tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType']);
                 	}
                 }else{
                 	$this->_validateFieldValue($value, $fieldsArray[$key]['config']);
-                	$tempFields[$key]= $this->_filterFieldValue($value, $fieldsArray[$key]['cType']);
+                	$tempFields[$key]= $this->_filterFieldValue($value, $fieldsArray[$key]['cType'],$key);
                 }
             }
         }
@@ -167,9 +167,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * 
      * @param mixed $value data value
      * @param array $config field config array
+     * @param string $key field name
      * @return boolean
      */
-    protected function _validateFieldValue($value, $config){
+    protected function _validateFieldValue($value, $config,$key){
     	//if something wrong : write it in $this->_inputDataErrors
     	return true;
     }
