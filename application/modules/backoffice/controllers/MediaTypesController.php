@@ -26,7 +26,7 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_ContentTypesController extends Backoffice_DataAccessController
+class Backoffice_MediaTypesController extends Backoffice_DataAccessController
 {
     public function init(){
 		parent::init();
