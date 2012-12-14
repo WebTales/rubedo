@@ -9,3 +9,5 @@ library/HTMLPurifier
 .settings
 .zfproject.xml
 .buildpath
+/vendor
+/composer.lock
