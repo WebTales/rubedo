@@ -1,6 +1,9 @@
 <?php
 
-class Twig_Extension_Translate extends Twig_Extension
+namespace Rubedo\Templates;
+
+
+class Translate extends \Twig_Extension
 {
 
 	protected $lang;
@@ -18,7 +21,7 @@ class Twig_Extension_Translate extends Twig_Extension
     public function getFilters()
     {
         return array(
-            'trans' => new Twig_Filter_Method($this,'translate'),
+            'trans' => new \Twig_Filter_Method($this,'translate'),
         );
     }
 
@@ -40,7 +43,7 @@ class Twig_Extension_Translate extends Twig_Extension
 	 */
 	public function translate($text)
     {
-    	$translate = new Zend_Translate ('gettext', APPLICATION_PATH.'/../data/languages/fr/default.mo', 'fr');
+    	$translate = new \Zend_Translate ('gettext', APPLICATION_PATH.'/../data/languages/fr/default.mo', 'fr');
 		$translate->addTranslation(APPLICATION_PATH.'/../data/languages/en/default.mo', 'en');
 		$translate->setLocale($this->lang);
         return $translate->_($text);

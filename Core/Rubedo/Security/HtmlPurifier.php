@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Rubedo
  *
@@ -22,36 +23,31 @@ namespace Rubedo\Security;
  * @category Rubedo
  * @package Rubedo
  */
-class HtmlPurifier extends HtmlCleaner
-{
+class HtmlPurifier extends HtmlCleaner {
+	protected static $_purifier;
+	
+	/**
+	 * Clean a raw content to become a valid HTML content without threats
+	 *
+	 * @param string $html        	
+	 * @return string
+	 */
+	public function clean($html) {
 
-    protected static $_purifier;
-
-    /**
-     * Clean a raw content to become a valid HTML content without threats
-     *
-     * @param string $html
-     * @return string
-     */
-    public function clean($html)
-    {
-        include_once ('HTMLPurifier/HTMLPurifier.auto.php');
-         if (!class_exists('\HTMLPurifier_Config')) {
-             return parent::clean($html);
-         }
-        if (!isset(self::$_purifier)) {
-
-            $config = \HTMLPurifier_Config::createDefault();
-            $config->set('Core.Encoding', 'UTF-8');
-            $config->set('Cache.SerializerPath', APPLICATION_PATH . "/../cache/htmlpurifier");
-
-            self::$_purifier = new \HTMLPurifier($config);
-
-        }
-        $html = self::$_purifier->purify($html);
-
-        return $html;
-
-    }
-
+		
+		if (! class_exists ( '\HTMLPurifier_Config' )) {
+			return parent::clean ( $html );
+		}
+		if (! isset ( self::$_purifier )) {
+			$htmlPurifierBootstrap = new \HTMLPurifier_Bootstrap();
+			$config = \HTMLPurifier_Config::createDefault ();
+			$config->set ( 'Core.Encoding', 'UTF-8' );
+			$config->set ( 'Cache.SerializerPath', APPLICATION_PATH . "/../cache/htmlpurifier" );
+			
+			self::$_purifier = new \HTMLPurifier ( $config );
+		}
+		$html = self::$_purifier->purify ( $html );
+		
+		return $html;
+	}
 }

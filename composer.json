@@ -5,7 +5,17 @@
 	"twig/twig": "1.*",
         "ruflin/Elastica": "v0.19.8.0",
         "chriskite/phactory": "v0.4.2",
-        "ezyang/htmlpurifier": "dev-master"
+        "ezyang/htmlpurifier": "dev-master",
+        "webtales/rubedo-backoffice-ui" : "dev-master"
     },
-    "minimum-stability": "stable" 
+    "repositories": [
+		{
+			"type": "vcs",
+			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
+		}
+	],
+    "minimum-stability": "stable",
+    "config": {
+        "process-timeout": 600
+    }
 }
