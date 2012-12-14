@@ -51,8 +51,19 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
      *
      * @see Zend_Controller_Action::init()
      */
-    public function init() {
-        parent::init();
+    public function init() {		
+		// init the data access service
+        $this->_dataService = Rubedo\Services\Manager::getService('NestedContents');
+		
+		$this->_parentId = $this->getRequest()->getParam('parentId');
+
+        if (!isset($this->_parentId)) {
+            $response = array();
+            $response['success'] = false;
+            $response['message'] = 'no parentId Given';
+			$this->getResponse()->setHttpResponseCode(500);
+            $this->_returnJson($response);
+        }
 		
 		$sessionService = \Rubedo\Services\Manager::getService('Session');
 		
@@ -88,21 +99,6 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
             $returnValue = Zend_Json::prettyPrint($returnValue);
         }
         $this->getResponse()->setBody($returnValue);
-    }
-
-    public function init() {
-        // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('NestedContents');
-		
-		$this->_parentId = $this->getRequest()->getParam('parentId');
-
-        if (!isset($this->_parentId)) {
-            $response = array();
-            $response['success'] = false;
-            $response['message'] = 'no parentId Given';
-			$this->getResponse()->setHttpResponseCode(500);
-            $this->_returnJson($response);
-        }
     }
 
     /**

@@ -192,7 +192,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 			$result = $this->_controlMaxLength($value, $config['maxLength']);
 			
 			if(!$result){
-				$this->_inputDataErrors[] = "The Length of the field ".$key." must be greater than ".$config['minLength'];
+				$this->_inputDataErrors[] = "The Length of the field ".$key." must be greater than ".$config['maxLength'];
 			}
 		}
 		
