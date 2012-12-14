@@ -39,6 +39,38 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
      * @var bool
      */
     protected $_prettyJson = true;
+	
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index');
+	
+    /**
+     * Disable layout & rendering, set content type to json
+     * init the store parameter if transmitted
+     *
+     * @see Zend_Controller_Action::init()
+     */
+    public function init() {
+        parent::init();
+		
+		$sessionService = \Rubedo\Services\Manager::getService('Session');
+		
+        // refuse write action not send by POST
+        if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
+            throw new \Exception("You can't call a write action with a GET request");
+        } else {
+        	if(!in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)){
+        		$user = $sessionService->get('user');
+        		$token = $this->getRequest()->getParam('token');
+				
+				if($token !== $user['token']){
+					throw new \Exception("The token given in the request doesn't match with the token in session");
+				}
+        	}
+        }
+
+    }
 
     /**
      * Set the response body with Json content
