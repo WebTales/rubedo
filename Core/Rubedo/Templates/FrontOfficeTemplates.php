@@ -84,7 +84,7 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
 
         //$this->_twig->addExtension(new \Twig_Extension_Highlight());
 
-        //$this->_twig->addExtension(new \Twig_Extension_Intl());
+        $this->_twig->addExtension(new \Twig_Extensions_Extension_Intl());
         
         $this->_twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml',array('is_safe' => array('html'))));
         
