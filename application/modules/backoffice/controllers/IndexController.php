@@ -50,7 +50,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
         $this->getHelper('ViewRenderer')
             ->setNoRender();
         $this->getResponse()
-            ->setBody(file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/app.html'));
+            ->setBody(file_get_contents(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/app.html'));
     }
 
     /**
@@ -66,7 +66,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
             ->setHeader('Content-Type', "application/javascript");
         
         $this->getResponse()
-            ->setBody(file_get_contents(APPLICATION_PATH . '/rubedo-backoffice-ui/www/app.js'));
+            ->setBody(file_get_contents(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/app.js'));
     }
 }
 
