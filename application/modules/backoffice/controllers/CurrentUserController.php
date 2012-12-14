@@ -33,6 +33,8 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
      * @param 	Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
+	
+	protected $_currentUserService;
 
     /**
      * Initialise the controller
@@ -41,6 +43,7 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
         parent::init();
 
         $this->_auth = \Rubedo\Services\Manager::getService('Authentication');
+		$this->_currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
     }
 
     /**
@@ -111,7 +114,20 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
             $result = false;
         }
         $this->_helper->json(array('success' => $result));
-
     }
+	
+	/**
+	 * Return a json with the token of the current user
+	 */
+	public function getTokenAction() {
+		$response = array();
+		$response['token'] = $this->_currentUserService->getToken();
+		
+		if(mb_strlen($response['token']) != 128 && !ctype_alnum($response['token'])){
+			$this->getResponse()->setHttpResponseCode(500);
+		} else {
+			$this->_helper->json($response);
+		}
+	}
 
 }

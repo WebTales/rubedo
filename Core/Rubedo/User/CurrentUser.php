@@ -132,8 +132,42 @@ class CurrentUser implements ICurrentUser
 			return $serviceUser->changePassword($newPass,$user['version'],$user['id']);
 		}else{
 			return false;
+		}	
+	}
+	
+	/**
+	 * Generate a token for the current user
+	 * 
+	 * @return string
+	 */
+	public function generateToken() {
+		$sessionService = \Rubedo\Services\Manager::getService('Session');
+		$hashService = \Rubedo\Services\Manager::getService('Hash');
+		
+		$user = $sessionService->get('user');
+		
+		$token = $hashService->generateRandomString(20);
+		$user['token'] = $hashService->derivatePassword($token, $hashService->generateRandomString(10));
+		$sessionService->set('user', $user);
+		
+		return $user['token'];
+	}
+	
+	/**
+	 * Return the token of the current user
+	 * 
+	 * @return string
+	 */
+	public function getToken() {
+		$sessionService = \Rubedo\Services\Manager::getService('Session');
+		
+		$token = $sessionService->get('token', "");
+		
+		if($token == ""){
+			$token = $this->generateToken();
 		}
 		
-		
+		return $token;
 	}
+	
 }
