@@ -33,6 +33,16 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
      * @param 	Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
+	
+	/**
+	 * Variable for currentUser service
+	 */
+	protected $_currentUserService;
+	
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'get-token');
 
     /**
      * Initialise the controller
@@ -41,6 +51,21 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
         parent::init();
 
         $this->_auth = \Rubedo\Services\Manager::getService('Authentication');
+		$this->_currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+		
+		// refuse write action not send by POST
+        if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
+            throw new \Exception("You can't call a write action with a GET request");
+        } else {
+        	if(!in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)){
+        		$user = $sessionService->get('user');
+        		$token = $this->getRequest()->getParam('token');
+				
+				if($token !== $user['token']){
+					throw new \Exception("The token given in the request doesn't match with the token in session");
+				}
+        	}
+        }
     }
 
     /**
@@ -111,7 +136,20 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
             $result = false;
         }
         $this->_helper->json(array('success' => $result));
-
     }
+	
+	/**
+	 * Return a json with the token of the current user
+	 */
+	public function getTokenAction() {
+		$response = array();
+		$response['token'] = $this->_currentUserService->getToken();
+		
+		if(mb_strlen($response['token']) != 128 && !ctype_alnum($response['token'])){
+			$this->getResponse()->setHttpResponseCode(500);
+		} else {
+			$this->_helper->json($response);
+		}
+	}
 
 }
