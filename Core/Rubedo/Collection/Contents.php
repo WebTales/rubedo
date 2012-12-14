@@ -135,12 +135,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 		$value = array($value);
                 	}
                 	foreach($value as $valueItem){
-                		$this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'],$key);
+                		$this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
                 		$tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType']);
                 	}
                 }else{
-                	$this->_validateFieldValue($value, $fieldsArray[$key]['config']);
-                	$tempFields[$key]= $this->_filterFieldValue($value, $fieldsArray[$key]['cType'],$key);
+                	$this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
+                	$tempFields[$key]= $this->_filterFieldValue($value, $fieldsArray[$key]['cType']);
                 }
             }
         }
@@ -170,9 +170,40 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @param string $key field name
      * @return boolean
      */
-    protected function _validateFieldValue($value, $config,$key){
-    	//if something wrong : write it in $this->_inputDataErrors
-    	return true;
+    protected function _validateFieldValue($value, $config, $key){
+    	
+    	if(isset($config['allowBlank'])){
+    		$result = $this->_controlAllowBlank($value, $config['allowBlank']);
+			
+			if(!$result){
+				$this->_inputDataErrors[] = "The field ".$key." must be specified";
+			}
+    	}
+		
+		if(isset($config['minLength'])){
+			$result = $this->_controlMinLength($value, $config['minLength']);
+			
+			if(!$result){
+				$this->_inputDataErrors[] = "The Length of the field ".$key." must be greater than ".$config['minLength'];
+			}
+		}
+		
+		if(isset($config['maxLength'])){
+			$result = $this->_controlMaxLength($value, $config['maxLength']);
+			
+			if(!$result){
+				$this->_inputDataErrors[] = "The Length of the field ".$key." must be greater than ".$config['minLength'];
+			}
+		}
+		
+		if(isset($config['vtype'])){
+			$result = $this->_controlVtype($value, $config['vtype']);
+			
+			if(!$result){
+				$this->_inputDataErrors[] = "The value \"".$value."\" doesn't match with the condition of validation \"".$config['vtype']."\"";
+			}
+		}
+		
     }
     
     
@@ -196,4 +227,98 @@ class Contents extends WorkflowAbstractCollection implements IContents
     	}
     	return $returnValue;
     }
+	
+	/**
+	 * Check if the allowBlank condition is respected
+	 * 
+	 * @param mixed $value data value
+	 * @param bool $allowBlank configuration value
+	 * @return bool
+	 */
+	protected function _controlAllowBlank($value, $allowBlank){
+		if($allowBlank == false){
+			if($value == "" || $value == null){
+				$response = false;
+			} else {
+				$response = true;
+			}
+		} else {
+			$response = true;
+		}
+		
+		return $response;
+	}
+	
+	/**
+	 * Check if the minLength condition is respected
+	 * 
+	 * @param mixed $value data value
+	 * @param integer $minLength configuration value
+	 * @return bool
+	 */
+	protected function _controlMinLength($value, $minLength){
+		if(mb_strlen($value)>0 && mb_strlen($value)<$minLength){
+			$response = false;
+		} else {
+			$response = true;
+		}
+		
+		return $response;
+	}
+	
+	/**
+	 * Check if the maxLength condition is respected
+	 * 
+	 * @param mixed $value data value
+	 * @param integer $maxLength configuration value
+	 * @return bool
+	 */
+	protected function _controlMaxLength($value, $maxLength){
+		if(mb_strlen($value)>$maxLength){
+			$response = false;
+		} else {
+			$response = true;
+		}
+		
+		return $response;
+	}
+	
+	protected function _controlVtype($value, $vtype){
+			
+		if($value != ""){	
+			switch ($vtype) {
+				case 'alpha':
+					if(ctype_alpha($value)){
+						return true;
+					} else {
+						return false;
+					}
+					break;
+				case 'alphanum':
+					if(ctype_alnum($value)){
+						return true;
+					} else {
+						return false;
+					}
+					break;
+				case 'url':
+					if(preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $value)){
+						return true;
+					} else {
+						return false;
+					}
+					break;
+				case 'email':
+					if(preg_match('|^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]{2,})+$|i', $value)){
+						return true;
+					} else {
+						return false;
+					}
+					break;
+			}
+		} else {
+			return true;
+		}
+	}
+	
 }
