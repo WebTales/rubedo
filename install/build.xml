@@ -101,11 +101,28 @@
 	<target name="git.pull">
 		<gitpull repository="." source="origin" />
 	</target>
-	<target name="gitui.pull">
-		<gitpull repository="application/rubedo-backoffice-ui" source="origin" />
+	
+	<target name="composer.update">
+		<exec command="composer update" passthru="true"/>
 	</target>
-	<target name="main" depends="git.pull,gitui.pull">
-		<echo>Tout est bon !</echo>
+	
+	<target name="composer.update-dev">
+		<exec command="composer update --dev" passthru="true"/>
+	</target>
+	
+	<target name="update" depends="git.pull,composer.update">
+		<echo>Updated</echo>
+	</target>
+	
+	<target name="update-dev" depends="git.pull,composer.update-dev">
+		<echo>Updated</echo>
+	</target>
+	
+	<target name="main">
+		<echo>No default action</echo>
+		<echo>To update, phing update</echo>
+		<echo>To build report , phing report</echo>
+		<echo>To run unit tests, phing phpunit</echo>
 	</target>
 	<target name="report" depends="prepare, phpcs, phpmd, phpdepend, phpcpd, phpdoc, phpunit"/>
 		
