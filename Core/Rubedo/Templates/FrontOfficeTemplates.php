@@ -68,7 +68,7 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
     protected function _init()
     {
 
-        $this->_options = array('templateDir' => APPLICATION_PATH . "/../data/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
+        $this->_options = array('templateDir' => APPLICATION_PATH . "/../public/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
         if (isset($this->_service)) {
             $this->_options = $this->_service->getCurrentOptions();
         }
