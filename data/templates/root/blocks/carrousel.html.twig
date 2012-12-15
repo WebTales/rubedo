@@ -1,33 +1,36 @@
-{% extends "root/block.html" %}
+{% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
 <!-- carousel -->
-<div class="slider-wrapper-post theme-default row" style="position:relative; margin : 30px 0;">
-	
-	<div id="sliders" class="nivoSlider span12" style="margin-bottom:0px;">
-		
-		{% for slide in items %}
-		<a href="/single?content-id={{slide.id}}" title="Standart post"><img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{slide.id}}"
-		data-thumb="/image?file-id={{slide.thumbnail}}"  /></a>
+<div class="slider-wrapper-post theme-default row"
+	style="position: relative; margin: 30px 0;">
+
+	<div id="sliders" class="nivoSlider span12" style="margin-bottom: 0px;">
+
+		{% for slide in items %} 
+		<a href="/single?content-id={{slide.id}}" title="Standart post">
+			<img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{slide.id}}" data-thumb="/image?file-id={{slide.thumbnail}}" />
+		</a> 
 		{% endfor %}
 
 	</div>
-	
+
 	{% for slide in items %}
 	<div class="nivo-html-caption" id="htmlcaption_{{slide.id}}">
-		<a href="/single?content-id={{slide.id}}" title="{{slide.text}}"> <h1>{{slide.text}}</h1>
-		<p>
-			{{slide.summary}}
-		</p> </a>
-		<div class="cat-slider" style="position:absolute; top:0px; right:0; z-index:999; padding:5px; font-size:12px; color:#f8f8f8;">
-			{% for term in slide.terms %}
-			{% if not loop.first %}&nbsp;|&nbsp;{% endif %}{{term}}
+		<a href="/single?content-id={{slide.id}}" title="{{slide.text}}">
+			<h1>{{slide.text}}</h1>
+			<p>{{slide.summary}}</p>
+		</a>
+		<div class="cat-slider" style="position: absolute; top: 0px; right: 0; z-index: 999; padding: 5px; font-size: 12px; color: #f8f8f8;">
+			{% for term in slide.terms %} 
+			{% if not loop.first %} &nbsp;|&nbsp; {% endif %}
+			{{term}}
 			{% endfor %}
 		</div>
 	</div>
 	{% endfor %}
 
-	
+
 
 </div>
 

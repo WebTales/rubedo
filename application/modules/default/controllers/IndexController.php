@@ -130,7 +130,7 @@ class IndexController extends Zend_Controller_Action
         $pageInfo = $pageService->findById($pageId);
         $this->_servicePage->setPageTitle($pageInfo['text']);
         $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-        $pageInfo['template'] = 'root/page.html';
+        $pageInfo['template'] = 'root/page.html.twig';
 
         return $pageInfo;
     }

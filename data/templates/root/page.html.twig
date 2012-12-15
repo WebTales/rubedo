@@ -76,7 +76,7 @@
 			{% block pageMainContent %}
 			{% if rows %}
 			{% for row in rows %}
-			{% include 'root/row.html' with row only %}
+			{% include 'root/row.html.twig' with row only %}
 			{% endfor %}
 			{% endif %}
 			{% endblock %}

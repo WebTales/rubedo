@@ -2,7 +2,7 @@
 	<!-- process columns -->
 	{% if columns %}
 		{% for column in columns %}
-			{% include 'root/column.html' with column only %}
+			{% include 'root/column.html.twig' with column only %}
 		{% endfor %}
 	{% endif %}
 </div>

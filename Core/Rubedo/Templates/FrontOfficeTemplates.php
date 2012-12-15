@@ -130,9 +130,9 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
     public function getFileThemePath($path)
     {
         if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
-            return '/' . $this->getCurrentTheme() . '/' . $path;
+            return '' . $this->getCurrentTheme() . '/' . $path;
         } else {
-            return '/root/' . $path;
+            return 'root/' . $path;
         }
     }
 

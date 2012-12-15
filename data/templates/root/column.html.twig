@@ -2,12 +2,12 @@
 	<!-- process nested rows & blocks -->
 	{% if blocks %}
 		{% for block in blocks %}
-			{% include [block.template,'root/block.html'] with block.data only %}
+			{% include [block.template,'root/block.html.twig'] with block.data only %}
 		{% endfor %}
 	{% endif %}
 	{% if rows %}
 		{% for row in rows %}
-				{% include 'root/row.html' with row only %}
+				{% include 'root/row.html.twig' with row only %}
 		{% endfor %}
 	{% endif %}
 </div>
