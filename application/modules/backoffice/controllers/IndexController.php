@@ -44,13 +44,34 @@ class Backoffice_IndexController extends Zend_Controller_Action
 		if(!$this->_auth->getIdentity()){
 			$this->_helper->redirector->gotoUrl("/backoffice/login");
 		}
+		
+		$appHtml = file_get_contents(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/app.html');
         
+		$extjsNativeInclude = '<script src="extjs-4.1.0/ext-all-debug.js"></script>';
+		
+		$extjsOptions = Zend_Registry::get('extjs');
+		
+		if(!isset($extjsOptions['debug']) ||$extjsOptions['debug']==false){
+		    $extjsInclude = '<script src="extjs-4.1.0/ext-all.js"></script>';
+		    //http://cdn.sencha.com/ext-4.1.0-gpl/
+		    
+		}else{
+		    $extjsInclude = $extjsNativeInclude;
+		}
+		$appHtml = str_replace($extjsNativeInclude, $extjsInclude, $appHtml);
+		
+		if(isset($extjsOptions['network']) && $extjsOptions['network']=='cdn'){
+		    $appHtml = str_replace('extjs-4.1.0/', 'http://cdn.sencha.com/ext-4.1.0-gpl/', $appHtml);
+		}
+		
+		
+		
         $this->getHelper('Layout')
             ->disableLayout();
         $this->getHelper('ViewRenderer')
             ->setNoRender();
         $this->getResponse()
-            ->setBody(file_get_contents(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/app.html'));
+            ->setBody($appHtml);
     }
 
     /**

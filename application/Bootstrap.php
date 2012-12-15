@@ -71,6 +71,20 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 		 define('ENABLE_CACHE', $serviceOptions['enableCache']);*/
 
 	}
+	
+	/**
+	 * Load services parameter from application.ini to the service manager
+	 */
+	protected function _initExtjs() {
+	    $options = $this->getOption('backoffice');
+	    if(!isset($options['extjs'])) {
+	        $extjsOptions = array('debug'=>false,'network'=>'local');
+	    } else {
+	        $extjsOptions = $options['extjs'];
+	    }
+	    Zend_Registry::set('extjs', $extjsOptions);
+	
+	}
 
 	/**
 	 * Load router configuration with specific rules
