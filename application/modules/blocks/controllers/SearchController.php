@@ -129,7 +129,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $output['date'] = $date;
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-                "blocks/search.html");
+                "blocks/search.html.twig");
         
         $css = array();
         $js = array();

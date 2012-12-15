@@ -34,7 +34,7 @@ class Blocks_ResponsiveController extends Blocks_AbstractController
         $output["items"] = null;
 
 		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/responsive.html");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/responsive.html.twig");
 
         $css = array();
         $js = array();

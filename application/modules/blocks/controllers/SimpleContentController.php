@@ -39,7 +39,7 @@ class Blocks_SimpleContentController extends Blocks_AbstractController
 		$data['title'] = $data['text'];
         $output = $data;
 		
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/simplecontent.html");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/simplecontent.html.twig");
 
         $css = array();
         $js = array();

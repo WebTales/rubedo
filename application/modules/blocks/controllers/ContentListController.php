@@ -60,7 +60,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
             foreach ($typeArray['data'] as $dataType) {
-                $contentTypeArray[(string)$dataType['id']] = "root/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html";
+                $contentTypeArray[(string)$dataType['id']] = "root/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig";
             }
 
             foreach ($contentArray['data'] as $vignette) {
@@ -77,9 +77,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
         }
 
         if (isset($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentlist.html");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentlist.html.twig");
 
         }
 

@@ -47,12 +47,12 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
 
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
-            $templateName .= ".html";
+            $templateName .= ".html.twig";
             $output["data"] = $data;
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
         }else{
         	$output= array();
-        	 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html");
+        	 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
         }
 		
         $css = array();

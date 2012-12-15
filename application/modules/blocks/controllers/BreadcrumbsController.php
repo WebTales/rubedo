@@ -35,7 +35,7 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
 		
         $output= array('liens' => $links);
 
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/breadcrumbs.html");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/breadcrumbs.html.twig");
 
         $css = array();
         $js = array();

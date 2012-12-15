@@ -34,7 +34,7 @@ class Blocks_FooterController extends Blocks_AbstractController
         $output["items"] = null;
 
 		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/footer.html");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/footer.html.twig");
 
         $css = array();
         $js = array();

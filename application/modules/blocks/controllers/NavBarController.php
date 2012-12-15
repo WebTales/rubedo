@@ -84,7 +84,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
 
         $twigVar["data"] = $output;
 
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
 
         $css = array();
         $js = array();

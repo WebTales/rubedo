@@ -67,7 +67,7 @@ class Blocks_CarrouselController extends Blocks_AbstractController
 		
         $output["items"] = $data;
 
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html.twig");
 
         $css = array();
         $js = array();

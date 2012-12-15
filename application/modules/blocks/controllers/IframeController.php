@@ -40,7 +40,7 @@ class Blocks_IframeController extends Blocks_AbstractController
         $output = $$lang;
         $output['id'] = $id;
 		
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/iframe.html");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/iframe.html.twig");
 
         $css = array();
         $js = array();
