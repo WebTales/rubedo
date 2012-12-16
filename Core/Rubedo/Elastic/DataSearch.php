@@ -36,12 +36,13 @@ class DataSearch extends DataAbstract implements IDataSearch
 	 * @param string $lang optional lang filter
 	 * @param string $author optional author filter
 	 * @param string $date optional date filter
+	 * @param string $taxonomy optional taxonomy filter
 	 * @param string $pager optional pager, default set to 10
 	 * @param string $orderBy optional  orderBy, default sort on score
 	 * @param string $pageSize optional page size, "all" for everything
      * @return Elastica_ResultSet
      */
-    public function search ($terms, $type=null, $lang=null, $author=null, $date=null, $pager=null, $orderBy=null, $pageSize=null) {
+    public function search ($terms, $type=null, $lang=null, $author=null, $date=null, $taxonomy=null, $pager=null, $orderBy=null, $pageSize=null) {
     	
 		// set default options
 		if (is_null($lang)) {
@@ -98,7 +99,15 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$globalFilter->addFilter($dateFilter);
 				$setFilter = true;
 			}			
-			
+
+			// filter on taxonomy
+			if ($taxonomy != '') {
+				$taxonomyFilter = new \Elastica_Filter_Term();
+        		$taxonomyFilter->setTerm('taxonomy.Tags', $taxonomy);
+				$globalFilter->addFilter($taxonomyFilter);
+				$setFilter = true;
+			}
+						
 			// Set query on terms
 			$elasticaQueryString = new \Elastica_Query_QueryString($terms."*");
 			
@@ -137,7 +146,22 @@ class DataSearch extends DataAbstract implements IDataSearch
 												
 			// Add that facet to the search query object.
 			$elasticaQuery->addFacet($elasticaFacetDate);
-			
+
+			// Define taxonomy facets
+			$collection = \Rubedo\Services\Manager::getService('MongoDataAccess');
+			$collection->init("Taxonomy");	
+			$taxonomyList = $collection->read();
+			foreach ($taxonomyList['data'] as $taxonomy) {
+				$vocabulary = $taxonomy['name'];	
+				$elasticaFacetTaxonomy = new \Elastica_Facet_Terms('taxonomy'.$vocabulary.'Facet');
+				$elasticaFacetTaxonomy->setField('taxonomy.'.$taxonomy['name']);
+				$elasticaFacetTaxonomy->setSize(10);
+				$elasticaFacetTaxonomy->setOrder('reverse_count');
+				if ($setFilter) $elasticaFacetTaxonomy->setFilter($globalFilter);
+				// Add that facet to the search query object.
+				$elasticaQuery->addFacet($elasticaFacetTaxonomy);					        
+			}
+				
 			// Add pagination 		
 			if ($pageSize!="all") {
 				$elasticaQuery->setSize($pageSize)->setFrom($pager*$pageSize);

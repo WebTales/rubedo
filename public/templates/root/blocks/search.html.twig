@@ -96,6 +96,22 @@
 		</p>
 		{% endif %}
 		<p>
+			<i class="icon-tags"></i> {{"Tags"|trans}}
+		</p>
+		{% if (taxonomy == '') %}
+		<ul>
+			{% for facet in taxonomyFacets %}
+			<li>
+				<a href="{{url({'taxonomy': facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
+			</li>
+			{% endfor %}
+		</ul>
+		{% else %}
+		<p style="padding-left: 20px">
+			{{taxonomy}} <a href="{{url({'taxonomy': null})}}"><i class="icon-remove-sign"></i></a>
+		</p>
+		{% endif %}
+		<p>
 			<i class="icon-calendar"></i> {{"date"|trans}}
 		</p>
 		{% if (date == '') %}

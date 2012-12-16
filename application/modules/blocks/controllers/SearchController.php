@@ -46,14 +46,17 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // get date filter
         $date = $this->getRequest()->getParam('date');
+		
+        // get taxonomy filter
+        $taxonomy = $this->getRequest()->getParam('taxonomy');
         
         // get pager
         $pager = $this->getRequest()->getParam('pager',0);
             
-            // get orderBy
+        // get orderBy
         $orderBy = $this->getRequest()->getParam('orderby','_score');
             
-            // get page size
+        // get page size
         $pageSize = $this->getRequest()->getParam('pagesize',10);
 
         
@@ -61,7 +64,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $query->init();
         
         $elasticaResultSet = $query->search($terms, $type, $lang, $author, 
-                $date, $pager, $orderBy, $pageSize);
+                $date, $taxonomy, $pager, $orderBy, $pageSize);
         
         // Get total hits
         $nbResults = $elasticaResultSet->getTotalHits();
@@ -123,16 +126,20 @@ class Blocks_SearchController extends Blocks_AbstractController
         $output['typeFacets'] = $elasticaFacets['typeFacet']['terms'];
         $output['authorFacets'] = $elasticaFacets['authorFacet']['terms'];
         $output['dateFacets'] = $elasticaFacets['dateFacet']['entries'];
+		$output['taxonomyFacets'] = $elasticaFacets['taxonomyTagsFacet']['terms'];
         $output['type'] = $type;
         $output['lang'] = $lang;
         $output['author'] = $author;
         $output['date'] = $date;
+		$output['taxonomy'] = $taxonomy;
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
                 "blocks/search.html.twig");
         
         $css = array();
         $js = array();
+		//print_r($output);
+		//exit;
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
