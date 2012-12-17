@@ -179,6 +179,8 @@ abstract class AbstractCollection implements IAbstractCollection
             foreach ($sort as $value) {
                 $this->_dataService->addSort(array($value["property"] => strtolower($value["direction"])));
             }
+        }else{
+            $this->_dataService->addSort(array("orderValue" => 1));
         }
 
         return $this->_dataService->readChild($parentId);
