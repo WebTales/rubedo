@@ -60,14 +60,13 @@ interface IDataIndex
     public function deleteContentType ($id);
 	
     /**
-     * Index new content
+     * Create or update index for existing content
      *    
-	 * @param string $id new content id
-	 * @param string $typeId new content type id
-	 * @param array $data new content data
+	 * @param string $id content id
+	 * @param boolean $live live if true, workspace if live
      * @return array
      */
-    public function indexContent ($id, $typeId, $data);
+	public function indexContent ($id, $live = true);
 	
     /**
      * Delete existing content from index

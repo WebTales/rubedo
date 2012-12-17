@@ -482,12 +482,7 @@ class DataAccess implements IDataAccess
          $ElasticDataIndexService->createContentType ($obj['id'], $obj,TRUE);
          }
          */
-        // if it is a content creation, get it updated as a ES collection
-        if ($this->_collection->getName() == "Contents" and $returnArray["success"]) {
-            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-            $ElasticDataIndexService->init();
-            $ElasticDataIndexService->indexContent($obj['id'], $obj['typeId'], $obj);
-        }
+
         return $returnArray;
     }
 
@@ -553,12 +548,7 @@ class DataAccess implements IDataAccess
             $ElasticDataIndexService->init();
             $ElasticDataIndexService->indexContentType($obj['id'], $obj, TRUE);
         }
-        // if it is a content update, get it updated as a ES collection
-        if ($this->_collection->getName() == "Contents" and $returnArray["success"]) {
-            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-            $ElasticDataIndexService->init();
-            $ElasticDataIndexService->indexContent($obj['id'], $obj['typeId'], $obj);
-        }
+
 
         return $returnArray;
     }
@@ -602,12 +592,7 @@ class DataAccess implements IDataAccess
             $ElasticDataIndexService->init();
             $ElasticDataIndexService->deleteContentType($obj['id'], TRUE);
         }
-        // if it is a content destroy, delete the ES document
-        if ($this->_collection->getName() == "Contents" and $returnArray["success"]) {
-            $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-            $ElasticDataIndexService->init();
-            $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id'], TRUE);
-        }
+
         return $returnArray;
     }
 

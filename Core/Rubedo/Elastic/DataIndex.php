@@ -192,13 +192,11 @@ class DataIndex extends DataAbstract implements IDataIndex
      * Create or update index for existing content
      *    
 	 * @see \Rubedo\Interfaces\IDataIndex::indexContent()
-	 * @param string $id new content id
-	 * @param string $typeId new content type id
-	 * @param array $data new content data
+	 * @param string $id content id
 	 * @param boolean $live live if true, workspace if live
      * @return array
      */
-	public function indexContent ($id, $typeId = null, $data = null, $live = FALSE) {
+	public function indexContent ($id, $live = true) {
 
 	     // content data to index
 	     if ($live) {
@@ -206,14 +204,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 	     } else {
 	            $space = "workspace";
 	     }
-
-		// retrieve type id and content data if null
-		if (is_null($typeId)) {
-			$c = \Rubedo\Services\Manager::getService('MongoDataAccess');
-			$c->init("Contents");	
-			$data = $c->findById($id);
-			$typeId = $data['typeId'];
-		}
+            
+            // retrieve type id and content data if null
+        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id);
+        $typeId = $data['typeId'];
 		
 		// Retrieve type label
 		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
