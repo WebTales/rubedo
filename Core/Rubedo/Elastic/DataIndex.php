@@ -196,7 +196,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 	 * @param boolean $live live if true, workspace if live
      * @return array
      */
-	public function indexContent ($id, $live = true) {
+	public function indexContent ($id, $live = false) {
 
 	     // content data to index
 	     if ($live) {
