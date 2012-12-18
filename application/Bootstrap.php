@@ -51,6 +51,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         if (isset($options)) {
 			Rubedo\Elastic\DataAbstract::setOptions($options['elastic']);
         }
+        $indexContentOptionsJson = file_get_contents(APPLICATION_PATH.'/configs/elastica.json');
+        $indexContentOptions = Zend_Json::decode($indexContentOptionsJson);
+        Rubedo\Elastic\DataAbstract::setContentIndexOption($indexContentOptions);
     }
 
 	/**
