@@ -1,0 +1,20 @@
+{
+	"index": {
+		"analysis": {
+			"analyzer": {
+				"my_analyzer": {
+					"tokenizer": "standard",
+					"filter": ["standard", "lowercase","asciifolding", "french_stemmer"]
+				}
+			},
+			"filter": {
+				"french_stemmer": {
+					"type": "stemmer",
+					"name": "light_french"
+				}
+			}
+		},
+		"number_of_shards" : 1, 
+		"number_of_replicas" : 0
+	}
+}
