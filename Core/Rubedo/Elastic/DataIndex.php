@@ -35,7 +35,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','type','author');
+		$searchableFields=array('lastUpdateTime','text','summary','type','author');
     	
 		// Get content type config by id
 		$c = new \Rubedo\Mongo\DataAccess();
@@ -46,15 +46,11 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$summary="";
 		$fields=$contentTypeConfig["fields"];
 		foreach($fields as $field) {
-			if ($field['config']['resumed']) {
-				$summary = $field['config']['name'];
-			}
 			if ($field['config']['searchable']) {
 				$searchableFields[] = $field['config']['name'];
 			}	
 		}    
 		
-		$returnArray['summary']=$summary;
 		$returnArray['searchableFields']=$searchableFields;
 		return $returnArray;	
     }
@@ -222,15 +218,11 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentData = array();
 		foreach($data[$space]['fields'] as $field => $var) {
 
-			// Add summary if exists
-			if ($field==$typeStructure['summary']) {
-				$contentData["summary"] = (string) $var;
-			} else {
-				// only index searchable fields
-				if (in_array($field,$typeStructure['searchableFields']))  {	
-					$contentData[$field] = (string) $var;
-				}
+			// only index searchable fields
+			if (in_array($field,$typeStructure['searchableFields']))  {	
+				$contentData[$field] = (string) $var;
 			}
+
 			// Date format fix
 			if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
 		}

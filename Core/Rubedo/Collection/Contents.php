@@ -114,7 +114,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         $returnArray = parent::destroy($obj,$safe);
         if ($returnArray["success"]) {
-            $this->_indexContent($returnArray['data']);
+            $this->_unIndexContent($obj);
         }
         return $returnArray;
    }
@@ -138,7 +138,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
    protected function _unIndexContent($obj){
        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
        $ElasticDataIndexService->init();
-       $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id'], TRUE);
+       $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id']);
    }
 
 	/**
@@ -165,7 +165,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $fieldsList = array_keys($fieldsArray);
         $tempFields = array();
         $tempFields['text'] = $obj['text'];
-        $tempFields['summary'] = $obj['summary'];
+        $tempFields['summary'] = $obj['fields']['summary'];
         
         foreach ($obj['fields'] as $key => $value) {
             if(in_array($key, array('text','summary'))){
