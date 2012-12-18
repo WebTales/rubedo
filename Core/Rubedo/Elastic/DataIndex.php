@@ -42,19 +42,19 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$c->init("ContentTypes");
 		$contentTypeConfig = $c->findById($id);
 
-		// Search abstract field
-		$abstract="";
+		// Search summary field
+		$summary="";
 		$fields=$contentTypeConfig["fields"];
 		foreach($fields as $field) {
 			if ($field['config']['resumed']) {
-				$abstract = $field['config']['name'];
+				$summary = $field['config']['name'];
 			}
 			if ($field['config']['searchable']) {
 				$searchableFields[] = $field['config']['name'];
 			}	
 		}    
 		
-		$returnArray['abstract']=$abstract;
+		$returnArray['summary']=$summary;
 		$returnArray['searchableFields']=$searchableFields;
 		return $returnArray;	
     }
@@ -89,18 +89,12 @@ class DataIndex extends DataAbstract implements IDataIndex
 		if (is_array($data["fields"])) {
 
 			foreach($data["fields"] as $key => $field) {
-				
+						
 				// Only searchable fields get indexed
 				if ($field['config']['searchable']) {
 					
 					$name = $field['config']['fieldLabel'];
-					
-					if ($field['config']['resumed']) {
-						$store = 'yes';
-						$name = 'abstract';
-					} else {
-						$store = 'no';
-					}				
+								
 					switch($field['cType']) {
 						case 'checkbox' :
 							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
@@ -155,6 +149,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add systems metadata : TODO update model text to title	
 		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["taxonomy.Tags"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
@@ -226,9 +221,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentData = array();
 		foreach($data[$space]['fields'] as $field => $var) {
 
-			// Add abstract if exists
-			if ($field==$typeStructure['abstract']) {
-				$contentData["abstract"] = (string) $var;
+			// Add summary if exists
+			if ($field==$typeStructure['summary']) {
+				$contentData["summary"] = (string) $var;
 			} else {
 				// only index searchable fields
 				if (in_array($field,$typeStructure['searchableFields']))  {	
