@@ -165,9 +165,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $fieldsList = array_keys($fieldsArray);
         $tempFields = array();
         $tempFields['text'] = $obj['text'];
+        $tempFields['summary'] = $obj['summary'];
         
         foreach ($obj['fields'] as $key => $value) {
-            if($key == 'text'){
+            if(in_array($key, array('text','summary'))){
                 continue;
             }
             if (! in_array($key, $fieldsList)) {
