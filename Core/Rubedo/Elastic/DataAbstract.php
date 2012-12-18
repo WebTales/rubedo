@@ -125,8 +125,6 @@ class DataAbstract
 		if (!$this->_content_index->exists()) {
 			$this->_content_index->create(self::$_content_index_param,true);
 		}
-		//\Zend_Debug::dump($this->_content_index->getSettings());
-		//die();
 		$this->_document_index = $this->_client->getIndex(self::$_options['documentIndex']);
 		
 		// Create document index if not exists
@@ -145,7 +143,7 @@ class DataAbstract
     }
     
     /**
-     * Set the options for ES connection
+     * Set the options for the content-index 
      *
      * @param string $host
      */
