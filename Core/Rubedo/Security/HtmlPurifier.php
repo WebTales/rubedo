@@ -33,7 +33,9 @@ class HtmlPurifier extends HtmlCleaner {
 	 * @return string
 	 */
 	public function clean($html) {
-
+		if(empty($html)){
+		    return $html;
+		}
 		
 		if (! class_exists ( '\HTMLPurifier_Config' )) {
 			return parent::clean ( $html );
