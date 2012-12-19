@@ -213,7 +213,9 @@ blockquote small{ font-style: normal; font-weight:700; margin-top:20px; margin-b
 
 .widget ul{ margin-left:0 !important;}
 #searchform{ margin-bottom:0;}
-input.search-query  { width:100%; padding:0; height:20px; padding-top:5px; padding-bottom:5px; background:#ffffff url(../images/search-icon.png) top right no-repeat;border-color:#E3E3E8;  -webkit-border-radius: 0px;-moz-border-radius: 0px;border-radius: 0px;color:#CACACA;}
+
+input.search-query  { height:20px; padding-top:5px; padding-bottom:5px; background:#ffffff url(../images/search-icon.png) top right no-repeat;border-color:#E3E3E8;  -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;color:#CACACA;}
+#header-search input.search-query{ width:100%; padding:0; height:20px; padding-top:5px; padding-bottom:5px;padding-left:14px;margin-left:-14px; background:#ffffff url(../images/search-icon.png) top right no-repeat;border-color:#E3E3E8;  -webkit-border-radius: 0px;-moz-border-radius: 0px;border-radius: 0px;color:#CACACA;}
 .navigation{float:left;}
 .pagenavi > a,.pagenavi > span { margin-right:3px;}
 #blog_page .pagenavi span.current,#blog_page #commentform button{ color:#f8f8f8}
