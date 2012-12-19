@@ -66,7 +66,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
     {
         $returnArray = parent::destroy($obj, $safe);
         if ($returnArray["success"]) {
-            $this->_indexContent($returnArray['data']);
+            $this->_unIndexContentType($obj);
         }
         return $returnArray;
     }
