@@ -47,6 +47,7 @@ class config
 		'Session'					=>	'Rubedo\\Interfaces\\User\\ISession',
 		'Authentication'			=>	'Rubedo\\Interfaces\\User\\IAuthentication',
 		'CurrentTime'				=>	'Rubedo\\Interfaces\\Time\\ICurrentTime',
+		'Date'					=>	'Rubedo\\Interfaces\\Time\\IDate',
 		'Url'						=>	'Rubedo\\Interfaces\\Router\\IUrl',
 		'PageContent'				=>	'Rubedo\\Interfaces\\Content\\IPage',
 		'FrontOfficeTemplates'		=>	'Rubedo\\Interfaces\\Templates\\IFrontOfficeTemplates',
