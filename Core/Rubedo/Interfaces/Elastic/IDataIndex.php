@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
- * yet to be written
- *
- * @category Rubedo
- * @package Rubedo
- * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license yet to be written
- * @version $Id$
+ * @category   Rubedo
+ * @package    Rubedo
+ * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Interfaces\Elastic;
 
@@ -49,7 +51,7 @@ interface IDataIndex
      * @param boolean $overwrite overwrite content type if it exists
      * @return array
      */
-    public function IndexContentType ($id, $data,$overwrite);
+    public function IndexContentType ($id, $data,$overwrite=false);
 	
     /**
      * Delete ES type for new content type

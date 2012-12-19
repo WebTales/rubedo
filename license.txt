@@ -1,0 +1,15 @@
+Rubedo - pre-release - ECM solution
+Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+All rights reserved.
+licensing@webtales.fr
+
+Open Source License
+------------------------------------------------------------------------------------------
+Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+
+http://www.gnu.org/licenses/gpl.html
+
+
+--
+
+This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD-PARTY INTELLECTUAL PROPERTY RIGHTS.  See the GNU General Public License for more details.
