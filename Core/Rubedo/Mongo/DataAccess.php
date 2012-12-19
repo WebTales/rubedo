@@ -533,11 +533,16 @@ class DataAccess implements IDataAccess
         }
 
         $resultArray = $this->_collection->update($updateCondition, array('$set' => $obj), array("safe" => $safe));
-
+	
+	$obj=$this->findById($mongoID);
+	
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
                 $obj['id'] = $id;
                 unset($obj['_id']);
+		
+		
+																
                 $returnArray = array('success' => true, "data" => $obj);
             } else {
                 $returnArray = array('success' => false, "msg" => 'no record had been updated');
@@ -559,6 +564,7 @@ class DataAccess implements IDataAccess
             $ElasticDataIndexService->init();
             $ElasticDataIndexService->indexContent($obj['id'], $obj['typeId'], $obj);
         }
+								
 
         return $returnArray;
     }
@@ -700,6 +706,7 @@ class DataAccess implements IDataAccess
      */
     public function addFilter(array $filter) {
         //check valid input
+        
         if (count($filter) !== 1) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
         }
@@ -709,8 +716,7 @@ class DataAccess implements IDataAccess
                 throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
-                throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
-
+		throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
             }
             if (is_array($value)) {
                 foreach ($value as $operator => $subvalue) {
