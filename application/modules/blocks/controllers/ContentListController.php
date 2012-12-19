@@ -33,36 +33,25 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $blockConfig = $this->getRequest()->getParam('block-config');
-	$blockConfig=json_decode($blockConfig['query'],true);
-	$output = array();
 
-        foreach ($blockConfig['vocabularies'] as $key => $value) {
-		$taxonomyTerms=$value['terms'];
-		$taxonomyRule=$value['rule'];
-        }
-       
+        $taxanomyTerm = array_pop($blockConfig['taxonomy']);
+
+        $output = array();
+
         //$filterArray[] = array('property' => 'typeId', 'value' => '999999999999999999999999');
-        //$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');;
-        //$filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => $taxanomyTerm);
-       
-        if(isset($taxonomyRule)){					
-        	if($taxonomyRule=="some"){
-        		$operator='$in';
-        	}elseif($taxonomyRule=="all"){
-        		$operator='$all';
-        	}																				
-	}
-        $filterArray[]=array('property' => 'typeId', 'value' => $blockConfig['contentTypes']);					
-	$filterArray[]=array('operator'=>$operator ,'property' => 'taxonomy', 'value' => $taxonomyTerms);			
-	$filterArray[]=array('property' => 'status', 'value' => 'published');		
+        //$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');
+        $filterArray[] = array('property' => 'status', 'value' => 'published');
+
+        $filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => $taxanomyTerm);
+
         $sort = array();
         $sort[] = array('property' => 'text', 'direction' => 'asc');
 
         $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
-	
+
         $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
-	
+
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $pageData['nbPages'] = (int)ceil(($nbItems) / $pageData['limit']);
