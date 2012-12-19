@@ -2,7 +2,7 @@
 	"index": {
 		"analysis": {
 			"analyzer": {
-				"my_analyzer": {
+				"default": {
 					"tokenizer": "standard",
 					"filter": ["standard", "lowercase","asciifolding", "french_stemmer"]
 				}
@@ -10,7 +10,7 @@
 			"filter": {
 				"french_stemmer": {
 					"type": "stemmer",
-					"name": "light_french"
+					"name": "french"
 				}
 			}
 		},
