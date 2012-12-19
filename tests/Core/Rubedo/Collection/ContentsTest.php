@@ -42,6 +42,9 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		
 		$this->_mockContentTypesService = $this->getMock('Rubedo\\Collection\\ContentTypes');
         Rubedo\Services\Manager::setMockService('ContentTypes', $this->_mockContentTypesService);
+								
+		$this->_mockDataIndexService = $this->getMock('Rubedo\\Elastic\\DataIndex');
+        Rubedo\Services\Manager::setMockService('ElasticDataIndex', $this->_mockDataIndexService);
 
         parent::setUp();
     }
@@ -60,8 +63,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 												'minLength' => 2,
 												'maxLength' => 5,
 											)),
-			array 	(	'cType' => 'summary',
-						'config' => array 	(	'name' => 'summary',
+			array 	(	'cType' => 'description',
+						'config' => array 	(	'name' => 'description',
 												'allowBlank' => true,
 												'multivalued' => false,
 												'minLength' => 2,
@@ -74,11 +77,12 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 												'minLength' => 2,
 												'maxLength' => 20,))))));
 												
-		$this->_mockWorkflowDataAccessService->expects($this->once())->method('create')->will($this->returnValue(array('success' => true)));
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('create')->will($this->returnValue(array('success' => true,'data'=>array('id'=>'id'))));
 		
 		$obj = array(	"typeId" => "50c0c8669a199d930f000001",
 						"fields" => array(	'text' => 'test',
-											'summary' => 'test',
+											'summary'=>'content summary',
+											'description' => 'test',
 											'body' => '<p>Paragraphe</p>'),
 						"text" => "test");
 		
@@ -138,8 +142,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 												'allowBlank' => true,
 												'multivalued' => false,
 											)),
-			array 	(	'cType' => 'summary',
-						'config' => array 	(	'name' => 'summary',
+			array 	(	'cType' => 'description',
+						'config' => array 	(	'name' => 'description',
 												'allowBlank' => true,
 												'multivalued' => false,
 												'minLength' => 10,
@@ -151,13 +155,13 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		
 		$obj = array(	"typeId" => "50c0c8669a199d930f000001",
 						"fields" => array(	'text' => 'test',
-											'summary' => 'test',
+											'summary'=>'summary of test',
+											'description' => 'test',
 											'body' => '<p>Paragraphe</p>'),
 						"text" => "test");
 		
 		$contents = new \Rubedo\Collection\Contents();
 		$result = $contents->create($obj, true);
-		
 		$this->assertFalse($result['success']);
 	}
 	
@@ -194,7 +198,6 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		
 		$contents = new \Rubedo\Collection\Contents();
 		$result = $contents->create($obj, true);
-		
 		$this->assertFalse($result['success']);
 	}
 	
