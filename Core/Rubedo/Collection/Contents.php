@@ -74,8 +74,15 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     'inputErrors' => $this->_inputDataErrors
             );
         }
+        
+        if ( $returnArray["success"]) {
+            $this->_indexContent($returnArray['data']);
+        }
+        
         return $returnArray;
     }
+    
+    
     
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::update()
@@ -92,10 +99,49 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     'inputErrors' => $this->_inputDataErrors
             );
         }
+        
+        if ( $returnArray["success"]) {
+            $this->_indexContent($returnArray['data']);
+        }
+        
         return $returnArray;
     }
+    
+    /*
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
+     */
+    public function destroy (array $obj, $safe = true)
+    {
+        $returnArray = parent::destroy($obj,$safe);
+        if ($returnArray["success"]) {
+            $this->_unIndexContent($obj);
+        }
+        return $returnArray;
+   }
+   
+   /**
+    * Push the content to Elastic Search
+    *
+    * @param array $obj
+    */
+   protected function _indexContent($obj){
+       $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+       $ElasticDataIndexService->init();
+       $ElasticDataIndexService->indexContent($obj['id']);
+   }
+    
+   /**
+    * Remove the content from Indexed Search
+    *
+    * @param array $obj
+    */
+   protected function _unIndexContent($obj){
+       $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+       $ElasticDataIndexService->init();
+       $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id']);
+   }
 
-    /**
+	/**
      * Return validated data from input data based on content type
      *
      * @param array $obj            
@@ -119,9 +165,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $fieldsList = array_keys($fieldsArray);
         $tempFields = array();
         $tempFields['text'] = $obj['text'];
+        $tempFields['summary'] = $obj['fields']['summary'];
         
         foreach ($obj['fields'] as $key => $value) {
-            if($key == 'text'){
+            if(in_array($key, array('text','summary'))){
                 continue;
             }
             if (! in_array($key, $fieldsList)) {
@@ -320,5 +367,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 			return true;
 		}
 	}
+	
+	
 	
 }

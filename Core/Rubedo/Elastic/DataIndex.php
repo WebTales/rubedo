@@ -35,26 +35,22 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','type','author');
+		$searchableFields=array('lastUpdateTime','text','summary','type','author');
     	
 		// Get content type config by id
 		$c = new \Rubedo\Mongo\DataAccess();
 		$c->init("ContentTypes");
 		$contentTypeConfig = $c->findById($id);
 
-		// Search abstract field
-		$abstract="";
+		// Search summary field
+		$summary="";
 		$fields=$contentTypeConfig["fields"];
 		foreach($fields as $field) {
-			if ($field['config']['resumed']) {
-				$abstract = $field['config']['name'];
-			}
 			if ($field['config']['searchable']) {
 				$searchableFields[] = $field['config']['name'];
 			}	
 		}    
 		
-		$returnArray['abstract']=$abstract;
 		$returnArray['searchableFields']=$searchableFields;
 		return $returnArray;	
     }
@@ -89,18 +85,13 @@ class DataIndex extends DataAbstract implements IDataIndex
 		if (is_array($data["fields"])) {
 
 			foreach($data["fields"] as $key => $field) {
-				
+						
 				// Only searchable fields get indexed
 				if ($field['config']['searchable']) {
 					
 					$name = $field['config']['fieldLabel'];
-					
-					if ($field['config']['resumed']) {
-						$store = 'yes';
-						$name = 'abstract';
-					} else {
-						$store = 'no';
-					}				
+					$store = "no";
+								
 					switch($field['cType']) {
 						case 'checkbox' :
 							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
@@ -155,6 +146,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add systems metadata : TODO update model text to title	
 		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["taxonomy.Tags"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
@@ -192,13 +184,11 @@ class DataIndex extends DataAbstract implements IDataIndex
      * Create or update index for existing content
      *    
 	 * @see \Rubedo\Interfaces\IDataIndex::indexContent()
-	 * @param string $id new content id
-	 * @param string $typeId new content type id
-	 * @param array $data new content data
+	 * @param string $id content id
 	 * @param boolean $live live if true, workspace if live
      * @return array
      */
-	public function indexContent ($id, $typeId = null, $data = null, $live = FALSE) {
+	public function indexContent ($id, $live = false) {
 
 	     // content data to index
 	     if ($live) {
@@ -206,14 +196,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 	     } else {
 	            $space = "workspace";
 	     }
-
-		// retrieve type id and content data if null
-		if (is_null($typeId)) {
-			$c = \Rubedo\Services\Manager::getService('MongoDataAccess');
-			$c->init("Contents");	
-			$data = $c->findById($id);
-			$typeId = $data['typeId'];
-		}
+            
+            // retrieve type id and content data if null
+        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id);
+        $typeId = $data['typeId'];
 		
 		// Retrieve type label
 		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
@@ -232,15 +218,11 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentData = array();
 		foreach($data[$space]['fields'] as $field => $var) {
 
-			// Add abstract if exists
-			if ($field==$typeStructure['abstract']) {
-				$contentData["abstract"] = (string) $var;
-			} else {
-				// only index searchable fields
-				if (in_array($field,$typeStructure['searchableFields']))  {	
-					$contentData[$field] = (string) $var;
-				}
+			// only index searchable fields
+			if (in_array($field,$typeStructure['searchableFields']))  {	
+				$contentData[$field] = (string) $var;
 			}
+
 			// Date format fix
 			if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
 		}

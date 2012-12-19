@@ -108,7 +108,7 @@ class Blocks_SearchController extends Blocks_AbstractController
                     'url' => $url,
                     'score' => $score,
                     'title' => $data['text'],
-                    'abstract' => $data['abstract'],
+                    'summary' => $data['summary'],
                     'author' => $data['author'],
                     'type' => $data['contentType'],
                     'lastUpdateTime' => $data['lastUpdateTime']
