@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Time;
-
 use Rubedo\Interfaces\Time\ICurrentTime;
 
 /**
@@ -26,15 +25,27 @@ use Rubedo\Interfaces\Time\ICurrentTime;
  * @package Rubedo
  * @todo define and implements real time service
  */
-class CurrentTime implements ICurrentTime {
+class CurrentTime implements ICurrentTime
+{
 
-	/**
-	 * Return the current time
-	 * 
-	 * @return string current timestamp format datetime (number of second since unix dawn of time)
-	 */
-	public function getCurrentTime() {
-		return time();
-	}
-	
+    protected static $_simulatedTime = false;
+
+    /**
+     * Return the current time
+     *
+     * @return string current timestamp format datetime (number of second since
+     *         unix dawn of time)
+     */
+    public function getCurrentTime ()
+    {
+        if (self::$_simulatedTime > 0) {
+            return self::$_simulatedTime;
+        }
+        return time();
+    }
+
+    public function setSimulatedTime ($time)
+    {
+        self::$_simulatedTime = intval($time);
+    }
 }

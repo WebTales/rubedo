@@ -77,9 +77,26 @@ class IndexController extends Zend_Controller_Action
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_session = Manager::getService('Session');
 
+        
+        
         //context
         $lang = $this->_session->get('lang', 'fr');
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
+        if(!$isLoggedIn){
+            $isPreview = false;
+        }else{
+            $isPreview = $this->getRequest()->getParam('preview',false);
+        }
+        //Zend_Registry::set('isPreview',$isPreview);
+        if($isPreview){
+            $isLoggedIn = false;
+            Manager::getService ( 'Url' )->disableNavigation();
+            $simulatedTime = $this->getRequest()->getParam('preview_time',null);
+            if(isset($simulatedTime)){
+                Manager::getService ( 'CurrentTime' )->setSimulatedTime($simulatedTime);
+            }
+        }
+        
         $this->_serviceTemplate->setCurrentTheme($this->_session->get('themeCSS', 'default'));
 
         //Load the CSS files
