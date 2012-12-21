@@ -14,8 +14,6 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
-
  
 /**
  * Controller providing Elastic Search querying
@@ -27,9 +25,7 @@
  * @package Rubedo
  *
  */
-class Backoffice_ElasticSearchController extends Zend_Controller_Action
-{
-    
+class Backoffice_ElasticSearchController extends Zend_Controller_Action {    
 	public function indexAction() {
 		$es = Rubedo\Services\Manager::getService('ElasticDataSearch');
 		$es->init();		
@@ -44,7 +40,15 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action
 		foreach($elasticaFacets as $facet) {
 			$results["facets"][] = (array) $facet;
 		}
-		$this->_helper->json($results);
+
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        $this->getResponse()->setHeader('Content-Type', "application/json", true);
+
+        $returnValue = Zend_Json::encode($results);
+        $returnValue = Zend_Json::prettyPrint($returnValue);
+
+        $this->getResponse()->setBody($returnValue);
 		
 	}
 
