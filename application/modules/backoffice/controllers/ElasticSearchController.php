@@ -38,13 +38,17 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		$elasticaFacets = $elasticaResultSet->getFacets();
 		$results = array();
 		$results['total'] = $elasticaResultSet->getTotalHits();
-		foreach($elasticaResults as $result) {
-			$results["results"][] = (array) $result;
-		}
-		foreach($elasticaFacets as $name => $facet) {
-			$temp = (array) $facet;
-			$temp["name"] = $name;
-			$results["facets"][] = $temp;
+		$results["results"] = array();
+		$results["facets"] = array();
+		if ($results['total'] > 0) {
+			foreach($elasticaResults as $result) {
+				$results["results"][] = (array) $result;
+			}
+			foreach($elasticaFacets as $name => $facet) {
+				$temp = (array) $facet;
+				$temp["name"] = $name;
+				$results["facets"][] = $temp;
+			}
 		}
 
         $this->getHelper('Layout')->disableLayout();
