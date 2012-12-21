@@ -29,7 +29,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 	public function indexAction() {
 		$es = Rubedo\Services\Manager::getService('ElasticDataSearch');
 		$es->init();		
-		$elasticaResultSet = $es->search($this->_request->getPost('query')."*") ;
+		$elasticaResultSet = $es->search($this->getRequest()->getParam('query')) ;
 		$elasticaResults = $elasticaResultSet->getResults();
 		$elasticaFacets = $elasticaResultSet->getFacets();
 		$results = array();
@@ -37,8 +37,8 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		foreach($elasticaResults as $result) {
 			$results["results"][] = (array) $result;
 		}
-		foreach($elasticaFacets as $facet) {
-			$results["facets"][] = (array) $facet;
+		foreach($elasticaFacets as $name => $facet) {
+			$results["facets"][$name] = (array) $facet;
 		}
 
         $this->getHelper('Layout')->disableLayout();
