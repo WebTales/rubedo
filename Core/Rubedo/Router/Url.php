@@ -39,6 +39,8 @@ class Url implements IUrl
      */
     const URI_DELIMITER = '/';
 
+    protected static $_disableNav = false;
+    
     /**
      * Return page id based on request URL
      *
@@ -75,9 +77,18 @@ class Url implements IUrl
         
         return $page['id'];
     }
+    
+    public function disableNavigation(){
+        self::$_disableNav = true;
+    }
 
     public function getUrl ($data, $encode = false)
     {
+        if(self::$_disableNav){
+            $currentUri = \Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+
+            return trim($currentUri.'#',self::URI_DELIMITER);
+        }
         $url = self::URI_DELIMITER;
         
         if (! isset($data['pageId'])) {
