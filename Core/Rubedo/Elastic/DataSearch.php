@@ -121,7 +121,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			if ($setFilter) $elasticaQuery->setFilter($globalFilter);
 		
 			// Define the type facet.
-			$elasticaFacetType = new \Elastica_Facet_Terms('typeFacet');
+			$elasticaFacetType = new \Elastica_Facet_Terms('type');
 			$elasticaFacetType->setField('contentType');
 			$elasticaFacetType->setSize(10);
 			$elasticaFacetType->setOrder('reverse_count');
@@ -131,7 +131,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$elasticaQuery->addFacet($elasticaFacetType);
 			
 			// Define the author facet.
-			$elasticaFacetAuthor = new \Elastica_Facet_Terms('authorFacet');
+			$elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
 			$elasticaFacetAuthor->setField('author');
 			$elasticaFacetAuthor->setSize(5);
 			$elasticaFacetAuthor->setOrder('reverse_count');
@@ -141,7 +141,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$elasticaQuery->addFacet($elasticaFacetAuthor);
 
 			// Define the date facet.
-			$elasticaFacetDate = new \Elastica_Facet_DateHistogram('dateFacet');
+			$elasticaFacetDate = new \Elastica_Facet_DateHistogram('date');
 			$elasticaFacetDate->setField('lastUpdateTime');
 			$elasticaFacetDate->setInterval('month');
 			if ($setFilter) $elasticaFacetDate->setFilter($globalFilter);
@@ -155,7 +155,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$taxonomyList = $collection->read();
 			foreach ($taxonomyList['data'] as $taxonomy) {
 				$vocabulary = $taxonomy['name'];	
-				$elasticaFacetTaxonomy = new \Elastica_Facet_Terms('taxonomy'.$vocabulary.'Facet');
+				$elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
 				$elasticaFacetTaxonomy->setField('taxonomy.'.$taxonomy['name']);
 				$elasticaFacetTaxonomy->setSize(10);
 				$elasticaFacetTaxonomy->setOrder('reverse_count');

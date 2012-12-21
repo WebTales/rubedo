@@ -123,10 +123,10 @@ class Blocks_SearchController extends Blocks_AbstractController
         $output['pageSize'] = $pageSize;
         $output['orderBy'] = $orderBy;
         
-        $output['typeFacets'] = $elasticaFacets['typeFacet']['terms'];
-        $output['authorFacets'] = $elasticaFacets['authorFacet']['terms'];
-        $output['dateFacets'] = $elasticaFacets['dateFacet']['entries'];
-		$output['taxonomyFacets'] = $elasticaFacets['taxonomyTagsFacet']['terms'];
+        $output['typeFacets'] = $elasticaFacets['type']['terms'];
+        $output['authorFacets'] = $elasticaFacets['author']['terms'];
+        $output['dateFacets'] = $elasticaFacets['date']['entries'];
+		$output['taxonomyFacets'] = $elasticaFacets['Tags']['terms'];
         $output['type'] = $type;
         $output['lang'] = $lang;
         $output['author'] = $author;
