@@ -33,73 +33,39 @@ class Blocks_ContentListController extends Blocks_AbstractController
     	$this->_dateService = Manager::getService('Date');			
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
-<<<<<<< HEAD
 
         $blockConfig = $this->getRequest()->getParam('block-config');
-	
-	if(isset($blockConfig['query'])){
-		
-	$blockConfig=json_decode($blockConfig['query'],true);	
-	//Zend_Debug::dump($blockConfig);die();
-	foreach ($blockConfig['vocabularies'] as $key => $value) {
-	$taxonomyTerms=$value['terms'];
-	$taxonomyRule=$value['rule'];
-        }
-	
-	$fieldRules=$blockConfig['fieldRules'];
-	}
-								
 	$output = array();
 	$operatorsArray=array('$lt'=>'<','$lte'=>'<=','$gt'=>'>','$gte'=>'>=','$ne'=>'!=','eq'=>'=');
 	
-        //$filterArray[] = array('property' => 'typeId', 'value' => '999999999999999999999999');
-        //$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');
-        //$filterArray[] = array('property' => 'typeId', 'value' => '50c0c8cf9a199dd40f000000');
-        //$filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => $taxanomyTerm);
-       
-        if(isset($taxonomyRule)){					
-        	if($taxonomyRule=="some"){
-        		$TaxonomyOperator='$in';
-        	}elseif($taxonomyRule=="all"){
-        		$taxonomyOperator='$all';
-        	}
-	$filterArray[]=array('operator'=>$TaxonomyOperator ,'property' => 'taxonomy', 'value' => $taxonomyTerms);																				
-	}
-	if(isset($fieldRules)){
-		foreach ($blockConfig['fieldRules'] as $property => $value) {
-	  		$ruleOperator=array_search($value['rule'], $operatorsArray);
-	  		$filterArray[]=array('operator'=>$ruleOperator,'property'=>$property, 'value'=>$this->_dateService->convertToTimeStamp($value['value']));
-       		 }
-	}
-	
-        $filterArray[]=array('property' => 'typeId', 'value' => $blockConfig['contentTypes'][0]);							
+	if(isset($blockConfig['query'])){
+		$blockConfig=json_decode($blockConfig['query'],true);
+	//Zend_Debug::dump($blockConfig);die();	
+	/*Add filters on TypeId and publication*/
+	$filterArray[]=array( 'operator'=>'$in','property' => 'typeId', 'value' => $blockConfig['contentTypes']);
 	$filterArray[]=array('property' => 'status', 'value' => 'published');
-=======
-        $blockConfig = $this->getRequest()->getParam('block-config');
-
-        $taxanomyTerm = array_pop($blockConfig['taxonomy']);
-
-        $output = array();
-
-        //$filterArray[] = array('property' => 'typeId', 'value' => '999999999999999999999999');
-        //$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');
-        $filterArray[] = array('property' => 'status', 'value' => 'published');
-
-        $filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => $taxanomyTerm);
-
->>>>>>> 31b572c02de15c2402f0f186929aea97ddfab22f
+	/*Add filter on taxonomy*/
+	foreach ($blockConfig['vocabularies'] as $key => $value) {
+		if(isset($value['rule'])){
+		if($value['rule']=="some"){$taxOperator='$in';}
+		elseif($value['rule']=="all"){$taxOperator='$all';}
+		}
+	$filterArray[]=array('operator'=>$taxOperator,'property' => 'taxonomy.'.$key , 'value' => $value['terms']);	
+       	}
+	/*Add filter on FieldRule*/
+	foreach ($blockConfig['fieldRules'] as $property => $value) {
+	$ruleOperator=array_search($value['rule'], $operatorsArray);
+	$filterArray[]=array('operator'=>$ruleOperator, 'property'=>$property, 'value'=>$this->_dateService->convertToTimeStamp($value['value']));
+       	}
+	}
+							
+	//$filterArray[]=array('property' => 'status', 'value' => 'published');
         $sort = array();
-        $sort[] = array('property' => 'text', 'direction' => 'asc');					
-
-        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
+        $sort[] = array('property' => 'text', 'direction' => 'asc');
+        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 12;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
-<<<<<<< HEAD
-        $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
-=======
-
         $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
 
->>>>>>> 31b572c02de15c2402f0f186929aea97ddfab22f
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $pageData['nbPages'] = (int)ceil(($nbItems) / $pageData['limit']);
