@@ -30,32 +30,61 @@ class Blocks_ContentListController extends Blocks_AbstractController
      * Default Action, return the Ext/Js HTML loader
      */
     public function indexAction() {
+        $this->_dateService = Manager::getService('Date');
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
+        $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
+
         $blockConfig = $this->getRequest()->getParam('block-config');
-
-        $taxanomyTerm = array_pop($blockConfig['taxonomy']);
-
         $output = array();
-
-        //$filterArray[] = array('property' => 'typeId', 'value' => '999999999999999999999999');
-        //$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');
-        $filterArray[] = array('property' => 'status', 'value' => 'published');
-
-        $filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => $taxanomyTerm);
+        $operatorsArray = array('$lt' => '<', '$lte' => '<=', '$gt' => '>', '$gte' => '>=', '$ne' => '!=', 'eq' => '=');
+        if (isset($blockConfig['query'])) {
+            $blockConfig = json_decode($blockConfig['query'], true);
+            /*Add filters on TypeId and publication*/
+            $filterArray[] = array('operator' => '$in', 'property' => 'typeId', 'value' => $blockConfig['contentTypes']);
+            $filterArray[] = array('property' => 'status', 'value' => 'published');
+            /*Add filter on taxonomy*/
+            foreach ($blockConfig['vocabularies'] as $key => $value) {
+                if (isset($value['rule'])) {
+                    if ($value['rule'] == "some") {
+                        $taxOperator = '$in';
+                    } elseif ($value['rule'] == "all") {
+                        $taxOperator = '$all';
+                    } elseif ($value['rule'] == "someRec") {
+                        foreach ($value['terms'] as $child) {
+                            $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                            foreach ($terms as $taxonomyTerms) { 
+                                $value['terms'][] = $taxonomyTerms["id"];
+                            }
+                        }
+                        $taxOperator = '$in';
+                    }
+                }
+                $filterArray[] = array('operator' => $taxOperator, 'property' => 'taxonomy.' . $key, 'value' => $value['terms']);
+            }
+            /*Add filter on FieldRule*/
+            foreach ($blockConfig['fieldRules'] as $property => $value) {
+                $ruleOperator = array_search($value['rule'], $operatorsArray);
+		//Temporary test 
+		if($property=="CreateDate"){
+			$property="createTime";
+		}elseif($property=="lastUpdateDate"){
+			$property="lastUpdateTime";
+		}										
+                $filterArray[] = array('operator' => $ruleOperator, 'property' => $property, 'value' => $this->_dateService->convertToTimeStamp($value['value']));
+            }
+        }
 
         $sort = array();
         $sort[] = array('property' => 'text', 'direction' => 'asc');
-
-        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
+        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 12;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
-
-        $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
+        $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
 
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $pageData['nbPages'] = (int)ceil(($nbItems) / $pageData['limit']);
-            $pageData['limitPage'] = min(array($pageData['nbPages'],3));
+            $pageData['limitPage'] = min(array($pageData['nbPages'], 3));
 
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
@@ -73,6 +102,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             }
 
             $output["data"] = $data;
+            //Zend_Debug::dump($output["data"]);die();
             $output["page"] = $pageData;
         }
 
