@@ -14,56 +14,65 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing access to images in gridFS
  *
- * Receveive Ajax Calls with needed ressources, send true or false for each of them
+ * Receveive Ajax Calls with needed ressources, send true or false for each of
+ * them
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class ImageController extends Zend_Controller_Action
 {
 
-    function indexAction() {
+    function indexAction ()
+    {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
-
+        
         $fileId = $this->getRequest()->getParam('file-id');
-
+        
         if (isset($fileId)) {
-            $fileService = Rubedo\Services\Manager::getService('Images');
+            $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
-			if(! $obj instanceof MongoGridFSFile){
-				throw new Zend_Controller_Exception("No Image Found", 1);
-			}
+            if (! $obj instanceof MongoGridFSFile) {
+                throw new Zend_Controller_Exception("No Image Found", 1);
+            }
             $image = $obj->getBytes();
-			
-			$meta = $obj->file;
-			$filename = $meta['filename'];
-			$nameSegment = explode('.',$filename);
-			$extension = array_pop($nameSegment);
-			
-			$type = strtolower($extension);
-			$type = ($type == 'jpg')?'jpeg':$type;
-			
+            
+            $meta = $obj->file;
+            $filename = $meta['filename'];
+            $nameSegment = explode('.', $filename);
+            $extension = array_pop($nameSegment);
+            if (! in_array($extension, 
+                    array(
+                            'gif',
+                            'jpg',
+                            'png',
+                            'jpeg'
+                    ))) {
+                throw new Zend_Controller_Exception(
+                        'Not authorized file extension');
+            }
+            
+            $type = strtolower($extension);
+            $type = ($type == 'jpg') ? 'jpeg' : $type;
+            
             $this->getResponse()->clearBody();
-            $this->getResponse()->setHeader('Content-Type', 'image/'.$type);
-			$this->getResponse()->setHeader('Cache-Control','public, max-age='. 24*3600);
-			$this->getResponse()->setHeader('Expires',date(DATE_RFC822,strtotime(" 1 day")));
+            $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
+            $this->getResponse()->setHeader('Cache-Control', 
+                    'public, max-age=' . 24 * 3600);
+            $this->getResponse()->setHeader('Expires', 
+                    date(DATE_RFC822, strtotime(" 1 day")));
             $this->getResponse()->setBody($image);
-
         } else {
             throw new Zend_Controller_Exception("No Id Given", 1);
-
         }
-
     }
-
 }
