@@ -33,6 +33,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
     	$this->_dateService = Manager::getService('Date');			
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
+<<<<<<< HEAD
 
         $blockConfig = $this->getRequest()->getParam('block-config');
 	
@@ -73,12 +74,32 @@ class Blocks_ContentListController extends Blocks_AbstractController
 	
         $filterArray[]=array('property' => 'typeId', 'value' => $blockConfig['contentTypes'][0]);							
 	$filterArray[]=array('property' => 'status', 'value' => 'published');
+=======
+        $blockConfig = $this->getRequest()->getParam('block-config');
+
+        $taxanomyTerm = array_pop($blockConfig['taxonomy']);
+
+        $output = array();
+
+        //$filterArray[] = array('property' => 'typeId', 'value' => '999999999999999999999999');
+        //$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');
+        $filterArray[] = array('property' => 'status', 'value' => 'published');
+
+        $filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => $taxanomyTerm);
+
+>>>>>>> 31b572c02de15c2402f0f186929aea97ddfab22f
         $sort = array();
         $sort[] = array('property' => 'text', 'direction' => 'asc');					
 
         $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
+<<<<<<< HEAD
         $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
+=======
+
+        $contentArray = $this->_dataReader->getList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
+
+>>>>>>> 31b572c02de15c2402f0f186929aea97ddfab22f
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $pageData['nbPages'] = (int)ceil(($nbItems) / $pageData['limit']);

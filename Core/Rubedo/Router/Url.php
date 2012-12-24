@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
- * yet to be written
- *
- * @category Rubedo
- * @package Rubedo
- * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license yet to be written
- * @version $Id$
+ * @category   Rubedo
+ * @package    Rubedo
+ * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Router;
 use Rubedo\Interfaces\Router\IUrl;
@@ -37,6 +39,8 @@ class Url implements IUrl
      */
     const URI_DELIMITER = '/';
 
+    protected static $_disableNav = false;
+    
     /**
      * Return page id based on request URL
      *
@@ -73,9 +77,18 @@ class Url implements IUrl
         
         return $page['id'];
     }
+    
+    public function disableNavigation(){
+        self::$_disableNav = true;
+    }
 
     public function getUrl ($data, $encode = false)
     {
+        if(self::$_disableNav){
+            $currentUri = \Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+
+            return trim($currentUri.'#',self::URI_DELIMITER);
+        }
         $url = self::URI_DELIMITER;
         
         if (! isset($data['pageId'])) {
