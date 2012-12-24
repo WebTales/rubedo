@@ -138,7 +138,7 @@
 		<table class="table">
 			{% for result in results %}
 			<tr>
-				<td><h3><a href="/single?content-id={{result.id}}">{{ result.title }}</a></h3>
+				<td><h3><a href="{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':result.id},true) }}">{{ result.title }}</a></h3>
 				<div class="progress progress-success" style="width:50px; float: left;">
 					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
 						{{ result.score }}%
