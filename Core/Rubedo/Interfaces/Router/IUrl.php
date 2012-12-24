@@ -1,18 +1,15 @@
 <?php
 /**
- * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
- * All rights reserved.
- * licensing@webtales.fr
- *
+ * Rubedo -- ECM solution Copyright (c) 2012, WebTales
+ * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
- * @category   Rubedo
- * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Interfaces\Router;
 
@@ -24,14 +21,28 @@ namespace Rubedo\Interfaces\Router;
  * @category Rubedo
  * @package Rubedo
  */
-Interface IUrl {
+Interface IUrl
+{
 
-	/**
-	 * Return page id based on request URL
-	 *
-	 * @param string $url requested URL
-	 * @return string|int 
-	 */
-	public function getPageId($url);
+    /**
+     * Return page id based on request URL
+     *
+     * @param string $url requested URL
+     * @return string int
+     */
+    public function getPageId ($url,$host);
 
+    /**
+     * Generates an url given the name of a route.
+     *
+     * @access public
+     * @param array $urlOptions Options passed to the assemble method of the
+     *            Route object.
+     * @param mixed $name The name of a Route to use. If null it will use the
+     *            current Route
+     * @param bool $reset Whether or not to reset the route defaults with those
+     *            provided
+     * @return string Url for the link href attribute.
+     */
+    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true);
 }

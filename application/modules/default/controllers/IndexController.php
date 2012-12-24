@@ -217,7 +217,7 @@ class IndexController extends Zend_Controller_Action
             case 'Bloc de navigation':
                 $controller = 'nav-bar';
                 $params['currentPage'] = $this->_pageId;
-                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil');
+                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil',$this->getRequest()->getHttpHost());
                 
                 break;
             case 'Carrousel':

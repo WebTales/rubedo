@@ -1,20 +1,18 @@
 <?php
 /**
- * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
- * All rights reserved.
- * licensing@webtales.fr
- *
+ * Rubedo -- ECM solution Copyright (c) 2012, WebTales
+ * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
- * @category   Rubedo
- * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Router;
+
 use Rubedo\Interfaces\Router\IUrl;
 use Rubedo\Services\Manager;
 
@@ -40,15 +38,14 @@ class Url implements IUrl
     const URI_DELIMITER = '/';
 
     protected static $_disableNav = false;
-    
+
     /**
      * Return page id based on request URL
      *
-     * @param string $url
-     *            requested URL
+     * @param string $url requested URL
      * @return string int
      */
-    public function getPageId ($url)
+    public function getPageId ($url,$host)
     {
         $page = "index";
         
@@ -63,11 +60,10 @@ class Url implements IUrl
             }
         }
         
-        if (in_array($page, 
-                array(
-                        '',
-                        'index'
-                ))) {
+        if (in_array($page, array(
+            '',
+            'index'
+        ))) {
             $page = 'accueil';
         }
         $page = Manager::getService('Pages')->findByName($page);
@@ -77,17 +73,18 @@ class Url implements IUrl
         
         return $page['id'];
     }
-    
-    public function disableNavigation(){
+
+    public function disableNavigation ()
+    {
         self::$_disableNav = true;
     }
 
     public function getUrl ($data, $encode = false)
     {
-        if(self::$_disableNav){
+        if (self::$_disableNav) {
             $currentUri = \Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-
-            return trim($currentUri.'#',self::URI_DELIMITER);
+            
+            return trim($currentUri . '#', self::URI_DELIMITER);
         }
         $url = self::URI_DELIMITER;
         
@@ -103,18 +100,16 @@ class Url implements IUrl
         }
         
         if (! ctype_alpha($page['text'])) {
-            throw new \Zend_Controller_Router_Exception(
-                    'page name should be alphanum');
+            throw new \Zend_Controller_Router_Exception('page name should be alphanum');
         }
         $url .= $page['text'];
         $queryStringArray = array();
         
         foreach ($data as $key => $value) {
-            if (in_array($key, 
-                    array(
-                            'controller',
-                            'action'
-                    ))) {
+            if (in_array($key, array(
+                'controller',
+                'action'
+            ))) {
                 continue;
             }
             $key = ($encode) ? urlencode($key) : $key;
@@ -140,21 +135,17 @@ class Url implements IUrl
      * Generates an url given the name of a route.
      *
      * @access public
-     *        
-     * @param array $urlOptions
-     *            Options passed to the assemble method of the Route object.
-     * @param mixed $name
-     *            The name of a Route to use. If null it will use the current
-     *            Route
-     * @param bool $reset
-     *            Whether or not to reset the route defaults with those provided
+     * @param array $urlOptions Options passed to the assemble method of the
+     *            Route object.
+     * @param mixed $name The name of a Route to use. If null it will use the
+     *            current Route
+     * @param bool $reset Whether or not to reset the route defaults with those
+     *            provided
      * @return string Url for the link href attribute.
      */
-    public function url (array $urlOptions = array(), $name = null, $reset = false, 
-            $encode = true)
+    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         $router = \Zend_Controller_Front::getInstance()->getRouter();
-       
         
         return $router->assemble($urlOptions, $name, $reset, $encode);
     }
