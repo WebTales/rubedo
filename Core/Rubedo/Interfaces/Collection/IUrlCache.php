@@ -14,32 +14,32 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-namespace Rubedo\Collection;
-
-use Rubedo\Interfaces\Collection\ISites;
+namespace Rubedo\Interfaces\Collection;
 
 /**
- * Service to handle Sites
+ * Interface of service handling users
+ *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-class Sites extends AbstractCollection implements ISites
+interface IUrlCache extends IAbstractCollection
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'Sites';
-		parent::__construct();
-	}
-	
-	public function findByHost($host){
-	    $site = $this->findByName($host);
-	    if($site===null){
-	        $site = $this->_dataService->findOne(array('alias'=>$host));
-	    }
-	    return $site;
-	}
-	
+    /**
+     * Return cached URL for a given PageId
+     * 
+     * @param string $pageId
+     *            page ID
+     * @return array
+     */
+    public function findByPageId ($pageId);
+    
+    /**
+     * @param string $url
+     * @param string $siteid
+     * @return array
+     */
+    public function findByUrl ($url, $siteid);
 }

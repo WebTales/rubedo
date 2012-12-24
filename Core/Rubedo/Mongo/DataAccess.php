@@ -111,9 +111,11 @@ class DataAccess implements IDataAccess
 
     /**
      * Getter of the DB connection string
+     * 
      * @return string DB connection String
      */
-    public static function getDefaultMongo() {
+    public static function getDefaultMongo ()
+    {
         return static::$_defaultMongo;
     }
 
@@ -128,19 +130,23 @@ class DataAccess implements IDataAccess
      * Initialize a data service handler to read or write in a MongoDb
      * Collection
      *
-     * @param string $collection name of the DB
-     * @param string $dbName name of the DB
-     * @param string $mongo connection string to the DB server
+     * @param string $collection
+     *            name of the DB
+     * @param string $dbName
+     *            name of the DB
+     * @param string $mongo
+     *            connection string to the DB server
      */
-    public function init($collection, $dbName = null, $mongo = null) {
+    public function init ($collection, $dbName = null, $mongo = null)
+    {
         if (is_null($mongo)) {
             $mongo = self::$_defaultMongo;
         }
-
+        
         if (is_null($dbName)) {
             $dbName = self::$_defaultDb;
         }
-
+        
         if (gettype($mongo) !== 'string') {
             throw new \Exception('$mongo should be a string');
         }
@@ -153,16 +159,16 @@ class DataAccess implements IDataAccess
         $this->_adapter = new \Mongo($mongo);
         $this->_dbName = $this->_adapter->$dbName;
         $this->_collection = $this->_dbName->$collection;
-
     }
 
     /**
      * Set the main MongoDB connection string
      *
-     * @param string $mongo
+     * @param string $mongo            
      * @throws \Exception
      */
-    public static function setDefaultMongo($mongo) {
+    public static function setDefaultMongo ($mongo)
+    {
         if (gettype($mongo) !== 'string') {
             throw new \Exception('$mongo should be a string');
         }
@@ -172,10 +178,11 @@ class DataAccess implements IDataAccess
     /**
      * Set the main Database name
      *
-     * @param string $dbName
+     * @param string $dbName            
      * @throws \Exception
      */
-    public static function setDefaultDb($dbName) {
+    public static function setDefaultDb ($dbName)
+    {
         if (gettype($dbName) !== 'string') {
             throw new \Exception('$dbName should be a string');
         }
@@ -188,110 +195,120 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read() {
-        //get the UI parameters
+    public function read ()
+    {
+        // get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-
-        //merge the two fields array to obtain only one array with all the conditions
-        if (!empty($includedFields) && !empty($excludedFields)) {
+        
+        // merge the two fields array to obtain only one array with all the
+        // conditions
+        if (! empty($includedFields) && ! empty($excludedFields)) {
             $fieldRule = $includedFields;
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-
-        //get the cursor
+        
+        // get the cursor
         $cursor = $this->_collection->find($filter, $fieldRule);
         $nbItems = $cursor->count();
-
-        //apply sort, paging, filter
+        
+        // apply sort, paging, filter
         $cursor->sort($sort);
         $cursor->skip($firstResult);
         $cursor->limit($numberOfResults);
-
-        //switch from cursor to actual array
+        
+        // switch from cursor to actual array
         $data = iterator_to_array($cursor);
-
-        //iterate throught data to convert ID to string and add version nulmber if none
+        
+        // iterate throught data to convert ID to string and add version nulmber
+        // if none
         foreach ($data as &$value) {
-            $value['id'] = (string)$value['_id'];
+            $value['id'] = (string) $value['_id'];
             unset($value['_id']);
-            if (!isset($value['version'])) {
+            if (! isset($value['version'])) {
                 $value['version'] = 1;
             }
-
         }
-
-        //return data as simple array with no keys
+        
+        // return data as simple array with no keys
         $datas = array_values($data);
-		$returnArray = array("data"=>$datas,'count'=>$nbItems);
+        $returnArray = array(
+            "data" => $datas,
+            'count' => $nbItems
+        );
         return $returnArray;
     }
 
     /**
      * Recursive function for deleteChildren
      *
-     * @param $parent is an array with the data of the parent
+     * @param $parent is
+     *            an array with the data of the parent
      * @return bool
      */
-    protected function _deleteChild($parent) {
-
-        //Get the childrens of the current parent
+    protected function _deleteChild ($parent)
+    {
+        
+        // Get the childrens of the current parent
         $childrensArray = $this->readChild($parent['id']);
-
-        //Delete all the childrens
-        if (!is_array($childrensArray)) {
+        
+        // Delete all the childrens
+        if (! is_array($childrensArray)) {
             throw new \Rubedo\Exceptions\DataAccess('Should be an array');
         }
-
+        
         foreach ($childrensArray as $key => $value) {
             self::_deleteChild($value);
         }
-
-        //Delete the parent
+        
+        // Delete the parent
         $returnArray = $this->destroy($parent, true);
-
-        if (!$returnArray['success']) {
+        
+        if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-
+        
         return $returnArray;
     }
 
     /**
      * Recursive function for deleteVocabulary
      *
-     * @param $parent is an array with the data of the vocabulary
+     * @param $parent is
+     *            an array with the data of the vocabulary
      * @return bool
      */
-    protected function _deleteVocabulary($parent) {
-
-        $filter = array('vocabularyId' => $parent['id']);
+    protected function _deleteVocabulary ($parent)
+    {
+        $filter = array(
+            'vocabularyId' => $parent['id']
+        );
         $this->addFilter($filter);
-
-        //Get the childrens of the current parent
+        
+        // Get the childrens of the current parent
         $childrensArray = $this->read();
-
-        //Delete all the childrens
-        if (!is_array($childrensArray)) {
+        
+        // Delete all the childrens
+        if (! is_array($childrensArray)) {
             throw new \Rubedo\Exceptions\DataAccess('Should be an array');
         }
-
+        
         foreach ($childrensArray as $key => $value) {
             self::_deleteChild($value);
         }
-
-        //Delete the parent
+        
+        // Delete the parent
         $returnArray = $this->destroy($parent, true);
-
-        if (!$returnArray['success']) {
+        
+        if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-
+        
         return $childrensArray;
     }
 
@@ -301,13 +318,14 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::readTree()
      * @return array
      */
-    public function readTree() {
+    public function readTree ()
+    {
         $dataStore = $this->read();
-		$dataStore = $dataStore['data'];
-
+        $dataStore = $dataStore['data'];
+        
         $this->_lostChildren = array();
         $rootAlreadyFound = false;
-
+        
         foreach ($dataStore as $record) {
             $id = $record['id'];
             if (isset($record['parentId']) && $record['parentId'] != 'root') {
@@ -322,22 +340,25 @@ class DataAccess implements IDataAccess
                 }
             }
         }
-
+        
         if (isset($rootRecord)) {
             $result = $this->_appendChild($rootRecord);
         } else {
             $result = array();
         }
-
+        
         return $result;
     }
 
     /**
      * recursive function to rebuild tree from flat data store
-     * @param array $record root record of the tree
+     * 
+     * @param array $record
+     *            root record of the tree
      * @return array complete tree array
      */
-    protected function _appendChild(array $record) {
+    protected function _appendChild (array $record)
+    {
         $id = $record['id'];
         $record['children'] = array();
         if (isset($this->_lostChildren[$id])) {
@@ -352,49 +373,60 @@ class DataAccess implements IDataAccess
 
     /**
      * Find child of a node tree
-     * @param $parentId id of the parent node
+     * 
+     * @param $parentId id
+     *            of the parent node
      * @return array children array
      */
-    public function readChild($parentId) {
-        //get the UI parameters
+    public function readChild ($parentId)
+    {
+        // get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-
-        //merge the two fields array to obtain only one array with all the conditions
-        if (!empty($includedFields) && !empty($excludedFields)) {
+        
+        // merge the two fields array to obtain only one array with all the
+        // conditions
+        if (! empty($includedFields) && ! empty($excludedFields)) {
             $fieldRule = $includedFields;
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-
-        //get the cursor
+        
+        // get the cursor
         if (empty($filter)) {
-            $cursor = $this->_collection->find(array('parentId' => $parentId), $fieldRule);
+            $cursor = $this->_collection->find(array(
+                'parentId' => $parentId
+            ), $fieldRule);
         } else {
-            $cursor = $this->_collection->find(array('parentId' => $parentId, '$and' => array($filter)), $fieldRule);
+            $cursor = $this->_collection->find(array(
+                'parentId' => $parentId,
+                '$and' => array(
+                    $filter
+                )
+            ), $fieldRule);
         }
-
-        //apply sort, paging, filter
+        
+        // apply sort, paging, filter
         $cursor->sort($sort);
-
-        //switch from cursor to actual array
+        
+        // switch from cursor to actual array
         $data = iterator_to_array($cursor);
-
-        //iterate throught data to convert ID to string and add version nulmber if none
+        
+        // iterate throught data to convert ID to string and add version nulmber
+        // if none
         foreach ($data as &$value) {
-            $value['id'] = (string)$value['_id'];
+            $value['id'] = (string) $value['_id'];
             unset($value['_id']);
-            if (!isset($value['version'])) {
+            if (! isset($value['version'])) {
                 $value['version'] = 1;
             }
-
         }
-
-        //return data as simple array with no keys
+        
+        // return data as simple array with no keys
         $response = array_values($data);
-
+        
         return $response;
     }
 
@@ -402,81 +434,104 @@ class DataAccess implements IDataAccess
      * Do a findone request on the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::findOne()
-     * @param array $value search condition
+     * @param array $value
+     *            search condition
      * @return array
      */
-    public function findOne($value) {
-        //get the UI parameters
+    public function findOne ($value)
+    {
+        // get the UI parameters
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-
-        //merge the two fields array to obtain only one array with all the conditions
-        if (!empty($includedFields) && !empty($excludedFields)) {
+        
+        // merge the two fields array to obtain only one array with all the
+        // conditions
+        if (! empty($includedFields) && ! empty($excludedFields)) {
             $fieldRule = $includedFields;
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-
+        
         $value = array_merge($value, $this->getFilterArray());
-
+        
         $data = $this->_collection->findOne($value, $fieldRule);
-
-        $data['id'] = (string)$data['_id'];
+        if ($data === null) {
+            return null;
+        }
+        $data['id'] = (string) $data['_id'];
         unset($data['_id']);
-
+        
         return $data;
     }
 
     /**
      * Find an item given by its literral ID
-     * @param string $contentId
+     * 
+     * @param string $contentId            
      * @return array
      */
-    public function findById($contentId) {
-        return $this->findOne(array('_id' => $this->getId($contentId)));
+    public function findById ($contentId)
+    {
+        return $this->findOne(array(
+            '_id' => $this->getId($contentId)
+        ));
     }
 
     /**
      * Find an item given by its name (find only one if many)
-     * @param string $name
+     * 
+     * @param string $name            
      * @return array
      */
-    public function findByName($name) {
-        return $this->findOne(array('text' => $name));
+    public function findByName ($name)
+    {
+        return $this->findOne(array(
+            'text' => $name
+        ));
     }
 
     /**
      * Create an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
-     * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param array $obj
+     *            data object
+     * @param bool $safe
+     *            should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $safe = true) {
-
+    public function create (array $obj, $safe = true)
+    {
         $obj['version'] = 1;
-
+        
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
         $obj['createUser'] = $currentUser;
-
+        
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
-
+        
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
-
-        $resultArray = $this->_collection->insert($obj, array("safe" => $safe));
+        
+        $resultArray = $this->_collection->insert($obj, array(
+            "safe" => $safe
+        ));
         if ($resultArray['ok'] == 1) {
-            $obj['id'] = (string)$obj['_id'];
+            $obj['id'] = (string) $obj['_id'];
             unset($obj['_id']);
-            $returnArray = array('success' => true, "data" => $obj);
+            $returnArray = array(
+                'success' => true,
+                "data" => $obj
+            );
         } else {
-            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+            $returnArray = array(
+                'success' => false,
+                "msg" => $resultArray["err"]
+            );
         }
-
+        
         return $returnArray;
     }
 
@@ -484,63 +539,82 @@ class DataAccess implements IDataAccess
      * Update an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::update
-     * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param array $obj
+     *            data object
+     * @param bool $safe
+     *            should we wait for a server response
      * @return array
      */
-    public function update(array $obj, $safe = true) {
+    public function update (array $obj, $safe = true)
+    {
         $id = $obj['id'];
         unset($obj['id']);
-        if (!isset($obj['version'])) {
+        if (! isset($obj['version'])) {
             throw new \Rubedo\Exceptions\DataAccess('can\'t update an object without a version number.');
         }
-
+        
         $oldVersion = $obj['version'];
         $obj['version'] = $obj['version'] + 1;
-
+        
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
-
+        
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
         $obj['lastUpdateTime'] = $currentTime;
-
+        
         $mongoID = $this->getId($id);
-
+        
         $updateArray = array();
         foreach ($obj as $key => $value) {
-            if (in_array($key, array('createUser', 'createTime'))) {
+            if (in_array($key, array(
+                'createUser',
+                'createTime'
+            ))) {
                 unset($obj[$key]);
             }
         }
-
-        $updateCondition = array('_id' => $mongoID, 'version' => $oldVersion);
-
+        
+        $updateCondition = array(
+            '_id' => $mongoID,
+            'version' => $oldVersion
+        );
+        
         if (is_array($this->_filterArray)) {
             $updateCondition = array_merge($this->_filterArray, $updateCondition);
         }
-
-        $resultArray = $this->_collection->update($updateCondition, array('$set' => $obj), array("safe" => $safe));
-	
-	$obj=$this->findById($mongoID);
-	
+        
+        $resultArray = $this->_collection->update($updateCondition, array(
+            '$set' => $obj
+        ), array(
+            "safe" => $safe
+        ));
+        
+        $obj = $this->findById($mongoID);
+        
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
                 $obj['id'] = $id;
                 unset($obj['_id']);
-		
-		
-																
-                $returnArray = array('success' => true, "data" => $obj);
+                
+                $returnArray = array(
+                    'success' => true,
+                    "data" => $obj
+                );
             } else {
-                $returnArray = array('success' => false, "msg" => 'no record had been updated');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'no record had been updated'
+                );
             }
-
         } else {
-            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
-        }							
-
+            $returnArray = array(
+                'success' => false,
+                "msg" => $resultArray["err"]
+            );
+        }
+        
         return $returnArray;
     }
 
@@ -548,113 +622,142 @@ class DataAccess implements IDataAccess
      * Delete objets in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
-     * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param array $obj
+     *            data object
+     * @param bool $safe
+     *            should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $safe = true) {
+    public function destroy (array $obj, $safe = true)
+    {
         $id = $obj['id'];
-        if (!isset($obj['version'])) {
+        if (! isset($obj['version'])) {
             throw new \Rubedo\Exceptions\DataAccess('can\'t destroy an object without a version number.');
         }
         $version = $obj['version'];
         $mongoID = $this->getId($id);
-
-        $updateCondition = array('_id' => $mongoID, 'version' => $version);
-
+        
+        $updateCondition = array(
+            '_id' => $mongoID,
+            'version' => $version
+        );
+        
         if (is_array($this->_filterArray)) {
             $updateCondition = array_merge($this->_filterArray, $updateCondition);
         }
-
-        $resultArray = $this->_collection->remove($updateCondition, array("safe" => $safe));
+        
+        $resultArray = $this->_collection->remove($updateCondition, array(
+            "safe" => $safe
+        ));
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
-                $returnArray = array('success' => true);
+                $returnArray = array(
+                    'success' => true
+                );
             } else {
-                $returnArray = array('success' => false, "msg" => 'no record had been deleted');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'no record had been deleted'
+                );
             }
-
         } else {
-            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+            $returnArray = array(
+                'success' => false,
+                "msg" => $resultArray["err"]
+            );
         }
-
+        
         return $returnArray;
     }
 
     /**
      * Delete the childrens of the parent given in parameter
      *
-     * @param $data contain the datas of the parent in database
+     * @param $data contain
+     *            the datas of the parent in database
      * @return array with the result of the operation
      */
-    public function deleteChild($data) {
+    public function deleteChild ($data)
+    {
         $parentId = $data['id'];
         $error = false;
-
-        //Get the childrens of the current parent
+        
+        // Get the childrens of the current parent
         $childrensArray = $this->readChild($parentId);
-
-        if (!is_array($childrensArray)) {
+        
+        if (! is_array($childrensArray)) {
             throw new \Rubedo\Exceptions\DataAccess('Should be an array');
         }
-
-        //Delete all the childrens
+        
+        // Delete all the childrens
         foreach ($childrensArray as $key => $value) {
             $result = $this->_deleteChild($value);
             if ($result['success'] == false) {
                 $error = true;
             }
         }
-
-        //Delete the parent
+        
+        // Delete the parent
         if ($error == false) {
             $returnArray = $this->destroy($data, true);
         } else {
-            $returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
+            $returnArray = array(
+                'success' => false,
+                'msg' => 'An error occured during the deletion'
+            );
         }
-
+        
         return $returnArray;
     }
 
-    public function deleteVocabulary($data) {
+    public function deleteVocabulary ($data)
+    {
         $parentId = $data['id'];
         $error = false;
-
-        //Add a filter to only get the childrens of the current vocabulary
-        $filter = array('vocabularyId' => $parentId);
+        
+        // Add a filter to only get the childrens of the current vocabulary
+        $filter = array(
+            'vocabularyId' => $parentId
+        );
         $this->addFilter($filter);
-
-        //Get the childrens of the current parent
+        
+        // Get the childrens of the current parent
         $childrensArray = $this->read();
-
-        //Check if $data is an array
-        if (!is_array($childrensArray)) {
+        
+        // Check if $data is an array
+        if (! is_array($childrensArray)) {
             throw new \Rubedo\Exceptions\DataAccess('Should be an array');
         }
-
-        //Delete all the childrens
+        
+        // Delete all the childrens
         foreach ($childrensArray as $key => $value) {
             $result = $this->_deleteVacabulary($value);
             if ($result['success'] == false) {
                 $error = true;
             }
         }
-
-        //Delete the parent
+        
+        // Delete the parent
         if ($error == false) {
             $returnArray = $this->destroy($data, true);
         } else {
-            $returnArray = array('success' => false, 'msg' => 'An error occured during the deletion');
+            $returnArray = array(
+                'success' => false,
+                'msg' => 'An error occured during the deletion'
+            );
         }
-
+        
         return $returnArray;
     }
 
     /**
      * Drop The current Collection
+     * 
      * @deprecated
+     *
      */
-    public function drop() {
+    public function drop ()
+    {
         return $this->_collection->drop();
     }
 
@@ -666,30 +769,40 @@ class DataAccess implements IDataAccess
      * or
      * array('field'=>array('operator'=>value))
      *
-     * @param array $filter Native Mongo syntax filter array
+     * @param array $filter
+     *            Native Mongo syntax filter array
      */
-    public function addFilter(array $filter) {
-        //check valid input
-        
+    public function addFilter (array $filter)
+    {
+        // check valid input
         if (count($filter) !== 1) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
         }
-
+        
         foreach ($filter as $name => $value) {
-            if (!in_array(gettype($value), array('array', 'string', 'float', 'integer', 'boolean'))) {
+            if (! in_array(gettype($value), array(
+                'array',
+                'string',
+                'float',
+                'integer',
+                'boolean'
+            ))) {
                 throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
-		throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
+                throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
             }
             if (is_array($value)) {
                 foreach ($value as $operator => $subvalue) {
-                    if (!in_array(gettype($subvalue), array('array', 'string', 'float', 'integer')) && !$subvalue instanceof \MongoRegex) {
+                    if (! in_array(gettype($subvalue), array(
+                        'array',
+                        'string',
+                        'float',
+                        'integer'
+                    )) && ! $subvalue instanceof \MongoRegex) {
                         throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
                     }
-
                 }
-
             }
             if ($name === 'id') {
                 $name = '_id';
@@ -713,11 +826,9 @@ class DataAccess implements IDataAccess
                     }
                 }
             }
-            //add validated input
+            // add validated input
             $this->_filterArray[$name] = $value;
-
         }
-
     }
 
     /**
@@ -725,29 +836,33 @@ class DataAccess implements IDataAccess
      *
      * Filter should be an array of array('field'=>'value')
      *
-     * @param array $filter Native Mongo syntax filter array
+     * @param array $filter
+     *            Native Mongo syntax filter array
      */
-    public function addOrFilter(array $condArray) {
-        if (!isset($this->_filterArray['$or'])) {
+    public function addOrFilter (array $condArray)
+    {
+        if (! isset($this->_filterArray['$or'])) {
             $this->_filterArray['$or'] = array();
         }
-
+        
         $this->_filterArray['$or'] = array_merge($this->_filterArray['$or'], $condArray);
-
     }
 
     /**
      * Unset all filter condition to the service
      */
-    public function clearFilter() {
+    public function clearFilter ()
+    {
         $this->_filterArray = array();
     }
 
     /**
      * Return the current array of conditions.
+     * 
      * @return array
      */
-    public function getFilterArray() {
+    public function getFilterArray ()
+    {
         return $this->_filterArray;
     }
 
@@ -759,195 +874,219 @@ class DataAccess implements IDataAccess
      * or
      * array('field'=>array('operator'=>value))
      *
-     * @param array $sort Native Mongo syntax sort array
+     * @param array $sort
+     *            Native Mongo syntax sort array
      */
-    public function addSort(array $sort) {
-        //check valid input
+    public function addSort (array $sort)
+    {
+        // check valid input
         if (count($sort) !== 1) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
-
         }
-
+        
         foreach ($sort as $name => $value) {
-            if (!in_array(gettype($value), array('array', 'string', 'float', 'integer'))) {
+            if (! in_array(gettype($value), array(
+                'array',
+                'string',
+                'float',
+                'integer'
+            ))) {
                 throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
                 throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
-
             }
             if (is_array($value)) {
                 foreach ($value as $operator => $subvalue) {
-                    if (!in_array(gettype($subvalue), array('string', 'float', 'integer'))) {
+                    if (! in_array(gettype($subvalue), array(
+                        'string',
+                        'float',
+                        'integer'
+                    ))) {
                         throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
                     }
-
                 }
-
             }
-
+            
             if ($value === 'asc') {
                 $value = 1;
-            } else if ($value === 'desc') {
-                $value = -1;
+            } else 
+                if ($value === 'desc') {
+                    $value = - 1;
+                }
+            // id isn't a mongo data, _id is
+            if ($name === 'id') {
+                $name = '_id';
             }
-			//id isn't a mongo data, _id is
-			if($name ==='id'){
-				$name = '_id';
-			}
-
-            //add validated input
+            
+            // add validated input
             $this->_sortArray[$name] = $value;
-
         }
-
     }
 
     /**
      * Unset all sort condition to the service
      */
-    public function clearSort() {
+    public function clearSort ()
+    {
         $this->_sortArray = array();
     }
 
     /**
      * Return the current array of conditions.
+     * 
      * @return array
      */
-    public function getSortArray() {
+    public function getSortArray ()
+    {
         return $this->_sortArray;
     }
 
     /**
      * Set the number of the first result displayed
      *
-     * @param $firstResult is the number of the first result displayed
+     * @param $firstResult is
+     *            the number of the first result displayed
      */
-    public function setFirstResult($firstResult) {
+    public function setFirstResult ($firstResult)
+    {
         if (gettype($firstResult) !== 'integer') {
             throw new \Rubedo\Exceptions\DataAccess("firstResult should be an integer", 1);
         }
-
+        
         $this->_firstResult = $firstResult;
     }
 
     /**
      * Set the number of results displayed
      *
-     * @param $numberOfResults is the number of results displayed
+     * @param $numberOfResults is
+     *            the number of results displayed
      */
-    public function setNumberOfResults($numberOfResults) {
+    public function setNumberOfResults ($numberOfResults)
+    {
         if (gettype($numberOfResults) !== 'integer') {
             throw new \Rubedo\Exceptions\DataAccess("numberOfResults should be an integer", 1);
         }
-
+        
         $this->_numberOfResults = $numberOfResults;
     }
 
     /**
      * Set to zero the number of the first result displayed
      */
-    public function clearFirstResult() {
+    public function clearFirstResult ()
+    {
         $this->_firstResult = 0;
     }
 
     /**
      * Set to zero (unlimited) the number of results displayed
      */
-    public function clearNumberOfResults() {
+    public function clearNumberOfResults ()
+    {
         $this->_numberOfResults = 0;
     }
 
     /**
      * Return the current number of the first result displayed
+     * 
      * @return integer
      */
-    public function getFirstResult() {
+    public function getFirstResult ()
+    {
         return $this->_firstResult;
     }
 
     /**
      * Return the current number of results displayed
+     * 
      * @return integer
      */
-    public function getNumberOfResults() {
+    public function getNumberOfResults ()
+    {
         return $this->_numberOfResults;
     }
 
     /**
      * Add to the field list the array passed in argument
      *
-     * @param array $fieldList
+     * @param array $fieldList            
      */
-    public function addToFieldList(array $fieldList) {
+    public function addToFieldList (array $fieldList)
+    {
         if (count($fieldList) === 0) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
         }
-
+        
         foreach ($fieldList as $value) {
-            if (!is_string($value)) {
+            if (! is_string($value)) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
             }
             if ($value === "id") {
                 throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
             }
-
-            //add validated input
+            
+            // add validated input
             $this->_fieldList[$value] = true;
         }
     }
 
     /**
      * Give the fields into the fieldList array
+     * 
      * @return array
      */
-    public function getFieldList() {
+    public function getFieldList ()
+    {
         return $this->_fieldList;
     }
 
     /**
      * Allow to remove one field in the current array
      *
-     * @param array $fieldToRemove
+     * @param array $fieldToRemove            
      */
-    public function removeFromFieldList(array $fieldToRemove) {
+    public function removeFromFieldList (array $fieldToRemove)
+    {
         foreach ($fieldToRemove as $value) {
-            if (!is_string($value)) {
+            if (! is_string($value)) {
                 throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string parameter", 1);
             }
             unset($this->_fieldList[$value]);
         }
-
     }
 
     /**
      * Clear the fieldList array
-     *
      */
-    public function clearFieldList() {
+    public function clearFieldList ()
+    {
         $this->_fieldList = array();
     }
 
     /**
      * Add to the exclude field list the array passed in argument
      *
-     * @param array $excludeFieldList
+     * @param array $excludeFieldList            
      */
-    public function addToExcludeFieldList(array $excludeFieldList) {
-
+    public function addToExcludeFieldList (array $excludeFieldList)
+    {
         if (count($excludeFieldList) === 0) {
             throw new \Rubedo\Exceptions\DataAccess("Invalid excluded fields list array", 1);
         }
-
+        
         foreach ($excludeFieldList as $value) {
-            if (!in_array(gettype($value), array('string'))) {
+            if (! in_array(gettype($value), array(
+                'string'
+            ))) {
                 throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
             }
             if ($value === "id") {
                 throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
             }
-
-            //add validated input
+            
+            // add validated input
             $this->_excludeFieldList[$value] = false;
         }
     }
@@ -955,18 +1094,20 @@ class DataAccess implements IDataAccess
     /**
      * Give the fields into the excludeFieldList array
      */
-    public function getExcludeFieldList() {
+    public function getExcludeFieldList ()
+    {
         return $this->_excludeFieldList;
     }
 
     /**
      * Allow to remove one field in the current excludeFieldList array
      *
-     * @param array $fieldToRemove
+     * @param array $fieldToRemove            
      */
-    public function removeFromExcludeFieldList(array $fieldToRemove) {
+    public function removeFromExcludeFieldList (array $fieldToRemove)
+    {
         foreach ($fieldToRemove as $value) {
-            if (!is_string($value)) {
+            if (! is_string($value)) {
                 throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string paramter", 1);
             }
             unset($this->_excludeFieldList[$value]);
@@ -976,54 +1117,90 @@ class DataAccess implements IDataAccess
     /**
      * Clear the excludeFieldList array
      */
-    public function clearExcludeFieldList() {
+    public function clearExcludeFieldList ()
+    {
         $this->_excludeFieldList = array();
     }
 
-    public function getRegex($expr) {
+    public function getRegex ($expr)
+    {
         return new \MongoRegex($expr);
     }
 
-    public function getId($idString = null) {
+    public function getId ($idString = null)
+    {
         return new \MongoId($idString);
+    }
+    
+    public function getMongoDate(){
+        return new \MongoDate();
     }
 
     /**
      * Update an objet in the current collection
      *
      * Shouldn't be used if doing a simple update action
+     * 
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
-     * @param array $data data to update
-     * @param array $updateCond array of condition to determine what should be updated
-     * @param bool $safe should we wait for a server response
+     * @param array $data
+     *            data to update
+     * @param array $updateCond
+     *            array of condition to determine what should be updated
+     * @param bool $safe
+     *            should we wait for a server response
      * @return array
      */
-    public function customUpdate(array $data, array $updateCond, $safe = true) {
-
-        $resultArray = $this->_collection->update($updateCond, $data, array("safe" => $safe));
-
+    public function customUpdate (array $data, array $updateCond, $safe = true)
+    {
+        $resultArray = $this->_collection->update($updateCond, $data, array(
+            "safe" => $safe
+        ));
+        
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
-                $returnArray = array('success' => true, "data" => $data);
+                $returnArray = array(
+                    'success' => true,
+                    "data" => $data
+                );
             } else {
-                $returnArray = array('success' => false, "msg" => 'no record had been updated');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'no record had been updated'
+                );
             }
-
         } else {
-            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+            $returnArray = array(
+                'success' => false,
+                "msg" => $resultArray["err"]
+            );
         }
-
+        
         return $returnArray;
     }
 
-    public function customFind($filter = array(), $fieldRule = array()) {
-        //get the cursor
+    public function customFind ($filter = array(), $fieldRule = array())
+    {
+        // get the cursor
         $cursor = $this->_collection->find($filter, $fieldRule);
         return $cursor;
     }
 
-    public function customDelete($deleteCond, $safe = true) {
-        return $this->_collection->remove($deleteCond, array('safe' => $safe));
+    public function customDelete ($deleteCond, $safe = true)
+    {
+        return $this->_collection->remove($deleteCond, array(
+            'safe' => $safe
+        ));
     }
 
+    /**
+     * Add index to collection
+     * 
+     * @param string|arrau $keys
+     * @param array $options
+     */
+    public function ensureIndex ($keys, $options = array())
+    {
+        $options['safe'] = true;
+        $this->_collection->ensureIndex($keys, $options);
+    }
 }

@@ -34,4 +34,8 @@ class Pages extends AbstractCollection implements IPages
 		parent::__construct();
 	}
 	
+	public function matchSegment($urlSegment,$parentId,$siteId){
+	    return $this->_dataService->findOne(array('text'=>$urlSegment,'parentId'=>$parentId,'site'=>$siteId));
+	}
+	
 }

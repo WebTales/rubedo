@@ -5,12 +5,12 @@
 			<div class="row" id="header">
 				<div class="span8">
 					<div class="left logo">
-						<a href="/" title="Ma Ville - Accueil" rel="home"><img src="/assets/logo-ville.gif" alt="" /></a>
+						<a href="{{ url({'pageId':'50c0a4749a199d9107000000'}) }}" title="Ma Ville - Accueil" rel="home"><img src="/assets/logo-ville.gif" alt="" /></a>
 					</div>
 				</div>
 				<div class="span4" id="header-search">
 					<div style="margin-top: 100px;margin-right:10px;">
-						<form class="form-search" action="/index/search">
+						<form class="form-search" action="{{ url({'pageId':'50c0b4849a199dfa0a000000'}) }}">
 							<input type="text" class="input-medium search-query" name="query" value="" placeholder="{{"search"|trans}}" id="s" />
 						</form>
 					</div>
@@ -19,7 +19,7 @@
 			<nav id="menu-top" class="row">
 				<ul id="mainmenu" class="menu span12">
 					<li id="menu-item-{{rootPage}}" class="menu-item menu-item-type-post_type menu-item-object-page {% if currentPage == rootPage %}current-menu-item{% endif %} page_item {% if currentPage == rootPage %}current_page_item{% endif %}">
-						<a href="/">Accueil {{data.currentPage}}</a>
+						<a href="{{ url({'pageId':'50c0a4749a199d9107000000'}) }}">Accueil</a>
 					</li>
 					{% for page in pages %}
 					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">

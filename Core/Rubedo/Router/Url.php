@@ -27,6 +27,8 @@ use Rubedo\Services\Manager;
 class Url implements IUrl
 {
 
+    protected static $_useCache = true;
+
     /**
      * param delimiter
      */
@@ -42,41 +44,118 @@ class Url implements IUrl
     /**
      * Return page id based on request URL
      *
-     * @param string $url requested URL
+     * @param string $url
+     *            requested URL
      * @return string int
      */
-    public function getPageId ($url,$host)
-    {
-        $page = "index";
+    public function getPageId ($url, $host)
+    {    
+        if (false !== strpos($url,'?')) {
+            
+            list ($url, $querystring) = explode('?', $url);
+        }
+
         
-        $matches = array();
-        $regex = '~/index/([^/?]*)~i';
-        if (preg_match($regex, $url, $matches)) {
-            $page = $matches[1];
-        } else {
-            $regex = '~/([^/?]*)~i';
-            if (preg_match($regex, $url, $matches)) {
-                $page = $matches[1];
+        $site = Manager::getService('Sites')->findByHost($host);
+        if (null == $site) {
+            $siteArray = Manager::getService('Sites')->getList();
+            $site = current($siteArray['data']);
+        }
+        
+        $siteId = $site['id'];
+        unset($site);
+        $cachedUrl = Manager::getService('UrlCache')->findByUrl($url, $siteId);
+        if (self::$_useCache && null != $cachedUrl) {
+            return $cachedUrl['pageId'];
+        }
+        
+        $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
+        $lastMatchedNode = 'root';
+        if (empty($urlSegments[0])) {
+            $matchedNode = Manager::getService('Pages')->matchSegment('accueil', $lastMatchedNode, $siteId);
+            if($matchedNode){
+                return $matchedNode['id'];
             }
         }
         
-        if (in_array($page, array(
-            '',
-            'index'
-        ))) {
-            $page = 'accueil';
+        $nbSegments = count($urlSegments);
+        $nbMatched = 0;
+        
+        foreach ($urlSegments as $value) {
+            $matchedNode = Manager::getService('Pages')->matchSegment($value, $lastMatchedNode, $siteId);
+            if (null === $matchedNode) {
+                break;
+            } else {
+                $lastMatchedNode = $matchedNode['id'];
+            }
+            $nbMatched ++;
         }
-        $page = Manager::getService('Pages')->findByName($page);
-        if ($page['id'] == '') {
+        
+        if ($nbMatched == 0) {
             return null;
         }
         
-        return $page['id'];
+        if ($nbSegments > $nbMatched) {
+            $partial = true;
+        } else {
+            $partial = false;
+            $urlToCache = array(
+                'pageId' => $lastMatchedNode,
+                'url' => $url,
+                'siteId' => $siteId
+            );
+            if (self::$_useCache) {
+                Manager::getService('UrlCache')->create($urlToCache);
+            }
+        }
+        
+        return $lastMatchedNode;
     }
 
     public function disableNavigation ()
     {
         self::$_disableNav = true;
+    }
+
+    protected function _getPageUrl ($pageId)
+    {
+        $cachedUrl = Manager::getService('UrlCache')->findByPageId($pageId);
+        if (!self::$_useCache || null === $cachedUrl) {
+            $url = '';
+            $page = Manager::getService('Pages')->findById($pageId);
+            
+            if (! isset($page['text'])) {
+                throw new \Zend_Controller_Router_Exception('no page found');
+            }
+            
+            if (! ctype_alpha($page['text'])) {
+                throw new \Zend_Controller_Router_Exception('page name should be alphanum');
+            }
+            
+            $siteId = $page['site'];
+            
+            $rootline = Manager::getService('Pages')->getAncestors($page);
+            
+            foreach ($rootline as $value) {
+                $url .= self::URI_DELIMITER;
+                $url .= $value['text'];
+            }
+            
+            $url .= self::URI_DELIMITER;
+            $url .= $page['text'];
+            $urlToCache = array(
+                'pageId' => $pageId,
+                'url' => $url,
+                'siteId' => $siteId
+            );
+            if (self::$_useCache) {
+                Manager::getService('UrlCache')->create($urlToCache);
+            }
+            
+            return $url;
+        } else {
+            return $cachedUrl['url'];
+        }
     }
 
     public function getUrl ($data, $encode = false)
@@ -86,23 +165,13 @@ class Url implements IUrl
             
             return trim($currentUri . '#', self::URI_DELIMITER);
         }
-        $url = self::URI_DELIMITER;
         
         if (! isset($data['pageId'])) {
             throw new \Zend_Controller_Router_Exception('no page given');
         }
         
-        $page = Manager::getService('Pages')->findById($data['pageId']);
+        $url = $this->_getPageUrl($data['pageId']);
         unset($data['pageId']);
-        
-        if (! isset($page['text'])) {
-            throw new \Zend_Controller_Router_Exception('no page found');
-        }
-        
-        if (! ctype_alpha($page['text'])) {
-            throw new \Zend_Controller_Router_Exception('page name should be alphanum');
-        }
-        $url .= $page['text'];
         $queryStringArray = array();
         
         foreach ($data as $key => $value) {
@@ -135,11 +204,14 @@ class Url implements IUrl
      * Generates an url given the name of a route.
      *
      * @access public
-     * @param array $urlOptions Options passed to the assemble method of the
+     * @param array $urlOptions
+     *            Options passed to the assemble method of the
      *            Route object.
-     * @param mixed $name The name of a Route to use. If null it will use the
+     * @param mixed $name
+     *            The name of a Route to use. If null it will use the
      *            current Route
-     * @param bool $reset Whether or not to reset the route defaults with those
+     * @param bool $reset
+     *            Whether or not to reset the route defaults with those
      *            provided
      * @return string Url for the link href attribute.
      */
