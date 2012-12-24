@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -43,15 +43,13 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected $_dataService;
 
-    protected function _init()
-    {
+    protected function _init() {
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
         $this->_dataService->init($this->_collectionName);
     }
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->_init();
     }
 
@@ -62,14 +60,15 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null, $start = null, $limit = null)
-    {
+    public function getList($filters = null, $sort = null, $start = null, $limit = null) {
         if (isset($filters)) {
             foreach ($filters as $value) {
                 if ((!(isset($value["operator"]))) || ($value["operator"] == "eq")) {
                     $this->_dataService->addFilter(array($value["property"] => $value["value"]));
                 } else if ($value["operator"] == 'like') {
                     $this->_dataService->addFilter(array($value["property"] => array('$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i'))));
+                } elseif (isset($value["operator"])) {
+                    $this->_dataService->addFilter(array($value["property"] => array($value["operator"] => $value["value"])));
                 }
 
             }
@@ -81,13 +80,13 @@ abstract class AbstractCollection implements IAbstractCollection
 
             }
         }
-		if(isset($start)){
-			$this->_dataService->setFirstResult($start);
-		}
-		if(isset($limit)){
-			$this->_dataService->setNumberOfResults($limit);
-		}
-		
+        if (isset($start)) {
+            $this->_dataService->setFirstResult($start);
+        }
+        if (isset($limit)) {
+            $this->_dataService->setNumberOfResults($limit);
+        }
+
         $dataValues = $this->_dataService->read();
 
         return $dataValues;
@@ -99,8 +98,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param string $contentId
      * @return array
      */
-    public function findById($contentId)
-    {
+    public function findById($contentId) {
         return $this->_dataService->findById($contentId);
     }
 
@@ -109,8 +107,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param string $name
      * @return array
      */
-    public function findByName($name)
-    {
+    public function findByName($name) {
         return $this->_dataService->findByName($name);
     }
 
@@ -122,8 +119,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $safe = true)
-    {
+    public function create(array $obj, $safe = true) {
         return $this->_dataService->create($obj, $safe);
     }
 
@@ -135,8 +131,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function update(array $obj, $safe = true)
-    {
+    public function update(array $obj, $safe = true) {
         return $this->_dataService->update($obj, $safe);
     }
 
@@ -148,13 +143,11 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $safe = true)
-    {
+    public function destroy(array $obj, $safe = true) {
         return $this->_dataService->destroy($obj, $safe);
     }
 
-    public function customDelete($deleteCond, $safe = true)
-    {
+    public function customDelete($deleteCond, $safe = true) {
         return $this->_dataService->customDelete($deleteCond, $safe);
     }
 
@@ -165,8 +158,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $sort  array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild($parentId, $filters = null, $sort = null)
-    {
+    public function readChild($parentId, $filters = null, $sort = null) {
         if (isset($filters)) {
             foreach ($filters as $value) {
                 if ((!(isset($value["operator"]))) || ($value["operator"] == "eq")) {
@@ -181,7 +173,7 @@ abstract class AbstractCollection implements IAbstractCollection
             foreach ($sort as $value) {
                 $this->_dataService->addSort(array($value["property"] => strtolower($value["direction"])));
             }
-        }else{
+        } else {
             $this->_dataService->addSort(array("orderValue" => 1));
         }
 
