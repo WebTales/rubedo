@@ -124,7 +124,7 @@
 		<echo>To build report , phing report</echo>
 		<echo>To run unit tests, phing phpunit</echo>
 	</target>
-	<target name="report" depends="prepare, phpcs, phpmd, phpdepend, phpcpd, phpdoc, phpunit"/>
+	<target name="report" depends="prepare, phpcs, phpmd, phpdepend, phpcpd, phpdoc, phpunit,phpunitcoverage"/>
 		
 	<target name="restore-db">
 		<exec

@@ -40,10 +40,12 @@ class Blocks_CarrouselController extends Blocks_AbstractController
         
         $filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => '50c0caeb9a199d1e11000001');
 		//{"live.taxonomy.50c0cabc9a199dcc0f000002":"50c0caeb9a199d1e11000001"}
-        $filterArray[] = array('property' => 'status', 'value' => 'published');
+        //$filterArray[] = array('property' => 'online', 'value' => true);
 
-        $contentArray = $this->_dataReader->getList($filterArray);
-		
+        $isDraft = Zend_Registry::get('draft');
+        
+        $contentArray = $this->_dataReader->getOnlineList($filterArray);
+		//($filters = null, $sort = null, $start = null, $limit = null, $live = true) 
 		
         foreach ($contentArray['data'] as $vignette) {
             $fields = $vignette['fields'];
