@@ -42,7 +42,6 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var\Rubedo\Mongo\DataAccess
      */
     protected $_dataService;
-
     protected function _init() {
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
@@ -180,4 +179,17 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_dataService->readChild($parentId);
     }
 
+    public function fetchAllChildren($parentId, $filters = null, $sort = null,$limit=10){
+    	$returnArray = array();	
+   	$children=$this->readChild($parentId,$filters,$sort); //Read child of the parentId
+	foreach ($children as $value) { // for each child returned before if they can have children (leaf===false) do another read child.
+		$returnArray[] = $value;
+		if($value['leaf']===false && $limit > 0){
+			$returnArray = array_merge($returnArray,$this->readChild($value['id'],$filters,$sort,$limit-1));
+		}
+	}
+	return $returnArray;
+    }
+
 }
+	
