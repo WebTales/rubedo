@@ -14,8 +14,6 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
-
  
 /**
  * Controller providing Elastic Search querying
@@ -27,20 +25,72 @@
  * @package Rubedo
  *
  */
-class Backoffice_ElasticSearchController extends Zend_Controller_Action
-{
-    
-	public function indexAction() {
-		$es = Rubedo\Services\Manager::getService('ElasticDataSearch');
-		$es->init();		
-		$elasticaResultSet = $es->search($this->_request->getPost('query')."*") ;
-		$elasticaResults = $elasticaResultSet->getResults();
-		$results = array();
-		foreach($elasticaResults as $result) {
-			$results[] = (array) $result;
-		}
+ 
+ 
+ 
+class Backoffice_ElasticSearchController extends Zend_Controller_Action {
+	 
+	public function indexAction() {	
 		
-		$this->_helper->json($results);
+        // get query
+        $terms = $this->getRequest()->getParam('query');
+        
+        // get type filter
+        $type = $this->getRequest()->getParam('type');
+        
+        // get lang filter : TODO get lang from search
+        $lang = "fr";
+        
+        // get author filter
+        $author = $this->getRequest()->getParam('author');
+        
+        // get date filter
+        $date = $this->getRequest()->getParam('date');
+		
+        // get taxonomy filter
+        $taxonomy = $this->getRequest()->getParam('taxonomy');
+        
+        // get pager
+        $pager = $this->getRequest()->getParam('pager',0);
+            
+        // get orderBy
+        $orderBy = $this->getRequest()->getParam('orderby','_score');
+            
+        // get page size
+        $pageSize = $this->getRequest()->getParam('pagesize',10);
+
+        $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+        
+        $query->init();
+        
+        $elasticaResultSet = $query->search($terms, $type, $lang, $author, 
+                $date, $taxonomy, $pager, $orderBy, $pageSize);		
+		
+		$elasticaResults = $elasticaResultSet->getResults();
+		$elasticaFacets = $elasticaResultSet->getFacets();
+		$results = array();
+		$results['total'] = $elasticaResultSet->getTotalHits();
+		$results["results"] = array();
+		$results["facets"] = array();
+		if ($results['total'] > 0) {
+			foreach($elasticaResults as $result) {
+				$results["results"][] = (array) $result;
+			}
+			foreach($elasticaFacets as $name => $facet) {
+				$temp = (array) $facet;
+				$temp["name"] = $name;
+				$results["facets"][] = $temp;
+			}
+		}
+
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        $this->getResponse()->setHeader('Content-Type', "application/json", true);
+
+        $returnValue = Zend_Json::encode($results);
+        $returnValue = Zend_Json::prettyPrint($returnValue);
+
+        $this->getResponse()->setBody($returnValue);
 		
 	}
 
