@@ -1,0 +1,8 @@
+<div class="row">
+	<!-- process columns -->
+	{% if columns %}
+		{% for column in columns %}
+			{% include 'cnews/column.html.twig' with column only %}
+		{% endfor %}
+	{% endif %}
+</div>

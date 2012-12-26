@@ -1,27 +1,20 @@
-<!-- header	-->
-<div class="row">
-	<div class="span12">
-		<header class="header default">
-			<div class="row" id="header">
-				<div class="span8">
-					<div class="left logo">
-						<a href="{{ url({'pageId':'50c0a4749a199d9107000000'},true) }}" title="Ma Ville - Accueil" rel="home"><img src="/assets/logo-ville.gif" alt="" /></a>
-					</div>
-				</div>
-				<div class="span4" id="header-search">
-					<div style="margin-top: 100px;margin-right:10px;">
-						<form class="form-search" action="{{ url({'pageId':'50c0b4849a199dfa0a000000'},true) }}">
-							<input type="text" class="input-medium search-query" name="query" value="" placeholder="{{"search"|trans}}" id="s" />
-						</form>
-					</div>
-				</div>
-			</div>
-			<nav id="menu-top" class="row">
-				<ul id="mainmenu" class="menu span12">
-					<li id="menu-item-{{rootPage}}" class="menu-item menu-item-type-post_type menu-item-object-page {% if currentPage == rootPage %}current-menu-item{% endif %} page_item {% if currentPage == rootPage %}current_page_item{% endif %}">
-						<a href="{{ url({'pageId':'50c0a4749a199d9107000000'},true) }}">Accueil</a>
-					</li>
-					{% for page in pages %}
+<div id="menu" class="navbar {% if data.position != 'none' %}navbar-{{ data.position }}{% endif %}">
+  <div class="navbar-inner">
+  	<div class="container-fluid">
+	<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	</a>
+	<a class="brand" href="{{ url({'pageId':'50c0a4749a199d9107000000'},true) }}" title="Ma Ville - Accueil" rel="home">Accueil</a>
+	<!-- Everything you want hidden at 940px or less, place within here -->
+	<div class="nav-collapse">
+    <!-- /nav bar --> 
+    
+    <div class="nav-collapse collapse">
+            <ul class="nav">
+              {% for page in pages %}
 					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
 						<a href="{{page.url}}">{{page.title}}</a>
 						{% if page.pages %}
@@ -36,8 +29,20 @@
 						{% endif %}
 					</li>
 					{% endfor %}
-				</ul>
-			</nav>
-		</header>
-	</div>
+            </ul>
+          </div>
+    
+    <!-- search component-->
+    	<div class="btn-group pull-right">
+	    	<form class="form-search" action="{{ url({'pageId':'50c0b4849a199dfa0a000000'},true) }}">
+			  <input type="text" class="input-medium search-query" name="search">
+			  <button type="submit" class="btn">{{"search"|trans}}</button>
+			</form>
+		</div>
+
+	<!-- /search component-->
+
+ 	</div>
+ 	</div>
+  </div>
 </div>
