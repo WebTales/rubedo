@@ -74,15 +74,25 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $filterArray[] = array('operator' => $ruleOperator, 'property' => $property, 'value' => $this->_dateService->convertToTimeStamp($value['value']));
             }
         }else{
-            $taxanomyTerm = array_pop($blockConfig['taxonomy']);
+            $taxonomyTerm = array_pop($blockConfig['taxonomy']);
             
             $output = array();
             
-            //$filterArray[] = array('property' => 'typeId', 'value' => '999999999999999999999999');
-            //$filterArray[] = array('property' => 'typeId', 'value' => '507fea58add92a5108000000');
-            $filterArray[] = array('property' => 'status', 'value' => 'published');
-            
-            $filterArray[] = array('property' => 'taxonomy.50c0cabc9a199dcc0f000002', 'value' => $taxanomyTerm);
+            // $filterArray[] = array('property' => 'typeId', 'value' =>
+            // '999999999999999999999999');
+            // $filterArray[] = array('property' => 'typeId', 'value' =>
+            // '507fea58add92a5108000000');
+            if ($taxonomyTerm) {
+                
+                $filterArray[] = array(
+                        'property' => 'taxonomy.50c0cabc9a199dcc0f000002',
+                        'value' => $taxonomyTerm
+                );
+            }
+            $filterArray[] = array(
+                    'property' => 'status',
+                    'value' => 'published'
+            );
             
         }
 
