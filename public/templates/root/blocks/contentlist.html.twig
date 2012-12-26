@@ -6,30 +6,30 @@
 	<div class="row-fluid">
 		{% for content in data %}
 		{% include content.type  %}
-			{% if loop.index % 3 == 0 %}
-		</div>
-	<div class="row-fluid">
-		{% endif %}
-
 		{% endfor %}
 	</div>
-	{%if page.nbPages > page.limit %}
-	<div class="pagination pagination-centered">
-		<ul>
-			{% if page.currentPage != 1%}
-	<li><a href="/index?page={{page.currentPage-9}}">{{page.currentPage-9}}</a></li>
-		<li><a href="/index?page={{page.currentPage-1}}">Prev</a></li>
+	{%if page.limitPage > 1 %}
+		
+		<div class="pagination pagination-mini">
+			<ul>
+				{% if page.currentPage != 1%}
+				<li>
+					<a href="{{url({'page': page.currentPage-1},true)}}"><<</a>
+				</li>
+				{%endif%}
+				{% for  i in 1..page.limitPage %}
+				<li {% if page.currentPage == i%}class="active"{%endif%}>
+					<a href="{{url({'page': i},true)}}">{{i}}</a>
+				</li>
+				{%endfor%}
+				{% if page.currentPage != page.limitPage %}
+				<li>
+					<a href="{{url({'page': page.currentPage+1},true)}}">>></a>
+				</li>
+				{%endif%}
+			</ul>
+		</div>
 		{%endif%}
-	{% for  i in page.currentPage..page.limitPage %}
-	<li><a href="/index?page={{i}}">{{i}}</a></li>
-	{%endfor%}
-	{% if page.currentPage != page.nbPages %}
-	<li><a href="/index?page={{page.currentPage+1}}">Next</a></li>
-	<li><a href="/index?page={{page.currentPage+9}}">{{page.currentPage+18}}</a></li>
-	{%endif%}
-	</ul>
-	</div>
-	{%endif%}
 </div>
 
 {% endblock %}

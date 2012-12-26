@@ -132,8 +132,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
         
         $sort = array();
         $sort[] = array(
-                'property' => 'text',
-                'direction' => 'asc'
+                'property' => 'fields.date',
+                'direction' => 'desc'
         );
         $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 12;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);

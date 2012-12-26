@@ -1,0 +1,33 @@
+{% extends "root/block.html.twig" %}
+
+{% block mainContent %}
+
+<div class="block headline">
+
+<ul class="w-recentpost">
+			<li style="margin-bottom:10px; padding-bottom:2px;">
+			    				
+				{% if content.image %}
+				<a href="/single?content-id={{content.id}}"><img alt=""  class="imageLeft" src="/image?file-id={{content.image}}" style="max-height: 80px;max-width: 80px;"/></a>
+				{% endif %}
+				<header class="entry-header">
+					<h2 class="post-title-small"><a href='/single?content-id={{content.id}}' title='Actu'>{{content.title}}</a></h2>
+				</header>
+				<div class="entry-info">
+
+					{% if content.date %}
+					Le {{content.date}}
+					{% endif %}
+				</div>
+				<div class="entry-content editable"  id="{{ content.id }}_summary">
+					{{content.summary|cleanHtml}}
+				</div>
+				<div class="btn btn-small pull-right">
+				    <a href="/single?content-id={{content.id}}">Lire la suite <span class="icon-forward"></span></a>
+				</div>
+
+			</li>
+		</ul>
+	
+</div>
+{% endblock %}
