@@ -16,8 +16,8 @@
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractController.php');
+
 /**
- *
  *
  * @author jbourdin
  * @category Rubedo
@@ -29,21 +29,36 @@ class Blocks_ContentListController extends Blocks_AbstractController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction() {
+    public function indexAction ()
+    {
         $this->_dateService = Manager::getService('Date');
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-
+        
         $blockConfig = $this->getRequest()->getParam('block-config');
         $output = array();
-        $operatorsArray = array('$lt' => '<', '$lte' => '<=', '$gt' => '>', '$gte' => '>=', '$ne' => '!=', 'eq' => '=');
+        $operatorsArray = array(
+                '$lt' => '<',
+                '$lte' => '<=',
+                '$gt' => '>',
+                '$gte' => '>=',
+                '$ne' => '!=',
+                'eq' => '='
+        );
         if (isset($blockConfig['query'])) {
             $blockConfig = json_decode($blockConfig['query'], true);
-            /*Add filters on TypeId and publication*/
-            $filterArray[] = array('operator' => '$in', 'property' => 'typeId', 'value' => $blockConfig['contentTypes']);
-            $filterArray[] = array('property' => 'status', 'value' => 'published');
-            /*Add filter on taxonomy*/
+            /* Add filters on TypeId and publication */
+            $filterArray[] = array(
+                    'operator' => '$in',
+                    'property' => 'typeId',
+                    'value' => $blockConfig['contentTypes']
+            );
+            $filterArray[] = array(
+                    'property' => 'status',
+                    'value' => 'published'
+            );
+            /* Add filter on taxonomy */
             foreach ($blockConfig['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
                     if ($value['rule'] == "some") {
@@ -52,91 +67,120 @@ class Blocks_ContentListController extends Blocks_AbstractController
                         $taxOperator = '$all';
                     } elseif ($value['rule'] == "someRec") {
                         foreach ($value['terms'] as $child) {
-                            $terms = $this->_taxonomyReader->fetchAllChildren($child);
-                            foreach ($terms as $taxonomyTerms) { 
+                            $terms = $this->_taxonomyReader->fetchAllChildren(
+                                    $child);
+                            foreach ($terms as $taxonomyTerms) {
                                 $value['terms'][] = $taxonomyTerms["id"];
                             }
                         }
                         $taxOperator = '$in';
                     }
                 }
-                $filterArray[] = array('operator' => $taxOperator, 'property' => 'taxonomy.' . $key, 'value' => $value['terms']);
+                $filterArray[] = array(
+                        'operator' => $taxOperator,
+                        'property' => 'taxonomy.' . $key,
+                        'value' => $value['terms']
+                );
             }
-            /*Add filter on FieldRule*/
+            /* Add filter on FieldRule */
             foreach ($blockConfig['fieldRules'] as $property => $value) {
                 $ruleOperator = array_search($value['rule'], $operatorsArray);
-		//Temporary test 
-		if($property=="CreateDate"){
-			$property="createTime";
-		}elseif($property=="lastUpdateDate"){
-			$property="lastUpdateTime";
-		}										
-                $filterArray[] = array('operator' => $ruleOperator, 'property' => $property, 'value' => $this->_dateService->convertToTimeStamp($value['value']));
-            }
-        }else{
-            $taxonomyTerm = array_pop($blockConfig['taxonomy']);
-            
-            $output = array();
-            
-            // $filterArray[] = array('property' => 'typeId', 'value' =>
-            // '999999999999999999999999');
-            // $filterArray[] = array('property' => 'typeId', 'value' =>
-            // '507fea58add92a5108000000');
-            if ($taxonomyTerm) {
-                
+                // Temporary test
+                if ($property == "CreateDate") {
+                    $property = "createTime";
+                } elseif ($property == "lastUpdateDate") {
+                    $property = "lastUpdateTime";
+                }
                 $filterArray[] = array(
-                        'property' => 'taxonomy.50c0cabc9a199dcc0f000002',
-                        'value' => $taxonomyTerm
+                        'operator' => $ruleOperator,
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp(
+                                $value['value'])
                 );
+            }
+        } else { 
+            //no advanced query : should get classic parameters
+            $output = array();
+            if (isset($blockConfig['contentTypes'])) {
+                $contentTypesArray = $blockConfig['contentTypes'];
+                if (is_array($contentTypesArray) && count($contentTypesArray) > 0) {
+                    $filterArray[] = array(
+                            'operator' => '$in',
+                            'property' => 'typeId',
+                            'value' => $contentTypesArray
+                    );
+                }
+            }
+            
+            if (isset($blockConfig['taxonomy'])) {
+                $taxonomyTermsArray = $blockConfig['taxonomy'];
+                if (is_array($taxonomyTermsArray) &&
+                         count($taxonomyTermsArray) > 0) {
+                    
+                    $filterArray[] = array(
+                            'operator' => '$in',
+                            'property' => 'taxonomy.50c0cabc9a199dcc0f000002', //@todo : taxanomy parameter do not return vocabulary !
+                            'value' => $taxonomyTermsArray
+                    );
+                }
             }
             $filterArray[] = array(
                     'property' => 'status',
                     'value' => 'published'
             );
-            
         }
-
+        
         $sort = array();
-        $sort[] = array('property' => 'text', 'direction' => 'asc');
+        $sort[] = array(
+                'property' => 'text',
+                'direction' => 'asc'
+        );
         $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 12;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
-        $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
-
+        $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, 
+                (($pageData['currentPage'] - 1) * $pageData['limit']), 
+                $pageData['limit']);
+        
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
-            $pageData['nbPages'] = (int)ceil(($nbItems) / $pageData['limit']);
-            $pageData['limitPage'] = min(array($pageData['nbPages'], 3));
-
+            $pageData['nbPages'] = (int) ceil(($nbItems) / $pageData['limit']);
+            $pageData['limitPage'] = min(array(
+                    $pageData['nbPages'],
+                    3
+            ));
+            
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
             foreach ($typeArray['data'] as $dataType) {
-                $contentTypeArray[(string)$dataType['id']] = "root/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig";
+                $contentTypeArray[(string) $dataType['id']] = "root/blocks/shortsingle/" .
+                         preg_replace('#[^a-zA-Z]#', '', $dataType['type']) .
+                         ".html.twig";
             }
-
+            
             foreach ($contentArray['data'] as $vignette) {
                 $fields = $vignette['fields'];
                 $fields['title'] = $fields['text'];
                 unset($fields['text']);
-                $fields['id'] = (string)$vignette['id'];
-                $fields['type'] = $contentTypeArray[(string)$vignette['typeId']];
+                $fields['id'] = (string) $vignette['id'];
+                $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
                 $data[] = $fields;
             }
-
+            
             $output["data"] = $data;
-            //Zend_Debug::dump($output["data"]);die();
+            // Zend_Debug::dump($output["data"]);die();
             $output["page"] = $pageData;
         }
-
+        
         if (isset($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentlist.html.twig");
-
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/contentlist.html.twig");
         }
-
+        
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
-
 }
