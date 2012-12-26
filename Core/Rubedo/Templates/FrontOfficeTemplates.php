@@ -113,9 +113,9 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
     public function getTemplateDir()
     {
         if (!isset(self::$templateDir)) {
-            $this->_options = array('templateDir' => APPLICATION_PATH . "/../public/themes", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
+            $this->_options = array('templateDir' => APPLICATION_PATH . "/../public/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
             if (isset($this->_service)) {
-                $this->_options = $this->_service->getCurrentOptions();
+                $this->_options = array_merge($this->_options,$this->_service->getCurrentOptions());
             }
 
             self::$templateDir = $this->_options['templateDir'];
@@ -147,7 +147,6 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
     public function getCurrentTheme()
     {
         if (!isset(self::$_currentTheme)) {
-
             self::$_currentTheme = 'default';
         }
         return self::$_currentTheme;
