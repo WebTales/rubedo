@@ -63,9 +63,11 @@
 			<form class="form-search" action="{{url({},true)}}">
 				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ searchTerms }}" placeholder="{{"search"|trans}}">
 			</form>
+		{% if not hideType %}
 		<p>
 			<i class="icon-file"></i> {{"content_type"|trans}}
 		</p>
+		
 		{% if (type == '') %}
 		<ul>
 			{% for facet in typeFacets %}
@@ -78,6 +80,7 @@
 		<p style="padding-left: 20px">
 			{{type}} <a href="{{url({'type': null})}}"><i class="icon-remove-sign"></i></a>
 		</p>
+		{% endif %}
 		{% endif %}
 		<p>
 			<i class="icon-user"></i> {{"author"|trans}}

@@ -37,6 +37,14 @@ class Blocks_SearchController extends Blocks_AbstractController
         // get type filter
         $type = $this->getRequest()->getParam('type');
         
+        $site = $this->getRequest()->getParam('site');
+        $siteId = $site['id'];
+        if($siteId == '50dae42bc1c3da3401000000'){
+          $type='Blog';
+          $output['hideType']=true;
+        }
+        //50dae42bc1c3da3401000000
+        
         // get lang filter
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');

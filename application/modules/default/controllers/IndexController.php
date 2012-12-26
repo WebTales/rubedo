@@ -234,6 +234,7 @@ class IndexController extends Zend_Controller_Action
     {
         $params = array();
         $params['block-config'] = $block['configBloc'];
+        $params['site'] = $this->_site;
         switch ($block['bType']) {
             case 'Bloc de navigation':
                 $controller = 'nav-bar';
