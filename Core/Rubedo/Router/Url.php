@@ -117,6 +117,10 @@ class Url implements IUrl
         self::$_disableNav = true;
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
+     */
     public function getPageUrl ($pageId)
     {
         $cachedUrl = Manager::getService('UrlCache')->findByPageId($pageId);
@@ -158,6 +162,10 @@ class Url implements IUrl
         }
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Router\IUrl::getUrl()
+     */
     public function getUrl ($data, $encode = false)
     {
         if (self::$_disableNav) {

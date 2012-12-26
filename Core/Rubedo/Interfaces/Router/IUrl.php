@@ -45,4 +45,22 @@ Interface IUrl
      * @return string Url for the link href attribute.
      */
     public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true);
+    
+    
+    /**
+     * Return the path part of the URL of a page given by its ID
+     * 
+     * @param string $pageId
+     * @return string 
+     */
+    public function getPageUrl ($pageId);
+    
+    /**
+     * Return the path part of the URL matching parameters given in $data array
+     * 
+     * @param array $data
+     * @param bool $encode
+     * @return string
+     */
+    public function getUrl ($data, $encode = false);
 }
