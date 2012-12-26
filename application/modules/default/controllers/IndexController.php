@@ -96,7 +96,8 @@ class IndexController extends Zend_Controller_Action
             Manager::getService('Url')->disableNavigation();
             $simulatedTime = $this->getRequest()->getParam('preview_time', null);
             if (isset($simulatedTime)) {
-                Manager::getService('CurrentTime')->setSimulatedTime($simulatedTime);
+                Manager::getService('CurrentTime')->setSimulatedTime(
+                        $simulatedTime);
             }
             $isDraft = $this->getRequest()->getParam('preview_draft', null);
             if (isset($isDraft)) {
@@ -104,11 +105,13 @@ class IndexController extends Zend_Controller_Action
             } else {
                 Zend_Registry::set('draft', false);
             }
-        }else{
+        } else {
             Zend_Registry::set('draft', false);
         }
         
-        $this->_serviceTemplate->setCurrentTheme($this->_session->get('themeCSS', 'default'));
+        
+        
+        //$this->_serviceTemplate->setCurrentTheme();
         
         // Load the CSS files
         
@@ -124,6 +127,7 @@ class IndexController extends Zend_Controller_Action
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
         
+        
         // Build Twig context
         $twigVar = $this->_pageParams;
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
@@ -134,8 +138,11 @@ class IndexController extends Zend_Controller_Action
         $twigVar['js'] = $this->_servicePage->getJs();
         $twigVar['isLoggedIn'] = $isLoggedIn;
         
+        $pageTemplate = $this->_serviceTemplate->getFileThemePath($this->_pageParams['template']);
+        
         // Render content with template
-        $content = $this->_serviceTemplate->render($this->_pageParams['template'], $twigVar);
+        $content = $this->_serviceTemplate->render(
+                $pageTemplate, $twigVar);
         
         // disable ZF view layer
         $this->getHelper('ViewRenderer')->setNoRender();
@@ -156,9 +163,20 @@ class IndexController extends Zend_Controller_Action
     {
         $pageService = Manager::getService('Pages');
         $pageInfo = $pageService->findById($pageId);
+        
+        $this->_site = Manager::getService('Sites')->findById($pageInfo['site']);
+        if(!isset($this->_site['theme'])){
+            if($this->_site['text']=='demo.webtales.fr'){
+                $this->_site['theme'] = 'cnews';
+            }else{
+                $this->_site['theme'] = 'default';
+            }
+        }
+        $this->_serviceTemplate->setCurrentTheme($this->_site['theme']);
+        
         $this->_servicePage->setPageTitle($pageInfo['text']);
         $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-        $pageInfo['template'] = 'root/page.html.twig';
+        $pageInfo['template'] = 'page.html.twig';
         
         return $pageInfo;
     }
@@ -171,9 +189,11 @@ class IndexController extends Zend_Controller_Action
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
             if (is_array($column['blocks'])) {
-                $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
+                $returnArray[$key]['blocks'] = $this->_getBlocksInfos(
+                        $column['blocks']);
             } else {
-                $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
+                $returnArray[$key]['rows'] = $this->_getRowsInfos(
+                        $column['rows']);
             }
         }
         return $returnArray;
@@ -196,7 +216,8 @@ class IndexController extends Zend_Controller_Action
         $returnArray = $rows;
         foreach ($rows as $key => $row) {
             if (is_array($row['columns'])) {
-                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
+                $returnArray[$key]['columns'] = $this->_getColumnsInfos(
+                        $row['columns']);
             }
         }
         return $returnArray;
@@ -217,7 +238,9 @@ class IndexController extends Zend_Controller_Action
             case 'Bloc de navigation':
                 $controller = 'nav-bar';
                 $params['currentPage'] = $this->_pageId;
-                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil',$this->getRequest()->getHttpHost());
+                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', 
+                        $this->getRequest()
+                            ->getHttpHost());
                 
                 break;
             case 'Carrousel':
@@ -250,25 +273,26 @@ class IndexController extends Zend_Controller_Action
                 }
                 
                 $params = array(
-                    'content-id' => $contentId
+                        'content-id' => $contentId
                 );
                 break;
             default:
                 $data = array();
                 $template = 'root/block.html';
                 return array(
-                    'data' => $data,
-                    'template' => $template
+                        'data' => $data,
+                        'template' => $template
                 );
                 break;
         }
         
-        $response = Action::getInstance()->action('index', $controller, 'blocks', $params);
+        $response = Action::getInstance()->action('index', $controller, 
+                'blocks', $params);
         $data = $response->getBody('content');
         $template = $response->getBody('template');
         return array(
-            'data' => $data,
-            'template' => $template
+                'data' => $data,
+                'template' => $template
         );
     }
 }
