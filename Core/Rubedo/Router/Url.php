@@ -117,7 +117,7 @@ class Url implements IUrl
         self::$_disableNav = true;
     }
 
-    protected function _getPageUrl ($pageId)
+    public function getPageUrl ($pageId)
     {
         $cachedUrl = Manager::getService('UrlCache')->findByPageId($pageId);
         if (!self::$_useCache || null === $cachedUrl) {
@@ -170,7 +170,7 @@ class Url implements IUrl
             throw new \Zend_Controller_Router_Exception('no page given');
         }
         
-        $url = $this->_getPageUrl($data['pageId']);
+        $url = $this->getPageUrl($data['pageId']);
         unset($data['pageId']);
         $queryStringArray = array();
         
