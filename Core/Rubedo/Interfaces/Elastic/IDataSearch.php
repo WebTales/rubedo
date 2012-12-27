@@ -48,6 +48,6 @@ interface IDataSearch
 	 * @param string $pageSize optional page size, "all" for everything
      * @return Elastica_ResultSet
      */
-    public function search ($terms, $type, $lang, $author, $date, $pager, $orderBy, $pageSize);
+    public function search (array $params);
 		
 }

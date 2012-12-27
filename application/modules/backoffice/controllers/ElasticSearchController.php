@@ -30,56 +30,32 @@
  
 class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 	 
-	public function indexAction() {	
+	public function indexAction() {
 		
-        // get query
-        $terms = $this->getRequest()->getParam('query');
-        
-        // get type filter
-        $type = $this->getRequest()->getParam('type');
-        
-        // get lang filter : TODO get lang from search
-        $lang = "fr";
-        
-        // get author filter
-        $author = $this->getRequest()->getParam('author');
-        
-        // get date filter
-        $date = $this->getRequest()->getParam('date');
+		// get params 
+		$params = $this->getRequest()->getParams();
 		
-        // get taxonomy filter
-        $taxonomy = $this->getRequest()->getParam('taxonomy');
-        
-        // get pager
-        $pager = $this->getRequest()->getParam('pager',0);
-            
-        // get orderBy
-        $orderBy = $this->getRequest()->getParam('orderby','_score');
-            
-        // get page size
-        $pageSize = $this->getRequest()->getParam('pagesize',10);
-
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         
         $query->init();
         
-        $elasticaResultSet = $query->search($terms, $type, $lang, $author, 
-                $date, $taxonomy, $pager, $orderBy, $pageSize);		
+        $search = $query->search($params);
+        $elasticaResultSet = $search["resultSet"];	
 		
 		$elasticaResults = $elasticaResultSet->getResults();
 		$elasticaFacets = $elasticaResultSet->getFacets();
 		$results = array();
 		$results['total'] = $elasticaResultSet->getTotalHits();
-		$results["results"] = array();
-		$results["facets"] = array();
+		$results['results'] = array();
+		$results['facets'] = array();
 		if ($results['total'] > 0) {
 			foreach($elasticaResults as $result) {
-				$results["results"][] = (array) $result;
+				$results['results'][] = (array) $result;
 			}
 			foreach($elasticaFacets as $name => $facet) {
 				$temp = (array) $facet;
-				$temp["name"] = $name;
-				$results["facets"][] = $temp;
+				$temp['name'] = $name;
+				$results['facets'][] = $temp;
 			}
 		}
 

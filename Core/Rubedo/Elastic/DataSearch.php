@@ -33,31 +33,41 @@ class DataSearch extends DataAbstract implements IDataSearch
      * ES search
      *     
 	 * @see \Rubedo\Interfaces\IDataSearch::search()
-	 * @param string $terms terms to search
-	 * @param string $type optional content type filter
-	 * @param string $lang optional lang filter
-	 * @param string $author optional author filter
-	 * @param string $date optional date filter
-	 * @param string $taxonomy optional taxonomy filter
-	 * @param string $pager optional pager, default set to 10
-	 * @param string $orderBy optional  orderBy, default sort on score
-	 * @param string $pageSize optional page size, "all" for everything
+	 * @params array $params search parameters : query, type, lang, author, date, taxonomy, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search ($terms, $type=null, $lang=null, $author=null, $date=null, $taxonomy=null, $pager=null, $orderBy=null, $pageSize=null) {
+    public function search (array $params) {
     	
+		$filters = array();
+		
+		// Default parameters	
+		$defaultVars = array(
+			'site' => '',
+			'block-config' => '',
+			'query' => '',
+			'type' => '',
+			'lang' => '',
+			'author' => '',
+			'date' => '',
+			'pager' => 0,
+			'orderby' => '_score',
+			'pagesize' => 10
+		);
+		
 		// set default options
-		if (is_null($lang)) {
+		if (!isset($params['lang'])) {
         	$session = Manager::getService('Session');
-        	$lang = $session->get('lang','fr');
+        	$params['lang'] = $session->get('lang','fr');
 		}
 		
-		if (is_null($pager)) $pager = 0;
+		if (!isset($params['pager'])) $params['pager'] = $defaultVars['pager'];
 		
-		if (is_null($orderBy)) $orderBy = "_score";
+		if (!isset($params['orderby'])) $params['orderby'] = $defaultVars['orderby'];
 		
-		if (is_null($pageSize)) $pageSize = 10;
-				
+		if (!isset($params['pagesize'])) $params['pagesize'] = $defaultVars['pagesize'];
+		
+		if (!isset($params['query'])) $params['query']= $defaultVars['query'];
+					
 		try{
 
 			// Build global filter
@@ -75,26 +85,33 @@ class DataSearch extends DataAbstract implements IDataSearch
         	}
 			 */
 			
+			// filter on query
+			if ($params['query']!='') {
+				$filters["query"]=$params['query'];
+			}
+			
 			// filter on type
-			if ($type != '') {
+			if (isset($params['type'])) {
 				$typeFilter = new \Elastica_Filter_Term();
-        		$typeFilter->setTerm('contentType', $type);
+        		$typeFilter->setTerm('contentType', $params['type']);
 				$globalFilter->addFilter($typeFilter);
+				$filters["type"]=$params['type'];
 				$setFilter = true;
 			}
 			
 			// filter on author
-			if ($author != '') {
+			if (isset($params['author'])) {
 				$authorFilter = new \Elastica_Filter_Term();
-        		$authorFilter->setTerm('author', $author);
+        		$authorFilter->setTerm('author', $params['author']);
 				$globalFilter->addFilter($authorFilter);
+				$filters["author"]=$params['author'];
 				$setFilter = true;
 			}
 			
 			// filter on date
-			if ($date!= '') {
+			if (isset($params['date'])) {
 				$dateFilter = new \Elastica_Filter_Range();
-				$d = $date/1000;
+				$d = $params['date']/1000;
 				$dateFrom = $dateTo = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d))*1000; 
 				$dateTo = mktime(0, 0, 0, date('m',$d)+1, date('d',$d), date('Y',$d))*1000;  
         		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
@@ -103,15 +120,17 @@ class DataSearch extends DataAbstract implements IDataSearch
 			}			
 
 			// filter on taxonomy
-			if ($taxonomy != '') {
+			$vocabularies = array_diff_key($params,$defaultVars);
+			foreach($vocabularies as $key => $value) {
 				$taxonomyFilter = new \Elastica_Filter_Term();
-        		$taxonomyFilter->setTerm('taxonomy.Tags', $taxonomy);
+        		$taxonomyFilter->setTerm('taxonomy.'.$key, $value);
 				$globalFilter->addFilter($taxonomyFilter);
-				$setFilter = true;
+				$filters[$key]=$value;
+				$setFilter = true;					
 			}
 						
 			// Set query on terms
-			$elasticaQueryString = new \Elastica_Query_QueryString($terms."*");
+			$elasticaQueryString = new \Elastica_Query_QueryString($params['query']."*");
 			
 			$elasticaQuery = new \Elastica_Query();
 			
@@ -165,19 +184,22 @@ class DataSearch extends DataAbstract implements IDataSearch
 			}
 				
 			// Add pagination 		
-			if ($pageSize!="all") {
-				$elasticaQuery->setSize($pageSize)->setFrom($pager*$pageSize);
+			if ($params['pagesize']!="all") {
+				$elasticaQuery->setSize($params['pagesize'])->setFrom($params['pager']*$params['pagesize']);
 			} 
 						
 			// add sort
-			$elasticaQuery->setSort(array($orderBy =>"desc"));
+			$elasticaQuery->setSort(array($params['orderby'] =>"desc"));
 
 			// run query
 			$elasticaResultSet = $this->_content_index->search($elasticaQuery);
 			
 			// Return resultset
-
-			return($elasticaResultSet);
+			$result = array(
+				"resultSet" => $elasticaResultSet,
+				"filters" => $filters
+			);
+			return($result);
 			
 		} catch (Exception $e) {
             var_dump($e->getMessage());

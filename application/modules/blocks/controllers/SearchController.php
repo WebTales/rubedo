@@ -31,12 +31,13 @@ class Blocks_SearchController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        // get query
-        $terms = $this->getRequest()->getParam('query');
-        
-        // get type filter
-        $type = $this->getRequest()->getParam('type');
-        
+    	
+		// get search parameters
+		$params = $this->getRequest()->getParams();
+		
+		// set pagesize default if not set
+		if (is_null($params['pagesize'])) $params['pagesize'] = 10;
+		              
         $site = $this->getRequest()->getParam('site');
         $siteId = $site['id'];
         if($siteId == '50dae42bc1c3da3401000000'){
@@ -44,47 +45,26 @@ class Blocks_SearchController extends Blocks_AbstractController
           $output['hideType']=true;
         }
         //50dae42bc1c3da3401000000
-        
-        // get lang filter
-        $session = Manager::getService('Session');
-        $lang = $session->get('lang', 'fr');
-        
-        // get author filter
-        $author = $this->getRequest()->getParam('author');
-        
-        // get date filter
-        $date = $this->getRequest()->getParam('date');
-		
-        // get taxonomy filter
-        $taxonomy = $this->getRequest()->getParam('taxonomy');
-        
-        // get pager
-        $pager = $this->getRequest()->getParam('pager',0);
-            
-        // get orderBy
-        $orderBy = $this->getRequest()->getParam('orderby','_score');
-            
-        // get page size
-        $pageSize = $this->getRequest()->getParam('pagesize',10);
-
-        
+               
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         $query->init();
         
-        $elasticaResultSet = $query->search($terms, $type, $lang, $author, 
-                $date, $taxonomy, $pager, $orderBy, $pageSize);
+		$search = $query->search($params);
+        $elasticaResultSet = $search["resultSet"];
+		$filters = $search["filters"];
         
         // Get total hits
-        $nbResults = $elasticaResultSet->getTotalHits();
-        if ($pageSize != "all") {
-            $pageCount = intval($nbResults / $pageSize) + 1;
+        $nbresults = $elasticaResultSet->getTotalHits();
+        if ($params['pagesize'] != "all") {
+            $pagecount = intval($nbresults / $params['pagesize']) + 1;
         } else {
-            $pageCount = 1;
+            $pagecount = 1;
         }
         
-        // Get facets from the result of the search query
+        // Get facets
         $elasticaFacets = $elasticaResultSet->getFacets();
         
+		// Get results
         $elasticaResults = $elasticaResultSet->getResults();
         
         $results = array();
@@ -93,8 +73,6 @@ class Blocks_SearchController extends Blocks_AbstractController
             
             $data = $result->getData();
             $resultType = $result->getType();
-            // $lang_id = explode('_',$result->getId());
-            // $id = $lang_id[1];
             $id = $result->getId();
             
             $score = $result->getScore();
@@ -103,13 +81,7 @@ class Blocks_SearchController extends Blocks_AbstractController
                 $score = 1;
             
             $score = round($score * 100);
-            // $url = $data['canonical_url'];
-            // if ($url == '') {
-            // no canonical url
-            // redirect to default detail page
-            // $url = '/detail/index/id/'.$id;
             $url = "#";
-            // }
             
             $results[] = array(
                     'id' => $id,
@@ -123,31 +95,20 @@ class Blocks_SearchController extends Blocks_AbstractController
             );
         }
         
-        $output['searchTerms'] = $terms;
+		$output = $params;
+
         $output['results'] = $results;
-        $output['nbResults'] = $nbResults;
-        $output['pager'] = $pager;
-        $output['pageCount'] = $pageCount;
-        $output['pageSize'] = $pageSize;
-        $output['orderBy'] = $orderBy;
-        
-        $output['typeFacets'] = $elasticaFacets['type']['terms'];
-        $output['authorFacets'] = $elasticaFacets['author']['terms'];
-        $output['dateFacets'] = $elasticaFacets['date']['entries'];
-		$output['taxonomyFacets'] = $elasticaFacets['Tags']['terms'];
-        $output['type'] = $type;
-        $output['lang'] = $lang;
-        $output['author'] = $author;
-        $output['date'] = $date;
-		$output['taxonomy'] = $taxonomy;
-        
+        $output['nbresults'] = $nbresults;
+        $output['pagecount'] = $pagecount;
+		$output['facets'] = $elasticaFacets;
+		$output['filters'] = $filters;
+		       
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
                 "blocks/search.html.twig");
         
         $css = array();
         $js = array();
-		//print_r($output);
-		//exit;
+
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
