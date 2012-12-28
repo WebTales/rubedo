@@ -35,7 +35,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-        
         $blockConfig = $this->getRequest()->getParam('block-config');
         $output = array();
         $operatorsArray = array(
@@ -59,6 +58,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     'value' => 'published'
             );
             /* Add filter on taxonomy */
+            
             foreach ($blockConfig['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
                     if ($value['rule'] == "some") {
@@ -66,6 +66,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     } elseif ($value['rule'] == "all") {
                         $taxOperator = '$all';
                     } elseif ($value['rule'] == "someRec") {
+                    	if(count($value['terms'])>0){
                         foreach ($value['terms'] as $child) {
                             $terms = $this->_taxonomyReader->fetchAllChildren(
                                     $child);
@@ -73,14 +74,17 @@ class Blocks_ContentListController extends Blocks_AbstractController
                                 $value['terms'][] = $taxonomyTerms["id"];
                             }
                         }
+			}
                         $taxOperator = '$in';
                     }
                 }
+		if(count($value['terms'])>0){
                 $filterArray[] = array(
                         'operator' => $taxOperator,
                         'property' => 'taxonomy.' . $key,
                         'value' => $value['terms']
                 );
+		}
             }
             /* Add filter on FieldRule */
             foreach ($blockConfig['fieldRules'] as $property => $value) {
@@ -135,7 +139,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 'property' => 'fields.date',
                 'direction' => 'desc'
         );
-        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 12;
+        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, 
                 (($pageData['currentPage'] - 1) * $pageData['limit']), 
@@ -151,12 +155,15 @@ class Blocks_ContentListController extends Blocks_AbstractController
             
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
-            foreach ($typeArray['data'] as $dataType) {
-                $contentTypeArray[(string) $dataType['id']] = "root/blocks/shortsingle/" .
+            foreach ($typeArray['data'] as $dataType) {   	
+            	/*$dataType['type']= htmlentities($dataType['type'], ENT_NOQUOTES, 'utf-8');//Convert spécial chars to htmlentities
+    		$dataType['type']= preg_replace('#&([A-za-z])(?:acute|cedil|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $dataType['type']);//Replace all special char by normal char
+    		$dataType['type']= preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $dataType['type']); // to spécial char e.g. '&oelig;'*/
+                $contentTypeArray[(string) $dataType['id']] = "cnews/blocks/shortsingle/" .
                          preg_replace('#[^a-zA-Z]#', '', $dataType['type']) .
-                         ".html.twig";
+                         ".html.twig";																			
             }
-            
+         
             foreach ($contentArray['data'] as $vignette) {
                 $fields = $vignette['fields'];
                 $fields['title'] = $fields['text'];
@@ -167,7 +174,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             }
             
             $output["data"] = $data;
-            // Zend_Debug::dump($output["data"]);die();
+
             $output["page"] = $pageData;
         }
         
