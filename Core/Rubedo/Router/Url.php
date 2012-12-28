@@ -222,11 +222,35 @@ class Url implements IUrl
      *            Whether or not to reset the route defaults with those
      *            provided
      * @return string Url for the link href attribute.
-     */
+     */ 
     public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
-        $router = \Zend_Controller_Front::getInstance()->getRouter();
-        
-        return $router->assemble($urlOptions, $name, $reset, $encode);
+    $router = \Zend_Controller_Front::getInstance()->getRouter();
+
+    return $router->assemble($urlOptions, $name, $reset, $encode);
     }
-}
+	/**
+	 * Return the url of the single content page of the site if the single page exist
+	 * 
+	 * @param string $contentId
+	 * 	Id of the content to display
+	 * @param string $siteId
+	 * 	Id of the site
+	 * 
+	 * @return string Url
+	 */ 
+    public function displaySingleUrl($contentId, $siteId)
+    {
+    $filterArray['site']=$siteId;
+    $filterArray['text']='single';
+    $page = Manager::getService('Pages')->customFind($filterArray);
+    $page=iterator_to_array($page);
+    $site=Manager::getService('Sites')->findById($siteId);
+    if(count($page)>0){
+    return $site['text']."/single?content-id=".$contentId;
+    }else{
+    return false;
+    }
+
+    }
+    }
