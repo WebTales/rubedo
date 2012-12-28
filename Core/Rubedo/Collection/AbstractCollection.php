@@ -114,6 +114,10 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_dataService->findByName($name);
     }
 
+    public function customFind ($filter = array(), $fieldRule = array()){
+	return $this->_dataService->customFind($filter,$fieldRule);			
+    }
+
     /**
      * Create an objet in the current collection
      *
