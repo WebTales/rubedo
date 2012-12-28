@@ -1,42 +1,34 @@
-{% extends "root/block.html.twig" %}
+{% extends "root/block.html.twig" %} {% block mainContent %}
 
-{% block mainContent %}
+<div class="block clearfix" style="border-bottom:1px solid #E3E3E8; margin-bottom:10px; padding-bottom:2px;">
 
-<div class="block headline">
-	<div class="hero-unit">
-		<h1 class="editable" id="{{ data.id }}_text">{{ data.text|cleanHtml }}</h1>
-		<div class="alignright">
-			{% for term in data.terms %}
-			{% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="label label-warning">{{term}}</span>
-			{% endfor %}
-		</div>
-		<div class="entry-info">
-			{% if data.dateBegin %}
-			{% if data.dateEnd%}
-			Du {{data.dateBegin}} au {{data.dateEnd}}
-			{% else %}
-			A partir du {{data.dateBegin}}
-			{% endif %}
-			{% endif %}
-			{% if data.Location %}
-			{{data.Location}}
-			{% endif %}
-			{% if data.date %}
-			Le {{data.date}}
-			{% endif %}
-		</div>
-		<div style="clear:both;"></div>
-		{% if data.image %}
-		
-		<div class="thumbnail alignright" style="margin-top:2em;">
-			<img src="/image?file-id={{data.image}}" alt="{{data.text}}" title="{{data.text}}"  />
-		</div>
-		{% endif %}
-		<br/>
-		<div class="editable" id="{{ data.id }}_body">
-			{{ data.body|cleanHtml }}
-		</div>
-		<div style="clear:both;"></div>
+<a href="{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':content.id},true) }}"><img alt=""  class="imageLeft" src="/image?file-id={{content.thumbnail}}" style="max-height: 80px;max-width: 80px;"/></a>
+				<header class="entry-header">
+					<h2 class="post-title-small"><a href='{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':content.id},true) }}' title='Actu'>{{content.title}}</a></h2>
+				</header>
+				<div class="entry-content editable"  id="{{ content.id }}_summary">
+					{{content.summary|cleanHtml}}
+				</div>
+				<div class="entry-info">
+					{% if content.dateBegin %}
+					{% if content.dateEnd%}
+					Du {{content.dateBegin}} au {{content.dateEnd}}
+					{% else %}
+					A partir du {{content.dateBegin}}
+					{% endif %}
+					{% endif %}
+					{% if content.Location %}
+					{{content.Location}}
+					{% endif %}
+					{% if content.date %}
+					Le {{content.date}}
+					{% endif %}
+				</div>
+	<div class="btn btn-small pull-right">
+		<a href="/single?content-id={{content.id}}">En savoir plus <span
+			class="icon-forward"></span></a>
 	</div>
+
+
 </div>
 {% endblock %}

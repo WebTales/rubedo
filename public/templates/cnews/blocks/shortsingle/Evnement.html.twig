@@ -1,10 +1,10 @@
-<div class="block headline">
+{% extends "root/block.html.twig" %} {% block mainContent %}
 
-<ul class="w-recentpost">
-			<li style="border-bottom:1px solid #E3E3E8; margin-bottom:10px; padding-bottom:2px;">
-				<a href="/single?content-id={{content.id}}"><img alt=""  class="imageLeft" src="/image?file-id={{content.thumbnail}}" style="max-height: 80px;max-width: 80px;"/></a>
+<div class="block clearfix" style="border-bottom:1px solid #E3E3E8; margin-bottom:10px; padding-bottom:2px;">
+
+<a href="{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':content.id},true) }}"><img alt=""  class="imageLeft" src="/image?file-id={{content.thumbnail}}" style="max-height: 80px;max-width: 80px;"/></a>
 				<header class="entry-header">
-					<h2 class="post-title-small"><a href='/single?content-id={{content.id}}' title='Actu'>{{content.title}}</a></h2>
+					<h2 class="post-title-small"><a href='{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':content.id},true) }}' title='Actu'>{{content.title}}</a></h2>
 				</header>
 				<div class="entry-content editable"  id="{{ content.id }}_summary">
 					{{content.summary|cleanHtml}}
@@ -24,7 +24,11 @@
 					Le {{content.date}}
 					{% endif %}
 				</div>
-			</li>
-		</ul>
-	
+	<div class="btn btn-small pull-right">
+		<a href="/single?content-id={{content.id}}">En savoir plus <span
+			class="icon-forward"></span></a>
+	</div>
+
+
 </div>
+{% endblock %}
