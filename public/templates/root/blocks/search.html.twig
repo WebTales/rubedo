@@ -58,10 +58,10 @@
 {% if filters|length > 0 %}
 <div class="navbar">
 	<div class="navbar-inner">
-		<p class="brand">Termes recherchés :&nbsp;&nbsp;
+		<p class="brand">Critères de recherche :&nbsp;&nbsp;
 
 		{% for name,value in filters %}
-			{% if (name) != '' %}
+			{% if (name) != '' and name != 'Sites' %}
 			<a href="{{url({(name): null})}}" >
 				<span class="badge badge-info"><i class="icon-remove-sign"></i> {{ value }}</span>
 			</a>

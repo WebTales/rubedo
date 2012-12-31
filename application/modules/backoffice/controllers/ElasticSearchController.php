@@ -34,13 +34,15 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		
 		// get params 
 		$params = $this->getRequest()->getParams();
+		$params['site']=null;
 		
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         
         $query->init();
         
         $search = $query->search($params);
-        $elasticaResultSet = $search["resultSet"];	
+        $elasticaResultSet = $search["resultSet"];
+		$filters = $search["filters"];
 		
 		$elasticaResults = $elasticaResultSet->getResults();
 		$elasticaFacets = $elasticaResultSet->getFacets();

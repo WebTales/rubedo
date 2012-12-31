@@ -36,13 +36,8 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $params['pagesize'] = $this->getRequest()->getParam('pagesize', 10);
         
-        // $site = $this->getRequest()->getParam('site');
-        // $siteId = $site['id'];
-        // if($siteId == '50dae42bc1c3da3401000000'){
-        // $params['type']='Blog';
-        // $output['hideType']=true;
-        // }
-        // 50dae42bc1c3da3401000000
+        $site = $this->getRequest()->getParam('site');
+		$params['Sites']=$site['id'];
         
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         $query->init();
