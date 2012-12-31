@@ -12,7 +12,6 @@
  * @license    yet to be written
  * @version    $Id:
  */
-
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractController.php');
@@ -31,27 +30,26 @@ class Blocks_SearchController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-    	
-		// get search parameters
-		$params = $this->getRequest()->getParams();
-		
-		// set pagesize default if not set
-		if (is_null($params['pagesize'])) $params['pagesize'] = 10;
-		              
-        $site = $this->getRequest()->getParam('site');
-        $siteId = $site['id'];
-        if($siteId == '50dae42bc1c3da3401000000'){
-          $type='Blog';
-          $output['hideType']=true;
-        }
-        //50dae42bc1c3da3401000000
-               
+        
+        // get search parameters
+        $params = $this->getRequest()->getParams();
+        
+        $params['pagesize'] = $this->getRequest()->getParam('pagesize', 10);
+        
+        // $site = $this->getRequest()->getParam('site');
+        // $siteId = $site['id'];
+        // if($siteId == '50dae42bc1c3da3401000000'){
+        // $params['type']='Blog';
+        // $output['hideType']=true;
+        // }
+        // 50dae42bc1c3da3401000000
+        
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         $query->init();
         
-		$search = $query->search($params);
+        $search = $query->search($params);
         $elasticaResultSet = $search["resultSet"];
-		$filters = $search["filters"];
+        $filters = $search["filters"];
         
         // Get total hits
         $nbresults = $elasticaResultSet->getTotalHits();
@@ -64,9 +62,8 @@ class Blocks_SearchController extends Blocks_AbstractController
         // Get facets
         $elasticaFacets = $elasticaResultSet->getFacets();
         
-		// Get results
+        // Get results
         $elasticaResults = $elasticaResultSet->getResults();
-        
         $results = array();
         
         foreach ($elasticaResults as $result) {
@@ -84,31 +81,31 @@ class Blocks_SearchController extends Blocks_AbstractController
             $url = "#";
             
             $results[] = array(
-                    'id' => $id,
-                    'url' => $url,
-                    'score' => $score,
-                    'title' => $data['text'],
-                    'summary' => $data['summary'],
-                    'author' => $data['author'],
-                    'type' => $data['contentType'],
-                    'lastUpdateTime' => $data['lastUpdateTime']
+                'id' => $id,
+                'url' => $url,
+                'score' => $score,
+                'title' => $data['text'],
+                'summary' => $data['summary'],
+                'author' => $data['author'],
+                'type' => $data['contentType'],
+                'lastUpdateTime' => $data['lastUpdateTime']
             );
         }
         
-		$output = $params;
-
+        $output = $params;
+        
         $output['results'] = $results;
         $output['nbresults'] = $nbresults;
         $output['pagecount'] = $pagecount;
-		$output['facets'] = $elasticaFacets;
-		$output['filters'] = $filters;
-		       
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-                "blocks/search.html.twig");
+        $output['facets'] = $elasticaFacets;
+        $output['filters'] = $filters;
+        
+
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
         $css = array();
         $js = array();
-
+        
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
