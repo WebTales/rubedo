@@ -179,8 +179,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$vocabulary = $taxonomy['name'];	
 				$elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
 				$elasticaFacetTaxonomy->setField('taxonomy.'.$taxonomy['name']);
-				$elasticaFacetTaxonomy->setSize(10);
-				$elasticaFacetTaxonomy->setOrder('reverse_count');
+				$elasticaFacetTaxonomy->setSize(20);
+				$elasticaFacetTaxonomy->setOrder('count');
 				if ($setFilter) $elasticaFacetTaxonomy->setFilter($globalFilter);
 				// Add that facet to the search query object.
 				$elasticaQuery->addFacet($elasticaFacetTaxonomy);					        

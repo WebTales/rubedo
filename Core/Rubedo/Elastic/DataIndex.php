@@ -68,7 +68,6 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function indexContentType($id, $data, $overwrite=FALSE) {
     	
 		// Unicity type id check
-
 		$mapping = $this->_content_index->getMapping();
 		if (array_key_exists($id,$mapping[self::$_options['contentIndex']])) {
 			if ($overwrite) {
@@ -79,7 +78,14 @@ class DataIndex extends DataAbstract implements IDataIndex
 				throw new \Exception("$id type already exists");
 			}
 		}
-
+		
+		// Get vocabularies for current content type
+		$vocabularies=array();
+		foreach($data['vocabularies'] as $vocabularyId) {
+			$vocabulary = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
+			$vocabularies[] = $vocabulary['name'];
+		}
+		
 		// Create mapping
 		$indexMapping = array();
 		
@@ -151,7 +157,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["taxonomy.Tags"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
+		foreach($vocabularies as $vocabularyName) {
+			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
+		}
 		
 		// If there is no searchable field, the new type is not created
 		if (!empty($indexMapping)) {
@@ -199,7 +207,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 	            $space = "workspace";
 	     }
             
-            // retrieve type id and content data if null
+        // retrieve type id and content data if null
         $data = \Rubedo\Services\Manager::getService('Contents')->findById($id);
         $typeId = $data['typeId'];
 		
@@ -253,8 +261,18 @@ class DataIndex extends DataAbstract implements IDataIndex
                 foreach ($data[$space]["taxonomy"] as $vocabulary => $terms) {
 					$collection = \Rubedo\Services\Manager::getService('MongoDataAccess');
 					$collection->init("Taxonomy");
-					$taxonomy = $collection->findById($vocabulary);				
-                    foreach ($terms as $term) $contentData['taxonomy'][$taxonomy['name']][] = $tt->getTerm($term);
+					$taxonomy = $collection->findById($vocabulary);
+					$termsArray = array();				
+                    foreach ($terms as $term) {
+                    	$term = $tt->findById($term);
+						$termsArray = $tt->getAncestors($term);
+						$termsArray[] = $term;
+						$tmp = array();
+						foreach ($termsArray as $tempTerm) {
+							$contentData['taxonomy'][$taxonomy['name']][] = $tempTerm['text'];
+						}
+                    	
+					}
                 }
          }
 
