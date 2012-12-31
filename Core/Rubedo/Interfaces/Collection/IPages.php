@@ -26,4 +26,15 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface IPages extends IAbstractCollection{
 	
+	
+/**
+ * find a page by name and siteID
+ * 
+ * @param string $name Name of the page
+ * @param string $siteId Site Id
+ * 
+ * @return array
+ * 
+ */
+		public function findByNameAndSite($name,$siteId);
 }
