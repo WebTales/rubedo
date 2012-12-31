@@ -37,13 +37,7 @@ class Backoffice_FoThemesController extends Zend_Controller_Action
      *
      * @var bool
      */
-    protected $_prettyJson = true;
-
-	/**
-	 * Array with the read only actions
-	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree');
-	
+    protected $_prettyJson = true;	
 
     /**
      * Set the response body with Json content
