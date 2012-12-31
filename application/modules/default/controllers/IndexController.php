@@ -235,6 +235,13 @@ class IndexController extends Zend_Controller_Action
         $params = array();
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
+        $params['blockId'] = $block['id'];
+        $params['prefix'] = isset($block['urlPrefix'])?$block['urlPrefix']:$block['id'];
+        $blockQueryParams = $this->getRequest()->getParam($params['prefix'],array());
+        foreach ($blockQueryParams as $key => $value){
+            $params[$key]= $value;
+        }
+        
         switch ($block['bType']) {
             case 'Bloc de navigation':
                 $controller = 'nav-bar';
