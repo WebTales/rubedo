@@ -5,7 +5,7 @@
 
 
 	<h2 class="post-title-small">
-		<a href='/single?content-id={{content.id}}' title='Actu'>{{content.title}}</a>
+		<a href='{{ displaySingleUrl(content.id) }}' title='Actu'>{{content.title}}</a>
 	</h2>
 	
 	
@@ -14,7 +14,7 @@
 	</div>
 	{% if content.image %} 
 	<div class="pull-left thumbnail" style="margin:1em;">
-    	<a href="/single?content-id={{content.id}}"><img
+    	<a href="{{ displaySingleUrl(content.id) }}"><img
     		alt="" class="imageLeft" src="/image?file-id={{content.image}}"
     		style="max-height: 80px; max-width: 80px;" /></a> 
 	</div>
@@ -22,7 +22,7 @@
 	<div class="editable" id="{{ content.id }}_summary">
 		{{content.summary|cleanHtml}}</div>
 	<div class="btn btn-small pull-right">
-		<a href="/single?content-id={{content.id}}">Lire la suite <span
+		<a href="{{ displaySingleUrl(content.id) }}">Lire la suite <span
 			class="icon-forward"></span></a>
 	</div>
 
