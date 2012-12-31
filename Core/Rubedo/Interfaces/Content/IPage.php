@@ -74,4 +74,17 @@ Interface IPage
      */
     public function getPageTitle();
 
-}
+     /**
+     * get the Current site
+     *
+     * @return string current site id
+     */
+    public function getCurrentSite();
+
+    /**
+    * set the current site
+    *
+    * @param string $siteId site id
+    */
+    public function setCurrentSite($siteId);
+    }
