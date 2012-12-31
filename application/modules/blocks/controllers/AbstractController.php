@@ -12,10 +12,9 @@
  * @license    yet to be written
  * @version    $Id:
  */
-
 Use Rubedo\Services\Manager;
+
 /**
- *
  *
  * @author jbourdin
  * @category Rubedo
@@ -27,16 +26,19 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction() {
-
+    public function indexAction ()
+    {
         $this->_sendResponse($output, $template, $css, $js);
     }
 
-    protected function _sendResponse($output, $template, array $css = null, array $js = null) {
+    protected function _sendResponse ($output, $template, array $css = null, array $js = null)
+    {
+        $output['lang'] = Manager::getService('Session')->get('lang', 'fr');
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
-        $this->_servicePage     = Manager::getService('PageContent');
+        $this->_servicePage = Manager::getService('PageContent');
         
         if ($this->getResponse() instanceof \Rubedo\Controller\Response) {
+            
             $this->getHelper('Layout')->disableLayout();
             $this->getHelper('ViewRenderer')->setNoRender();
             $this->getResponse()->setBody($output, 'content');
@@ -52,9 +54,6 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
                 }
             }
         } else {
-            
-            $session = Rubedo\Services\Manager::getService('Session');
-            $lang = $session->get('lang', 'fr');
             $content = $this->_serviceTemplate->render($template, $output);
             if (is_array($css)) {
                 foreach ($css as $value) {
@@ -66,11 +65,10 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
                     $this->view->headScript()->appendFile($value);
                 }
             }
-
+            
             $this->getHelper('ViewRenderer')->setNoRender();
-
+            
             $this->getResponse()->appendBody($content, 'default');
         }
     }
-
 }

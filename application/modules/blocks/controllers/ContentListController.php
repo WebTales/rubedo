@@ -156,12 +156,12 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
             foreach ($typeArray['data'] as $dataType) {   	
-            	/*$dataType['type']= htmlentities($dataType['type'], ENT_NOQUOTES, 'utf-8');//Convert spécial chars to htmlentities
+            	/*$dataType['type']= htmlentities($dataType['type'], ENT_NOQUOTES, 'utf-8');//Convert special chars to htmlentities
     		$dataType['type']= preg_replace('#&([A-za-z])(?:acute|cedil|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $dataType['type']);//Replace all special char by normal char
-    		$dataType['type']= preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $dataType['type']); // to spécial char e.g. '&oelig;'*/
-                $contentTypeArray[(string) $dataType['id']] = "cnews/blocks/shortsingle/" .
+    		$dataType['type']= preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $dataType['type']); // to special char e.g. '&oelig;'*/
+                $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" .
                          preg_replace('#[^a-zA-Z]#', '', $dataType['type']) .
-                         ".html.twig";																			
+                         ".html.twig");																			
             }
          
             foreach ($contentArray['data'] as $vignette) {
