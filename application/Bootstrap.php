@@ -80,6 +80,17 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	/**
 	 * Load services parameter from application.ini to the service manager
 	 */
+	protected function _initSites() {
+	    $options = $this->getOption('site');
+	    if(isset($options['overide'])) {
+	        Rubedo\Collection\Sites::setOverride($options['overide']);
+	    }
+	
+	}
+	
+	/**
+	 * Load services parameter from application.ini to the service manager
+	 */
 	protected function _initExtjs() {
 	    $options = $this->getOption('backoffice');
 	    if(!isset($options['extjs'])) {
