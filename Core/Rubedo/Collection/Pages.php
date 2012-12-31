@@ -60,6 +60,12 @@ class Pages extends AbstractCollection implements IPages
         Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$safe);
         return $returnValue;
     }
+	
+	public function findByNameAndSite($name,$siteId){
+		$filterArray['site'] = $siteId;
+        $filterArray['text'] = $name;
+		return $this->_dataService->findOne($filterArray);
+	}
 
 	
 	
