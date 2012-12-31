@@ -100,6 +100,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $output['facets'] = $elasticaFacets;
         $output['filters'] = $filters;
         
+
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
         $css = array();
