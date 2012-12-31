@@ -8,7 +8,7 @@
 	<div id="sliders" class="nivoSlider span12" style="margin-bottom: 0px;">
 
 		{% for slide in items %} 
-		<a href="{{ displaySingleUrl(content.id) }}" title="Standart post">
+		<a href="{{ displaySingleUrl(slide.id) }}" title="Standart post">
 			<img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{slide.id}}" data-thumb="/image?file-id={{slide.thumbnail}}" />
 		</a> 
 		{% endfor %}
@@ -17,7 +17,7 @@
 
 	{% for slide in items %}
 	<div class="nivo-html-caption" id="htmlcaption_{{slide.id}}">
-		<a href="{{ displaySingleUrl(content.id) }}" title="{{slide.text}}">
+		<a href="{{ displaySingleUrl(slide.id) }}" title="{{slide.text}}">
 			<h1>{{slide.text}}</h1>
 			<p>{{slide.summary}}</p>
 		</a>
