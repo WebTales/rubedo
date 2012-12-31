@@ -14,17 +14,17 @@
 			<ul>
 				{% if page.currentPage != 1%}
 				<li>
-					<a href="{{url({'page': page.currentPage-1},true)}}"><<</a>
+					<a href="{{url({'page': page.currentPage-1,'prefix':prefix},true)}}"><<</a>
 				</li>
 				{%endif%}
 				{% for  i in 1..page.limitPage %}
 				<li {% if page.currentPage == i%}class="active"{%endif%}>
-					<a href="{{url({'page': i},true)}}">{{i}}</a>
+					<a href="{{url({'page': i,'prefix':prefix},true)}}">{{i}}</a>
 				</li>
 				{%endfor%}
 				{% if page.currentPage != page.limitPage %}
 				<li>
-					<a href="{{url({'page': page.currentPage+1},true)}}">>></a>
+					<a href="{{url({'page': page.currentPage+1,'prefix':prefix},true)}}">>></a>
 				</li>
 				{%endif%}
 			</ul>

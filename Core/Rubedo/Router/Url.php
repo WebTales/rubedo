@@ -168,11 +168,23 @@ class Url implements IUrl
         $url = $this->getPageUrl($data['pageId']);
         unset($data['pageId']);
         $queryStringArray = array();
+        
+        if(isset($data['prefix'])){
+            
+            $prefix = $data['prefix'];
+            unset($data['prefix']);
+        }else{
+            $prefix = '';
+        }
 
         foreach ($data as $key => $value) {
             if (in_array($key, array('controller', 'action'))) {
                 continue;
             }
+            if($prefix){
+                $key = $prefix.'['.$key.']';
+            }
+            
             $key = ($encode) ? urlencode($key) : $key;
             if (is_array($value)) {
                 foreach ($value as $arrayValue) {
