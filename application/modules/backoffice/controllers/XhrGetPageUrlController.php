@@ -12,7 +12,6 @@
  * @license    yet to be written
  * @version    $Id:
  */
-
 use Rubedo\Services\Manager;
 
 /**
@@ -33,16 +32,14 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
         }
         $page = Manager::getService('Pages')->findById($pageId);
         if (! $page) {
-            throw new Zend_Controller_Exception(
-                    'the page-id doesn\'t match a page');
+            throw new Zend_Controller_Exception('the page-id doesn\'t match a page');
         }
         $pageUrl = Manager::getService('Url')->getPageUrl($pageId);
-        $site = Manager::getService('Sites')->findById($page['site']);
         
-        $url = 'http://' . $site['text'] . $pageUrl;
+        $url = 'http://' . Manager::getService('Sites')->getHost($page['site']) . '/' . $pageUrl;
         
         $returnArray = array(
-                'url' => $url
+            'url' => $url
         );
         
         $this->_helper->json($returnArray);
