@@ -24,6 +24,23 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface ISites extends IAbstractCollection{
-	
+interface ISites extends IAbstractCollection
+{
+
+    /**
+     * Return the host name of a site, given the ID or Site Array
+     * 
+     * @param string|array $site
+     *            site Array or Site ID
+     * @return string hostName
+     */
+    public function getHost ($site);
+
+    /**
+     * Return site matching host part of the URL
+     * 
+     * @param string $host            
+     * @return array site data
+     */
+    public function findByHost ($host);
 }
