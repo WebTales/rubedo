@@ -35,8 +35,52 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-        $blockConfig = $this->getRequest()->getParam('block-config');
-        $output = array();
+		$blockConfig = $this->getRequest()->getParam('block-config');
+		$contentArray=$this->getDataList($blockConfig,$this->setPaginationValues($blockConfig));      
+      	
+        $nbItems = $contentArray["count"];
+        if ($nbItems > 0) {
+            $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
+            $contentArray['page']['limitPage'] = min(array(
+                    $contentArray['page']['nbPages'],
+                    3
+            ));
+            $typeArray = $this->_typeReader->getList();
+            $contentTypeArray = array();
+            foreach ($typeArray['data'] as $dataType) {   	
+            	/*$dataType['type']= htmlentities($dataType['type'], ENT_NOQUOTES, 'utf-8');//Convert special chars to htmlentities
+    		$dataType['type']= preg_replace('#&([A-za-z])(?:acute|cedil|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $dataType['type']);//Replace all special char by normal char
+    		$dataType['type']= preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $dataType['type']); // to special char e.g. '&oelig;'*/
+                $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" .
+                         preg_replace('#[^a-zA-Z]#', '', $dataType['type']) .
+                         ".html.twig");																			
+            }
+            foreach ($contentArray['data'] as $vignette) {
+                $fields = $vignette['fields'];
+                $fields['title'] = $fields['text'];
+                unset($fields['text']);
+                $fields['id'] = (string) $vignette['id'];
+                $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
+                $data[] = $fields;
+            }
+            $output["data"] = $data;
+			$output['prefix']=$this->getRequest()->getParam('prefix');
+            $output["page"] = $contentArray['page'];
+        }
+        if (isset($blockConfig['displayType'])) {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/contentlist.html.twig");
+        }
+        $css = array();
+        $js = array();
+        $this->_sendResponse($output, $template, $css, $js);
+    }
+
+	protected function getDataList($blockConfig,$pageData)
+	{
         $operatorsArray = array(
                 '$lt' => '<',
                 '$lte' => '<=',
@@ -58,7 +102,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     'value' => 'published'
             );
             /* Add filter on taxonomy */
-            
             foreach ($blockConfig['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
                     if ($value['rule'] == "some") {
@@ -163,61 +206,23 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     'value' => 'published'
             );
         }
-        
-        $sort = array();
+		$sort = array();
         $sort[] = array(
                 'property' => 'fields.date',
                 'direction' => 'desc'
         );
-        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
-        $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
+		/*Get the list*/
         $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, 
                 (($pageData['currentPage'] - 1) * $pageData['limit']), 
                 $pageData['limit']);
-        
-        $nbItems = $contentArray["count"];
-        if ($nbItems > 0) {
-            $pageData['nbPages'] = (int) ceil(($nbItems) / $pageData['limit']);
-            $pageData['limitPage'] = min(array(
-                    $pageData['nbPages'],
-                    3
-            ));
-            
-            $typeArray = $this->_typeReader->getList();
-            $contentTypeArray = array();
-            foreach ($typeArray['data'] as $dataType) {   	
-            	/*$dataType['type']= htmlentities($dataType['type'], ENT_NOQUOTES, 'utf-8');//Convert special chars to htmlentities
-    		$dataType['type']= preg_replace('#&([A-za-z])(?:acute|cedil|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $dataType['type']);//Replace all special char by normal char
-    		$dataType['type']= preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $dataType['type']); // to special char e.g. '&oelig;'*/
-                $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" .
-                         preg_replace('#[^a-zA-Z]#', '', $dataType['type']) .
-                         ".html.twig");																			
-            }
-         
-            foreach ($contentArray['data'] as $vignette) {
-                $fields = $vignette['fields'];
-                $fields['title'] = $fields['text'];
-                unset($fields['text']);
-                $fields['id'] = (string) $vignette['id'];
-                $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
-                $data[] = $fields;
-            }
-            
-            $output["data"] = $data;
+		$contentArray['page']=$pageData;
+		return $contentArray;
+	}
 
-            $output["page"] = $pageData;
-        }
-        
-        if (isset($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-                    "blocks/" . $blockConfig['displayType'] . ".html.twig");
-        } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-                    "blocks/contentlist.html.twig");
-        }
-        
-        $css = array();
-        $js = array();
-        $this->_sendResponse($output, $template, $css, $js);
-    }
+	protected function setPaginationValues($blockConfig)
+	{
+		$pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
+    	$pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
+		return $pageData;
+	}
 }
