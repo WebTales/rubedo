@@ -137,7 +137,7 @@
 				<p>{{ result.summary }}</p>
 				{% endif %}
 				<br />
-				{{"published_by"|trans}} <a href="#">{{ result.author }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.author }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
 			{% endfor %}
 		</table>
