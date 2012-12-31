@@ -645,6 +645,45 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($writtenItem, $readItem);
         $this->assertEquals($readItem['name'], $name . ' updated');
     }
+    
+    /**
+     * Test of the update feature with partial update (some field aren't send for update
+     *
+     * Create an item with phactory
+     * Update it with the service
+     * Read it again with phactory
+     * Check if the version add been incremented
+     */
+    public function testPartialUpdate() {
+        $version = rand(1, 25);
+        $item = static::$phactory->create('item', array('version' => $version,'another field'=>'another value'));
+        unset($item['another field']);
+        $itemId = (string)$item['_id'];
+        $name = $item['name'];
+    
+        $item['id'] = $itemId;
+        unset($item['_id']);
+        $item['name'] .= ' updated';
+    
+        //actual begin of the application run
+        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+    
+        $updateArray = $dataAccessObject->update($item, true);
+        //end of application run
+    
+        $this->assertTrue($updateArray["success"]);
+        $writtenItem = $updateArray["data"];
+    
+        $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
+        $this->assertEquals(1, count($readItems));
+        $readItem = array_pop($readItems);
+        $readItem['id'] = (string)$readItem['_id'];
+        unset($readItem['_id']);
+    
+        $this->assertEquals($writtenItem, $readItem);
+        $this->assertEquals($readItem['name'], $name . ' updated');
+    }
 
     /**
      * Test of the update feature
