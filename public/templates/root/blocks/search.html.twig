@@ -1,30 +1,30 @@
 <br />
 <div class="navbar">
 	<div class="navbar-inner">
-		<a class="brand">{% if nbResults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ nbResults }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
+		<a class="brand">{% if nbresults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ nbresults }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
 		<ul class="nav pull-right">
 			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if orderBy == "_score" %}
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if orderby == "_score" or orderby == "" %}
 				{{"order_by_relevance"|trans}}
 				{% endif %}
-				{% if orderBy == "lastUpdateTime" %}
+				{% if orderby == "lastUpdateTime" %}
 				{{"order_by_date"|trans}}
 				{% endif %}
-				{% if orderBy == "author" %}
+				{% if orderby == "author" %}
 				{{"order_by_author"|trans}}
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
-					{% if orderBy != "_score" %}
+					{% if orderby != "_score" %}
 					<li>
 						<a href="{{url({'orderby': '_score'})}}">{{"order_by_relevance"|trans}}</a>
 					</li>
 					{% endif %}
-					{% if orderBy != "lastUpdateTime" %}
+					{% if orderby != "lastUpdateTime" %}
 					<li>
 						<a href="{{url({'orderby': 'lastUpdateTime'})}}">{{"order_by_date"|trans}}</a>
 					</li>
 					{% endif %}
-					{% if orderBy != "author" %}
+					{% if orderby != "author" %}
 					<li>
 						<a href="{{url({'orderby': 'author'})}}">{{"order_by_author"|trans}}</a>
 					</li>
@@ -32,10 +32,10 @@
 				</ul>
 			</li>
 			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if pageSize=="all" %}
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if pagesize=="all" %}
 				{{"all_on_one_page"|trans}}
 				{% else %}
-				{{ pageSize }} {{"by_page"|trans}}
+				{{ pagesize }} {{"by_page"|trans}}
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
 					<li>
@@ -55,84 +55,68 @@
 		</ul>
 	</div>
 </div>
+{% if filters|length > 0 %}
+<div class="navbar">
+	<div class="navbar-inner">
+		<p class="brand">Termes recherchés :&nbsp;&nbsp;
+
+		{% for name,value in filters %}
+			{% if (name) != '' %}
+			<a href="{{url({(name): null})}}" >
+				<span class="badge badge-info"><i class="icon-remove-sign"></i> {{ value }}</span>
+			</a>
+			{% endif %}
+		{% endfor %}
+		</p>
+	</div>
+</div>
+{% endif %}
 <div class="row-fluid">
 	<div class="span3 well well-large">
 		<p>
 			<i class="icon-search"></i> {{"full_text_search"|trans}}
 		</p>
 			<form class="form-search" action="{{url({},true)}}">
-				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ searchTerms }}" placeholder="{{"search"|trans}}">
+				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
 			</form>
-		{% if not hideType %}
-		<p>
-			<i class="icon-file"></i> {{"content_type"|trans}}
-		</p>
 		
-		{% if (type == '') %}
-		<ul>
-			{% for facet in typeFacets %}
-			<li>
-				<a href="{{url({'type': facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
-			</li>
-			{% endfor %}
-		</ul>
-		{% else %}
-		<p style="padding-left: 20px">
-			{{type}} <a href="{{url({'type': null})}}"><i class="icon-remove-sign"></i></a>
-		</p>
-		{% endif %}
-		{% endif %}
-		<p>
-			<i class="icon-user"></i> {{"author"|trans}}
-		</p>
-		{% if (author == '') %}
-		<ul>
-			{% for facet in authorFacets %}
-			<li>
-				<a href="{{url({'author': facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
-			</li>
-			{% endfor %}
-		</ul>
-		{% else %}
-		<p style="padding-left: 20px">
-			{{author}} <a href="{{url({'author': null})}}"><i class="icon-remove-sign"></i></a>
-		</p>
-		{% endif %}
-		<p>
-			<i class="icon-tags"></i> {{"Tags"|trans}}
-		</p>
-		{% if (taxonomy == '') %}
-		<ul>
-			{% for facet in taxonomyFacets %}
-			<li>
-				<a href="{{url({'taxonomy': facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
-			</li>
-			{% endfor %}
-		</ul>
-		{% else %}
-		<p style="padding-left: 20px">
-			{{taxonomy}} <a href="{{url({'taxonomy': null})}}"><i class="icon-remove-sign"></i></a>
-		</p>
-		{% endif %}
-		<p>
-			<i class="icon-calendar"></i> {{"date"|trans}}
-		</p>
-		{% if (date == '') %}
-		<ul>
-			{% for facet in dateFacets %}
-			<li>
-				<a href="{{url({'date': facet.term})}}">{{ (facet.time/1000)|date("Y") }} ({{ facet.count }})</a>
-			</li>
-			{% endfor %}
-		</ul>
-		{% else %}
-		<p style="padding-left: 20px">
-			{{ (date/1000)|date("Y") }} <a href="{{url({'date': null})}}"><i class="icon-remove-sign"></i></a>
-		</p>
-		{% endif %}
+		{% for name,value in facets %}
+		
+			{% if facets[name]['terms']|length > 1 %}
+			
+			{% if name == 'type' %}
+			<p>
+				<i class="icon-file"></i> {{"content_type"|trans}}
+			</p>		
+			{% elseif name == 'author' %}
+			<p>
+				<i class="icon-user"></i> {{"author"|trans}}
+			</p>		
+			{% elseif name == 'date' %}
+			<p>
+				<i class="icon-calendar"></i> {{"date"|trans}}
+			</p>	
+			{% else %}
+			<p>
+				<i class="icon-tags"></i> {{name|trans}}
+			</p>			
+			{% endif %}	
+	
+			<ul>
+				{% for facet in facets[name]['terms'] %}
+				<li>
+					<a href="{{url({(name) : facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
+				</li>
+				{% endfor %}
+			</ul>
+			
+			{% endif %}
+		
+		{% endfor %}
+		
 	</div>
 	<div class="span9">
-		{% if nbResults == 0 %}
+		{% if nbresults == 0 %}
 		<div class="alert alert-error">
 			{{"no_result"|trans}}
 		</div>
@@ -157,11 +141,11 @@
 			</tr>
 			{% endfor %}
 		</table>
-		{% if pageCount > 1 %}
+		{% if pagecount > 1 %}
 		<div class="pagination pagination-centered">
 			<ul>
 				<li class="disabled">
-					<a href="#">Page {{ pager+1 }} {{"on"|trans}} {{ pageCount }}</a>
+					<a href="#">Page {{ pager+1 }} {{"on"|trans}} {{ pagecount }}</a>
 				</li>
 				{% if pager==0 %}
 				<li class="disabled">
@@ -172,12 +156,12 @@
 					<a href="{{url({'pager': pager-1})}}"><<</a>
 				</li>
 				{% endif %}
-				{% for i in range(0, pageCount-1) %}
+				{% for i in range(0, pagecount-1) %}
 				<li {% if pager==i %}class="disabled"{% endif %}>
 					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
 				</li>
 				{% endfor %}
-				{% if pager==pageCount-1 %}
+				{% if pager==pagecount-1 %}
 				<li class="disabled">
 					<a href="#">>></a>
 				</li>
