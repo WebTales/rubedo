@@ -91,6 +91,7 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
         $this->_twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml',array('is_safe' => array('html'))));
         
         $this->_twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
+	    $this->_twig->addFunction('displaySingleUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displaySingleUrl'));
     }
 
     /**
@@ -170,6 +171,10 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
     
     public static function url(array $urlOptions = array(), $reset = false, $encode = true){
         return Manager::getService('Url')->url($urlOptions,null, $reset, $encode);
+    }
+				
+    public static function displaySingleUrl($contentId,$siteId=null){
+	return Manager::getService('Url')->displaySingleUrl($contentId,$siteId);
     }
 
 }
