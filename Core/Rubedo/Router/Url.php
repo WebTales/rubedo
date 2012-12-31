@@ -48,39 +48,37 @@ class Url implements IUrl
      *            requested URL
      * @return string int
      */
-    public function getPageId ($url, $host)
-    {    
-        if (false !== strpos($url,'?')) {
-            
-            list ($url, $querystring) = explode('?', $url);
+    public function getPageId($url, $host) {
+        if (false !== strpos($url, '?')) {
+
+            list($url, $querystring) = explode('?', $url);
         }
 
-        
         $site = Manager::getService('Sites')->findByHost($host);
         if (null == $site) {
             $siteArray = Manager::getService('Sites')->getList();
             $site = current($siteArray['data']);
         }
-        
+
         $siteId = $site['id'];
         unset($site);
         $cachedUrl = Manager::getService('UrlCache')->findByUrl($url, $siteId);
         if (self::$_useCache && null != $cachedUrl) {
             return $cachedUrl['pageId'];
         }
-        
+
         $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
         $lastMatchedNode = 'root';
         if (empty($urlSegments[0])) {
             $matchedNode = Manager::getService('Pages')->matchSegment('accueil', $lastMatchedNode, $siteId);
-            if($matchedNode){
+            if ($matchedNode) {
                 return $matchedNode['id'];
             }
         }
-        
+
         $nbSegments = count($urlSegments);
         $nbMatched = 0;
-        
+
         foreach ($urlSegments as $value) {
             $matchedNode = Manager::getService('Pages')->matchSegment($value, $lastMatchedNode, $siteId);
             if (null === $matchedNode) {
@@ -88,32 +86,27 @@ class Url implements IUrl
             } else {
                 $lastMatchedNode = $matchedNode['id'];
             }
-            $nbMatched ++;
+            $nbMatched++;
         }
-        
+
         if ($nbMatched == 0) {
             return null;
         }
-        
+
         if ($nbSegments > $nbMatched) {
             $partial = true;
         } else {
             $partial = false;
-            $urlToCache = array(
-                'pageId' => $lastMatchedNode,
-                'url' => $url,
-                'siteId' => $siteId
-            );
+            $urlToCache = array('pageId' => $lastMatchedNode, 'url' => $url, 'siteId' => $siteId);
             if (self::$_useCache) {
                 Manager::getService('UrlCache')->create($urlToCache);
             }
         }
-        
+
         return $lastMatchedNode;
     }
 
-    public function disableNavigation ()
-    {
+    public function disableNavigation() {
         self::$_disableNav = true;
     }
 
@@ -121,41 +114,36 @@ class Url implements IUrl
      * (non-PHPdoc)
      * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
      */
-    public function getPageUrl ($pageId)
-    {
+    public function getPageUrl($pageId) {
         $cachedUrl = Manager::getService('UrlCache')->findByPageId($pageId);
         if (!self::$_useCache || null === $cachedUrl) {
             $url = '';
             $page = Manager::getService('Pages')->findById($pageId);
-            
-            if (! isset($page['text'])) {
+
+            if (!isset($page['text'])) {
                 throw new \Zend_Controller_Router_Exception('no page found');
             }
-            
-            if (! ctype_alpha($page['text'])) {
+
+            if (!ctype_alpha($page['text'])) {
                 throw new \Zend_Controller_Router_Exception('page name should be alphanum');
             }
-            
+
             $siteId = $page['site'];
-            
+
             $rootline = Manager::getService('Pages')->getAncestors($page);
-            
+
             foreach ($rootline as $value) {
                 $url .= self::URI_DELIMITER;
                 $url .= $value['text'];
             }
-            
+
             $url .= self::URI_DELIMITER;
             $url .= $page['text'];
-            $urlToCache = array(
-                'pageId' => $pageId,
-                'url' => $url,
-                'siteId' => $siteId
-            );
+            $urlToCache = array('pageId' => $pageId, 'url' => $url, 'siteId' => $siteId);
             if (self::$_useCache) {
                 Manager::getService('UrlCache')->create($urlToCache);
             }
-            
+
             return $url;
         } else {
             return $cachedUrl['url'];
@@ -166,27 +154,23 @@ class Url implements IUrl
      * (non-PHPdoc)
      * @see \Rubedo\Interfaces\Router\IUrl::getUrl()
      */
-    public function getUrl ($data, $encode = false)
-    {
+    public function getUrl($data, $encode = false) {
         if (self::$_disableNav) {
             $currentUri = \Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-            
+
             return trim($currentUri . '#', self::URI_DELIMITER);
         }
-        
-        if (! isset($data['pageId'])) {
+
+        if (!isset($data['pageId'])) {
             throw new \Zend_Controller_Router_Exception('no page given');
         }
-        
+
         $url = $this->getPageUrl($data['pageId']);
         unset($data['pageId']);
         $queryStringArray = array();
-        
+
         foreach ($data as $key => $value) {
-            if (in_array($key, array(
-                'controller',
-                'action'
-            ))) {
+            if (in_array($key, array('controller', 'action'))) {
                 continue;
             }
             $key = ($encode) ? urlencode($key) : $key;
@@ -204,7 +188,7 @@ class Url implements IUrl
         if (count($queryStringArray) > 0) {
             $url .= '?' . implode(self::PARAM_DELIMITER, $queryStringArray);
         }
-        
+
         return ltrim($url, self::URI_DELIMITER);
     }
 
@@ -222,35 +206,46 @@ class Url implements IUrl
      *            Whether or not to reset the route defaults with those
      *            provided
      * @return string Url for the link href attribute.
-     */ 
-    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true)
-    {
-    $router = \Zend_Controller_Front::getInstance()->getRouter();
+     */
+    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true) {
+        $router = \Zend_Controller_Front::getInstance()->getRouter();
 
-    return $router->assemble($urlOptions, $name, $reset, $encode);
-    }
-	/**
-	 * Return the url of the single content page of the site if the single page exist
-	 * 
-	 * @param string $contentId
-	 * 	Id of the content to display
-	 * @param string $siteId
-	 * 	Id of the site
-	 * 
-	 * @return string Url
-	 */ 
-    public function displaySingleUrl($contentId, $siteId)
-    {
-    $filterArray['site']=$siteId;
-    $filterArray['text']='single';
-    $page = Manager::getService('Pages')->customFind($filterArray);
-    $page=iterator_to_array($page);
-    $site=Manager::getService('Sites')->findById($siteId);
-    if(count($page)>0){
-    return $site['text']."/single?content-id=".$contentId;
-    }else{
-    return false;
+        return $router->assemble($urlOptions, $name, $reset, $encode);
     }
 
+    /**
+     * Return the url of the single content page of the site if the single page exist
+     *
+     * @param string $contentId
+     * 	Id of the content to display
+     * @param string $siteId
+     * 	Id of the site
+     *
+     * @return string Url
+     */
+    public function displaySingleUrl($contentId, $siteId = null) {
+        if ($siteId === null) {
+            $doNotAddSite = true;
+            $siteId = Manager::getService('PageContent')->getCurrentSite();
+        } else {
+            $doNotAddSite = false;
+        }
+        $page = Manager::getService('Pages')->findByNameAndSite('single', $siteId);
+
+        if ($page) {
+            $data = array('pageId' => $page['id'], 'content-id' => $contentId);
+            $pageUrl = $this->getUrl($data);
+            $site = Manager::getService('Sites')->findById($siteId);
+            if ($doNotAddSite) {
+                return $pageUrl;
+            } else {
+
+                return 'http://' . $site['text'] . $pageUrl;
+            }
+        } else {
+            return '#';
+        }
+
     }
-    }
+
+}
