@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -49,13 +49,18 @@ class Page implements  IPage
      */
     protected static $_title = '';
 
+    /**
+     * Current Site
+     *
+     * @var string
+     */
+    protected static $_currentSite = '';
 
     /**
      * append a css file to the file list
      * @param string $cssFile URL of the CSS added
      */
-    public function appendCss($cssFile)
-    {
+    public function appendCss($cssFile) {
         if (!in_array($cssFile, self::$_css)) {
             self::$_css[] = $cssFile;
         }
@@ -64,8 +69,7 @@ class Page implements  IPage
     /**
      * clear the included css files list
      */
-    public function clearCss()
-    {
+    public function clearCss() {
         self::$_css = array();
     }
 
@@ -73,8 +77,7 @@ class Page implements  IPage
      * Return the list of css files
      * @return array list of URL
      */
-    public function getCss()
-    {
+    public function getCss() {
         return self::$_css;
     }
 
@@ -82,8 +85,7 @@ class Page implements  IPage
      * append a js file to the file list
      * @param string $jsFile URL of the js added
      */
-    public function appendJs($jsFile)
-    {
+    public function appendJs($jsFile) {
         if (!in_array($jsFile, self::$_js)) {
             self::$_js[] = $jsFile;
         }
@@ -92,8 +94,7 @@ class Page implements  IPage
     /**
      * clear the included js files list
      */
-    public function clearJs()
-    {
+    public function clearJs() {
         self::$_js = array();
     }
 
@@ -101,8 +102,7 @@ class Page implements  IPage
      * Return the list of js files
      * @return array list of URL
      */
-    public function getJs()
-    {
+    public function getJs() {
         return self::$_js;
     }
 
@@ -111,8 +111,7 @@ class Page implements  IPage
      *
      * @param string $pageTitle page title
      */
-    public function setPageTitle($pageTitle)
-    {
+    public function setPageTitle($pageTitle) {
         self::$_title = $pageTitle;
     }
 
@@ -121,9 +120,26 @@ class Page implements  IPage
      *
      * @return string page title
      */
-    public function getPageTitle()
-    {
+    public function getPageTitle() {
         return self::$_title;
+    }
+
+    /**
+     * get the current site
+     *
+     * @return string current site
+     */
+    public function getCurrentSite() {
+        return self::$_currentSite;
+    }
+
+    /**
+     * set the current site
+     *
+     * @param string $siteId current site
+     */
+    public function setCurrentSite($siteId) {
+        self::$_currentSite = $siteId;
     }
 
 }
