@@ -95,12 +95,42 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 } elseif ($property == "lastUpdateDate") {
                     $property = "lastUpdateTime";
                 }
+				$nextDate = new DateTime($value['value']);
+				$nextDate->add(new DateInterval('PT23H59M59S'));
+				$nextDate=(array)$nextDate;
+				if($ruleOperator==='eq')
+				{
+					$filterArray[] = array(
+                        'operator' => '$gt',
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp(
+                                $value['value']));
+					$filterArray[] = array(
+                        'operator' => '$lt',
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp(
+                                $nextDate['date']));
+				
+				}elseif($ruleOperator==='$gt'){
+				$filterArray[] = array(
+                        'operator' => $ruleOperator,
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp(
+                                $nextDate['date']));
+				}elseif($ruleOperator==='$lte'){	
+					$filterArray[] = array(
+                        'operator' => $ruleOperator,
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp(
+                                $nextDate['date']));	
+						
+				}else{
                 $filterArray[] = array(
                         'operator' => $ruleOperator,
                         'property' => $property,
                         'value' => $this->_dateService->convertToTimeStamp(
-                                $value['value'])
-                );
+                                $value['value']));
+                }
             }
         } else { 
             //no advanced query : should get classic parameters
