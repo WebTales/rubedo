@@ -126,8 +126,8 @@ class IndexController extends Zend_Controller_Action
         
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
-        
-        
+        $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
+					
         // Build Twig context
         $twigVar = $this->_pageParams;
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
