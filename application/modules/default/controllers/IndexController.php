@@ -68,6 +68,11 @@ class IndexController extends Zend_Controller_Action
      * @var string
      */
     protected $_pageId;
+    
+    /**
+     * array of parent IDs
+     */
+    protected $_rootlineArray;
 
     /**
      * Main Action : render the Front Office view
@@ -167,6 +172,12 @@ class IndexController extends Zend_Controller_Action
         $this->_serviceTemplate->setCurrentTheme($this->_site['theme']);
         
         $this->_servicePage->setPageTitle($pageInfo['text']);
+        $rootline = $pageService->getAncestors($pageInfo);
+        $this->_rootlineArray=array();
+        foreach ($rootline as $ancestor){
+            $this->_rootlineArray[]=$ancestor['id'];
+        }
+        $this->_rootlineArray[] = $pageId;
         $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
         $pageInfo['template'] = 'page.html.twig';
         
@@ -268,6 +279,7 @@ class IndexController extends Zend_Controller_Action
             case 'Bloc de navigation':
                 $controller = 'nav-bar';
                 $params['currentPage'] = $this->_pageId;
+                $params['rootline'] = $this->_rootlineArray;
                 $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()
                     ->getHttpHost());
                 
@@ -286,6 +298,7 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'search';
                 break;
             case 'Fil d\'Ariane':
+                $params['rootline'] = $this->_rootlineArray;
                 $controller = 'breadcrumbs';
                 break;
             case 'Twig':
