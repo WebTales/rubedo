@@ -127,11 +127,20 @@ class DataSearch extends DataAbstract implements IDataSearch
 			foreach ($taxonomies as $taxonomy) {
 				$vocabulary = $taxonomy['name'];
 				if (array_key_exists($vocabulary,$params)) {
-					$taxonomyFilter = new \Elastica_Filter_Term();
-					$taxonomyFilter->setTerm('taxonomy.'.$vocabulary, $params[$vocabulary]);
-					$globalFilter->addFilter($taxonomyFilter);
-					$filters[$vocabulary]=$params[$vocabulary];
-					$setFilter = true;					
+				    if(!is_array($params[$vocabulary])){
+				        $params[$vocabulary] = array($params[$vocabulary]);
+				    }
+					
+					foreach ($params[$vocabulary] as $term){
+					    $taxonomyFilter = new \Elastica_Filter_Term();
+					    $taxonomyFilter->setTerm('taxonomy.'.$vocabulary, $term);
+					    $globalFilter->addFilter($taxonomyFilter);
+					    $filters[$vocabulary][]=$term;
+					    $setFilter = true;
+					}
+					
+					
+								
 				}
 			}
 						
