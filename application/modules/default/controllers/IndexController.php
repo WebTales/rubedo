@@ -166,11 +166,7 @@ class IndexController extends Zend_Controller_Action
         
         $this->_site = Manager::getService('Sites')->findById($pageInfo['site']);
         if(!isset($this->_site['theme'])){
-            if($this->_site['text']=='demo.webtales.fr'){
-                $this->_site['theme'] = 'cnews';
-            }else{
                 $this->_site['theme'] = 'default';
-            }
         }
         $this->_serviceTemplate->setCurrentTheme($this->_site['theme']);
         
