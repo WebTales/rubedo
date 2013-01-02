@@ -33,6 +33,14 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
 
     protected function _sendResponse ($output, $template, array $css = null, array $js = null)
     {
+        $params['responsive'] = $block['responsive'];
+        $params['classHtml'] = $block['classHTML'];
+        $params['idHtml'] = $block['idHTML'];
+        
+        $output['responsive'] = $this->getRequest()->getParam('responsive',array());
+        $output['classHtml'] = $this->getRequest()->getParam('classHtml','');
+        $output['idHtml'] = $this->getRequest()->getParam('idHtml','');
+        
         $output['lang'] = Manager::getService('Session')->get('lang', 'fr');
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_servicePage = Manager::getService('PageContent');
