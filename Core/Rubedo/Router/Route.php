@@ -54,19 +54,45 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
      *
      * @param array $data An array of variable and value pairs used as
      *            parameters
-     * @param bool $reset Weither to reset the current params
+     * @param bool|string $reset should we reset the current params
      * @return string Route path with user submitted parameters
      */
     public function assemble ($data = array(), $reset = false, $encode = false)
     {
-        if ($reset) {
+        if ($reset===true) {
             $params = array(
                 'pageId' => $this->_values["pageId"]
             );
         } else {
             $params = \Zend_Controller_Front::getInstance()->getRequest()->getParams();
         }
-        $data = array_merge($params, $data);
+        if($reset==='add'){
+            
+            foreach($data as $key => $value){
+                if(!isset($params[$key])){
+                    $params[$key]=array();
+                }
+                if(!is_array($value)){
+                    $value = array($value);
+                }
+                $data[$key] = array_unique(array_merge($params[$key],$value));
+            }
+            $data = array_merge($params, $data);
+        }elseif ($reset==='sub'){
+            foreach($data as $key => $value){
+                if(!isset($params[$key])){
+                    $params[$key]=array();
+                }
+                if(!is_array($value)){
+                    $value = array($value);
+                }
+                $data[$key] = array_diff($params[$key],$value);
+            }
+            $data = array_merge($params, $data);
+        }else{
+            $data = array_merge($params, $data);
+        }
+        
         
         foreach ($data as $key => $value) {
             if ($value !== null) {
@@ -76,7 +102,8 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
             }
         }
         $url = Manager::getService('Url')->getUrl($params, $encode);
-        
+        //$baseUrl = \Zend_Controller_Front::getInstance()->getBaseUrl();
+        //\Zend_Debug::dump($baseUrl);die();
         return $url;
     }
 

@@ -34,10 +34,11 @@ class Blocks_SearchController extends Blocks_AbstractController
         // get search parameters
         $params = $this->getRequest()->getParams();
         
+        
         $params['pagesize'] = $this->getRequest()->getParam('pagesize', 10);
         
         $site = $this->getRequest()->getParam('site');
-		$params['Sites']=$site['id'];
+		$params['Sites']=$site['text'];
         
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         $query->init();
@@ -57,6 +58,21 @@ class Blocks_SearchController extends Blocks_AbstractController
         // Get facets
         $elasticaFacets = $elasticaResultSet->getFacets();
         
+        //do not show selected values
+        foreach ($elasticaFacets as $name => $facet){
+            if(!isset($facet['terms'])){
+                continue;
+            }
+            $facetParam = $this->getRequest()->getParam($name,array());
+            
+            foreach($facet['terms'] as $key => $term){
+                
+                if(in_array($term['term'], $facetParam)){
+                    unset($elasticaFacets[$name]['terms'][$key]);
+                }
+            }
+        }
+
         // Get results
         $elasticaResults = $elasticaResultSet->getResults();
         $results = array();

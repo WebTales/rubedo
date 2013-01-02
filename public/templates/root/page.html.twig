@@ -81,7 +81,7 @@
 			 <div class="container container-fluid">
 				{% if rows %}
 				{% for row in rows %}
-				{% include 'root/row.html.twig' with row only %}
+				{% include row.template with row only %}
 				{% endfor %}
 				{% endif %}
 			</div>

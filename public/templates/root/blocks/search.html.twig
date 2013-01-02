@@ -61,11 +61,20 @@
 		<p class="brand">Critères de recherche :&nbsp;&nbsp;
 
 		{% for name,value in filters %}
-			{% if (name) != '' and name != 'Sites' %}
-			<a href="{{url({(name): null})}}" >
+		    {% if name == '' or name == 'Sites' %}
+            {% elseif name == 'type' or name == 'author' or name == 'date' %}
+                <a href="{{url({(name): null})}}" >
 				<span class="badge badge-info"><i class="icon-remove-sign"></i> {{ value }}</span>
-			</a>
-			{% endif %}
+			    </a>
+            {% else %}
+                {% for tag in value %}
+		        
+		            <a href="{{url({(name): tag},'sub')}}" >
+				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ tag }}</span>
+			        </a>
+		        {% endfor %}
+            {% endif %}
+		        
 		{% endfor %}
 		</p>
 	</div>
@@ -84,31 +93,43 @@
 		
 			{% if facets[name]['terms']|length > 1 %}
 			
-			{% if name == 'type' %}
-			<p>
-				<i class="icon-file"></i> {{"content_type"|trans}}
-			</p>		
-			{% elseif name == 'author' %}
-			<p>
-				<i class="icon-user"></i> {{"author"|trans}}
-			</p>		
-			{% elseif name == 'date' %}
-			<p>
-				<i class="icon-calendar"></i> {{"date"|trans}}
-			</p>	
-			{% else %}
-			<p>
-				<i class="icon-tags"></i> {{name|trans}}
-			</p>			
-			{% endif %}	
-	
-			<ul>
-				{% for facet in facets[name]['terms'] %}
-				<li>
-					<a href="{{url({(name) : facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
-				</li>
-				{% endfor %}
-			</ul>
+    			{% if name == 'type' %}
+    			<p>
+    				<i class="icon-file"></i> {{"content_type"|trans}}
+    			</p>		
+    			{% elseif name == 'author' %}
+    			<p>
+    				<i class="icon-user"></i> {{"author"|trans}}
+    			</p>		
+    			{% elseif name == 'date' %}
+    			<p>
+    				<i class="icon-calendar"></i> {{"date"|trans}}
+    			</p>	
+    			{% else %}
+    			<p>
+    				<i class="icon-tags"></i> {{name|trans}}
+    			</p>			
+    			{% endif %}	
+    	
+    	        {% if name == 'type' or name == 'author' or name == 'date' %}
+    	          <ul>
+    				{% for facet in facets[name]['terms'] %}
+    				<li>
+    					<a href="{{url({(name) : facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
+    				</li>
+    				{% endfor %}
+			    </ul>
+    	        {% else %}
+    	        <ul>
+    				{% for facet in facets[name]['terms'] %}
+    				<li>
+    					<a href="{{url({(name) : [facet.term]},'add')}}">{{ facet.term }} ({{ facet.count }})</a>
+    				</li>
+    				{% endfor %}
+			    </ul>
+    					
+    			{% endif %}	
+			
 			
 			{% endif %}
 		

@@ -70,6 +70,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $output["data"] = $data;
             $output['prefix'] = $this->getRequest()->getParam('prefix');
             $output["page"] = $contentArray['page'];
+            $output['test']=array(1,2,3);
         }
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
