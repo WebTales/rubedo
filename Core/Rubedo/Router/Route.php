@@ -102,7 +102,8 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
             }
         }
         $url = Manager::getService('Url')->getUrl($params, $encode);
-        
+        //$baseUrl = \Zend_Controller_Front::getInstance()->getBaseUrl();
+        //\Zend_Debug::dump($baseUrl);die();
         return $url;
     }
 

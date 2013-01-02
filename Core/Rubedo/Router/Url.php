@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
 class Url implements IUrl
 {
 
-    protected static $_useCache = true;
+    protected static $_useCache = false;
 
     /**
      * param delimiter
@@ -246,7 +246,7 @@ class Url implements IUrl
 
         if ($page) {
             $data = array('pageId' => $page['id'], 'content-id' => $contentId);
-            $pageUrl = $this->getUrl($data);
+            $pageUrl = $this->url($data,null,true);
             if ($doNotAddSite) {
                 return $pageUrl;
             } else {
