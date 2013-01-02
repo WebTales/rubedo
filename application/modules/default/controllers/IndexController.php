@@ -173,6 +173,12 @@ class IndexController extends Zend_Controller_Action
         return $pageInfo;
     }
 
+    /**
+     * get Columns infos
+     * 
+     * @param array $columns
+     * @return array
+     */
     protected function _getColumnsInfos (array $columns = null)
     {
         if ($columns === null) {
@@ -180,6 +186,11 @@ class IndexController extends Zend_Controller_Action
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
+            $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
+            $returnArray[$key]['classHtml'] = $column['classHTML'];
+            $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($column['responsive']);
+            $returnArray[$key]['idHtml'] = $column['idHTML'];
+            
             if (is_array($column['blocks'])) {
                 $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
             } else {
@@ -189,6 +200,12 @@ class IndexController extends Zend_Controller_Action
         return $returnArray;
     }
 
+    /**
+     * get Blocks infos
+     *
+     * @param array $blocks
+     * @return array
+     */
     protected function _getBlocksInfos (array $blocks)
     {
         $returnArray = array();
@@ -198,6 +215,13 @@ class IndexController extends Zend_Controller_Action
         return $returnArray;
     }
 
+    
+    /**
+     * get Rows infos
+     * 
+     * @param array $rows
+     * @return array
+     */
     protected function _getRowsInfos (array $rows = null)
     {
         if ($rows === null) {
@@ -205,6 +229,11 @@ class IndexController extends Zend_Controller_Action
         }
         $returnArray = $rows;
         foreach ($rows as $key => $row) {
+            $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('row.html.twig');
+            $returnArray[$key]['classHtml'] = $row['classHTML'];
+            $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($row['responsive']);
+            $returnArray[$key]['idHtml'] = $row['idHTML'];
+            
             if (is_array($row['columns'])) {
                 $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
             }
@@ -324,6 +353,7 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 1:
             default:
+                $class = '';
                 foreach ($responsiveArray as $value) {
                     $class .= ' visible-' . $value;
                 }
