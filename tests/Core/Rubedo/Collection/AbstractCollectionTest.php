@@ -238,6 +238,18 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection = new testCollection();
 		$collection->customDelete($deleteCond,$safe);
 	}
+		/**
+	 * Test if customUpdate method call the customUpdate method only one time
+	 */
+	public function testNormalcustomUpdate(){
+		$this->_mockDataAccessService->expects($this->once())->method('customUpdate');
+	
+		 $data=array('value'=>"test");
+		 $updateCond=array('condition'=>"test");
+		 $safe=true;
+		$collection = new testCollection();
+		$collection->customUpdate($data,$updateCond);
+	}
 	 /*
 	  *  Test if readChild method call the readChild method only one time
 	  */
