@@ -17,7 +17,6 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IAbstractCollection;
-use Rubedo\Mongo\DataAccess;
 use Rubedo\Services\Manager;
 
 /**
@@ -116,6 +115,24 @@ abstract class AbstractCollection implements IAbstractCollection
 
     public function customFind ($filter = array(), $fieldRule = array()){
 	return $this->_dataService->customFind($filter,$fieldRule);			
+    }
+    
+    /**
+     * Update an objet in the current collection
+     *
+     * Shouldn't be used if doing a simple update action
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::customUpdate
+     * @param array $data
+     *            data to update
+     * @param array $updateCond
+     *            array of condition to determine what should be updated
+     * @param array $options
+     * @return array
+     */
+    public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
+    {
+        return $this->_dataService->customUpdate ($data, $updateCond, $options);
     }
 
     /**

@@ -198,9 +198,9 @@ class IndexController extends Zend_Controller_Action
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
-            $returnArray[$key]['classHtml'] = isset($row['classHTML'])?$row['classHTML']:null;
+            $returnArray[$key]['classHtml'] = isset($column['classHTML'])?$column['classHTML']:null;
             $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($column['responsive']);
-            $returnArray[$key]['idHtml'] = isset($row['idHTML'])?$row['idHTML']:null;
+            $returnArray[$key]['idHtml'] = isset($column['idHTML'])?$column['idHTML']:null;
             
             if (is_array($column['blocks'])) {
                 $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
@@ -266,9 +266,9 @@ class IndexController extends Zend_Controller_Action
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
         $params['prefix'] = isset($block['urlPrefix']) ? $block['urlPrefix'] : $block['id'];
-        $params['classHtml'] = isset($row['classHTML'])?$row['classHTML']:null;
+        $params['classHtml'] = isset($block['classHTML'])?$block['classHTML']:null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
-        $params['idHtml'] = isset($row['idHTML'])?$row['idHTML']:null;
+        $params['idHtml'] = isset($block['idHTML'])?$block['idHTML']:null;
         
         $blockQueryParams = $this->getRequest()->getParam($params['prefix'], array());
         foreach ($blockQueryParams as $key => $value) {

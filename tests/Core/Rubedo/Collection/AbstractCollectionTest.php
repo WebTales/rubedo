@@ -238,6 +238,18 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection = new testCollection();
 		$collection->customDelete($deleteCond,$safe);
 	}
+		/**
+	 * Test if customUpdate method call the customUpdate method only one time
+	 */
+	public function testNormalcustomUpdate(){
+		$this->_mockDataAccessService->expects($this->once())->method('customUpdate');
+	
+		 $data=array('value'=>"test");
+		 $updateCond=array('condition'=>"test");
+		 $safe=true;
+		$collection = new testCollection();
+		$collection->customUpdate($data,$updateCond);
+	}
 	 /*
 	  *  Test if readChild method call the readChild method only one time
 	  */
@@ -297,7 +309,9 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection->readChild($parentId, $filter, $sort);
 	}
 	
-	
+	/**
+	 * Test if getAncestors return array() when parentId is root 
+	 */
 	public function testgetAncestorsIfParentIdIsRoot(){
 
 	$item['parentId']='root';
@@ -306,6 +320,9 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$result=$collection->getAncestors($item, $limit);
 		$this->assertTrue(is_array($result));
 	}
+	/**
+	 * Test if getAncestors return array() when limit=0 
+	 */
 	public function testgetAncestorsIfLimitLessThanZero(){
 
 	$item['parentId']='parent';
@@ -314,6 +331,9 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$result=$collection->getAncestors($item, $limit);
 		$this->assertTrue(is_array($result));
 	}
+	/**
+	 * Test if getAncestors method call findById method
+	 */
 	public function testNormalGetAncestorsWithLimitFive(){
 		$this->_mockDataAccessService->expects($this->exactly(5))->method('findById');
 		$item['parentId']="parent";
@@ -322,8 +342,7 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		
 		$result=$collection->getAncestors($item,$limit);
 		$this->assertTrue(is_array($result));
-
-		
 	}
+	
 	
 }
