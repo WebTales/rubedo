@@ -277,42 +277,6 @@ class DataAccess implements IDataAccess
     }
 
     /**
-     * Recursive function for deleteVocabulary
-     *
-     * @param $parent is
-     *            an array with the data of the vocabulary
-     * @return bool
-     */
-    protected function _deleteVocabulary ($parent)
-    {
-        $filter = array(
-            'vocabularyId' => $parent['id']
-        );
-        $this->addFilter($filter);
-        
-        // Get the childrens of the current parent
-        $childrensArray = $this->read();
-        
-        // Delete all the childrens
-        if (! is_array($childrensArray)) {
-            throw new \Rubedo\Exceptions\DataAccess('Should be an array');
-        }
-        
-        foreach ($childrensArray as $key => $value) {
-            self::_deleteChild($value);
-        }
-        
-        // Delete the parent
-        $returnArray = $this->destroy($parent, true);
-        
-        if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
-        }
-        
-        return $childrensArray;
-    }
-
-    /**
      * Do a find request on the current collection and return content as tree
      *
      * @see \Rubedo\Interfaces\IDataAccess::readTree()
@@ -709,47 +673,7 @@ class DataAccess implements IDataAccess
         
         return $returnArray;
     }
-
-    public function deleteVocabulary ($data)
-    {
-        $parentId = $data['id'];
-        $error = false;
-        
-        // Add a filter to only get the childrens of the current vocabulary
-        $filter = array(
-            'vocabularyId' => $parentId
-        );
-        $this->addFilter($filter);
-        
-        // Get the childrens of the current parent
-        $childrensArray = $this->read();
-        
-        // Check if $data is an array
-        if (! is_array($childrensArray)) {
-            throw new \Rubedo\Exceptions\DataAccess('Should be an array');
-        }
-        
-        // Delete all the childrens
-        foreach ($childrensArray as $key => $value) {
-            $result = $this->_deleteVacabulary($value);
-            if ($result['success'] == false) {
-                $error = true;
-            }
-        }
-        
-        // Delete the parent
-        if ($error == false) {
-            $returnArray = $this->destroy($data, true);
-        } else {
-            $returnArray = array(
-                'success' => false,
-                'msg' => 'An error occured during the deletion'
-            );
-        }
-        
-        return $returnArray;
-    }
-
+	
     /**
      * Drop The current Collection
      * 
