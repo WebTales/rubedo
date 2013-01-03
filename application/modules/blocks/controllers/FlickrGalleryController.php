@@ -39,7 +39,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             'cache_dir' => APPLICATION_PATH . '/../cache/zend'
         );
         
-        $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
+        $cache = Zend_Cache::factory('Core', new Rubedo\Cache\MongoCache(), $frontendOptions, $backendOptions);
         
         if (! ($items = $cache->load('flickr_items'))) {
             $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
@@ -61,7 +61,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
                 $items[] = $item;
                 // Zend_Debug::dump($photo);die();
             }
-            $cache->save($items, 'flickr_items');
+            $cache->save($items, 'flickr_items',array('flickr'));
         }
         
         $output['items'] = $items;

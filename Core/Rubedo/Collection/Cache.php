@@ -15,7 +15,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Interfaces\Collection\IContentTypes;
+use Rubedo\Interfaces\Collection\ICache;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle cached contents
@@ -31,6 +32,15 @@ class Cache extends AbstractCollection implements ICache
     {
         $this->_collectionName = 'Cache';
         parent::__construct();
+    }
+    
+    public function findByCacheId($cacheId,$time = null){
+        $cond = array();
+        $cond['cacheId'] = $cacheId;
+        if($time){
+            $cond['expire'] = array('$gt'=>$time);
+        }
+        return $this->_dataService->findOne($cond);
     }
     
 }
