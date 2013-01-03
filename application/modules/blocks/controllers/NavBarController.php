@@ -56,6 +56,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
 
         $output['currentPage'] = $this->getRequest()->getParam('currentPage');
         $output['rootPage'] = $this->getRequest()->getParam('rootPage');
+        $output['rootline'] = $this->getRequest()->getParam('rootline',array());
         $output['pages'] = array();
 
         $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage']);

@@ -46,9 +46,18 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $data["id"] = $mongoId;
 
             $type = $this->_typeReader->findById($content['typeId'], true, false);
+			$cTypeArray=array();
+			foreach($type["fields"] as $value){
+				
+				$cTypeArray[$value['config']['name']]=$value["cType"];
+			}
             $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
             $templateName .= ".html.twig";
             $output["data"] = $data;
+			$output["type"]=$cTypeArray;
+			//Zend_Debug::dump($cTypeArray);die();
+			
+			
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
         }else{
         	$output= array();

@@ -54,7 +54,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
      *
      * @param array $data An array of variable and value pairs used as
      *            parameters
-     * @param bool $reset Weither to reset the current params
+     * @param bool|string $reset should we reset the current params
      * @return string Route path with user submitted parameters
      */
     public function assemble ($data = array(), $reset = false, $encode = false)
@@ -88,10 +88,6 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
                 }
                 $data[$key] = array_diff($params[$key],$value);
             }
-            //\Zend_Debug::dump($reset);
-            //\Zend_Debug::dump($params);
-            //\Zend_Debug::dump($data);
-            //die();
             $data = array_merge($params, $data);
         }else{
             $data = array_merge($params, $data);
@@ -106,7 +102,8 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
             }
         }
         $url = Manager::getService('Url')->getUrl($params, $encode);
-        
+        //$baseUrl = \Zend_Controller_Front::getInstance()->getBaseUrl();
+        //\Zend_Debug::dump($baseUrl);die();
         return $url;
     }
 

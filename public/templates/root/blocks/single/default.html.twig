@@ -1,0 +1,43 @@
+{% block mainContent %} 
+
+	<div class="block headline">
+	<div class="hero-unit">
+	<h1 class="editable" id="{{ data.id }}_text">{{ data.text |cleanHtml }}</h1>
+	<div class="editable" id="{{ data.id }}_summary">
+			{{ data.summary|cleanHtml }}
+		</div>
+	 {% for key, value in data %}
+      		{%for cKey,cValue in type %}
+      			{%if(key==cKey)%}
+      					{%if cValue=="ImagePickerField"%}
+      						<img alt=""  class="imageLeft" src="/image?file-id={{value}}" />
+      					{%elseif(cValue=="CKEField")%}
+      					<div><span>{{key}} : </span><div class="entry-content editable"  id="{{ data.id }}_{{key}}">
+						{{value|cleanHtml}}
+						</div></div>
+						{%elseif(cValue=="datefield")%}
+						<div><span>{{key}} : </span><span class="label label-info" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}</span></div>
+      					{%elseif(cValue=="textfield")%}
+      					<div><span>{{key}} : </span><h3 class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}  </h3></div>
+      					{%elseif(cValue=="numberfield")%}
+      					<div><span>{{key}} : </span><input type="number" name="quantity" value="{{ value |cleanHtml }}"></div>
+      					{%elseif(cValue=="colorfield")%}
+      					<div><span>{{key}} : </span><input type="color" id="{{ data.id }}_{{key}}" name="favcolor" value="{{ value |cleanHtml }}"></div>
+      					{%elseif(cValue=="slider")%}
+      					<div><span>{{key}} : </span><input type="range" id="{{ data.id }}_{{key}}" value="{{ value |cleanHtml }}"></div>
+      					{%elseif(cValue=="timefield")%}
+      					<div><span>{{key}} : </span><h3 class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }} </h3></div>
+      					{%elseif(cValue=="ratingField")%}
+      					<div><span>{{key}} : </span>
+      							{%for i in 0..value%}
+      							<i class="icon-star"></i>
+      							{%endfor%}
+      						</div>
+      					
+      					{%endif%}
+      			{%endif%}
+      		{%endfor%}
+    {% endfor %}
+	</div>
+</div>
+{% endblock %}

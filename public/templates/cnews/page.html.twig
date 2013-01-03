@@ -30,6 +30,7 @@
 	href='/cnews/css/csc-style.css?ver=3.4.2' type='text/css' media='all' />
 <link rel="stylesheet" type="text/css" media="all"
 	href="/cnews/style.css" />
+<link href="/colorbox/colorbox.css" rel="stylesheet">
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -98,7 +99,7 @@
 			style="margin-left: -30px; margin-right: -30px; padding-top: 5px; padding-bottom: 5px;"></div>
 
 		{% block pageMainContent %} {% if rows %} {% for row in rows %} {%
-		include 'cnews/row.html.twig' with row only %} {% endfor %} {% endif %}
+		include row.template with row only %} {% endfor %} {% endif %}
 		{% endblock %}
 
 	</div>
@@ -132,9 +133,15 @@
 	<script type='text/javascript'
 		src='/cnews/js/jquery.vegas.js?ver=3.4.2'></script>
 	<script type='text/javascript' src='/cnews/js/custom.js?ver=3.4.2'></script>
+	
 	{% for file in js %}
 	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
 	{% endfor %}
-
+	<script src="/colorbox/jquery.colorbox.js"></script>
+	<script>
+            jQuery(document).ready(function () {
+                jQuery('a.flk_gallery').colorbox({transition:'none',current:	"image {current} parmi {total}",maxWidth:'80%',maxHeight:'80%',opacity:0.5 ,rel:'flk_gallery'});
+            });
+        </script>
 </body>
 </html>
