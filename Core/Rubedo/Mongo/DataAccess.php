@@ -1076,10 +1076,7 @@ class DataAccess implements IDataAccess
      */
     public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
     {
-        $resultArray = $this->_collection->update($updateCond, $data, array(
-            "safe" => $options
-        ));
-        
+        $resultArray = $this->_collection->update($updateCond, $data, $options);
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
                 $returnArray = array(
@@ -1111,9 +1108,7 @@ class DataAccess implements IDataAccess
 
     public function customDelete ($deleteCond, $options = array('safe'=>true))
     {
-        return $this->_collection->remove($deleteCond, array(
-            'safe' => $options
-        ));
+        return $this->_collection->remove($deleteCond, $options);
     }
 
     /**
