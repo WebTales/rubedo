@@ -78,7 +78,10 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
      *         (int) of the available cache record
      */
     public function test ($id)
-    {}
+    {
+        throw new \Zend_Exception('not yet implemented');
+        
+    }
 
     /**
      * Save some string datas into a cache record
@@ -140,7 +143,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
         $options = array();
         $options['safe'] = true;
         
-        $result = $this->_dataService->customDelete($obj, $updateCond, $options);
+        $result = $this->_dataService->customDelete($updateCond, $options);
         if ($result['success']) {
             return true;
         } else {
@@ -183,6 +186,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
             case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
             case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
             case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+                throw new \Zend_Exception('not yet implemented');
                 break;
             case \Zend_Cache::CLEANING_MODE_OLD:
                 $updateCond["expire"]=array('$lt'=>Manager::getService('CurrentTime')->getCurrentTime());
