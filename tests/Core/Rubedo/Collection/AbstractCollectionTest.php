@@ -49,6 +49,7 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
         $this->_mockDataAccessService = $this->getMock('Rubedo\\Mongo\\DataAccess');
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $this->_mockDataAccessService);
 
+
         parent::setUp();
     }
 	
@@ -104,6 +105,44 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Test if getList method call setFirstResult and setNumberOfResults when a start and a limit are given in parameters
+	 */
+	public function testGetListWithStartAndLimit(){
+		$this->_mockDataAccessService->expects($this->once())->method('read');
+		$this->_mockDataAccessService->expects($this->once())->method('setFirstResult');
+		$this->_mockDataAccessService->expects($this->once())->method('setNumberOfResults');
+		
+		$collection = new testCollection();
+		$collection->getList(null, null, 0, 10);
+	}
+	
+	/**
+	 * Test if getList method call addFilter when an operator is given in parameter
+	 */
+	public function testGetListWithOperator(){
+		$this->_mockDataAccessService->expects($this->once())->method('read');
+		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
+		
+		$filter = array(array('operator' => 'test', "property" => "test", "value" => "test"));
+		
+		$collection = new testCollection();
+		$collection->getList($filter);
+	}
+	
+	/**
+	 * Test if getList method call addFilter when an operator is given in parameter
+	 */
+	public function testGetListWithLikeOperator(){
+		$this->_mockDataAccessService->expects($this->once())->method('read');
+		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
+		
+		$filter = array(array('operator' => 'like', "property" => "test", "value" => "test"));
+		
+		$collection = new testCollection();
+		$collection->getList($filter);
+	}
+	
+	/**
 	 * Test if findById method call the findById method only one time
 	 */
 	public function testNormalFindById(){
@@ -125,6 +164,31 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		
 		$collection = new testCollection();
 		$collection->create($obj, true);
+	}
+		/**
+	 * Test if customFind method call the customFind method only one time
+	 */
+	public function testNormalCustomFind(){
+		$this->_mockDataAccessService->expects($this->once())->method('customFind');
+		
+		$filter = array(array("property" => "test", "value" => "test"));
+		$fieldRule = array(array("property" => "test", "value" => "test"));
+		
+		$collection = new testCollection();
+		$collection->customFind($filter,$fieldRule);
+	}
+	/**
+	 * Test if findByName method call the findByName method only one time
+	 */
+	public function testNormalFindByName(){
+		
+		$this->_mockDataAccessService->expects($this->once())->method('findByName');
+		
+		$name="name";
+		
+		$collection = new testCollection();
+		$collection->findByName($name);
+	
 	}
 	
 	/**
@@ -161,6 +225,32 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		
 		$collection = new testCollection();
 		$collection->readChild($parentId);
+	}
+	
+	/**
+	 * Test if customDelete method call the customDelete method only one time
+	 */
+	public function testNormalcustomDelete(){
+		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
+	
+		 $deleteCond=array();
+		 $safe=true;
+		$collection = new testCollection();
+		$collection->customDelete($deleteCond,$safe);
+	}
+	 /*
+	  *  Test if readChild method call the readChild method only one time
+	  */
+	public function testReadChildWithOperator(){
+		$this->_mockDataAccessService->expects($this->once())->method('readChild');
+		
+		$filter = array(array("property" => "test", "value" => "test", "operator" => "like"));
+		
+		$parentId = '123456798';
+		
+		$collection = new testCollection();
+		$collection->readChild($parentId, $filter);
+
 	}
 	
 	/**
@@ -206,4 +296,34 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection = new testCollection();
 		$collection->readChild($parentId, $filter, $sort);
 	}
+	
+	
+	public function testgetAncestorsIfParentIdIsRoot(){
+
+	$item['parentId']='root';
+	$limit=5;
+		$collection = new testCollection();
+		$result=$collection->getAncestors($item, $limit);
+		$this->assertTrue(is_array($result));
+	}
+	public function testgetAncestorsIfLimitLessThanZero(){
+
+	$item['parentId']='parent';
+	$limit=0;
+		$collection = new testCollection();
+		$result=$collection->getAncestors($item, $limit);
+		$this->assertTrue(is_array($result));
+	}
+	public function testNormalGetAncestorsWithLimitFive(){
+		$this->_mockDataAccessService->expects($this->exactly(5))->method('findById');
+		$item['parentId']="parent";
+		$limit=5;
+		$collection = new testCollection();
+		
+		$result=$collection->getAncestors($item,$limit);
+		$this->assertTrue(is_array($result));
+
+		
+	}
+	
 }
