@@ -1,0 +1,18 @@
+{% extends "root/block.html.twig" %} 
+
+{% block mainContent %}
+
+	<ul class="thumbnails">
+		{% for slide in items %}
+		<li class="span1">
+			<div class="thumbnail">
+				<a class="flk_gallery" href="{{ slide.image }}" title="{{ slide.title }}"><img src="{{ slide.thumbnail }}" alt="{{ slide.title }}"></a>
+			</div>
+
+		</li> {% endfor %}
+	</ul>
+
+	
+	
+
+{% endblock %}
