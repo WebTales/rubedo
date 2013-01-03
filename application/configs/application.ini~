@@ -119,16 +119,13 @@ searchstream.elastic.contentIndex = content-didier
 searchstream.elastic.documentIndex = document-didier 
 
 site.overide.demo_webtales_fr = rubedo.local
-site.overide.blog_demo_webtales_fr = blog.local
+site.overide.blog_webtales_fr = blog.local
 
 [nduvollet : development]
 searchstream.elastic.host = 178.32.8.116
 searchstream.elastic.port = 9200
 searchstream.elastic.contentIndex = content-duvollet
 searchstream.elastic.documentIndex = document-duvollet
-
-site.overide.demo_webtales_fr = rubedo_nd_local
-site.overide.blog_demo_webtales_fr = blog_nd_local
 
 [ntrenti : development]
 searchstream.elastic.host = 178.32.8.116
@@ -137,9 +134,8 @@ searchstream.elastic.contentIndex = content-ntrenti
 searchstream.elastic.documentIndex = document-ntrenti
 services.HtmlCleaner.class 				= Rubedo\Security\HtmlCleaner
 
-<<<<<<< HEAD
 [adobre : development]
-searchstream.elastic.host = 178.32.8.116
+searchstream.elastic.host = localhost
 searchstream.elastic.port = 9200
 searchstream.elastic.contentIndex = content-alexandru
 searchstream.elastic.documentIndex = document-alexandru 
@@ -147,13 +143,3 @@ searchstream.elastic.documentIndex = document-alexandru
 site.overide.demo_webtales_fr = rubedo.alexandru.local
 site.overide.blog_demo_webtales_fr = blog.alexandru.local
 
-=======
-[mgoncalves : development]
-searchstream.elastic.host = 178.32.8.116
-searchstream.elastic.port = 9200
-searchstream.elastic.contentIndex = content-mgoncalves
-searchstream.elastic.documentIndex = document-mgoncalves
-
-site.overide.demo_webtales_fr = rubedo_mickael
-site.overide.blog_demo_webtales_fr = blog_mickael
->>>>>>> af9ae92ec81707c8168a3ed2eeb3ff06b6a628ac
