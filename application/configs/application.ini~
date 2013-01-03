@@ -135,7 +135,7 @@ searchstream.elastic.documentIndex = document-ntrenti
 services.HtmlCleaner.class 				= Rubedo\Security\HtmlCleaner
 
 [adobre : development]
-searchstream.elastic.host = 178.32.8.116
+searchstream.elastic.host = localhost
 searchstream.elastic.port = 9200
 searchstream.elastic.contentIndex = content-alexandru
 searchstream.elastic.documentIndex = document-alexandru 
