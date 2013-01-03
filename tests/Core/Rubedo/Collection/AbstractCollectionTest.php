@@ -104,6 +104,44 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Test if getList method call setFirstResult and setNumberOfResults when a start and a limit are given in parameters
+	 */
+	public function testGetListWithStartAndLimit(){
+		$this->_mockDataAccessService->expects($this->once())->method('read');
+		$this->_mockDataAccessService->expects($this->once())->method('setFirstResult');
+		$this->_mockDataAccessService->expects($this->once())->method('setNumberOfResults');
+		
+		$collection = new testCollection();
+		$collection->getList(null, null, 0, 10);
+	}
+	
+	/**
+	 * Test if getList method call addFilter when an operator is given in parameter
+	 */
+	public function testGetListWithOperator(){
+		$this->_mockDataAccessService->expects($this->once())->method('read');
+		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
+		
+		$filter = array(array('operator' => 'test', "property" => "test", "value" => "test"));
+		
+		$collection = new testCollection();
+		$collection->getList($filter);
+	}
+	
+	/**
+	 * Test if getList method call addFilter when an operator is given in parameter
+	 */
+	public function testGetListWithLikeOperator(){
+		$this->_mockDataAccessService->expects($this->once())->method('read');
+		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
+		
+		$filter = array(array('operator' => 'like', "property" => "test", "value" => "test"));
+		
+		$collection = new testCollection();
+		$collection->getList($filter);
+	}
+	
+	/**
 	 * Test if findById method call the findById method only one time
 	 */
 	public function testNormalFindById(){
@@ -161,6 +199,20 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		
 		$collection = new testCollection();
 		$collection->readChild($parentId);
+	}
+	
+	/**
+	 * Test if readChild method call the readChild method only one time
+	 */
+	public function testReadChildWithOperator(){
+		$this->_mockDataAccessService->expects($this->once())->method('readChild');
+		
+		$filter = array(array("property" => "test", "value" => "test", "operator" => "like"));
+		
+		$parentId = '123456798';
+		
+		$collection = new testCollection();
+		$collection->readChild($parentId, $filter);
 	}
 	
 	/**
