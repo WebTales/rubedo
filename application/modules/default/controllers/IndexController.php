@@ -81,6 +81,7 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
+        
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
         $this->_servicePage = Manager::getService('PageContent');
@@ -153,6 +154,13 @@ class IndexController extends Zend_Controller_Action
         $this->getResponse()->appendBody($content, 'default');
     }
 
+    public function versionAction(){
+        $versionArray = array('Zend_Framework'=>Zend_Version::VERSION);
+        
+        $this->_helper->json($versionArray);
+        
+    }
+    
     /**
      * Return page infos based on its ID
      *
