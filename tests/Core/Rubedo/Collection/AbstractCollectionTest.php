@@ -49,6 +49,7 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
         $this->_mockDataAccessService = $this->getMock('Rubedo\\Mongo\\DataAccess');
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $this->_mockDataAccessService);
 
+
         parent::setUp();
     }
 	
@@ -126,6 +127,31 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection = new testCollection();
 		$collection->create($obj, true);
 	}
+		/**
+	 * Test if customFind method call the customFind method only one time
+	 */
+	public function testNormalCustomFind(){
+		$this->_mockDataAccessService->expects($this->once())->method('customFind');
+		
+		$filter = array(array("property" => "test", "value" => "test"));
+		$fieldRule = array(array("property" => "test", "value" => "test"));
+		
+		$collection = new testCollection();
+		$collection->customFind($filter,$fieldRule);
+	}
+	/**
+	 * Test if findByName method call the findByName method only one time
+	 */
+	public function testNormalFindByName(){
+		
+		$this->_mockDataAccessService->expects($this->once())->method('findByName');
+		
+		$name="name";
+		
+		$collection = new testCollection();
+		$collection->findByName($name);
+	
+	}
 	
 	/**
 	 * Test if update method call the update method only one time
@@ -161,6 +187,18 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		
 		$collection = new testCollection();
 		$collection->readChild($parentId);
+	}
+	
+	/**
+	 * Test if customDelete method call the customDelete method only one time
+	 */
+	public function testNormalcustomDelete(){
+		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
+	
+		 $deleteCond=array();
+		 $safe=true;
+		$collection = new testCollection();
+		$collection->customDelete($deleteCond,$safe);
 	}
 	
 	/**
@@ -206,4 +244,34 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection = new testCollection();
 		$collection->readChild($parentId, $filter, $sort);
 	}
+	
+	
+	public function testgetAncestorsIfParentIdIsRoot(){
+
+	$item['parentId']='root';
+	$limit=5;
+		$collection = new testCollection();
+		$result=$collection->getAncestors($item, $limit);
+		$this->assertTrue(is_array($result));
+	}
+	public function testgetAncestorsIfLimitLessThanZero(){
+
+	$item['parentId']='parent';
+	$limit=0;
+		$collection = new testCollection();
+		$result=$collection->getAncestors($item, $limit);
+		$this->assertTrue(is_array($result));
+	}
+	public function testNormalGetAncestorsWithLimitFive(){
+		$this->_mockDataAccessService->expects($this->exactly(5))->method('findById');
+		$item['parentId']="parent";
+		$limit=5;
+		$collection = new testCollection();
+		
+		$result=$collection->getAncestors($item,$limit);
+		$this->assertTrue(is_array($result));
+
+		
+	}
+	
 }
