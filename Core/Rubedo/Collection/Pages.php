@@ -42,22 +42,22 @@ class Pages extends AbstractCollection implements IPages
 	/* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $safe = true)
+    public function destroy (array $obj, $options = array('safe'=>true))
     {
         $pageId = $obj['id'];
-        $returnValue = parent::destroy($obj,$safe);
-        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$safe);
+        $returnValue = parent::destroy($obj,$options);
+        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$options);
         return $returnValue;
     }
 
 	/* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $safe = true)
+    public function update (array $obj, $options = array('safe'=>true))
     {
         $pageId = $obj['id'];
-        $returnValue = parent::update($obj,$safe);
-        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$safe);
+        $returnValue = parent::update($obj,$options);
+        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$options);
         return $returnValue;
     }
 	

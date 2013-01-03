@@ -133,10 +133,10 @@ class FileAccess extends DataAccess implements IFileAccess
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $safe = true) {
+    public function create(array $obj, $options = array('safe'=>true)) {
 
         $obj['version'] = 1;
 		$filename = $obj['serverFilename'];
@@ -173,7 +173,7 @@ class FileAccess extends DataAccess implements IFileAccess
      * @param array $obj data object
      * @return array
      */
-    public function destroy(array $obj,$safe = true) {
+    public function destroy(array $obj,$options = array('safe'=>true)) {
         $id = $obj['id'];
         //if (!isset($obj['version'])) {
         //    throw new \Rubedo\Exceptions\DataAccess('can\'t destroy an object without a version number.');
@@ -187,7 +187,7 @@ class FileAccess extends DataAccess implements IFileAccess
             $updateCondition = array_merge($this->_filterArray, $updateCondition);
         }
 
-        $resultArray = $this->_collection->remove($updateCondition, array("safe" => $safe));
+        $resultArray = $this->_collection->remove($updateCondition, array("safe" => $options));
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
                 $returnArray = array('success' => true);

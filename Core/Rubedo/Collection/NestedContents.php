@@ -91,10 +91,10 @@ class NestedContents implements INestedContents
      *
      * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create($parentContentId, array $obj, $safe = true) {
+    public function create($parentContentId, array $obj, $options = array('safe'=>true)) {
         $objId = $this->_dataService->getId();
         $obj['id'] = (string)$objId;
 
@@ -128,10 +128,10 @@ class NestedContents implements INestedContents
      *
      * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function update($parentContentId, array $obj, $safe = true) {
+    public function update($parentContentId, array $obj, $options = array('safe'=>true)) {
         unset($obj['parentContentId']);
 
 		$oldVersion = $obj['version'];
@@ -173,10 +173,10 @@ class NestedContents implements INestedContents
      *
      * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy($parentContentId, array $obj, $safe = true) {
+    public function destroy($parentContentId, array $obj, $options = array('safe'=>true)) {
 
         $data = array('$pull' => array('nestedContents' => array('id' => $obj['id'])));
         $updateCond = array('_id' => $this->_dataService->getId($parentContentId));

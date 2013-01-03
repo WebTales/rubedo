@@ -41,17 +41,17 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
      *
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-	public function update(array $obj, $safe = true, $live = true){
+	public function update(array $obj, $options = array('safe'=>true), $live = true){
 		if($live === true){
 			$this->_dataService->setLive();
 		} else {
 			$this->_dataService->setWorkspace();
 		}
 		
-		$returnArray = parent::update($obj, $safe);
+		$returnArray = parent::update($obj, $options);
 		if($returnArray['success']){
 			if($returnArray['data']['status'] === 'published' && !$live){
 				$result = $this->_dataService->publish($returnArray['data']['id']);
@@ -74,17 +74,17 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $safe = true, $live = true) {
+    public function create(array $obj, $options = array('safe'=>true), $live = true) {
     	if($live === true){
 			$this->_dataService->setLive();
 		} else {
 			$this->_dataService->setWorkspace();
 		}
 		
-        $returnArray = parent::create($obj, $safe);
+        $returnArray = parent::create($obj, $options);
 		
 		if(isset($returnArray['data']['status'])){
 			if($returnArray['data']['status'] === 'published'){

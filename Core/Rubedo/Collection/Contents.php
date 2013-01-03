@@ -92,11 +92,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
-    public function create (array $obj, $safe = true, $live = true)
+    public function create (array $obj, $options = array('safe'=>true), $live = true)
     {
         $obj = $this->_filterInputData($obj);
         if ($this->_isValidInput) {
-            $returnArray = parent::create($obj, $safe, $live);
+            $returnArray = parent::create($obj, $options, $live);
         } else {
             $returnArray = array(
                 'success' => false,
@@ -115,11 +115,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::update()
      */
-    public function update (array $obj, $safe = true, $live = true)
+    public function update (array $obj, $options = array('safe'=>true), $live = true)
     {
         $obj = $this->_filterInputData($obj);
         if ($this->_isValidInput) {
-            $returnArray = parent::update($obj, $safe, $live);
+            $returnArray = parent::update($obj, $options, $live);
         } else {
             $returnArray = array(
                 'success' => false,
@@ -138,9 +138,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $safe = true)
+    public function destroy (array $obj, $options = array('safe'=>true))
     {
-        $returnArray = parent::destroy($obj, $safe);
+        $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
             $this->_unIndexContent($obj);
         }

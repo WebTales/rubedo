@@ -460,11 +460,11 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj
      *            data object
-     * @param bool $safe
+     * @param bool $options
      *            should we wait for a server response
      * @return array
      */
-    public function create (array $obj, $safe = true)
+    public function create (array $obj, $options = array('safe'=>true))
     {
         $obj['version'] = 1;
         
@@ -480,7 +480,7 @@ class DataAccess implements IDataAccess
         $obj['lastUpdateTime'] = $currentTime;
         
         $resultArray = $this->_collection->insert($obj, array(
-            "safe" => $safe
+            "safe" => $options
         ));
         if ($resultArray['ok'] == 1) {
             $obj['id'] = (string) $obj['_id'];
@@ -505,11 +505,11 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj
      *            data object
-     * @param bool $safe
+     * @param bool $options
      *            should we wait for a server response
      * @return array
      */
-    public function update (array $obj, $safe = true)
+    public function update (array $obj, $options = array('safe'=>true))
     {
         $id = $obj['id'];
         unset($obj['id']);
@@ -552,7 +552,7 @@ class DataAccess implements IDataAccess
         $resultArray = $this->_collection->update($updateCondition, array(
             '$set' => $obj
         ), array(
-            "safe" => $safe
+            "safe" => $options
         ));
         
         $obj = $this->findById($mongoID);
@@ -588,11 +588,11 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj
      *            data object
-     * @param bool $safe
+     * @param bool $options
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $safe = true)
+    public function destroy (array $obj, $options = array('safe'=>true))
     {
         $id = $obj['id'];
         if (! isset($obj['version'])) {
@@ -611,7 +611,7 @@ class DataAccess implements IDataAccess
         }
         
         $resultArray = $this->_collection->remove($updateCondition, array(
-            "safe" => $safe
+            "safe" => $options
         ));
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
@@ -1070,14 +1070,14 @@ class DataAccess implements IDataAccess
      *            data to update
      * @param array $updateCond
      *            array of condition to determine what should be updated
-     * @param bool $safe
+     * @param bool $options
      *            should we wait for a server response
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, $safe = true)
+    public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
     {
         $resultArray = $this->_collection->update($updateCond, $data, array(
-            "safe" => $safe
+            "safe" => $options
         ));
         
         if ($resultArray['ok'] == 1) {
@@ -1109,10 +1109,10 @@ class DataAccess implements IDataAccess
         return $cursor;
     }
 
-    public function customDelete ($deleteCond, $safe = true)
+    public function customDelete ($deleteCond, $options = array('safe'=>true))
     {
         return $this->_collection->remove($deleteCond, array(
-            'safe' => $safe
+            'safe' => $options
         ));
     }
 
