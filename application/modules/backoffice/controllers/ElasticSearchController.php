@@ -50,6 +50,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		$results['total'] = $elasticaResultSet->getTotalHits();
 		$results['results'] = array();
 		$results['facets'] = array();
+		$results['filters'] = $filters;
 		if ($results['total'] > 0) {
 			foreach($elasticaResults as $result) {
 				$results['results'][] = (array) $result;
