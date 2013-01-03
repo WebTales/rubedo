@@ -7,7 +7,7 @@
         "ruflin/Elastica": "v0.19.8.0",
         "ezyang/htmlpurifier": "dev-master",
         "webtales/rubedo-backoffice-ui" : "dev-master",
-        "zendframework/zendframework1": "1.12.1"
+        "bombayworks/zendframework1": "v1.12.1"
     },
     "require-dev": {
         "chriskite/phactory": "v0.4.2"
