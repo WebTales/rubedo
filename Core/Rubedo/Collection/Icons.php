@@ -38,9 +38,9 @@ class Icons extends AbstractCollection implements IIcons
 		$this->_userId = $currentUser['id'];
 	}
 	
-    public function create(array $obj, $safe = true) {
+    public function create(array $obj, $options = array('safe'=>true)) {
     	$obj['userId']= $this->_userId;
-        return parent::create($obj, $safe);
+        return parent::create($obj, $options);
     }
 	
 	public function getList($filters = null, $sort = null, $start = null, $limit = null){
@@ -48,13 +48,13 @@ class Icons extends AbstractCollection implements IIcons
 		return parent::getList($filters, $sort, $start, $limit);
 	}
 	
-	public function update(array $obj, $safe = true){
+	public function update(array $obj, $options = array('safe'=>true)){
 		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::update($obj,$safe);
+		return parent::update($obj,$options);
 	}
 	
-	public function destroy(array $obj, $safe = true){
+	public function destroy(array $obj, $options = array('safe'=>true)){
 		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::destroy($obj,$safe);
+		return parent::destroy($obj,$options);
 	}
 }

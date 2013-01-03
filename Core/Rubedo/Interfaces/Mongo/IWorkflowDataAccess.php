@@ -41,34 +41,4 @@ interface IWorkflowDataAccess extends IDataAccess{
 	 */
 	public function publish($objectId);
 	
-	/**
-	 * Allow to read in the current collection
-	 * 
-	 * @return array
-	 */
-	public function read();
-	
-	/**
-	 * Allow to update an element in the current collection
-	 * 
-	 * @return bool
-	 */
-	public function update(array $obj, $safe = true);
-	
-	/**
-	 * Allow to create an item in the current collection
-	 * 
-	 * @return array
-	 */
-	public function create(array $obj, $safe = true);
-	
-	/**
-     * Delete objets in the current collection
-     *
-     * @see \Rubedo\Interfaces\IDataAccess::destroy
-     * @param array $obj data object
-     * @param bool $safe should we wait for a server response
-     * @return array
-     */
-    public function destroy(array $obj, $safe = true);
 }

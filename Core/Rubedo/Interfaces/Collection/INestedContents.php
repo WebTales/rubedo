@@ -40,30 +40,30 @@ interface INestedContents
      *
      * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create($parentContentId, array $obj, $safe = true);
+    public function create($parentContentId, array $obj, $options = array('safe'=>true));
 
     /**
      * Update an objet in the current collection
      *
      * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function update($parentContentId, array $obj, $safe = true);
+    public function update($parentContentId, array $obj, $options = array('safe'=>true));
 
     /**
      * Delete objets in the current collection
      *
      * @param string $parentContentId parent id of nested contents
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy($parentContentId, array $obj, $safe = true);
+    public function destroy($parentContentId, array $obj, $options = array('safe'=>true));
 	
 	/**
 	 * Find a nested content by its id and its parentId

@@ -124,12 +124,11 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj
      *            data object
-     * @param bool $safe
-     *            should we wait for a server response
+     * @param array $options
      * @return array
      */
-    public function create(array $obj, $safe = true) {
-        return $this->_dataService->create($obj, $safe);
+    public function create(array $obj, $options = array('safe'=>true)) {
+        return $this->_dataService->create($obj, $options);
     }
 
     /**
@@ -138,12 +137,11 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj
      *            data object
-     * @param bool $safe
-     *            should we wait for a server response
+     * @param array $options
      * @return array
      */
-    public function update(array $obj, $safe = true) {
-        return $this->_dataService->update($obj, $safe);
+    public function update(array $obj, $options = array('safe'=>true)) {
+        return $this->_dataService->update($obj, $options);
     }
 
     /**
@@ -152,16 +150,15 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj
      *            data object
-     * @param bool $safe
-     *            should we wait for a server response
+     * @param array $options
      * @return array
      */
-    public function destroy(array $obj, $safe = true) {
-        return $this->_dataService->destroy($obj, $safe);
+    public function destroy(array $obj, $options = array('safe'=>true)) {
+        return $this->_dataService->destroy($obj, $options);
     }
 
-    public function customDelete($deleteCond, $safe = true) {
-        return $this->_dataService->customDelete($deleteCond, $safe);
+    public function customDelete($deleteCond, $options = array('safe'=>true)) {
+        return $this->_dataService->customDelete($deleteCond, $options);
     }
 
     /**

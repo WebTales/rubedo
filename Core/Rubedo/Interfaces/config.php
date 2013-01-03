@@ -77,6 +77,7 @@ class config
 		'Versioning'				=>	'Rubedo\\Interfaces\\Collection\\IVersioning',
 		'Images'					=>	'Rubedo\\Interfaces\\Collection\\IImages',
 		'MediaTypes'				=>	'Rubedo\\Interfaces\\Collection\\IMediaTypes',
+		'Cache'				=>	'Rubedo\\Interfaces\\Collection\\ICache',
 		
 	);
 

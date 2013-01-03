@@ -54,10 +54,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms {
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $safe = true) {
+    public function destroy(array $obj, $options = array('safe'=>true)) {
         $deleteCond = array('_id' => array('$in' => $this->_getChildToDelete($obj['id'])));
 		
         $resultArray = $this->_dataService->customDelete($deleteCond);

@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
 class Url implements IUrl
 {
 
-    protected static $_useCache = true;
+    protected static $_useCache = false;
 
     /**
      * param delimiter
@@ -181,15 +181,15 @@ class Url implements IUrl
             if (in_array($key, array('controller', 'action'))) {
                 continue;
             }
+            
+            $key = ($encode) ? urlencode($key) : $key;
             if($prefix){
                 $key = $prefix.'['.$key.']';
             }
-            
-            $key = ($encode) ? urlencode($key) : $key;
             if (is_array($value)) {
                 foreach ($value as $arrayValue) {
                     $arrayValue = ($encode) ? urlencode($arrayValue) : $arrayValue;
-                    $queryStringArray[] = $key . '=' . $arrayValue;
+                    $queryStringArray[] = $key . '[]=' . $arrayValue;
                 }
             } else {
                 if ($encode)
@@ -246,7 +246,7 @@ class Url implements IUrl
 
         if ($page) {
             $data = array('pageId' => $page['id'], 'content-id' => $contentId);
-            $pageUrl = $this->getUrl($data);
+            $pageUrl = $this->url($data,null,true);
             if ($doNotAddSite) {
                 return $pageUrl;
             } else {

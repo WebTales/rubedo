@@ -1,8 +1,8 @@
-<div class="row">
+<div class="row {{ classHtml }}" {% if idHtml %}id="{{ idHtml }}"{% endif %}>
 	<!-- process columns -->
 	{% if columns %}
 		{% for column in columns %}
-			{% include 'root/column.html.twig' with column only %}
+			{% include column.template with column only %}
 		{% endfor %}
 	{% endif %}
 </div>

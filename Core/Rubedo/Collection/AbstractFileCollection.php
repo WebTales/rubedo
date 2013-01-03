@@ -119,12 +119,11 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
      * @return array
      */
-    public function create(array $obj) {
+    public function create(array $obj, $options = array('safe'=>true)) {
         $obj['fileType'] = $this->_fileType;
-        return $this->_dataService->create($obj);
+        return $this->_dataService->create($obj,$options);
     }
 
     /**
@@ -132,11 +131,11 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param array $options
      * @return array
      */
-    public function update(array $obj) {
-        return $this->_dataService->update($obj, $safe);
+    public function update(array $obj, $options = array('safe'=>true)) {
+        return $this->_dataService->update($obj, $options);
     }
 
     /**
@@ -144,11 +143,11 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param array $options
      * @return array
      */
-    public function destroy(array $obj) {
-        return $this->_dataService->destroy($obj);
+    public function destroy(array $obj, $options = array('safe'=>true)) {
+        return $this->_dataService->destroy($obj,$options);
     }
 
 }

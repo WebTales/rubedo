@@ -259,10 +259,10 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return bool
      */
-    public function update(array $obj, $safe = true) {
+    public function update(array $obj, $options = array('safe'=>true)) {
         $obj = $this->_inputObjectFilter($obj);
 
-        $result = parent::update($obj, $safe);
+        $result = parent::update($obj, $options);
 
         if ($result['success']) {
             $result['data'] = $this->_outputObjectFilter($result['data']);
@@ -279,7 +279,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return array
      */
-    public function create(array $obj, $safe = true) {
+    public function create(array $obj, $options = array('safe'=>true)) {
         $obj = $this->_inputObjectFilter($obj);
 
         if ($this->_currentWs === 'workspace') {
@@ -287,7 +287,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         } else {
             $obj['workspace'] = array();
         }
-        $result = parent::create($obj, $safe);
+        $result = parent::create($obj, $options);
 
         $result['data'] = $this->_outputObjectFilter($result['data']);
 
@@ -299,11 +299,11 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj data object
-     * @param bool $safe should we wait for a server response
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $safe = true) {
-        $result = parent::destroy($obj, $safe);
+    public function destroy(array $obj, $options = array('safe'=>true)) {
+        $result = parent::destroy($obj, $options);
 
         return $result;
     }
