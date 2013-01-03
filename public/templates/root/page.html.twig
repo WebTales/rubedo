@@ -18,6 +18,7 @@
         <link href="/css/bootstrap-responsive.css" rel="stylesheet">
         <link href="/css/rubedo.css" rel="stylesheet">
         <!--<link rel="stylesheet" type="text/css" href="/extjs-4.1.1/resources/css/ext-all.css">-->
+        <link href="/colorbox/colorbox.css" rel="stylesheet">
 
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -109,7 +110,12 @@
 		{% for file in js %}
 		<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
 		{% endfor %}
-
+        <script src="/colorbox/jquery.colorbox.js"></script>
+		<script>
+            jQuery(document).ready(function () {
+                jQuery('a.flk_gallery').colorbox({current:	"image {current} parmi {total}",maxWidth:'80%',maxHeight:'80%',opacity:0.5 ,rel:'flk_gallery'});
+            });
+        </script>
 		{% endblock %}
 	</body>
 </html>
