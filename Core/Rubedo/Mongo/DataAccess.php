@@ -1070,8 +1070,7 @@ class DataAccess implements IDataAccess
      *            data to update
      * @param array $updateCond
      *            array of condition to determine what should be updated
-     * @param bool $options
-     *            should we wait for a server response
+     * @param array $options
      * @return array
      */
     public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
