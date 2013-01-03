@@ -287,6 +287,9 @@ class IndexController extends Zend_Controller_Action
             case 'Carrousel':
                 $controller = 'carrousel';
                 break;
+            case 'Gallerie Flickr':
+                    $controller = 'flickr-gallery';
+                    break;
             case 'Liste de Contenus':
                 $controller = 'content-list';
                 

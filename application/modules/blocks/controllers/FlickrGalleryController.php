@@ -30,22 +30,44 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $frontendOptions = array(
-            'lifetime' => 7200,
-            'automatic_serialization' => true
-        );
+        $cache = Rubedo\Services\Cache::getCache('flicker');
+                
+        $blockConfig = $this->getRequest()->getParam('block-config',array());
         
-        $backendOptions = array(
-            'cache_dir' => APPLICATION_PATH . '/../cache/zend'
-        );
+        $flParams['perPage'] = array();
         
-        $cache = Zend_Cache::factory('Core', new Rubedo\Cache\MongoCache(), $frontendOptions, $backendOptions);
+        if(isset($blockConfig['itemsPerPage'])){
+            $flParams['perPage'] = $blockConfig['itemsPerPage'];
+        }else{
+            $flParams['perPage'] = 12;
+        }
+        if(isset($blockConfig['user'])){
+            $flParams['user'] = $blockConfig['user'];
+        }
+        if(isset($blockConfig['tags'])){
+            $flParams['tags'] = $blockConfig['tags'];
+        }
+        if(isset($blockConfig['tagmode'])){
+            $flParams['tag_mode'] = ($blockConfig['tagmode']=='ALL')?'all':'or';
+        }
         
-        if (! ($items = $cache->load('flickr_items'))) {
+        
+        $cacheKey = 'flickr_items_'.md5(serialize($flParams));
+        
+        if (! ($items = $cache->load($cacheKey))) {
             $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
-            $photosArray = $flickrService->userSearch('croixrougedeparis', array(
-                'per_page' => 36
-            ));
+            if ($flParams['user']) {
+                $photosArray = $flickrService->userSearch($flParams['user'], array(
+                    'per_page' => $flParams['perPage']
+                ));
+            }elseif ($flParams['tags']){
+                $photosArray = $flickrService->tagSearch($flParams['tags'], array(
+                    'per_page' => $flParams['perPage'],
+                    'tag_mode'=>$flParams['tag_mode']
+                ));
+            }else{
+                throw new Zend_Controller_Exception('need a criteria to display Flickr Contents');
+            }
             
             $items = array();
             foreach ($photosArray as $photo) {
@@ -61,7 +83,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
                 $items[] = $item;
                 // Zend_Debug::dump($photo);die();
             }
-            $cache->save($items, 'flickr_items',array('flickr'));
+            $cache->save($items, $cacheKey,array('flickr'));
         }
         
         $output['items'] = $items;
