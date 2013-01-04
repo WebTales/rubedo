@@ -62,7 +62,7 @@ class Cache
      *            name of the cache called
      * @return \Zend_Cache instance of the cache
      */
-    public static function getCache ($cacheName)
+    public static function getCache ($cacheName = null)
     {
         $frontendOptions = array(
             'lifetime' => 7200,
