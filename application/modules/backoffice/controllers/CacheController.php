@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use  Rubedo\Services\Manager,Rubedo\Services\Cache;
+use Rubedo\Services\Manager, Rubedo\Services\Cache;
 
 /**
  * Controller providing control over the cached contents
@@ -26,17 +26,19 @@ use  Rubedo\Services\Manager,Rubedo\Services\Cache;
  */
 class Backoffice_CacheController extends Zend_Controller_Action
 {
+
     /**
      * cache object
-     * 
+     *
      * @var Zend_Cache
      */
     protected $_cache;
-    
-    public function init(){
-        //$this->_cache = Rubedo\Services\Cache::getCache();
+
+    public function init ()
+    {
+        // $this->_cache = Rubedo\Services\Cache::getCache();
     }
-    
+
     /**
      * The default read Action
      *
@@ -44,15 +46,22 @@ class Backoffice_CacheController extends Zend_Controller_Action
      * params, get sort from request params
      */
     public function indexAction ()
-    {   
+    {
         $countArray = array();
-        $countArray['Cached items']=Manager::getService('Cache')->count();
-        $countArray['Cached Url']=Manager::getService('UrlCache')->count();
+        $countArray['Cached items'] = Manager::getService('Cache')->count();
+        $countArray['Cached Url'] = Manager::getService('UrlCache')->count();
         $this->_helper->json($countArray);
     }
-    
-    public function clearAction(){
-        
-        $this->_helper->json(Cache::getCache()->clean());
+
+    public function clearAction ()
+    {
+        $countArray = array();
+        $countArray['Cached items']=Cache::getCache()->clean();
+        if (Manager::getService('UrlCache')->count() > 0) {
+            $countArray['Cached Url'] = Manager::getService('UrlCache')->drop();
+        }else{
+            $countArray['Cached Url'] = true;
+        }
+        $this->_helper->json($countArray);
     }
 }

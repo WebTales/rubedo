@@ -275,6 +275,16 @@ abstract class AbstractCollection implements IAbstractCollection
 	}
 	return $returnArray;
     }
+    
+    public function drop ()
+    {
+        $result = $this->_dataService->drop();
+        if($result['ok']){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 }
 	
