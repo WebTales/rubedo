@@ -37,12 +37,14 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         if (isset($mongoId) && $mongoId !=0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
             $data = $content['fields'];
-			$terms = array_pop($content['taxonomy']);
-			$termsArray = array();
-			foreach ($terms as $term) {
-				$termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
-			}
-			$data['terms']=$termsArray;
+            if(isset($content['taxonomy'])){
+    			$terms = array_pop($content['taxonomy']);
+    			$termsArray = array();
+    			foreach ($terms as $term) {
+    				$termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+    			}
+    			$data['terms']=$termsArray;
+            }
             $data["id"] = $mongoId;
 
             $type = $this->_typeReader->findById($content['typeId'], true, false);
