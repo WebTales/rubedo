@@ -196,7 +196,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
         }
         
         $result = $this->_dataService->customDelete($updateCond, $options);
-        if ($result['success']) {
+        if ($result['ok']) {
             return true;
         } else {
             return false;
