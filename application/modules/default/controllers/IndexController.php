@@ -126,7 +126,10 @@ class IndexController extends Zend_Controller_Action
         $this->_servicePage->appendJs('/js/scripts.js');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
-        
+                
+        if(!$this->_pageId){
+            throw new Zend_Controller_Exception('No Page found');
+        }
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);

@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
 class Url implements IUrl
 {
 
-    protected static $_useCache = false;
+    protected static $_useCache = true;
 
     /**
      * param delimiter
@@ -61,7 +61,7 @@ class Url implements IUrl
         }
 
         $siteId = $site['id'];
-        unset($site);
+        //unset($site);
         $cachedUrl = Manager::getService('UrlCache')->findByUrl($url, $siteId);
         if (self::$_useCache && null != $cachedUrl) {
             return $cachedUrl['pageId'];
@@ -70,9 +70,10 @@ class Url implements IUrl
         $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
         $lastMatchedNode = 'root';
         if (empty($urlSegments[0])) {
-            $matchedNode = Manager::getService('Pages')->matchSegment('accueil', $lastMatchedNode, $siteId);
-            if ($matchedNode) {
-                return $matchedNode['id'];
+            if(isset($site['homePage'])){
+                return $site['homePage'];
+            }else{
+                return null;
             }
         }
 
