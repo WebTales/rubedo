@@ -44,12 +44,8 @@ if (! defined('INCLUDE_PATH_CONFIGURED')) {
     define('INCLUDE_PATH_CONFIGURED', true);
 }
 
-/**
- * Zend_Application
- */
-require_once 'Zend/Application.php';
-
 require_once 'autoload.php';
+
 
 // Create application, bootstrap, and run
 $application = new Zend_Application(APPLICATION_ENV, 
