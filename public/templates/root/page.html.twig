@@ -53,6 +53,7 @@
 
 			
 			{% block pageContentToolBar %}
+			{% if isLoggedIn %}
 			<div class="navbar hide" id="contentToolBar">
 				<div class="navbar-inner">
 					<div class="container-fluid">
@@ -75,6 +76,7 @@
 					</div>
 				</div>
 			</div>
+			{% endif %}
 			{% endblock %}
 
 			{% block pageMainContent %}
