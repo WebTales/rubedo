@@ -87,7 +87,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"text" => "test");
 		
 		$contents = new \Rubedo\Collection\Contents();
-		$result = $contents->create($obj, true);
+		$result = $contents->create($obj);
 		
 		$this->assertTrue($result['success']);
 	}
@@ -125,7 +125,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('create')->will($this->returnValue(array('success' => true,'data'=>array('id'=>'id'))));
 		
 		$contents = new \Rubedo\Collection\Contents();
-		$result = $contents->create($obj, true);
+		$result = $contents->create($obj);
 		
 		$this->assertFalse($result['success']);
 	}
@@ -163,7 +163,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('create')->will($this->returnValue(array('success' => true,'data'=>array('id'=>'id'))));
 		
 		$contents = new \Rubedo\Collection\Contents();
-		$result = $contents->create($obj, true);
+		$result = $contents->create($obj);
 
 		$this->assertFalse($result['success']);
 	}
@@ -201,7 +201,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"text" => "test");
 		
 		$contents = new \Rubedo\Collection\Contents();
-		$result = $contents->create($obj, true);
+		$result = $contents->create($obj);
 		$this->assertFalse($result['success']);
 	}
 	
@@ -237,7 +237,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"text" => "test");
 		
 		$contents = new \Rubedo\Collection\Contents();
-		$result = $contents->create($obj, true);
+		$result = $contents->create($obj);
 		$this->assertFalse($result['success']);
 	}
 	
@@ -275,7 +275,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
 		
 		$contents = new \Rubedo\Collection\Contents();
-		$result = $contents->update($obj, true);
+		$result = $contents->update($obj);
 		
 		$this->assertTrue($result['success']);
 	}
@@ -314,9 +314,29 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
 		
 		$contents = new \Rubedo\Collection\Contents();
-		$result = $contents->update($obj, true);
+		$result = $contents->update($obj);
 		
 		$this->assertFalse($result['success']);
+	}
+	
+	/**
+	 * Test if the destroy method works fine
+	 */
+	public function testDestroy() {
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('destroy')->will($this->returnValue(array("success" => true)));
+		$this->_mockDataIndexService->expects($this->once())->method('deleteContent');
+		
+		$obj = array(	"id" => "test",
+						"typeId" => "50c0c8669a199d930f000001",
+						"fields" => array(	'text' => 'test',
+											'summary' => 'test',
+											'body' => 'http://test.fr'),
+						"text" => "test");
+						
+		$contents = new \Rubedo\Collection\Contents();
+		$result = $contents->destroy($obj);
+		
+		$this->assertTrue($result['success']);
 	}
 	
 }
