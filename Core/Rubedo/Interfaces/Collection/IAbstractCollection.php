@@ -84,5 +84,13 @@ interface IAbstractCollection {
      * @return array children array
      */
     public function readChild($parentId, $filters = null, $sort = null);
+    
+    /**
+     * Do a count of item matching filter
+     * 
+     * @param array $filters
+     * @return integer
+     */
+    public function count($filters = null);
 
 }

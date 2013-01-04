@@ -111,7 +111,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Getter of the DB connection string
-     * 
+     *
      * @return string DB connection String
      */
     public static function getDefaultMongo ()
@@ -316,7 +316,7 @@ class DataAccess implements IDataAccess
 
     /**
      * recursive function to rebuild tree from flat data store
-     * 
+     *
      * @param array $record
      *            root record of the tree
      * @return array complete tree array
@@ -337,7 +337,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Find child of a node tree
-     * 
+     *
      * @param $parentId id
      *            of the parent node
      * @return array children array
@@ -430,7 +430,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Find an item given by its literral ID
-     * 
+     *
      * @param string $contentId            
      * @return array
      */
@@ -443,7 +443,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Find an item given by its name (find only one if many)
-     * 
+     *
      * @param string $name            
      * @return array
      */
@@ -673,11 +673,12 @@ class DataAccess implements IDataAccess
         
         return $returnArray;
     }
-	
+
     /**
      * Drop The current Collection
-     * 
+     *
      * @deprecated
+     *
      *
      */
     public function drop ()
@@ -685,6 +686,16 @@ class DataAccess implements IDataAccess
         return $this->_collection->drop();
     }
 
+    /*
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Mongo\IDataAccess::count()
+     */
+    public function count ()
+    {
+        $filter = $this->getFilterArray();
+        return $this->_collection->count($filter);
+    }
+    
     /**
      * Add a filter condition to the service
      *
@@ -782,7 +793,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Return the current array of conditions.
-     * 
+     *
      * @return array
      */
     public function getFilterArray ()
@@ -858,7 +869,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Return the current array of conditions.
-     * 
+     *
      * @return array
      */
     public function getSortArray ()
@@ -914,7 +925,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Return the current number of the first result displayed
-     * 
+     *
      * @return integer
      */
     public function getFirstResult ()
@@ -924,7 +935,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Return the current number of results displayed
-     * 
+     *
      * @return integer
      */
     public function getNumberOfResults ()
@@ -958,7 +969,7 @@ class DataAccess implements IDataAccess
 
     /**
      * Give the fields into the fieldList array
-     * 
+     *
      * @return array
      */
     public function getFieldList ()
@@ -1055,8 +1066,9 @@ class DataAccess implements IDataAccess
     {
         return new \MongoId($idString);
     }
-    
-    public function getMongoDate(){
+
+    public function getMongoDate ()
+    {
         return new \MongoDate();
     }
 
@@ -1064,30 +1076,23 @@ class DataAccess implements IDataAccess
      * Update an objet in the current collection
      *
      * Shouldn't be used if doing a simple update action
-     * 
+     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
      * @param array $updateCond
      *            array of condition to determine what should be updated
-     * @param array $options
+     * @param array $options            
      * @return array
      */
     public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
     {
         $resultArray = $this->_collection->update($updateCond, $data, $options);
         if ($resultArray['ok'] == 1) {
-            if ($resultArray['updatedExisting'] == true) {
-                $returnArray = array(
-                    'success' => true,
-                    "data" => $data
-                );
-            } else {
-                $returnArray = array(
-                    'success' => false,
-                    "msg" => 'no record had been updated'
-                );
-            }
+            
+            $returnArray = array(
+                'success' => true
+            );
         } else {
             $returnArray = array(
                 'success' => false,
@@ -1112,9 +1117,9 @@ class DataAccess implements IDataAccess
 
     /**
      * Add index to collection
-     * 
-     * @param string|arrau $keys
-     * @param array $options
+     *
+     * @param string|arrau $keys            
+     * @param array $options            
      */
     public function ensureIndex ($keys, $options = array())
     {
