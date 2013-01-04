@@ -76,7 +76,7 @@ class UrlCacheTest extends PHPUnit_Framework_TestCase {
 	/*
 	 * test if verifyIndexes function start ensureIndex twice.
 	 */
-	public function testNormalVerifyIndexes(){
+	public function testVerifyIndexes(){
 		$this->_mockDataAccessService->expects($this->exactly(2))->method('ensureIndex');
 		
 		$obj["test"]="test";
