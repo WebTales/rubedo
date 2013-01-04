@@ -76,6 +76,58 @@ class WorkflowAbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection->findById($contentId,false);
 		
 	}
+		/*
+		 * test if create function works fine when live param is false and create function return status published
+		 */
+	public function testCreateWithLiveFalseAndStatusPublished(){
+		$createReturn["data"]["status"]="published";
+		$createReturn["data"]["id"]="unId";
+		$this->_mockWorkflowDataAccessService->expects($this->never())->method('setLive');
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('setWorkspace');
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('create')->will($this->returnValue($createReturn));
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('publish');
+		
+		$obj["test"]="test";
+		$collection = new testWorkflowCollection();
+		$result =  $collection->create($obj, array('safe'=>true),false);
+	}
+		/*
+		 * test if create function works fine when live param istrue and create function not return status published
+		 */
+	public function testCreateWithLiveStatusNotPublished(){
+		$createReturn["data"]["status"]="notpublished";
+		$createReturn["data"]["id"]="unId";
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('setLive');
+		$this->_mockWorkflowDataAccessService->expects($this->never())->method('setWorkspace');
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('create')->will($this->returnValue($createReturn));
+		$this->_mockWorkflowDataAccessService->expects($this->never())->method('publish');
+		
+		$obj["test"]="test";
+		$collection = new testWorkflowCollection();
+		$result =  $collection->create($obj, array('safe'=>true),true);
+	}
+	/*
+	 * test if readChild function works fine
+	 */
+	public function testNormalReadChild(){
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('setLive');
+		$this->_mockWorkflowDataAccessService->expects($this->never())->method('setWorkspace');
+		
+		$parentId="parentId";
+		$collection = new testWorkflowCollection();
+		$result =  $collection->readChild($parentId);
+	}
+	/*
+	 * test if readChild function works fine when live param is false
+	 */
+	public function testNormalReadChildWithLiveFalse(){
+		$this->_mockWorkflowDataAccessService->expects($this->never())->method('setLive');
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('setWorkspace');
+		
+		$parentId="parentId";
+		$collection = new testWorkflowCollection();
+		$result =  $collection->readChild($parentId, null,null,false);
+	}
 }
 
 	
