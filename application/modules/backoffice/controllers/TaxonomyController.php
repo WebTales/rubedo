@@ -48,7 +48,7 @@ class Backoffice_TaxonomyController extends Backoffice_DataAccessController
             }
 			
 			}
-		if($childDelete["err"]===null){ 
+		if($childDelete["ok"]==1){ 
 			parent::deleteAction();
 		}
 		

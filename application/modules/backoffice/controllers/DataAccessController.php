@@ -55,7 +55,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms');
 	
     /**
      * Disable layout & rendering, set content type to json
