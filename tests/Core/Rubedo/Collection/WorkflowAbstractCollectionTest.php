@@ -46,9 +46,36 @@ class WorkflowAbstractCollectionTest extends PHPUnit_Framework_TestCase {
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $this->_mockDataAccessService);
 		$this->_mockWorkflowDataAccessService = $this->getMock('Rubedo\\Mongo\\WorkflowDataAccess');
         Rubedo\Services\Manager::setMockService('MongoWorkflowDataAccess', $this->_mockWorkflowDataAccessService);
+		
 
         parent::setUp();
     }
+	/*
+	 * Test if FindById call method setLive once when live is true
+	 */
+	public function testNormalFindByIdWithLiveToTrue(){
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('setLive');
+		$this->_mockWorkflowDataAccessService->expects($this->never())->method('setWorkspace');
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('findById');
+		
+		$contentId="id";
+		$collection = new testWorkflowCollection();
+		$collection->findById($contentId);
+		
+	}
+	/*
+	 * Test if FindById call method setWorkspace once when live is false
+	 */
+		public function testNormalFindByIdWithLiveToFalse(){
+		$this->_mockWorkflowDataAccessService->expects($this->never())->method('setLive');
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('setWorkspace');
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('findById');
+		
+		$contentId="id";
+		$collection = new testWorkflowCollection();
+		$collection->findById($contentId,false);
+		
+	}
 }
 
 	
