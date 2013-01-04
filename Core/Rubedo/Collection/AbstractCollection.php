@@ -173,6 +173,26 @@ abstract class AbstractCollection implements IAbstractCollection
     public function destroy(array $obj, $options = array('safe'=>true)) {
         return $this->_dataService->destroy($obj, $options);
     }
+    
+    
+    /* (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::count()
+     */
+    public function count($filters = null) {
+        if (isset($filters)) {
+            foreach ($filters as $value) {
+                if ((!(isset($value["operator"]))) || ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(array($value["property"] => $value["value"]));
+                } else if ($value["operator"] == 'like') {
+                    $this->_dataService->addFilter(array($value["property"] => array('$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i'))));
+                } elseif (isset($value["operator"])) {
+                    $this->_dataService->addFilter(array($value["property"] => array($value["operator"] => $value["value"])));
+                }
+
+            }
+        }
+        return $this->_dataService->count();
+    }
 
     public function customDelete($deleteCond, $options = array('safe'=>true)) {
         return $this->_dataService->customDelete($deleteCond, $options);
@@ -254,6 +274,16 @@ abstract class AbstractCollection implements IAbstractCollection
 		}
 	}
 	return $returnArray;
+    }
+    
+    public function drop ()
+    {
+        $result = $this->_dataService->drop();
+        if($result['ok']){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }
