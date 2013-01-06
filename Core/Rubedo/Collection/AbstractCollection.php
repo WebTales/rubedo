@@ -113,6 +113,17 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_dataService->findByName($name);
     }
 
+    /**
+     * Do a findone request
+     *
+     * @param array $value
+     *            search condition
+     * @return array
+     */
+    public function findOne ($value) {
+    	return $this->_dataService->findOne($value);
+    }
+
     public function customFind ($filter = array(), $fieldRule = array()){
 	return $this->_dataService->customFind($filter,$fieldRule);			
     }
