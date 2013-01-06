@@ -479,9 +479,8 @@ class DataAccess implements IDataAccess
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
         
-        $resultArray = $this->_collection->insert($obj, array(
-            "safe" => $options
-        ));
+        $resultArray = $this->_collection->insert($obj, $options);
+		
         if ($resultArray['ok'] == 1) {
             $obj['id'] = (string) $obj['_id'];
             unset($obj['_id']);
