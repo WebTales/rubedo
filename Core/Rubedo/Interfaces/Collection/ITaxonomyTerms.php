@@ -37,13 +37,6 @@ interface ITaxonomyTerms extends IAbstractCollection{
     public function destroy(array $obj, $options = array('safe'=>true));
 	
 	/**
-     *
-     * @param string $id id whose children should be deleted
-     * @return array array list of items to delete
-     */
-    protected function _getChildToDelete($id);
-	
-	/**
 	 * Allow to find a term by its id
 	 * 
 	 * @param string $id id of the term
