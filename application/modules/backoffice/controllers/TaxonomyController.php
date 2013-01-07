@@ -38,18 +38,5 @@ class Backoffice_TaxonomyController extends Backoffice_DataAccessController
 		$this -> _dataTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
 	}
 	
-	public function deleteAction() {
-		  $data = $this->getRequest()->getParam('data');
-		    if (!is_null($data)) {
-            $data = Zend_Json::decode($data);
-            if (is_array($data)) {
-				$childDelete=$this->_dataTermsService->deleteByVocabularyId($data['id']);
-            }
-			
-			}
-		if($childDelete["ok"]==1){ 
-			parent::deleteAction();
-		}
-		
-	}
+
 }
