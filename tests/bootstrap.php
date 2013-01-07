@@ -17,7 +17,6 @@ if(!defined('INCLUDE_PATH_CONFIGURED')){
 
 
 require_once 'autoload.php';
-Zend_Loader_Autoloader::getInstance();
 
 Zend_Session::$_unitTestEnabled = true;
 
