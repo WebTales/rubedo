@@ -54,7 +54,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		$returnArray = parent::update($obj, $options);
 		if($returnArray['success']){
 			if($returnArray['data']['status'] === 'published' && !$live){
-				$result = $this->_dataService->publish($returnArray['data']['id']);
+				$result = $this->publish($returnArray['data']['id']);
 				
 				if(!$result['success']){
 					$returnArray['success'] = false;
@@ -86,15 +86,18 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		
         $returnArray = parent::create($obj, $options);
 		
-		if(isset($returnArray['data']['status'])){
-			if($returnArray['data']['status'] === 'published'){
-				$result = $this->_dataService->publish($returnArray['data']['id']);
+		if($returnArray['success']){
+			if($returnArray['data']['status'] === 'published' && !$live){
+				$result = $this->publish($returnArray['data']['id']);
 				
 				if(!$result['success']){
 					$returnArray['success'] = false;
 					$returnArray['msg'] = "failed to publish the content";
+					unset($returnArray['data']);
 				}
 			}
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'failed to update');
 		}
 		
 		return $returnArray;
@@ -150,5 +153,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		
 		return $returnArray;
     }
+	
+	public function publish($objectId) {
+		return $this->_dataService->publish($objectId);
+	}
 
 }
