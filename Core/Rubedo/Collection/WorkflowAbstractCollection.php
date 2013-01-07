@@ -54,7 +54,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		$returnArray = parent::update($obj, $options);
 		if($returnArray['success']){
 			if($returnArray['data']['status'] === 'published' && !$live){
-				$result = $this->_dataService->publish($returnArray['data']['id']);
+				$result = $this->publish($returnArray['data']['id']);
 				
 				if(!$result['success']){
 					$returnArray['success'] = false;
@@ -77,24 +77,28 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true), $live = true) {
+    public function create(array $obj, $options = array('safe'=>true), $live = false) {
     	if($live === true){
-			$this->_dataService->setLive();
-		} else {
-			$this->_dataService->setWorkspace();
+    		throw new Exception('Can\' create directly in live');
 		}
+
+		$this->_dataService->setWorkspace();
+		
 		
         $returnArray = parent::create($obj, $options);
 		
-		if(isset($returnArray['data']['status'])){
+		if($returnArray['success']){
 			if($returnArray['data']['status'] === 'published'){
-				$result = $this->_dataService->publish($returnArray['data']['id']);
+				$result = $this->publish($returnArray['data']['id']);
 				
 				if(!$result['success']){
 					$returnArray['success'] = false;
 					$returnArray['msg'] = "failed to publish the content";
+					unset($returnArray['data']);
 				}
 			}
+		} else {
+			$returnArray = array('success' => false, 'msg' => 'failed to update');
 		}
 		
 		return $returnArray;
@@ -150,5 +154,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
 		
 		return $returnArray;
     }
+	
+	public function publish($objectId) {
+		return $this->_dataService->publish($objectId);
+	}
 
 }

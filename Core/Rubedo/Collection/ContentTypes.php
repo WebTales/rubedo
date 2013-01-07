@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
+
 use Rubedo\Interfaces\Collection\IContentTypes;
 
 /**
@@ -26,6 +27,81 @@ use Rubedo\Interfaces\Collection\IContentTypes;
  */
 class ContentTypes extends AbstractCollection implements IContentTypes
 {
+
+    protected $_model = array(
+        'type' => array(
+            'domain' => 'name',
+            'required' => true
+        ),
+        'dependant' => array(
+            'domain' => 'bool',
+            'required' => true
+        ),
+        'dependantTypes' => array(
+            'domain' => 'list',
+            'required' => true,
+            'items' => array(
+                'domain' => 'id',
+                'required' => false
+            )
+        ),
+        'fields' => array(
+            'domain' => 'list',
+            'required' => true,
+            'items' => array(
+                'domain' => 'array',
+                'required' => false,
+                'items' => array(
+                    'cType' => array(
+                        'domain' => 'string',
+                        'required' => true
+                    ),
+                    'config' => array(
+                        "name" => array(
+                            'domain' => 'string',
+                            'required' => true
+                        ),
+                        "fieldLabel" => array(
+                            'domain' => 'string',
+                            'required' => true
+                        ),
+                        "allowBlank" => array(
+                            'domain' => 'bool',
+                            'required' => false
+                        ),
+                        "localizable" => array(
+                            'domain' => 'bool',
+                            'required' => false
+                        ),
+                        "searchable" => array(
+                            'domain' => 'bool',
+                            'required' => false
+                        ),
+                        "multivalued" => array(
+                            'domain' => 'bool',
+                            'required' => false
+                        ),
+                        "tooltip" => array(
+                            'domain' => 'string',
+                            'required' => false
+                        ),
+                        "labelSeparator" => array(
+                            'domain' => 'string',
+                            'required' => false
+                        )
+                    )
+                )
+            )
+        ),
+        'vocabularies' => array(
+            'domain' => 'list',
+            'required' => true,
+            'items' => array(
+                'domain' => 'id',
+                'required' => false
+            )
+        )
+    );
 
     public function __construct ()
     {
@@ -80,8 +156,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     protected function _indexContentType ($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService(
-                'ElasticDataIndex');
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContentType($obj['id'], $obj, TRUE);
     }
@@ -93,19 +168,21 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     protected function _unIndexContentType ($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService(
-                'ElasticDataIndex');
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteContentType($obj['id'], TRUE);
     }
 
-	/**
+    /**
      * Find an item given by its name (find only one if many)
      *
-     * @param string $name
+     * @param string $name            
      * @return array
      */
-    public function findByName($name) {
-        return $this->_dataService->findOne(array('type'=>$name));
+    public function findByName ($name)
+    {
+        return $this->_dataService->findOne(array(
+            'type' => $name
+        ));
     }
 }
