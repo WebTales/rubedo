@@ -55,7 +55,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms','model');
 	
     /**
      * Disable layout & rendering, set content type to json
@@ -330,6 +330,11 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         }
 
         $this->_returnJson($returnArray);
+    }
+    
+    public function modelAction(){
+        $model = $this->_dataService->getModel();
+        $this->_returnJson($model);
     }
 
 }

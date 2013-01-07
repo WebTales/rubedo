@@ -42,6 +42,8 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected $_dataService;
     
+    protected $_model = array();
+    
     protected function _init() {
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
@@ -176,9 +178,18 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _filterInputData (array $obj)
     {
+        if(count($this->_model)>0){
+        }
         return $obj;
     }
+    
 
+
+    public function getModel(){
+        return $this->_model;
+    }
+    
+    
     /**
      * Update an objet in the current collection
      *
