@@ -16,8 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IAbstractCollection;
-use Rubedo\Mongo\DataAccess;
+use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection;
 use Rubedo\Services\Manager;
 
 /**
@@ -27,7 +26,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-abstract class WorkflowAbstractCollection extends AbstractCollection Implements IWorkflowAbstractCollection
+abstract class WorkflowAbstractCollection extends AbstractCollection implements IWorkflowAbstractCollection
 {
 
     protected function _init() {
