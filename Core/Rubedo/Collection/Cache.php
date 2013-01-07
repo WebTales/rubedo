@@ -29,6 +29,29 @@ use Rubedo\Services\Manager;
 class Cache extends AbstractCollection implements ICache
 {
 
+    protected $_model = array(
+        'data' => array(
+            'domain' => 'string',
+            'required' => true,
+        ),
+        'cacheId' => array(
+            'domain' => 'string',
+            'required' => true
+        ),
+        'expire' => array(
+            'domain' => 'tstamp',
+            'required' => false
+        ),
+        'tags' => array(
+            'domain' => 'list',
+            'required' => false,
+            'subConfig' => array(
+                'domain' => 'string',
+                'required' => false
+            )
+        )
+    );
+
     public function __construct ()
     {
         $this->_collectionName = 'Cache';
@@ -77,7 +100,7 @@ class Cache extends AbstractCollection implements ICache
 
     /**
      * Remove expired cache items
-     * 
+     *
      * @return boolean
      */
     public function deledExpired ()
@@ -93,7 +116,5 @@ class Cache extends AbstractCollection implements ICache
         } else {
             return false;
         }
-        
     }
-    
 }
