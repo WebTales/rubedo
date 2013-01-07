@@ -98,4 +98,14 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteContentType($obj['id'], TRUE);
     }
+
+	/**
+     * Find an item given by its name (find only one if many)
+     *
+     * @param string $name
+     * @return array
+     */
+    public function findByName($name) {
+        return $this->_dataService->findOne(array('type'=>$name));
+    }
 }

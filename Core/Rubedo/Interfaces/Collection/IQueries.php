@@ -14,29 +14,16 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Interfaces\Collection;
 
-require_once('DataAccessController.php'); 
- 
 /**
- * Controller providing CRUD API for the taxonomy JSON
- *
- * Receveive Ajax Calls for read & write from the UI to the Mongo DB
+ * Interface of service handling Querys
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
  */
-class Backoffice_TaxonomyController extends Backoffice_DataAccessController
-{
+interface IQuerys extends IAbstractCollection{
 	
-	public function init(){
-		parent::init();
-		
-		$this -> _dataService = Rubedo\Services\Manager::getService('Taxonomy');
-		$this -> _dataTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-	}
-	
-
 }
