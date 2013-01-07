@@ -34,4 +34,11 @@ interface ICache extends IAbstractCollection
      * @return bool
      */
     public function upsertByCacheId ($obj, $cacheId);
+    
+    /**
+     * Remove expired cache items
+     *
+     * @return boolean
+     */
+    public function deledExpired ();
 }
