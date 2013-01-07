@@ -78,7 +78,7 @@ class config
 		'Images'					=>	'Rubedo\\Interfaces\\Collection\\IImages',
 		'MediaTypes'				=>	'Rubedo\\Interfaces\\Collection\\IMediaTypes',
 		'Cache'						=>	'Rubedo\\Interfaces\\Collection\\ICache',
-		'Querys'					=>	'Rubedo\\Interfaces\\Collection\\IQuerys',
+		'Queries'					=>	'Rubedo\\Interfaces\\Collection\\IQueries',
 	);
 
     /**

@@ -17,13 +17,13 @@
 namespace Rubedo\Interfaces\Collection;
 
 /**
- * Interface of service handling Querys
+ * Interface of service handling Queries
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-interface IQuerys extends IAbstractCollection{
+interface IQueries extends IAbstractCollection{
 	
 }
