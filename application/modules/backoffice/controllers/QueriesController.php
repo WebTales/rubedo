@@ -18,7 +18,7 @@
 require_once('DataAccessController.php');
  
 /**
- * Controller providing CRUD API for the querys JSON
+ * Controller providing CRUD API for the Queries JSON
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
@@ -28,13 +28,13 @@ require_once('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_QuerysController extends Backoffice_DataAccessController
+class Backoffice_QueriesController extends Backoffice_DataAccessController
 {
    public function init(){
 		parent::init();
 		
 		// init the data access service
-		$this -> _dataService = Rubedo\Services\Manager::getService('Querys');
+		$this -> _dataService = Rubedo\Services\Manager::getService('Queries');
 	}
 
 }
