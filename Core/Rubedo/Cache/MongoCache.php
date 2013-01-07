@@ -126,18 +126,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
      */
     public function remove ($id)
     {
-        $updateCond = array(
-            'cacheId' => $id
-        );
-        $options = array();
-        $options['safe'] = true;
-        
-        $result = $this->_dataService->customDelete($updateCond, $options);
-        if ($result['success']) {
-            return true;
-        } else {
-            return false;
-        }
+       return $this->_dataService->deleteByCacheId($id);
     }
 
     /**
@@ -178,17 +167,11 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
                 throw new \Zend_Exception('not yet implemented');
                 break;
             case \Zend_Cache::CLEANING_MODE_OLD:
-                $updateCond["expire"]=array('$lt'=>Manager::getService('CurrentTime')->getCurrentTime());
+               return $this->_dataService->deleteExpired();
                 break;
             default:
+                return $this->_dataService->drop();
                 break;
-        }
-        
-        $result = $this->_dataService->customDelete($updateCond, $options);
-        if ($result['ok']) {
-            return true;
-        } else {
-            return false;
         }
     }
     

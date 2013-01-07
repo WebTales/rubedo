@@ -50,8 +50,10 @@ class Cache extends AbstractCollection implements ICache
     /**
      * Update object or insert if not present base on the CacheId field
      *
-     * @param array $obj inserted data
-     * @param string $cacheId string parameter of the cache entry
+     * @param array $obj
+     *            inserted data
+     * @param string $cacheId
+     *            string parameter of the cache entry
      * @return bool
      */
     public function upsertByCacheId ($obj, $cacheId)
@@ -72,5 +74,41 @@ class Cache extends AbstractCollection implements ICache
             return false;
         }
     }
+
+    /**
+     * Remove expired cache items
+     * 
+     * @return boolean
+     */
+    public function deledExpired ()
+    {
+        $options = array();
+        $options['safe'] = true;
+        $updateCond["expire"] = array(
+            '$lt' => Manager::getService('CurrentTime')->getCurrentTime()
+        );
+        $result = $this->_dataService->customDelete($updateCond, $options);
+        if ($result['ok']) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+	public function deleteByCacheId($id){
+		 $updateCond = array(
+            'cacheId' => $id
+        );
+        $options = array();
+        $options['safe'] = true;
+		$result = $this->_dataService->customDelete($updateCond, $options);
+        if ($result['success']) {
+            return true;
+        } else {
+            return false;
+        }
+	}
+	
+	
     
 }
