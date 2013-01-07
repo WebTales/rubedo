@@ -36,5 +36,16 @@ class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('TaxonomyTerms');
 	}
+	
+	/**
+	 * Clear orphan terms in the collection
+	 * 
+	 * @return array Result of the request
+	 */
+	public function clearOrphanTermsAction() {
+   		$result = $this->_dataService->clearOrphanTerms();
+		
+		$this->_returnJson($result);
+   	}
 
 }

@@ -34,23 +34,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms {
 	
 	protected static $_termsArray = array();
 
-    public function getChildrens($parentId) {
-
-        $terms = $this->readChild($vocabularyId);
-
-        foreach ($terms as $key => $value) {
-            $this->deleteChild($terms);
-        }
-
-        $result = $this->_dataService->destroy($data);
-
-        if ($result['success'] == true) {
-
-        }
-    }
-
     /**
-     * Delete objets in the current collection
+     * Delete objects in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj data object
@@ -95,15 +80,87 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms {
         }
 
         return $returnArray;
-
     }
 	
+	/**
+	 * Allow to find a term by its id
+	 * 
+	 * @param string $id id of the term
+	 * @return array Contain the term
+	 */
 	public function getTerm($id){
 		if(!isset(self::$_termsArray[$id])){
 			$term = $this->findById($id);
 			self::$_termsArray[$id]=$term['text'];
 		}
 		return self::$_termsArray[$id];
+	}
+	
+	/**
+	 * Clear orphan terms in the collection
+	 * 
+	 * @return array Result of the request
+	 */
+	public function clearOrphanTerms() {
+		$taxonomy = \Rubedo\Services\Manager::getService('Taxonomy');
+		$orphans = array();
+		$erreur = false;
+		
+		$terms = $this->getList();
+		$terms = $terms ['data'];
+		
+		foreach ($terms as $value) {
+			if(isset($value['vocabularyId'])){
+				$vocabulary = $taxonomy->findById($value['vocabularyId']);
+				
+				if(!$vocabulary){
+					$orphans[] = $value;
+				} else {
+					if (isset($value['parentId'])) {
+						if(!$value['parentId'] == "root") {
+							$parent = $this->findById($value['parentId']);
+							
+							if(!$parent){
+								$orphans[] = $value;
+							}
+						}
+					} else {
+						$orphans[] = $value;
+					}
+				}
+			} else {
+				$orphans[] = $value;
+			}
+		}
+		
+		foreach ($orphans as $value) {
+			$result = $this->destroy($value);
+
+			if(!$result['success']){
+				$erreur = true;
+			}
+		}
+				
+		if(!$erreur) {
+			$response['success'] = true;
+			$response['data'] = $orphans;
+		} else {
+			$response['success'] = false;
+		}
+		
+		return $response;
+	}
+	
+	/**
+	 * Allow to find terms by their vocabulary
+	 * 
+	 * @param string $vocabularyId Contain the id of the vocabulary
+	 * @return array Contain the terms associated to the vocabulary given in parameter
+	 */
+	public function findByVocabulary($vocabularyId) {
+		$filter = array(array("property" => "vocabularyId"), array("value" => $vocabularyId));	
+			
+		return $this->_dataService->getList($filter);
 	}
 
 	public function deleteByVocabularyId($id){
