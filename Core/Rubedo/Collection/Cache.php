@@ -75,6 +75,11 @@ class Cache extends AbstractCollection implements ICache
         }
     }
 
+    /**
+     * Remove expired cache items
+     * 
+     * @return boolean
+     */
     public function deledExpired ()
     {
         $options = array();
