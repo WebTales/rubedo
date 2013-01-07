@@ -98,9 +98,27 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 		$id="id";
 		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
 		$result=$taxonomyTermsService->getTerm($id);
-		$isArray=is_string($result);
-		$this->assertTrue($isArray);
+		$isString=is_string($result);
+		$this->assertTrue($isString);
 		
+	}
+	
+	public function testFindByVocabularyId()
+	{
+		$this->_mockDataAccessService->expects($this->once())->method('read');
+		$this->_mockDataAccessService->expects($this->any())->method('addFilter');
+		
+		$id="vocabularyId";
+		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$result=$taxonomyTermsService->findByVocabulary($id);
+	}
+	
+	public function testDeleteByVocabulary()
+	{
+		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
+		$id="vocabularyId";
+		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$result=$taxonomyTermsService->deleteByVocabularyId($id);
 	}
 	
 }

@@ -158,9 +158,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms {
 	 * @return array Contain the terms associated to the vocabulary given in parameter
 	 */
 	public function findByVocabulary($vocabularyId) {
-		$filter = array(array("property" => "vocabularyId"), array("value" => $vocabularyId));	
-			
-		return $this->_dataService->getList($filter);
+		$filter = array("property" => "vocabularyId", "value" => $vocabularyId);	
+		return $this->getList($filter);
 	}
 
 	public function deleteByVocabularyId($id){
