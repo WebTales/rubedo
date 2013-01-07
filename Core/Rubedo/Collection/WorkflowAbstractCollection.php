@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-abstract class WorkflowAbstractCollection extends AbstractCollection
+abstract class WorkflowAbstractCollection extends AbstractCollection Implements IWorkflowAbstractCollection
 {
 
     protected function _init() {
