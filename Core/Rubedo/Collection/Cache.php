@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
+
 use Rubedo\Interfaces\Collection\ICache;
 use Rubedo\Services\Manager;
 
@@ -33,14 +34,43 @@ class Cache extends AbstractCollection implements ICache
         $this->_collectionName = 'Cache';
         parent::__construct();
     }
-    
-    public function findByCacheId($cacheId,$time = null){
+
+    public function findByCacheId ($cacheId, $time = null)
+    {
         $cond = array();
         $cond['cacheId'] = $cacheId;
-        if($time){
-            $cond['expire'] = array('$gt'=>$time);
+        if ($time) {
+            $cond['expire'] = array(
+                '$gt' => $time
+            );
         }
         return $this->_dataService->findOne($cond);
+    }
+
+    /**
+     * Update object or insert if not present base on the CacheId field
+     *
+     * @param array $obj inserted data
+     * @param string $cacheId string parameter of the cache entry
+     * @return bool
+     */
+    public function upsertByCacheId ($obj, $cacheId)
+    {
+        $obj = $this->_filterInputData($obj);
+        $options = array();
+        $options['safe'] = true;
+        $options['upsert'] = true;
+        
+        $updateCond = array(
+            'cacheId' => $cacheId
+        );
+        
+        $result = $this->_dataService->customUpdate($obj, $updateCond, $options);
+        if ($result['success']) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
 }

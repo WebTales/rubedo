@@ -41,6 +41,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var\Rubedo\Mongo\DataAccess
      */
     protected $_dataService;
+    
     protected function _init() {
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
@@ -116,6 +117,7 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Do a findone request
      *
+     * @deprecated
      * @param array $value
      *            search condition
      * @return array
@@ -124,6 +126,12 @@ abstract class AbstractCollection implements IAbstractCollection
     	return $this->_dataService->findOne($value);
     }
 
+    /**
+     * @deprecated
+     * @param unknown $filter
+     * @param unknown $fieldRule
+     * @return MongoCursor
+     */
     public function customFind ($filter = array(), $fieldRule = array()){
 	return $this->_dataService->customFind($filter,$fieldRule);			
     }
@@ -133,6 +141,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      * Shouldn't be used if doing a simple update action
      *
+     * @deprecated
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
@@ -157,6 +166,17 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function create(array $obj, $options = array('safe'=>true)) {
         return $this->_dataService->create($obj, $options);
+    }
+    
+    /**
+     * Return validated data from input data based on collection rules
+     *
+     * @param array $obj
+     * @return array:
+     */
+    protected function _filterInputData (array $obj)
+    {
+        return $obj;
     }
 
     /**
@@ -205,6 +225,13 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_dataService->count();
     }
 
+    /**
+     * 
+     * @deprecated
+     * @param unknown $deleteCond
+     * @param unknown $options
+     * @return Ambigous <boolean, multitype:>
+     */
     public function customDelete($deleteCond, $options = array('safe'=>true)) {
         return $this->_dataService->customDelete($deleteCond, $options);
     }
@@ -286,6 +313,7 @@ abstract class AbstractCollection implements IAbstractCollection
 	}
 	return $returnArray;
     }
+    
     
     public function drop ()
     {
