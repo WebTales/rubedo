@@ -77,17 +77,18 @@ abstract class WorkflowAbstractCollection extends AbstractCollection
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true), $live = true) {
+    public function create(array $obj, $options = array('safe'=>true), $live = false) {
     	if($live === true){
-			$this->_dataService->setLive();
-		} else {
-			$this->_dataService->setWorkspace();
+    		throw new Exception('Can\' create directly in live');
 		}
+
+		$this->_dataService->setWorkspace();
+		
 		
         $returnArray = parent::create($obj, $options);
 		
 		if($returnArray['success']){
-			if($returnArray['data']['status'] === 'published' && !$live){
+			if($returnArray['data']['status'] === 'published'){
 				$result = $this->publish($returnArray['data']['id']);
 				
 				if(!$result['success']){
