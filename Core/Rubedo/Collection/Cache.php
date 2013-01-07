@@ -117,4 +117,20 @@ class Cache extends AbstractCollection implements ICache
             return false;
         }
     }
+	public function deleteByCacheId($id){
+		 $updateCond = array(
+            'cacheId' => $id
+        );
+        $options = array();
+        $options['safe'] = true;
+		$result = $this->_dataService->customDelete($updateCond, $options);
+        if ($result['success']) {
+            return true;
+        } else {
+            return false;
+        }
+	}
+	
+	
+    
 }

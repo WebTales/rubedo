@@ -16,21 +16,21 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IQuerys,Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IQueries,Rubedo\Services\Manager;
 
 /**
- * Service to handle Querys
+ * Service to handle Queries
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-class Querys extends AbstractCollection implements IQuerys
+class Queries extends AbstractCollection implements IQueries
 {
 	
 
 	public function __construct(){
-		$this->_collectionName = 'Querys';
+		$this->_collectionName = 'Queries';
 		parent::__construct();
 	}
 	
