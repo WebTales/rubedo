@@ -43,8 +43,7 @@ class Backoffice_TaxonomyController extends Backoffice_DataAccessController
 		    if (!is_null($data)) {
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
-				$deleteCond = array('vocabularyId'=>$data["id"]);
-				$childDelete=$this->_dataTermsService->customDelete($deleteCond);
+				$childDelete=$this->_dataTermsService->deleteByVocabularyId($data['id']);
             }
 			
 			}
