@@ -35,8 +35,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
         $blockConfig = $this->getRequest()->getParam('block-config');
+
         $contentArray = $this->getDataList($blockConfig, $this->setPaginationValues($blockConfig));
-        
+
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
@@ -84,6 +85,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
 
     protected function getDataList ($blockConfig, $pageData)
     {
+    	$sort = array();
         $operatorsArray = array(
             '$lt' => '<',
             '$lte' => '<=',
@@ -135,13 +137,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
             }
             /* Add filter on FieldRule */
             foreach ($blockConfig['fieldRules'] as $property => $value) {
-                $ruleOperator = array_search($value['rule'], $operatorsArray);
-                // Temporary test
-                if ($property == "CreateDate") {
-                    $property = "createTime";
-                } elseif ($property == "lastUpdateDate") {
-                    $property = "lastUpdateTime";
-                }
+            	if(isset($value['rule'])&& isset($value['value'])){
+            	   $ruleOperator = array_search($value['rule'], $operatorsArray);
                 $nextDate = new DateTime($value['value']);
                 $nextDate->add(new DateInterval('PT23H59M59S'));
                 $nextDate = (array) $nextDate;
@@ -175,6 +172,21 @@ class Blocks_ContentListController extends Blocks_AbstractController
                         'value' => $this->_dateService->convertToTimeStamp($value['value'])
                     );
                 }
+				}
+				/*
+				 * Add Sort
+				 */
+				 if(isset($value['sort'])){
+       		$sort[] = array(
+            'property' => $property,
+            'direction' => $value['sort']
+        );	
+				 }else{
+				 $sort[] = array(
+            'property' =>'id',
+            'direction' => 'DESC');
+				 }
+			
             }
         } else {
             // no advanced query : should get classic parameters
@@ -214,11 +226,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 'value' => 'published'
             );
         }
-        $sort = array();
-        $sort[] = array(
-            'property' => 'fields.date',
-            'direction' => 'desc'
-        );
         /* Get the list */
         $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
         $contentArray['page'] = $pageData;
