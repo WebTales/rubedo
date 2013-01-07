@@ -26,4 +26,13 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface ITaxonomyTerms extends IAbstractCollection{
 	
+	    /**
+     * Delete each terms by vocabularyId
+     *
+	 * @param string $id id of the vocabulary
+	 *
+     * @return array 
+     */
+	public function deleteByVocabularyId($id);
+	
 }

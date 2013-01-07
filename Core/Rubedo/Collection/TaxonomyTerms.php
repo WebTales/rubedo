@@ -106,4 +106,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms {
 		return self::$_termsArray[$id];
 	}
 
+	public function deleteByVocabularyId($id){
+		$deleteCond = array('vocabularyId'=>$id);
+		return $this->customDelete($deleteCond);
+	}
+
 }
