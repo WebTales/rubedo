@@ -42,5 +42,14 @@ class Taxonomy extends AbstractCollection implements ITaxonomy {
     public function findByName($name) {
         return $this->_dataService->findOne(array('name'=>$name));
     }
+	
+	public function destroy(array $obj, $options = array('safe'=>true)){
+		$childDelete=Manager::getService('TaxonomyTerms')->deleteByVocabularyId($obj['id']);
+		if($childDelete["ok"]==1){ 
+			return parent::destroy($obj,$options);
+		}else{
+			return $childDelete;
+		}
+	}
 
 }
