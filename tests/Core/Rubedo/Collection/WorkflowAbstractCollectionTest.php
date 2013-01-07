@@ -18,6 +18,7 @@
 Use Rubedo\Collection\WorkflowAbstractCollection;
 
 require_once('Rubedo/Interfaces/Collection/IAbstractCollection.php');
+require_once('Rubedo/Interfaces/Collection/IWorkflowAbstractCollection.php');
 require_once('Rubedo/Collection/WorkflowAbstractCollection.php');
 
 class testWorkflowCollection extends WorkflowAbstractCollection {
