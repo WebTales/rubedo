@@ -109,23 +109,12 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
         $obj['tags'] = $tags;
         if ($specificLifetime) {
             $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
-        } elseif ($lifetime = $this->getOption('lifetime')) {
+        } elseif ($this->getOption('lifetime')) {
+            $lifetime = $this->getOption('lifetime');
             $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $lifetime;
         }
-        $options = array();
-        $options['safe'] = true;
-        $options['upsert'] = true;
         
-        $updateCond = array(
-            'cacheId' => $obj['cacheId']
-        );
-        
-        $result = $this->_dataService->customUpdate($obj, $updateCond, $options);
-        if ($result['success']) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->_dataService->upsertByCacheId($obj,$id);
     }
 
     /**
