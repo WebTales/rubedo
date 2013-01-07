@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
+use Rubedo\Services\Manager;
 
 /**
  * Abstract Controller providing CRUD API and dealing with the data access
@@ -66,7 +66,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     public function init() {
         parent::init();
 		
-		$sessionService = \Rubedo\Services\Manager::getService('Session');
+		$sessionService = Manager::getService('Session');
 		
         // refuse write action not send by POST
         if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {

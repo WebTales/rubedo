@@ -16,8 +16,10 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection, Rubedo\Services\Manager;
+
+
+//require_once APPLICATION_PATH.'/../Core/Rubedo/Interfaces/Collection/IWorkflowAbstractCollection.php';
 
 /**
  * Class implementing the API to MongoDB
@@ -78,7 +80,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      */
     public function create(array $obj, $options = array('safe'=>true), $live = false) {
     	if($live === true){
-    		throw new Exception('Can\' create directly in live');
+    		throw new \Zend_Exception('Can\' create directly in live');
 		}
 
 		$this->_dataService->setWorkspace();
