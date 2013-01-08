@@ -36,8 +36,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
 		$this->_queryReader=Manager::getService('Queries');
         $queryId = $this->getRequest()->getParam('block-config');
-		$blockConfig= $this->_queryReader->findById($queryId["query"]);
-
+		$blockConfig=$this->getQuery($queryId);
+		
         $contentArray = $this->getDataList($blockConfig, $this->setPaginationValues($blockConfig));
 
         $nbItems = $contentArray["count"];
@@ -84,7 +84,11 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
-
+/*
+ * 
+ * @ todo: PHPDoc
+ * 
+ */
     protected function getDataList ($blockConfig, $pageData)
     {
     	$sort = array();
@@ -108,6 +112,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 'property' => 'status',
                 'value' => 'published'
             );
+
             /* Add filter on taxonomy */
             foreach ($blockConfig['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
@@ -240,4 +245,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         return $pageData;
     }
+	protected function getQuery($queryId)
+	{
+		return $this->_queryReader->findById($queryId["query"]);
+	}
 }
