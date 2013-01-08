@@ -322,6 +322,9 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function getAncestors ($item, $limit = 10)
     {
+        if (!isset($item['parentId'])) {
+            return array();
+        }
         if ($item['parentId'] == 'root') {
             return array();
         }
