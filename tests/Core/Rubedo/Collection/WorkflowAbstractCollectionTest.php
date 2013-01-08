@@ -66,6 +66,22 @@ class WorkflowAbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		
 	}
 
+	public function testNormalCreate()
+	{
+		$createReturn['success']=true;
+		$createReturn['data']['status']='published';
+		$createReturn['data']['id']='testId';
+		$publishReturn['success']=true;
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('create')->will($this->returnValue($createReturn));
+			$this->_mockWorkflowDataAccessService->expects($this->once())->method('setWorkspace');
+			$this->_mockWorkflowDataAccessService->expects($this->once())->method('publish')->will($this->returnValue($publishReturn));
+		
+		$obj=array("value"=>"test");
+		$collection = new testWorkflowCollection();
+		$result=$collection->create($obj);
+		$this->assertTrue($result['success']);
+	}
+
 	/*
 	 * test if readChild function works fine
 	 */
