@@ -45,6 +45,13 @@ class DataAccess implements IDataAccess
      * @var string
      */
     protected static $_defaultDb;
+    
+    /**
+     * List of adapters in order not to instanciate more than once each DB connection
+     * 
+     * @var array
+     */
+    protected static $_adapterArray = array();
 
     /**
      * MongoDB Connection
@@ -108,6 +115,7 @@ class DataAccess implements IDataAccess
      * @var array
      */
     protected $_excludeFieldList = array();
+    
 
     /**
      * Getter of the DB connection string
@@ -119,6 +127,8 @@ class DataAccess implements IDataAccess
         return static::$_defaultMongo;
     }
 
+   
+    
     /**
      * temp data for tree view
      *
@@ -156,9 +166,25 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this->_adapter = new \Mongo($mongo);
+        $this->_adapter = $this->_getAdapter($mongo);
         $this->_dbName = $this->_adapter->$dbName;
         $this->_collection = $this->_dbName->$collection;
+    }
+    
+    /**
+     * Getter of Mongo adapter : should only connect once for each mongoDB server
+     * 
+     * @param string $mongo mongoDB connection string
+     * @return \Mongo
+     */
+    protected function _getAdapter($mongo){
+        if(isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \Mongo){
+            return self::$_adapterArray[$mongo];
+        }else{
+            $adapter = new \Mongo($mongo);
+            self::$_adapterArray[$mongo] = $adapter;
+            return $adapter;
+        }
     }
 
     /**
