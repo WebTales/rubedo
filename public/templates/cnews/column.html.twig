@@ -1,7 +1,9 @@
 <div class="{% if span > 0 %}span{{span}}{% endif %}{% if offset > 0 %} offset{{offset}}{% endif %} {{ classHtml }}"
  {% if idHtml %}id="{{ idHtml }}"{% endif %}>
      {% if displayTitle %}
-	<h3>{{ eTitle }}</h3>
+	<div class="widget-title">
+		<h3>{{ eTitle }}</h3><span class="stripe-dots"></span>
+	</div>
 	{% endif %}
 	<!-- process nested rows & blocks -->
 	{% if blocks %}
