@@ -68,7 +68,7 @@ class IndexController extends Zend_Controller_Action
      * @var string
      */
     protected $_pageId;
-    
+
     /**
      * array of parent IDs
      */
@@ -126,8 +126,8 @@ class IndexController extends Zend_Controller_Action
         $this->_servicePage->appendJs('/js/scripts.js');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
-                
-        if(!$this->_pageId){
+        
+        if (! $this->_pageId) {
             throw new Zend_Controller_Exception('No Page found');
         }
         // build contents tree
@@ -157,13 +157,15 @@ class IndexController extends Zend_Controller_Action
         $this->getResponse()->appendBody($content, 'default');
     }
 
-    public function versionAction(){
-        $versionArray = array('Zend_Framework'=>Zend_Version::VERSION);
+    public function versionAction ()
+    {
+        $versionArray = array(
+            'Zend_Framework' => Zend_Version::VERSION
+        );
         
         $this->_helper->json($versionArray);
-        
     }
-    
+
     /**
      * Return page infos based on its ID
      *
@@ -184,9 +186,9 @@ class IndexController extends Zend_Controller_Action
         
         $this->_servicePage->setPageTitle($pageInfo['text']);
         $rootline = $pageService->getAncestors($pageInfo);
-        $this->_rootlineArray=array();
-        foreach ($rootline as $ancestor){
-            $this->_rootlineArray[]=$ancestor['id'];
+        $this->_rootlineArray = array();
+        foreach ($rootline as $ancestor) {
+            $this->_rootlineArray[] = $ancestor['id'];
         }
         $this->_rootlineArray[] = $pageId;
         $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
@@ -197,8 +199,8 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * get Columns infos
-     * 
-     * @param array $columns
+     *
+     * @param array $columns            
      * @return array
      */
     protected function _getColumnsInfos (array $columns = null)
@@ -208,11 +210,11 @@ class IndexController extends Zend_Controller_Action
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
-            $returnArray[$key]['displayTitle'] = isset($column['displayTitle'])?$column['displayTitle']:null;
+            $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
-            $returnArray[$key]['classHtml'] = isset($column['classHTML'])?$column['classHTML']:null;
+            $returnArray[$key]['classHtml'] = isset($column['classHTML']) ? $column['classHTML'] : null;
             $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($column['responsive']);
-            $returnArray[$key]['idHtml'] = isset($column['idHTML'])?$column['idHTML']:null;
+            $returnArray[$key]['idHtml'] = isset($column['idHTML']) ? $column['idHTML'] : null;
             
             if (is_array($column['blocks'])) {
                 $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
@@ -226,7 +228,7 @@ class IndexController extends Zend_Controller_Action
     /**
      * get Blocks infos
      *
-     * @param array $blocks
+     * @param array $blocks            
      * @return array
      */
     protected function _getBlocksInfos (array $blocks)
@@ -238,11 +240,10 @@ class IndexController extends Zend_Controller_Action
         return $returnArray;
     }
 
-    
     /**
      * get Rows infos
-     * 
-     * @param array $rows
+     *
+     * @param array $rows            
      * @return array
      */
     protected function _getRowsInfos (array $rows = null)
@@ -252,11 +253,11 @@ class IndexController extends Zend_Controller_Action
         }
         $returnArray = $rows;
         foreach ($rows as $key => $row) {
-            $returnArray[$key]['displayTitle'] = isset($row['displayTitle'])?$row['displayTitle']:null;
+            $returnArray[$key]['displayTitle'] = isset($row['displayTitle']) ? $row['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('row.html.twig');
-            $returnArray[$key]['classHtml'] = isset($row['classHTML'])?$row['classHTML']:null;
+            $returnArray[$key]['classHtml'] = isset($row['classHTML']) ? $row['classHTML'] : null;
             $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($row['responsive']);
-            $returnArray[$key]['idHtml'] = isset($row['idHTML'])?$row['idHTML']:null;
+            $returnArray[$key]['idHtml'] = isset($row['idHTML']) ? $row['idHTML'] : null;
             
             if (is_array($row['columns'])) {
                 $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
@@ -279,10 +280,10 @@ class IndexController extends Zend_Controller_Action
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
         $params['prefix'] = isset($block['urlPrefix']) ? $block['urlPrefix'] : $block['id'];
-        $params['classHtml'] = isset($block['classHTML'])?$block['classHTML']:null;
+        $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
-        $params['idHtml'] = isset($block['idHTML'])?$block['idHTML']:null;
-        $params['displayTitle'] = isset($block['displayTitle'])?$block['displayTitle']:null;
+        $params['idHtml'] = isset($block['idHTML']) ? $block['idHTML'] : null;
+        $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : null;
         
         $blockQueryParams = $this->getRequest()->getParam($params['prefix'], array());
         foreach ($blockQueryParams as $key => $value) {
@@ -302,8 +303,8 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'carrousel';
                 break;
             case 'Gallerie Flickr':
-                    $controller = 'flickr-gallery';
-                    break;
+                $controller = 'flickr-gallery';
+                break;
             case 'Liste de Contenus':
                 $controller = 'content-list';
                 
@@ -312,7 +313,9 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'footer';
                 break;
             case 'Résultat de recherche':
+                $params['constrainToSite']=$block['configBloc']['constrainToSite'];
                 $controller = 'search';
+                
                 break;
             case 'Fil d\'Ariane':
                 $params['rootline'] = $this->_rootlineArray;
@@ -331,9 +334,8 @@ class IndexController extends Zend_Controller_Action
                     $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : null;
                 }
                 
-                $params = array(
-                    'content-id' => $contentId
-                );
+                $params['content-id'] = $contentId;
+                
                 break;
             default:
                 $data = array();
