@@ -108,12 +108,23 @@ class Blocks_SearchController extends Blocks_AbstractController
         }
         
         $output = $params;
-        $output['serverParams']=$serverParams;
         
         $output['results'] = $results;
         $output['nbresults'] = $nbresults;
         $output['pagecount'] = $pagecount;
         $output['facets'] = $elasticaFacets;
+        
+        if($params['constrainToSite']){
+            foreach ($filters['Navigation'] as $key => $value){
+                if($value == $site['text']){
+                    unset($filters['Navigation'][$key]);
+                }
+            }
+            if(count($filters['Navigation'])==0){
+                unset($filters['Navigation']);
+            }
+        }
+        
         $output['filters'] = $filters;
         
 
