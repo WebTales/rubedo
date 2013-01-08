@@ -41,9 +41,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$filters = array();
 		
 		// Get taxonomies
-		$collection = \Rubedo\Services\Manager::getService('MongoDataAccess');
-		$collection->init("Taxonomy");	
-		$taxonomyList = $collection->read();
+		$collection = \Rubedo\Services\Manager::getService('Taxonomy');
+		$taxonomyList = $collection->getList();
 		$taxonomies = $taxonomyList['data'];
 		
 		// Default parameters	
