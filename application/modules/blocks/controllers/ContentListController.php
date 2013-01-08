@@ -98,7 +98,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
         );
         if (isset($blockConfig['query'])) {
         	$blockConfig=$blockConfig['query'];
-			Zend_Debug::dump($blockConfig);die();
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
                 'operator' => '$in',
