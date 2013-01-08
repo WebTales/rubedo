@@ -101,7 +101,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
      */
     public function create (array $obj, $options = array('safe'=>true,))
     {
-        if ($obj['text'] == 'navigation') {
+        if ($obj['name'] == 'navigation') {
             throw new \Exception('can\'t create a navigation vocabulary');
         }
         return parent::create($obj, $options);
@@ -127,7 +127,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['id'] == 'navigation') {
             throw new \Exception('can\'t update navigation vocabulary');
         }
-        if ($obj['text'] == 'navigation') {
+        if ($obj['name'] == 'navigation') {
             throw new \Exception('can\'t create a navigation vocabulary');
         }
         return parent::update($obj, $options);
