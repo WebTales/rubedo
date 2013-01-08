@@ -401,4 +401,16 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         );
         return $this->_dataService->customDelete($deleteCond);
     }
+    
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::findByName()
+     */
+    public function findByName ($name)
+    {
+        throw new \Exception('name is not unique');
+    }
+
+    
+    
 }
