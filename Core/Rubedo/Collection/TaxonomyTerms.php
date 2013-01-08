@@ -298,11 +298,16 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     {
         if (! isset(self::$_termsArray[$id])) {
             if ($vocabularyId == null || $vocabularyId != 'navigation') {
-                $term = $this->findById($id);
+                $term = parent::findById($id);
             } else {
-                $term = Manager::getService('pages')->findById($id);
+                $term = Manager::getService('Sites')->findById($id);
                 if (! $term) {
-                    $term = Manager::getService('sites')->findById($id);
+                    $term = Manager::getService('Pages')->findById($id);
+                    if ($term) {
+                        $term = $this->_pageToTerm($term);
+                    }
+                } else {
+                    $term = $this->_siteToTerm($term);
                 }
             }
             if (! isset($term['text'])) {
@@ -401,9 +406,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         );
         return $this->_dataService->customDelete($deleteCond);
     }
-    
-	/**
-	 *  (non-PHPdoc)
+
+    /**
+     * (non-PHPdoc)
+     *
      * @see \Rubedo\Collection\AbstractCollection::findByName()
      */
     public function findByName ($name)
@@ -411,6 +417,29 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         throw new \Exception('name is not unique');
     }
 
-    
-    
+    /**
+     * Allow to find a term by its id
+     *
+     * @param string $id
+     *            id of the term
+     * @param string $vocabularyId
+     *            id of the vocabulary
+     * @return array the term
+     */
+    public function findById ($id)
+    {
+        $term = parent::findById($id);
+        if (! $term) {
+            $term = Manager::getService('Sites')->findById($id);
+            if (! $term) {
+                $term = Manager::getService('Pages')->findById($id);
+                if ($term) {
+                    $term = $this->_pageToTerm($term);
+                }
+            } else {
+                $term = $this->_siteToTerm($term);
+            }
+        }
+        return $term;
+    }
 }
