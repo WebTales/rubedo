@@ -52,6 +52,20 @@ class DataAccess implements IDataAccess
      * @var array
      */
     protected static $_adapterArray = array();
+    
+    /**
+     * List of db in order not to instanciate more than once each DB object
+     *
+     * @var array
+     */
+    protected static $_dbArray = array();
+    
+    /**
+     * List of db in order not to instanciate more than once each Collection object
+     *
+     * @var array
+     */
+    protected static $_collectionArray = array();
 
     /**
      * MongoDB Connection
@@ -166,9 +180,7 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this->_adapter = $this->_getAdapter($mongo);
-        $this->_dbName = $this->_adapter->$dbName;
-        $this->_collection = $this->_dbName->$collection;
+        $this->_collection = $this->_getCollection($collection,$dbName,$mongo);
     }
     
     /**
@@ -186,6 +198,39 @@ class DataAccess implements IDataAccess
             return $adapter;
         }
     }
+
+    /**
+     * Getter of MongoDB object : should only be instanciated once for each DB
+     *
+     * @param string $dbName            
+     * @param string $mongo            
+     * @return \MongoDB
+     */
+    protected function _getDB ($dbName, $mongo)
+    {
+        if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
+            return self::$_dbArray[$mongo . '_' . $dbName];
+        } else {
+            $this->_adapter = $this->_getAdapter($mongo);
+            $db = $this->_adapter->$dbName;
+            self::$_dbArray[$mongo . '_' . $dbName] = $db;
+            return $db;
+        }
+    }
+    
+   protected function _getCollection($collection,$dbName,$mongo){
+       $this->_dbName = $this->_getDB($dbName,$mongo);
+       return $this->_dbName->$collection;
+       
+       if (isset(self::$_collectionArray[$mongo . '_' . $dbName.'_'.$collection]) && self::$_collectionArray[$mongo . '_' . $dbName.'_'.$collection] instanceof \MongoCollection) {
+           return self::$_collectionArray[$mongo . '_' . $dbName.'_'.$collection];
+       } else {
+           $this->_dbName = $this->_getDB($dbName,$mongo);
+           $collection = $this->_dbName->$collection;
+           self::$_collectionArray[$mongo . '_' . $dbName.'_'.$collection] = $collection;
+           return $collection;
+       }
+   }
 
     /**
      * Set the main MongoDB connection string
