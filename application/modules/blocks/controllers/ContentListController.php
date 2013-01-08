@@ -34,7 +34,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-        $blockConfig = $this->getRequest()->getParam('block-config');
+		$this->_queryReader=Manager::getService('Queries');
+        $queryId = $this->getRequest()->getParam('block-config');
+		$blockConfig= $this->_queryReader->findById($queryId["query"]);
 
         $contentArray = $this->getDataList($blockConfig, $this->setPaginationValues($blockConfig));
 
@@ -95,7 +97,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             'eq' => '='
         );
         if (isset($blockConfig['query'])) {
-            $blockConfig = json_decode($blockConfig['query'], true);
+        	$blockConfig=$blockConfig['query'];
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
                 'operator' => '$in',
