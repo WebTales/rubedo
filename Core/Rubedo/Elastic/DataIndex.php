@@ -259,10 +259,14 @@ class DataIndex extends DataAbstract implements IDataIndex
          if (isset($data[$space]["taxonomy"])) {
                 $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
                 foreach ($data[$space]["taxonomy"] as $vocabulary => $terms) {
+                    if(!is_array($terms)){
+                        continue;
+                    }
 					$collection = \Rubedo\Services\Manager::getService('MongoDataAccess');
 					$collection->init("Taxonomy");
 					$taxonomy = $collection->findById($vocabulary);
-					$termsArray = array();				
+					$termsArray = array();
+								
                     foreach ($terms as $term) {
                     	$term = $tt->findById($term);
 						$termsArray = $tt->getAncestors($term);
