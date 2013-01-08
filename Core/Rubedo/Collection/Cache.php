@@ -103,7 +103,7 @@ class Cache extends AbstractCollection implements ICache
      *
      * @return boolean
      */
-    public function deledExpired ()
+    public function deleteExpired ()
     {
         $options = array();
         $options['safe'] = true;
