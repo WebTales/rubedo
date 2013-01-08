@@ -80,7 +80,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      */
     public function create(array $obj, $options = array('safe'=>true), $live = false) {
     	if($live === true){
-    		throw new \Zend_Exception('Can\' create directly in live');
+    		throw new \Zend_Exception('Can\'t create directly in live');
 		}
 
 		$this->_dataService->setWorkspace();
