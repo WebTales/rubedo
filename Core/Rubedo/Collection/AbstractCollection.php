@@ -167,6 +167,9 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function create(array $obj, $options = array('safe'=>true)) {
+        if(count($this->_model)>0){
+            $obj = $this->_filterInputData($obj);
+        }
         return $this->_dataService->create($obj, $options);
     }
     
@@ -178,13 +181,32 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _filterInputData (array $obj)
     {
-        if(count($this->_model)>0){
-        }
+        //do verify $obj structure based on $_model
         return $obj;
     }
     
+    /**
+     * Is the data a valid input for the domain
+     * 
+     * @param mixed $data
+     * @param string $domain
+     * @throws Exception
+     * @return boolean
+     */
+    protected function _isValid($data,$domain){
+        $domainClassName = 'Rubedo\\Domains\\'.ucfirst($domain);
+        if(!class_exists($domainClassName)){
+            throw new Exception('domain not defined :'.(string) $domain);
+        }
+        return $domainClassName::isValid($data);
+    }
+    
 
-
+    /**
+     * getter of the model
+     * 
+     * @return array
+     */
     public function getModel(){
         return $this->_model;
     }
