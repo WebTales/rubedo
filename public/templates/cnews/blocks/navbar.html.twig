@@ -7,21 +7,23 @@
 			<div class="row" id="header">
 				<div class="span8">
 					<div class="left logo">
-						<a href="{{ url({'pageId':'50c0a4749a199d9107000000'},true) }}" title="Iosys - Accueil" rel="home"><img src="/assets/logo.gif" alt="" /></a>
+						<a href="{{ url({'pageId':homePage},true) }}" title="Iosys - Accueil" rel="home"><img src="/assets/logo.gif" alt="" /></a>
 					</div>
 				</div>
+				{% if useSearchEngine %}
 				<div class="span4" id="header-search">
 					<div style="margin-top: 100px;margin-right:10px;">
-						<form class="form-search" action="{{ url({'pageId':'50c0b4849a199dfa0a000000'},true) }}">
+						<form class="form-search" action="{{ url({'pageId':searchPage},true) }}">
 							<input type="text" class="input-medium search-query" name="query" value="" placeholder="{{"search"|trans}}" id="s" />
 						</form>
 					</div>
 				</div>
+				{% endif %}
 			</div>
 			<nav id="menu-top" class="row">
 				<ul id="mainmenu" class="menu span12">
 					<li id="menu-item-{{rootPage}}" class="menu-item menu-item-type-post_type menu-item-object-page {% if page.id in rootline %}current-menu-item{% endif %} page_item {% if currentPage == rootPage %}current_page_item{% endif %}">
-						<a href="{{ url({'pageId':'50c0a4749a199d9107000000'},true) }}">Accueil</a>
+						<a href="{{ url({'pageId':homePage},true) }}">Accueil</a>
 					</li>
 					{% for page in pages %}
 					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if page.id in rootline %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">

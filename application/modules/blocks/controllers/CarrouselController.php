@@ -33,8 +33,12 @@ class Blocks_CarrouselController extends Blocks_ContentListController
     {
         $this->_dataReader = Manager::getService('Contents');
         $isDraft = Zend_Registry::get('draft');
-		/*get block config and data list*/
-       	$blockConfig = $this->getRequest()->getParam('block-config');
+		$this->_queryReader=Manager::getService('Queries');
+		/*
+		 * Get queryId, blockConfig and Datalist
+		 */
+		$queryId = $this->getRequest()->getParam('block-config');
+		$blockConfig=parent::getQuery($queryId);
 		$contentArray=parent::getDataList($blockConfig,$this->setPaginationValues($blockConfig));      
 		$data = array();
         foreach ($contentArray['data'] as $vignette) {

@@ -47,6 +47,29 @@ class DataAccess implements IDataAccess
     protected static $_defaultDb;
 
     /**
+     * List of adapters in order not to instanciate more than once each DB
+     * connection
+     *
+     * @var array
+     */
+    protected static $_adapterArray = array();
+
+    /**
+     * List of db in order not to instanciate more than once each DB object
+     *
+     * @var array
+     */
+    protected static $_dbArray = array();
+
+    /**
+     * List of db in order not to instanciate more than once each Collection
+     * object
+     *
+     * @var array
+     */
+    protected static $_collectionArray = array();
+
+    /**
      * MongoDB Connection
      *
      * @var \Mongo
@@ -156,9 +179,66 @@ class DataAccess implements IDataAccess
         if (gettype($collection) !== 'string') {
             throw new \Exception('$collection should be a string');
         }
-        $this->_adapter = new \Mongo($mongo);
-        $this->_dbName = $this->_adapter->$dbName;
-        $this->_collection = $this->_dbName->$collection;
+        $this->_collection = $this->_getCollection($collection, $dbName, $mongo);
+    }
+
+    /**
+     * Getter of Mongo adapter : should only connect once for each mongoDB
+     * server
+     *
+     * @param string $mongo
+     *            mongoDB connection string
+     * @return \Mongo
+     */
+    protected function _getAdapter ($mongo)
+    {
+        if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \Mongo) {
+            return self::$_adapterArray[$mongo];
+        } else {
+            $adapter = new \Mongo($mongo);
+            self::$_adapterArray[$mongo] = $adapter;
+            return $adapter;
+        }
+    }
+
+    /**
+     * Getter of MongoDB object : should only be instanciated once for each DB
+     *
+     * @param string $dbName            
+     * @param string $mongo            
+     * @return \MongoDB
+     */
+    protected function _getDB ($dbName, $mongo)
+    {
+        if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
+            return self::$_dbArray[$mongo . '_' . $dbName];
+        } else {
+            $this->_adapter = $this->_getAdapter($mongo);
+            $db = $this->_adapter->$dbName;
+            self::$_dbArray[$mongo . '_' . $dbName] = $db;
+            return $db;
+        }
+    }
+
+    /**
+     * Getter of MongoDB collection : should only be instanciated once for each
+     * collection
+     *
+     * @param string $collection            
+     * @param string $dbName            
+     * @param string $mongo            
+     * @return \MongoCollection
+     */
+    protected function _getCollection ($collection, $dbName, $mongo)
+    {
+        if (isset(self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection]) && self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] instanceof \MongoCollection) {
+            return self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection];
+        } else {
+            $this->_dbName = $this->_getDB($dbName, $mongo);
+            $collection = $this->_dbName->$collection;
+            self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] = $collection;
+            return $collection;
+        }
     }
 
     /**
@@ -223,7 +303,12 @@ class DataAccess implements IDataAccess
         $cursor->limit($numberOfResults);
         
         // switch from cursor to actual array
-        $data = iterator_to_array($cursor);
+        if($cursor->count() > 0){
+            $data = iterator_to_array($cursor);
+        }else{
+            $data = array();
+        }
+        
         
         // iterate throught data to convert ID to string and add version nulmber
         // if none
@@ -480,7 +565,7 @@ class DataAccess implements IDataAccess
         $obj['lastUpdateTime'] = $currentTime;
         
         $resultArray = $this->_collection->insert($obj, $options);
-		
+        
         if ($resultArray['ok'] == 1) {
             $obj['id'] = (string) $obj['_id'];
             unset($obj['_id']);
@@ -679,22 +764,23 @@ class DataAccess implements IDataAccess
      * @deprecated
      *
      *
+     *
+     *
      */
     public function drop ()
     {
         return $this->_collection->drop();
     }
-
+    
     /*
-     * (non-PHPdoc)
-     * @see \Rubedo\Interfaces\Mongo\IDataAccess::count()
+     * (non-PHPdoc) @see \Rubedo\Interfaces\Mongo\IDataAccess::count()
      */
     public function count ()
     {
         $filter = $this->getFilterArray();
         return $this->_collection->count($filter);
     }
-    
+
     /**
      * Add a filter condition to the service
      *

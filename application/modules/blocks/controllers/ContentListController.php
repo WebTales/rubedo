@@ -34,8 +34,10 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-        $blockConfig = $this->getRequest()->getParam('block-config');
-
+		$this->_queryReader=Manager::getService('Queries');
+        $queryId = $this->getRequest()->getParam('block-config');
+		$blockConfig=$this->getQuery($queryId);
+		
         $contentArray = $this->getDataList($blockConfig, $this->setPaginationValues($blockConfig));
 
         $nbItems = $contentArray["count"];
@@ -82,7 +84,11 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
-
+/*
+ * 
+ * @ todo: PHPDoc
+ * 
+ */
     protected function getDataList ($blockConfig, $pageData)
     {
     	$sort = array();
@@ -95,7 +101,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             'eq' => '='
         );
         if (isset($blockConfig['query'])) {
-            $blockConfig = json_decode($blockConfig['query'], true);
+        	$blockConfig=$blockConfig['query'];
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
                 'operator' => '$in',
@@ -106,6 +112,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 'property' => 'status',
                 'value' => 'published'
             );
+
             /* Add filter on taxonomy */
             foreach ($blockConfig['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
@@ -238,4 +245,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         return $pageData;
     }
+	protected function getQuery($queryId)
+	{
+		return $this->_queryReader->findById($queryId["query"]);
+	}
 }
