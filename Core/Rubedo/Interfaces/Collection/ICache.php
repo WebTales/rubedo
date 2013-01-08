@@ -40,5 +40,5 @@ interface ICache extends IAbstractCollection
      *
      * @return boolean
      */
-    public function deledExpired ();
+    public function deleteExpired ();
 }
