@@ -57,6 +57,9 @@ class XhrEditController extends Zend_Controller_Action
 
             $baseData = $this->_dataService->findById($id, true, false);
             $baseData['fields'][$field] = $data;
+			if($field == "text"){
+				$baseData['text'] = $data;
+			}
             $returnArray = $this->_dataService->update($baseData, true, true);
 
         } else {
