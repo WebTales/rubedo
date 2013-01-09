@@ -144,14 +144,16 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 
                 return array_values($returnArray);
             } else {
+                
                 $rootPage = Manager::getService('Pages')->findById($parentId);
+                
                 if ($rootPage) {
-                    $filter[] = array(
+                    $filters[] = array(
                         'property' => 'site',
                         'value' => $rootPage["site"]
                     );
                 } else {
-                    $filter[] = array(
+                    $filters[] = array(
                         'property' => 'site',
                         'value' => $parentId
                     );
@@ -160,7 +162,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 
                 $returnArray = array();
                 $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
-                
+
                 foreach ($childrenArray as $page) {
                     $returnArray[] = $this->_pageToTerm($page);
                 }
