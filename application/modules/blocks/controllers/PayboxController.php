@@ -142,27 +142,31 @@ class Blocks_PayboxController extends Blocks_AbstractController
 		
 		$amount = "38000";
 		
-		if(isset($params['auto'])){
-			if(isset($params['erreur'])) {
-				if($params['erreur'] == "00000") {
-					if(isset($params['sign'])){
-						if(isset($params['montant']) && $amount==$params['montant']) {
-							$file = fopen(APPLICATION_PATH."/../data/paybox/pubkey.pem", "r");
-							$pubkey = fread($file, 1024);
-							fclose($file);
-							
-							$sign = $params['sign'];
-							$sign = urldecode($sign);
-							$sign = base64_decode($sign);
-							$result = openssl_verify($url, $sign, $pubkey);
-							
-							if($result == 1){
-								//enregistrer payement
-							}
-						}
+		if(isset($params['auto']) && isset($params['erreur']) && isset($params['sign']) && isset($params['montant'])) {
+			if($params['erreur'] == "00000") {
+				if($amount==$params['montant']) {
+					$file = fopen(APPLICATION_PATH."/../data/paybox/pubkey.pem", "r");
+					$pubkey = fread($file, 1024);
+					fclose($file);
+					
+					$sign = $params['sign'];
+					$sign = urldecode($sign);
+					$sign = base64_decode($sign);
+					$result = openssl_verify($url, $sign, $pubkey);
+					
+					if($result == 1){
+						//register payment
+					} else {
+						$this->getResponse()->setHttpResponseCode(400);
 					}
+				} else {
+					$this->getResponse()->setHttpResponseCode(500);
 				}
+			} else {
+				$this->getResponse()->setHttpResponseCode(500);
 			}
+		} else {
+			$this->getResponse()->setHttpResponseCode(405);
 		}
 	}
 
