@@ -138,6 +138,10 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
             return 'root/' . $path;
         }
     }
+    
+    public function templateFileExists($path){
+        return is_file($this->getTemplateDir(). '/' . $path);
+    }
 
     /**
      * Get the current theme name
