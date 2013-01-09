@@ -31,7 +31,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array());
-        
+
         if (isset($blockConfig['rootPage'])) {
             $rootPage = $blockConfig['rootPage'];
         } else {
@@ -71,6 +71,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['useSearchEngine'] = $useSearchEngine;
         $output['searchPage'] = $searchPage;
         $output['pages'] = array();
+        $output['logo']= $blockConfig['logo'];
         
         $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage']);
         foreach ($levelOnePages as $page) {
@@ -96,9 +97,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
             
             $output['pages'][] = $tempArray;
         }
-        
-        // Zend_Debug::dump($output['pages']);die();
-        
+                
         $twigVar["data"] = $output;
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
