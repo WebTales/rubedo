@@ -60,7 +60,14 @@ class Blocks_ContentListController extends Blocks_AbstractController
                  * preg_replace('#&([A-za-z]{2})(?:lig);#', '\1',
                  * $dataType['type']); // to special char e.g. '&oelig;'
                  */
-                $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig");
+                
+                $path = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig");
+                //$contentTypeArray[(string) $dataType['id']]
+                if(Manager::getService('FrontOfficeTemplates')->templateFileExists($path)){
+                    $contentTypeArray[(string) $dataType['id']] = $path;
+                }else{
+                    $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/Default.html.twig");
+                }
             }
             foreach ($contentArray['data'] as $vignette) {
                 $fields = $vignette['fields'];
