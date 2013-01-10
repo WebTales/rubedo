@@ -68,6 +68,12 @@ class IndexController extends Zend_Controller_Action
      * @var string
      */
     protected $_pageId;
+    
+    /**
+     * current mask object
+     * @var array
+     */
+    protected $_mask;
 
     /**
      * array of parent IDs
@@ -178,6 +184,22 @@ class IndexController extends Zend_Controller_Action
         $pageService = Manager::getService('Pages');
         $pageInfo = $pageService->findById($pageId);
         
+        $this->_mask = Manager::getService('Masks')->findById($pageInfo['maskId']);//maskId
+        if(!$this->_mask){
+            throw new Zend_Controller_Exception('no mask found');
+        }
+        //Zend_Debug::dump($this->_mask['blocks'][0]);/();
+        $this->_blocksArray = array();
+        foreach ($this->_mask['blocks'] as $block){
+            $this->_blocksArray[$block['parentCol']][]=$block;
+        }
+        foreach ($pageInfo['blocks'] as $block){
+            $this->_blocksArray[$block['parentCol']][]=$block;
+        }
+        
+        $pageInfo['rows'] = $this->_mask['rows'];
+        
+        
         $this->_site = Manager::getService('Sites')->findById($pageInfo['site']);
         if (! isset($this->_site['theme'])) {
             $this->_site['theme'] = 'default';
@@ -191,6 +213,7 @@ class IndexController extends Zend_Controller_Action
             $this->_rootlineArray[] = $ancestor['id'];
         }
         $this->_rootlineArray[] = $pageId;
+        //Zend_Debug::dump($pageInfo);die();
         $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
         $pageInfo['template'] = 'page.html.twig';
         
@@ -215,9 +238,8 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['classHtml'] = isset($column['classHTML']) ? $column['classHTML'] : null;
             $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($column['responsive']);
             $returnArray[$key]['idHtml'] = isset($column['idHTML']) ? $column['idHTML'] : null;
-            
-            if (is_array($column['blocks'])) {
-                $returnArray[$key]['blocks'] = $this->_getBlocksInfos($column['blocks']);
+            if (isset($this->_blocksArray[$column['id']])) {
+                $returnArray[$key]['blocks'] = $this->_getBlocksInfos($this->_blocksArray[$column['id']]);
             } else {
                 $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
             }
