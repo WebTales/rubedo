@@ -37,9 +37,9 @@ class Blocks_CarrouselController extends Blocks_ContentListController
 		/*
 		 * Get queryId, blockConfig and Datalist
 		 */
-		$queryId = $this->getRequest()->getParam('block-config');
-		$blockConfig=parent::getQuery($queryId);
-		$contentArray=parent::getDataList($blockConfig,$this->setPaginationValues($blockConfig));      
+		$blockConfig = $this->getRequest()->getParam('block-config');
+		$query=parent::getQuery($blockConfig['query']);
+		$contentArray=parent::getDataList($query,$this->setPaginationValues($blockConfig));      
 		$data = array();
         foreach ($contentArray['data'] as $vignette) {
             $fields = $vignette['fields'];
