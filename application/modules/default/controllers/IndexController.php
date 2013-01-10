@@ -188,13 +188,18 @@ class IndexController extends Zend_Controller_Action
         if(!$this->_mask){
             throw new Zend_Controller_Exception('no mask found');
         }
-        //Zend_Debug::dump($this->_mask['blocks'][0]);/();
         $this->_blocksArray = array();
         foreach ($this->_mask['blocks'] as $block){
-            $this->_blocksArray[$block['parentCol']][]=$block;
+            if(!isset($block['orderValue'])){
+                throw new Zend_Controller_Exception('no orderValue for block '.$block['id']);
+            }
+            $this->_blocksArray[$block['parentCol']][$block['orderValue']]=$block;
         }
         foreach ($pageInfo['blocks'] as $block){
-            $this->_blocksArray[$block['parentCol']][]=$block;
+            if(!isset($block['orderValue'])){
+                throw new Zend_Controller_Exception('no orderValue for block '.$block['id']);
+            }
+            $this->_blocksArray[$block['parentCol']][$block['orderValue']]=$block;
         }
         
         $pageInfo['rows'] = $this->_mask['rows'];
@@ -213,7 +218,6 @@ class IndexController extends Zend_Controller_Action
             $this->_rootlineArray[] = $ancestor['id'];
         }
         $this->_rootlineArray[] = $pageId;
-        //Zend_Debug::dump($pageInfo);die();
         $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
         $pageInfo['template'] = 'page.html.twig';
         
