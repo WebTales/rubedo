@@ -7,7 +7,7 @@
 	<span class="icon-bar"></span>
 	<span class="icon-bar"></span>
 	</a>
-	<a class="brand" href="{{ url({'pageId':homePage},true) }}" title="Accueil" rel="home">Accueil</a>
+	<a class="brand" href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}" title="Accueil" rel="home">Accueil</a>
 	<!-- Everything you want hidden at 940px or less, place within here -->
 	<div class="nav-collapse">
     <!-- /nav bar --> 
@@ -31,7 +31,7 @@
 					{% endfor %}
             </ul>
           </div>
-    {% if useSearchEngine %}
+    {% if useSearchEngine and searchPage %}
     <!-- search component-->
     	<div class="btn-group pull-right">
 	    	<form class="form-search" action="{{ url({'pageId':searchPage},true) }}">

@@ -7,10 +7,10 @@
 			<div class="row" id="header">
 				<div class="span8">
 					<div class="left logo">
-						<a href="{{ url({'pageId':homePage},true) }}" title="Iosys - Accueil" rel="home"><img style="max-height:160px;max-width:250px;" src="{% if logo %}image?file-id={{ logo }}{% else %}/assets/logo.gif{% endif %}" alt="" /></a>
+						<a href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}" title="Iosys - Accueil" rel="home"><img style="max-height:160px;max-width:250px;" src="{% if logo %}image?file-id={{ logo }}{% else %}/assets/logo.gif{% endif %}" alt="" /></a>
 					</div>
 				</div>
-				{% if useSearchEngine %}
+				{% if useSearchEngine and searchPage %}
 				<div class="span4" id="header-search">
 					<div style="margin-top: 100px;margin-right:10px;">
 						<form class="form-search" action="{{ url({'pageId':searchPage},true) }}">
@@ -23,7 +23,7 @@
 			<nav id="menu-top" class="row">
 				<ul id="mainmenu" class="menu span12">
 					<li id="menu-item-{{rootPage}}" class="menu-item menu-item-type-post_type menu-item-object-page {% if page.id in rootline %}current-menu-item{% endif %} page_item {% if currentPage == rootPage %}current_page_item{% endif %}">
-						<a href="{{ url({'pageId':homePage},true) }}">Accueil</a>
+						<a href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}">Accueil</a>
 					</li>
 					{% for page in pages %}
 					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if page.id in rootline %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
