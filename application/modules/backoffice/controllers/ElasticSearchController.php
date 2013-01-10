@@ -39,7 +39,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         
         $query->init();
-        
+        $params['pagesize']=100;
         $search = $query->search($params);
         $elasticaResultSet = $search["resultSet"];
 		$filters = $search["filters"];

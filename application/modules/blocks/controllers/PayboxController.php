@@ -38,23 +38,23 @@ class Blocks_PayboxController extends Blocks_AbstractController
             if ($paybox->isValid($request->getPost())) {
                 $params = $this->getRequest()->getParams();
 				$titre = $params['gender'];
-                $nom = $params['nom'];
-				$prenom = $params['prenom'];
-				$adresse = $params['adresse'];
-				$codePostale = $params['codePostale'];
-				$ville = $params['ville'];
-				$pays = $params['pays'];
-				$telCabinet = $params['telCabinet'];
-				$telPortable = $params['telPortable'];
+                $nom = $params['name'];
+				$prenom = $params['firstname'];
+				$adresse = $params['address'];
+				$codePostale = $params['postalCode'];
+				$ville = $params['city'];
+				$pays = $params['country'];
+				$telCabinet = $params['officeTelNumber'];
+				$telPortable = $params['mobilePhoneNumber'];
 				$email = $params['email'];
 				$activity = $params['activity'];
-				$diplome = $params['diplome'];
-				$anneeObtentiondiplome = $params['anneeObtentionDiplome'];
-				$etudiant = $params['etudiant'];
-				$anneeObtentionEtudiant = $params['anneeObtentionEtudiant'];
-				$adresseFacturation = $params['adresseFacturation'];
-				$typeclient = $params['typeClient'];
-				$typePaiement = $params['typePaiement'];
+				$diplome = $params['diploma'];
+				$anneeObtentiondiplome = $params['graduationYear'];
+				$etudiant = $params['student'];
+				$anneeObtentionEtudiant = $params['studentGraduationYear'];
+				$adresseFacturation = $params['billingAddress'];
+				$typeclient = $params['clientType'];
+				$typePaiement = $params['paymentType'];
 				
 				//Control and backup, then if it's ok
 				$this->_helper->redirector('payment', 'paybox');
@@ -64,53 +64,110 @@ class Blocks_PayboxController extends Blocks_AbstractController
     }
 
 	public function paymentAction() {
+		$serverUrl = $this->getRequest()->getScheme().'://'.$this->getRequest()->getHttpHost();
+		
+		$params = array(
 		//mode d'appel
-		     $PBX_MODE        = '1';
+		     'PBX_MODE'        => '1',
 		//identification
-		     $PBX_SITE        = '1999888';
-		     $PBX_RANG        = '98';
-		     $PBX_IDENTIFIANT = '3';
+		     'PBX_SITE'        => '1999888',
+		     'PBX_RANG'        => '98',
+		     'PBX_IDENTIFIANT' => '3',
 		//gestion de la page de connection : paramétrage "invisible"
-		     $PBX_WAIT        = '0';
-		     $PBX_TXT         = " ";
-		     $PBX_BOUTPI      = "nul";
-		     $PBX_BKGD        = "white";
+		     'PBX_WAIT'        => '0',
+		     'PBX_BOUTPI'      => "nul",
+		     'PBX_BKGD'        => "white",
 		//informations paiement (appel)
-		     $PBX_TOTAL       = '37000';
-		     $PBX_DEVISE      = '978';
-		     $PBX_CMD         = "ref cmd";
-		     $PBX_PORTEUR     = "mickael.goncalves@webtales.fr";
+		     'PBX_TOTAL'       => '38000',
+		     'PBX_DEVISE'      => '978',
+		     'PBX_CMD'         => (string)rand(1, 10000),
+		     'PBX_PORTEUR'     => "mickael.goncalves@webtales.fr",
 		//informations nécessaires aux traitements (réponse)
-		     $PBX_RETOUR      = "montant:M;ref:R;auto:A;trans:T";
-		     $PBX_EFFECTUE    = "http://rubedo.mickael/blocks/paybox/";
-		     $PBX_REFUSE      = "http://rubedo.mickael/blocks/paybox/";
-		     $PBX_ANNULE      = "http://rubedo.mickael/blocks/paybox/";
+		     'PBX_RETOUR'      => "montant:M;maref:R;auto:A;trans:T;abonnement:B ;paiement:P;carte:C;idtrans:S;pays:Y;erreur:E;validite:D;PPPS:U;IP:I;BIN6:N;digest:H;sign:K",
+		     'PBX_EFFECTUE'    => $serverUrl.$this->_helper->url('back-payment','paybox','blocks'),
+		     'PBX_REFUSE'      => $serverUrl.$this->_helper->url('refused','paybox','blocks'),
+		     'PBX_ANNULE'      => $serverUrl.$this->_helper->url('canceled','paybox','blocks'),
+			 'PBX_REPONDRE_A'  => $serverUrl.$this->_helper->url('back-payment','paybox','blocks'),
 		//page en cas d'erreur
-		     $PBX_ERREUR      = "http://rubedo.mickael/blocks/paybox/";
+		     'PBX_ERREUR'      => $serverUrl.$this->_helper->url('error','paybox','blocks'),
 		//en plus
-		     $PBX_TYPECARTE   = "CB";
-		     $PBX_LANGUE      = "FRA";
-		    
+		     'PBX_TYPECARTE'   => "CB",
+		     'PBX_LANGUE'      => "FRA",
+			 );
+		
+		foreach ($params as $key => $value) {
+			$queryStringArray[] = "$key=$value";
+		}
+
+		$queryString = implode('&', $queryStringArray);
+
+		/* Mettre le montant en session */
+
 		//lancement paiement par URL
-		$url = '/cgi-bin/modulev3.cgi?PBX_MODE='.$PBX_MODE.'&PBX_SITE='.$PBX_SITE.'&PBX_RANG='.$PBX_RANG.'&PBX_IDENTIFIANT='.$PBX_IDENTIFIANT.'&PBX_WAIT='.$PBX_WAIT.'&PBX_TXT='.$PBX_TXT.'&PBX_BOUTPI='.$PBX_BOUTPI.'&PBX_BKGD='.$PBX_BKGD.'&PBX_TOTAL='.$PBX_TOTAL.'&PBX_DEVISE='.$PBX_DEVISE.'&PBX_CMD='.$PBX_CMD.'&PBX_PORTEUR='.$PBX_PORTEUR.'&PBX_EFFECTUE='.$PBX_EFFECTUE.'&PBX_REFUSE='.$PBX_REFUSE.'&PBX_ANNULE='.$PBX_ANNULE.'&PBX_ERREUR='.$PBX_ERREUR.'&PBX_RETOUR='.$PBX_RETOUR.'&PBX_TYPECARTE='.$PBX_TYPECARTE.'&PBX_LANGUE='.$PBX_LANGUE.'';
-	
+		$url = '/cgi-bin/modulev3.cgi?'.$queryString;
+
 		$this->_redirect($url);
 	}
 	
-	public function accepteAction() {
+	public function doneAction() {
 		
 	}
 	
-	public function refuseAction() {
+	public function refusedAction() {
 		
 	}
 
-	public function annuleAction() {
+	public function canceledAction() {
 		
 	}
 	
-	public function erreurAction() {
+	public function errorAction() {
 		
+	}
+	
+	public function backPaymentAction() {
+		$url = $this->getRequest()->getRequestUri();
+		$stringArray = explode("?", $url);
+		$url = $stringArray[1];
+		
+		$paramsKeyValue = array();
+		
+		foreach (explode("&", $url) as $value) {
+			$keyValueArray = explode("=", $value);
+			$params[$keyValueArray[0]] = $keyValueArray[1];
+		}
+		
+		$pos = strrpos( $url, '&' );
+    	$url = substr( $url, 0, $pos );
+		
+		$amount = "38000";
+		
+		if(isset($params['auto']) && isset($params['erreur']) && isset($params['sign']) && isset($params['montant'])) {
+			if($params['erreur'] == "00000") {
+				if($amount==$params['montant']) {
+					$file = fopen(APPLICATION_PATH."/../data/paybox/pubkey.pem", "r");
+					$pubkey = fread($file, 1024);
+					fclose($file);
+					
+					$sign = $params['sign'];
+					$sign = urldecode($sign);
+					$sign = base64_decode($sign);
+					$result = openssl_verify($url, $sign, $pubkey);
+					
+					if($result == 1){
+						//register payment
+					} else {
+						$this->getResponse()->setHttpResponseCode(400);
+					}
+				} else {
+					$this->getResponse()->setHttpResponseCode(500);
+				}
+			} else {
+				$this->getResponse()->setHttpResponseCode(500);
+			}
+		} else {
+			$this->getResponse()->setHttpResponseCode(405);
+		}
 	}
 
 }

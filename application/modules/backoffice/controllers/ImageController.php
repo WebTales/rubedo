@@ -97,13 +97,14 @@ class Backoffice_ImageController extends Zend_Controller_Action
     function deleteAction() {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
+        
+        $dataJson = $this->getRequest()->getParam('data',Zend_Json::encode(array()));
+        $data = Zend_Json::decode($dataJson);
+        
 
-        $fileId = $this->getRequest()->getParam('file-id');
-        $version = $this->getRequest()->getParam('file-version', 1);
-
-        if (isset($fileId)) {
+        if (isset($data['id'])) {
             $fileService = Rubedo\Services\Manager::getService('Images');
-            $result = $fileService->destroy(array('id' => $fileId, 'version' => $version));
+            $result = $fileService->destroy($data);
 
             $this->_helper->json($result);
 

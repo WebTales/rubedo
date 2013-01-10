@@ -7,7 +7,7 @@
 			<div class="row" id="header">
 				<div class="span8">
 					<div class="left logo">
-						<a href="{{ url({'pageId':homePage},true) }}" title="Iosys - Accueil" rel="home"><img src="/assets/logo.gif" alt="" /></a>
+						<a href="{{ url({'pageId':homePage},true) }}" title="Iosys - Accueil" rel="home"><img style="max-height:160px;max-width:250px;" src="{% if logo %}image?file-id={{ logo }}{% else %}/assets/logo.gif{% endif %}" alt="" /></a>
 					</div>
 				</div>
 				{% if useSearchEngine %}

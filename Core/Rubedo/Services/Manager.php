@@ -105,8 +105,14 @@ class Manager implements IServicesManager
         }
 
         $serviceClassName = self::resolveName($serviceName);
+        
+        if(count(Rubedo\Interfaces\config::getConcerns($serviceName))){
+            return new Proxy($serviceClassName, $serviceName);
+        }else{
+            return new $serviceClassName;
+        }
 
-        return new Proxy($serviceClassName, $serviceName);
+        
     }
 
     /**

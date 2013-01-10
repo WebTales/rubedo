@@ -175,10 +175,6 @@ class FileAccess extends DataAccess implements IFileAccess
      */
     public function destroy(array $obj,$options = array('safe'=>true)) {
         $id = $obj['id'];
-        //if (!isset($obj['version'])) {
-        //    throw new \Rubedo\Exceptions\DataAccess('can\'t destroy an object without a version number.');
-        //}
-        //$version = $obj['version'];
         $mongoID = $this->getId($id);
 
         $updateCondition = array('_id' => $mongoID);
@@ -187,7 +183,7 @@ class FileAccess extends DataAccess implements IFileAccess
             $updateCondition = array_merge($this->_filterArray, $updateCondition);
         }
 
-        $resultArray = $this->_collection->remove($updateCondition, array("safe" => $options));
+        $resultArray = $this->_collection->remove($updateCondition, $options);
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
                 $returnArray = array('success' => true);
