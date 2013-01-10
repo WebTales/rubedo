@@ -50,11 +50,11 @@ class CacheTest extends PHPUnit_Framework_TestCase {
 		$cacheService=new Rubedo\Collection\Cache();
 		$cacheService->deleteByCacheId($id);
 	}
-	public function testDeledExpired(){
+	public function testDeleteExpired(){
 		$this->_mockCurrentTimeService->expects($this->once())->method('getCurrentTime');
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
 		$cacheService=new Rubedo\Collection\Cache();
-		$cacheService->deledExpired();
+		$cacheService->deleteExpired();
 	}
 
 	public function testUpsertByCacheId()
