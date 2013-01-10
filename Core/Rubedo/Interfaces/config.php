@@ -151,8 +151,15 @@ class config
      * Public static method which return concerns array
      * @return array list of concerns
      */
-    final public static function getConcerns()
+    final public static function getConcerns($serviceName=null)
     {
+        if($serviceName){
+            if(isset(static::$_concernArray[$serviceName])){
+                return static::$_concernArray[$serviceName];
+            }else{
+                return array();
+            }
+        }
         return static::$_concernArray;
     }
 
