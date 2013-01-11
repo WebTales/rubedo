@@ -20,4 +20,22 @@ require_once 'autoload.php';
 
 Zend_Session::$_unitTestEnabled = true;
 
+function testBootstrap(){
+    $optionsObject = new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', APPLICATION_ENV, array(
+        'allowModifications' => true
+    ));
+    if (is_file(APPLICATION_PATH . '/configs/local.ini')) {
+        $localOptionsObject = new Zend_Config_Ini(APPLICATION_PATH . '/configs/local.ini');
+        $optionsObject->merge($localOptionsObject);
+    }
+    
+    $options = $optionsObject->toArray();
+    
+    $bootstrap = new Zend_Application(APPLICATION_ENV, $options);
+    $bootstrap->bootstrap();
+    return $bootstrap;
+}
+
+
+
 require_once (APPLICATION_PATH . '/../tests/application/AbstractControllerTest.php');

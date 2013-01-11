@@ -57,8 +57,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * init the Zend Application for tests
      */
     public function setUp() {
-        $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
-        $this->bootstrap->bootstrap();
+        testBootstrap();
         $mockUserService = $this->getMock('Rubedo\User\CurrentUser');
         Rubedo\Services\Manager::setMockService('CurrentUser', $mockUserService);
 

@@ -27,8 +27,7 @@ class AuthenticationTest extends PHPUnit_Framework_TestCase
      * Init
      */
     public function setUp() {
-        $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
-        $this->bootstrap->bootstrap();
+        testBootstrap();
         parent::setUp();
     }
 

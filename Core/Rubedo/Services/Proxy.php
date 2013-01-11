@@ -146,7 +146,7 @@ class Proxy implements IServicesProxy
         }
 
         //list of concerns
-        $concernsArray = Rubedo\Interfaces\config::getConcerns();
+        $concernsArray = Rubedo\Interfaces\config::getConcerns($this->_serviceName);
 
         if (empty($concernsArray)) {
             $retour = call_user_func_array(array($this->_object, $name), $arguments);

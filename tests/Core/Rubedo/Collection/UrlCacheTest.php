@@ -33,8 +33,7 @@ class UrlCacheTest extends PHPUnit_Framework_TestCase {
      * init the Zend Application for tests
      */
     public function setUp() {
-        $this->bootstrap = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
-		$this->bootstrap->bootstrap();
+        testBootstrap();
         $this->_mockDataAccessService = $this->getMock('Rubedo\\Mongo\\DataAccess');
         Rubedo\Services\Manager::setMockService('MongoDataAccess', $this->_mockDataAccessService);
 
