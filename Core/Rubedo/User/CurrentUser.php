@@ -163,7 +163,8 @@ class CurrentUser implements ICurrentUser
 	public function getToken() {
 		$sessionService = \Rubedo\Services\Manager::getService('Session');
 		
-		$token = $sessionService->get('token', "");
+		$user = $sessionService->get('user');
+		$token = isset($user['token'])?$user['token']:"";
 		
 		if($token == ""){
 			$token = $this->generateToken();

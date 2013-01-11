@@ -9,14 +9,14 @@
 
 		{% for slide in items %} 
 		<a href="{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':slide.id},true) }}" title="Standart post">
-			<img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{slide.id}}" data-thumb="/image?file-id={{slide.thumbnail}}" />
+			<img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" data-thumb="/image?file-id={{slide.thumbnail}}" />
 		</a> 
 		{% endfor %}
 
 	</div>
 
 	{% for slide in items %}
-	<div class="nivo-html-caption" id="htmlcaption_{{slide.id}}">
+	<div class="nivo-html-caption" id="htmlcaption_{{prefix}}_{{slide.id}}">
 		<a href="{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':slide.id},true) }}" title="{{slide.text}}">
 			<h1>{{slide.text}}</h1>
 			<p>{{slide.summary}}</p>

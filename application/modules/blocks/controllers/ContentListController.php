@@ -34,12 +34,13 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-		$this->_queryReader=Manager::getService('Queries');
-        $queryId = $this->getRequest()->getParam('block-config');
-		$blockConfig=$this->getQuery($queryId);
-		
-        $contentArray = $this->getDataList($blockConfig, $this->setPaginationValues($blockConfig));
-
+        $this->_queryReader = Manager::getService('Queries');
+        $blockConfig = $this->getRequest()->getParam('block-config');
+        $queryId = $blockConfig['query'];
+        $queryConfig = $this->getQuery($queryId);
+        
+        $contentArray = $this->getDataList($queryConfig, $this->setPaginationValues($blockConfig));
+        
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
@@ -62,10 +63,10 @@ class Blocks_ContentListController extends Blocks_AbstractController
                  */
                 
                 $path = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig");
-                //$contentTypeArray[(string) $dataType['id']]
-                if(Manager::getService('FrontOfficeTemplates')->templateFileExists($path)){
+                // $contentTypeArray[(string) $dataType['id']]
+                if (Manager::getService('FrontOfficeTemplates')->templateFileExists($path)) {
                     $contentTypeArray[(string) $dataType['id']] = $path;
-                }else{
+                } else {
                     $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/Default.html.twig");
                 }
             }
@@ -80,8 +81,13 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $output["data"] = $data;
             $output['prefix'] = $this->getRequest()->getParam('prefix');
             $output["page"] = $contentArray['page'];
-            $output['test']=array(1,2,3);
+            $output['test'] = array(
+                1,
+                2,
+                3
+            );
         }
+        // Zend_Debug::dump($blockConfig);die();
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
@@ -91,14 +97,15 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
-/*
- * 
- * @ todo: PHPDoc
- * 
- */
-    protected function getDataList ($blockConfig, $pageData)
+    /*
+     * @ todo: PHPDoc
+     */
+    protected function getDataList ($queryObj, $pageData)
     {
-    	$sort = array();
+        if ($queryObj === null) {
+            return array();
+        }
+        $sort = array();
         $operatorsArray = array(
             '$lt' => '<',
             '$lte' => '<=',
@@ -107,21 +114,21 @@ class Blocks_ContentListController extends Blocks_AbstractController
             '$ne' => '!=',
             'eq' => '='
         );
-        if (isset($blockConfig['query'])) {
-        	$blockConfig=$blockConfig['query'];
+        if (isset($queryObj['query'])) {
+            $queryObj = $queryObj['query'];
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
                 'operator' => '$in',
                 'property' => 'typeId',
-                'value' => $blockConfig['contentTypes']
+                'value' => $queryObj['contentTypes']
             );
             $filterArray[] = array(
                 'property' => 'status',
                 'value' => 'published'
             );
-
+            
             /* Add filter on taxonomy */
-            foreach ($blockConfig['vocabularies'] as $key => $value) {
+            foreach ($queryObj['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
                     if ($value['rule'] == "some") {
                         $taxOperator = '$in';
@@ -138,7 +145,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                         }
                         $taxOperator = '$in';
                     }
-                }else{
+                } else {
                     $taxOperator = '$in';
                 }
                 if (count($value['terms']) > 0) {
@@ -150,95 +157,58 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 }
             }
             /* Add filter on FieldRule */
-            foreach ($blockConfig['fieldRules'] as $property => $value) {
-            	if(isset($value['rule'])&& isset($value['value'])){
-            	   $ruleOperator = array_search($value['rule'], $operatorsArray);
-                $nextDate = new DateTime($value['value']);
-                $nextDate->add(new DateInterval('PT23H59M59S'));
-                $nextDate = (array) $nextDate;
-                if ($ruleOperator === 'eq') {
-                    $filterArray[] = array(
-                        'operator' => '$gt',
+            foreach ($queryObj['fieldRules'] as $property => $value) {
+                if (isset($value['rule']) && isset($value['value'])) {
+                    $ruleOperator = array_search($value['rule'], $operatorsArray);
+                    $nextDate = new DateTime($value['value']);
+                    $nextDate->add(new DateInterval('PT23H59M59S'));
+                    $nextDate = (array) $nextDate;
+                    if ($ruleOperator === 'eq') {
+                        $filterArray[] = array(
+                            'operator' => '$gt',
+                            'property' => $property,
+                            'value' => $this->_dateService->convertToTimeStamp($value['value'])
+                        );
+                        $filterArray[] = array(
+                            'operator' => '$lt',
+                            'property' => $property,
+                            'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
+                        );
+                    } elseif ($ruleOperator === '$gt') {
+                        $filterArray[] = array(
+                            'operator' => $ruleOperator,
+                            'property' => $property,
+                            'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
+                        );
+                    } elseif ($ruleOperator === '$lte') {
+                        $filterArray[] = array(
+                            'operator' => $ruleOperator,
+                            'property' => $property,
+                            'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
+                        );
+                    } else {
+                        $filterArray[] = array(
+                            'operator' => $ruleOperator,
+                            'property' => $property,
+                            'value' => $this->_dateService->convertToTimeStamp($value['value'])
+                        );
+                    }
+                }
+                /*
+                 * Add Sort
+                 */
+                if (isset($value['sort'])) {
+                    $sort[] = array(
                         'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($value['value'])
-                    );
-                    $filterArray[] = array(
-                        'operator' => '$lt',
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                    );
-                } elseif ($ruleOperator === '$gt') {
-                    $filterArray[] = array(
-                        'operator' => $ruleOperator,
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                    );
-                } elseif ($ruleOperator === '$lte') {
-                    $filterArray[] = array(
-                        'operator' => $ruleOperator,
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
+                        'direction' => $value['sort']
                     );
                 } else {
-                    $filterArray[] = array(
-                        'operator' => $ruleOperator,
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($value['value'])
-                    );
-                }
-				}
-				/*
-				 * Add Sort
-				 */
-				 if(isset($value['sort'])){
-       		$sort[] = array(
-            'property' => $property,
-            'direction' => $value['sort']
-        );	
-				 }else{
-				 $sort[] = array(
-            'property' =>'id',
-            'direction' => 'DESC');
-				 }
-			
-            }
-        } else {
-            // no advanced query : should get classic parameters
-            $output = array();
-            if (isset($blockConfig['contentTypes'])) {
-                $contentTypesArray = $blockConfig['contentTypes'];
-                if (is_array($contentTypesArray) && count($contentTypesArray) > 0) {
-                    $filterArray[] = array(
-                        'operator' => '$in',
-                        'property' => 'typeId',
-                        'value' => $contentTypesArray
+                    $sort[] = array(
+                        'property' => 'id',
+                        'direction' => 'DESC'
                     );
                 }
             }
-            
-            if (isset($blockConfig['taxonomy'])) {
-                $taxonomyTermsArray = $blockConfig['taxonomy'];
-                if (is_array($taxonomyTermsArray) && count($taxonomyTermsArray) > 0) {
-                    
-                    $filterArray[] = array(
-                        'operator' => '$in',
-                        'property' => 'taxonomy.50c0cabc9a199dcc0f000002', // @todo
-                                                                           // :
-                                                                           // taxanomy
-                                                                           // parameter
-                                                                           // do
-                                                                           // not
-                                                                           // return
-                                                                           // vocabulary
-                                                                           // !
-                        'value' => $taxonomyTermsArray
-                    );
-                }
-            }
-            $filterArray[] = array(
-                'property' => 'status',
-                'value' => 'published'
-            );
         }
         /* Get the list */
         $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
@@ -252,8 +222,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         return $pageData;
     }
-	protected function getQuery($queryId)
-	{
-		return $this->_queryReader->findById($queryId["query"]);
-	}
+
+    protected function getQuery ($queryId)
+    {
+        return $this->_queryReader->findById($queryId);
+    }
 }
