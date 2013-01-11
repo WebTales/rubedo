@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing the list of available Front Office Theme
@@ -65,18 +65,21 @@ class Backoffice_FoThemesController extends Zend_Controller_Action
      *
      */
     public function indexAction() {
-        
-
         $dataValues = array();
         $dataValues[]=array('text'=>'default','label'=>'Default');
         $dataValues[]=array('text'=>'cnews','label'=>'Ville');
 
-        $response = array();
-        $response['total'] = 2;
-        $response['data'] = $dataValues;
-        $response['success'] = TRUE;
-        $response['message'] = 'OK';
+        $response = Manager::getService('FrontOfficeTemplates')->getAvailableThemes();
 
+        $this->_returnJson($response);
+    }
+    
+    /**
+     * 
+     */
+    public function getThemeInfosAction(){
+        $themeName = $this->getParam('theme','default');
+        $response = Manager::getService('FrontOfficeTemplates')->getThemeInfos($themeName);
         $this->_returnJson($response);
     }
 }

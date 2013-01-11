@@ -16,8 +16,8 @@
  */
 namespace Rubedo\Templates;
 
-use Rubedo\Interfaces\Templates\IFrontOfficeTemplates;
-Use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Templates\IFrontOfficeTemplates, Rubedo\Services\Manager;
+
 /**
  * Front Office URL service
  *
@@ -26,17 +26,19 @@ Use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class FrontOfficeTemplates implements  IFrontOfficeTemplates
+class FrontOfficeTemplates implements IFrontOfficeTemplates
 {
 
     /**
      * twig environnelent object
+     * 
      * @var \Twig_Environment
      */
     protected $_twig;
 
     /**
      * Twig options array
+     * 
      * @var array
      */
     protected $_options = array();
@@ -58,49 +60,62 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct ()
     {
         $this->_init();
     }
 
     /**
      * initialise Twig Context
-     * @param string $lang current language
+     * 
+     * @param string $lang
+     *            current language
      */
-    protected function _init()
+    protected function _init ()
     {
-
-        $this->_options = array('templateDir' => APPLICATION_PATH . "/../public/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
+        $this->_options = array(
+            'templateDir' => APPLICATION_PATH . "/../public/templates",
+            'cache' => APPLICATION_PATH . "/../cache/twig",
+            'debug' => true,
+            'auto_reload' => true
+        );
         if (isset($this->_service)) {
             $this->_options = $this->_service->getCurrentOptions();
         }
-
+        
         $lang = Manager::getService('Session')->get('lang', 'fr');
-
+        
         $loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
         $this->_twig = new \Twig_Environment($loader, $this->_options);
-
-        //$this->_twig->addExtension(new \Twig_Extension_Debug());
-
+        
+        // $this->_twig->addExtension(new \Twig_Extension_Debug());
+        
         $this->_twig->addExtension(new Translate($lang));
-
-        //$this->_twig->addExtension(new \Twig_Extension_Highlight());
-
+        
+        // $this->_twig->addExtension(new \Twig_Extension_Highlight());
+        
         $this->_twig->addExtension(new \Twig_Extensions_Extension_Intl());
         
-        $this->_twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml',array('is_safe' => array('html'))));
+        $this->_twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml', array(
+            'is_safe' => array(
+                'html'
+            )
+        )));
         
         $this->_twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
-	    $this->_twig->addFunction('displaySingleUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displaySingleUrl'));
+        $this->_twig->addFunction('displaySingleUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displaySingleUrl'));
     }
 
     /**
      * render a twig template given an array of data
-     * @param string $template template name
-     * @param array $vars array of data to be rendered
+     * 
+     * @param string $template
+     *            template name
+     * @param array $vars
+     *            array of data to be rendered
      * @return string HTML produced by twig
      */
-    public function render($template, array $vars)
+    public function render ($template, array $vars)
     {
         $templateObj = $this->_twig->loadTemplate($template);
         return $templateObj->render($vars);
@@ -111,14 +126,19 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
      *
      * @return string
      */
-    public function getTemplateDir()
+    public function getTemplateDir ()
     {
-        if (!isset(self::$templateDir)) {
-            $this->_options = array('templateDir' => APPLICATION_PATH . "/../public/templates", 'cache' => APPLICATION_PATH . "/../cache/twig", 'debug' => true, 'auto_reload' => true);
+        if (! isset(self::$templateDir)) {
+            $this->_options = array(
+                'templateDir' => APPLICATION_PATH . "/../public/templates",
+                'cache' => APPLICATION_PATH . "/../cache/twig",
+                'debug' => true,
+                'auto_reload' => true
+            );
             if (isset($this->_service)) {
-                $this->_options = array_merge($this->_options,$this->_service->getCurrentOptions());
+                $this->_options = array_merge($this->_options, $this->_service->getCurrentOptions());
             }
-
+            
             self::$templateDir = $this->_options['templateDir'];
         }
         return self::$templateDir;
@@ -128,9 +148,10 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
      * Return the actual path of a twig subpart in the current theme
      *
      * Check if it exist in current theme, return default path if not
+     * 
      * @return string
      */
-    public function getFileThemePath($path)
+    public function getFileThemePath ($path)
     {
         if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
             return '' . $this->getCurrentTheme() . '/' . $path;
@@ -138,9 +159,10 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
             return 'root/' . $path;
         }
     }
-    
-    public function templateFileExists($path){
-        return is_file($this->getTemplateDir(). '/' . $path);
+
+    public function templateFileExists ($path)
+    {
+        return is_file($this->getTemplateDir() . '/' . $path);
     }
 
     /**
@@ -148,10 +170,9 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
      *
      * @return string
      */
-
-    public function getCurrentTheme()
+    public function getCurrentTheme ()
     {
-        if (!isset(self::$_currentTheme)) {
+        if (! isset(self::$_currentTheme)) {
             self::$_currentTheme = 'default';
         }
         return self::$_currentTheme;
@@ -159,9 +180,10 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
 
     /**
      * Set the current theme name
-     * @param string $theme
+     * 
+     * @param string $theme            
      */
-    public function setCurrentTheme($theme)
+    public function setCurrentTheme ($theme)
     {
         self::$_currentTheme = $theme;
     }
@@ -169,16 +191,65 @@ class FrontOfficeTemplates implements  IFrontOfficeTemplates
     /**
      * Call the Html Cleaner Service
      */
-    public static function cleanHtml($html){
+    public static function cleanHtml ($html)
+    {
         return Manager::getService('HtmlCleaner')->clean($html);
     }
-    
-    public static function url(array $urlOptions = array(), $reset = false, $encode = true){
-        return Manager::getService('Url')->url($urlOptions,null, $reset, $encode);
-    }
-				
-    public static function displaySingleUrl($contentId,$siteId=null){
-	return Manager::getService('Url')->displaySingleUrl($contentId,$siteId);
+
+    public static function url (array $urlOptions = array(), $reset = false, $encode = true)
+    {
+        return Manager::getService('Url')->url($urlOptions, null, $reset, $encode);
     }
 
+    public static function displaySingleUrl ($contentId, $siteId = null)
+    {
+        return Manager::getService('Url')->displaySingleUrl($contentId, $siteId);
+    }
+
+    public function getAvailableThemes ()
+    {
+        $templateDirIterator = new \DirectoryIterator($this->getTemplateDir());
+        if(!$templateDirIterator){
+            throw new \Exception('cannnot instanciate iterator for template dir');
+        }
+        
+        $themeInfosArray = array();
+        
+        foreach ($templateDirIterator as $directory){
+            if($directory->isDot() || !$directory->isDir()){
+                continue;
+            }
+            $jsonFilePath = $directory->getPathname().'/theme.json';
+            if(is_file($jsonFilePath)){
+                $themeJson = file_get_contents($jsonFilePath);
+                $themeInfos = \Zend_Json::decode($themeJson);
+                $themeInfosArray[]=$themeInfos;
+            }
+            
+        }
+        
+        $response = array();
+        $response['total'] = count($themeInfosArray);
+        $response['data'] = $themeInfosArray;
+        $response['success'] = TRUE;
+        $response['message'] = 'OK';
+        
+        return $response;
+    }
+    
+    public function getThemeInfos($name){
+        $jsonFilePath = $this->getTemplateDir().'/'.$name.'/theme.json';
+        if(is_file($jsonFilePath)){
+            $themeJson = file_get_contents($jsonFilePath);
+            $themeInfos = \Zend_Json::decode($themeJson);
+            return $themeInfos;
+        }else{
+            return null;
+        }
+        
+    }
+    
+    public function getCurrentThemeInfos(){
+        return $this->getThemeInfos($this->getCurrentTheme());
+    }
 }
