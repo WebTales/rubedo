@@ -1,0 +1,128 @@
+/*
+ * 
+ * This is my CSS
+ * 
+ */
+
+
+body
+{
+	width:940px !important;
+	margin:auto !important;
+}
+
+/*
+ * 
+ * Header css
+ * 
+ */
+#header
+{
+	background-image: url('../images/mainPageBkg.png');
+	background-repeat:no-repeat;
+	
+}
+#header #logo
+{
+width:122px;
+height:117px;
+margin-bottom:-0px;
+background-image: url('../images/headerLogo.png');
+}
+
+/*
+ * 
+ * Navigation bar override css
+ * 
+ */
+.navbar {
+	width: 938px;
+}
+.navbar-inner{
+	border: 0px;
+	width: 882px;
+	height: 41px;
+	border-radius: 0px !important;
+	background-image: url('../images/headerMainBkg.png') !important;
+	background-repeat: repeat-x;
+	font-size: 0.85em;
+	font-family: 'metaPlusBold', arial, verdana;
+}
+.brand
+{
+	color:#ffffff !important;
+	font-size:1.85em !important;
+}
+.nav li {
+	background-image: url('../Images/headerSeparator.png');
+	background-repeat: no-repeat;
+	background-position: 100%;
+}
+
+.navbar .nav li a{
+	padding-right:10px;
+	padding-left:10px;
+}
+/*
+ * 
+ * Middle content css
+ * 
+ */
+#middle-content
+{
+	background-image: url('../images/mainPageBkg.png');
+	background-repeat:no-repeat;
+	height:500px;
+	background-position:0% 65% !important;
+}
+#middle-hand
+{
+	background-image: url('../images/hand.png') !important;
+	background-repeat: no-repeat;
+	min-height: 500px;
+	background-position: 30% 10px;
+}
+#bloc-content
+{
+	margin-top:15px;
+}
+#bloc-content .span3
+{
+	width:24.5%;
+}
+.bloc-title
+{
+	background-color: #008bcb;
+	font-weight:bold;
+	color:white;
+	font-size:1.5em;
+	height:50px;
+}
+.bloc-container
+{
+	border:1px solid #008bcb;
+	height:270px;
+}
+/*
+ * 
+ * Footer css
+ * 
+ */
+#footer-space
+{
+	height:20px;
+}
+#footer-logo
+{
+	width: 201px;
+	height: 42px;
+	background-image: url('../images/footerLogo.png');
+	background-repeat: no-repeat;
+}
+#footer-bar{
+		margin-left: 0px;
+	height: 42px;
+	width: 740px;
+	background-image: url('../images/footerMainBkg.png');
+	background-repeat: repeat-x;
+}
