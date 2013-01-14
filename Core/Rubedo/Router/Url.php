@@ -125,7 +125,7 @@ class Url implements IUrl
                 throw new \Zend_Controller_Router_Exception('no page found');
             }
 
-            if (!ctype_alpha($page['text'])) {
+            if (!ctype_alnum($page['text'])) {
                 throw new \Zend_Controller_Router_Exception('page name should be alphanum');
             }
 
