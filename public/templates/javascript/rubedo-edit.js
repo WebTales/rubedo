@@ -1,5 +1,3 @@
-// navbar
-//jQuery('#menu').css('margin-top','60px');
 
 jQuery('#contentToolBar').css('top','0');
 jQuery('#contentToolBar').show();
@@ -35,32 +33,9 @@ CKEDITOR.on( 'instanceCreated', function( event ) {
 		});
 	} else {
 		editor.on( 'configLoaded', function() {
-
-		// Remove unnecessary plugins to make the editor simpler.
-		//editor.config.removePlugins = 'colorbutton,find,forms,iframe,removeformat,scayt,smiley,specialchar,wsc';
-		//editor.config.extraPlugins ='stylesheetparser';
-		//editor.config.contentsCss = '/css/default.bootstrap.min.css';
-		// Rearrange the layout of the toolbar.
-		/*
-		editor.config.toolbar = [
-			{ name: 'document', items : [ 'NewPage','Templates','Print'] },
-			{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-			{ name: 'editing', items : [ 'Find','Replace' ] },
-			{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike' ] },
-			{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote',
-			'-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
-			{ name: 'styles', items : [ 'Styles','Format'] },
-			{ name: 'links', items : [ 'Link','Unlink','Anchor' ] },
-			{ name: 'insert', items : [ 'Image','Flash','Table','Forms','HorizontalRule'] }
-		];*/
-			
-		// file and media explorer
-		editor.config.filebrowserBrowseUrl = '/ckfinder/ckfinder.html';
-		editor.config.filebrowserImageBrowseUrl = '/ckfinder/ckfinder.html?type=Images';
-		editor.config.filebrowserFlashBrowseUrl = '/ckfinder/ckfinder.html?type=Flash';
-		editor.config.filebrowserUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&currentFolder=/archive/';
-		editor.config.filebrowserImageUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images&currentFolder=/cars/';
-		editor.config.filebrowserFlashUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash';        
+		// set file and media explorer
+		editor.config.filebrowserBrowseUrl = '/backoffice/resources/extFinder/app.html?CKEditor=CKEField-1132-inputEl&CKEditorFuncNum=2&langCode=fr';
+		editor.config.filebrowserUploadUrl = '/backoffice/resources/extFinder/app.html?CKEditor=CKEField-1132-inputEl&CKEditorFuncNum=2&langCode=fr';
 		});		
 	}
 });
