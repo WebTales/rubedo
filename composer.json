@@ -6,7 +6,7 @@
 		"twig/extensions": "v1.0.0-alpha",
         "ruflin/Elastica": "v0.19.8.0",
         "ezyang/htmlpurifier": "dev-master",
-        "webtales/rubedo-backoffice-ui" : "master",
+        "webtales/rubedo-backoffice-ui" : "dev-master",
         "bombayworks/zendframework1": "v1.12.1"
     },
     "require-dev": {
