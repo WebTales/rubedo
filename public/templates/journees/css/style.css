@@ -1,9 +1,41 @@
 /*
  * 
- * This is my CSS
+ * Font
  * 
  */
+@font-face {
+    font-family: 'metaPlusBold';
+    src: url('font/metaplus-bold-roman-webfont.eot');
+    src: url('font/metaplus-bold-roman-webfont.eot?#iefix') format('embedded-opentype'),
+         url('font/metaplus-bold-roman-webfont.woff') format('woff'),
+         url('font/metaplus-bold-roman-webfont.ttf') format('truetype'),
+         url('font/metaplus-bold-roman-webfont.svg#metaplus_bold_romanregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
 
+}
+
+
+
+
+@font-face {
+    font-family: 'metaPlus';
+    src: url('font/metaplus-webfont.eot');
+    src: url('font/metaplus-webfont.eot?#iefix') format('embedded-opentype'),
+         url('font/metaplus-webfont.woff') format('woff'),
+         url('font/metaplus-webfont.ttf') format('truetype'),
+         url('font/metaplus-webfont.svg#metaplusregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+/*
+ * Temporary font
+ */
+*
+{
+	font-family:'metaPlus',Arial;
+}
 
 body
 {
@@ -53,8 +85,8 @@ background-image: url('../images/headerLogo.png');
 	color:#ffffff !important;
 	font-size:1.85em !important;
 }
-.nav li {
-	background-image: url('../Images/headerSeparator.png');
+.navbar .nav li {
+	background-image: url('../Images/headerSeparator.png') !important;
 	background-repeat: no-repeat;
 	background-position: 100%;
 }
@@ -62,6 +94,12 @@ background-image: url('../images/headerLogo.png');
 .navbar .nav li a{
 	padding-right:10px;
 	padding-left:10px;
+	color:white !important;
+	font-size:1.5em !important;
+}
+.navbar .nav li a:hover
+{
+	color: #bed600 !important;
 }
 /*
  * 
@@ -98,10 +136,37 @@ background-image: url('../images/headerLogo.png');
 	font-size:1.5em;
 	height:50px;
 }
+.bloc-title span
+{
+	margin-top:15px;
+	margin-left:15px;
+	position:absolute;
+}
 .bloc-container
 {
 	border:1px solid #008bcb;
 	height:270px;
+}
+.bloc-content
+{
+	height:238px;
+	margin:10px 10px 10px 10px;
+	
+}
+.bloc-content ul
+{
+		list-style-type:disc #008bcb;
+}
+.bloc-content p
+{
+	margin-top:-10px;
+	padding-top:0px;
+}
+#news-bloc2
+{
+		background-image: url('../images/homePageBloc2.png');
+	background-repeat: no-repeat;
+	background-color:#008BCB;
 }
 /*
  * 
