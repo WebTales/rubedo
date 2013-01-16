@@ -129,7 +129,7 @@
 	<target name="restore-db">
 		<exec
 		command="mongorestore -d rubedo --drop rubedo"
-		dir="${project.basedir}/data/dump"
+		dir="${project.basedir}/vendor/webtales/rubedoData/dump"
 		passthru="true"
 		/>
 	</target>
@@ -137,7 +137,7 @@
 	<target name="dump-db">
 		<exec
 		command="mongodump -d rubedo"
-		dir="${project.basedir}/data"
+		dir="${project.basedir}/vendor/webtales/rubedoData"
 		passthru="true"
 		/>
 	</target>
