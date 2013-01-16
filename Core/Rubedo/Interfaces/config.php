@@ -79,6 +79,8 @@ class config
 		'MediaTypes'				=>	'Rubedo\\Interfaces\\Collection\\IMediaTypes',
 		'Cache'						=>	'Rubedo\\Interfaces\\Collection\\ICache',
 		'Queries'					=>	'Rubedo\\Interfaces\\Collection\\IQueries',
+		'Dam'					    =>	'Rubedo\\Interfaces\\Collection\\IDam',
+		'DamTypes'					=>	'Rubedo\\Interfaces\\Collection\\IDamTypes',
 	);
 
     /**
