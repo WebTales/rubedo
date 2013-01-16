@@ -49,6 +49,10 @@ class Page implements  IPage
      */
     protected static $_title = '';
 
+    protected static $_description ='';
+    
+    protected static $_keywords = array();
+    
     /**
      * Current Site
      *
@@ -141,5 +145,40 @@ class Page implements  IPage
     public function setCurrentSite($siteId) {
         self::$_currentSite = $siteId;
     }
+    
+	/**
+     * @return the $_description
+     */
+    public function getDescription ()
+    {
+        return Page::$_description;
+    }
+
+	/**
+     * @return the $_keywords
+     */
+    public function getKeywords ()
+    {
+        return Page::$_keywords;
+    }
+
+	/**
+     * @param string $_description
+     */
+    public function setDescription ($_description)
+    {
+        Page::$_description = $_description;
+    }
+
+	/**
+     * @param multitype: $_keywords
+     */
+    public function setKeywords ($_keywords)
+    {
+        Page::$_keywords = $_keywords;
+    }
+
+    
+    
 
 }

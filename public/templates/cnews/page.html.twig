@@ -2,12 +2,16 @@
 <html lang="fr">
 <head>
 {% block pageTitle %}
-<title>Démo Rubedo 1</title> {% endblock %} {% block pageMeta %}
+<title>{{ title }}</title>
+
+ {% endblock %} {% block pageMeta %}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% if description %}
 <meta name="description"
-	content="The Rubedo Project, open-source CMS with Zend Framework, MongoDB and Ext-JS">
+	content="{{ description }}">
 <meta name="author" content="WebTales">
+{% endif %}
 {% endblock %} {% block pageStyle %}
 <!-- Styles -->
 <link rel='stylesheet' id='prettyPhoto-css'
