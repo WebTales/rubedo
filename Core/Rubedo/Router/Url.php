@@ -124,10 +124,6 @@ class Url implements IUrl
                 throw new \Zend_Controller_Router_Exception('no page found');
             }
 
-            if (!ctype_alnum($page['pageURL'])) {
-                throw new \Zend_Controller_Router_Exception('page name should be alphanum');
-            }
-
             $siteId = $page['site'];
 
             $rootline = Manager::getService('Pages')->getAncestors($page);
