@@ -1,5 +1,10 @@
 /*
  * 
+ * Shared CSS
+ * 
+ */
+/*
+ * 
  * Font
  * 
  */
@@ -41,7 +46,9 @@ body
 {
 	width:940px !important;
 	margin:auto !important;
+
 }
+
 
 /*
  * 
@@ -52,7 +59,8 @@ body
 {
 	background-image: url('../images/mainPageBkg.png');
 	background-repeat:no-repeat;
-	
+	height: 158px;
+
 }
 #header #logo
 {
@@ -61,32 +69,39 @@ height:117px;
 margin-bottom:-0px;
 background-image: url('../images/headerLogo.png');
 }
+#header #title
+{
+	color:white;
+	font-size:50px;
+	margin-top:5%;
+}
 
 /*
  * 
  * Navigation bar override css
  * 
  */
-.navbar {
-	width: 938px;
+.navbar
+{
+	width:940px;
+	border:none;
 }
 .navbar-inner{
 	border: 0px;
-	width: 882px;
+	
 	height: 41px;
 	border-radius: 0px !important;
 	background-image: url('../images/headerMainBkg.png') !important;
 	background-repeat: repeat-x;
-	font-size: 0.85em;
+	font-size: 1em;
 	font-family: 'metaPlusBold', arial, verdana;
-}
-.brand
-{
-	color:#ffffff !important;
-	font-size:1.85em !important;
+	width: 882px;
+	box-shadow: 0px 0px 0px #ffffff !important;
+	border:none;
+	
 }
 .navbar .nav li {
-	background-image: url('../Images/headerSeparator.png') !important;
+	background-image: url('../images/headerSeparator.png') !important;
 	background-repeat: no-repeat;
 	background-position: 100%;
 }
@@ -95,12 +110,23 @@ background-image: url('../images/headerLogo.png');
 	padding-right:10px;
 	padding-left:10px;
 	color:white !important;
-	font-size:1.5em !important;
+	font-size:0.95em !important;
+	text-shadow:none !important;
+	font-family:'metaPlusBold';
 }
 .navbar .nav li a:hover
 {
-	color: #bed600 !important;
+	background-color:#d9eaf1 !important;
+	color:#008bcb !important;
 }
+#nav-block .span1 {
+margin-left:-148px;
+	width: 19px;
+	height: 41px;
+	background-image: url('../images/headerRightEnd.png');
+	background-repeat: no-repeat;
+}
+
 /*
  * 
  * Middle content css
@@ -112,6 +138,7 @@ background-image: url('../images/headerLogo.png');
 	background-repeat:no-repeat;
 	height:500px;
 	background-position:0% 65% !important;
+	margin-top:-18px
 }
 #middle-hand
 {
@@ -120,62 +147,14 @@ background-image: url('../images/headerLogo.png');
 	min-height: 500px;
 	background-position: 30% 10px;
 }
-#bloc-content
-{
-	margin-top:15px;
-}
-#bloc-content .span3
-{
-	width:24.5%;
-}
-.bloc-title
-{
-	background-color: #008bcb;
-	font-weight:bold;
-	color:white;
-	font-size:1.5em;
-	height:50px;
-}
-.bloc-title span
-{
-	margin-top:15px;
-	margin-left:15px;
-	position:absolute;
-}
-.bloc-container
-{
-	border:1px solid #008bcb;
-	height:270px;
-}
-.bloc-content
-{
-	height:238px;
-	margin:10px 10px 10px 10px;
-	
-}
-.bloc-content ul
-{
-		list-style-type:disc #008bcb;
-}
-.bloc-content p
-{
-	margin-top:-10px;
-	padding-top:0px;
-}
-#news-bloc2
-{
-		background-image: url('../images/homePageBloc2.png');
-	background-repeat: no-repeat;
-	background-color:#008BCB;
-}
 /*
  * 
  * Footer css
  * 
  */
-#footer-space
+#footer
 {
-	height:20px;
+	margin-top:10px;
 }
 #footer-logo
 {
@@ -191,3 +170,94 @@ background-image: url('../images/headerLogo.png');
 	background-image: url('../images/footerMainBkg.png');
 	background-repeat: repeat-x;
 }
+
+
+
+/*
+ * 
+ * Home page
+ * @accueil
+ *  Css for each bloc is on html code.
+ */
+
+#home-text
+{
+	width:400px;
+	position:absolute;
+	margin-left:600px;
+	margin-top:60px;
+}
+.bloc
+{
+	margin-top:10px;
+	border:1px solid #008bcb;
+	width:291px !important;
+	height:270px;
+}
+
+.bloc-title
+{
+	background-color: #008bcb;
+	font-weight:bold;
+	color:white;
+	font-size:1.5em;
+	height:40px;
+}
+.bloc-title span
+{
+ 	margin-left:5px;
+ 	margin-top:10px;
+ 	position:absolute;
+}
+#bloc-inscription
+{
+	background-image: url('../images/homePageBloc2.png');
+	background-repeat: no-repeat;
+	background-color:#008BCB;
+
+}
+#bloc-video
+{
+	background-image: url('../images/homePageBloc3.png');
+	background-repeat: no-repeat;
+	background-color:#2e2e2e;
+
+}
+#bloc-invite
+{
+	background-image: url('../images/homePageBloc1-back.png');
+	background-repeat: no-repeat;
+		background-color:#cecece;
+}
+/*
+ * Programme 
+ * 
+ */
+#programme-content
+{
+	height:1377px;
+	background-image: url('../images/programmeBackContent.png');
+	background-repeat: no-repeat;
+}
+#programme-content table
+{
+	
+	border-collapse:separate !important;
+	border-spacing:20px !important;
+}
+#programme-content table tr td{
+	min-width: 110px;
+}
+#programme-content .programme-title
+{
+	 background-image:url('../images/textHeader.png');
+	background-repeat:no-repeat;
+	height:27px;
+	padding:5px 5px 0px 5px;
+	 color:#FFFFFF;
+}
+#content-invite{
+	width:840px;
+	margin-left:50px;
+}
+
