@@ -1,1 +1,0 @@
-{indexes:[{ "v" : 1, "key" : { "_id" : 1 }, "ns" : "rubedo.fs.chunks", "name" : "_id_" }, { "v" : 1, "key" : { "files_id" : 1, "n" : 1 }, "unique" : true, "ns" : "rubedo.fs.chunks", "dropDups" : true, "name" : "files_id_1_n_1" }]}
