@@ -2,17 +2,17 @@
 <html lang="fr">
 <head>
 {% block pageTitle %}
-<title>{{ title }}</title>
-
- {% endblock %} {% block pageMeta %}
+<title>{{ title }}</title> {% endblock %} 
+{% block pageMeta %}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 {% if description %}
-<meta name="description"
-	content="{{ description }}">
+<meta name="description" content="{{ description }}">
+{% endif %} 
 <meta name="author" content="WebTales">
-{% endif %}
-{% endblock %} {% block pageStyle %}
+
+{% endblock %} 
+{% block pageStyle %}
 <!-- Styles -->
 <link rel='stylesheet' id='prettyPhoto-css'
 	href='/cnews/css/prettyPhoto.css?ver=3.4.2' type='text/css' media='all' />
@@ -103,8 +103,8 @@
 			style="margin-left: -30px; margin-right: -30px; padding-top: 5px; padding-bottom: 5px;"></div>
 
 		{% block pageMainContent %} {% if rows %} {% for row in rows %} {%
-		include row.template with row only %} {% endfor %} {% endif %}
-		{% endblock %}
+		include row.template with row only %} {% endfor %} {% endif %} {%
+		endblock %}
 
 	</div>
 
@@ -137,7 +137,7 @@
 	<script type='text/javascript'
 		src='/cnews/js/jquery.vegas.js?ver=3.4.2'></script>
 	<script type='text/javascript' src='/cnews/js/custom.js?ver=3.4.2'></script>
-	
+
 	{% for file in js %}
 	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
 	{% endfor %}
