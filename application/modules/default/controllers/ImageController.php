@@ -86,7 +86,8 @@ class ImageController extends Zend_Controller_Action
             list ($imgWidth, $imgHeight) = getimagesize($tmpImagePath);
             
             $ratio = $imgWidth / $imgHeight;
-            if ($size == "custom" && is_null($width) && is_null($height)) {
+            if ((is_null($width) || $imgWidth == $width) && (is_null($height) ||
+                     ($imgHeight == $height))) {
                 $newImage = $image;
             } elseif ($mode == 'morph') {
                 $width = isset($width) ? $width : $height * $ratio;
