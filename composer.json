@@ -6,16 +6,21 @@
 		"twig/extensions": "v1.0.0-alpha",
         "ruflin/Elastica": "v0.19.8.0",
         "ezyang/htmlpurifier": "dev-master",
-        "webtales/rubedo-backoffice-ui" : "master",
+        "webtales/rubedo-backoffice-ui" : "dev-master",
         "bombayworks/zendframework1": "v1.12.1"
     },
     "require-dev": {
-        "chriskite/phactory": "v0.4.2"
+        "chriskite/phactory": "v0.4.2",
+        "webtales/rubedoData" : "dev-master"
     },
     "repositories": [
 		{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
+		},
+		{
+			"type": "vcs",
+			"url": "git://github.com/WebTales/rubedoData.git"
 		}
 	],
     "minimum-stability": "stable",

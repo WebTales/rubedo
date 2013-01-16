@@ -155,7 +155,7 @@
 				<br />
 				<br />
 				{% if result.summary %}
-				<p>{{ result.summary }}</p>
+				<p>{{ result.summary|cleanHtml }}</p>
 				{% endif %}
 				<br />
 				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.author }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>

@@ -334,7 +334,7 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if getAncestors method call findById method
 	 */
 	public function testNormalGetAncestorsWithLimitFive(){
-		$this->_mockDataAccessService->expects($this->exactly(5))->method('findById');
+		$this->_mockDataAccessService->expects($this->once())->method('findById');
 		$item['parentId']="parent";
 		$limit=5;
 		$collection = new testCollection();

@@ -67,6 +67,16 @@ class Pages extends AbstractCollection implements IPages
 		return $this->_dataService->findOne($filterArray);
 	}
 
+    public function create (array $obj, $options = array('safe'=>true))
+    {
+    	// overwrite site name
+ 		$accent="ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿ";
+    	$noAccent="aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyyby";
+    	$url=strtr(trim($obj['title']),$accent,$noAccent);
+    	$obj['text'] = str_replace(array("'","\""),array("",""),strtolower(preg_replace("# #","",$url)));
+        return parent::create($obj, $options);
+    }
+		
 	
 	
 	
