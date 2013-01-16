@@ -38,6 +38,13 @@ class ImageController extends Zend_Controller_Action
         
         $fileId = $this->getRequest()->getParam('file-id');
         
+        $size = $this->getParam('size', 'custom');
+        if ($size == "custom") {
+            $width = $this->getParam('width', null);
+            $height = $this->getParam('height', null);
+            $mode = $this->getParam('mode', 'morph');
+        }
+        
         if (isset($fileId)) {
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
@@ -50,15 +57,13 @@ class ImageController extends Zend_Controller_Action
             $filename = $meta['filename'];
             $nameSegment = explode('.', $filename);
             $extension = array_pop($nameSegment);
-            if (! in_array($extension, 
-                    array(
-                            'gif',
-                            'jpg',
-                            'png',
-                            'jpeg'
-                    ))) {
-                throw new Zend_Controller_Exception(
-                        'Not authorized file extension');
+            if (! in_array($extension, array(
+                'gif',
+                'jpg',
+                'png',
+                'jpeg'
+            ))) {
+                throw new Zend_Controller_Exception('Not authorized file extension');
             }
             
             $type = strtolower($extension);
@@ -66,10 +71,8 @@ class ImageController extends Zend_Controller_Action
             
             $this->getResponse()->clearBody();
             $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
-            $this->getResponse()->setHeader('Cache-Control', 
-                    'public, max-age=' . 24 * 3600);
-            $this->getResponse()->setHeader('Expires', 
-                    date(DATE_RFC822, strtotime(" 1 day")));
+            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600);
+            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")));
             $this->getResponse()->setBody($image);
         } else {
             throw new Zend_Controller_Exception("No Id Given", 1);

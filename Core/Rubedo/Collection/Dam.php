@@ -34,4 +34,8 @@ class Dam extends AbstractCollection implements IDam
 		parent::__construct();
 	}
 	
+	public function thumbnailAction(){
+	    
+	}
+	
 }
