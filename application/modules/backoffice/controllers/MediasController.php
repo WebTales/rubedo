@@ -57,7 +57,7 @@ class Backoffice_MediasController extends Backoffice_DataAccessController
         if($mediaType['mainFileType']=='image'){
             $this->_forward('index','image','default',array('size'=>'thumbnail','file-id'=>$media['originalFile']));
         }else{
-            
+            die();
         }
     }
     
