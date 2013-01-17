@@ -5,7 +5,7 @@
 	?>
 	<div style="float: left;margin : 10px;">
 		<a href ="<?php echo $this->url(array('action'=>'get','file-id'=>$value['id']))?>">
-			<img width="280" src="<?php echo $this->url(array('action'=>'get','file-id'=>$value['id']))?>" alt=""/>
+			<?php echo $value['filename']?>
 		</a>
 		<br />
 		<a href ="<?php echo $this->url(array('action'=>'delete','file-id'=>$value['id'],'version'=>$value['version']))?>">

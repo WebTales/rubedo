@@ -76,6 +76,7 @@ class config
 		'Pages'						=>	'Rubedo\\Interfaces\\Collection\\IPages',
 		'Versioning'				=>	'Rubedo\\Interfaces\\Collection\\IVersioning',
 		'Images'					=>	'Rubedo\\Interfaces\\Collection\\IImages',
+		'Files'					    =>	'Rubedo\\Interfaces\\Collection\\IFiles',
 		'MediaTypes'				=>	'Rubedo\\Interfaces\\Collection\\IMediaTypes',
 		'Cache'						=>	'Rubedo\\Interfaces\\Collection\\ICache',
 		'Queries'					=>	'Rubedo\\Interfaces\\Collection\\IQueries',
