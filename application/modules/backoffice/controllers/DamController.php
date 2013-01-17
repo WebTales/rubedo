@@ -36,5 +36,59 @@ class Backoffice_DamController extends Backoffice_DataAccessController
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('Dam');
 	}
+	
+	public function getThumbnailAction ()
+	{
+	    $mediaId = $this->getParam('id', null);
+	    if (! $mediaId) {
+	        throw new Exception('no id given');
+	    }
+	    $media = $this->_dataService->findById($mediaId);
+	    if(!$media){
+	        throw new Exception('no media found');
+	    }
+	    $mediaType = Manager::getService('MediaTypes')->findById($media['typeId']);
+	    if(!$mediaType){
+	        throw new Exception('unknown media type');
+	    }
+	    if($mediaType['mainFileType']=='image'){
+	        $this->_forward('index','image','default',array('size'=>'thumbnail','file-id'=>$media['originalFile']));
+	    }else{
+	        die();
+	    }
+	}
+	
+	public function getOriginalFileAction ()
+	{
+	    $mediaId = $this->getParam('id', null);
+	    if (! $mediaId) {
+	        throw new Exception('no id given');
+	    }
+	    $media = $this->_dataService->findById($mediaId);
+	    if(!$media){
+	        throw new Exception('no media found');
+	    }
+	    $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
+	    if(!$mediaType){
+	        throw new Exception('unknown media type');
+	    }
+	    if($mediaType['mainFileType']=='image'){
+	        $this->_forward('index','image','default',array('file-id'=>$media['originalFile']));
+	    }else{
+	        $this->_forward('index','file','default',array('file-id'=>$media['originalFile']));
+	    }
+	}
+	
+	public function createAction(){
+	    $adapter = new Zend_File_Transfer_Adapter_Http();
+	
+	    if (! $adapter->receive()) {
+	        throw new Exception(implode("\n", $adapter->getMessages()));
+	    }
+	
+	    $filesArray = $adapter->getFileInfo();
+	    $returnArray = array('success'=>false,'msg'=>'not yet implemented');
+	    return $this->_returnJson($returnArray);
+	}
 
 }
