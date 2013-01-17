@@ -11,7 +11,7 @@
     },
     "require-dev": {
         "chriskite/phactory": "v0.4.2",
-        "webtales/rubedoData" : "dev-master"
+        "webtales/rubedoData" : "dev-journees"
     },
     "repositories": [
 		{
