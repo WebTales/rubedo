@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing access control list
@@ -50,7 +50,7 @@ class Backoffice_FileController extends Zend_Controller_Action
     {
         parent::init();
         
-        $sessionService = \Rubedo\Services\Manager::getService('Session');
+        $sessionService = Manager::getService('Session');
         
         // refuse write action not send by POST
         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
@@ -69,7 +69,7 @@ class Backoffice_FileController extends Zend_Controller_Action
 
     function indexAction ()
     {
-        $fileService = Rubedo\Services\Manager::getService('Files');
+        $fileService = Manager::getService('Files');
         $filesArray = $fileService->getList();
         // Zend_Debug::dump($filesArray);die();
         $data = $filesArray['data'];
@@ -98,7 +98,7 @@ class Backoffice_FileController extends Zend_Controller_Action
             $mimeType = $finfo->file($fileInfo['tmp_name']);
         }
         
-        $fileService = Rubedo\Services\Manager::getService('Files');
+        $fileService = Manager::getService('Files');
         $obj = array(
             'serverFilename' => $fileInfo['tmp_name'],
             'text' => $fileInfo['name'],
@@ -106,11 +106,8 @@ class Backoffice_FileController extends Zend_Controller_Action
             'Content-Type' => isset($mimeType) ? $mimeType : $fileInfo['type']
         );
         $result = $fileService->create($obj);
-        // if ($result['success'] == true) {
-        // $this->redirect($this->_helper->url('index'));
-        // } else {
+        
         $this->_helper->json($result);
-        // }
     }
 
     function deleteAction ()
@@ -122,7 +119,7 @@ class Backoffice_FileController extends Zend_Controller_Action
         $version = $this->getRequest()->getParam('file-version', 1);
         
         if (isset($fileId)) {
-            $fileService = Rubedo\Services\Manager::getService('Files');
+            $fileService = Manager::getService('Files');
             $result = $fileService->destroy(array(
                 'id' => $fileId,
                 'version' => $version
@@ -146,7 +143,7 @@ class Backoffice_FileController extends Zend_Controller_Action
         $fileId = $this->getRequest()->getParam('file-id');
         
         if (isset($fileId)) {
-            $fileService = Rubedo\Services\Manager::getService('Files');
+            $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
             if (! $obj instanceof MongoGridFSFile) {
                 throw new Zend_Controller_Exception("No Image Found", 1);
@@ -159,7 +156,7 @@ class Backoffice_FileController extends Zend_Controller_Action
 
     function dropAllFilesAction ()
     {
-        $fileService = Rubedo\Services\Manager::getService('MongoFileAccess');
+        $fileService = Manager::getService('MongoFileAccess');
         $fileService->init();
         return $this->_helper->json($fileService->drop());
     }
