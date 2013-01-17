@@ -1,7 +1,9 @@
 {
     "name": "webtales/rubedo",
     "require": {
-		"php": ">=5.3.0",        
+		"php": ">=5.3.0", 
+		"ext-fileinfo": "*",
+		"ext-gd": "*",       
 		"twig/twig": "1.*",
 		"twig/extensions": "v1.0.0-alpha",
         "ruflin/Elastica": "v0.19.8.0",
