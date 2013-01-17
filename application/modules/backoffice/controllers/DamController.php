@@ -75,7 +75,8 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             ));
         } else {
             $this->_forward('index', 'image', 'default', array(
-                'size' => 'thumbnail',
+                'width' => '100',
+                'height'=>'100',
                 'file-id'=>null,
                 'filepath' => realpath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/icones/blue/128X128/attach_document.png')
             ));
