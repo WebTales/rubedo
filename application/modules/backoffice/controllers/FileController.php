@@ -71,16 +71,15 @@ class Backoffice_FileController extends Zend_Controller_Action
     {
         $fileService = Manager::getService('Files');
         $filesArray = $fileService->getList();
-        // Zend_Debug::dump($filesArray);die();
         $data = $filesArray['data'];
         $files = array();
         foreach ($data as $value) {
             $metaData = $value->file;
-            $metaData['id'] = (string) $metaData['_id'];
+            $metaData['id'] = (string)$metaData['_id'];
             unset($metaData['_id']);
             $files[] = $metaData;
         }
-        $this->view->files = $files;
+        return $this->_helper->json(array('data' => $files, 'total' => $filesArray['count']));
     }
 
     function putAction ()
