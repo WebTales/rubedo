@@ -35,8 +35,17 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     /**
      * Array with the read only actions
      */
-    protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms','model','get-original-file','get-thumbnail');
-    
+    protected $_readOnlyAction = array(
+        'index',
+        'find-one',
+        'read-child',
+        'tree',
+        'clear-orphan-terms',
+        'model',
+        'get-original-file',
+        'get-thumbnail'
+    );
+
     public function init ()
     {
         parent::init();
@@ -65,7 +74,11 @@ class Backoffice_DamController extends Backoffice_DataAccessController
                 'file-id' => $media['originalFileId']
             ));
         } else {
-            die();
+            $this->_forward('index', 'image', 'default', array(
+                'size' => 'thumbnail',
+                'file-id'=>null,
+                'filepath' => realpath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/icones/blue/128X128/attach_document.png')
+            ));
         }
     }
 
@@ -104,7 +117,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $damType) {
             throw new Zend_Controller_Exception('unknown type');
         }
-        $obj['typeId']= $damType['id'];
+        $obj['typeId'] = $damType['id'];
         
         $title = $this->getParam('title');
         if (! $title) {
@@ -168,7 +181,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
-
+        
         $returnValue = Zend_Json::encode($returnArray);
         if ($this->_prettyJson) {
             $returnValue = Zend_Json::prettyPrint($returnValue);
