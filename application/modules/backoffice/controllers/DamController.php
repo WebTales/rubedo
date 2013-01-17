@@ -159,6 +159,14 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        return $this->_returnJson($returnArray);
+        // disable layout and set content type
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+
+        $returnValue = Zend_Json::encode($returnArray);
+        if ($this->_prettyJson) {
+            $returnValue = Zend_Json::prettyPrint($returnValue);
+        }
+        $this->getResponse()->setBody($returnValue);
     }
 }
