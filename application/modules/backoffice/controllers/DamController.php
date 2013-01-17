@@ -55,14 +55,14 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $media) {
             throw new Exception('no media found');
         }
-        $mediaType = Manager::getService('MediaTypes')->findById($media['typeId']);
+        $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new Exception('unknown media type');
         }
-        if ($mediaType['mainFileType'] == 'image') {
+        if ($mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
                 'size' => 'thumbnail',
-                'file-id' => $media['originalFile']
+                'file-id' => $media['originalFileId']
             ));
         } else {
             die();
@@ -83,13 +83,13 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $mediaType) {
             throw new Exception('unknown media type');
         }
-        if ($mediaType['mainFileType'] == 'image') {
+        if ($mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
-                'file-id' => $media['originalFile']
+                'file-id' => $media['originalFileId']
             ));
         } else {
             $this->_forward('index', 'file', 'default', array(
-                'file-id' => $media['originalFile']
+                'file-id' => $media['originalFileId']
             ));
         }
     }
