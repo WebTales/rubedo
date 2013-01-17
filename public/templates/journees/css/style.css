@@ -3,6 +3,13 @@
  * Shared CSS
  * 
  */
+.end{
+	-o-transform:skewx(22deg);
+    -moz-transform:skewx(22deg);
+    -ms-transform:skewx(22deg);
+    -webkit-transform:skewx(22deg);
+    transform:skewx(22deg);
+}
 /*
  * 
  * Font
@@ -34,12 +41,59 @@
     font-style: normal;
 
 }
-/*
- * Temporary font
- */
+.title 
+{
+	color:#FFFFFF;
+	font-size:1.3em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+.title, x:-moz-any-link, x:default{
+	color:#FFFFFF;
+  font-size:1.1em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+
+.light-title
+{
+	color:#FFFFFF;
+	font-size:0.9em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+.light-title, x:-moz-any-link, x:default{
+	color:#FFFFFF;
+  font-size:0.9em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+
+.big-title
+{
+	color:#FFFFFF;
+	font-size:1.7em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+.big-title, x:-moz-any-link, x:default{
+	color:#FFFFFF;
+  font-size:1.4em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
 *
 {
 	font-family:'metaPlus',Arial;
+	
+}
+.blue-list
+{
+	list-style-image: url('../images/puce5x5.png');
+}
+.blue-text
+{
+	color:#008bcb;
 }
 
 body
@@ -114,6 +168,14 @@ background-image: url('../images/headerLogo.png');
 	text-shadow:none !important;
 	font-family:'metaPlusBold';
 }
+.navbar .nav li a, x:-moz-any-link, x:default{
+	padding-right:10px;
+	padding-left:10px;
+	color:white !important;
+	font-size:0.80em !important;
+	text-shadow:none !important;
+	font-family:'metaPlusBold';
+}
 .navbar .nav li a:hover
 {
 	background-color:#d9eaf1 !important;
@@ -126,7 +188,10 @@ margin-left:-148px;
 	background-image: url('../images/headerRightEnd.png');
 	background-repeat: no-repeat;
 }
-
+#nav-block
+{height: 41px;}
+#nav-block .span11
+{height: 41px;}
 /*
  * 
  * Middle content css
@@ -138,7 +203,7 @@ margin-left:-148px;
 	background-repeat:no-repeat;
 	height:500px;
 	background-position:0% 65% !important;
-	margin-top:-18px
+
 }
 #middle-hand
 {
@@ -203,6 +268,15 @@ margin-left:-148px;
 	font-size:1.5em;
 	height:40px;
 }
+
+.bloc-title, x:-moz-any-link, x:default
+{
+	background-color: #008bcb;
+	font-weight:bold;
+	color:white;
+	font-size:1.3em;
+	height:40px;
+}
 .bloc-title span
 {
  	margin-left:5px;
@@ -214,23 +288,21 @@ margin-left:-148px;
 	background-image: url('../images/homePageBloc2.png');
 	background-repeat: no-repeat;
 	background-color:#008BCB;
-
 }
 #bloc-video
 {
 	background-image: url('../images/homePageBloc3.png');
 	background-repeat: no-repeat;
 	background-color:#2e2e2e;
-
 }
 #bloc-invite
 {
 	background-image: url('../images/homePageBloc1-back.png');
 	background-repeat: no-repeat;
-		background-color:#cecece;
+	background-color:#cecece;
 }
 /*
- * Programme 
+ * Programme & intervenants
  * 
  */
 #programme-content
@@ -241,7 +313,6 @@ margin-left:-148px;
 }
 #programme-content table
 {
-	
 	border-collapse:separate !important;
 	border-spacing:20px !important;
 }
@@ -256,8 +327,37 @@ margin-left:-148px;
 	padding:5px 5px 0px 5px;
 	 color:#FFFFFF;
 }
+/*
+ * 
+ * Invite d'honneur
+ * 
+ */
 #content-invite{
 	width:840px;
 	margin-left:50px;
+	margin-top:15px;
 }
+#content-invite li
+{
+	margin-top:13px;
+}
+/*
+ * 
+ * Exposition permanente
+ * 
+ */
 
+#content-exposition
+{
+	margin-top:0px !important;
+	background-color:#e3e4e5;
+	width:940px;
+	height:700px;
+}
+#content-image{
+	background-image:url('../images/exposition-back.png');
+	background-repeat:no-repeat;
+	width:940px;
+	height:700px;
+	background-position: 100px 50px;
+}
