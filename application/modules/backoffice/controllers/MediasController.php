@@ -32,6 +32,11 @@ Use Rubedo\Services\Manager;
 class Backoffice_MediasController extends Backoffice_DataAccessController
 {
 
+    /**
+     * Array with the read only actions
+     */
+    protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms','model','get-thumbnail','get-original-thumbnail');
+    
     public function init ()
     {
         parent::init();
@@ -80,6 +85,11 @@ class Backoffice_MediasController extends Backoffice_DataAccessController
         }else{
             $this->_forward('index','file','default',array('file-id'=>$media['originalFile']));
         }
+    }
+    
+    public function createAction(){
+        $returnArray = array('success'=>false,'msg'=>'not yet implemented');
+        return $this->_returnJson($returnArray);
     }
     
     
