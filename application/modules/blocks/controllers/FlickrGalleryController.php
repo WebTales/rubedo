@@ -81,7 +81,6 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
                 $item['thumbnail_height'] = $photo->Thumbnail->height;
                 $item['url'] = $photo->Original->clickUri;
                 $items[] = $item;
-                // Zend_Debug::dump($photo);die();
             }
             $cache->save($items, $cacheKey,array('flickr'));
         }

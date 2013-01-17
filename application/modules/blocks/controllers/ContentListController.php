@@ -87,7 +87,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 3
             );
         }
-        // Zend_Debug::dump($blockConfig);die();
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
