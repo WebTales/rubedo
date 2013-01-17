@@ -64,99 +64,29 @@ class ImageController extends Zend_Controller_Action
             $filename = $meta['filename'];
             $nameSegment = explode('.', $filename);
             $extension = array_pop($nameSegment);
-            if (! in_array($extension, 
-                    array(
-                            'gif',
-                            'jpg',
-                            'png',
-                            'jpeg'
-                    ))) {
-                throw new Zend_Controller_Exception(
-                        'Not authorized file extension');
+            if (! in_array($extension, array(
+                'gif',
+                'jpg',
+                'png',
+                'jpeg'
+            ))) {
+                throw new Zend_Controller_Exception('Not authorized file extension');
             }
             
             $type = strtolower($extension);
             $type = ($type == 'jpg') ? 'jpeg' : $type;
-            
-            $gdCreateClassName = 'imagecreatefrom' . $type;
             $gdReturnClassName = 'image' . $type;
             
-            $image = $gdCreateClassName($tmpImagePath);
-            
-            list ($imgWidth, $imgHeight) = getimagesize($tmpImagePath);
-            
-            $ratio = $imgWidth / $imgHeight;
-            if ((is_null($width) || $imgWidth == $width) && (is_null($height) ||
-                     ($imgHeight == $height))) {
-                $newImage = $image;
-            } elseif ($mode == 'morph') {
-                $width = isset($width) ? $width : $height * $ratio;
-                $height = isset($height) ? $height : $width / $ratio;
-                
-                $newImage = imagecreatetruecolor($width, $height);
-                imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, 
-                        $height, $imgWidth, $imgHeight);
-            } elseif ($mode == 'boxed') {
-                if (is_null($width) || is_null($height)) {
-                    $width = isset($width) ? $width : $height * $ratio;
-                    $height = isset($height) ? $height : $width / $ratio;
-                } else {
-                    $newRatio = $width / $height;
-                    // which dimension should be modified
-                    if ($newRatio > $ratio) {
-                        $width = $height * $ratio;
-                    } else {
-                        $height = $width / $ratio;
-                    }
-                }
-                $newImage = imagecreatetruecolor($width, $height);
-                imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, 
-                        $height, $imgWidth, $imgHeight);
-            } elseif ($mode == 'crop') {
-                $width = isset($width) ? $width : $imgWidth;
-                $height = isset($height) ? $height : $imgHeight;
-                
-                $widthCoeff = $width / $imgWidth;
-                $heightCoeff = $height / $imgHeight;
-                $transformCoeff = max($widthCoeff, $heightCoeff);
-                
-                $tmpWidth = $transformCoeff * $imgWidth;
-                $tmpHeight = $transformCoeff * $imgHeight;
-                
-                $tmpImage = imagecreatetruecolor($tmpWidth, $tmpHeight);
-                imagecopyresampled($tmpImage, $image, 0, 0, 0, 0, $tmpWidth, 
-                        $tmpHeight, $imgWidth, $imgHeight);
-                
-                if ($tmpWidth > $width) {
-                    $marginWidth = ($tmpWidth - $width) / 2;
-                } else {
-                    $marginWidth = 0;
-                }
-                
-                if ($tmpHeight > $height) {
-                    $marginHeight = ($tmpHeight - $height) / 2;
-                } else {
-                    $marginHeight = 0;
-                }
-                
-                $newImage = imagecreatetruecolor($width, $height);
-                imagecopy($newImage, $tmpImage, 0, 0, $marginWidth, 
-                        $marginHeight, $tmpWidth, $tmpHeight);
-                imagedestroy($tmpImage);
-            } else {
-                throw new Zend_Controller_Exception("unimplemented resize mode", 
-                        1);
-            }
+            $imageService = new Rubedo\Image\Image();
+            $newImage = $imageService->resizeImage($tmpImagePath, $mode, $width, $height, $size);
             
             $this->getResponse()->clearBody();
             $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
-            $this->getResponse()->setHeader('Cache-Control', 
-                    'public, max-age=' . 24 * 3600);
-            $this->getResponse()->setHeader('Expires', 
-                    date(DATE_RFC822, strtotime(" 1 day")));
+            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600);
+            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")));
             $this->getResponse()->sendHeaders();
             $gdReturnClassName($newImage);
-            imagedestroy($image);
+            // imagedestroy($image);
             imagedestroy($newImage);
             
             die();
