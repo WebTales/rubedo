@@ -61,8 +61,7 @@ class Backoffice_FileController extends Zend_Controller_Action
                 $token = $this->getRequest()->getParam('token');
                 
                 if ($token !== $user['token']) {
-                    // throw new \Exception("The token given in the request
-                // doesn't match with the token in session");
+                    throw new \Exception("The token given in the request doesn't match with the token in session");
                 }
             }
         }
@@ -89,9 +88,9 @@ class Backoffice_FileController extends Zend_Controller_Action
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
         if (! $adapter->receive()) {
-            throw new Exception(implode("\n",$adapter->getMessages()));
+            throw new Exception(implode("\n", $adapter->getMessages()));
         }
-
+        
         $fileInfo = array_pop($adapter->getFileInfo());
         
         if (class_exists('finfo')) {
@@ -104,7 +103,7 @@ class Backoffice_FileController extends Zend_Controller_Action
             'serverFilename' => $fileInfo['tmp_name'],
             'text' => $fileInfo['name'],
             'filename' => $fileInfo['name'],
-            'Content-Type' => isset($mimeType)?$mimeType:$fileInfo['type']
+            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfo['type']
         );
         $result = $fileService->create($obj);
         // if ($result['success'] == true) {
