@@ -13,7 +13,7 @@
  */
 namespace Rubedo\Image;
 
-use Rubedo\Services\Manager, Rubedo\Interfaces\Image\IImage;
+use Rubedo\Interfaces\Image\IImage;
 
 /**
  * Image transofmration service
@@ -25,7 +25,10 @@ use Rubedo\Services\Manager, Rubedo\Interfaces\Image\IImage;
  */
 class Image implements IImage
 {
-
+    /**
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Image\IImage::resizeImage()
+     */
     public function resizeImage ($fileName, $mode = null, $width = null, $height = null, $size = null)
     {
         $imgInfos = getimagesize($fileName);
