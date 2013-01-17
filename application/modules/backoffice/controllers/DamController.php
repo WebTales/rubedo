@@ -104,7 +104,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $damType) {
             throw new Zend_Controller_Exception('unknown type');
         }
-        $obj['typeId']= $damType;
+        $obj['typeId']= $damType['id'];
         
         $title = $this->getParam('title');
         if (! $title) {
