@@ -32,6 +32,11 @@ Use Rubedo\Services\Manager;
 class Backoffice_DamController extends Backoffice_DataAccessController
 {
 
+    /**
+     * Array with the read only actions
+     */
+    protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms','model','get-original-file','get-thumbnail');
+    
     public function init ()
     {
         parent::init();
@@ -99,6 +104,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $damType) {
             throw new Zend_Controller_Exception('unknown type');
         }
+        $obj['typeId']= $damType;
         
         $title = $this->getParam('title');
         if (! $title) {
