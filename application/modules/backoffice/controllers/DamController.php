@@ -151,6 +151,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         
         $obj['originalFileId'] = $result['data']['id'];
+        $obj['mimeType'] = $mimeType;
         
         $returnArray = $this->_dataService->create($obj);
         
