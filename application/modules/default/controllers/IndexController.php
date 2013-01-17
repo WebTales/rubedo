@@ -369,6 +369,9 @@ class IndexController extends Zend_Controller_Action
                 $params['content-id'] = $contentId;
                 
                 break;
+			case 'Média externe';
+				$controller = 'embeddedmedia';
+				break;
             default:
                 $data = array();
                 $template = 'root/block.html';
