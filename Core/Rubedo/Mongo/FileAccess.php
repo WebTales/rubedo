@@ -138,6 +138,12 @@ class FileAccess extends DataAccess implements IFileAccess
      */
     public function create(array $obj, $options = array('safe'=>true)) {
 
+        $mimeType = $obj['Content-Type'];
+        if(!$this->_isValidContentType($mimeType)){
+            return array('success'=>false,'msg'=>'not allowed file type : '.$mimeType);
+        }
+        
+        
         $obj['version'] = 1;
 		$filename = $obj['serverFilename'];
 		unset($obj['serverFilename']);
@@ -200,5 +206,15 @@ class FileAccess extends DataAccess implements IFileAccess
 	
 	public function drop(){
 		return $this->_collection->drop();
+	}
+	
+	protected function _isValidContentType($contentType){
+
+	    list ($type) = explode(';', $contentType);
+	    list ($subtype,$applicationType) = explode('/', $type);
+	    if($applicationType=='x-php'){
+	        return false;
+	    }
+	    return true;
 	}
 }

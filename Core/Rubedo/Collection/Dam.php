@@ -27,15 +27,10 @@ use Rubedo\Interfaces\Collection\IDam;
  */
 class Dam extends AbstractCollection implements IDam
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'Dam';
-		parent::__construct();
-	}
-	
-	public function thumbnailAction(){
-	    
-	}
-	
+    public function __construct ()
+    {
+        $this->_collectionName = 'Dam';
+        parent::__construct();
+    }
 }

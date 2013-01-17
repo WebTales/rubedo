@@ -147,11 +147,12 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         );
         $result = $fileService->create($fileObj);
         if (! $result['success']) {
-            throw new Zend_Controller_Exception('can\'t upload file!');
+            $this->getResponse()->setHttpResponseCode(500);
+            return $this->_returnJson($result);
         }
         
         $obj['originalFileId'] = $result['data']['id'];
-        $obj['mimeType'] = $mimeType;
+        $obj['Content-Type'] = $mimeType;
         
         $returnArray = $this->_dataService->create($obj);
         
