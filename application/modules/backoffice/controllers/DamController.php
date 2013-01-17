@@ -74,6 +74,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
                 'file-id' => $media['originalFileId']
             ));
         } else {
+            //$user = Manager::getService('CurrentUser')->getCurrentUser();
             $this->_forward('index', 'image', 'default', array(
                 'width' => '100',
                 'height'=>'100',
