@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Security;
 
-use Rubedo\Interfaces\Security\IAcl;
+use Rubedo\Interfaces\Security\IAcl,Rubedo\Services\Manager;
 /**
  * Interface of Access Control List Implementation
  *
@@ -36,7 +36,7 @@ class Acl implements  IAcl
      */
     public function hasAccess($resource) {
 		
-		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+		$currentUserService = Manager::getService('CurrentUser');
 		$groups = $currentUserService->getGroups();
 		
 		foreach($groups as $group){
@@ -53,11 +53,11 @@ class Acl implements  IAcl
 	 * @todo real access implementation
 	 */
 	protected function groupHasAccess($resource, $group){
+	    if(is_null($group)){
+	        return false;
+	    }
 	    $groupName = $group['name'];
 	    
-	    if($groupName == 'admin'){
-	        return true;
-	    }
         
 		if(strpos($resource,'execute')!==false){
 			if(strpos($resource,'backoffice')!==false && $groupName == 'public' && (strpos($resource,'index')===false && strpos($resource,'login')===false)){

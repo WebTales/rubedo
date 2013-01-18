@@ -105,6 +105,9 @@ class CurrentUser implements ICurrentUser
     public function getGroups() {
         
         $user = $this->getCurrentUser();
+        if(is_null($user)){
+            return Manager::getService('Groups')->getPublicGroup();
+        }
         
         $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
         return $groupsArray['data'];

@@ -27,20 +27,34 @@ use Rubedo\Interfaces\Collection\IGroups;
  */
 class Groups extends AbstractCollection implements IGroups
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'Groups';
-		parent::__construct();
-	}
-	
-	public function getListByUserId($userId){
-	    $filters = array();
-	    $filters[]=array('property'=>"members",'value'=>$userId);
-	    $groupList = $this->getList($filters);
-	    return $groupList;
-	    \Zend_Debug::dump($groupList);
-	    die();
-	}
-	
+    public function __construct ()
+    {
+        $this->_collectionName = 'Groups';
+        parent::__construct();
+    }
+
+    public function getListByUserId ($userId)
+    {
+        $filters = array();
+        $filters[] = array(
+            'property' => "members",
+            'value' => $userId
+        );
+        $groupList = $this->getList($filters);
+        
+        return $groupList;
+    }
+
+    public function getPublicGroup ()
+    {
+        return $this->findByName('public');
+    }
+
+    public function findByName ($name)
+    {
+        return $this->_dataService->findOne(array(
+            'name' => $name
+        ));
+    }
 }
