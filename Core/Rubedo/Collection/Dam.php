@@ -17,6 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IDam;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Groups
@@ -32,5 +33,13 @@ class Dam extends AbstractCollection implements IDam
     {
         $this->_collectionName = 'Dam';
         parent::__construct();
+    }
+    
+    public function destroy(array $obj, $options = array('safe'=>true)){
+        $obj = $this->_dataService->findById($obj['id']);
+        $destroyOriginal = Manager::getService('Files')->destroy(array('id'=>$obj['originalFileId']));
+        
+        return parent::destroy($obj,$options);
+        
     }
 }
