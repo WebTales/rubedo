@@ -66,7 +66,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         $jsonTFilter = $this->getParam('tFilter',Zend_Json::encode(array()));
         $filterArray = Zend_Json::decode($jsonFilter);
         $tFilterArray = Zend_Json::decode($jsonTFilter);
-        $globalFilterArray = array_merge($filterArray,$tFilterArray);
+        $globalFilterArray = array_merge($tFilterArray,$filterArray);
         
         //call standard method with merge array
         $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
