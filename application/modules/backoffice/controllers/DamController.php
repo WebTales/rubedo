@@ -79,7 +79,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
                 'width' => '100',
                 'height'=>'100',
                 'file-id'=>null,
-                'filepath' => realpath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/icones/blue/128x128/attach_document.png')
+                'filepath' => realpath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/icones/'.Manager::getService('Session')->get('iconSet', 'red').'/128x128/attach_document.png')
             ));
         }
     }

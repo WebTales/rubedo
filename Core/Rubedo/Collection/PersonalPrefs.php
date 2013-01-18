@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IPersonalPrefs;
+use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager;
 
 /**
  * Service to handle PersonalPrefs
@@ -27,34 +27,54 @@ use Rubedo\Interfaces\Collection\IPersonalPrefs;
  */
 class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'PersonalPrefs';
-		parent::__construct();
-		
-		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-		$currentUser = $currentUserService->getCurrentUserSummary();
-		$this->_userId = $currentUser['id'];
-	}
-	
-	public function create(array $obj, $options = array('safe'=>true)) {
-    	$obj['userId']= $this->_userId;
+    public function __construct ()
+    {
+        $this->_collectionName = 'PersonalPrefs';
+        parent::__construct();
+        
+        $currentUserService = Manager::getService('CurrentUser');
+        $currentUser = $currentUserService->getCurrentUserSummary();
+        $this->_userId = $currentUser['id'];
+    }
+
+    public function create (array $obj, $options = array('safe'=>true))
+    {
+        $obj['userId'] = $this->_userId;
         return parent::create($obj, $options);
     }
-	
-	public function getList($filters = null, $sort = null, $start = null, $limit = null){
-		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::getList($filters, $sort, $start, $limit);
-	}
-	
-	public function update(array $obj, $options = array('safe'=>true)){
-		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::update($obj,$options);
-	}
-	
-	public function destroy(array $obj, $options = array('safe'=>true)){
-		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::destroy($obj,$options);
-	}
+
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
+        $this->_dataService->addFilter(array(
+            'userId' => $this->_userId
+        ));
+        $returnArray = parent::getList($filters, $sort, $start, $limit);
+        if ($returnArray['count'] == 1) {
+            $iconSet = $returnArray['data'][0]['iconSet'];
+            Manager::getService('Session')->set('iconSet', $iconSet);
+        }
+        
+        return $returnArray;
+    }
+
+    public function update (array $obj, $options = array('safe'=>true))
+    {
+        $this->_dataService->addFilter(array(
+            'userId' => $this->_userId
+        ));
+        $returnArray = parent::update($obj, $options);
+        if ($obj['iconSet']) {
+            Manager::getService('Session')->set('iconSet', $obj['iconSet']);
+        }
+        return $returnArray;
+    }
+
+    public function destroy (array $obj, $options = array('safe'=>true))
+    {
+        $this->_dataService->addFilter(array(
+            'userId' => $this->_userId
+        ));
+        return parent::destroy($obj, $options);
+    }
 }

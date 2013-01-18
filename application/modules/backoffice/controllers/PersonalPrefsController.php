@@ -39,5 +39,7 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 
         $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
     }
+    
+    
 
 }
