@@ -25,8 +25,10 @@ use Rubedo\Interfaces\Image\IImage;
  */
 class Image implements IImage
 {
+
     /**
      * (non-PHPdoc)
+     *
      * @see \Rubedo\Interfaces\Image\IImage::resizeImage()
      */
     public function resizeImage ($fileName, $mode = null, $width = null, $height = null, $size = null)
@@ -42,22 +44,38 @@ class Image implements IImage
         $image = $gdCreateClassName($fileName);
         
         $ratio = $imgWidth / $imgHeight;
-        if ((is_null($width) || $imgWidth == $width) && (is_null($height) || ($imgHeight == $height))) { // do not transform anything : return original image
+        if ((is_null($width) || $imgWidth == $width) && (is_null($height) || ($imgHeight == $height))) { // do
+                                                                                                         // not
+                                                                                                         // transform
+                                                                                                         // anything
+                                                                                                         // :
+                                                                                                         // return
+                                                                                                         // original
+                                                                                                         // image
             $newImage = $image;
-            imagealphablending($newImage, false);
-            imagesavealpha($newImage, true);
-            
-        } elseif ($mode == 'morph') { // transform image so that new one fit exactly the dimension with anamorphic resizing
+            if ($type == 'png') {
+                imagealphablending($newImage, false);
+                imagesavealpha($newImage, true);
+            }
+        } elseif ($mode == 'morph') { // transform image so that new one fit
+                                      // exactly the dimension with anamorphic
+                                      // resizing
             $width = isset($width) ? $width : $height * $ratio;
             $height = isset($height) ? $height : $width / $ratio;
             
             $newImage = imagecreatetruecolor($width, $height);
-            $transparent = imagecolorallocatealpha($newImage,0,0,0,127);
-            imagefill($newImage,0,0,$transparent);
-            imagealphablending($newImage, false);
-            imagesavealpha($newImage, true);
+            $transparent = imagecolorallocatealpha($newImage, 0, 0, 0, 127);
+            if ($type == 'gif') {
+                imagecolortransparent($newImage, $transparent);
+            }
+            imagefill($newImage, 0, 0, $transparent);
+            if ($type == 'png') {
+                imagealphablending($newImage, false);
+                imagesavealpha($newImage, true);
+            }
             imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
-        } elseif ($mode == 'boxed') { // respect ratio, tallest image which fit the box
+        } elseif ($mode == 'boxed') { // respect ratio, tallest image which fit
+                                      // the box
             if (is_null($width) || is_null($height)) {
                 $width = isset($width) ? $width : $height * $ratio;
                 $height = isset($height) ? $height : $width / $ratio;
@@ -71,12 +89,19 @@ class Image implements IImage
                 }
             }
             $newImage = imagecreatetruecolor($width, $height);
-            $transparent = imagecolorallocatealpha($newImage,0,0,0,127);
-            imagefill($newImage,0,0,$transparent);
-            imagealphablending($newImage, false);
-            imagesavealpha($newImage, true);
+            $transparent = imagecolorallocatealpha($newImage, 0, 0, 0, 127);
+            if ($type == 'gif') {
+                imagecolortransparent($newImage, $transparent);
+            }
+            imagefill($newImage, 0, 0, $transparent);
+            
+            if ($type == 'png') {
+                imagealphablending($newImage, false);
+                imagesavealpha($newImage, true);
+            }
             imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
-        } elseif ($mode == 'crop') { //respect ratio but crop part which do not fit the box.
+        } elseif ($mode == 'crop') { // respect ratio but crop part which do not
+                                     // fit the box.
             $width = isset($width) ? $width : $imgWidth;
             $height = isset($height) ? $height : $imgHeight;
             
@@ -88,10 +113,15 @@ class Image implements IImage
             $tmpHeight = $transformCoeff * $imgHeight;
             
             $tmpImage = imagecreatetruecolor($tmpWidth, $tmpHeight);
-            $transparent = imagecolorallocatealpha($tmpImage,0,0,0,127);
-            imagefill($tmpImage,0,0,$transparent);
-            imagealphablending($tmpImage, false);
-            imagesavealpha($tmpImage, true);
+            $transparent = imagecolorallocatealpha($tmpImage, 0, 0, 0, 127);
+            if ($type == 'gif') {
+                imagecolortransparent($tmpImage, $transparent);
+            }
+            imagefill($tmpImage, 0, 0, $transparent);
+            if ($type == 'png') {
+                imagealphablending($tmpImage, false);
+                imagesavealpha($tmpImage, true);
+            }
             imagecopyresampled($tmpImage, $image, 0, 0, 0, 0, $tmpWidth, $tmpHeight, $imgWidth, $imgHeight);
             
             if ($tmpWidth > $width) {
@@ -107,10 +137,15 @@ class Image implements IImage
             }
             
             $newImage = imagecreatetruecolor($width, $height);
-            $transparent = imagecolorallocatealpha($newImage,0,0,0,127);
-            imagefill($newImage,0,0,$transparent);
-            imagealphablending($newImage, false);
-            imagesavealpha($newImage, true);
+            $transparent = imagecolorallocatealpha($newImage, 0, 0, 0, 127);
+            if ($type == 'gif') {
+                imagecolortransparent($newImage, $transparent);
+            }
+            imagefill($newImage, 0, 0, $transparent);
+            if ($type == 'png') {
+                imagealphablending($newImage, false);
+                imagesavealpha($newImage, true);
+            }
             imagecopy($newImage, $tmpImage, 0, 0, $marginWidth, $marginHeight, $tmpWidth, $tmpHeight);
             imagedestroy($tmpImage);
         } else {
