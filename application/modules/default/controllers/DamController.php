@@ -44,7 +44,7 @@ class DamController extends Zend_Controller_Action
             if(!$media){
                 throw new Zend_Controller_Exception("No Media found", 1);
             }
-            $fileId = $media['originalFile'];
+            $fileId = $media['originalFileId'];
             $this->_forward('index','image','default',array('file-id'=>$fileId));
         } else {
             throw new Zend_Controller_Exception("No Media Given", 1);
