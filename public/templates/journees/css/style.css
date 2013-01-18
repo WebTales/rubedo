@@ -257,7 +257,7 @@ margin-left:-148px;
 	margin-top:10px;
 	border:1px solid #008bcb;
 	width:291px !important;
-	height:270px;
+	height:280px;
 }
 
 .bloc-title
@@ -301,15 +301,25 @@ margin-left:-148px;
 	background-repeat: no-repeat;
 	background-color:#cecece;
 }
+.label a{
+	text-decoration:none;
+	color:#FFFFFF;
+}
+.label a:hover
+{
+
+	color:#FFFFFF;
+}
 /*
  * Programme & intervenants
  * 
  */
 #programme-content
 {
-	height:1377px;
-	background-image: url('../images/programmeBackContent.png');
-	background-repeat: no-repeat;
+	margin-left:75px;
+	margin-top:20px;
+	width:790px;
+
 }
 #programme-content table
 {
@@ -318,14 +328,6 @@ margin-left:-148px;
 }
 #programme-content table tr td{
 	min-width: 110px;
-}
-#programme-content .programme-title
-{
-	 background-image:url('../images/textHeader.png');
-	background-repeat:no-repeat;
-	height:27px;
-	padding:5px 5px 0px 5px;
-	 color:#FFFFFF;
 }
 /*
  * 
