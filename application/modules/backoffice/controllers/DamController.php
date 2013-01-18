@@ -53,8 +53,28 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('Dam');
     }
+    
+    
 
-    public function getThumbnailAction ()
+    /* (non-PHPdoc)
+     * @see Backoffice_DataAccessController::indexAction()
+     */
+    public function indexAction ()
+    {
+        //merge filter and tFilter
+        $jsonFilter = $this->getParam('filter',array());
+        $jsonTFilter = $this->getParam('tFilter',array());
+        $filterArray = Zend_Json::decode($jsonFilter);
+        $tFilterArray = Zend_Json::decode($jsonTFilter);
+        $globalFilterArray = array_merge($filterArray,$tFilterArray);
+        
+        //call standard method with merge array
+        $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
+        parent::indexAction();
+        
+    }
+
+	public function getThumbnailAction ()
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
