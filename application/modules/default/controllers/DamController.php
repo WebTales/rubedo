@@ -28,7 +28,7 @@ use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class ImageController extends Zend_Controller_Action
+class DamController extends Zend_Controller_Action
 {
 
     function indexAction ()
