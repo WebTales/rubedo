@@ -34,4 +34,13 @@ class Groups extends AbstractCollection implements IGroups
 		parent::__construct();
 	}
 	
+	public function getListByUserId($userId){
+	    $filters = array();
+	    $filters[]=array('property'=>"members",'value'=>$userId);
+	    $groupList = $this->getList($filters);
+	    return $groupList;
+	    \Zend_Debug::dump($groupList);
+	    die();
+	}
+	
 }

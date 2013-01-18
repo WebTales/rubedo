@@ -17,6 +17,7 @@
 namespace Rubedo\User;
 
 use Rubedo\Interfaces\User\ICurrentUser;
+use Rubedo\Services\Manager;
 
 /**
  * Current User Service
@@ -102,7 +103,12 @@ class CurrentUser implements ICurrentUser
      * @return array
      */
     public function getGroups() {
+        
         $user = $this->getCurrentUser();
+        
+        $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
+        return $groupsArray['data'];
+        
         $groups = array();
         switch($user['login']) {
             case 'admin' :

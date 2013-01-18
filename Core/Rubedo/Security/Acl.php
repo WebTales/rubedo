@@ -52,9 +52,15 @@ class Acl implements  IAcl
 	 * 
 	 * @todo real access implementation
 	 */
-	protected function groupHasAccess($resource, $groupId){
+	protected function groupHasAccess($resource, $group){
+	    $groupName = $group['name'];
+	    
+	    if($groupName == 'admin'){
+	        return true;
+	    }
+        
 		if(strpos($resource,'execute')!==false){
-			if(strpos($resource,'backoffice')!==false && $groupId == 'public' && (strpos($resource,'index')===false && strpos($resource,'login')===false)){
+			if(strpos($resource,'backoffice')!==false && $groupName == 'public' && (strpos($resource,'index')===false && strpos($resource,'login')===false)){
 				return false;
 			}
 			return true;
@@ -120,8 +126,10 @@ class Acl implements  IAcl
 										//'write.ui.workflows'
 										);
 
-
-		if(in_array($resource, $aclArray[$groupId])){
+        if(!isset($aclArray[$groupName])){
+            return false;
+        }
+		if(in_array($resource, $aclArray[$groupName])){
 			return true;
 		}else{
 			return false;
