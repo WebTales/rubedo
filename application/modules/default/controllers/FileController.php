@@ -55,55 +55,6 @@ class FileController extends Zend_Controller_Action
             if (class_exists('finfo')) {
                 $finfo = new finfo(FILEINFO_MIME);
                 $mimeType = $finfo->file($tmpImagePath);
-            } else {
-                $type = strtolower($extension);
-                switch ($type) {
-                    case 'doc':
-                    case 'dot':
-                        $mimeType = 'application/msword';
-                        break;
-                    case 'xsl':
-                        $mimeType = 'application/msexcel';
-                        break;
-                    case 'ppt':
-                    case 'pps':
-                    case 'ppa':
-                    case 'pot':
-                        $mimeType = 'application/ms-powerpoint';
-                        break;
-                    case 'xlsx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                        break;
-                    case 'xltx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.template';
-                        break;
-                    case 'potx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.template';
-                        break;
-                    case 'ppsx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.slideshow';
-                        break;
-                    case 'pptx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-                        break;
-                    case 'sldx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.slide';
-                        break;
-                    case 'docx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-                        break;
-                    case 'dotx':
-                        $mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.template';
-                        break;
-                    case 'pdf':
-                        $mimeType = 'application/pdf';
-                        break;
-                    case 'txt':
-                        $mimeType = 'text/plain';
-                        break;
-                    default:
-                        throw new Exception('unknown file type');
-                }
             }
             
             list ($type) = explode(';', $mimeType);
@@ -123,6 +74,17 @@ class FileController extends Zend_Controller_Action
             
             if ($subtype == 'image') {
                 $doNotDownload = true;
+            }
+            
+            switch ($this->getParam('mode', null)) {
+                case 'download':
+                    $doNotDownload = false;
+                    break;
+                case 'inline':
+                    $doNotDownload = false;
+                    break;
+                default:
+                    break;
             }
             
             $this->getResponse()->clearBody();
