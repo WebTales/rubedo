@@ -62,8 +62,8 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     public function indexAction ()
     {
         //merge filter and tFilter
-        $jsonFilter = $this->getParam('filter',array());
-        $jsonTFilter = $this->getParam('tFilter',array());
+        $jsonFilter = $this->getParam('filter',Zend_Json::encode(array()));
+        $jsonTFilter = $this->getParam('tFilter',Zend_Json::encode(array()));
         $filterArray = Zend_Json::decode($jsonFilter);
         $tFilterArray = Zend_Json::decode($jsonTFilter);
         $globalFilterArray = array_merge($filterArray,$tFilterArray);
