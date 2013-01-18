@@ -15,10 +15,10 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-require_once ('DataAccessController.php');
-
+require_once('DataAccessController.php');
+ 
 /**
- * Controller providing CRUD API for the PersonalPrefs JSON
+ * Controller providing CRUD API for the Groups JSON
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
@@ -28,18 +28,13 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *
  */
-class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
+class Backoffice_DamTypesController extends Backoffice_DataAccessController
 {
-
-    /**
-     * Initialise the controller
-     */
-    public function init() {
-        parent::init();
-
-        $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
-    }
-    
-    
+    public function init(){
+		parent::init();
+		
+		// init the data access service
+		$this -> _dataService = Rubedo\Services\Manager::getService('DamTypes');
+	}
 
 }

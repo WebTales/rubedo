@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing access control list
@@ -45,7 +45,7 @@ class Backoffice_ImageController extends Zend_Controller_Action
     public function init() {
         parent::init();
 		
-		$sessionService = \Rubedo\Services\Manager::getService('Session');
+		$sessionService = Manager::getService('Session');
 		
         // refuse write action not send by POST
         if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
@@ -64,7 +64,7 @@ class Backoffice_ImageController extends Zend_Controller_Action
     }
 
     function indexAction() {
-        $fileService = Rubedo\Services\Manager::getService('Images');
+        $fileService = Manager::getService('Images');
         $filesArray = $fileService->getList();
         $data = $filesArray['data'];
         $files = array();
@@ -87,7 +87,7 @@ class Backoffice_ImageController extends Zend_Controller_Action
 
         $fileInfo = array_pop($adapter->getFileInfo());
 
-        $fileService = Rubedo\Services\Manager::getService('Images');
+        $fileService = Manager::getService('Images');
         $obj = array('serverFilename' => $fileInfo['tmp_name'],'text'=>$fileInfo['name'], 'filename' => $fileInfo['name'], 'Content-Type' => $fileInfo['type']);
         $result = $fileService->create($obj);
 
@@ -103,7 +103,7 @@ class Backoffice_ImageController extends Zend_Controller_Action
         
 
         if (isset($data['id'])) {
-            $fileService = Rubedo\Services\Manager::getService('Images');
+            $fileService = Manager::getService('Images');
             $result = $fileService->destroy($data);
 
             $this->_helper->json($result);
@@ -123,7 +123,7 @@ class Backoffice_ImageController extends Zend_Controller_Action
         $fileId = $this->getRequest()->getParam('file-id');
 
         if (isset($fileId)) {
-            $fileService = Rubedo\Services\Manager::getService('Images');
+            $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
 			if(! $obj instanceof MongoGridFSFile){
 				throw new Zend_Controller_Exception("No Image Found", 1);

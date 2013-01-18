@@ -14,27 +14,16 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Interfaces\Collection;
 
-require_once('DataAccessController.php');
- 
 /**
- * Controller providing CRUD API for the Medias JSON
- *
- * Receveive Ajax Calls for read & write from the UI to the Mongo DB
+ * Interface of service handling DAM item
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
  */
-class Backoffice_MediasController extends Backoffice_DataAccessController
-{
-    public function init(){
-		parent::init();
-		
-		// init the data access service
-		$this -> _dataService = Rubedo\Services\Manager::getService('Medias');
-	}
-
+interface IDamTypes extends IAbstractCollection{
+	
 }

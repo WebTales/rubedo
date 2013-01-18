@@ -14,32 +14,23 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Collection;
 
-require_once ('DataAccessController.php');
+use Rubedo\Interfaces\Collection\IDam;
 
 /**
- * Controller providing CRUD API for the PersonalPrefs JSON
- *
- * Receveive Ajax Calls for read & write from the UI to the Mongo DB
- *
+ * Service to handle Groups
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
  */
-class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
+class Dam extends AbstractCollection implements IDam
 {
 
-    /**
-     * Initialise the controller
-     */
-    public function init() {
-        parent::init();
-
-        $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
+    public function __construct ()
+    {
+        $this->_collectionName = 'Dam';
+        parent::__construct();
     }
-    
-    
-
 }

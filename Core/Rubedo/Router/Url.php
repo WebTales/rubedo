@@ -13,8 +13,7 @@
  */
 namespace Rubedo\Router;
 
-use Rubedo\Interfaces\Router\IUrl;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Router\IUrl, Rubedo\Services\Manager;
 
 /**
  * Front Office URL service
@@ -121,12 +120,8 @@ class Url implements IUrl
             $url = '';
             $page = Manager::getService('Pages')->findById($pageId);
 
-            if (!isset($page['text'])) {
+            if (!isset($page['pageURL'])) {
                 throw new \Zend_Controller_Router_Exception('no page found');
-            }
-
-            if (!ctype_alnum($page['text'])) {
-                throw new \Zend_Controller_Router_Exception('page name should be alphanum');
             }
 
             $siteId = $page['site'];
@@ -135,11 +130,11 @@ class Url implements IUrl
 
             foreach ($rootline as $value) {
                 $url .= self::URI_DELIMITER;
-                $url .= $value['text'];
+                $url .= $value['pageURL'];
             }
 
             $url .= self::URI_DELIMITER;
-            $url .= $page['text'];
+            $url .= $page['pageURL'];
             $urlToCache = array('pageId' => $pageId, 'url' => $url, 'siteId' => $siteId);
             if (self::$_useCache) {
                 Manager::getService('UrlCache')->create($urlToCache);

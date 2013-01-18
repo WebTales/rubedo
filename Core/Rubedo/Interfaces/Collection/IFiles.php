@@ -14,32 +14,16 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
-require_once ('DataAccessController.php');
+namespace Rubedo\Interfaces\Collection;
 
 /**
- * Controller providing CRUD API for the PersonalPrefs JSON
- *
- * Receveive Ajax Calls for read & write from the UI to the Mongo DB
+ * Interface of service handling Image collection
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
  */
-class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
-{
-
-    /**
-     * Initialise the controller
-     */
-    public function init() {
-        parent::init();
-
-        $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
-    }
-    
-    
-
+interface IFiles extends IAbstractFileCollection{
+	
 }

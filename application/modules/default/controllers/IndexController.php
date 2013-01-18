@@ -12,8 +12,7 @@
  * @license    yet to be written
  * @version    $Id:
  */
-Use Rubedo\Controller\Action;
-Use Rubedo\Services\Manager;
+Use Rubedo\Controller\Action, Rubedo\Services\Manager;
 
 /**
  * Front Office Defautl Controller
@@ -146,6 +145,10 @@ class IndexController extends Zend_Controller_Action
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
         $twigVar['title'] = $this->_servicePage->getPageTitle();
+        $twigVar['description'] = $this->_servicePage->getDescription();
+        $twigVar['keywords'] = $this->_servicePage->getKeywords();
+        
+        
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
         $twigVar['isLoggedIn'] = $isLoggedIn;
@@ -211,7 +214,10 @@ class IndexController extends Zend_Controller_Action
         }
         $this->_serviceTemplate->setCurrentTheme($this->_site['theme']);
         
-        $this->_servicePage->setPageTitle($pageInfo['text']);
+        $this->_servicePage->setPageTitle($pageInfo['title']);
+        $this->_servicePage->setDescription($pageInfo['description']);
+        $this->_servicePage->setKeywords($pageInfo['keywords']);
+        
         $rootline = $pageService->getAncestors($pageInfo);
         $this->_rootlineArray = array();
         foreach ($rootline as $ancestor) {
@@ -363,6 +369,9 @@ class IndexController extends Zend_Controller_Action
                 $params['content-id'] = $contentId;
                 
                 break;
+			case 'Média externe';
+				$controller = 'embeddedmedia';
+				break;
             default:
                 $data = array();
                 $template = 'root/block.html';

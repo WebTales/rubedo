@@ -35,27 +35,27 @@ class FileAccess extends DataAccess implements IFileAccess
      */
     protected $_collection;
 
-
-
     /**
      * Initialize a data service handler to read or write in a MongoDb
      * Collection
      *
-     * @param string $collection name of the DB
-     * @param string $dbName name of the DB
-     * @param string $mongo connection string to the DB server
+     * @param string $collection
+     *            name of the DB
+     * @param string $dbName
+     *            name of the DB
+     * @param string $mongo
+     *            connection string to the DB server
      */
-    public function init($collection=null, $dbName = null, $mongo = null) {
-    	unset($collection);
+    public function init ($collection = null, $dbName = null, $mongo = null)
+    {
+        unset($collection);
         $mongo = self::$_defaultMongo;
         $dbName = self::$_defaultDb;
-
+        
         $this->_adapter = new \Mongo($mongo);
         $this->_dbName = $this->_adapter->$dbName;
         $this->_collection = $this->_dbName->getGridFS();
-
     }
-
 
     /**
      * Do a find request on the current collection
@@ -63,41 +63,45 @@ class FileAccess extends DataAccess implements IFileAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read() {
-        //get the UI parameters
+    public function read ()
+    {
+        // get the UI parameters
         $filter = $this->getFilterArray();
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-
-        //merge the two fields array to obtain only one array with all the conditions
-        if (!empty($includedFields) && !empty($excludedFields)) {
+        
+        // merge the two fields array to obtain only one array with all the
+        // conditions
+        if (! empty($includedFields) && ! empty($excludedFields)) {
             $fieldRule = $includedFields;
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-
-        //get the cursor
+        
+        // get the cursor
         $cursor = $this->_collection->find($filter, $fieldRule);
         $nbItems = $cursor->count();
-
-        //apply sort, paging, filter
+        
+        // apply sort, paging, filter
         $cursor->sort($sort);
         $cursor->skip($firstResult);
         $cursor->limit($numberOfResults);
-		
-		$data = array();
-        //switch from cursor to actual array
+        
+        $data = array();
+        // switch from cursor to actual array
         foreach ($cursor as $key => $value) {
-            $data[]=$value;
+            $data[] = $value;
         }
-
-
-        //return data as simple array with no keys
+        
+        // return data as simple array with no keys
         $datas = array_values($data);
-		$returnArray = array("data"=>$datas,'count'=>$nbItems);
+        $returnArray = array(
+            "data" => $datas,
+            'count' => $nbItems
+        );
         return $returnArray;
     }
 
@@ -105,100 +109,166 @@ class FileAccess extends DataAccess implements IFileAccess
      * Do a findone request on the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::findOne()
-     * @param array $value search condition
+     * @param array $value
+     *            search condition
      * @return array
      */
-    public function findOne($value) {
-        //get the UI parameters
+    public function findOne ($value)
+    {
+        // get the UI parameters
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-
-        //merge the two fields array to obtain only one array with all the conditions
-        if (!empty($includedFields) && !empty($excludedFields)) {
+        
+        // merge the two fields array to obtain only one array with all the
+        // conditions
+        if (! empty($includedFields) && ! empty($excludedFields)) {
             $fieldRule = $includedFields;
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-
+        
         $value = array_merge($value, $this->getFilterArray());
-
+        
         $mongoFile = $this->_collection->findOne($value, $fieldRule);
-
+        
         return $mongoFile;
     }
-
 
     /**
      * Create an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
-     * @param array $obj data object
-     * @param bool $options should we wait for a server response
+     * @param array $obj
+     *            data object
+     * @param bool $options
+     *            should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true)) {
-
+    public function create (array $obj, $options = array('safe'=>true))
+    {
+        $filename = $obj['serverFilename'];
+        $partList = explode('.', $filename);
+        $extension = array_pop($partList);
+        
+        if (! $this->_isValidExtension($extension)) {
+            return array(
+                'success' => false,
+                'msg' => 'not allowed file extension : ' . $extension
+            );
+        }
+        
+        $mimeType = $obj['Content-Type'];
+        if (! $this->_isValidContentType($mimeType)) {
+            return array(
+                'success' => false,
+                'msg' => 'not allowed file type : ' . $mimeType
+            );
+        }
+        
         $obj['version'] = 1;
-		$filename = $obj['serverFilename'];
-		unset($obj['serverFilename']);
-
+        
+        unset($obj['serverFilename']);
+        
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
         $obj['createUser'] = $currentUser;
-
+        
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
-
+        
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
-
-
-        $fileId = $this->_collection->put($filename,$obj);
-		
+        
+        $fileId = $this->_collection->put($filename, $obj);
+        
         if ($fileId) {
-            $obj['id'] = (string)$fileId;
-            $returnArray = array('success' => true, "data" => $obj);
+            $obj['id'] = (string) $fileId;
+            $returnArray = array(
+                'success' => true,
+                "data" => $obj
+            );
         } else {
-            $returnArray = array('success' => false);
+            $returnArray = array(
+                'success' => false
+            );
         }
         
         return $returnArray;
     }
-	
-	/**
+
+    /**
      * Delete objets in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
-     * @param array $obj data object
+     * @param array $obj
+     *            data object
      * @return array
      */
-    public function destroy(array $obj,$options = array('safe'=>true)) {
+    public function destroy (array $obj, $options = array('safe'=>true))
+    {
         $id = $obj['id'];
         $mongoID = $this->getId($id);
-
-        $updateCondition = array('_id' => $mongoID);
-
+        
+        $updateCondition = array(
+            '_id' => $mongoID
+        );
+        
         if (is_array($this->_filterArray)) {
             $updateCondition = array_merge($this->_filterArray, $updateCondition);
         }
-
+        
         $resultArray = $this->_collection->remove($updateCondition, $options);
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
-                $returnArray = array('success' => true);
+                $returnArray = array(
+                    'success' => true
+                );
             } else {
-                $returnArray = array('success' => false, "msg" => 'no record had been deleted');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'no record had been deleted'
+                );
             }
-
         } else {
-            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+            $returnArray = array(
+                'success' => false,
+                "msg" => $resultArray["err"]
+            );
         }
         
         return $returnArray;
     }
-	
-	public function drop(){
-		return $this->_collection->drop();
-	}
+
+    public function drop ()
+    {
+        return $this->_collection->drop();
+    }
+
+    protected function _isValidContentType ($contentType)
+    {
+        list ($type) = explode(';', $contentType);
+        list ($subtype, $applicationType) = explode('/', $type);
+        if ($applicationType == 'x-php') {
+            return false;
+        }
+        return true;
+    }
+
+    protected function _isValidExtension ($extension)
+    {
+        $notAllowed = array(
+            'php',
+            'php3',
+            'exe',
+            'dll',
+            'app',
+            'bat',
+            'sh'
+        );
+        if (in_array($extension, $notAllowed)) {
+            return false;
+        }
+        return true;
+    }
 }

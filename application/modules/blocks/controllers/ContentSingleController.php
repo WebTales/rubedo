@@ -57,8 +57,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $templateName .= ".html.twig";
             $output["data"] = $data;
 			$output["type"]=$cTypeArray;
-			//Zend_Debug::dump($cTypeArray);die();
-			
+			Manager::getService('PageContent')->setPageTitle($data['text']);
 			
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
         }else{
