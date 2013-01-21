@@ -76,7 +76,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 												'minLength' => 2,
 												'maxLength' => 20,))))));
 												
-		$this->_mockWorkflowDataAccessService->expects($this->once())->method('create')->will($this->returnValue(array('success' => true,'data'=>array('id'=>'id'))));
+		$this->_mockWorkflowDataAccessService->expects($this->once())->method('create')->will($this->returnValue(array('success' => true,'data'=>array('id'=>'id', 'status' => 'draft'))));
 		
 		$obj = array(	"typeId" => "50c0c8669a199d930f000001",
 						"fields" => array(	'text' => 'test',

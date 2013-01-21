@@ -61,7 +61,8 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 	public function testNormalUpdate(){
 		$this->_mockDataAccessService->expects($this->once())->method('update');
 		$this->_mockUrlCacheService->expects($this->once())->method('customDelete');
-		$obj['id']='test';
+		$obj['id'] = 'test';
+		$obj['title'] = 'test';
 		$PageService=new Rubedo\Collection\Pages();
 		$PageService->update($obj);
 	}
