@@ -54,6 +54,18 @@
 	font-weight:bold;
 	padding: 7px 5px 10px 5px;
 }
+*+html .title{
+		color:#FFFFFF;
+  font-size:1em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+html>/**/body .title{
+		color:#FFFFFF;
+  font-size:1.15em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
 
 .light-title
 {
@@ -82,6 +94,13 @@
 	font-weight:bold;
 	padding: 7px 5px 10px 5px;
 }
+html>/**/body .big-title{
+		color:#FFFFFF;
+  font-size:1.2em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+
 *
 {
 	font-family:'metaPlus',Arial;
@@ -128,6 +147,14 @@ background-image: url('../images/headerLogo.png');
 	color:white;
 	font-size:50px;
 	margin-top:5%;
+
+	
+}
+*+html #header #title {
+	color:white;
+	font-size:50px;
+	margin-top:5%;
+  line-height:45px;
 }
 
 /*
@@ -142,7 +169,7 @@ background-image: url('../images/headerLogo.png');
 }
 .navbar-inner{
 	border: 0px;
-	
+	filter:none !important;
 	height: 41px;
 	border-radius: 0px !important;
 	background-image: url('../images/headerMainBkg.png') !important;
@@ -153,6 +180,14 @@ background-image: url('../images/headerLogo.png');
 	box-shadow: 0px 0px 0px #ffffff !important;
 	border:none;
 	
+}
+html>/**/body .navbar-inner
+{
+	width:875px;
+}
+*+html .navbar-inner
+{
+	font-size:1.1em;
 }
 .navbar .nav li {
 	background-image: url('../images/headerSeparator.png') !important;
@@ -188,6 +223,16 @@ margin-left:-148px;
 	background-image: url('../images/headerRightEnd.png');
 	background-repeat: no-repeat;
 }
+html>/**/body #nav-block .span1
+{
+	margin-left:55px;
+	width: 19px;
+	height: 41px;
+	background-image: url('../images/headerRightEnd.png');
+	background-repeat: no-repeat;
+
+}
+
 #nav-block
 {height: 41px;}
 #nav-block .span11
@@ -235,6 +280,14 @@ margin-left:-148px;
 	background-image: url('../images/footerMainBkg.png');
 	background-repeat: repeat-x;
 }
+html>/**/body #footer-bar
+	{
+			margin-left: 0px;
+	height: 42px;
+	width: 738px;
+	background-image: url('../images/footerMainBkg.png');
+	background-repeat: repeat-x;
+	}
 #footer a
 {
 	color:#FFFFFF;
@@ -335,6 +388,11 @@ margin-left:-148px;
 {
 	border-collapse:separate !important;
 	border-spacing:20px !important;
+}
+*+html #programme-content table tr td
+{
+	
+	
 }
 #programme-content table tr td{
 	min-width: 110px;
