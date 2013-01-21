@@ -235,6 +235,10 @@ margin-left:-148px;
 	background-image: url('../images/footerMainBkg.png');
 	background-repeat: repeat-x;
 }
+#footer a
+{
+	color:#FFFFFF;
+}
 
 
 
@@ -283,11 +287,17 @@ margin-left:-148px;
  	margin-top:10px;
  	position:absolute;
 }
-#bloc-inscription
+/*#bloc-inscription
 {
 	background-image: url('../images/homePageBloc2.png');
 	background-repeat: no-repeat;
 	background-color:#008BCB;
+}*/
+#inscription-content img
+{
+	width:291px;
+	height:240px;
+	border:none;
 }
 #bloc-video
 {
