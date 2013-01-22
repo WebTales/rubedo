@@ -29,6 +29,7 @@ class Blocks_PayboxController extends Blocks_AbstractController
     public function indexAction() {
 
 		$paybox = new Application_Form_ClientPayboxForm;
+		$paybox->setAttrib('action', $this->_helper->url->url());
 		
 		$this->view->paybox = $paybox;
 		
@@ -57,13 +58,16 @@ class Blocks_PayboxController extends Blocks_AbstractController
 				$typePaiement = $params['paymentType'];
 				
 				//Control and backup, then if it's ok
-				$this->_helper->redirector('payment', 'paybox');
+				$this->_helper->redirector->gotoRoute(array('action'=>'payment'));
             }
         }
 		
     }
 
 	public function paymentAction() {
+	    $controller = $this->getRequest()->getControllerName();
+	    $module = $this->getRequest()->getModuleName();
+	    
 		$serverUrl = $this->getRequest()->getScheme().'://'.$this->getRequest()->getHttpHost();
 		
 		$params = array(
@@ -84,12 +88,12 @@ class Blocks_PayboxController extends Blocks_AbstractController
 		     'PBX_PORTEUR'     => "mickael.goncalves@webtales.fr",
 		//informations nécessaires aux traitements (réponse)
 		     'PBX_RETOUR'      => "montant:M;maref:R;auto:A;trans:T;abonnement:B ;paiement:P;carte:C;idtrans:S;pays:Y;erreur:E;validite:D;PPPS:U;IP:I;BIN6:N;digest:H;sign:K",
-		     'PBX_EFFECTUE'    => $serverUrl.$this->_helper->url('back-payment','paybox','blocks'),
-		     'PBX_REFUSE'      => $serverUrl.$this->_helper->url('refused','paybox','blocks'),
-		     'PBX_ANNULE'      => $serverUrl.$this->_helper->url('canceled','paybox','blocks'),
-			 'PBX_REPONDRE_A'  => $serverUrl.$this->_helper->url('back-payment','paybox','blocks'),
+		     'PBX_EFFECTUE'    => $serverUrl.$this->_helper->url->url(array('action'=>'done','controller'=>$controller,'module'=>$module),null,true),
+		     'PBX_REFUSE'      => $serverUrl.$this->_helper->url->url(array('action'=>'refused','controller'=>$controller,'module'=>$module),null,true),
+		     'PBX_ANNULE'      => $serverUrl.$this->_helper->url->url(array('action'=>'canceled','controller'=>$controller,'module'=>$module),null,true),
+			 'PBX_REPONDRE_A'  => $serverUrl.$this->_helper->url->url(array('action'=>'back-payment','controller'=>$controller,'module'=>$module),null,true),
 		//page en cas d'erreur
-		     'PBX_ERREUR'      => $serverUrl.$this->_helper->url('error','paybox','blocks'),
+		     'PBX_ERREUR'      => $serverUrl.$this->_helper->url->url(array('action'=>'error','controller'=>$controller,'module'=>$module),null,true),
 		//en plus
 		     'PBX_TYPECARTE'   => "CB",
 		     'PBX_LANGUE'      => "FRA",
