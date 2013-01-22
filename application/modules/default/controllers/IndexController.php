@@ -67,9 +67,10 @@ class IndexController extends Zend_Controller_Action
      * @var string
      */
     protected $_pageId;
-    
+
     /**
      * current mask object
+     *
      * @var array
      */
     protected $_mask;
@@ -148,7 +149,6 @@ class IndexController extends Zend_Controller_Action
         $twigVar['description'] = $this->_servicePage->getDescription();
         $twigVar['keywords'] = $this->_servicePage->getKeywords();
         
-        
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
         $twigVar['isLoggedIn'] = $isLoggedIn;
@@ -187,26 +187,25 @@ class IndexController extends Zend_Controller_Action
         $pageService = Manager::getService('Pages');
         $pageInfo = $pageService->findById($pageId);
         
-        $this->_mask = Manager::getService('Masks')->findById($pageInfo['maskId']);//maskId
-        if(!$this->_mask){
+        $this->_mask = Manager::getService('Masks')->findById($pageInfo['maskId']); // maskId
+        if (! $this->_mask) {
             throw new Zend_Controller_Exception('no mask found');
         }
         $this->_blocksArray = array();
-        foreach ($this->_mask['blocks'] as $block){
-            if(!isset($block['orderValue'])){
-                throw new Zend_Controller_Exception('no orderValue for block '.$block['id']);
+        foreach ($this->_mask['blocks'] as $block) {
+            if (! isset($block['orderValue'])) {
+                throw new Zend_Controller_Exception('no orderValue for block ' . $block['id']);
             }
-            $this->_blocksArray[$block['parentCol']][$block['orderValue']]=$block;
+            $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
-        foreach ($pageInfo['blocks'] as $block){
-            if(!isset($block['orderValue'])){
-                throw new Zend_Controller_Exception('no orderValue for block '.$block['id']);
+        foreach ($pageInfo['blocks'] as $block) {
+            if (! isset($block['orderValue'])) {
+                throw new Zend_Controller_Exception('no orderValue for block ' . $block['id']);
             }
-            $this->_blocksArray[$block['parentCol']][$block['orderValue']]=$block;
+            $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
         
         $pageInfo['rows'] = $this->_mask['rows'];
-        
         
         $this->_site = Manager::getService('Sites')->findById($pageInfo['site']);
         if (! isset($this->_site['theme'])) {
@@ -345,7 +344,7 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'footer';
                 break;
             case 'Résultat de recherche':
-                $params['constrainToSite']=$block['configBloc']['constrainToSite'];
+                $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
                 $controller = 'search';
                 
                 break;
@@ -369,10 +368,55 @@ class IndexController extends Zend_Controller_Action
                 $params['content-id'] = $contentId;
                 
                 break;
-			case 'Média externe';
-				$controller = 'embeddedmedia';
-				break;
+            case 'Média externe':
+                $controller = 'embeddedmedia';
+                break;
+            case 'Controleur Zend':
+                $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
+                $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
+                $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
+                
+                $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
+                $prefix = isset($block['urlPrefix'])?$block['urlPrefix']:$block['id'];
+                $route->setPrefix($prefix);
+                
+                $allParams = $this->getAllParams();
+                foreach ($allParams as $key => $value) {
+                    $prefixPos = strpos($key, $prefix . '_');
+                    if ($prefixPos === 0) {
+                        $subKey = substr($key, strlen($prefix . '_'));
+                        switch ($subKey) {
+                            case 'action':
+                                $action = $value;
+                                break;
+                            case 'controller':
+                                $controller = $value;
+                                break;
+                            case 'module':
+                                $module = $value;
+                                break;
+                            default:
+                                $params[$subKey] = $value;
+                                break;
+                        }
+                    } else {
+                        $params[$key] = $value;
+                    }
+                }
+                
+                $response = Action::getInstance()->action($action, $controller, $module, $params);
+                $route->clearPrefix();
+                $data = $response->getBody();
+                
+                return array(
+                    'data' => array(
+                        'content' => $data
+                    ),
+                    'template' => 'root/zend.html.twig'
+                );
+                break;
             default:
+                
                 $data = array();
                 $template = 'root/block.html';
                 return array(

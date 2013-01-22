@@ -52,47 +52,63 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
      * Assembles user submitted parameters forming a URL path defined by this
      * route
      *
-     * @param array $data An array of variable and value pairs used as
+     * @param array $data
+     *            An array of variable and value pairs used as
      *            parameters
-     * @param bool|string $reset should we reset the current params
+     * @param bool|string $reset
+     *            should we reset the current params
      * @return string Route path with user submitted parameters
      */
     public function assemble ($data = array(), $reset = false, $encode = false)
     {
-        if ($reset===true) {
+        if (isset($this->_prefix)) {
+            
+            foreach ($data as $key => $value) {
+                if ($key == $this->_prefix) {
+                    continue;
+                }
+                unset($data[$key]);
+                $data[$this->_prefix . '_' . $key] = $value;
+            }
+        }
+        
+        if ($reset === true) {
             $params = array(
                 'pageId' => $this->_values["pageId"]
             );
         } else {
             $params = \Zend_Controller_Front::getInstance()->getRequest()->getParams();
         }
-        if($reset==='add'){
+        if ($reset === 'add') {
             
-            foreach($data as $key => $value){
-                if(!isset($params[$key])){
-                    $params[$key]=array();
+            foreach ($data as $key => $value) {
+                if (! isset($params[$key])) {
+                    $params[$key] = array();
                 }
-                if(!is_array($value)){
-                    $value = array($value);
+                if (! is_array($value)) {
+                    $value = array(
+                        $value
+                    );
                 }
-                $data[$key] = array_unique(array_merge($params[$key],$value));
+                $data[$key] = array_unique(array_merge($params[$key], $value));
             }
             $data = array_merge($params, $data);
-        }elseif ($reset==='sub'){
-            foreach($data as $key => $value){
-                if(!isset($params[$key])){
-                    $params[$key]=array();
+        } elseif ($reset === 'sub') {
+            foreach ($data as $key => $value) {
+                if (! isset($params[$key])) {
+                    $params[$key] = array();
                 }
-                if(!is_array($value)){
-                    $value = array($value);
+                if (! is_array($value)) {
+                    $value = array(
+                        $value
+                    );
                 }
-                $data[$key] = array_diff($params[$key],$value);
+                $data[$key] = array_diff($params[$key], $value);
             }
             $data = array_merge($params, $data);
-        }else{
+        } else {
             $data = array_merge($params, $data);
         }
-        
         
         foreach ($data as $key => $value) {
             if ($value !== null) {
@@ -102,19 +118,21 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
             }
         }
         $url = Manager::getService('Url')->getUrl($params, $encode);
-        //$baseUrl = \Zend_Controller_Front::getInstance()->getBaseUrl();
-        //\Zend_Debug::dump($baseUrl);die();
+        // $baseUrl = \Zend_Controller_Front::getInstance()->getBaseUrl();
+        // \Zend_Debug::dump($baseUrl);die();
         return $url;
     }
 
     /**
-     * Matches a user submitted path. Assigns and returns an array of variables
+     * Matches a user submitted path.
+     * Assigns and returns an array of variables
      * on a successful match.
      * If a request object is registered, it uses its setModuleName(),
      * setControllerName(), and setActionName() accessors to set those values.
      * Always returns the values as an array.
      *
-     * @param string $path Path used to match against this routing map
+     * @param string $path
+     *            Path used to match against this routing map
      * @return array An array of assigned values or a false on a mismatch
      */
     public function match ($path)
@@ -130,6 +148,21 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
             );
             return $this->_values;
         }
+    }
+
+    public function setPrefix ($prefix)
+    {
+        $this->_prefix = $prefix;
+    }
+
+    public function getPrefix ()
+    {
+        return $this->_prefix;
+    }
+
+    public function clearPrefix ()
+    {
+        $this->_prefix = null;
     }
 }
 
