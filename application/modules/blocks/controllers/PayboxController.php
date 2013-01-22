@@ -25,6 +25,11 @@ require_once ('AbstractController.php');
  */
 class Blocks_PayboxController extends Blocks_AbstractController
 {
+	protected $_paybox;
+	
+	public function init() {
+		$this->_paybox = Manager::getService('Paybox');
+	}
 
     public function indexAction() {
 
@@ -37,27 +42,49 @@ class Blocks_PayboxController extends Blocks_AbstractController
 		if ($request->isPost()) {
             if ($paybox->isValid($request->getPost())) {
                 $params = $this->getRequest()->getParams();
-				$titre = $params['gender'];
-                $nom = $params['name'];
-				$prenom = $params['firstname'];
-				$adresse = $params['address'];
-				$codePostale = $params['postalCode'];
-				$ville = $params['city'];
-				$pays = $params['country'];
-				$telCabinet = $params['officeTelNumber'];
-				$telPortable = $params['mobilePhoneNumber'];
+				
+				$gender = $params['gender'];
+                $name = $params['name'];
+				$firstname = $params['firstname'];
+				$address = $params['address'];
+				$postalCode = $params['postalCode'];
+				$city = $params['city'];
+				$country = $params['country'];
+				$officeTelNumber = $params['officeTelNumber'];
+				$mobilePhoneNumber = $params['mobilePhoneNumber'];
 				$email = $params['email'];
 				$activity = $params['activity'];
-				$diplome = $params['diploma'];
-				$anneeObtentiondiplome = $params['graduationYear'];
-				$etudiant = $params['student'];
-				$anneeObtentionEtudiant = $params['studentGraduationYear'];
-				$adresseFacturation = $params['billingAddress'];
-				$typeclient = $params['clientType'];
-				$typePaiement = $params['paymentType'];
+				$diploma = $params['diploma'];
+				$university = $params['student'];
+				$studentGraduationYear = $params['studentGraduationYear'];
+				$billingAddress = $params['billingAddress'];
 				
-				//Control and backup, then if it's ok
-				$this->_helper->redirector('payment', 'paybox');
+				//Control and backup
+				$filter = array('email' => $email);
+				if(count($this->_paybox->customFind($filter) == 0)){
+					$user = array(	'gender' 				=> $gender,
+									'name' 					=> $name,
+									'firstname' 			=> $firstname,
+									'address' 				=> $address,
+									'postalCode' 			=> $postalCode,
+									'city' 					=> $city,
+									'country' 				=> $country,
+									'officeTelNumber' 		=> $officeTelNumber,
+									'mobilePhoneNumber' 	=> $mobilePhoneNumber,
+									'email' 				=> $email,
+									'activity' 				=> $activity,
+									'diploma' 				=> $diploma,
+									'university' 			=> $university,
+									'studentGraduationYear' => $studentGraduationYear,
+									'billingAddress' 		=> $billingAddress,
+									'payment'				=> false,
+					);
+				
+					$this->_paybox->create($user);
+					
+					//redirect if it's ok
+					$this->_helper->redirector('payment', 'paybox');
+				}
             }
         }
 		
@@ -70,15 +97,15 @@ class Blocks_PayboxController extends Blocks_AbstractController
 		//mode d'appel
 		     'PBX_MODE'        => '1',
 		//identification
-		     'PBX_SITE'        => '1999888',
-		     'PBX_RANG'        => '98',
-		     'PBX_IDENTIFIANT' => '3',
+		     'PBX_SITE'        => '0983514',
+		     'PBX_RANG'        => '01',
+		     'PBX_IDENTIFIANT' => '354677877',
 		//gestion de la page de connection : paramétrage "invisible"
 		     'PBX_WAIT'        => '0',
 		     'PBX_BOUTPI'      => "nul",
 		     'PBX_BKGD'        => "white",
 		//informations paiement (appel)
-		     'PBX_TOTAL'       => '38000',
+		     'PBX_TOTAL'       => '18000',
 		     'PBX_DEVISE'      => '978',
 		     'PBX_CMD'         => (string)rand(1, 10000),
 		     'PBX_PORTEUR'     => "mickael.goncalves@webtales.fr",
@@ -140,7 +167,7 @@ class Blocks_PayboxController extends Blocks_AbstractController
 		$pos = strrpos( $url, '&' );
     	$url = substr( $url, 0, $pos );
 		
-		$amount = "38000";
+		$amount = "18000";
 		
 		if(isset($params['auto']) && isset($params['erreur']) && isset($params['sign']) && isset($params['montant'])) {
 			if($params['erreur'] == "00000") {
