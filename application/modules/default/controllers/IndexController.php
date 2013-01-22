@@ -369,10 +369,25 @@ class IndexController extends Zend_Controller_Action
                 $params['content-id'] = $contentId;
                 
                 break;
-			case 'Média externe';
+			case 'Média externe':
 				$controller = 'embeddedmedia';
 				break;
+			case 'Controleur Zend':
+			    //Zend_Debug::dump($block);die();
+			    $module = isset($block['configBloc']['module'])?$block['configBloc']['module']:'blocks';
+			    $controller = isset($block['configBloc']['controller'])?$block['configBloc']['controller']:null;
+			    $action = isset($block['configBloc']['action'])?$block['configBloc']['action']:null;
+			    
+			    $response = Action::getInstance()->action($action, $controller, $module, $params);
+			    //Zend_Debug::dump($response->getBody());die();
+			    $data = $response->getBody();
+			    return array(
+			        'data' => array('content'=>$data),
+			        'template' => 'root/zend.html.twig'
+			    );
+			    break;
             default:
+                
                 $data = array();
                 $template = 'root/block.html';
                 return array(
