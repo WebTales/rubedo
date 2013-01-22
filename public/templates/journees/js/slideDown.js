@@ -15,5 +15,6 @@
 			$(this).slideUp("slow");
 		}
 	});
+	return false;
     };
 })(jQuery);  
