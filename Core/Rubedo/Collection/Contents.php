@@ -92,7 +92,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true), $live = true)
+    public function create (array $obj, $options = array('safe'=>true), $live = false)
     {
         $obj = $this->_filterInputData($obj);
 

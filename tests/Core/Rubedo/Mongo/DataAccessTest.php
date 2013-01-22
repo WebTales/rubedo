@@ -990,6 +990,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
+		
         $item = static::$phactory->create('item', array('version' => 1));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
@@ -1005,8 +1006,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item3['children'] = array();
         unset($item3['_id']);
         unset($item3['parentId']);
+		
+		$dataAccessObject->addSort(array('id' => 'asc'));
 
-        $items = $item;
+      	$items = $item;
         $items['children'] = array($item2, $item3);
 
         $readArray = $dataAccessObject->readTree();

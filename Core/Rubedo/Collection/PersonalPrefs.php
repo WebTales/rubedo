@@ -64,7 +64,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
             'userId' => $this->_userId
         ));
         $returnArray = parent::update($obj, $options);
-        if ($obj['iconSet']) {
+        if (isset($obj['iconSet'])) {
             Manager::getService('Session')->set('iconSet', $obj['iconSet']);
         }
         return $returnArray;
