@@ -61,19 +61,15 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
      */
     public function assemble ($data = array(), $reset = false, $encode = false)
     {
-        if ($this->_prefix) {
-            // $allParams =
-            // \Zend_Controller_Front::getInstance()->getRequest()->getParams();
+        if (isset($this->_prefix)) {
+            
             foreach ($data as $key => $value) {
                 if ($key == $this->_prefix) {
                     continue;
                 }
                 unset($data[$key]);
-                $data[$this->_prefix.'_'.$key] = $value;
+                $data[$this->_prefix . '_' . $key] = $value;
             }
-            
-            //\Zend_Debug::dump($data);
-            //die();
         }
         
         if ($reset === true) {
