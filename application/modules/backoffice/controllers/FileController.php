@@ -105,8 +105,15 @@ class Backoffice_FileController extends Zend_Controller_Action
             'Content-Type' => isset($mimeType) ? $mimeType : $fileInfo['type']
         );
         $result = $fileService->create($obj);
+ 	// disable layout and set content type
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
         
-        $this->_helper->json($result);
+        $returnValue = Zend_Json::encode($result);
+        
+            $returnValue = Zend_Json::prettyPrint($returnValue);
+        
+        $this->getResponse()->setBody($returnValue);
     }
 
     function deleteAction ()
