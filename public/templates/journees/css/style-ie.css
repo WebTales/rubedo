@@ -1,0 +1,429 @@
+/*
+ * 
+ * Shared CSS
+ * 
+ */
+.end{
+	-o-transform:skewx(22deg);
+    -moz-transform:skewx(22deg);
+    -ms-transform:skewx(22deg);
+    -webkit-transform:skewx(22deg);
+    transform:skewx(22deg);
+}
+/*
+ * 
+ * Font
+ * 
+ */
+@font-face {
+    font-family: 'metaPlusBold';
+    src: url('font/metaplus-bold-roman-webfont.eot');
+    src: url('font/metaplus-bold-roman-webfont.eot?#iefix') format('embedded-opentype'),
+         url('font/metaplus-bold-roman-webfont.woff') format('woff'),
+         url('font/metaplus-bold-roman-webfont.ttf') format('truetype'),
+         url('font/metaplus-bold-roman-webfont.svg#metaplus_bold_romanregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'metaPlus';
+    src: url('font/metaplus-webfont.eot');
+    src: url('font/metaplus-webfont.eot?#iefix') format('embedded-opentype'),
+         url('font/metaplus-webfont.woff') format('woff'),
+         url('font/metaplus-webfont.ttf') format('truetype'),
+         url('font/metaplus-webfont.svg#metaplusregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+.title 
+{
+	color:#FFFFFF;
+	font-size:1em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+.title, x:-moz-any-link, x:default{
+	color:#FFFFFF;
+  font-size:1em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+*+html .title{
+		color:#FFFFFF;
+  font-size:1em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+html>/**/body .title{
+		color:#FFFFFF;
+  font-size:1.15em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+
+.light-title
+{
+	color:#FFFFFF;
+	font-size:0.5em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+.light-title, x:-moz-any-link, x:default{
+	color:#FFFFFF;
+  font-size:0.9em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+
+.big-title
+{
+	color:#FFFFFF;
+	font-size:1.7em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+.big-title, x:-moz-any-link, x:default{
+	color:#FFFFFF;
+  font-size:1.4em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+html>/**/body .big-title{
+		color:#FFFFFF;
+  font-size:1.2em; 
+	font-weight:bold;
+	padding: 7px 5px 10px 5px;
+}
+
+*
+{
+	font-family:'metaPlus',Arial;
+	word-spacing: 0.01em;
+}
+.blue-list
+{
+	list-style-image: url('../images/puce5x5.png');
+}
+.blue-text
+{
+	color:#008bcb;
+}
+
+body
+{
+	width:940px !important;
+	margin:auto !important;
+	overflow-x: hidden !important;
+
+}
+
+
+/*
+ * 
+ * Header css
+ * 
+ */
+#header
+{
+	background-image: url('../images/mainPageBkg.png');
+	background-repeat:no-repeat;
+	height: 158px;
+
+}
+#header #logo
+{
+width:122px;
+height:117px;
+margin-bottom:-0px;
+background-image: url('../images/headerLogo.png');
+}
+#header #title
+{
+	color:white;
+	font-size:50px;
+	margin-top:5%;
+
+	
+}
+*+html #header #title {
+	color:white;
+	font-size:50px;
+	margin-top:5%;
+  line-height:45px;
+}
+
+/*
+ * 
+ * Navigation bar override css
+ * 
+ */
+.navbar
+{
+	width:940px;
+	border:none;
+}
+.navbar-inner
+{
+		filter:none !important;
+}
+.navbar-inner{
+	border: 0px;
+	filter:none !important;
+	height: 41px;
+	border-radius: 0px !important;
+	background-image: url('../images/headerMainBkg.png') !important;
+	background-repeat: repeat-x;
+	font-size: 1em;
+	font-family: 'metaPlusBold', arial, verdana;
+	width: 865px !important;
+	box-shadow: 0px 0px 0px #ffffff !important;
+	border:none;
+}
+.navbar .nav li {
+	background-image: url('../images/headerSeparator.png') !important;
+	background-repeat: no-repeat;
+	background-position: 100%;
+}
+
+.navbar .nav li a{
+	padding-right:10px;
+	padding-left:10px;
+	color:white !important;
+	font-size:0.95em !important;
+	text-shadow:none !important;
+	font-family:'metaPlusBold';
+}
+.navbar .nav li a, x:-moz-any-link, x:default{
+	padding-right:10px;
+	padding-left:10px;
+	color:white !important;
+	font-size:0.80em !important;
+	text-shadow:none !important;
+	font-family:'metaPlusBold';
+}
+.navbar .nav li a:hover
+{
+	background-color:#d9eaf1 !important;
+	color:#008bcb !important;
+}
+
+#nav-block .span1
+{
+	margin-left:45px;
+	width: 19px;
+	height: 41px;
+	background-image: url('../images/headerRightEnd.png');
+	background-repeat: no-repeat;
+
+}
+
+#nav-block
+{height: 41px;}
+#nav-block .span11
+{height: 41px;}
+/*
+ * 
+ * Middle content css
+ * 
+ */
+#middle-content
+{
+	background-image: url('../images/mainPageBkg.png');
+	background-repeat:no-repeat;
+	height:500px;
+	background-position:0% 65% !important;
+
+}
+#middle-hand
+{
+	background-image: url('../images/hand.png') !important;
+	background-repeat: no-repeat;
+	min-height: 500px;
+	background-position: 30% 10px;
+}
+/*
+ * 
+ * Footer css
+ * 
+ */
+#footer
+{
+	margin-top:10px;
+}
+#footer-logo
+{
+	width: 201px;
+	height: 42px;
+	background-image: url('../images/footerLogo.png');
+	background-repeat: no-repeat;
+}
+#footer-bar{
+		margin-left: 0px;
+	height: 42px;
+	width: 738px;
+	background-image: url('../images/footerMainBkg.png');
+	background-repeat: repeat-x;
+}
+
+#footer a
+{
+	color:#FFFFFF;
+}
+#footer-text
+{
+	margin-right:30px !important;
+}
+
+
+/*
+ * 
+ * Home page
+ * @accueil
+ *  Css for each bloc is on html code.
+ */
+
+#home-text
+{
+	width:400px;
+	position:absolute;
+	margin-left:600px;
+	margin-top:60px;
+}
+.bloc
+{
+	margin-top:10px;
+	border:1px solid #008bcb;
+	width:291px !important;
+	height:290px;
+}
+
+.bloc-title
+{
+	background-color: #008bcb;
+	font-weight:bold;
+	color:white;
+	font-size:1.3em;
+	height:40px;
+}
+
+.bloc-title, x:-moz-any-link, x:default
+{
+	background-color: #008bcb;
+	font-weight:bold;
+	color:white;
+	font-size:1.3em;
+	height:40px;
+}
+.bloc-title span
+{
+ 	margin-left:5px;
+ 	margin-top:10px;
+ 	position:absolute;
+}
+#inscription-content
+{
+	background-color:#008bcb;
+	height:250px;
+}
+#inscription-content img
+{
+	width:291px;
+	height:240px;
+	border:none;
+}
+#bloc-video
+{
+	background-color:#2e2e2e;
+}
+#video-content img
+{
+	width:291px;
+	height:240px;
+	border:none;
+}
+#bloc-invite
+{
+	background-image: url('../images/homePageBloc1-back.png');
+	background-repeat: no-repeat;
+	background-color:#cecece;
+}
+.label a{
+	text-decoration:none;
+	color:#FFFFFF;
+}
+.label a:hover
+{
+
+	color:#FFFFFF;
+}
+/*
+ * Programme & intervenants
+ * 
+ */
+#programme-content
+{
+	margin-left:75px;
+	margin-top:20px;
+	width:790px;
+
+}
+#programme-content table
+{
+	border-collapse:separate !important;
+	border-spacing:20px !important;
+}
+*+html #programme-content table tr td
+{
+	
+	
+}
+.cell100px
+{
+	width:110px !important;
+}
+.photo
+{
+	width:100px !important;
+	height:101px !important;
+	margin-left:20px !important;
+}
+/*
+ * 
+ * Invite d'honneur
+ * 
+ */
+#content-invite{
+	width:840px;
+	margin-left:50px;
+	margin-top:15px;
+}
+#content-invite li
+{
+	margin-top:13px;
+}
+/*
+ * 
+ * Exposition permanente
+ * 
+ */
+
+#content-exposition
+{
+	margin-top:0px !important;
+	background-color:#e3e4e5;
+	width:940px;
+	height:700px;
+}
+#content-image{
+	background-image:url('../images/exposition-back.png');
+	background-repeat:no-repeat;
+	width:940px;
+	height:700px;
+	background-position: 100px 50px;
+}

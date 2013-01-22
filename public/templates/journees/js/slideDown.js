@@ -4,6 +4,7 @@
 	if(self.css("display")=="block")
 	{
 		self.slideUp("slow");
+		
 	}
 	else
 	{

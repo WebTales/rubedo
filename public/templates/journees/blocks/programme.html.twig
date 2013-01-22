@@ -3,21 +3,21 @@
 <div style="width:789px; height:80px;">
 <img src="/templates/journees/images/prog-back-top.png" usemap="#progmap"/>
 <map name="progmap">
-  <area shape="rect" coords="720,20,790,50" alt="telecharger" href="/accueil/inscrire">
+  <area shape="rect" coords="720,20,790,50" alt="telecharger" href="/templates/journees/pdf/PROGRAMME-ZID-2013.pdf">
 </map>
 </div>
 	<div style=" width:789px; font-weight: bold; background-color:#ececed;">
 		<table>
 			<tr>
-				<td>8h00 - 8h45</td>
+				<td class="cell100px">8h00 - 8h45</td>
 				<td>Enregistrement &amp; café d'accueil.</td>
 			</tr>
 			<tr>
-				<td>8h45 - 9h00</td>
+				<td class="cell100px">8h45 - 9h00</td>
 				<td>Mot de bienvenue par M.Lionel DESCOQS et présentation de la journée par les
 				<br/>
-				Présidents Scientifiques,<a href="#" style="color:#008bcb;" onclick='jQuery("#d-bourgeois").slideDownOnly("slow")'> Pr Denis BOURGEOIS</a> et
-				<a href="#" style="color:#008bcb;" onclick='jQuery("#m-jabbour").slideDownOnly("slow")'> Dr Michel JABBOUR.</a></td>
+				Présidents Scientifiques,<a href="#" style="color:#008bcb;" onclick='jQuery("#d-bourgeois").slideDownOnly("slow");return false;'> Pr Denis BOURGEOIS</a> et
+				<a href="#" style="color:#008bcb;" onclick='jQuery("#m-jabbour").slideDownOnly("slow");return false;'> Dr Michel JABBOUR.</a></td>
 			</tr>
 			</table>
 		<div class="info" id="m-jabbour" style="color:#008bcb; font-weight:normal; font-style:italic; margin-left:10; line-height:1.4em;display:none;">
@@ -25,7 +25,7 @@
 		{%if content.title=="jabbour"%}
 		<table>
 		<tr>
-		<td><img style="border:1px solid #008bcb" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
+		<td class="photo"><img style="border:1px solid #008bcb;" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
 		</tr>
 		</table>
 		<div style="margin-left:40px;">
@@ -51,7 +51,7 @@
 		{%if content.title=="bourgeois"%}
 		<table>
 		<tr>
-		<td><img style="border:1px solid #008bcb" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
+		<td class="photo"><img style="border:1px solid #008bcb;" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
 		</tr>
 		</table>
 		<div style="margin-left:40px;">
@@ -74,8 +74,8 @@
 		</div>
 			<table>
 			<tr>
-				<td>9h00 - 9h35</td>
-				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#jf-andre").slideDownOnly("slow")'>Dr Jean-Frédéric ANDRE:</a>
+				<td class="cell100px">9h00 - 9h35</td>
+				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#jf-andre").slideDownOnly("slow");return false;'>Dr Jean-Frédéric ANDRE:</a>
 				<br/>
 				&laquo;Utilisation de la sédation consciente pour la chirurgie.&raquo;</td>
 			</tr>
@@ -85,7 +85,7 @@
 		{%if content.title=="andre"%}
 		<table>
 		<tr>
-		<td><img style="border:1px solid #008bcb" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
+		<td class="photo"><img style="border:1px solid #008bcb;" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
 		</tr>
 		</table>
 		<div style="margin-left:40px;">
@@ -108,8 +108,8 @@
 		</div>
 		<table>
 			<tr>
-				<td>9h35 - 10h20</td>
-				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#a-agnini").slideDownOnly("slow")'>Dr Alessandro AGINI:</a>
+				<td class="cell100px">9h35 - 10h20</td>
+				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#a-agnini").slideDownOnly("slow");return false;'>Dr Alessandro AGINI:</a>
 				<br/>
 				&laquo; Les nouvelles technologies CFAO au service des patients:
 				<br/>
@@ -121,7 +121,7 @@
 		{%if content.title=="agnini"%}
 		<table>
 		<tr>
-		<td><img style="border:1px solid #008bcb" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
+		<td class="photo"><img style="border:1px solid #008bcb;" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
 		</tr>
 		</table>
 		<div style="margin-left:40px;">
@@ -145,20 +145,20 @@
 		<table>
 			
 			<tr>
-				<td>10h20 - 10h40</td>
-				<td>Pause.</td>
+				<td class="cell100px">10h20 - 10h40</td>
+				<td class="cell100px">Pause.</td>
 			</tr>
 			<tr>
-				<td>10h40 - 11h00</td>
+				<td class="cell100px">10h40 - 11h00</td>
 				<td>Dr Michel JABBOUR:
 				<br/>
 				&laquo; Présentation du film de la réouverture du cas de reconstruction maxiliaire, présenté le 24 mai 2012, et de l'étude clinique à 2 ans sur le Puros &copy;. &raquo;</td>
 			</tr>
 			<tr>
-				<td>11h00 - 11h35</td>
-				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#f-cangemi").slideDownOnly("slow")'>Dr Franck CANGEMI:</a>
+				<td class="cell100px">11h00 - 11h35</td>
+				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#f-cangemi").slideDownOnly("slow");return false;'>Dr Franck CANGEMI:</a>
 				<br/>
-				&laquo; Les mini-implants, la solution pour la patient âgé ? &raquo; </td>
+				&laquo; Les mini-implants, la solution pour le patient âgé ? &raquo; </td>
 			</tr>
 	</table>
 		<div class="info" id="f-cangemi" style="color:#008bcb; font-weight:normal; font-style:italic; margin-left:10; line-height:1.4em;display:none;">
@@ -166,7 +166,7 @@
 		{%if content.title=="cangemi"%}
 		<table>
 		<tr>
-		<td><img style="border:1px solid #008bcb" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
+		<td class="photo"><img style="border:1px solid #008bcb;" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
 		</tr>
 		</table>
 		<div style="margin-left:40px;">
@@ -187,8 +187,8 @@
 		</div>
 		<table>
 			<tr>
-				<td>11h35 - 12h20</td>
-				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#j-surmenain").slideDownOnly("slow")'>Dr Jérôme SURMENAIN:</a>
+				<td class="cell100px">11h35 - 12h20</td>
+				<td><a href="#"  style="color:#008bcb;" onclick='jQuery("#j-surmenain").slideDownOnly("slow");return false;'>Dr Jérôme SURMENAIN:</a>
 				<br/>
 				&laquo; Le matériau Trabecular Metal en implantologie dentaire :
 				<br/>
@@ -200,13 +200,13 @@
 		{%if content.title=="surmenain"%}
 		<table>
 		<tr>
-		<td><img style="border:1px solid #008bcb" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
+		<td class="photo"><img style="border:1px solid #008bcb;" src="/dam?media-id={{content.image}}&width=100&height=101&mode=boxed"/></td><td>{{content.bio |cleanHtml}}</td>
 		</tr>
 		</table>
 		<div style="margin-left:40px;">
 		<div class="row">
 			{%if content.abtitle != ""%}
-			<div class="span3" style="height:35px; width:560px; background-color:#008bcb;">
+			<div class="span3" style="height:35px; width:580px; background-color:#008bcb;">
 				<div class="light-title" style="padding: 10px 10px 10px 10px;">
 					{{content.abtitle |cleanHtml}}
 				</div>
@@ -223,11 +223,11 @@
 		</div>
 		<table>
 			<tr>
-				<td>12h20 - 13h30</td>
+				<td class="cell100px">12h20 - 13h30</td>
 				<td>Déjeuner cocktail</td>
 			</tr>
 			<tr>
-				<td>13h30 - 15h00</td>
+				<td class="cell100px">13h30 - 15h00</td>
 				<td><a href="/accueil/invite" style="color:#008bcb;">Dr Dennis TARNOW:</a>
 				<br/>
 				&laquo; Extraction - implantation immédiate ou différée ?
@@ -235,11 +235,11 @@
 				L'étât de l'art. &raquo; </td>
 			</tr>
 			<tr>
-				<td>15h00 - 15h20</td>
+				<td class="cell100px">15h00 - 15h20</td>
 				<td>Pause.</td>
 			</tr>
 			<tr>
-				<td>15h20 - 17h30</td>
+				<td class="cell100px">15h20 - 17h30</td>
 				<td>Dr Dennis TARNOW:
 				<br/>
 				&laquo; Les Péri-implantites : ce que nous savons, ce que nous pensons savoir,
@@ -247,7 +247,7 @@
 				et ce que nous ne savons pas. &raquo; </td>
 			</tr>
 			<tr>
-				<td>17h30 - 17h50</td>
+				<td class="cell100px">17h30 - 17h50</td>
 				<td>Questions au Dr Dennis TARNOW</td>
 			</tr>
 			<tr>
