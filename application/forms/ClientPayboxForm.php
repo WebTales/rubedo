@@ -5,7 +5,7 @@ class Application_Form_ClientPayboxForm extends Zend_Form
     public function init()
     {
        	$this->setMethod('post');
-		$this->setAttrib('action', '/blocks/paybox/');
+		//$this->setAttrib('action', '/blocks/paybox/');
 		
 		//Modification du décorateur
 		$this->setDecorators(

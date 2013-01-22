@@ -119,6 +119,7 @@ body
 {
 	width:940px !important;
 	margin:auto !important;
+	overflow-x: hidden !important;
 
 }
 
@@ -176,7 +177,7 @@ background-image: url('../images/headerLogo.png');
 	background-repeat: repeat-x;
 	font-size: 1em;
 	font-family: 'metaPlusBold', arial, verdana;
-	width: 882px;
+	width: 882px !important;
 	box-shadow: 0px 0px 0px #ffffff !important;
 	border:none;
 	
@@ -217,7 +218,7 @@ html>/**/body .navbar-inner
 	color:#008bcb !important;
 }
 #nav-block .span1 {
-margin-left:-148px;
+margin-left:-148px !important;
 	width: 19px;
 	height: 41px;
 	background-image: url('../images/headerRightEnd.png');
@@ -314,7 +315,7 @@ html>/**/body #footer-bar
 	margin-top:10px;
 	border:1px solid #008bcb;
 	width:291px !important;
-	height:280px;
+	height:290px;
 }
 
 .bloc-title
@@ -340,12 +341,11 @@ html>/**/body #footer-bar
  	margin-top:10px;
  	position:absolute;
 }
-/*#bloc-inscription
+#inscription-content
 {
-	background-image: url('../images/homePageBloc2.png');
-	background-repeat: no-repeat;
-	background-color:#008BCB;
-}*/
+	background-color:#008bcb;
+	height:250px;
+}
 #inscription-content img
 {
 	width:291px;
@@ -354,9 +354,13 @@ html>/**/body #footer-bar
 }
 #bloc-video
 {
-	background-image: url('../images/homePageBloc3.png');
-	background-repeat: no-repeat;
 	background-color:#2e2e2e;
+}
+#video-content img
+{
+	width:291px;
+	height:240px;
+	border:none;
 }
 #bloc-invite
 {
