@@ -4,6 +4,7 @@
 	if(self.css("display")=="block")
 	{
 		self.slideUp("slow");
+		
 	}
 	else
 	{
@@ -15,6 +16,5 @@
 			$(this).slideUp("slow");
 		}
 	});
-	return false;
     };
 })(jQuery);  
