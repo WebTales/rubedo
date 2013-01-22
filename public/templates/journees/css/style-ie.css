@@ -44,7 +44,7 @@
 .title 
 {
 	color:#FFFFFF;
-	font-size:1.3em; 
+	font-size:1em; 
 	font-weight:bold;
 	padding: 7px 5px 10px 5px;
 }
@@ -70,7 +70,7 @@ html>/**/body .title{
 .light-title
 {
 	color:#FFFFFF;
-	font-size:0.9em; 
+	font-size:0.5em; 
 	font-weight:bold;
 	padding: 7px 5px 10px 5px;
 }
@@ -386,6 +386,12 @@ background-image: url('../images/headerLogo.png');
 .cell100px
 {
 	width:110px !important;
+}
+.photo
+{
+	width:100px !important;
+	height:101px !important;
+	margin-left:20px !important;
 }
 /*
  * 
