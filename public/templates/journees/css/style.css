@@ -172,7 +172,7 @@ background-image: url('../images/headerLogo.png');
 {
 		filter:none !important;
 }
-:root *> .navbar-inner{
+.navbar-inner{
 	border: 0px;
 	filter:none !important;
 	height: 41px;
