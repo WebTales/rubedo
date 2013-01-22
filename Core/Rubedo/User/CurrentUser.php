@@ -106,10 +106,13 @@ class CurrentUser implements ICurrentUser
         
         $user = $this->getCurrentUser();
         if(is_null($user)){
-            return Manager::getService('Groups')->getPublicGroup();
+            return array(Manager::getService('Groups')->getPublicGroup());
         }
         
         $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
+        if(count($groupsArray['data'])==0){
+            return array(Manager::getService('Groups')->getPublicGroup());
+        }
         return $groupsArray['data'];
         
         $groups = array();
@@ -124,6 +127,8 @@ class CurrentUser implements ICurrentUser
                 $groups[] = 'public';
                 break;
         }
+        
+        
 
         return $groups;
     }
