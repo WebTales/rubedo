@@ -103,11 +103,11 @@
 	</target>
 	
 	<target name="composer.update">
-		<exec command="composer update" passthru="true"/>
+		<exec command="composer update -o" passthru="true"/>
 	</target>
 	
 	<target name="composer.update-dev">
-		<exec command="composer update --dev" passthru="true"/>
+		<exec command="composer update --dev -o" passthru="true"/>
 	</target>
 	
 	<target name="update" depends="git.pull,composer.update">
