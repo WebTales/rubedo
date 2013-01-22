@@ -164,7 +164,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         
         $filesArray = $adapter->getFileInfo();
-        $originalFileInfos = $filesArray['originalFile'];
+        $originalFileInfos = $filesArray['originalFileId'];
         
         if (class_exists('finfo')) {
             $finfo = new finfo(FILEINFO_MIME);
