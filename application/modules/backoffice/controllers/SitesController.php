@@ -37,5 +37,17 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 		$this -> _dataService = Rubedo\Services\Manager::getService('Sites');
 	}
 	
-
+	public function wizardCreateAction()
+	{
+		$jsonSite=parent::createAction();
+		Zend_Debug::dump($jsonSite);die();
+		$site=json_decode($jsonSite);
+		$maskObj=array('siteId'=>$site["id"],'text'=>"Accueil");
+		//Create json mask with siteId
+		Rubedo\Services\Manager::getService('Masks');
+		
+		//Create json page whith id siteId and MaskId
+		Rubedo\Services\Manager::getService('Pages');
+	return false;
+	}
 }
