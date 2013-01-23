@@ -18,7 +18,7 @@ require_once ('AbstractController.php');
 
 /**
  *
- * @author jbourdin
+ * @author dfanchon
  * @category Rubedo
  * @package Rubedo
  */
@@ -33,11 +33,11 @@ class Blocks_ImageController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array());
             
         $site = $this->getParam('site');
-        $output['imageLink'] = isset($site['imageLink']) ? $site['imageLink'] : null;
-        $output['imageAlt'] = isset($site['imageAlt']) ? $site['imageAlt'] : null;
-        $output['imageFile'] = isset($site['imageFile']) ? $site['imageFile'] : null;
-        $output['imageWidth'] = isset($site['imageWidth']) ? $site['imageWidth'] : null;
-        $output['imageHeight'] = isset($site['imageHeight']) ? $site['imageHeight'] : null;
+        $output['imageLink'] = isset($blockConfig['imageLink']) ? $blockConfig['imageLink'] : null;
+        $output['imageAlt'] = isset($blockConfig['imageAlt']) ? $blockConfig['imageAlt'] : null;
+        $output['imageFile'] = isset($blockConfig['imageFile']) ? $blockConfig['imageFile'] : null;
+        $output['imageWidth'] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
+        $output['imageHeight'] = isset($blockConfig['imageHeight']) ? $blockConfig['imageHeight'] : null;
                                       
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/image.html.twig");
         
