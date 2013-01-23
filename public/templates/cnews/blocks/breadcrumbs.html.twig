@@ -1,8 +1,7 @@
-<ul class="breadcrumb">
-	{% for lien in liens %}
-	<li {% if lien.current %}class="active"{% endif %}>
-		<a href="/{{ lien.controller }}">{{ lien.libelle }}</a>
-		{% if loop.index < loop.length %}<span class="divider">/</span>{% endif %}
-	</li>
-	{% endfor %}
-</ul>
+<div class="">
+	<div class="breadcrumbs_menu">
+		{% for page in rootline %} <a href="{{url({'pageId':page.id})}}"> {{ page.text }}
+		</a> &nbsp;/&nbsp; {% endfor %}
+        <span class="current">{{ currentPage.text }}</span>
+	</div>
+</div>

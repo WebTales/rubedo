@@ -15,7 +15,7 @@
 			{% for content in data %}
 			<li style="border-bottom:1px solid #E3E3E8; margin-bottom:10px; padding-bottom:2px;">
 
-				<a href="{{ displaySingleUrl(content.id) }}"><img alt=""  class="imageLeft" src="/image?file-id={{content.thumbnail}}" style="max-height: 80px;max-width: 80px;"/></a>
+				<a href="{{ displaySingleUrl(content.id) }}"><img alt=""  class="imageLeft" src="/dam?media-id={{content.image}}&width=80&height=80&mode=boxed" style="max-height: 80px;max-width: 80px;"/></a>
 
 				<header class="entry-header">
 					<h2 class="post-title-small"><a href='{{ displaySingleUrl(content.id) }}' title='Actu'>{{content.title}}</a></h2>

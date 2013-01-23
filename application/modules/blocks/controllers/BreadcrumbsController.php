@@ -31,9 +31,42 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
      */
     public function indexAction() {
 
-		$links = array(array('libelle' => 'Accueil', 'controller' => 'index', 'current' => false), array('libelle' => Manager::getService('PageContent')->getPageTitle(), 'controller' => '#', 'current' => true));
-		
-        $output= array('liens' => $links);
+		$blockConfig = $this->getParam('block-config', array());
+
+        if (isset($blockConfig['rootPage'])) {
+            $rootPage = $blockConfig['rootPage'];
+        } else {
+            $rootPage = $this->getParam('rootPage');
+        }
+        
+        
+        $session = Manager::getService('Session');
+        $lang = $session->get('lang', 'fr');
+        
+        $currentPage = $this->getRequest()->getParam('currentPage');
+        $output['currentPage'] = Manager::getService('Pages')->findById($currentPage);
+        
+        $rootline = $this->getRequest()->getParam('rootline', array());
+        $rootline = array_reverse($rootline);
+        $rootlineArray = array();
+        
+        foreach ($rootline as $pageId){
+            if($pageId == $currentPage){
+                continue;
+            }
+            
+            $rootlineArray[] = Manager::getService('Pages')->findById($pageId);
+            if($pageId == $rootPage){
+                break;
+            }
+            
+        }
+        $rootlineArray = array_reverse($rootlineArray);
+        
+        
+        
+        $output['rootPage'] = $rootPage;
+        $output['rootline'] = $rootlineArray;
 
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/breadcrumbs.html.twig");
 

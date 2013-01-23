@@ -349,6 +349,7 @@ class IndexController extends Zend_Controller_Action
                 
                 break;
             case 'Fil d\'Ariane':
+                $params['currentPage'] = $this->_pageId;
                 $params['rootline'] = $this->_rootlineArray;
                 $controller = 'breadcrumbs';
                 break;

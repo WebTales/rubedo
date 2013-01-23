@@ -10,7 +10,7 @@
 
 		{% for slide in items %} 
 		<a href="{{ displaySingleUrl(slide.id) }}" title="Standart post">
-			<img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{slide.id}}" data-thumb="/image?file-id={{slide.thumbnail}}" />
+			<img src="/dam?media-id={{slide.image}}&width=850&height=260&mode=crop" alt="{{slide.text}}" title="#htmlcaption_{{slide.id}}" data-thumb="/dam?media-id={{slide.image}}&width=80&height=80&mode=crop" />
 		</a> 
 		{% endfor %}
 

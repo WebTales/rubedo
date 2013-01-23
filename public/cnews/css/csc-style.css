@@ -128,7 +128,7 @@ nav ul.menu li ul li a:hover{color: #474747;background:#577088; margin-top:0; bo
 
 /***** Breadcrumbs *****/
 
-.breadcrumbs_menu{ margin-bottom:20px; padding-bottom:10px; font-size:12px;border-bottom: 1px solid #E3E3E8;}
+.breadcrumbs_menu{ margin-bottom:20px;margin-top:20px; padding-bottom:10px; font-size:12px;border-bottom: 1px solid #E3E3E8;}
 .breadcrumbs_menu .current{}
 
 /***** Breaking *****/

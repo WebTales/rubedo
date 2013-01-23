@@ -37,5 +37,35 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 		$this -> _dataService = Rubedo\Services\Manager::getService('Sites');
 	}
 	
+	public function wizardCreateAction()
+	{
+	 $data = $this->getRequest()->getParam('data');
 
+        if (!is_null($data)) {
+            $insertData = Zend_Json::decode($data);
+            if (is_array($insertData)) {
+                $site= $this->_dataService->create($insertData, true);
+            }}
+		if($site['success']===true)
+		{
+			$maskObj=array("site"=>$site['data']['id'],'text'=>"Default-Mask","blocks"=>array(),"rows"=>array());
+			$mask=Rubedo\Services\Manager::getService('Masks')->create($maskObj,true);
+			if($mask['success']===true)
+			{
+				$pageObj=array("site"=>$site['data']['id'],'title'=>"accueil","maskId"=>$mask['data']['id'],"parentId"=>'root',"blocks"=>array());
+				$page=Rubedo\Services\Manager::getService('Pages')->create($pageObj,true);
+				if($page['success']===true)
+				{
+					$updateData=$site['data'];
+					$updateData['homePage']=$page['data']['id'];
+					
+					$returnArray=$this->_dataService->update($updateData, true);
+				}
+			}
+		} if (!$returnArray['success']) {
+            $this->getResponse()->setHttpResponseCode(500);
+        }
+        $this->_returnJson($returnArray);
+	}
+	
 }
