@@ -39,15 +39,33 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 	
 	public function wizardCreateAction()
 	{
-		$jsonSite=parent::createAction();
-		Zend_Debug::dump($jsonSite);die();
-		$site=json_decode($jsonSite);
-		$maskObj=array('siteId'=>$site["id"],'text'=>"Accueil");
-		//Create json mask with siteId
-		Rubedo\Services\Manager::getService('Masks');
-		
-		//Create json page whith id siteId and MaskId
-		Rubedo\Services\Manager::getService('Pages');
-	return false;
+	 $data = $this->getRequest()->getParam('data');
+
+        if (!is_null($data)) {
+            $insertData = Zend_Json::decode($data);
+            if (is_array($insertData)) {
+                $site= $this->_dataService->create($insertData, true);
+            }}
+		if($site['success']===true)
+		{
+			$maskObj=array("site"=>$site['data']['id'],'text'=>"Default-Mask");
+			$mask=Rubedo\Services\Manager::getService('Masks')->create($maskObj,true);
+			if($mask['success']===true)
+			{
+				$pageObj=array("site"=>$site['data']['id'],'title'=>"accueil","maskId"=>$mask['data']['id'],"parentId"=>'root');
+				$page=Rubedo\Services\Manager::getService('Pages')->create($pageObj,true);
+				if($page['success']===true)
+				{
+					$updateData=$site['data'];
+					$updateData['homePage']=$page['data']['id'];
+					
+					$returnArray=$this->_dataService->update($updateData, true);
+				}
+			}
+		} if (!$returnArray['success']) {
+            $this->getResponse()->setHttpResponseCode(500);
+        }
+        $this->_returnJson($returnArray);
 	}
+	
 }
