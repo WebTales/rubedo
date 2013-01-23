@@ -48,11 +48,11 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             }}
 		if($site['success']===true)
 		{
-			$maskObj=array("site"=>$site['data']['id'],'text'=>"Default-Mask");
+			$maskObj=array("site"=>$site['data']['id'],'text'=>"Default-Mask","blocks"=>array(),"rows"=>array());
 			$mask=Rubedo\Services\Manager::getService('Masks')->create($maskObj,true);
 			if($mask['success']===true)
 			{
-				$pageObj=array("site"=>$site['data']['id'],'title'=>"accueil","maskId"=>$mask['data']['id'],"parentId"=>'root');
+				$pageObj=array("site"=>$site['data']['id'],'title'=>"accueil","maskId"=>$mask['data']['id'],"parentId"=>'root',"blocks"=>array());
 				$page=Rubedo\Services\Manager::getService('Pages')->create($pageObj,true);
 				if($page['success']===true)
 				{
