@@ -39,13 +39,14 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         
         $query->init();
-        if (isset($params['limit'])) $params['pagesize'] = $params['limit'];
-		if (isset($params['page'])) $params['pager'] = $params['page'];
+        if (isset($params['limit'])) $params['pagesize'] = (int) $params['limit'];
+		if (isset($params['page'])) $params['pager'] = (int) $params['page'];
 		if (isset($params['sort'])) {
 			$params['orderBy'] = $params['sort']['property'];
 			$params['orderByDirection'] = $params['sort']['direction'];
 		}
         $search = $query->search($params);
+
         $elasticaResultSet = $search["resultSet"];
 		$filters = $search["filters"];
 		
@@ -75,7 +76,6 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		$results['success']=true;
 		$results['message']='OK';
 
-		//Zend_Debug::dump($results);
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
