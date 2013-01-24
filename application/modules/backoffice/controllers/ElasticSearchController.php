@@ -62,8 +62,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 				$tmp['id'] = $result->getId();
 				$tmp['typeId'] = $result->getType();
 				$tmp['score'] = $result->getScore();
-				$tmp['fields'] = $result->getData();
-				$results['data'][] = $tmp;
+				$results['data'][] = array_merge($tmp,$result->getData());
 			}
 			foreach($elasticaFacets as $name => $facet) {
 				$temp = (array) $facet;
