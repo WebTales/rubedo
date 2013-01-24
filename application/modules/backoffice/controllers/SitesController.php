@@ -51,7 +51,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$resultMasks = $masks->deleteBySiteId($siteId);
 				
 				if($resultPages['ok'] == 1 && $resultMasks['ok'] == 1){
-					$returnArray = $this->_dataService->deleteBySiteId($siteId);
+					$returnArray = $this->_dataService->deleteById($siteId);
 				} else {
 					$returnArray = array('success' => false, "msg" => 'Error during the deletion of masks and pages');
 				}
@@ -299,7 +299,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 						$updateData=$site['data'];
 						$updateData['homePage']=$homePage['data']['id'];
 						$updateSiteReturn=$this->_dataService->update($updateData, true);
-						$updateSiteReturn['success']=false;
+
 						if($updateSiteReturn['success']===true)
 						{
 							$returnArray=$updateSiteReturn;
@@ -326,7 +326,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$resultPages = Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($siteId);
 				$resultMasks = Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($siteId);
 				if($resultPages['ok'] == 1 && $resultMasks['ok'] == 1){
-					$returnArray['delete'] = $this->_dataService->deleteBySiteId($siteId);
+					$returnArray['delete'] = $this->_dataService->deleteById($siteId);
 				}else {
 					$returnArray['delete'] = array('success' => false, "msg" => 'Error during the deletion of masks and pages');
 				}
