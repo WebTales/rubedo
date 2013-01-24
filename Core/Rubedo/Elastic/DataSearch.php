@@ -69,7 +69,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 		if (!array_key_exists('orderby',$params)) $params['orderby'] = $defaultVars['orderby'];
 		
 		if (!array_key_exists('orderbyDirection',$params)) $params['orderbyDirection'] = $defaultVars['orderbyDirection'];
-		
+
 		if (!array_key_exists('pagesize',$params)) $params['pagesize'] = $defaultVars['pagesize'];
 		
 		if (!array_key_exists('query',$params)) $params['query']= $defaultVars['query'];
