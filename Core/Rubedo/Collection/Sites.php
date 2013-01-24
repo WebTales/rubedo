@@ -74,4 +74,8 @@ class Sites extends AbstractCollection implements ISites
         }
         return $site;
     }
+	public function deleteBySiteId($id)
+	{
+		return $this->_dataService->customDelete(array('site' => $id),array('safe'=>true));
+	}
 }
