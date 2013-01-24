@@ -37,6 +37,37 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 		$this -> _dataService = Rubedo\Services\Manager::getService('Sites');
 	}
 	
+	public function deleteAction() {
+		$pages = Rubedo\Services\Manager::getService('Pages');
+		$masks = Rubedo\Services\Manager::getService('Masks');
+		
+		$data = $this->getRequest()->getParam('data');
+
+        if (!is_null($data)) {
+            $data = Zend_Json::decode($data);
+            if (is_array($data)) {
+				$siteId = $data['id'];
+				$resultPages = $pages->customDelete(array('site' => $siteId));
+				$resultMasks = $masks->customDelete(array('site' => $siteId));
+				
+				if($resultPages['ok'] == 1 && $resultMasks['ok'] == 1){
+					$returnArray = $this->_dataService->destroy($data, true);
+				} else {
+					$returnArray = array('success' => false, "msg" => 'Error during the deletion of masks and pages');
+				}
+            } else {
+                $returnArray = array('success' => false, "msg" => 'Not an array');
+            }
+
+        } else {
+            $returnArray = array('success' => false, "msg" => 'Invalid Data');
+        }
+        if (!$returnArray['success']) {
+            $this->getResponse()->setHttpResponseCode(500);
+        }
+        $this->_returnJson($returnArray);
+	}
+
 	public function wizardCreateAction()
 	{
 	 $data = $this->getRequest()->getParam('data');
