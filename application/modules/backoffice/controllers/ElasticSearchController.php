@@ -40,7 +40,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         
         $query->init();
         if (isset($params['limit'])) $params['pagesize'] = (int) $params['limit'];
-		if (isset($params['page'])) $params['pager'] = (int) $params['page'];
+		if (isset($params['page'])) $params['pager'] = (int) $params['page']-1;
 		if (isset($params['sort'])) {
 			$params['orderBy'] = $params['sort']['property'];
 			$params['orderByDirection'] = $params['sort']['direction'];
@@ -48,7 +48,11 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         $search = $query->search($params);
 
         $elasticaResultSet = $search["resultSet"];
-		$filters = $search["filters"];
+		if (is_array($search["filters"])) {
+			$filters = $search["filters"];
+		} else {
+			$filters = array();
+		}
 		
 		$elasticaResults = $elasticaResultSet->getResults();
 		$elasticaFacets = $elasticaResultSet->getFacets();
