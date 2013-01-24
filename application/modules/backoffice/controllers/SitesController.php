@@ -47,11 +47,11 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
 				$siteId = $data['id'];
-				$resultPages = $pages->customDelete(array('site' => $siteId));
-				$resultMasks = $masks->customDelete(array('site' => $siteId));
+				$resultPages = $pages->deleteBySiteId($siteId);
+				$resultMasks = $masks->deleteBySiteId($siteId);
 				
 				if($resultPages['ok'] == 1 && $resultMasks['ok'] == 1){
-					$returnArray = $this->_dataService->destroy($data, true);
+					$returnArray = $this->_dataService->deleteBySiteId($siteId);
 				} else {
 					$returnArray = array('success' => false, "msg" => 'Error during the deletion of masks and pages');
 				}
@@ -62,7 +62,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         } else {
             $returnArray = array('success' => false, "msg" => 'Invalid Data');
         }
-        if (!$returnArray['success']) {
+        if ($returnArray['ok']!=1) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
@@ -293,14 +293,43 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				{
 					$updateMask=$mask['data'];
 					$updateMask["blocks"][0]['configBloc']=array("useSearchEngine"=>true,"rootPage"=>$homePage['data']['id'],"searchPage"=>$searchPage['data']['id']);
-					Rubedo\Services\Manager::getService('Masks')->update($updateMask, true);
+					$updateMaskReturn=Rubedo\Services\Manager::getService('Masks')->update($updateMask, true);
+					if($updateMaskReturn['success']===true)
+					{
+						$updateData=$site['data'];
+						$updateData['homePage']=$homePage['data']['id'];
+						$updateSiteReturn=$this->_dataService->update($updateData, true);
+						$updateSiteReturn['success']=false;
+						if($updateSiteReturn['success']===true)
+						{
+							$returnArray=$updateSiteReturn;
+						}else{
+							$returnArray = array('success' => false, "msg" => 'error during site update');
+						}
+
+					}else{
+						$returnArray = array('success' => false, "msg" => 'error during mask update');
+					}
 					
-					$updateData=$site['data'];
-					$updateData['homePage']=$homePage['data']['id'];
-					$returnArray=$this->_dataService->update($updateData, true);
+				}else {
+					$returnArray = array('success' => false, "msg" => 'error during pages creation');
 				}
+			}else{
+				$returnArray = array('success' => false, "msg" => 'error during mask creation');
 			}
-		} if (!$returnArray['success']) {
+		}else
+		{
+			$returnArray = array('success' => false, "msg" => 'error during site creation');
+		}
+ 		if (!$returnArray['success']) {
+ 			$siteId=$site['data']['id'];
+				$resultPages = Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($siteId);
+				$resultMasks = Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($siteId);
+				if($resultPages['ok'] == 1 && $resultMasks['ok'] == 1){
+					$returnArray['delete'] = $this->_dataService->deleteBySiteId($siteId);
+				}else {
+					$returnArray['delete'] = array('success' => false, "msg" => 'Error during the deletion of masks and pages');
+				}
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
