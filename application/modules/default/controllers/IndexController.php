@@ -375,6 +375,12 @@ class IndexController extends Zend_Controller_Action
             case 'Image':
                 $controller = 'image';
                 break;
+            case 'Texte':
+                $controller = 'text';
+                break;
+            case 'Texte Riche':
+                $controller = 'richtext';
+                break;
             case 'Controleur Zend':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
                 $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
