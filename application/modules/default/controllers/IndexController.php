@@ -372,6 +372,9 @@ class IndexController extends Zend_Controller_Action
             case 'Média externe':
                 $controller = 'embeddedmedia';
                 break;
+            case 'Image':
+                $controller = 'image';
+                break;
             case 'Controleur Zend':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
                 $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;

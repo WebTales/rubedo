@@ -19,7 +19,7 @@ require_once ('AbstractController.php');
 
 /**
  *
- * @author jbourdin
+ * @author dfanchon
  * @category Rubedo
  * @package Rubedo
  */
