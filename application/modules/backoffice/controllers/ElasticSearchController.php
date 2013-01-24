@@ -39,7 +39,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         
         $query->init();
-        if (isset($params['pagesize'])) $params['limit'] = $params['pagesize'];
+        if (isset($params['limit'])) $params['pagesize'] = $params['limit'];
 		if (isset($params['page'])) $params['pager'] = $params['page'];
 		if (isset($params['sort'])) {
 			$params['orderBy'] = $params['sort']['property'];
