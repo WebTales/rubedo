@@ -39,7 +39,12 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         
         $query->init();
-        $params['pagesize']=100;
+        if (isset($params['pagesize'])) $params['limit'] = $params['pagesize'];
+		if (isset($params['page'])) $params['pager'] = $params['page'];
+		if (isset($params['sort'])) {
+			$params['orderBy'] = $params['sort']['property'];
+			$params['orderByDirection'] = $params['sort']['direction'];
+		}
         $search = $query->search($params);
         $elasticaResultSet = $search["resultSet"];
 		$filters = $search["filters"];
@@ -48,20 +53,30 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		$elasticaFacets = $elasticaResultSet->getFacets();
 		$results = array();
 		$results['total'] = $elasticaResultSet->getTotalHits();
-		$results['results'] = array();
+		$results['data'] = array();
 		$results['facets'] = array();
-		$results['filters'] = $filters;
+		$results['activeFacets'] = $filters;
 		if ($results['total'] > 0) {
 			foreach($elasticaResults as $result) {
-				$results['results'][] = (array) $result;
+				$temp = array();
+				$tmp['id'] = $result->getId();
+				$tmp['typeId'] = $result->getType();
+				$tmp['score'] = $result->getScore();
+				$tmp['fields'] = $result->getData();
+				$results['data'][] = $tmp;
 			}
 			foreach($elasticaFacets as $name => $facet) {
 				$temp = (array) $facet;
-				$temp['name'] = $name;
-				$results['facets'][] = $temp;
+				if (!empty($temp)) {
+					$temp['name'] = $name;
+					$results['facets'][] = $temp;
+				}
 			}
 		}
+		$results['success']=true;
+		$results['message']='OK';
 
+		//Zend_Debug::dump($results);
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);

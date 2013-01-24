@@ -54,7 +54,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 			'date' => '',
 			'pager' => 0,
 			'orderby' => '_score',
-			'pagesize' => 10
+			'orderbyDirection' => 'asc',
+			'pagesize' => 25
 		);
 		
 		// set default options
@@ -66,6 +67,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 		if (!array_key_exists('pager',$params)) $params['pager'] = $defaultVars['pager'];
 		
 		if (!array_key_exists('orderby',$params)) $params['orderby'] = $defaultVars['orderby'];
+		
+		if (!array_key_exists('orderbyDirection',$params)) $params['orderbyDirection'] = $defaultVars['orderbyDirection'];
 		
 		if (!array_key_exists('pagesize',$params)) $params['pagesize'] = $defaultVars['pagesize'];
 		
@@ -200,7 +203,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			} 
 						
 			// add sort
-			$elasticaQuery->setSort(array($params['orderby'] =>"desc"));
+			$elasticaQuery->setSort(array($params['orderby'] => $params['orderbyDirection']));
 
 			// run query
 			$elasticaResultSet = $this->_content_index->search($elasticaQuery);
