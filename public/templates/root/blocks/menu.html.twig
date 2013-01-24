@@ -1,0 +1,35 @@
+<div class="navbar">
+  <div class="navbar-inner">
+  	<div class="container-fluid">
+		<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+		<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</a>
+		<!-- Everything you want hidden at 940px or less, place within here -->
+		<div class="nav-collapse">
+	    <!-- /nav bar --> 
+	    
+		    <div class="nav-collapse collapse">
+				<ul class="nav">
+		        {% for page in pages %}
+					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
+						<a href="{{page.url}}">{{page.title}}</a>
+						{% if page.pages %}
+							<ul class="sub-menu">
+							{% for subpage in page.pages %}
+								<li class="menu-item menu-item-type-custom menu-item-object-custom">
+									<a href="{{subpage.url}}">{{subpage.title}}</a>
+								</li>
+							{% endfor %}
+							</ul>
+						{% endif %}
+					</li>
+				{% endfor %}
+		        </ul>
+			</div>
+		</div>
+ 	</div>
+  </div>
+</div>

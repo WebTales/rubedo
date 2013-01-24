@@ -381,6 +381,9 @@ class IndexController extends Zend_Controller_Action
             case 'Texte Riche':
                 $controller = 'richtext';
                 break;
+            case 'Menu':
+                $controller = 'menu';
+                break;
             case 'Controleur Zend':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
                 $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
