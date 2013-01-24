@@ -76,7 +76,6 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		$results['success']=true;
 		$results['message']='OK';
 
-		//Zend_Debug::dump($results);
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
