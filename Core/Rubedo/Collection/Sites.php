@@ -74,4 +74,9 @@ class Sites extends AbstractCollection implements ISites
         }
         return $site;
     }
+	public function deleteById($id)
+	{
+		$mongoId=$this->_dataService->getId($id);
+		return $this->_dataService->customDelete(array('_id' => $mongoId));
+	}
 }

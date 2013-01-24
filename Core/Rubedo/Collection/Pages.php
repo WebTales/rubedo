@@ -115,5 +115,9 @@ class Pages extends AbstractCollection implements IPages
 	    
 	    return $url;
 	}
+	public function deleteBySiteId($id)
+	{
+		return $this->_dataService->customDelete(array('site' => $id));
+	}
 	
 }

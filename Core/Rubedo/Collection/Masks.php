@@ -34,4 +34,8 @@ class Masks extends AbstractCollection implements IMasks
 		parent::__construct();
 	}
 	
+	public function deleteBySiteId($id)
+	{
+		return $this->_dataService->customDelete(array('site' => $id));
+	}
 }
