@@ -375,7 +375,7 @@ class IndexController extends Zend_Controller_Action
             case 'Image':
                 $controller = 'image';
                 break;
-            case 'Text':
+            case 'Texte':
                 $controller = 'text';
                 break;
             case 'Texte Riche':
