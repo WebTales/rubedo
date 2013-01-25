@@ -27,11 +27,4 @@ use Rubedo\Interfaces\Collection\IImages;
  */
 class Images extends AbstractFileCollection implements IImages
 {
-	
-
-	public function __construct(){
-		$this->_fileType = 'image';
-		parent::__construct();
-	}
-	
 }
