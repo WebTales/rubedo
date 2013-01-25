@@ -67,7 +67,7 @@ class Backoffice_FileController extends Zend_Controller_Action
         }
     }
 
-    function indexAction ()
+    public function indexAction ()
     {
         $fileService = Manager::getService('Files');
         $filesArray = $fileService->getList();
@@ -75,14 +75,17 @@ class Backoffice_FileController extends Zend_Controller_Action
         $files = array();
         foreach ($data as $value) {
             $metaData = $value->file;
-            $metaData['id'] = (string)$metaData['_id'];
+            $metaData['id'] = (string) $metaData['_id'];
             unset($metaData['_id']);
             $files[] = $metaData;
         }
-        return $this->_helper->json(array('data' => $files, 'total' => $filesArray['count']));
+        return $this->_helper->json(array(
+            'data' => $files,
+            'total' => $filesArray['count']
+        ));
     }
 
-    function putAction ()
+    public function putAction ()
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
@@ -92,31 +95,30 @@ class Backoffice_FileController extends Zend_Controller_Action
         
         $fileInfo = array_pop($adapter->getFileInfo());
         
-        if (class_exists('finfo')) {
-            $finfo = new finfo(FILEINFO_MIME);
-            $mimeType = $finfo->file($fileInfo['tmp_name']);
-        }
+        $finfo = new finfo(FILEINFO_MIME);
+        $mimeType = $finfo->file($fileInfo['tmp_name']);
         
         $fileService = Manager::getService('Files');
+        
         $obj = array(
             'serverFilename' => $fileInfo['tmp_name'],
             'text' => $fileInfo['name'],
             'filename' => $fileInfo['name'],
-            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfo['type']
+            'Content-Type' => $mimeType
         );
         $result = $fileService->create($obj);
- 	// disable layout and set content type
+        // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         
         $returnValue = Zend_Json::encode($result);
         
-            $returnValue = Zend_Json::prettyPrint($returnValue);
+        $returnValue = Zend_Json::prettyPrint($returnValue);
         
         $this->getResponse()->setBody($returnValue);
     }
 
-    function deleteAction ()
+    public function deleteAction ()
     {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
@@ -139,12 +141,14 @@ class Backoffice_FileController extends Zend_Controller_Action
         }
     }
 
-    function getAction ()
+    public function getAction ()
     {
         $this->_forward('index', 'file', 'default');
     }
 
-    function getMetaAction ()
+    
+    
+    public function getMetaAction ()
     {
         $fileId = $this->getRequest()->getParam('file-id');
         
@@ -160,7 +164,7 @@ class Backoffice_FileController extends Zend_Controller_Action
         }
     }
 
-    function dropAllFilesAction ()
+    public function dropAllFilesAction ()
     {
         $fileService = Manager::getService('MongoFileAccess');
         $fileService->init();

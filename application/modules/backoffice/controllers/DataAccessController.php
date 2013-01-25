@@ -55,7 +55,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms','model');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model');
 	
     /**
      * Disable layout & rendering, set content type to json
@@ -240,7 +240,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
 
-                $returnArray = $this->_dataService->destroy($data, true);
+                $returnArray = $this->_dataService->destroy($data);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');

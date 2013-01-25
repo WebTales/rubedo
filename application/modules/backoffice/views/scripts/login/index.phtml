@@ -55,7 +55,12 @@ Ext.define('Connector.view.Viewport', {
                             fieldLabel: 'Compte utilisateur ',
                             labelWidth: 120,
                             allowBlank: false,
-                            blankText: 'Ce champ est obligatoire'
+                            blankText: 'Ce champ est obligatoire',
+                            listeners: {
+                            	render: function(field,e){
+                            		field.focus();
+                            	}
+                            }
                         },
                         {
                             xtype: 'button',
