@@ -30,6 +30,11 @@ require_once('DataAccessController.php');
  */
 class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
 {
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms','model');
+	
     public function init(){
 		parent::init();
 		
