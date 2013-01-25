@@ -96,4 +96,11 @@ class ImageController extends Zend_Controller_Action
             throw new Zend_Controller_Exception("No Image Given", 1);
         }
     }
+
+    public function getThumbnailAction ()
+    {
+        $this->_forward('index', 'image', 'default', array(
+            'size' => 'thumbnail'
+        ));
+    }
 }
