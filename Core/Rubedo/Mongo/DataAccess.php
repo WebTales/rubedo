@@ -694,9 +694,7 @@ class DataAccess implements IDataAccess
             $updateCondition = array_merge($this->_filterArray, $updateCondition);
         }
         
-        $resultArray = $this->_collection->remove($updateCondition, array(
-            "safe" => $options
-        ));
+        $resultArray = $this->_collection->remove($updateCondition, $options);
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
                 $returnArray = array(

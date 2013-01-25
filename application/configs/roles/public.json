@@ -1,0 +1,10 @@
+{
+    "id":"public",
+    "label":{
+    	"fr":"Acces aux parties publiques",
+    	"en":"access public parts"
+    },
+    "rights":[
+        "execute.controller.login.index.backoffice"
+    ]
+}
