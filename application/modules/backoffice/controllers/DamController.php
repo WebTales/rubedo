@@ -132,7 +132,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             throw new Zend_Controller_Exception('unknown type');
         }
         $obj['typeId'] = $damType['id'];
-        $obj['mainFileType']= $damType['mainFileType'];
+        $obj['mainFileType'] = $damType['mainFileType'];
         
         $title = $this->getParam('title');
         if (! $title) {
@@ -140,6 +140,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
+        $obj['taxonomy'] = Zend_Json::decode($this->getParam('taxonomy', Zend_Json::encode(array())));
         
         $fields = $damType['fields'];
         
@@ -155,19 +156,6 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             }
         }
         
-        $adapter = new Zend_File_Transfer_Adapter_Http();
-        
-        if (! $adapter->receive()) {
-            throw new Exception(implode("\n", $adapter->getMessages()));
-        }
-        
-        $this->filesArray = $adapter->getFileInfo();
-        
-        $originalFileInfos = $this->filesArray['originalFileId'];
-        
-        $finfo = new finfo(FILEINFO_MIME);
-        $mimeType = $finfo->file($originalFileInfos['tmp_name']);
-        
         foreach ($fields as $field) {
             if ($field['cType'] !== 'Ext.form.field.File') {
                 continue;
@@ -182,7 +170,9 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         
         $obj['originalFileId'] = $this->_uploadFile('originalFileId');
-        $obj['Content-Type'] = $mimeType;
+        
+        $obj['Content-Type'] = $this->mimeType;
+        
         if (! $obj['originalFileId']) {
             $this->getResponse()->setHttpResponseCode(500);
             return $this->_returnJson(array(
@@ -209,11 +199,22 @@ class Backoffice_DamController extends Backoffice_DataAccessController
 
     protected function _uploadFile ($name)
     {
-        $fileInfos = $this->filesArray[$name];
+        $adapter = new Zend_File_Transfer_Adapter_Http();
         
-        if (class_exists('finfo')) {
-            $finfo = new finfo(FILEINFO_MIME);
-            $mimeType = $finfo->file($fileInfos['tmp_name']);
+        if (! $adapter->receive($name)) {
+            return null;
+        }
+        
+        $filesArray = $adapter->getFileInfo();
+        
+        $fileInfos = $filesArray[$name];
+        
+        $finfo = new finfo(FILEINFO_MIME);
+        
+        $mimeType = $finfo->file($fileInfos['tmp_name']);
+        
+        if ($name == 'originalFileId') {
+            $this->mimeType = $mimeType;
         }
         
         $fileService = Manager::getService('Files');
