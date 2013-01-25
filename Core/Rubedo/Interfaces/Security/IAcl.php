@@ -41,5 +41,11 @@ interface IAcl
 	 * @return array the array of boolean with ressource as key name
 	 */
 	public function accessList(array $ressourceArray);
+	
+	/**
+	 * List availaible roles for groups configuration
+	 * @return array
+	 */
+	public function getAvailaibleRoles();
 
 }

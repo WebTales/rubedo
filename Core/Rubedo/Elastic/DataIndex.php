@@ -377,11 +377,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 			// Create content type with overwrite set to true
 			$this->indexContentType($contentType["id"],$contentType,TRUE);
 			// Index all contents from type
-			$c = \Rubedo\Services\Manager::getService('MongoDataAccess');
-			$c->init("Contents");	
-			$filter = array("typeId"=>$contentType["id"]);
-			$c->addFilter($filter);
-			$contentList = $c->read();
+			$contentList = \Rubedo\Services\Manager::getService('Contents')->getByType($contentType["id"]);
 			$contentCount = 0;
 			foreach($contentList["data"] as $content) {
 				$this->indexContent($content["id"]);
