@@ -240,7 +240,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
 
-                $returnArray = $this->_dataService->destroy($data, true);
+                $returnArray = $this->_dataService->destroy($data);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
