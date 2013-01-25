@@ -427,7 +427,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	public function getByType($typeId) {
 		$filter = array(array('property' => 'typeId', 'value' => $typeId));
 		
-		$this->getList($filter);
+		return $this->getList($filter);
 	}
 
 	/*public function clearOrphanContents() {
@@ -441,5 +441,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
 		}
 		
 		$result = $this->customDelete(array('typeId' => array('$nin' => $cotentTypesArray)));
+		
+		if($result['ok'] == 1){
+			return array('success' => 'true');
+		}
 	}*/
 }
