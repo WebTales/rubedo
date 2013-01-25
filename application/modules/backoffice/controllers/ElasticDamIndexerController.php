@@ -27,13 +27,13 @@
  * @package Rubedo
  *
  */
-class Backoffice_ElasticIndexerController extends Zend_Controller_Action
+class Backoffice_ElasticDamIndexerController extends Zend_Controller_Action
 {
     
 	public function indexAction() {
 		$es = Rubedo\Services\Manager::getService('ElasticDataIndex');
 		$es->init();		
-		$return = $es->indexAllContent() ;
+		$return = $es->indexAllDam() ;
 		$this->_helper->json($return);
 		
 	}

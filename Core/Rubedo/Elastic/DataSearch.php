@@ -36,7 +36,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 	 * @params array $params search parameters : query, type, lang, author, date, taxonomy, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search (array $params) {
+    public function search (array $params, $option = 'all') {
 
 		$filters = array();
 		
@@ -206,7 +206,21 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$elasticaQuery->setSort(array($params['orderby'] => $params['orderbyDirection']));
 
 			// run query
-			$elasticaResultSet = $this->_content_index->search($elasticaQuery);
+			switch ($option) {
+				case 'content': 
+					$elasticaResultSet = $this->_content_index->search($elasticaQuery);
+					break;
+				case 'dam' :
+					$elasticaResultSet = $this->_dam_index->search($elasticaQuery);
+					break;
+				case 'all' :
+					$client = $this->_content_index->getClient();
+					$search = new \Elastica_Search($client);
+					$search->addIndex($this->_dam_index);
+					$search->addIndex($this->_content_index);
+					$elasticaResultSet = $search->search($elasticaQuery);
+					break;
+			}
 			
 			// Return resultset
 			$result = array(

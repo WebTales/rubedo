@@ -86,19 +86,19 @@ class DataAbstract
 		'number_of_replicas' => 0 ));
 		
     /**
-     * Object which represent the document ES index
+     * Object which represent the dam ES index
      *
      * @var \Elastica_Index
      */
-    protected static $_document_index = "document";
+    protected static $_dam_index;
 
     /**
-     * Object which represent the default document ES index param
+     * Object which represent the default dam ES index param
      *
      * @var \Elastica_Index
      */
      // TODO : get params into .ini
-    protected static $_document_index_param = array('index' => array(
+    protected static $_dam_index_param = array('index' => array(
 		'number_of_shards' => 1, 
 		'number_of_replicas' => 0 ));
 	
@@ -127,11 +127,11 @@ class DataAbstract
 		if (!$this->_content_index->exists()) {
 			$this->_content_index->create(self::$_content_index_param,true);
 		}
-		$this->_document_index = $this->_client->getIndex(self::$_options['documentIndex']);
+		$this->_dam_index = $this->_client->getIndex(self::$_options['damIndex']);
 		
-		// Create document index if not exists
-		if (!$this->_document_index->exists()) {
-			$this->_document_index->create(self::$_document_index_param,true);
+		// Create dam index if not exists
+		if (!$this->_dam_index->exists()) {
+			$this->_dam_index->create(self::$_dam_index_param,true);
 		}
     }
 

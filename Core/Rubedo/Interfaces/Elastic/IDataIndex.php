@@ -61,15 +61,33 @@ interface IDataIndex
      * @return array
      */
     public function IndexContentType ($id, $data,$overwrite=false);
-	
+
     /**
-     * Delete ES type for new content type
+     * Index ES type for new or updated dam type
+     *     
+	 * @param string $id dam type id
+	 * @param array $data new dam type
+     * @param boolean $overwrite overwrite dam type if it exists
+     * @return array
+     */
+    public function IndexDamType ($id, $data,$overwrite=false);
+		
+    /**
+     * Delete ES type for content type
      *     
 	 * @param string $id content type id
      * @return array
      */
     public function deleteContentType ($id);
 	
+    /**
+     * Delete ES type for dam type
+     *     
+	 * @param string $id dam type id
+     * @return array
+     */
+    public function deleteDamType ($id);
+		
     /**
      * Create or update index for existing content
      *    
@@ -80,31 +98,14 @@ interface IDataIndex
 	public function indexContent ($id, $live = true);
 	
     /**
-     * Delete existing content from index
+     * Create or update index for existing Dam document
 	 * 
-	 * @param string $typeId content type id
-	 * @param string $id content id
+	 * @param string $id dam id
      * @return array
      */
-    public function deleteContent ($typeId, $id);
-	
-    /**
-     * Index DAM document
-     *   
-	 * @param string $id document id  
-	 * @param array $data new document data
-     * @return array
-     */
-    public function indexDocument ($id,$data);
-	
-    /**
-     * Delete index type for existing DAM document
-     *     
-	 * @param string $id document id  
-     * @return array
-     */
-    public function deleteDocument ($id);
 
+    public function indexDam ($id);
+	
     /**
      * Reindex all content
      *      

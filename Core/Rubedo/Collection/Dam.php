@@ -42,4 +42,11 @@ class Dam extends AbstractCollection implements IDam
         return parent::destroy($obj,$options);
         
     }
+
+	public function getByType($typeId) {
+		$filter = array(array('property' => 'typeId', 'value' => $typeId));
+		
+		return $this->getList($filter);
+	}
 }
+

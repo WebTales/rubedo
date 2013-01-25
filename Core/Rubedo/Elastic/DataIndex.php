@@ -63,13 +63,13 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getDamTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','title','type','author');
+		$searchableFields=array('lastUpdateTime','text','type','author');
     	
 		// Get content type config by id
-		$DamTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
+		$damTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
 
 		// Search summary field
-		$fields=$DamTypeConfig["fields"];
+		$fields=$damTypeConfig["fields"];
 		foreach($fields as $field) {
 			if ($field['config']['searchable']) {
 				$searchableFields[] = $field['config']['name'];
@@ -198,6 +198,125 @@ class DataIndex extends DataAbstract implements IDataIndex
 			return array();
 		}
     }
+
+    /**
+     * Index ES type for new or updated dam type
+     *     
+	 * @see \Rubedo\Interfaces\IDataIndex:indexDamType()
+	 * @param string $id dam type id
+	 * @param array $data new content type
+     * @return array
+     */
+    public function indexDamType($id, $data, $overwrite=FALSE) {
+    	
+		// Unicity type id check
+		$mapping = $this->_dam_index->getMapping();
+		if (array_key_exists($id,$mapping[self::$_options['damIndex']])) {
+			if ($overwrite) {
+				// delete existing content type
+				$this->deleteDamType($id);
+			} else {
+				// throw exception
+				throw new \Exception("$id type already exists");
+			}
+		}
+		
+		// Get vocabularies for current dam type
+		$vocabularies=array();
+		foreach($data['vocabularies'] as $vocabularyId) {
+			$vocabulary = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
+			$vocabularies[] = $vocabulary['name'];
+		}
+		
+		// Create mapping
+		$indexMapping = array();
+		
+		// If there is any fields get them mapped
+		if (is_array($data["fields"])) {
+
+			foreach($data["fields"] as $key => $field) {
+						
+				// Only searchable fields get indexed
+				if ($field['config']['searchable']) {
+					
+					$name = $field['config']['fieldLabel'];
+					$store = "no";
+								
+					switch($field['cType']) {
+						case 'checkbox' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'combo' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'datefield' :
+							$indexMapping[$name] = array('type' => 'date', 'format' => 'yyyy-MM-dd', 'store' => $store);
+							break;
+						case 'field' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'htmleditor' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'CKEField' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'numberfield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'radio' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'textareafield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'textfield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'timefield' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'ratingField' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'slider' :
+							$indexMapping[$name] = array('type' => 'string', 'store' => $store);
+							break;
+						case 'document' :
+							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
+							break;
+						default :
+							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
+							break;
+					}
+				}
+			}	
+		}
+		
+		// Add systems metadata
+		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
+		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["damType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		foreach($vocabularies as $vocabularyName) {
+			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
+		}
+		
+		// If there is no searchable field, the new type is not created
+		if (!empty($indexMapping)) {
+			// Create new type
+			$type = new \Elastica_Type($this->_dam_index, $id);
+			
+			// Set mapping
+			$type->setMapping($indexMapping);
+			
+			// Return indexed field list
+			return array_flip(array_keys($indexMapping));
+		} else {
+			return array();
+		}
+    }
 	
     /**
      * Delete ES type for existing content type
@@ -209,6 +328,20 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function deleteContentType ($id) {
     	
     	$type = new \Elastica_Type($this->_content_index, $id);
+    	$type->delete();
+		
+    }
+	
+    /**
+     * Delete ES type for existing dam type
+     *     
+	 * @see \Rubedo\Interfaces\IDataIndex::deleteDamType()
+	 * @param string $id dam type id
+     * @return array
+     */
+    public function deleteDamType ($id) {
+    	
+    	$type = new \Elastica_Type($this->_dam_index, $id);
     	$type->delete();
 		
     }
@@ -285,7 +418,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                         continue;
                     }
 					$collection = \Rubedo\Services\Manager::getService('Taxonomy');
-					//$collection->init("Taxonomy");
 					$taxonomy = $collection->findById($vocabulary);
 					$termsArray = array();
 								
@@ -317,43 +449,122 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentType->getIndex()->refresh();    
     	
     }
-	
-    /**
-     * Delete existing content from index
-     *     
-	 * @see \Rubedo\Interfaces\IDataIndex::deleteContent()
-	 * @param string $typeId content type id
-	 * @param string $id content id
-     * @return array
-     */
-    public function deleteContent ($typeId, $id) {
-     	$type = new \Elastica_Type($this->_content_index, $typeId);
-    	$type->deleteById($id);   	
-    }
-	
-    /**
-     * Index DAM document
-     *   
-	 * @see \Rubedo\Interfaces\IDataIndex::indexDocument()
-	 * @param string $id document id  
-	 * @param array $data new document data
-     * @return array
-     */
-    public function indexDocument ($id,$data) {
-    	
-    }
-	
-    /**
-     * Delete index type for existing DAM document
-     *     
-	 * @see \Rubedo\Interfaces\IDataIndex::deleteDocument()
-	 * @param string $id document id  
-     * @return array
-     */
-    public function deleteDocument ($id) {
-    	
-    }
 
+    /**
+     * Create or update index for existing Dam document
+	 * 
+	 * @param string $id dam id
+     * @return array
+     */
+
+    public function indexDam ($id) {
+    	        
+        // retrieve Dam Type id and dam data if null
+        $data = \Rubedo\Services\Manager::getService('Dam')->findById($id);
+        $typeId = $data['typeId'];
+
+		// Retrieve Dam Type label
+		$damType = \Rubedo\Services\Manager::getService('DamTypes')->findById($typeId);
+
+		$type = $damType['type'];
+			
+		// Load ES dam type 
+    	$damType = $this->_dam_index
+    						->getType($typeId);
+
+		// Get dam type structure
+		$typeStructure = $this->getDamTypeStructure($typeId);
+	
+		// Add fields to index	
+		$damData = array();
+		
+		if (array_key_exists('fields', $data) && is_array($data['fields'])) {
+			foreach($data['fields'] as $field => $var) {
+	
+				// only index searchable fields
+				if (in_array($field,$typeStructure['searchableFields']))  {	
+					$damData[$field] = (string) $var;
+				}
+	
+				// Date format fix
+				if ($field=="lastUpdateTime") $damData[$field] = date("Y-m-d", (int) $var);
+			}
+		}
+
+		// Add default meta's
+		$damData['damType'] = $type;
+		$damData['text'] =  (string) $data['title'];
+		if (isset($data['lastUpdateTime'])) {
+			$damData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
+		} else {
+			$damData['lastUpdateTime'] = 0;
+		}
+		if (isset($data['createUser'])) {
+			$damData['author'] = (string) $data['createUser']['fullName'];
+		} else {
+			$damData['author'] = "unknown";
+		}
+        
+        // Add taxonomy
+         if (isset($data["taxonomy"])) {
+                $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+                foreach ($data["taxonomy"] as $vocabulary => $terms) {
+                    if(!is_array($terms)){
+                        continue;
+                    }
+					$collection = \Rubedo\Services\Manager::getService('Taxonomy');
+					$taxonomy = $collection->findById($vocabulary);
+					$termsArray = array();
+								
+                    foreach ($terms as $term) {
+                    	$term = $tt->findById($term);
+                    	if(!$term){
+                    	    continue;
+                    	}
+						$termsArray = $tt->getAncestors($term);
+						$termsArray[] = $term;
+						$tmp = array();
+						foreach ($termsArray as $tempTerm) {
+							$damData['taxonomy'][$taxonomy['name']][] = $tempTerm['text'];
+						}
+                    	
+					}
+                }
+         }
+		$currentDam = new \Elastica_Document($id, $damData);
+		
+		if (isset($damData['originalFileId']) && $damData['originalFileId'] != '') {
+				
+			$indexedFiles = array(
+			'application/pdf',
+			'application/rtf',
+			'text/html',
+			'text/plain',
+			'text/richtext',
+			'application/msword',
+			'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			'application/vnd.ms-excel',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+			'application/vnd.ms-powerpoint',
+			'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+			'application/vnd.oasis.opendocument.text',
+			'application/vnd.oasis.opendocument.spreadsheet',
+			'application/vnd.oasis.opendocument.presentation'
+			);
+			$mime = explode(';',$damData['Content-Type']);
+			if (array_key_exists($mime[0],$indexedFiles)) {
+				$mongoFile = \Rubedo\Services\Manager::getService('File')->FindById($damData['originalFileId']);
+				$currentDocument->addFile('file', $mongoFile->getBytes());
+			}
+		}
+		
+		// Add dam to dam type index
+		$damType->addDocument($currentDam);
+
+		// Refresh index
+		$damType->getIndex()->refresh();       	
+    }
+	
     /**
      * Reindex all content
      *      
@@ -364,14 +575,12 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Initialize result array
 		$result = array();
 		
-		// Destroy and re-create content and document index
+		// Destroy and re-create content index
 		@$this->_content_index->delete();
 		$this->_content_index->create(self::$_content_index_param,true);
-		@$this->_document_index->delete();
-		$this->_document_index->create(self::$_document_index_param,true);	
 			
 		// Retreive all content types
-		$contentTypeList = \Rubedo\Services\Manager::getService('ContentTypes')->read();
+		$contentTypeList = \Rubedo\Services\Manager::getService('ContentTypes')->getList();
 		
 		foreach($contentTypeList["data"] as $contentType) {
 			// Create content type with overwrite set to true
@@ -384,6 +593,39 @@ class DataIndex extends DataAbstract implements IDataIndex
 				$contentCount++;
 			}
 			$result[$contentType["type"]]=$contentCount;
+		}
+		return($result);
+
+    }
+	
+    /**
+     * Reindex all dam
+     *      
+     * @return array
+     */
+    public function indexAllDam () {
+    	
+		// Initialize result array
+		$result = array();
+		
+		// Destroy and re-create content index
+		@$this->_dam_index->delete();
+		$this->_dam_index->create(self::$_dam_index_param,true);
+			
+		// Retreive all dam types
+		$damTypeList = \Rubedo\Services\Manager::getService('DamTypes')->getList();
+		
+		foreach($damTypeList["data"] as $damType) {
+			// Create dam type with overwrite set to true
+			$this->indexdamType($damType["id"],$damType,TRUE);
+			// Index all dams from type
+			$damList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
+			$damCount = 0;
+			foreach($damList["data"] as $dam) {
+				$this->indexDam($dam["id"]);
+				$damCount++;
+			}
+			$result[$damType["type"]]=$damCount;
 		}
 		return($result);
 
