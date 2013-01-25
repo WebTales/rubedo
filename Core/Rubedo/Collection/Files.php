@@ -27,11 +27,4 @@ use Rubedo\Interfaces\Collection\IFiles;
  */
 class Files extends AbstractFileCollection implements IFiles
 {
-	
-
-	public function __construct(){
-		$this->_fileType = 'files';
-		parent::__construct();
-	}
-	
 }

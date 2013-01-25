@@ -89,17 +89,12 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             throw new Exception('unknown media type');
         }
         if ($mediaType['mainFileType'] == 'Image') {
-            $this->_forward('index', 'image', 'default', array(
-                'size' => 'thumbnail',
+            $this->_forward('get-thumbnail', 'image', 'default', array(
                 'file-id' => $media['originalFileId']
             ));
         } else {
-            //$user = Manager::getService('CurrentUser')->getCurrentUser();
-            $this->_forward('index', 'image', 'default', array(
-                'width' => '100',
-                'height'=>'100',
-                'file-id'=>null,
-                'filepath' => realpath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/icones/'.Manager::getService('Session')->get('iconSet', 'red').'/128x128/attach_document.png')
+            $this->_forward('get-thumbnail', 'file', 'default', array(
+                'file-id' => $media['originalFileId']
             ));
         }
     }
