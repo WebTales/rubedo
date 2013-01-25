@@ -430,20 +430,35 @@ class Contents extends WorkflowAbstractCollection implements IContents
 		return $this->getList($filter);
 	}
 
-	/*public function clearOrphanContents() {
+	public function clearOrphanContents() {
 		$contentTypesService = Manager::getService('ContentTypes');
 		
-		$contentTypesService->getList();
+		$result = $contentTypesService->getList();
 		
 		//recovers the list of contentTypes id
-		foreach ($contentTypesService['data'] as $value) {
+		foreach ($result['data'] as $value) {
 			$contentTypesArray[] = $value['id'];
 		}
-		
-		$result = $this->customDelete(array('typeId' => array('$nin' => $cotentTypesArray)));
+
+		$result = $this->customDelete(array('typeId' => array('$nin' => $contentTypesArray)));
 		
 		if($result['ok'] == 1){
 			return array('success' => 'true');
+		} else {
+			return array('success' => 'false');
 		}
-	}*/
+	}
+	
+	public function countOrphanContents() {
+		$contentTypesService = Manager::getService('ContentTypes');
+
+		$result = $contentTypesService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$contentTypesArray[] = $value['id'];
+		}
+		
+		return $this->count(array(array('property' => 'typeId', 'operator' => '$nin', 'value' => $contentTypesArray)));
+	}
 }

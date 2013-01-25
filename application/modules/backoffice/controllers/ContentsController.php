@@ -30,6 +30,11 @@ require_once ('DataAccessController.php');
  */
 class Backoffice_ContentsController extends Backoffice_DataAccessController
 {
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-contents','count-orphan-contents',);
+	
     public function init() {
         parent::init();
 
@@ -189,6 +194,18 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 		}
 		
 			$this->_returnJson($returnArray);
+	}
+	
+	public function clearOrphanContentsAction() {
+		$result = $this->_dataService->clearOrphanContents();
+		
+		$this->_returnJson($result);
+	}
+	
+	public function countOrphanContentsAction() {
+		$result = $this->_dataService->countOrphanContents();
+		
+		$this->_returnJson($result);
 	}
 
 }
