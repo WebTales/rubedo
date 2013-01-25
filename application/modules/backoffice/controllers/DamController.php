@@ -54,27 +54,24 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         $this->_dataService = Rubedo\Services\Manager::getService('Dam');
     }
     
-    
-
-    /* (non-PHPdoc)
-     * @see Backoffice_DataAccessController::indexAction()
+    /*
+     * (non-PHPdoc) @see Backoffice_DataAccessController::indexAction()
      */
     public function indexAction ()
     {
-        //merge filter and tFilter
-        $jsonFilter = $this->getParam('filter',Zend_Json::encode(array()));
-        $jsonTFilter = $this->getParam('tFilter',Zend_Json::encode(array()));
+        // merge filter and tFilter
+        $jsonFilter = $this->getParam('filter', Zend_Json::encode(array()));
+        $jsonTFilter = $this->getParam('tFilter', Zend_Json::encode(array()));
         $filterArray = Zend_Json::decode($jsonFilter);
         $tFilterArray = Zend_Json::decode($jsonTFilter);
-        $globalFilterArray = array_merge($tFilterArray,$filterArray);
+        $globalFilterArray = array_merge($tFilterArray, $filterArray);
         
-        //call standard method with merge array
+        // call standard method with merge array
         $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
         parent::indexAction();
-        
     }
 
-	public function getThumbnailAction ()
+    public function getThumbnailAction ()
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
@@ -141,9 +138,14 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             throw new Zend_Controller_Exception('missing title');
         }
         $obj['title'] = $title;
+        $obj['fields']['title'] = $title;
         
         $fields = $damType['fields'];
+        
         foreach ($fields as $field) {
+            if ($field['cType'] == 'Ext.form.field.File') {
+                continue;
+            }
             $fieldConfig = $field['config'];
             $name = $fieldConfig['name'];
             $obj['fields'][$name] = $this->getParam($name);
@@ -158,37 +160,35 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             throw new Exception(implode("\n", $adapter->getMessages()));
         }
         
-        $filesArray = $adapter->getFileInfo();
-        $originalFileInfos = $filesArray['originalFileId'];
+        $this->filesArray = $adapter->getFileInfo();
         
-        if (class_exists('finfo')) {
-            $finfo = new finfo(FILEINFO_MIME);
-            $mimeType = $finfo->file($originalFileInfos['tmp_name']);
+        $originalFileInfos = $this->filesArray['originalFileId'];
+        
+        $finfo = new finfo(FILEINFO_MIME);
+        $mimeType = $finfo->file($originalFileInfos['tmp_name']);
+        
+        foreach ($fields as $field) {
+            if ($field['cType'] !== 'Ext.form.field.File') {
+                continue;
+            }
+            $fieldConfig = $field['config'];
+            $name = $fieldConfig['name'];
+            
+            $obj['fields'][$name] = $this->_uploadFile($name);
+            if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
+                throw new Zend_Controller_Exception('required field missing :' . $name);
+            }
         }
         
-        list ($type) = explode(';', $mimeType);
-        list ($subtype) = explode('/', $type);
-        
-        if ($subtype == 'image') {
-            $fileService = Manager::getService('Images');
-        } else {
-            $fileService = Manager::getService('Files');
-        }
-        
-        $fileObj = array(
-            'serverFilename' => $originalFileInfos['tmp_name'],
-            'text' => $originalFileInfos['name'],
-            'filename' => $originalFileInfos['name'],
-            'Content-Type' => isset($mimeType) ? $mimeType : $originalFileInfos['type']
-        );
-        $result = $fileService->create($fileObj);
-        if (! $result['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
-            return $this->_returnJson($result);
-        }
-        
-        $obj['originalFileId'] = $result['data']['id'];
+        $obj['originalFileId'] = $this->_uploadFile('originalFileId');
         $obj['Content-Type'] = $mimeType;
+        if (! $obj['originalFileId']) {
+            $this->getResponse()->setHttpResponseCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                'msg' => 'no main file uploaded'
+            ));
+        }
         
         $returnArray = $this->_dataService->create($obj);
         
@@ -204,5 +204,29 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             $returnValue = Zend_Json::prettyPrint($returnValue);
         }
         $this->getResponse()->setBody($returnValue);
+    }
+
+    protected function _uploadFile ($name)
+    {
+        $fileInfos = $this->filesArray[$name];
+        
+        if (class_exists('finfo')) {
+            $finfo = new finfo(FILEINFO_MIME);
+            $mimeType = $finfo->file($fileInfos['tmp_name']);
+        }
+        
+        $fileService = Manager::getService('Files');
+        
+        $fileObj = array(
+            'serverFilename' => $fileInfos['tmp_name'],
+            'text' => $fileInfos['name'],
+            'filename' => $fileInfos['name'],
+            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type']
+        );
+        $result = $fileService->create($fileObj);
+        if (! $result['success']) {
+            return null;
+        }
+        return $result['data']['id'];
     }
 }
