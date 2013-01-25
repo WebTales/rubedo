@@ -79,4 +79,25 @@ class Sites extends AbstractCollection implements ISites
 		$mongoId=$this->_dataService->getId($id);
 		return $this->_dataService->customDelete(array('_id' => $mongoId));
 	}
+	
+	public function destroy(array $obj, $options = array('safe'=>true))
+	{
+		$id=$obj['id'];
+		//print_r($obj);die();
+		$pages = \Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($id);
+		if($pages['ok']==1)
+		{
+			$masks = \Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($id);
+			if($masks['ok']==1)
+			{
+					$returnArray=parent::destroy($obj,$options);
+			}else{
+				$returnArray=array('success'=>false, 'msg'=>"error during masks deletion");
+			}
+			
+		}else{
+				$returnArray=array('success'=>false, 'msg'=>"error during pages deletion");
+			}
+		return $returnArray;
+	}
 }

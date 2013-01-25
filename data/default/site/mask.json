@@ -1,0 +1,122 @@
+{
+	"site": "",
+	"text": "Default-Mask",
+	"rows": [
+		{
+			"mType": "row",
+			"id": "",
+			"eTitle": "title",
+			"classHTML": null,
+			"idHTML": null,
+			"height": null,
+			"displayTitle": null,
+			"responsive": {
+				"phone": true,
+				"tablet": true,
+				"desktop": true
+			},
+			"columns": [
+				{
+					"mType": "col",
+					"id": "",
+					"eTitle": "title",
+					"classHTML": null,
+					"idHTML": null,
+					"displayTitle": null,
+					"span": 12,
+					"offset": 0,
+					"rows": null,
+					"isTerminal": true,
+					"responsive": {
+						"phone": true,
+						"tablet": true,
+						"desktop": true
+					}
+				}
+			]
+		}, {
+			"mType": "row",
+			"id": "",
+			"eTitle": "title",
+			"classHTML": null,
+			"idHTML": null,
+			"height": null,
+			"displayTitle": null,
+			"responsive": {
+				"phone": true,
+				"tablet": true,
+				"desktop": true
+			},
+			"columns": [
+				{
+					"mType": "col",
+					"id": "",
+					"eTitle": "title",
+					"classHTML": null,
+					"idHTML": null,
+					"displayTitle": null,
+					"span": 12,
+					"offset": 0,
+					"rows": null,
+					"isTerminal": true,
+					"responsive": {
+						"phone": true,
+						"tablet": true,
+						"desktop": true
+					}
+				}
+			]
+		}
+	],
+	"blocks": [
+		{
+			"bType": "Bloc de navigation",
+			"title": "Bloc de navigation",
+			"id": "",
+			"parentCol": "",
+			"canEdit": null,
+			"mType": "block",
+			"classHTML": null,
+			"displayTitle": null,
+			"urlPrefix": null,
+			"flex": 1,
+			"idHTML": null,
+			"orderValue": 100,
+			"responsive": {
+				"phone": true,
+				"tablet": true,
+				"desktop": true
+			},
+			"configBloc": [],
+			"champsConfig": {
+				"avance": [],
+				"simple": [
+					{
+						"categorie": "Pages",
+						"champs": [
+							{
+								"config": {
+									"fieldLabel": "Racine",
+									"name": "rootPage"
+								},
+								"type": "Ext.ux.TreePicker"
+							}, {
+								"config": {
+									"fieldLabel": "Page de recherche",
+									"name": "searchPage"
+								},
+								"type": "Ext.ux.TreePicker"
+							}, {
+								"config": {
+									"fieldLabel": "Moteur de recherche",
+									"name": "useSearchEngine"
+								},
+								"type": "Ext.form.field.Checkbox"
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}
