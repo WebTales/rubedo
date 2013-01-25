@@ -423,4 +423,23 @@ class Contents extends WorkflowAbstractCollection implements IContents
             return true;
         }
     }
+
+	public function getByType($typeId) {
+		$filter = array(array('property' => 'typeId', 'value' => $typeId));
+		
+		$this->getList($filter);
+	}
+
+	/*public function clearOrphanContents() {
+		$contentTypesService = Manager::getService('ContentTypes');
+		
+		$contentTypesService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($contentTypesService['data'] as $value) {
+			$contentTypesArray[] = $value['id'];
+		}
+		
+		$result = $this->customDelete(array('typeId' => array('$nin' => $cotentTypesArray)));
+	}*/
 }

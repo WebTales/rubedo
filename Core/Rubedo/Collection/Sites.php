@@ -83,7 +83,6 @@ class Sites extends AbstractCollection implements ISites
 	public function destroy(array $obj, $options = array('safe'=>true))
 	{
 		$id=$obj['id'];
-		//print_r($obj);die();
 		$pages = \Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($id);
 		if($pages['ok']==1)
 		{
