@@ -2,7 +2,7 @@
     "id":"public",
     "label":{
     	"fr":"Acces aux parties publiques",
-    	"en":"access public parts"
+    	"en":"access public areas"
     },
     "rights":[
         "execute.controller.login.index.backoffice"
