@@ -41,7 +41,7 @@ class DamController extends Zend_Controller_Action
         if (! $mediaId) {
             throw new Exception('no id given');
         }
-        $media = $this->_dataService->findById($mediaId);
+        $media = Manager::getService('Dam')->findById($mediaId);
         if (! $media) {
             throw new Exception('no media found');
         }
