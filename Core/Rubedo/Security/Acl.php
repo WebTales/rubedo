@@ -30,6 +30,16 @@ class Acl implements IAcl
 {
 
     /**
+     * Path of the directory where role definition json are stored
+     * @var string
+     */
+    protected $_rolesDirectory;
+    
+    public function __construct(){
+        $this->_rolesDirectory = realpath(APPLICATION_PATH.'/configs/roles');
+    }
+    
+    /**
      * Check if the current user has access to a given resource for a given
      * access mode
      *
@@ -191,5 +201,36 @@ class Acl implements IAcl
             $aclArray[$value] = $object->hasAccess($value);
         }
         return $aclArray;
+    }
+    
+    public function getAvailaibleRoles(){
+        
+        $templateDirIterator = new \DirectoryIterator($this->_rolesDirectory);
+        if(!$templateDirIterator){
+            throw new \Exception('cannnot instanciate iterator for role dir');
+        }
+        
+        $rolesInfosArray = array();
+        
+        foreach ($templateDirIterator as $file){
+            if($file->isDot() || $file->isDir()){
+                continue;
+            }
+            if($file->getExtension()=='json'){
+                $roleJson = file_get_contents($file->getPathname());
+                $roleInfos = \Zend_Json::decode($roleJson);
+                unset($roleInfos['rights']);
+                $rolesInfosArray[]=$roleInfos;
+            }
+        
+        }
+        
+        $response = array();
+        $response['total'] = count($rolesInfosArray);
+        $response['data'] = $rolesInfosArray;
+        $response['success'] = TRUE;
+        $response['message'] = 'OK';
+        
+        return $response;
     }
 }
