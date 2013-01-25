@@ -203,6 +203,10 @@ class Acl implements IAcl
         return $aclArray;
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Security\IAcl::getAvailaibleRoles()
+     */
     public function getAvailaibleRoles(){
         
         $templateDirIterator = new \DirectoryIterator($this->_rolesDirectory);
@@ -219,6 +223,8 @@ class Acl implements IAcl
             if($file->getExtension()=='json'){
                 $roleJson = file_get_contents($file->getPathname());
                 $roleInfos = \Zend_Json::decode($roleJson);
+                $roleLabel = $roleInfos['label']['fr'];
+                $roleInfos['label'] = $roleLabel;
                 unset($roleInfos['rights']);
                 $rolesInfosArray[]=$roleInfos;
             }
