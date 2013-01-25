@@ -110,7 +110,7 @@ class FileController extends Zend_Controller_Action
 
     public function getThumbnailAction ()
     {
-        $this->_forward('index', 'file', 'default', array(
+        $this->_forward('index', 'image', 'default', array(
             'size' => 'thumbnail',
             'file-id' => null,
             'filepath' => realpath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png')
