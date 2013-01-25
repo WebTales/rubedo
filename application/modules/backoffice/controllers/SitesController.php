@@ -37,24 +37,13 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 		$this -> _dataService = Rubedo\Services\Manager::getService('Sites');
 	}
 	
-	public function deleteAction() {
-		$pages = Rubedo\Services\Manager::getService('Pages');
-		$masks = Rubedo\Services\Manager::getService('Masks');
-		
+	public function deleteAction() {	
 		$data = $this->getRequest()->getParam('data');
 
         if (!is_null($data)) {
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
-				$siteId = $data['id'];
-				$resultPages = $pages->deleteBySiteId($siteId);
-				$resultMasks = $masks->deleteBySiteId($siteId);
-				
-				if($resultPages['ok'] == 1 && $resultMasks['ok'] == 1){
-					$returnArray = $this->_dataService->deleteById($siteId);
-				} else {
-					$returnArray = array('success' => false, "msg" => 'Error during the deletion of masks and pages');
-				}
+					$returnArray=$this->_dataService->destroy($data);
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
             }
@@ -62,7 +51,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         } else {
             $returnArray = array('success' => false, "msg" => 'Invalid Data');
         }
-        if ($returnArray['ok']!=1) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
