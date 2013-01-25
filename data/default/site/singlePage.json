@@ -1,0 +1,67 @@
+{
+	"site": "",
+	"title": "single",
+	"maskId": "",
+	"excludeFromMenu": true,
+	"parentId": "root",
+	"description": "",
+	"keywords": [],
+	"blocks": [
+		{
+			"bType": "D\u00e9tail de contenu",
+			"canEdit": true,
+			"classHTML": null,
+			"displayTitle": null,
+			"flex": 1,
+			"id": "",
+			"idHTML": null,
+			"mType": "block",
+			"orderValue": 1,
+			"parentCol": "",
+			"title": "D\u00e9tail de contenu",
+			"urlPrefix": null,
+			"responsive": {
+				"phone": true,
+				"tablet": true,
+				"desktop": true
+			},
+			"configBloc": {
+				"recievesParam": true
+			},
+			"champsConfig": {
+				"avance": [],
+				"simple": [
+					{
+						"categorie": "Affichage",
+						"champs": [
+							{
+								"config": {
+									"fieldLabel": "Type d'affichage",
+									"name": "displayType"
+								},
+								"type": "Ext.form.field.Text"
+							}
+						]
+					}, {
+						"categorie": "Contenu",
+						"champs": [
+							{
+								"config": {
+									"fieldLabel": "Contenu \u00e0 afficher",
+									"name": "contentId"
+								},
+								"type": "Rubedo.view.FCCField"
+							}, {
+								"config": {
+									"fieldLabel": "Param\u00e8tre externe",
+									"name": "recievesParam"
+								},
+								"type": "Ext.form.field.Checkbox"
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}

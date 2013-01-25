@@ -37,24 +37,13 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 		$this -> _dataService = Rubedo\Services\Manager::getService('Sites');
 	}
 	
-	public function deleteAction() {
-		$pages = Rubedo\Services\Manager::getService('Pages');
-		$masks = Rubedo\Services\Manager::getService('Masks');
-		
+	public function deleteAction() {	
 		$data = $this->getRequest()->getParam('data');
 
         if (!is_null($data)) {
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
-				$siteId = $data['id'];
-				$resultPages = $pages->deleteBySiteId($siteId);
-				$resultMasks = $masks->deleteBySiteId($siteId);
-				
-				if($resultPages['ok'] == 1 && $resultMasks['ok'] == 1){
-					$returnArray = $this->_dataService->deleteById($siteId);
-				} else {
-					$returnArray = array('success' => false, "msg" => 'Error during the deletion of masks and pages');
-				}
+					$returnArray=$this->_dataService->destroy($data);
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
             }
@@ -62,7 +51,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         } else {
             $returnArray = array('success' => false, "msg" => 'Invalid Data');
         }
-        if ($returnArray['ok']!=1) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
@@ -81,213 +70,40 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 		{
 			$firstColumnId=(string) new MongoId();
 			$secondColumnId=(string) new MongoId();
-			$maskObj=array("site"=>$site['data']['id'],'text'=>"Default-Mask",
-			"rows"=>array(
-			0=>array(
-				"mType"=>"row",
-				"id"=>(string) new MongoId(),
-				"eTitle"=>"title",
-				"classHTML"=>null,
-				"idHTML"=>null,
-				"height"=>null,
-				"displayTitle"=>null,
-				"responsive"=>array("phone"=>true,"tablet"=>true,"desktop"=>true),
-				"columns"=>array(0=>array(
-					"mType"=>"col",
-					"id"=>$firstColumnId,
-					"eTitle"=>"title",
-					"classHTML"=>null,
-					"idHTML"=>null,
-					"displayTitle"=>null,
-					"span"=>12,
-					"offset"=>0,
-					"rows"=>null,
-					"isTerminal"=>true,
-					"responsive"=>array("phone"=>true,"tablet"=>true,"desktop"=>true),
-					))
-				),
-			1=>array(
-				"mType"=>"row",
-				"id"=>(string) new MongoId(),
-				"eTitle"=>"title",
-				"classHTML"=>null,
-				"idHTML"=>null,
-				"height"=>null,
-				"displayTitle"=>null,
-				"responsive"=>array("phone"=>true,"tablet"=>true,"desktop"=>true),
-				"columns"=>array(0=>array(
-					"mType"=>"col",
-					"id"=>$secondColumnId,
-					"eTitle"=>"title",
-					"classHTML"=>null,
-					"idHTML"=>null,
-					"displayTitle"=>null,
-					"span"=>12,
-					"offset"=>0,
-					"rows"=>null,
-					"isTerminal"=>true,
-					"responsive"=>array("phone"=>true,"tablet"=>true,"desktop"=>true),
-						))
-					)
-				),
-				"blocks"=>array(0=>array(
-					"bType" =>"Bloc de navigation" ,
-					"title"=>"Bloc de navigation",
-					"id" =>(string) new MongoId(), 
-					"parentCol" =>$firstColumnId,
-					"canEdit"=>null,
-					"mType" =>"block" ,
-					"classHTML"=>null,
-					"displayTitle"=>null,
-					"urlPrefix"=>null,
-					"flex"=>1,
-					"idHTML"=>null,
-					"orderValue"=>100,
-					"responsive"=>array("phone"=>true,"tablet"=>true,"desktop"=>true),
-					"configBloc"=>array(),
-					"champsConfig"=>array(
-						"avance"=>array(),
-						"simple"=>array(
-						0=>array(
-							"categorie"=>"Pages",
-							"champs"=>array(
-								0=>array(
-									"config"=>array(
-										"fieldLabel"=>"Racine",
-										"name"=>"rootPage"
-									),
-									"type"=>"Ext.ux.TreePicker",
-								),
-								1=>array(
-									"config"=>array(
-										"fieldLabel"=>"Page de recherche",
-										"name"=>"searchPage"
-									),
-									"type"=>"Ext.ux.TreePicker",
-								),
-								2=>array(
-									"config"=>array(
-										"fieldLabel"=>"Moteur de recherche",
-										"name"=>"useSearchEngine"
-										),
-										"type"=>"Ext.form.field.Checkbox",
-								),
-								)
-							)
-						)
-					)
-				)
-			)
-			);
+			$jsonMask=realpath(APPLICATION_PATH."/../data/default/site/mask.json");
+			$maskObj=(Zend_Json::decode(file_get_contents($jsonMask),true));
+			$maskObj['site']=$site['data']['id'];
+			$maskObj['rows'][0]['id']=(string) new MongoId();
+			$maskObj['rows'][1]['id']=(string) new MongoId();
+			$maskObj['rows'][0]['columns'][0]['id']=$firstColumnId;
+			$maskObj['rows'][1]['columns'][0]['id']=$secondColumnId;
+			$maskObj['blocks'][0]['id']=(string) new MongoId();
+			$maskObj['blocks'][0]['parentCol']=$firstColumnId;
+			
 			$mask=Rubedo\Services\Manager::getService('Masks')->create($maskObj,true);
 			if($mask['success']===true)
 			{
 				/*Create Home Page*/
-				$homePageObj=array("site"=>$site['data']['id'],'title'=>"accueil","maskId"=>$mask['data']['id'],"parentId"=>'root',"description"=>"","keywords"=>array(),"blocks"=>array());
+				$jsonHomePage=realpath(APPLICATION_PATH."/../data/default/site/homePage.json");
+				$homePageObj=(Zend_Json::decode(file_get_contents($jsonHomePage),true));
+				$homePageObj['site']=$site['data']['id'];
+				$homePageObj['maskId']=$mask['data']['id'];
 				$homePage=Rubedo\Services\Manager::getService('Pages')->create($homePageObj,true);
 				/*Create Single Page*/
-				$pageObj=array("site"=>$site['data']['id'],'title'=>"single","maskId"=>$mask['data']['id'],"excludeFromMenu"=>true,"parentId"=>'root',"description"=>"","keywords"=>array(),
-				"blocks"=>array(
-				0=>array(
-					"bType"=>"Détail de contenu",
-					"canEdit"=>true,
-					"classHTML"=>null,
-					"displayTitle"=>null,
-					"flex"=>1,
-					"id"=>(string) new MongoId(),
-					"idHTML"=>null,
-					"mType"=>"block",
-					"orderValue"=>1,
-					"parentCol"=>$secondColumnId,
-					"title"=>"Détail de contenu",
-					"urlPrefix"=>null,
-					"responsive"=>array("phone"=>true,"tablet"=>true,"desktop"=>true),
-					"configBloc"=>array("recievesParam"=>true),
-					"champsConfig"=>array(
-						"avance"=>array(),
-						"simple"=>array(
-							0=>array(
-								"categorie"=>"Affichage",
-								"champs"=>array(
-									0=>array(
-										"config"=>array(
-											"fieldLabel"=>"Type d'affichage",
-											"name"=>"displayType"
-										),
-										"type"=>"Ext.form.field.Text"
-									)
-								)
-							),
-							1=>array(
-								"categorie"=>"Contenu",
-								"champs"=>array(
-									0=>array(
-										"config"=>array(
-											"fieldLabel"=>"Contenu à afficher",
-											"name"=>"contentId"
-										),
-										"type"=>"Rubedo.view.FCCField"
-									),
-									1=>array(
-										"config"=>array(
-											"fieldLabel"=>"Paramètre externe",
-											"name"=>"recievesParam"
-										),
-										"type"=>"Ext.form.field.Checkbox"
-									)
-								)
-							)
-						)
-					)
-				)
-				));
-				$page=Rubedo\Services\Manager::getService('Pages')->create($pageObj,true);
+				$jsonSinglePage=realpath(APPLICATION_PATH."/../data/default/site/singlePage.json");
+				$singlePageObj=(Zend_Json::decode(file_get_contents($jsonSinglePage),true));
+				$singlePageObj['site']=$site['data']['id'];
+				$singlePageObj['maskId']=$mask['data']['id'];
+				$singlePageObj['blocks'][0]['id']=(string) new MongoId();
+				$singlePageObj['blocks'][0]['parentCol']=$secondColumnId;
+				$page=Rubedo\Services\Manager::getService('Pages')->create($singlePageObj,true);
 				/*Create Search Page*/
-				$searchPageObj=array("site"=>$site['data']['id'],'title'=>"search","excludeFromMenu"=>true,"maskId"=>$mask['data']['id'],"parentId"=>'root',"description"=>"","keywords"=>array(),
-				"blocks"=>array(
-				0=>array(
-				"bType"=>"Résultat de recherche",
-				"canEdit"=>true,
-				"classHTML"=>null,
-				"displayTitle"=> null,
-				"flex"=> 1,
-				"id"=>(string) new MongoId(),
-				"idHTML"=> null,
-				"mType"=> "block",
-				"orderValue"=> 1,
-				"responsive"=>array("phone"=>true,"tablet"=>true,"desktop"=>true),
-				"parentCol"=>$secondColumnId,
-				"title"=>"Résultat de recherche",
-				"urlPrefix"=>null,
-				"configBloc"=>array("constrainToSite"=>true),
-				"champsConfig"=>array(
-					"avance"=>array(),
-					"simple"=>array(
-						0=>array(
-							"categorie"=>"Filtrage",
-							"champs"=>array(
-								0=>array(
-									"config"=>array(
-										"fieldLabel"=>"Restreindre au site",
-										"name"=>"constrainToSite",
-									),
-									"type"=>"Ext.form.field.Checkbox"
-								),
-								1=>array(
-									"config"=>array(
-										"fieldLabel"=>"Filtres",
-										"name"=>"filters",
-
-									),
-									"type"=>"Ext.form.field.TextArea"
-								)
-							)
-						)
-					
-					)
-				)
-				)		
-				));
+				$jsonSearchPage=realpath(APPLICATION_PATH."/../data/default/site/searchPage.json");
+				$searchPageObj=(Zend_Json::decode(file_get_contents($jsonSearchPage),true));
+				$searchPageObj['site']=$site['data']['id'];
+				$searchPageObj['maskId']=$mask['data']['id'];
+				$searchPageObj['blocks'][0]['id']=(string) new MongoId();
+				$searchPageObj['blocks'][0]['parentCol']=$secondColumnId;
 				$searchPage=Rubedo\Services\Manager::getService('Pages')->create($searchPageObj,true);
 				if($page['success']===true)
 				{
