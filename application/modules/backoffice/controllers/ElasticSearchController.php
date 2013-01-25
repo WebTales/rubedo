@@ -42,9 +42,13 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         if (isset($params['limit'])) $params['pagesize'] = (int) $params['limit'];
 		if (isset($params['page'])) $params['pager'] = (int) $params['page']-1;
 		if (isset($params['sort'])) {
-			$params['orderBy'] = $params['sort']['property'];
-			$params['orderByDirection'] = $params['sort']['direction'];
+
+			$sort = Zend_Json::decode($params['sort']);
+			$params['orderby'] = ($sort[0]['property']=='score') ? '_score' : $sort[0]['property'];
+			$params['orderbyDirection'] = $sort[0]['direction'];
+
 		}
+
         $search = $query->search($params);
 
         $elasticaResultSet = $search["resultSet"];
@@ -66,7 +70,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 				$temp = array();
 				$tmp['id'] = $result->getId();
 				$tmp['typeId'] = $result->getType();
-				$tmp['score'] = $result->getScore();
+				$tmp['_score'] = $result->getScore();
 				$results['data'][] = array_merge($tmp,$result->getData());
 			}
 			foreach($elasticaFacets as $name => $facet) {
