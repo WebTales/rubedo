@@ -36,12 +36,21 @@ interface IDataIndex
     public function init ($host = null, $port= null);
 
     /**
-     * Get ES type structure
+     * Get ES content type structure
      *     
 	 * @param string $id content type id
      * @return array
      */
-    public function getTypeStructure ($id);
+    public function getContentTypeStructure ($id);
+
+    /**
+     * Get ES DAM type structure
+     *     
+	 * @param string $id content type id
+     * @return array
+     */
+    public function getDamTypeStructure ($id);
+
 
     /**
      * Index ES type for new or updated content type

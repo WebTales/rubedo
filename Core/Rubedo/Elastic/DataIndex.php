@@ -34,18 +34,15 @@ class DataIndex extends DataAbstract implements IDataIndex
 	 * @param string $id content type id
      * @return array
      */
-    public function getTypeStructure ($id) {
+    public function getContentTypeStructure ($id) {
     	
 		$returnArray=array();
 		$searchableFields=array('lastUpdateTime','text','summary','type','author');
     	
 		// Get content type config by id
-		$c = new \Rubedo\Mongo\DataAccess();
-		$c->init("ContentTypes");
-		$contentTypeConfig = $c->findById($id);
+		$contentTypeConfig = \Rubedo\Services\Manager::getService('ContentTypes')->findById($id);
 
-		// Search summary field
-		$summary="";
+		// Get indexable fields
 		$fields=$contentTypeConfig["fields"];
 		foreach($fields as $field) {
 			if ($field['config']['searchable']) {
@@ -56,7 +53,33 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$returnArray['searchableFields']=$searchableFields;
 		return $returnArray;	
     }
+
+    /**
+     * Get ES DAM type structure
+     *     
+	 * @param string $id DAM type id
+     * @return array
+     */
+    public function getDamTypeStructure ($id) {
+    	
+		$returnArray=array();
+		$searchableFields=array('lastUpdateTime','title','type','author');
+    	
+		// Get content type config by id
+		$DamTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
+
+		// Search summary field
+		$fields=$DamTypeConfig["fields"];
+		foreach($fields as $field) {
+			if ($field['config']['searchable']) {
+				$searchableFields[] = $field['config']['name'];
+			}	
+		}    
 		
+		$returnArray['searchableFields']=$searchableFields;
+		return $returnArray;	
+    }
+    		
     /**
      * Index ES type for new or updated content type
      *     
@@ -212,9 +235,8 @@ class DataIndex extends DataAbstract implements IDataIndex
         $typeId = $data['typeId'];
 		
 		// Retrieve type label
-		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
-		$ct->init("ContentTypes");	
-		$contentType = $ct->findById($typeId);
+
+		$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($typeId);
 		$type = $contentType['type'];
 					
 		// Load ES type 
@@ -222,7 +244,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     						->getType($typeId);
 		
 		// Get content type structure
-		$typeStructure = $this->getTypeStructure($typeId);
+		$typeStructure = $this->getContentTypeStructure($typeId);
 	
 		// Add fields to index	
 		$contentData = array();
@@ -349,9 +371,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$this->_document_index->create(self::$_document_index_param,true);	
 			
 		// Retreive all content types
-		$ct = \Rubedo\Services\Manager::getService('MongoDataAccess');
-		$ct->init("ContentTypes");
-		$contentTypeList = $ct->read();
+		$contentTypeList = \Rubedo\Services\Manager::getService('ContentTypes')->read();
 		
 		foreach($contentTypeList["data"] as $contentType) {
 			// Create content type with overwrite set to true
