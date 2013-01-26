@@ -79,7 +79,16 @@ interface IDataIndex
      * @return array
      */
     public function deleteContentType ($id);
-	
+
+    /**
+     * Delete existing content from index
+     *     
+	 * @param string $typeId content type id
+	 * @param string $id content id
+     * @return array
+     */
+    public function deleteContent ($typeId, $id);
+    		
     /**
      * Delete ES type for dam type
      *     
@@ -87,7 +96,16 @@ interface IDataIndex
      * @return array
      */
     public function deleteDamType ($id);
-		
+
+    /**
+     * Delete existing dam from index
+     *     
+	 * @param string $typeId content type id
+	 * @param string $id content id
+     * @return array
+     */
+    public function deleteDam ($typeId, $id);
+			
     /**
      * Create or update index for existing content
      *    

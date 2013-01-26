@@ -335,6 +335,21 @@ class DataIndex extends DataAbstract implements IDataIndex
     }
 	
     /**
+     * Delete existing content from index
+     *     
+	 * @see \Rubedo\Interfaces\IDataIndex::deleteContent()
+	 * @param string $typeId content type id
+	 * @param string $id content id
+     * @return array
+     */
+    public function deleteContent ($typeId, $id) {
+    	
+    	$type = new \Elastica_Type($this->_content_index, $typeId);
+    	$type->deleteById($id);
+		
+    }
+	
+    /**
      * Delete ES type for existing dam type
      *     
 	 * @see \Rubedo\Interfaces\IDataIndex::deleteDamType()
@@ -345,6 +360,21 @@ class DataIndex extends DataAbstract implements IDataIndex
     	
     	$type = new \Elastica_Type($this->_dam_index, $id);
     	$type->delete();
+		
+    }
+
+    /**
+     * Delete existing dam from index
+     *     
+	 * @see \Rubedo\Interfaces\IDataIndex::deleteDam()
+	 * @param string $typeId content type id
+	 * @param string $id content id
+     * @return array
+     */
+    public function deleteDam ($typeId, $id) {
+    	
+    	$type = new \Elastica_Type($this->_dam_index, $typeId);
+    	$type->deleteById($id);
 		
     }
 	

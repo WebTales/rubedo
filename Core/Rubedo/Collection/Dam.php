@@ -42,7 +42,35 @@ class Dam extends AbstractCollection implements IDam
             'id' => $obj['originalFileId']
         ));
         
-        return parent::destroy($obj, $options);
+        $returnArray = parent::destroy($obj, $options);
+        if ($returnArray["success"]) {
+            $this->_unIndexDam($obj);
+        }
+        return $returnArray;
+    }
+
+    /**
+     * Push the dam to Elastic Search
+     *
+     * @param array $obj            
+     */
+    protected function _indexDam ($obj)
+    {
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->indexDam($obj['id']);
+    }
+
+    /**
+     * Remove the content from Indexed Search
+     *
+     * @param array $obj            
+     */
+    protected function _unIndexDam ($obj)
+    {
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->deleteDam($obj['typeId'], $obj['id']);
     }
 
     /**
@@ -57,7 +85,13 @@ class Dam extends AbstractCollection implements IDam
             throw new \Exception('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
-        return parent::update($obj, $options);
+        $returnArray = parent::update($obj, $options);
+		
+		if ($returnArray["success"]) {
+            $this->_indexDam($returnArray['data']);
+        }
+		
+		return $returnArray;
     }
 
     /**
@@ -72,7 +106,13 @@ class Dam extends AbstractCollection implements IDam
             throw new \Exception('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
-        return parent::create ($obj, $options);
+        $returnArray = parent::create($obj, $options);
+		
+		if ($returnArray["success"]) {
+            $this->_indexDam($returnArray['data']);
+        }
+		
+		return $returnArray;
     }
 
 	public function getByType($typeId) {
