@@ -399,7 +399,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		} else {
 			$contentData['lastUpdateTime'] = 0;
 		}
-		if (isset($data['status'])) {
+		if (isset($data[$space]['status'])) {
 			$contentData['status'] = (string) $data[$space]['status'];
 		} else {
 			$contentData['status'] = "unknown";
