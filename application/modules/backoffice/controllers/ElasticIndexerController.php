@@ -31,9 +31,17 @@ class Backoffice_ElasticIndexerController extends Zend_Controller_Action
 {
     
 	public function indexAction() {
+		
+		// get params 
+		$params = $this->getRequest()->getParams();
+		
+		// get option : all, dam, content
+		
+		$option = isset($params['option']) ? $params['option'] : 'all';
+
 		$es = Rubedo\Services\Manager::getService('ElasticDataIndex');
-		$es->init();		
-		$return = $es->indexAllContent() ;
+		$es->init();	
+		$return = $es->indexAll($option);
 		$this->_helper->json($return);
 		
 	}

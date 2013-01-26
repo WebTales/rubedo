@@ -107,10 +107,11 @@ interface IDataIndex
     public function indexDam ($id);
 	
     /**
-     * Reindex all content
+     * Reindex all content or dam
+	 * @param string $option : dam, content or all
      *      
      * @return array
      */
-    public function indexAllContent ();
+    public function indexAll ($option);
 		
 }

@@ -174,9 +174,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 			}	
 		}
 		
-		// Add systems metadata : TODO update model text to title	
+		// Add systems metadata	
 		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["objectType"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
@@ -296,6 +297,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add systems metadata
 		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["objectType"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["damType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
@@ -368,7 +370,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         $typeId = $data['typeId'];
 		
 		// Retrieve type label
-
 		$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($typeId);
 		$type = $contentType['type'];
 					
@@ -393,6 +394,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		}
 
 		// Add default meta's
+		$contentData['objectType'] = 'content';
 		$contentData['contentType'] = $type;
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
@@ -493,6 +495,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
 		// Add default meta's
 		$damData['damType'] = $type;
+		$damData['objectType'] = 'dam';
 		$damData['text'] =  (string) $data['title'];
 		if (isset($data['lastUpdateTime'])) {
 			$damData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
@@ -566,69 +569,70 @@ class DataIndex extends DataAbstract implements IDataIndex
     }
 	
     /**
-     * Reindex all content
-     *      
+     * Reindex all content or dam
+	 * @param string $option : dam, content or all  
+	 *    
      * @return array
      */
-    public function indexAllContent () {
+    public function indexAll ($option='all') {
     	
 		// Initialize result array
 		$result = array();
 		
-		// Destroy and re-create content index
-		@$this->_content_index->delete();
-		$this->_content_index->create(self::$_content_index_param,true);
-			
-		// Retreive all content types
-		$contentTypeList = \Rubedo\Services\Manager::getService('ContentTypes')->getList();
-		
-		foreach($contentTypeList["data"] as $contentType) {
-			// Create content type with overwrite set to true
-			$this->indexContentType($contentType["id"],$contentType,TRUE);
-			// Index all contents from type
-			$contentList = \Rubedo\Services\Manager::getService('Contents')->getByType($contentType["id"]);
-			$contentCount = 0;
-			foreach($contentList["data"] as $content) {
-				$this->indexContent($content["id"]);
-				$contentCount++;
-			}
-			$result[$contentType["type"]]=$contentCount;
+		if ($option=='all' or $option=='content') {
+			// Destroy and re-create content index
+			@$this->_content_index->delete();
+			$this->_content_index->create(self::$_content_index_param,true);
 		}
+	
+		if ($option=='all' or $option=='dam') {
+			// Destroy and re-create dam index
+			@$this->_dam_index->delete();
+			$this->_dam_index->create(self::$_dam_index_param,true);
+		}
+		
+		if ($option=='all' or $option=='content') {
+						
+			// Retreive all content types
+			$contentTypeList = \Rubedo\Services\Manager::getService('ContentTypes')->getList();
+			
+			foreach($contentTypeList["data"] as $contentType) {
+				// Create content type with overwrite set to true
+				$this->indexContentType($contentType["id"],$contentType,TRUE);
+				// Index all contents from type
+				$contentList = \Rubedo\Services\Manager::getService('Contents')->getByType($contentType["id"]);
+				$contentCount = 0;
+				foreach($contentList["data"] as $content) {
+					$this->indexContent($content["id"]);
+					$contentCount++;
+				}
+				$result[$contentType["type"]]=$contentCount;
+			}
+		}
+		
+		if ($option=='all' or $option=='dam') {
+		
+			// Retreive all dam types
+			$damTypeList = \Rubedo\Services\Manager::getService('DamTypes')->getList();
+		
+			foreach($damTypeList["data"] as $damType) {
+				// Create dam type with overwrite set to true
+				$this->indexdamType($damType["id"],$damType,TRUE);
+				// Index all dams from type
+				$damList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
+				$damCount = 0;
+				foreach($damList["data"] as $dam) {
+					$this->indexDam($dam["id"]);
+					$damCount++;
+				}
+				$result[$damType["type"]]=$damCount;
+			}
+		}
+		
+		
 		return($result);
 
     }
 	
-    /**
-     * Reindex all dam
-     *      
-     * @return array
-     */
-    public function indexAllDam () {
-    	
-		// Initialize result array
-		$result = array();
-		
-		// Destroy and re-create content index
-		@$this->_dam_index->delete();
-		$this->_dam_index->create(self::$_dam_index_param,true);
-			
-		// Retreive all dam types
-		$damTypeList = \Rubedo\Services\Manager::getService('DamTypes')->getList();
-		
-		foreach($damTypeList["data"] as $damType) {
-			// Create dam type with overwrite set to true
-			$this->indexdamType($damType["id"],$damType,TRUE);
-			// Index all dams from type
-			$damList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
-			$damCount = 0;
-			foreach($damList["data"] as $dam) {
-				$this->indexDam($dam["id"]);
-				$damCount++;
-			}
-			$result[$damType["type"]]=$damCount;
-		}
-		return($result);
-
-    }
 	
 }

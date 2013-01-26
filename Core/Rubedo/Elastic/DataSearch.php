@@ -33,7 +33,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      * ES search
      *     
 	 * @see \Rubedo\Interfaces\IDataSearch::search()
-	 * @params array $params search parameters : query, type, lang, author, date, taxonomy, pager, orderby, pagesize
+	 * @params array $params search parameters : query, type, damtype, lang, author, date, taxonomy, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
     public function search (array $params, $option = 'all') {
@@ -96,7 +96,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$filters['query']=$params['query'];
 			}
 			
-			// filter on type
+			// filter on content type
 			if (array_key_exists('type',$params)) {
 				$typeFilter = new \Elastica_Filter_Term();
         		$typeFilter->setTerm('contentType', $params['type']);
@@ -104,7 +104,16 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$filters["type"]=$params['type'];
 				$setFilter = true;
 			}
-			
+
+			// filter on dam type
+			if (array_key_exists('damType',$params)) {
+				$typeFilter = new \Elastica_Filter_Term();
+        		$typeFilter->setTerm('damType', $params['damType']);
+				$globalFilter->addFilter($typeFilter);
+				$filters["damType"]=$params['damType'];
+				$setFilter = true;
+			}
+						
 			// filter on author
 			if (array_key_exists('author',$params)) {
 				$authorFilter = new \Elastica_Filter_Term();
@@ -162,9 +171,19 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$elasticaFacetType->setSize(10);
 			$elasticaFacetType->setOrder('reverse_count');
 			if ($setFilter) $elasticaFacetType->setFilter($globalFilter);
-						
+
 			// Add type facet to the search query object.
 			$elasticaQuery->addFacet($elasticaFacetType);
+			
+			// Define the dam type facet.
+			$elasticaFacetDamType = new \Elastica_Facet_Terms('damType');
+			$elasticaFacetDamType->setField('damType');
+			$elasticaFacetDamType->setSize(10);
+			$elasticaFacetDamType->setOrder('reverse_count');
+			if ($setFilter) $elasticaFacetDamType->setFilter($globalFilter);
+									
+			// Add dam type facet to the search query object.
+			$elasticaQuery->addFacet($elasticaFacetDamType);
 			
 			// Define the author facet.
 			$elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
