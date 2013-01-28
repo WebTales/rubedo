@@ -72,6 +72,7 @@ class XhrEditController extends Zend_Controller_Action
                 $returnArray = $this->_dataService->update($baseData, array(
                     'safe' => true
                 ), true);
+                
             }
         } else {
             $returnArray['success'] = false;
@@ -80,6 +81,7 @@ class XhrEditController extends Zend_Controller_Action
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
+        
         return $this->_helper->json($returnArray);
     }
 }

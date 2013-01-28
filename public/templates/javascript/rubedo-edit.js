@@ -2,6 +2,7 @@
 jQuery('#contentToolBar').css('top','0');
 jQuery('#contentToolBar').show();
 
+
 CKEDITOR.on( 'instanceCreated', function( event ) {
 	var editor = event.editor,element = editor.element;
 	editor.config.entities = false;
@@ -116,8 +117,44 @@ function undo(editor) {
 	}
 }
 
-function save(id,data) {
-	jQuery.post("/xhr-edit", { 'id': id, 'data': data},
-   function(result) {
-   });
+function save(id, data) {
+	jQuery.ajax({
+		type : 'POST',
+		url : "/xhr-edit",
+		data : {
+			'id' : id,
+			'data' : data
+		},
+		"success": function (data, textStatus, jqXHR) {
+			notify('success', 'Les données ont été sauvegardées.');
+	    },
+	    "error": function (jqXHR, textStatus, errorThrown) {
+	    	var response = jqXHR.responseText;
+	    	var responseObject = jQuery.parseJSON(response);
+	    	var returnMsg = responseObject.msg;
+	    	if(returnMsg == "Content already have a draft version"){
+	    		returnMsg = 'Un brouillon empêche les modifications.';
+	    	}
+	    	notify('failure', returnMsg);
+	    }
+	});
+}
+
+
+
+function notify(notify_type, msg) {
+	
+	var alerts = jQuery('#alerts');
+	alerts.append('<div id="alert"></div>');
+	var alert = jQuery('#alert');
+	alert.append('<a class="close" data-dismiss="alert" href="#">&times;</a>');
+	alert.append(msg);
+	
+	if (notify_type == 'success') {
+		
+		alert.addClass('alert alert-success').fadeIn('fast');
+	}
+	if (notify_type == 'failure') {
+		alert.addClass('alert alert-error').fadeIn('fast');
+	}
 }
