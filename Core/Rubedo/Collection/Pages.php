@@ -120,4 +120,36 @@ class Pages extends AbstractCollection implements IPages
 		return $this->_dataService->customDelete(array('site' => $id));
 	}
 	
+	public function clearOrphanPages() {
+		$masksService = Manager::getService('Masks');
+		
+		$result = $masksService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$masksArray[] = $value['id'];
+		}
+
+		$result = $this->customDelete(array('maskId' => array('$nin' => $masksArray)));
+		
+		if($result['ok'] == 1){
+			return array('success' => 'true');
+		} else {
+			return array('success' => 'false');
+		}
+	}
+	
+	public function countOrphanPages() {
+		$masksService = Manager::getService('Masks');
+
+		$result = $masksService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$masksArray[] = $value['id'];
+		}
+		
+		return $this->count(array(array('property' => 'maskId', 'operator' => '$nin', 'value' => $masksArray)));
+	}
+	
 }
