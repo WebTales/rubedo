@@ -92,5 +92,13 @@ interface IAbstractCollection {
      * @return integer
      */
     public function count($filters = null);
+    
+    /**
+     * return a list with its parent-line
+     *
+     * @param array $filters
+     * @return array:
+     */
+    public function getListWithAncestors ($filters = null);
 
 }
