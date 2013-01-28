@@ -15,6 +15,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
+use Rubedo\Services\Manager;
+
 /**
  * Controller providing action concerning the current user
  *
@@ -52,15 +54,15 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
     public function init() {
         parent::init();
 
-        $this->_auth = \Rubedo\Services\Manager::getService('Authentication');
-		$this->_currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+        $this->_auth = Manager::getService('Authentication');
+		$this->_currentUserService = Manager::getService('CurrentUser');
 		
 		// refuse write action not send by POST
         if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
             throw new \Exception("You can't call a write action with a GET request");
         } else {
         	if(!in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)){
-        		$user = $sessionService->get('user');
+        		$user = Manager::getService('Session')->get('user');
         		$token = $this->getRequest()->getParam('token');
 				
 				if($token !== $user['token']){
@@ -76,7 +78,7 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
      * @return array
      */
     public function indexAction() {
-        $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+        $currentUserService = Manager::getService('CurrentUser');
         $response = $currentUserService->getCurrentUser();
 
         if (!is_null($response)) {
@@ -93,7 +95,7 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
      * Update the current values for the user
      */
     public function updateAction() {
-        $usersService = \Rubedo\Services\Manager::getService('Users');
+        $usersService = Manager::getService('Users');
         $data = $this->getRequest()->getParam('data');
 
         if (!is_null($data)) {
@@ -132,7 +134,7 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
         $newPassword = $this->getRequest()->getParam('newPassword');
 
         if (is_string($oldPassword) && is_string($newPassword)) {
-            $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+            $currentUserService = Manager::getService('CurrentUser');
             $result = $currentUserService->changePassword($oldPassword, $newPassword);
         } else {
             $result = false;
