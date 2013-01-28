@@ -26,9 +26,9 @@
  *
  */
  
- 
- 
 class Backoffice_ElasticSearchController extends Zend_Controller_Action {
+	
+	protected $_option = 'all';
 	 
 	public function indexAction() {
 		
@@ -37,7 +37,9 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		
 		// get option : all, dam, content
 		
-		$option = isset($params['option']) ? $params['option'] : 'all';
+		if (isset($params['option'])) {
+			$this->_option = $params['option'];
+		}
 		
 		// search over every sites
 		$params['site']=null;
@@ -45,17 +47,19 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         
         $query->init();
-        if (isset($params['limit'])) $params['pagesize'] = (int) $params['limit'];
-		if (isset($params['page'])) $params['pager'] = (int) $params['page']-1;
+        if (isset($params['limit'])) {
+        	$params['pagesize'] = (int) $params['limit'];
+		}
+		if (isset($params['page'])) {
+			$params['pager'] = (int) $params['page']-1;
+		}
 		if (isset($params['sort'])) {
-
 			$sort = Zend_Json::decode($params['sort']);
 			$params['orderby'] = ($sort[0]['property']=='score') ? '_score' : $sort[0]['property'];
 			$params['orderbyDirection'] = $sort[0]['direction'];
-
 		}
 
-        $search = $query->search($params,$option);
+        $search = $query->search($params,$this->_option);
 
         $elasticaResultSet = $search["resultSet"];
 		if (is_array($search["filters"])) {
