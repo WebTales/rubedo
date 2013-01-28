@@ -320,61 +320,37 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         return self::$_termsArray[$id];
     }
 
-    /**
-     * Clear orphan terms in the collection
-     *
-     * @return array Result of the request
-     */
-    public function clearOrphanTerms ()
-    {
-        $taxonomy = \Rubedo\Services\Manager::getService('Taxonomy');
-        $orphans = array();
-        $erreur = false;
-        
-        $terms = $this->getList();
-        $terms = $terms['data'];
-        
-        foreach ($terms as $value) {
-            if (isset($value['vocabularyId'])) {
-                $vocabulary = $taxonomy->findById($value['vocabularyId']);
-                
-                if (! $vocabulary) {
-                    $orphans[] = $value;
-                } else {
-                    if (isset($value['parentId'])) {
-                        if (! $value['parentId'] == "root") {
-                            $parent = $this->findById($value['parentId']);
-                            
-                            if (! $parent) {
-                                $orphans[] = $value;
-                            }
-                        }
-                    } else {
-                        $orphans[] = $value;
-                    }
-                }
-            } else {
-                $orphans[] = $value;
-            }
-        }
-        
-        foreach ($orphans as $value) {
-            $result = $this->destroy($value);
-            
-            if (! $result['success']) {
-                $erreur = true;
-            }
-        }
-        
-        if (! $erreur) {
-            $response['success'] = true;
-            $response['data'] = $orphans;
-        } else {
-            $response['success'] = false;
-        }
-        
-        return $response;
-    }
+    public function clearOrphanTerms() {
+		$taxonomyService = Manager::getService('Taxonomy');
+		
+		$result = $taxonomyService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$taxonomyArray[] = $value['id'];
+		}
+
+		$result = $this->customDelete(array('vocabularyId' => array('$nin' => $taxonomyArray)));
+		
+		if($result['ok'] == 1){
+			return array('success' => 'true');
+		} else {
+			return array('success' => 'false');
+		}
+	}
+	
+	public function countOrphanTerms() {
+		$taxonomyService = Manager::getService('Taxonomy');
+
+		$result = $taxonomyService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$taxonomyArray[] = $value['id'];
+		}
+		
+		return $this->count(array(array('property' => 'vocabularyId', 'operator' => '$nin', 'value' => $taxonomyArray)));
+	}
 
     /**
      * Allow to find terms by their vocabulary
