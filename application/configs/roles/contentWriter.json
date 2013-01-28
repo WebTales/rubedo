@@ -1,0 +1,14 @@
+{
+    "id":"contentWriter",
+    "label":{
+    	"fr":"Rédaction des contenus",
+    	"en":"Can writer contents"
+    },
+    "rights":[
+        "[a-z]+.ui.contents$",
+        "read.ui.contents.[a-z]+",
+        "write.ui.contents.draft",
+        "write.ui.contents.draftToPending",
+        "execute.controller.contents.@dot*"       
+    ]
+}

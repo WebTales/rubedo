@@ -1,0 +1,20 @@
+{
+    "id":"backoffice",
+    "label":{
+    	"fr":"Utilisation du back-office",
+    	"en":"Use backoffice"
+    },
+    "rights":[
+        "execute.controller.index.@dot*.backoffice",
+        "execute.controller.logout.index.backoffice",
+        "execute.controller.current-user.@dot*.backoffice",
+        "execute.controller.personal-prefs.@dot*.backoffice",
+        "execute.controller.acl.index.backoffice",
+        "execute.controller.wallpapers.@dot*.backoffice",
+        "execute.controller.themes.index.backoffice",
+        "execute.controller.icons.@dot*.backoffice",
+        "execute.controller.content-types.index.backoffice",
+        "execute.controller.taxonomy.index.backoffice",
+        "execute.controller.elastic-search.index.backoffice"
+    ]
+}

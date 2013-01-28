@@ -2,9 +2,13 @@
     "id":"public",
     "label":{
     	"fr":"Acces aux parties publiques",
-    	"en":"access public areas"
+    	"en":"Access public areas"
     },
     "rights":[
-        "execute.controller.login.index.backoffice"
+        "execute.controller.login.index.backoffice",
+        "execute.controller.xhr-authentication.login.backoffice",
+        "execute.controller.current-user.get-token.backoffice",
+        "execute.controller.index.index.backoffice",
+        "execute.controller.@dot*.@dot*.default"
     ]
 }

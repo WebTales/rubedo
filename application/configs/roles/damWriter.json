@@ -1,0 +1,13 @@
+{
+    "id":"damWriter",
+    "label":{
+    	"fr":"Edition de document du DAM",
+    	"en":"Can write DAM contents"
+    },
+    "rights":[
+        "write.ui.medias",
+        "read.ui.medias",
+        "execute.controller.dam-types.index.backoffice",
+        "execute.controller.dam.@dot*.backoffice"
+    ]
+}

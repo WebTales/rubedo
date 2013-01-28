@@ -1,0 +1,14 @@
+{
+    "id":"damReader",
+    "label":{
+    	"fr":"Consultation du DAM",
+    	"en":"Can read DAM contents"
+    },
+    "rights":[
+        "read.ui.medias",
+        "execute.controller.dam-types.index.backoffice",
+        "execute.controller.dam.index.backoffice",
+        "execute.controller.dam.get-thumbnail.backoffice",
+        "execute.controller.dam.get.backoffice" 
+    ]
+}
