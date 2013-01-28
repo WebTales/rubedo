@@ -1,4 +1,8 @@
+{% extends "root/block.html.twig" %} 
+
+{% block mainContent %}
 <div id="{{ id }}">
 	<h2>{{ title }}</h2>
 	<iframe width="{{ width }}" height="{{ height }}" frameborder="{{ frameborder }}" scrolling="{{ scrolling }}" marginheight="{{ marginheight }}" marginwidth="{{ marginwidth }}" src="{{ src }}"></iframe>
 </div>
+{% endblock %}

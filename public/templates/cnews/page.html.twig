@@ -103,7 +103,7 @@
 			style="margin-left: -30px; margin-right: -30px; padding-top: 5px; padding-bottom: 5px;"></div>
 
 		{% block pageMainContent %} {% if rows %} {% for row in rows %} {%
-		include row.template with row only %} {% endfor %} {% endif %} {%
+		include row.template with row %} {% endfor %} {% endif %} {%
 		endblock %}
 
 	</div>

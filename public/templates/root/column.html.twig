@@ -6,12 +6,12 @@
 	<!-- process nested rows & blocks -->
 	{% if blocks %}
 		{% for block in blocks %}
-			{% include [block.template,'root/block.html.twig'] with block.data only %}
+			{% include [block.template,'root/block.html.twig'] with block.data %}
 		{% endfor %}
 	{% endif %}
 	{% if rows %}
 		{% for row in rows %}
-				{% include row.template with row only %}
+				{% include row.template with row %}
 		{% endfor %}
 	{% endif %}
 </div>

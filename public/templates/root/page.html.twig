@@ -79,7 +79,7 @@
 	{% endif %} {% endblock %} {% block pageMainContent %}
 
 	<div class="container container-fluid">{% if rows %} {% for row in rows
-		%} {% include row.template with row only %} {% endfor %} {% endif %}</div>
+		%} {% include row.template with row %} {% endfor %} {% endif %}</div>
 	{% endblock %}
 
 	<!--/.fluid-container-->

@@ -40,8 +40,10 @@ class Blocks_MenuController extends Blocks_AbstractController
 		
 		$output['rootPage'] = $rootPage;
 		$output['pages'] = array();
+		
+		$excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
 		     
-        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage']);
+        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],array($excludeFromMenuCondition));
 
         foreach ($levelOnePages as $page) {
             $tempArray = array();
@@ -50,7 +52,7 @@ class Blocks_MenuController extends Blocks_AbstractController
             ), null, true);
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
-            $levelTwoPages = Manager::getService('Pages')->readChild($page['id']);
+            $levelTwoPages = Manager::getService('Pages')->readChild($page['id'],array($excludeFromMenuCondition));
             if (count($levelTwoPages)) {
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {

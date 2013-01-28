@@ -8,7 +8,7 @@
 	<!-- process columns -->
 	{% if columns %}
 		{% for column in columns %}
-			{% include column.template with column only %}
+			{% include column.template with column %}
 		{% endfor %}
 	{% endif %}
 </div>

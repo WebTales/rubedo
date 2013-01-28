@@ -54,7 +54,6 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
             if($pageId == $currentPage){
                 continue;
             }
-            
             $rootlineArray[] = Manager::getService('Pages')->findById($pageId);
             if($pageId == $rootPage){
                 break;
