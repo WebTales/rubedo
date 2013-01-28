@@ -43,6 +43,11 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected $_dataService;
 
+    /**
+     * description of content data structure
+     * 
+     * @var array
+     */
     protected $_model = array();
 
     protected function _init ()
@@ -110,6 +115,12 @@ abstract class AbstractCollection implements IAbstractCollection
         return $dataValues;
     }
 
+    /**
+     * return a list with its parent-line
+     * 
+     * @param array $filters
+     * @return array:
+     */
     public function getListWithAncestors ($filters = null)
     {
         $returnArray = array();
@@ -123,6 +134,14 @@ abstract class AbstractCollection implements IAbstractCollection
         return $listResult;
     }
 
+    /**
+     * add parent-line of an item to an array
+     * 
+     * @param array $array
+     * @param array $item
+     * @param int $max
+     * @return array
+     */
     protected function _addParentToArray ($array, $item, $max = 5)
     {
         if (isset($array[$item['id']])) {
