@@ -45,7 +45,7 @@ abstract class AbstractCollection implements IAbstractCollection
 
     /**
      * description of content data structure
-     * 
+     *
      * @var array
      */
     protected $_model = array();
@@ -117,8 +117,8 @@ abstract class AbstractCollection implements IAbstractCollection
 
     /**
      * return a list with its parent-line
-     * 
-     * @param array $filters
+     *
+     * @param array $filters            
      * @return array:
      */
     public function getListWithAncestors ($filters = null)
@@ -136,10 +136,10 @@ abstract class AbstractCollection implements IAbstractCollection
 
     /**
      * add parent-line of an item to an array
-     * 
-     * @param array $array
-     * @param array $item
-     * @param int $max
+     *
+     * @param array $array            
+     * @param array $item            
+     * @param int $max            
      * @return array
      */
     protected function _addParentToArray ($array, $item, $max = 5)
@@ -156,7 +156,7 @@ abstract class AbstractCollection implements IAbstractCollection
         }
         
         $parentItem = Manager::getService('Groups')->findById($item['parentId']);
-
+        
         if ($parentItem) {
             $array[$parentItem['id']] = $parentItem;
             $array = $this->_addParentToArray($array, $parentItem, $max - 1);
@@ -193,6 +193,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @deprecated
      *
      *
+     *
      * @param array $value
      *            search condition
      * @return array
@@ -205,6 +206,7 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      * @param unknown $filter            
@@ -222,6 +224,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * Shouldn't be used if doing a simple update action
      *
      * @deprecated
+     *
      *
      *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
@@ -278,7 +281,7 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         $domainClassName = 'Rubedo\\Domains\\' . ucfirst($domain);
         if (! class_exists($domainClassName)) {
-            throw new Exception('domain not defined :' . (string) $domain);
+            throw new \Exception('domain not defined :' . (string) $domain);
         }
         return $domainClassName::isValid($data);
     }
@@ -355,6 +358,7 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      * @param unknown $deleteCond            
