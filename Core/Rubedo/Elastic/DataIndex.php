@@ -63,7 +63,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getDamTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','type','author');
+		$searchableFields=array('lastUpdateTime','text','type','author','fileSize');
     	
 		// Get content type config by id
 		$damTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
@@ -301,6 +301,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["damType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["fileSize"] = array('type' => 'integer', 'store' => 'yes');
+		$indexMapping["file"] = array('type' => 'attachment', 'store' => 'no');
+		
 		foreach($vocabularies as $vocabularyName) {
 			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
 		}
@@ -527,6 +530,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$damData['damType'] = $type;
 		$damData['objectType'] = 'dam';
 		$damData['text'] =  (string) $data['title'];
+		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
+		$damData['fileSize'] = $fileSize;
 		if (isset($data['lastUpdateTime'])) {
 			$damData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		} else {
@@ -565,8 +570,8 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
          }
 		$currentDam = new \Elastica_Document($id, $damData);
-		
-		if (isset($damData['originalFileId']) && $damData['originalFileId'] != '') {
+
+		if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
 				
 			$indexedFiles = array(
 			'application/pdf',
@@ -584,10 +589,11 @@ class DataIndex extends DataAbstract implements IDataIndex
 			'application/vnd.oasis.opendocument.spreadsheet',
 			'application/vnd.oasis.opendocument.presentation'
 			);
-			$mime = explode(';',$damData['Content-Type']);
-			if (array_key_exists($mime[0],$indexedFiles)) {
-				$mongoFile = \Rubedo\Services\Manager::getService('File')->FindById($damData['originalFileId']);
-				$currentDocument->addFile('file', $mongoFile->getBytes());
+			$mime = explode(';',$data['Content-Type']);
+
+			if (in_array($mime[0],$indexedFiles)) {
+				$mongoFile = \Rubedo\Services\Manager::getService('Files')->FindById($data['originalFileId']);
+				$currentDam->addFileContent('file', $mongoFile->getBytes());
 			}
 		}
 		
