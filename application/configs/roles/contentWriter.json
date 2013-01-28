@@ -9,6 +9,11 @@
         "read.ui.contents.[a-z]+",
         "write.ui.contents.draft",
         "write.ui.contents.draftToPending",
-        "execute.controller.contents.@dot*"       
+        "execute.controller.contents.@dot*",
+        "execute.controller.versioning.index.backoffice",
+        "execute.controller.taxonomy-terms.index.backoffice"      
+    ],
+    "includes":[
+        "backoffice"
     ]
 }

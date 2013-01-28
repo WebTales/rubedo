@@ -5,7 +5,7 @@
     	"en":"Can review contents"
     },
     "rights":[
-        "[a-z]+.ui.contents",
+        "[a-z]+.ui.contents$",
         "read.ui.contents.[a-z]+",
         "write.ui.contents.draft",
         "write.ui.contents.draftToPending",
@@ -22,5 +22,8 @@
         "read.ui.masks",
         "read.ui.users",
         "read.ui.contentTypes"
+    ],
+    "includes":[
+        "contentWriter"
     ]
 }

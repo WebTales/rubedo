@@ -9,5 +9,8 @@
         "read.ui.medias",
         "execute.controller.dam-types.index.backoffice",
         "execute.controller.dam.@dot*.backoffice"
+    ],
+    "includes":[
+        "damReader"
     ]
 }

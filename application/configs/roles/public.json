@@ -9,6 +9,6 @@
         "execute.controller.xhr-authentication.login.backoffice",
         "execute.controller.current-user.get-token.backoffice",
         "execute.controller.index.index.backoffice",
-        "execute.controller.@dot*.@dot*.default"
+        "execute.controller.@.get-thumbnail.default"
     ]
 }
