@@ -28,6 +28,7 @@ use Rubedo\Services\Manager;
  */
 abstract class AbstractCollection implements IAbstractCollection
 {
+
     /**
      * name of the collection
      *
@@ -38,19 +39,21 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * data access service
      *
-     * @var\Rubedo\Mongo\DataAccess
+     * @var \Rubedo\Mongo\DataAccess
      */
     protected $_dataService;
-    
+
     protected $_model = array();
-    
-    protected function _init() {
+
+    protected function _init ()
+    {
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
         $this->_dataService->init($this->_collectionName);
     }
 
-    public function __construct() {
+    public function __construct ()
+    {
         $this->_init();
     }
 
@@ -63,17 +66,28 @@ abstract class AbstractCollection implements IAbstractCollection
      *            sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null, $start = null, $limit = null) {
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
         if (isset($filters)) {
             foreach ($filters as $value) {
-                if ((!(isset($value["operator"]))) || ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(array($value["property"] => $value["value"]));
-                } else if ($value["operator"] == 'like') {
-                    $this->_dataService->addFilter(array($value["property"] => array('$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i'))));
-                } elseif (isset($value["operator"])) {
-                    $this->_dataService->addFilter(array($value["property"] => array($value["operator"] => $value["value"])));
-                }
-
+                if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(array(
+                        $value["property"] => $value["value"]
+                    ));
+                } else 
+                    if ($value["operator"] == 'like') {
+                        $this->_dataService->addFilter(array(
+                            $value["property"] => array(
+                                '$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i')
+                            )
+                        ));
+                    } elseif (isset($value["operator"])) {
+                        $this->_dataService->addFilter(array(
+                            $value["property"] => array(
+                                $value["operator"] => $value["value"]
+                            )
+                        ));
+                    }
             }
         }
         if (isset($sort)) {
@@ -90,29 +104,67 @@ abstract class AbstractCollection implements IAbstractCollection
         if (isset($limit)) {
             $this->_dataService->setNumberOfResults($limit);
         }
-
+        
         $dataValues = $this->_dataService->read();
         
         return $dataValues;
     }
 
+    public function getListWithAncestors ($filters = null)
+    {
+        $returnArray = array();
+        $listResult = $this->getList($filters);
+        $list = $listResult['data'];
+        foreach ($list as $item) {
+            $returnArray = $this->_addParentToArray($returnArray, $item);
+        }
+        $listResult['count'] = count($returnArray);
+        $listResult['data'] = array_values($returnArray);
+        return $listResult;
+    }
+
+    protected function _addParentToArray ($array, $item, $max = 5)
+    {
+        if (isset($array[$item['id']])) {
+            return $array;
+        }
+        $array[$item['id']] = $item;
+        if ($item['parentId'] == 'root') {
+            return $array;
+        }
+        if (isset($array[$item['parentId']])) {
+            return $array;
+        }
+        
+        $parentItem = Manager::getService('Groups')->findById($item['parentId']);
+
+        if ($parentItem) {
+            $array[$parentItem['id']] = $parentItem;
+            $array = $this->_addParentToArray($array, $parentItem, $max - 1);
+        }
+        
+        return $array;
+    }
+
     /**
      * Find an item given by its literral ID
-     * 
+     *
      * @param string $contentId            
      * @return array
      */
-    public function findById($contentId) {
+    public function findById ($contentId)
+    {
         return $this->_dataService->findById($contentId);
     }
 
     /**
      * Find an item given by its name (find only one if many)
-     * 
+     *
      * @param string $name            
      * @return array
      */
-    public function findByName($name) {
+    public function findByName ($name)
+    {
         return $this->_dataService->findByName($name);
     }
 
@@ -120,41 +172,50 @@ abstract class AbstractCollection implements IAbstractCollection
      * Do a findone request
      *
      * @deprecated
+     *
+     *
      * @param array $value
      *            search condition
      * @return array
      */
-    public function findOne ($value) {
-    	return $this->_dataService->findOne($value);
+    public function findOne ($value)
+    {
+        return $this->_dataService->findOne($value);
     }
 
     /**
+     *
      * @deprecated
-     * @param unknown $filter
-     * @param unknown $fieldRule
+     *
+     *
+     * @param unknown $filter            
+     * @param unknown $fieldRule            
      * @return MongoCursor
      */
-    public function customFind ($filter = array(), $fieldRule = array()){
-	return $this->_dataService->customFind($filter,$fieldRule);			
+    public function customFind ($filter = array(), $fieldRule = array())
+    {
+        return $this->_dataService->customFind($filter, $fieldRule);
     }
-    
+
     /**
      * Update an objet in the current collection
      *
      * Shouldn't be used if doing a simple update action
      *
      * @deprecated
+     *
+     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
      * @param array $updateCond
      *            array of condition to determine what should be updated
-     * @param array $options
+     * @param array $options            
      * @return array
      */
     public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
     {
-        return $this->_dataService->customUpdate ($data, $updateCond, $options);
+        return $this->_dataService->customUpdate($data, $updateCond, $options);
     }
 
     /**
@@ -163,65 +224,67 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj
      *            data object
-     * @param array $options
+     * @param array $options            
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true)) {
-        if(count($this->_model)>0){
+    public function create (array $obj, $options = array('safe'=>true))
+    {
+        if (count($this->_model) > 0) {
             $obj = $this->_filterInputData($obj);
         }
         return $this->_dataService->create($obj, $options);
     }
-    
+
     /**
      * Return validated data from input data based on collection rules
      *
-     * @param array $obj
+     * @param array $obj            
      * @return array:
      */
     protected function _filterInputData (array $obj)
     {
-        //do verify $obj structure based on $_model
+        // do verify $obj structure based on $_model
         return $obj;
     }
-    
+
     /**
      * Is the data a valid input for the domain
-     * 
-     * @param mixed $data
-     * @param string $domain
+     *
+     * @param mixed $data            
+     * @param string $domain            
      * @throws Exception
      * @return boolean
      */
-    protected function _isValid($data,$domain){
-        $domainClassName = 'Rubedo\\Domains\\'.ucfirst($domain);
-        if(!class_exists($domainClassName)){
-            throw new Exception('domain not defined :'.(string) $domain);
+    protected function _isValid ($data, $domain)
+    {
+        $domainClassName = 'Rubedo\\Domains\\' . ucfirst($domain);
+        if (! class_exists($domainClassName)) {
+            throw new Exception('domain not defined :' . (string) $domain);
         }
         return $domainClassName::isValid($data);
     }
-    
 
     /**
      * getter of the model
-     * 
+     *
      * @return array
      */
-    public function getModel(){
+    public function getModel ()
+    {
         return $this->_model;
     }
-    
-    
+
     /**
      * Update an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj
      *            data object
-     * @param array $options
+     * @param array $options            
      * @return array
      */
-    public function update(array $obj, $options = array('safe'=>true)) {
+    public function update (array $obj, $options = array('safe'=>true))
+    {
         return $this->_dataService->update($obj, $options);
     }
 
@@ -231,47 +294,62 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj
      *            data object
-     * @param array $options
+     * @param array $options            
      * @return array
      */
-    public function destroy(array $obj, $options = array('safe'=>true)) {
+    public function destroy (array $obj, $options = array('safe'=>true))
+    {
         return $this->_dataService->destroy($obj, $options);
     }
     
-    
-    /* (non-PHPdoc)
-     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::count()
+    /*
+     * (non-PHPdoc) @see
+     * \Rubedo\Interfaces\Collection\IAbstractCollection::count()
      */
-    public function count($filters = null) {
+    public function count ($filters = null)
+    {
         if (isset($filters)) {
             foreach ($filters as $value) {
-                if ((!(isset($value["operator"]))) || ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(array($value["property"] => $value["value"]));
-                } else if ($value["operator"] == 'like') {
-                    $this->_dataService->addFilter(array($value["property"] => array('$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i'))));
-                } elseif (isset($value["operator"])) {
-                    $this->_dataService->addFilter(array($value["property"] => array($value["operator"] => $value["value"])));
-                }
-
+                if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(array(
+                        $value["property"] => $value["value"]
+                    ));
+                } else 
+                    if ($value["operator"] == 'like') {
+                        $this->_dataService->addFilter(array(
+                            $value["property"] => array(
+                                '$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i')
+                            )
+                        ));
+                    } elseif (isset($value["operator"])) {
+                        $this->_dataService->addFilter(array(
+                            $value["property"] => array(
+                                $value["operator"] => $value["value"]
+                            )
+                        ));
+                    }
             }
         }
         return $this->_dataService->count();
     }
 
     /**
-     * 
+     *
      * @deprecated
-     * @param unknown $deleteCond
-     * @param unknown $options
+     *
+     *
+     * @param unknown $deleteCond            
+     * @param unknown $options            
      * @return Ambigous <boolean, multitype:>
      */
-    public function customDelete($deleteCond, $options = array('safe'=>true)) {
+    public function customDelete ($deleteCond, $options = array('safe'=>true))
+    {
         return $this->_dataService->customDelete($deleteCond, $options);
     }
 
     /**
      * Find child of a node tree
-     * 
+     *
      * @param string $parentId
      *            id of the parent node
      * @param array $filters
@@ -280,7 +358,8 @@ abstract class AbstractCollection implements IAbstractCollection
      *            array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild($parentId, $filters = null, $sort = null) {
+    public function readChild ($parentId, $filters = null, $sort = null)
+    {
         if (isset($filters)) {
             foreach ($filters as $value) {
                 if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
@@ -305,7 +384,9 @@ abstract class AbstractCollection implements IAbstractCollection
                 ));
             }
         } else {
-            $this->_dataService->addSort(array("orderValue" => 1));
+            $this->_dataService->addSort(array(
+                "orderValue" => 1
+            ));
         }
         
         return $this->_dataService->readChild($parentId);
@@ -313,7 +394,7 @@ abstract class AbstractCollection implements IAbstractCollection
 
     /**
      * Return the array of ancestors for a given item
-     * 
+     *
      * @param array $item
      *            object whose ancestors we're looking for
      * @param number $limit
@@ -322,7 +403,7 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function getAncestors ($item, $limit = 10)
     {
-        if (!isset($item['parentId'])) {
+        if (! isset($item['parentId'])) {
             return array();
         }
         if ($item['parentId'] == 'root') {
@@ -332,34 +413,37 @@ abstract class AbstractCollection implements IAbstractCollection
             return array();
         }
         $parentItem = $this->findById($item['parentId']);
-        $returnArray = $this->getAncestors($parentItem,$limit - 1);
+        $returnArray = $this->getAncestors($parentItem, $limit - 1);
         $returnArray[] = $parentItem;
         return $returnArray;
-        
     }
 
-    public function fetchAllChildren($parentId, $filters = null, $sort = null,$limit=10){
-    	$returnArray = array();	
-   	$children=$this->readChild($parentId,$filters,$sort); //Read child of the parentId
-	foreach ($children as $value) { // for each child returned before if they can have children (leaf===false) do another read child.
-		$returnArray[] = $value;
-		if($value['leaf']===false && $limit > 0){
-			$returnArray = array_merge($returnArray,$this->readChild($value['id'],$filters,$sort,$limit-1));
-		}
-	}
-	return $returnArray;
+    public function fetchAllChildren ($parentId, $filters = null, $sort = null, $limit = 10)
+    {
+        $returnArray = array();
+        $children = $this->readChild($parentId, $filters, $sort); // Read child
+                                                                  // of
+                                                                  // the
+                                                                  // parentId
+        foreach ($children as $value) { // for each child returned before if
+                                        // they can have children (leaf===false)
+                                        // do another read child.
+            $returnArray[] = $value;
+            if ($value['leaf'] === false && $limit > 0) {
+                $returnArray = array_merge($returnArray, $this->readChild($value['id'], $filters, $sort, $limit - 1));
+            }
+        }
+        return $returnArray;
     }
-    
-    
+
     public function drop ()
     {
         $result = $this->_dataService->drop();
-        if($result['ok']){
+        if ($result['ok']) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-
 }
 	

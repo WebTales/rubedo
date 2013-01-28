@@ -41,7 +41,7 @@ class Groups extends AbstractCollection implements IGroups
             'property' => "members",
             'value' => $userId
         );
-        $groupList = $this->getList($filters);
+        $groupList = $this->getListWithAncestors($filters);
         
         return $groupList;
     }

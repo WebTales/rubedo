@@ -31,14 +31,16 @@ class Acl implements IAcl
 
     /**
      * Path of the directory where role definition json are stored
+     *
      * @var string
      */
     protected $_rolesDirectory;
-    
-    public function __construct(){
-        $this->_rolesDirectory = realpath(APPLICATION_PATH.'/configs/roles');
+
+    public function __construct ()
+    {
+        $this->_rolesDirectory = realpath(APPLICATION_PATH . '/configs/roles');
     }
-    
+
     /**
      * Check if the current user has access to a given resource for a given
      * access mode
@@ -51,10 +53,12 @@ class Acl implements IAcl
     {
         $currentUserService = Manager::getService('CurrentUser');
         $groups = $currentUserService->getGroups();
+
         $roleArray = array();
         foreach ($groups as $group) {
             $roleArray = $this->_addGroupToRoleArray($roleArray, $group);
         }
+        $roleArray = $this->_addGroupToRoleArray($roleArray, Manager::getService('Groups')->getPublicGroup());
         
         foreach ($roleArray as $role) {
             if ($this->_roleHasAccess($resource, $role)) {
@@ -65,10 +69,21 @@ class Acl implements IAcl
         return false;
     }
 
-    protected function _addGroupToRoleArray (array $roleArray, array $group)
+    /**
+     * add role of the group to the current role Array
+     * 
+     * @param array $roleArray
+     * @param array $group
+     * @return array
+     */
+    protected function _addGroupToRoleArray (array $roleArray, array $group=null)
     {
+        if(is_null($group)){
+            return array();
+        }
+        
         if (! isset($group['roles'])) {
-            $group['roles'] = $this->_getRole($group);
+            $group['roles'] = $this->_getRoleByGroup($group);
         }
         if (isset($group['roles']) && is_array($group['roles'])) {
             $groupRoleArray = array_values($group['roles']);
@@ -77,95 +92,43 @@ class Acl implements IAcl
         return $roleArray;
     }
 
+    /**
+     * Check if a given role has access to the ressource
+     * 
+     * @param string $resource
+     * @param string $role
+     * @return boolean
+     */
     protected function _roleHasAccess ($resource, $role)
     {
+         // @todo temporary disabling workflow components
+         if (strpos($resource, 'workflows') !== false) {
+             return false;
+         }
+        
         if (is_null($role)) {
             return false;
         }
         
-        if (strpos($resource, 'execute') !== false) {
-            if (strpos($resource, 'backoffice') !== false && $role == 'public' && (strpos($resource, 'index') === false && strpos($resource, 'login') === false)) {
-                return false;
+        $rightsArray = $this->_getRightsByRoleName($role);
+        foreach ($rightsArray as $rightAccess) {
+            $rightAccess = str_replace('.', '\.', $rightAccess);
+            $rightAccess = str_replace('@dot', '.', $rightAccess);
+            if (1 == preg_match('#' . $rightAccess . '#', $resource)) {
+                return true;
             }
-            return true;
         }
         
-        $aclArray = array();
-        
-        $aclArray['public'] = array();
-        $aclArray['redacteur'] = array(
-            'read.ui.contents',
-            'write.ui.contents',
-            'read.ui.contents.draft',
-            'read.ui.contents.pending',
-            'read.ui.contents.published',
-            'write.ui.contents.draft',
-            'write.ui.contents.draftToPending'
-        );
-        $aclArray['valideur'] = array(
-            'read.ui.contents',
-            'write.ui.contents',
-            'read.ui.contents.draft',
-            'read.ui.contents.pending',
-            'read.ui.contents.published',
-            'write.ui.contents.draft',
-            'write.ui.contents.pending',
-            'write.ui.contents.published',
-            'write.ui.contents.draftToPending',
-            'write.ui.contents.pendingToDraft',
-            'write.ui.contents.pendingToPublished',
-            'write.ui.contents.putOnline',
-            'write.ui.contents.putOffline',
-            'read.ui.masks',
-            'read.ui.users',
-            'read.ui.contentTypes'
-        );
-        $aclArray['admin'] = array(
-            'read.ui.taxonomy',
-            'write.ui.taxonomy',
-            'read.ui.contentTypes',
-            'write.ui.contentTypes',
-            'read.ui.contents',
-            'write.ui.contents',
-            'read.ui.contents.draft',
-            'read.ui.contents.pending',
-            'read.ui.contents.published',
-            'write.ui.contents.draft',
-            'write.ui.contents.pending',
-            'write.ui.contents.published',
-            'write.ui.contents.draftToPending',
-            'write.ui.contents.pendingToDraft',
-            'write.ui.contents.pendingToPublished',
-            'write.ui.contents.putOnline',
-            'write.ui.contents.putOffline',
-            'read.ui.masks',
-            'write.ui.masks',
-            'read.ui.users',
-            'write.ui.users',
-            'read.ui.sites',
-            'write.ui.sites',
-            'exe.ui.elasticSearch',
-            'read.ui.pages',
-            'write.ui.pages',
-            'read.ui.medias',
-            'write.ui.medias',
-            'read.ui.groups',
-            'write.ui.groups'
-        );
-        // 'read.ui.workflows',
-        // 'write.ui.workflows' ) ;
-        
-        if (! isset($aclArray[$role])) {
-            return false;
-        }
-        if (in_array($resource, $aclArray[$role])) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
-    protected function _getRole ($group)
+    /**
+     * return the array of roles set to a given group.
+     *
+     * @param string $group            
+     * @return array
+     */
+    protected function _getRoleByGroup ($group)
     {
         switch ($group['name']) {
             case 'admin':
@@ -180,6 +143,46 @@ class Acl implements IAcl
                 break;
         }
         return $roles;
+    }
+
+    /**
+     * Return the role configuration from its name
+     *
+     * Read infos from configs/role/jsonfile
+     *
+     * @param string $name            
+     * @return array null
+     */
+    protected function _getRoleByName ($name)
+    {
+        $pathName = $this->_rolesDirectory . '/' . $name . '.json';
+        if (is_file($pathName)) {
+            $roleInfos = \Zend_Json::decode(file_get_contents($pathName));
+            return $roleInfos;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return the array of rights of a given role
+     *
+     * @param string $name            
+     * @return array
+     */
+    protected function _getRightsByRoleName ($name,$max=5)
+    {
+        $rightsArray = array();
+        $roleInfos = $this->_getRoleByName($name);
+        if ($roleInfos) {
+            $rightsArray = $roleInfos['rights'];
+            if(isset($roleInfos['includes']) && $max > 0){
+                foreach ($roleInfos['includes'] as $include){
+                    $rightsArray = array_merge($rightsArray,$this->_getRightsByRoleName($include,$max - 1));
+                }
+            }
+        }
+        return $rightsArray;
     }
 
     /**
@@ -202,33 +205,33 @@ class Acl implements IAcl
         }
         return $aclArray;
     }
-    
+
     /**
      * (non-PHPdoc)
+     *
      * @see \Rubedo\Interfaces\Security\IAcl::getAvailaibleRoles()
      */
-    public function getAvailaibleRoles(){
-        
+    public function getAvailaibleRoles ()
+    {
         $templateDirIterator = new \DirectoryIterator($this->_rolesDirectory);
-        if(!$templateDirIterator){
+        if (! $templateDirIterator) {
             throw new \Exception('cannnot instanciate iterator for role dir');
         }
         
         $rolesInfosArray = array();
         
-        foreach ($templateDirIterator as $file){
-            if($file->isDot() || $file->isDir()){
+        foreach ($templateDirIterator as $file) {
+            if ($file->isDot() || $file->isDir()) {
                 continue;
             }
-            if($file->getExtension()=='json'){
+            if ($file->getExtension() == 'json') {
                 $roleJson = file_get_contents($file->getPathname());
                 $roleInfos = \Zend_Json::decode($roleJson);
                 $roleLabel = $roleInfos['label']['fr'];
                 $roleInfos['label'] = $roleLabel;
                 unset($roleInfos['rights']);
-                $rolesInfosArray[]=$roleInfos;
+                $rolesInfosArray[] = $roleInfos;
             }
-        
         }
         
         $response = array();
