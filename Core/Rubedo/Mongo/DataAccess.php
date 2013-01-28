@@ -816,7 +816,8 @@ class DataAccess implements IDataAccess
                         'array',
                         'string',
                         'float',
-                        'integer'
+                        'integer',
+                        'boolean'
                     )) && ! $subvalue instanceof \MongoRegex) {
                         throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
                     }
