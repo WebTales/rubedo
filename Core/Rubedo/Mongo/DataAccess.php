@@ -635,9 +635,7 @@ class DataAccess implements IDataAccess
         
         $resultArray = $this->_collection->update($updateCondition, array(
             '$set' => $obj
-        ), array(
-            "safe" => $options
-        ));
+        ), $options);
         
         $obj = $this->findById($mongoID);
         
