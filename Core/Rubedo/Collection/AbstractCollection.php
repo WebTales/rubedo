@@ -396,6 +396,12 @@ abstract class AbstractCollection implements IAbstractCollection
                                 '$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i')
                             )
                         ));
+                    } elseif (isset($value["operator"])) {
+                        $this->_dataService->addFilter(array(
+                            $value["property"] => array(
+                                $value["operator"] => $value["value"]
+                            )
+                        ));
                     }
             }
         }
