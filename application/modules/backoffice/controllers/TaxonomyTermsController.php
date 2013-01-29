@@ -14,9 +14,8 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+require_once ('DataAccessController.php');
 
-require_once('DataAccessController.php');
- 
 /**
  * Controller providing CRUD API for the taxonomyTerms JSON
  *
@@ -26,42 +25,57 @@ require_once('DataAccessController.php');
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
 {
-	/**
-	 * Array with the read only actions
-	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'navigation-tree', 'clear-orphan-terms','count-orphan-terms','model');
-	
-    public function init(){
-		parent::init();
-		
-		// init the data access service
-		$this -> _dataService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-	}
-	
-	/**
-	 * Clear orphan terms in the collection
-	 * 
-	 * @return array Result of the request
-	 */
-	public function clearOrphanTermsAction() {
-   		$result = $this->_dataService->clearOrphanTerms();
-		
-		$this->_returnJson($result);
-   	}
-	
-	public function countOrphanTermsAction() {
-   		$result = $this->_dataService->countOrphanTerms();
-		
-		$this->_returnJson($result);
-   	}
-   	
-   	public function navigationTreeAction(){
-   	    $result = $this->_dataService->getNavigationTree();
-   	    $this->_returnJson($result);
-   	}
 
+    /**
+     * Array with the read only actions
+     */
+    protected $_readOnlyAction = array(
+        'index',
+        'find-one',
+        'read-child',
+        'navigation-tree',
+        'clear-orphan-terms',
+        'count-orphan-terms',
+        'model'
+    );
+
+    public function init ()
+    {
+        parent::init();
+        
+        // init the data access service
+        $this->_dataService = Rubedo\Services\Manager::getService('TaxonomyTerms');
+    }
+
+    /**
+     * Clear orphan terms in the collection
+     *
+     * @return array Result of the request
+     */
+    public function clearOrphanTermsAction ()
+    {
+        $result = $this->_dataService->clearOrphanTerms();
+        
+        $this->_returnJson($result);
+    }
+
+    public function countOrphanTermsAction ()
+    {
+        $result = $this->_dataService->countOrphanTerms();
+        
+        $this->_returnJson($result);
+    }
+
+    public function navigationTreeAction ()
+    {
+        $result = $this->_dataService->getNavigationTree();
+        $resultArray = array();
+        $resultArray['success'] = true;
+        $resultArray['children'] = $result;
+        $this->_returnJson($resultArray);
+    }
 }
