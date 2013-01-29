@@ -264,7 +264,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         if (!is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
-                $returnArray = $this->_dataService->create($insertData, true);
+                $returnArray = $this->_dataService->create($insertData);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
@@ -289,7 +289,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
             $updateData = Zend_Json::decode($data);
             if (is_array($updateData)) {
 
-                $returnArray = $this->_dataService->update($updateData, true);
+                $returnArray = $this->_dataService->update($updateData);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
