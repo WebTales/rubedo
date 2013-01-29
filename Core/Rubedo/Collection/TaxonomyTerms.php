@@ -62,7 +62,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 return array();
             }
             $currentPage = Manager::getService('Pages')->findById($item['id']);
-            if ($currenPage) {
+            if ($currentPage) {
                 $site = Manager::getService('Sites')->findById($currentPage['site']);
                 $returnArray = array();
                 $returnArray[] = $this->_siteToTerm($site);
@@ -100,6 +100,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         } else {
             $siteList = Manager::getService('Sites')->getList($filters);
             $contentArray = array();
+            
+            $contentArray[] = $this->_getMainRoot();
+            
             foreach ($siteList['data'] as $site) {
                 $contentArray[] = $this->_siteToTerm($site);
             }
@@ -137,6 +140,12 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         } else {
             if ($parentId == 'root') {
                 $returnArray = array();
+                
+                $returnArray[] = $this->_getMainRoot();
+                
+                return array_values($returnArray);
+            } elseif ($parentId == 'all') {
+                $returnArray = array();
                 $childrenArray = Manager::getService('Sites')->getList($filters, $sort);
                 foreach ($childrenArray['data'] as $site) {
                     $returnArray[] = $this->_siteToTerm($site);
@@ -162,7 +171,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 
                 $returnArray = array();
                 $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
-
+                
                 foreach ($childrenArray as $page) {
                     $returnArray[] = $this->_pageToTerm($page);
                 }
@@ -170,6 +179,64 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 return array_values($returnArray);
             }
         }
+    }
+
+    public function getNavigationTree ()
+    {
+        $mainRoot = $this->_getMainRoot();
+        $siteArray = Manager::getService('Sites')->getList();
+        $childrenArray = array();
+        foreach ($siteArray['data'] as $site) {
+            $childrenArray[] = $this->_siteToTerm($site);
+        }
+        if(count($childrenArray) > 0){
+            foreach ($childrenArray as $key => $value){
+                $childrenArray[$key] = $this->_addChildrenToSite($value);
+            }
+        }
+        $mainRoot['children'] = $childrenArray;
+        return $mainRoot;
+    }
+
+    protected function _addChildrenToSite($array){
+        $sort[] = array(
+            'property' => 'orderValue',
+            'direction' => 'ASC'
+        );
+        $filters[] = array(
+            'property' => 'site',
+            'value' => $array['id']
+        );
+        $children = Manager::getService('Pages')->readChild('root', $filters, $sort);
+        if (count($children) > 0) {
+            $array['leaf'] = true;
+            $array['children'] = array();
+            foreach ($children as $child) {
+                $child = $this->_pageToTerm($child);
+                $array['children'][] = $this->_addNavigationChildrenToArray($child);
+            }
+        }
+        return $array;
+    }
+    
+    protected function _addNavigationChildrenToArray ($array)
+    {
+        $filters = null;
+        
+        $sort[] = array(
+            'property' => 'orderValue',
+            'direction' => 'ASC'
+        );
+        $children = Manager::getService('Pages')->readChild($array['id'], $filters, $sort);
+        if (count($children) > 0) {
+            $array['leaf'] = true;
+            $array['children'] = array();
+            foreach ($children as $child) {
+                $child = $this->_pageToTerm($child);
+                $array['children'][] = $this->_addNavigationChildrenToArray($child);
+            }
+        }
+        return $array;
     }
 
     /**
@@ -181,11 +248,21 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     protected function _siteToTerm ($site)
     {
         $term = array();
-        $term["parentId"] = 'root';
+        $term["parentId"] = 'all';
         $term['text'] = $site['text'];
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
         return $term;
+    }
+
+    protected function _getMainRoot ()
+    {
+        $mainRoot = array();
+        $mainRoot["parentId"] = 'root';
+        $mainRoot['text'] = 'Tous les sites';
+        $mainRoot['id'] = 'all';
+        $mainRoot['vocabularyId'] = 'navigation';
+        return $mainRoot;
     }
 
     /**
@@ -320,37 +397,53 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         return self::$_termsArray[$id];
     }
 
-    public function clearOrphanTerms() {
-		$taxonomyService = Manager::getService('Taxonomy');
-		
-		$result = $taxonomyService->getList();
-		
-		//recovers the list of contentTypes id
-		foreach ($result['data'] as $value) {
-			$taxonomyArray[] = $value['id'];
-		}
+    public function clearOrphanTerms ()
+    {
+        $taxonomyService = Manager::getService('Taxonomy');
+        
+        $result = $taxonomyService->getList();
+        
+        // recovers the list of contentTypes id
+        foreach ($result['data'] as $value) {
+            $taxonomyArray[] = $value['id'];
+        }
+        
+        $result = $this->customDelete(array(
+            'vocabularyId' => array(
+                '$nin' => $taxonomyArray
+            )
+        ));
+        
+        if ($result['ok'] == 1) {
+            return array(
+                'success' => 'true'
+            );
+        } else {
+            return array(
+                'success' => 'false'
+            );
+        }
+    }
 
-		$result = $this->customDelete(array('vocabularyId' => array('$nin' => $taxonomyArray)));
-		
-		if($result['ok'] == 1){
-			return array('success' => 'true');
-		} else {
-			return array('success' => 'false');
-		}
-	}
-	
-	public function countOrphanTerms() {
-		$taxonomyService = Manager::getService('Taxonomy');
-
-		$result = $taxonomyService->getList();
-		
-		//recovers the list of contentTypes id
-		foreach ($result['data'] as $value) {
-			$taxonomyArray[] = $value['id'];
-		}
-		
-		return $this->count(array(array('property' => 'vocabularyId', 'operator' => '$nin', 'value' => $taxonomyArray)));
-	}
+    public function countOrphanTerms ()
+    {
+        $taxonomyService = Manager::getService('Taxonomy');
+        
+        $result = $taxonomyService->getList();
+        
+        // recovers the list of contentTypes id
+        foreach ($result['data'] as $value) {
+            $taxonomyArray[] = $value['id'];
+        }
+        
+        return $this->count(array(
+            array(
+                'property' => 'vocabularyId',
+                'operator' => '$nin',
+                'value' => $taxonomyArray
+            )
+        ));
+    }
 
     /**
      * Allow to find terms by their vocabulary

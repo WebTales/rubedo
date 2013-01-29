@@ -33,7 +33,7 @@ class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-terms','count-orphan-terms','model');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'navigation-tree', 'clear-orphan-terms','count-orphan-terms','model');
 	
     public function init(){
 		parent::init();
@@ -57,6 +57,11 @@ class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
    		$result = $this->_dataService->countOrphanTerms();
 		
 		$this->_returnJson($result);
+   	}
+   	
+   	public function navigationTreeAction(){
+   	    $result = $this->_dataService->getNavigationTree();
+   	    $this->_returnJson($result);
    	}
 
 }
