@@ -34,7 +34,8 @@ class CurrentUser implements ICurrentUser
     /**
      * Current User Object
      *
-     * Static : do not do an authentication and a data fetch each time the service is instanciated
+     * Static : do not do an authentication and a data fetch each time the
+     * service is instanciated
      *
      * @var array
      */
@@ -52,8 +53,9 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getCurrentUser() {
-        if (!isset(self::$_currentUser)) {
+    public function getCurrentUser ()
+    {
+        if (! isset(self::$_currentUser)) {
             if ($this->isAuthenticated()) {
                 self::$_currentUser = $this->_fetchCurrentUser();
             }
@@ -66,9 +68,14 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getCurrentUserSummary() {
+    public function getCurrentUserSummary ()
+    {
         $userInfos = $this->getCurrentUser();
-        return array('id' => $userInfos['id'], 'login' => $userInfos['login'], 'fullName' => $userInfos['name']);
+        return array(
+            'id' => $userInfos['id'],
+            'login' => $userInfos['login'],
+            'fullName' => $userInfos['name']
+        );
     }
 
     /**
@@ -76,7 +83,8 @@ class CurrentUser implements ICurrentUser
      *
      * @return boolean
      */
-    public function isAuthenticated() {
+    public function isAuthenticated ()
+    {
         $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
         return $serviceAuth->hasIdentity();
     }
@@ -86,12 +94,13 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    protected function _fetchCurrentUser() {
+    protected function _fetchCurrentUser ()
+    {
         $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
         $sessionUser = $serviceAuth->getIdentity();
-
+        
         $serviceReader = \Rubedo\Services\Manager::getService('Users');
-
+        
         $user = $serviceReader->findById($sessionUser['id']);
         return $user;
     }
@@ -102,89 +111,123 @@ class CurrentUser implements ICurrentUser
      * @todo to be implemented with real groups !
      * @return array
      */
-    public function getGroups() {
-        
+    public function getGroups ()
+    {
         $user = $this->getCurrentUser();
-        if(is_null($user)){
-            return array(Manager::getService('Groups')->getPublicGroup());
+        if (is_null($user)) {
+            return array(
+                Manager::getService('Groups')->getPublicGroup()
+            );
         }
         
         $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
-        if(count($groupsArray['data'])==0){
-            return array(Manager::getService('Groups')->getPublicGroup());
+        if (count($groupsArray['data']) == 0) {
+            return array(
+                Manager::getService('Groups')->getPublicGroup()
+            );
         }
         return $groupsArray['data'];
         
         $groups = array();
-        switch($user['login']) {
-            case 'admin' :
+        switch ($user['login']) {
+            case 'admin':
                 $groups[] = 'admin';
-            case 'valideur' :
+            case 'valideur':
                 $groups[] = 'valideur';
-            case 'redacteur' :
+            case 'redacteur':
                 $groups[] = 'redacteur';
-            default :
+            default:
                 $groups[] = 'public';
                 break;
         }
         
-        
-
         return $groups;
     }
 
-	/**
-	 * Change the password of the current user
-	 * 
-	 * @param string $oldPass current password
-	 * @param string $newPass new password
-	 */
-	public function changePassword($oldPass,$newPass){
-		$user = $this->getCurrentUser();
+    /**
+     * Change the password of the current user
+     *
+     * @param string $oldPass
+     *            current password
+     * @param string $newPass
+     *            new password
+     */
+    public function changePassword ($oldPass, $newPass)
+    {
+        $user = $this->getCurrentUser();
+        
+        $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+        if ($serviceAuth->forceReAuth($user['login'], $oldPass)) {
+            $serviceUser = \Rubedo\Services\Manager::getService('Users');
+            return $serviceUser->changePassword($newPass, $user['version'], $user['id']);
+        } else {
+            return false;
+        }
+    }
 
-		$serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
-		if($serviceAuth->forceReAuth($user['login'], $oldPass)){
-			$serviceUser = \Rubedo\Services\Manager::getService('Users');
-			return $serviceUser->changePassword($newPass,$user['version'],$user['id']);
-		}else{
-			return false;
-		}	
-	}
-	
-	/**
-	 * Generate a token for the current user
-	 * 
-	 * @return string
-	 */
-	public function generateToken() {
-		$sessionService = \Rubedo\Services\Manager::getService('Session');
-		$hashService = \Rubedo\Services\Manager::getService('Hash');
-		
-		$user = $sessionService->get('user');
-		
-		$token = $hashService->generateRandomString(20);
-		$user['token'] = $hashService->derivatePassword($token, $hashService->generateRandomString(10));
-		$sessionService->set('user', $user);
-		
-		return $user['token'];
-	}
-	
-	/**
-	 * Return the token of the current user
-	 * 
-	 * @return string
-	 */
-	public function getToken() {
-		$sessionService = \Rubedo\Services\Manager::getService('Session');
-		
-		$user = $sessionService->get('user');
-		$token = isset($user['token'])?$user['token']:"";
-		
-		if($token == ""){
-			$token = $this->generateToken();
-		}
-		
-		return $token;
-	}
-	
+    /**
+     * Generate a token for the current user
+     *
+     * @return string
+     */
+    public function generateToken ()
+    {
+        $sessionService = \Rubedo\Services\Manager::getService('Session');
+        $hashService = \Rubedo\Services\Manager::getService('Hash');
+        
+        $user = $sessionService->get('user');
+        
+        $token = $hashService->generateRandomString(20);
+        $user['token'] = $hashService->derivatePassword($token, $hashService->generateRandomString(10));
+        $sessionService->set('user', $user);
+        
+        return $user['token'];
+    }
+
+    /**
+     * Return the token of the current user
+     *
+     * @return string
+     */
+    public function getToken ()
+    {
+        $sessionService = \Rubedo\Services\Manager::getService('Session');
+        
+        $user = $sessionService->get('user');
+        $token = isset($user['token']) ? $user['token'] : "";
+        
+        if ($token == "") {
+            $token = $this->generateToken();
+        }
+        
+        return $token;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\User\ICurrentUser::getReadNavigationTaxonomy()
+     */
+    public function getReadNavigationTaxonomy ()
+    {
+        $currentUser = $this->getCurrentUser();
+        if(!isset($currentUser['readNavigation'])){
+            $currentUser['readNavigation'] = array('all');
+        }
+        return $currentUser['readNavigation'];
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\User\ICurrentUser::getWriteNavigationTaxonomy()
+     */
+    public function getWriteNavigationTaxonomy ()
+    {
+        $currentUser = $this->getCurrentUser();
+        if(!isset($currentUser['writeNavigation'])){
+            $currentUser['writeNavigation'] = array('all');
+        }
+        return $currentUser['writeNavigation'];
+    }
 }

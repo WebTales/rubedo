@@ -64,4 +64,18 @@ interface ICurrentUser
 	 * @param string $newPass new password
 	 */
 	public function changePassword($oldPass,$newPass);
+	
+	/**
+	 * return current user "can read" item of navigation
+	 * 
+	 * @return array
+	 */
+	public function getReadNavigationTaxonomy ();
+	
+	/**
+	 * return current user "can read" item of navigation
+	 * 
+	 * @return array
+	 */
+	public function getWriteNavigationTaxonomy ();
 }
