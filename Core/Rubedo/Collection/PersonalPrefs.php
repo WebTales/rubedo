@@ -77,4 +77,36 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         ));
         return parent::destroy($obj, $options);
     }
+	
+	public function clearOrphanPrefs() {
+		$usersService = Manager::getService('Users');
+		
+		$result = $usersService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$usersArray[] = $value['id'];
+		}
+
+		$result = $this->customDelete(array('userId' => array('$nin' => $usersArray)));
+		
+		if($result['ok'] == 1){
+			return array('success' => 'true');
+		} else {
+			return array('success' => 'false');
+		}
+	}
+	
+	public function countOrphanPrefs() {
+		$usersService = Manager::getService('Users');
+
+		$result = $usersService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$usersArray[] = $value['id'];
+		}
+		
+		return $this->count(array(array('property' => 'userId', 'operator' => '$nin', 'value' => $usersArray)));
+	}
 }
