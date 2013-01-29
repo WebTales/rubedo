@@ -153,7 +153,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
             $updateData = Zend_Json::decode($data);
             if (is_array($updateData)) {
 
-                $returnArray = $this->_dataService->update($updateData, true, false);
+                $returnArray = $this->_dataService->update($updateData, array('safe'=>true), false);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
