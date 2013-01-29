@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IIcons;
+use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager;
 
 /**
  * Service to handle Icons
@@ -56,5 +56,37 @@ class Icons extends AbstractCollection implements IIcons
 	public function destroy(array $obj, $options = array('safe'=>true)){
 		$this->_dataService->addFilter(array('userId' => $this->_userId));
 		return parent::destroy($obj,$options);
+	}
+	
+	public function clearOrphanIcons() {
+		$usersService = Manager::getService('Users');
+		
+		$result = $usersService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$usersArray[] = $value['id'];
+		}
+
+		$result = $this->customDelete(array('userId' => array('$nin' => $usersArray)));
+		
+		if($result['ok'] == 1){
+			return array('success' => 'true');
+		} else {
+			return array('success' => 'false');
+		}
+	}
+	
+	public function countOrphanIcons() {
+		$usersService = Manager::getService('Users');
+
+		$result = $usersService->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($result['data'] as $value) {
+			$usersArray[] = $value['id'];
+		}
+		
+		return $this->count(array(array('property' => 'userId', 'operator' => '$nin', 'value' => $usersArray)));
 	}
 }
