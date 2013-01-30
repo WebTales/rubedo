@@ -82,6 +82,7 @@ class config
 		'Queries'					=>	'Rubedo\\Interfaces\\Collection\\IQueries',
 		'Dam'					    =>	'Rubedo\\Interfaces\\Collection\\IDam',
 		'DamTypes'					=>	'Rubedo\\Interfaces\\Collection\\IDamTypes',
+		'Workspaces'                =>  'Rubedo\\Interfaces\\Collection\\IWorkspaces',
 		'Mailer'					=>	'Rubedo\\Interfaces\\Mail\\IMailer',
 	);
 
