@@ -94,9 +94,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function create (array $obj, $options = array('safe'=>true), $live = false)
     {
-        if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-            $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-        }
+//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
+//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
+//         }
         $obj = $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
@@ -121,9 +121,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
     {
-        if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-            $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-        }
+//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
+//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
+//         }
         $obj = $this->_filterInputData($obj);
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
