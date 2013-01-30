@@ -59,38 +59,8 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 			$params['orderbyDirection'] = $sort[0]['direction'];
 		}
 
-        $search = $query->search($params,$this->_option);
-
-        $elasticaResultSet = $search["resultSet"];
-		if (is_array($search["filters"])) {
-			$filters = $search["filters"];
-		} else {
-			$filters = array();
-		}
-		
-		$elasticaResults = $elasticaResultSet->getResults();
-		$elasticaFacets = $elasticaResultSet->getFacets();
-		$results = array();
-		$results['total'] = $elasticaResultSet->getTotalHits();
-		$results['data'] = array();
-		$results['facets'] = array();
-		$results['activeFacets'] = $filters;
-		if ($results['total'] > 0) {
-			foreach($elasticaResults as $result) {
-				$temp = array();
-				$tmp['id'] = $result->getId();
-				$tmp['typeId'] = $result->getType();
-				$tmp['_score'] = $result->getScore();
-				$results['data'][] = array_merge($tmp,$result->getData());
-			}
-			foreach($elasticaFacets as $name => $facet) {
-				$temp = (array) $facet;
-				if (!empty($temp)) {
-					$temp['name'] = $name;
-					$results['facets'][] = $temp;
-				}
-			}
-		}
+        $results = $query->search($params,$this->_option);
+	
 		$results['success']=true;
 		$results['message']='OK';
 
@@ -105,4 +75,5 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		
 	}
 
+	
 }

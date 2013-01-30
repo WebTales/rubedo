@@ -1,7 +1,7 @@
 <br />
 <div class="navbar">
 	<div class="navbar-inner">
-		<a class="brand">{% if nbresults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ nbresults }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
+		<a class="brand">{% if nbresults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
 		<ul class="nav pull-right">
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if orderby == "_score" or orderby == "" %}
@@ -55,22 +55,22 @@
 		</ul>
 	</div>
 </div>
-{% if filters|length > 0 %}
+{% if activeFacets|length > 0 %}
 <div class="navbar">
 	<div class="navbar-inner">
 		<p class="brand">Critères de recherche :&nbsp;&nbsp;
-
-		{% for name,value in filters %}
-		    {% if name == '' or name == 'Sites' %}
-            {% elseif name == 'type' or name == 'author' or name == 'date' %}
-                <a href="{{url({(name): null})}}" >
-				<span class="badge badge-info"><i class="icon-remove-sign"></i> {{ value }}</span>
-			    </a>
+		{% for facet in activeFacets %}
+		    {% if facet.id == 'navigation' %}
+		    {% elseif facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
+                {% for term in facet.terms %}
+	                <a href="{{url({(facet.id): null})}}" >
+					<span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
+				    </a>
+		        {% endfor %}
             {% else %}
-                {% for tag in value %}
-		        
-		            <a href="{{url({(name): tag},'sub')}}" >
-				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ tag }}</span>
+                {% for term in facet.terms %}
+		            <a href="{{url({(facet.id): term.term},'sub')}}" >
+				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
 			        </a>
 		        {% endfor %}
             {% endif %}
@@ -89,41 +89,41 @@
 				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
 			</form>
 		
-		{% for name,value in facets %}
-		
-			{% if facets[name]['terms']|length > 1 %}
-			
-    			{% if name == 'type' %}
+		{% for facet in facets %}
+
+			{% if facet.terms|length > 1 %}
+
+    			{% if facet.id == 'type' %}
     			<p>
     				<i class="icon-file"></i> {{"content_type"|trans}}
     			</p>		
-    			{% elseif name == 'author' %}
+    			{% elseif facet.id == 'author' %}
     			<p>
     				<i class="icon-user"></i> {{"author"|trans}}
     			</p>		
-    			{% elseif name == 'date' %}
+    			{% elseif facet.id == 'date' %}
     			<p>
     				<i class="icon-calendar"></i> {{"date"|trans}}
     			</p>	
     			{% else %}
     			<p>
-    				<i class="icon-tags"></i> {{name|trans}}
+    				<i class="icon-tags"></i> {{facet.label}}
     			</p>			
     			{% endif %}	
     	
-    	        {% if name == 'type' or name == 'author' or name == 'date' %}
+    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
     	          <ul>
-    				{% for facet in facets[name]['terms'] %}
+    				{% for term in facet.terms %}
     				<li>
-    					<a href="{{url({(name) : facet.term})}}">{{ facet.term }} ({{ facet.count }})</a>
+    					<a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
     				{% endfor %}
 			    </ul>
     	        {% else %}
     	        <ul>
-    				{% for facet in facets[name]['terms'] %}
+    				{% for term in facet.terms %}
     				<li>
-    					<a href="{{url({(name) : [facet.term]},'add')}}">{{ facet.term }} ({{ facet.count }})</a>
+    					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
     				{% endfor %}
 			    </ul>
@@ -137,14 +137,14 @@
 		
 	</div>
 	<div class="span9">
-		{% if nbresults == 0 %}
+		{% if total == 0 %}
 		<div class="alert alert-error">
 			{{"no_result"|trans}}
 		</div>
 		{% else %}
 
 		<table class="table">
-			{% for result in results %}
+			{% for result in data %}
 			<tr>
 				<td><h3><a href="{{ displaySingleUrl(result.id) }}">{{ result.title }}</a></h3>
 				<div class="progress progress-success" style="width:50px; float: left;">
@@ -158,7 +158,7 @@
 				<p>{{ result.summary|cleanHtml }}</p>
 				{% endif %}
 				<br />
-				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.author }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
 			{% endfor %}
 		</table>

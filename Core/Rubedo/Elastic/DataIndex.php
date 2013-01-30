@@ -302,7 +302,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["damType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["fileSize"] = array('type' => 'integer', 'store' => 'yes');
-		$indexMapping["file"] = array('type' => 'attachment', 'store' => 'no');
+		$indexMapping["file"] = array('type' => 'attachment', 'store'=>'no');
 		
 		foreach($vocabularies as $vocabularyName) {
 			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
@@ -401,10 +401,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         // retrieve type id and content data if null
         $data = \Rubedo\Services\Manager::getService('Contents')->findById($id);
         $typeId = $data['typeId'];
-		
-		// Retrieve type label
-		$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($typeId);
-		$type = $contentType['type'];
 					
 		// Load ES type 
     	$contentType = $this->_content_index
@@ -428,7 +424,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
 		// Add default meta's
 		$contentData['objectType'] = 'content';
-		$contentData['contentType'] = $type;
+		$contentData['contentType'] = $typeId;
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		} else {
@@ -440,7 +436,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 			$contentData['status'] = "unknown";
 		}
 		if (isset($data['createUser'])) {
-			$contentData['author'] = (string) $data['createUser']['fullName'];
+			$contentData['author'] = (string) $data['createUser']['id'];
+			$contentData['authorName'] = (string) $data['createUser']['fullName'];
 		} else {
 			$contentData['author'] = "unknown";
 		}
@@ -465,7 +462,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 						$termsArray[] = $term;
 						$tmp = array();
 						foreach ($termsArray as $tempTerm) {
-							$contentData['taxonomy'][$taxonomy['name']][] = $tempTerm['text'];
+							//$contentData['taxonomy'][$taxonomy['name']][] = $tempTerm['text'];
+							$contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+							//array('id' => $tempTerm['id'], 'name' => $tempTerm['text']);
 						}
                     	
 					}
@@ -476,6 +475,66 @@ class DataIndex extends DataAbstract implements IDataIndex
 		if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
 			$currentDocument->addFile('file', $contentData['attachment']);
 		}
+		
+		// Add content to content type index
+		$contentType->addDocument($currentDocument);
+
+		// Refresh index
+		$contentType->getIndex()->refresh();    
+    	
+    }
+
+    /**
+     * Update Content Taxonomy
+     *    
+	 * @see \Rubedo\Interfaces\IDataIndex::updateContentTaxonomy()
+	 * @param string $id content id
+	 * @param boolean $live live if true, workspace if live
+     * @return array
+     */
+	public function updateContentTaxonomy ($id, $live = false) {
+
+	     // content data to index
+	     if ($live) {
+	            $space = "live";
+	     } else {
+	            $space = "workspace";
+	     }
+            
+        // retrieve type id and content data if null
+        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id);
+        $typeId = $data['typeId'];
+		
+		// Retrieve type label
+		$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($typeId);
+		
+        // Add taxonomy
+         if (isset($data[$space]["taxonomy"])) {
+                $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+                foreach ($data[$space]["taxonomy"] as $vocabulary => $terms) {
+                    if(!is_array($terms)){
+                        continue;
+                    }
+					$collection = \Rubedo\Services\Manager::getService('Taxonomy');
+					$taxonomy = $collection->findById($vocabulary);
+					$termsArray = array();
+								
+                    foreach ($terms as $term) {
+                    	$term = $tt->findById($term);
+                    	if(!$term){
+                    	    continue;
+                    	}
+						$termsArray = $tt->getAncestors($term);
+						$termsArray[] = $term;
+						$tmp = array();
+						foreach ($termsArray as $tempTerm) {
+							$contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+						}
+                    	
+					}
+                }
+         }
+		$currentDocument = new \Elastica_Document($id, $contentData);
 		
 		// Add content to content type index
 		$contentType->addDocument($currentDocument);
@@ -497,12 +556,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // retrieve Dam Type id and dam data if null
         $data = \Rubedo\Services\Manager::getService('Dam')->findById($id);
         $typeId = $data['typeId'];
-
-		// Retrieve Dam Type label
-		$damType = \Rubedo\Services\Manager::getService('DamTypes')->findById($typeId);
-
-		$type = $damType['type'];
-			
+	
 		// Load ES dam type 
     	$damType = $this->_dam_index
     						->getType($typeId);
@@ -527,7 +581,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		}
 
 		// Add default meta's
-		$damData['damType'] = $type;
+		$damData['damType'] = $typeId;
 		$damData['objectType'] = 'dam';
 		$damData['text'] =  (string) $data['title'];
 		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
@@ -538,7 +592,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 			$damData['lastUpdateTime'] = 0;
 		}
 		if (isset($data['createUser'])) {
-			$damData['author'] = (string) $data['createUser']['fullName'];
+			$damData['author'] = (string) $data['createUser']['id'];
+			$damData['authorName'] = (string) $data['createUser']['fullName'];
 		} else {
 			$damData['author'] = "unknown";
 		}
@@ -563,7 +618,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 						$termsArray[] = $term;
 						$tmp = array();
 						foreach ($termsArray as $tempTerm) {
-							$damData['taxonomy'][$taxonomy['name']][] = $tempTerm['text'];
+							$damData['taxonomy'][$taxonomy['name']][] = $tempTerm['id'];
 						}
                     	
 					}

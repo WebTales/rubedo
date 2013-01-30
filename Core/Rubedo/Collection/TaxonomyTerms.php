@@ -386,11 +386,12 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function findByVocabulary ($vocabularyId)
     {
-        $filter = array(
+    	$filters = array();
+        $filters[] = array(
             "property" => "vocabularyId",
             "value" => $vocabularyId
         );
-        return $this->getList($filter);
+        return $this->getList($filters);
     }
 
     /**

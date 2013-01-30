@@ -39,7 +39,9 @@ class DataSearch extends DataAbstract implements IDataSearch
     public function search (array $params, $option = 'all') {
 
 		$filters = array();
-		
+		$result = array();
+		$result['data'] = array();
+
 		// Get taxonomies
 		$collection = \Rubedo\Services\Manager::getService('Taxonomy');
 		$taxonomyList = $collection->getList();
@@ -136,7 +138,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
 			// filter on taxonomy
 			foreach ($taxonomies as $taxonomy) {
-				$vocabulary = $taxonomy['name'];
+				$vocabulary = $taxonomy['id'];
 				if (array_key_exists($vocabulary,$params)) {
 				    if(!is_array($params[$vocabulary])){
 				        $params[$vocabulary] = array($params[$vocabulary]);
@@ -149,9 +151,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					    $filters[$vocabulary][]=$term;
 					    $setFilter = true;
 					}
-					
-					
-								
+			
 				}
 			}
 						
@@ -206,9 +206,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 
 			// Define taxonomy facets
 			foreach ($taxonomies as $taxonomy) {
-				$vocabulary = $taxonomy['name'];	
+				$vocabulary = $taxonomy['id'];	
 				$elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
-				$elasticaFacetTaxonomy->setField('taxonomy.'.$taxonomy['name']);
+				$elasticaFacetTaxonomy->setField('taxonomy.'.$taxonomy['id']);
 				$elasticaFacetTaxonomy->setSize(20);
 				$elasticaFacetTaxonomy->setOrder('count');
 				if ($setFilter) $elasticaFacetTaxonomy->setFilter($globalFilter);
@@ -241,11 +241,194 @@ class DataSearch extends DataAbstract implements IDataSearch
 					break;
 			}
 			
-			// Return resultset
-			$result = array(
-				"resultSet" => $elasticaResultSet,
-				"filters" => $filters
-			);
+			// Update data
+			$resultsList = $elasticaResultSet->getResults();
+			$result['total'] = $elasticaResultSet->getTotalHits();
+			$result['query'] = $params['query'];
+			foreach($resultsList as $resultItem) {
+				$temp = array();
+				$tmp['id'] = $resultItem->getId();
+				$tmp['typeId'] = $resultItem->getType();
+				$tmp['score'] = $resultItem->getScore();
+				if (! is_float($tmp['score'])) $tmp['score'] = 1;
+            	$tmp['score'] = round($tmp['score'] * 100);
+				$data = $resultItem->getData();
+				$tmp['title'] = $data['text'];
+				$tmp['objectType'] = $data['objectType'];
+				$tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];		
+				$tmp['author'] = $data['author'];
+				$tmp['authorName'] = $data['authorName'];
+				switch ($data['objectType']) {
+					case 'content':
+						$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($data['contentType']);
+						$tmp['type'] = $contentType['type'];
+						break;
+					case 'dam':
+						$damType = \Rubedo\Services\Manager::getService('DamTypes')->findById($data['damType']);
+						$tmp['type'] = $damType['type'];
+						break;
+				}
+
+				
+				$result['data'][] = $tmp;
+			}
+						
+			// Add label to Facets
+			$elasticaFacets = $elasticaResultSet->getFacets();
+			
+			foreach($elasticaFacets as $id => $facet) {
+				$temp = (array) $facet;
+				if (!empty($temp)) {
+					$temp['id'] = $id;
+					switch ($id) {
+						case 'navigation':
+							
+							$temp['label'] = 'Navigation';
+							if (array_key_exists('terms', $temp)) {
+								$collection = \Rubedo\Services\Manager::getService('Pages');
+								foreach ($temp['terms'] as $key => $value) {
+									$termItem = $collection->findById($value['term']);
+									$temp['terms'][$key]['label'] = $termItem['type'];
+								}
+							}
+							break;
+
+						case 'damType' :
+							
+							$temp['label'] = 'Type de document';
+							if (array_key_exists('terms', $temp)) {
+								$collection = \Rubedo\Services\Manager::getService('DamTypes');
+								foreach ($temp['terms'] as $key => $value) {
+									$termItem = $collection->findById($value['term']);
+									$temp['terms'][$key]['label'] = $termItem['type'];
+								}
+							}
+							break;
+																					
+						case 'type' :
+							
+							$temp['label'] = 'Type de contenu';
+							if (array_key_exists('terms', $temp)) {
+								$collection = \Rubedo\Services\Manager::getService('ContentTypes');
+								foreach ($temp['terms'] as $key => $value) {
+									$termItem = $collection->findById($value['term']);
+									$temp['terms'][$key]['label'] = $termItem['type'];
+								}
+							}
+							break;
+
+						case 'author' :
+							
+							$temp['label'] = 'Auteur';
+							if (array_key_exists('terms', $temp)) {
+								$collection = \Rubedo\Services\Manager::getService('Users');
+								foreach ($temp['terms'] as $key => $value) {
+									$termItem = $collection->findById($value['term']);
+									$temp['terms'][$key]['label'] = $termItem['name'];
+								}
+							}
+							break;
+							
+						default:
+							
+							$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($id);
+							$temp['label'] = $vocabularyItem['name'];
+							if (array_key_exists('terms', $temp)) {
+								$collection = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+								foreach ($temp['terms'] as $key => $value) {		
+									$termItem = $collection->findById($value['term']);
+									$temp['terms'][$key]['label'] = $termItem['text'];
+								}
+							}
+							break;
+					}	
+					$result['facets'][] = $temp;
+				}
+			}
+			
+			// Add label to filters
+			foreach ($filters as $vocabularyId => $termId) {
+				switch ($vocabularyId) {
+					case 'navigation':
+						$termItem = \Rubedo\Services\Manager::getService('Pages')->findById($termId);
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Navigation',
+							'terms' => array(
+								array(
+									'term' => $termId,
+									'label' => $termItem['text']
+								)
+							)
+						);
+						break;
+						
+					case 'damType' :
+						$termItem  = \Rubedo\Services\Manager::getService('DamTypes')->findById($termId);
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Types de documents',
+							'terms' => array(
+								array(
+									'term' => $termId,
+									'label' => $termItem['type']
+								)
+							)
+						);
+						break;
+						
+					case 'type' :
+						$termItem  = \Rubedo\Services\Manager::getService('ContentTypes')->findById($termId);
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Types de Contenus',
+							'terms' => array (
+								array(
+									'term' => $termId,
+									'label' => $termItem['type']
+								)
+							)
+						);
+						break;
+						
+					case 'author' :
+						$termItem  = \Rubedo\Services\Manager::getService('Users')->findById($termId);
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Auteur',
+							'terms' => array (
+								array(
+									'term' => $termId,
+									'label' => $termItem['name']
+								)
+							)
+						);
+						break;
+
+					default:
+						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
+						
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => $vocabularyItem['name']
+						);
+						
+						foreach ($termId as $term) {
+							$termItem = \Rubedo\Services\Manager::getService('TaxonomyTerms')->findById($term);
+							$temp['terms'][]=array(
+								'term' => $term,
+								'label' => $termItem['text']								
+							);
+	
+						}
+						
+						break;							
+						
+				}
+
+				$result['activeFacets'][] = $temp;
+			}
+					
 			return($result);
 			
 		} catch (Exception $e) {
