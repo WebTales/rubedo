@@ -80,9 +80,9 @@ class Dam extends AbstractCollection implements IDam
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
-        if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-            $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-        }
+//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
+//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
+//         }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Exception('no file found');
@@ -104,9 +104,9 @@ class Dam extends AbstractCollection implements IDam
      */
     public function create (array $obj, $options = array('safe'=>true,))
     {
-        if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-            $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-        }
+//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
+//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
+//         }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Exception('no file found');
