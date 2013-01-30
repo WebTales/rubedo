@@ -27,11 +27,88 @@ use Rubedo\Interfaces\Collection\IWorkspaces;
  */
 class Workspaces extends AbstractCollection implements IWorkspaces
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'Workspaces';
-		parent::__construct();
-	}
-	
+    /**
+     * a virtual taxonomy which reflects sites & pages trees
+     *
+     * @var array
+     */
+    protected $_virtualGlobalWorkspace = array(
+        'id' => 'global',
+        'text' => 'Global',
+        'readOnly' => true
+    );
+
+    public function __construct ()
+    {
+        $this->_collectionName = 'Workspaces';
+        parent::__construct();
+    }
+
+    /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
+     */
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
+        $list = parent::getList($filters, $sort, $start, $limit);
+        $list['data'] = array_merge(array(
+            $this->_virtualGlobalWorkspace
+        ), $list['data']);
+        $list['count'] = $list['count'] + 1;
+        return $list;
+    }
+
+    /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::findById()
+     */
+    public function findById ($contentId)
+    {
+        if ($contentId == 'global') {
+            return $this->_virtualGlobalWorkspace;
+        } else {
+            return parent::findById($contentId);
+        }
+    }
+
+    public function destroy (array $obj, $options = array('safe'=>true))
+    {
+        if ($obj['id'] == 'global') {
+            throw new \Exception('can\'t destroy global workspace');
+        }
+        
+        return parent::destroy($obj, $options);
+    }
+
+    /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::count()
+     */
+    public function count ($filters = null)
+    {
+        return parent::count($filters) + 1;
+    }
+
+    /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
+     */
+    public function create (array $obj, $options = array('safe'=>true,))
+    {
+        if ($obj['name'] == 'Global') {
+            throw new \Exception('can\'t create global workspace');
+        }
+        return parent::create($obj, $options);
+    }
+
+    /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
+     */
+    public function update (array $obj, $options = array('safe'=>true,))
+    {
+        if ($obj['id'] == 'global') {
+            throw new \Exception('can\'t update global workspace');
+        }
+        if ($obj['name'] == 'Global') {
+            throw new \Exception('can\'t create a global workspace');
+        }
+        return parent::update($obj, $options);
+    }
 }

@@ -110,7 +110,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
      */
     public function count ($filters = null)
     {
-        return parent::count($filters) + 1;
+        return parent::count($filters) + 2;
     }
 
     /**
@@ -118,7 +118,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
      */
     public function create (array $obj, $options = array('safe'=>true,))
     {
-        if ($obj['name'] == 'navigation') {
+        if ($obj['name'] == 'Navigation') {
             throw new \Exception('can\'t create a navigation vocabulary');
         }
         return parent::create($obj, $options);
@@ -144,7 +144,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['id'] == 'navigation') {
             throw new \Exception('can\'t update navigation vocabulary');
         }
-        if ($obj['name'] == 'navigation') {
+        if ($obj['name'] == 'Navigation') {
             throw new \Exception('can\'t create a navigation vocabulary');
         }
         return parent::update($obj, $options);
