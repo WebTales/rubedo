@@ -127,21 +127,16 @@ class CurrentUser implements ICurrentUser
             );
         }
         return $groupsArray['data'];
-        
-        $groups = array();
-        switch ($user['login']) {
-            case 'admin':
-                $groups[] = 'admin';
-            case 'valideur':
-                $groups[] = 'valideur';
-            case 'redacteur':
-                $groups[] = 'redacteur';
-            default:
-                $groups[] = 'public';
-                break;
-        }
-        
-        return $groups;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\User\ICurrentUser::getMainGroup()
+     */
+    public function getMainGroup ()
+    {
+        return array_shift($this->getGroups());
     }
 
     /**
@@ -204,30 +199,48 @@ class CurrentUser implements ICurrentUser
     }
 
     /**
-     * (non-PHPdoc)
-     * 
-     * @see \Rubedo\Interfaces\User\ICurrentUser::getReadNavigationTaxonomy()
+     * return current user "can read" workspaces
+     *
+     * @return array
      */
-    public function getReadNavigationTaxonomy ()
+    public function getReadWorkspaces ()
     {
-        $currentUser = $this->getCurrentUser();
-        if(!isset($currentUser['readNavigation'])){
-            $currentUser['readNavigation'] = array('all');
+        $groupArray = $this->getGroups();
+        $workspaceArray = array();
+        
+        foreach ($groupArray as $group) {
+            $workspaceArray = array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id']));
         }
-        return $currentUser['readNavigation'];
+        return $workspaceArray;
     }
 
     /**
-     * (non-PHPdoc)
-     * 
-     * @see \Rubedo\Interfaces\User\ICurrentUser::getWriteNavigationTaxonomy()
+     * return main workspace of the current user
+     *
+     * @return array
      */
-    public function getWriteNavigationTaxonomy ()
+    public function getMainWorkspace ()
     {
-        $currentUser = $this->getCurrentUser();
-        if(!isset($currentUser['writeNavigation'])){
-            $currentUser['writeNavigation'] = array('all');
+        $mainGroup = $this->getMainGroup();
+        if (! $mainGroup) {
+            return null;
         }
-        return $currentUser['writeNavigation'];
+        return Manager::getService('Groups')->getMainWorkspace($mainGroup['id']);
+    }
+
+    /**
+     * return current user "can write" workspaces
+     *
+     * @return array
+     */
+    public function getWriteWorkspaces ()
+    {
+        $groupArray = $this->getGroups();
+        $workspaceArray = array();
+        
+        foreach ($groupArray as $group) {
+            $workspaceArray = array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']));
+        }
+        return $workspaceArray;
     }
 }

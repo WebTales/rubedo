@@ -57,4 +57,46 @@ class Groups extends AbstractCollection implements IGroups
             'name' => $name
         ));
     }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\IGroups::getReadWorkspaces()
+     */
+    public function getReadWorkspaces ($groupId)
+    {
+        $group = $this->findById($groupId);
+        if (! isset($group['readWorkspaces'])) {
+            $group['readWorkspaces'] = array(
+                'global'
+            );
+        }
+        return $group['readWorkspaces'];
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\IGroups::getMainWorkspace()
+     */
+    public function getMainWorkspace ($groupId)
+    {
+        $groupArray = $this->getWriteWorkspaces($groupId);
+        
+        return array_shift($groupArray);
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\IGroups::getWriteWorkspaces()
+     */
+    public function getWriteWorkspaces ($groupId)
+    {
+        $group = $this->findById($groupId);
+        if (! isset($group['writeWorkspaces'])) {
+            $group['writeWorkspaces'] = array();
+        }
+        return $group['writeWorkspaces'];
+    }
 }

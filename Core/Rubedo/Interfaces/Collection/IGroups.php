@@ -24,6 +24,30 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IGroups extends IAbstractCollection{
-	
+interface IGroups extends IAbstractCollection
+{
+
+    /**
+     * return "can read" workspaces
+     *
+     * @param string $groupId            
+     * @return array
+     */
+    public function getReadWorkspaces ($groupId);
+
+    /**
+     * return main workspace
+     * 
+     * @param string $groupId            
+     * @return array
+     */
+    public function getMainWorkspace ($groupId);
+
+    /**
+     * return "can write" workspaces
+     * 
+     * @param string $groupId            
+     * @return array
+     */
+    public function getWriteWorkspaces ($groupId);
 }

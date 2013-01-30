@@ -66,16 +66,31 @@ interface ICurrentUser
 	public function changePassword($oldPass,$newPass);
 	
 	/**
-	 * return current user "can read" item of navigation
+	 * return the main group of the current User
 	 * 
-	 * @return array
+	 * @return arr
 	 */
-	public function getReadNavigationTaxonomy ();
+	public function getMainGroup();
+	
 	
 	/**
-	 * return current user "can read" item of navigation
+	 * return current user "can read" workspaces
 	 * 
 	 * @return array
 	 */
-	public function getWriteNavigationTaxonomy ();
+	public function getReadWorkspaces ();
+	
+	/**
+	 * return main workspace of the current user
+	 * 
+	 * @return array
+	 */
+	public function getMainWorkspace();
+	
+	/**
+	 * return current user "can write" workspaces
+	 * 
+	 * @return array
+	 */
+	public function getWriteWorkspaces ();
 }
