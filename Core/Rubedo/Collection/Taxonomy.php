@@ -40,18 +40,6 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         'multiSelect' => true,
         'readOnly'=>true
     );
-    
-    /**
-     * a virtual taxonomy which reflects sites & pages trees
-     *
-     * @var array
-     */
-    protected $_virtualWorkspacesVocabulary = array(
-        'id' => 'workspaces',
-        'name' => 'Workspaces',
-        'multiSelect' => true,
-        'readOnly'=>true
-    );
 
     public function __construct ()
     {
@@ -67,9 +55,8 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
             $this->_virtualNavigationVocabulary,
-            $this->_virtualWorkspacesVocabulary
         ), $list['data']);
-        $list['count'] = $list['count'] + 2;
+        $list['count'] = $list['count'] + 1;
         return $list;
     }
 
@@ -83,9 +70,6 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         if ($name == 'Navigation') {
             return $this->_virtualNavigationVocabulary;
-        }
-        if ($name == 'Workspaces') {
-            return $this->_virtualWorkspacesVocabulary;
         }
         return $this->_dataService->findOne(array(
             'name' => $name

@@ -91,9 +91,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 if (($filter['property'] == 'vocabularyId' && $filter['value'] == 'navigation')) {
                     $navigation = true;
                     unset($filters[$key]);
-                } elseif (($filter['property'] == 'vocabularyId' && $filter['value'] == 'workspaces')) {
-                    $workspace = true;
-                    unset($filters[$key]);
                 }
             }
         }
@@ -103,18 +100,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $contentArray = array();
             foreach ($siteList['data'] as $site) {
                 $contentArray[] = $this->_siteToTerm($site);
-            }
-            
-            $number = count($contentArray);
-            return array(
-                'count' => $number,
-                'data' => $contentArray
-            );
-        } elseif ($workspace) {
-            $siteList = Manager::getService('Workspaces')->getList($filters);
-            $contentArray = array();
-            foreach ($siteList['data'] as $site) {
-                $contentArray[] = $this->_workspaceToTerm($site);
             }
             
             $number = count($contentArray);
@@ -139,9 +124,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 if (($filter['property'] == 'vocabularyId' && $filter['value'] == 'navigation')) {
                     $navigation = true;
                     unset($filters[$key]);
-                } elseif (($filter['property'] == 'vocabularyId' && $filter['value'] == 'workspaces')) {
-                    $workspace = true;
-                    unset($filters[$key]);
                 }
             }
         }
@@ -163,15 +145,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 return array_values($returnArray);
             }
             return array();
-        } elseif ($workspace) {
-            
-            $returnArray = array();
-            $childrenArray = Manager::getService('Workspaces')->getList($filters, $sort);
-            foreach ($childrenArray['data'] as $workspace) {
-                $returnArray[] = $this->_workspaceToTerm($workspace);
-            }
-            
-            return array_values($returnArray);
         } else {
             return parent::readChild($parentId, $filters, $sort);
         }
