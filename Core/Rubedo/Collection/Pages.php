@@ -122,7 +122,7 @@ class Pages extends AbstractCollection implements IPages
 	     
 	    $url = strtr(trim($url),$normalizeChars);
 	    $url = mb_strtolower($url,'UTF-8');
-	    $url = mb_ereg_replace("[^A-Za-z0-9\.\-]","",$url);
+	    $url = mb_ereg_replace("[^A-Za-z0-9\\.\\-]","",$url);
 	    $url = trim($url,'-');
 	    
 	    return $url;
