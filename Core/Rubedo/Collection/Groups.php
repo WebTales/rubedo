@@ -125,19 +125,19 @@ class Groups extends AbstractCollection implements IGroups
     }
 	
 	public function clearOrphanGroups() {
-		$pagesArray = array();	
-		$pagesIdArray = array('root');
+		$groupssArray = array();	
+		$groupsIdArray = array('root');
 		$orphansArray = array();
 		$orphansIdArray = array();
 		
-		$pagesArray = $this->getList();
+		$groupsArray = $this->getList();
 		
 		//recovers the list of contentTypes id
-		foreach ($pagesArray['data'] as $value) {
-			$pagesIdArray[] = $value['id'];
+		foreach ($groupsArray['data'] as $value) {
+			$groupsIdArray[] = $value['id'];
 		}
 		
-		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $pagesIdArray)));
+		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $groupsIdArray)));
 
 		foreach ($orphansArray['data'] as $value) {
 			$orphansIdArray[] = $value['id'];
@@ -162,19 +162,19 @@ class Groups extends AbstractCollection implements IGroups
 	}
 	
 	public function countOrphanGroups() {
-		$pagesArray = array();	
-		$pagesIdArray = array('root');
+		$groupsArray = array();	
+		$groupsIdArray = array('root');
 		$orphansArray = array();
 		$orphansIdArray = array();
 		
-		$pagesArray = $this->getList();
+		$groupsArray = $this->getList();
 		
 		//recovers the list of contentTypes id
-		foreach ($pagesArray['data'] as $value) {
-			$pagesIdArray[] = $value['id'];
+		foreach ($groupsArray['data'] as $value) {
+			$groupsIdArray[] = $value['id'];
 		}
 		
-		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $pagesIdArray)));
+		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $groupsIdArray)));
 
 		foreach ($orphansArray['data'] as $value) {
 			$orphansIdArray[] = $value['id'];
