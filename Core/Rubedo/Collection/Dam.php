@@ -29,6 +29,25 @@ use Rubedo\Services\Manager;
 class Dam extends AbstractCollection implements IDam
 {
 
+    /**
+     * ensure that no nested contents are requested directly
+     */
+    protected function _init ()
+    {
+        parent::_init();
+        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+        if (in_array('all', $readWorkspaceArray)) {
+            return;
+        }
+        $readWorkspaceArray[] = null;
+        $filter = array(
+            'target' => array(
+                '$in' => $readWorkspaceArray
+            )
+        );
+        $this->_dataService->addFilter($filter);
+    }
+
     public function __construct ()
     {
         $this->_collectionName = 'Dam';
@@ -80,51 +99,61 @@ class Dam extends AbstractCollection implements IDam
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
-//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-//         }
+        // if(!isset($obj['taxonomy']['navigation']) ||
+        // empty($obj['taxonomy']['navigation'])){
+        // $obj['taxonomy']['navigation'] =
+        // Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
+        // }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Exception('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
         $returnArray = parent::update($obj, $options);
-		
-		if ($returnArray["success"]) {
+        
+        if ($returnArray["success"]) {
             $this->_indexDam($returnArray['data']);
         }
-		
-		return $returnArray;
+        
+        return $returnArray;
     }
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true,))
     {
-//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-//         }
+        // if(!isset($obj['taxonomy']['navigation']) ||
+        // empty($obj['taxonomy']['navigation'])){
+        // $obj['taxonomy']['navigation'] =
+        // Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
+        // }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Exception('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
         $returnArray = parent::create($obj, $options);
-		
-		if ($returnArray["success"]) {
+        
+        if ($returnArray["success"]) {
             $this->_indexDam($returnArray['data']);
         }
-		
-		return $returnArray;
+        
+        return $returnArray;
     }
 
-	public function getByType($typeId) {
-		$filter = array(array('property' => 'typeId', 'value' => $typeId));
-		
-		return $this->getList($filter);
+    public function getByType ($typeId)
+    {
+        $filter = array(
+            array(
+                'property' => 'typeId',
+                'value' => $typeId
+            )
+        );
+        
+        return $this->getList($filter);
 	}
 }
 

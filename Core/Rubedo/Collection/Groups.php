@@ -68,7 +68,7 @@ class Groups extends AbstractCollection implements IGroups
         $group = $this->findById($groupId);
         if (! isset($group['readWorkspaces'])) {
             $group['readWorkspaces'] = array(
-                'global',
+                'global',//'51092bd09a199de401000000'
             );
         }else{
             $group['readWorkspaces'][]='global';

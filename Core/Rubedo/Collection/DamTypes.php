@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IDamTypes;
+use Rubedo\Interfaces\Collection\IDamTypes,Rubedo\Services\Manager;
 
 /**
  * Service to handle Groups
@@ -27,7 +27,20 @@ use Rubedo\Interfaces\Collection\IDamTypes;
  */
 class DamTypes extends AbstractCollection implements IDamTypes
 {
-	
+    /**
+     * Only access to content with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+        if(in_array('all',$readWorkspaceArray)){
+            return;
+        }
+        $readWorkspaceArray[] = null;
+        $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+        $this->_dataService->addFilter($filter);
+    }
 
 	public function __construct(){
 		$this->_collectionName = 'DamTypes';

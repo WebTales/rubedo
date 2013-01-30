@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IContentTypes;
+use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager;
 
 /**
  * Service to handle ContentTypes
@@ -27,6 +27,21 @@ use Rubedo\Interfaces\Collection\IContentTypes;
  */
 class ContentTypes extends AbstractCollection implements IContentTypes
 {
+    
+    /**
+     * Only access to content with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+        if(in_array('all',$readWorkspaceArray)){
+            return;
+        }
+        $readWorkspaceArray[] = null;
+        $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+        $this->_dataService->addFilter($filter);
+    }
 
     protected $_model = array(
         'type' => array(
