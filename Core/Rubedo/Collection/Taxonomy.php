@@ -37,7 +37,20 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     protected $_virtualNavigationVocabulary = array(
         'id' => 'navigation',
         'name' => 'Navigation',
-        'multiSelect' => true
+        'multiSelect' => true,
+        'readOnly'=>true
+    );
+    
+    /**
+     * a virtual taxonomy which reflects sites & pages trees
+     *
+     * @var array
+     */
+    protected $_virtualWorkspacesVocabulary = array(
+        'id' => 'workspaces',
+        'name' => 'Workspaces',
+        'multiSelect' => true,
+        'readOnly'=>true
     );
 
     public function __construct ()
@@ -53,9 +66,10 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
-            $this->_virtualNavigationVocabulary
+            $this->_virtualNavigationVocabulary,
+            $this->_virtualWorkspacesVocabulary
         ), $list['data']);
-        $list['count'] ++;
+        $list['count'] = $list['count'] + 2;
         return $list;
     }
 
@@ -67,8 +81,11 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
      */
     public function findByName ($name)
     {
-        if ($name == 'navigation') {
+        if ($name == 'Navigation') {
             return $this->_virtualNavigationVocabulary;
+        }
+        if ($name == 'Workspaces') {
+            return $this->_virtualWorkspacesVocabulary;
         }
         return $this->_dataService->findOne(array(
             'name' => $name

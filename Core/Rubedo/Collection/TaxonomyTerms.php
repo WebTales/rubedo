@@ -91,24 +91,18 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 if (($filter['property'] == 'vocabularyId' && $filter['value'] == 'navigation')) {
                     $navigation = true;
                     unset($filters[$key]);
+                } elseif (($filter['property'] == 'vocabularyId' && $filter['value'] == 'workspaces')) {
+                    $workspace = true;
+                    unset($filters[$key]);
                 }
             }
         }
         
-        if (! $navigation) {
-            return parent::getList($filters, $sort, $start, $limit);
-        } else {
+        if ($navigation) {
             $siteList = Manager::getService('Sites')->getList($filters);
             $contentArray = array();
-            
-            $contentArray[] = $this->_getMainRoot();
-            
             foreach ($siteList['data'] as $site) {
                 $contentArray[] = $this->_siteToTerm($site);
-            }
-            $pageList = Manager::getService('Pages')->getList($filters);
-            foreach ($pageList['data'] as $page) {
-                $contentArray[] = $this->_pageToTerm($page);
             }
             
             $number = count($contentArray);
@@ -116,6 +110,20 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 'count' => $number,
                 'data' => $contentArray
             );
+        } elseif ($workspace) {
+            $siteList = Manager::getService('Workspaces')->getList($filters);
+            $contentArray = array();
+            foreach ($siteList['data'] as $site) {
+                $contentArray[] = $this->_workspaceToTerm($site);
+            }
+            
+            $number = count($contentArray);
+            return array(
+                'count' => $number,
+                'data' => $contentArray
+            );
+        } else {
+            return parent::getList($filters, $sort, $start, $limit);
         }
     }
     
@@ -131,13 +139,14 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 if (($filter['property'] == 'vocabularyId' && $filter['value'] == 'navigation')) {
                     $navigation = true;
                     unset($filters[$key]);
+                } elseif (($filter['property'] == 'vocabularyId' && $filter['value'] == 'workspaces')) {
+                    $workspace = true;
+                    unset($filters[$key]);
                 }
             }
         }
         
-        if (! $navigation) {
-            return parent::readChild($parentId, $filters, $sort);
-        } else {
+        if ($navigation) {
             if ($parentId == 'root') {
                 $returnArray = array();
                 
@@ -152,32 +161,19 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 }
                 
                 return array_values($returnArray);
-            } else {
-                
-                $rootPage = Manager::getService('Pages')->findById($parentId);
-                
-                if ($rootPage) {
-                    $filters[] = array(
-                        'property' => 'site',
-                        'value' => $rootPage["site"]
-                    );
-                } else {
-                    $filters[] = array(
-                        'property' => 'site',
-                        'value' => $parentId
-                    );
-                    $parentId = 'root';
-                }
-                
-                $returnArray = array();
-                $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
-                
-                foreach ($childrenArray as $page) {
-                    $returnArray[] = $this->_pageToTerm($page);
-                }
-                
-                return array_values($returnArray);
             }
+            return array();
+        } elseif ($workspace) {
+            
+            $returnArray = array();
+            $childrenArray = Manager::getService('Workspaces')->getList($filters, $sort);
+            foreach ($childrenArray['data'] as $workspace) {
+                $returnArray[] = $this->_workspaceToTerm($workspace);
+            }
+            
+            return array_values($returnArray);
+        } else {
+            return parent::readChild($parentId, $filters, $sort);
         }
     }
 
@@ -189,8 +185,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         foreach ($siteArray['data'] as $site) {
             $childrenArray[] = $this->_siteToTerm($site);
         }
-        if(count($childrenArray) > 0){
-            foreach ($childrenArray as $key => $value){
+        if (count($childrenArray) > 0) {
+            foreach ($childrenArray as $key => $value) {
                 $childrenArray[$key] = $this->_addChildrenToSite($value);
             }
         }
@@ -198,7 +194,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         return $mainRoot;
     }
 
-    protected function _addChildrenToSite($array){
+    protected function _addChildrenToSite ($array)
+    {
         $sort[] = array(
             'property' => 'orderValue',
             'direction' => 'ASC'
@@ -218,7 +215,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         }
         return $array;
     }
-    
+
     protected function _addNavigationChildrenToArray ($array)
     {
         $filters = null;
@@ -242,6 +239,24 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     /**
      * convert a site item to a taxonomy term item
      *
+     * @param array $workspace            
+     * @return array
+     */
+    protected function _workspaceToTerm ($workspace)
+    {
+        $term = array();
+        $term["parentId"] = 'root';
+        $term['text'] = $workspace['text'];
+        $term['id'] = $workspace['id'];
+        $term['vocabularyId'] = 'wokspaces';
+        $term['readOnly'] = true;
+        $term['leaf'] = true;
+        return $term;
+    }
+
+    /**
+     * convert a site item to a taxonomy term item
+     *
      * @param array $site            
      * @return array
      */
@@ -252,6 +267,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $site['text'];
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
+        $term['readOnly'] = true;
+        $term['leaf'] = true;
         return $term;
     }
 
@@ -262,6 +279,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $mainRoot['text'] = 'Tous les sites';
         $mainRoot['id'] = 'all';
         $mainRoot['vocabularyId'] = 'navigation';
+        $mainRoot['readOnly'] = true;
         return $mainRoot;
     }
 
@@ -280,6 +298,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['leaf'] = $page['leaf'];
         $term['orderValue'] = $page['orderValue'];
         $term['vocabularyId'] = 'navigation';
+        $term['readOnly'] = true;
         
         return $term;
     }
