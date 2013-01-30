@@ -34,20 +34,75 @@ class Pages extends AbstractCollection implements IPages
 		parent::__construct();
 	}
 	
+	/**
+     *
+     * @param string $id
+     *            id whose children should be deleted
+     * @return array array list of items to delete
+     */
+    protected function _getChildToDelete ($id)
+    {
+        // delete at least the node
+        $returnArray = array(
+            $this->_dataService->getId($id)
+        );
+        
+        // read children list
+        $terms = $this->readChild($id);
+        
+        // for each child, get sublist of children
+        if (is_array($terms)) {
+            foreach ($terms as $key => $value) {
+                $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
+            }
+        }
+        
+        return $returnArray;
+    }
+	
 	public function matchSegment($urlSegment,$parentId,$siteId){
 	    return $this->_dataService->findOne(array('pageURL'=>$urlSegment,'parentId'=>$parentId,'site'=>$siteId));
 	}
 	
-
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::destroy()
+	/**
+     * Delete objects in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::destroy
+     * @param array $obj
+     *            data object
+     * @param bool $options
+     *            should we wait for a server response
+     * @return array
      */
     public function destroy (array $obj, $options = array('safe'=>true))
     {
-        $pageId = $obj['id'];
-        $returnValue = parent::destroy($obj,$options);
-        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$options);
-        return $returnValue;
+        $deleteCond = array(
+            '_id' => array(
+                '$in' => $this->_getChildToDelete($obj['id'])
+            )
+        );
+        
+        $resultArray = $this->_dataService->customDelete($deleteCond);
+        Manager::getService('UrlCache')->customDelete(array('pageId'=>$obj['id']),$options);
+		
+        if ($resultArray['ok'] == 1) {
+            if ($resultArray['n'] > 0) {
+                $returnArray = array(
+                    'success' => true
+                );
+            } else {
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'no record had been deleted'
+                );
+            }
+        } else {
+            $returnArray = array(
+                'success' => false,
+                "msg" => $resultArray["err"]
+            );
+        }
+        return $returnArray;
     }
 
 	/* (non-PHPdoc)
