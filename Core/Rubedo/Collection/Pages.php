@@ -222,6 +222,4 @@ class Pages extends AbstractCollection implements IPages {
 
     }
 
-    //protected function _findBy
-
 }

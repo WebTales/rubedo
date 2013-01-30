@@ -320,38 +320,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         return self::$_termsArray[$id];
     }
 
-    public function clearOrphanTerms() {
-		$taxonomyService = Manager::getService('Taxonomy');
-		
-		$result = $taxonomyService->getList();
-		
-		//recovers the list of contentTypes id
-		foreach ($result['data'] as $value) {
-			$taxonomyArray[] = $value['id'];
-		}
-
-		$result = $this->customDelete(array('vocabularyId' => array('$nin' => $taxonomyArray)));
-		
-		if($result['ok'] == 1){
-			return array('success' => 'true');
-		} else {
-			return array('success' => 'false');
-		}
-	}
-	
-	public function countOrphanTerms() {
-		$taxonomyService = Manager::getService('Taxonomy');
-
-		$result = $taxonomyService->getList();
-		
-		//recovers the list of contentTypes id
-		foreach ($result['data'] as $value) {
-			$taxonomyArray[] = $value['id'];
-		}
-		
-		return $this->count(array(array('property' => 'vocabularyId', 'operator' => '$nin', 'value' => $taxonomyArray)));
-	}
-
     /**
      * Allow to find terms by their vocabulary
      *
@@ -419,5 +387,85 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             }
         }
         return $term;
+    }
+	
+	public function clearOrphanTerms() {
+        $taxonomyService = Manager::getService('Taxonomy');
+        $taxonomyArray = array();
+        $taxonomyIdArray = array();
+        $termsArray = array();
+        $termsIdArray = array('root');
+        $orphansArray = array();
+        $orphansIdArray = array();
+
+        $taxonomyArray = $taxonomyService->getList();
+        $termsArray = $this->getList();
+
+        foreach ($taxonomyArray['data'] as $value) {
+            $taxonomyIdArray[] = $value['id'];
+        }
+
+        foreach ($termsArray['data'] as $value) {
+            $termsIdArray[] = $value['id'];
+        }
+		
+        $orphansArray = $this->_dataService->customFind(array('$or' => array( array('parentId' => array('$nin' => $termsIdArray)), array('vocabularyId' => array('$nin' => $taxonomyIdArray)))));
+
+        if ($orphansArray->count() > 0) {
+            $orphansArray = iterator_to_array($orphansArray);
+        } else {
+            $orphansArray = array();
+        }
+
+        foreach ($orphansArray as $value) {
+            $orphansIdArray[] = $value['_id'];
+        }
+
+        $result = $this->_deleteByArrayOfId($orphansIdArray);
+
+        if ($result['ok'] == 1) {
+            return array('success' => 'true');
+        } else {
+            return array('success' => 'false');
+        }
+    }
+
+    public function countOrphanTerms() {
+        $taxonomyService = Manager::getService('Taxonomy');
+        $taxonomyArray = array();
+        $taxonomyIdArray = array();
+        $termsArray = array();
+        $termsIdArray = array('root');
+        $orphansArray = array();
+
+        $taxonomyArray = $taxonomyService->getList();
+        $termsArray = $this->getList();
+
+        foreach ($taxonomyArray['data'] as $value) {
+            $taxonomyIdArray[] = $value['id'];
+        }
+
+        foreach ($termsArray['data'] as $value) {
+            $termsIdArray[] = $value['id'];
+        }
+				
+        $orphansArray = $this->_dataService->customFind(array('$or' => array( array('parentId' => array('$nin' => $termsIdArray)), array('vocabularyId' => array('$nin' => $taxonomyIdArray)))));
+
+        if ($orphansArray->count() > 0) {
+            $orphansArray = iterator_to_array($orphansArray);
+        } else {
+            $orphansArray = array();
+        }
+
+        return count($orphansArray);
+    }
+
+    protected function _deleteByArrayOfId($arrayId) {
+        $deleteArray = array();
+        foreach ($arrayId as $stringId) {
+            $deleteArray[] = $this->_dataService->getId($stringId);
+        }
+        return $this->_dataService->customDelete(array('_id' => array('$in' => $deleteArray)));
+
     }
 }
