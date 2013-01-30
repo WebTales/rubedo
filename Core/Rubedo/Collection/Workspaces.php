@@ -70,6 +70,11 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         }
     }
 
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Rubedo\Collection\AbstractCollection::destroy()
+     */
     public function destroy (array $obj, $options = array('safe'=>true))
     {
         if ($obj['id'] == 'global') {
@@ -80,7 +85,9 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     }
 
     /**
-     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::count()
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Collection\AbstractCollection::count()
      */
     public function count ($filters = null)
     {
