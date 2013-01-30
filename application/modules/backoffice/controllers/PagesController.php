@@ -30,11 +30,33 @@ require_once('DataAccessController.php');
  */
 class Backoffice_PagesController extends Backoffice_DataAccessController
 {
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-pages','count-orphan-pages','model');
+	
     public function init(){
 		parent::init();
 		
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('Pages');
 	}
-
+	
+	/**
+	 * Clear orphan terms in the collection
+	 * 
+	 * @return array Result of the request
+	 */
+	public function clearOrphanPagesAction() {
+   		$result = $this->_dataService->clearOrphanPages();
+		
+		$this->_returnJson($result);
+   	}
+	
+	public function countOrphanPagesAction() {
+   		$result = $this->_dataService->countOrphanPages();
+		
+		$this->_returnJson($result);
+   	}
+	
 }

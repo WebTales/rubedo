@@ -29,12 +29,29 @@ require_once('DataAccessController.php');
  *
  */
 class Backoffice_IconsController extends Backoffice_DataAccessController
-{			
+{
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-icons','count-orphan-icons',);
+	
     public function init(){
 		parent::init();
 		
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('Icons');
+	}
+	
+	public function clearOrphanIconsAction() {
+		$result = $this->_dataService->clearOrphanIcons();
+		
+		$this->_returnJson($result);
+	}
+	
+	public function countOrphanIconsAction() {
+		$result = $this->_dataService->countOrphanIcons();
+		
+		$this->_returnJson($result);
 	}
 
 }

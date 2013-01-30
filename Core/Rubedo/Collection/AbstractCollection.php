@@ -43,6 +43,11 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected $_dataService;
 
+    /**
+     * description of content data structure
+     *
+     * @var array
+     */
     protected $_model = array();
 
     protected function _init ()
@@ -110,6 +115,12 @@ abstract class AbstractCollection implements IAbstractCollection
         return $dataValues;
     }
 
+    /**
+     * return a list with its parent-line
+     *
+     * @param array $filters            
+     * @return array:
+     */
     public function getListWithAncestors ($filters = null)
     {
         $returnArray = array();
@@ -123,6 +134,14 @@ abstract class AbstractCollection implements IAbstractCollection
         return $listResult;
     }
 
+    /**
+     * add parent-line of an item to an array
+     *
+     * @param array $array            
+     * @param array $item            
+     * @param int $max            
+     * @return array
+     */
     protected function _addParentToArray ($array, $item, $max = 5)
     {
         if (isset($array[$item['id']])) {
@@ -137,7 +156,7 @@ abstract class AbstractCollection implements IAbstractCollection
         }
         
         $parentItem = Manager::getService('Groups')->findById($item['parentId']);
-
+        
         if ($parentItem) {
             $array[$parentItem['id']] = $parentItem;
             $array = $this->_addParentToArray($array, $parentItem, $max - 1);
@@ -174,6 +193,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @deprecated
      *
      *
+     *
      * @param array $value
      *            search condition
      * @return array
@@ -186,6 +206,7 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      * @param unknown $filter            
@@ -203,6 +224,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * Shouldn't be used if doing a simple update action
      *
      * @deprecated
+     *
      *
      *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
@@ -259,7 +281,7 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         $domainClassName = 'Rubedo\\Domains\\' . ucfirst($domain);
         if (! class_exists($domainClassName)) {
-            throw new Exception('domain not defined :' . (string) $domain);
+            throw new \Exception('domain not defined :' . (string) $domain);
         }
         return $domainClassName::isValid($data);
     }
@@ -338,6 +360,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @deprecated
      *
      *
+     *
      * @param unknown $deleteCond            
      * @param unknown $options            
      * @return Ambigous <boolean, multitype:>
@@ -371,6 +394,12 @@ abstract class AbstractCollection implements IAbstractCollection
                         $this->_dataService->addFilter(array(
                             $value["property"] => array(
                                 '$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i')
+                            )
+                        ));
+                    } elseif (isset($value["operator"])) {
+                        $this->_dataService->addFilter(array(
+                            $value["property"] => array(
+                                $value["operator"] => $value["value"]
                             )
                         ));
                     }

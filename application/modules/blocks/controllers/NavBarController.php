@@ -73,7 +73,9 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['pages'] = array();
         $output['logo']= $blockConfig['logo'];
         
-        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage']);
+        $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
+        
+        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],array($excludeFromMenuCondition));
         foreach ($levelOnePages as $page) {
             $tempArray = array();
             $tempArray['url'] = $this->_helper->url->url(array(
@@ -81,7 +83,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
             ), null, true);
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
-            $levelTwoPages = Manager::getService('Pages')->readChild($page['id']);
+            $levelTwoPages = Manager::getService('Pages')->readChild($page['id'],array($excludeFromMenuCondition));
             if (count($levelTwoPages)) {
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {

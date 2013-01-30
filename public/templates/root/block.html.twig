@@ -1,5 +1,9 @@
-{% block mainContent %} 	  	
- <div class="block" style='border-style: dotted;padding: 20 px;margin : 20 px;'>  	
-   Ici, un bloc mal traité  	
- </div>  	
-{% endblock %}
+<div class=" {{ classHtml }}"  {% if idHtml %} id="{{ idHtml }}"
+	{% endif %}>
+	{% block mainContent %}
+	<div class="block"
+		style='border-style: dotted; padding: 20 px; margin: 20 px;'>
+		Something wrong happened !
+		</div>
+	{% endblock %}
+</div>

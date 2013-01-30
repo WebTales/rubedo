@@ -73,13 +73,14 @@
 						class="icon-ok"></i> Sauvegarder les modifications
 					</a> <span class="label label-warning pull-right">Edition</span>
 				</div>
+				<div class="span8 offset4" id="alerts"></div>
 			</div>
 		</div>
 	</div>
 	{% endif %} {% endblock %} {% block pageMainContent %}
 
 	<div class="container container-fluid">{% if rows %} {% for row in rows
-		%} {% include row.template with row only %} {% endfor %} {% endif %}</div>
+		%} {% include row.template with row %} {% endfor %} {% endif %}</div>
 	{% endblock %}
 
 	<!--/.fluid-container-->

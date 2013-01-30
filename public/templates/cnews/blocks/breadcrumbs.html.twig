@@ -1,7 +1,12 @@
+{% extends "root/block.html.twig" %} 
+
+{% block mainContent %} 	  	
+
 <div class="">
 	<div class="breadcrumbs_menu">
 		{% for page in rootline %} <a href="{{url({'pageId':page.id})}}"> {{ page.text }}
 		</a> &nbsp;/&nbsp; {% endfor %}
-        <span class="current">{{ currentPage.text }}</span>
+        <span class="current">{{ title }}</span>
 	</div>
 </div>
+{% endblock %}

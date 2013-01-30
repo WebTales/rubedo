@@ -635,9 +635,7 @@ class DataAccess implements IDataAccess
         
         $resultArray = $this->_collection->update($updateCondition, array(
             '$set' => $obj
-        ), array(
-            "safe" => $options
-        ));
+        ), $options);
         
         $obj = $this->findById($mongoID);
         
@@ -816,7 +814,8 @@ class DataAccess implements IDataAccess
                         'array',
                         'string',
                         'float',
-                        'integer'
+                        'integer',
+                        'boolean'
                     )) && ! $subvalue instanceof \MongoRegex) {
                         throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
                     }

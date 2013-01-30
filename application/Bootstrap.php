@@ -103,6 +103,17 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	}
 
 	/**
+	 * Load parameter from application.ini for swiftMail
+	 */
+	protected function _initSwiftMail ()
+	{
+	    $options = $this->getOption('swiftmail');
+	    if (isset($options)) {
+	        Zend_Registry::set('swiftMail', $options);
+	    }
+	}
+	
+	/**
 	 * Load router configuration with specific rules
 	 */
 	protected function _initRouter() {

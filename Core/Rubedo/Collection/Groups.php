@@ -33,6 +33,72 @@ class Groups extends AbstractCollection implements IGroups
         $this->_collectionName = 'Groups';
         parent::__construct();
     }
+	
+	/**
+     *
+     * @param string $id
+     *            id whose children should be deleted
+     * @return array array list of items to delete
+     */
+    protected function _getChildToDelete ($id)
+    {
+        // delete at least the node
+        $returnArray = array(
+            $this->_dataService->getId($id)
+        );
+        
+        // read children list
+        $terms = $this->readChild($id);
+        
+        // for each child, get sublist of children
+        if (is_array($terms)) {
+            foreach ($terms as $key => $value) {
+                $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
+            }
+        }
+        
+        return $returnArray;
+    }
+	
+	/**
+     * Delete objects in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::destroy
+     * @param array $obj
+     *            data object
+     * @param bool $options
+     *            should we wait for a server response
+     * @return array
+     */
+    public function destroy (array $obj, $options = array('safe'=>true))
+    {
+        $deleteCond = array(
+            '_id' => array(
+                '$in' => $this->_getChildToDelete($obj['id'])
+            )
+        );
+        
+        $resultArray = $this->_dataService->customDelete($deleteCond);
+		
+        if ($resultArray['ok'] == 1) {
+            if ($resultArray['n'] > 0) {
+                $returnArray = array(
+                    'success' => true
+                );
+            } else {
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'no record had been deleted'
+                );
+            }
+        } else {
+            $returnArray = array(
+                'success' => false,
+                "msg" => $resultArray["err"]
+            );
+        }
+        return $returnArray;
+    }
 
     public function getListByUserId ($userId)
     {
@@ -57,4 +123,63 @@ class Groups extends AbstractCollection implements IGroups
             'name' => $name
         ));
     }
+	
+	public function clearOrphanGroups() {
+		$groupssArray = array();	
+		$groupsIdArray = array('root');
+		$orphansArray = array();
+		$orphansIdArray = array();
+		
+		$groupsArray = $this->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($groupsArray['data'] as $value) {
+			$groupsIdArray[] = $value['id'];
+		}
+		
+		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $groupsIdArray)));
+
+		foreach ($orphansArray['data'] as $value) {
+			$orphansIdArray[] = $value['id'];
+		}
+
+		$result = $this->_deleteByArrayOfId($orphansIdArray);
+
+		if($result['ok'] == 1){
+			return array('success' => 'true');
+		} else {
+			return array('success' => 'false');
+		}
+	}
+	
+	protected function _deleteByArrayOfId($arrayId){
+		$deleteArray = array();
+		foreach ($arrayId as $stringId) {
+			$deleteArray[]=$this->_dataService->getId($stringId);
+		}
+		return $this->_dataService->customDelete(array('_id' => array('$in' => $deleteArray)));
+		
+	}
+	
+	public function countOrphanGroups() {
+		$groupsArray = array();	
+		$groupsIdArray = array('root');
+		$orphansArray = array();
+		$orphansIdArray = array();
+		
+		$groupsArray = $this->getList();
+		
+		//recovers the list of contentTypes id
+		foreach ($groupsArray['data'] as $value) {
+			$groupsIdArray[] = $value['id'];
+		}
+		
+		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $groupsIdArray)));
+
+		foreach ($orphansArray['data'] as $value) {
+			$orphansIdArray[] = $value['id'];
+		}
+		
+		return count($orphansIdArray);
+	}
 }

@@ -11,7 +11,8 @@
         "ezyang/htmlpurifier": "dev-master",
         "webtales/rubedo-backoffice-ui" : "dev-master",
         "bombayworks/zendframework1": "v1.12.1",
-        "alb/oembed": "1.0.0"
+        "alb/oembed": "1.0.0",
+        "swiftmailer/swiftmailer": "v4.3.0"
     },
     "require-dev": {
         "chriskite/phactory": "v0.4.2",

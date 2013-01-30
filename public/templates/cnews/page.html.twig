@@ -91,9 +91,14 @@
 						class="icon-ok"></i> Sauvegarder les modifications
 					</a> <span class="label label-warning pull-right">Edition</span>
 				</div>
+				<div class="span8 offset4" id="alerts"></div>
 			</div>
+			
 		</div>
+		
 	</div>
+	
+	
 	{% endif %} {% endblock %}
 	<div class="container basis"
 		style="position: relative; background: #ffffff;">
@@ -103,7 +108,7 @@
 			style="margin-left: -30px; margin-right: -30px; padding-top: 5px; padding-bottom: 5px;"></div>
 
 		{% block pageMainContent %} {% if rows %} {% for row in rows %} {%
-		include row.template with row only %} {% endfor %} {% endif %} {%
+		include row.template with row %} {% endfor %} {% endif %} {%
 		endblock %}
 
 	</div>

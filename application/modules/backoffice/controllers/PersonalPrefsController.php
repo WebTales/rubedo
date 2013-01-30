@@ -30,6 +30,10 @@ require_once ('DataAccessController.php');
  */
 class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 {
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-prefs','count-orphan-prefs',);
 
     /**
      * Initialise the controller
@@ -40,6 +44,16 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
         $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
     }
     
-    
+    public function clearOrphanPrefsAction() {
+		$result = $this->_dataService->clearOrphanPrefs();
+		
+		$this->_returnJson($result);
+	}
+	
+	public function countOrphanPrefsAction() {
+		$result = $this->_dataService->countOrphanPrefs();
+		
+		$this->_returnJson($result);
+	}
 
 }

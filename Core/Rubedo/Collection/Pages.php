@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -25,99 +25,201 @@ use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Pages extends AbstractCollection implements IPages
-{
-	
+class Pages extends AbstractCollection implements IPages {
 
-	public function __construct(){
-		$this->_collectionName = 'Pages';
-		parent::__construct();
-	}
-	
-	public function matchSegment($urlSegment,$parentId,$siteId){
-	    return $this->_dataService->findOne(array('pageURL'=>$urlSegment,'parentId'=>$parentId,'site'=>$siteId));
-	}
-	
-
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::destroy()
-     */
-    public function destroy (array $obj, $options = array('safe'=>true))
-    {
-        $pageId = $obj['id'];
-        $returnValue = parent::destroy($obj,$options);
-        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$options);
-        return $returnValue;
+    public function __construct() {
+        $this->_collectionName = 'Pages';
+        parent::__construct();
     }
 
-	/* (non-PHPdoc)
+    /**
+     *
+     * @param string $id
+     *            id whose children should be deleted
+     * @return array array list of items to delete
+     */
+    protected function _getChildToDelete($id) {
+        // delete at least the node
+        $returnArray = array($this->_dataService->getId($id));
+
+        // read children list
+        $terms = $this->readChild($id);
+
+        // for each child, get sublist of children
+        if (is_array($terms)) {
+            foreach ($terms as $key => $value) {
+                $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
+            }
+        }
+
+        return $returnArray;
+    }
+
+    public function matchSegment($urlSegment, $parentId, $siteId) {
+        return $this->_dataService->findOne(array('pageURL' => $urlSegment, 'parentId' => $parentId, 'site' => $siteId));
+    }
+
+    /**
+     * Delete objects in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::destroy
+     * @param array $obj
+     *            data object
+     * @param bool $options
+     *            should we wait for a server response
+     * @return array
+     */
+    public function destroy(array $obj, $options = array('safe'=>true)) {
+        $deleteCond = array('_id' => array('$in' => $this->_getChildToDelete($obj['id'])));
+
+        $resultArray = $this->_dataService->customDelete($deleteCond);
+        Manager::getService('UrlCache')->customDelete(array('pageId' => $obj['id']), $options);
+
+        if ($resultArray['ok'] == 1) {
+            if ($resultArray['n'] > 0) {
+                $returnArray = array('success' => true);
+            } else {
+                $returnArray = array('success' => false, "msg" => 'no record had been deleted');
+            }
+        } else {
+            $returnArray = array('success' => false, "msg" => $resultArray["err"]);
+        }
+        return $returnArray;
+    }
+
+    /* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true))
-    {
-        if(empty($obj['pageURL'])){
+    public function update(array $obj, $options = array('safe'=>true)) {
+        if (empty($obj['pageURL'])) {
             $dataUrl = $obj['title'];
-        }else{
+        } else {
             $dataUrl = $obj['pageURL'];
         }
-    	
-    	$obj['pageURL'] = $this->_filterUrl($dataUrl);
-        
+
+        $obj['pageURL'] = $this->_filterUrl($dataUrl);
+
         $pageId = $obj['id'];
-        $returnValue = parent::update($obj,$options);
-        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$options);
+        $returnValue = parent::update($obj, $options);
+        Manager::getService('UrlCache')->customDelete(array('pageId' => $pageId), $options);
         return $returnValue;
     }
-	
-	public function findByNameAndSite($name,$siteId){
-		$filterArray['site'] = $siteId;
-        $filterArray['text'] = $name;
-		return $this->_dataService->findOne($filterArray);
-	}
 
-    public function create (array $obj, $options = array('safe'=>true))
-    {
-        if(empty($obj['text'])){
+    public function findByNameAndSite($name, $siteId) {
+        $filterArray['site'] = $siteId;
+        $filterArray['text'] = $name;
+        return $this->_dataService->findOne($filterArray);
+    }
+
+    public function create(array $obj, $options = array('safe'=>true)) {
+        if (empty($obj['text'])) {
             $obj['text'] = $obj['title'];
         }
-        if(empty($obj['pageURL'])){
+        if (empty($obj['pageURL'])) {
             $dataUrl = $obj['title'];
-        }else{
+        } else {
             $dataUrl = $obj['pageURL'];
         }
-    	
-    	$obj['pageURL'] = $this->_filterUrl($dataUrl);
+
+        $obj['pageURL'] = $this->_filterUrl($dataUrl);
         return parent::create($obj, $options);
     }
+
+    protected function _filterUrl($url) {
+        mb_regex_encoding('UTF-8');
+
+        $normalizeChars = array('Á' => 'A', 'À' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Å' => 'A', 'Ä' => 'A', 'Æ' => 'AE', 'Ç' => 'C', 'É' => 'E', 'È' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Í' => 'I', 'Ì' => 'I', 'Î' => 'I', 'Ï' => 'I', 'Ð' => 'Eth', 'Ñ' => 'N', 'Ó' => 'O', 'Ò' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O', 'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'å' => 'a', 'ä' => 'a', 'æ' => 'ae', 'ç' => 'c', 'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e', 'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i', 'ð' => 'eth', 'ñ' => 'n', 'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ø' => 'o', 'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ý' => 'y', 'ß' => 'sz', 'þ' => 'thorn', 'ÿ' => 'y', ' ' => '-', '\'' => '-');
+
+        $url = strtr(trim($url), $normalizeChars);
+        $url = mb_strtolower($url, 'UTF-8');
+        $url = mb_ereg_replace("[^A-Za-z0-9\.\-]", "", $url);
+        $url = trim($url, '-');
+
+        return $url;
+    }
+
+    public function deleteBySiteId($id) {
+        return $this->_dataService->customDelete(array('site' => $id));
+    }
+
+    public function clearOrphanPages() {
+        $masksService = Manager::getService('Masks');
+        $masksArray = array();
+        $masksIdArray = array();
+        $pagesArray = array();
+        $pagesIdArray = array('root');
+        $orphansArray = array();
+        $orphansIdArray = array();
+
+        $masksArray = $masksService->getList();
+        $pagesArray = $this->getList();
+
+        foreach ($masksArray['data'] as $value) {
+            $masksIdArray[] = $value['id'];
+        }
+
+        foreach ($pagesArray['data'] as $value) {
+            $pagesIdArray[] = $value['id'];
+        }
 		
-	
-	protected function _filterUrl($url){
-	    mb_regex_encoding('UTF-8');
-	     
-	    $normalizeChars = array(
-	        'Á'=>'A', 'À'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Å'=>'A', 'Ä'=>'A', 'Æ'=>'AE', 'Ç'=>'C',
-	        'É'=>'E', 'È'=>'E', 'Ê'=>'E', 'Ë'=>'E', 'Í'=>'I', 'Ì'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ð'=>'Eth',
-	        'Ñ'=>'N', 'Ó'=>'O', 'Ò'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O',
-	        'Ú'=>'U', 'Ù'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y',
-	         
-	        'á'=>'a', 'à'=>'a', 'â'=>'a', 'ã'=>'a', 'å'=>'a', 'ä'=>'a', 'æ'=>'ae', 'ç'=>'c',
-	        'é'=>'e', 'è'=>'e', 'ê'=>'e', 'ë'=>'e', 'í'=>'i', 'ì'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'eth',
-	        'ñ'=>'n', 'ó'=>'o', 'ò'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o',
-	        'ú'=>'u', 'ù'=>'u', 'û'=>'u', 'ü'=>'u', 'ý'=>'y',
-	         
-	        'ß'=>'sz', 'þ'=>'thorn', 'ÿ'=>'y', ' '=>'-','\''=>'-'
-	    );
-	     
-	    $url = strtr(trim($url),$normalizeChars);
-	    $url = mb_strtolower($url,'UTF-8');
-	    $url = mb_ereg_replace("[^A-Za-z0-9\.\-]","",$url);
-	    $url = trim($url,'-');
-	    
-	    return $url;
-	}
-	public function deleteBySiteId($id)
-	{
-		return $this->_dataService->customDelete(array('site' => $id));
-	}
-	
+        $orphansArray = $this->_dataService->customFind(array('$or' => array( array('parentId' => array('$nin' => $pagesIdArray)), array('maskId' => array('$nin' => $masksIdArray)))));
+
+        if ($orphansArray->count() > 0) {
+            $orphansArray = iterator_to_array($orphansArray);
+        } else {
+            $orphansArray = array();
+        }
+
+        foreach ($orphansArray as $value) {
+            $orphansIdArray[] = $value['_id'];
+        }
+
+        $result = $this->_deleteByArrayOfId($orphansIdArray);
+
+        if ($result['ok'] == 1) {
+            return array('success' => 'true');
+        } else {
+            return array('success' => 'false');
+        }
+    }
+
+    public function countOrphanPages() {
+        $masksService = Manager::getService('Masks');
+        $masksArray = array();
+        $masksIdArray = array();
+        $pagesArray = array();
+        $pagesIdArray = array('root');
+        $orphansArray = array();
+
+        $masksArray = $masksService->getList();
+        $pagesArray = $this->getList();
+
+        foreach ($masksArray['data'] as $value) {
+            $masksIdArray[] = $value['id'];
+        }
+
+        foreach ($pagesArray['data'] as $value) {
+            $pagesIdArray[] = $value['id'];
+        }
+
+        $orphansArray = $this->_dataService->customFind(array('$or' => array( array('parentId' => array('$nin' => $pagesIdArray)), array('maskId' => array('$nin' => $masksIdArray)))));
+
+        if ($orphansArray->count() > 0) {
+            $orphansArray = iterator_to_array($orphansArray);
+        } else {
+            $orphansArray = array();
+        }
+
+        return count($orphansArray);
+    }
+
+    protected function _deleteByArrayOfId($arrayId) {
+        $deleteArray = array();
+        foreach ($arrayId as $stringId) {
+            $deleteArray[] = $this->_dataService->getId($stringId);
+        }
+        return $this->_dataService->customDelete(array('_id' => array('$in' => $deleteArray)));
+
+    }
+
 }
