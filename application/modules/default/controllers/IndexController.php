@@ -175,6 +175,40 @@ class IndexController extends Zend_Controller_Action
         $this->_helper->json($versionArray);
     }
 
+    public function testMailAction ()
+    {
+        $to = $this->getParam('to', null);
+        if(is_null($to)){
+            throw new Zend_Controller_Action_Exception('Please, give an email adresse');
+        }
+        $message = Manager::getService('Mailer')->getNewMessage();
+        
+        $message->setSubject('Rubedo Test Mail');
+        $message->setReplyTo(array(
+            'rubedo@webtales.fr' => 'Rubedo'
+        ));
+        $message->setReturnPath('jbourdin@gmail.com');
+        $message->setFrom(array(
+            'jbourdin@gmail.com'
+        ));
+        $message->setTo(array(
+            $to
+        ));
+        
+        $this->view->logo = $message->embed(Swift_Image::fromPath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/images/logoRubedo.png'));
+        $this->view->To = $to;
+        // Set body content
+        $msgContent = $this->view->render('index/mail.phtml');
+        
+        // Set the body
+        $message->setBody($msgContent, 'text/html');
+        
+        $send = Manager::getService('Mailer')->sendMessage($message);
+        if ($send == 0) {
+            throw new Zend_Controller_Action_Exception('No mail has been sent !');
+        }
+    }
+
     /**
      * Return page infos based on its ID
      *
@@ -390,7 +424,7 @@ class IndexController extends Zend_Controller_Action
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = isset($block['urlPrefix'])?$block['urlPrefix']:$block['id'];
+                $prefix = isset($block['urlPrefix']) ? $block['urlPrefix'] : $block['id'];
                 $route->setPrefix($prefix);
                 
                 $allParams = $this->getAllParams();
