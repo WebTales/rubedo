@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IWorkspaces;
+use Rubedo\Interfaces\Collection\IWorkspaces,Rubedo\Services\Manager;
 
 /**
  * Service to handle Workspaces
@@ -27,7 +27,26 @@ use Rubedo\Interfaces\Collection\IWorkspaces;
  */
 class Workspaces extends AbstractCollection implements IWorkspaces
 {
-
+    protected function _init(){
+        parent::_init();
+        
+        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+        if(in_array('all',$readWorkspaceArray)){
+            return;
+        }
+        $mongoIdArray = array();
+        foreach ($readWorkspaceArray as $workspaceId){
+            if($workspaceId == 'global'){
+                continue;
+            }
+            $mongoIdArray[]=$this->_dataService->getId($workspaceId);
+        }
+        $filter = array('_id'=> array('$in'=>$mongoIdArray));
+        
+        $this->_dataService->addFilter($filter);
+    }
+    
+    
     /**
      * a virtual taxonomy which reflects sites & pages trees
      *

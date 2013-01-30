@@ -27,7 +27,19 @@ use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager;
  */
 class Pages extends AbstractCollection implements IPages
 {
-	
+    /**
+     * Only access to content with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+        if(in_array('all',$readWorkspaceArray)){
+            return;
+        }
+        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+        $this->_dataService->addFilter($filter);
+    }
 
 	public function __construct(){
 		$this->_collectionName = 'Pages';
@@ -151,5 +163,49 @@ class Pages extends AbstractCollection implements IPages
 		
 		return $this->count(array(array('property' => 'maskId', 'operator' => '$nin', 'value' => $masksArray)));
 	}
+	
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::getList()
+     */
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
+        $list = parent::getList ($filters, $sort, $start, $limit);
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        $returnArray = array();
+        foreach ($list as $page){
+            if(!in_array($page['workspace'], $writeWorkspaces)){
+                $page['readOnly'] =true;
+            }
+           $returnArray[] = $page;
+        }
+        return $returnArray;
+    }
+    
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::readChild()
+     */
+    public function readChild ($parentId, $filters = null, $sort = null)
+    {
+        $list = parent::readChild ($parentId,$filters, $sort);
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        $returnArray = array();
+        foreach ($list as $page){
+            if(!in_array($page['workspace'], $writeWorkspaces)){
+                $page['readOnly'] =true;
+                
+            }else{
+                $page['readOnly'] =false;
+            }
+           $returnArray[] = $page;
+        }
+        return $returnArray;
+        
+    }
+
+    
+    
+
+	
+	
 	
 }

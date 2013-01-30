@@ -131,7 +131,7 @@ class CurrentUser implements ICurrentUser
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Interfaces\User\ICurrentUser::getMainGroup()
      */
     public function getMainGroup ()
@@ -209,7 +209,7 @@ class CurrentUser implements ICurrentUser
         $workspaceArray = array();
         
         foreach ($groupArray as $group) {
-            $workspaceArray = array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id']));
+            $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id'])));
         }
         return $workspaceArray;
     }
@@ -239,7 +239,7 @@ class CurrentUser implements ICurrentUser
         $workspaceArray = array();
         
         foreach ($groupArray as $group) {
-            $workspaceArray = array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']));
+            $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id'])));
         }
         return $workspaceArray;
     }
