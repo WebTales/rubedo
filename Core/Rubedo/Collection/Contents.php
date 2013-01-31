@@ -65,6 +65,16 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $filter = array('target'=> array('$in'=>$readWorkspaceArray));
         $this->_dataService->addFilter($filter);
     }
+    
+    protected function _initWrite(){
+        $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        if(in_array('all',$writeWorkspaceArray)){
+            return;
+        }
+        $writeWorkspaceArray[]=null;
+        $filter = array('writeWorkspace'=> array('$in'=>$writeWorkspaceArray));
+        $this->_dataService->addFilter($filter);
+    }
 
     /**
      * Return the visible contents list
@@ -102,9 +112,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function create (array $obj, $options = array('safe'=>true), $live = false)
     {
-//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-//         }
+        $this->_initWrite();
+        
         $obj = $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
@@ -129,9 +138,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
     {
-//         if(!isset($obj['taxonomy']['navigation']) || empty($obj['taxonomy']['navigation'])){
-//             $obj['taxonomy']['navigation'] = Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-//         }
+        $this->_initWrite();
+        
         $obj = $this->_filterInputData($obj);
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
@@ -155,6 +163,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function destroy (array $obj, $options = array('safe'=>true))
     {
+        $this->_initWrite();
+        
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
             $this->_unIndexContent($obj);
@@ -196,14 +206,14 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         $obj = $this->_setDefaultWorkspace($obj);
         
-//         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-//         if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-//             throw new \Exception('You can not assign to this workspace');
-//         }
-//         $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
-//         if (count(array_intersect($obj['writeWorkspace'], $readWorkspaces))==0) {
-//             throw new \Exception('You can not assign to this workspace');
-//         }
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+            throw new \Exception('You can not assign to this workspace');
+        }
+        $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
+        if (count(array_intersect($obj['target'], $readWorkspaces))==0) {
+            throw new \Exception('You can not assign to this workspace');
+        }
         
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
