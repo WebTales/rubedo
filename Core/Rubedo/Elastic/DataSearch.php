@@ -351,7 +351,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			
 			// Add label to filters
 				
-			$result['activeFacets'][] = array();
+			$result['activeFacets']= array();
 			
 			foreach ($filters as $vocabularyId => $termId) {
 				switch ($vocabularyId) {
