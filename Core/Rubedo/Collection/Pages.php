@@ -49,44 +49,94 @@ class Pages extends AbstractCollection implements IPages
 	public function matchSegment($urlSegment,$parentId,$siteId){
 	    return $this->_dataService->findOne(array('pageURL'=>$urlSegment,'parentId'=>$parentId,'site'=>$siteId));
 	}
-	
 
-	/* (non-PHPdoc)
+    /**
+     * (non-PHPdoc)
+     * 
      * @see \Rubedo\Collection\AbstractCollection::destroy()
      */
     public function destroy (array $obj, $options = array('safe'=>true))
     {
-        $pageId = $obj['id'];
-        $returnValue = parent::destroy($obj,$options);
-        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$options);
+        $returnValue = parent::destroy($obj, $options);
+
+        $this->_clearCacheForPage($obj);
+        
         return $returnValue;
     }
 
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::update()
+    /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
     public function update (array $obj, $options = array('safe'=>true))
     {
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        $obj = $this->_initContent($obj);
         
-        if(!in_array($obj['workspace'], $writeWorkspaces)){
+        $returnValue = parent::update($obj, $options);
+        
+        $this->_clearCacheForPage($obj);
+        
+        return $returnValue;
+    }
+    
+    /**
+     * Set workspace and URL.
+     * 
+     * @param array $obj
+     * @throws \Exception
+     * @return array
+     */
+    protected function _initContent($obj){
+        //set inheritance for workspace
+        if (! isset($obj['inheritWorkspace']) || empty($obj['inheritWorkspace'])) {
+            $obj['inheritWorkspace'] = true;
+        }
+        //resolve inheritance if not forced
+        if ($obj['inheritWorkspace']) {
+            unset($obj['workspace']);
+            $ancestorsLine = array_reverse($this->getAncestors($obj));
+            foreach ($ancestorsLine as $key => $ancestor) {
+                if (isset($ancestor['inheritWorkspace']) && $ancestor['inheritWorkspace'] == false) {
+                    $obj['workspace'] = $ancestor['workspace'];
+                    break;
+                }
+            }
+            if (! isset($obj['workspace'])) {
+                $site = Manager::getService('Sites')->findById($obj['site']);
+                $obj['workspace'] = (isset($site['workspace'])&&!empty($site['workspace'])) ? $site['workspace'] : 'global';
+            }
+        }
+        
+        //verify workspace can be attributed
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        if (! in_array($obj['workspace'], $writeWorkspaces)) {
             throw new \Exception('You can not assign page to this workspace');
         }
         
-        if(empty($obj['pageURL'])){
+        //set text property
+        if (empty($obj['text'])) {
+            $obj['text'] = $obj['title'];
+        }
+        
+        //set pageUrl
+        if (empty($obj['pageURL'])) {
             $dataUrl = $obj['title'];
-        }else{
+        } else {
             $dataUrl = $obj['pageURL'];
         }
-    	
-    	$obj['pageURL'] = $this->_filterUrl($dataUrl);
         
-        $pageId = $obj['id'];
-        $returnValue = parent::update($obj,$options);
-        Manager::getService('UrlCache')->customDelete(array('pageId'=>$pageId),$options);
-        return $returnValue;
+        //filter URL
+        $obj['pageURL'] = $this->_filterUrl($dataUrl);
+        
+        return $obj;
     }
 	
+    protected function _clearCacheForPage($obj){
+        $pageId = $obj['id'];
+        Manager::getService('UrlCache')->customDelete(array(
+        'pageId' => $pageId
+        ), array('safe'=>false));
+    }
+    
 	public function findByNameAndSite($name,$siteId){
 		$filterArray['site'] = $siteId;
         $filterArray['text'] = $name;
@@ -95,22 +145,7 @@ class Pages extends AbstractCollection implements IPages
 
     public function create (array $obj, $options = array('safe'=>true))
     {
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        
-        if(!in_array($obj['workspace'], $writeWorkspaces)){
-            throw new \Exception('You can not assign page to this workspace');
-        }
-        
-        if(empty($obj['text'])){
-            $obj['text'] = $obj['title'];
-        }
-        if(empty($obj['pageURL'])){
-            $dataUrl = $obj['title'];
-        }else{
-            $dataUrl = $obj['pageURL'];
-        }
-    	
-    	$obj['pageURL'] = $this->_filterUrl($dataUrl);
+        $obj = $this->_initContent($obj);
         return parent::create($obj, $options);
     }
 		
@@ -139,6 +174,8 @@ class Pages extends AbstractCollection implements IPages
 	    
 	    return $url;
 	}
+	
+	
 	public function deleteBySiteId($id)
 	{
 		return $this->_dataService->customDelete(array('site' => $id));
