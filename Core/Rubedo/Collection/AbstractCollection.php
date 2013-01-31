@@ -254,6 +254,7 @@ abstract class AbstractCollection implements IAbstractCollection
         if (count($this->_model) > 0) {
             $obj = $this->_filterInputData($obj);
         }
+        unset($obj['readOnly']);
         return $this->_dataService->create($obj, $options);
     }
 
@@ -307,6 +308,7 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function update (array $obj, $options = array('safe'=>true))
     {
+        unset($obj['readOnly']);
         return $this->_dataService->update($obj, $options);
     }
 

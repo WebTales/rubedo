@@ -67,6 +67,12 @@ class Pages extends AbstractCollection implements IPages
      */
     public function update (array $obj, $options = array('safe'=>true))
     {
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        
+        if(!in_array($obj['workspace'], $writeWorkspaces)){
+            throw new \Exception('You can not assign page to this workspace');
+        }
+        
         if(empty($obj['pageURL'])){
             $dataUrl = $obj['title'];
         }else{
@@ -89,6 +95,12 @@ class Pages extends AbstractCollection implements IPages
 
     public function create (array $obj, $options = array('safe'=>true))
     {
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        
+        if(!in_array($obj['workspace'], $writeWorkspaces)){
+            throw new \Exception('You can not assign page to this workspace');
+        }
+        
         if(empty($obj['text'])){
             $obj['text'] = $obj['title'];
         }
@@ -175,6 +187,8 @@ class Pages extends AbstractCollection implements IPages
         foreach ($list as $page){
             if(!in_array($page['workspace'], $writeWorkspaces)){
                 $page['readOnly'] =true;
+            }else{
+                $page['readOnly'] =false;
             }
            $returnArray[] = $page;
         }
