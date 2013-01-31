@@ -73,6 +73,16 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         $list['data'] = array_merge(array(
             $this->_virtualGlobalWorkspace
         ), $list['data']);
+        
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+                
+        foreach ($list['data'] as &$workspace){
+            if(in_array($workspace['id'],$writeWorkspaces)){
+                $workspace['canContribute']=true;
+            }else{
+                $workspace['canContribute']=false;
+            }
+        }
         $list['count'] = $list['count'] + 1;
         return $list;
     }
@@ -121,6 +131,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         if ($obj['name'] == 'Global') {
             throw new \Exception('can\'t create global workspace');
         }
+        unset($obj['canContribute']);
         return parent::create($obj, $options);
     }
 
@@ -135,6 +146,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         if ($obj['name'] == 'Global') {
             throw new \Exception('can\'t create a global workspace');
         }
+        unset($obj['canContribute']);
         return parent::update($obj, $options);
     }
 }
