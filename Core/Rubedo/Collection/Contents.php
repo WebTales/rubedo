@@ -196,6 +196,15 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         $obj = $this->_setDefaultWorkspace($obj);
         
+//         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+//         if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+//             throw new \Exception('You can not assign to this workspace');
+//         }
+//         $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
+//         if (count(array_intersect($obj['writeWorkspace'], $readWorkspaces))==0) {
+//             throw new \Exception('You can not assign to this workspace');
+//         }
+        
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
         $contentTypeFields = $contentType['fields'];
