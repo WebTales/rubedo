@@ -45,6 +45,7 @@ class Backoffice_GenericCleaningController extends Backoffice_DataAccessControll
 		$taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
 		$pagesService = Rubedo\Services\Manager::getService('Pages');
 		$contentsService = Rubedo\Services\Manager::getService('Contents');
+		$groupsService = Rubedo\Services\Manager::getService('Groups');
 		
 		$results = array();
 		
@@ -53,6 +54,7 @@ class Backoffice_GenericCleaningController extends Backoffice_DataAccessControll
 		$results['taxonomy terms'] = $taxonomyTermsService->clearOrphanTerms();
 		$results['pages'] = $pagesService->clearOrphanPages();
 		$results['contents'] = $contentsService->clearOrphanContents();
+		$results['groups'] = $groupsService->clearOrphanGroups();
 		
 		$this->_returnJson($results);
 	}
@@ -63,6 +65,7 @@ class Backoffice_GenericCleaningController extends Backoffice_DataAccessControll
 		$taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
 		$pagesService = Rubedo\Services\Manager::getService('Pages');
 		$contentsService = Rubedo\Services\Manager::getService('Contents');
+		$groupsService = Rubedo\Services\Manager::getService('Groups');
 		
 		$results = array();
 		
@@ -71,6 +74,7 @@ class Backoffice_GenericCleaningController extends Backoffice_DataAccessControll
 		$results['taxonomy terms'] = $taxonomyTermsService->countOrphanTerms();
 		$results['pages'] = $pagesService->countOrphanPages();
 		$results['contents'] = $contentsService->countOrphanContents();
+		$results['groups'] = $groupsService->countOrphanGroups();
 		
 		$this->_returnJson($results);
 	}
