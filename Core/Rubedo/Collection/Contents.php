@@ -62,7 +62,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             return;
         }
         $readWorkspaceArray[]=null;
-        $filter = array('target'=> array('$in'=>$readWorkspaceArray));
+        $filter = array('target.$'=> array('$in'=>$readWorkspaceArray));
         $this->_dataService->addFilter($filter);
     }
 
@@ -194,6 +194,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _filterInputData (array $obj)
     {
+        $obj = $this->_setDefaultWorkspace($obj);
+        
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
         $contentTypeFields = $contentType['fields'];
@@ -474,5 +476,21 @@ class Contents extends WorkflowAbstractCollection implements IContents
 		}
 		
 		return $this->count(array(array('property' => 'typeId', 'operator' => '$nin', 'value' => $contentTypesArray)));
+	}
+	
+	/**
+	 * Set workspace if none given based on User main group.
+	 * 
+	 * @param array $content
+	 * @return array
+	 */
+	protected function _setDefaultWorkspace($content){
+	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']==''){
+	        $content['writeWorkspace'] = Manager::getService('CurrentUser')->getMainWorkspace();
+	    }
+	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() ){
+	        $content['target'] = Manager::getService('CurrentUser')->getReadWorkspaces();
+	    }
+	    return $content;
 	}
 }
