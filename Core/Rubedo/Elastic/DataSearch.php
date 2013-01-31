@@ -350,6 +350,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 			}
 			
 			// Add label to filters
+				
+			$result['activeFacets'][] = array();
+			
 			foreach ($filters as $vocabularyId => $termId) {
 				switch ($vocabularyId) {
 					case 'navigation':
@@ -444,6 +447,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
 				$result['activeFacets'][] = $temp;
 			}
+		 
 					
 			return($result);
 			
