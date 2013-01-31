@@ -120,6 +120,8 @@ class Sites extends AbstractCollection implements ISites
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
+        $obj = $this->_initContent($obj);
+        
         $return = parent::update($obj,$options);
         if($return['success']==true){
             Manager::getService('Pages')->propagateWorkspace ('root', $return['data']['workspace'], $return['data']['id']);
@@ -141,7 +143,18 @@ class Sites extends AbstractCollection implements ISites
     public function create (array $obj, $options = array('safe'=>true,))
     {
         $obj = $this->_setDefaultWorkspace($obj);
+        $obj = $this->_initContent($obj);
+        
         return parent::create($obj,$options);
+    }
+    
+    protected function _initContent($obj){
+        //verify workspace can be attributed
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        if (! in_array($obj['workspace'], $writeWorkspaces)) {
+            throw new \Exception('You can not assign to this workspace');
+        }
+        return $obj;
     }
 
 	
