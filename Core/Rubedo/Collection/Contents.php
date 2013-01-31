@@ -498,7 +498,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	        $content['writeWorkspace'] = Manager::getService('CurrentUser')->getMainWorkspace();
 	    }
 	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() ){
-	        $content['target'] = Manager::getService('CurrentUser')->getReadWorkspaces();
+	        $content['target'] = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 	    }
 	    return $content;
 	}
