@@ -128,7 +128,12 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true), $live = true)
-    {
+    {        
+        if (! isset($obj['workspaces']) ||  $obj['workspaces']=='') {
+            $obj['workspaces'] = array(
+                'global'
+            );
+        }
         $returnArray = parent::create($obj, $options, $live);
         
         if ($returnArray["success"]) {
