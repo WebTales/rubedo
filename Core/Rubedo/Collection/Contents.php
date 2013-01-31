@@ -62,7 +62,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             return;
         }
         $readWorkspaceArray[]=null;
-        $filter = array('target.$'=> array('$in'=>$readWorkspaceArray));
+        $filter = array('target'=> array('$in'=>$readWorkspaceArray));
         $this->_dataService->addFilter($filter);
     }
 
