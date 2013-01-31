@@ -276,7 +276,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$result['data'][] = $tmp;
 			}
 						
-			// Add label to Facets
+			// Add label to Facets, hide facets with 1 result, 
 			$elasticaFacets = $elasticaResultSet->getFacets();
 			
 			$result['facets'] = array();
@@ -293,8 +293,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('Pages');
 								foreach ($temp['terms'] as $key => $value) {
-									$termItem = $collection->findById($value['term']);
-									$temp['terms'][$key]['label'] = $termItem['type'];
+									if (!in_array($value['term'],$filters[$id],TRUE)) {	
+										$termItem = $collection->findById($value['term']);
+										$temp['terms'][$key]['label'] = $termItem['type'];
+									} else {
+										unset($temp['terms'][$key]);
+									}
 								}
 							} else {
 								$renderFacet = false;
@@ -307,8 +311,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('DamTypes');
 								foreach ($temp['terms'] as $key => $value) {
-									$termItem = $collection->findById($value['term']);
-									$temp['terms'][$key]['label'] = $termItem['type'];
+									if (!in_array($value['term'],$filters[$id],TRUE)) {	
+										$termItem = $collection->findById($value['term']);
+										$temp['terms'][$key]['label'] = $termItem['type'];
+									} else {
+										unset($temp['terms'][$key]);
+									}
 								}
 							} else {
 								$renderFacet = false;
@@ -321,8 +329,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('ContentTypes');
 								foreach ($temp['terms'] as $key => $value) {
-									$termItem = $collection->findById($value['term']);
-									$temp['terms'][$key]['label'] = $termItem['type'];
+									if (!in_array($value['term'],$filters[$id],TRUE)) {	
+										$termItem = $collection->findById($value['term']);
+										$temp['terms'][$key]['label'] = $termItem['type'];
+									} else {
+										unset($temp['terms'][$key]);
+									}
 								}
 							} else {
 								$renderFacet = false;
@@ -335,8 +347,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('Users');
 								foreach ($temp['terms'] as $key => $value) {
-									$termItem = $collection->findById($value['term']);
-									$temp['terms'][$key]['label'] = $termItem['name'];
+									if (!in_array($value['term'],$filters[$id],TRUE)) {	
+										$termItem = $collection->findById($value['term']);
+										$temp['terms'][$key]['label'] = $termItem['name'];
+									} else {
+										unset($temp['terms'][$key]);
+									}
 								}
 							} else {
 								$renderFacet = false;
@@ -349,9 +365,13 @@ class DataSearch extends DataAbstract implements IDataSearch
 							$temp['label'] = $vocabularyItem['name'];
 							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('TaxonomyTerms');
-								foreach ($temp['terms'] as $key => $value) {		
-									$termItem = $collection->findById($value['term']);
-									$temp['terms'][$key]['label'] = $termItem['text'];
+								foreach ($temp['terms'] as $key => $value) {
+									if (!in_array($value['term'],$filters[$id],TRUE)) {	
+										$termItem = $collection->findById($value['term']);
+										$temp['terms'][$key]['label'] = $termItem['text'];
+									} else {
+										unset($temp['terms'][$key]);
+									}
 								}
 							} else {
 								$renderFacet = false;
