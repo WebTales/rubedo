@@ -9,7 +9,7 @@
         "read.ui.contents.[a-z]+",
         "write.ui.contents.draft",
         "write.ui.contents.draftToPending",
-        "execute.controller.contents.$dot*",
+        "execute.controller.contents.@dot*",
         "read.ui.contents",
         "write.ui.contents.draft",
         "write.ui.contents.pending",
