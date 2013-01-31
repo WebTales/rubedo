@@ -1,0 +1,15 @@
+{
+    "id":"pageReader",
+    "label":{
+    	"fr":"Consultation des pages",
+    	"en":"Can read pages"
+    },
+    "rights":[
+        "read.ui.pages",
+        "execute.controller.pages.index.backoffice",
+        "execute.controller.sites.index.backoffice",
+        "execute.controller.masks.index.backoffice",
+        "execute.controller.pages.read-child.backoffice",
+        "execute.controller.xhr-get-page-url.index.backoffice"
+    ]
+}
