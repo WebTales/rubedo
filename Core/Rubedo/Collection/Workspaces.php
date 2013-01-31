@@ -128,7 +128,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
      */
     public function create (array $obj, $options = array('safe'=>true,))
     {
-        if ($obj['name'] == 'Global') {
+        if ($obj['text'] == 'Global') {
             throw new \Exception('can\'t create global workspace');
         }
         unset($obj['canContribute']);
