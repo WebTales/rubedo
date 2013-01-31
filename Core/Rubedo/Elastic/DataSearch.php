@@ -279,56 +279,67 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Add label to Facets
 			$elasticaFacets = $elasticaResultSet->getFacets();
 			
+			$result['facets'] = array();
+			
 			foreach($elasticaFacets as $id => $facet) {
 				$temp = (array) $facet;
+				$renderFacet = true;
 				if (!empty($temp)) {
 					$temp['id'] = $id;
 					switch ($id) {
 						case 'navigation':
 							
 							$temp['label'] = 'Navigation';
-							if (array_key_exists('terms', $temp)) {
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('Pages');
 								foreach ($temp['terms'] as $key => $value) {
 									$termItem = $collection->findById($value['term']);
 									$temp['terms'][$key]['label'] = $termItem['type'];
 								}
+							} else {
+								$renderFacet = false;
 							}
 							break;
 
 						case 'damType' :
 							
 							$temp['label'] = 'Type de document';
-							if (array_key_exists('terms', $temp)) {
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('DamTypes');
 								foreach ($temp['terms'] as $key => $value) {
 									$termItem = $collection->findById($value['term']);
 									$temp['terms'][$key]['label'] = $termItem['type'];
 								}
+							} else {
+								$renderFacet = false;
 							}
 							break;
 																					
 						case 'type' :
 							
 							$temp['label'] = 'Type de contenu';
-							if (array_key_exists('terms', $temp)) {
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('ContentTypes');
 								foreach ($temp['terms'] as $key => $value) {
 									$termItem = $collection->findById($value['term']);
 									$temp['terms'][$key]['label'] = $termItem['type'];
 								}
+							} else {
+								$renderFacet = false;
 							}
 							break;
 
 						case 'author' :
 							
 							$temp['label'] = 'Auteur';
-							if (array_key_exists('terms', $temp)) {
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('Users');
 								foreach ($temp['terms'] as $key => $value) {
 									$termItem = $collection->findById($value['term']);
 									$temp['terms'][$key]['label'] = $termItem['name'];
 								}
+							} else {
+								$renderFacet = false;
 							}
 							break;
 							
@@ -336,20 +347,27 @@ class DataSearch extends DataAbstract implements IDataSearch
 							
 							$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($id);
 							$temp['label'] = $vocabularyItem['name'];
-							if (array_key_exists('terms', $temp)) {
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('TaxonomyTerms');
 								foreach ($temp['terms'] as $key => $value) {		
 									$termItem = $collection->findById($value['term']);
 									$temp['terms'][$key]['label'] = $termItem['text'];
 								}
+							} else {
+								$renderFacet = false;
 							}
 							break;
 					}	
-					$result['facets'][] = $temp;
+					if ($renderFacet) {
+						$result['facets'][] = $temp;
+					}
 				}
 			}
 			
 			// Add label to filters
+				
+			$result['activeFacets']= array();
+			
 			foreach ($filters as $vocabularyId => $termId) {
 				switch ($vocabularyId) {
 					case 'navigation':
@@ -444,6 +462,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
 				$result['activeFacets'][] = $temp;
 			}
+		 
 					
 			return($result);
 			

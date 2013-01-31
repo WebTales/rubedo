@@ -1,0 +1,16 @@
+{
+    "id":"siteWriter",
+    "label":{
+    	"fr":"Edition des sites",
+    	"en":"Can write sites"
+    },
+    "rights":[
+        "write.ui.sites",
+        "execute.controller.sites.wizard-create.backoffice",
+        "execute.controller.sites.update.backoffice",
+        "execute.controller.sites.delete.backoffice"
+    ],
+    "includes":[
+        "siteReader"
+    ]
+}
