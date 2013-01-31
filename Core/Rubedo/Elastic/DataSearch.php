@@ -404,7 +404,20 @@ class DataSearch extends DataAbstract implements IDataSearch
 							)
 						);
 						break;
-
+					
+					case 'query' :
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Query',
+							'terms' => array(
+								array(
+									'term' => $termId,
+									'label' => $termId
+								)
+							)
+						);
+						break;
+												
 					default:
 						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
 						
