@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\ISites;
+use Rubedo\Interfaces\Collection\ISites, Rubedo\Services\Manager;
 
 /**
  * Service to handle Sites
@@ -31,6 +31,20 @@ class Sites extends AbstractCollection implements ISites
     protected static $_overrideSiteName = array();
 
     protected static $_overrideSiteNameReverse = array();
+    
+    /**
+     * Only access to content with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+        if(in_array('all',$readWorkspaceArray)){
+            return;
+        }
+        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+        $this->_dataService->addFilter($filter);
+    }
 
     public static function setOverride (array $array)
     {
@@ -99,4 +113,38 @@ class Sites extends AbstractCollection implements ISites
 			}
 		return $returnArray;
 	}
+	
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::update()
+     */
+    public function update (array $obj, $options = array('safe'=>true,))
+    {
+        $return = parent::update($obj,$options);
+        if($return['success']==true){
+            Manager::getService('Pages')->propagateWorkspace ('root', $return['data']['workspace'], $return['data']['id']);
+        }
+        return $return;
+        
+    }
+
+    protected function _setDefaultWorkspace($site){
+        if(!isset($site['workspace']) || $site['workspace']==''){
+            $site['workspace'] = Manager::getService('CurrentUser')->getMainWorkspace();
+        }
+        return $site;
+    }
+    
+	/** (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::create()
+     */
+    public function create (array $obj, $options = array('safe'=>true,))
+    {
+        $obj = $this->_setDefaultWorkspace($obj);
+        return parent::create($obj,$options);
+    }
+
+	
+    
+	
 }

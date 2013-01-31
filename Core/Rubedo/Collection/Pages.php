@@ -75,6 +75,8 @@ class Pages extends AbstractCollection implements IPages
         
         $this->_clearCacheForPage($obj);
         
+        $this->propagateWorkspace ($obj['id'], $obj['workspace']);
+        
         return $returnValue;
     }
     
@@ -86,8 +88,9 @@ class Pages extends AbstractCollection implements IPages
      * @return array
      */
     protected function _initContent($obj){
+        
         //set inheritance for workspace
-        if (! isset($obj['inheritWorkspace']) || empty($obj['inheritWorkspace'])) {
+        if (! isset($obj['inheritWorkspace']) || $obj['inheritWorkspace']!==false) {
             $obj['inheritWorkspace'] = true;
         }
         //resolve inheritance if not forced
@@ -105,7 +108,6 @@ class Pages extends AbstractCollection implements IPages
                 $obj['workspace'] = (isset($site['workspace'])&&!empty($site['workspace'])) ? $site['workspace'] : 'global';
             }
         }
-        
         //verify workspace can be attributed
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         if (! in_array($obj['workspace'], $writeWorkspaces)) {
@@ -251,6 +253,25 @@ class Pages extends AbstractCollection implements IPages
         }
         return $returnArray;
         
+    }
+
+    public function propagateWorkspace ($parentId, $workspaceId, $siteId = null)
+    {
+        $filters = array();
+        if ($siteId) {
+            $filters[] = array(
+                'property' => 'site',
+                'value' => $siteId
+            );
+        }
+        $pageList = $this->readChild($parentId);
+        foreach ($pageList as $page) {
+            if (! $page['readOnly']) {
+                if ($page['workspace'] != $workspaceId) {
+                    $this->update($page);
+                }
+            }
+        }
     }
 
     

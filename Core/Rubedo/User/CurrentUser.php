@@ -136,7 +136,10 @@ class CurrentUser implements ICurrentUser
      */
     public function getMainGroup ()
     {
-        return array_shift($this->getGroups());
+        $groups = $this->getGroups();
+        reset($groups);
+        $return = array_shift($groups);
+        return $return;
     }
 
     /**

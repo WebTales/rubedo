@@ -64,7 +64,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         if (!is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
-                $site= $this->_dataService->create($insertData, true);
+                $site= $this->_dataService->create($insertData);
             }}
 		if($site['success']===true)
 		{
@@ -80,7 +80,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 			$maskObj['blocks'][0]['id']=(string) new MongoId();
 			$maskObj['blocks'][0]['parentCol']=$firstColumnId;
 			
-			$mask=Rubedo\Services\Manager::getService('Masks')->create($maskObj,true);
+			$mask=Rubedo\Services\Manager::getService('Masks')->create($maskObj);
 			if($mask['success']===true)
 			{
 				/*Create Home Page*/
@@ -88,7 +88,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$homePageObj=(Zend_Json::decode(file_get_contents($jsonHomePage),true));
 				$homePageObj['site']=$site['data']['id'];
 				$homePageObj['maskId']=$mask['data']['id'];
-				$homePage=Rubedo\Services\Manager::getService('Pages')->create($homePageObj,true);
+				$homePage=Rubedo\Services\Manager::getService('Pages')->create($homePageObj);
 				/*Create Single Page*/
 				$jsonSinglePage=realpath(APPLICATION_PATH."/../data/default/site/singlePage.json");
 				$singlePageObj=(Zend_Json::decode(file_get_contents($jsonSinglePage),true));
@@ -96,7 +96,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$singlePageObj['maskId']=$mask['data']['id'];
 				$singlePageObj['blocks'][0]['id']=(string) new MongoId();
 				$singlePageObj['blocks'][0]['parentCol']=$secondColumnId;
-				$page=Rubedo\Services\Manager::getService('Pages')->create($singlePageObj,true);
+				$page=Rubedo\Services\Manager::getService('Pages')->create($singlePageObj);
 				/*Create Search Page*/
 				$jsonSearchPage=realpath(APPLICATION_PATH."/../data/default/site/searchPage.json");
 				$searchPageObj=(Zend_Json::decode(file_get_contents($jsonSearchPage),true));
@@ -104,18 +104,17 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$searchPageObj['maskId']=$mask['data']['id'];
 				$searchPageObj['blocks'][0]['id']=(string) new MongoId();
 				$searchPageObj['blocks'][0]['parentCol']=$secondColumnId;
-				$searchPage=Rubedo\Services\Manager::getService('Pages')->create($searchPageObj,true);
+				$searchPage=Rubedo\Services\Manager::getService('Pages')->create($searchPageObj);
 				if($page['success']===true)
 				{
 					$updateMask=$mask['data'];
 					$updateMask["blocks"][0]['configBloc']=array("useSearchEngine"=>true,"rootPage"=>$homePage['data']['id'],"searchPage"=>$searchPage['data']['id']);
-					$updateMaskReturn=Rubedo\Services\Manager::getService('Masks')->update($updateMask, true);
+					$updateMaskReturn=Rubedo\Services\Manager::getService('Masks')->update($updateMask);
 					if($updateMaskReturn['success']===true)
 					{
 						$updateData=$site['data'];
 						$updateData['homePage']=$homePage['data']['id'];
-						$updateSiteReturn=$this->_dataService->update($updateData, true);
-
+						$updateSiteReturn=$this->_dataService->update($updateData);
 						if($updateSiteReturn['success']===true)
 						{
 							$returnArray=$updateSiteReturn;
