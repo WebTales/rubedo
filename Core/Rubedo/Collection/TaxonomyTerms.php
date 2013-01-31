@@ -389,54 +389,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         return self::$_termsArray[$id];
     }
 
-    public function clearOrphanTerms ()
-    {
-        $taxonomyService = Manager::getService('Taxonomy');
-        
-        $result = $taxonomyService->getList();
-        
-        // recovers the list of contentTypes id
-        foreach ($result['data'] as $value) {
-            $taxonomyArray[] = $value['id'];
-        }
-        
-        $result = $this->customDelete(array(
-            'vocabularyId' => array(
-                '$nin' => $taxonomyArray
-            )
-        ));
-        
-        if ($result['ok'] == 1) {
-            return array(
-                'success' => 'true'
-            );
-        } else {
-            return array(
-                'success' => 'false'
-            );
-        }
-    }
-
-    public function countOrphanTerms ()
-    {
-        $taxonomyService = Manager::getService('Taxonomy');
-        
-        $result = $taxonomyService->getList();
-        
-        // recovers the list of contentTypes id
-        foreach ($result['data'] as $value) {
-            $taxonomyArray[] = $value['id'];
-        }
-        
-        return $this->count(array(
-            array(
-                'property' => 'vocabularyId',
-                'operator' => '$nin',
-                'value' => $taxonomyArray
-            )
-        ));
-    }
-
     /**
      * Allow to find terms by their vocabulary
      *
@@ -462,7 +414,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function deleteByVocabularyId ($id)
     {
-        if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
+        if ($id == 'navigation'){
             throw new \Exception('can\'t destroy navigation terms ');
         }
         $deleteCond = array(
