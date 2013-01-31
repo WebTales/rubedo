@@ -1,0 +1,15 @@
+{
+    "id":"maskWriter",
+    "label":{
+    	"fr":"Edition des masques",
+    	"en":"Can write masks"
+    },
+    "rights":[
+        "write.ui.masks",
+        "execute.controller.masks.update.backoffice",
+        "execute.controller.xhr-get-mongo-id.index.backoffice"
+    ],
+    "includes":[
+        "maskReader"
+    ]
+}
