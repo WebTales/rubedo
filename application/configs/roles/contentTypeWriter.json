@@ -1,0 +1,15 @@
+{
+    "id":"contentTypeWriter",
+    "label":{
+    	"fr":"Edition des types de contenu",
+    	"en":"Can write content types"
+    },
+    "rights":[
+        "write.ui.contentTypes",
+        "execute.controller.content-types.update.backoffice",
+        "execute.controller.content-types.delete.backoffice"
+    ],
+    "includes":[
+        "contentTypeReader"
+    ]
+}

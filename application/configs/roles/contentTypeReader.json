@@ -1,0 +1,11 @@
+{
+    "id":"contentTypeReader",
+    "label":{
+    	"fr":"Consultation des types de contenu",
+    	"en":"Can read content types"
+    },
+    "rights":[
+        "read.ui.contentTypes",
+        "execute.controller.contentTypes.index.backoffice"
+    ]
+}
