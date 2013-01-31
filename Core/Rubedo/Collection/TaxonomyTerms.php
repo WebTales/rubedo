@@ -284,7 +284,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
             throw new \Exception('can\'t alter navigation terms ');
         }
-        parent::update($obj, $options);
+        return parent::update($obj, $options);
     }
 
     /**
