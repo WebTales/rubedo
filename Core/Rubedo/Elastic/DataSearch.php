@@ -258,6 +258,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];		
 				$tmp['author'] = $data['author'];
 				$tmp['authorName'] = $data['authorName'];
+				$tmp['lastUpdateTime'] = $data['lastUpdateTime'];
+				if (array_key_exists('fileSize',$data)) {
+					$tmp['fileSize'] = $data['fileSize'];
+				} 
 				switch ($data['objectType']) {
 					case 'content':
 						$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($data['contentType']);
@@ -268,7 +272,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 						$tmp['type'] = $damType['type'];
 						break;
 				}
-
 				
 				$result['data'][] = $tmp;
 			}
