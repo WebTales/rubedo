@@ -65,16 +65,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $filter = array('target'=> array('$in'=>$readWorkspaceArray));
         $this->_dataService->addFilter($filter);
     }
-    
-    protected function _initWrite(){
-        $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        if(in_array('all',$writeWorkspaceArray)){
-            return;
-        }
-        $writeWorkspaceArray[]=null;
-        $filter = array('writeWorkspace'=> array('$in'=>$writeWorkspaceArray));
-        $this->_dataService->addFilter($filter);
-    }
 
     /**
      * Return the visible contents list
@@ -107,13 +97,25 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $returnArray;
     }
     
-    /*
+    
+    
+    /* (non-PHPdoc)
+     * @see \Rubedo\Collection\WorkflowAbstractCollection::getList()
+     */
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null, $live = true)
+    {
+        $list = parent::getList($filters,$sort,$start,$limit,$live);
+        foreach ($list['data'] as &$obj){
+            $obj = $this->_addReadableProperty($obj);
+        }
+        return $list;        
+    }
+
+	/*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true), $live = false)
-    {
-        $this->_initWrite();
-        
+    {        
         $obj = $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
@@ -137,8 +139,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::update()
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
-    {
-        $this->_initWrite();
+    {        
+        $origObj = $this->findById($obj['id'],$live,false);
+        if($origObj['readOnly']){
+            throw new \Exception('no rights to update this content');
+        }
         
         $obj = $this->_filterInputData($obj);
         if ($this->_isValidInput) {
@@ -163,8 +168,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function destroy (array $obj, $options = array('safe'=>true))
     {
-        $this->_initWrite();
-        
+        $origObj = $this->findById($obj['id'],false,false);
+        if($origObj['readOnly']){
+            throw new \Exception('no rights to destroy this content');
+        }
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
             $this->_unIndexContent($obj);
@@ -512,4 +519,40 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	    }
 	    return $content;
 	}
+
+    protected function _addReadableProperty ($obj)
+    {
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        $obj = $this->_setDefaultWorkspace($obj);
+        
+        $contentTypeId = $obj['typeId'];
+        $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
+        //\Zend_Debug::dump($contentType);die();
+        if ($contentType['readOnly']) {
+            $obj['readOnly'] = true;
+        } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+            $obj['readOnly'] = true;
+        } else {
+            
+            $obj['readOnly'] = false;
+        }
+        
+        return $obj;
+    }
+	
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Collection\WorkflowAbstractCollection::findById()
+     */
+    public function findById ($contentId, $live = true, $raw = true)
+    {
+        
+        $obj = parent::findById ($contentId, $live,$raw);
+        $obj = $this->_addReadableProperty($obj);
+        return $obj;
+        
+    }
+
+	
+	
 }
