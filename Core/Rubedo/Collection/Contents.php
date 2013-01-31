@@ -519,19 +519,27 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	    }
 	    return $content;
 	}
-	
-	protected function _addReadableProperty($obj){
-	   $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-	   $obj = $this->_setDefaultWorkspace($obj);
-	   
-	    if(!in_array($obj['writeWorkspace'], $writeWorkspaces)){
-	        $obj['readOnly'] =true;
-	    }else{
-	        $obj['readOnly'] =false;
-	    }
 
-	    return $obj;
-	}
+    protected function _addReadableProperty ($obj)
+    {
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        $obj = $this->_setDefaultWorkspace($obj);
+        
+        $contentTypeId = $obj['typeId'];
+        $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
+        //\Zend_Debug::dump($contentType);die();
+        if ($contentType['readOnly']) {
+            $obj['readOnly'] = true;
+        } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+            $obj['readOnly'] = true;
+        } else {
+            
+            $obj['readOnly'] = false;
+        }
+        
+        return $obj;
+    }
+	
 	/**
 	 *  (non-PHPdoc)
      * @see \Rubedo\Collection\WorkflowAbstractCollection::findById()
