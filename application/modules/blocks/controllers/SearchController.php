@@ -47,92 +47,23 @@ class Blocks_SearchController extends Blocks_AbstractController
         $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
         $query->init();
         
-        $search = $query->search($params);
-        $elasticaResultSet = $search["resultSet"];
-        $filters = $search["filters"];
+        $results = $query->search($params);
         
-        // Get total hits
-        $nbresults = $elasticaResultSet->getTotalHits();
+        // Pagination
+        
         if ($params['pagesize'] != "all") {
-            $pagecount = intval($nbresults / $params['pagesize']) + 1;
+            $pagecount = intval( $results['total'] / $params['pagesize']) + 1;
         } else {
             $pagecount = 1;
         }
-        
-        // Get facets
-        $elasticaFacets = $elasticaResultSet->getFacets();
-        
-        //do not show selected values
-        foreach ($elasticaFacets as $name => $facet){
-            if(!isset($facet['terms'])){
-                continue;
-            }
-            $facetParam = $this->getRequest()->getParam($name,array());
-            
-            foreach($facet['terms'] as $key => $term){
-                
-                if(in_array($term['term'], $facetParam)){
-                    unset($elasticaFacets[$name]['terms'][$key]);
-                }
-            }
-        }
 
-        // Get results
-        $elasticaResults = $elasticaResultSet->getResults();
-        $results = array();
-        
-        foreach ($elasticaResults as $result) {
-            
-            $data = $result->getData();
-            $resultType = $result->getType();
-            $id = $result->getId();
-            
-            $score = $result->getScore();
-            
-            if (! is_float($score))
-                $score = 1;
-            
-            $score = round($score * 100);
-            $url = "#";
-            
-            $results[] = array(
-                'id' => $id,
-                'url' => $url,
-                'score' => $score,
-                'title' => $data['text'],
-                'summary' => $data['summary'],
-                'author' => $data['author'],
-                'type' => $data['contentType'],
-                'lastUpdateTime' => $data['lastUpdateTime']
-            );
-        }
-        
-        $output = $params;
-        
-        $output['results'] = $results;
-        $output['nbresults'] = $nbresults;
-        $output['pagecount'] = $pagecount;
-        $output['facets'] = $elasticaFacets;
-        
-        if($params['constrainToSite']){
-            foreach ($filters['Navigation'] as $key => $value){
-                if($value == $site['text']){
-                    unset($filters['Navigation'][$key]);
-                }
-            }
-            if(count($filters['Navigation'])==0){
-                unset($filters['Navigation']);
-            }
-        }
-        
-        $output['filters'] = $filters;
-        
-
+        $results['pagecount'] = $pagecount;
+		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
         $css = array();
         $js = array();
         
-        $this->_sendResponse($output, $template, $css, $js);
+        $this->_sendResponse($results, $template, $css, $js);
     }
 }

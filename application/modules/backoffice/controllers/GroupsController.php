@@ -30,11 +30,33 @@ require_once('DataAccessController.php');
  */
 class Backoffice_GroupsController extends Backoffice_DataAccessController
 {
+    /**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-groups','count-orphan-groups','model');	
+		
     public function init(){
 		parent::init();
 		
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('Groups');
 	}
+	
+	/**
+	 * Clear orphan groups in the collection
+	 * 
+	 * @return array Result of the request
+	 */
+	public function clearOrphanGroupsAction() {
+   		$result = $this->_dataService->clearOrphanGroups();
+		
+		$this->_returnJson($result);
+   	}
+	
+	public function countOrphanGroupsAction() {
+   		$result = $this->_dataService->countOrphanGroups();
+		
+		$this->_returnJson($result);
+   	}
 
 }
