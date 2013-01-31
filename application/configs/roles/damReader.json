@@ -9,6 +9,10 @@
         "execute.controller.dam-types.index.backoffice",
         "execute.controller.dam.index.backoffice",
         "execute.controller.dam.get-thumbnail.backoffice",
-        "execute.controller.dam.get.backoffice" 
+        "execute.controller.dam.get.backoffice",
+        "execute.controller.elastic-search-dam.index.backoffice",
+        "execute.controller.image.get.backoffice",
+        "execute.controller.image.get-thumbnail.default",
+        "execute.controller.file.get-thumbnail.default"
     ]
 }
