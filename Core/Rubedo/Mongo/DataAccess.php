@@ -354,10 +354,6 @@ class DataAccess implements IDataAccess
         // Delete the parent
         $returnArray = $this->destroy($parent, true);
         
-        if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
-        }
-        
         return $returnArray;
     }
 
