@@ -1,0 +1,18 @@
+{
+    "id":"groupWriter",
+    "label":{
+    	"fr":"Edition des groupes",
+    	"en":"Can write groups"
+    },
+    "rights":[
+        "write.ui.groups",
+        "execute.controller.groups.create.backoffice",
+        "execute.controller.groups.delete.backoffice",
+        "execute.controller.groups.update.backoffice",
+        "execute.controller.users.index.backoffice",
+        "xecute.controller.roles.index.backoffice"
+    ],
+    "includes":[
+        "groupReader"
+    ]
+}

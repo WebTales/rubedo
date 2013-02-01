@@ -1,0 +1,14 @@
+{
+    "id":"groupReader",
+    "label":{
+    	"fr":"Consultation des groupes",
+    	"en":"Can read groups"
+    },
+    "rights":[
+        "read.ui.groups",
+        "execute.controller.groups.index.backoffice",
+        "execute.controller.groups.read-child.backoffice",
+        "execute.controller.users.index.backoffice",
+        "execute.controller.roles.index.backoffice"
+    ]
+}
