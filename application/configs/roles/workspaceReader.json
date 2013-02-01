@@ -1,0 +1,11 @@
+{
+    "id":"workspaceReader",
+    "label":{
+    	"fr":"Consultation des espaces de travail",
+    	"en":"Can read workspaces"
+    },
+    "rights":[
+        "read.ui.workspaces",
+        "execute.controller.workspaces.index.backoffice"
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id":"workspaceWriter",
+    "label":{
+    	"fr":"Edition des espaces de travail",
+    	"en":"Can write workspaces"
+    },
+    "rights":[
+        "write.ui.workspaces",
+        "execute.controller.workspaces.create.backoffice",
+        "execute.controller.workspaces.delete.backoffice"
+    ],
+    "includes":[
+        "workspaceReader"
+    ]
+}
