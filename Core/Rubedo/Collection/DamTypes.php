@@ -47,4 +47,25 @@ class DamTypes extends AbstractCollection implements IDamTypes
 		parent::__construct();
 	}
 	
+	public function create (array $obj, $options = array('safe'=>true))
+    {
+    	$obj = $this->_addDefaultWorkspace($obj);
+		
+		return parent::create($obj, $options);
+	}
+	
+	public function update (array $obj, $options = array('safe'=>true))
+    {
+    	$obj = $this->_addDefaultWorkspace($obj);
+		
+		return parent::update($obj, $options);
+	}
+	
+	protected function _addDefaultWorkspace($obj){
+		if(!isset($obj['workspaces'])||$obj['workspaces']==array()||$obj['workspaces']==""){
+			$obj['workspaces']=array('global');
+		}
+		return $obj;
+	}
+	
 }
