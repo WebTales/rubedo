@@ -18,7 +18,7 @@ namespace Rubedo\Exceptions;
 
 
 /**
- * Exception occuring when an access right isn't granted
+ * Exception occuring when something went wrong with user input
  *
  * @author jbourdin
  * @category Rubedo

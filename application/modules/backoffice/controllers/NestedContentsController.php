@@ -71,14 +71,14 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
 		
         // refuse write action not send by POST
         if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-            throw new \Exception("You can't call a write action with a GET request");
+            throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request");
         } else {
         	if(!in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)){
         		$user = $sessionService->get('user');
         		$token = $this->getRequest()->getParam('token');
 				
 				if($token !== $user['token']){
-					throw new \Exception("The token given in the request doesn't match with the token in session");
+					throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session");
 				}
         	}
         }

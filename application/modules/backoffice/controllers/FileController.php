@@ -54,14 +54,14 @@ class Backoffice_FileController extends Zend_Controller_Action
         
         // refuse write action not send by POST
         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-            throw new \Exception("You can't call a write action with a GET request");
+            throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request");
         } else {
             if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
                 $user = $sessionService->get('user');
                 $token = $this->getRequest()->getParam('token');
                 
                 if ($token !== $user['token']) {
-                    throw new \Exception("The token given in the request doesn't match with the token in session");
+                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session");
                 }
             }
         }
@@ -90,7 +90,7 @@ class Backoffice_FileController extends Zend_Controller_Action
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
         if (! $adapter->receive()) {
-            throw new Exception(implode("\n", $adapter->getMessages()));
+            throw new \Rubedo\Exceptions\Server(implode("\n", $adapter->getMessages()));
         }
         
         $fileInfo = array_pop($adapter->getFileInfo());
@@ -137,7 +137,7 @@ class Backoffice_FileController extends Zend_Controller_Action
                 $this->redirect($this->_helper->url('index'));
             }
         } else {
-            throw new Zend_Controller_Exception("No Id Given", 1);
+            throw new \Rubedo\Exceptions\User("No Id Given", 1);
         }
     }
 
@@ -156,11 +156,11 @@ class Backoffice_FileController extends Zend_Controller_Action
             $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
             if (! $obj instanceof MongoGridFSFile) {
-                throw new Zend_Controller_Exception("No Image Found", 1);
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", 1);
             }
             $this->_helper->json($obj->file);
         } else {
-            throw new Zend_Controller_Exception("No Id Given", 1);
+            throw new \Rubedo\Exceptions\User("No Id Given", 1);
         }
     }
 

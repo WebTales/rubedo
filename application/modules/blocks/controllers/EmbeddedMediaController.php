@@ -37,7 +37,7 @@ class Blocks_EmbeddedMediaController extends Blocks_AbstractController
         if(isset($blockConfig['url'])){
         	$oembedParams['url'] = $blockConfig['url'];
         } else {
-			throw new Zend_Controller_Exception('need an url to display embed content');
+			throw new \Rubedo\Exceptions\User('need an url to display embed content');
 		}
         $cache = Rubedo\Services\Cache::getCache('oembed');
 

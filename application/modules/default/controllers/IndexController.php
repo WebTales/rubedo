@@ -134,7 +134,7 @@ class IndexController extends Zend_Controller_Action
         $this->_pageId = $this->getRequest()->getParam('pageId');
         
         if (! $this->_pageId) {
-            throw new Zend_Controller_Exception('No Page found');
+            throw new \Rubedo\Exceptions\NotFound('No Page found');
         }
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
@@ -179,7 +179,7 @@ class IndexController extends Zend_Controller_Action
     {
         $to = $this->getParam('to', null);
         if(is_null($to)){
-            throw new Zend_Controller_Action_Exception('Please, give an email adresse');
+            throw new \Rubedo\Exceptions\User('Please, give an email adresse');
         }
         $message = Manager::getService('Mailer')->getNewMessage();
         
@@ -205,7 +205,7 @@ class IndexController extends Zend_Controller_Action
         
         $send = Manager::getService('Mailer')->sendMessage($message);
         if ($send == 0) {
-            throw new Zend_Controller_Action_Exception('No mail has been sent !');
+            throw new \Rubedo\Exceptions\Server('No mail has been sent !');
         }
     }
 
@@ -223,18 +223,18 @@ class IndexController extends Zend_Controller_Action
         
         $this->_mask = Manager::getService('Masks')->findById($pageInfo['maskId']); // maskId
         if (! $this->_mask) {
-            throw new Zend_Controller_Exception('no mask found');
+            throw new \Rubedo\Exceptions\Server('no mask found');
         }
         $this->_blocksArray = array();
         foreach ($this->_mask['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
-                throw new Zend_Controller_Exception('no orderValue for block ' . $block['id']);
+                throw new \Rubedo\Exceptions\Server('no orderValue for block ' . $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
         foreach ($pageInfo['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
-                throw new Zend_Controller_Exception('no orderValue for block ' . $block['id']);
+                throw new \Rubedo\Exceptions\Server('no orderValue for block ' . $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }

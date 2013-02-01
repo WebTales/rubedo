@@ -28,11 +28,11 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
     {
         $pageId = $this->getRequest()->getParam('page-id');
         if (! $pageId) {
-            throw new Zend_Controller_Exception('this action need a page-id');
+            throw new \Rubedo\Exceptions\User('this action need a page-id');
         }
         $page = Manager::getService('Pages')->findById($pageId);
         if (! $page) {
-            throw new Zend_Controller_Exception('the page-id doesn\'t match a page');
+            throw new \Rubedo\Exceptions\NotFound('the page-id doesn\'t match a page');
         }
         $pageUrl = Manager::getService('Url')->getPageUrl($pageId);
         

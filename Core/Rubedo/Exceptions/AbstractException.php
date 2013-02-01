@@ -18,7 +18,7 @@ namespace Rubedo\Exceptions;
 
 
 /**
- * Exception occuring when an access right isn't granted
+ * Abstract exception : handle message translation
  *
  * @author jbourdin
  * @category Rubedo
