@@ -119,6 +119,8 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['name'] == 'Navigation') {
             throw new \Exception('can\'t create a navigation vocabulary');
         }
+
+		$obj = $this->_addDefaultWorkspace($obj);
         return parent::create($obj, $options);
     }
 
@@ -145,6 +147,14 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['name'] == 'Navigation') {
             throw new \Exception('can\'t create a navigation vocabulary');
         }
+		$obj = $this->_addDefaultWorkspace($obj);
         return parent::update($obj, $options);
     }
+	
+	protected function _addDefaultWorkspace($obj){
+		if(!isset($obj['workspaces'])||$obj['workspaces']==array()||$obj['workspaces']==""){
+			$obj['workspaces']=array('global');
+		}
+		return $obj;
+	}
 }
