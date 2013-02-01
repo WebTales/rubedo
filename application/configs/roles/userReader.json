@@ -1,0 +1,12 @@
+{
+    "id":"userReader",
+    "label":{
+    	"fr":"Consultation des utilisateurs",
+    	"en":"Can read users"
+    },
+    "rights":[
+        "read.ui.users",
+        "execute.controller.users.index.backoffice",
+        "execute.controller.delegations.index.backoffice"
+    ]
+}
