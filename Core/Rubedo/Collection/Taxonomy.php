@@ -93,7 +93,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     public function destroy (array $obj, $options = array('safe'=>true))
     {
         if ($obj['id'] == 'navigation') {
-            throw new \Exception('can\'t destroy navigation');
+            throw new \Rubedo\Exceptions\Access('can\'t destroy navigation');
         }
         $childDelete = Manager::getService('TaxonomyTerms')->deleteByVocabularyId($obj['id']);
         if ($childDelete["ok"] == 1) {
@@ -117,7 +117,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     public function create (array $obj, $options = array('safe'=>true,))
     {
         if ($obj['name'] == 'Navigation') {
-            throw new \Exception('can\'t create a navigation vocabulary');
+            throw new \Rubedo\Exceptions\Access('can\'t create a navigation vocabulary');
         }
         return parent::create($obj, $options);
     }
@@ -140,10 +140,10 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     public function update (array $obj, $options = array('safe'=>true,))
     {
         if ($obj['id'] == 'navigation') {
-            throw new \Exception('can\'t update navigation vocabulary');
+            throw new \Rubedo\Exceptions\Access('can\'t update navigation vocabulary');
         }
         if ($obj['name'] == 'Navigation') {
-            throw new \Exception('can\'t create a navigation vocabulary');
+            throw new \Rubedo\Exceptions\Access('can\'t create a navigation vocabulary');
         }
         return parent::update($obj, $options);
     }

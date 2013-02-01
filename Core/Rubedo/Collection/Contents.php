@@ -142,7 +142,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {        
         $origObj = $this->findById($obj['id'],$live,false);
         if($origObj['readOnly']){
-            throw new \Exception('no rights to update this content');
+            throw new \Rubedo\Exceptions\Access('no rights to update this content');
         }
         
         $obj = $this->_filterInputData($obj);
@@ -170,7 +170,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         $origObj = $this->findById($obj['id'],false,false);
         if($origObj['readOnly']){
-            throw new \Exception('no rights to destroy this content');
+            throw new \Rubedo\Exceptions\Access('no rights to destroy this content');
         }
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
@@ -215,11 +215,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-            throw new \Exception('You can not assign to this workspace');
+            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
         }
         $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
         if (count(array_intersect($obj['target'], $readWorkspaces))==0) {
-            throw new \Exception('You can not assign to this workspace');
+            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
         }
         
         $contentTypeId = $obj['typeId'];

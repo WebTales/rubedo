@@ -171,13 +171,13 @@ class DataAccess implements IDataAccess
         }
         
         if (gettype($mongo) !== 'string') {
-            throw new \Exception('$mongo should be a string');
+            throw new \Rubedo\Exceptions\Server('$mongo should be a string');
         }
         if (gettype($dbName) !== 'string') {
-            throw new \Exception('$db should be a string');
+            throw new \Rubedo\Exceptions\Server('$db should be a string');
         }
         if (gettype($collection) !== 'string') {
-            throw new \Exception('$collection should be a string');
+            throw new \Rubedo\Exceptions\Server('$collection should be a string');
         }
         $this->_collection = $this->_getCollection($collection, $dbName, $mongo);
     }
@@ -250,7 +250,7 @@ class DataAccess implements IDataAccess
     public static function setDefaultMongo ($mongo)
     {
         if (gettype($mongo) !== 'string') {
-            throw new \Exception('$mongo should be a string');
+            throw new \Rubedo\Exceptions\Server('$mongo should be a string');
         }
         self::$_defaultMongo = $mongo;
     }
@@ -264,7 +264,7 @@ class DataAccess implements IDataAccess
     public static function setDefaultDb ($dbName)
     {
         if (gettype($dbName) !== 'string') {
-            throw new \Exception('$dbName should be a string');
+            throw new \Rubedo\Exceptions\Server('$dbName should be a string');
         }
         self::$_defaultDb = $dbName;
     }
@@ -344,7 +344,7 @@ class DataAccess implements IDataAccess
         
         // Delete all the childrens
         if (! is_array($childrensArray)) {
-            throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+            throw new \Rubedo\Exceptions\Server('Should be an array');
         }
         
         foreach ($childrensArray as $key => $value) {
@@ -379,7 +379,7 @@ class DataAccess implements IDataAccess
             } else {
                 $rootRecord = $record;
                 if ($rootAlreadyFound) {
-                    throw new \Rubedo\Exceptions\DataAccess('More than one root node found');
+                    throw new \Rubedo\Exceptions\Server('More than one root node found');
                 } else {
                     $rootAlreadyFound = true;
                 }
@@ -594,7 +594,7 @@ class DataAccess implements IDataAccess
         $id = $obj['id'];
         unset($obj['id']);
         if (! isset($obj['version'])) {
-            throw new \Rubedo\Exceptions\DataAccess('can\'t update an object without a version number.');
+            throw new \Rubedo\Exceptions\Access('can\'t update an object without a version number.');
         }
         
         $oldVersion = $obj['version'];
@@ -674,7 +674,7 @@ class DataAccess implements IDataAccess
     {
         $id = $obj['id'];
         if (! isset($obj['version'])) {
-            throw new \Rubedo\Exceptions\DataAccess('can\'t destroy an object without a version number.');
+            throw new \Rubedo\Exceptions\Access('can\'t destroy an object without a version number.');
         }
         $version = $obj['version'];
         $mongoID = $this->getId($id);
@@ -726,7 +726,7 @@ class DataAccess implements IDataAccess
         $childrensArray = $this->readChild($parentId);
         
         if (! is_array($childrensArray)) {
-            throw new \Rubedo\Exceptions\DataAccess('Should be an array');
+            throw new \Rubedo\Exceptions\Server('Should be an array');
         }
         
         // Delete all the childrens
@@ -788,7 +788,7 @@ class DataAccess implements IDataAccess
     {
         // check valid input
         if (count($filter) !== 1) {
-            throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
+            throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
         }
         
         foreach ($filter as $name => $value) {
@@ -799,10 +799,10 @@ class DataAccess implements IDataAccess
                 'integer',
                 'boolean'
             ))) {
-                throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
+                throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
-                throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
+                throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
             }
             if (is_array($value)) {
                 foreach ($value as $operator => $subvalue) {
@@ -813,7 +813,7 @@ class DataAccess implements IDataAccess
                         'integer',
                         'boolean'
                     )) && ! $subvalue instanceof \MongoRegex) {
-                        throw new \Rubedo\Exceptions\DataAccess("Invalid filter array", 1);
+                        throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
                     }
                 }
             }
@@ -894,7 +894,7 @@ class DataAccess implements IDataAccess
     {
         // check valid input
         if (count($sort) !== 1) {
-            throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
+            throw new \Rubedo\Exceptions\Server("Invalid sort array", 1);
         }
         
         foreach ($sort as $name => $value) {
@@ -904,10 +904,10 @@ class DataAccess implements IDataAccess
                 'float',
                 'integer'
             ))) {
-                throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
+                throw new \Rubedo\Exceptions\Server("Invalid sort array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
-                throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
+                throw new \Rubedo\Exceptions\Server("Invalid sort array", 1);
             }
             if (is_array($value)) {
                 foreach ($value as $operator => $subvalue) {
@@ -916,7 +916,7 @@ class DataAccess implements IDataAccess
                         'float',
                         'integer'
                     ))) {
-                        throw new \Rubedo\Exceptions\DataAccess("Invalid sort array", 1);
+                        throw new \Rubedo\Exceptions\Server("Invalid sort array", 1);
                     }
                 }
             }
@@ -964,7 +964,7 @@ class DataAccess implements IDataAccess
     public function setFirstResult ($firstResult)
     {
         if (gettype($firstResult) !== 'integer') {
-            throw new \Rubedo\Exceptions\DataAccess("firstResult should be an integer", 1);
+            throw new \Rubedo\Exceptions\Server("firstResult should be an integer", 1);
         }
         
         $this->_firstResult = $firstResult;
@@ -979,7 +979,7 @@ class DataAccess implements IDataAccess
     public function setNumberOfResults ($numberOfResults)
     {
         if (gettype($numberOfResults) !== 'integer') {
-            throw new \Rubedo\Exceptions\DataAccess("numberOfResults should be an integer", 1);
+            throw new \Rubedo\Exceptions\Server("numberOfResults should be an integer", 1);
         }
         
         $this->_numberOfResults = $numberOfResults;
@@ -1029,15 +1029,15 @@ class DataAccess implements IDataAccess
     public function addToFieldList (array $fieldList)
     {
         if (count($fieldList) === 0) {
-            throw new \Rubedo\Exceptions\DataAccess("Invalid field list array", 1);
+            throw new \Rubedo\Exceptions\Server("Invalid field list array", 1);
         }
         
         foreach ($fieldList as $value) {
             if (! is_string($value)) {
-                throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
+                throw new \Rubedo\Exceptions\Server("This type of data in not allowed", 1);
             }
             if ($value === "id") {
-                throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
+                throw new \Rubedo\Exceptions\Server("id field is not authorized", 1);
             }
             
             // add validated input
@@ -1064,7 +1064,7 @@ class DataAccess implements IDataAccess
     {
         foreach ($fieldToRemove as $value) {
             if (! is_string($value)) {
-                throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string parameter", 1);
+                throw new \Rubedo\Exceptions\Server("RemoveFromFieldList only accept string parameter", 1);
             }
             unset($this->_fieldList[$value]);
         }
@@ -1086,17 +1086,17 @@ class DataAccess implements IDataAccess
     public function addToExcludeFieldList (array $excludeFieldList)
     {
         if (count($excludeFieldList) === 0) {
-            throw new \Rubedo\Exceptions\DataAccess("Invalid excluded fields list array", 1);
+            throw new \Rubedo\Exceptions\Server("Invalid excluded fields list array", 1);
         }
         
         foreach ($excludeFieldList as $value) {
             if (! in_array(gettype($value), array(
                 'string'
             ))) {
-                throw new \Rubedo\Exceptions\DataAccess("This type of data in not allowed", 1);
+                throw new \Rubedo\Exceptions\Server("This type of data in not allowed", 1);
             }
             if ($value === "id") {
-                throw new \Rubedo\Exceptions\DataAccess("id field is not authorized", 1);
+                throw new \Rubedo\Exceptions\Server("id field is not authorized", 1);
             }
             
             // add validated input
@@ -1121,7 +1121,7 @@ class DataAccess implements IDataAccess
     {
         foreach ($fieldToRemove as $value) {
             if (! is_string($value)) {
-                throw new \Rubedo\Exceptions\DataAccess("RemoveFromFieldList only accept string paramter", 1);
+                throw new \Rubedo\Exceptions\Server("RemoveFromFieldList only accept string paramter", 1);
             }
             unset($this->_excludeFieldList[$value]);
         }
