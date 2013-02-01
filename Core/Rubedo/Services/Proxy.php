@@ -60,7 +60,7 @@ class Proxy implements IServicesProxy
     public function getCurrentOptions($name = null)
     {
         if (gettype($name) !== 'string' && $name !== null) {
-            throw new \Exception('Manager->getCurrentOptions only accept string argument');
+            throw new \Rubedo\Exceptions\Server('Manager->getCurrentOptions only accept string argument');
         }
         if ($name == null) {
             return $this->_currentOptions;
@@ -96,7 +96,7 @@ class Proxy implements IServicesProxy
         } elseif ($serviceObject instanceof $serviceClassName) {
             $this->setServiceObj($serviceObject);
         } else {
-            throw new \Rubedo\Exceptions\ServiceManager("Override Object not an instance of service Classe Name", 1);
+            throw new \Rubedo\Exceptions\Server("Override Object not an instance of service Classe Name", 1);
         }
         $this->_serviceName = $serviceName;
 
@@ -142,7 +142,7 @@ class Proxy implements IServicesProxy
     public function __call($name, $arguments)
     {
         if (!method_exists($this->_object, $name)) {
-            throw new \Rubedo\Exceptions\ServiceManager('The method ' . $name . ' doesn\'t exist');
+            throw new \Rubedo\Exceptions\Server('The method ' . $name . ' doesn\'t exist');
         }
 
         //list of concerns

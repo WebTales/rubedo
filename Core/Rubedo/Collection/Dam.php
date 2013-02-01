@@ -106,7 +106,7 @@ class Dam extends AbstractCollection implements IDam
         // }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
-            throw new \Exception('no file found');
+            throw new \Rubedo\Exceptions\Server('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
         $returnArray = parent::update($obj, $options);
@@ -132,7 +132,7 @@ class Dam extends AbstractCollection implements IDam
         // }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
-            throw new \Exception('no file found');
+            throw new \Rubedo\Exceptions\Server('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
         $returnArray = parent::create($obj, $options);

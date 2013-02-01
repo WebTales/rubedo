@@ -102,10 +102,10 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
      */
     public function __construct($name, $password) {
         if (!is_string($name)) {
-            throw new \Rubedo\Exceptions\Authentication('$name should be a string', 1);
+            throw new \Rubedo\Exceptions\Server('$name should be a string', 1);
         }
         if (!is_string($password)) {
-            throw new \Rubedo\Exceptions\Authentication('$password should be a string', 1);
+            throw new \Rubedo\Exceptions\Server('$password should be a string', 1);
         }
         $this->_authenticateResultInfo['identity'] = null;
         $this->_login = $name;

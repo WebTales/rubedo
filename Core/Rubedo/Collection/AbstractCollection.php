@@ -282,7 +282,7 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         $domainClassName = 'Rubedo\\Domains\\' . ucfirst($domain);
         if (! class_exists($domainClassName)) {
-            throw new \Exception('domain not defined :' . (string) $domain);
+            throw new \Rubedo\Exceptions\User('domain not defined :' . (string) $domain);
         }
         return $domainClassName::isValid($data);
     }

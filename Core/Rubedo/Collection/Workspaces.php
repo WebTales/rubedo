@@ -107,7 +107,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     public function destroy (array $obj, $options = array('safe'=>true))
     {
         if ($obj['id'] == 'global') {
-            throw new \Exception('can\'t destroy global workspace');
+            throw new \Rubedo\Exceptions\Access('can\'t destroy global workspace');
         }
         
         return parent::destroy($obj, $options);
@@ -129,7 +129,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     public function create (array $obj, $options = array('safe'=>true,))
     {
         if ($obj['text'] == 'Global') {
-            throw new \Exception('can\'t create global workspace');
+            throw new \Rubedo\Exceptions\Access('can\'t create global workspace');
         }
         unset($obj['canContribute']);
         return parent::create($obj, $options);
@@ -141,10 +141,10 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     public function update (array $obj, $options = array('safe'=>true,))
     {
         if ($obj['id'] == 'global') {
-            throw new \Exception('can\'t update global workspace');
+            throw new \Rubedo\Exceptions\Access('can\'t update global workspace');
         }
         if ($obj['name'] == 'Global') {
-            throw new \Exception('can\'t create a global workspace');
+            throw new \Rubedo\Exceptions\Access('can\'t create a global workspace');
         }
         unset($obj['canContribute']);
         return parent::update($obj, $options);

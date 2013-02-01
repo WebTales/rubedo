@@ -47,7 +47,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function create (array $obj, $options = array('safe'=>true,))
     {
         if ($obj['vocabularyId'] == 'navigation') {
-            throw new \Exception('can\'t create navigation terms ');
+            throw new \Rubedo\Exceptions\Access('can\'t create navigation terms ');
         }
         return parent::create($obj, $options);
     }
@@ -282,7 +282,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function update (array $obj, $options = array('safe'=>true,))
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
-            throw new \Exception('can\'t alter navigation terms ');
+            throw new \Rubedo\Exceptions\Access('can\'t alter navigation terms ');
         }
         return parent::update($obj, $options);
     }
@@ -300,7 +300,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function destroy (array $obj, $options = array('safe'=>true))
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
-            throw new \Exception('can\'t destroy navigation terms ');
+            throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');
         }
         $deleteCond = array(
             '_id' => array(
@@ -415,7 +415,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function deleteByVocabularyId ($id)
     {
         if ($id == 'navigation'){
-            throw new \Exception('can\'t destroy navigation terms ');
+            throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');
         }
         $deleteCond = array(
             'vocabularyId' => $id
@@ -430,7 +430,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function findByName ($name)
     {
-        throw new \Exception('name is not unique');
+        throw new \Rubedo\Exceptions\Access('name is not unique');
     }
 
     /**

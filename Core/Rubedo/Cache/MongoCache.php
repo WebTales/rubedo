@@ -79,7 +79,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
      */
     public function test ($id)
     {
-        throw new \Zend_Exception('not yet implemented');
+        throw new \Rubedo\Exceptions\Server('not yet implemented');
         
     }
 
@@ -164,7 +164,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
             case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
             case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
             case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                throw new \Zend_Exception('not yet implemented');
+                throw new \Rubedo\Exceptions\Server('not yet implemented');
                 break;
             case \Zend_Cache::CLEANING_MODE_OLD:
                return $this->_dataService->deleteExpired();

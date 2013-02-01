@@ -127,7 +127,7 @@ class Pages extends AbstractCollection implements IPages
         //verify workspace can be attributed
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         if (! in_array($obj['workspace'], $writeWorkspaces)) {
-            throw new \Exception('You can not assign page to this workspace');
+            throw new \Rubedo\Exceptions\Access('You can not assign page to this workspace');
         }
         
         //set text property
