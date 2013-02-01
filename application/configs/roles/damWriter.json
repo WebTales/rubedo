@@ -5,8 +5,8 @@
     	"en":"Can write DAM contents"
     },
     "rights":[
-        "write.ui.medias",
-        "read.ui.medias",
+        "write.ui.dam",
+        "read.ui.dam",
         "execute.controller.dam-types.index.backoffice",
         "execute.controller.dam.@dot*.backoffice"
     ],
