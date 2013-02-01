@@ -1,0 +1,16 @@
+{
+    "id":"damTypeWriter",
+    "label":{
+    	"fr":"Edition des types de DAM",
+    	"en":"Can write DAM types"
+    },
+    "rights":[
+        "write.ui.damTypes",
+        "execute.controller.dam-types.create.backoffice",
+        "execute.controller.dam-types.delete.backoffice",
+        "execute.controller.dam-types.update.backoffice"
+    ],
+    "includes":[
+        "damTypeReader"
+    ]
+}
