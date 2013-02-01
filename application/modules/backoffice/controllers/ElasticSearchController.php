@@ -74,6 +74,14 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
         $this->getResponse()->setBody($returnValue);
 		
 	}
+	
+	public function getOptionsAction(){
+	    $esOptions = Rubedo\Elastic\DataAbstract::getOptions();
+	    $returnArray = array();
+	    $returnArray['success']=true;
+	    $returnArray['data'] = $esOptions;
+	    $this->_helper->json($returnArray);
+	}
 
 	
 }
