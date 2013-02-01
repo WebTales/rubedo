@@ -329,11 +329,13 @@ class DataSearch extends DataAbstract implements IDataSearch
 							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('ContentTypes');
 								foreach ($temp['terms'] as $key => $value) {
-									if (!in_array($value['term'],$filters[$id],TRUE)) {	
-										$termItem = $collection->findById($value['term']);
-										$temp['terms'][$key]['label'] = $termItem['type'];
-									} else {
-										unset($temp['terms'][$key]);
+									if(isset($fitlers[$id])){
+										if (!in_array($value['term'],$filters[$id],TRUE)) {	
+											$termItem = $collection->findById($value['term']);
+											$temp['terms'][$key]['label'] = $termItem['type'];
+										} else {
+											unset($temp['terms'][$key]);
+										}
 									}
 								}
 							} else {
@@ -366,11 +368,13 @@ class DataSearch extends DataAbstract implements IDataSearch
 							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
 								$collection = \Rubedo\Services\Manager::getService('TaxonomyTerms');
 								foreach ($temp['terms'] as $key => $value) {
-									if (!in_array($value['term'],$filters[$id],TRUE)) {	
-										$termItem = $collection->findById($value['term']);
-										$temp['terms'][$key]['label'] = $termItem['text'];
-									} else {
-										unset($temp['terms'][$key]);
+									if(isset($fitlers[$id])){
+										if (!in_array($value['term'],$filters[$id],TRUE)) {	
+											$termItem = $collection->findById($value['term']);
+											$temp['terms'][$key]['label'] = $termItem['text'];
+										} else {
+											unset($temp['terms'][$key]);
+										}
 									}
 								}
 							} else {
