@@ -138,13 +138,21 @@ class DataAbstract
 	 /**
      * Set the options for ES connection
      *
-     * @param string $host
+     * @param array $options
      */
     public static function setOptions(array $options) {
         self::$_options = $options;
     }
     
     /**
+     * @return the $_options
+     */
+    public static function getOptions ()
+    {
+        return self::$_options;
+    }
+
+	/**
      * Set the options for the content-index 
      *
      * @param string $host
