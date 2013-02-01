@@ -280,7 +280,7 @@ class Pages extends AbstractCollection implements IPages
                 'value' => $siteId
             );
         }
-        $pageList = $this->readChild($parentId);
+        $pageList = $this->readChild($parentId,$filters);
         foreach ($pageList as $page) {
             if (! $page['readOnly']) {
                 if ($page['workspace'] != $workspaceId) {
