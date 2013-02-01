@@ -33,12 +33,6 @@ class Backoffice_IndexController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
-        try{
-           new DataAccess('Pages');
-        }catch(\Exception $e){
-            throw new \Exception('Can\'t connect to MongoDB !');
-        }
-		
 		$this->_auth = Rubedo\Services\Manager::getService('Authentication');
 		
 		if(!$this->_auth->getIdentity()){

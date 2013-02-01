@@ -16,7 +16,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-
 /**
  * Front Office Error Controller
  *
@@ -31,7 +30,7 @@ class ErrorController extends Zend_Controller_Action
 
     /**
      * Main Action of this controller
-     * 
+     *
      * Return an error message and can expose the failure description
      */
     public function errorAction ()
@@ -44,25 +43,30 @@ class ErrorController extends Zend_Controller_Action
         }
         if ($errors->type == Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER) {
             $exceptionType = get_class($errors->exception);
+            
             switch ($exceptionType) {
-                case '\\Rubedo\\Exceptions\\Access':
-                    $error->type = 'access';
+                case 'Rubedo\\Exceptions\\Access':
+                    $errors->type = 'access';
                     break;
-                case '\\Rubedo\\Exceptions\\User':
-                    $error->type = 'user';
+                case 'Rubedo\\Exceptions\\User':
+                    $errors->type = 'user';
                     break;
-                case '\\Rubedo\\Exceptions\\Server':
-                    $error->type = 'server';
+                case 'Rubedo\\Exceptions\\Server':
+                    $errors->type = 'server';
+                    break;
+                case 'Rubedo\\Exceptions\\NotFound':
+                    $errors->type = 'notFound';
                     break;
                 default:
                     break;
             }
         }
-            
+        
         switch ($errors->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
+            case 'notFound':
                 // 404 error -- controller or action not found
                 $this->getResponse()->setHttpResponseCode(404);
                 $priority = Zend_Log::NOTICE;
@@ -85,10 +89,10 @@ class ErrorController extends Zend_Controller_Action
                 break;
         }
         
-        if($this->getRequest()->isXmlHttpRequest()){
+        if ($this->getRequest()->isXmlHttpRequest()) {
             $returnArray = array();
-            $returnArray['success']=false;
-            $returnArray['msg']=$errors->exception->getMessage();
+            $returnArray['success'] = false;
+            $returnArray['msg'] = $errors->exception->getMessage();
             $this->_helper->json($returnArray);
         }
         

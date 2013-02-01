@@ -66,7 +66,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
                     'tag_mode'=>$flParams['tag_mode']
                 ));
             }else{
-                throw new Zend_Controller_Exception('need a criteria to display Flickr Contents');
+                throw new \Rubedo\Exceptions\User('need a criteria to display Flickr Contents');
             }
             
             $items = array();

@@ -18,14 +18,14 @@ namespace Rubedo\Exceptions;
 
 
 /**
- * Exception occuring when something went wrong on server side
+ * Exception occuring when an item isn't found
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  *
  */
-class Server extends AbstractException
+class NotFound extends AbstractException
 {
 
 }

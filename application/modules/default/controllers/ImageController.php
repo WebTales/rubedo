@@ -54,7 +54,7 @@ class ImageController extends Zend_Controller_Action
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
             if (! $obj instanceof MongoGridFSFile) {
-                throw new Zend_Controller_Exception("No Image Found", 1);
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", 1);
             }
             
             $filePath = sys_get_temp_dir() . '/' . $fileId;
@@ -72,7 +72,7 @@ class ImageController extends Zend_Controller_Action
                 'png',
                 'jpeg'
             ))) {
-                throw new Zend_Controller_Exception('Not authorized file extension');
+                throw new \Rubedo\Exceptions\Access('Not authorized file extension');
             }
             
             $type = strtolower($extension);
@@ -106,7 +106,7 @@ class ImageController extends Zend_Controller_Action
             
             die();
         } else {
-            throw new Zend_Controller_Exception("No Image Given", 1);
+            throw new \Rubedo\Exceptions\User("No Image Given", 1);
         }
     }
 

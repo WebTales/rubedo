@@ -75,15 +75,15 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
-            throw new Exception('no id given');
+            throw new \Rubedo\Exceptions\User('no id given');
         }
         $media = $this->_dataService->findById($mediaId);
         if (! $media) {
-            throw new Exception('no media found');
+            throw new \Rubedo\Exceptions\NotFound('no media found');
         }
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
-            throw new Exception('unknown media type');
+            throw new \Rubedo\Exceptions\Server('unknown media type');
         }
         if ($mediaType['mainFileType'] == 'Image') {
             $this->_forward('get-thumbnail', 'image', 'default', array(
@@ -100,15 +100,15 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
-            throw new Exception('no id given');
+            throw new \Rubedo\Exceptions\User('no id given');
         }
         $media = $this->_dataService->findById($mediaId);
         if (! $media) {
-            throw new Exception('no media found');
+            throw new \Rubedo\Exceptions\NotFound('no media found');
         }
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
-            throw new Exception('unknown media type');
+            throw new \Rubedo\Exceptions\Server('unknown media type');
         }
         if ($mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
@@ -125,18 +125,18 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     {
         $typeId = $this->getParam('typeId');
         if (! $typeId) {
-            throw new Zend_Controller_Exception('no type ID Given');
+            throw new \Rubedo\Exceptions\User('no type ID Given');
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
         if (! $damType) {
-            throw new Zend_Controller_Exception('unknown type');
+            throw new \Rubedo\Exceptions\Server('unknown type');
         }
         $obj['typeId'] = $damType['id'];
         $obj['mainFileType'] = $damType['mainFileType'];
         
         $title = $this->getParam('title');
         if (! $title) {
-            throw new Zend_Controller_Exception('missing title');
+            throw new \Rubedo\Exceptions\User('missing title');
         }
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
@@ -152,7 +152,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             $name = $fieldConfig['name'];
             $obj['fields'][$name] = $this->getParam($name);
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
-                throw new Zend_Controller_Exception('required field missing :' . $name);
+                throw new \Rubedo\Exceptions\User('required field missing :' . $name);
             }
         }
         
@@ -165,7 +165,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             
             $obj['fields'][$name] = $this->_uploadFile($name);
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
-                throw new Zend_Controller_Exception('required field missing :' . $name);
+                throw new \Rubedo\Exceptions\User('required field missing :' . $name);
             }
         }
         

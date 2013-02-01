@@ -49,7 +49,7 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
         }
         
         if (! $hasAccess) {
-            throw new \Zend_Acl_Exception("can't access $ressourceName");
+            throw new \Rubedo\Exceptions\Access("can't access $ressourceName");
         }
     }
 }
