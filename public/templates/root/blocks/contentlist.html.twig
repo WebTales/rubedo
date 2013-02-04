@@ -1,7 +1,17 @@
 {% extends "root/block.html.twig" %}
 
 {% block mainContent %}
-
+{% if isLoggedIn %}
+{%if query.type=="manual"%}
+<div id="list-editmode" class="hide">
+	<div class="btn-group pull-left">
+						<a class="btn" href="#" id="btn-add-content"> <i class="icon-plus-sign"></i>
+							Ajouter un contenu
+						</a>
+					</div>
+</div>
+{%endif%}
+{%endif%}
 <div class="block contentlist well">
 	<div class="row-fluid">
 		{% for content in data %}
