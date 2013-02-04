@@ -141,6 +141,18 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
         $obj['taxonomy'] = Zend_Json::decode($this->getParam('taxonomy', Zend_Json::encode(array())));
+		
+		$workspace = $this->getParam('writeWorkspace');
+		if(!is_null($workspace) && $workspace != ""){
+			$obj['writeWorkspace'] = $workspace;
+			$obj['fields']['writeWorkspace'] = $workspace;
+		}
+		
+		$targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
+		if(is_array($targets) && count($targets) > 0){
+			$obj['target'] = $targets;
+			$obj['fields']['target'] = $targets;
+		}
         
         $fields = $damType['fields'];
         
