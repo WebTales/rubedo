@@ -160,9 +160,43 @@ function notify(notify_type, msg) {
 		alert.addClass('alert alert-error').fadeIn('fast');
 	}
 }
+function createPopupWindow()
+{
+	var siteUrl=window.location.href.substr(7);
+	siteUrl=siteUrl.substr(0,siteUrl.indexOf("/"));
+	var modalUrl="http://"+siteUrl+"/backoffice/resources/contentContributor/app.html?typeId=50ec46b6b58ce97004003263";
+	
+jQuery("<div id='add-content-window' class='modal hide fade'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button></div><div id='add-content-modal-body' class='modal-body'><iframe src='"+modalUrl+"'></iframe></div></div>").appendTo(document.body);
+
+jQuery('#add-content-window').css({
+			"width":"90%",
+			"height":"90%",
+			"left":"20%",
+			"top":"30%"
+		});
+jQuery('#add-content-window iframe').css({
+			"width":"99%",
+			"height":"90%",
+			"border":"none"
+		});
+jQuery("#add-content-modal-body").css({
+			"max-height":jQuery("#add-content-window").width()
+		});
+}
 
 jQuery("#btn-add-content").click(function(){
-		alert("ok")
+	if(document.getElementById("add-content-window"))
+	{
+			jQuery('#add-content-window').modal('show');
+	}
+	else{
+
+		if(createPopupWindow())
+		{
+			jQuery('#add-content-window').modal('show');
+		}
+	}
+	
 	});
 
 
