@@ -40,8 +40,9 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
         $module = $request->getModuleName();
         
         $ressourceName = 'execute.controller.' . $controller . '.' . $action . '.' . $module;
-        
-        if (($module == 'default' || ! isset($module)) && (($action == 'index' && $controller == 'index') || ($action == 'error' && $controller == 'error') || ($action == 'index' && $controller == 'image') || ($action == 'index' && $controller == 'dam'))) {
+        if($module =='install'){
+            $hasAccess = true;
+        }elseif (($module == 'default' || ! isset($module)) && (($action == 'index' && $controller == 'index') || ($action == 'error' && $controller == 'error') || ($action == 'index' && $controller == 'image') || ($action == 'index' && $controller == 'dam'))) {
             $hasAccess = true;
         } else {
             $aclService = \Rubedo\Services\Manager::getService('Acl');
