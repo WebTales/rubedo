@@ -38,9 +38,11 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $blockConfig = $this->getRequest()->getParam('block-config');
         $queryId = $blockConfig['query'];
         $queryConfig = $this->getQuery($queryId);
-        
+		$queryType=$queryConfig['type'];
+		
         $contentArray = $this->getDataList($queryConfig, $this->setPaginationValues($blockConfig));
-        
+
+      
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
@@ -79,6 +81,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $data[] = $fields;
             }
             $output["data"] = $data;
+			$output["query"]['type']=$queryType;
             $output['prefix'] = $this->getRequest()->getParam('prefix');
             $output["page"] = $contentArray['page'];
             $output['test'] = array(
@@ -86,6 +89,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 2,
                 3
             );
+			
         }
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
@@ -113,7 +117,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             '$ne' => '!=',
             'eq' => '='
         );
-        if (isset($queryObj['query'])) {
+        if (isset($queryObj['query'])&& $queryObj['type']!="manual") {
             $queryObj = $queryObj['query'];
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
@@ -208,8 +212,22 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     );
                 }
             }
+        }else{
+        	 $filterArray[]=array(
+	        	 'property'=>'id',
+	        	 'value'=>$queryObj['query'][0]
+			 );
+			  $filterArray[] = array(
+                'property' => 'status',
+                'value' => 'published'
+            );
+			$sort[] = array(
+                        'property' => 'id',
+                        'direction' => 'DESC'
+                    );
         }
         /* Get the list */
+     
         $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
         $contentArray['page'] = $pageData;
         return $contentArray;
