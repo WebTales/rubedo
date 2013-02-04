@@ -214,11 +214,13 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $obj = $this->_setDefaultWorkspace($obj);
         
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		
+		//var_dump($obj['writeWorkspace'],$writeWorkspaces);die();
         if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
             throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
         }
         $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
-        if (count(array_intersect($obj['target'], $readWorkspaces))==0) {
+        if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
             throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
         }
         
@@ -512,7 +514,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	 */
 	protected function _setDefaultWorkspace($content){
 	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']==''){
-	        $content['writeWorkspace'] = Manager::getService('CurrentUser')->getMainWorkspace();
+	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+	        $content['writeWorkspace'] = $mainWorkspace['id'];
 	    }
 	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() ){
 	        $content['target'] = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
@@ -524,10 +527,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         $obj = $this->_setDefaultWorkspace($obj);
-        
+
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
-        //\Zend_Debug::dump($contentType);die();
+		
         if ($contentType['readOnly']) {
             $obj['readOnly'] = true;
         } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
