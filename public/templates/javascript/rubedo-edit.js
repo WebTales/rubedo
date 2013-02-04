@@ -83,6 +83,7 @@ function swithToEditMode() {
 	CKEDITOR.inlineAll();
 	jQuery('#viewmode').hide();
 	jQuery('#editmode').show();
+	jQuery("#list-editmode").show();
 }
 
 function swithToViewMode() {
@@ -91,7 +92,8 @@ function swithToViewMode() {
 	} 
 	jQuery('.editable').attr('contenteditable','false');
 	jQuery('#viewmode').show();
-	jQuery('#editmode').hide();	
+	jQuery('#editmode').hide();
+		jQuery("#list-editmode").hide();
 }
 
 function checkIfDirty() {
@@ -158,3 +160,9 @@ function notify(notify_type, msg) {
 		alert.addClass('alert alert-error').fadeIn('fast');
 	}
 }
+
+jQuery("#btn-add-content").click(function(){
+		alert("ok")
+	});
+
+
