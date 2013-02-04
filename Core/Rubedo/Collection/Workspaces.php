@@ -88,6 +88,23 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     }
 
     /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
+     */
+    public function getWholeList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
+        $list = parent::getList($filters, $sort, $start, $limit);
+        $list['data'] = array_merge(array(
+            $this->_virtualGlobalWorkspace
+        ), $list['data']);
+        
+        foreach ($list['data'] as &$workspace) {
+            $workspace['canContribute'] = true;
+        }
+        $list['count'] = $list['count'] + 1;
+        return $list;
+    }
+
+    /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::findById()
      */
     public function findById ($contentId)
