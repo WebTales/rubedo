@@ -16,36 +16,39 @@
 * @version $Id$
 */
 
-	$doctypeHelper = new Zend_View_Helper_Doctype();
-	$doctypeHelper->doctype('XHTML1_RDFA');
-	echo $this->doctype();
 ?>
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<?php
-    	$is_error = 'error' == Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
-    	
-    	echo $this->headTitle();    
-    	
-    	$this->headMeta()->setProperty('og:title', 'Rubedo');
-        $this->headMeta()->setProperty('Content-Type', 'text/html; charset=UTF-8');
-    	
-    	echo $this->headMeta();
-    	
-        $this->headLink();
- //       	->prependStylesheet("/static/css/style_zend.css", "screen");
-        	// @TODO: voir comment importer les styles pour IE6 et IE7
-        	
-        $this->headScript();
-//        	 ->appendFile("/static/js/jquery-1.7.1.min.js")
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rubedo Installer</title>
+<meta property="og:title" content="Rubedo">
+<meta property="Content-Type" content="text/html; charset=UTF-8">
+<?php
 
-        
-        echo $this->headLink();
-		?>
-	</head>
-	
-	<body>
-		<?php echo $this->layout()->content?>
-		<?php echo $this->headScript(); ?>
- 	</body>
+$this->headLink()
+    ->prependStylesheet("/css/bootstrap-responsive.css", "screen")
+    ->prependStylesheet("/css/bootstrap.css", "screen");
+$this->headScript()->appendFile("/templates/root/js/jquery.js");
+
+echo $this->headLink();
+?>
+</head>
+
+<body
+	style="background-image: url(http://rubedo.localhost/backoffice/resources/images/logo.png); background-position: 50% 50%; background-repeat: no-repeat no-repeat; min-height: 800px;">
+	<div class="container">
+		<div class="row-fluid" style="height: 250px;"></div>
+		<div class="row-fluid">
+			<div class="span2"></div>
+			<div class="span8">
+				<div class="well">
+    				<?php echo $this->layout()->content?>
+    				<div class='clearfix'></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<?php echo $this->headScript(); ?>
+		
+</body>
 </html>
