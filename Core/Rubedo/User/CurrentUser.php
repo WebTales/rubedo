@@ -49,6 +49,20 @@ class CurrentUser implements ICurrentUser
     protected static $_currentUserId = null;
 
     /**
+     * current user group list
+     * 
+     * @var array
+     */
+    protected static $_groups = null;
+
+    /**
+     * is current User a global Admin ?
+     * 
+     * @var boolean
+     */
+    protected static $_isGlobalAdmin = null;
+
+    /**
      * Return the authenticated user array
      *
      * @return array
@@ -113,20 +127,23 @@ class CurrentUser implements ICurrentUser
      */
     public function getGroups ()
     {
-        $user = $this->getCurrentUser();
-        if (is_null($user)) {
-            return array(
-                Manager::getService('Groups')->getPublicGroup()
-            );
+        if (! isset(self::$_groups)) {
+            $user = $this->getCurrentUser();
+            if (is_null($user)) {
+                return array(
+                    Manager::getService('Groups')->getPublicGroup()
+                );
+            }
+            
+            $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
+            if (count($groupsArray['data']) == 0) {
+                return array(
+                    Manager::getService('Groups')->getPublicGroup()
+                );
+            }
+            self::$_groups = $groupsArray['data'];
         }
-        
-        $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
-        if (count($groupsArray['data']) == 0) {
-            return array(
-                Manager::getService('Groups')->getPublicGroup()
-            );
-        }
-        return $groupsArray['data'];
+        return self::$_groups;
     }
 
     /**
@@ -197,7 +214,6 @@ class CurrentUser implements ICurrentUser
         if ($token == "") {
             $token = $this->generateToken();
         }
-        
         return $token;
     }
 
@@ -209,6 +225,11 @@ class CurrentUser implements ICurrentUser
     public function getReadWorkspaces ()
     {
         $groupArray = $this->getGroups();
+        if ($this->_isGlobalAdmin()) {
+            return array(
+                'all'
+            );
+        }
         $workspaceArray = array();
         
         foreach ($groupArray as $group) {
@@ -220,10 +241,14 @@ class CurrentUser implements ICurrentUser
     /**
      * return main workspace of the current user
      *
+     * @todo implement real "main group" & "main workspace" base on order.
      * @return array
      */
     public function getMainWorkspace ()
     {
+        
+        return Manager::getService('Workspaces')->findById('global');
+        
         $mainGroup = $this->getMainGroup();
         if (! $mainGroup) {
             return null;
@@ -238,12 +263,38 @@ class CurrentUser implements ICurrentUser
      */
     public function getWriteWorkspaces ()
     {
-        $groupArray = $this->getGroups();
-        $workspaceArray = array();
-        
-        foreach ($groupArray as $group) {
-            $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id'])));
+        if($this->_isGlobalAdmin()){
+            $workspaceList = Manager::GetService("Workspaces")->getWholeList();
+            foreach ($workspaceList['data'] as $workspace) {
+                $workspaceArray[] = $workspace['id'];
+            }
+        }else{
+            $groupArray = $this->getGroups();
+            $workspaceArray = array();
+            
+            foreach ($groupArray as $group) {
+                $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id'])));
+            }
         }
+        
         return $workspaceArray;
+    }
+
+    /**
+     * Is the current user a global admin ?
+     * @return boolean
+     */
+    protected function _isGlobalAdmin ()
+    {
+        if (! isset(self::$_isGlobalAdmin)) {
+            self::$_isGlobalAdmin = false;
+            $groupList = $this->getGroups();
+            foreach ($groupList as $group) {
+                if ($group['name'] == 'admin') {
+                    self::$_isGlobalAdmin = true;
+                }
+            }
+        }
+        return self::$_isGlobalAdmin;
     }
 }
