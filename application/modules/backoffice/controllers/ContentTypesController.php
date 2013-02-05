@@ -29,7 +29,12 @@ require_once('DataAccessController.php');
  *
  */
 class Backoffice_ContentTypesController extends Backoffice_DataAccessController
-{	
+{
+    /**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model', 'get-readable-content-types');	
+		
     public function init(){
 		parent::init();
 		
