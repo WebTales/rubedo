@@ -42,8 +42,14 @@ require_once 'autoload.php';
 $optionsObject = new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', APPLICATION_ENV, array(
     'allowModifications' => true
 ));
-if (is_file(APPLICATION_PATH . '/configs/local.ini')) {
-    $localOptionsObject = new Zend_Config_Ini(APPLICATION_PATH . '/configs/local.ini');
+
+if (is_file(APPLICATION_PATH . '/configs/local/config.json')) {
+    $localOptionsObject = new Zend_Config_Json(
+            APPLICATION_PATH . '/configs/local/config.json');
+    $optionsObject->merge($localOptionsObject);
+} elseif (is_file(APPLICATION_PATH . '/configs/local.ini')) {
+    $localOptionsObject = new Zend_Config_Ini(
+            APPLICATION_PATH . '/configs/local.ini');
     $optionsObject->merge($localOptionsObject);
 }
 
