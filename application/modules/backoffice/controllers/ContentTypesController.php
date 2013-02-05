@@ -30,11 +30,20 @@ require_once('DataAccessController.php');
  */
 class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 {
+    /**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model', 'get-readable-content-types');	
+		
     public function init(){
 		parent::init();
 		
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('ContentTypes');
+	}
+	
+	public function getReadableContentTypesAction() {
+		return $this->_returnJson($this->_dataService->getReadableContentTypes());
 	}
 
 }

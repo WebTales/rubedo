@@ -251,4 +251,26 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         
         return $obj;
     }
+	
+	public function getReadableContentTypes() {
+		$currentUserService = Manager::getService('CurrentUser');
+		$contentTypesList = array();
+		
+		$readWorkspaces = $currentUserService->getReadWorkspaces();
+		$readWorkspaces[] = NULL;
+
+		if(in_array("all", $readWorkspaces)){
+			$filter = array();
+		} else {
+			$filter = array(array('property' => 'workspaces', 'operator' => '$in', 'value' => $readWorkspaces));
+		}
+		
+		$readableContentTypes = $this->getList($filter);
+		
+		foreach ($readableContentTypes['data'] as $value) {
+			$contentTypesList[] = array('type' => $value['type'], 'id' => $value['id']);
+		}
+		
+		return $contentTypesList;
+	}
 }
