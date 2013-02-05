@@ -281,6 +281,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$data = $resultItem->getData();
 				$tmp['title'] = $data['text'];
 				$tmp['objectType'] = $data['objectType'];
+				$tmp['readOnly'] = $data['readOnly'];
 				if ($data['objectType'] === 'dam') {
 					$tmp['damType'] = $data['damType'];
 				}
