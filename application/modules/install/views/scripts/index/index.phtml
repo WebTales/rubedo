@@ -1,25 +1,21 @@
-<h1>Rubedo installer</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
-	fermentum ullamcorper tortor porta egestas. Mauris ultrices mattis
-	sodales. Donec viverra fermentum dui vel ullamcorper. Sed tortor
-	tellus, laoreet ornare pretium id, fringilla a nisl. Ut rhoncus mi a mi
-	tempus faucibus at sit amet tellus. Nam nisl turpis, rhoncus nec
-	posuere ut, egestas sit amet risus. Nunc placerat tortor in nibh
-	pharetra vehicula. Lorem ipsum dolor sit amet, consectetur adipiscing
-	elit. Duis euismod sem eu justo tempor in vulputate quam malesuada.
-	Proin eget ipsum eu risus pretium luctus. Aliquam sapien urna,
-	consequat in ornare a, vehicula eu enim. Nulla porttitor orci et ante
-	tempor congue. Sed semper ante sit amet mi ultricies interdum.</p>
-<p>Aliquam at commodo erat. Etiam a leo nisi. Duis id est ut lorem
-	ornare egestas quis in felis. Integer mi odio, pellentesque non viverra
-	a, accumsan sit amet diam. Etiam urna nunc, aliquet quis commodo sed,
-	rutrum id augue. Integer sodales tortor mi, quis gravida sapien.
-	Praesent ac risus ante, in tincidunt sem. Sed porta turpis sit amet
-	urna aliquet ac sollicitudin nisl pretium. Proin vel est eget est
-	iaculis porta a vel sem. Nullam aliquam imperdiet metus nec mattis.
-	Aliquam bibendum ante porttitor leo luctus at cursus sem semper. Proin
-	sed arcu sit amet lorem commodo tristique. Proin dapibus dapibus neque,
-	et consequat ligula lobortis a.</p>
-	
-	    <div class='pull-right'><a href="<?php echo $this->url(array('action'=>'start'));?>" class="btn btn-large btn-primary" type="button"><i class="icon-wrench"></i> Start Install</a></div>
-	    
+<h1>Current Configuration</h1>
+<ul class="nav nav-tabs">
+  <li><a href="#db" data-toggle="tab">Database</a></li>
+  <li><a href="#admin" data-toggle="tab">Admin Account</a></li>
+  <li><a href="#messages" data-toggle="tab">Messages</a></li>
+  <li><a href="#all" data-toggle="tab">All</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane active" id="db">
+      DB config:
+      <pre><?php print_r($this->options['datastream']);?></pre>
+      <div class='pull-right'><a href="<?php echo $this->url(array('action'=>'set-db'));?>" class="btn btn-large btn-primary" type="button"><i class="icon-wrench"></i> Edit configuration</a></div>
+  </div>
+  <div class="tab-pane" id="admin">
+  Admin Account Config
+        <div class='pull-right'><a href="<?php echo $this->url(array('action'=>'admin-config'));?>" class="btn btn-large btn-primary" type="button"><i class="icon-wrench"></i> Edit configuration</a></div>
+  
+  </div>
+  <div class="tab-pane" id="messages">...</div>
+  <div class="tab-pane" id="all"><pre><?php print_r($this->options);?></pre></div>
+</div>

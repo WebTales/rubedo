@@ -38,6 +38,11 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_localConfigDir = realpath(APPLICATION_PATH . '/configs/local/');
         $this->_localConfigFile = $this->_localConfigDir . '/config.json';
         $this->_loadLocalConfig();
+        $this->_applicationOptions = $this->getFrontController()
+            ->getParam('bootstrap')
+            ->getApplication()
+            ->getOptions();
+        $this->view->options = $this->_applicationOptions;
     }
 
     public function indexAction ()
@@ -47,16 +52,38 @@ class Install_IndexController extends Zend_Controller_Action
                     'Local config file ' . $this->_localConfigFile .
                              ' should be writable');
         }
-        if (! isset($this->_localConfig['installed'])) {
-            $this->_localConfig['installed'] = array(
-                    'status' => 'begin'
-            );
+        if (! isset($this->_localConfig['installed']) ||
+                 $this->_localConfig['installed']['status'] != 'finished') {
+            if (! isset($this->_localConfig['installed']['action'])) {
+                $this->_localConfig['installed']['action'] = 'start-wizard';
+            }
+            $action = $this->_localConfig['installed']['action'];
+            $this->_forward($action);
         }
+    }
+
+    public function startWizardAction ()
+    {
+        $this->_localConfig['installed'] = array(
+                'status' => 'begin',
+                'action' => 'start-wizard'
+        );
         
         $this->_saveLocalConfig();
     }
-    
-    public function setDbAction(){
+
+    public function setDbAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if($this->_localConfig['installed']['status'] != 'finished'){
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-db';
+        }
+        
+        
+        
+        $this->view->isReady = true;
+        $this->_saveLocalConfig();
         
     }
 
@@ -82,8 +109,13 @@ class Install_IndexController extends Zend_Controller_Action
     protected function _loadLocalConfig ()
     {
         if (is_file($this->_localConfigFile)) {
-            $localConfig = new Zend_Config_Json($this->_localConfigFile, 
-                    null, 
+            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, 
+                    array(
+                            'allowModifications' => true
+                    ));
+        } elseif (is_file(APPLICATION_PATH . '/configs/local.ini')) {
+            $localConfig = new Zend_Config_Ini(
+                    APPLICATION_PATH . '/configs/local.ini', null, 
                     array(
                             'allowModifications' => true
                     ));
