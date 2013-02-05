@@ -167,5 +167,59 @@ class Dam extends AbstractCollection implements IDam
         
         return $this->getList($filter);
 	}
+
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\WorkflowAbstractCollection::getList()
+     */
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
+        $list = parent::getList($filters,$sort,$start,$limit);
+        foreach ($list['data'] as &$obj){
+            $obj = $this->_addReadableProperty($obj);
+        }
+        return $list;
+    }
+	
+	/**
+	 * Set workspace if none given based on User main group.
+	 * 
+	 * @param array $content
+	 * @return array
+	 */
+	protected function _setDefaultWorkspace($content){
+	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']=='' || $content['writeWorkspace']==array()){
+	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+	        $content['writeWorkspace'] = $mainWorkspace['id'];
+	    }
+	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() ){
+	        $content['target'] = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
+	    }
+	    return $content;
+	}
+	
+	/**
+	 * Defines if each objects are readable
+	 * @param array $obj Contain the current object
+	 * @return array
+	 */
+    protected function _addReadableProperty ($obj)
+    {
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        $obj = $this->_setDefaultWorkspace($obj);
+
+        $contentTypeId = $obj['typeId'];
+        $contentType = Manager::getService('DamTypes')->findById($contentTypeId);
+		
+        if ($contentType['readOnly']) {
+            $obj['readOnly'] = true;
+        } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+            $obj['readOnly'] = true;
+        } else {
+            
+            $obj['readOnly'] = false;
+        }
+        
+        return $obj;
+    }
 }
 

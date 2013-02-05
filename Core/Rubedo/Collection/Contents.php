@@ -108,7 +108,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         foreach ($list['data'] as &$obj){
             $obj = $this->_addReadableProperty($obj);
         }
-        return $list;        
+        return $list;
     }
 
 	/*
@@ -513,7 +513,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	 * @return array
 	 */
 	protected function _setDefaultWorkspace($content){
-	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']==''){
+	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']=='' || $content['writeWorkspace']==array()){
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $content['writeWorkspace'] = $mainWorkspace['id'];
 	    }
