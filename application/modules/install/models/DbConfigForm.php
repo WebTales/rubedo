@@ -24,7 +24,7 @@
  */
 class Install_Model_DbConfigForm
 {
-    public static function getDtForm($params){
+    public static function getForm($params){
         
         $serverNameField = new Zend_Form_Element_Text('server');
         $serverNameField->setRequired(true);
@@ -55,6 +55,7 @@ class Install_Model_DbConfigForm
         
         $dbForm = new Zend_Form();
         $dbForm->setMethod('post');
+        $dbForm->setAttrib('id', 'dbForm');
         $dbForm->addElement($serverNameField);
         // $dbForm->addElement($serverPortField);
         $dbForm->addElement($dbNameField);

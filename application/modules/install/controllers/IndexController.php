@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
+use Rubedo\Mongo\DataAccess, Rubedo\Services\Manager;
 
 /**
  * Installer Controller
@@ -71,6 +71,9 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
+    /**
+     * Check if a valid connection to MongoDB can be written in local config
+     */
     public function setDbAction ()
     {
         $this->view->displayMode = 'regular';
@@ -81,7 +84,7 @@ class Install_IndexController extends Zend_Controller_Action
         
         $mongoOptions = $this->_applicationOptions["datastream"]["mongo"];
         
-        $dbForm = Install_Model_DbConfigForm::getDtForm($mongoOptions);
+        $dbForm = Install_Model_DbConfigForm::getForm($mongoOptions);
         
         $mongoAccess = new DataAccess();
         
@@ -108,6 +111,63 @@ class Install_IndexController extends Zend_Controller_Action
         }
         
         $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+
+    public function setAdminAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-admin';
+        }
+        
+        $form = Install_Model_AdminConfigForm::getForm();
+        
+        if ($this->getRequest()->isPost() && $form->isValid($this->getAllParams())) {
+            $params = $form->getValues();
+            $hashService = \Rubedo\Services\Manager::getService('Hash');
+            
+            $params['salt'] = $hashService->generateRandomString();
+            $params['password'] = $hashService->derivatePassword($params['password'], $params['salt']);
+
+            $userService = Manager::getService('MongoDataAccess');
+            $userService->init('Users');
+            $response = $userService->create($params);
+            $result = $response['success'];
+            
+            
+            
+            if(!$result){
+                $this->view->hasError = true;
+                $this->view->errorMsg = $response['msg'];
+            }else{
+                $userId = $response['data']['id'];
+                
+                $groupService = Manager::getService('MongoDataAccess');
+                $groupService->init('Groups');
+                $adminGroup = $groupService->findOne(array('name'=>'admin'));
+                $adminGroup['members'][]=$userId;
+                $groupService->update($adminGroup);
+                $this->view->accountName = $params['name'];
+            }
+            
+            $this->view->creationDone = $result;
+        }
+        
+        $listAdminUsers = Manager::getService('Users')->getAdminUsers();
+        
+        if ($listAdminUsers['count'] > 0) {
+            $this->view->hasAdmin = true;
+            $this->view->adminAccounts = $listAdminUsers['data'];
+            $this->view->isReady = true;
+        } else {
+            
+            $this->view->errorMsgs = 'No Admin Account Set';
+        }
+        
+        $this->view->form = $form;
         
         $this->_saveLocalConfig();
     }

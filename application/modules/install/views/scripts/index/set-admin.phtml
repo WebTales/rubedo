@@ -1,0 +1,42 @@
+<h1>DataBase Configuration</h1>
+<br />
+<div id="alerts">
+    <?php if($this->hasError){?>
+    <div class="alert alert-error"><?php echo $this->form->getErrorMessages();?></div>
+    <?php }?>
+    <?php if($this->hasAdmin){?>
+    <div class="alert alert-success">
+		Admin accounts exist :
+		<ul>
+            <?php foreach($this->adminAccounts as $admin){?>
+            <li><?php echo $admin['login'].' - '.$admin['email'];?></li>
+            <?php }?>
+        </ul>
+	</div>
+    <?php }else{?>
+    <div class="alert alert-error">No Admin Account Set</div>
+    <?php }?>
+    <?php if($this->creationDone){?>
+    <div class="alert alert-success">Account created : <?php echo $this->accountName;?></div>
+    <?php }else{?>
+    <?php echo $this->form->render();?>
+    <?php }?>
+</div>
+<?php if($this->displayMode=='wizard'){?>
+<ul class="pager">
+	<li class="previous"><a
+		href="<?php echo $this->url(array('action'=>'set-db'));?>">&larr;
+			Configure Database</a></li>
+  <?php if($this->isReady){?>
+  <li class="next"><a
+		href="<?php echo $this->url(array('action'=>'set-elastic-search'));?>">Configure
+			Elastic Search &rarr;</a></li>
+  <?php }?>
+</ul>
+<?php }else{?>
+<div class='pull-right'>
+	<a href="<?php echo $this->url(array('action'=>'index'));?>"
+		class="btn btn-large btn-primary" type="button"><i class="icon-home"></i>
+		Return</a>
+</div>
+<?php }?>
