@@ -167,13 +167,11 @@ var stringModalId="#"+modalId;
 jQuery("<div id='"+modalId+"' class='modal hide fade'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button></div><div id='add-content-modal-body' class='modal-body'>"+body+"</div></div>").appendTo(document.body);
 jQuery(stringModalId).css({
 			"width":"90%",
-			"height":"80%"
+			"height":"80%",
+			"top":"35%",
+			"left":"20%"
 		});
-jQuery(".modal.fade.in").css({
-	"top":"50%",
-	"left":"20%"
-	
-});
+
 jQuery(stringModalId+' iframe').css({
 			"width":"99%",
 			"height":"90%",
@@ -204,15 +202,17 @@ function destroyModal()
 }
 function getList()
 {
-     $.ajax({
-       type: "POST",
-       url: "http://"+getDomainName()+"/backoffice/content-types/get-readable-content-types/",
-       data: "",
-       success: function(msg){
-         $('#results').val(msg); // je sais plus si c'est val() ou html() qu'il faut utiliser pour un textarea, à toi de voir :)
-      }
-     });
-    }
+jQuery.ajax({
+	"url":"/backoffice/content-types/get-readable-content-types/",
+	"type":"GET",
+	"dataType":"JSON",
+	"success":function(msg)
+	{
+		var s=txt;
+	}
+});
+return s;
+}
 
 
 function getDomainName()
