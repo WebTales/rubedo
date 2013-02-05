@@ -38,6 +38,8 @@ class Backoffice_LoginController extends Zend_Controller_Action
 	 */
     public function init() {
         $this->_auth = Rubedo\Services\Manager::getService('Authentication');
+        $this->getHelper('Layout')->disableLayout();
+        
     }
 	
 	/**
