@@ -62,9 +62,13 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	}
 	
 	protected function _addDefaultWorkspace($obj){
-		if(!isset($obj['workspaces'])||$obj['workspaces']==array()||$obj['workspaces']==""){
-			$obj['workspaces']=array('global');
-		}
+		
+		if (! isset($obj['workspaces']) ||  $obj['workspaces']=='' || $obj['workspaces']==array()) {
+            $obj['workspaces'] = array(
+                'global'
+            );
+        }
+				
 		return $obj;
 	}
 	

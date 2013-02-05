@@ -130,6 +130,18 @@ class Dam extends AbstractCollection implements IDam
         // $obj['taxonomy']['navigation'] =
         // Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
         // }
+        if (! isset($obj['workspaces']) ||  $obj['workspaces']=='' || $obj['workspaces']==array()) {
+            $obj['workspaces'] = array(
+                'global'
+            );
+        }
+		
+		if (! isset($obj['target']) ||  $obj['target']=='' || $obj['target']==array()) {
+            $obj['target'] = array(
+                'global'
+            );
+        }
+        
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Rubedo\Exceptions\Server('no file found');
