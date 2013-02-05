@@ -21,13 +21,10 @@
 		<div id="collapseOne" class="accordion-body collapse">
 			<div class="accordion-inner">
 				<h3>Stack trace:</h3>
-				<pre>
-				<?php echo $this->exception->getTraceAsString()?>
-  </pre>
+				<pre><?php echo $this->exception->getTraceAsString()?></pre>
 
 				<h3>Request Parameters:</h3>
-				<pre><?php echo $this->escape(var_export($this->request->getParams(), true))?>
-  </pre>
+				<pre><?php echo $this->escape(var_export($this->request->getParams(), true))?></pre>
 			</div>
 		</div>
 	</div>
