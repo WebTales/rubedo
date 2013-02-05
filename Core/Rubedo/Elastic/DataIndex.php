@@ -37,7 +37,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getContentTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','summary','type','author');
+		$searchableFields=array('lastUpdateTime','text','summary','type','author','target','readOnly');
     	
 		// Get content type config by id
 		$contentTypeConfig = \Rubedo\Services\Manager::getService('ContentTypes')->findById($id);
@@ -63,7 +63,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getDamTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','type','author','fileSize');
+		$searchableFields=array('lastUpdateTime','text','type','author','fileSize','target','readOnly');
     	
 		// Get content type config by id
 		$damTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
@@ -181,6 +181,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["readOnly"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		
+		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
 			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
 		}
@@ -303,7 +307,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["damType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["fileSize"] = array('type' => 'integer', 'store' => 'yes');
 		$indexMapping["file"] = array('type' => 'attachment', 'store'=>'no');
+		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["readOnly"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		
+		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
 			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
 		}
@@ -424,6 +431,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
 		// Add default meta's
 		$contentData['objectType'] = 'content';
+		$contentData['readOnly'] = (integer) $data['readOnly'];
 		$contentData['contentType'] = $typeId;
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
@@ -462,9 +470,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 						$termsArray[] = $term;
 						$tmp = array();
 						foreach ($termsArray as $tempTerm) {
-							//$contentData['taxonomy'][$taxonomy['name']][] = $tempTerm['text'];
 							$contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
-							//array('id' => $tempTerm['id'], 'name' => $tempTerm['text']);
 						}
                     	
 					}
@@ -583,6 +589,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add default meta's
 		$damData['damType'] = $typeId;
 		$damData['objectType'] = 'dam';
+		$damData['readOnly'] = (integer) $data['readOnly'];
 		$damData['text'] =  (string) $data['title'];
 		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
 		$damData['fileSize'] = $fileSize;
@@ -605,8 +612,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     if(!is_array($terms)){
                         continue;
                     }
-					$collection = \Rubedo\Services\Manager::getService('Taxonomy');
-					$taxonomy = $collection->findById($vocabulary);
+					$taxonomy = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabulary);
 					$termsArray = array();
 								
                     foreach ($terms as $term) {
@@ -618,12 +624,13 @@ class DataIndex extends DataAbstract implements IDataIndex
 						$termsArray[] = $term;
 						$tmp = array();
 						foreach ($termsArray as $tempTerm) {
-							$damData['taxonomy'][$taxonomy['name']][] = $tempTerm['id'];
+							$damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
 						}
                     	
 					}
                 }
          }
+
 		$currentDam = new \Elastica_Document($id, $damData);
 
 		if (isset($data['originalFileId']) && $data['originalFileId'] != '') {

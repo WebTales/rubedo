@@ -1,6 +1,14 @@
 <h1>DataBase Configuration</h1>
 <br />
-
+<div id="alerts">
+    <?php if($this->hasError){?>
+    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
+    <?php }?>
+    <?php if($this->isReady){?>
+    <div class="alert alert-success">Connection to DB is set</div>
+    <?php }?>
+</div>
+<?php echo $this->form->render();?>
 <?php if($this->displayMode=='wizard'){?>
 <ul class="pager">
 	<li class="previous"><a

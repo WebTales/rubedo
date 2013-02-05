@@ -62,10 +62,45 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	}
 	
 	protected function _addDefaultWorkspace($obj){
-		if(!isset($obj['workspaces'])||$obj['workspaces']==array()||$obj['workspaces']==""){
-			$obj['workspaces']=array('global');
-		}
+		
+		if (! isset($obj['workspaces']) ||  $obj['workspaces']=='' || $obj['workspaces']==array()) {
+            $obj['workspaces'] = array(
+                'global'
+            );
+        }
+				
 		return $obj;
 	}
+	
+	/**
+     *  (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::findById()
+     */
+    public function findById ($contentId)
+    {
+        $obj = parent::findById ($contentId);
+        $obj= $this->_addReadableProperty ($obj);
+        return $obj;
+        
+    }
+	
+	protected function _addReadableProperty ($obj)
+    {
+        if (! isset($obj['workspaces'])) {
+            $obj['workspaces'] = array(
+                'global'
+            );
+        }
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        
+        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
+            $obj['readOnly'] = true;
+        } else {
+            
+            $obj['readOnly'] = false;
+        }
+        
+        return $obj;
+    }
 	
 }

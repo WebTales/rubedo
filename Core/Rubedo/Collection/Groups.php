@@ -60,6 +60,16 @@ class Groups extends AbstractCollection implements IGroups
         return $returnArray;
     }
 	
+	public function create (array $obj, $options = array('safe'=>true))
+    {
+    	// Define default read workspace for groups if it's not set
+    	if(!isset($obj['readWorkspaces']) || $obj['readWorkspaces']=="" || $obj['readWorkspaces'] == array()){
+    		$obj['readWorkspaces'] = array('global');
+    	}	
+			
+    	return parent::create($obj, $options);
+	}
+	
 	/**
      * Delete objects in the current collection
      *

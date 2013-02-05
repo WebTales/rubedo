@@ -33,7 +33,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      * ES search
      *     
 	 * @see \Rubedo\Interfaces\IDataSearch::search()
-	 * @params array $params search parameters : query, type, damtype, lang, author, date, taxonomy, pager, orderby, pagesize
+	 * @params array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
     public function search (array $params, $option = 'all') {
@@ -134,7 +134,17 @@ class DataSearch extends DataAbstract implements IDataSearch
         		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
 				$globalFilter->addFilter($dateFilter);
 				$setFilter = true;
-			}			
+			}	
+
+			// filter on target
+			if (array_key_exists('target',$params)) {
+				$targetFilter = new \Elastica_Filter_Term();
+        		$targetFilter->setTerm('target', $params['target']);
+				$globalFilter->addFilter($targetFilter);
+				$filters["target"]=$params['target'];
+				$setFilter = true;
+
+			}				
 
 			// filter on taxonomy
 			foreach ($taxonomies as $taxonomy) {
@@ -168,6 +178,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('type');
 			$elasticaFacetType->setField('contentType');
+			// Exclude active Facets for this vocabulary
+			if (isset($filters['type'])) {
+				$elasticaFacetType->setExclude(array($filters['type']));					
+			}
 			$elasticaFacetType->setSize(10);
 			$elasticaFacetType->setOrder('reverse_count');
 			if ($setFilter) $elasticaFacetType->setFilter($globalFilter);
@@ -178,6 +192,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Define the dam type facet.
 			$elasticaFacetDamType = new \Elastica_Facet_Terms('damType');
 			$elasticaFacetDamType->setField('damType');
+			// Exclude active Facets for this vocabulary
+			if (isset($filters['damType'])) {
+				$elasticaFacetDamType->setExclude(array($filters['damType']));					
+			}
 			$elasticaFacetDamType->setSize(10);
 			$elasticaFacetDamType->setOrder('reverse_count');
 			if ($setFilter) $elasticaFacetDamType->setFilter($globalFilter);
@@ -188,6 +206,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Define the author facet.
 			$elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
 			$elasticaFacetAuthor->setField('author');
+			// Exclude active Facets for this vocabulary
+			if (isset($filters['author'])) {
+				$elasticaFacetAuthor->setExclude(array($filters['author']));					
+			}
 			$elasticaFacetAuthor->setSize(5);
 			$elasticaFacetAuthor->setOrder('reverse_count');
 			if ($setFilter) $elasticaFacetAuthor->setFilter($globalFilter);
@@ -259,6 +281,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$data = $resultItem->getData();
 				$tmp['title'] = $data['text'];
 				$tmp['objectType'] = $data['objectType'];
+				$tmp['readOnly'] = $data['readOnly'];
+				if ($data['objectType'] === 'dam') {
+					$tmp['damType'] = $data['damType'];
+				}
 				$tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];		
 				$tmp['author'] = $data['author'];
 				$tmp['authorName'] = $data['authorName'];
@@ -282,7 +308,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 						
 			// Add label to Facets, hide facets with 1 result, 
 			$elasticaFacets = $elasticaResultSet->getFacets();
-			
+						
 			$result['facets'] = array();
 			
 			foreach($elasticaFacets as $id => $facet) {
@@ -306,9 +332,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 							break;
 
 						case 'damType' :
-							
+
 							$temp['label'] = 'Type de document';
-							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
 								$collection = \Rubedo\Services\Manager::getService('DamTypes');
 								foreach ($temp['terms'] as $key => $value) {
 									$termItem = $collection->findById($value['term']);
@@ -322,7 +348,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 						case 'type' :
 							
 							$temp['label'] = 'Type de contenu';
-							if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
 								$collection = \Rubedo\Services\Manager::getService('ContentTypes');
 								foreach ($temp['terms'] as $key => $value) {
 									$termItem = $collection->findById($value['term']);
@@ -442,6 +468,19 @@ class DataSearch extends DataAbstract implements IDataSearch
 							)
 						);
 						break;
+					
+					case 'target' :
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Target',
+							'terms' => array(
+								array(
+									'term' => $termId,
+									'label' => $termId
+								)
+							)
+						);
+						break;						
 												
 					default:
 						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
