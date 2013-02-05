@@ -91,12 +91,16 @@
 		
 		{% for facet in facets %}
 
-			{% if facet.terms|length > 1 %}
+			{% if facet.terms|length > 0 %}
 
     			{% if facet.id == 'type' %}
     			<p>
     				<i class="icon-file"></i> {{"content_type"|trans}}
-    			</p>		
+    			</p>	
+    			{% elseif facet.id == 'damType' %}
+    			<p>
+    				<i class="icon-file"></i> {{"dam_type"|trans}}
+    			</p>	
     			{% elseif facet.id == 'author' %}
     			<p>
     				<i class="icon-user"></i> {{"author"|trans}}
@@ -110,7 +114,6 @@
     				<i class="icon-tags"></i> {{facet.label}}
     			</p>			
     			{% endif %}	
-    	
     	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
     	          <ul>
     				{% for term in facet.terms %}

@@ -610,8 +610,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     if(!is_array($terms)){
                         continue;
                     }
-					$collection = \Rubedo\Services\Manager::getService('Taxonomy');
-					$taxonomy = $collection->findById($vocabulary);
+					$taxonomy = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabulary);
 					$termsArray = array();
 								
                     foreach ($terms as $term) {
@@ -623,12 +622,13 @@ class DataIndex extends DataAbstract implements IDataIndex
 						$termsArray[] = $term;
 						$tmp = array();
 						foreach ($termsArray as $tempTerm) {
-							$damData['taxonomy'][$taxonomy['name']][] = $tempTerm['id'];
+							$damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
 						}
                     	
 					}
                 }
          }
+
 		$currentDam = new \Elastica_Document($id, $damData);
 
 		if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
