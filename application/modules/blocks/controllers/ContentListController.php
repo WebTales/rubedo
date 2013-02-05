@@ -39,7 +39,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $queryId = $blockConfig['query'];
         $queryConfig = $this->getQuery($queryId);
 		$queryType=$queryConfig['type'];
-		
         $contentArray = $this->getDataList($queryConfig, $this->setPaginationValues($blockConfig));
 
       
@@ -77,11 +76,13 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $fields['title'] = $fields['text'];
                 unset($fields['text']);
                 $fields['id'] = (string) $vignette['id'];
+				$fields['typeId']=$vignette['typeId'];
                 $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
                 $data[] = $fields;
             }
             $output["data"] = $data;
 			$output["query"]['type']=$queryType;
+			$output["query"]['id']=$queryId;
             $output['prefix'] = $this->getRequest()->getParam('prefix');
             $output["page"] = $contentArray['page'];
             $output['test'] = array(
