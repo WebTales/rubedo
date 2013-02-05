@@ -1,4 +1,4 @@
-<h1>DataBase Configuration</h1>
+<h1>Define Admin Accounts</h1>
 <br />
 <div id="alerts">
     <?php if($this->hasError){?>
@@ -25,8 +25,8 @@
 <?php if($this->displayMode=='wizard'){?>
 <ul class="pager">
 	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'set-db'));?>">&larr;
-			Configure Database</a></li>
+		href="<?php echo $this->url(array('action'=>'set-db-contents'));?>">&larr;
+			Initialize Database Contents</a></li>
   <?php if($this->isReady){?>
   <li class="next"><a
 		href="<?php echo $this->url(array('action'=>'set-elastic-search'));?>">Configure

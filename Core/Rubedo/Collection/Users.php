@@ -63,9 +63,12 @@ class Users extends AbstractCollection implements IUsers
 	public function getAdminUsers(){
 	    $adminGroup = Manager::getService('Groups')->findByName('admin');
 	    $userIdList = array();
-	    foreach($adminGroup['members'] as $id){
-	        $userIdList[]= $id;
+	    if(isset($adminGroup['members'])){
+	        foreach($adminGroup['members'] as $id){
+	            $userIdList[]= $id;
+	        } 
 	    }
+	    
 	    $filters = array();
 	    $filters[]= array('property'=>'id','value'=>$userIdList,'operator'=>'$in');
 	    return $this->getList($filters);
