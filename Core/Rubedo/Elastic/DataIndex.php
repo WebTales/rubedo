@@ -431,7 +431,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
 		// Add default meta's
 		$contentData['objectType'] = 'content';
-		$contentData['readOnly'] = (string) $data['readOnly'];
+		$contentData['readOnly'] = (integer) $data['readOnly'];
 		$contentData['contentType'] = $typeId;
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
@@ -470,9 +470,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 						$termsArray[] = $term;
 						$tmp = array();
 						foreach ($termsArray as $tempTerm) {
-							//$contentData['taxonomy'][$taxonomy['name']][] = $tempTerm['text'];
 							$contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
-							//array('id' => $tempTerm['id'], 'name' => $tempTerm['text']);
 						}
                     	
 					}
@@ -591,7 +589,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add default meta's
 		$damData['damType'] = $typeId;
 		$damData['objectType'] = 'dam';
-		$damData['readOnly'] = (string) $data['readOnly'];
+		$damData['readOnly'] = (integer) $data['readOnly'];
 		$damData['text'] =  (string) $data['title'];
 		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
 		$damData['fileSize'] = $fileSize;
