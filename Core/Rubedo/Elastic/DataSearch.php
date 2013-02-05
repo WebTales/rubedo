@@ -33,7 +33,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      * ES search
      *     
 	 * @see \Rubedo\Interfaces\IDataSearch::search()
-	 * @params array $params search parameters : query, type, damtype, lang, author, date, taxonomy, pager, orderby, pagesize
+	 * @params array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
     public function search (array $params, $option = 'all') {
@@ -134,7 +134,17 @@ class DataSearch extends DataAbstract implements IDataSearch
         		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
 				$globalFilter->addFilter($dateFilter);
 				$setFilter = true;
-			}			
+			}	
+
+			// filter on target
+			if (array_key_exists('target',$params)) {
+				$targetFilter = new \Elastica_Filter_Term();
+        		$targetFilter->setTerm('target', $params['target']);
+				$globalFilter->addFilter($targetFilter);
+				$filters["target"]=$params['target'];
+				$setFilter = true;
+
+			}				
 
 			// filter on taxonomy
 			foreach ($taxonomies as $taxonomy) {
@@ -442,6 +452,19 @@ class DataSearch extends DataAbstract implements IDataSearch
 							)
 						);
 						break;
+					
+					case 'target' :
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Target',
+							'terms' => array(
+								array(
+									'term' => $termId,
+									'label' => $termId
+								)
+							)
+						);
+						break;						
 												
 					default:
 						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
