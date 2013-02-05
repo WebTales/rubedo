@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * Rubedo
+*
+* LICENSE
+*
+* yet to be written
+* 
+* This is the main front-office layout
+*
+* @category Rubedo
+* @package Rubedo
+* @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+* @license yet to be written
+* @version $Id$
+*/
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rubedo Installer</title>
+<meta property="og:title" content="Rubedo">
+<meta property="Content-Type" content="text/html; charset=UTF-8">
+<?php
+
+$this->headLink()
+    ->prependStylesheet("/css/bootstrap-responsive.css", "screen")
+    ->prependStylesheet("/css/bootstrap.css", "screen");
+$this->headScript()
+    ->appendFile("/templates/root/js/jquery.js")
+    ->appendFile("/templates/root/js/bootstrap-collapse.js");
+
+echo $this->headLink();
+?>
+</head>
+
+<body
+	style="background-image: url(http://rubedo.localhost/backoffice/resources/images/logo.png); background-position: 50% 50%; background-repeat: no-repeat no-repeat; min-height: 800px;">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand"
+				href="<?php echo $this->url(array('action'=>'index'));?>">Rubedo
+				Install Tool</a>
+
+			<!-- <ul class="nav">
+				<li class="active">
+					<a href="#">Home</a>
+				</li>
+				<li><a href="#">Link</a></li>
+				<li><a href="#">Link</a></li>
+			</ul> -->
+		</div>
+	</div>
+	<div class="container">
+		<div class="row-fluid" style="height: 250px;"></div>
+		<div class="row-fluid">
+			<div class="span2"></div>
+			<div class="span8">
+				<div class="well">
+    				<?php echo $this->layout()->content?>
+    				<div class='clearfix'></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<?php echo $this->headScript(); ?>
+		
+</body>
+</html>
