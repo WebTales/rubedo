@@ -160,21 +160,21 @@ function notify(notify_type, msg) {
 		alert.addClass('alert alert-error').fadeIn('fast');
 	}
 }
-function createPopupWindow()
+function modal(body,modalId)
 {
-	var siteUrl=window.location.href.substr(7);
-	siteUrl=siteUrl.substr(0,siteUrl.indexOf("/"));
-	var modalUrl="http://"+siteUrl+"/backoffice/resources/contentContributor/app.html?typeId=50ec46b6b58ce97004003263";
-	
-jQuery("<div id='add-content-window' class='modal hide fade'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button></div><div id='add-content-modal-body' class='modal-body'><iframe src='"+modalUrl+"'></iframe></div></div>").appendTo(document.body);
 
-jQuery('#add-content-window').css({
+var stringModalId="#"+modalId;
+jQuery("<div id='"+modalId+"' class='modal hide fade'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button></div><div id='add-content-modal-body' class='modal-body'>"+body+"</div></div>").appendTo(document.body);
+jQuery(stringModalId).css({
 			"width":"90%",
-			"height":"90%",
-			"left":"20%",
-			"top":"30%"
+			"height":"80%"
 		});
-jQuery('#add-content-window iframe').css({
+jQuery(".modal.fade.in").css({
+	"top":"50%",
+	"left":"20%"
+	
+});
+jQuery(stringModalId+' iframe').css({
 			"width":"99%",
 			"height":"90%",
 			"border":"none"
@@ -182,21 +182,43 @@ jQuery('#add-content-window iframe').css({
 jQuery("#add-content-modal-body").css({
 			"max-height":jQuery("#add-content-window").width()
 		});
+	return true;
+}
+function addContentWindow(type,typeId,queryId)
+{
+	alert(getList());
+	var siteUrl=getDomainName();
+	if(document.getElementById('add-content-window'))
+	{
+		jQuery("#add-content-window").modal('show');
+	}else
+	{
+		var modalUrl="http://"+siteUrl+"/backoffice/resources/contentContributor/app.html?queryId="+queryId;
+		if(modal("<iframe src='"+modalUrl+"'></iframe>","add-content-window"))
+		jQuery("#add-content-window").modal('show');
+	}	
+}
+function destroyModal()
+{
+	
+}
+function getList()
+{
+     $.ajax({
+       type: "POST",
+       url: "http://"+getDomainName()+"/backoffice/content-types/get-readable-content-types/",
+       data: "",
+       success: function(msg){
+         $('#results').val(msg); // je sais plus si c'est val() ou html() qu'il faut utiliser pour un textarea, à toi de voir :)
+      }
+     });
+    }
+
+
+function getDomainName()
+{
+	return window.location.href.substr(7).substr(0,window.location.href.substr(7).indexOf("/"));
 }
 
-jQuery("#btn-add-content").click(function(){
-	if(document.getElementById("add-content-window"))
-	{
-			jQuery('#add-content-window').modal('show');
-	}
-	else{
-
-		if(createPopupWindow())
-		{
-			jQuery('#add-content-window').modal('show');
-		}
-	}
-	
-	});
 
 
