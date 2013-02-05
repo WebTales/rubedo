@@ -138,6 +138,9 @@ msgstr "Défaut"
 msgid "search"
 msgstr "Rechercher"
 
+msgid "dam_type"
+msgstr "Type de document"
+
 #~ msgid "close"
 #~ msgstr "Fermer"
 
