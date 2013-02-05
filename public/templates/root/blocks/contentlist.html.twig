@@ -5,10 +5,10 @@
 {%if query.type=="manual"%}
 <div id="list-editmode" class="hide">
 	<div class="btn-group pull-left">
-						<a class="btn" href="#" id="btn-add-content"> <i class="icon-plus-sign"></i>
-							Ajouter un contenu
-						</a>
-					</div>
+	<a class="btn" href="#" id="btn-add-content" onclick="addContentWindow('{{query.id}}')"> <i class="icon-plus-sign"></i>
+	Ajouter un contenu
+	</a>
+	</div>
 </div>
 {%endif%}
 {%endif%}
