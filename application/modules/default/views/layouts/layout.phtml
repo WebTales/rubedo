@@ -28,7 +28,9 @@
 $this->headLink()
     ->prependStylesheet("/css/bootstrap-responsive.css", "screen")
     ->prependStylesheet("/css/bootstrap.css", "screen");
-$this->headScript()->appendFile("/templates/root/js/jquery.js");
+$this->headScript()
+    ->appendFile("/templates/root/js/jquery.js")
+    ->appendFile("/templates/root/js/bootstrap-collapse.js");
 
 echo $this->headLink();
 ?>

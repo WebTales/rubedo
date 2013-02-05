@@ -1,20 +1,40 @@
-  <h1>An error occurred</h1>
-  <h2><?php echo $this->message ?></h2>
+<div class="alert alert-error">
+	<h2><?php echo $this->message ?></h2>
 
-  <?php if (isset($this->exception)): ?>
-  
-  <h3>Exception information:</h3>
-  <p>
-      <b>Message:</b> <?php echo $this->exception->getMessage() ?>
+<?php if (isset($this->exception)){ ?>
+
+<p>
+	<?php echo $this->exception->getMessage()?>
   </p>
+</div>
 
-  <h3>Stack trace:</h3>
-  <pre><?php echo $this->exception->getTraceAsString() ?>
+<div class="accordion" id="trace">
+	<div class="accordion-group">
+		<div class="accordion-heading">
+			<div class="pull-right">
+				<a class="accordion-toggle " data-toggle="collapse"
+					data-parent="#trace" href="#collapseOne">More info <i
+					class="icon-chevron-down"></i></a>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div id="collapseOne" class="accordion-body collapse">
+			<div class="accordion-inner">
+				<h3>Stack trace:</h3>
+				<pre>
+				<?php echo $this->exception->getTraceAsString()?>
   </pre>
 
-  <h3>Request Parameters:</h3>
-  <pre><?php echo $this->escape(var_export($this->request->getParams(), true)) ?>
+				<h3>Request Parameters:</h3>
+				<pre><?php echo $this->escape(var_export($this->request->getParams(), true))?>
   </pre>
+			</div>
+		</div>
+	</div>
+</div>
+<?php }else{?>
 
-  <?php endif ?>
+</div>
+
+<?php } ?>
 
