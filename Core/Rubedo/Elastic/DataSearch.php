@@ -333,13 +333,11 @@ class DataSearch extends DataAbstract implements IDataSearch
 						case 'damType' :
 
 							$temp['label'] = 'Type de document';
-							if (array_key_exists('terms', $temp)) {
-								if ($option=='all' or count($temp['terms']) > 1) {
-									$collection = \Rubedo\Services\Manager::getService('DamTypes');
-									foreach ($temp['terms'] as $key => $value) {
-										$termItem = $collection->findById($value['term']);
-										$temp['terms'][$key]['label'] = $termItem['type'];
-									}
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
+								$collection = \Rubedo\Services\Manager::getService('DamTypes');
+								foreach ($temp['terms'] as $key => $value) {
+									$termItem = $collection->findById($value['term']);
+									$temp['terms'][$key]['label'] = $termItem['type'];
 								}
 							} else {
 								$renderFacet = false;
@@ -349,13 +347,11 @@ class DataSearch extends DataAbstract implements IDataSearch
 						case 'type' :
 							
 							$temp['label'] = 'Type de contenu';
-							if (array_key_exists('terms', $temp)) {
-								if ($option=='all' or count($temp['terms']) > 1) {
-									$collection = \Rubedo\Services\Manager::getService('ContentTypes');
-									foreach ($temp['terms'] as $key => $value) {
-										$termItem = $collection->findById($value['term']);
-										$temp['terms'][$key]['label'] = $termItem['type'];
-									}
+							if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
+								$collection = \Rubedo\Services\Manager::getService('ContentTypes');
+								foreach ($temp['terms'] as $key => $value) {
+									$termItem = $collection->findById($value['term']);
+									$temp['terms'][$key]['label'] = $termItem['type'];
 								}
 							} else {
 								$renderFacet = false;
