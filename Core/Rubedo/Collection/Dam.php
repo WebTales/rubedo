@@ -221,5 +221,18 @@ class Dam extends AbstractCollection implements IDam
         
         return $obj;
     }
+	
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Collection\WorkflowAbstractCollection::findById()
+     */
+    public function findById ($contentId)
+    {
+        
+        $obj = parent::findById ($contentId);
+        $obj = $this->_addReadableProperty($obj);
+        return $obj;
+        
+    }
 }
 
