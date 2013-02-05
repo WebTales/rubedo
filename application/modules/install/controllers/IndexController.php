@@ -127,6 +127,14 @@ class Install_IndexController extends Zend_Controller_Action
             $this->_localConfig['installed']['action'] = 'set-db-contents';
         }
         
+        if($this->getParam('doEnsureIndex',false)){
+            
+        }
+        
+        if($this->getParam('doInsertGroups',false)){
+        
+        }
+        
         $this->view->isReady = true;
         
         $this->_saveLocalConfig();

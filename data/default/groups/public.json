@@ -1,0 +1,14 @@
+{
+	"canDeleteElements" : 0,
+	"canWriteUnownedElements" : 0,
+	"members" : [
+	],
+	"name" : "public",
+	"parentId" : "root",
+	"readWorkspaces" : ["global"],
+	"roles" : [
+		"public"
+	],
+	"version" : 1,
+	"writeWorkspaces" : [ ]
+}
