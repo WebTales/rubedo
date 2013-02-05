@@ -41,7 +41,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
 		$queryType=$queryConfig['type'];
         $contentArray = $this->getDataList($queryConfig, $this->setPaginationValues($blockConfig));
 
-      
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
@@ -148,9 +147,11 @@ class Blocks_ContentListController extends Blocks_AbstractController
                             }
                         }
                         $taxOperator = '$in';
+                    }else{
+                    	$taxOperator = '$in';
                     }
                 } else {
-                    $taxOperator = '$in';
+                   $taxOperator = '$in';
                 }
                 if (count($value['terms']) > 0) {
                     $filterArray[] = array(
@@ -215,10 +216,11 @@ class Blocks_ContentListController extends Blocks_AbstractController
             }
         }else{
         	 $filterArray[]=array(
-	        	 'property'=>'id',
-	        	 'value'=>$queryObj['query'][0]
+        	 	'operator'=> '$in',
+	        	 'property'=> 'id',
+	        	 'value'=>$queryObj['query']
 			 );
-			  $filterArray[] = array(
+			  $filterArray[]=array(
                 'property' => 'status',
                 'value' => 'published'
             );
@@ -228,7 +230,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     );
         }
         /* Get the list */
-     
         $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
         $contentArray['page'] = $pageData;
         return $contentArray;
