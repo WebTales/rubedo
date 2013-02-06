@@ -33,14 +33,20 @@
 					<a href="{{url({'page': i},true)}}">{{i}}</a>
 				</li>
 				{%endfor%}
-				{%elseif page.limitPage>6%}
-				{% for  i in page.currentPage-4..page.limitPage %}
+				{%elseif page.limitPage>6 and page.currentPage+4 < page.nbPages%}
+				{% for  i in page.currentPage-4..page.currentPage+4%}
+				<li {% if page.currentPage == i%}class="active"{%endif%}>
+					<a href="{{url({'page': i},true)}}">{{i}}</a>
+				</li>
+				{%endfor%}
+				{%else%}
+				{% for  i in page.currentPage-4..page.currentPage+(page.nbPages-page.currentPage)%}
 				<li {% if page.currentPage == i%}class="active"{%endif%}>
 					<a href="{{url({'page': i},true)}}">{{i}}</a>
 				</li>
 				{%endfor%}
 				{%endif%}
-				{% if page.currentPage != page.limitPage %}
+				{% if page.currentPage != page.nbPages %}
 				<li>
 					<a href="{{url({'page': page.currentPage+1},true)}}">>></a>
 				</li>
