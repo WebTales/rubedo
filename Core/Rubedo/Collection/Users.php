@@ -16,8 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IUsers;
-use Rubedo\Mongo\DataAccess;
+use Rubedo\Interfaces\Collection\IUsers, Rubedo\Services\Manager;
 
 /**
  * Service to handle Users
@@ -59,6 +58,20 @@ class Users extends AbstractCollection implements IUsers
 		}else{
 			return false;
 		}
+	}
+	
+	public function getAdminUsers(){
+	    $adminGroup = Manager::getService('Groups')->findByName('admin');
+	    $userIdList = array();
+	    if(isset($adminGroup['members'])){
+	        foreach($adminGroup['members'] as $id){
+	            $userIdList[]= $id;
+	        } 
+	    }
+	    
+	    $filters = array();
+	    $filters[]= array('property'=>'id','value'=>$userIdList,'operator'=>'$in');
+	    return $this->getList($filters);
 	}
 	
 	/**

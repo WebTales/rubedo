@@ -1,18 +1,20 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
- *
- * yet to be written
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
+use Rubedo\Mongo\DataAccess, Rubedo\Services\Manager;
 
 /**
  * Installer Controller
@@ -48,9 +50,12 @@ class Install_IndexController extends Zend_Controller_Action
     public function indexAction ()
     {
         if (! $this->_isConfigWritable()) {
-            throw new Rubedo\Exceptions\User('Local config file ' . $this->_localConfigFile . ' should be writable');
+            throw new Rubedo\Exceptions\User(
+                    'Local config file ' . $this->_localConfigFile .
+                             ' should be writable');
         }
-        if (! isset($this->_localConfig['installed']) || $this->_localConfig['installed']['status'] != 'finished') {
+        if (! isset($this->_localConfig['installed']) ||
+                 $this->_localConfig['installed']['status'] != 'finished') {
             if (! isset($this->_localConfig['installed']['action'])) {
                 $this->_localConfig['installed']['action'] = 'start-wizard';
             }
@@ -62,13 +67,16 @@ class Install_IndexController extends Zend_Controller_Action
     public function startWizardAction ()
     {
         $this->_localConfig['installed'] = array(
-            'status' => 'begin',
-            'action' => 'start-wizard'
+                'status' => 'begin',
+                'action' => 'start-wizard'
         );
         
         $this->_saveLocalConfig();
     }
 
+    /**
+     * Check if a valid connection to MongoDB can be written in local config
+     */
     public function setDbAction ()
     {
         $this->view->displayMode = 'regular';
@@ -77,48 +85,15 @@ class Install_IndexController extends Zend_Controller_Action
             $this->_localConfig['installed']['action'] = 'set-db';
         }
         
-        $mongoOptions = $this->_applicationOptions["datastream"]["mongo"];
+        $mongoOptions = isset($this->_applicationOptions["datastream"]["mongo"]) ? $this->_applicationOptions["datastream"]["mongo"] : array();
         
-        $serverNameField = new Zend_Form_Element_Text('server');
-        $serverNameField->setRequired(true);
-        $serverNameField->setValue(isset($mongoOptions['server']) ? $mongoOptions['server'] : 'localhost/rubedo');
-        $serverNameField->setLabel('Server Name');
-        
-        $serverPortField = new Zend_Form_Element_Text('serverport');
-        // $serverPortField->setRequired(true);
-        $serverPortField->setValue(isset($mongoOptions['port']) ? $mongoOptions['port'] : null);
-        $serverPortField->addValidator('digits');
-        $serverPortField->setLabel('Server Port');
-        
-        $dbNameField = new Zend_Form_Element_Text('db');
-        $dbNameField->setRequired(true);
-        $dbNameField->setValue(isset($mongoOptions['db']) ? $mongoOptions['db'] : null);
-        $dbNameField->setLabel('Db Name');
-        
-        $serverLoginField = new Zend_Form_Element_Text('login');
-        $serverLoginField->setValue(isset($mongoOptions['login']) ? $mongoOptions['login'] : null);
-        $serverLoginField->setLabel('Username');
-        
-        $serverPasswordField = new Zend_Form_Element_Text('password');
-        $serverPasswordField->setValue(isset($mongoOptions['password']) ? $mongoOptions['password'] : null);
-        $serverPasswordField->setLabel('Password');
-        
-        $submitButton = new Zend_Form_Element_Submit('Submit');
-        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
-        
-        $dbForm = new Zend_Form();
-        $dbForm->setMethod('post');
-        $dbForm->addElement($serverNameField);
-        // $dbForm->addElement($serverPortField);
-        $dbForm->addElement($dbNameField);
-        $dbForm->addElement($serverLoginField);
-        $dbForm->addElement($serverPasswordField);
-        $dbForm->addElement($submitButton);
+        $dbForm = Install_Model_DbConfigForm::getForm($mongoOptions);
         
         $mongoAccess = new DataAccess();
         
         try {
-            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+            if ($this->getRequest()->isPost() &&
+                     $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
                 $mongo = $this->_buildConnectionString($params);
                 $dbName = $params['db'];
@@ -126,22 +101,100 @@ class Install_IndexController extends Zend_Controller_Action
             } else {
                 $initCollection = $mongoAccess->init('Users');
                 $params = $this->_applicationOptions["datastream"]["mongo"];
-                
             }
             $connectionValid = true;
         } catch (Exception $exception) {
             $connectionValid = false;
-            
         }
         if ($connectionValid) {
             $this->view->isReady = true;
-            $this->_localConfig["datastream"]["mongo"]=$params;
+            $this->_localConfig["datastream"]["mongo"] = $params;
         } else {
             $this->view->hasError = true;
             $this->view->errorMsgs = 'Rubedo can\'t connect itself to specified DB';
         }
         
         $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+
+    public function setDbContentsAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-db-contents';
+        }
+        
+        if($this->getParam('doEnsureIndex',false)){
+            
+        }
+        
+        if($this->getParam('doInsertGroups',false)){
+        
+        }
+        
+        $this->view->isReady = true;
+        
+        $this->_saveLocalConfig();
+    }
+
+    public function setAdminAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-admin';
+        }
+        
+        $form = Install_Model_AdminConfigForm::getForm();
+        
+        if ($this->getRequest()->isPost() &&
+                 $form->isValid($this->getAllParams())) {
+            $params = $form->getValues();
+            $hashService = \Rubedo\Services\Manager::getService('Hash');
+            
+            $params['salt'] = $hashService->generateRandomString();
+            $params['password'] = $hashService->derivatePassword(
+                    $params['password'], $params['salt']);
+            
+            $userService = Manager::getService('MongoDataAccess');
+            $userService->init('Users');
+            $response = $userService->create($params);
+            $result = $response['success'];
+            
+            if (! $result) {
+                $this->view->hasError = true;
+                $this->view->errorMsg = $response['msg'];
+            } else {
+                $userId = $response['data']['id'];
+                
+                $groupService = Manager::getService('MongoDataAccess');
+                $groupService->init('Groups');
+                $adminGroup = $groupService->findOne(array(
+                        'name' => 'admin'
+                ));
+                $adminGroup['members'][] = $userId;
+                $groupService->update($adminGroup);
+                $this->view->accountName = $params['name'];
+            }
+            
+            $this->view->creationDone = $result;
+        }
+        
+        $listAdminUsers = Manager::getService('Users')->getAdminUsers();
+        
+        if ($listAdminUsers['count'] > 0) {
+            $this->view->hasAdmin = true;
+            $this->view->adminAccounts = $listAdminUsers['data'];
+            $this->view->isReady = true;
+        } else {
+            
+            $this->view->errorMsgs = 'No Admin Account Set';
+        }
+        
+        $this->view->form = $form;
         
         $this->_saveLocalConfig();
     }
@@ -179,13 +232,16 @@ class Install_IndexController extends Zend_Controller_Action
     protected function _loadLocalConfig ()
     {
         if (is_file($this->_localConfigFile)) {
-            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, array(
-                'allowModifications' => true
-            ));
+            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, 
+                    array(
+                            'allowModifications' => true
+                    ));
         } elseif (is_file(APPLICATION_PATH . '/configs/local.ini')) {
-            $localConfig = new Zend_Config_Ini(APPLICATION_PATH . '/configs/local.ini', null, array(
-                'allowModifications' => true
-            ));
+            $localConfig = new Zend_Config_Ini(
+                    APPLICATION_PATH . '/configs/local.ini', null, 
+                    array(
+                            'allowModifications' => true
+                    ));
         } else {
             $localConfig = new Zend_Config(array(), true);
         }

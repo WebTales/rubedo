@@ -172,7 +172,7 @@ class Groups extends AbstractCollection implements IGroups
     public function getWriteWorkspaces ($groupId)
     {
         $group = $this->findById($groupId);
-        if (! isset($group['writeWorkspaces'])) {
+        if (! isset($group['writeWorkspaces']) || $group['writeWorkspaces']=="") {
             $group['writeWorkspaces'] = array();
         }
         return $group['writeWorkspaces'];

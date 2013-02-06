@@ -13,7 +13,6 @@
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Router;
-
 Use Rubedo\Services\Manager;
 
 /**
@@ -24,7 +23,8 @@ Use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Controller_Router_Route_Interface
+class Route extends \Zend_Controller_Router_Route_Abstract implements 
+        \Zend_Controller_Router_Route_Interface
 {
 
     /**
@@ -74,7 +74,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
         
         if ($reset === true) {
             $params = array(
-                'pageId' => $this->_values["pageId"]
+                    'pageId' => $this->_values["pageId"]
             );
         } else {
             $params = \Zend_Controller_Front::getInstance()->getRequest()->getParams();
@@ -87,7 +87,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
                 }
                 if (! is_array($value)) {
                     $value = array(
-                        $value
+                            $value
                     );
                 }
                 $data[$key] = array_unique(array_merge($params[$key], $value));
@@ -100,7 +100,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
                 }
                 if (! is_array($value)) {
                     $value = array(
-                        $value
+                            $value
                     );
                 }
                 $data[$key] = array_diff($params[$key], $value);
@@ -135,14 +135,19 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
      */
     public function match ($path)
     {
-        $pageId = Manager::getService('Url')->getPageId($path->getRequestUri(), $path->getHttpHost());
+        try {
+            $pageId = Manager::getService('Url')->getPageId(
+                    $path->getRequestUri(), $path->getHttpHost());
+        } catch (\Rubedo\Exceptions\Server $exception) {
+            $pageId = null;
+        }
         if ($pageId === null) {
             return false;
         } else {
             $this->_values = array(
-                'controller' => 'index',
-                'action' => 'index',
-                'pageId' => $pageId
+                    'controller' => 'index',
+                    'action' => 'index',
+                    'pageId' => $pageId
             );
             return $this->_values;
         }
