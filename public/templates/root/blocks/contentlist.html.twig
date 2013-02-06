@@ -18,7 +18,7 @@
 		{% include content.type  %}
 		{% endfor %}
 	</div>
-	{%if page.limitPage > 1 %}
+	{%if page.limitPage > 1 and  page.currentPage < page.nbPages+1 %}
 		
 		<div class="pagination pagination-mini">
 			<ul>
@@ -33,7 +33,7 @@
 					<a href="{{url({'page': i},true)}}">{{i}}</a>
 				</li>
 				{%endfor%}
-				{%else%}
+				{%elseif page.limitPage>6%}
 				{% for  i in page.currentPage-4..page.limitPage %}
 				<li {% if page.currentPage == i%}class="active"{%endif%}>
 					<a href="{{url({'page': i},true)}}">{{i}}</a>
