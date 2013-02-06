@@ -37,5 +37,19 @@ class Backoffice_MasksController extends Backoffice_DataAccessController
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('Masks');
 	}
+	
+	public function isUsedAction()
+	{
+		$data = $this->getRequest()->getParam('id');
+		
+		$pagesList=Rubedo\Services\Manager::getService('Pages')->findByMaskId($data);
+		if(is_array($pagesList) && count($pagesList)>0)
+		{
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 }
