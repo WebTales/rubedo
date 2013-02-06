@@ -46,7 +46,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
             $contentArray['page']['limitPage'] = min(array(
                 $contentArray['page']['nbPages'],
-                3
+                10
             ));
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();

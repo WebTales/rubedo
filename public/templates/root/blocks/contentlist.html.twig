@@ -27,11 +27,19 @@
 					<a href="{{url({'page': page.currentPage-1},true)}}"><<</a>
 				</li>
 				{%endif%}
+				{%if page.currentPage < 6%}
 				{% for  i in 1..page.limitPage %}
 				<li {% if page.currentPage == i%}class="active"{%endif%}>
 					<a href="{{url({'page': i},true)}}">{{i}}</a>
 				</li>
 				{%endfor%}
+				{%else%}
+				{% for  i in page.currentPage-4..page.limitPage %}
+				<li {% if page.currentPage == i%}class="active"{%endif%}>
+					<a href="{{url({'page': i},true)}}">{{i}}</a>
+				</li>
+				{%endfor%}
+				{%endif%}
 				{% if page.currentPage != page.limitPage %}
 				<li>
 					<a href="{{url({'page': page.currentPage+1},true)}}">>></a>
