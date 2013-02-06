@@ -160,6 +160,11 @@ class Pages extends AbstractCollection implements IPages
         $filterArray['text'] = $name;
 		return $this->_dataService->findOne($filterArray);
 	}
+	public function findByMaskId($maskId)
+	{
+		$filterArray[]=array("property"=>"maskId","value"=>$maskId);
+		return parent::getList($filterArray);
+	}
 
     public function create (array $obj, $options = array('safe'=>true))
     {
@@ -249,7 +254,7 @@ class Pages extends AbstractCollection implements IPages
         }
         return $returnArray;
     }
-    
+
 	/* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::readChild()
      */
