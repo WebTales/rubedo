@@ -185,31 +185,47 @@
 		</table>
 		{% if pagecount > 1 %}
 		<div class="pagination pagination-centered">
+		{%set wrap=limit//2%}
+		{%set lastWrap=(pagecount-1)-current%}
 			<ul>
-				<li class="disabled">
-					<a href="#">Page {{ pager+1 }} {{"on"|trans}} {{ pagecount }}</a>
+			<li class="disabled">
+					<a href="#">Page {{ current+1 }} {{"on"|trans}} {{ pagecount }}</a>
 				</li>
-				{% if pager==0 %}
+				{% if current==0 %}
 				<li class="disabled">
 					<a href="#"><<</a>
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': pager-1})}}"><<</a>
+					<a href="{{url({'pager': current-1})}}"><<</a>
 				</li>
 				{% endif %}
-				{% for i in range(0, pagecount-1) %}
-				<li {% if pager==i %}class="disabled"{% endif %}>
+				{%if current<wrap+1 or limit<10%}
+				{% for i in range(0, limit) %}
+				<li {% if current==i %}class="disabled"{% endif %}>
 					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
 				</li>
 				{% endfor %}
-				{% if pager==pagecount-1 %}
+				{%elseif limit>wrap and current+wrap<pagecount %}
+				{% for  i in current-(wrap)..current+wrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%else%}
+				{% for  i in current-(limit-(lastWrap)-1)..current+lastWrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%endif%}
+				{% if current==pagecount-1%}
 				<li class="disabled">
 					<a href="#">>></a>
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': pager+1})}}">>></a>
+					<a href="{{url({'pager': current+1})}}">>></a>
 				</li>
 				{% endif %}
 			</ul>
