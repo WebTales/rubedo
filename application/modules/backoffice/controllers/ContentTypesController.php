@@ -63,11 +63,11 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 	{
 		$newData=$this->getRequest()->getParam('data');
 		$data=$this->_dataService->findById($data['id']);
-		
+		$
 		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
 		if(is_array($listResult) && $listResult['count']>0)
 		{
-			$resultArray=array("modify"=>"allowed");
+			$resultArray=array("modify"=>"ok");
 		}
 		else 
 		{
@@ -84,6 +84,10 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 				$tinierData=$newData;
 			}
 			$unauthorized=0;
+			$authorizedModif=array("first"=>array('506441f8c648043912000017','506441f8c648043912000018','506441f8c648043912000019'),
+			"second"=>array('506441f8c64804391200001d','506441f8c64804391200001e','506441f8c64804391200001f')
+			);
+			
 			foreach($greaterData['fields'] as $key=>$field)
 			{
 				foreach($tinierData['fields'] as $newfield)
@@ -92,12 +96,28 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 					{
 						if($field['protoId']!=$newfield['protoId'])
 						{
-							$unauthorized++;
+							if(in_array($field['protoId'],$authorizedModif['first']))
+							{
+								if(!in_array($newfield['protoId'],$authorizedModif['first']))
+								{
+									$unauthorized++;
+								}
+							}elseif(in_array($field['protoId'],$authorizedModif['second']))
+							{
+								if(!in_array($newfield['protoId'],$authorizedModif['second']))
+								{
+									$unauthorized++;
+								}
+							}
+							else {
+								$unauthorized++;
+							}
+							
 						}
 					}
 				}
 			}
-			$resultArray = ($unauthorized!=0) ? array("modify"=>"forbidden") : array("modify"=>"maybe");
+			$resultArray = ($unauthorized!=0) ? array("modify"=>"no") : array("modify"=>"possible");
 			
 		}
 		$this->_returnJson($resultArray);
