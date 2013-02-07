@@ -33,7 +33,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
     /**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model', 'get-readable-content-types');	
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model', 'get-readable-content-types','is-used');	
 		
     public function init(){
 		parent::init();
@@ -49,8 +49,8 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 	{
 			$id = $this->getRequest()->getParam('id');
 		
-		$listResult=Rubedo\Services\Manager::getService('Contents')->findByTypeId($id);
-		if(is_array($listResult) && count($listResult)>0)
+		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
+		if(is_array($listResult) && $listResult['count']>0)
 		{
 			$result=array("used"=>true);
 		}
