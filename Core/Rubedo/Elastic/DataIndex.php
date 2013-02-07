@@ -37,7 +37,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getContentTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','summary','type','author','target','readOnly');
+		$searchableFields=array('lastUpdateTime','text','summary','type','author','target');
     	
 		// Get content type config by id
 		$contentTypeConfig = \Rubedo\Services\Manager::getService('ContentTypes')->findById($id);
@@ -63,7 +63,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getDamTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','type','author','fileSize','target','readOnly');
+		$searchableFields=array('lastUpdateTime','text','type','author','fileSize','target');
     	
 		// Get content type config by id
 		$damTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
@@ -182,7 +182,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["readOnly"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -308,7 +308,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["fileSize"] = array('type' => 'integer', 'store' => 'yes');
 		$indexMapping["file"] = array('type' => 'attachment', 'store'=>'no');
 		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["readOnly"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -431,8 +431,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 
 		// Add default meta's
 		$contentData['objectType'] = 'content';
-		$contentData['readOnly'] = (integer) $data['readOnly'];
 		$contentData['contentType'] = $typeId;
+		$contentData['writeWorkspace'] = $data['writeWorkspace'];
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		} else {
@@ -603,7 +603,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add default meta's
 		$damData['damType'] = $typeId;
 		$damData['objectType'] = 'dam';
-		$damData['readOnly'] = (integer) $data['readOnly'];
+		$damData['writeWorkspace'] = $data['writeWorkspace'];
 		$damData['text'] =  (string) $data['title'];
 		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
 		$damData['fileSize'] = $fileSize;
