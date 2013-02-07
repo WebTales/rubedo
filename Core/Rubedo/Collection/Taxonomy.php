@@ -67,11 +67,36 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
     {
         $list = parent::getList($filters, $sort, $start, $limit);
+		
+		foreach ($list['data'] as &$obj){
+            $obj = $this->_addReadableProperty($obj);
+        }
+		
         $list['data'] = array_merge(array(
             $this->_virtualNavigationVocabulary,
         ), $list['data']);
         $list['count'] = $list['count'] + 1;
+		
         return $list;
+    }
+	
+	protected function _addReadableProperty ($obj)
+    {
+        if (! isset($obj['workspaces'])) {
+            $obj['workspaces'] = array(
+                'global'
+            );
+        }
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        
+        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
+            $obj['readOnly'] = true;
+        } else {
+            
+            $obj['readOnly'] = false;
+        }
+        
+        return $obj;
     }
 
     /**
