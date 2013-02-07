@@ -236,24 +236,35 @@ class Pages extends AbstractCollection implements IPages
 		return $this->count(array(array('property' => 'maskId', 'operator' => '$nin', 'value' => $masksArray)));
 	}
 	
-	/* (non-PHPdoc)
+	protected function _addReadableProperty ($obj)
+    {
+        if (! isset($obj['workspace'])) {
+            $obj['workspace'] = 'global';
+        }
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		
+        if (!in_array($obj['workspace'], $writeWorkspaces)) {
+            $obj['readOnly'] = true;
+        } else {
+            
+            $obj['readOnly'] = false;
+        }
+        
+        return $obj;
+    }
+	
+	/**
+	 *  (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::getList()
      */
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
     {
-        $list = parent::getList ($filters, $sort, $start, $limit);
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        $returnArray = array();
-        foreach ($list as $page){
-            if(!in_array($page['workspace'], $writeWorkspaces)){
-                $page['readOnly'] =true;
-            }else{
-                $page['readOnly'] =false;
-            }
-           $returnArray[] = $page;
+        $list = parent::getList($filters,$sort,$start,$limit);
+        foreach ($list['data'] as &$obj){
+            $obj = $this->_addReadableProperty($obj);
         }
-        return $returnArray;
-    }
+        return $list;
+    } 
 
 	/* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::readChild()
