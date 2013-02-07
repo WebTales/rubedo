@@ -479,12 +479,15 @@ class DataIndex extends DataAbstract implements IDataIndex
 		 
         
 		// Add target
-		$contentData['target']=array('global');
+		$contentData['target']=array();
 		if (isset($data['target'])) {
 			foreach ($data['target'] as $key => $target) {
 				$contentData['target'][] = (string) $target;
 			}
-		}	
+		}
+		if (empty($contentData['target']))	{
+			$contentData['target'] = array('Global');
+		}
 			
 		// Add document 
 		$currentDocument = new \Elastica_Document($id, $contentData);

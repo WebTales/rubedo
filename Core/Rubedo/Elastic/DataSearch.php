@@ -189,8 +189,17 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$elasticaQuery->setQuery($elasticaQueryString);
 			
 			// Apply filters if needed
-			if ($setFilter) $elasticaQuery->setFilter($globalFilter);
-			if ($setWorkspaceFilter) $elasticaQuery->setFilter($workspacesFilter);
+			if ($setFilter) {
+				if ($setWorkspaceFilter) {
+					$globalFilter->addFilter($workspacesFilter);
+				}
+				$elasticaQuery->setFilter($globalFilter);
+			} else {
+				if ($workspacesFilter) {
+					$elasticaQuery->setFilter($workspacesFilter);
+				}
+			}	
+			 
 			
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('type');
