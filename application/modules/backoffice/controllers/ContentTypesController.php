@@ -33,7 +33,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
     /**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model', 'get-readable-content-types','is-used');	
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model', 'get-readable-content-types','is-used','is-changeable');	
 		
     public function init(){
 		parent::init();
@@ -58,6 +58,72 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 			$result=array("used"=>false);
 		}
 		$this->_returnJson($result);
+	}
+	public function isChangeableAction()
+	{
+		$newData=$this->getRequest()->getParam('data');
+		$data=$this->_dataService->findById($data['id']);
+		$
+		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
+		if(is_array($listResult) && $listResult['count']>0)
+		{
+			$resultArray=array("modify"=>"ok");
+		}
+		else 
+		{
+			
+			if(count($data)>count($newData)){
+				$greaterData=$data;
+				$tinierData=$newData;
+			}elseif(count($data)<count($newData)){
+				$greaterData=$newData;
+				$tinierData=$data;
+			}
+			else{
+				$greaterData=$data;
+				$tinierData=$newData;
+			}
+			$unauthorized=0;
+			$authorizedModif=array("first"=>array('506441f8c648043912000017','506441f8c648043912000018','506441f8c648043912000019'),
+			"second"=>array('506441f8c64804391200001d','506441f8c64804391200001e','506441f8c64804391200001f')
+			);
+			
+			foreach($greaterData['fields'] as $key=>$field)
+			{
+				foreach($tinierData['fields'] as $newfield)
+				{
+					if($field['name']==$newfield['name'])
+					{
+						if($field['protoId']!=$newfield['protoId'])
+						{
+							if(in_array($field['protoId'],$authorizedModif['first']))
+							{
+								if(!in_array($newfield['protoId'],$authorizedModif['first']))
+								{
+									$unauthorized++;
+								}
+							}elseif(in_array($field['protoId'],$authorizedModif['second']))
+							{
+								if(!in_array($newfield['protoId'],$authorizedModif['second']))
+								{
+									$unauthorized++;
+								}
+							}
+							else {
+								$unauthorized++;
+							}
+							
+						}
+					}
+				}
+			}
+			$resultArray = ($unauthorized!=0) ? array("modify"=>"no") : array("modify"=>"possible");
+			
+		}
+		$this->_returnJson($resultArray);
+		
+	
+		
 	}
 
 }
