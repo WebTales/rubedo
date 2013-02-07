@@ -45,5 +45,19 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 	public function getReadableContentTypesAction() {
 		return $this->_returnJson($this->_dataService->getReadableContentTypes());
 	}
+	public function isUsedAction()
+	{
+			$id = $this->getRequest()->getParam('id');
+		
+		$listResult=Rubedo\Services\Manager::getService('Contents')->findByTypeId($id);
+		if(is_array($listResult) && count($listResult)>0)
+		{
+			$result=array("used"=>true);
+		}
+		else {
+			$result=array("used"=>false);
+		}
+		$this->_returnJson($result);
+	}
 
 }
