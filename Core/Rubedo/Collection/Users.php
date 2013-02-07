@@ -89,4 +89,30 @@ class Users extends AbstractCollection implements IUsers
 		parent::_init();
 		$this->_dataService->addToExcludeFieldList(array('password'));
 	}
+	
+	/**
+     * Create an objet in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::create
+     * @param array $obj
+     *            data object
+     * @param array $options            
+     * @return array
+     */
+    public function create (array $obj, $options = array('safe'=>true))
+    {
+    	$personalPrefsObj = array(
+    							'userId' => $obj['id'],
+    							'stylesheet' => 'resources/css/blue_theme.css',
+    							'wallpaper' => 'resources/wallpapers/rubedo.jpg',
+    							'iconSet' => 'blue',
+    							'themeColor' => '#D7251D',
+    							'HCMode' => 'false',
+							);
+			
+    	$personalPrefsService = Manager::getService('PersonalPrefs');
+		$personalPrefsService->create($personalPrefsObj);
+			
+    	return parent::create($obj, $options);
+	}
 }
