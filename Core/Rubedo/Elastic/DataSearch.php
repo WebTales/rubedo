@@ -177,7 +177,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 					$workspaceFilter = new \Elastica_Filter_Term();
 					$workspaceFilter->setTerm('target', $workspace);
 					$workspacesFilter->addFilter($workspaceFilter);
-					$filters['target'][]=$workspace;
 				}
 				$setWorkspaceFilter = true;				
 			}
