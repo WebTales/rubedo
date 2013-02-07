@@ -63,7 +63,6 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 	{
 		$newData=$this->getRequest()->getParam('data');
 		$data=$this->_dataService->findById($data['id']);
-		$
 		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
 		if(is_array($listResult) && $listResult['count']>0)
 		{
