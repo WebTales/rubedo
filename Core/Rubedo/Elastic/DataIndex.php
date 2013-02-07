@@ -449,7 +449,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		} else {
 			$contentData['author'] = "unknown";
 		}
-        
+		
         // Add taxonomy
          if (isset($data[$space]["taxonomy"])) {
                 $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
@@ -476,6 +476,17 @@ class DataIndex extends DataAbstract implements IDataIndex
 					}
                 }
          }
+		 
+        
+		// Add target
+		$contentData['target']=array();
+		if (isset($data['target'])) {
+			foreach ($data['target'] as $key => $target) {
+				$contentData['target'][] = (string) $target;
+			}
+		}	
+			
+		// Add document 
 		$currentDocument = new \Elastica_Document($id, $contentData);
 		
 		if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
@@ -631,6 +642,15 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
          }
 
+		// Add target
+		$damData['target']=array();
+		if (isset($data['target'])) {
+			foreach ($data['target'] as $key => $target) {
+				$damData['target'][] = (string) $target;
+			}
+		}
+		
+		// Add document 
 		$currentDam = new \Elastica_Document($id, $damData);
 
 		if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
@@ -726,7 +746,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 				$result[$damType["type"]]=$damCount;
 			}
 		}
-		
 		
 		return($result);
 

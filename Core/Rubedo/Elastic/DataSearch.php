@@ -121,7 +121,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$authorFilter = new \Elastica_Filter_Term();
         		$authorFilter->setTerm('author', $params['author']);
 				$globalFilter->addFilter($authorFilter);
-				$filters["author"]=$params['author'];
+				$filters['author']=$params['author'];
 				$setFilter = true;
 			}
 			
@@ -137,6 +137,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			}	
 
 			// filter on target
+			/*
 			if (array_key_exists('target',$params)) {
 				$targetFilter = new \Elastica_Filter_Term();
         		$targetFilter->setTerm('target', $params['target']);
@@ -144,7 +145,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$filters["target"]=$params['target'];
 				$setFilter = true;
 
-			}				
+			}
+			 */				
 
 			// filter on taxonomy
 			foreach ($taxonomies as $taxonomy) {
@@ -163,6 +165,18 @@ class DataSearch extends DataAbstract implements IDataSearch
 					}
 			
 				}
+			}
+			
+			// filter on read Workspaces		
+			$readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+			if (!in_array('all',$readWorkspaceArray)) {
+				foreach ($readWorkspaceArray as $workspace) {
+					$workspaceFilter = new \Elastica_Filter_Term();
+					$workspaceFilter->setTerm('target', $workspace);
+					$globalFilter->addFilter($workspaceFilter);
+					$filters['target'][]=$workspace;
+				}
+				$setFilter = true;				
 			}
 						
 			// Set query on terms
@@ -480,7 +494,20 @@ class DataSearch extends DataAbstract implements IDataSearch
 								)
 							)
 						);
-						break;						
+						break;		
+						
+					case 'workspace' : 
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Workspace',
+							'terms' => array(
+								array(
+									'term' => $termId,
+									'label' => $termId
+								)
+							)
+						);
+						break;									
 												
 					default:
 						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
