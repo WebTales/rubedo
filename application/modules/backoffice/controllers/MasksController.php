@@ -45,11 +45,12 @@ class Backoffice_MasksController extends Backoffice_DataAccessController
 		$pagesList=Rubedo\Services\Manager::getService('Pages')->findByMaskId($data);
 		if(is_array($pagesList) && count($pagesList)>0)
 		{
-			return true;
+			$result=array("used"=>true);
 		}
 		else {
-			return false;
+			$result=array("used"=>false);
 		}
+		$this->_returnJson($result);
 	}
 
 }
