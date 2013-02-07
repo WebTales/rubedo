@@ -81,7 +81,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Build global filter
 			
 			$globalFilter = new \Elastica_Filter_And();
+			$workspacesFilter = new \Elastica_Filter_Or();
+			
 			$setFilter = false;
+			$setWorkspaceFilter = false;
 						
 			// filter on lang TOTO add lang filter
 			/*
@@ -173,10 +176,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 				foreach ($readWorkspaceArray as $workspace) {
 					$workspaceFilter = new \Elastica_Filter_Term();
 					$workspaceFilter->setTerm('target', $workspace);
-					$globalFilter->addFilter($workspaceFilter);
+					$workspacesFilter->addFilter($workspaceFilter);
 					$filters['target'][]=$workspace;
 				}
-				$setFilter = true;				
+				$setWorkspaceFilter = true;				
 			}
 						
 			// Set query on terms
@@ -188,7 +191,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 			
 			// Apply filters if needed
 			if ($setFilter) $elasticaQuery->setFilter($globalFilter);
-		
+			if ($setWorkspaceFilter) $elasticaQuery->setFilter($workspacesFilter);
+			
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('type');
 			$elasticaFacetType->setField('contentType');
@@ -368,6 +372,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 									$termItem = $collection->findById($value['term']);
 									$temp['terms'][$key]['label'] = $termItem['type'];
 								}
+									
 							} else {
 								$renderFacet = false;
 							}
@@ -411,7 +416,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Add label to filters
 				
 			$result['activeFacets']= array();
-			
 			foreach ($filters as $vocabularyId => $termId) {
 				switch ($vocabularyId) {
 					case 'navigation':
@@ -507,7 +511,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 								)
 							)
 						);
-						break;									
+						break;								
 												
 					default:
 						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	

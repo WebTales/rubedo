@@ -479,7 +479,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		 
         
 		// Add target
-		$contentData['target']=array();
+		$contentData['target']=array('global');
 		if (isset($data['target'])) {
 			foreach ($data['target'] as $key => $target) {
 				$contentData['target'][] = (string) $target;
@@ -643,13 +643,13 @@ class DataIndex extends DataAbstract implements IDataIndex
          }
 
 		// Add target
-		$damData['target']=array();
+		$damData['target']=array('global');
 		if (isset($data['target'])) {
 			foreach ($data['target'] as $key => $target) {
 				$damData['target'][] = (string) $target;
 			}
 		}
-		
+
 		// Add document 
 		$currentDam = new \Elastica_Document($id, $damData);
 
