@@ -160,7 +160,7 @@ class Pages extends AbstractCollection implements IPages
         $filterArray['text'] = $name;
 		return $this->_dataService->findOne($filterArray);
 	}
-	public function findByMaskId($maskId)
+	public function getListByMaskId($maskId)
 	{
 		$filterArray[]=array("property"=>"maskId","value"=>$maskId);
 		return parent::getList($filterArray);
