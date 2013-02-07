@@ -308,7 +308,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$data = $resultItem->getData();
 				$tmp['title'] = $data['text'];
 				$tmp['objectType'] = $data['objectType'];
-				$tmp['readOnly'] = $data['readOnly'];
+				
 				if ($data['objectType'] === 'dam') {
 					$tmp['damType'] = $data['damType'];
 				}
@@ -329,7 +329,14 @@ class DataSearch extends DataAbstract implements IDataSearch
 						$tmp['type'] = $damType['type'];
 						break;
 				}
-				
+				// Set read only
+				$writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+				if (in_array($data['writeWorkspace'],$writeWorkspaceArray)) {
+					$tmp['readOnly'] = false;
+				} else {
+					$tmp['readOnly'] = true;
+				}
+
 				$result['data'][] = $tmp;
 			}
 						
