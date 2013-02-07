@@ -99,6 +99,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// filter on query
 			if ($params['query']!='') {
 				$filters['query']=$params['query'];
+				$setFilter = true;
 			}
 			
 			// filter on content type
@@ -195,7 +196,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				}
 				$elasticaQuery->setFilter($globalFilter);
 			} else {
-				if ($workspacesFilter) {
+				if ($setWorkspaceFilter) {
 					$elasticaQuery->setFilter($workspacesFilter);
 				}
 			}	
