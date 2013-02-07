@@ -1,0 +1,15 @@
+{
+    "id":"contentReader",
+    "label":{
+    	"fr":"Consultation des contenus",
+    	"en":"Can read contents"
+    },
+    "rights":[
+        "read.ui.contents",
+        "execute.controller.contents.index.backoffice",
+        "execute.controller.contents.find-one.backoffice",
+        "execute.controller.versioning.index.backoffice",
+        "execute.controller.taxonomy-terms.index.backoffice",
+        "execute.controller.dam.get-thumbnail.backoffice"
+    ]
+}
