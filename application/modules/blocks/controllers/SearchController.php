@@ -58,6 +58,10 @@ class Blocks_SearchController extends Blocks_AbstractController
         }
 
         $results['pagecount'] = $pagecount;
+		$results['limit']=min(array(
+                $pagecount,
+                10
+            ));
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
