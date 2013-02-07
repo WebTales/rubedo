@@ -99,6 +99,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// filter on query
 			if ($params['query']!='') {
 				$filters['query']=$params['query'];
+				$setFilter = true;
 			}
 			
 			// filter on content type
@@ -177,7 +178,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 					$workspaceFilter = new \Elastica_Filter_Term();
 					$workspaceFilter->setTerm('target', $workspace);
 					$workspacesFilter->addFilter($workspaceFilter);
-					$filters['target'][]=$workspace;
 				}
 				$setWorkspaceFilter = true;				
 			}
@@ -190,8 +190,17 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$elasticaQuery->setQuery($elasticaQueryString);
 			
 			// Apply filters if needed
-			if ($setFilter) $elasticaQuery->setFilter($globalFilter);
-			if ($setWorkspaceFilter) $elasticaQuery->setFilter($workspacesFilter);
+			if ($setFilter) {
+				if ($setWorkspaceFilter) {
+					$globalFilter->addFilter($workspacesFilter);
+				}
+				$elasticaQuery->setFilter($globalFilter);
+			} else {
+				if ($setWorkspaceFilter) {
+					$elasticaQuery->setFilter($workspacesFilter);
+				}
+			}	
+			 
 			
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('type');
