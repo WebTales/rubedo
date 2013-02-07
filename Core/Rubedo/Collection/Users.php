@@ -48,8 +48,8 @@ class Users extends AbstractCollection implements IUsers
 			$insertData['password'] = $password;
 			$insertData['salt'] = $salt;
 			
-			$result = $this->_dataService->update($insertData, true);
-			
+			$result = $this->_dataService->update($insertData, array('safe' => true));
+						
 			if($result['success'] == true){
 				return true;
 			} else{
