@@ -45,16 +45,9 @@ class Backoffice_MasksController extends Backoffice_DataAccessController
 	public function isUsedAction()
 	{
 		$id= $this->getRequest()->getParam('id');
-		
 		$listResult=Rubedo\Services\Manager::getService('Pages')->getListByMaskId($id);
-		if(is_array($listResult) && $listResult['count']>0)
-		{
-			$result=array("used"=>true);
-		}
-		else {
-			$result=array("used"=>false);
-		}
-		$this->_returnJson($result);
+	 	$resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
+		$this->_returnJson($resultArray);
 	}
 
 }
