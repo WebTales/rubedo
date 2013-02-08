@@ -55,9 +55,11 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 	public function isChangeableAction()
 	{
 		$newData=$this->getRequest()->getParam('data');
+		
 		$newData=Zend_Json::decode($newData);
-		$data=$this->_dataService->findById($data['id']);
-		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
+		Zend_Debug::dump($newData);die();
+		$data=$this->_dataService->findById($newData['id']);
+		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($newData['id']);
 		if(is_array($listResult) && $listResult['count']>0)
 		{
 			$resultArray=array("modify"=>"ok");
@@ -80,8 +82,8 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 			$authorizedModif=array("first"=>array('506441f8c648043912000017','506441f8c648043912000018','506441f8c648043912000019'),
 			"second"=>array('506441f8c64804391200001d','506441f8c64804391200001e','506441f8c64804391200001f')
 			);
-			
-			foreach($greaterData['fields'] as $key=>$field)
+			//\Zend_Debug::dump($greaterData['fields']);die();
+			foreach($greaterData['fields'] as $field)
 			{
 				foreach($tinierData['fields'] as $newfield)
 				{
