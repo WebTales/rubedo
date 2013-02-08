@@ -55,6 +55,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 	public function isChangeableAction()
 	{
 		$newData=$this->getRequest()->getParam('data');
+		$newData=Zend_Json::decode($newData);
 		$data=$this->_dataService->findById($data['id']);
 		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
 		if(is_array($listResult) && $listResult['count']>0)
