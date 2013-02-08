@@ -56,6 +56,8 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 	{
 		$newData=$this->getRequest()->getParam('data');
 		$newData=Zend_Json::decode($newData);
+		$newData['fields']=$newData['champs'];
+		unset ($newData['champs']);
 		$data=$this->_dataService->findById($newData['id']);
 		
 		$listResult=Rubedo\Services\Manager::getService('Contents')->getListByTypeId($newData['id']);
@@ -86,7 +88,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 			{
 				foreach($tinierData['fields'] as $newfield)
 				{
-					if($field['name']==$newfield['name'])
+					if($field['config']['name']==$newfield['config']['name'])
 					{
 						if($field['protoId']!=$newfield['protoId'])
 						{
