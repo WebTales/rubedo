@@ -16,7 +16,7 @@
  */
 
 require_once('DataAccessController.php');
- 
+Use Rubedo\Controller\Action;
 /**
  * Controller providing CRUD API for the Pages JSON
  *
@@ -33,7 +33,7 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-pages','count-orphan-pages','model');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-pages','count-orphan-pages','model','get-content-list');
 	
     public function init(){
 		parent::init();
@@ -58,5 +58,31 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 		
 		$this->_returnJson($result);
    	}
+	public function getContentListAction()
+	{
+		$data=$this->getRequest()->getParam('id');
+		$page=$this->_dataService->findById($data);
+		$pageBlocks=$page['blocks'];
+		foreach($pageBlocks as $block)
+		{
+			 switch ($block['bType']) {
+            case 'Carrousel':
+                $controller = 'carrousel';
+                break;
+            case 'Gallerie Flickr':
+                $controller = 'flickr-gallery';
+                break;
+            case 'Liste de Contenus':
+                $controller = 'content-list';
+				break;
+			case 'Détail de contenu':
+                $controller = 'content-single';
+					break;
+			 }
+			$response=Action::getInstance()->action('get-contents',$controller, 'blocks', $block['configBloc']);
+		  	$contentArray[]=$response->getBody();
+		}
+		$this->_returnJson($contentArray);
+	}
 	
 }
