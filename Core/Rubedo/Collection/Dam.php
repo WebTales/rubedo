@@ -179,7 +179,11 @@ class Dam extends AbstractCollection implements IDam
         }
         return $list;
     }
-	
+	public function getListByDamTypeId($typeId)
+	{
+		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
+		return parent::getList($filterArray);
+	}
 	/**
 	 * Set workspace if none given based on User main group.
 	 * 
