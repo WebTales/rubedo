@@ -48,8 +48,8 @@ class Users extends AbstractCollection implements IUsers
 			$insertData['password'] = $password;
 			$insertData['salt'] = $salt;
 			
-			$result = $this->_dataService->update($insertData, true);
-			
+			$result = $this->_dataService->update($insertData, array('safe' => true));
+						
 			if($result['success'] == true){
 				return true;
 			} else{
@@ -63,9 +63,12 @@ class Users extends AbstractCollection implements IUsers
 	public function getAdminUsers(){
 	    $adminGroup = Manager::getService('Groups')->findByName('admin');
 	    $userIdList = array();
-	    foreach($adminGroup['members'] as $id){
-	        $userIdList[]= $id;
+	    if(isset($adminGroup['members'])){
+	        foreach($adminGroup['members'] as $id){
+	            $userIdList[]= $id;
+	        } 
 	    }
+	    
 	    $filters = array();
 	    $filters[]= array('property'=>'id','value'=>$userIdList,'operator'=>'$in');
 	    return $this->getList($filters);
@@ -85,5 +88,31 @@ class Users extends AbstractCollection implements IUsers
 	protected function _init(){
 		parent::_init();
 		$this->_dataService->addToExcludeFieldList(array('password'));
+	}
+	
+	/**
+     * Create an objet in the current collection
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::create
+     * @param array $obj
+     *            data object
+     * @param array $options            
+     * @return array
+     */
+    public function create (array $obj, $options = array('safe'=>true))
+    {
+    	$personalPrefsObj = array(
+    							'userId' => $obj['id'],
+    							'stylesheet' => 'resources/css/blue_theme.css',
+    							'wallpaper' => 'resources/wallpapers/rubedo.jpg',
+    							'iconSet' => 'blue',
+    							'themeColor' => '#D7251D',
+    							'HCMode' => 'false',
+							);
+			
+    	$personalPrefsService = Manager::getService('PersonalPrefs');
+		$personalPrefsService->create($personalPrefsObj);
+			
+    	return parent::create($obj, $options);
 	}
 }

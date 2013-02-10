@@ -555,6 +555,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $obj;
         
     }
+	public function getListByTypeId($typeId)
+	{
+		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
+		return parent::getList($filterArray);
+	}
 
 	
 	

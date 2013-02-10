@@ -31,15 +31,4 @@
 		</div>
 		{%endif%}
 </div>
-{% if isLoggedIn %}
-{%if query.type=="manual"%}
-<div id="list-editmode" class="hide">
-	<div class="btn-group pull-left">
-						<a class="btn" href="#" id="btn-add-content"> <i class="icon-edit"></i>
-							Ajouter un contenu
-						</a>
-					</div>
-</div>
-{%endif%}
-{%endif%}
 {% endblock %}

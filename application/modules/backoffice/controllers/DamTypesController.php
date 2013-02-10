@@ -36,5 +36,11 @@ class Backoffice_DamTypesController extends Backoffice_DataAccessController
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('DamTypes');
 	}
-
+	public function isUsedAction()
+	{
+		$id= $this->getRequest()->getParam('id');
+		$listResult=Rubedo\Services\Manager::getService('Dam')->getListByDamTypeId($id);
+	 	$resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
+		$this->_returnJson($resultArray);
+	}
 }

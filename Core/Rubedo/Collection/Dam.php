@@ -179,7 +179,11 @@ class Dam extends AbstractCollection implements IDam
         }
         return $list;
     }
-	
+	public function getListByDamTypeId($typeId)
+	{
+		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
+		return parent::getList($filterArray);
+	}
 	/**
 	 * Set workspace if none given based on User main group.
 	 * 
@@ -207,12 +211,16 @@ class Dam extends AbstractCollection implements IDam
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         $obj = $this->_setDefaultWorkspace($obj);
 
-        $contentTypeId = $obj['typeId'];
-        $contentType = Manager::getService('DamTypes')->findById($contentTypeId);
+        $damTypeId = $obj['typeId'];
+        $damType = Manager::getService('DamTypes')->findById($damTypeId);
 		
-        if ($contentType['readOnly']) {
+		if($obj['fields']['title'] == "Salamandre") {
+			//var_dump($obj['writeWorkspace'], $writeWorkspaces, in_array($obj['writeWorkspace'], $writeWorkspaces), $damType['readOnly']);die();
+		}
+		
+        if ($damType['readOnly']) {
             $obj['readOnly'] = true;
-        } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+        } elseif (in_array($obj['writeWorkspace'], $writeWorkspaces) == false) {
             $obj['readOnly'] = true;
         } else {
             

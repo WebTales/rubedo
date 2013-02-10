@@ -81,7 +81,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Build global filter
 			
 			$globalFilter = new \Elastica_Filter_And();
+			$workspacesFilter = new \Elastica_Filter_Or();
+			
 			$setFilter = false;
+			$setWorkspaceFilter = false;
 						
 			// filter on lang TOTO add lang filter
 			/*
@@ -96,6 +99,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// filter on query
 			if ($params['query']!='') {
 				$filters['query']=$params['query'];
+				$setFilter = true;
 			}
 			
 			// filter on content type
@@ -121,7 +125,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$authorFilter = new \Elastica_Filter_Term();
         		$authorFilter->setTerm('author', $params['author']);
 				$globalFilter->addFilter($authorFilter);
-				$filters["author"]=$params['author'];
+				$filters['author']=$params['author'];
 				$setFilter = true;
 			}
 			
@@ -137,6 +141,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			}	
 
 			// filter on target
+			/*
 			if (array_key_exists('target',$params)) {
 				$targetFilter = new \Elastica_Filter_Term();
         		$targetFilter->setTerm('target', $params['target']);
@@ -144,7 +149,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$filters["target"]=$params['target'];
 				$setFilter = true;
 
-			}				
+			}
+			 */				
 
 			// filter on taxonomy
 			foreach ($taxonomies as $taxonomy) {
@@ -164,6 +170,17 @@ class DataSearch extends DataAbstract implements IDataSearch
 			
 				}
 			}
+			
+			// filter on read Workspaces		
+			$readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+			if (!in_array('all',$readWorkspaceArray)) {
+				foreach ($readWorkspaceArray as $workspace) {
+					$workspaceFilter = new \Elastica_Filter_Term();
+					$workspaceFilter->setTerm('target', $workspace);
+					$workspacesFilter->addFilter($workspaceFilter);
+				}
+				$setWorkspaceFilter = true;				
+			}
 						
 			// Set query on terms
 			$elasticaQueryString = new \Elastica_Query_QueryString($params['query']."*");
@@ -173,8 +190,18 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$elasticaQuery->setQuery($elasticaQueryString);
 			
 			// Apply filters if needed
-			if ($setFilter) $elasticaQuery->setFilter($globalFilter);
-		
+			if ($setFilter) {
+				if ($setWorkspaceFilter) {
+					$globalFilter->addFilter($workspacesFilter);
+				}
+				$elasticaQuery->setFilter($globalFilter);
+			} else {
+				if ($setWorkspaceFilter) {
+					$elasticaQuery->setFilter($workspacesFilter);
+				}
+			}	
+			 
+			
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('type');
 			$elasticaFacetType->setField('contentType');
@@ -281,7 +308,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$data = $resultItem->getData();
 				$tmp['title'] = $data['text'];
 				$tmp['objectType'] = $data['objectType'];
-				$tmp['readOnly'] = $data['readOnly'];
+				
 				if ($data['objectType'] === 'dam') {
 					$tmp['damType'] = $data['damType'];
 				}
@@ -302,7 +329,14 @@ class DataSearch extends DataAbstract implements IDataSearch
 						$tmp['type'] = $damType['type'];
 						break;
 				}
-				
+				// Set read only
+				$writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+				if (in_array($data['writeWorkspace'],$writeWorkspaceArray)) {
+					$tmp['readOnly'] = false;
+				} else {
+					$tmp['readOnly'] = true;
+				}
+
 				$result['data'][] = $tmp;
 			}
 						
@@ -354,6 +388,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 									$termItem = $collection->findById($value['term']);
 									$temp['terms'][$key]['label'] = $termItem['type'];
 								}
+									
 							} else {
 								$renderFacet = false;
 							}
@@ -397,7 +432,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Add label to filters
 				
 			$result['activeFacets']= array();
-			
 			foreach ($filters as $vocabularyId => $termId) {
 				switch ($vocabularyId) {
 					case 'navigation':
@@ -480,7 +514,20 @@ class DataSearch extends DataAbstract implements IDataSearch
 								)
 							)
 						);
-						break;						
+						break;		
+						
+					case 'workspace' : 
+						$temp = array(
+							'id' => $vocabularyId,
+							'label' => 'Workspace',
+							'terms' => array(
+								array(
+									'term' => $termId,
+									'label' => $termId
+								)
+							)
+						);
+						break;								
 												
 					default:
 						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	

@@ -157,7 +157,34 @@ class Sites extends AbstractCollection implements ISites
         return $obj;
     }
 
+	protected function _addReadableProperty ($obj)
+    {
+        if (! isset($obj['workspace'])) {
+            $obj['workspace'] = 'global';
+        }
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		
+        if (!in_array($obj['workspace'], $writeWorkspaces)) {
+            $obj['readOnly'] = true;
+        } else {
+            
+            $obj['readOnly'] = false;
+        }
+        
+        return $obj;
+    }
 	
-    
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::getList()
+     */
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
+        $list = parent::getList($filters,$sort,$start,$limit);
+        foreach ($list['data'] as &$obj){
+            $obj = $this->_addReadableProperty($obj);
+        }
+        return $list;
+    }    
 	
 }

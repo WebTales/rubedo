@@ -30,12 +30,24 @@ require_once('DataAccessController.php');
  */
 class Backoffice_MasksController extends Backoffice_DataAccessController
 {
+		/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model','is-used');
 	
 	public function init(){
 		parent::init();
 		
 		// init the data access service
 		$this -> _dataService = Rubedo\Services\Manager::getService('Masks');
+	}
+	
+	public function isUsedAction()
+	{
+		$id= $this->getRequest()->getParam('id');
+		$listResult=Rubedo\Services\Manager::getService('Pages')->getListByMaskId($id);
+	 	$resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
+		$this->_returnJson($resultArray);
 	}
 
 }

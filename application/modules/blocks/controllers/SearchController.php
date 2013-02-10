@@ -33,8 +33,6 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // get search parameters
         $params = $this->getRequest()->getParams();
-        
-        
         $params['pagesize'] = $this->getRequest()->getParam('pagesize', 10);
         
         if($params['constrainToSite']){
@@ -52,12 +50,17 @@ class Blocks_SearchController extends Blocks_AbstractController
         // Pagination
         
         if ($params['pagesize'] != "all") {
-            $pagecount = intval( $results['total'] / $params['pagesize']) + 1;
+            $pagecount = intval( $results['total'] / $params['pagesize']+1);
         } else {
             $pagecount = 1;
         }
-
+		
+		$results['current']=$params['pager'];
         $results['pagecount'] = $pagecount;
+		$results['limit']=min(array(
+                $pagecount-1,
+                10
+            ));
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
