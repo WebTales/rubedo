@@ -60,17 +60,19 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
    	}
 	public function getContentListAction()
 	{
+		$returnArray=array();
+		$total=0;
+		$contentArray=array();
+		
 		$data=$this->getRequest()->getParams();
-		$page=$this->_dataService->findById($data);
+		$params["pagination"]=array("page"=>$data['page'],"start"=>$data["start"],"limit"=>$data["limit"]);
+		$page=$this->_dataService->findById($data['id']);
 		$pageBlocks=$page['blocks'];
 		foreach($pageBlocks as $block)
 		{
 			 switch ($block['bType']) {
             case 'Carrousel':
                 $controller = 'carrousel';
-                break;
-            case 'Gallerie Flickr':
-                $controller = 'flickr-gallery';
                 break;
             case 'Liste de Contenus':
                 $controller = 'content-list';
@@ -79,10 +81,30 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
                 $controller = 'content-single';
 					break;
 			 }
-			$response=Action::getInstance()->action('get-contents',$controller, 'blocks', $block['configBloc']);
-		  	$contentArray[]=$response->getBody();
+			$params["block"]=$block['configBloc'];
+			$response=Action::getInstance()->action('get-contents',$controller, 'blocks', $params);
+		
+		  $contentArray[]=$response->getBody();
 		}
-		$this->_returnJson($contentArray);
+	
+		if(!empty($contentArray)){
+		foreach($contentArray as $key=>$content)
+		{
+			$content=Zend_Json::decode($content);
+			if($content["success"]==true)
+			{
+			$total=$total+$content["total"];
+			}else{
+				unset($contentArray[$key]);
+			}
+		}
+		$returnArray["total"]=$total;
+		$returnArray["data"]=$contentArray;
+		}else{
+			$returnArray=array("success"=>false,"msg"=>"No contents found");
+		}
+		
+		$this->_returnJson($returnArray);
 	}
 	
 }
