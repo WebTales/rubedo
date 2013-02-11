@@ -2,36 +2,26 @@
 
 {% block mainContent %}
 <!-- carousel -->
-<div class="slider-wrapper-post theme-default row"
-	style="position: relative; margin: 30px 0;">
-
-	<div id="sliders" class="nivoSlider span12" style="margin-bottom: 0px;">
-
-		{% for slide in items %} 
-		<a href="{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':slide.id},true) }}" title="Standart post">
-			<img src="/image?file-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" data-thumb="/image?file-id={{slide.thumbnail}}" />
-		</a> 
+<div id="myCarousel" class="carousel slide">
+<center>
+  <div class="carousel-inner">
+	   {% for slide in items %} 
+		  <div {%if loop.index==1%}class="active item"{%else%} class="item"{%endif%}>
+			<img src="/dam?media-id={{slide.image}}&width=850&height=260&mode=crop" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" />
+		  <!-- Carousel items -->
+		  <div class="carousel-caption" style="width:820px; margin:auto;">
+           <h4>{{slide.title}}</h4>
+            <p>{{slide.summary}}</p>
+             </div>
+             </div>
 		{% endfor %}
-
-	</div>
-
-	{% for slide in items %}
-	<div class="nivo-html-caption" id="htmlcaption_{{prefix}}_{{slide.id}}">
-		<a href="{{ url({'pageId':'50c1b31e9a199d9003000000','content-id':slide.id},true) }}" title="{{slide.text}}">
-			<h1>{{slide.text}}</h1>
-			<p>{{slide.summary}}</p>
-		</a>
-		<div class="cat-slider" style="position: absolute; top: 0px; right: 0; z-index: 999; padding: 5px; font-size: 12px; color: #f8f8f8;">
-			{% for term in slide.terms %} 
-			{% if not loop.first %} &nbsp;|&nbsp; {% endif %}
-			{{term}}
-			{% endfor %}
-		</div>
-	</div>
-	{% endfor %}
-
-
-
+  </div>
+  </center>
+  <!-- Carousel nav -->
+  <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+  <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
 </div>
+
+
 
 {% endblock %}
