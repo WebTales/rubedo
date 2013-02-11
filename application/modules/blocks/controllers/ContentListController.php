@@ -39,8 +39,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $queryId = $blockConfig['query'];
         $queryConfig = $this->getQuery($queryId);
 		$queryType=$queryConfig['type'];
-        $contentArray = $this->getDataList($queryConfig, $this->setPaginationValues($blockConfig));
-
+        $contentArray = $this->getContentList($this->setFilters($queryConfig), $this->setPaginationValues($blockConfig));
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
             $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
@@ -103,9 +102,17 @@ class Blocks_ContentListController extends Blocks_AbstractController
     /*
      * @ todo: PHPDoc
      */
-    protected function getDataList ($queryObj, $pageData)
+    protected function getContentList ($filters, $pageData)
     {
-        if ($queryObj === null) {
+        $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
+        $contentArray['page'] = $pageData;
+        return $contentArray;
+    }
+
+	protected function setFilters($query)
+	{
+		
+		if ($query === null) {
             return array();
         }
         $sort = array();
@@ -117,13 +124,13 @@ class Blocks_ContentListController extends Blocks_AbstractController
             '$ne' => '!=',
             'eq' => '='
         );
-        if (isset($queryObj['query'])&& $queryObj['type']!="manual") {
-            $queryObj = $queryObj['query'];
+        if (isset($query['query'])&& $query['type']!="manual") {
+            $query = $query['query'];
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
                 'operator' => '$in',
                 'property' => 'typeId',
-                'value' => $queryObj['contentTypes']
+                'value' => $query['contentTypes']
             );
             $filterArray[] = array(
                 'property' => 'status',
@@ -131,7 +138,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             );
             
             /* Add filter on taxonomy */
-            foreach ($queryObj['vocabularies'] as $key => $value) {
+            foreach ($query['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
                     if ($value['rule'] == "some") {
                         $taxOperator = '$in';
@@ -162,7 +169,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 }
             }
             /* Add filter on FieldRule */
-            foreach ($queryObj['fieldRules'] as $property => $value) {
+            foreach ($query['fieldRules'] as $property => $value) {
                 if (isset($value['rule']) && isset($value['value'])) {
                     $ruleOperator = array_search($value['rule'], $operatorsArray);
                     $nextDate = new DateTime($value['value']);
@@ -218,7 +225,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         	 $filterArray[]=array(
         	 	'operator'=> '$in',
 	        	 'property'=> 'id',
-	        	 'value'=>$queryObj['query']
+	        	 'value'=>$query['query']
 			 );
 			  $filterArray[]=array(
                 'property' => 'status',
@@ -229,11 +236,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
                         'direction' => 'DESC'
                     );
         }
-        /* Get the list */
-        $contentArray = $this->_dataReader->getOnlineList($filterArray, $sort, (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
-        $contentArray['page'] = $pageData;
-        return $contentArray;
-    }
+		$returnArray=array("filter"=>$filterArray,"sort"=>$sort);
+		return $returnArray;
+	}
 
     protected function setPaginationValues ($blockConfig)
     {
@@ -244,6 +249,21 @@ class Blocks_ContentListController extends Blocks_AbstractController
 
     protected function getQuery ($queryId)
     {
+    	$this->_queryReader = Manager::getService('Queries');
         return $this->_queryReader->findById($queryId);
     }
+	
+	public function getContentsAction()
+	{
+		$this->_dataReader=Manager::getService('Contents');
+		$data=$this->getRequest()->getParams();
+		$query=$this->getQuery($data['query']);
+		$filters=$this->setFilters($query);
+		$contentList=$this->_dataReader->getOnlineList($filters['filter'],$filters["sort"]);
+		foreach($contentList['data'] as $content)
+		{
+			$returnArray[]=array('content'=>$content['text'],'id'=>$content['id']);
+		}
+		 $this->_sendResponse(Zend_Json::encode($returnArray),'contents');
+	}
 }
