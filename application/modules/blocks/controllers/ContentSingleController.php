@@ -70,5 +70,24 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
 
         $this->_sendResponse($output, $template, $css, $js);
     }
+public function getContentsAction()
+	{
+		$this->_dataReader=Manager::getService('Contents');
+		$returnArray=array();
+		$data=$this->getRequest()->getParams();
+		if(isset($data['block']['contentId']))
+		{
+		$content=$this->_dataReader->findById($data['block']['contentId']);
+		$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
+		$returnArray['total']=count($returnArray);
+		$returnArray["success"]=true;
+		}else
+			{
+				$returnArray=array("success"=>false,"msg"=>"No query found");
+			}
+			$this->getHelper('Layout')->disableLayout();
+            $this->getHelper('ViewRenderer')->setNoRender();
+            $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
+	}
 
 }
