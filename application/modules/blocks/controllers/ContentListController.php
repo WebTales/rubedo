@@ -30,10 +30,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $this->_dateService = Manager::getService('Date');
+      
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
-        $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getRequest()->getParam('block-config');
         $queryId = $blockConfig['query'];
@@ -111,6 +110,10 @@ class Blocks_ContentListController extends Blocks_AbstractController
 
 	protected function setFilters($query)
 	{
+		  $this->_dateService = Manager::getService('Date');
+		$this->_dataReader = Manager::getService('Contents');
+        $this->_typeReader = Manager::getService('ContentTypes');
+        $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
 		
 		if ($query === null) {
             return array();
@@ -124,7 +127,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             '$ne' => '!=',
             'eq' => '='
         );
-        if (isset($query['query'])&& $query['type']!="manual") {
+        if (isset($query['query'])&& $query['type']!='manual') {
             $query = $query['query'];
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
@@ -257,13 +260,27 @@ class Blocks_ContentListController extends Blocks_AbstractController
 	{
 		$this->_dataReader=Manager::getService('Contents');
 		$data=$this->getRequest()->getParams();
-		$query=$this->getQuery($data['query']);
+		if(isset($data['block']['query']))
+		{
+		$query=$this->getQuery($data['block']['query']);
 		$filters=$this->setFilters($query);
-		$contentList=$this->_dataReader->getOnlineList($filters['filter'],$filters["sort"]);
+		$contentList=$this->_dataReader->getOnlineList($filters['filter'],$filters["sort"],(($data['pagination']['page']-1)*$data['pagination']['limit']),intval($data['pagination']['limit']));
+		if($contentList["count"]>0)
+		{
 		foreach($contentList['data'] as $content)
 		{
-			$returnArray[]=array('content'=>$content['text'],'id'=>$content['id']);
+			$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
 		}
-		 $this->_sendResponse(Zend_Json::encode($returnArray),'contents');
+		$returnArray['total']=count($returnArray);
+		$returnArray["success"]=true;
+		}else{
+			$returnArray=array("success"=>false,"msg"=>"No contents found");
+		}
+		}else{
+				$returnArray=array("success"=>false,"msg"=>"No query found");
+			}
+			$this->getHelper('Layout')->disableLayout();
+            $this->getHelper('ViewRenderer')->setNoRender();
+            $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
 	}
 }
