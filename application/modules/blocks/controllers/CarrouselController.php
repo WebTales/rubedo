@@ -64,5 +64,29 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
+	public function getContentsAction()
+	{
+		$returnArray=array();
+		$this->_dataReader=Manager::getService('Contents');
+		$data=$this->getRequest()->getParams();
+		if(isset($data['block']['query']))
+		{
+		$query=$this->getQuery($data['block']['query']);
+		$filters=$this->setFilters($query);
+		$contentList=$this->_dataReader->getOnlineList($filters['filter'],$filters["sort"],(($data['pagination']['page']-1)*$data['pagination']['limit']),intval($data['pagination']['limit']));
+		foreach($contentList['data'] as $content)
+		{
+			$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
+		}
+		$returnArray['total']=count($returnArray);
+			$returnArray["success"]=true;
+		}else
+			{
+				$returnArray=array("success"=>false,"msg"=>"No query found");
+			}
+			$this->getHelper('Layout')->disableLayout();
+            $this->getHelper('ViewRenderer')->setNoRender();
+            $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
+	}
 
 }
