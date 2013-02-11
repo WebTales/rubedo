@@ -60,7 +60,7 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
    	}
 	public function getContentListAction()
 	{
-		$data=$this->getRequest()->getParam('id');
+		$data=$this->getRequest()->getParams();
 		$page=$this->_dataService->findById($data);
 		$pageBlocks=$page['blocks'];
 		foreach($pageBlocks as $block)
