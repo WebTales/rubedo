@@ -101,8 +101,6 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 			}
 		}
 		$returnArray["total"]=$total;
-		//Zend_Debug::dump($contentArray);die();
-		//$returnArray["data"]=Zend_Json::decode($contentArray);
 		}else{
 			$returnArray=array("success"=>false,"msg"=>"No contents found");
 		}
