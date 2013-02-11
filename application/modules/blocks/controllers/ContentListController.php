@@ -279,8 +279,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
 		}else{
 				$returnArray=array("success"=>false,"msg"=>"No query found");
 			}
+		
 			$this->getHelper('Layout')->disableLayout();
             $this->getHelper('ViewRenderer')->setNoRender();
-            $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
+            $this->getResponse()->setBody(Zend_Json::encode($returnArray));
 	}
 }
