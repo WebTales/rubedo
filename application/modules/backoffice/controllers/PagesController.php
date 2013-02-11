@@ -86,7 +86,6 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 		
 		  $contentArray[]=$response->getBody();
 		}
-	
 		if(!empty($contentArray)){
 		foreach($contentArray as $key=>$content)
 		{
@@ -94,12 +93,16 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 			if($content["success"]==true)
 			{
 			$total=$total+$content["total"];
+			unset($content['total']);
+			unset($content['success']);
+			$returnArray["data"][]=$content;
 			}else{
 				unset($contentArray[$key]);
 			}
 		}
 		$returnArray["total"]=$total;
-		$returnArray["data"]=$contentArray;
+		//Zend_Debug::dump($contentArray);die();
+		//$returnArray["data"]=Zend_Json::decode($contentArray);
 		}else{
 			$returnArray=array("success"=>false,"msg"=>"No contents found");
 		}
