@@ -66,7 +66,6 @@ class Blocks_CarrouselController extends Blocks_ContentListController
     }
 	public function getContentsAction()
 	{
-		$returnArray=array();
 		$this->_dataReader=Manager::getService('Contents');
 		$data=$this->getRequest()->getParams();
 		if(isset($data['block']['query']))
@@ -74,14 +73,18 @@ class Blocks_CarrouselController extends Blocks_ContentListController
 		$query=$this->getQuery($data['block']['query']);
 		$filters=$this->setFilters($query);
 		$contentList=$this->_dataReader->getOnlineList($filters['filter'],$filters["sort"],(($data['pagination']['page']-1)*$data['pagination']['limit']),intval($data['pagination']['limit']));
+		if($contentList["count"]>0)
+		{
 		foreach($contentList['data'] as $content)
 		{
 			$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
 		}
 		$returnArray['total']=count($returnArray);
-			$returnArray["success"]=true;
-		}else
-			{
+		$returnArray["success"]=true;
+		}else{
+			$returnArray=array("success"=>false,"msg"=>"No contents found");
+		}
+		}else{
 				$returnArray=array("success"=>false,"msg"=>"No query found");
 			}
 			$this->getHelper('Layout')->disableLayout();
