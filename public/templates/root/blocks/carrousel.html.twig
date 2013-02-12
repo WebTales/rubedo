@@ -2,14 +2,15 @@
 
 {% block mainContent %}
 <!-- carousel -->
-<div id="myCarousel" class="carousel slide">
+{%set carouselid="carousel-"~random() %}
+<div id="{{carouselid}}" class="carousel slide">
 <center>
   <div class="carousel-inner">
 	   {% for slide in items %} 
 		  <div {%if loop.index==1%}class="active item"{%else%} class="item"{%endif%}>
-			<img src="/dam?media-id={{slide.image}}&width=850&height=260&mode=crop" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" />
+			<img src="/dam?media-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" />
 		  <!-- Carousel items -->
-		  <div class="carousel-caption" style="width:820px; margin:auto;">
+		  <div class="carousel-caption" style="width:100%; margin:auto;">
            <h4>{{slide.title}}</h4>
             <p>{{slide.summary}}</p>
              </div>
@@ -18,10 +19,7 @@
   </div>
   </center>
   <!-- Carousel nav -->
-  <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-  <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+  <a class="carousel-control left" href="#{{carouselid}}" data-slide="prev">&lsaquo;</a>
+  <a class="carousel-control right" href="#{{carouselid}}" data-slide="next">&rsaquo;</a>
 </div>
-
-
-
 {% endblock %}
