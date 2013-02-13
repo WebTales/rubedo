@@ -42,15 +42,15 @@ class Backoffice_IndexController extends Zend_Controller_Action
 		$appHtml = file_get_contents(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/app.html');
         
 		$extjsNativeInclude = '<script src="extjs-4.1.0/ext-all-debug.js"></script>';
-		
+		$rubedoFavIcone='<link rel="shortcut icon" type="image/x-icon" href="/backoffice/resources/icones/faviconRubedo.ico"/>';
 		$extjsOptions = Zend_Registry::get('extjs');
 		
 		if(!isset($extjsOptions['debug']) ||$extjsOptions['debug']==false){
-		    $extjsInclude = '<script src="extjs-4.1.0/ext-all.js"></script>';
+		    $extjsInclude = '<script src="extjs-4.1.0/ext-all.js"></script>'.$rubedoFavIcone;
 		    //http://cdn.sencha.com/ext-4.1.0-gpl/
 		    
 		}else{
-		    $extjsInclude = $extjsNativeInclude;
+		    $extjsInclude = $extjsNativeInclude.$rubedoFavIcone;
 		}
 		$appHtml = str_replace($extjsNativeInclude, $extjsInclude, $appHtml);
 		
