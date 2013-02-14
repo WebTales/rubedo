@@ -57,13 +57,20 @@ class Contents extends WorkflowAbstractCollection implements IContents
             'nestedContents'
         ));
         
-        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-        if(in_array('all',$readWorkspaceArray)){
-            return;
+        //filter contents with user rights
+        if (! self::isUserFilterDisabled()) {
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if (in_array('all', $readWorkspaceArray)) {
+                return;
+            }
+            $readWorkspaceArray[] = null;
+            $filter = array(
+                'target' => array(
+                    '$in' => $readWorkspaceArray
+                )
+            );
+            $this->_dataService->addFilter($filter);
         }
-        $readWorkspaceArray[]=null;
-        $filter = array('target'=> array('$in'=>$readWorkspaceArray));
-        $this->_dataService->addFilter($filter);
     }
 
     /**
@@ -141,8 +148,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function update (array $obj, $options = array('safe'=>true), $live = true)
     {        
         $origObj = $this->findById($obj['id'],$live,false);
-        if($origObj['readOnly']){
-            throw new \Rubedo\Exceptions\Access('no rights to update this content');
+        if (! self::isUserFilterDisabled()) {
+            if ($origObj['readOnly']) {
+                throw new \Rubedo\Exceptions\Access('no rights to update this content');
+            }
         }
         
         $obj = $this->_filterInputData($obj);
@@ -162,15 +171,17 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         return $returnArray;
     }
-    
-    /*
+        
+        /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
     public function destroy (array $obj, $options = array('safe'=>true))
     {
-        $origObj = $this->findById($obj['id'],false,false);
-        if($origObj['readOnly']){
-            throw new \Rubedo\Exceptions\Access('no rights to destroy this content');
+        $origObj = $this->findById($obj['id'], false, false);
+        if (! self::isUserFilterDisabled()) {
+            if ($origObj['readOnly']) {
+                throw new \Rubedo\Exceptions\Access('no rights to destroy this content');
+            }
         }
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
@@ -214,10 +225,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $obj = $this->_setDefaultWorkspace($obj);
         
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-		
-		//var_dump($obj['writeWorkspace'],$writeWorkspaces);die();
-        if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            
+            // var_dump($obj['writeWorkspace'],$writeWorkspaces);die();
+        if (! self::isUserFilterDisabled()) {
+            if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            }
         }
         $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
         if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
@@ -519,25 +532,33 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	    }
 	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() ){
 	        $content['target'] = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
-	    }
-	    return $content;
-	}
+        }
+        return $content;
+    }
 
+    /**
+     * Add a readOnly field to contents based on user rights
+     * 
+     * @param array $obj
+     * @return array
+     */
     protected function _addReadableProperty ($obj)
     {
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        $obj = $this->_setDefaultWorkspace($obj);
-
-        $contentTypeId = $obj['typeId'];
-        $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
-		
-        if ($contentType['readOnly']) {
-            $obj['readOnly'] = true;
-        } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-            $obj['readOnly'] = true;
-        } else {
+        if (! self::isUserFilterDisabled()) {
+            $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+            $obj = $this->_setDefaultWorkspace($obj);
             
-            $obj['readOnly'] = false;
+            $contentTypeId = $obj['typeId'];
+            $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
+            
+            if ($contentType['readOnly']) {
+                $obj['readOnly'] = true;
+            } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+                $obj['readOnly'] = true;
+            } else {
+                
+                $obj['readOnly'] = false;
+            }
         }
         
         return $obj;

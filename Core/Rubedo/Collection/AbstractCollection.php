@@ -49,6 +49,13 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var array
      */
     protected $_model = array();
+    
+    /**
+     * If true, no request should be filtered by user access rights
+     * 
+     * @var boolean
+     */
+    protected static $_isUserFilterDisabled = false;
 
     protected function _init ()
     {
@@ -480,5 +487,27 @@ abstract class AbstractCollection implements IAbstractCollection
             return false;
         }
     }
+    
+	/**
+     * @return the $_isUserFilterDisabled
+     */
+    public static final function isUserFilterDisabled ()
+    {
+        return self::$_isUserFilterDisabled;
+    }
+
+	/**
+     * @param boolean $_isUserFilterDisabled
+     * @return boolean previous value of the param
+     */
+    public static final function disableUserFilter ($_isUserFilterDisabled=true)
+    {
+        $oldValue = self::$_isUserFilterDisabled;
+        self::$_isUserFilterDisabled = $_isUserFilterDisabled;
+        return $oldValue;
+    }
+
+    
+    
 }
 	
