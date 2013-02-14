@@ -1,0 +1,30 @@
+{% extends "root/block.html.twig" %} 
+
+{% block mainContent %}
+<!-- carousel -->
+{%set galleryid="gallery-"~random() %}
+<div id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
+	<div id="{{carouselid}}" class="carousel slide">
+<center>
+  <div class="carousel-inner">
+	   {% for 0..items//count%} 
+		  <div {%if loop.index==1%}class="active item"{%else%} class="item"{%endif%}>
+		  	<ul class="thumbnails">
+		  	{%for 0..itemsToDisplay%}
+		  	<li class="thumbnail">
+			<a data-gallery="gallery" href="/dam?media-id={{slide.image}}"><img class="gallery-item" src="/dam?media-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" /><a>
+			</li>
+			{%endfor%}
+			</ul>
+             </div>
+		{% endfor %}
+  </div>
+  </center>
+  </div>
+  <!-- Carousel nav -->
+  <a class="carousel-control left" href="#{{galleryid}}" data-slide="prev">&lsaquo;</a>
+  <a class="carousel-control right" href="#{{galleryid}}" data-slide="next">&rsaquo;</a>
+</div>
+
+	</div>
+{% endblock %}
