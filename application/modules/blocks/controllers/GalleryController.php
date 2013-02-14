@@ -39,11 +39,13 @@ class Blocks_GalleryController extends Blocks_ContentListController
 		 */
 		$blockConfig = $this->getRequest()->getParam('block-config');
 		$query=parent::getQuery($blockConfig['query']);
-		$contentArray=parent::getContentList($this->setFilters($query), $this->setPaginationValues($blockConfig));
-		//$contentArray=parent::getDataList($query,$this->setPaginationValues($blockConfig));      
+		$contentArray=parent::getContentList($this->setFilters($query), $this->setPaginationValues($blockConfig)); 
 		$data = array();
         foreach ($contentArray['data'] as $vignette) {
             $fields = $vignette['fields'];
+			
+			if(isset($vignette['taxonomy']) && $vignette['taxonomy']!=array())
+			{
 			$terms = array_pop($vignette['taxonomy']);
 			$termsArray = array();
 			foreach ($terms as $term) {
@@ -53,13 +55,20 @@ class Blocks_GalleryController extends Blocks_ContentListController
 				$termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
 			}
 			$fields['terms']=$termsArray;
+			}
+			
             $fields['title'] = $fields['text'];
+			$fields['image']=$fields['Nouveau_champ_Champ DAM'];
+			unset($fields['Nouveau_champ_Champ DAM']);
             unset($fields['text']);
             $fields['id'] = (string)$vignette['id'];
             $data[] = $fields;
         }
         $output["items"] = $data;
-				$output["count"]=$contentArray["count"];
+		$output["count"]=count($data);
+		$output["image"]["width"]=$blockConfig['imageThumbnailWidth'];
+		$output["image"]["height"]=$blockConfig['imageThumbnailHeight'];
+		$output["pageSize"]=$blockConfig['pageSize'];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
         $css = array();
         $js = array();
