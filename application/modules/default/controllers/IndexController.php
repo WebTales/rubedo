@@ -409,6 +409,12 @@ class IndexController extends Zend_Controller_Action
             case 'Image':
                 $controller = 'image';
                 break;
+			case 'Audio':
+                $controller = 'audio';
+                break;
+			case 'Video':
+                $controller = 'video';
+                break;
             case 'Texte':
                 $controller = 'text';
                 break;
