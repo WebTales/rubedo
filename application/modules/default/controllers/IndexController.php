@@ -418,6 +418,9 @@ class IndexController extends Zend_Controller_Action
             case 'Texte':
                 $controller = 'text';
                 break;
+			case 'imageGallery':
+                $controller = 'gallery';
+                break;
             case 'Texte Riche':
                 $controller = 'richtext';
                 break;
