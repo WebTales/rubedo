@@ -1,0 +1,2 @@
+<video src="{% if videoFile %}/dam?media-id={{ videoFile }}{% if videoWidth %}&width={{ videoWidth }}{% endif %}{% if videoHeight %}&height={{ videoHeight }}{% endif %}{% else %}/assets/logo.gif{% endif %}"{%if videoAutoplay==true%} autoplay="true" {%endif%} {%if videoPreload==true %} preload="true" {%endif%}{%if videoLoop==true %} loop="true" {%endif%}{%if videoControls==true %} controls="true" {%endif%} {%if videoPoster %} poster="{{videoPoster}}" {%endif%}>
+</video>
