@@ -35,6 +35,7 @@ class Dam extends AbstractCollection implements IDam
     protected function _init ()
     {
         parent::_init();
+		if (! self::isUserFilterDisabled()) {
         $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
         if (in_array('all', $readWorkspaceArray)) {
             return;
@@ -46,6 +47,7 @@ class Dam extends AbstractCollection implements IDam
             )
         );
         $this->_dataService->addFilter($filter);
+		}
     }
 
     public function __construct ()

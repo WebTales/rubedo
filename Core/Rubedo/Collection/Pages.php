@@ -33,12 +33,14 @@ class Pages extends AbstractCollection implements IPages
      */
     protected function _init(){
         parent::_init();
+		if (! self::isUserFilterDisabled()) {
         $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
         if(in_array('all',$readWorkspaceArray)){
             return;
         }
         $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
         $this->_dataService->addFilter($filter);
+		}
     }
 
 	public function __construct(){
@@ -163,7 +165,7 @@ class Pages extends AbstractCollection implements IPages
 	public function getListByMaskId($maskId)
 	{
 		$filterArray[]=array("property"=>"maskId","value"=>$maskId);
-		return parent::getList($filterArray);
+		return $this->getList($filterArray);
 	}
 
     public function create (array $obj, $options = array('safe'=>true))
