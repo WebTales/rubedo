@@ -269,7 +269,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
 		{
 		foreach($contentList['data'] as $content)
 		{
-			$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
+			$returnArray[]=array('text'=>$content['text'],'id'=>$content['id']);
 		}
 		$returnArray['total']=count($returnArray);
 		$returnArray["success"]=true;

@@ -77,7 +77,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
 		{
 		foreach($contentList['data'] as $content)
 		{
-			$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
+			$returnArray[]=array('text'=>$content['text'],'id'=>$content['id']);
 		}
 		$returnArray['total']=count($returnArray);
 		$returnArray["success"]=true;

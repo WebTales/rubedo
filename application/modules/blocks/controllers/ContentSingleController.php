@@ -78,7 +78,7 @@ public function getContentsAction()
 		if(isset($data['block']['contentId']))
 		{
 		$content=$this->_dataReader->findById($data['block']['contentId']);
-		$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
+		$returnArray[]=array('text'=>$content['text'],'id'=>$content['id']);
 		$returnArray['total']=count($returnArray);
 		$returnArray["success"]=true;
 		}else
