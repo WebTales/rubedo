@@ -9,29 +9,26 @@
 	<div id="{{galleryid}}" class="carousel slide">
 	 <center>
   <div class="carousel-inner">
- 
-	   {% for i in 0..pages-1 %} 
-		  <div {%if loop.index<=1%}class="active item"{%else%}class="item" {%endif%}>
+ 		
+		  <div class="active item">
 		  	<ul class="thumbnails">
-		  	{%for z in 0..pageSize-1%}
+		  	{%for item in items%}
 		  	<li>
 		  	  <div class="thumbnail">
-			<a data-gallery="gallery" href="/dam?media-id={{items[(i*pageSize)+z].image}}"><img class="gallery-item" src="/dam?media-id={{items[(i*pageSize)+z].image}}{%if image.width %}&width={{image.width}}{%if image.height%}&height={{image.height}}&mode=crop{%endif%}{%endif%}" /></a>
+			<a data-gallery="gallery" href="/dam?media-id={{item.image}}"><img class="gallery-item" src="/dam?media-id={{item.image}}{%if image.width %}&width={{image.width}}{%if image.height%}&height={{image.height}}&mode=crop{%endif%}{%endif%}" /></a>
 			</div>
 			</li>
-			{%endfor%}
+		{% endfor %}
 			</ul>
-			
              </div>
          
-		{% endfor %}
 		 
   </div>
  </center>
-    <a class="carousel-control left" href="#{{galleryid}}" data-slide="prev">&lsaquo;</a>
-  <a class="carousel-control right" href="#{{galleryid}}" data-slide="next">&rsaquo;</a>
+    <a class="carousel-control left" href="{{url({'page': currentPage-1},true)}}" data-slide="prev">&lsaquo;</a>
+  <a class="carousel-control right" href="{{url({'page': currentPage+1},true)}}" data-slide="next">&rsaquo;</a>
   </div>
-  <!-- Carousel nav -->
+
 
 </div>
 
