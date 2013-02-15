@@ -63,11 +63,16 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 		$returnArray=array();
 		$total=0;
 		$contentArray=array();
-		
 		$data=$this->getRequest()->getParams();
 		$params["pagination"]=array("page"=>$data['page'],"start"=>$data["start"],"limit"=>$data["limit"]);
 		$page=$this->_dataService->findById($data['id']);
-		$pageBlocks=$page['blocks'];
+		
+		$mask=Rubedo\Services\Manager::getService('Masks')->findById($page['maskId']);
+		
+		$pageBlocks=array_merge($page['blocks'],$mask['blocks']);
+
+		if($pageBlocks!=array())
+		{
 		foreach($pageBlocks as $block)
 		{
 			 switch ($block['bType']) {
@@ -80,13 +85,17 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 			case 'Détail de contenu':
                 $controller = 'content-single';
 					break;
+			default:
+				$controller=false;
 			 }
+			 if($controller!=false)
+			 {
 			$params["block"]=$block['configBloc'];
 			$response=Action::getInstance()->action('get-contents',$controller, 'blocks', $params);
-		
 		  $contentArray[]=$response->getBody();
+			 }
 		}
-		if(!empty($contentArray)){
+		if(isset($contentArray)&& !empty($contentArray)){
 		foreach($contentArray as $key=>$content)
 		{
 			$content=Zend_Json::decode($content);
@@ -102,9 +111,11 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 		}
 		$returnArray["total"]=$total;
 		}else{
-			$returnArray=array("success"=>false,"msg"=>"No contents found");
+			$returnArray=array("success"=>true,"msg"=>"No contents found","data"=>array());
 		}
-		
+		}else{
+			$returnArray=array("success"=>true,"msg"=>"No blocks found on this page","data"=>array());
+		}
 		$this->_returnJson($returnArray);
 	}
 	
