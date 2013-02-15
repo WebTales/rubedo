@@ -31,79 +31,101 @@ class Blocks_GalleryController extends Blocks_ContentListController
      */
     public function indexAction()
     {
-        $this->_dataReader = Manager::getService('Contents');
         $isDraft = Zend_Registry::get('draft');
-		$this->_queryReader=Manager::getService('Queries');
+		$this->_dataService=Manager::getservice('Dam');
 		/*
 		 * Get queryId, blockConfig and Datalist
 		 */
 		$blockConfig = $this->getRequest()->getParam('block-config');
-		//Zend_Debug::dump($blockConfig);die();
-		$blockConfig["size"]=$blockConfig["pageSize"];
-		$blockConfig["pageSize"]=$blockConfig["pageSize"]*2;
-		$query=parent::getQuery($blockConfig['query']);
-		$contentArray=parent::getContentList($this->setFilters($query), $this->setPaginationValues($blockConfig)); 
-		$data = array();
-        foreach ($contentArray['data'] as $vignette) {
-            $fields = $vignette['fields'];
+		$currentPage=$this->getRequest()->getParam('page',1);
+		$query=Zend_Json::decode($blockConfig["query"]);
+		$filter=$this->setFilters($query);
+		$limit=(isset($blockConfig["pageSize"]))?$blockConfig['pageSize']:5;
+		$mediaArray=$this->_dataService->getList($filter['filter'],$filter['sort'],(($currentPage - 1) * $limit),$limit);
+		
+		  foreach ($mediaArray['data'] as $media) {
+               $fields["image"]=(string)$media['id'];
+			  $data[]=$fields;
+            }
 			
-			if(isset($vignette['taxonomy']) && $vignette['taxonomy']!=array())
-			{
-			$terms = array_pop($vignette['taxonomy']);
-			$termsArray = array();
-			foreach ($terms as $term) {
-				if($term=='50c0caeb9a199d1e11000001'){
-					continue;
-				}
-				$termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
-			}
-			$fields['terms']=$termsArray;
-			}
+			$output['items']=$data;
+			$output['count']=$mediaArray['count'];
+			$output['pageSize']=$limit;
+			$output["image"]["width"]=$blockConfig['imageThumbnailWidth'];
+ 			$output["image"]["height"]=$blockConfig['imageThumbnailHeight'];
+			$output['currentPage']=$currentPage;
 			
-            $fields['title'] = $fields['text'];
-			$fields['image']=$fields['Nouveau_champ_Champ DAM'];
-			unset($fields['Nouveau_champ_Champ DAM']);
-            unset($fields['text']);
-            $fields['id'] = (string)$vignette['id'];
-            $data[] = $fields;
+		  
+		  if (isset($blockConfig['displayType'])) {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
         }
-        $output["items"] = $data;
-		$output["count"]=count($data);
-		$output["image"]["width"]=$blockConfig['imageThumbnailWidth'];
-		$output["image"]["height"]=$blockConfig['imageThumbnailHeight'];
-		$output["pageSize"]=$blockConfig['size'];
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
-		
-    }
-	public function getContentsAction()
+	}
+	protected function setFilters($query)
 	{
-		$this->_dataReader=Manager::getService('Contents');
-		$data=$this->getRequest()->getParams();
-		if(isset($data['block']['query']))
+		if($query!=null)
 		{
-		$query=$this->getQuery($data['block']['query']);
-		$filters=$this->setFilters($query);
-		$contentList=$this->_dataReader->getOnlineList($filters['filter'],$filters["sort"],(($data['pagination']['page']-1)*$data['pagination']['limit']),intval($data['pagination']['limit']));
-		if($contentList["count"]>0)
-		{
-		foreach($contentList['data'] as $content)
-		{
-			$returnArray[]=array('title'=>$content['text'],'id'=>$content['id']);
-		}
-		$returnArray['total']=count($returnArray);
-		$returnArray["success"]=true;
+           /* Add filters on TypeId and publication */
+            $filterArray[] = array(
+                'operator' => '$in',
+                'property' => 'typeId',
+                'value' => $query['DAMTypes']
+            );
+			/* Add filter on taxonomy */
+            foreach ($query['vocabularies'] as $key => $value) {
+                if (isset($value['rule'])) {
+                    if ($value['rule'] == "some") {
+                        $taxOperator = '$in';
+                    } elseif ($value['rule'] == "all") {
+                        $taxOperator = '$all';
+                    } elseif ($value['rule'] == "someRec") {
+                        if (count($value['terms']) > 0) {
+                            foreach ($value['terms'] as $child) {
+                                $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                                foreach ($terms as $taxonomyTerms) {
+                                    $value['terms'][] = $taxonomyTerms["id"];
+                                }
+                            }
+                        }
+                        $taxOperator = '$in';
+                    }else{
+                    	$taxOperator = '$in';
+                    }
+                } else {
+                   $taxOperator = '$in';
+                }
+                if (count($value['terms']) > 0) {
+                    $filterArray[] = array(
+                        'operator' => $taxOperator,
+                        'property' => 'taxonomy.' . $key,
+                        'value' => $value['terms']
+                    );
+                }
+            }
+ /*
+                 * Add Sort
+                 */
+                 if (isset($query['fieldRules'])) {
+                 foreach($query['fieldRules'] as $field=>$rule)
+				 {
+				 	$sort[]=array("property"=>$field,'direction'=>$rule['sort']);
+				 }
+				 }else {
+                    $sort[] = array(
+                        'property' => 'id',
+                        'direction' => 'DESC'
+                    );
+                }
+			
 		}else{
-			$returnArray=array("success"=>false,"msg"=>"No contents found");
+			return array();
 		}
-		}else{
-				$returnArray=array("success"=>false,"msg"=>"No query found");
-			}
-			$this->getHelper('Layout')->disableLayout();
-            $this->getHelper('ViewRenderer')->setNoRender();
-            $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
+		$returnArray=array("filter"=>$filterArray,"sort"=>$sort);
+		return $returnArray;
 	}
 
 }
