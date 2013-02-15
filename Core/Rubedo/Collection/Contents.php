@@ -579,7 +579,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	public function getListByTypeId($typeId)
 	{
 		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
-		return parent::getList($filterArray);
+		return $this->getList($filterArray);
 	}
 
 	
