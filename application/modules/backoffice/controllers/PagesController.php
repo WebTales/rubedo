@@ -104,12 +104,20 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 			$total=$total+$content["total"];
 			unset($content['total']);
 			unset($content['success']);
-			$returnArray["data"][]=$content;
+			foreach($content as $vignette)
+			{
+				$returnArray["data"][]=$vignette;
+			}
 			}else{
 				unset($contentArray[$key]);
 			}
 		}
+		if($total!=0)
+		{
 		$returnArray["total"]=$total;
+		}else{
+			$returnArray=array("success"=>true,"msg"=>"No contents found","data"=>array());
+		}
 		}else{
 			$returnArray=array("success"=>true,"msg"=>"No contents found","data"=>array());
 		}
