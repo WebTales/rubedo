@@ -38,6 +38,9 @@ class Blocks_GalleryController extends Blocks_ContentListController
 		 * Get queryId, blockConfig and Datalist
 		 */
 		$blockConfig = $this->getRequest()->getParam('block-config');
+		//Zend_Debug::dump($blockConfig);die();
+		$blockConfig["size"]=$blockConfig["pageSize"];
+		$blockConfig["pageSize"]=$blockConfig["pageSize"]*2;
 		$query=parent::getQuery($blockConfig['query']);
 		$contentArray=parent::getContentList($this->setFilters($query), $this->setPaginationValues($blockConfig)); 
 		$data = array();
@@ -68,11 +71,12 @@ class Blocks_GalleryController extends Blocks_ContentListController
 		$output["count"]=count($data);
 		$output["image"]["width"]=$blockConfig['imageThumbnailWidth'];
 		$output["image"]["height"]=$blockConfig['imageThumbnailHeight'];
-		$output["pageSize"]=$blockConfig['pageSize'];
+		$output["pageSize"]=$blockConfig['size'];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
+		
     }
 	public function getContentsAction()
 	{
