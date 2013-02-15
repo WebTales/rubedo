@@ -14,6 +14,7 @@
 <link href="/css/default.bootstrap.min.css" rel="stylesheet">
 <link href="/css/bootstrap-responsive.css" rel="stylesheet">
 <link href="bootstrap-gallery/css/bootstrap-image-gallery.min.css" rel="stylesheet">
+<link href="video-js/video-js.min.css" rel="stylesheet" type="text/css">
 <link href="/css/rubedo.css" rel="stylesheet">
 <!--<link rel="stylesheet" type="text/css" href="/extjs-4.1.1/resources/css/ext-all.css">-->
 <link href="/colorbox/colorbox.css" rel="stylesheet">
@@ -129,6 +130,11 @@
 	<script src="/templates/root/js/bootstrap-typeahead.js"></script>
 	<script src="/bootstrap-gallery/js/load-image.min.js"></script>
 	<script src="/bootstrap-gallery/js/bootstrap-image-gallery.js"></script>
+  	<script src="/video-js/video.min.js"></script>
+  	<script>
+    	_V_.options.flash.swf = "/video-js/video-js.swf";
+  	</script>
+	
 	{% for file in js %}
 	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
 	{% endfor %}
