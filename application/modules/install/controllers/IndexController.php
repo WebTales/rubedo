@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Services\Manager;
+use Rubedo\Mongo\DataAccess,Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager;
 
 /**
  * Installer Controller
@@ -198,6 +198,36 @@ class Install_IndexController extends Zend_Controller_Action
         
         $this->_saveLocalConfig();
     }
+    
+    public function setLocalDomainsAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-local-domains';
+        }
+    
+    
+        $dbForm = Install_Model_DomainAliasForm::getForm();
+    
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+                $params = $dbForm->getValues();
+                $this->_localConfig['site']['override'][$params["domain"]] = $params["localDomain"];
+            } 
+            
+            $connectionValid = true;
+
+            $this->view->isReady = true;
+        if(!isset($this->_localConfig['site']['override'])){
+            $this->_localConfig['site']['override'] = array();
+        }
+            
+        $this->view->overrideList = $this->_localConfig['site']['override'];
+    
+        $this->view->form = $dbForm;
+    
+        $this->_saveLocalConfig();
+    }
 
     public function setDbContentsAction ()
     {
@@ -246,10 +276,12 @@ class Install_IndexController extends Zend_Controller_Action
             $params['salt'] = $hashService->generateRandomString();
             $params['password'] = $hashService->derivatePassword($params['password'], $params['salt']);
             
-            $userService = Manager::getService('MongoDataAccess');
-            $userService->init('Users');
+            $wasFiltered = AbstractCollection::disableUserFilter();
+            $userService = Manager::getService('Users');
             $response = $userService->create($params);
             $result = $response['success'];
+            
+            AbstractCollection::disableUserFilter($wasFiltered);
             
             if (! $result) {
                 $this->view->hasError = true;
