@@ -922,7 +922,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Create items with Phactory
      * Delete one with the service
      *
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testNoVersionDestroy() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
