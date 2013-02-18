@@ -228,24 +228,26 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      * @see \Rubedo\Collection\AbstractCollection::getList()
      */
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
-    {
+    {			
         $list = parent::getList($filters,$sort,$start,$limit);
+
         foreach ($list['data'] as &$obj){
             $obj = $this->_addReadableProperty($obj);
         }
+
         return $list;
     }
 
     protected function _addReadableProperty ($obj)
     {
         if (! self::isUserFilterDisabled()) {	
-	        if (! isset($obj['workspaces'])) {
+	        if (! isset($obj['workspaces']) || $obj['workspaces']=="") {
 	            $obj['workspaces'] = array(
 	                'global'
 	            );
 	        }
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-	        
+
 	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
 	            $obj['readOnly'] = true;
 	        } else {
