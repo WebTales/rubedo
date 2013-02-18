@@ -77,7 +77,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     /**
      * Test if setOptions correctly throw exception if params isn't an array
      *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testMalformedOptions()
     {
@@ -95,14 +95,29 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
 
         $service = \Rubedo\Services\Manager::getService('TestService');
+		$this->assertInstanceOf('TestService',$service);
+    }
+	
+	/**
+     * Normal getService Result
+     */
+    public function testValidGetServiceWithConcern()
+    {
+        $options = array('TestService' => array('class' => 'TestService'));
+        Rubedo\Services\Manager::setOptions($options);
+        Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
+		Rubedo\Interfaces\config::addConcern('TestService','testConcern');
+        $service = \Rubedo\Services\Manager::getService('TestService');
         $this->assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
         $this->assertAttributeInstanceOf('TestService', '_object', $service);
     }
+	
+	
 
     /**
      * GetService Exception if called without a string param
      *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testNonStringGetService()
     {
@@ -113,7 +128,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     /**
      *GetService Exception if called with an unknown serviceName
      *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testNonDeclaredServiceGetService()
     {
@@ -124,7 +139,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     /**
      * GetService Exception if called without an undeclared interface
      *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testNonDeclaredInterfaceGetService()
     {
@@ -137,7 +152,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     /**
      * GetService Exception if the service class do not implement the service class
      *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testDontImplementdInterfaceGetService()
     {

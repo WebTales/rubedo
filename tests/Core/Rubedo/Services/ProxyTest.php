@@ -1,32 +1,32 @@
 <?php
 
-class testConcern
-{
-    public function __construct($injecteurArray, $options)
-    {
+class testConcern {
+    public function __construct($injecteurArray, $options) {
 
     }
 
-    public function process($object, $name, $arguments)
-    {
+    public function process($object, $name, $arguments) {
         return call_user_func_array(array($object, $name), $arguments);
     }
 
 }
 
-class ProxyTest extends PHPUnit_Framework_TestCase
-{
-    public function setUp()
-    {
+class ProxyTest extends PHPUnit_Framework_TestCase {
+    public function setUp() {
         testBootstrap();
         parent::setUp();
+    }
+
+    public function tearDown() {
+        Rubedo\Interfaces\config::clearConcerns();
+        parent::tearDown();
+
     }
 
     /**
      * Test Service Override
      */
-    public function testOverrideProxyClass()
-    {
+    public function testOverrideProxyClass() {
         $mock = $this->getMock('Rubedo\Mongo\DataAccess');
         $service = new Rubedo\Services\Proxy('Rubedo\Mongo\DataAccess', 'MongoDataAccess', $mock);
         $this->assertInstanceOf('Rubedo\Mongo\DataAccess', $service->getServiceObj());
@@ -36,10 +36,9 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     /**
      * Failed method call : non existent method in nested object
      *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
+     * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testInvalidMethodCall()
-    {
+    public function testInvalidMethodCall() {
         $mock = new stdClass();
 
         $service = new Rubedo\Services\Proxy('stdClass', 'TestService', $mock);
@@ -52,8 +51,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     /**
      * Valid nested method call
      */
-    public function testValidMethodCall()
-    {
+    public function testValidMethodCall() {
         $mock = $this->getMock('TestService');
         $mock->expects($this->once())->method('fakeMethod')->will($this->returnValue(42));
 
@@ -67,13 +65,12 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     /**
      * Valid nested method call with concerns
      */
-    public function testValidMethodCallWithConcerns()
-    {
+    public function testValidMethodCallWithConcerns() {
         $mock = $this->getMock('TestService');
         $mock->expects($this->once())->method('fakeMethod')->will($this->returnValue(42));
 
         Rubedo\Interfaces\config::clearConcerns();
-        Rubedo\Interfaces\config::addConcern('testConcern');
+        Rubedo\Interfaces\config::addConcern('TestService', 'testConcern');
 
         $service = new Rubedo\Services\Proxy('TestService', 'TestService', $mock);
         $this->assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);

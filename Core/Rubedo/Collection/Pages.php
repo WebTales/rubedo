@@ -33,13 +33,14 @@ class Pages extends AbstractCollection implements IPages
      */
     protected function _init(){
         parent::_init();
+		
 		if (! self::isUserFilterDisabled()) {
-        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-        if(in_array('all',$readWorkspaceArray)){
-            return;
-        }
-        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
-        $this->_dataService->addFilter($filter);
+	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+	        if(in_array('all',$readWorkspaceArray)){
+	            return;
+	        }
+	        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+	        $this->_dataService->addFilter($filter);
 		}
     }
 
@@ -66,7 +67,6 @@ class Pages extends AbstractCollection implements IPages
 	    $deleteCond = array('_id' => array('$in' => $this->_getChildToDelete($obj['id'])));
 	
 	    $resultArray = $this->_dataService->customDelete($deleteCond);
-	    
 	
 	    if ($resultArray['ok'] == 1) {
 	        if ($resultArray['n'] > 0) {
@@ -127,10 +127,13 @@ class Pages extends AbstractCollection implements IPages
             }
         }
         //verify workspace can be attributed
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        if (! in_array($obj['workspace'], $writeWorkspaces)) {
-            throw new \Rubedo\Exceptions\Access('You can not assign page to this workspace');
-        }
+        if (! self::isUserFilterDisabled()) {	
+        	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		
+	        if (! in_array($obj['workspace'], $writeWorkspaces)) {
+	            throw new \Rubedo\Exceptions\Access('You can not assign page to this workspace');
+	        }
+		}
         
         //set text property
         if (empty($obj['text'])) {
@@ -240,17 +243,19 @@ class Pages extends AbstractCollection implements IPages
 	
 	protected function _addReadableProperty ($obj)
     {
-        if (! isset($obj['workspace'])) {
-            $obj['workspace'] = 'global';
-        }
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-		
-        if (!in_array($obj['workspace'], $writeWorkspaces)) {
-            $obj['readOnly'] = true;
-        } else {
-            
-            $obj['readOnly'] = false;
-        }
+        if (! self::isUserFilterDisabled()) {	
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+			
+	        if (!in_array($obj['workspace'], $writeWorkspaces)) {
+	            $obj['readOnly'] = true;
+	        } else {
+	            
+	            $obj['readOnly'] = false;
+	        }
+		}
         
         return $obj;
     }
@@ -277,12 +282,13 @@ class Pages extends AbstractCollection implements IPages
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         $returnArray = array();
         foreach ($list as $page){
-            if(!in_array($page['workspace'], $writeWorkspaces)){
-                $page['readOnly'] =true;
-                
-            }else{
-                $page['readOnly'] =false;
-            }
+        	if (! self::isUserFilterDisabled()) {
+	            if(!in_array($page['workspace'], $writeWorkspaces)){
+	                $page['readOnly'] =true;
+	            }else{
+	                $page['readOnly'] =false;
+	            }
+			}
            $returnArray[] = $page;
         }
         return $returnArray;
@@ -300,11 +306,17 @@ class Pages extends AbstractCollection implements IPages
         }
         $pageList = $this->readChild($parentId,$filters);
         foreach ($pageList as $page) {
-            if (! $page['readOnly']) {
-                if ($page['workspace'] != $workspaceId) {
+        	if (! self::isUserFilterDisabled()) {
+	            if (! $page['readOnly']) {
+	                if ($page['workspace'] != $workspaceId) {
+	                    $this->update($page);
+	                }
+	            }
+			} else {
+				if ($page['workspace'] != $workspaceId) {
                     $this->update($page);
                 }
-            }
+			}
         }
     }
 

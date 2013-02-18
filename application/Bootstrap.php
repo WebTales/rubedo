@@ -82,8 +82,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	 */
 	protected function _initSites() {
 	    $options = $this->getOption('site');
-	    if(isset($options['overide'])) {
-	        Rubedo\Collection\Sites::setOverride($options['overide']);
+	    if(isset($options['override'])) {
+	        Rubedo\Collection\Sites::setOverride($options['override']);
 	    }
 	
 	}

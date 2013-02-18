@@ -1,0 +1,24 @@
+<h1>Mailer Configuration</h1>
+<br />
+<div id="alerts">
+    <?php if($this->hasError){?>
+    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
+    <?php }?>
+    <?php if($this->isReady){?>
+    <div class="alert alert-success">Connection to SMTP server is set</div>
+    <?php }?>
+</div>
+<?php echo $this->form->render();?>
+<?php if($this->displayMode=='wizard'){?>
+<ul class="pager">
+	<li class="previous"><a
+		href="<?php echo $this->url(array('action'=>'set-elastic-search','module'=>'install'),null,true);?>">&larr;
+			Configure Admin Account</a></li>
+  <?php if($this->isReady){?>
+  <li class="next"><a
+		href="<?php echo $this->url(array('action'=>'set-local-domains','module'=>'install'),null,true);?>">Local Domains &rarr;</a></li>
+  <?php }?>
+</ul>
+<?php }else{?>
+<div class='pull-right'><a href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>" class="btn btn-large btn-primary" type="button"><i class="icon-home"></i> Return</a></div>
+<?php }?>

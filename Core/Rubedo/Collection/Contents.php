@@ -112,9 +112,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function getList ($filters = null, $sort = null, $start = null, $limit = null, $live = true)
     {
         $list = parent::getList($filters,$sort,$start,$limit,$live);
-        foreach ($list['data'] as &$obj){
+		
+		foreach ($list['data'] as &$obj){
             $obj = $this->_addReadableProperty($obj);
         }
+		
         return $list;
     }
 
@@ -224,18 +226,18 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         $obj = $this->_setDefaultWorkspace($obj);
         
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		if (! self::isUserFilterDisabled()) {
+        	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
             
-            // var_dump($obj['writeWorkspace'],$writeWorkspaces);die();
-        if (! self::isUserFilterDisabled()) {
             if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
                 throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
             }
-        }
-        $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
-        if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
-            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
-        }
+        
+	        $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
+	        if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
+	            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+	        }
+		}
         
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
@@ -308,7 +310,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         
         return $obj;
-    }
+	}
 
     /**
      * Check if value is valid based on field config from type content

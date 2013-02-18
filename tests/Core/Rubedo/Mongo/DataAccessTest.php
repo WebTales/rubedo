@@ -629,7 +629,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $this->assertTrue($updateArray["success"]);
@@ -668,7 +668,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
     
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
     
         $this->assertTrue($updateArray["success"]);
@@ -707,7 +707,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
@@ -740,7 +740,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
@@ -771,7 +771,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
@@ -801,7 +801,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $this->assertTrue($updateArray["success"]);
@@ -825,7 +825,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Create an item with phactory
      * Update it with the service
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Access
      */
     public function testNoVersionUpdate() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -842,7 +842,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['version']);
         $item['name'] .= ' updated';
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
     }
 
     /**
@@ -871,7 +871,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $item['name'] .= ' updated';
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
 
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('no record had been updated', $updateArray['msg']);
@@ -904,7 +904,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, true);
+        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
 
         $this->assertTrue($updateArray["success"]);
 
@@ -922,7 +922,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Create items with Phactory
      * Delete one with the service
      *
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Access
      */
     public function testNoVersionDestroy() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -943,7 +943,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, true);
+        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
     }
 
     /**
@@ -973,7 +973,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, true);
+        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('no record had been deleted', $updateArray['msg']);
     }
@@ -1101,7 +1101,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Create 3 items through Phactory without parentID
      * readTree should fail as expected
      *
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testReadTreeMoreThanOneRoot() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1731,7 +1731,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * filter should not be empty
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddFilterNotBeEmpty() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1744,7 +1744,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * filter should not have more than one item
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddFilterNotTwoArgs() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1757,7 +1757,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * filter should not be empty
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddFilterOnlyOneArrayChild() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1770,7 +1770,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * filter should not be empty
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddFilterOnlyArrayOrScalarChild() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1841,7 +1841,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * sort should not be empty
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddSortNotBeEmpty() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1854,7 +1854,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * sort should not have more than one item
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddSortNotTwoArgs() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1867,7 +1867,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * sort should not be empty
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddSortOnlyOneArrayChild() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1880,7 +1880,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * sort should not be empty
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddSortOnlyArrayOrScalarChild() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1955,7 +1955,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * FirstResult should be an integer
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testSetFirstResultWithNoInteger() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -1966,7 +1966,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * numberOfResults should be an integer
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testSetNumberOfResultsWithNoInteger() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -2037,7 +2037,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * fieldList can't be an array in another array
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddFieldOnlyStringOrBool() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -2050,7 +2050,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * id field is included by default
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddIdField() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -2136,7 +2136,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * excludeFieldList can't be an array in another array
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddExcludeFieldOnlyStringOrBool() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -2148,7 +2148,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * excludeFieldList can't be an empty array
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddExcludeFieldNotempty() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -2160,7 +2160,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * id field can't be excluded
-     * @expectedException \Rubedo\Exceptions\DataAccess
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testAddExcludedIdField() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();

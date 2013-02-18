@@ -22,7 +22,9 @@
  * @package Rubedo-Test
  */
 class CurrentUserTest extends PHPUnit_Framework_TestCase {
-    /**
+    
+	 
+	 /**
      * Init
      */
     public function setUp() {
@@ -100,13 +102,12 @@ class CurrentUserTest extends PHPUnit_Framework_TestCase {
      * Test if getGroups return good values
      */
     public function testGetGroups() {
-    	$auth = new \Rubedo\User\Authentication();
+    	$mockGroupsService = $this->getMock('Rubedo\\Collection\\Groups');
+        Rubedo\Services\Manager::setMockService('Groups', $mockGroupsService);
+		
 		$currentUser = new \Rubedo\User\CurrentUser();
 		
-		$auth->authenticate('admin', 'admin');
 		$result = $currentUser->getGroups();
-		
-		$this->assertEquals($result, array('admin', 'valideur', 'redacteur', 'public'));
     }
 
 }

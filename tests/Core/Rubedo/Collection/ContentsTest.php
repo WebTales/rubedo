@@ -265,7 +265,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 												'multivalued' => false,
 												'vtype' => 'alpha'))))));
 		
-		$obj = array(	"typeId" => "50c0c8669a199d930f000001",
+		$obj = array(	"id" => "test",
+						"typeId" => "50c0c8669a199d930f000001",
 						"fields" => array(	'text' => 'test',
 											'summary' => 'test',
 											'body' => 'Paragraphe'),
@@ -304,7 +305,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 												'multivalued' => false,
 												'vtype' => 'email'))))));
 		
-		$obj = array(	"typeId" => "50c0c8669a199d930f000001",
+		$obj = array(	"id" => "test",
+						"typeId" => "50c0c8669a199d930f000001",
 						"fields" => array(	'text' => 'test',
 											'summary' => 'test',
 											'body' => 'http://test.fr'),

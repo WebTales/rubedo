@@ -38,12 +38,15 @@ class Sites extends AbstractCollection implements ISites
      */
     protected function _init(){
         parent::_init();
-        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-        if(in_array('all',$readWorkspaceArray)){
-            return;
-        }
-        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
-        $this->_dataService->addFilter($filter);
+		
+		if (! self::isUserFilterDisabled()) {
+	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+	        if(in_array('all',$readWorkspaceArray)){
+	            return;
+	        }
+	        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+	        $this->_dataService->addFilter($filter);
+		}
     }
 
     public static function setOverride (array $array)
@@ -103,14 +106,14 @@ class Sites extends AbstractCollection implements ISites
 			$masks = \Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($id);
 			if($masks['ok']==1)
 			{
-					$returnArray=parent::destroy($obj,$options);
+				$returnArray=parent::destroy($obj,$options);
 			}else{
 				$returnArray=array('success'=>false, 'msg'=>"error during masks deletion");
 			}
 			
 		}else{
 				$returnArray=array('success'=>false, 'msg'=>"error during pages deletion");
-			}
+		}
 		return $returnArray;
 	}
 	
@@ -150,26 +153,31 @@ class Sites extends AbstractCollection implements ISites
     
     protected function _initContent($obj){
         //verify workspace can be attributed
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        if (! in_array($obj['workspace'], $writeWorkspaces)) {
-            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
-        }
+        if (! self::isUserFilterDisabled()) {
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+	        if (! in_array($obj['workspace'], $writeWorkspaces)) {
+	            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+	        }
+		}
+		
         return $obj;
     }
 
 	protected function _addReadableProperty ($obj)
     {
-        if (! isset($obj['workspace'])) {
-            $obj['workspace'] = 'global';
-        }
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-		
-        if (!in_array($obj['workspace'], $writeWorkspaces)) {
-            $obj['readOnly'] = true;
-        } else {
-            
-            $obj['readOnly'] = false;
-        }
+        if (! self::isUserFilterDisabled()) {	
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+			
+	        if (!in_array($obj['workspace'], $writeWorkspaces)) {
+	            $obj['readOnly'] = true;
+	        } else {
+	            
+	            $obj['readOnly'] = false;
+	        }
+		}
         
         return $obj;
     }
