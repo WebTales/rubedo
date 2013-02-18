@@ -49,8 +49,12 @@ class Sites extends AbstractCollection implements ISites
 		}
     }
 
-    public static function setOverride (array $array)
+    public static function setOverride (array $array = null)
     {
+        $newArray = array();
+        if($array == null){
+            $array = array();
+        }
         foreach ($array as $key => $value) {
             
             $newArray[str_replace('_', '.', $key)] = str_replace('_', '.', $value);

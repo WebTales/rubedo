@@ -28,18 +28,18 @@ class Install_Model_DbConfigForm
         
         $serverNameField = new Zend_Form_Element_Text('server');
         $serverNameField->setRequired(true);
-        $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost/rubedo');
+        $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost');
         $serverNameField->setLabel('Server Name');
         
-        $serverPortField = new Zend_Form_Element_Text('serverport');
+        //$serverPortField = new Zend_Form_Element_Text('serverport');
         // $serverPortField->setRequired(true);
-        $serverPortField->setValue(isset($params['port']) ? $params['port'] : null);
-        $serverPortField->addValidator('digits');
-        $serverPortField->setLabel('Server Port');
+        //$serverPortField->setValue(isset($params['port']) ? $params['port'] : null);
+        //$serverPortField->addValidator('digits');
+        //$serverPortField->setLabel('Server Port');
         
         $dbNameField = new Zend_Form_Element_Text('db');
         $dbNameField->setRequired(true);
-        $dbNameField->setValue(isset($params['db']) ? $params['db'] : null);
+        $dbNameField->setValue(isset($params['db']) ? $params['db'] : 'rubedo');
         $dbNameField->setLabel('Db Name');
         
         $serverLoginField = new Zend_Form_Element_Text('login');
