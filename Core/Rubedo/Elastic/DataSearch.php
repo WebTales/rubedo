@@ -79,13 +79,27 @@ class DataSearch extends DataAbstract implements IDataSearch
 		try{
 
 			// Build global filter
-			
+
+			$setFilter = false;		
 			$globalFilter = new \Elastica_Filter_And();
+			
+			
+			// Filter on read Workspaces		
+			
+			$readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
 			$workspacesFilter = new \Elastica_Filter_Or();
 			
-			$setFilter = false;
-			$setWorkspaceFilter = false;
-						
+			if (!in_array('all',$readWorkspaceArray)) {
+			
+				$workspaceFilter = new \Elastica_Filter_Term();
+				$workspaceFilter->setTerm('target', $readWorkspaceArray);
+				$workspacesFilter->addFilter($workspaceFilter);				 
+				$globalFilter->addFilter($workspacesFilter);
+				$setFilter = true;
+			
+			}
+			
+							
 			// filter on lang TOTO add lang filter
 			/*
 			if ($lang != '') {
@@ -138,19 +152,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
 				$globalFilter->addFilter($dateFilter);
 				$setFilter = true;
-			}	
-
-			// filter on target
-			/*
-			if (array_key_exists('target',$params)) {
-				$targetFilter = new \Elastica_Filter_Term();
-        		$targetFilter->setTerm('target', $params['target']);
-				$globalFilter->addFilter($targetFilter);
-				$filters["target"]=$params['target'];
-				$setFilter = true;
-
-			}
-			 */				
+			}		
 
 			// filter on taxonomy
 			foreach ($taxonomies as $taxonomy) {
@@ -170,38 +172,19 @@ class DataSearch extends DataAbstract implements IDataSearch
 			
 				}
 			}
-			
-			// filter on read Workspaces		
-			$readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-			if (!in_array('all',$readWorkspaceArray)) {
-				foreach ($readWorkspaceArray as $workspace) {
-					$workspaceFilter = new \Elastica_Filter_Term();
-					$workspaceFilter->setTerm('target', $workspace);
-					$workspacesFilter->addFilter($workspaceFilter);
-				}
-				$setWorkspaceFilter = true;				
-			}
-						
+					
 			// Set query on terms
 			$elasticaQueryString = new \Elastica_Query_QueryString($params['query']."*");
 			
 			$elasticaQuery = new \Elastica_Query();
 			
 			$elasticaQuery->setQuery($elasticaQueryString);
-			
-			// Apply filters if needed
+
 			if ($setFilter) {
-				if ($setWorkspaceFilter) {
-					$globalFilter->addFilter($workspacesFilter);
-				}
 				$elasticaQuery->setFilter($globalFilter);
-			} else {
-				if ($setWorkspaceFilter) {
-					$elasticaQuery->setFilter($workspacesFilter);
-				}
-			}	
-			 
 			
+			} 
+			 
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('type');
 			$elasticaFacetType->setField('contentType');
