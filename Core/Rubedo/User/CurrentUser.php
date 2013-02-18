@@ -153,10 +153,8 @@ class CurrentUser implements ICurrentUser
      */
     public function getMainGroup ()
     {
-        $groups = $this->getGroups();
-        reset($groups);
-        $return = array_shift($groups);
-        return $return;
+        $user = $this->getCurrentUser();
+        return $user['defaultGroup'];
     }
 
     /**
@@ -247,13 +245,13 @@ class CurrentUser implements ICurrentUser
     public function getMainWorkspace ()
     {
         
-        return Manager::getService('Workspaces')->findById('global');
+        //return Manager::getService('Workspaces')->findById('global');
         
         $mainGroup = $this->getMainGroup();
         if (! $mainGroup) {
-            return null;
+            return Manager::getService('Workspaces')->findById('global');
         }
-        return Manager::getService('Groups')->getMainWorkspace($mainGroup['id']);
+        return Manager::getService('Groups')->getMainWorkspace($mainGroup);
     }
 
     /**

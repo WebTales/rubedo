@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IGroups;
+use Rubedo\Interfaces\Collection\IGroups, Rubedo\Services\Manager;
 
 /**
  * Service to handle Groups
@@ -159,9 +159,11 @@ class Groups extends AbstractCollection implements IGroups
      */
     public function getMainWorkspace ($groupId)
     {
-        $groupArray = $this->getWriteWorkspaces($groupId);
-        
-        return array_shift($groupArray);
+        $group = $this->findById($groupId);
+        if (! isset($group['defaultWorkspaces']) || $group['defaultWorkspaces']=="") {
+            $group['defaultWorkspaces']='global';
+        }
+        return Manager::getService('Workspaces')->findById($group['defaultWorkspaces']); 
     }
 
     /**
