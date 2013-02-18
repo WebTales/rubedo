@@ -213,7 +213,7 @@ class DataAccess implements IDataAccess
         if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
             return self::$_dbArray[$mongo . '_' . $dbName];
         } else {
-            $this->_adapter = $this->_getAdapter($mongo);
+            $this->_adapter = $this->_getAdapter($mongo.'/'.$dbName);
             $db = $this->_adapter->$dbName;
             self::$_dbArray[$mongo . '_' . $dbName] = $db;
             return $db;

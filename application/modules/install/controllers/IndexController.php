@@ -146,7 +146,7 @@ class Install_IndexController extends Zend_Controller_Action
                 $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init();
             } else {
-                $params = $this->_applicationOptions["searchstream"]["elastic"];
+                $params = $esOptions;
                 $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init();
             }

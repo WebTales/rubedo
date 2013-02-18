@@ -28,7 +28,7 @@ class Install_Model_DbConfigForm
         
         $serverNameField = new Zend_Form_Element_Text('server');
         $serverNameField->setRequired(true);
-        $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost/rubedo');
+        $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost');
         $serverNameField->setLabel('Server Name');
         
         //$serverPortField = new Zend_Form_Element_Text('serverport');
