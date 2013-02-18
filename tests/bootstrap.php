@@ -36,6 +36,7 @@ function testBootstrap(){
     
     $bootstrap = new Zend_Application(APPLICATION_ENV, $options);
     $bootstrap->bootstrap();
+    Rubedo\Collection\AbstractCollection::disableUserFilter();
     return $bootstrap;
 }
 
