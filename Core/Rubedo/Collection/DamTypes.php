@@ -33,13 +33,16 @@ class DamTypes extends AbstractCollection implements IDamTypes
      */
     protected function _init(){
         parent::_init();
-        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-        if(in_array('all',$readWorkspaceArray)){
-            return;
-        }
-        $readWorkspaceArray[] = null;
-        $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
-        $this->_dataService->addFilter($filter);
+		
+		if (! self::isUserFilterDisabled()) {
+	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+	        if(in_array('all',$readWorkspaceArray)){
+	            return;
+	        }
+	        $readWorkspaceArray[] = null;
+	        $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+	        $this->_dataService->addFilter($filter);
+		}
     }
 
 	public function __construct(){
@@ -86,19 +89,21 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	
 	protected function _addReadableProperty ($obj)
     {
-        if (! isset($obj['workspaces'])) {
-            $obj['workspaces'] = array(
-                'global'
-            );
-        }
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        
-        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
-            $obj['readOnly'] = true;
-        } else {
-            
-            $obj['readOnly'] = false;
-        }
+        if (! self::isUserFilterDisabled()) {	
+	        if (! isset($obj['workspaces'])) {
+	            $obj['workspaces'] = array(
+	                'global'
+	            );
+	        }
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+	        
+	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
+	            $obj['readOnly'] = true;
+	        } else {
+	            
+	            $obj['readOnly'] = false;
+	        }
+		}
         
         return $obj;
     }
