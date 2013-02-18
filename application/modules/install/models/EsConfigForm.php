@@ -1,0 +1,72 @@
+<?php
+/**
+ * Rubedo -- ECM solution
+ * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
+ *
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ *
+ * @category   Rubedo
+ * @package    Rubedo
+ * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
+ */
+
+/**
+ * Form for DB Config
+ *
+ * @author jbourdin
+ * @category Rubedo
+ * @package Rubedo
+ */
+class Install_Model_EsConfigForm
+{
+    public static function getForm($params){
+        
+        /*
+         * searchstream.elastic.host = 178.32.8.116
+searchstream.elastic.port = 9200
+searchstream.elastic.contentIndex = content
+searchstream.elastic.damIndex = dam
+         */
+        
+        
+        $serverNameField = new Zend_Form_Element_Text('host');
+        $serverNameField->setRequired(true);
+        $serverNameField->setValue(isset($params['host']) ? $params['host'] : 'localhost');
+        $serverNameField->setLabel('Server Name');
+        
+        $serverPortField = new Zend_Form_Element_Text('port');
+        $serverPortField->setValue(isset($params['port']) ? $params['port'] : 9200);
+        $serverPortField->addValidator('digits');
+        $serverPortField->setLabel('Server Port');
+        
+        $contentIndexField = new Zend_Form_Element_Text('contentIndex');
+        $contentIndexField->setRequired(true);
+        $contentIndexField->setValue(isset($params['contentIndex']) ? $params['contentIndex'] : null);
+        $contentIndexField->setLabel('Contents index name');
+        
+        $damIndexField = new Zend_Form_Element_Text('damIndex');
+        $damIndexField->setRequired(true);
+        $damIndexField->setValue(isset($params['damIndex']) ? $params['damIndex'] : null);
+        $damIndexField->setLabel('Dam index name');
+
+        $submitButton = new Zend_Form_Element_Submit('Submit');
+        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
+        
+        $dbForm = new Zend_Form();
+        $dbForm->setMethod('post');
+        $dbForm->setAttrib('id', 'dbForm');
+        $dbForm->addElement($serverNameField);
+        $dbForm->addElement($serverPortField);
+        $dbForm->addElement($contentIndexField);
+        $dbForm->addElement($damIndexField);
+        $dbForm->addElement($submitButton);
+        
+        return $dbForm;
+    }
+}
+

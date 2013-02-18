@@ -115,6 +115,90 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
+    /**
+     * Check if a valid connection to MongoDB can be written in local config
+     */
+    public function setElasticSearchAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-elastic-search';
+        }
+        
+        $esOptions = isset($this->_applicationOptions["searchstream"]["elastic"]) ? $this->_applicationOptions["searchstream"]["elastic"] : array();
+        
+        $dbForm = Install_Model_EsConfigForm::getForm($esOptions);
+        
+        try {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+                $params = $dbForm->getValues();
+                $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+                $query->init($params['host'], $params['port']);
+            } else {
+                $params = $this->_applicationOptions["searchstream"]["elastic"];
+                $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+                $query->init();
+            }
+            $connectionValid = true;
+        } catch (Exception $exception) {
+            $connectionValid = false;
+        }
+        if ($connectionValid) {
+            $this->view->isReady = true;
+            $this->_localConfig["searchstream"]["elastic"] = $params;
+        } else {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'Rubedo can\'t connect itself to specified ES';
+        }
+        
+        $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+
+    public function setMailerAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-mailer';
+        }
+        
+        $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array();
+        
+        $dbForm = Install_Model_MailConfigForm::getForm($mailerOptions);
+        
+        try {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+                $params = $dbForm->getValues();
+            } else {
+                $params = $this->_applicationOptions["swiftmail"]["smtp"];
+            }
+            $transport = \Swift_SmtpTransport::newInstance($params['server'], $params['port'], $params['ssl'] ? 'ssl' : null);
+            if (isset($params['username'])) {
+                $transport->setUsername($params['username'])->setPassword($params['password']);
+            }
+            $transport->setTimeout(3);
+            $transport->start();
+            $transport->stop();
+            $connectionValid = true;
+        } catch (Exception $exception) {
+            $connectionValid = false;
+        }
+        if ($connectionValid) {
+            $this->view->isReady = true;
+            $this->_localConfig["swiftmail"]["smtp"] = $params;
+        } else {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'Rubedo can\'t connect to SMTP server';
+        }
+        
+        $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+
     public function setDbContentsAction ()
     {
         $this->view->displayMode = 'regular';
@@ -292,21 +376,24 @@ class Install_IndexController extends Zend_Controller_Action
         $this->view->isDefaultGroupsExists = $result;
         return $result;
     }
-    
+
     protected function _doInsertContents ()
     {
         $success = true;
         $contentPath = APPLICATION_PATH . '/../data/default/';
         $contentIterator = new DirectoryIterator($contentPath);
         foreach ($contentIterator as $directory) {
-            if ($directory->isDot() || !$directory->isDir()) {
+            if ($directory->isDot() || ! $directory->isDir()) {
                 continue;
             }
-            if(in_array($directory->getFilename(),array('groups','site'))){
+            if (in_array($directory->getFilename(), array(
+                'groups',
+                'site'
+            ))) {
                 continue;
             }
             $collection = ucfirst($directory->getFilename());
-            $itemsJson = new DirectoryIterator($contentPath.'/'.$directory->getFilename());
+            $itemsJson = new DirectoryIterator($contentPath . '/' . $directory->getFilename());
             foreach ($itemsJson as $file) {
                 if ($file->isDot() || $file->isDir()) {
                     continue;
@@ -320,8 +407,6 @@ class Install_IndexController extends Zend_Controller_Action
             }
         }
         
-        
-        
         if (! $success) {
             $this->view->hasError = true;
             $this->view->errorMsgs = 'failed to initialize contents';
@@ -331,6 +416,5 @@ class Install_IndexController extends Zend_Controller_Action
         
         return $success;
     }
-    
 }
 
