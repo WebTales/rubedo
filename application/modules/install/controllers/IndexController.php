@@ -142,8 +142,9 @@ class Install_IndexController extends Zend_Controller_Action
         try {
             if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
+                Rubedo\Elastic\DataAbstract::setOptions($params);
                 $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-                $query->init($params['host'], $params['port']);
+                $query->init();
             } else {
                 $params = $this->_applicationOptions["searchstream"]["elastic"];
                 $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
@@ -174,7 +175,7 @@ class Install_IndexController extends Zend_Controller_Action
             $this->_localConfig['installed']['action'] = 'set-mailer';
         }
         
-        $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array();
+        $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array('server'=>null,'port'=>null,'ssl'=>null);
         
         $dbForm = Install_Model_MailConfigForm::getForm($mailerOptions);
         
@@ -182,7 +183,7 @@ class Install_IndexController extends Zend_Controller_Action
             if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
             } else {
-                $params = $this->_applicationOptions["swiftmail"]["smtp"];
+                $params = $mailerOptions;
             }
             $transport = \Swift_SmtpTransport::newInstance($params['server'], $params['port'], $params['ssl'] ? 'ssl' : null);
             if (isset($params['username'])) {
