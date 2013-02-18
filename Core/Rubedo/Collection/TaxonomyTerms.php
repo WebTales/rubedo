@@ -222,7 +222,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $workspace['text'];
         $term['id'] = $workspace['id'];
         $term['vocabularyId'] = 'wokspaces';
-        $term['readOnly'] = true;
+		if (! self::isUserFilterDisabled()) {	
+        	$term['readOnly'] = true;
+		}
         $term['leaf'] = true;
         return $term;
     }
@@ -240,7 +242,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $site['text'];
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
-        $term['readOnly'] = true;
+		if (! self::isUserFilterDisabled()) {	
+        	$term['readOnly'] = true;
+		}
         $term['leaf'] = true;
         return $term;
     }
@@ -252,7 +256,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $mainRoot['text'] = 'Tous les sites';
         $mainRoot['id'] = 'all';
         $mainRoot['vocabularyId'] = 'navigation';
-        $mainRoot['readOnly'] = true;
+		if (! self::isUserFilterDisabled()) {	
+        	$mainRoot['readOnly'] = true;
+		}
         return $mainRoot;
     }
 
@@ -271,8 +277,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['leaf'] = $page['leaf'];
         $term['orderValue'] = $page['orderValue'];
         $term['vocabularyId'] = 'navigation';
-        $term['readOnly'] = true;
-        
+		if (! self::isUserFilterDisabled()) {	
+        	$term['readOnly'] = true;
+		}
+		
         return $term;
     }
     

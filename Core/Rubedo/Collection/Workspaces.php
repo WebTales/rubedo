@@ -30,20 +30,22 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     protected function _init(){
         parent::_init();
         
-        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-        if(in_array('all',$readWorkspaceArray)){
-            return;
-        }
-        $mongoIdArray = array();
-        foreach ($readWorkspaceArray as $workspaceId){
-            if($workspaceId == 'global'){
-                continue;
-            }
-            $mongoIdArray[]=$this->_dataService->getId($workspaceId);
-        }
-        $filter = array('_id'=> array('$in'=>$mongoIdArray));
-        
-        $this->_dataService->addFilter($filter);
+		if (! self::isUserFilterDisabled()) {	
+	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+	        if(in_array('all',$readWorkspaceArray)){
+	            return;
+	        }
+	        $mongoIdArray = array();
+	        foreach ($readWorkspaceArray as $workspaceId){
+	            if($workspaceId == 'global'){
+	                continue;
+	            }
+	            $mongoIdArray[]=$this->_dataService->getId($workspaceId);
+	        }
+	        $filter = array('_id'=> array('$in'=>$mongoIdArray));
+	        
+	        $this->_dataService->addFilter($filter);
+		}
     }
     
     
@@ -75,14 +77,17 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         ), $list['data']);
         
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-                
-        foreach ($list['data'] as &$workspace){
-            if(in_array($workspace['id'],$writeWorkspaces)){
-                $workspace['canContribute']=true;
-            }else{
-                $workspace['canContribute']=false;
-            }
-        }
+        
+		if (! self::isUserFilterDisabled()) {	
+	        foreach ($list['data'] as &$workspace){
+	            if(in_array($workspace['id'],$writeWorkspaces)){
+	                $workspace['canContribute']=true;
+	            }else{
+	                $workspace['canContribute']=false;
+	            }
+	        }
+		}
+		
         $list['count'] = $list['count'] + 1;
         return $list;
     }
@@ -100,6 +105,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         foreach ($list['data'] as &$workspace) {
             $workspace['canContribute'] = true;
         }
+		
         $list['count'] = $list['count'] + 1;
         return $list;
     }
