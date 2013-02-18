@@ -4,20 +4,72 @@
     <?php if($this->hasError){?>
     <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
     <?php }?>
-    <?php if(false && $this->isReady){?>
-    <!-- <div class="alert alert-success">Connection to DB is set</div> -->
+    <?php if($this->isIndexed){?>
+    <div class="alert alert-success">Indexes had been applied</div>
+    <?php }?>
+    
+    <?php if($this->isGroupsCreated){?>
+    <div class="alert alert-success">Groups had been created</div>
+    <?php }?>
+    
+    <?php if(!$this->isDefaultGroupsExists){?>
+    <div class="alert alert-warning">Default groups are not set</div>
     <?php }?>
 </div>
+<div class="row-fluid">
+	<div class="span6">
+		<h2>Apply indexes</h2>
+		<a
+			href="<?php echo $this->url(array('doEnsureIndex'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+			class="btn btn-large btn-primary" type="button"><i
+			class="icon-tasks icon-white"></i> Run Indexes</a>
+	</div>
+
+	<div class="span6">
+<?php if(!$this->isDefaultGroupsExists){?>
+<h2>Initialize default groups</h2>
+		<a
+			href="<?php echo $this->url(array('doInsertGroups'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+			class="btn btn-large btn-primary" type="button"><i
+			class="icon-user icon-white"></i> Create groups</a>
+<?php }?>
+</div>
+</div>
+
+<br />
+<br />
+
+<?php if($this->shouldInitialize){?>
+<div class="row-fluid">
+
+	<h2>Initialize Db Contents</h2>
+	<a
+		href="<?php echo $this->url(array('initContents'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+		class="btn btn-large btn-primary" type="button"><i
+		class="icon-user icon-white"></i> Initialize Contents</a>
+</div>
+<?php }?>
+
+
+<br />
+<br />
+
 <?php if($this->displayMode=='wizard'){?>
 <ul class="pager">
 	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'set-db'));?>">&larr;
+		href="<?php echo $this->url(array('action'=>'set-db','module'=>'install'),null,true);?>">&larr;
 			Configure Database</a></li>
   <?php if($this->isReady){?>
   <li class="next"><a
-		href="<?php echo $this->url(array('action'=>'set-admin'));?>">Configure Admin Account &rarr;</a></li>
+		href="<?php echo $this->url(array('action'=>'set-admin','module'=>'install'),null,true);?>">Configure
+			Admin Account &rarr;</a></li>
   <?php }?>
 </ul>
 <?php }else{?>
-<div class='pull-right'><a href="<?php echo $this->url(array('action'=>'index'));?>" class="btn btn-large btn-primary" type="button"><i class="icon-home"></i> Return</a></div>
+<div class='pull-right'>
+	<a
+		href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>"
+		class="btn btn-large btn-primary" type="button"><i class="icon-home"></i>
+		Return</a>
+</div>
 <?php }?>

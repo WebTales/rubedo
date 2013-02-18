@@ -12,13 +12,13 @@
 <?php if($this->displayMode=='wizard'){?>
 <ul class="pager">
 	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'start-wizard'));?>">&larr;
+		href="<?php echo $this->url(array('action'=>'start-wizard','module'=>'install'),null,true);?>">&larr;
 			Intro</a></li>
   <?php if($this->isReady){?>
   <li class="next"><a
-		href="<?php echo $this->url(array('action'=>'set-db-contents'));?>">Initialize Database Contents &rarr;</a></li>
+		href="<?php echo $this->url(array('action'=>'set-db-contents','module'=>'install'),null,true);?>">Initialize Database Contents &rarr;</a></li>
   <?php }?>
 </ul>
 <?php }else{?>
-<div class='pull-right'><a href="<?php echo $this->url(array('action'=>'index'));?>" class="btn btn-large btn-primary" type="button"><i class="icon-home"></i> Return</a></div>
+<div class='pull-right'><a href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>" class="btn btn-large btn-primary" type="button"><i class="icon-home"></i> Return</a></div>
 <?php }?>

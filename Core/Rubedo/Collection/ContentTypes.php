@@ -176,9 +176,13 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     protected function _indexContentType ($obj)
     {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContentType($obj['id'], $obj, TRUE);
+        
+        AbstractCollection::disableUserFilter($wasFiltered);
     }
 
     /**
@@ -188,9 +192,13 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     protected function _unIndexContentType ($obj)
     {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteContentType($obj['id'], TRUE);
+        
+        AbstractCollection::disableUserFilter($wasFiltered);
     }
 
     /**

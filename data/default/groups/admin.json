@@ -7,7 +7,7 @@
 	"name" : "admin",
 	"parentId" : "root",
 	"readWorkspaces" : [
-		"global",
+		"global"
 	],
 	"rights" : [ ],
 	"roles" : [
