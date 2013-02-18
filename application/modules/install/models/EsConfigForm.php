@@ -40,12 +40,12 @@ class Install_Model_EsConfigForm
         
         $contentIndexField = new Zend_Form_Element_Text('contentIndex');
         $contentIndexField->setRequired(true);
-        $contentIndexField->setValue(isset($params['contentIndex']) ? $params['contentIndex'] : null);
+        $contentIndexField->setValue(isset($params['contentIndex']) ? $params['contentIndex'] : 'contents');
         $contentIndexField->setLabel('Contents index name');
         
         $damIndexField = new Zend_Form_Element_Text('damIndex');
         $damIndexField->setRequired(true);
-        $damIndexField->setValue(isset($params['damIndex']) ? $params['damIndex'] : null);
+        $damIndexField->setValue(isset($params['damIndex']) ? $params['damIndex'] : 'dam');
         $damIndexField->setLabel('Dam index name');
 
         $submitButton = new Zend_Form_Element_Submit('Submit');
