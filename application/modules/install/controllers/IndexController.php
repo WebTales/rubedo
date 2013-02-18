@@ -70,6 +70,15 @@ class Install_IndexController extends Zend_Controller_Action
         
         $this->_saveLocalConfig();
     }
+    
+    public function finishWizardAction(){
+        $this->_localConfig['installed'] = array(
+            'status' => 'finished',
+        );
+        
+        $this->_saveLocalConfig();
+        $this->_forward('index');
+    }
 
     /**
      * Check if a valid connection to MongoDB can be written in local config
@@ -133,11 +142,11 @@ class Install_IndexController extends Zend_Controller_Action
         try {
             if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
-                $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+                $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init($params['host'], $params['port']);
             } else {
                 $params = $this->_applicationOptions["searchstream"]["elastic"];
-                $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+                $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init();
             }
             $connectionValid = true;
@@ -224,6 +233,38 @@ class Install_IndexController extends Zend_Controller_Action
             
         $this->view->overrideList = $this->_localConfig['site']['override'];
     
+        $this->view->form = $dbForm;
+    
+        $this->_saveLocalConfig();
+    }
+    
+    public function setPhpSettingsAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-php-settings';
+        }
+    
+    
+        $phpOptions = isset($this->_applicationOptions["phpSettings"]) ? $this->_applicationOptions["phpSettings"] : array();
+        //resources.frontController.params.displayExceptions = 0
+        if(isset($this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"])){
+            $phpOptions["displayExceptions"] = $this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"];
+        }
+        $dbForm = Install_Model_PhpSettingsForm::getForm($phpOptions);
+    
+        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+            $params = $dbForm->getValues();
+            $this->_localConfig["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
+            unset($params["displayExceptions"]);
+            $this->_localConfig["phpSettings"] = $params;
+        }
+    
+        $connectionValid = true;
+    
+        $this->view->isReady = true;
+            
         $this->view->form = $dbForm;
     
         $this->_saveLocalConfig();

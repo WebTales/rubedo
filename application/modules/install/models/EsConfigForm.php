@@ -26,12 +26,6 @@ class Install_Model_EsConfigForm
 {
     public static function getForm($params){
         
-        /*
-         * searchstream.elastic.host = 178.32.8.116
-searchstream.elastic.port = 9200
-searchstream.elastic.contentIndex = content
-searchstream.elastic.damIndex = dam
-         */
         
         
         $serverNameField = new Zend_Form_Element_Text('host');

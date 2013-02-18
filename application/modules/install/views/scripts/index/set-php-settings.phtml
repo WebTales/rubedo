@@ -1,0 +1,29 @@
+<h1>PHP local settings</h1>
+<br />
+<div id="alerts">
+    <?php if($this->hasError){?>
+    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
+    <?php }?>
+    
+    
+</div>
+
+<?php echo $this->form->render();?>
+<?php if($this->displayMode=='wizard'){?>
+<ul class="pager">
+	<li class="previous"><a
+		href="<?php echo $this->url(array('action'=>'set-local-domains','module'=>'install'),null,true);?>">&larr;
+			Local Domains</a></li>
+  <?php if($this->isReady){?>
+  <li class="next"><a
+		href="<?php echo $this->url(array('action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish &rarr;</a></li>
+  <?php }?>
+</ul>
+<?php }else{?>
+<div class='pull-right'>
+	<a
+		href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>"
+		class="btn btn-large btn-primary" type="button"><i class="icon-home"></i>
+		Return</a>
+</div>
+<?php }?>
