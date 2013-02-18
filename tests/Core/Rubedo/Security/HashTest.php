@@ -43,7 +43,7 @@ class HashTest extends PHPUnit_Framework_TestCase {
 	 * Test hashString function whith an integer for the string
 	 * It should return an exception
 	 * 
-	 * @expectedException \Rubedo\Exceptions\Hash
+	 * @expectedException \Rubedo\Exceptions\Server
 	 */
 	public function testHashStringWhitoutStringType(){
 		
@@ -80,7 +80,7 @@ class HashTest extends PHPUnit_Framework_TestCase {
 	 * Test derivatePassword whith an array for the apssword
 	 * The function should return an exception
 	 * 
-	 * @expectedException \Rubedo\Exceptions\Hash
+	 * @expectedException \Rubedo\Exceptions\Server
 	 */
     public function testDerivatePasswordWhitoutStringType() {
 
@@ -136,7 +136,7 @@ class HashTest extends PHPUnit_Framework_TestCase {
 	 * Test checkPassword with a boolean
 	 * The function should return an exception
 	 * 
-	 * @expectedException \Rubedo\Exceptions\Hash
+	 * @expectedException \Rubedo\Exceptions\Server
 	 */
 	public function testCheckPasswordWhitoutStringType() {
 

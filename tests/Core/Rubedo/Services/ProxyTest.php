@@ -36,7 +36,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     /**
      * Failed method call : non existent method in nested object
      *
-     * @expectedException \Rubedo\Exceptions\ServiceManager
+     * @expectedException \Rubedo\Exceptions\Server
      */
     public function testInvalidMethodCall()
     {
