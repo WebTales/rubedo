@@ -629,7 +629,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $this->assertTrue($updateArray["success"]);
@@ -668,7 +668,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
     
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
     
         $this->assertTrue($updateArray["success"]);
@@ -707,7 +707,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
@@ -740,7 +740,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
@@ -771,7 +771,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
@@ -801,7 +801,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
         //end of application run
 
         $this->assertTrue($updateArray["success"]);
@@ -825,7 +825,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Create an item with phactory
      * Update it with the service
-     * @expectedException \Rubedo\Exceptions\Server
+     * @expectedException \Rubedo\Exceptions\Access
      */
     public function testNoVersionUpdate() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -842,7 +842,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['version']);
         $item['name'] .= ' updated';
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
     }
 
     /**
@@ -871,7 +871,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $item['name'] .= ' updated';
 
-        $updateArray = $dataAccessObject->update($item, true);
+        $updateArray = $dataAccessObject->update($item, array('safe' => true));
 
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('no record had been updated', $updateArray['msg']);
@@ -904,7 +904,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, true);
+        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
 
         $this->assertTrue($updateArray["success"]);
 
@@ -922,7 +922,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Create items with Phactory
      * Delete one with the service
      *
-     * @expectedException \Rubedo\Exceptions\Server
+     * @expectedException \Rubedo\Exceptions\Access
      */
     public function testNoVersionDestroy() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
@@ -943,7 +943,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, true);
+        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
     }
 
     /**
@@ -973,7 +973,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, true);
+        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('no record had been deleted', $updateArray['msg']);
     }

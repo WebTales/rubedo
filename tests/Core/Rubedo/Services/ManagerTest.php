@@ -95,9 +95,24 @@ class ManagerTest extends PHPUnit_Framework_TestCase
         Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
 
         $service = \Rubedo\Services\Manager::getService('TestService');
+		$this->assertInstanceOf('TestService',$service);
+    }
+	
+	/**
+     * Normal getService Result
+     */
+    public function testValidGetServiceWithConcern()
+    {
+        $options = array('TestService' => array('class' => 'TestService'));
+        Rubedo\Services\Manager::setOptions($options);
+        Rubedo\Interfaces\config::addInterface('TestService', 'ITestService');
+		Rubedo\Interfaces\config::addConcern('TestService','testConcern');
+        $service = \Rubedo\Services\Manager::getService('TestService');
         $this->assertInstanceOf('\\Rubedo\\Services\\Proxy', $service);
         $this->assertAttributeInstanceOf('TestService', '_object', $service);
     }
+	
+	
 
     /**
      * GetService Exception if called without a string param

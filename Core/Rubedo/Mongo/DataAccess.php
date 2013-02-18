@@ -634,7 +634,7 @@ class DataAccess implements IDataAccess
         ), $options);
         
         $obj = $this->findById($mongoID);
-        
+
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
                 $obj['id'] = $id;
@@ -650,6 +650,11 @@ class DataAccess implements IDataAccess
                     "msg" => 'no record had been updated'
                 );
             }
+        } elseif ($resultArray) {
+        	$returnArray = array(
+                'success' => true,
+                "data" => $obj
+            );
         } else {
             $returnArray = array(
                 'success' => false,
@@ -700,6 +705,10 @@ class DataAccess implements IDataAccess
                     "msg" => 'no record had been deleted'
                 );
             }
+        } elseif ($resultArray) {
+        	$returnArray = array(
+                'success' => true
+            );
         } else {
             $returnArray = array(
                 'success' => false,

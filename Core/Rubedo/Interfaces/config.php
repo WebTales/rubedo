@@ -137,9 +137,14 @@ class config
     /**
      * Public static method to clear concerns during service method call
      */
-    final public static function clearConcerns()
+    final public static function clearConcerns($serviceName=null)
     {
-        static::$_concernArray = array();
+    	if($serviceName){
+    		static::$_concernArray[$serviceName] = array();
+    	}else{
+    		static::$_concernArray = array();
+    	}
+        
     }
 
     /**
@@ -147,9 +152,9 @@ class config
      *
      * @param string $concernName Class name of the concern
      */
-    final public static function addConcern($concernName)
+    final public static function addConcern($serviceName,$concernName)
     {
-        static::$_concernArray[] = $concernName;
+        static::$_concernArray[$serviceName][] = $concernName;
     }
 
     /**
