@@ -79,7 +79,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
-    {
+    {        	
         if (isset($filters)) {
             foreach ($filters as $value) {
                 if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
@@ -94,10 +94,14 @@ abstract class AbstractCollection implements IAbstractCollection
                             )
                         ));
                     } elseif (isset($value["operator"])) {
-                        $this->_dataService->addFilter(array(
-                            $value["property"] => array(
-                                $value["operator"] => $value["value"]
-                            )
+                    	if($value['operator']=='$nin' && $value['value']==array()){
+                    		continue;
+                    	}
+						
+                		$this->_dataService->addFilter(array(
+                        $value["property"] => array(
+                            $value["operator"] => $value["value"]
+                        )
                         ));
                     }
             }
