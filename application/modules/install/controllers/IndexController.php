@@ -130,7 +130,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
         
         if ($this->getParam('initContents', false)) {
-            $this->view->isContentsInitialized = $this->_doUpsertContents();
+            $this->view->isContentsInitialized = $this->_doInsertContents();
         } else {
             $this->view->shouldInitialize = true;
         }
@@ -293,9 +293,43 @@ class Install_IndexController extends Zend_Controller_Action
         return $result;
     }
     
-    protected function _doUpsertContents ()
+    protected function _doInsertContents ()
     {
-        return false;
+        $success = true;
+        $contentPath = APPLICATION_PATH . '/../data/default/';
+        $contentIterator = new DirectoryIterator($contentPath);
+        foreach ($contentIterator as $directory) {
+            if ($directory->isDot() || !$directory->isDir()) {
+                continue;
+            }
+            if(in_array($directory->getFilename(),array('groups','site'))){
+                continue;
+            }
+            $collection = ucfirst($directory->getFilename());
+            $itemsJson = new DirectoryIterator($contentPath.'/'.$directory->getFilename());
+            foreach ($itemsJson as $file) {
+                if ($file->isDot() || $file->isDir()) {
+                    continue;
+                }
+                if ($file->getExtension() == 'json') {
+                    $itemJson = file_get_contents($file->getPathname());
+                    $item = Zend_Json::decode($itemJson);
+                    $result = Manager::getService($collection)->create($item);
+                    $success = $result['success'] && $success;
+                }
+            }
+        }
+        
+        
+        
+        if (! $success) {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'failed to initialize contents';
+        } else {
+            $this->view->isContentInitialized = true;
+        }
+        
+        return $success;
     }
     
 }

@@ -12,6 +12,11 @@
     <div class="alert alert-success">Groups had been created</div>
     <?php }?>
     
+    <?php if($this->isContentInitialized){?>
+    <div class="alert alert-success">Contents had been initialized</div>
+    <?php }?>
+    
+    
     <?php if(!$this->isDefaultGroupsExists){?>
     <div class="alert alert-warning">Default groups are not set</div>
     <?php }?>
