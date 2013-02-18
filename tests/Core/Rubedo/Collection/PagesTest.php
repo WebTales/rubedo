@@ -52,7 +52,8 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 	
 	public function testNormalDestroy()
 	{
-		$this->_mockDataAccessService->expects($this->once())->method('destroy');
+		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')->will($this->returnValue(array()));
 		$this->_mockUrlCacheService->expects($this->once())->method('customDelete');
 		$obj['id']='test';
 		$PageService=new Rubedo\Collection\Pages();
@@ -60,8 +61,10 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 	}
 	public function testNormalUpdate(){
 		$this->_mockDataAccessService->expects($this->once())->method('update');
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')->will($this->returnValue(array()));
 		$this->_mockUrlCacheService->expects($this->once())->method('customDelete');
 		$obj['id'] = 'test';
+		$obj['site'] = 'test';
 		$obj['title'] = 'test';
 		$PageService=new Rubedo\Collection\Pages();
 		$PageService->update($obj);
