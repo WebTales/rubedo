@@ -236,4 +236,23 @@ class Groups extends AbstractCollection implements IGroups
 		
 		return count($orphansIdArray);
 	}
+	
+	public function clearUserFromGroups($userId){
+	    $options = array('safe'=>true,'multiple'=>true);
+	    $data = array('$unset'=>array('members.$'=>''));
+	    $updateCond = array('members'=>$userId);
+	    $result = $this->_dataService->customUpdate($data, $updateCond,$options);
+	}
+	
+	public function addUserToGroupList($userId,$groupIdList){
+	    $inArray = array();
+	    foreach ($groupIdList as $groupId){
+	        $inArray[] = $this->_dataService->getId($groupId);
+	    }
+
+	    $options = array('safe'=>true,'multiple'=>true);
+	    $data = array('$push'=>array('members'=>$userId));
+	    $updateCond = array('_id'=>array('$in'=>$inArray));
+	    $result = $this->_dataService->customUpdate($data, $updateCond,$options);
+	}
 }

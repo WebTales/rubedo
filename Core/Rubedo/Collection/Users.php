@@ -27,68 +27,84 @@ use Rubedo\Interfaces\Collection\IUsers, Rubedo\Services\Manager;
  */
 class Users extends AbstractCollection implements IUsers
 {
-	/**
-	 * Change the password of the user given by its id
-	 * Check version conflict
-	 * 
-	 * @param string $$password new password
-	 * @param int $version version number
-	 * @param string $userId id of the user to be changed
-	 */
-	public function changePassword($password,$version,$userId){
-		$hashService = \Rubedo\Services\Manager::getService('Hash');
-		
-		$salt = $hashService->generateRandomString();
-		
-		if (!empty($password) && !empty($userId) && !empty($version)) {
-			$password = $hashService->derivatePassword($password, $salt);
-			
-			$insertData['id'] = $userId;
-			$insertData['version'] = (int) $version;
-			$insertData['password'] = $password;
-			$insertData['salt'] = $salt;
-			
-			$result = $this->_dataService->update($insertData, array('safe' => true));
-						
-			if($result['success'] == true){
-				return true;
-			} else{
-				return false;
-			}
-		}else{
-			return false;
-		}
-	}
-	
-	public function getAdminUsers(){
-	    $adminGroup = Manager::getService('Groups')->findByName('admin');
-	    $userIdList = array();
-	    if(isset($adminGroup['members'])){
-	        foreach($adminGroup['members'] as $id){
-	            $userIdList[]= $id;
-	        } 
-	    }
-	    
-	    $filters = array();
-	    $filters[]= array('property'=>'id','value'=>$userIdList,'operator'=>'$in');
-	    return $this->getList($filters);
-	}
-	
-	/**
-	 * Set the collection name
-	 */
-	public function __construct(){
-		$this->_collectionName = 'Users';
-		parent::__construct();
-	}
-	
-	/**
-	 * ensure that no password field is sent outside of the service layer
-	 */
-	protected function _init(){
-		parent::_init();
-		$this->_dataService->addToExcludeFieldList(array('password'));
-	}
+
+    /**
+     * Change the password of the user given by its id
+     * Check version conflict
+     *
+     * @param string $$password
+     *            new password
+     * @param int $version
+     *            version number
+     * @param string $userId
+     *            id of the user to be changed
+     */
+    public function changePassword ($password, $version, $userId)
+    {
+        $hashService = \Rubedo\Services\Manager::getService('Hash');
+        
+        $salt = $hashService->generateRandomString();
+        
+        if (! empty($password) && ! empty($userId) && ! empty($version)) {
+            $password = $hashService->derivatePassword($password, $salt);
+            
+            $insertData['id'] = $userId;
+            $insertData['version'] = (int) $version;
+            $insertData['password'] = $password;
+            $insertData['salt'] = $salt;
+            
+            $result = $this->_dataService->update($insertData, array(
+                'safe' => true
+            ));
+            
+            if ($result['success'] == true) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function getAdminUsers ()
+    {
+        $adminGroup = Manager::getService('Groups')->findByName('admin');
+        $userIdList = array();
+        if (isset($adminGroup['members'])) {
+            foreach ($adminGroup['members'] as $id) {
+                $userIdList[] = $id;
+            }
+        }
+        
+        $filters = array();
+        $filters[] = array(
+            'property' => 'id',
+            'value' => $userIdList,
+            'operator' => '$in'
+        );
+        return $this->getList($filters);
+    }
+
+    /**
+     * Set the collection name
+     */
+    public function __construct ()
+    {
+        $this->_collectionName = 'Users';
+        parent::__construct();
+    }
+
+    /**
+     * ensure that no password field is sent outside of the service layer
+     */
+    protected function _init ()
+    {
+        parent::_init();
+        $this->_dataService->addToExcludeFieldList(array(
+            'password'
+        ));
+    }
 
     /**
      * Create an objet in the current collection
@@ -101,6 +117,10 @@ class Users extends AbstractCollection implements IUsers
      */
     public function create (array $obj, $options = array('safe'=>true))
     {
+        $groups = isset($obj['groups']) ? $obj['groups'] : array();
+        Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
+        $obj['groups'] = null;
+        
         $returnValue = parent::create($obj, $options);
         $obj = $returnValue['data'];
         
@@ -117,38 +137,67 @@ class Users extends AbstractCollection implements IUsers
         $personalPrefsService->create($personalPrefsObj);
         return $returnValue;
     }
-    
-    public function findById($contentId){
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Collection\AbstractCollection::findById()
+     */
+    public function findById ($contentId)
+    {
         $result = parent::findById($contentId);
         $result = $this->_addGroupsInfos($result);
         return $result;
     }
-    
-    protected function _addGroupsInfos($obj){
+
+    /**
+     * Add groups data from group members list.
+     *
+     * @param array $obj            
+     * @return array
+     */
+    protected function _addGroupsInfos ($obj)
+    {
         $groupList = Manager::getService('Groups')->getListByUserId($obj['id']);
         $obj['groups'] = array();
-        foreach ($groupList['data'] as $group){
+        foreach ($groupList['data'] as $group) {
             $obj['groups'][] = $group['id'];
         }
         
         return $obj;
     }
     
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::getList()
+    /*
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
     {
-        $list = parent::getList($filters, $sort , $start , $limit);
+        $list = parent::getList($filters, $sort, $start, $limit);
         
-        foreach ($list['data'] as &$value){
-           $value = $this->_addGroupsInfos($value);
+        foreach ($list['data'] as &$value) {
+            $value = $this->_addGroupsInfos($value);
         }
         return $list;
-        
     }
-
     
+    /*
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
+     */
+    public function update (array $obj, $options = array('safe'=>true,))
+    {
+        Manager::getService('Groups')->clearUserFromGroups($obj['id']);
+        $groups = isset($obj['groups']) ? $obj['groups'] : array();
+        Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
+        $obj['groups'] = null;
+        return parent::update($obj, $options);
+    }
     
-    
+    /*
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
+     */
+    public function destroy (array $obj, $options = array('safe'=>true,))
+    {
+        Manager::getService('Groups')->clearUserFromGroups($obj['id']);
+        return parent::destroy($obj, $options);
+    }
 }

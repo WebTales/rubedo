@@ -1176,7 +1176,6 @@ class DataAccess implements IDataAccess
     {
         $resultArray = $this->_collection->update($updateCond, $data, $options);
         if ($resultArray['ok'] == 1) {
-            
             $returnArray = array(
                 'success' => true
             );
