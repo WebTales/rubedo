@@ -189,7 +189,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
 		}
 		
-		// If there is no searchable field, the new type is not created
+		// Create new ES type if not empty
 		if (!empty($indexMapping)) {
 			// Create new type
 			$type = new \Elastica_Type($this->_content_index, $id);
@@ -199,7 +199,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 			
 			// Return indexed field list
 			return array_flip(array_keys($indexMapping));
+			
 		} else {
+			// If there is no searchable field, the new type is not created
 			return array();
 		}
     }
@@ -478,7 +480,7 @@ class DataIndex extends DataAbstract implements IDataIndex
          }
 		 
         
-		// Add target
+		// Add read workspace
 		$contentData['target']=array();
 		if (isset($data['target'])) {
 			foreach ($data['target'] as $key => $target) {
@@ -486,7 +488,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 			}
 		}
 		if (empty($contentData['target']))	{
-			$contentData['target'] = array('Global');
+			$contentData['target'][] = 'global';
 		}
 			
 		// Add document 
@@ -495,7 +497,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
 			$currentDocument->addFile('file', $contentData['attachment']);
 		}
-		
+
 		// Add content to content type index
 		$contentType->addDocument($currentDocument);
 
