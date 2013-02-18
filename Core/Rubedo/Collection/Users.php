@@ -117,4 +117,38 @@ class Users extends AbstractCollection implements IUsers
         $personalPrefsService->create($personalPrefsObj);
         return $returnValue;
     }
+    
+    public function findById($contentId){
+        $result = parent::findById($contentId);
+        $result = $this->_addGroupsInfos($result);
+        return $result;
+    }
+    
+    protected function _addGroupsInfos($obj){
+        $groupList = Manager::getService('Groups')->getListByUserId($obj['id']);
+        $obj['groups'] = array();
+        foreach ($groupList['data'] as $group){
+            $obj['groups'][] = $group['id'];
+        }
+        
+        return $obj;
+    }
+    
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::getList()
+     */
+    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    {
+        $list = parent::getList($filters, $sort , $start , $limit);
+        
+        foreach ($list['data'] as &$value){
+           $value = $this->_addGroupsInfos($value);
+        }
+        return $list;
+        
+    }
+
+    
+    
+    
 }
