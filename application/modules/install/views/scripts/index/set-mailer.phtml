@@ -1,22 +1,22 @@
-<h1>DataBase Configuration</h1>
+<h1>Mailer Configuration</h1>
 <br />
 <div id="alerts">
     <?php if($this->hasError){?>
     <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
     <?php }?>
     <?php if($this->isReady){?>
-    <div class="alert alert-success">Connection to DB is set</div>
+    <div class="alert alert-success">Connection to SMTP server is set</div>
     <?php }?>
 </div>
 <?php echo $this->form->render();?>
 <?php if($this->displayMode=='wizard'){?>
 <ul class="pager">
 	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'start-wizard','module'=>'install'),null,true);?>">&larr;
-			Intro</a></li>
+		href="<?php echo $this->url(array('action'=>'set-elastic-search','module'=>'install'),null,true);?>">&larr;
+			Configure Admin Account</a></li>
   <?php if($this->isReady){?>
   <li class="next"><a
-		href="<?php echo $this->url(array('action'=>'set-db-contents','module'=>'install'),null,true);?>">Initialize Database Contents &rarr;</a></li>
+		href="<?php echo $this->url(array('action'=>'set-domain-aliases','module'=>'install'),null,true);?>">Set Domain Aliases &rarr;</a></li>
   <?php }?>
 </ul>
 <?php }else{?>

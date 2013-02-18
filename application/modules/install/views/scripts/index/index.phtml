@@ -9,11 +9,11 @@
   <div class="tab-pane active" id="db">
       DB config:
       <pre><?php if(isset($this->options['datastream']["mongo"]))print_r($this->options['datastream']["mongo"]);?></pre>
-      <div class='pull-right'><a href="<?php echo $this->url(array('action'=>'set-db'));?>" class="btn btn-large btn-primary" type="button"><i class="icon-wrench"></i> Edit configuration</a></div>
+      <div class='pull-right'><a href="<?php echo $this->url(array('action'=>'set-db','module'=>'install'),null,true);?>" class="btn btn-large btn-primary" type="button"><i class="icon-wrench"></i> Edit configuration</a></div>
   </div>
   <div class="tab-pane" id="admin">
   Admin Account Config
-        <div class='pull-right'><a href="<?php echo $this->url(array('action'=>'admin-config'));?>" class="btn btn-large btn-primary" type="button"><i class="icon-wrench icon-white"></i> Edit configuration</a></div>
+        <div class='pull-right'><a href="<?php echo $this->url(array('action'=>'admin-config','module'=>'install'),null,true);?>" class="btn btn-large btn-primary" type="button"><i class="icon-wrench icon-white"></i> Edit configuration</a></div>
   
   </div>
   <div class="tab-pane" id="messages">...</div>

@@ -25,17 +25,17 @@
 <?php if($this->displayMode=='wizard'){?>
 <ul class="pager">
 	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'set-db-contents'));?>">&larr;
+		href="<?php echo $this->url(array('action'=>'set-db-contents','module'=>'install'),null,true);?>">&larr;
 			Initialize Database Contents</a></li>
   <?php if($this->isReady){?>
   <li class="next"><a
-		href="<?php echo $this->url(array('action'=>'set-elastic-search'));?>">Configure
+		href="<?php echo $this->url(array('action'=>'set-elastic-search','module'=>'install'),null,true);?>">Configure
 			Elastic Search &rarr;</a></li>
   <?php }?>
 </ul>
 <?php }else{?>
 <div class='pull-right'>
-	<a href="<?php echo $this->url(array('action'=>'index'));?>"
+	<a href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>"
 		class="btn btn-large btn-primary" type="button"><i class="icon-home"></i>
 		Return</a>
 </div>

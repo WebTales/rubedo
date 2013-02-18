@@ -50,12 +50,9 @@ class Install_IndexController extends Zend_Controller_Action
     public function indexAction ()
     {
         if (! $this->_isConfigWritable()) {
-            throw new Rubedo\Exceptions\User(
-                    'Local config file ' . $this->_localConfigFile .
-                             ' should be writable');
+            throw new Rubedo\Exceptions\User('Local config file ' . $this->_localConfigFile . ' should be writable');
         }
-        if (! isset($this->_localConfig['installed']) ||
-                 $this->_localConfig['installed']['status'] != 'finished') {
+        if (! isset($this->_localConfig['installed']) || $this->_localConfig['installed']['status'] != 'finished') {
             if (! isset($this->_localConfig['installed']['action'])) {
                 $this->_localConfig['installed']['action'] = 'start-wizard';
             }
@@ -67,8 +64,8 @@ class Install_IndexController extends Zend_Controller_Action
     public function startWizardAction ()
     {
         $this->_localConfig['installed'] = array(
-                'status' => 'begin',
-                'action' => 'start-wizard'
+            'status' => 'begin',
+            'action' => 'start-wizard'
         );
         
         $this->_saveLocalConfig();
@@ -92,8 +89,7 @@ class Install_IndexController extends Zend_Controller_Action
         $mongoAccess = new DataAccess();
         
         try {
-            if ($this->getRequest()->isPost() &&
-                     $dbForm->isValid($this->getAllParams())) {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
                 $mongo = $this->_buildConnectionString($params);
                 $dbName = $params['db'];
@@ -119,6 +115,90 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
+    /**
+     * Check if a valid connection to MongoDB can be written in local config
+     */
+    public function setElasticSearchAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-elastic-search';
+        }
+        
+        $esOptions = isset($this->_applicationOptions["searchstream"]["elastic"]) ? $this->_applicationOptions["searchstream"]["elastic"] : array();
+        
+        $dbForm = Install_Model_EsConfigForm::getForm($esOptions);
+        
+        try {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+                $params = $dbForm->getValues();
+                $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+                $query->init($params['host'], $params['port']);
+            } else {
+                $params = $this->_applicationOptions["searchstream"]["elastic"];
+                $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+                $query->init();
+            }
+            $connectionValid = true;
+        } catch (Exception $exception) {
+            $connectionValid = false;
+        }
+        if ($connectionValid) {
+            $this->view->isReady = true;
+            $this->_localConfig["searchstream"]["elastic"] = $params;
+        } else {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'Rubedo can\'t connect itself to specified ES';
+        }
+        
+        $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+
+    public function setMailerAction ()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'set-mailer';
+        }
+        
+        $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array();
+        
+        $dbForm = Install_Model_MailConfigForm::getForm($mailerOptions);
+        
+        try {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+                $params = $dbForm->getValues();
+            } else {
+                $params = $this->_applicationOptions["swiftmail"]["smtp"];
+            }
+            $transport = \Swift_SmtpTransport::newInstance($params['server'], $params['port'], $params['ssl'] ? 'ssl' : null);
+            if (isset($params['username'])) {
+                $transport->setUsername($params['username'])->setPassword($params['password']);
+            }
+            $transport->setTimeout(3);
+            $transport->start();
+            $transport->stop();
+            $connectionValid = true;
+        } catch (Exception $exception) {
+            $connectionValid = false;
+        }
+        if ($connectionValid) {
+            $this->view->isReady = true;
+            $this->_localConfig["swiftmail"]["smtp"] = $params;
+        } else {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'Rubedo can\'t connect to SMTP server';
+        }
+        
+        $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+
     public function setDbContentsAction ()
     {
         $this->view->displayMode = 'regular';
@@ -127,15 +207,24 @@ class Install_IndexController extends Zend_Controller_Action
             $this->_localConfig['installed']['action'] = 'set-db-contents';
         }
         
-        if($this->getParam('doEnsureIndex',false)){
-            
+        if ($this->getParam('doEnsureIndex', false)) {
+            $this->view->isIndexed = $this->_doEnsureIndexes();
+        } else {
+            $this->view->shouldIndex = true;
         }
         
-        if($this->getParam('doInsertGroups',false)){
-        
+        if ($this->getParam('initContents', false)) {
+            $this->view->isContentsInitialized = $this->_doInsertContents();
+        } else {
+            $this->view->shouldInitialize = true;
         }
         
-        $this->view->isReady = true;
+        if ($this->getParam('doInsertGroups', false)) {
+            $this->view->groupCreated = $this->_docreateDefaultsGroup();
+        }
+        if ($this->_isDefaultGroupsExists()) {
+            $this->view->isReady = true;
+        }
         
         $this->_saveLocalConfig();
     }
@@ -150,14 +239,12 @@ class Install_IndexController extends Zend_Controller_Action
         
         $form = Install_Model_AdminConfigForm::getForm();
         
-        if ($this->getRequest()->isPost() &&
-                 $form->isValid($this->getAllParams())) {
+        if ($this->getRequest()->isPost() && $form->isValid($this->getAllParams())) {
             $params = $form->getValues();
             $hashService = \Rubedo\Services\Manager::getService('Hash');
             
             $params['salt'] = $hashService->generateRandomString();
-            $params['password'] = $hashService->derivatePassword(
-                    $params['password'], $params['salt']);
+            $params['password'] = $hashService->derivatePassword($params['password'], $params['salt']);
             
             $userService = Manager::getService('MongoDataAccess');
             $userService->init('Users');
@@ -173,7 +260,7 @@ class Install_IndexController extends Zend_Controller_Action
                 $groupService = Manager::getService('MongoDataAccess');
                 $groupService->init('Groups');
                 $adminGroup = $groupService->findOne(array(
-                        'name' => 'admin'
+                    'name' => 'admin'
                 ));
                 $adminGroup['members'][] = $userId;
                 $groupService->update($adminGroup);
@@ -232,20 +319,102 @@ class Install_IndexController extends Zend_Controller_Action
     protected function _loadLocalConfig ()
     {
         if (is_file($this->_localConfigFile)) {
-            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, 
-                    array(
-                            'allowModifications' => true
-                    ));
+            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, array(
+                'allowModifications' => true
+            ));
         } elseif (is_file(APPLICATION_PATH . '/configs/local.ini')) {
-            $localConfig = new Zend_Config_Ini(
-                    APPLICATION_PATH . '/configs/local.ini', null, 
-                    array(
-                            'allowModifications' => true
-                    ));
+            $localConfig = new Zend_Config_Ini(APPLICATION_PATH . '/configs/local.ini', null, array(
+                'allowModifications' => true
+            ));
         } else {
             $localConfig = new Zend_Config(array(), true);
         }
         $this->_localConfig = $localConfig->toArray();
+    }
+
+    protected function _doEnsureIndexes ()
+    {
+        $this->view->hasError = true;
+        $this->view->errorMsgs = 'failed to apply indexes';
+        return false;
+    }
+
+    protected function _docreateDefaultsGroup ()
+    {
+        if ($this->_isDefaultGroupsExists()) {
+            return;
+        }
+        $success = true;
+        $groupsJsonPath = APPLICATION_PATH . '/../data/default/groups';
+        $groupsJson = new DirectoryIterator($groupsJsonPath);
+        foreach ($groupsJson as $file) {
+            if ($file->isDot() || $file->isDir()) {
+                continue;
+            }
+            if ($file->getExtension() == 'json') {
+                $itemJson = file_get_contents($file->getPathname());
+                $item = Zend_Json::decode($itemJson);
+                $result = Manager::getService('Groups')->create($item);
+                $success = $result['success'] && $success;
+            }
+        }
+        if (! $success) {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'failed to create default groups';
+        } else {
+            $this->view->isGroupsCreated = true;
+        }
+        
+        return $success;
+    }
+
+    protected function _isDefaultGroupsExists ()
+    {
+        $adminGroup = Manager::getService('Groups')->findByName('admin');
+        $publicGroup = Manager::getService('Groups')->findByName('public');
+        $result = ! is_null($adminGroup) && ! is_null($publicGroup);
+        $this->view->isDefaultGroupsExists = $result;
+        return $result;
+    }
+
+    protected function _doInsertContents ()
+    {
+        $success = true;
+        $contentPath = APPLICATION_PATH . '/../data/default/';
+        $contentIterator = new DirectoryIterator($contentPath);
+        foreach ($contentIterator as $directory) {
+            if ($directory->isDot() || ! $directory->isDir()) {
+                continue;
+            }
+            if (in_array($directory->getFilename(), array(
+                'groups',
+                'site'
+            ))) {
+                continue;
+            }
+            $collection = ucfirst($directory->getFilename());
+            $itemsJson = new DirectoryIterator($contentPath . '/' . $directory->getFilename());
+            foreach ($itemsJson as $file) {
+                if ($file->isDot() || $file->isDir()) {
+                    continue;
+                }
+                if ($file->getExtension() == 'json') {
+                    $itemJson = file_get_contents($file->getPathname());
+                    $item = Zend_Json::decode($itemJson);
+                    $result = Manager::getService($collection)->create($item);
+                    $success = $result['success'] && $success;
+                }
+            }
+        }
+        
+        if (! $success) {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'failed to initialize contents';
+        } else {
+            $this->view->isContentInitialized = true;
+        }
+        
+        return $success;
     }
 }
 
