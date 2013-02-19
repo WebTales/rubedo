@@ -11,13 +11,11 @@
 <meta name="author" content="WebTales">
 {% endblock %} {% block pageStyle %}
 <!-- Le styles -->
-<link href="/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-<link href="bootstrap-gallery/css/bootstrap-image-gallery.min.css" rel="stylesheet">
-<link href="video-js/video-js.min.css" rel="stylesheet" type="text/css">
-<link href="/css/rubedo.css" rel="stylesheet">
-<!--<link rel="stylesheet" type="text/css" href="/extjs-4.1.1/resources/css/ext-all.css">-->
-<link href="/colorbox/colorbox.css" rel="stylesheet">
+<link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="{{baseUrl}}/bootstrap-gallery/css/bootstrap-image-gallery.min.css" rel="stylesheet">
+<link href="{{baseUrl}}/video-js/video-js.min.css" rel="stylesheet" type="text/css">
+<link href="{{baseUrl}}/colorbox/colorbox.css" rel="stylesheet">
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -115,19 +113,19 @@
 	<!-- Le javascript
 		================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="/components/jquery/jquery/jquery-1.9.1.min.js"></script>
-	<script src="/components/twitter/bootstrap/js/bootstrap.min.js"></script>
-	<script src="/bootstrap-gallery/js/load-image.min.js"></script>
-	<script src="/bootstrap-gallery/js/bootstrap-image-gallery.js"></script>
-  	<script src="/video-js/video.min.js"></script>
+	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.9.1.min.js"></script>
+	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
+	<script src="{{baseUrl}}/bootstrap-gallery/js/load-image.min.js"></script>
+	<script src="{{baseUrl}}/bootstrap-gallery/js/bootstrap-image-gallery.js"></script>
+  	<script src="{{baseUrl}}/video-js/video.min.js"></script>
   	<script>
-    	_V_.options.flash.swf = "/video-js/video-js.swf";
+    	_V_.options.flash.swf = "{{baseUrl}}/video-js/video-js.swf";
   	</script>
 	
 	{% for file in js %}
 	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
 	{% endfor %}
-	<script src="/colorbox/jquery.colorbox.js"></script>
+	<script src="{{baseUrl}}/colorbox/jquery.colorbox.js"></script>
 	<script>
             jQuery(document).ready(function () {
                 jQuery('a.flk_gallery').colorbox({transition:'none',current:	"image {current} parmi {total}",maxWidth:'80%',maxHeight:'80%',opacity:0.5 ,rel:'flk_gallery'});

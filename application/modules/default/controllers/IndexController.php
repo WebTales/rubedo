@@ -124,12 +124,15 @@ class IndexController extends Zend_Controller_Action
         
         // Load the CSS files
         
+        $this->_servicePage->appendCss('/templates/'.$this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
+        
         // load the javaScripts files
         if ($isLoggedIn) {
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
+            $this->_servicePage->appendJs('/templates/'.$this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
         }
         
-        $this->_servicePage->appendJs('/js/scripts.js');
+        //$this->_servicePage->appendJs('/js/scripts.js');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
         
