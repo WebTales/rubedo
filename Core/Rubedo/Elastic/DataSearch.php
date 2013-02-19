@@ -258,6 +258,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 			} 
 						
 			// add sort
+			if ($params['orderby'] == 'text') {
+				$params['orderby'] = 'text_not_analyzed';
+			}
 			$elasticaQuery->setSort(array($params['orderby'] => $params['orderbyDirection']));
 
 			// run query
