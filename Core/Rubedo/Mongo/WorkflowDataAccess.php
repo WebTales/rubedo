@@ -86,11 +86,6 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $this->clearFilter();
 
             foreach ($filterArray as $key => $value) {
-                if ($key == '_id') {
-                	$this->addFilter(array('id' => (string)$value));
-                    continue;
-                }
-
                 if (in_array($key, $this->_metaDataFields)) {
                     $this->addFilter(array($key => $value));
                     continue;
