@@ -4,7 +4,7 @@
     	"webtales/rubedo-backoffice-ui" : "dev-master",
         "jquery/jquery" : "1.9.1",
         "sensha/extjs" : "4.1.1a",
-        "ckeditor/ckeditor" : "4.0.1",
+        "webtales/ckeditor" : "dev-master",
         "jackmoore/colorbox" : "1.4.2",
         "twitter/bootstrap" : "v2.3.0",
         "zencoder/video-js" : "3.2.0"
@@ -84,12 +84,13 @@
         	}
         
     	},
-    	
-    	
-    	
     	{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
+		},
+		{
+			"type": "vcs",
+			"url": "git://github.com/WebTales/ckeditor.git"
 		}
 	],
     "minimum-stability": "stable",
