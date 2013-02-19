@@ -1,8 +1,14 @@
+{% extends "root/block.html.twig" %} 
+
+{% block mainContent %} 	  	
+
 <ul class="breadcrumb">
-	{% for lien in liens %}
-	<li {% if lien.current %}class="active"{% endif %}>
-		<a href="/{{ lien.controller }}">{{ lien.libelle }}</a>
-		{% if loop.index < loop.length %}<span class="divider">/</span>{% endif %}
-	</li>
-	{% endfor %}
+
+		{% for page in rootline %} 
+		<li>
+		<a href="{{url({'pageId':page.id})}}"> {{ page.text }}
+		</a> <span class="divider">/</span></li>
+		 {% endfor %}
+        <li class="active">{{ title }}</li>
 </ul>
+{% endblock %}
