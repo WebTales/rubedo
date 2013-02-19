@@ -357,6 +357,7 @@ class IndexController extends Zend_Controller_Action
         
         switch ($block['bType']) {
             case 'Bloc de navigation':
+            case 'navigation':
                 $controller = 'nav-bar';
                 $params['currentPage'] = $this->_pageId;
                 $params['rootline'] = $this->_rootlineArray;
@@ -365,34 +366,42 @@ class IndexController extends Zend_Controller_Action
                 
                 break;
             case 'Carrousel':
+            case 'carrousel':
                 $controller = 'carrousel';
                 break;
             case 'Gallerie Flickr':
+            case 'flickrGallery' :
                 $controller = 'flickr-gallery';
                 break;
             case 'Liste de Contenus':
+            case 'contentList':
                 $controller = 'content-list';
                 
                 break;
             case 'Pied de page':
+            case 'footer':
                 $controller = 'footer';
                 break;
             case 'Résultat de recherche':
+            case 'searchResults':
                 $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
                 $controller = 'search';
                 
                 break;
             case 'Fil d\'Ariane':
+            case 'breadcrumb':
                 $params['currentPage'] = $this->_pageId;
                 $params['rootline'] = $this->_rootlineArray;
                 $controller = 'breadcrumbs';
                 break;
             case 'Twig':
+            case 'twig':
                 $controller = 'twig';
                 $params['template'] = $block['configBloc']['fileName'];
                 
                 break;
             case 'Détail de contenu':
+            case 'contentDetail':
                 $controller = 'content-single';
                 $contentIdParam = $this->getRequest()->getParam('content-id');
                 $contentId = $contentIdParam ? $contentIdParam : null;
@@ -404,15 +413,19 @@ class IndexController extends Zend_Controller_Action
                 
                 break;
             case 'Média externe':
+            case 'externalMedia':
                 $controller = 'embeddedmedia';
                 break;
             case 'Image':
+            case 'image':
                 $controller = 'image';
                 break;
 			case 'Audio':
+			case 'audio':
                 $controller = 'audio';
                 break;
 			case 'Video':
+			case 'video':
                 $controller = 'video';
                 break;
             case 'Texte':
@@ -422,12 +435,15 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'gallery';
                 break;
             case 'Texte Riche':
+            case 'richText':
                 $controller = 'richtext';
                 break;
             case 'Menu':
+            case 'menu':
                 $controller = 'menu';
                 break;
             case 'Controleur Zend':
+            case 'zendController':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
                 $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
