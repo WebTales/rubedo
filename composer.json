@@ -16,7 +16,8 @@
         "jquery/jquery" : "1.9.1",
         "sensha/extjs" : "4.1.1a",
         "ckeditor/ckeditor" : "4.0.1",
-        "jackmoore/colorbox" : "1.4.2"
+        "jackmoore/colorbox" : "1.4.2",
+        "twitter/bootstrap" : "v2.3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
@@ -81,7 +82,21 @@
             	}
         	}
         
+    	},
+    	{
+        "type": "package",
+        "package": {
+            "name": "twitter/bootstrap",
+            "version": "v2.3.0",
+            "dist": {
+                "url": "http://twitter.github.com/bootstrap/assets/bootstrap.zip",
+                "type": "zip"
+            	}
+        	}
+        
     	}
+    	
+    	
     	
     	
     	
