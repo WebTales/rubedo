@@ -538,7 +538,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         } else {
         	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 			
-			if(count(array_diff($content['target'], $readWorkspaces))>0 && $readWorkspaces[0]!="all"){
+			if(count(array_intersect($content['target'], $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
 				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
 			}
         }
