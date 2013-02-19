@@ -87,6 +87,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// Filter on read Workspaces		
 			
 			$readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+
 			$workspacesFilter = new \Elastica_Filter_Or();
 			
 			if (!in_array('all',$readWorkspaceArray)) {
@@ -113,7 +114,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 			// filter on query
 			if ($params['query']!='') {
 				$filters['query']=$params['query'];
-				$setFilter = true;
 			}
 			
 			// filter on content type
