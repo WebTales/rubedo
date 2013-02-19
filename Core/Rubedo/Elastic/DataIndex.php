@@ -437,8 +437,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentData['objectType'] = 'content';
 		$contentData['contentType'] = $typeId;
 		$contentData['writeWorkspace'] = $data['writeWorkspace'];
-		$damData['text'] =  (string) $data['title'];
-		$damData['text_not_analyzed'] =  (string) $data['title'];
+		$damData['text'] =  (string) $data['text'];
+		$damData['text_not_analyzed'] =  (string) $data['text'];
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		} else {
