@@ -56,6 +56,8 @@ class Backoffice_IndexController extends Zend_Controller_Action
 		
 		if(isset($extjsOptions['network']) && $extjsOptions['network']=='cdn'){
 		    $appHtml = str_replace('extjs-4.1.0/', 'http://cdn.sencha.com/ext-4.1.0-gpl/', $appHtml);
+		}else{
+		    $appHtml = str_replace('extjs-4.1.0/', $this->view->baseUrl().'/components/sensha/extjs/', $appHtml);
 		}
 		
 		
@@ -66,22 +68,6 @@ class Backoffice_IndexController extends Zend_Controller_Action
             ->setNoRender();
         $this->getResponse()
             ->setBody($appHtml);
-    }
-
-    /**
-     * Return the Ext/Js main JS
-     */
-    public function appjsAction ()
-    {
-        $this->getHelper('Layout')
-            ->disableLayout();
-        $this->getHelper('ViewRenderer')
-            ->setNoRender();
-        $this->getResponse()
-            ->setHeader('Content-Type', "application/javascript");
-        
-        $this->getResponse()
-            ->setBody(file_get_contents(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/app.js'));
     }
 }
 

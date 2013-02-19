@@ -9,7 +9,6 @@ RewriteRule ^.*$ - [NC,L]
 RewriteRule ^/$ /index.php [L]
 
 RewriteRule ^backoffice(/)?$ /index.php [L]
-RewriteRule ^backoffice/app.js /index.php [L]
 RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [L]
 
 RewriteRule !\.(js|ico|txt|gif|jpg|png|css)$ /index.php [L]
