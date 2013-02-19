@@ -154,7 +154,12 @@ class CurrentUser implements ICurrentUser
     public function getMainGroup ()
     {
         $user = $this->getCurrentUser();
-        return $user['defaultGroup'];
+        if(isset($user['defaultGroup'])){
+            return $user['defaultGroup'];
+        }else{
+            return null;
+        }
+        
     }
 
     /**
