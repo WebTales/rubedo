@@ -6,7 +6,13 @@
 	<!-- process nested rows & blocks -->
 	{% if blocks %}
 		{% for block in blocks %}
-			{% include [block.template,'root/block.html.twig'] with block.data %}
+		    {% if not block.data %}
+		    {% include [block.template,'root/block.html.twig'] %}
+		    {% else %}
+		    {% include [block.template,'root/block.html.twig'] with block.data %}
+		    {% endif %}
+			
+			
 		{% endfor %}
 	{% endif %}
 	{% if rows %}

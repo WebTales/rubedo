@@ -1,0 +1,30 @@
+{% extends "root/block.html.twig" %} {% block mainContent %}
+
+<div class="block clearfix"
+	style="border-bottom: 1px solid #E3E3E8; margin-bottom: 10px; padding-bottom: 2px;">
+	{% if content.image %} <a href="{{ displaySingleUrl(content.id) }}"><img
+		alt="" class="imageLeft"
+		src="/dam?media-id={{content.image}}&width=80&height=80&mode=boxed"
+		style="max-height: 80px; max-width: 80px;" /></a> {% endif %}
+	<header class="entry-header">
+		<h2 class="post-title-small">
+			<a href='{{ displaySingleUrl(content.id) }}' title='Actu'>{{content.title}}</a>
+		</h2>
+	</header>
+	<div class="entry-content editable" id="{{ content.id }}_summary">
+		{{content.summary|cleanHtml}}</div>
+	<div class="entry-info">{% if content.dateBegin %} {% if
+		content.dateEnd%} Du {{content.dateBegin}} au {{content.dateEnd}} {%
+		else %} A partir du {{content.dateBegin}} {% endif %} {% endif %} {%
+		if content.Location %} {{content.Location}} {% endif %} {% if
+		content.date %} Le {{content.date}} {% endif %}</div>
+	<div class="btn btn-small pull-right">
+		<a href="{{ displaySingleUrl(content.id) }}">En savoir plus <span
+			class="icon-forward"></span></a>
+
+	</div>
+
+
+</div>
+{% endblock %}
+
