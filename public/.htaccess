@@ -1,0 +1,15 @@
+RewriteEngine On
+# The following rule tells Apache that if the requested filename
+# exists, simply serve it.
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+
+RewriteRule ^/$ /index.php [L]
+
+RewriteRule ^backoffice(/)?$ /index.php [L]
+RewriteRule ^backoffice/app.js /index.php [L]
+RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [L]
+
+RewriteRule !\.(js|ico|txt|gif|jpg|png|css)$ /index.php [L]
