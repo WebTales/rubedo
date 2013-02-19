@@ -35,8 +35,8 @@ CKEDITOR.on( 'instanceCreated', function( event ) {
 	} else {
 		editor.on( 'configLoaded', function() {
 		// set file and media explorer path
-		editor.config.filebrowserBrowseUrl = '/backoffice/resources/extFinder/app.html?CKEditor=CKEField-1132-inputEl&CKEditorFuncNum=2&langCode=fr';
-		editor.config.filebrowserUploadUrl = '/backoffice/resources/extFinder/app.html?CKEditor=CKEField-1132-inputEl&CKEditorFuncNum=2&langCode=fr';
+			editor.config.filebrowserImageBrowseUrl="/backoffice/resources/extFinder/app.html?type=Image";
+			editor.config.filebrowserImageUploadUrl="/backoffice/resources/extFinder/app.html?type=Image";
 		});		
 	}
 });
