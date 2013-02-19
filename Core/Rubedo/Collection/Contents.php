@@ -532,8 +532,15 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $content['writeWorkspace'] = $mainWorkspace['id'];
 	    }
-	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() ){
-	        $content['target'] = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
+	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() || !is_array($content['target'])){
+	    	$mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+	        $content['target'] = array($mainWorkspace['id']);
+        } else {
+        	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
+			
+			if(count(array_diff($content['target'], $readWorkspaces))>0 && $readWorkspaces[0]!="all"){
+				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
+			}
         }
         return $content;
     }
