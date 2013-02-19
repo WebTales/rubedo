@@ -94,7 +94,7 @@ abstract class AbstractCollection implements IAbstractCollection
                             )
                         ));
                     } elseif (isset($value["operator"])) {
-                    	if($value['operator']=='$nin' && $value['value']==array()){
+                    	if($value['value']==array() || $value['value']=="" || !isset($value['value'])){
                     		continue;
                     	}
 						
