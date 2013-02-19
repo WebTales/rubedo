@@ -37,8 +37,8 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getContentTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','summary','type','author','target');
-    	
+		$searchableFields=array('lastUpdateTime','text','text_not_analysed','summary','type','author','target');
+
 		// Get content type config by id
 		$contentTypeConfig = \Rubedo\Services\Manager::getService('ContentTypes')->findById($id);
 
@@ -63,7 +63,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getDamTypeStructure ($id) {
     	
 		$returnArray=array();
-		$searchableFields=array('lastUpdateTime','text','type','author','fileSize','target');
+		$searchableFields=array('lastUpdateTime','text','text_not_analysed','type','author','fileSize','target');
     	
 		// Get content type config by id
 		$damTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
@@ -177,6 +177,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add systems metadata	
 		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["text_not_analyzed"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["objectType"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
@@ -303,6 +304,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add systems metadata
 		$indexMapping["lastUpdateTime"] = array('type' => 'date', 'store' => 'yes');
 		$indexMapping["text"] = array('type' => 'string', 'store' => 'yes');
+		$indexMapping["text_not_analyzed"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["objectType"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["summary"] = array('type' => 'string', 'store' => 'yes');
 		$indexMapping["author"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
@@ -435,6 +437,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentData['objectType'] = 'content';
 		$contentData['contentType'] = $typeId;
 		$contentData['writeWorkspace'] = $data['writeWorkspace'];
+		$damData['text'] =  (string) $data['title'];
+		$damData['text_not_analyzed'] =  (string) $data['title'];
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		} else {
@@ -607,6 +611,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$damData['objectType'] = 'dam';
 		$damData['writeWorkspace'] = $data['writeWorkspace'];
 		$damData['text'] =  (string) $data['title'];
+		$damData['text_not_analyzed'] =  (string) $data['title'];
 		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
 		$damData['fileSize'] = $fileSize;
 		if (isset($data['lastUpdateTime'])) {
