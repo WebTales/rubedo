@@ -126,7 +126,7 @@ class IndexController extends Zend_Controller_Action
         
         // load the javaScripts files
         if ($isLoggedIn) {
-            $this->_servicePage->appendJs('/ckeditor-dev/ckeditor.js');
+            $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
         }
         
         $this->_servicePage->appendJs('/js/scripts.js');
