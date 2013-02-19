@@ -12,12 +12,7 @@
         "webtales/rubedo-backoffice-ui" : "dev-master",
         "bombayworks/zendframework1": "v1.12.1",
         "alb/oembed": "1.0.0",
-        "swiftmailer/swiftmailer": "v4.3.0",
-        "jquery/jquery" : "1.9.1",
-        "sensha/extjs" : "4.1.1a",
-        "ckeditor/ckeditor" : "4.0.1",
-        "jackmoore/colorbox" : "1.4.2",
-        "twitter/bootstrap" : "v2.3.0"
+        "swiftmailer/swiftmailer": "v4.3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
@@ -35,71 +30,7 @@
 		{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedoData.git"
-		},
-		{
-        "type": "package",
-        "package": {
-	            "name": "jquery/jquery",
-	            "version": "1.9.1",
-	            "dist": {
-	                "url": "http://code.jquery.com/jquery-1.9.1.min.js",
-	                "type": "file"
-	            }
-	        }
-	    },        
-        {
-        "type": "package",
-        "package": {
-            "name": "sensha/extjs",
-            "version": "4.1.1a",
-            "dist": {
-                "url": "http://cdn.sencha.com/ext-4.1.1a-gpl.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
-        "type": "package",
-        "package": {
-            "name": "ckeditor/ckeditor",
-            "version": "4.0.1",
-            "dist": {
-                "url": "http://download.cksource.com/CKEditor/CKEditor/CKEditor%204.0.1/ckeditor_4.0.1_full.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
-        "type": "package",
-        "package": {
-            "name": "jackmoore/colorbox",
-            "version": "1.4.2",
-            "dist": {
-                "url": "https://github.com/jackmoore/colorbox/archive/1.4.2.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
-        "type": "package",
-        "package": {
-            "name": "twitter/bootstrap",
-            "version": "v2.3.0",
-            "dist": {
-                "url": "http://twitter.github.com/bootstrap/assets/bootstrap.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	}
-    	
-    	
-    	
-    	
-    	
+		}
 	],
     "minimum-stability": "stable",
     "config": {
