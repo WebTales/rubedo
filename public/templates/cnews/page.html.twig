@@ -15,25 +15,25 @@
 {% block pageStyle %}
 <!-- Styles -->
 <link rel='stylesheet' id='prettyPhoto-css'
-	href='{{baseUrl}}/cnews/css/prettyPhoto.css?ver=3.4.2' type='text/css' media='all' />
+	href='{{baseUrl}}/templates/cnews/css/prettyPhoto.css?ver=3.4.2' type='text/css' media='all' />
 <link rel='stylesheet' id='font-awesome-css'
-	href='{{baseUrl}}/cnews/css/font-awesome.css?ver=3.4.2' type='text/css'
+	href='{{baseUrl}}/templates/cnews/css/font-awesome.css?ver=3.4.2' type='text/css'
 	media='all' />
 <link rel='stylesheet' id='nivo-slider-css'
-	href='{{baseUrl}}/cnews/css/nivo-slider.css?ver=3.4.2' type='text/css' media='all' />
+	href='{{baseUrl}}/templates/cnews/css/nivo-slider.css?ver=3.4.2' type='text/css' media='all' />
 <link rel='stylesheet' id='vegas-css'
-	href='{{baseUrl}}/cnews/css/jquery.vegas.css?ver=3.4.2' type='text/css'
+	href='{{baseUrl}}/templates/cnews/css/jquery.vegas.css?ver=3.4.2' type='text/css'
 	media='all' />
 <link rel='stylesheet' id='mediaelementplayer-css'
-	href='{{baseUrl}}/cnews/js/build/mediaelementplayer.min.css?ver=3.4.2'
+	href='{{baseUrl}}/templates/cnews/js/build/mediaelementplayer.min.css?ver=3.4.2'
 	type='text/css' media='all' />
 <link rel='stylesheet' id='google-code-prettify-css'
-	href='{{baseUrl}}/cnews/js/google-code-prettify/prettify.css?ver=3.4.2'
+	href='{{baseUrl}}/templates/cnews/js/google-code-prettify/prettify.css?ver=3.4.2'
 	type='text/css' media='all' />
 <link rel='stylesheet' id='csc-style-css'
-	href='{{baseUrl}}/cnews/css/csc-style.css?ver=3.4.2' type='text/css' media='all' />
+	href='{{baseUrl}}/templates/cnews/css/csc-style.css?ver=3.4.2' type='text/css' media='all' />
 <link rel="stylesheet" type="text/css" media="all"
-	href="{{baseUrl}}/cnews/style.css" />
+	href="{{baseUrl}}/templates/cnews/css/style.css" />
 <link href="{{baseUrl}}/colorbox/colorbox.css" rel="stylesheet">
 
 {% for sheet in css %}
@@ -60,8 +60,8 @@
 	rel='stylesheet' type='text/css'>
 
 <!-- js mandatory in the header section -->
-<script type='text/javascript' src='/js/jquery/jquery.js?ver=1.7.2'></script>
-<script type='text/javascript' src='/js/comment-reply.js?ver=3.4.2'></script>
+<script type='text/javascript' src='{{baseUrl}}/templates/cnews/js/jquery/jquery.js?ver=1.7.2'></script>
+<script type='text/javascript' src='{{baseUrl}}/templates/cnews/js/comment-reply.js?ver=3.4.2'></script>
 
 </head>
 
@@ -118,33 +118,33 @@
 
 	<!-- JS files -->
 
-	<script type='text/javascript' src='{{baseUrl}}/cnews/js/home.js'></script>
+	<script type='text/javascript' src='{{baseUrl}}/templates/cnews/js/home.js'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.ui.totop.js?ver=1.1'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.ui.totop.js?ver=1.1'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.prettyPhoto.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.prettyPhoto.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.easing.1.3.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.easing.1.3.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.cycle.all.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.cycle.all.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/google-code-prettify/prettify.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/google-code-prettify/prettify.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/bootstrap.min.js?ver=3.4.2'></script>
-	<script type='text/javascript' src='{{baseUrl}}/cnews/js/application.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/bootstrap.min.js?ver=3.4.2'></script>
+	<script type='text/javascript' src='{{baseUrl}}/templates/cnews/js/application.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/build/mediaelement-and-player.min.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/build/mediaelement-and-player.min.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.isotope.min.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.isotope.min.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.nivo.slider.pack.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.nivo.slider.pack.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.flexslider-min.js?ver=3.4.2'></script>
-	<script type='text/javascript' src='{{baseUrl}}/cnews/js/superfish.js?ver=3.4.2'></script>
-	<script type='text/javascript' src='{{baseUrl}}/cnews/js/modernizr.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.flexslider-min.js?ver=3.4.2'></script>
+	<script type='text/javascript' src='{{baseUrl}}/templates/cnews/js/superfish.js?ver=3.4.2'></script>
+	<script type='text/javascript' src='{{baseUrl}}/templates/cnews/js/modernizr.js?ver=3.4.2'></script>
 	<script type='text/javascript'
-		src='{{baseUrl}}/cnews/js/jquery.vegas.js?ver=3.4.2'></script>
-	<script type='text/javascript' src='{{baseUrl}}/cnews/js/custom.js?ver=3.4.2'></script>
+		src='{{baseUrl}}/templates/cnews/js/jquery.vegas.js?ver=3.4.2'></script>
+	<script type='text/javascript' src='{{baseUrl}}/templates/cnews/js/custom.js?ver=3.4.2'></script>
 
 	{% for file in js %}
 	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
