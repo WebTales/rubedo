@@ -26,12 +26,11 @@
 <?php
 
 $this->headLink()
-    ->prependStylesheet("/css/bootstrap-responsive.css", "screen")
-    ->prependStylesheet("/css/bootstrap.css", "screen");
+    ->prependStylesheet("/components/twitter/bootstrap/css/bootstrap-responsive.min.css", "screen")
+    ->prependStylesheet("/components/twitter/bootstrap/css/bootstrap.min.css", "screen");
 $this->headScript()
-    ->appendFile("/templates/root/js/jquery.js")
-    ->appendFile("/templates/root/js/bootstrap-collapse.js")
-    ->appendFile("/templates/root/js/bootstrap-tab.js");
+    ->appendFile("/components/jquery/jquery/jquery-1.9.1.min.js")
+    ->appendFile("/components/twitter/bootstrap/js/bootstrap.min.js");
 
 echo $this->headLink();
 ?>
