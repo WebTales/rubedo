@@ -33,13 +33,14 @@ class Blocks_TwigController extends Blocks_AbstractController
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
 
-        $output = $$lang;
-        $output['id'] = $id;
+        $output = array();
 		
 		$templateName = $this->getRequest()->getParam('template','block.html');
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath($templateName);
-
+        if(!is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template)){
+               throw new Rubedo\Exceptions\Server('File '.Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template.' does not exists');
+        }
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
