@@ -17,7 +17,7 @@
               {% for page in pages %}
 					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
 						<a href="{{page.url}}">{{page.title}}</a>
-						{% if page.pages %}
+						{% if false %}
 						<ul class="sub-menu">
 							{% for subpage in page.pages %}
 							<li class="menu-item menu-item-type-custom menu-item-object-custom">
