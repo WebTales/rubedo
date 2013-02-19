@@ -253,7 +253,7 @@ class CurrentUser implements ICurrentUser
         //return Manager::getService('Workspaces')->findById('global');
         
         $mainGroup = $this->getMainGroup();
-        if (! $mainGroup) {
+        if ($mainGroup==null) {
             return Manager::getService('Workspaces')->findById('global');
         }
         return Manager::getService('Groups')->getMainWorkspace($mainGroup);
