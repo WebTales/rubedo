@@ -160,10 +160,10 @@ class Groups extends AbstractCollection implements IGroups
     public function getMainWorkspace ($groupId)
     {
         $group = $this->findById($groupId);
-        if (! isset($group['defaultWorkspaces']) || $group['defaultWorkspaces']=="") {
-            $group['defaultWorkspaces']='global';
+        if (! isset($group['defaultWorkspace']) || $group['defaultWorkspace']=="") {
+            $group['defaultWorkspace']='global';
         }
-        return Manager::getService('Workspaces')->findById($group['defaultWorkspaces']); 
+        return Manager::getService('Workspaces')->findById($group['defaultWorkspace']); 
     }
 
     /**
