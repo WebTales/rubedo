@@ -39,7 +39,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
 			$this->_helper->redirector->gotoUrl("/backoffice/login");
 		}
 		
-		$appHtml = file_get_contents(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/app.html');
+		$appHtml = file_get_contents(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/app.html');
         
 		$extjsNativeInclude = '<script src="extjs-4.1.0/ext-all-debug.js"></script>';
 		$rubedoFavIcone='<link rel="shortcut icon" type="image/x-icon" href="/backoffice/resources/icones/faviconRubedo.ico"/>';
