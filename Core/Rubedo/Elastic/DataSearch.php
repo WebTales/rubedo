@@ -82,22 +82,21 @@ class DataSearch extends DataAbstract implements IDataSearch
 
 			$setFilter = false;		
 			$globalFilter = new \Elastica_Filter_And();
-			
-			
+
 			// Filter on read Workspaces		
 			
 			$readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
 
-			$workspacesFilter = new \Elastica_Filter_Or();
-			
-			if (!in_array('all',$readWorkspaceArray)) {
-			
-				$workspaceFilter = new \Elastica_Filter_Term();
-				$workspaceFilter->setTerm('target', $readWorkspaceArray);
-				$workspacesFilter->addFilter($workspaceFilter);				 
+			if (!in_array('all',$readWorkspaceArray) && !empty($readWorkspaceArray)) {
+					
+				$workspacesFilter = new \Elastica_Filter_Or();
+				 
+				 $workspaceFilter = new \Elastica_Filter_Terms();
+				 $workspaceFilter->setTerms('target',$readWorkspaceArray);
+				 $workspacesFilter->addFilter($workspaceFilter);
+				  	
 				$globalFilter->addFilter($workspacesFilter);
 				$setFilter = true;
-			
 			}
 			
 							
@@ -174,16 +173,17 @@ class DataSearch extends DataAbstract implements IDataSearch
 			}
 					
 			// Set query on terms
+
 			$elasticaQueryString = new \Elastica_Query_QueryString($params['query']."*");
 			
 			$elasticaQuery = new \Elastica_Query();
 			
 			$elasticaQuery->setQuery($elasticaQueryString);
 
+			// Apply filter if needed
 			if ($setFilter) {
 				$elasticaQuery->setFilter($globalFilter);
-			
-			} 
+			}
 			 
 			// Define the type facet.
 			$elasticaFacetType = new \Elastica_Facet_Terms('type');
