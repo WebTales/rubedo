@@ -2,6 +2,9 @@
 	<target name="main" depends="set-rights,composer.install,composer.front.install">
 	</target>
 	
+	<target name="install-dev" depends="set-rights,composer.install-dev,composer.front.install-dev">
+	</target>
+	
 	<target name="update" depends="set-rights,composer.update,composer.front.update">
 	</target>
 	
@@ -13,7 +16,7 @@
 	</target>
 	
 	<target name="composer.front.install">
-		<exec command="composer instal" passthru="true" dir="${project.basedir}/public"/>
+		<exec command="composer install" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	
 	<target name="composer.update">
@@ -24,8 +27,16 @@
 		<exec command="composer install" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	
-	<target name="composer.update-dev">
+	<target name="composer.install-dev">
 		<exec command="composer install -o --dev" passthru="true" dir="${project.basedir}"/>
+	</target>
+	
+	<target name="composer.front.install-dev">
+		<exec command="composer install --dev" passthru="true" dir="${project.basedir}/public"/>
+	</target>
+	
+	<target name="composer.update-dev">
+		<exec command="composer update -o --dev" passthru="true" dir="${project.basedir}"/>
 	</target>
 	
 	<target name="composer.front.update-dev">
