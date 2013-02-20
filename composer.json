@@ -24,10 +24,6 @@
     "repositories": [
 		{
 			"type": "vcs",
-			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
-		},
-		{
-			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedoData.git"
 		}
 	],

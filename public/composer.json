@@ -1,12 +1,12 @@
 {
     "name": "webtales/rubedo-public",
     "require": {
-    	"webtales/rubedo-backoffice-ui" : "dev-master",
         "jquery/jquery" : "1.9.1",
         "sencha/extjs" : "4.1.1a",
         "webtales/ckeditor" : "dev-master",
         "twitter/bootstrap" : "v2.3.0",
-        "zencoder/video-js" : "3.2.0"
+        "zencoder/video-js" : "3.2.0",
+        "webtales/rubedo-backoffice-ui" : "dev-master"
     },
     "require-dev": {
         
