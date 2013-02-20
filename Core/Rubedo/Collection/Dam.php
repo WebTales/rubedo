@@ -180,24 +180,24 @@ class Dam extends AbstractCollection implements IDam
 	 * @param array $content
 	 * @return array
 	 */
-	protected function _setDefaultWorkspace($content){
-	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']=='' || $content['writeWorkspace']==array()){
+	protected function _setDefaultWorkspace($dam){
+	    if(!isset($dam['writeWorkspace']) || $dam['writeWorkspace']=='' || $dam['writeWorkspace']==array()){
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $content['writeWorkspace'] = $mainWorkspace['id'];
-			$content['fields']['writeWorkspace'] = $mainWorkspace['id'];
+	        $dam['writeWorkspace'] = $mainWorkspace['id'];
+			$dam['fields']['writeWorkspace'] = $mainWorkspace['id'];
 	    }
-	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() || !is_array($content['target'])){
+	    if(!isset($dam['target']) || $dam['target']=='' || $dam['target']==array() || !is_array($dam['target'])){
 	    	$mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $content['target'] = array($mainWorkspace['id']);
-			$content['fields']['target'] = array($mainWorkspace['id']);
+	        $dam['target'] = array($mainWorkspace['id']);
+			$dam['fields']['target'] = array($mainWorkspace['id']);
         } else {
         	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 			
-			if(count(array_intersect($content['target'], $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
+			if(count(array_intersect($dam['target'], $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
 				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
 			}
         }
-        return $content;
+        return $dam;
     }
 	
 	/**
@@ -209,14 +209,19 @@ class Dam extends AbstractCollection implements IDam
     {
         if (! self::isUserFilterDisabled()) {	
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-	        $obj = $this->_setDefaultWorkspace($obj);
-	
+
+			//Set the workspace/target for old items in database
+            if(!isset($obj['writeWorkspace']) || $obj['writeWorkspace']=="" || $obj['writeWorkspace']==array()){
+            	$obj['writeWorkspace'] = "";
+            }
+            if(!isset($obj['target']) || $obj['target']=="" || $obj['target']==array()){
+            	$obj['target'] = array('global');
+            }
+			
 	        $damTypeId = $obj['typeId'];
 	        $damType = Manager::getService('DamTypes')->findById($damTypeId);
 			
-			if($obj['fields']['title'] == "Salamandre") {
-				//var_dump($obj['writeWorkspace'], $writeWorkspaces, in_array($obj['writeWorkspace'], $writeWorkspaces), $damType['readOnly']);die();
-			}
+			//var_dump($damType, $writeWorkspaces, $obj['writeWorkpace']);die();
 			
 	        if ($damType['readOnly']) {
 	            $obj['readOnly'] = true;

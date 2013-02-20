@@ -555,7 +555,14 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         if (! self::isUserFilterDisabled()) {
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-            $obj = $this->_setDefaultWorkspace($obj);
+
+            //Set the workspace/target for old items in database
+            if(!isset($obj['writeWorkspace']) || $obj['writeWorkspace']=="" || $obj['writeWorkspace']==array()){
+            	$obj['writeWorkspace'] = "";
+            }
+            if(!isset($obj['target']) || $obj['target']=="" || $obj['target']==array()){
+            	$obj['target'] = array('global');
+            }
             
             $contentTypeId = $obj['typeId'];
             $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);

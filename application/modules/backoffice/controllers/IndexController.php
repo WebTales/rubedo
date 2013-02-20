@@ -30,6 +30,8 @@ class Backoffice_IndexController extends Zend_Controller_Action
 
     /**
      * Default Action, return the Ext/Js HTML loader
+     * 
+     * @todo handle extjs options (debug or not, CDN or not).
      */
     public function indexAction ()
     {
@@ -39,7 +41,8 @@ class Backoffice_IndexController extends Zend_Controller_Action
 			$this->_helper->redirector->gotoUrl("/backoffice/login");
 		}
 		
-		$appHtml = file_get_contents(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/app.html');
+		/*
+		 $appHtml = file_get_contents(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/app.html');
         
 		$extjsNativeInclude = '<script src="extjs-4.1.0/ext-all-debug.js"></script>';
 		$rubedoFavIcone='<link rel="shortcut icon" type="image/x-icon" href="/backoffice/resources/icones/faviconRubedo.ico"/>';
@@ -57,17 +60,14 @@ class Backoffice_IndexController extends Zend_Controller_Action
 		if(isset($extjsOptions['network']) && $extjsOptions['network']=='cdn'){
 		    $appHtml = str_replace('extjs-4.1.0/', 'http://cdn.sencha.com/ext-4.1.0-gpl/', $appHtml);
 		}else{
-		    $appHtml = str_replace('extjs-4.1.0/', $this->view->baseUrl().'/components/sensha/extjs/', $appHtml);
+		    $appHtml = str_replace('extjs-4.1.0/', $this->view->baseUrl().'/components/sencha/extjs/', $appHtml);
 		}
-		
+		*/
 		
 		
         $this->getHelper('Layout')
             ->disableLayout();
-        $this->getHelper('ViewRenderer')
-            ->setNoRender();
-        $this->getResponse()
-            ->setBody($appHtml);
+        
     }
 }
 

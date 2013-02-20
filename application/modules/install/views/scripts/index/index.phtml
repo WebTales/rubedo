@@ -1,43 +1,14 @@
-<h1>Current Configuration</h1>
-<ul class="nav nav-tabs">
-	<li><a href="#status" data-toggle="tab">Status</a></li>
-	<li><a href="#db" data-toggle="tab">Database</a></li>
-	<li><a href="#admin" data-toggle="tab">Admin Account</a></li>
-	<li><a href="#messages" data-toggle="tab">Messages</a></li>
-	<li><a href="#all" data-toggle="tab">All</a></li>
-</ul>
-<div class="tab-content">
-	<div class="tab-pane active" id="status">
-		<p>Configuration Wizard had been run.</p>
-		<p>
-			<a
-				href="<?php echo $this->url(array('module'=>'backoffice','action'=>'index','controller'=>'login'),null,true);?>"
-				class="btn btn-large btn-success" type="button"><i
-				class="icon-user icon-white"></i> Access to Back Office</a>
-		</p>
-	</div>
-	<div class="tab-pane" id="db">
-		DB config:
-		<pre><?php if(isset($this->options['datastream']["mongo"]))print_r($this->options['datastream']["mongo"]);?></pre>
-		<div class='pull-right'>
-			<a
-				href="<?php echo $this->url(array('action'=>'set-db','module'=>'install'),null,true);?>"
-				class="btn btn-large btn-primary" type="button"><i
-				class="icon-wrench icon-white"></i> Edit configuration</a>
-		</div>
-	</div>
-	<div class="tab-pane" id="admin">
-		Admin Account Config
-		<div class='pull-right'>
-			<a
-				href="<?php echo $this->url(array('action'=>'admin-config','module'=>'install'),null,true);?>"
-				class="btn btn-large btn-primary" type="button"><i
-				class="icon-wrench icon-white"></i> Edit configuration</a>
-		</div>
-
-	</div>
-	<div class="tab-pane" id="messages">...</div>
-	<div class="tab-pane" id="all">
-		<pre><?php print_r($this->options);?></pre>
-	</div>
+<div class="hero-unit">
+	<h1>Installation of Rubedo</h1>
+	<p>Configuration Wizard had been run.</p>
+	<p>
+		<a
+			href="<?php echo $this->url(array('module'=>'backoffice','action'=>'index','controller'=>'login'),null,true);?>"
+			class="btn btn-large btn-success" type="button"><i
+			class="icon-user icon-white"></i> Access to Back Office</a> 
+		<a
+			href="<?php echo $this->url(array('module'=>'install','action'=>'start-wizard','controller'=>'index'),null,true);?>"
+			class="btn btn-large btn-danger" type="button"><i
+			class="icon-wrench icon-white"></i> Run wizard again</a>
+	</p>
 </div>

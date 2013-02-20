@@ -9,16 +9,3 @@
     <?php }?>
 </div>
 <?php echo $this->form->render();?>
-<?php if($this->displayMode=='wizard'){?>
-<ul class="pager">
-	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'set-admin','module'=>'install'),null,true);?>">&larr;
-			Configure Admin Account</a></li>
-  <?php if($this->isReady){?>
-  <li class="next"><a
-		href="<?php echo $this->url(array('action'=>'set-mailer','module'=>'install'),null,true);?>">Set Mailer &rarr;</a></li>
-  <?php }?>
-</ul>
-<?php }else{?>
-<div class='pull-right'><a href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>" class="btn btn-large btn-primary" type="button"><i class="icon-home"></i> Return</a></div>
-<?php }?>
