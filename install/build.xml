@@ -153,4 +153,14 @@
 		<chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
 		<chmod file="${project.basedir}/cache/zend" mode="777"/>
 	</target>
+	<target name="prepare-config" depends="">
+		<mkdir dir="${project.basedir}/application/configs"/>
+		<mkdir dir="${project.basedir}/application/configs/local"/>
+		<chmod file="${project.basedir}/application/configs/local" mode="777"/>
+	</target>
+	<target name="set-rights" depends="prepare-cache,prepare-config">
+		
+	</target>
+	
+	
 </project>

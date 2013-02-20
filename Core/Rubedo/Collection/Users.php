@@ -118,11 +118,13 @@ class Users extends AbstractCollection implements IUsers
     public function create (array $obj, $options = array('safe'=>true))
     {
         $groups = isset($obj['groups']) ? $obj['groups'] : array();
-        Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
+        
         $obj['groups'] = null;
         
         $returnValue = parent::create($obj, $options);
         $obj = $returnValue['data'];
+        
+        Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
         
         $personalPrefsObj = array(
             'userId' => $obj['id'],
