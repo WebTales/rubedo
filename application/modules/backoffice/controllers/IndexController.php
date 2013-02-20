@@ -57,7 +57,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
 		if(isset($extjsOptions['network']) && $extjsOptions['network']=='cdn'){
 		    $appHtml = str_replace('extjs-4.1.0/', 'http://cdn.sencha.com/ext-4.1.0-gpl/', $appHtml);
 		}else{
-		    $appHtml = str_replace('extjs-4.1.0/', $this->view->baseUrl().'/components/sensha/extjs/', $appHtml);
+		    $appHtml = str_replace('extjs-4.1.0/', $this->view->baseUrl().'/components/sencha/extjs/', $appHtml);
 		}
 		
 		

@@ -3,7 +3,7 @@
     "require": {
     	"webtales/rubedo-backoffice-ui" : "dev-master",
         "jquery/jquery" : "1.9.1",
-        "sensha/extjs" : "4.1.1a",
+        "sencha/extjs" : "4.1.1a",
         "webtales/ckeditor" : "dev-master",
         "jackmoore/colorbox" : "1.4.2",
         "twitter/bootstrap" : "v2.3.0",
@@ -27,7 +27,7 @@
         {
         "type": "package",
         "package": {
-            "name": "sensha/extjs",
+            "name": "sencha/extjs",
             "version": "4.1.1a",
             "dist": {
                 "url": "http://cdn.sencha.com/ext-4.1.1a-gpl.zip",
