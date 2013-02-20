@@ -34,7 +34,7 @@ class Install_Model_NavObject
         $container = new Zend_Navigation();
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'Configure database',
+            'label' => 'Database',
             'action' => 'set-db',
             'controller' => 'index',
             'module' => 'install'
@@ -42,7 +42,7 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'Initialize contents',
+            'label' => 'Contents',
             'action' => 'set-db-contents',
             'controller' => 'index',
             'module' => 'install'
@@ -50,7 +50,7 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'Configure database',
+            'label' => 'Accounts',
             'action' => 'set-admin',
             'controller' => 'index',
             'module' => 'install'
@@ -58,7 +58,7 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'Configure ElasticSearch',
+            'label' => 'ElasticSearch',
             'action' => 'set-elastic-search',
             'controller' => 'index',
             'module' => 'install'
@@ -66,7 +66,7 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'Configure mailer',
+            'label' => 'Mailer',
             'action' => 'set-mailer',
             'controller' => 'index',
             'module' => 'install'
@@ -74,7 +74,7 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'Configure local domains',
+            'label' => 'Local domains',
             'action' => 'set-local-domains',
             'controller' => 'index',
             'module' => 'install'
@@ -82,7 +82,7 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'Configure PHP settings',
+            'label' => 'PHP settings',
             'action' => 'set-php-settings',
             'controller' => 'index',
             'module' => 'install'

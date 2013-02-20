@@ -81,7 +81,7 @@ class Install_IndexController extends Zend_Controller_Action
                 $this->_localConfig['installed']['action'] = 'start-wizard';
             }
             $action = $this->_localConfig['installed']['action'];
-            $this->_forward($action);
+            $this->redirect($this->_helper->url($action));
         }
         
        
@@ -223,13 +223,13 @@ class Install_IndexController extends Zend_Controller_Action
             $connectionValid = false;
         }
         if ($connectionValid) {
-            $this->view->isReady = true;
+            $this->view->isSet = true;
             $this->_localConfig["swiftmail"]["smtp"] = $params;
         } else {
             $this->view->hasError = true;
             $this->view->errorMsgs = 'Rubedo can\'t connect to SMTP server';
         }
-        
+        $this->view->isReady = true;
         $this->view->form = $dbForm;
         
         $this->_saveLocalConfig();
