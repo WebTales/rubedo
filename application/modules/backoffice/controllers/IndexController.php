@@ -64,10 +64,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
 		
         $this->getHelper('Layout')
             ->disableLayout();
-        $this->getHelper('ViewRenderer')
-            ->setNoRender();
-        $this->getResponse()
-            ->setBody($appHtml);
+        
     }
 }
 
