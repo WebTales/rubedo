@@ -15,7 +15,6 @@
 * @license yet to be written
 * @version $Id$
 */
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -38,12 +37,20 @@ echo $this->headLink();
 
 <body
 	style="background-image: url('/backoffice/resources/images/logo.png'); background-position: 50% 100px; background-repeat: no-repeat no-repeat; min-height: 800px;">
-	<div class="navbar">
+	<div class="navbar navbar-inverse">
 		<div class="navbar-inner">
 			<a class="brand"
 				href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>">Rubedo
 				Install Tool</a>
-
+			<div class="nav-collapse collapse">
+				<ul class="nav">
+                   <?php foreach ($this->navigationContainer as $page){?>
+                       <li <?php if($page->isActive()){?> class="active"
+						<?php }?>><a href="<?php echo $page->getHref();?>"><?php echo $page->getLabel();?></a>
+					</li>
+                   <?php } ?>
+               </ul>
+			</div>
 			<!-- <ul class="nav">
 				<li class="active">
 					<a href="#">Home</a>
@@ -61,6 +68,31 @@ echo $this->headLink();
 				<div class="well">
     				<?php echo $this->layout()->content?>
     				<div class='clearfix'></div>
+    				<?php if($this->displayMode=='wizard'){?>
+                        <ul class="pager">
+                            <?php if($this->previous){?>
+                        	<li class="previous"><a
+							href="<?php echo $this->previous->getHref();?>">&larr; <?php echo $this->previous->getLabel();?></a></li>
+                        	<?php }else{?>
+                        	    <li class="previous"><a
+							href="<?php echo $this->url(array('action'=>'start-wizard','module'=>'install'),null,true);?>">&larr;
+								Intro</a></li>
+                        	<?php } ?>
+                        	
+                        	<?php if($this->isReady){?>
+                            	<?php if($this->next){?>
+                            	<li class="next"><a
+    							href="<?php echo $this->next->getHref();?>"><?php echo $this->next->getLabel();?> &rarr;</a></li>
+                            	<?php }else{?>
+                            	    <li class="next"><a
+    							href="<?php echo $this->url(array('action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish
+    								&rarr;</a></li>
+                            	<?php } ?>
+                        	<?php } ?>
+                         </ul> 
+                    <?php }?>
+                        
+
 				</div>
 			</div>
 		</div>

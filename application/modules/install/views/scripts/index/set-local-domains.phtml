@@ -21,21 +21,3 @@
 
 <h2>Add local override</h2>
 <?php echo $this->form->render();?>
-<?php if($this->displayMode=='wizard'){?>
-<ul class="pager">
-	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'set-mailer','module'=>'install'),null,true);?>">&larr;
-			Set Mailer</a></li>
-  <?php if($this->isReady){?>
-  <li class="next"><a
-		href="<?php echo $this->url(array('action'=>'set-php-settings','module'=>'install'),null,true);?>">PHP settings &rarr;</a></li>
-  <?php }?>
-</ul>
-<?php }else{?>
-<div class='pull-right'>
-	<a
-		href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>"
-		class="btn btn-large btn-primary" type="button"><i class="icon-home"></i>
-		Return</a>
-</div>
-<?php }?>

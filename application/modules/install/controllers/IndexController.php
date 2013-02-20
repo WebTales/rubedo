@@ -37,6 +37,10 @@ class Install_IndexController extends Zend_Controller_Action
     {
         $this->_helper->_layout->setLayout('install-layout');
         
+        $this->_navigation = Install_Model_NavObject::getNav();
+        $this->view->navigationContainer = $this->_navigation;
+        $this->_setWizardSteps();
+        
         $this->_localConfigDir = realpath(APPLICATION_PATH . '/configs/local/');
         $this->_localConfigFile = $this->_localConfigDir . '/config.json';
         $this->_loadLocalConfig();
@@ -47,6 +51,26 @@ class Install_IndexController extends Zend_Controller_Action
         $this->view->options = $this->_applicationOptions;
     }
 
+    /**
+     * get previous and next step for wizard
+     */
+    protected function _setWizardSteps ()
+    {
+        $getNext = false;
+        $previous = null;
+        foreach ($this->_navigation as $page) {
+            if ($getNext) {
+                $this->view->next = $page;
+                break;
+            }
+            if ($page->isActive()) {
+                $this->view->previous = isset($previous) ? $previous : null;
+                $getNext = true;
+            }
+            $previous = $page;
+        }
+    }
+    
     public function indexAction ()
     {
         if (! $this->_isConfigWritable()) {
@@ -59,6 +83,8 @@ class Install_IndexController extends Zend_Controller_Action
             $action = $this->_localConfig['installed']['action'];
             $this->_forward($action);
         }
+        
+       
     }
 
     public function startWizardAction ()

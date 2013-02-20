@@ -9,14 +9,3 @@
     <?php }?>
 </div>
 <?php echo $this->form->render();?>
-<?php if($this->displayMode=='wizard'){?>
-<ul class="pager">
-	<li class="previous"><a
-		href="<?php echo $this->url(array('action'=>'set-elastic-search','module'=>'install'),null,true);?>">&larr;
-			Configure Admin Account</a></li>
-  <li class="next"><a
-		href="<?php echo $this->url(array('action'=>'set-local-domains','module'=>'install'),null,true);?>">Local Domains &rarr;</a></li>
-</ul>
-<?php }else{?>
-<div class='pull-right'><a href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>" class="btn btn-large btn-primary" type="button"><i class="icon-home"></i> Return</a></div>
-<?php }?>
