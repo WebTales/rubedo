@@ -1,11 +1,10 @@
 {
     "name": "webtales/rubedo-public",
     "require": {
-    	"webtales/rubedo-backoffice-ui" : "dev-master",
+    	"webtales/rubedo-backoffice-ui" : "0.9",
         "jquery/jquery" : "1.9.1",
         "sencha/extjs" : "4.1.1a",
-        "webtales/ckeditor" : "dev-master",
-        "jackmoore/colorbox" : "1.4.2",
+        "webtales/ckeditor" : "0.9",
         "twitter/bootstrap" : "v2.3.0",
         "zencoder/video-js" : "3.2.0"
     },
@@ -31,30 +30,6 @@
             "version": "4.1.1a",
             "dist": {
                 "url": "http://cdn.sencha.com/ext-4.1.1a-gpl.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
-        "type": "package",
-        "package": {
-            "name": "ckeditor/ckeditor",
-            "version": "4.0.1",
-            "dist": {
-                "url": "http://download.cksource.com/CKEditor/CKEditor/CKEditor%204.0.1/ckeditor_4.0.1_full.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
-        "type": "package",
-        "package": {
-            "name": "jackmoore/colorbox",
-            "version": "1.4.2",
-            "dist": {
-                "url": "https://github.com/jackmoore/colorbox/archive/1.4.2.zip",
                 "type": "zip"
             	}
         	}
@@ -99,4 +74,3 @@
         "vendor-dir" : "components"
     }
 }
-
