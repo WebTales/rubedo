@@ -237,6 +237,7 @@ class CurrentUser implements ICurrentUser
         
         foreach ($groupArray as $group) {
             $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id'])));
+			$workspaceArray = array_merge($workspaceArray,array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']))));
         }
         return $workspaceArray;
     }

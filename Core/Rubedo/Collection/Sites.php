@@ -138,9 +138,10 @@ class Sites extends AbstractCollection implements ISites
     }
 
     protected function _setDefaultWorkspace($site){
-        if(!isset($site['workspace']) || $site['workspace']==''){
-            $site['workspace'] = Manager::getService('CurrentUser')->getMainWorkspace();
-        }
+        if(!isset($site['workspace']) || $site['workspace']=='' || $site['workspace']==array()){
+	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+	        $site['workspace'] = $mainWorkspace['id'];
+	    }
         return $site;
     }
     
@@ -169,7 +170,8 @@ class Sites extends AbstractCollection implements ISites
 
 	protected function _addReadableProperty ($obj)
     {
-        if (! self::isUserFilterDisabled()) {	
+        if (! self::isUserFilterDisabled()) {
+        	//Set the workspace for old items in database	
 	        if (! isset($obj['workspace'])) {
 	            $obj['workspace'] = 'global';
 	        }

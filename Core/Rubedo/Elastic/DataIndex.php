@@ -653,7 +653,7 @@ class DataIndex extends DataAbstract implements IDataIndex
          }
 
 		// Add target
-		$damData['target']=array('global');
+		$damData['target']=array();
 		if (isset($data['target'])) {
 			foreach ($data['target'] as $key => $target) {
 				$damData['target'][] = (string) $target;
