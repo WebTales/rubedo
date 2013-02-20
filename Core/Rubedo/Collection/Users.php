@@ -117,8 +117,12 @@ class Users extends AbstractCollection implements IUsers
      */
     public function create (array $obj, $options = array('safe'=>true))
     {
-        $groups = isset($obj['groups']) ? $obj['groups'] : array();
-        
+		if(!isset($obj['groups']) || $obj['groups']==""){
+			$groups= array();
+		} else {
+			$group = $obj['groups'];
+		}		
+		
         $obj['groups'] = null;
         
         $returnValue = parent::create($obj, $options);
