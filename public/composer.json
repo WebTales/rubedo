@@ -5,7 +5,6 @@
         "jquery/jquery" : "1.9.1",
         "sencha/extjs" : "4.1.1a",
         "webtales/ckeditor" : "0.9",
-        "jackmoore/colorbox" : "1.4.2",
         "twitter/bootstrap" : "v2.3.0",
         "zencoder/video-js" : "3.2.0"
     },
