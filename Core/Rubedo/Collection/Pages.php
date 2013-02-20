@@ -243,7 +243,8 @@ class Pages extends AbstractCollection implements IPages
 	
 	protected function _addReadableProperty ($obj)
     {
-        if (! self::isUserFilterDisabled()) {	
+        if (! self::isUserFilterDisabled()) {
+        	//Set the workspace for old items in database	
 	        if (! isset($obj['workspace'])) {
 	            $obj['workspace'] = 'global';
 	        }

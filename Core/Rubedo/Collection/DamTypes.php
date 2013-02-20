@@ -66,11 +66,10 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	
 	protected function _addDefaultWorkspace($obj){
 		
-		if (! isset($obj['workspaces']) ||  $obj['workspaces']=='' || $obj['workspaces']==array()) {
-            $obj['workspaces'] = array(
-                'global'
-            );
-        }
+		if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
+	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+	        $obj['workspaces'] = array($mainWorkspace['id']);
+	    }
 				
 		return $obj;
 	}
@@ -89,8 +88,9 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	
 	protected function _addReadableProperty ($obj)
     {
-        if (! self::isUserFilterDisabled()) {	
-	        if (! isset($obj['workspaces'])) {
+        if (! self::isUserFilterDisabled()) {
+        	//Set the workspace for old items in database	
+	        if (! isset($obj['workspaces']) || $obj['workspaces']=="") {
 	            $obj['workspaces'] = array(
 	                'global'
 	            );
