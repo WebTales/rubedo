@@ -117,26 +117,33 @@ class Users extends AbstractCollection implements IUsers
      */
     public function create (array $obj, $options = array('safe'=>true))
     {
-        $groups = isset($obj['groups']) ? $obj['groups'] : array();
-        
+		if(!isset($obj['groups']) || $obj['groups']==""){
+			$groups= array();
+		} else {
+			$group = $obj['groups'];
+		}		
+		
         $obj['groups'] = null;
         
         $returnValue = parent::create($obj, $options);
-        $obj = $returnValue['data'];
+        $createUser = $returnValue['data'];
         
-        Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
+        Manager::getService('Groups')->addUserToGroupList($createUser['id'], $groups);
         
         $personalPrefsObj = array(
-            'userId' => $obj['id'],
-            'stylesheet' => 'resources/css/blue_theme.css',
+            'userId' => $createUser['id'],
+            'stylesheet' => 'resources/css/red_theme.css',
             'wallpaper' => 'resources/wallpapers/rubedo.jpg',
-            'iconSet' => 'blue',
+            'iconSet' => 'red',
             'themeColor' => '#D7251D',
-            'HCMode' => 'false'
+            'lastEdited' => array(),
+            'HCMode' => false
         );
         
         $personalPrefsService = Manager::getService('PersonalPrefs');
-        $personalPrefsService->create($personalPrefsObj);
+        
+		$personalPrefsService->create($personalPrefsObj);
+		
         return $returnValue;
     }
 
