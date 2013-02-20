@@ -1,49 +1,45 @@
-<div id="menu" class="navbar">
-  <div class="navbar-inner">
-  	<div class="container-fluid">
-	<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
-	<span class="icon-bar"></span>
-	<span class="icon-bar"></span>
-	<span class="icon-bar"></span>
-	</a>
-	<a class="brand" href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}" title="Accueil" rel="home">Accueil</a>
-	<!-- Everything you want hidden at 940px or less, place within here -->
-	<div class="nav-collapse">
-    <!-- /nav bar --> 
-    
-    <div class="nav-collapse collapse">
-            <ul class="nav">
-              {% for page in pages %}
-					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
-						<a href="{{page.url}}">{{page.title}}</a>
-						{% if false %}
+<div id="menu" class="navbar navbar-inverse">
+	<div class="navbar-inner">
+		<div class="container">
+			<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+			<a class="btn btn-navbar" data-toggle="collapse"
+				data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+				class="icon-bar"></span> <span class="icon-bar"></span>
+			</a> <a class="brand"
+				href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}"
+				title="Accueil" rel="home">Accueil</a>
+
+			<!-- Everything you want hidden at 940px or less, place within here -->
+			<div class="nav-collapse collapse">
+				<!-- /nav bar -->
+
+				<ul class="nav">
+					{% for page in pages %}
+					<li id="menu-item-{{page.id}}"
+						class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
+						<a href="{{page.url}}">{{page.title}}</a> {% if false %}
 						<ul class="sub-menu">
 							{% for subpage in page.pages %}
-							<li class="menu-item menu-item-type-custom menu-item-object-custom">
+							<li
+								class="menu-item menu-item-type-custom menu-item-object-custom">
 								<a href="{{subpage.url}}">{{subpage.title}}</a>
-							</li>
-							{% endfor %}
+							</li> {% endfor %}
 
-						</ul>
-						{% endif %}
-					</li>
-					{% endfor %}
-            </ul>
-          </div>
-    {% if useSearchEngine and searchPage %}
-    <!-- search component-->
-    	<div class="btn-group pull-right">
-	    	<form class="form-search" action="{{ url({'pageId':searchPage},true) }}">
-			  <input type="text" class="input-medium search-query" name="search">
-			  <button type="submit" class="btn">{{"search"|trans}}</button>
-			</form>
+						</ul> {% endif %}
+					</li> {% endfor %}
+				</ul>
+				{% if useSearchEngine and searchPage %}
+				<!-- search component-->
+					<form class="navbar-search pull-right"
+						action="{{ url({'pageId':searchPage},true) }}">
+						<input type="text" class="input-medium search-query" name="search"
+							placeholder="{{"search"|trans}}">
+						<!-- <button type="submit" class="btn">{{"search"|trans}}</button> -->
+					</form>
+
+				<!-- /search component-->
+				{% endif %}
+			</div>
 		</div>
-
-	<!-- /search component-->
-	{% endif %}
-
- 	</div>
- 	</div>
-  </div>
+	</div>
 </div>
