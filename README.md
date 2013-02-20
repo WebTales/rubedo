@@ -25,9 +25,9 @@ Installation
 ### Install Steps
 * Download Source form gitHub (https://github.com/WebTales/rubedo/tags)
 * Extract them on your server
-* Definie a vHost with the *public* as documentRoot
+* Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot
-* Inside the documentRoot, run `composer install -o`
-* Run `../vendor/bin/phing set-rights` inside the *install* dir
-* Run `composer install` inside the *public* dir
+* Inside project root, run `composer install -o`
+* Run `../vendor/bin/phing set-rights` inside the *install* directory
+* Run `composer install` inside the *public* directory
 * Access the */install* URL and run the config wizard
