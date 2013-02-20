@@ -132,11 +132,10 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     public function create (array $obj, $options = array('safe'=>true), $live = true)
     {        
-        if (! isset($obj['workspaces']) ||  $obj['workspaces']=='') {
-            $obj['workspaces'] = array(
-                'global'
-            );
-        }
+        if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
+	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+	        $obj['workspaces'] = array($mainWorkspace['id']);
+	    }
         $returnArray = parent::create($obj, $options, $live);
         
         if ($returnArray["success"]) {
@@ -248,7 +247,8 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 
     protected function _addReadableProperty ($obj)
     {
-        if (! self::isUserFilterDisabled()) {	
+        if (! self::isUserFilterDisabled()) {
+        	//Set the workspace for old items in database	
 	        if (! isset($obj['workspaces']) || $obj['workspaces']=="") {
 	            $obj['workspaces'] = array(
 	                'global'
