@@ -214,9 +214,7 @@ class Dam extends AbstractCollection implements IDam
 	        $damTypeId = $obj['typeId'];
 	        $damType = Manager::getService('DamTypes')->findById($damTypeId);
 			
-			if($obj['fields']['title'] == "Salamandre") {
-				//var_dump($obj['writeWorkspace'], $writeWorkspaces, in_array($obj['writeWorkspace'], $writeWorkspaces), $damType['readOnly']);die();
-			}
+			//var_dump($damType, $writeWorkspaces, $obj['writeWorkpace']);die();
 			
 	        if ($damType['readOnly']) {
 	            $obj['readOnly'] = true;
