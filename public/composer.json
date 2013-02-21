@@ -5,7 +5,7 @@
         "sencha/extjs" : "4.1.1a",
         "webtales/ckeditor" : "dev-master",
         "twitter/bootstrap" : "v2.3.0",
-        "zencoder/video-js" : "3.2.3",
+        "zencoder/video-js" : "3.2.0",
         "webtales/rubedo-backoffice-ui" : "dev-master"
     },
     "require-dev": {
@@ -51,9 +51,9 @@
         "type": "package",
         "package": {
             "name": "zencoder/video-js",
-            "version": "3.2.3",
+            "version": "3.2.0",
             "dist": {
-                "url": "https://github.com/zencoder/video-js/archive/3.2.3.zip",
+                "url": "https://github.com/downloads/zencoder/video-js/video-js-3.2.0.zip",
                 "type": "zip"
             	}
         	}
