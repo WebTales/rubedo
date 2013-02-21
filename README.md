@@ -43,16 +43,16 @@ Setting Up Your VHOST
 ------------------------------------------------------------------------------------------
 The following is a sample VHOST you might want to consider for your project.
 
-<VirtualHost *:80>
-   DocumentRoot "path_to_project/rubedo/public"
-   ServerName rubedo.local
-
-   <Directory "path_to_project/rubedo/public">
-       Options -Indexes FollowSymLinks
-       AllowOverride All
-       Order allow,deny
-       Allow from all
-   </Directory>
-
-</VirtualHost>
+	<VirtualHost *:80>
+	   DocumentRoot "path_to_project/rubedo/public"
+	   ServerName rubedo.local
+	
+	   <Directory "path_to_project/rubedo/public">
+	       Options -Indexes FollowSymLinks
+	       AllowOverride All
+	       Order allow,deny
+	       Allow from all
+	   </Directory>
+	
+	</VirtualHost>
 

@@ -186,18 +186,23 @@ class Dam extends AbstractCollection implements IDam
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $dam['writeWorkspace'] = $mainWorkspace['id'];
 			$dam['fields']['writeWorkspace'] = $mainWorkspace['id'];
-	    }
-	    if(!isset($dam['target']) || $dam['target']=='' || $dam['target']==array() || !is_array($dam['target'])){
-	    	$mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $dam['target'] = array($mainWorkspace['id']);
-			$dam['fields']['target'] = array($mainWorkspace['id']);
-        } else {
+	    } else {
         	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 			
-			if(count(array_intersect($dam['target'], $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
+			if(!in_array($dam['writeWorkspace'], $readWorkspaces) && $readWorkspaces[0]!="all"){
 				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
 			}
         }
+		
+		if(!isset($dam['target'])){
+			$dam['target'] = array();
+		}
+		
+		if(!in_array($dam['writeWorkspace'], $dam['target'])){
+			$dam['target'][] = $dam['writeWorkspace'];
+			$dam['fields']['target'][] = $dam['writeWorkspace'];
+		}
+		
         return $dam;
     }
 	
