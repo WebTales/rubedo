@@ -125,7 +125,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function create (array $obj, $options = array('safe'=>true), $live = false)
     {
-        $obj = $this->_setDefaultWorkspace($obj);
+        $obj = $this->_setDefaultWorkspace($obj);	        
         $obj = $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
@@ -534,17 +534,18 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']=='' || $content['writeWorkspace']==array()){
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $content['writeWorkspace'] = $mainWorkspace['id'];
-	    }
-	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() || !is_array($content['target'])){
-	    	$mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $content['target'] = array($mainWorkspace['id']);
-        } else {
+	    } else {
         	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 			
-			if(count(array_intersect($content['target'], $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
+			if(count(array_intersect(array($content['writeWorkspace']), $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
 				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
 			}
         }
+		
+		if(!in_array($content['writeWorkspace'], $content['target'])){
+			$content['target'][] = $content['writeWorkspace'];
+		}
+		
         return $content;
     }
 
