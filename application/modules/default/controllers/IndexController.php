@@ -372,6 +372,9 @@ class IndexController extends Zend_Controller_Action
             case 'carrousel':
                 $controller = 'carrousel';
                 break;
+           	case 'googleMaps':
+                $controller = 'google-maps';
+                break;
             case 'Gallerie Flickr':
             case 'flickrGallery' :
                 $controller = 'flickr-gallery';
