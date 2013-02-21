@@ -417,7 +417,7 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Média externe':
             case 'externalMedia':
-                $controller = 'embeddedmedia';
+                $controller = 'embedded-media';
                 break;
             case 'Image':
             case 'image':
