@@ -124,7 +124,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true), $live = false)
-    {        
+    {
+        $obj = $this->_setDefaultWorkspace($obj);
         $obj = $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
@@ -156,6 +157,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
         }
         
+		if(count(array_intersect(array($obj['writeWorkspace']), $obj['target']))==0){
+			$obj['target'][] = $obj['writeWorkspace'];
+		}
+		
         $obj = $this->_filterInputData($obj);
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
@@ -223,9 +228,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @return array:
      */
     protected function _filterInputData (array $obj)
-    {
-        $obj = $this->_setDefaultWorkspace($obj);
-        
+    {        
 		if (! self::isUserFilterDisabled()) {
         	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
             

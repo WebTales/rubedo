@@ -372,6 +372,9 @@ class IndexController extends Zend_Controller_Action
             case 'carrousel':
                 $controller = 'carrousel';
                 break;
+           	case 'googleMaps':
+                $controller = 'google-maps';
+                break;
             case 'Gallerie Flickr':
             case 'flickrGallery' :
                 $controller = 'flickr-gallery';
@@ -417,7 +420,7 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Média externe':
             case 'externalMedia':
-                $controller = 'embeddedmedia';
+                $controller = 'embedded-media';
                 break;
             case 'Image':
             case 'image':
