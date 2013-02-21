@@ -58,7 +58,7 @@
             	}
         	}
         
-    	},
+    	},    	
     	{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"

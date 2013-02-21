@@ -102,16 +102,17 @@ class Dam extends AbstractCollection implements IDam
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
-        // if(!isset($obj['taxonomy']['navigation']) ||
-        // empty($obj['taxonomy']['navigation'])){
-        // $obj['taxonomy']['navigation'] =
-        // Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-        // }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Rubedo\Exceptions\Server('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
+		
+		if(count(array_intersect(array($obj['writeWorkspace']), $obj['target']))==0){
+			$obj['target'][] = $obj['writeWorkspace'];
+			$obj['fields']['target'][] = $obj['writeWorkspace'];
+		}
+		
         $returnArray = parent::update($obj, $options);
         
         if ($returnArray["success"]) {
@@ -213,9 +214,11 @@ class Dam extends AbstractCollection implements IDam
 			//Set the workspace/target for old items in database
             if(!isset($obj['writeWorkspace']) || $obj['writeWorkspace']=="" || $obj['writeWorkspace']==array()){
             	$obj['writeWorkspace'] = "";
+				$obj['fields']['writeWorkspace'] = "";
             }
             if(!isset($obj['target']) || $obj['target']=="" || $obj['target']==array()){
             	$obj['target'] = array('global');
+				$obj['fields']['target'] = array('global');
             }
 			
 	        $damTypeId = $obj['typeId'];
