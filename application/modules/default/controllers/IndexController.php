@@ -141,6 +141,7 @@ class IndexController extends Zend_Controller_Action
         }
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
+        
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
         
         // Build Twig context
@@ -228,6 +229,15 @@ class IndexController extends Zend_Controller_Action
         if (! $this->_mask) {
             throw new \Rubedo\Exceptions\Server('no mask found');
         }
+        
+        $this->_currentContent = $this->getParam('content-id',null);
+        
+        //@todo get main column
+        if($this->_currentContent){
+            $this->_mainCol = $this->_getMainColumn();
+        }
+        
+        
         $this->_blocksArray = array();
         foreach ($this->_mask['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
@@ -240,6 +250,10 @@ class IndexController extends Zend_Controller_Action
                 throw new \Rubedo\Exceptions\Server('no orderValue for block ' . $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
+        }
+        if($this->_mainCol){
+            unset($this->_blocksArray[$this->_mainCol]);
+            $this->_blocksArray[$this->_mainCol][] = $this->_getSingleBlock();
         }
         
         $pageInfo['rows'] = $this->_mask['rows'];
@@ -264,6 +278,22 @@ class IndexController extends Zend_Controller_Action
         $pageInfo['template'] = 'page.html.twig';
         
         return $pageInfo;
+    }
+    
+    protected function _getSingleBlock(){
+        $block = array();
+        $block['configBloc'] = array();
+        $block['bType'] = 'contentDetail';
+        $block['id'] = 'single';
+        $block['responsive']=array('tablet'=>true,
+                    'desktop'=>true,
+                    'phone'=>true);
+        
+        return $block;
+    }
+    
+    protected function _getMainColumn(){
+        return isset($this->_mask['mainColumnId'])?$this->_mask['mainColumnId']:null;
     }
 
     /**
