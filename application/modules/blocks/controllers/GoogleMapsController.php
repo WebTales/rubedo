@@ -29,6 +29,5 @@ class Blocks_GoogleMapsController extends Blocks_ContentListController
 {
 
 	protected $_defaultTemplate = 'googleMaps';
-	
 
 }

@@ -78,6 +78,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
                 $data[] = $fields;
             }
+            $output['blockConfig']=$blockConfig;
             $output["data"] = $data;
 			$output["query"]['type']=$queryType;
 			$output["query"]['id']=$queryId;
