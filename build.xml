@@ -20,11 +20,11 @@
 	</target>
 	
 	<target name="composer.update">
-		<exec command="composer install -o" passthru="true" dir="${project.basedir}"/>
+		<exec command="composer update -o" passthru="true" dir="${project.basedir}"/>
 	</target>
 	
 	<target name="composer.front.update">
-		<exec command="composer install" passthru="true" dir="${project.basedir}/public"/>
+		<exec command="composer update" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	
 	<target name="composer.install-dev">
@@ -40,7 +40,7 @@
 	</target>
 	
 	<target name="composer.front.update-dev">
-		<exec command="composer install --dev" passthru="true" dir="${project.basedir}/public"/>
+		<exec command="composer update --dev" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	
 	<target name="prepare-cache" depends="">
