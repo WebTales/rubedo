@@ -16,17 +16,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
-        "squizlabs/php_codesniffer": "1.4.*",
-        "phpmd/phpmd": "1.4.*",
-        "chriskite/phactory": "v0.4.2",
-        "webtales/rubedoData" : "dev-master"
+        "chriskite/phactory": "v0.4.2"
     },
-    "repositories": [
-		{
-			"type": "vcs",
-			"url": "git://github.com/WebTales/rubedoData.git"
-		}
-	],
     "minimum-stability": "stable",
     "config": {
         "process-timeout": 600
