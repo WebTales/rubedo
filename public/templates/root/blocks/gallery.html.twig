@@ -5,31 +5,14 @@
 {%set galleryid="gallery-"~random() %}
 {%set pages=count//pageSize%}
 
+<br><br>
+
 <div id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
-	<div id="{{galleryid}}" class="carousel slide">
-	 <center>
-  <div class="carousel-inner">
- 		
-		  <div class="active item">
-		  	<ul class="thumbnails">
-		  	{%for item in items%}
-		  	<li>
-		  	  <div class="thumbnail">
-			<a data-gallery="gallery" href="/dam?media-id={{item.image}}"><img class="gallery-item" src="/dam?media-id={{item.image}}{%if image.width %}&width={{image.width}}{%if image.height%}&height={{image.height}}&mode=crop{%endif%}{%endif%}" /></a>
-			</div>
-			</li>
-		{% endfor %}
-			</ul>
-             </div>
-         
-		 
-  </div>
- </center>
-    <a class="carousel-control left" href="{{url({'page': currentPage-1},true)}}" data-slide="prev">&lsaquo;</a>
-  <a class="carousel-control right" href="{{url({'page': currentPage+1},true)}}" data-slide="next">&rsaquo;</a>
-  </div>
-
-
+	{% for item in items %}
+    <a href="/dam?media-id={{item.image}}" data-gallery="gallery"><img src="/dam?media-id={{item.image}}" width="184" alt="{{item.title}}" title="{{item.title}}"></a>
+    {% endfor %}
 </div>
 
 {% endblock %}
+
+
