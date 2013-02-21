@@ -5,7 +5,7 @@
         "sencha/extjs" : "4.1.1a",
         "webtales/ckeditor" : "dev-master",
         "twitter/bootstrap" : "v2.3.0",
-        "zencoder/video-js" : "3.2.0",
+        "zencoder/video-js" : "3.2.3",
         "webtales/rubedo-backoffice-ui" : "dev-master"
     },
     "require-dev": {
@@ -51,14 +51,14 @@
         "type": "package",
         "package": {
             "name": "zencoder/video-js",
-            "version": "3.2.0",
+            "version": "3.2.3",
             "dist": {
-                "url": "https://github.com/downloads/zencoder/video-js/video-js-3.2.0.zip",
+                "url": "https://github.com/zencoder/video-js/archive/3.2.3.zip",
                 "type": "zip"
             	}
         	}
         
-    	},
+    	},    	
     	{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
