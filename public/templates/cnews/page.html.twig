@@ -34,7 +34,6 @@
 	href='{{baseUrl}}/templates/cnews/css/csc-style.css?ver=3.4.2' type='text/css' media='all' />
 <link rel="stylesheet" type="text/css" media="all"
 	href="{{baseUrl}}/templates/cnews/css/style.css" />
-<link href="{{baseUrl}}/colorbox/colorbox.css" rel="stylesheet">
 
 {% for sheet in css %}
 <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
@@ -149,11 +148,5 @@
 	{% for file in js %}
 	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
 	{% endfor %}
-	<script src="{{baseUrl}}/colorbox/jquery.colorbox.js"></script>
-	<script>
-            jQuery(document).ready(function () {
-                jQuery('a.flk_gallery').colorbox({transition:'none',current:	"image {current} parmi {total}",maxWidth:'80%',maxHeight:'80%',opacity:0.5 ,rel:'flk_gallery'});
-            });
-        </script>
 </body>
 </html>
