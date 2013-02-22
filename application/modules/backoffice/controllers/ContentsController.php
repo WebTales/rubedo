@@ -104,7 +104,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         if (!is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
-                $returnArray = $this->_dataService->create($insertData, true, false);
+                $returnArray = $this->_dataService->create($insertData, array('safe'=>true), false);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
