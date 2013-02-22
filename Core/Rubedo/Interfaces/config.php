@@ -86,6 +86,21 @@ class config
 		'Mailer'					=>	'Rubedo\\Interfaces\\Mail\\IMailer',
 	);
 
+	/**
+	 * Return all collection services
+	 * @return multitype:unknown
+	 */
+    public static function getCollectionServices ()
+    {
+        $collectionServicesArray = array();
+        foreach (self::$_interfaceArray as $service => $interface) {
+            if(in_array('Rubedo\\Interfaces\\Collection\\IAbstractCollection',class_implements($interface))){
+                $collectionServicesArray[] = $service;
+            }
+        }
+        return $collectionServicesArray;
+    }
+
     /**
      * Public static method to add new service to the application
      *

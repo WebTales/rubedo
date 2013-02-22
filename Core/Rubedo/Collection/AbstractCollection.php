@@ -30,6 +30,13 @@ abstract class AbstractCollection implements IAbstractCollection
 {
 
     /**
+     * Indexes of the collection
+     * 
+     * @var array
+     */
+    protected $_indexes = array();
+    
+    /**
      * name of the collection
      *
      * @var string
@@ -510,7 +517,28 @@ abstract class AbstractCollection implements IAbstractCollection
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
         return $oldValue;
     }
+    
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::checkIndexes()
+     */
+    public function checkIndexes ()
+    {
+       return false;
+        
+    }
 
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::ensureIndexes()
+     */
+    public function ensureIndexes ()
+    {
+        return false;        
+    }
+
+
+    
     
     
 }
