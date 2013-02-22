@@ -426,7 +426,13 @@ class DataIndex extends DataAbstract implements IDataIndex
 
 			// only index searchable fields
 			if (in_array($field,$typeStructure['searchableFields']))  {	
-				$contentData[$field] = (string) $var;
+				if(is_array($var)){
+				    foreach ($var as $subvalue){
+				        $contentData[$field][] = (string) $subvalue;
+				    }
+				}else{
+				    $contentData[$field] = (string) $var;
+				}
 			}
 
 			// Date format fix
