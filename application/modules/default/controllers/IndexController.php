@@ -77,8 +77,17 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * array of parent IDs
+	 * 
+	 * @var array
      */
     protected $_rootlineArray;
+	
+	/**
+	 * ID of the column to display main content instead of page content if content-id given
+	 * 
+	 * @var string
+	 */
+	protected $_mainCol = null;
 
     /**
      * Main Action : render the Front Office view
