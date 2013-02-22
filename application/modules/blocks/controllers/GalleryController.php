@@ -12,145 +12,166 @@
  * @license    yet to be written
  * @version    $Id:
  */
-
 Use Rubedo\Services\Manager;
 
 require_once ('ContentListController.php');
+
 /**
- *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_GalleryController extends Blocks_ContentListController {
-
-	
+class Blocks_GalleryController extends Blocks_ContentListController
+{
 
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction() {
-        $isDraft = Zend_Registry::get('draft');
-        $this->_dataService = Manager::getservice('Dam');
+    public function indexAction ()
+    {
+        $output = $this->_getList();
         
-        //Get queryId, blockConfig and Datalist
-        $blockConfig = $this->getRequest()->getParam('block-config');
-        $currentPage = $this->getRequest()->getParam('page', 1);
-        $query = Zend_Json::decode($blockConfig["query"]);
-        $filter = $this->setFilters($query);
-        $limit = (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
-		
-		//Get the number of pictures in database
-		$allDamCount = $this->_dataService->getList();
-		$allDamCount = $allDamCount['count'];
-		
-		//Define the maximum number of pages
-		$maxPage = (int)($allDamCount/$limit);
-		if($allDamCount%$limit > 0){
-			$maxPage ++;
-		}
-		
-		//Set the page to 1 if the user enter a bad page value in the URL
-		if($currentPage<1 || $currentPage > $maxPage){
-			$currentPage = 1;
-		}
-		
-		//Defines if the arrows of the carousel are displayed or none
-		$next =true;
-		$previous = true;
-		
-		if($currentPage == $maxPage){
-			$next = false;
-		}
-		
-		if($currentPage <= 1){
-			$previous = false;
-		}
-		
-		//Get the pictures
-        $mediaArray = $this->_dataService->getList($filter['filter'], $filter['sort'], (($currentPage - 1) * $limit), $limit);
-
-		//Set the ID and the title for each pictures
-        foreach ($mediaArray['data'] as $media) {
-            $fields["image"] = (string)$media['id'];
-            $fields["title"] = $media['title'];
-            $data[] = $fields;
-        }
-			
-		//Values sent to the view
-        $output['items'] = $data;
-		$output['allDamCount'] = $allDamCount;
-		$output['maxPage'] = $maxPage;
-		$output['previous'] = $previous;
-		$output['next'] = $next;
-        $output['count'] = $mediaArray['count'];
-        $output['pageSize'] = $limit;
-        $output["image"]["width"] = $blockConfig['imageThumbnailWidth'];
-        $output["image"]["height"] = $blockConfig['imageThumbnailHeight'];
-        $output['currentPage'] = $currentPage;
-
-        if (isset($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
-        } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
-        }
-		
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
+        
         $css = array();
         $js = array();
-		
+        
         $this->_sendResponse($output, $template, $css, $js);
     }
 
+    public function xhrGetImagesAction ()
+    {
+        // $this->_dataService = Manager::getservice('Dam');
+        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
+        
+        // $currentPage = \Zend_Json::decode($this->getParam('page'));
+        // $allDamCount = \Zend_Json::decode($this->getParam('itemCount'));
+        // $pageSize = \Zend_Json::decode($this->getParam('itemsPerPage'));
+        // $maxPage = \Zend_Json::decode($this->getParam('maxPage'));
+        // $items = array();
+        
+        // // Defines if the arrows of the carousel are displayed or none
+        
+        // // Get the pictures
+        // $mediaArray = $this->_dataService->getList(null, null, (($currentPage
+        // - 1) * $pageSize), $pageSize);
+        
+        // // Set the ID and the title for each pictures
+        // foreach ($mediaArray['data'] as $media) {
+        // $fields["image"] = (string) $media['id'];
+        // $fields["title"] = $media['title'];
+        // $items[] = $fields;
+        // }
+        // $twigVars = array();
+        // $twigVars['items'] = $items;
+        // $twigVars['currentPage'] = $currentPage;
+        // $twigVars['maxPage'] = $maxPage;
+        
+        // if ($currentPage != $maxPage) {
+        // $twigVars['next'] = true;
+        // }
+        
+        // if ($currentPage > 1) {
+        // $twigVars['previous'] = true;
+        // }
+        
+        // $twigVars['allDamCount'] = $allDamCount;
+        // $twigVars['pageSize'] = $pageSize;
+        $twigVars = $this->_getList();
+        // $currentPage
+        $html = $this->_serviceTemplate->render('root/blocks/gallery/items.html.twig', $twigVars);
+        $data = array(
+            'html' => $html
+        );
+        $this->_helper->json($data);
+    }
 
-	public function xhrGetImagesAction(){
-		$this->_dataService = Manager::getservice('Dam');
-		$this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');	
-			
-		$currentPage = \Zend_Json::decode($this->getParam('page'));
-		$allDamCount = \Zend_Json::decode($this->getParam('itemCount'));
-		$pageSize = \Zend_Json::decode($this->getParam('itemsPerPage'));
-		$maxPage = \Zend_Json::decode($this->getParam('maxPage'));
-		$items = array();
-		
-		//Defines if the arrows of the carousel are displayed or none
-		
-		
-		//Get the pictures
-        $mediaArray = $this->_dataService->getList(null, null, (($currentPage - 1) * $pageSize), $pageSize);
-		
-		//Set the ID and the title for each pictures
-        foreach ($mediaArray['data'] as $media) {
-            $fields["image"] = (string)$media['id'];
-            $fields["title"] = $media['title'];
-            $items[] = $fields;
+    protected function _getList ()
+    {
+        $currentPage = $this->getRequest()->getParam('page', 1);
+        
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $limit = (int)$this->getParam('itemsPerPage', 5);
+            $filter = array('filter'=>null,'sort'=>null);
+            $galleryId = $this->getParam('galleryid');
+            $imgWidth = $this->getParam('width',null);
+            $imgHeight = $this->getParam('height',null);
+        } else {
+            $isDraft = Zend_Registry::get('draft');
+            // Get queryId, blockConfig and Datalist
+            $blockConfig = $this->getRequest()->getParam('block-config');
+            $limit = (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
+            
+            $query = Zend_Json::decode($blockConfig["query"]);
+            $filter = $this->setFilters($query);
+            $imgWidth = $blockConfig['imageThumbnailWidth'];
+            $imgHeight = $blockConfig['imageThumbnailHeight'];
+            $galleryId = 'gallery'.md5(rand(0,1000000));
         }
-		$twigVars = array();
-		$twigVars['items']=$items;
-		$twigVars['currentPage']=$currentPage;
-		$twigVars['maxPage']=$maxPage;
-		
-		if($currentPage != $maxPage){
-			$twigVars['next']=true;
-		}
-		
-		if($currentPage > 1){
-			$twigVars['previous']=true;
-		}
+        
+        $this->_dataService = Manager::getservice('Dam');
+        
+        // Get the number of pictures in database
+        $allDamCount = $this->_dataService->count($filter['filter']);
+        // Define the maximum number of pages
+        $maxPage = (int) ($allDamCount / $limit);
+        if ($allDamCount % $limit > 0) {
+            $maxPage ++;
+        }
+        
+        // Set the page to 1 if the user enter a bad page value in the URL
+        if ($currentPage < 1 || $currentPage > $maxPage) {
+            $currentPage = 1;
+        }
+        
+        // Defines if the arrows of the carousel are displayed or none
+        $next = true;
+        $previous = true;
+        
+        if ($currentPage == $maxPage) {
+            $next = false;
+        }
+        
+        if ($currentPage <= 1) {
+            $previous = false;
+        }
+        
+        // Get the pictures
+        $mediaArray = $this->_dataService->getList($filter['filter'], $filter['sort'], (($currentPage - 1) * $limit), $limit);
+        
+        // Set the ID and the title for each pictures
+        foreach ($mediaArray['data'] as $media) {
+            $fields["image"] = (string) $media['id'];
+            $fields["title"] = $media['title'];
+            $data[] = $fields;
+        }
+        
+        // Values sent to the view
+        $output['galleryid']=$galleryId;
+        $output['items'] = $data;
+        $output['allDamCount'] = $allDamCount;
+        $output['maxPage'] = $maxPage;
+        $output['previous'] = $previous;
+        $output['next'] = $next;
+        $output['count'] = $mediaArray['count'];
+        $output['pageSize'] = $limit;
+        $output["image"]["width"] = isset($imgWidth)?$imgWidth:null;
+        $output["image"]["height"] = isset($imgHeight)?$imgHeight:null;
+        $output['currentPage'] = $currentPage;
+                
+        return $output;
+    }
 
-		$twigVars['allDamCount']=$allDamCount;
-		$twigVars['pageSize']=$pageSize;
-		
-		//$currentPage
-		$html = $this->_serviceTemplate->render('root/blocks/gallery/items.html.twig', $twigVars);
-		$data = array('html' => $html);
-		$this->_helper->json($data);
-	}
-
-    protected function setFilters($query) {
+    protected function setFilters ($query)
+    {
         if ($query != null) {
             /* Add filters on TypeId and publication */
-            $filterArray[] = array('operator' => '$in', 'property' => 'typeId', 'value' => $query['DAMTypes']);
+            $filterArray[] = array(
+                'operator' => '$in',
+                'property' => 'typeId',
+                'value' => $query['DAMTypes']
+            );
             /* Add filter on taxonomy */
             foreach ($query['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
@@ -175,7 +196,11 @@ class Blocks_GalleryController extends Blocks_ContentListController {
                     $taxOperator = '$in';
                 }
                 if (count($value['terms']) > 0) {
-                    $filterArray[] = array('operator' => $taxOperator, 'property' => 'taxonomy.' . $key, 'value' => $value['terms']);
+                    $filterArray[] = array(
+                        'operator' => $taxOperator,
+                        'property' => 'taxonomy.' . $key,
+                        'value' => $value['terms']
+                    );
                 }
             }
             /*
@@ -183,17 +208,24 @@ class Blocks_GalleryController extends Blocks_ContentListController {
              */
             if (isset($query['fieldRules'])) {
                 foreach ($query['fieldRules'] as $field => $rule) {
-                    $sort[] = array("property" => $field, 'direction' => $rule['sort']);
+                    $sort[] = array(
+                        "property" => $field,
+                        'direction' => $rule['sort']
+                    );
                 }
             } else {
-                $sort[] = array('property' => 'id', 'direction' => 'DESC');
+                $sort[] = array(
+                    'property' => 'id',
+                    'direction' => 'DESC'
+                );
             }
-
         } else {
             return array();
         }
-        $returnArray = array("filter" => $filterArray, "sort" => $sort);
+        $returnArray = array(
+            "filter" => $filterArray,
+            "sort" => isset($sort) ? $sort : null
+        );
         return $returnArray;
     }
-
 }

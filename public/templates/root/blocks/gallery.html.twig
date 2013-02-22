@@ -3,28 +3,10 @@
 {% block mainContent %}
 <!-- carousel -->
 {% set galleryid="gallery-"~random() %}
-{% set galleryid2="gallery-"~random() %}
 {% set pages=count//pageSize %}
 
-<br><br>
-
 <div id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
-	Gallerie sans jQuery
 	<div id="{{galleryid}}" class="carousel slide">
-		<div class="carousel-inner">
-			{% include 'root/blocks/gallery/items.html.twig' %}
-		    
-		    {% if previous == true %}
-				<a class="carousel-control left" href="{{url({'page': currentPage-1},true)}}" data-slide="prev">&lsaquo;</a>
-			{% endif %}
-			{% if next == true %}
-				<a class="carousel-control right" href="{{url({'page': currentPage+1},true)}}" data-slide="next">&rsaquo;</a>
-			{% endif %}
-		</div>
-	</div>
-	
-	Gallerie avec jQuery
-	<div id="{{galleryid2}}" class="carousel slide" stlye="overflow:hidden">
 		<div class="carousel-inner">
 			{% include 'root/blocks/gallery/items.html.twig' %}
 		    
@@ -33,8 +15,8 @@
 </div>
 
 <script type="text/javascript">
-	function changePage(pageNumber, itemCount, itemsPerPage, maxPage) {
-		if(jQuery('#{{galleryid2}} > .carousel-inner > #page'+pageNumber).length == 0){
+	function changePage(pageNumber, itemCount, itemsPerPage, maxPage,galleryid,width,height) {
+		if(jQuery('#{{galleryid}} > .carousel-inner > #page'+pageNumber).length == 0){
 		var request = jQuery.ajax({
 			url : "{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}",
 			type : "POST",
@@ -42,23 +24,26 @@
 				'page' : pageNumber,
 				'itemCount' : itemCount,
 				'itemsPerPage' : itemsPerPage,
-				'maxPage' : maxPage
+				'maxPage' : maxPage,
+				'width': (width) ? width : null,
+				'height': (height) ? height : null,
+				'galleryid':galleryid
 			},
 			dataType : "json"
 		});
 
 		request.done(function(data) {
 			var newHtml = data.html;
-			jQuery("#{{galleryid2}} > .carousel-inner").append(newHtml);
+			jQuery("#{{galleryid}} > .carousel-inner").append(newHtml);
 		});
 
 		request.fail(function(jqXHR, textStatus) {
 		});
 		}
-		jQuery('#{{galleryid2}} > .carousel-inner > .active').hide();
-		jQuery('#{{galleryid2}} > .carousel-inner > .active').removeClass('active');
-		jQuery('#{{galleryid2}} > .carousel-inner > #page'+pageNumber).show();
-		jQuery('#{{galleryid2}} > .carousel-inner > #page'+pageNumber).addClass('active');
+		jQuery('#{{galleryid}} > .carousel-inner > .active').hide();
+		jQuery('#{{galleryid}} > .carousel-inner > .active').removeClass('active');
+		jQuery('#{{galleryid}} > .carousel-inner > #page'+pageNumber).show();
+		jQuery('#{{galleryid}} > .carousel-inner > #page'+pageNumber).addClass('active');
 		return false;
 	}
 </script>

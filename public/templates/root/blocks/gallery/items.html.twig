@@ -1,12 +1,12 @@
 <div id="page{{currentPage}}" class="active" data-slide-to="{{currentPage}}">
 	{% for item in items %}
-	<a href="/dam?media-id={{item.image}}" data-gallery="gallery"><img src="/dam?media-id={{item.image}}" width="184" heigth="184" alt="{{item.title}}" title="{{item.title}}"></a>
+	<a href="/dam?media-id={{item.image}}" data-gallery="gallery"><img src="/dam?media-id={{item.image}}" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}"></a>
 	{% endfor %}
 
 	{% if previous == true %}
-	<a class="carousel-control left" href="#" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}})">&lsaquo;</a>
+	<a class="carousel-control left" href="#" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %})">&lsaquo;</a>
 	{% endif %}
 	{% if next == true %}
-	<a class="carousel-control right" href="#" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}})">&rsaquo;</a>
+	<a class="carousel-control right" href="#" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %})">&rsaquo;</a>
 	{% endif %}
 </div>
