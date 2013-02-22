@@ -27,7 +27,13 @@ use Rubedo\Interfaces\Collection\ISites, Rubedo\Services\Manager;
  */
 class Sites extends AbstractCollection implements ISites
 {
-
+    protected $_indexes = array(
+        array('keys'=>array('text'=>1),'options'=>array('unique'=>true)),
+        array('keys'=>array('alias'=>1),'options'=>array('unique'=>true)),
+        array('keys'=>array('workspace'=>1)),
+    );
+    
+    
     protected static $_overrideSiteName = array();
 
     protected static $_overrideSiteNameReverse = array();

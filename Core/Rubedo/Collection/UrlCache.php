@@ -28,7 +28,12 @@ use Rubedo\Mongo\DataAccess;
  */
 class UrlCache extends AbstractCollection implements IUrlCache
 {
-
+    protected $_indexes = array(
+        array('keys'=>array('siteId'=>1,"url"=>1),'options'=>array('unique'=>true)),
+        array('keys'=>array('siteId'=>1,"pageId"=>1),'options'=>array('unique'=>true)),
+    
+    );
+    
     /**
      * Set the collection name
      */

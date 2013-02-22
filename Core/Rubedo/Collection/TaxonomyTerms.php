@@ -28,6 +28,11 @@ use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager;
 class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('vocabularyId'=>1,"parentId"=>1,"orderValue"=>1)),
+        
+    );
+    
     public function __construct ()
     {
         $this->_collectionName = 'TaxonomyTerms';

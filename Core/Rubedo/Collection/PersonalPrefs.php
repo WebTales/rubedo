@@ -27,6 +27,9 @@ use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager;
  */
 class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 {
+    protected $_indexes = array(
+        array('keys'=>array('userId'=>1),'options'=>array('unique'=>true)),
+    );
 
     public function __construct ()
     {
