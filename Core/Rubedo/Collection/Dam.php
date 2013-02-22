@@ -29,6 +29,12 @@ use Rubedo\Services\Manager;
 class Dam extends AbstractCollection implements IDam
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('target'=>1,'createTime'=>-1)),
+        array('keys'=>array('mainFileType'=>1,'target'=>1,'createTime'=>-1)),
+        array('keys'=>array('originalFileId'=>1),'options'=>array('unique'=>true)),
+    );
+    
     /**
      * ensure that no nested contents are requested directly
      */

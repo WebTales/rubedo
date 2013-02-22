@@ -27,7 +27,9 @@ use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager;
  */
 class Icons extends AbstractCollection implements IIcons
 {
-	
+    protected $_indexes = array(
+        array('keys'=>array('userId'=>1)),
+    );
 
 	public function __construct(){
 		$this->_collectionName = 'Icons';
