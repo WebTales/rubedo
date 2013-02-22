@@ -62,11 +62,11 @@ class Blocks_GalleryController extends Blocks_ContentListController
         
         if ($this->getRequest()->isXmlHttpRequest()) {
             $limit = (int)$this->getParam('itemsPerPage', 5);
-            $filter = array('filter'=>null,'sort'=>null);
             $galleryId = $this->getParam('galleryid');
             $imgWidth = $this->getParam('width',null);
             $imgHeight = $this->getParam('height',null);
             $query = Zend_Json::decode($this->getParam("query",Zend_Json::encode(null)));
+            $filter = $this->setFilters($query);
         } else {
             $isDraft = Zend_Registry::get('draft');
             // Get queryId, blockConfig and Datalist
