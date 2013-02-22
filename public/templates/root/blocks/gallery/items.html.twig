@@ -4,9 +4,9 @@
 	{% endfor %}
 
 	{% if previous == true %}
-	<a class="carousel-control left" href="#" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %})">&lsaquo;</a>
+	<a class="carousel-control left" href="#" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}')">&lsaquo;</a>
 	{% endif %}
 	{% if next == true %}
-	<a class="carousel-control right" href="#" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %})">&rsaquo;</a>
+	<a class="carousel-control right" href="#" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}')">&rsaquo;</a>
 	{% endif %}
 </div>

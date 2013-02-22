@@ -42,51 +42,20 @@ class Blocks_GalleryController extends Blocks_ContentListController
 
     public function xhrGetImagesAction ()
     {
-        // $this->_dataService = Manager::getservice('Dam');
-        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
-        
-        // $currentPage = \Zend_Json::decode($this->getParam('page'));
-        // $allDamCount = \Zend_Json::decode($this->getParam('itemCount'));
-        // $pageSize = \Zend_Json::decode($this->getParam('itemsPerPage'));
-        // $maxPage = \Zend_Json::decode($this->getParam('maxPage'));
-        // $items = array();
-        
-        // // Defines if the arrows of the carousel are displayed or none
-        
-        // // Get the pictures
-        // $mediaArray = $this->_dataService->getList(null, null, (($currentPage
-        // - 1) * $pageSize), $pageSize);
-        
-        // // Set the ID and the title for each pictures
-        // foreach ($mediaArray['data'] as $media) {
-        // $fields["image"] = (string) $media['id'];
-        // $fields["title"] = $media['title'];
-        // $items[] = $fields;
-        // }
-        // $twigVars = array();
-        // $twigVars['items'] = $items;
-        // $twigVars['currentPage'] = $currentPage;
-        // $twigVars['maxPage'] = $maxPage;
-        
-        // if ($currentPage != $maxPage) {
-        // $twigVars['next'] = true;
-        // }
-        
-        // if ($currentPage > 1) {
-        // $twigVars['previous'] = true;
-        // }
-        
-        // $twigVars['allDamCount'] = $allDamCount;
-        // $twigVars['pageSize'] = $pageSize;
         $twigVars = $this->_getList();
-        // $currentPage
-        $html = $this->_serviceTemplate->render('root/blocks/gallery/items.html.twig', $twigVars);
+        
+        $html = Manager::getService('FrontOfficeTemplates')->render('root/blocks/gallery/items.html.twig', $twigVars);
         $data = array(
             'html' => $html
         );
         $this->_helper->json($data);
     }
 
+    /**
+     * return a list of items based on the query
+     * 
+     * @return array
+     */
     protected function _getList ()
     {
         $currentPage = $this->getRequest()->getParam('page', 1);
@@ -97,6 +66,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
             $galleryId = $this->getParam('galleryid');
             $imgWidth = $this->getParam('width',null);
             $imgHeight = $this->getParam('height',null);
+            $query = Zend_Json::decode($this->getParam("query",Zend_Json::encode(null)));
         } else {
             $isDraft = Zend_Registry::get('draft');
             // Get queryId, blockConfig and Datalist
@@ -159,12 +129,14 @@ class Blocks_GalleryController extends Blocks_ContentListController
         $output["image"]["width"] = isset($imgWidth)?$imgWidth:null;
         $output["image"]["height"] = isset($imgHeight)?$imgHeight:null;
         $output['currentPage'] = $currentPage;
+        $output['jsonQuery'] = Zend_Json::encode($query);
                 
         return $output;
     }
 
     protected function setFilters ($query)
     {
+        
         if ($query != null) {
             /* Add filters on TypeId and publication */
             $filterArray[] = array(

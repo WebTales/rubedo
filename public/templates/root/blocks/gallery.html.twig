@@ -15,7 +15,7 @@
 </div>
 
 <script type="text/javascript">
-	function changePage(pageNumber, itemCount, itemsPerPage, maxPage,galleryid,width,height) {
+	function changePage(pageNumber, itemCount, itemsPerPage, maxPage,galleryid,width,height,query) {
 		if(jQuery('#{{galleryid}} > .carousel-inner > #page'+pageNumber).length == 0){
 		var request = jQuery.ajax({
 			url : "{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}",
@@ -27,7 +27,8 @@
 				'maxPage' : maxPage,
 				'width': (width) ? width : null,
 				'height': (height) ? height : null,
-				'galleryid':galleryid
+				'galleryid':galleryid,
+				'query':query
 			},
 			dataType : "json"
 		});
