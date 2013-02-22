@@ -32,6 +32,9 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Indexes of the collection
      * 
+     * should be an array of index.
+     * An index should be an array('keys'=>array,'options'=>array) which define fields and options of the index
+     * 
      * @var array
      */
     protected $_indexes = array();
@@ -524,7 +527,11 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function checkIndexes ()
     {
-       return false;
+       $result = true;
+        foreach ($this->_indexes as $index){
+            $result = $result && $this->_dataService->checkIndex($index['keys']);
+        }
+        return $result;
         
     }
 
@@ -534,7 +541,11 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function ensureIndexes ()
     {
-        return false;        
+        $result = true;
+        foreach ($this->_indexes as $index){
+            $result = $result && $this->_dataService->ensureIndex($index['keys'],isset($index['options'])?$index['options']:array());
+        }
+        return $result;        
     }
 
 
