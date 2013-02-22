@@ -1,6 +1,10 @@
 <div id="page{{currentPage}}" class="active" data-slide-to="{{currentPage}}">
 	{% for item in items %}
-	<a href="/dam?media-id={{item.image}}" data-gallery="gallery"><img src="/dam?media-id={{item.image}}" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}"></a>
+	<a href="#" data-gallery="gallery" onclick="
+		jQuery('#myModal').modal();
+		jQuery('#fullScreenPicture').attr('src','/dam?media-id={{item.image}}');
+		jQuery('#myModalLabel').html('{{item.title}}');
+	"><img src="/dam?media-id={{item.image}}" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}"></a>
 	{% endfor %}
 
 	{% if previous == true %}
