@@ -91,7 +91,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function indexContentType($id, $data, $overwrite=FALSE) {
     	
 		// Unicity type id check
-		$mapping = $this->_content_index->getMapping();
+		$mapping = self::$_content_index->getMapping();
 		if (array_key_exists($id,$mapping[self::$_options['contentIndex']])) {
 			if ($overwrite) {
 				// delete existing content type
@@ -193,7 +193,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Create new ES type if not empty
 		if (!empty($indexMapping)) {
 			// Create new type
-			$type = new \Elastica_Type($this->_content_index, $id);
+			$type = new \Elastica_Type(self::$_content_index, $id);
 			
 			// Set mapping
 			$type->setMapping($indexMapping);
@@ -218,7 +218,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function indexDamType($id, $data, $overwrite=FALSE) {
     	
 		// Unicity type id check
-		$mapping = $this->_dam_index->getMapping();
+		$mapping = self::$_dam_index->getMapping();
 		if (array_key_exists($id,$mapping[self::$_options['damIndex']])) {
 			if ($overwrite) {
 				// delete existing content type
@@ -322,7 +322,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// If there is no searchable field, the new type is not created
 		if (!empty($indexMapping)) {
 			// Create new type
-			$type = new \Elastica_Type($this->_dam_index, $id);
+			$type = new \Elastica_Type(self::$_dam_index, $id);
 			
 			// Set mapping
 			$type->setMapping($indexMapping);
@@ -343,7 +343,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContentType ($id) {
     	
-    	$type = new \Elastica_Type($this->_content_index, $id);
+    	$type = new \Elastica_Type(self::$_content_index, $id);
     	$type->delete();
 		
     }
@@ -358,7 +358,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContent ($typeId, $id) {
     	
-    	$type = new \Elastica_Type($this->_content_index, $typeId);
+    	$type = new \Elastica_Type(self::$_content_index, $typeId);
     	$type->deleteById($id);
 		
     }
@@ -372,7 +372,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDamType ($id) {
     	
-    	$type = new \Elastica_Type($this->_dam_index, $id);
+    	$type = new \Elastica_Type(self::$_dam_index, $id);
     	$type->delete();
 		
     }
@@ -387,7 +387,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDam ($typeId, $id) {
     	
-    	$type = new \Elastica_Type($this->_dam_index, $typeId);
+    	$type = new \Elastica_Type(self::$_dam_index, $typeId);
     	$type->deleteById($id);
 		
     }
@@ -414,7 +414,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $typeId = $data['typeId'];
 					
 		// Load ES type 
-    	$contentType = $this->_content_index
+    	$contentType = self::$_content_index
     						->getType($typeId);
 		
 		// Get content type structure
@@ -584,7 +584,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $typeId = $data['typeId'];
 	
 		// Load ES dam type 
-    	$damType = $this->_dam_index
+    	$damType = self::$_dam_index
     						->getType($typeId);
 
 		// Get dam type structure
@@ -709,14 +709,14 @@ class DataIndex extends DataAbstract implements IDataIndex
 		
 		if ($option=='all' or $option=='content') {
 			// Destroy and re-create content index
-			@$this->_content_index->delete();
-			$this->_content_index->create(self::$_content_index_param,true);
+			@self::$_content_index->delete();
+			self::$_content_index->create(self::$_content_index_param,true);
 		}
 	
 		if ($option=='all' or $option=='dam') {
 			// Destroy and re-create dam index
-			@$this->_dam_index->delete();
-			$this->_dam_index->create(self::$_dam_index_param,true);
+			@self::$_dam_index->delete();
+			self::$_dam_index->create(self::$_dam_index_param,true);
 		}
 		
 		if ($option=='all' or $option=='content') {

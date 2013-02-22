@@ -121,17 +121,17 @@ class DataAbstract
 
         $this->_client = new \Elastica_Client(array('port'=>$port,'host'=>$host));
 		
-		$this->_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
+		self::$_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
 		
 		// Create content index if not exists
-		if (!$this->_content_index->exists()) {
-			$this->_content_index->create(self::$_content_index_param,true);
+		if (!self::$_content_index->exists()) {
+			self::$_content_index->create(self::$_content_index_param,true);
 		}
-		$this->_dam_index = $this->_client->getIndex(self::$_options['damIndex']);
+		self::$_dam_index = $this->_client->getIndex(self::$_options['damIndex']);
 		
 		// Create dam index if not exists
-		if (!$this->_dam_index->exists()) {
-			$this->_dam_index->create(self::$_dam_index_param,true);
+		if (!self::$_dam_index->exists()) {
+			self::$_dam_index->create(self::$_dam_index_param,true);
 		}
     }
 
