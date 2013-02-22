@@ -196,9 +196,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return Manager::getService('HtmlCleaner')->clean($html);
     }
 
-    public static function url (array $urlOptions = array(), $reset = false, $encode = true)
+    public static function url (array $urlOptions = array(), $reset = false, $encode = true,$route = null)
     {
-        return Manager::getService('Url')->url($urlOptions, null, $reset, $encode);
+        return Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
     }
 
     public static function displaySingleUrl ($contentId, $siteId = null)

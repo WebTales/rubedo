@@ -25,29 +25,65 @@ require_once ('ContentListController.php');
  */
 class Blocks_GalleryController extends Blocks_ContentListController {
 
+	
+
     /**
      * Default Action, return the Ext/Js HTML loader
      */
     public function indexAction() {
         $isDraft = Zend_Registry::get('draft');
         $this->_dataService = Manager::getservice('Dam');
-        /*
-         * Get queryId, blockConfig and Datalist
-         */
+        
+        //Get queryId, blockConfig and Datalist
         $blockConfig = $this->getRequest()->getParam('block-config');
         $currentPage = $this->getRequest()->getParam('page', 1);
         $query = Zend_Json::decode($blockConfig["query"]);
         $filter = $this->setFilters($query);
         $limit = (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
+		
+		//Get the number of pictures in database
+		$allDamCount = $this->_dataService->getList();
+		$allDamCount = $allDamCount['count'];
+		
+		//Define the maximum number of pages
+		$maxPage = (int)($allDamCount/$limit);
+		if($allDamCount%$limit > 0){
+			$maxPage ++;
+		}
+		
+		//Set the page to 1 if the user enter a bad page value in the URL
+		if($currentPage<1 || $currentPage > $maxPage){
+			$currentPage = 1;
+		}
+		
+		//Defines if the arrows of the carousel are displayed or none
+		$next =true;
+		$previous = true;
+		
+		if($currentPage == $maxPage){
+			$next = false;
+		}
+		
+		if($currentPage <= 1){
+			$previous = false;
+		}
+		
+		//Get the pictures
         $mediaArray = $this->_dataService->getList($filter['filter'], $filter['sort'], (($currentPage - 1) * $limit), $limit);
 
+		//Set the ID and the title for each pictures
         foreach ($mediaArray['data'] as $media) {
             $fields["image"] = (string)$media['id'];
             $fields["title"] = $media['title'];
             $data[] = $fields;
         }
-
+			
+		//Values sent to the view
         $output['items'] = $data;
+		$output['allDamCount'] = $allDamCount;
+		$output['maxPage'] = $maxPage;
+		$output['previous'] = $previous;
+		$output['next'] = $next;
         $output['count'] = $mediaArray['count'];
         $output['pageSize'] = $limit;
         $output["image"]["width"] = $blockConfig['imageThumbnailWidth'];
@@ -59,10 +95,57 @@ class Blocks_GalleryController extends Blocks_ContentListController {
         } else {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
         }
+		
         $css = array();
         $js = array();
+		
         $this->_sendResponse($output, $template, $css, $js);
     }
+
+
+	public function xhrGetImagesAction(){
+		$this->_dataService = Manager::getservice('Dam');
+		$this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');	
+			
+		$currentPage = \Zend_Json::decode($this->getParam('page'));
+		$allDamCount = \Zend_Json::decode($this->getParam('itemCount'));
+		$pageSize = \Zend_Json::decode($this->getParam('itemsPerPage'));
+		$maxPage = \Zend_Json::decode($this->getParam('maxPage'));
+		$items = array();
+		
+		//Defines if the arrows of the carousel are displayed or none
+		
+		
+		//Get the pictures
+        $mediaArray = $this->_dataService->getList(null, null, (($currentPage - 1) * $pageSize), $pageSize);
+		
+		//Set the ID and the title for each pictures
+        foreach ($mediaArray['data'] as $media) {
+            $fields["image"] = (string)$media['id'];
+            $fields["title"] = $media['title'];
+            $items[] = $fields;
+        }
+		$twigVars = array();
+		$twigVars['items']=$items;
+		$twigVars['currentPage']=$currentPage;
+		$twigVars['maxPage']=$maxPage;
+		
+		if($currentPage != $maxPage){
+			$twigVars['next']=true;
+		}
+		
+		if($currentPage > 1){
+			$twigVars['previous']=true;
+		}
+
+		$twigVars['allDamCount']=$allDamCount;
+		$twigVars['pageSize']=$pageSize;
+		
+		//$currentPage
+		$html = $this->_serviceTemplate->render('root/blocks/gallery/items.html.twig', $twigVars);
+		$data = array('html' => $html);
+		$this->_helper->json($data);
+	}
 
     protected function setFilters($query) {
         if ($query != null) {
