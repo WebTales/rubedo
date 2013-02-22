@@ -56,7 +56,6 @@ class config
 		'Users'						=>	'Rubedo\\Interfaces\\Collection\\IUsers',
 		'UrlCache'					=>	'Rubedo\\Interfaces\\Collection\\IUrlCache',
 		'Masks'						=>	'Rubedo\\Interfaces\\Collection\\IMasks',
-		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
 		'ReusableElements'			=>	'Rubedo\\Interfaces\\Collection\\IReusableElements',
 		'Contents'					=>	'Rubedo\\Interfaces\\Collection\\IContents',
 		'ContentTypes'				=>	'Rubedo\\Interfaces\\Collection\\IContentTypes',
@@ -64,8 +63,6 @@ class config
 		'FieldTypes'				=>	'Rubedo\\Interfaces\\Collection\\IFieldTypes',
 		'Groups'					=>	'Rubedo\\Interfaces\\Collection\\IGroups',
 		'Icons'						=>	'Rubedo\\Interfaces\\Collection\\IIcons',
-		'Medias'					=>	'Rubedo\\Interfaces\\Collection\\IMedias',
-		'Panier'					=>	'Rubedo\\Interfaces\\Collection\\IPanier',
 		'PersonalPrefs'				=>	'Rubedo\\Interfaces\\Collection\\IPersonalPrefs',
 		'Sites'						=>	'Rubedo\\Interfaces\\Collection\\ISites',
 		'Taxonomy'					=>	'Rubedo\\Interfaces\\Collection\\ITaxonomy',
@@ -77,7 +74,6 @@ class config
 		'Versioning'				=>	'Rubedo\\Interfaces\\Collection\\IVersioning',
 		'Images'					=>	'Rubedo\\Interfaces\\Collection\\IImages',
 		'Files'					    =>	'Rubedo\\Interfaces\\Collection\\IFiles',
-		'MediaTypes'				=>	'Rubedo\\Interfaces\\Collection\\IMediaTypes',
 		'Cache'						=>	'Rubedo\\Interfaces\\Collection\\ICache',
 		'Queries'					=>	'Rubedo\\Interfaces\\Collection\\IQueries',
 		'Dam'					    =>	'Rubedo\\Interfaces\\Collection\\IDam',
@@ -85,6 +81,21 @@ class config
 		'Workspaces'                =>  'Rubedo\\Interfaces\\Collection\\IWorkspaces',
 		'Mailer'					=>	'Rubedo\\Interfaces\\Mail\\IMailer',
 	);
+
+	/**
+	 * Return all collection services
+	 * @return multitype:unknown
+	 */
+    public static function getCollectionServices ()
+    {
+        $collectionServicesArray = array();
+        foreach (self::$_interfaceArray as $service => $interface) {
+            if(in_array('Rubedo\\Interfaces\\Collection\\IAbstractCollection',class_implements($interface))){
+                $collectionServicesArray[] = $service;
+            }
+        }
+        return $collectionServicesArray;
+    }
 
     /**
      * Public static method to add new service to the application

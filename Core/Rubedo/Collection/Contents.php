@@ -27,6 +27,17 @@ use Rubedo\Services\Manager;
 class Contents extends WorkflowAbstractCollection implements IContents
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('workspace.target'=>1,'createTime'=>-1)),
+        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'createTime'=>-1)),
+        array('keys'=>array('live.target'=>1,'createTime'=>-1)),
+        array('keys'=>array('live.target'=>1,'typeId'=>1,'createTime'=>-1)),
+        array('keys'=>array('workspace.target'=>1,'text'=>1)),
+        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'text'=>1)),
+        array('keys'=>array('live.target'=>1,'text'=>1)),
+        array('keys'=>array('live.target'=>1,'typeId'=>1,'text'=>1)),
+    );
+    
     /**
      * Is the input obj is valid
      *

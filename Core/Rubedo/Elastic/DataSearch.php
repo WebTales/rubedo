@@ -266,16 +266,16 @@ class DataSearch extends DataAbstract implements IDataSearch
 		// run query
 		switch ($option) {
 			case 'content': 
-				$elasticaResultSet = $this->_content_index->search($elasticaQuery);
+				$elasticaResultSet = self::$_content_index->search($elasticaQuery);
 				break;
 			case 'dam' :
-				$elasticaResultSet = $this->_dam_index->search($elasticaQuery);
+				$elasticaResultSet = self::$_dam_index->search($elasticaQuery);
 				break;
 			case 'all' :
-				$client = $this->_content_index->getClient();
+				$client = self::$_content_index->getClient();
 				$search = new \Elastica_Search($client);
-				$search->addIndex($this->_dam_index);
-				$search->addIndex($this->_content_index);
+				$search->addIndex(self::$_dam_index);
+				$search->addIndex(self::$_content_index);
 				$elasticaResultSet = $search->search($elasticaQuery);
 				break;
 		}

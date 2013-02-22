@@ -27,6 +27,10 @@ use Rubedo\Interfaces\Collection\IUsers, Rubedo\Services\Manager;
  */
 class Users extends AbstractCollection implements IUsers
 {
+    protected $_indexes = array(
+        array('keys'=>array('login'=>1),'options'=>array('unique'=>true)),
+        array('keys'=>array('email'=>1),'options'=>array('unique'=>true)),
+    );
 
     /**
      * Change the password of the user given by its id

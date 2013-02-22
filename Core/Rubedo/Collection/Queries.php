@@ -27,7 +27,10 @@ use Rubedo\Interfaces\Collection\IQueries,Rubedo\Services\Manager;
  */
 class Queries extends AbstractCollection implements IQueries
 {
-	
+    protected $_indexes = array(
+        array('keys'=>array('type'=>1)),
+    );
+    
 
 	public function __construct(){
 		$this->_collectionName = 'Queries';

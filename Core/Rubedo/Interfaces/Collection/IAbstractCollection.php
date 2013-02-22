@@ -97,8 +97,22 @@ interface IAbstractCollection {
      * return a list with its parent-line
      *
      * @param array $filters
-     * @return array:
+     * @return array
      */
     public function getListWithAncestors ($filters = null);
+    
+    /**
+     * Verify if all indexes are sets in DB
+     * 
+     * @return boolean
+     */
+    public function checkIndexes();
 
+    /**
+     * Ensure all indexes
+     * 
+     * @return booelan
+     */
+    public function ensureIndexes();
+    
 }

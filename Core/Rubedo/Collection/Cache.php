@@ -29,6 +29,10 @@ use Rubedo\Services\Manager;
 class Cache extends AbstractCollection implements ICache
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('cacheId'=>1),'options'=>array('unique'=>true)),
+    );
+    
     protected $_model = array(
         'data' => array(
             'domain' => 'string',

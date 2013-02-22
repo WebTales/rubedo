@@ -27,6 +27,12 @@ use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager;
  */
 class Pages extends AbstractCollection implements IPages
 {
+    protected $_indexes = array(
+        array('keys'=>array('site'=>1,'parentId'=>1,'orderValue'=>1)),
+        array('keys'=>array('site'=>1,'parentId'=>1,'workspace'=>1,'orderValue'=>1)),
+        
+    );
+    
     /**
      * Only access to content with read access
      * @see \Rubedo\Collection\AbstractCollection::_init()

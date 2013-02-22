@@ -28,6 +28,10 @@ use Rubedo\Interfaces\Collection\IVersioning;
 class Versioning extends AbstractCollection implements IVersioning
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('contentId'=>1,'contentVersion'=>-1)),
+    );
+    
     public function __construct() {
         $this->_collectionName = 'Versioning';
         parent::__construct();

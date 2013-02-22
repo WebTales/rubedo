@@ -27,6 +27,10 @@ use Rubedo\Interfaces\Collection\IWorkspaces,Rubedo\Services\Manager;
  */
 class Workspaces extends AbstractCollection implements IWorkspaces
 {
+    protected $_indexes = array(
+        array('keys'=>array('text'=>1),'options'=>array('unique'=>true)),
+    );
+    
     protected function _init(){
         parent::_init();
         
