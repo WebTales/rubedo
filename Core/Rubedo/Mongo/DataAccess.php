@@ -1211,7 +1211,6 @@ class DataAccess implements IDataAccess
     {
         $options['safe'] = true;
         $result =  $this->_collection->ensureIndex($keys, $options);
-        \Zend_Debug::dump($result);
         return $result;
     }
     
