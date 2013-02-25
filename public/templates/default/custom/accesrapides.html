@@ -1,14 +1,21 @@
-<ul>
-	<li class="cat-item cat-item-10">
-		<a href="#">Site National</a>
-	</li>
-	<li class="cat-item cat-item-8">
-		<a href="#">Autres délégations</a>
-	</li>
-	<li class="cat-item cat-item-11">
-		<a href="#">Documents et magazines</a>
-	</li>
-	<li class="cat-item cat-item-1">
-		<a href="#">Espace Presse</a>
-	</li>
-</ul>
+{% extends "root/block.html.twig" %} {% block mainContent %}
+<div class="well">
+
+
+	<ul class="nav nav-list">
+		<li><a href="#"><i class="icon-chevron-right"></i>Site
+				National</a></li>
+		<li class="divider"></li>
+		<li><a href="#"><i class="icon-chevron-right"></i>Autres
+				délégations</a></li>
+		<li class="divider"></li>
+		<li><a href="#"><i class="icon-chevron-right"></i>Documents
+				et magazines</a></li>
+		<li class="divider"></li>
+		<li><a href="#"><i class="icon-chevron-right"></i>Espace
+				Presse</a></li>
+	</ul>
+
+</div>
+
+{% endblock %}
