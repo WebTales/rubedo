@@ -273,7 +273,7 @@ abstract class AbstractCollection implements IAbstractCollection
     public function create (array $obj, $options = array('safe'=>true))
     {
         if (count($this->_model) > 0) {
-            $obj = $this->_filterInputData($obj);
+            $this->_filterInputData($obj);
         }
         unset($obj['readOnly']);
         return $this->_dataService->create($obj, $options);
@@ -285,53 +285,55 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $obj            
      * @return array:
      */
-     protected function _filterInputData (array $obj)
+    protected function _filterInputData (array $obj)
     {
     	
-    	if($this->_RequiredObject($obj))
+		if($this->_RequiredObject($obj))
 		{
-			\Zend_Debug::dump($this->_RequiredObject($obj));die();
-		 foreach($obj as $key=>$value)
-		 {
-		 	if($value!="" && $value!=array() && $value!=null){
-		 		 if (!is_array($value) && isset($model[$key]) && is_array($model[$key])) {
-		 		 	$result = $this->_isValid($value, $model[$key]['domain']);
-					 if (!$result) { 
-					 	 throw new \Zend_Exception('Failed to validate the datas for field ' . $key);
-					 }
-				 }elseif (is_array($value) && isset($model[$key]) && is_array($model[$key])) {
-				 	$result = $this->_filterInputData($value, $model[$key]);
-					if (!$result) {
-						throw new \Zend_Exception('Failed to validate the datas for field "' . $key . '"');
+			$result = true;			
+			
+			foreach($obj as $key=>$value){
+				
+				if($value!="" && $value!=array() && $value!=null){
+					if (!is_array($value) && isset($model[$key]) && is_array($model[$key])) {
+						$result = $this->_isValid($value, $model[$key]['domain']);
+						if (!$result) { 
+							throw new \Zend_Exception('Failed to validate the datas for field ' . $key);
+						}
+					} elseif (is_array($value) && isset($model[$key]) && is_array($model[$key])) {
+						$result = $this->_filterInputData($value, $model[$key]);
+						if (!$result) {
+							throw new \Zend_Exception('Failed to validate the datas for field "' . $key . '"');
+						}
 					}
-				 }
+				}
 			}
-				 
-		 }
+
+			return $result;
 		}else{
 			throw new \Zend_Exception('Missing required fields');
 		}
-		return $result;
 	}
 
+	/**
+	 * Assert if all requiered fields are specified
+	 * 
+	 * @param array $obj Contain the object
+	 * @return array Contain the list of missing fields
+ 	 */
 	protected function _RequiredObject(array $obj)
 	{
-		foreach ($this->_model as $key=>$value)
-		 {
-		 	if(isset($value['required']) && $value['required']==true)
-			{
-				if(!isset($obj[$key]))
-				{
+		foreach ($this->_model as $key=>$value){
+		 	if(isset($value['required']) && $value['required']==true){
+				if(!isset($obj[$key])){
 					$returnArray[]=false;
-					
-				}
-				else
-				{
-				   $returnArray[]= true;
+				} else {
+					$returnArray[]= true;
 				}
 			}
-		 }
-		 return (array_search(false, $returnArray))? array("can-validate"=>false) : array("can-validate"=>true);
+		}
+		
+		return (array_search(false, $returnArray))? array("can-validate"=>false) : array("can-validate"=>true);
 	}   
 
     /**
