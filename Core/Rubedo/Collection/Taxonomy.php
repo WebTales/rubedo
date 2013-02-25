@@ -126,11 +126,16 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['id'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t destroy navigation');
         }
-        $childDelete = Manager::getService('TaxonomyTerms')->deleteByVocabularyId($obj['id']);
-        if ($childDelete["ok"] == 1) {
+		$childrenToDelete=Manager::getService('TaxonomyTerms')->findByVocabulary($obj["id"]);
+		foreach($childrenToDelete["data"] as $child)
+		{
+			$deletedTerms[]=Manager::getService('TaxonomyTerms')->destroy($child);
+		}
+		if(!in_array(array("success"=>false),$deletedTerms))
+		{
             return parent::destroy($obj, $options);
         } else {
-            return $childDelete;
+            return array("success"=>false,"msg"=>"Error during children removal");
         }
     }
 
