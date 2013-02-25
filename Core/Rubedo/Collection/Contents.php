@@ -618,6 +618,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
 		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
 		return $this->getList($filterArray);
 	}
+	public function typeIsUsed($typeId)
+	{
+		$filterArray["typeId"]=$typeId;
+		$result=$this->_dataService->findOne($filterArray);
+		return ($result!=null)?array("used"=>true):array("used"=>false);
+	}
 
 	
 	
