@@ -49,7 +49,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
     public function isUsedAction() {
         $id = $this->getRequest()->getParam('id');
 		$wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
-        $result = Rubedo\Services\Manager::getService('Contents')->typeIsUsed($id);
+        $result = Rubedo\Services\Manager::getService('Contents')->isTypeUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
         $this->_returnJson($result);
     }

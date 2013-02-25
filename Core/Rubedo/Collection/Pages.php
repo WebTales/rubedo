@@ -176,7 +176,7 @@ class Pages extends AbstractCollection implements IPages
 		$filterArray[]=array("property"=>"maskId","value"=>$maskId);
 		return $this->getList($filterArray);
 	}
-	public function maskIsUsed($maskId)
+	public function isMaskUsed($maskId)
 	{
 		$filterArray["maskId"]=$maskId;
 		$result=$this->_dataService->findOne($filterArray);
