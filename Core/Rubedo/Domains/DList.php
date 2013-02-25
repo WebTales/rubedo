@@ -17,14 +17,14 @@
 namespace Rubedo\Domains;
 
 /**
- * Validator for "name" Domain
+ * Validator for "table" Domain
  * 
- * Should be a string of at most 256 caracters
+ * Should be an array
  * 
  * @author jbourdin
  *
  */
-class Name implements IDomains
+class DList implements IDomains
 {
     /**
      * Check if a value is valid for the current domain
@@ -34,10 +34,7 @@ class Name implements IDomains
      * @see Rubedo\Domains\IDomains::isValid()
      */
     public static function isValid($value){
-        if(!is_string($value)){
-            return false;
-        }
-        if(mb_strlen($value,'UTF-8') > 256){
+        if(!is_array($value)){
             return false;
         }
         return true;
