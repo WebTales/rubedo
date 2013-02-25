@@ -301,4 +301,64 @@ class Url implements IUrl
             return '#';
         }
     }
+
+    /**
+     * Return the url of the single content page of the site if the single page
+     * exist
+     *
+     * @param string $contentId
+     *            Id of the content to display
+     * @param string $siteId
+     *            Id of the site
+     *            
+     * @return string Url
+     */
+    public function displayCanonicalUrl ($contentId, $siteId = null)
+    {
+        $pageValid = false;
+        if ($siteId === null) {
+            $doNotAddSite = true;
+            $siteId = Manager::getService('PageContent')->getCurrentSite();
+        } else {
+            $doNotAddSite = false;
+        }
+        
+        $content = Manager::getService('Contents')->findById($contentId);
+        if (\Zend_Registry::get('draft', false)) {
+            $ws = 'draft';
+        } else {
+            $ws = 'live';
+        }
+        
+        if (isset($content[$ws]['taxonomy']['navigation'])) {
+            foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
+                $page = Manager::getService('Pages')->findById($pageId);
+                if ($page && $page['site'] == $siteId) {
+                    $pageValid = true;
+                    break;
+                }
+            }
+        }
+        
+        if (! $pageValid) {
+            $page = Manager::getService('Pages')->findByNameAndSite('single', $siteId);
+            $pageId = $page['id'];
+        }
+        
+        if ($pageId) {
+            $data = array(
+                'pageId' => $pageId,
+                'content-id' => $contentId
+            );
+            $pageUrl = $this->url($data, null, true);
+            if ($doNotAddSite) {
+                return $pageUrl;
+            } else {
+                
+                return 'http://' . Manager::getService('Sites')->getHost($siteId) . $pageUrl;
+            }
+        } else {
+            return '#';
+        }
+    }
 }

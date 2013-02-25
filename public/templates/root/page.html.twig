@@ -9,6 +9,11 @@
 <meta name="description" content="{{ description }}">
 {% endif %}
 <meta name="author" content="WebTales">
+
+{% if contentId %}
+<link rel="canonical" href="{{ displayCanonicalUrl(contentId) }}"/>
+{% endif %}
+
 {% endblock %} {% block pageStyle %}
 <!-- Le styles -->
 <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">

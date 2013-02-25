@@ -146,6 +146,7 @@ class IndexController extends Zend_Controller_Action
         $this->_pageId = $this->getRequest()->getParam('pageId');
         $this->_servicePage->setCurrentPage($this->_pageId);
         
+        
         if (! $this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found');
         }
@@ -156,6 +157,7 @@ class IndexController extends Zend_Controller_Action
         
         // Build Twig context
         $twigVar = $this->_pageParams;
+        $twigVar['contentId'] = $this->getParam('content-id',false);
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
