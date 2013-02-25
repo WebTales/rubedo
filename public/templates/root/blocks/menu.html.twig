@@ -1,4 +1,4 @@
-<div class="navbar navbar-inverse">
+<div class="navbar">
   <div class="navbar-inner">
   	<div class="container-fluid">
 		<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
@@ -13,21 +13,28 @@
 	    
 		    <div class="nav-collapse collapse">
 				<ul class="nav">
-		        {% for page in pages %}
-					<li id="menu-item-{{page.id}}" class="menu-item menu-item-type-custom menu-item-object-custom {% if currentPage == page.id %}current-menu-item{% endif %} {% if currentPage == page.id %}current_page_item{% endif %}">
-						<a href="{{page.url}}">{{page.title}}</a>
+					{% for page in pages %}
+					<li id="menu-item-{{page.id}}"
+						class="{% if page.id in rootline %}active{% endif %} {% if page.pages %}dropdown{% endif %}">
+						<a 
+						    {% if page.pages %}class="dropdown-toggle" id="menu-item-{{page.id}}" role="button" data-toggle="dropdown" data-target="#"{% endif %}
+						    href="{{page.url}}">{{page.title}}{% if page.pages %} <b class="caret"></b>{% endif %}</a> 
 						{% if page.pages %}
-							<ul class="sub-menu">
+						 <ul class="dropdown-menu" role="menu">
+						    <li
+								class="{% if page.id==currentPage %}active{% endif %}">
+						    <a href="{{page.url}}">{{page.title}}</a>
+						    </li>
+						    <li role="presentation" class="divider"></li>
 							{% for subpage in page.pages %}
-								<li class="menu-item menu-item-type-custom menu-item-object-custom">
-									<a href="{{subpage.url}}">{{subpage.title}}</a>
-								</li>
-							{% endfor %}
-							</ul>
-						{% endif %}
-					</li>
-				{% endfor %}
-		        </ul>
+							<li
+								class="{% if subpage.id in rootline %}active{% endif %}">
+								<a href="{{subpage.url}}">{{subpage.title}}</a>
+							</li> {% endfor %}
+
+						</ul> {% endif %}
+					</li> {% endfor %}
+				</ul>
 			</div>
 		</div>
  	</div>
