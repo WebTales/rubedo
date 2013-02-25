@@ -135,7 +135,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
 		{
             return parent::destroy($obj, $options);
         } else {
-            return array("success"=>false,"msg"=>"Error during removal of children");
+            return array("success"=>false,"msg"=>"Error during children removal");
         }
     }
 
