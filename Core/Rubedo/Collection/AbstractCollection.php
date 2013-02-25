@@ -295,17 +295,17 @@ abstract class AbstractCollection implements IAbstractCollection
 					//Case with a simple value
 					if(!isset($value['items'])){
 						if(!$this->_isValid($obj[$key], $value['domain'])) {
-							$this->_errors[$key] = "Failed to validate the value";
+							$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
 						}
 					} else {
 						//Case with an array for the value
 						if(!isset($value['items']['items'])){
 							if(!$this->_isValid($obj[$key], $value['domain'])) {
-								$this->_errors[$key] = "Failed to validate the value";
+								$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
 							}
 						} else { //Case with nested lists
 							if(!$this->_isValid($obj[$key], $value['domain'])) {
-								$this->_errors[$key] = "Failed to validate the value";
+								$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
 							}
 							if(is_array($obj[$key])){
 								$this->_filterInputData($obj[$key]);
@@ -320,9 +320,9 @@ abstract class AbstractCollection implements IAbstractCollection
 			}
 			
 			if(count($this->_errors)>0){
-				$summary = "Errors :";
+				$summary = "Errors : ";
 				foreach ($this->_errors as $key => $value) {
-					$summary .= $key." : ".$value;
+					$summary .= $key." => ".$value.", ";
 				}
 				throw new \Rubedo\Exceptions\Access($summary);
 			}
