@@ -46,10 +46,10 @@ class Backoffice_MasksController extends Backoffice_DataAccessController
 	{
 		$id= $this->getRequest()->getParam('id');
 		$wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
-        $listResult=Rubedo\Services\Manager::getService('Pages')->getListByMaskId($id);
+		$result=Rubedo\Services\Manager::getService('Pages')->maskIsUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
-	 	$resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
-		$this->_returnJson($resultArray);
+	 	//$resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
+		$this->_returnJson($result);
 	}
 
 }
