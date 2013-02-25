@@ -59,6 +59,8 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var array
      */
     protected $_model = array();
+	
+	protected $_errors = array();
     
     /**
      * If true, no request should be filtered by user access rights
@@ -287,54 +289,45 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _filterInputData (array $obj)
     {
-    	
-		if($this->_RequiredObject($obj))
-		{
-			$result = true;			
-			
-			foreach($obj as $key=>$value){
-				
-				if($value!="" && $value!=array() && $value!=null){
-					if (!is_array($value) && isset($model[$key]) && is_array($model[$key])) {
-						$result = $this->_isValid($value, $model[$key]['domain']);
-						if (!$result) { 
-							throw new \Zend_Exception('Failed to validate the datas for field ' . $key);
+    	if(count($this->_model)>0) {			
+			foreach($this->_model as $key => $value){
+				if (isset($obj[$key])) {
+					//Case with a simple value
+					if(!isset($value['items'])){
+						if(!$this->_isValid($obj[$key], $value['domain'])) {
+							$this->_errors[$key] = "Failed to validate the value";
 						}
-					} elseif (is_array($value) && isset($model[$key]) && is_array($model[$key])) {
-						$result = $this->_filterInputData($value, $model[$key]);
-						if (!$result) {
-							throw new \Zend_Exception('Failed to validate the datas for field "' . $key . '"');
+					} else {
+						//Case with an array for the value
+						if(!isset($value['items']['items'])){
+							if(!$this->_isValid($obj[$key], $value['domain'])) {
+								$this->_errors[$key] = "Failed to validate the value";
+							}
+						} else { //Case with nested lists
+							if(!$this->_isValid($obj[$key], $value['domain'])) {
+								$this->_errors[$key] = "Failed to validate the value";
+							}
+							if(is_array($obj[$key])){
+								$this->_filterInputData($obj[$key]);
+							}
 						}
+					}
+				} else {
+					if($value['required']){
+						$this->_errors[$key] = "The field is required";
 					}
 				}
 			}
-
-			return $result;
-		}else{
-			throw new \Zend_Exception('Missing required fields');
-		}
-	}
-
-	/**
-	 * Assert if all requiered fields are specified
-	 * 
-	 * @param array $obj Contain the object
-	 * @return array Contain the list of missing fields
- 	 */
-	protected function _RequiredObject(array $obj)
-	{
-		foreach ($this->_model as $key=>$value){
-		 	if(isset($value['required']) && $value['required']==true){
-				if(!isset($obj[$key])){
-					$returnArray[]=false;
-				} else {
-					$returnArray[]= true;
+			
+			if(count($this->_errors)>0){
+				$summary = "Errors :";
+				foreach ($this->_errors as $key => $value) {
+					$summary .= $key." : ".$value;
 				}
+				throw new \Rubedo\Exceptions\Access($summary);
 			}
 		}
-		
-		return (array_search(false, $returnArray))? array("can-validate"=>false) : array("can-validate"=>true);
-	}   
+	}  
 
     /**
      * Is the data a valid input for the domain
@@ -346,7 +339,7 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _isValid ($data, $domain)
     {
-        $domainClassName = 'Rubedo\\Domains\\' . ucfirst($domain);
+        $domainClassName = 'Rubedo\\Domains\\D' . ucfirst($domain);
         if (! class_exists($domainClassName)) {
             throw new \Rubedo\Exceptions\User('domain not defined :' . (string) $domain);
         }
