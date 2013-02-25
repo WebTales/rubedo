@@ -29,10 +29,16 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
 {
 
     protected $_indexes = array(
-        array('keys'=>array('vocabularyId'=>1,"parentId"=>1,"orderValue"=>1)),
-        
-    );
-    
+        array(
+            'keys' => array(
+                'vocabularyId' => 1,
+                "parentId" => 1,
+                "orderValue" => 1
+            )
+        )
+    )
+    ;
+
     public function __construct ()
     {
         $this->_collectionName = 'TaxonomyTerms';
@@ -152,7 +158,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 }
                 
                 return array_values($returnArray);
-            }else {
+            } else {
                 
                 $rootPage = Manager::getService('Pages')->findById($parentId);
                 
@@ -171,7 +177,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 
                 $returnArray = array();
                 $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
-
+                
                 foreach ($childrenArray as $page) {
                     $returnArray[] = $this->_pageToTerm($page);
                 }
@@ -213,7 +219,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         );
         $children = Manager::getService('Pages')->readChild('root', $filters, $sort);
         if (count($children) > 0) {
-            $array['leaf'] = true;
+            $array['expandable'] = true;
             $array['children'] = array();
             foreach ($children as $child) {
                 $child = $this->_pageToTerm($child);
@@ -233,7 +239,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         );
         $children = Manager::getService('Pages')->readChild($array['id'], $filters, $sort);
         if (count($children) > 0) {
-            $array['leaf'] = true;
+            $array['expandable'] = true;
             $array['children'] = array();
             foreach ($children as $child) {
                 $child = $this->_pageToTerm($child);
@@ -256,9 +262,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $workspace['text'];
         $term['id'] = $workspace['id'];
         $term['vocabularyId'] = 'wokspaces';
-		if (! self::isUserFilterDisabled()) {	
-        	$term['readOnly'] = true;
-		}
+        if (! self::isUserFilterDisabled()) {
+            $term['readOnly'] = true;
+        }
         $term['leaf'] = true;
         return $term;
     }
@@ -276,9 +282,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $site['text'];
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
-		if (! self::isUserFilterDisabled()) {	
-        	$term['readOnly'] = true;
-		}
+        $term['canAssign'] = $site['readOnly'] ? false : true;
+        if (! self::isUserFilterDisabled()) {
+            $term['readOnly'] = true;
+        }
         $term['leaf'] = true;
         return $term;
     }
@@ -289,10 +296,11 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $mainRoot["parentId"] = 'root';
         $mainRoot['text'] = 'Tous les sites';
         $mainRoot['id'] = 'all';
+        $mainRoot['canAssign'] = true;
         $mainRoot['vocabularyId'] = 'navigation';
-		if (! self::isUserFilterDisabled()) {	
-        	$mainRoot['readOnly'] = true;
-		}
+        if (! self::isUserFilterDisabled()) {
+            $mainRoot['readOnly'] = true;
+        }
         return $mainRoot;
     }
 
@@ -312,10 +320,11 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['expandable'] = $page['expandable'];
         $term['orderValue'] = $page['orderValue'];
         $term['vocabularyId'] = 'navigation';
-		if (! self::isUserFilterDisabled()) {	
-        	$term['readOnly'] = true;
-		}
-		
+        $term['canAssign'] = $page['readOnly'] ? false : true;
+        if (! self::isUserFilterDisabled()) {
+            $term['readOnly'] = true;
+        }
+        
         return $term;
     }
     
@@ -442,7 +451,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function findByVocabulary ($vocabularyId)
     {
-    	$filters = array();
+        $filters = array();
         $filters[] = array(
             "property" => "vocabularyId",
             "value" => $vocabularyId
@@ -457,7 +466,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function deleteByVocabularyId ($id)
     {
-        if ($id == 'navigation'){
+        if ($id == 'navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');
         }
         $deleteCond = array(
@@ -501,84 +510,124 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         }
         return $term;
     }
-	
-	public function clearOrphanTerms() {
+
+    public function clearOrphanTerms ()
+    {
         $taxonomyService = Manager::getService('Taxonomy');
         $taxonomyArray = array();
         $taxonomyIdArray = array();
         $termsArray = array();
-        $termsIdArray = array('root');
+        $termsIdArray = array(
+            'root'
+        );
         $orphansArray = array();
         $orphansIdArray = array();
-
+        
         $taxonomyArray = $taxonomyService->getList();
         $termsArray = $this->getList();
-
+        
         foreach ($taxonomyArray['data'] as $value) {
             $taxonomyIdArray[] = $value['id'];
         }
-
+        
         foreach ($termsArray['data'] as $value) {
             $termsIdArray[] = $value['id'];
         }
-		
-        $orphansArray = $this->_dataService->customFind(array('$or' => array( array('parentId' => array('$nin' => $termsIdArray)), array('vocabularyId' => array('$nin' => $taxonomyIdArray)))));
-
+        
+        $orphansArray = $this->_dataService->customFind(array(
+            '$or' => array(
+                array(
+                    'parentId' => array(
+                        '$nin' => $termsIdArray
+                    )
+                ),
+                array(
+                    'vocabularyId' => array(
+                        '$nin' => $taxonomyIdArray
+                    )
+                )
+            )
+        ));
+        
         if ($orphansArray->count() > 0) {
             $orphansArray = iterator_to_array($orphansArray);
         } else {
             $orphansArray = array();
         }
-
+        
         foreach ($orphansArray as $value) {
             $orphansIdArray[] = $value['_id'];
         }
-
+        
         $result = $this->_deleteByArrayOfId($orphansIdArray);
-
+        
         if ($result['ok'] == 1) {
-            return array('success' => 'true');
+            return array(
+                'success' => 'true'
+            );
         } else {
-            return array('success' => 'false');
+            return array(
+                'success' => 'false'
+            );
         }
     }
 
-    public function countOrphanTerms() {
+    public function countOrphanTerms ()
+    {
         $taxonomyService = Manager::getService('Taxonomy');
         $taxonomyArray = array();
         $taxonomyIdArray = array();
         $termsArray = array();
-        $termsIdArray = array('root');
+        $termsIdArray = array(
+            'root'
+        );
         $orphansArray = array();
-
+        
         $taxonomyArray = $taxonomyService->getList();
         $termsArray = $this->getList();
-
+        
         foreach ($taxonomyArray['data'] as $value) {
             $taxonomyIdArray[] = $value['id'];
         }
-
+        
         foreach ($termsArray['data'] as $value) {
             $termsIdArray[] = $value['id'];
         }
-				
-        $orphansArray = $this->_dataService->customFind(array('$or' => array( array('parentId' => array('$nin' => $termsIdArray)), array('vocabularyId' => array('$nin' => $taxonomyIdArray)))));
-
+        
+        $orphansArray = $this->_dataService->customFind(array(
+            '$or' => array(
+                array(
+                    'parentId' => array(
+                        '$nin' => $termsIdArray
+                    )
+                ),
+                array(
+                    'vocabularyId' => array(
+                        '$nin' => $taxonomyIdArray
+                    )
+                )
+            )
+        ));
+        
         if ($orphansArray->count() > 0) {
             $orphansArray = iterator_to_array($orphansArray);
         } else {
             $orphansArray = array();
         }
-
+        
         return count($orphansArray);
     }
 
-    protected function _deleteByArrayOfId($arrayId) {
+    protected function _deleteByArrayOfId ($arrayId)
+    {
         $deleteArray = array();
         foreach ($arrayId as $stringId) {
             $deleteArray[] = $this->_dataService->getId($stringId);
         }
-        return $this->_dataService->customDelete(array('_id' => array('$in' => $deleteArray)));
-
+        return $this->_dataService->customDelete(array(
+            '_id' => array(
+                '$in' => $deleteArray
+            )
+        ));
     }
 }
