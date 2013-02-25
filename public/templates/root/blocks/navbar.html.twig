@@ -1,16 +1,19 @@
+{% extends "root/block.html.twig" %}
+
+{% block mainContent %}
 <div id="menu" class="navbar">
 	<div class="navbar-inner">
 		<div class="container">
 			<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
 			<a class="btn btn-navbar" data-toggle="collapse"
-				data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+				data-target=".nav-collapse-{{ id }}"> <span class="icon-bar"></span> <span
 				class="icon-bar"></span> <span class="icon-bar"></span>
 			</a> <a class="brand"
 				href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}"
 				title="Accueil" rel="home">Accueil</a>
 
 			<!-- Everything you want hidden at 940px or less, place within here -->
-			<div class="nav-collapse collapse">
+			<div class="nav-collapse nav-collapse-{{ id }} collapse">
 				<!-- /nav bar -->
 
 				<ul class="nav">
@@ -18,15 +21,15 @@
 					<li id="menu-item-{{page.id}}"
 						class="{% if page.id in rootline %}active{% endif %} {% if page.pages %}dropdown{% endif %}">
 						<a 
-						    {% if page.pages %}class="dropdown-toggle" id="menu-item-{{page.id}}" role="button" data-toggle="dropdown" data-target="#"{% endif %}
+						    {% if page.pages %}class="dropdown-toggle" data-toggle="dropdown" data-target="#"{% endif %}
 						    href="{{page.url}}">{{page.title}}{% if page.pages %} <b class="caret"></b>{% endif %}</a> 
 						{% if page.pages %}
-						 <ul class="dropdown-menu" role="menu">
+						 <ul class="dropdown-menu">
 						    <li
 								class="{% if page.id==currentPage %}active{% endif %}">
 						    <a href="{{page.url}}">{{page.title}}</a>
 						    </li>
-						    <li role="presentation" class="divider"></li>
+						    <li class="divider"></li>
 							{% for subpage in page.pages %}
 							<li
 								class="{% if subpage.id in rootline %}active{% endif %}">
@@ -51,3 +54,4 @@
 		</div>
 	</div>
 </div>
+{% endblock %}
