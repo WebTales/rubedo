@@ -287,31 +287,29 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _filterInputData (array $obj)
     {
-    	
-		if($this->_RequiredObject($obj))
-		{
-			$result = true;			
-			
-			foreach($obj as $key=>$value){
+    	if(count($this->_model)>0){
+			if($this->_RequiredObject($obj))
+			{
+				$result = true;			
 				
-				if($value!="" && $value!=array() && $value!=null){
-					if (!is_array($value) && isset($model[$key]) && is_array($model[$key])) {
-						$result = $this->_isValid($value, $model[$key]['domain']);
+				foreach($obj as $key=>$value){
+					if (isset($this->_model[$key]) && is_array($this->_model[$key])) {
+						$result = $this->_isValid($value, $this->_model[$key]['domain']);
 						if (!$result) { 
 							throw new \Zend_Exception('Failed to validate the datas for field ' . $key);
 						}
-					} elseif (is_array($value) && isset($model[$key]) && is_array($model[$key])) {
-						$result = $this->_filterInputData($value, $model[$key]);
+					} elseif (is_array($value) && isset($this->_model[$key]) && is_array($this->_model[$key])) {
+						$result = $this->_filterInputData($value, $this->_model[$key]);
 						if (!$result) {
 							throw new \Zend_Exception('Failed to validate the datas for field "' . $key . '"');
 						}
 					}
 				}
+	
+				return $result;
+			}else{
+				throw new \Zend_Exception('Missing required fields');
 			}
-
-			return $result;
-		}else{
-			throw new \Zend_Exception('Missing required fields');
 		}
 	}
 
