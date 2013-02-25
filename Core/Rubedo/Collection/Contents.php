@@ -207,6 +207,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         return $returnArray;
     }
+	public function unsetTerms($vocId,$termId)
+	{
+		$data = array('$unset'=>array('taxonomy.'.$vocId.'.$'=>1));
+		$update = array('taxonomy.'.$vocId => $termId);
+		return $this->_dataService->customUpdate($data, $update);
+	}
 
     /**
      * Push the content to Elastic Search
