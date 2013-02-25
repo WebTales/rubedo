@@ -106,6 +106,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             foreach ($siteList['data'] as $site) {
                 $contentArray[] = $this->_siteToTerm($site);
             }
+            $pageList = Manager::getService('Pages')->getList($filters);
+            foreach ($pageList['data'] as $page) {
+                $contentArray[] = $this->_pageToTerm($page);
+            }
             
             $number = count($contentArray);
             return array(
@@ -145,6 +149,31 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 $childrenArray = Manager::getService('Sites')->getList($filters, $sort);
                 foreach ($childrenArray['data'] as $site) {
                     $returnArray[] = $this->_siteToTerm($site);
+                }
+                
+                return array_values($returnArray);
+            }else {
+                
+                $rootPage = Manager::getService('Pages')->findById($parentId);
+                
+                if ($rootPage) {
+                    $filters[] = array(
+                        'property' => 'site',
+                        'value' => $rootPage["site"]
+                    );
+                } else {
+                    $filters[] = array(
+                        'property' => 'site',
+                        'value' => $parentId
+                    );
+                    $parentId = 'root';
+                }
+                
+                $returnArray = array();
+                $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
+
+                foreach ($childrenArray as $page) {
+                    $returnArray[] = $this->_pageToTerm($page);
                 }
                 
                 return array_values($returnArray);
@@ -279,7 +308,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term["parentId"] = ($page['parentId'] == 'root') ? $page['site'] : $page['parentId'];
         $term['text'] = $page['text'];
         $term['id'] = $page['id'];
-        $term['leaf'] = $page['leaf'];
+        unset($term['leaf']);
+        $term['expandable'] = $page['expandable'];
         $term['orderValue'] = $page['orderValue'];
         $term['vocabularyId'] = 'navigation';
 		if (! self::isUserFilterDisabled()) {	
