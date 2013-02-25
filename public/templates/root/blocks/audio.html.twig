@@ -1,3 +1,7 @@
-<audio src="{% if audioFile %}/dam?media-id={{ audioFile }}{% else %}/assets/logo.gif{% endif %}"{%if audioAutoplay==true%} autoplay="true" {%endif%} {%if audioPreload==true %} preload="true" {%endif%}{%if audioLoop==true %} loop="true" {%endif%}{%if audioControls==true %} controls="true" {%endif%}>
+{% extends "root/block.html.twig" %}
 
+{% block mainContent %}
+<audio src="{% if audioFile %}/dam?media-id={{ audioFile }}{% else %}/assets/logo.gif{% endif %}"{%if audioAutoplay==true%} autoplay="true" {%endif%} {%if audioPreload==true %} preload="true" {%endif%}{%if audioLoop==true %} loop="true" {%endif%}{%if audioControls==true %} controls="true" {%endif%}>
 </audio>
+{% endblock %}
+
