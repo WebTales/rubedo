@@ -6,7 +6,7 @@
 
 		{% for page in rootline %} 
 		<li>
-		<a href="{{url({'pageId':page.id})}}"> {{ page.text }}
+		<a href="{{url({'pageId':page.id},true)}}"> {{ page.text }}
 		</a> <span class="divider">/</span></li>
 		 {% endfor %}
         <li class="active">{{ title }}</li>

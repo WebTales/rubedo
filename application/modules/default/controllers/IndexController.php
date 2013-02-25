@@ -144,6 +144,7 @@ class IndexController extends Zend_Controller_Action
         //$this->_servicePage->appendJs('/js/scripts.js');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
+        $this->_servicePage->setCurrentPage($this->_pageId);
         
         if (! $this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found');
