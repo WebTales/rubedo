@@ -118,7 +118,7 @@ class Url implements IUrl
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
      */
     public function getPageUrl ($pageId)
@@ -160,7 +160,7 @@ class Url implements IUrl
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Interfaces\Router\IUrl::getUrl()
      */
     public function getUrl ($data, $encode = false)
@@ -250,7 +250,7 @@ class Url implements IUrl
      *            
      * @return string Url
      */
-    public function displaySingleUrl ($contentId, $siteId = null)
+    public function displaySingleUrl ($contentId, $siteId = null, $defaultPage = null)
     {
         $pageValid = false;
         if ($siteId === null) {
@@ -278,10 +278,12 @@ class Url implements IUrl
         }
         
         if (! $pageValid) {
-            $pageId = Manager::getService('PageContent')->getCurrentPage();
+            if ($defaultPage) {
+                $pageId = $defaultPage;
+            } else {
+                $pageId = Manager::getService('PageContent')->getCurrentPage();
+            }
         }
-        // $page = Manager::getService('Pages')->findByNameAndSite('single',
-        // $siteId);
         
         if ($pageId) {
             $data = array(
