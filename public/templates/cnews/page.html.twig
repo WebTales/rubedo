@@ -11,6 +11,10 @@
 {% endif %} 
 <meta name="author" content="WebTales">
 
+{% if contentId %}
+<link rel="canonical" href="{{ displayCanonicalUrl(contentId) }}"/>
+{% endif %}
+
 {% endblock %} 
 {% block pageStyle %}
 <!-- Styles -->
