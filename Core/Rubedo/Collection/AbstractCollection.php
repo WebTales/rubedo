@@ -285,11 +285,54 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $obj            
      * @return array:
      */
-    protected function _filterInputData (array $obj)
+     protected function _filterInputData (array $obj)
     {
-        // do verify $obj structure based on $_model
-        return $obj;
-    }
+    	
+    	if($this->_RequiredObject($obj))
+		{
+			\Zend_Debug::dump($this->_RequiredObject($obj));die();
+		 foreach($obj as $key=>$value)
+		 {
+		 	if($value!="" && $value!=array() && $value!=null){
+		 		 if (!is_array($value) && isset($model[$key]) && is_array($model[$key])) {
+		 		 	$result = $this->_isValid($value, $model[$key]['domain']);
+					 if (!$result) { 
+					 	 throw new \Zend_Exception('Failed to validate the datas for field ' . $key);
+					 }
+				 }elseif (is_array($value) && isset($model[$key]) && is_array($model[$key])) {
+				 	$result = $this->_filterInputData($value, $model[$key]);
+					if (!$result) {
+						throw new \Zend_Exception('Failed to validate the datas for field "' . $key . '"');
+					}
+				 }
+			}
+				 
+		 }
+		}else{
+			throw new \Zend_Exception('Missing required fields');
+		}
+		return $result;
+	}
+
+	protected function _RequiredObject(array $obj)
+	{
+		foreach ($this->_model as $key=>$value)
+		 {
+		 	if(isset($value['required']) && $value['required']==true)
+			{
+				if(!isset($obj[$key]))
+				{
+					$returnArray[]=false;
+					
+				}
+				else
+				{
+				   $returnArray[]= true;
+				}
+			}
+		 }
+		 return (array_search(false, $returnArray))? array("can-validate"=>false) : array("can-validate"=>true);
+	}   
 
     /**
      * Is the data a valid input for the domain
