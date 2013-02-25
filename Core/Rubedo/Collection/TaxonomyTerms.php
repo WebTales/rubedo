@@ -282,7 +282,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $site['text'];
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
-        $term['canAssign'] = $site['readOnly'] ? false : true;
+        $term['canAssign'] = (isset($site['readOnly']) && $site['readOnly']) ? false : true;
         if (! self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
@@ -320,7 +320,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['expandable'] = $page['expandable'];
         $term['orderValue'] = $page['orderValue'];
         $term['vocabularyId'] = 'navigation';
-        $term['canAssign'] = $page['readOnly'] ? false : true;
+        $term['canAssign'] = (isset($page['readOnly']) && $page['readOnly']) ? false : true;
         if (! self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
