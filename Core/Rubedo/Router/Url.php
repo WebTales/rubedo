@@ -47,38 +47,39 @@ class Url implements IUrl
      *            requested URL
      * @return string int
      */
-    public function getPageId($url, $host) {
+    public function getPageId ($url, $host)
+    {
         if (false !== strpos($url, '?')) {
-
-            list($url, $querystring) = explode('?', $url);
+            
+            list ($url, $querystring) = explode('?', $url);
         }
-
+        
         $site = Manager::getService('Sites')->findByHost($host);
         if (null == $site) {
             $siteArray = Manager::getService('Sites')->getList();
             $site = current($siteArray['data']);
         }
-
+        
         $siteId = $site['id'];
-        //unset($site);
+        // unset($site);
         $cachedUrl = Manager::getService('UrlCache')->findByUrl($url, $siteId);
         if (self::$_useCache && null != $cachedUrl) {
             return $cachedUrl['pageId'];
         }
-
+        
         $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
         $lastMatchedNode = 'root';
         if (empty($urlSegments[0])) {
-            if(isset($site['homePage'])){
+            if (isset($site['homePage'])) {
                 return $site['homePage'];
-            }else{
+            } else {
                 return null;
             }
         }
-
+        
         $nbSegments = count($urlSegments);
         $nbMatched = 0;
-
+        
         foreach ($urlSegments as $value) {
             $matchedNode = Manager::getService('Pages')->matchSegment($value, $lastMatchedNode, $siteId);
             if (null === $matchedNode) {
@@ -86,60 +87,71 @@ class Url implements IUrl
             } else {
                 $lastMatchedNode = $matchedNode['id'];
             }
-            $nbMatched++;
+            $nbMatched ++;
         }
-
+        
         if ($nbMatched == 0) {
             return null;
         }
-
+        
         if ($nbSegments > $nbMatched) {
             $partial = true;
         } else {
             $partial = false;
-            $urlToCache = array('pageId' => $lastMatchedNode, 'url' => $url, 'siteId' => $siteId);
+            $urlToCache = array(
+                'pageId' => $lastMatchedNode,
+                'url' => $url,
+                'siteId' => $siteId
+            );
             if (self::$_useCache) {
                 Manager::getService('UrlCache')->create($urlToCache);
             }
         }
-
+        
         return $lastMatchedNode;
     }
 
-    public function disableNavigation() {
+    public function disableNavigation ()
+    {
         self::$_disableNav = true;
     }
 
     /**
      * (non-PHPdoc)
+     *
      * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
      */
-    public function getPageUrl($pageId) {
+    public function getPageUrl ($pageId)
+    {
         $cachedUrl = Manager::getService('UrlCache')->findByPageId($pageId);
-        if (!self::$_useCache || null === $cachedUrl) {
+        if (! self::$_useCache || null === $cachedUrl) {
             $url = '';
             $page = Manager::getService('Pages')->findById($pageId);
-
-            if (!isset($page['pageURL'])) {
+            
+            if (! isset($page['pageURL'])) {
                 throw new \Zend_Controller_Router_Exception('no page found');
             }
-
+            
             $siteId = $page['site'];
-
+            
             $rootline = Manager::getService('Pages')->getAncestors($page);
-
+            
             foreach ($rootline as $value) {
                 $url .= self::URI_DELIMITER;
                 $url .= $value['pageURL'];
             }
-
+            
             $url .= self::URI_DELIMITER;
             $url .= $page['pageURL'];
-            $urlToCache = array('pageId' => $pageId, 'url' => $url, 'siteId' => $siteId);
+            $urlToCache = array(
+                'pageId' => $pageId,
+                'url' => $url,
+                'siteId' => $siteId
+            );
             if (self::$_useCache) {
                 Manager::getService('UrlCache')->create($urlToCache);
             }
-
+            
             return $url;
         } else {
             return $cachedUrl['url'];
@@ -148,39 +160,44 @@ class Url implements IUrl
 
     /**
      * (non-PHPdoc)
+     *
      * @see \Rubedo\Interfaces\Router\IUrl::getUrl()
      */
-    public function getUrl($data, $encode = false) {
+    public function getUrl ($data, $encode = false)
+    {
         if (self::$_disableNav) {
             $currentUri = \Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-
+            
             return trim($currentUri . '#', self::URI_DELIMITER);
         }
-
-        if (!isset($data['pageId'])) {
+        
+        if (! isset($data['pageId'])) {
             throw new \Zend_Controller_Router_Exception('no page given');
         }
-
+        
         $url = $this->getPageUrl($data['pageId']);
         unset($data['pageId']);
         $queryStringArray = array();
         
-        if(isset($data['prefix'])){
+        if (isset($data['prefix'])) {
             
             $prefix = $data['prefix'];
             unset($data['prefix']);
-        }else{
+        } else {
             $prefix = '';
         }
-
+        
         foreach ($data as $key => $value) {
-            if (in_array($key, array('controller', 'action'))) {
+            if (in_array($key, array(
+                'controller',
+                'action'
+            ))) {
                 continue;
             }
             
             $key = ($encode) ? urlencode($key) : $key;
-            if($prefix){
-                $key = $prefix.'['.$key.']';
+            if ($prefix) {
+                $key = $prefix . '[' . $key . ']';
             }
             if (is_array($value)) {
                 foreach ($value as $arrayValue) {
@@ -196,7 +213,7 @@ class Url implements IUrl
         if (count($queryStringArray) > 0) {
             $url .= '?' . implode(self::PARAM_DELIMITER, $queryStringArray);
         }
-
+        
         return ltrim($url, self::URI_DELIMITER);
     }
 
@@ -215,44 +232,73 @@ class Url implements IUrl
      *            provided
      * @return string Url for the link href attribute.
      */
-    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true) {
+    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    {
         $router = \Zend_Controller_Front::getInstance()->getRouter();
-
+        
         return $router->assemble($urlOptions, $name, $reset, $encode);
     }
 
     /**
-     * Return the url of the single content page of the site if the single page exist
+     * Return the url of the single content page of the site if the single page
+     * exist
      *
      * @param string $contentId
-     * 	Id of the content to display
+     *            Id of the content to display
      * @param string $siteId
-     * 	Id of the site
-     *
+     *            Id of the site
+     *            
      * @return string Url
      */
-    public function displaySingleUrl($contentId, $siteId = null) {
+    public function displaySingleUrl ($contentId, $siteId = null, $defaultPage = null)
+    {
+        $pageValid = false;
         if ($siteId === null) {
             $doNotAddSite = true;
             $siteId = Manager::getService('PageContent')->getCurrentSite();
         } else {
             $doNotAddSite = false;
         }
-        $page = Manager::getService('Pages')->findByNameAndSite('single', $siteId);
-
-        if ($page) {
-            $data = array('pageId' => $page['id'], 'content-id' => $contentId);
-            $pageUrl = $this->url($data,null,true);
+        
+        $content = Manager::getService('Contents')->findById($contentId);
+        if (\Zend_Registry::get('draft', false)) {
+            $ws = 'draft';
+        } else {
+            $ws = 'live';
+        }
+        
+        if (isset($content[$ws]['taxonomy']['navigation'])) {
+            foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
+                $page = Manager::getService('Pages')->findById($pageId);
+                if ($page && $page['site'] == $siteId) {
+                    $pageValid = true;
+                    break;
+                }
+            }
+        }
+        
+        if (! $pageValid) {
+            if ($defaultPage) {
+                $pageId = $defaultPage;
+            } else {
+                $pageId = Manager::getService('PageContent')->getCurrentPage();
+            }
+        }
+        
+        if ($pageId) {
+            $data = array(
+                'pageId' => $pageId,
+                'content-id' => $contentId
+            );
+            $pageUrl = $this->url($data, null, true);
             if ($doNotAddSite) {
                 return $pageUrl;
             } else {
-
+                
                 return 'http://' . Manager::getService('Sites')->getHost($siteId) . $pageUrl;
             }
         } else {
             return '#';
         }
-
     }
-
 }
