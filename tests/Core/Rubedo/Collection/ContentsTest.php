@@ -13,7 +13,6 @@
  * @version $Id$
  */
 
-Use Rubedo\Collection\Icons;
  
 /**
  * Test suite of the collection service :

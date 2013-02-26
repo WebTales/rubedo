@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Services;
 
-use Rubedo, Rubedo\Interfaces, Rubedo\Interfaces\Services\IServicesManager;
+use Rubedo\Interfaces\Services\IServicesManager,Rubedo\Interfaces\config;
 
 /**
  * Service Manager Interface
@@ -106,7 +106,7 @@ class Manager implements IServicesManager
 
         $serviceClassName = self::resolveName($serviceName);
         
-        if(count(Rubedo\Interfaces\config::getConcerns($serviceName))){
+        if(count(config::getConcerns($serviceName))){
             return new Proxy($serviceClassName, $serviceName);
         }else{
             return new $serviceClassName;
@@ -131,7 +131,7 @@ class Manager implements IServicesManager
         } else {
             throw new \Rubedo\Exceptions\Server('Classe name for ' . $serviceName . ' service should be defined in config file');
         }
-        if (!$interfaceName = Rubedo\Interfaces\config::getInterface($serviceName)) {
+        if (!$interfaceName = config::getInterface($serviceName)) {
             throw new \Rubedo\Exceptions\Server($serviceName . ' isn\'t declared in service interface config');
         }
         if (!in_array($interfaceName, class_implements($className))) {

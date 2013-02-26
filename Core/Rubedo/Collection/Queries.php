@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IQueries,Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IQueries;
 
 /**
  * Service to handle Queries

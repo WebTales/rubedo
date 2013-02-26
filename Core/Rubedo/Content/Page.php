@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Content;
 
-Use Rubedo\Services\Manager;
 use Rubedo\Interfaces\Content\IPage;
 /**
  * Page service
