@@ -493,6 +493,10 @@ class IndexController extends Zend_Controller_Action
             case 'richText':
                 $controller = 'richtext';
                 break;
+			case 'AddThis':
+            case 'addThis':
+                $controller = 'addthis';
+                break;
             case 'Menu':
             case 'menu':
                 $controller = 'menu';
