@@ -1,34 +1,39 @@
+{% extends "root/block.html.twig" %}
+
 {% block mainContent %} 
 
 	<div class="block headline">
-	<div class="hero-unit">
 	<h1 class="editable" id="{{ data.id }}_text">{{ data.text |cleanHtml }}</h1>
 	<div class="editable" id="{{ data.id }}_summary">
 			{{ data.summary|cleanHtml }}
 		</div>
 	 {% for key, value in data %}
+	        {% if value %}
       		{%for cKey,cValue in type %}
       			{%if(key==cKey)%}
       					{%if cValue=="ImagePickerField"%}
-      						<img alt=""  class="imageLeft" src="/image?file-id={{value}}" />
+      					    <div>
+      					    <span class="label">{{key}} : </span>
+      						<img alt=""  class="imageLeft" src="/dam?media-id={{value}}" />
+      						</div>
       					{%elseif(cValue=="CKEField")%}
-      					<div><span>{{key}} : </span><div class="entry-content editable"  id="{{ data.id }}_{{key}}">
+      					<div><span class="label">{{key}} : </span><div class="entry-content editable"  id="{{ data.id }}_{{key}}">
 						{{value|cleanHtml}}
 						</div></div>
 						{%elseif(cValue=="datefield")%}
-						<div><span>{{key}} : </span><span class="label label-info" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}</span></div>
+						<div><span class="label">{{key}} : </span><span class="label label-info" id="{{ data.id }}_{{key}}">{{ value }}</span></div>
       					{%elseif(cValue=="textfield")%}
-      					<div><span>{{key}} : </span><h3 class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}  </h3></div>
+      					<div><span class="label">{{key}} : </span><h3 class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}  </h3></div>
       					{%elseif(cValue=="numberfield")%}
-      					<div><span>{{key}} : </span><input type="number" name="quantity" value="{{ value |cleanHtml }}"></div>
+      					<div><span class="label">{{key}} : </span><input type="number" name="quantity" value="{{ value |cleanHtml }}"></div>
       					{%elseif(cValue=="colorfield")%}
-      					<div><span>{{key}} : </span><input type="color" id="{{ data.id }}_{{key}}" name="favcolor" value="{{ value |cleanHtml }}"></div>
+      					<div><span class="label">{{key}} : </span><input type="color" id="{{ data.id }}_{{key}}" name="favcolor" value="{{ value |cleanHtml }}"></div>
       					{%elseif(cValue=="slider")%}
-      					<div><span>{{key}} : </span><input type="range" id="{{ data.id }}_{{key}}" value="{{ value |cleanHtml }}"></div>
+      					<div><span class="label">{{key}} : </span><input type="range" id="{{ data.id }}_{{key}}" value="{{ value |cleanHtml }}"></div>
       					{%elseif(cValue=="timefield")%}
-      					<div><span>{{key}} : </span><h3 class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }} </h3></div>
+      					<div><spa class="label"n>{{key}} : </span><h3 class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }} </h3></div>
       					{%elseif(cValue=="ratingField")%}
-      					<div><span>{{key}} : </span>
+      					<div><span class="label">{{key}} : </span>
       							{%for i in 0..value%}
       							<i class="icon-star"></i>
       							{%endfor%}
@@ -37,7 +42,7 @@
       					{%endif%}
       			{%endif%}
       		{%endfor%}
+      		{%endif%}
     {% endfor %}
-	</div>
 </div>
 {% endblock %}
