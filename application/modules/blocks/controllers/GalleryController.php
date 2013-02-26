@@ -77,7 +77,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
             $filter = $this->setFilters($query);
             $imgWidth = $blockConfig['imageThumbnailWidth'];
             $imgHeight = $blockConfig['imageThumbnailHeight'];
-            $galleryId = 'gallery'.md5(rand(0,1000000));
+            $galleryId = $this->getParam('galleryid', 'gallery'.md5(rand(0,1000000)));
         }
         
         $this->_dataService = Manager::getservice('Dam');
