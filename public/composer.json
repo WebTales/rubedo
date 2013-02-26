@@ -7,6 +7,7 @@
 		"twitter/bootstrap": "v2.3.0",
 		"zencoder/video-js": "3.2.0",
 		"webtales/bootstrap-image-gallery" : "2.10.0",
+		"thomaspark/bootswatch" : "v2.3.0",
 		"webtales/rubedo-backoffice-ui": "dev-master"
 	},
 	"require-dev": {},
@@ -72,6 +73,18 @@
 				}
 			}
 		}, {
+			"type": "package",
+			"package": {
+				"name": "thomaspark/bootswatch",
+				"version": "v2.3.0",
+				"dist": {
+					"url": "https://github.com/thomaspark/bootswatch/archive/v2.3.0+1.zip",
+					"type": "zip"
+				}
+			}
+		},
+		
+		 {
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
 		}, {
