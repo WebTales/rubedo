@@ -1,1 +1,4 @@
-{% if htmlTag  %}<{{htmlTag}}>{% endif %}{{htmlTag}}{% if htmlTag  %}</{{htmlTag}}>{% endif %}
+{% extends "root/block.html.twig" %}
+{% block mainContent %}
+{{text}}
+{% endblock %}
