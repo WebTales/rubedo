@@ -31,11 +31,10 @@ class Blocks_AddthisController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array()); 
-		$output['type']=($blockConfig["horizontal"]==true)? 'horizontal':'vertical';
-		$output['small']=$blockConfig['small'];
-		$output['like']=$blockConfig['like']; 
+		$output['type']=$blockConfig["disposition"];
+		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;
+		$output['like']=isset($blockConfig['like'])?$blockConfig['like']:false;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthis.html.twig");
-        
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
