@@ -46,7 +46,7 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 		$urlSegment="segment";
 		$parentId="parent";
 		$siteId="site";
-		$PageService=new Rubedo\Collection\Pages();
+		$PageService=new Pages();
 		$PageService->matchSegment($urlSegment, $parentId, $siteId);
 	}
 	
@@ -56,7 +56,7 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->once())->method('readChild')->will($this->returnValue(array()));
 		$this->_mockUrlCacheService->expects($this->once())->method('customDelete');
 		$obj['id']='test';
-		$PageService=new Rubedo\Collection\Pages();
+		$PageService=new Pages();
 		$PageService->destroy($obj);
 	}
 	public function testNormalUpdate(){
@@ -66,7 +66,7 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 		$obj['id'] = 'test';
 		$obj['site'] = 'test';
 		$obj['title'] = 'test';
-		$PageService=new Rubedo\Collection\Pages();
+		$PageService=new Pages();
 		$PageService->update($obj);
 	}
 	
@@ -75,7 +75,7 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->once())->method('findOne');
 		$name="name";
 		$siteId="site";
-		$PageService=new Rubedo\Collection\Pages();
+		$PageService=new Pages();
 		$PageService->findByNameAndSite($name, $siteId);
 	}
 }

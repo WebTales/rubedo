@@ -17,7 +17,6 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IUrlCache;
-use Rubedo\Mongo\DataAccess;
 
 /**
  * Service to handle Users
