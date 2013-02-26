@@ -35,7 +35,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
         
         $css = array();
-        $js = array();
+        $js = array('/templates/'.Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js"));
         
         $this->_sendResponse($output, $template, $css, $js);
     }
@@ -77,7 +77,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
             $filter = $this->setFilters($query);
             $imgWidth = $blockConfig['imageThumbnailWidth'];
             $imgHeight = $blockConfig['imageThumbnailHeight'];
-            $galleryId = $this->getParam('galleryid', 'gallery'.md5(rand(0,1000000)));
+            $galleryId = $this->getParam('galleryid', $this->getParam('prefix'));
         }
         
         $this->_dataService = Manager::getservice('Dam');
