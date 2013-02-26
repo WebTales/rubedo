@@ -3,10 +3,39 @@
 	{% if displayTitle %}
 	<h3>{{ eTitle }}</h3>
 	{% endif %}
-	<!-- process columns -->
-	{% if columns %}
-		{% for column in columns %}
-			{% include column.template with column %}
+	{% if displayAsTab and columns %}
+	<ul class="nav nav-tabs">
+	    {% for column in columns %}
+			<li {% if loop.first %}class="active"{% endif %}><a href="#{{ column.id }}" data-toggle="tab">{{ column.eTitle }}</a></li>
 		{% endfor %}
+  
+    </ul>
+    {% endif %}
+    
+	{% if displayAsTab %}
+	    
+	    {% if columns %}
+    	<div class="tab-content">
+    	    {% for column in columns %}
+    	        <div class="tab-pane {% if loop.first %}active{% endif %}" id="{{ column.id }}">
+    	        {% include column.template with column %}
+    	        </div>
+    			
+    		{% endfor %}
+        </div>
+        {% endif %}
+	
+	{% else %}
+	
+    	{% if columns %}
+    		{% for column in columns %}
+    			{% include column.template with column %}
+    		{% endfor %}
+    	{% endif %}
+	
 	{% endif %}
+	
+	
+	
+    
 </div>

@@ -12,7 +12,6 @@
  * @license    yet to be written
  * @version    $Id:
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
 
 /**
  * Login Default Controller

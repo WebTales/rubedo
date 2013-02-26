@@ -13,7 +13,6 @@
  * @version $Id$
  */
 
-Use Rubedo\Collection\Icons;
  
 /**
  * Test suite of the collection service :
@@ -277,7 +276,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 											'body' => 'Paragraphe'),
 						"text" => "test",
 						"target" => array("test"),
-						"writeWorkspace" => array("test"));
+						"writeWorkspace" => "test");
 		
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
 		
@@ -319,7 +318,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 											'body' => 'http://test.fr'),
 						"text" => "test",
 						"target" => array("test"),
-						"writeWorkspace" => array("test"));
+						"writeWorkspace" => "test");
 		
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
 		

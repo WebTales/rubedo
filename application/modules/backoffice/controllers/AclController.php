@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo, Rubedo\Services;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing access control list
@@ -61,7 +61,7 @@ class Backoffice_AclController extends Zend_Controller_Action
         if (isset($dataJson)) {
             $dataArray = Zend_Json::decode($dataJson);
             if (is_array($dataArray)) {
-            	$aclService = \Rubedo\Services\Manager::getService('Acl');
+            	$aclService = Manager::getService('Acl');
 				$AclArray = $aclService->accessList(array_keys($dataArray));
             }
         }

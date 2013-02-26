@@ -47,7 +47,7 @@ class UrlCacheTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->once())->method('findOne');
 		
 		$pageId="testId";
-		$urlCacheService=new Rubedo\Collection\UrlCache();
+		$urlCacheService=new UrlCache();
 		$urlCacheService->findByPageId($pageId);
 	}
 		/*
@@ -58,7 +58,7 @@ class UrlCacheTest extends PHPUnit_Framework_TestCase {
 		
 		$url="testId";
 		$siteId="testSiteId";
-		$urlCacheService=new Rubedo\Collection\UrlCache();
+		$urlCacheService=new UrlCache();
 		$urlCacheService->findByUrl($url, $siteId);
 	}
 	/*
@@ -69,7 +69,7 @@ class UrlCacheTest extends PHPUnit_Framework_TestCase {
 			$this->_mockDataAccessService->expects($this->once())->method('create');
 		
 		$obj["test"]="test";
-		$urlCacheService=new Rubedo\Collection\UrlCache();
+		$urlCacheService=new UrlCache();
 		$urlCacheService->create($obj);
 	}
 	/*
@@ -79,7 +79,7 @@ class UrlCacheTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->exactly(2))->method('ensureIndex');
 		
 		$obj["test"]="test";
-		$urlCacheService=new Rubedo\Collection\UrlCache();
+		$urlCacheService=new UrlCache();
 		$urlCacheService->verifyIndexes();
 		
 	}

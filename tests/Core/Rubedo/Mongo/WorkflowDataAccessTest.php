@@ -461,7 +461,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = array('name' => 'test draft', 'label' => 'draft');
 
-        $createArray = $dataAccessObject->create($item, true);
+        $createArray = $dataAccessObject->create($item);
 
         $this->assertTrue($createArray["success"]);
 
@@ -507,7 +507,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase
 
         $inputItem = array('id' => $item['id'], 'version' => $item['version'], 'label' => 'test draft updated');
 
-        $updateArray = $dataAccessObject->update($inputItem, true);
+        $updateArray = $dataAccessObject->update($inputItem);
 
         $item['version']++;
         $item['lastUpdateUser'] = $this->_fakeUser;
@@ -554,7 +554,7 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase
         $item3['id'] = $itemId;
         unset($item3['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item3, true);
+        $updateArray = $dataAccessObject->destroy($item3);
 
         $this->assertTrue($updateArray["success"]);
 

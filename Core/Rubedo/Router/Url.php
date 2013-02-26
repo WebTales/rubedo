@@ -261,8 +261,8 @@ class Url implements IUrl
         }
         
         $content = Manager::getService('Contents')->findById($contentId);
-        if (\Zend_Registry::get('draft', false)) {
-            $ws = 'draft';
+        if (\Zend_Registry::getInstance()->offsetExists('draft')) {
+            $ws = \Zend_Registry::get('draft');
         } else {
             $ws = 'live';
         }
@@ -285,7 +285,7 @@ class Url implements IUrl
                 $page = Manager::getService('Pages')->findById($pageId);
                 if(isset($page['maskId'])){
                     $mask = Manager::getService('Masks')->findById($page['maskId']);
-                    if(!isset($mask['mainColumnId'])){
+                    if(!isset($mask['mainColumnId']) || empty($mask['mainColumnId'])){
                         $pageId = $this->_getDefaultSingleBySiteID($siteId);
                     }
                 }

@@ -244,7 +244,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @param array $obj            
      * @return array:
      */
-    protected function _filterInputData (array $obj)
+    protected function _filterInputData (array $obj, array $model = null)
     {        
 		if (! self::isUserFilterDisabled()) {
         	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();

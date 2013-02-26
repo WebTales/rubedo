@@ -314,13 +314,16 @@ class IndexController extends Zend_Controller_Action
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos (array $columns = null)
+    protected function _getColumnsInfos (array $columns = null,$noSpan = false)
     {
         if ($columns === null) {
             return null;
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
+            if($noSpan){
+                $returnArray[$key]['span']=null;
+            }
             $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
             $returnArray[$key]['classHtml'] = isset($column['classHTML']) ? $column['classHTML'] : null;
@@ -328,8 +331,10 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['idHtml'] = isset($column['idHTML']) ? $column['idHTML'] : null;
             if (isset($this->_blocksArray[$column['id']])) {
                 $returnArray[$key]['blocks'] = $this->_getBlocksInfos($this->_blocksArray[$column['id']]);
+                $returnArray[$key]['rows'] = null;
             } else {
                 $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
+                $returnArray[$key]['blocks'] = null;
             }
         }
         return $returnArray;
@@ -370,7 +375,10 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['idHtml'] = isset($row['idHTML']) ? $row['idHTML'] : null;
             
             if (is_array($row['columns'])) {
-                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
+                $noSpan = (isset($row['displayAsTab']))?$row['displayAsTab']:false;
+                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns'],$noSpan);
+            }else{
+                $returnArray[$key]['columns'] = null;
             }
         }
         return $returnArray;
@@ -479,6 +487,10 @@ class IndexController extends Zend_Controller_Action
 			case 'video':
                 $controller = 'video';
                 break;
+				case 'Authentication':
+			case 'authentication':
+                $controller = 'authentication';
+                break;
             case 'Texte':
                 $controller = 'text';
                 break;
@@ -488,6 +500,10 @@ class IndexController extends Zend_Controller_Action
             case 'Texte Riche':
             case 'richText':
                 $controller = 'richtext';
+                break;
+			case 'AddThis':
+            case 'addThis':
+                $controller = 'addthis';
                 break;
             case 'Menu':
             case 'menu':

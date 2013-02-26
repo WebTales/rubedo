@@ -22,7 +22,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_AddthisController extends Blocks_AbstractController
+class Blocks_AuthenticationController extends Blocks_AbstractController
 {
 
     /**
@@ -30,14 +30,13 @@ class Blocks_AddthisController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array()); 
-		$output['type']=$blockConfig["disposition"];
-		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;
-		$output['like']=isset($blockConfig['like'])?$blockConfig['like']:false;
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthis.html.twig");
+
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/authentication.html.twig");
+		$currentUser = Manager::getService('CurrentUser')->getCurrentUser();
+        $output=array();
+		$output['currentUser']=$currentUser;
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
-

@@ -151,7 +151,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $frontController = $this->getResource('FrontController');
         
         $response = new Zend_Controller_Response_Http();
-        $response->setHeader('Content-Type', 'text/html; charset=UTF-8', true);
+        if(APPLICATION_ENV != 'testing'){
+            $response->setHeader('Content-Type', 'text/html; charset=UTF-8', true);
+        }
         $frontController->setResponse($response);
         
         return $frontController;

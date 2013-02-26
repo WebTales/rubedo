@@ -46,7 +46,7 @@ class TaxonomyTest extends PHPUnit_Framework_TestCase {
 	public function testFindByName(){
 		$this->_mockDataAccessService->expects($this->once())->method('findOne');
 		$name="text";
-		$taxonomyService=new Rubedo\Collection\Taxonomy();
+		$taxonomyService=new Taxonomy();
 		$taxonomyService->findByName($name);
 	}
 	
@@ -56,7 +56,7 @@ class TaxonomyTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->once())->method('destroy');
 		
 		$obj["id"]="testId";
-		$taxonomyService=new Rubedo\Collection\Taxonomy();
+		$taxonomyService=new Taxonomy();
 		$taxonomyService->destroy($obj);
 	}
 	
