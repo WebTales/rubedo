@@ -328,8 +328,10 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['idHtml'] = isset($column['idHTML']) ? $column['idHTML'] : null;
             if (isset($this->_blocksArray[$column['id']])) {
                 $returnArray[$key]['blocks'] = $this->_getBlocksInfos($this->_blocksArray[$column['id']]);
+                $returnArray[$key]['rows'] = null;
             } else {
                 $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
+                $returnArray[$key]['blocks'] = null;
             }
         }
         return $returnArray;
@@ -371,6 +373,8 @@ class IndexController extends Zend_Controller_Action
             
             if (is_array($row['columns'])) {
                 $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
+            }else{
+                $returnArray[$key]['columns'] = null;
             }
         }
         return $returnArray;
