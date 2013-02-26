@@ -77,12 +77,15 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 		{
 			 switch ($block['bType']) {
             case 'Carrousel':
+			case 'carrousel':
                 $controller = 'carrousel';
                 break;
             case 'Liste de Contenus':
+			case 'contentList':
                 $controller = 'content-list';
 				break;
 			case 'Détail de contenu':
+			case 'contentDetail':
                 $controller = 'content-single';
 					break;
 			default:
