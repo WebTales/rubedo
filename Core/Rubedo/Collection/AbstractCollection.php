@@ -30,6 +30,16 @@ abstract class AbstractCollection implements IAbstractCollection
 {
 
     /**
+     * Indexes of the collection
+     * 
+     * should be an array of index.
+     * An index should be an array('keys'=>array,'options'=>array) which define fields and options of the index
+     * 
+     * @var array
+     */
+    protected $_indexes = array();
+    
+    /**
      * name of the collection
      *
      * @var string
@@ -49,6 +59,8 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var array
      */
     protected $_model = array();
+	
+	protected $_errors = array();
     
     /**
      * If true, no request should be filtered by user access rights
@@ -262,9 +274,8 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function create (array $obj, $options = array('safe'=>true))
     {
-        if (count($this->_model) > 0) {
-            $obj = $this->_filterInputData($obj);
-        }
+       	$this->_filterInputData($obj);
+		
         unset($obj['readOnly']);
         return $this->_dataService->create($obj, $options);
     }
@@ -277,9 +288,45 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _filterInputData (array $obj)
     {
-        // do verify $obj structure based on $_model
-        return $obj;
-    }
+    	if(count($this->_model)>0) {			
+			foreach($this->_model as $key => $value){
+				if (isset($obj[$key])) {
+					//Case with a simple value
+					if(!isset($value['items'])){
+						if(!$this->_isValid($obj[$key], $value['domain'])) {
+							$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+						}
+					} else {
+						//Case with an array for the value
+						if(!isset($value['items']['items'])){
+							if(!$this->_isValid($obj[$key], $value['domain'])) {
+								$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+							}
+						} else { //Case with nested lists
+							if(!$this->_isValid($obj[$key], $value['domain'])) {
+								$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+							}
+							if(is_array($obj[$key])){
+								$this->_filterInputData($obj[$key]);
+							}
+						}
+					}
+				} else {
+					if($value['required']){
+						$this->_errors[$key] = "The field is required";
+					}
+				}
+			}
+			
+			if(count($this->_errors)>0){
+				$summary = "Errors : ";
+				foreach ($this->_errors as $key => $value) {
+					$summary .= $key." => ".$value.", ";
+				}
+				throw new \Rubedo\Exceptions\Access($summary);
+			}
+		}
+	}  
 
     /**
      * Is the data a valid input for the domain
@@ -291,7 +338,7 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _isValid ($data, $domain)
     {
-        $domainClassName = 'Rubedo\\Domains\\' . ucfirst($domain);
+        $domainClassName = 'Rubedo\\Domains\\D' . ucfirst($domain);
         if (! class_exists($domainClassName)) {
             throw new \Rubedo\Exceptions\User('domain not defined :' . (string) $domain);
         }
@@ -510,7 +557,36 @@ abstract class AbstractCollection implements IAbstractCollection
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
         return $oldValue;
     }
+    
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::checkIndexes()
+     */
+    public function checkIndexes ()
+    {
+       $result = true;
+        foreach ($this->_indexes as $index){
+            $result = $result && $this->_dataService->checkIndex($index['keys']);
+        }
+        return $result;
+        
+    }
 
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::ensureIndexes()
+     */
+    public function ensureIndexes ()
+    {
+        $result = true;
+        foreach ($this->_indexes as $index){
+            $result = $result && $this->_dataService->ensureIndex($index['keys'],isset($index['options'])?$index['options']:array());
+        }
+        return $result;        
+    }
+
+
+    
     
     
 }

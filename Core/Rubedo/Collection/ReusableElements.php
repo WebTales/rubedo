@@ -27,7 +27,9 @@ use Rubedo\Interfaces\Collection\IReusableElements;
  */
 class ReusableElements extends AbstractCollection implements IReusableElements
 {
-	
+    protected $_indexes = array(
+        array('keys'=>array('site'=>1)),
+    );
 
 	public function __construct(){
 		$this->_collectionName = 'ReusableElements';

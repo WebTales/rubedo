@@ -1,0 +1,81 @@
+<project name="rubedo" default="main" basedir=".">
+	<target name="main" depends="set-rights,composer.install,composer.front.install">
+	</target>
+	
+	<target name="install-dev" depends="set-rights,composer.install-dev,composer.front.install-dev">
+	</target>
+	
+	<target name="update" depends="set-rights,composer.update,composer.front.update">
+	</target>
+	
+	<target name="update-dev" depends="git.pull,set-rights,composer.update-dev,composer.front.update-dev">
+	</target>
+	
+	<target name="composer.install">
+		<exec command="composer install -o" passthru="true" dir="${project.basedir}"/>
+	</target>
+	
+	<target name="composer.front.install">
+		<exec command="composer install" passthru="true" dir="${project.basedir}/public"/>
+	</target>
+	
+	<target name="composer.update">
+		<exec command="composer update -o" passthru="true" dir="${project.basedir}"/>
+	</target>
+	
+	<target name="composer.front.update">
+		<exec command="composer update" passthru="true" dir="${project.basedir}/public"/>
+	</target>
+	
+	<target name="composer.install-dev">
+		<exec command="composer install -o --dev" passthru="true" dir="${project.basedir}"/>
+	</target>
+	
+	<target name="composer.front.install-dev">
+		<exec command="composer install --dev" passthru="true" dir="${project.basedir}/public"/>
+	</target>
+	
+	<target name="composer.update-dev">
+		<exec command="composer update -o --dev" passthru="true" dir="${project.basedir}"/>
+	</target>
+	
+	<target name="composer.front.update-dev">
+		<exec command="composer update --dev" passthru="true" dir="${project.basedir}/public"/>
+	</target>
+	
+	<target name="prepare-cache" depends="">
+		<mkdir dir="${project.basedir}/cache"/>
+		
+		<mkdir dir="${project.basedir}/cache/twig"/>
+		<mkdir dir="${project.basedir}/cache/htmlpurifier"/>
+		<mkdir dir="${project.basedir}/cache/zend"/>
+		
+		<chmod file="${project.basedir}/cache" mode="777"/>
+		<chmod file="${project.basedir}/cache/twig" mode="777"/>
+		<chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
+		<chmod file="${project.basedir}/cache/zend" mode="777"/>
+	</target>
+	<target name="prepare-config" depends="">
+		<mkdir dir="${project.basedir}/application/configs"/>
+		<mkdir dir="${project.basedir}/application/configs/local"/>
+		<chmod file="${project.basedir}/application/configs/local" mode="777"/>
+	</target>
+	<target name="set-rights" depends="prepare-cache,prepare-config">
+		
+	</target>
+	
+	<target name="git.pull">
+		<gitpull repository="." source="origin" />
+	</target>
+	
+	<target name="phpunit">
+		
+		<exec
+		command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/tests/phpunit.xml"
+		dir="${project.basedir}/tests"
+		passthru="true"
+		/>
+		
+	</target>
+	
+</project>

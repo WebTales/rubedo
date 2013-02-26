@@ -27,6 +27,17 @@ use Rubedo\Services\Manager;
 class Contents extends WorkflowAbstractCollection implements IContents
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('workspace.target'=>1,'createTime'=>-1)),
+        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'createTime'=>-1)),
+        array('keys'=>array('live.target'=>1,'createTime'=>-1)),
+        array('keys'=>array('live.target'=>1,'typeId'=>1,'createTime'=>-1)),
+        array('keys'=>array('workspace.target'=>1,'text'=>1)),
+        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'text'=>1)),
+        array('keys'=>array('live.target'=>1,'text'=>1)),
+        array('keys'=>array('live.target'=>1,'typeId'=>1,'text'=>1)),
+    );
+    
     /**
      * Is the input obj is valid
      *
@@ -124,8 +135,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true), $live = false)
-    {        
-        $obj = $this->_filterInputData($obj);
+    {
+        $obj = $this->_setDefaultWorkspace($obj);	        
+        $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
             $returnArray = parent::create($obj, $options, $live);
@@ -156,7 +168,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
         }
         
-        $obj = $this->_filterInputData($obj);
+		if(count(array_intersect(array($obj['writeWorkspace']), $obj['target']))==0){
+			$obj['target'][] = $obj['writeWorkspace'];
+		}
+		
+        $this->_filterInputData($obj);
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
         } else {
@@ -191,6 +207,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         return $returnArray;
     }
+	public function unsetTerms($vocId,$termId)
+	{
+		$data = array('$unset'=>array('taxonomy.'.$vocId.'.$'=>1));
+		$update = array('taxonomy.'.$vocId => $termId);
+		return $this->_dataService->customUpdate($data, $update);
+	}
 
     /**
      * Push the content to Elastic Search
@@ -223,9 +245,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @return array:
      */
     protected function _filterInputData (array $obj)
-    {
-        $obj = $this->_setDefaultWorkspace($obj);
-        
+    {        
 		if (! self::isUserFilterDisabled()) {
         	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
             
@@ -531,17 +551,18 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']=='' || $content['writeWorkspace']==array()){
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $content['writeWorkspace'] = $mainWorkspace['id'];
-	    }
-	    if(!isset($content['target']) || $content['target']=='' || $content['target']==array() || !is_array($content['target'])){
-	    	$mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $content['target'] = array($mainWorkspace['id']);
-        } else {
+	    } else {
         	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 			
-			if(count(array_intersect($content['target'], $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
+			if(count(array_intersect(array($content['writeWorkspace']), $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
 				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
 			}
         }
+		
+		if(!in_array($content['writeWorkspace'], $content['target'])){
+			$content['target'][] = $content['writeWorkspace'];
+		}
+		
         return $content;
     }
 
@@ -596,6 +617,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	{
 		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
 		return $this->getList($filterArray);
+	}
+	public function isTypeUsed($typeId)
+	{
+		$filterArray["typeId"]=$typeId;
+		$result=$this->_dataService->findOne($filterArray);
+		return ($result!=null)?array("used"=>true):array("used"=>false);
 	}
 
 	

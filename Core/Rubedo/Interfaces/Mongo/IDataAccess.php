@@ -281,4 +281,21 @@ interface IDataAccess
      * Clear the excludeFieldList array
      */
     public function clearExcludeFieldList ();
+    
+    /**
+     * Add index to collection
+     *
+     * @param string|arrau $keys
+     * @param array $options
+     * @return boolean
+     */
+    public function ensureIndex ($keys, $options = array());
+    
+    /**
+     * check if the index is set
+     *
+     * @param array
+     * @return boolean
+     */
+    public function checkIndex($keys);
 }

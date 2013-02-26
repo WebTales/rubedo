@@ -27,6 +27,12 @@ use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager;
  */
 class Pages extends AbstractCollection implements IPages
 {
+    protected $_indexes = array(
+        array('keys'=>array('site'=>1,'parentId'=>1,'orderValue'=>1)),
+        array('keys'=>array('site'=>1,'parentId'=>1,'workspace'=>1,'orderValue'=>1)),
+        
+    );
+    
     /**
      * Only access to content with read access
      * @see \Rubedo\Collection\AbstractCollection::_init()
@@ -169,6 +175,12 @@ class Pages extends AbstractCollection implements IPages
 	{
 		$filterArray[]=array("property"=>"maskId","value"=>$maskId);
 		return $this->getList($filterArray);
+	}
+	public function isMaskUsed($maskId)
+	{
+		$filterArray["maskId"]=$maskId;
+		$result=$this->_dataService->findOne($filterArray);
+		return ($result!=null)?array("used"=>true):array("used"=>false);
 	}
 
     public function create (array $obj, $options = array('safe'=>true))

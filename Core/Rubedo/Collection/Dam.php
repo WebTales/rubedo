@@ -29,6 +29,12 @@ use Rubedo\Services\Manager;
 class Dam extends AbstractCollection implements IDam
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('target'=>1,'createTime'=>-1)),
+        array('keys'=>array('mainFileType'=>1,'target'=>1,'createTime'=>-1)),
+        array('keys'=>array('originalFileId'=>1),'options'=>array('unique'=>true)),
+    );
+    
     /**
      * ensure that no nested contents are requested directly
      */
@@ -102,16 +108,17 @@ class Dam extends AbstractCollection implements IDam
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
-        // if(!isset($obj['taxonomy']['navigation']) ||
-        // empty($obj['taxonomy']['navigation'])){
-        // $obj['taxonomy']['navigation'] =
-        // Manager::getService('CurrentUser')->getWriteNavigationTaxonomy ();
-        // }
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Rubedo\Exceptions\Server('no file found');
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
+		
+		if(count(array_intersect(array($obj['writeWorkspace']), $obj['target']))==0){
+			$obj['target'][] = $obj['writeWorkspace'];
+			$obj['fields']['target'][] = $obj['writeWorkspace'];
+		}
+		
         $returnArray = parent::update($obj, $options);
         
         if ($returnArray["success"]) {
@@ -185,18 +192,23 @@ class Dam extends AbstractCollection implements IDam
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $dam['writeWorkspace'] = $mainWorkspace['id'];
 			$dam['fields']['writeWorkspace'] = $mainWorkspace['id'];
-	    }
-	    if(!isset($dam['target']) || $dam['target']=='' || $dam['target']==array() || !is_array($dam['target'])){
-	    	$mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $dam['target'] = array($mainWorkspace['id']);
-			$dam['fields']['target'] = array($mainWorkspace['id']);
-        } else {
+	    } else {
         	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 			
-			if(count(array_intersect($dam['target'], $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
+			if(!in_array($dam['writeWorkspace'], $readWorkspaces) && $readWorkspaces[0]!="all"){
 				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
 			}
         }
+		
+		if(!isset($dam['target'])){
+			$dam['target'] = array();
+		}
+		
+		if(!in_array($dam['writeWorkspace'], $dam['target'])){
+			$dam['target'][] = $dam['writeWorkspace'];
+			$dam['fields']['target'][] = $dam['writeWorkspace'];
+		}
+		
         return $dam;
     }
 	
@@ -213,9 +225,11 @@ class Dam extends AbstractCollection implements IDam
 			//Set the workspace/target for old items in database
             if(!isset($obj['writeWorkspace']) || $obj['writeWorkspace']=="" || $obj['writeWorkspace']==array()){
             	$obj['writeWorkspace'] = "";
+				$obj['fields']['writeWorkspace'] = "";
             }
             if(!isset($obj['target']) || $obj['target']=="" || $obj['target']==array()){
             	$obj['target'] = array('global');
+				$obj['fields']['target'] = array('global');
             }
 			
 	        $damTypeId = $obj['typeId'];

@@ -1,0 +1,16 @@
+<div id="page{{currentPage}}" class="active" data-slide-to="{{currentPage}}">
+	{% for item in items %}
+	<a href="#" data-gallery="gallery" onclick="
+		jQuery('#myModal').modal();
+		jQuery('#fullScreenPicture').attr('src','/dam?media-id={{item.image}}');
+		jQuery('#myModalLabel').html('{{item.title}}');
+	"><img src="/dam?media-id={{item.image}}" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}"></a>
+	{% endfor %}
+
+	{% if previous == true %}
+	<a class="carousel-control left" href="#" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}')">&lsaquo;</a>
+	{% endif %}
+	{% if next == true %}
+	<a class="carousel-control right" href="#" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}')">&rsaquo;</a>
+	{% endif %}
+</div>

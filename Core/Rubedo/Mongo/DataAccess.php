@@ -1210,6 +1210,17 @@ class DataAccess implements IDataAccess
     public function ensureIndex ($keys, $options = array())
     {
         $options['safe'] = true;
-        $this->_collection->ensureIndex($keys, $options);
+        $result =  $this->_collection->ensureIndex($keys, $options);
+        return $result;
+    }
+    
+    /**
+     * check if the index is set
+     * 
+     * @param array
+     * @return boolean
+     */
+    public function checkIndex($keys){
+        return false;
     }
 }

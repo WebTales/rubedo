@@ -77,8 +77,17 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * array of parent IDs
+	 * 
+	 * @var array
      */
     protected $_rootlineArray;
+	
+	/**
+	 * ID of the column to display main content instead of page content if content-id given
+	 * 
+	 * @var string
+	 */
+	protected $_mainCol = null;
 
     /**
      * Main Action : render the Front Office view
@@ -135,16 +144,20 @@ class IndexController extends Zend_Controller_Action
         //$this->_servicePage->appendJs('/js/scripts.js');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
+        $this->_servicePage->setCurrentPage($this->_pageId);
+        
         
         if (! $this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found');
         }
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
+        
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
         
         // Build Twig context
         $twigVar = $this->_pageParams;
+        $twigVar['contentId'] = $this->getParam('content-id',false);
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
@@ -228,6 +241,15 @@ class IndexController extends Zend_Controller_Action
         if (! $this->_mask) {
             throw new \Rubedo\Exceptions\Server('no mask found');
         }
+        
+        $this->_currentContent = $this->getParam('content-id',null);
+        
+        //@todo get main column
+        if($this->_currentContent){
+            $this->_mainCol = $this->_getMainColumn();
+        }
+        
+        
         $this->_blocksArray = array();
         foreach ($this->_mask['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
@@ -240,6 +262,10 @@ class IndexController extends Zend_Controller_Action
                 throw new \Rubedo\Exceptions\Server('no orderValue for block ' . $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
+        }
+        if($this->_mainCol){
+            unset($this->_blocksArray[$this->_mainCol]);
+            $this->_blocksArray[$this->_mainCol][] = $this->_getSingleBlock();
         }
         
         $pageInfo['rows'] = $this->_mask['rows'];
@@ -264,6 +290,22 @@ class IndexController extends Zend_Controller_Action
         $pageInfo['template'] = 'page.html.twig';
         
         return $pageInfo;
+    }
+    
+    protected function _getSingleBlock(){
+        $block = array();
+        $block['configBloc'] = array();
+        $block['bType'] = 'contentDetail';
+        $block['id'] = 'single';
+        $block['responsive']=array('tablet'=>true,
+                    'desktop'=>true,
+                    'phone'=>true);
+        
+        return $block;
+    }
+    
+    protected function _getMainColumn(){
+        return isset($this->_mask['mainColumnId'])?$this->_mask['mainColumnId']:null;
     }
 
     /**
@@ -372,6 +414,9 @@ class IndexController extends Zend_Controller_Action
             case 'carrousel':
                 $controller = 'carrousel';
                 break;
+           	case 'googleMaps':
+                $controller = 'google-maps';
+                break;
             case 'Gallerie Flickr':
             case 'flickrGallery' :
                 $controller = 'flickr-gallery';
@@ -420,7 +465,7 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Média externe':
             case 'externalMedia':
-                $controller = 'embeddedmedia';
+                $controller = 'embedded-media';
                 break;
             case 'Image':
             case 'image':

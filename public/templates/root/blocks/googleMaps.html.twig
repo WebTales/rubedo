@@ -1,0 +1,61 @@
+{% extends "root/block.html.twig" %}
+
+{% block mainContent %}
+{% if isLoggedIn %}
+{%if query.type=="manual" or query.type=="simple"%}
+<div id="list-editmode" class="hide">
+	<div class="btn-group pull-left">
+	<a class="btn" href="#" id="btn-add-content" onclick="createContentWindow('{{query.type}}','{{data[0].typeId}}','{{query.id}}')"> <i class="icon-plus-sign"></i>
+	Ajouter un contenu
+	</a>
+	</div>
+</div>
+<div class="clearfix"></div>
+{%endif%}
+{%endif%}
+<script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
+    </script>
+<script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(-34.397, 150.644),
+          zoom: {{blockConfig.zoom}}||12,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+      
+      var map = new google.maps.Map(document.getElementById("map_canvas"),
+            mapOptions);
+      var centerAddress = "{{blockConfig.centerAddress}}";
+      var centerLatitude = "{{blockConfig.centerLatitude}}";
+      var centerLongitude = "{{blockConfig.centerLongitude}}";
+      if (centerAddress) {
+      	geocoder = new google.maps.Geocoder();
+      	geocoder.geocode( { 'address': centerAddress}, function(results, status) {
+      		if (status == google.maps.GeocoderStatus.OK) {
+      			map.setCenter(results[0].geometry.location);
+      		}
+      	});
+      } else if (centerLatitude&&centerLongitude){
+    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));
+          
+      }
+      
+      
+      }
+      
+     
+      window.onload = initialize;
+</script>
+<div id="map_canvas" style="height:400px;" class="row-fluid"></div>
+<div class="block contentlist" style="margin-top:2em;">
+	<p>gruik</p>
+	<div class="row-fluid">
+		{% for content in data %}
+		{% include content.type  %}
+		{% endfor %}
+	</div>
+	
+</div>
+{% endblock %}

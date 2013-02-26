@@ -29,6 +29,10 @@ use Rubedo\Services\Manager;
 class Cache extends AbstractCollection implements ICache
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('cacheId'=>1),'options'=>array('unique'=>true)),
+    );
+    
     protected $_model = array(
         'data' => array(
             'domain' => 'string',
@@ -45,7 +49,7 @@ class Cache extends AbstractCollection implements ICache
         'tags' => array(
             'domain' => 'list',
             'required' => false,
-            'subConfig' => array(
+            'items' => array(
                 'domain' => 'string',
                 'required' => false
             )
@@ -81,7 +85,7 @@ class Cache extends AbstractCollection implements ICache
      */
     public function upsertByCacheId ($obj, $cacheId)
     {
-        $obj = $this->_filterInputData($obj);
+        $this->_filterInputData($obj);
         $options = array();
         $options['safe'] = true;
         $options['upsert'] = true;

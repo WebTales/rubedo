@@ -14,16 +14,20 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-namespace Rubedo\Interfaces\Collection;
 
+Use Rubedo\Services\Manager;
+
+require_once ('ContentListController.php');
 /**
- * Interface of service handling MediaTypes
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-interface IMediaTypes extends IAbstractCollection{
-	
+class Blocks_GoogleMapsController extends Blocks_ContentListController
+{
+
+	protected $_defaultTemplate = 'googleMaps';
+
 }

@@ -10,6 +10,7 @@
         "execute.controller.current-user.get-token.backoffice",
         "execute.controller.index.index.backoffice",
         "execute.controller.@dot*.get-thumbnail.default",
+        "execute.controller.gallery.xhr-get-images.blocks",
         "execute.controller.workspaces.index.backoffice"
     ]
 }

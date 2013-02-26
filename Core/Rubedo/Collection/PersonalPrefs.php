@@ -27,6 +27,9 @@ use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager;
  */
 class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 {
+    protected $_indexes = array(
+        array('keys'=>array('userId'=>1),'options'=>array('unique'=>true)),
+    );
 
     public function __construct ()
     {
@@ -40,7 +43,9 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 
     public function create (array $obj, $options = array('safe'=>true))
     {
-        $obj['userId'] = $this->_userId;
+        if(!isset($obj['userId'])){
+        	$obj['userId'] = $this->_userId;
+		}
         return parent::create($obj, $options);
     }
 

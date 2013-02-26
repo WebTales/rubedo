@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
- *
- * yet to be written
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
 
@@ -24,10 +26,9 @@ require_once ('AbstractController.php');
  */
 class Blocks_ContentListController extends Blocks_AbstractController
 {
-
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
+	protected $_defaultTemplate = 'contentlist';
+	
+    
     public function indexAction ()
     {
       
@@ -77,6 +78,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
                 $data[] = $fields;
             }
+            $output['blockConfig']=$blockConfig;
             $output["data"] = $data;
 			$output["query"]['type']=$queryType;
 			$output["query"]['id']=$queryId;
@@ -92,7 +94,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentlist.html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/".$this->_defaultTemplate.".html.twig");
         }
         $css = array();
         $js = array();

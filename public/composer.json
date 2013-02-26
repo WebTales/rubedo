@@ -1,76 +1,87 @@
 {
-    "name": "webtales/rubedo-public",
-    "require": {
-    	"webtales/rubedo-backoffice-ui" : "dev-master",
-        "jquery/jquery" : "1.9.1",
-        "sencha/extjs" : "4.1.1a",
-        "webtales/ckeditor" : "dev-master",
-        "twitter/bootstrap" : "v2.3.0",
-        "zencoder/video-js" : "3.2.0"
-    },
-    "require-dev": {
-        
-    },
-    "repositories": [
+	"name": "webtales/rubedo-public",
+	"require": {
+		"jquery/jquery": "1.9.1",
+		"sencha/extjs": "4.1.1a",
+		"webtales/ckeditor": "dev-master",
+		"twitter/bootstrap": "v2.3.0",
+		"zencoder/video-js": "3.2.0",
+		"webtales/bootstrap-image-gallery" : "2.10.0",
+		"webtales/rubedo-backoffice-ui": "dev-master"
+	},
+	"require-dev": {},
+	"repositories": [
 		{
-        "type": "package",
-        "package": {
-	            "name": "jquery/jquery",
-	            "version": "1.9.1",
-	            "dist": {
-	                "url": "http://code.jquery.com/jquery-1.9.1.min.js",
-	                "type": "file"
-	            }
-	        }
-	    },        
-        {
-        "type": "package",
-        "package": {
-            "name": "sencha/extjs",
-            "version": "4.1.1a",
-            "dist": {
-                "url": "http://cdn.sencha.com/ext-4.1.1a-gpl.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
-        "type": "package",
-        "package": {
-            "name": "twitter/bootstrap",
-            "version": "v2.3.0",
-            "dist": {
-                "url": "http://twitter.github.com/bootstrap/assets/bootstrap.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
-        "type": "package",
-        "package": {
-            "name": "zencoder/video-js",
-            "version": "3.2.0",
-            "dist": {
-                "url": "https://github.com/downloads/zencoder/video-js/video-js-3.2.0.zip",
-                "type": "zip"
-            	}
-        	}
-        
-    	},
-    	{
+			"type": "package",
+			"package": {
+				"name": "jquery/jquery",
+				"version": "1.9.1",
+				"dist": {
+					"url": "http://code.jquery.com/jquery-1.9.1.min.js",
+					"type": "file"
+				}
+			}
+		}, {
+			"type": "package",
+			"package": {
+				"name": "sencha/extjs",
+				"version": "4.1.1a",
+				"dist": {
+					"url": "http://cdn.sencha.com/ext-4.1.1a-gpl.zip",
+					"type": "zip"
+				}
+			}
+		}, {
+			"type": "package",
+			"package": {
+				"name": "twitter/bootstrap",
+				"version": "v2.3.0",
+				"dist": {
+					"url": "http://twitter.github.com/bootstrap/assets/bootstrap.zip",
+					"type": "zip"
+				}
+			}
+		}, {
+			"type": "package",
+			"package": {
+				"name": "zencoder/video-js",
+				"version": "3.2.0",
+				"dist": {
+					"url": "https://github.com/downloads/zencoder/video-js/video-js-3.2.0.zip",
+					"type": "zip"
+				}
+			}
+		}, {
+			"type": "package",
+			"package": {
+				"name": "zencoder/video-js",
+				"version": "3.2.0",
+				"dist": {
+					"url": "https://github.com/downloads/zencoder/video-js/video-js-3.2.0.zip",
+					"type": "zip"
+				}
+			}
+		}, {
+			"type": "package",
+			"package": {
+				"name": "webtales/bootstrap-image-gallery",
+				"version": "2.10.0",
+				"dist": {
+					"url": "https://github.com/WebTales/Bootstrap-Image-Gallery/archive/2.10.0.zip",
+					"type": "zip"
+				}
+			}
+		}, {
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
-		},
-		{
+		}, {
 			"type": "vcs",
 			"url": "git://github.com/WebTales/ckeditor.git"
 		}
 	],
-    "minimum-stability": "stable",
-    "config": {
-        "process-timeout": 600,
-        "vendor-dir" : "components"
-    }
+	"minimum-stability": "stable",
+	"config": {
+		"process-timeout": 600,
+		"vendor-dir": "components"
+	}
 }

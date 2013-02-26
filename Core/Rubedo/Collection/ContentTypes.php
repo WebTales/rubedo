@@ -28,6 +28,10 @@ use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager;
 class ContentTypes extends AbstractCollection implements IContentTypes
 {
     
+    protected $_indexes = array(
+        array('keys'=>array('type'=>1),'options'=>array('unique'=>true)),
+    );
+    
     /**
      * Only access to content with read access
      * @see \Rubedo\Collection\AbstractCollection::_init()

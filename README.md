@@ -19,15 +19,40 @@ Installation
 ### PreRequisites
 * A full PHP 5.3+ stack (i.e. http://www.zend.com/products/server/)
 * Composer (http://getcomposer.org)
+* Phing (http://www.phing.info)
 * MongoDB (http://www.mongodb.org)
 * ElasticSearch (http://www.elasticsearch.org)
 
 ### Install Steps
-* Download Source form gitHub (https://github.com/WebTales/rubedo/tags)
+* Download Source from gitHub (https://github.com/WebTales/rubedo/tags)
 * Extract them on your server
 * Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot
-* Inside project root, run `composer install -o`
-* Run `../vendor/bin/phing set-rights` inside the *install* directory
-* Run `composer install` inside the *public* directory
+* Inside project root, run `phing`
 * Access the */install* URL and run the config wizard
+
+### For Developpers
+* Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
+* Define a simple vHost with the *public* directory as documentRoot
+* Add an AllowOverride All on this documentRoot
+* Inside project root, run `phing install-dev`
+* Access the */install* URL and run the config wizard
+
+
+Setting Up Your VHOST
+------------------------------------------------------------------------------------------
+The following is a sample VHOST you might want to consider for your project.
+
+	<VirtualHost *:80>
+	   DocumentRoot "path_to_project/rubedo/public"
+	   ServerName rubedo.local
+	
+	   <Directory "path_to_project/rubedo/public">
+	       Options -Indexes FollowSymLinks
+	       AllowOverride All
+	       Order allow,deny
+	       Allow from all
+	   </Directory>
+	
+	</VirtualHost>
+

@@ -8,6 +8,9 @@
     <div class="alert alert-success">Indexes had been applied</div>
     <?php }?>
     
+    <?php if(!$this->shouldIndex){?>
+    <div class="alert alert-success">Indexes are set</div>
+    <?php }?>
     <?php if($this->isGroupsCreated){?>
     <div class="alert alert-success">Groups had been created</div>
     <?php }?>
@@ -21,15 +24,19 @@
     <div class="alert alert-warning">Default groups are not set</div>
     <?php }?>
 </div>
+
 <div class="row-fluid">
+    <?php if($this->shouldIndex){?>
 	<div class="span6">
+
 		<h2>Apply indexes</h2>
 		<a
 			href="<?php echo $this->url(array('doEnsureIndex'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
 			class="btn btn-large btn-primary" type="button"><i
 			class="icon-tasks icon-white"></i> Run Indexes</a>
-	</div>
 
+	</div>
+    <?php }?>
 	<div class="span6">
 <?php if(!$this->isDefaultGroupsExists){?>
 <h2>Initialize default groups</h2>
@@ -41,8 +48,7 @@
 </div>
 </div>
 
-<br />
-<br />
+
 
 <?php if($this->shouldInitialize){?>
 <div class="row-fluid">
