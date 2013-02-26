@@ -51,19 +51,10 @@ class TaxonomyTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function testDestroyWhenDeleteByVocabularyOk(){
-		$deleteReturn["ok"]=1;
-		$this->_mockTaxonomyTermsService->expects($this->once())->method('deleteByVocabularyId')
-										->will($this->returnValue($deleteReturn));
+		$this->_mockTaxonomyTermsService->expects($this->once())->method('findByVocabulary')
+										->will($this->returnValue(array('data' => array(array('test')))));
 		$this->_mockDataAccessService->expects($this->once())->method('destroy');
-		$obj["id"]="testId";
-		$taxonomyService=new Rubedo\Collection\Taxonomy();
-		$taxonomyService->destroy($obj);
-	}
-	public function testDestroyWhenDeleteByVocabularyFail(){
-		$deleteReturn["ok"]=0;
-		$this->_mockTaxonomyTermsService->expects($this->once())->method('deleteByVocabularyId')
-										->will($this->returnValue($deleteReturn));
-		$this->_mockDataAccessService->expects($this->never())->method('destroy');
+		
 		$obj["id"]="testId";
 		$taxonomyService=new Rubedo\Collection\Taxonomy();
 		$taxonomyService->destroy($obj);
