@@ -801,31 +801,7 @@ class DataAccess implements IDataAccess
         }
         
         foreach ($filter as $name => $value) {
-            if (! in_array(gettype($value), array(
-                'array',
-                'string',
-                'float',
-                'integer',
-                'boolean'
-            )) && !(is_object($value) && get_class($value)=='MongoId')) {
-                throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
-            }
-            if (is_array($value) && count($value) !== 1) {
-                throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
-            }
-            if (is_array($value)) {
-                foreach ($value as $operator => $subvalue) {
-                    if (! in_array(gettype($subvalue), array(
-                        'array',
-                        'string',
-                        'float',
-                        'integer',
-                        'boolean'
-                    )) && ! $subvalue instanceof \MongoRegex) {
-                        throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
-                    }
-                }
-            }
+            
             if ($name === 'id') {
                 $name = '_id';
                 if (is_string($value)) {
