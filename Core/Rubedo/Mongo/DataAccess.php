@@ -352,7 +352,7 @@ class DataAccess implements IDataAccess
         }
         
         // Delete the parent
-        $returnArray = $this->destroy($parent, true);
+        $returnArray = $this->destroy($parent);
         
         return $returnArray;
     }
@@ -748,7 +748,7 @@ class DataAccess implements IDataAccess
         
         // Delete the parent
         if ($error == false) {
-            $returnArray = $this->destroy($data, true);
+            $returnArray = $this->destroy($data);
         } else {
             $returnArray = array(
                 'success' => false,
@@ -807,7 +807,7 @@ class DataAccess implements IDataAccess
                 'float',
                 'integer',
                 'boolean'
-            ))) {
+            )) && !(is_object($value) && get_class($value)=='MongoId')) {
                 throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
