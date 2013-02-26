@@ -60,7 +60,7 @@ class CacheTest extends PHPUnit_Framework_TestCase {
 	{
 
 		$this->_mockDataAccessService->expects($this->once())->method('customUpdate');
-		$obj=array('value'=>'test');
+		$obj=array('value'=>'test', 'data' => 'test', 'cacheId' => 'test');
 		$cacheId="testChache";
 		$cacheService=new Rubedo\Collection\Cache();
 		$cacheService->upsertByCacheId($obj, $cacheId);
