@@ -74,6 +74,8 @@ class ContentTypes extends AbstractCollection implements IContentTypes
                 'domain' => 'array',
                 'required' => false,
                 'items' => array(
+                	'domain' => 'array',
+                	'required' => false,
                     'cType' => array(
                         'domain' => 'string',
                         'required' => true

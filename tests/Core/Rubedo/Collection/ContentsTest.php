@@ -54,7 +54,7 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 	 * Case with good values, should return true
 	 */
 	public function testCreateWithGoodConfiguration(){
-		$this->_mockContentTypesService->expects($this->once())->method('findById')->will($this->returnValue(array('fields' => array(
+		$this->_mockContentTypesService->expects($this->any())->method('findById')->will($this->returnValue(array('fields' => array(
 			array 	(	'cType' => 'text',
 						'config' => array 	(	'name' => 'text',
 												'allowBlank' => true,
@@ -83,7 +83,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 											'summary'=>'content summary',
 											'description' => 'test',
 											'body' => '<p>Paragraphe</p>'),
-						"text" => "test");
+						"text" => "test",
+						"target" => array("test"));
 		
 		$contents = new \Rubedo\Collection\Contents();
 		$result = $contents->create($obj);
@@ -119,7 +120,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"fields" => array(	'text' => 'test',
 											'summary' => 'test',
 											'body' => '<p>Paragraphe</p>'),
-						"text" => "");
+						"text" => "",
+						"target" => array("test"));
 						
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('create')->will($this->returnValue(array('success' => true,'data'=>array('id'=>'id'))));
 		
@@ -157,7 +159,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"fields" => array(	'text' => 'test',
 											'summary' => 'test',
 											'body' => ''),
-						"text" => "test");
+						"text" => "test",
+						"target" => array("test"));
 						
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('create')->will($this->returnValue(array('success' => true,'data'=>array('id'=>'id'))));
 		
@@ -197,7 +200,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 											'summary'=>'summary of test',
 											'description' => 'test',
 											'body' => '<p>Paragraphe</p>'),
-						"text" => "test");
+						"text" => "test",
+						"target" => array("test"));
 		
 		$contents = new \Rubedo\Collection\Contents();
 		$result = $contents->create($obj);
@@ -233,7 +237,8 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"fields" => array(	'text' => 'test',
 											'summary' => 'test',
 											'body' => '<p>Paragraphe</p>'),
-						"text" => "test");
+						"text" => "test",
+						"target" => array("test"));
 		
 		$contents = new \Rubedo\Collection\Contents();
 		$result = $contents->create($obj);
@@ -270,7 +275,9 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"fields" => array(	'text' => 'test',
 											'summary' => 'test',
 											'body' => 'Paragraphe'),
-						"text" => "test");
+						"text" => "test",
+						"target" => array("test"),
+						"writeWorkspace" => array("test"));
 		
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
 		
@@ -310,7 +317,9 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"fields" => array(	'text' => 'test',
 											'summary' => 'test',
 											'body' => 'http://test.fr'),
-						"text" => "test");
+						"text" => "test",
+						"target" => array("test"),
+						"writeWorkspace" => array("test"));
 		
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
 		

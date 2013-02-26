@@ -48,6 +48,7 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete')
 						->will($this->returnValue($customReturn));
 		$obj["id"]="id";
+		$obj['vocabularyId'] = "test";
 		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
 		$result=$taxonomyTermsService->destroy($obj);
 		$isArray=is_array($result);
@@ -64,6 +65,7 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 						->will($this->returnValue($customReturn));
 		
 		$obj["id"]="id";
+		$obj['vocabularyId'] = "test";
 		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
 		$result=$taxonomyTermsService->destroy($obj);
 		$isArray=is_array($result);
@@ -81,6 +83,7 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 						->will($this->returnValue($customReturn));
 		
 		$obj["id"]="id";
+		$obj['vocabularyId'] = "test";
 		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
 		$result=$taxonomyTermsService->destroy($obj);
 		$isArray=is_array($result);

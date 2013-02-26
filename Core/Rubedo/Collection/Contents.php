@@ -137,7 +137,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function create (array $obj, $options = array('safe'=>true), $live = false)
     {
         $obj = $this->_setDefaultWorkspace($obj);	        
-        $obj = $this->_filterInputData($obj);
+        $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
             $returnArray = parent::create($obj, $options, $live);
@@ -172,7 +172,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 			$obj['target'][] = $obj['writeWorkspace'];
 		}
 		
-        $obj = $this->_filterInputData($obj);
+        $this->_filterInputData($obj);
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
         } else {

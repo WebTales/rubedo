@@ -282,6 +282,13 @@ class Url implements IUrl
                 $pageId = $defaultPage;
             } else {
                 $pageId = Manager::getService('PageContent')->getCurrentPage();
+                $page = Manager::getService('Pages')->findById($pageId);
+                if(isset($page['maskId'])){
+                    $mask = Manager::getService('Masks')->findById($page['maskId']);
+                    if(!isset($mask['mainColumnId'])){
+                        $pageId = $this->_getDefaultSingleBySiteID($siteId);
+                    }
+                }
             }
         }
         
@@ -341,8 +348,7 @@ class Url implements IUrl
         }
         
         if (! $pageValid) {
-            $page = Manager::getService('Pages')->findByNameAndSite('single', $siteId);
-            $pageId = $page['id'];
+            $pageId = $this->_getDefaultSingleBySiteID($siteId);
         }
         
         if ($pageId) {
@@ -359,6 +365,15 @@ class Url implements IUrl
             }
         } else {
             return '#';
+        }
+    }
+    
+    protected function _getDefaultSingleBySiteID($siteId){
+        $site = Manager::getService('Sites')->findById($siteId);
+        if(isset($site['defaultSingle'])){
+            return $site['defaultSingle'];
+        }else{
+           return null;
         }
     }
 }
