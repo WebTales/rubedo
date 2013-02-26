@@ -503,7 +503,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = array('name' => 'created item 1');
 
-        $createArray = $dataAccessObject->create($item, true);
+        $createArray = $dataAccessObject->create($item);
 
         $this->assertTrue($createArray["success"]);
         $writtenItem = $createArray["data"];
@@ -527,7 +527,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = array('name' => 'created item 1');
 
-        $createArray = $dataAccessObject->create($item, true);
+        $createArray = $dataAccessObject->create($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
@@ -548,7 +548,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = array('name' => 'created item 1', 'lastUpdateUser' => 'test', 'lastUpdateTime' => 'test');
 
-        $createArray = $dataAccessObject->create($item, true);
+        $createArray = $dataAccessObject->create($item);
 
         $this->assertTrue($createArray["success"]);
         $writtenItem = $createArray["data"];
@@ -573,7 +573,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = array('name' => 'created item 1');
 
-        $createArray = $dataAccessObject->create($item, true);
+        $createArray = $dataAccessObject->create($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
@@ -596,7 +596,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item = array('name' => 'created item 1');
 
-        $createArray = $dataAccessObject->create($item, true);
+        $createArray = $dataAccessObject->create($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);

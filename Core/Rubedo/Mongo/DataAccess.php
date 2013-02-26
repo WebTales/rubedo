@@ -352,7 +352,7 @@ class DataAccess implements IDataAccess
         }
         
         // Delete the parent
-        $returnArray = $this->destroy($parent, true);
+        $returnArray = $this->destroy($parent);
         
         return $returnArray;
     }
@@ -748,7 +748,7 @@ class DataAccess implements IDataAccess
         
         // Delete the parent
         if ($error == false) {
-            $returnArray = $this->destroy($data, true);
+            $returnArray = $this->destroy($data);
         } else {
             $returnArray = array(
                 'success' => false,

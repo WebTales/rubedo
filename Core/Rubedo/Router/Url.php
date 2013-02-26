@@ -261,8 +261,8 @@ class Url implements IUrl
         }
         
         $content = Manager::getService('Contents')->findById($contentId);
-        if (\Zend_Registry::get('draft', false)) {
-            $ws = 'draft';
+        if (\Zend_Registry::getInstance()->offsetExists('draft')) {
+            $ws = \Zend_Registry::get('draft');
         } else {
             $ws = 'live';
         }
