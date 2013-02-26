@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-use Rubedo\Services;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing access control list
