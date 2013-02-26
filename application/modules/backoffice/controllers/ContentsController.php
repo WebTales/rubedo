@@ -100,10 +100,11 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
      */
     public function createAction() {
         $data = $this->getRequest()->getParam('data');
-
+		
         if (!is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
+            	$insertData["target"]=is_array($insertData["target"])?$insertData["target"]:array();
                 $returnArray = $this->_dataService->create($insertData, array('safe'=>true), false);
 
             } else {

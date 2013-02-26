@@ -492,6 +492,7 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'authentication';
                 break;
             case 'Texte':
+			case 'simpleText':
                 $controller = 'text';
                 break;
 			case 'imageGallery':
@@ -499,7 +500,7 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Texte Riche':
             case 'richText':
-                $controller = 'richtext';
+                $controller = 'rich-text';
                 break;
 			case 'AddThis':
             case 'addThis':

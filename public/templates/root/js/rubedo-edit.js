@@ -204,7 +204,7 @@ function createContentWindow(type,typeId,queryId)
 				}
 			}
 		});
-			jQuery("<div class='form-actions'><button type='submit' class='btn btn-primary' id='btn-valid-form' >Continue</button></div>").appendTo("#modal-form");
+			jQuery("<div class='form-actions'><a class='btn btn-primary' id='btn-valid-form' >Continue</a></div>").appendTo("#modal-form");
 			jQuery("#select-type-window").modal('show');
 			jQuery('#btn-valid-form').click(function(){
 			selectedTypeId=jQuery("#select-type-box").val();
