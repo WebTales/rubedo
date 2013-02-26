@@ -397,7 +397,7 @@ class IndexController extends Zend_Controller_Action
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
-        $params['prefix'] = isset($block['urlPrefix']) ? $block['urlPrefix'] : $block['id'];
+        $params['prefix'] = (isset($block['urlPrefix']) && !empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
         $params['idHtml'] = isset($block['idHTML']) ? $block['idHTML'] : null;
@@ -516,7 +516,7 @@ class IndexController extends Zend_Controller_Action
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = isset($block['urlPrefix']) ? $block['urlPrefix'] : $block['id'];
+                $prefix = (isset($block['urlPrefix']) && !empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
                 $route->setPrefix($prefix);
                 
                 $allParams = $this->getAllParams();
