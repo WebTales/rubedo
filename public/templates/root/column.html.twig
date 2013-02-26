@@ -16,10 +16,9 @@
 		{% endfor %}
 	{% endif %}
 	{% if rows %}
-	    <div>
 		{% for row in rows %}
+		        {% set nested = true %}
 				{% include row.template with row %}
 		{% endfor %}
-		</div>
 	{% endif %}
 </div>

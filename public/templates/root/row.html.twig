@@ -1,5 +1,5 @@
 
-<div class="row {{ classHtml }}" {% if idHtml %}id="{{ idHtml }}"{% endif %}>
+<div class="{% if not nested %}row{% endif %} {{ classHtml }}" {% if idHtml %}id="{{ idHtml }}"{% endif %}>
 	{% if displayTitle %}
 	<h3>{{ eTitle }}</h3>
 	{% endif %}
