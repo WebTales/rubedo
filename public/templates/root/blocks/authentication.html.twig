@@ -1,8 +1,7 @@
 {% extends "root/block.html.twig" %}
 {% block mainContent %}
 {% if isLoggedIn %}
-Bonjour {{currentUser.name}}
-<a href="#" onclick="logout()" class="btn"><i class="icon-user"></i>Deconnexion</a></div>
+<a href="#" onclick="logout()" class="btn">{{currentUser.name}}<i class="icon-user"></i>|Deconnexion</a></div>
 {%else%}
 <a href="#auth-modal" role="button" class="btn" data-toggle="modal">Connexion</a>
 <div id="auth-modal" class="modal hide fade">
