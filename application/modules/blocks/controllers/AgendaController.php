@@ -40,12 +40,13 @@ class Blocks_AgendaController extends Blocks_ContentListController
         $date = $this->getParam('cal-date');
         if($date){
             list($month,$year) = explode('-', $date);
-            $timestamp = mktime(0,0,0,$month,1,$year);
+            
         }else{
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
             $year = date('Y',$timestamp);
             $month = date('m',$timestamp);
         }
+        $timestamp = mktime(0,0,0,$month,1,$year);
         $nextMonth = new DateTime();
         $nextMonth->setTimestamp($timestamp);
         $nextMonth->add(new DateInterval('P1M'));
@@ -58,7 +59,7 @@ class Blocks_AgendaController extends Blocks_ContentListController
         
         $condition = array('$gte'=>$timestamp,'$lt'=>$nextMonthTimeStamp);
         $queryFilter['filter'][]=array('property'=>$usedDateField,'value'=>$condition);
-        //$queryFilter['filter'][]=array('operator'=>'$lt','property'=>$usedDateField,'value'=>$nextMonthTimeStamp);
+
         $contentArray = $this->getContentList($queryFilter,array('limit'=>100,'currentPage'=>1));
         
         $filledDate = array();
