@@ -286,10 +286,14 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $obj            
      * @return array:
      */
-    protected function _filterInputData (array $obj)
-    {
-    	if(count($this->_model)>0) {			
-			foreach($this->_model as $key => $value){
+    protected function _filterInputData (array $obj, array $model = null)
+    {			
+    	if(count($this->_model)>0) {
+    		if($model == null) {
+    			$model = $this->_model;
+    		}
+			
+			foreach($model as $key => $value){
 				if (isset($obj[$key])) {
 					//Case with a simple value
 					if(!isset($value['items'])){
@@ -307,7 +311,7 @@ abstract class AbstractCollection implements IAbstractCollection
 								$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
 							}
 							if(is_array($obj[$key])){
-								$this->_filterInputData($obj[$key]);
+								$this->_filterInputData($obj[$key], array('items' => $value['items']));
 							}
 						}
 					}
@@ -317,7 +321,7 @@ abstract class AbstractCollection implements IAbstractCollection
 					}
 				}
 			}
-			
+
 			if(count($this->_errors)>0){
 				$summary = "Errors : ";
 				foreach ($this->_errors as $key => $value) {
