@@ -285,7 +285,7 @@ class Url implements IUrl
                 $page = Manager::getService('Pages')->findById($pageId);
                 if(isset($page['maskId'])){
                     $mask = Manager::getService('Masks')->findById($page['maskId']);
-                    if(!isset($mask['mainColumnId'])){
+                    if(!isset($mask['mainColumnId']) || empty($mask['mainColumnId'])){
                         $pageId = $this->_getDefaultSingleBySiteID($siteId);
                     }
                 }

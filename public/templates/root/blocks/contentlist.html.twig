@@ -14,13 +14,16 @@
 
 {%endif%}
 {%endif%}
-<div class="block contentlist well">
+    {% block mainList %}
+    
 	<div class="row-fluid">
 		{% for content in data %}
 		{% include content.type  %}
 		{% endfor %}
 	</div>
+	{% endblock %}
 
+	{% block pager %}
 	{%if page.limitPage > 1 and  page.currentPage < page.nbPages+1 %}
 		{%set wrapCurrent=page.limitPage//2%}
 		{%set lastWrap=page.nbPages-page.currentPage%}
@@ -58,6 +61,6 @@
 			</ul>
 		</div>
 		{%endif%}
-</div>
+		{% endblock %}
 
 {% endblock %}

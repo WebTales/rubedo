@@ -330,6 +330,7 @@ abstract class AbstractCollection implements IAbstractCollection
 				throw new \Rubedo\Exceptions\Access($summary);
 			}
 		}
+		return $obj;
 	}  
 
     /**

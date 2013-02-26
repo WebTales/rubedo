@@ -314,13 +314,16 @@ class IndexController extends Zend_Controller_Action
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos (array $columns = null)
+    protected function _getColumnsInfos (array $columns = null,$noSpan = false)
     {
         if ($columns === null) {
             return null;
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
+            if($noSpan){
+                $returnArray[$key]['span']=null;
+            }
             $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
             $returnArray[$key]['classHtml'] = isset($column['classHTML']) ? $column['classHTML'] : null;
@@ -372,7 +375,8 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['idHtml'] = isset($row['idHTML']) ? $row['idHTML'] : null;
             
             if (is_array($row['columns'])) {
-                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
+                $noSpan = (isset($row['displayAsTab']))?$row['displayAsTab']:false;
+                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns'],$noSpan);
             }else{
                 $returnArray[$key]['columns'] = null;
             }
