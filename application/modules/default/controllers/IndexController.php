@@ -487,6 +487,10 @@ class IndexController extends Zend_Controller_Action
 			case 'video':
                 $controller = 'video';
                 break;
+				case 'Authentication':
+			case 'authentication':
+                $controller = 'authentication';
+                break;
             case 'Texte':
                 $controller = 'text';
                 break;

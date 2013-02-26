@@ -1,0 +1,52 @@
+{% extends "root/block.html.twig" %}
+{% block mainContent %}
+{% if isLoggedIn %}
+Bonjour {{currentUser.name}}
+<a href="#" onclick="logout()" class="btn"><i class="icon-user"></i>Deconnexion</a></div>
+{%else%}
+<a href="#auth-modal" role="button" class="btn" data-toggle="modal">Connexion</a>
+<div id="auth-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Se connecter</h3>
+  </div>
+  <form method="POST" name="auth-form" onsubmit="loggin()">
+  	 <div class="modal-body">
+ 	 	<input type="text" id="login" class="input-medium search-query" placeholder="Login">
+		<input type="password" id="password" class="input-medium search-query" placeholder="Mot de passe">
+ 	 </div>
+ 	 <div class="modal-footer">
+    <a href="#"  data-dismiss="modal" class="btn">Annuler</a>
+    <input href="#" type="submit" class="btn btn-primary"></input></div></form>
+</div>
+{%endif%}
+<script type="text/javascript">
+function loggin()
+{	 
+		jQuery.ajax({
+		   type: "POST", 
+		   url: "/xhr-authentication/login",
+		   async:true,
+		   data: { login: jQuery('#password').val(), password: jQuery('#login').val() },
+		   success: function(msg){
+		   	jQuery('#password').val("");
+		    jQuery('#login').val("");
+			jQuery("#auth-modal").modal("hide");
+		   }
+		});
+}
+function logout()
+{	 
+		jQuery.ajax({
+		   type: "POST", 
+		   url: "/xhr-authentication/logout",
+		   success: function(msg){
+				window.location.reload(); 
+		   }
+		});
+}
+</script>
+{% endblock %}
+
+
+

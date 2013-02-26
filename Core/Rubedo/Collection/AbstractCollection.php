@@ -294,6 +294,20 @@ abstract class AbstractCollection implements IAbstractCollection
     		}
 			
 			foreach($model as $key => $value){
+				//If the configuration is not specified for the current field
+				if(!isset($value['domain']) && !isset($value['required'])){
+					continue;
+				}
+				
+				//If the current field is "items" we just check if the object correspond with the model
+				if($key == 'items') {
+					if(!$this->_isValid($obj, $value['domain'])) {
+						$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+					}
+					continue;
+				}
+				
+				//Normal case processing
 				if (isset($obj[$key])) {
 					//Case with a simple value
 					if(!isset($value['items'])){

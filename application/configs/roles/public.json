@@ -11,6 +11,7 @@
         "execute.controller.index.index.backoffice",
         "execute.controller.@dot*.get-thumbnail.default",
         "execute.controller.gallery.xhr-get-images.blocks",
-        "execute.controller.workspaces.index.backoffice"
+        "execute.controller.workspaces.index.backoffice",
+        "execute.controller.xhr-authentication.login.default"
     ]
 }
