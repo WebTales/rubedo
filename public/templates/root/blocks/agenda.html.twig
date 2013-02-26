@@ -13,7 +13,7 @@
             </tr>
             <tr>
                 {% for day in days %}
-                    <th>{{ day }}</th>
+                    <th style='text-align:center;'>{{ day }}</th>
                 {% endfor %}
             </tr>
         </thead>
@@ -21,7 +21,7 @@
             {% for week in monthArray %}
                 <tr>
                 {% for day in week %}
-                    <td {% if not day.inMonth %}class="muted"{% endif %}><span {% if filledDate[day.value] and day.inMonth %}class="badge"{% endif %}>{{ day.value }}</span></td>
+                    <td style='text-align:center;' {% if not day.inMonth %}class="muted"{% endif %}><span {% if filledDate[day.value] and day.inMonth %}class="badge"{% endif %}>{{ day.value }}</span></td>
                 {% endfor %}
                 </tr>
             {% endfor %}
