@@ -807,7 +807,7 @@ class DataAccess implements IDataAccess
                 'float',
                 'integer',
                 'boolean'
-            ))) {
+            )) && !(is_object($value) && get_class($value)=='MongoId')) {
                 throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
             }
             if (is_array($value) && count($value) !== 1) {
