@@ -451,7 +451,7 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'breadcrumbs';
                 break;
 			case 'searchForm':
-                $controller = 'searchForm';
+                $controller = 'search-form';
 				break;				
             case 'Twig':
             case 'twig':
