@@ -397,6 +397,9 @@ class IndexController extends Zend_Controller_Action
                 $params['rootline'] = $this->_rootlineArray;
                 $controller = 'breadcrumbs';
                 break;
+			case 'searchForm':
+                $controller = 'searchForm';
+				break;				
             case 'Twig':
             case 'twig':
                 $controller = 'twig';
