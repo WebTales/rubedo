@@ -63,7 +63,7 @@ class Blocks_AgendaController extends Blocks_ContentListController
         $contentArray = $this->getContentList($queryFilter,array('limit'=>100,'currentPage'=>1));
         
         $filledDate = array();
-        
+        $data = array();
         foreach ($contentArray['data'] as $vignette) {
             //$vignette['readDate'] = date('c',$vignette['createTime']);
             //var_dump($vignette['readDate']);

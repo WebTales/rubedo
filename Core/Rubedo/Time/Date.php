@@ -29,6 +29,8 @@ class Date implements IDate
 {
 
     public static $startOnSunday = false;
+    
+    public static $local = 'fr_FR';
 
     /**
      * Convert to timestamp
@@ -123,10 +125,11 @@ class Date implements IDate
         } else {
             $daysOfWeek[7] = 'Sunday';
         }
-        setlocale(LC_ALL, 'fr_FR');
+        setlocale(LC_ALL, self::$local);
         foreach ($daysOfWeek as $key=>$day) {
             $nameArray[$key] = strftime('%A', strtotime("last $day"));
         }
+        ksort($nameArray);
         return $nameArray;
     }
 
@@ -145,10 +148,11 @@ class Date implements IDate
         } else {
             $daysOfWeek[7] = 'Sunday';
         }
-        setlocale(LC_ALL, 'fr_FR');
-        foreach ($daysOfWeek as $day) {
-            $nameArray[] = strftime('%a', strtotime("last $day"));
+        setlocale(LC_ALL, self::$local);
+        foreach ($daysOfWeek as $key=>$day) {
+            $nameArray[$key] = strftime('%a', strtotime("last $day"));
         }
+        ksort($nameArray);
         return $nameArray;
     }
 
@@ -157,7 +161,7 @@ class Date implements IDate
         if (! $timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        setlocale(LC_ALL, 'fr_FR');
+        setlocale(LC_ALL, self::$local);
         return strftime($format, $timestamp);
     }
 }
