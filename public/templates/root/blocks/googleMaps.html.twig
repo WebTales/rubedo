@@ -27,6 +27,7 @@
       
       var map = new google.maps.Map(document.getElementById("{{prefix}}map_canvas"),
             mapOptions);
+      var geocoder = new google.maps.Geocoder();
       var useLocation = "{{blockConfig.useLocation}}";
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
@@ -35,23 +36,47 @@
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 		      map.setCenter(initialLocation);
-		      console.log(initialLocation);
+		      new google.maps.Marker({
+			  	map:map,
+			  	position:initialLocation
+			      });
 		    }, function() {
 		      console.log("geolocation Error");
 		    });
 		  
       } else if (centerAddress) {
-      	geocoder = new google.maps.Geocoder();
+      	
       	geocoder.geocode( { 'address': centerAddress}, function(results, status) {
       		if (status == google.maps.GeocoderStatus.OK) {
       			map.setCenter(results[0].geometry.location);
       		}
       	});
       } else if (centerLatitude&&centerLongitude){
-    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));
-          
+    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
       }
       
+	  {% for content in data %}
+	  var contentPosition = JSON.parse("{{ content[blockConfig.positionField]|e('js') }}");
+	  if (contentPosition.address){
+		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
+	      		if (status == google.maps.GeocoderStatus.OK) {
+	      			new google.maps.Marker({
+	    			  	map:map,
+	    			  	position:results[0].geometry.location,
+	    			  	title:"{{ content.title }}"
+	    			});
+	      		}
+	      	});  
+	  } else if (contentPosition.latitude&&contentPosition.longitude){
+		  var markerLocation = new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude);
+		  new google.maps.Marker({
+			  	map:map,
+			  	position:markerLocation,
+			  	title:"{{ content.title }}"
+			});      
+      }
+	  
+	  {% endfor %}
       
       }
       
@@ -59,12 +84,5 @@
       window.onload = initialize;
 </script>
 <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
-<div class="block contentlist" style="margin-top:2em;">
-	<div class="row-fluid">
-		{% for content in data %}
-		{% include content.type  %}
-		{% endfor %}
-	</div>
-	
-</div>
+
 {% endblock %}
