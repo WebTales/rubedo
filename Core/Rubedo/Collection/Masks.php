@@ -27,6 +27,37 @@ use Rubedo\Interfaces\Collection\IMasks;
  */
 class Masks extends AbstractCollection implements IMasks
 {
+    protected $_model = array(
+		"text" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"site" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"rows" => array(
+			"domain" => "list",
+			"required" => true,
+			"items" => array(
+				"domain" => "string",
+				"required" => false,
+			),
+		),
+		"blocks" => array(
+			"domain" => "list",
+			"required" => true,
+			"items" => array(
+				"domain" => "string",
+				"required" => false,
+			),
+		),
+		"mainColumnId" => array(
+			"domain" => "string",
+			"required" => false,
+		),
+	);
+			
     protected $_indexes = array(
         array('keys'=>array('site'=>1)),
     );
