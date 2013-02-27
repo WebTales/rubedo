@@ -4,7 +4,7 @@
 		jQuery('#myModal').modal();
 		jQuery('#fullScreenPicture').attr('src','/dam?media-id={{item.image}}');
 		jQuery('#myModalLabel').html('{{item.title}}');
-	"><img class="" src="/dam?media-id={{item.image}}&width={{ image.width }}&height={{ image.height }}&mode=crop" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}"></a>
+	"><img class="" src="/dam?media-id={{item.image}}{%if image.width%}&width={{ image.width }}{%endif%}{%if image.height%}&height={{ image.height }}{%endif%}&mode=crop" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}"></a>
 	{% endfor %}
 
 	{% if previous == true %}
