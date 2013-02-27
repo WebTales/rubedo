@@ -74,7 +74,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements
         
         if ($reset === true) {
             $params = array(
-                    'pageId' => $this->_values["pageId"]
+                    'pageId' => isset($this->_values["pageId"])?$this->_values["pageId"]:null
             );
         } else {
             $params = \Zend_Controller_Front::getInstance()->getRequest()->getParams();

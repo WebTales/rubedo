@@ -297,7 +297,7 @@ class Url implements IUrl
                 'pageId' => $pageId,
                 'content-id' => $contentId
             );
-            $pageUrl = $this->url($data, null, true);
+            $pageUrl = $this->url($data, 'rewrite', true);
             if ($doNotAddSite) {
                 return $pageUrl;
             } else {
