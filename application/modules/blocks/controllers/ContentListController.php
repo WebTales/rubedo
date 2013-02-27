@@ -26,19 +26,36 @@ require_once ('AbstractController.php');
  */
 class Blocks_ContentListController extends Blocks_AbstractController
 {
-	protected $_defaultTemplate = 'contentlist';
-	
-    
+
+    protected $_defaultTemplate = 'contentlist';
+
     public function indexAction ()
     {
-      
+        $output = $this->_getList();
+        $blockConfig = $this->getRequest()->getParam('block-config');
+        
+        if (isset($blockConfig['displayType'])) {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
+        }
+        $css = array();
+        $js = array(
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/contentList.js")
+        );
+        $this->_sendResponse($output, $template, $css, $js);
+    }
+
+    protected function _getList ()
+    {
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getRequest()->getParam('block-config');
-        $queryId = $blockConfig['query'];
+        $queryId = $this->getParam('query-id', $blockConfig['query']);
+        
         $queryConfig = $this->getQuery($queryId);
-		$queryType=$queryConfig['type'];
+        $queryType = $queryConfig['type'];
         $contentArray = $this->getContentList($this->setFilters($queryConfig), $this->setPaginationValues($blockConfig));
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
@@ -74,32 +91,53 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $fields['title'] = $fields['text'];
                 unset($fields['text']);
                 $fields['id'] = (string) $vignette['id'];
-				$fields['typeId']=$vignette['typeId'];
+                $fields['typeId'] = $vignette['typeId'];
                 $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
                 $data[] = $fields;
             }
-            $output['blockConfig']=$blockConfig;
+            $output['blockConfig'] = $blockConfig;
             $output["data"] = $data;
-			$output["query"]['type']=$queryType;
-			$output["query"]['id']=$queryId;
+            $output["query"]['type'] = $queryType;
+            $output["query"]['id'] = $queryId;
             $output['prefix'] = $this->getRequest()->getParam('prefix');
             $output["page"] = $contentArray['page'];
-            $output['test'] = array(
-                1,
-                2,
-                3
-            );
-			
+            
+            $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
+            $output['limit'] = $this->getParam('limit', $defaultLimit);
+            
+            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
+            $output['singlePage'] = $this->getParam('single-page', $singlePage);
+            
+            $output['xhrUrl'] = $this->_helper->url->url(array(
+                'module' => 'blocks',
+                'controller' => 'calendar',
+                'action' => 'xhr-get-items'
+            ), 'default');
         }
-        if (isset($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
-        } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/".$this->_defaultTemplate.".html.twig");
-        }
-        $css = array();
-        $js = array();
-        $this->_sendResponse($output, $template, $css, $js);
+        return $output;
     }
+
+    public function xhrGetItemsAction ()
+    {
+        $twigVars = $this->_getList();
+        
+        $displayType = $this->getParam('displayType',false);
+        if ($displayType) {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/" . $displayType . ".html.twig");
+        } else {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/list.html.twig");
+        }
+        
+        $html = Manager::getService('FrontOfficeTemplates')->render($template, $twigVars);
+        $pager = Manager::getService('FrontOfficeTemplates')->render(Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/pager.html.twig"), $twigVars);
+        
+        $data = array(
+            'html' => $html,
+            'pager'=> $pager
+        );
+        $this->_helper->json($data);
+    }
+    
     /*
      * @ todo: PHPDoc
      */
@@ -110,14 +148,14 @@ class Blocks_ContentListController extends Blocks_AbstractController
         return $contentArray;
     }
 
-	protected function setFilters($query)
-	{
-		  $this->_dateService = Manager::getService('Date');
-		$this->_dataReader = Manager::getService('Contents');
+    protected function setFilters ($query)
+    {
+        $this->_dateService = Manager::getService('Date');
+        $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-		
-		if ($query === null) {
+        
+        if ($query === null) {
             return array();
         }
         $sort = array();
@@ -129,7 +167,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             '$ne' => '!=',
             'eq' => '='
         );
-        if (isset($query['query'])&& $query['type']!='manual') {
+        if (isset($query['query']) && $query['type'] != 'manual') {
             $query = $query['query'];
             /* Add filters on TypeId and publication */
             $filterArray[] = array(
@@ -159,11 +197,11 @@ class Blocks_ContentListController extends Blocks_AbstractController
                             }
                         }
                         $taxOperator = '$in';
-                    }else{
-                    	$taxOperator = '$in';
+                    } else {
+                        $taxOperator = '$in';
                     }
                 } else {
-                   $taxOperator = '$in';
+                    $taxOperator = '$in';
                 }
                 if (count($value['terms']) > 0) {
                     $filterArray[] = array(
@@ -226,64 +264,75 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     );
                 }
             }
-        }else{
-        	 $filterArray[]=array(
-        	 	'operator'=> '$in',
-	        	 'property'=> 'id',
-	        	 'value'=>$query['query']
-			 );
-			  $filterArray[]=array(
+        } else {
+            $filterArray[] = array(
+                'operator' => '$in',
+                'property' => 'id',
+                'value' => $query['query']
+            );
+            $filterArray[] = array(
                 'property' => 'status',
                 'value' => 'published'
             );
-			$sort[] = array(
-                        'property' => 'id',
-                        'direction' => 'DESC'
-                    );
+            $sort[] = array(
+                'property' => 'id',
+                'direction' => 'DESC'
+            );
         }
-		$returnArray=array("filter"=>$filterArray,"sort"=>$sort);
-		return $returnArray;
-	}
+        $returnArray = array(
+            "filter" => $filterArray,
+            "sort" => $sort
+        );
+        return $returnArray;
+    }
 
     protected function setPaginationValues ($blockConfig)
     {
-        $pageData['limit'] = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
+        $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
+        $pageData['limit'] = $this->getParam('limit', $defaultLimit);
+        // var_dump($pageData['limit']);die();
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         return $pageData;
     }
 
     protected function getQuery ($queryId)
     {
-    	$this->_queryReader = Manager::getService('Queries');
+        $this->_queryReader = Manager::getService('Queries');
         return $this->_queryReader->findById($queryId);
     }
-	
-	public function getContentsAction()
-	{
-		$this->_dataReader=Manager::getService('Contents');
-		$data=$this->getRequest()->getParams();
-		if(isset($data['block']['query']))
-		{
-		$query=$this->getQuery($data['block']['query']);
-		$filters=$this->setFilters($query);
-		$contentList=$this->_dataReader->getOnlineList($filters['filter'],$filters["sort"],(($data['pagination']['page']-1)*$data['pagination']['limit']),intval($data['pagination']['limit']));
-		if($contentList["count"]>0)
-		{
-		foreach($contentList['data'] as $content)
-		{
-			$returnArray[]=array('text'=>$content['text'],'id'=>$content['id']);
-		}
-		$returnArray['total']=count($returnArray);
-		$returnArray["success"]=true;
-		}else{
-			$returnArray=array("success"=>false,"msg"=>"No contents found");
-		}
-		}else{
-				$returnArray=array("success"=>false,"msg"=>"No query found");
-			}
-		
-			$this->getHelper('Layout')->disableLayout();
-            $this->getHelper('ViewRenderer')->setNoRender();
-            $this->getResponse()->setBody(Zend_Json::encode($returnArray));
-	}
+
+    public function getContentsAction ()
+    {
+        $this->_dataReader = Manager::getService('Contents');
+        $data = $this->getRequest()->getParams();
+        if (isset($data['block']['query'])) {
+            $query = $this->getQuery($data['block']['query']);
+            $filters = $this->setFilters($query);
+            $contentList = $this->_dataReader->getOnlineList($filters['filter'], $filters["sort"], (($data['pagination']['page'] - 1) * $data['pagination']['limit']), intval($data['pagination']['limit']));
+            if ($contentList["count"] > 0) {
+                foreach ($contentList['data'] as $content) {
+                    $returnArray[] = array(
+                        'text' => $content['text'],
+                        'id' => $content['id']
+                    );
+                }
+                $returnArray['total'] = count($returnArray);
+                $returnArray["success"] = true;
+            } else {
+                $returnArray = array(
+                    "success" => false,
+                    "msg" => "No contents found"
+                );
+            }
+        } else {
+            $returnArray = array(
+                "success" => false,
+                "msg" => "No query found"
+            );
+        }
+        
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        $this->getResponse()->setBody(Zend_Json::encode($returnArray));
+    }
 }

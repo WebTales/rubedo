@@ -12,6 +12,8 @@
         "execute.controller.@dot*.get-thumbnail.default",
         "execute.controller.gallery.xhr-get-images.blocks",
         "execute.controller.calendar.xhr-get-calendar.blocks",
+        "execute.controller.calendar.xhr-get-items.blocks",
+        "execute.controller.contentList.xhr-get-items.blocks",
         "execute.controller.workspaces.index.backoffice",
         "execute.controller.xhr-authentication.login.default"
     ]
