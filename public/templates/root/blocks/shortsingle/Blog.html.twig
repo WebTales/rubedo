@@ -1,4 +1,3 @@
-{% extends "root/block.html.twig" %} {% block mainContent %}
 
 <div class="block clearfix">
 
@@ -7,16 +6,14 @@
 	<h2 class="post-title-small">
 		<a href='{{ displaySingleUrl(content.id) }}' title='Actu'>{{content.title}}</a>
 	</h2>
-	
-	
-	<div class="">
-	{% if content.date %} Le {{content.date}} {% endif %}
-	</div>
-	{% if content.image %} 
-	<div class="pull-left thumbnail" style="margin:1em;">
-    	<a href="{{ displaySingleUrl(content.id) }}"><img
-    		alt="" class="imageLeft" src="/image?file-id={{content.image}}"
-    		style="max-height: 80px; max-width: 80px;" /></a> 
+
+
+	<div class="">{% if content.date %} Le {{content.date}} {% endif %}</div>
+	{% if content.image %}
+	<div class="pull-left thumbnail" style="margin: 1em;">
+		<a href="{{ displaySingleUrl(content.id) }}"><img alt=""
+			class="imageLeft" src="/image?file-id={{content.image}}"
+			style="max-height: 80px; max-width: 80px;" /></a>
 	</div>
 	{% endif %}
 	<div class="editable" id="{{ content.id }}_summary">
@@ -28,4 +25,3 @@
 
 
 </div>
-{% endblock %}

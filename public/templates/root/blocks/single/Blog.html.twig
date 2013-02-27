@@ -12,7 +12,7 @@
 		</div>
 		<div class="entry-info">
 			{% if data.date %}
-			Le {{data.date}}
+			Le {{data.date|localizeddate('long', 'none', lang)}}
 			{% endif %}
 		</div>
 		<div style="clear:both;"></div>

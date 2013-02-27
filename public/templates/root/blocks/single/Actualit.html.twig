@@ -11,18 +11,8 @@
 			{% endfor %}
 		</div>
 		<div class="entry-info">
-			{% if data.dateBegin %}
-			{% if data.dateEnd%}
-			Du {{data.dateBegin}} au {{data.dateEnd}}
-			{% else %}
-			A partir du {{data.dateBegin}}
-			{% endif %}
-			{% endif %}
-			{% if data.Location %}
-			{{data.Location}}
-			{% endif %}
 			{% if data.date %}
-			Le {{data.date}}
+			Le {{data.date|localizeddate('long', 'none', lang)}}
 			{% endif %}
 		</div>
 		<div style="clear:both;"></div>

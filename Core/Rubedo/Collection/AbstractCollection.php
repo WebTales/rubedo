@@ -68,6 +68,14 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var boolean
      */
     protected static $_isUserFilterDisabled = false;
+    
+    
+    /**
+     * store already found objects
+     * 
+     * @var array
+     */
+   protected static $_fetchedObjects = array();
 
     protected function _init ()
     {
@@ -196,7 +204,10 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function findById ($contentId)
     {
-        return $this->_dataService->findById($contentId);
+        if(!isset(self::$_fetchedObjects[$contentId])){
+            self::$_fetchedObjects[$contentId] = $this->_dataService->findById($contentId);
+        }
+        return self::$_fetchedObjects[$contentId];
     }
 
     /**
