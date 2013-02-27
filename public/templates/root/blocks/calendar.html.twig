@@ -1,10 +1,10 @@
 {% extends "root/blocks/contentlist.html.twig" %}
 {% block mainList %}
 <div class='row'>
-    <div class='calendar-{{ prefix }} span4'>
+    <div id='calendar-{{ prefix }}' class=' span4'>
         {% include 'root/blocks/calendar/table.html.twig' %}
     </div>
-    <div class="items-{{ prefix }} span8">
+    <div id='calendar-items-{{ prefix }}' class=" span8">
         {% include 'root/blocks/calendar/list.html.twig' %}
     </div>
 </div>

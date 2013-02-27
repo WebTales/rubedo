@@ -28,6 +28,8 @@ class Blocks_CalendarController extends Blocks_ContentListController
 {
     protected $_defaultTemplate = 'calendar';
     
+    
+    
     public function indexAction ()
     {
         
@@ -40,7 +42,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/".$this->_defaultTemplate.".html.twig");
         }
         $css = array();
-        $js = array();
+        $js = array('/templates/'.Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/calendar.js"));
         $this->_sendResponse($output, $template, $css, $js);
     }
     
@@ -62,6 +64,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
             $year = date('Y',$timestamp);
             $month = date('m',$timestamp);
+            $date = (string)$month.'-'.(string)$year;
         }
         $timestamp = mktime(0,0,0,$month,1,$year);
         $nextMonth = new DateTime();
@@ -119,6 +122,10 @@ class Blocks_CalendarController extends Blocks_ContentListController
         
         $output['monthArray'] = Manager::getService('Date')->getMonthArray(
             $timestamp);
+        
+        $output['caldate'] = $date;
+        
+       $output['xhrUrl'] = $this->_helper->url->url(array('module'=>'blocks','controller'=>'calendar','action'=>'xhr-get-calendar'),'default');
         
         return $output;
     }
