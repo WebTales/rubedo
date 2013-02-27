@@ -6,6 +6,8 @@
 	"parentId": "root",
 	"description": "",
 	"keywords": [],
+	"orderValue": 200,
+	"expandable": false,
 	"blocks": [
 		{
 			"bType": "D\u00e9tail de contenu",

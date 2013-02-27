@@ -31,19 +31,18 @@ class Blocks_MenuController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array());
- 
         if (isset($blockConfig['rootPage'])) {
             $rootPage = $blockConfig['rootPage'];
         } else {
             $rootPage = $this->getParam('rootPage');
         }
-		
+		 $site = $this->getParam('site');
 		$output['rootPage'] = $rootPage;
 		$output['pages'] = array();
-		
-		$excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
-		     
-        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],array($excludeFromMenuCondition));
+		$filterArray[]=array('property'=>'site','value'=>$site["id"]);
+		$excludeFromMenuCondition = array('operator'=>'$in','operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
+		$filterArray[]=$excludeFromMenuCondition;   
+        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],$filterArray);
 
         foreach ($levelOnePages as $page) {
             $tempArray = array();
@@ -68,7 +67,6 @@ class Blocks_MenuController extends Blocks_AbstractController
             
             $output['pages'][] = $tempArray;
         }
-                
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/menu.html.twig");
         
         $css = array();

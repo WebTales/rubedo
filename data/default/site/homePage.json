@@ -5,5 +5,8 @@
 	"parentId": "root",
 	"description": "",
 	"keywords": [],
+	"orderValue": 200,
+	"excludeFromMenu": false,
+	"expandable": false,
 	"blocks": []
 }
