@@ -1,0 +1,14 @@
+{% extends "root/blocks/contentlist.html.twig" %}
+{% block mainList %}
+<div class='row'>
+    <div id='calendar-{{ prefix }}' class=' span4'>
+        {% include 'root/blocks/calendar/table.html.twig' %}
+    </div>
+    <div id='calendar-items-{{ prefix }}' class=" span8">
+        {% include 'root/blocks/calendar/list.html.twig' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block pager %}
+{% endblock %}

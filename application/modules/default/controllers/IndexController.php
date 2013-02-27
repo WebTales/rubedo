@@ -432,7 +432,9 @@ class IndexController extends Zend_Controller_Action
             case 'Liste de Contenus':
             case 'contentList':
                 $controller = 'content-list';
-                
+                break;
+            case 'calendar' : 
+                $controller = 'calendar';
                 break;
             case 'Pied de page':
             case 'footer':
