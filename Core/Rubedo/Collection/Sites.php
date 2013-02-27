@@ -37,6 +37,101 @@ class Sites extends AbstractCollection implements ISites
     protected static $_overrideSiteName = array();
 
     protected static $_overrideSiteNameReverse = array();
+	
+	protected $_model = array(
+		"text" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"alias" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"description" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"keywords" => array(
+			"domain" => "list",
+			"required" => true,
+			"items" => array(
+				"domain" => "string",
+				"required" => false,
+			),
+		),
+		"mainLanguage" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		/*"languages" => array(
+			"domain" => "list",
+			"required" => true,
+			"items" => array(
+				"domain" => "string",
+				"required" => false,
+			),
+		),*/
+		"activeMessagery" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"SMTPServer" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"SMTPPort" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"SMTPLogin" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"SMTPPassword" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"defaultEmail" => array(
+			"domain" => "email",
+			"required" => true,
+		),
+		"accessibilityLevel" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"opquastLogin" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"opquastPassword" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"protocol" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		/*"filter" => array(
+			"domain" => "array",
+			"required" => true,
+		),*/
+		"theme" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"homePage" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"title" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"author" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+	);
     
     /**
      * Only access to content with read access
