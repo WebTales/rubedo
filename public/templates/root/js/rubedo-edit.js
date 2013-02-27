@@ -233,5 +233,67 @@ function getDomainName()
 	return window.location.href.substr(7).substr(0,window.location.href.substr(7).indexOf("/"));
 }
 
+(function($){
+    jQuery.extend({
+        rubedoModal: function(options){
+    	if(document.getElementById(options.id))
+    	{
+    		jQuery("#"+options.id).modal("show");
+    	}
+    	else
+    	{
+   /*
+    * Create modal
+    */
+        var modal="<div id='"+options.id+"' class='modal hide fade rubedo-modal'>"+
+        "<div class='modal-header'> <a href='#' id='modal-close-btn' class='close'>&times;</a>"+options.header+"</div>"+
+        "<div id='modal-body-content' class='modal-body'>"+options.body+"</div>"+
+        "</div>";
+
+	
+        jQuery(modal).appendTo(document.body);
+        jQuery(document.body).queue(function(){
+      
+        });
+         jQuery("#"+options.id).modal("show");
+       }
+   /*
+    * Destroy or close  action
+    */
+        jQuery("#modal-close-btn").click(function(){
+        	if(options.callback)
+        	{options.callback();}
+        	
+        	if(options.destroy)
+        	{
+        		if(options.destroy==true){
+     				jQuery("#"+options.id).remove();
+					jQuery(".modal-backdrop.fade.in").remove();}
+				else{
+					jQuery("#"+options.id).modal("hide");}
+        	}
+        	else{jQuery("#"+options.id).modal("hide");}
+  
+        });
+        jQuery(".modal-backdrop").click(function(){
+        	if(options.callback)
+        	options.callback();
+        	if(options.destroy)
+        	{
+        		if(options.destroy==true){
+     				jQuery("#"+options.id).remove();
+					jQuery(".modal-backdrop.fade.in").remove();}
+				else{
+					jQuery("#"+options.id).modal("hide");}
+        	}
+        	else{jQuery("#"+options.id).modal("hide");}
+  
+        });
+        
+     
+        }
+    });
+ 
+})(jQuery);
 
 
