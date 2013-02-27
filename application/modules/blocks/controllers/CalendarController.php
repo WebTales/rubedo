@@ -24,9 +24,9 @@ require_once ('ContentListController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_AgendaController extends Blocks_ContentListController
+class Blocks_CalendarController extends Blocks_ContentListController
 {
-    protected $_defaultTemplate = 'agenda';
+    protected $_defaultTemplate = 'calendar';
     
     public function indexAction ()
     {
