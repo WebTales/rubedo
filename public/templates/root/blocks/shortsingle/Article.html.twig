@@ -1,4 +1,3 @@
-{% extends "root/block.html.twig" %} {% block mainContent %}
 
 <div class="block clearfix"
 	style="border-bottom: 1px solid #E3E3E8; margin-bottom: 10px; padding-bottom: 2px;">
@@ -13,11 +12,7 @@
 	</header>
 	<div class="entry-content editable" id="{{ content.id }}_summary">
 		{{content.summary|cleanHtml}}</div>
-	<div class="entry-info">{% if content.dateBegin %} {% if
-		content.dateEnd%} Du {{content.dateBegin}} au {{content.dateEnd}} {%
-		else %} A partir du {{content.dateBegin}} {% endif %} {% endif %} {%
-		if content.Location %} {{content.Location}} {% endif %} {% if
-		content.date %} Le {{content.date}} {% endif %}</div>
+	<div class="entry-info">{% if content.date %} Le {{content.date|localizeddate('long', 'none', lang)}} {% endif %}</div>
 	<div class="btn btn-small pull-right">
 		<a href="{{ displaySingleUrl(content.id) }}">En savoir plus <span
 			class="icon-forward"></span></a>
@@ -26,5 +21,4 @@
 
 
 </div>
-{% endblock %}
 
