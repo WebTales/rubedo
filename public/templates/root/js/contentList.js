@@ -1,4 +1,4 @@
-function contentListChangePage(page, prefix, query, url, singlePage,limit) {
+function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType) {
 	if (jQuery('#list-' + prefix + ' > #list-' + prefix + '-' + page).length == 0) {
 		var request = jQuery.ajax({
 			url : url + '/blocks/contentList/xhr-get-items',
@@ -8,7 +8,8 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit) {
 				'prefix' : prefix,
 				'query-id' : query,
 				'single-page' : singlePage,
-				'limit' : limit
+				'limit' : limit,
+				'displayType':displayType
 			},
 			dataType : "json"
 		});
