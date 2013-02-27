@@ -56,19 +56,19 @@
       }
       
 	  {% for content in data %}
-	  var contentPosition = JSON.parse("{{ content[blockConfig.positionField]|e('js') }}");
-	  if (contentPosition.address){
-		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
-	      		if (status == google.maps.GeocoderStatus.OK) {
-	      			createContentMarker(results[0].geometry.location,"{{ content.title }}","{% include '/root/blocks/maps/googleItem.html.twig'  %}");
-	      		}
-	      	});  
-	  } else if (contentPosition.latitude&&contentPosition.longitude){
-		  createContentMarker(new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude),"{{ content.title }}","{% include '/root/blocks/maps/googleItem.html.twig'  %}");     
-      }
-	  
+	  handleContent(JSON.parse("{{ content[blockConfig.positionField]|e('js') }}"), "{{ content.title }}", "{% include '/root/blocks/maps/googleItem.html.twig'  %}");
 	  {% endfor %}
-      
+      function handleContent(contentPosition, title, contentString){
+    	  if (contentPosition.address){
+    		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
+    	      		if (status == google.maps.GeocoderStatus.OK) {
+    	      			createContentMarker(results[0].geometry.location, title, contentString);
+    	      		}
+    	      	});  
+    	  } else if (contentPosition.latitude&&contentPosition.longitude){
+    		  createContentMarker(new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude), title, contentString);     
+          }
+      }
       
       function createContentMarker(location,title,contentString){
     	  var marker = new google.maps.Marker({
@@ -93,11 +93,9 @@
 </script>
 <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
 <style type="text/css">
-
 #{{prefix}}map_canvas img {
     max-width: none;
-}
-	  
+}	  
 </style>
 
 {% endblock %}
