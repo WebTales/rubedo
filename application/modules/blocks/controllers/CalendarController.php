@@ -59,13 +59,17 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $date = $this->getParam('cal-date');
         if($date){
             list($month,$year) = explode('-', $date);
-        
+            
         }else{
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
             $year = date('Y',$timestamp);
             $month = date('m',$timestamp);
-            $date = (string)$month.'-'.(string)$year;
+            
         }
+        $month = intval($month);
+        $year = intval($year);
+        $date = (string)$month.'-'.(string)$year;
+        
         $timestamp = mktime(0,0,0,$month,1,$year);
         $nextMonth = new DateTime();
         $nextMonth->setTimestamp($timestamp);
