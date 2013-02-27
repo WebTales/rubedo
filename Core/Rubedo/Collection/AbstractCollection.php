@@ -312,8 +312,20 @@ abstract class AbstractCollection implements IAbstractCollection
 							if($this->_isValid($obj[$key], $value['domain'])) {
 								if(count($obj[$key]) > 0) {
 									foreach ($obj[$key] as $subKey => $subValue) {
-										if(!$this->_isValid($subValue, $value['items']['domain'])) {
-											$this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+										if($value['items']['domain'] != "list" && $value['items']['domain'] != "array") {
+											if(!$this->_isValid($subValue, $value['items']['domain'])) {
+												$this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+											}
+										} else {
+											if($value['items']['domain'] == "list"){
+												if(isset($value['items']['items']['domain']) && isset($value['items']['items']['required'])){
+													$this->_filterInputData(array('key' => $subValue), array('key' => $value['items']['items']));
+												} else {
+													$this->_filterInputData($subValue, $value['items']['items']);
+												}
+											} else {
+												$this->_filterInputData($subValue, $value['items']['items']);
+											}
 										}
 									}
 								} else {
@@ -366,6 +378,12 @@ abstract class AbstractCollection implements IAbstractCollection
 							$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
 						}
 						break;
+				}
+			} else {
+				if(isset($value['items']) && $value['items']['required'] == true) {
+					$this->_errors[$key] = 'this field is required';
+				} else {
+					continue;
 				}
 			}
 		}
