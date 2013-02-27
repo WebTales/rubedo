@@ -60,29 +60,44 @@
 	  if (contentPosition.address){
 		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
 	      		if (status == google.maps.GeocoderStatus.OK) {
-	      			new google.maps.Marker({
-	    			  	map:map,
-	    			  	position:results[0].geometry.location,
-	    			  	title:"{{ content.title }}"
-	    			});
+	      			createContentMarker(results[0].geometry.location,"{{ content.title }}","{% include '/root/blocks/maps/googleItem.html.twig'  %}");
 	      		}
 	      	});  
 	  } else if (contentPosition.latitude&&contentPosition.longitude){
-		  var markerLocation = new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude);
-		  new google.maps.Marker({
-			  	map:map,
-			  	position:markerLocation,
-			  	title:"{{ content.title }}"
-			});      
+		  createContentMarker(new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude),"{{ content.title }}","{% include '/root/blocks/maps/googleItem.html.twig'  %}");     
       }
 	  
 	  {% endfor %}
       
+      
+      function createContentMarker(location,title,contentString){
+    	  var marker = new google.maps.Marker({
+			  	map:map,
+			  	position:location,
+			  	title:title
+			});
+    	  var infowindow = new google.maps.InfoWindow({
+              content: contentString,
+              width:192,
+              height:100
+           });
+    	  google.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(map,marker);
+          });
+		  
       }
       
+      }
      
       window.onload = initialize;
 </script>
 <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+<style type="text/css">
+
+#{{prefix}}map_canvas img {
+    max-width: none;
+}
+	  
+</style>
 
 {% endblock %}
