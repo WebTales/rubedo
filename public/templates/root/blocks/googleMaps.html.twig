@@ -77,9 +77,7 @@
 			  	title:title
 			});
     	  var infowindow = new google.maps.InfoWindow({
-              content: contentString,
-              width:192,
-              height:100
+              content: contentString         
            });
     	  google.maps.event.addListener(marker, 'click', function() {
               infowindow.open(map,marker);
