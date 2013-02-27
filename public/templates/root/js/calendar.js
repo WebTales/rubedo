@@ -1,12 +1,13 @@
-function calendarChangeDate(date, prefix, query, url) {
+function calendarChangeDate(date, prefix, query, url, singlePage) {
 	if (jQuery('#calendar-' + prefix + ' > #calendar-' + date).length == 0) {
 		var request = jQuery.ajax({
-			url : url+'/blocks/calendar/xhr-get-calendar',
+			url : url + '/blocks/calendar/xhr-get-calendar',
 			type : "POST",
 			data : {
 				'cal-date' : date,
 				'prefix' : prefix,
-				'query-id' : query
+				'query-id' : query,
+				'single-page' : singlePage
 			},
 			dataType : "json"
 		});
@@ -23,19 +24,20 @@ function calendarChangeDate(date, prefix, query, url) {
 	jQuery('#calendar-' + prefix + ' > .active').removeClass('active');
 	jQuery('#calendar-' + prefix + ' > #calendar-' + date).show();
 	jQuery('#calendar-' + prefix + ' > #calendar-' + date).addClass('active');
-	calendarChangeDateForList(date, prefix, query, url);
+	calendarChangeDateForList(date, prefix, query, url, singlePage);
 	return false;
 }
 
-function calendarChangeDateForList(date, prefix, query, url) {
+function calendarChangeDateForList(date, prefix, query, url, singlePage) {
 	if (jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).length == 0) {
 		var request = jQuery.ajax({
-			url : url+'/blocks/calendar/xhr-get-items',
+			url : url + '/blocks/calendar/xhr-get-items',
 			type : "POST",
 			data : {
 				'cal-date' : date,
 				'prefix' : prefix,
-				'query-id' : query
+				'query-id' : query,
+				'single-page' : singlePage
 			},
 			dataType : "json"
 		});
@@ -51,5 +53,6 @@ function calendarChangeDateForList(date, prefix, query, url) {
 	jQuery('#calendar-items-' + prefix + ' > .active').hide();
 	jQuery('#calendar-items-' + prefix + ' > .active').removeClass('active');
 	jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).show();
-	jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).addClass('active');
+	jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).addClass(
+			'active');
 }
