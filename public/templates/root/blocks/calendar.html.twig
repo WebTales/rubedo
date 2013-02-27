@@ -1,13 +1,25 @@
 {% extends "root/blocks/contentlist.html.twig" %}
 {% block mainList %}
+{% set displayBoth =  display.showList and display.showCal %}
+
+{% if displayBoth %}
 <div class='row'>
-    <div id='calendar-{{ prefix }}' class=' span4'>
+{% endif %}
+    {% if display.showCal %}
+    <div id='calendar-{{ prefix }}' class='{% if display.showList %}span4{% endif %}'>
         {% include 'root/blocks/calendar/table.html.twig' %}
     </div>
+    {% endif %}
+    
+    {% if display.showList %}
     <div id='calendar-items-{{ prefix }}' class=" span8">
         {% include 'root/blocks/calendar/list.html.twig' %}
     </div>
+    {% endif %}
+{% if displayBoth %}
 </div>
+{% endif %}
+
 {% endblock %}
 
 {% block pager %}

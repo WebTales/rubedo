@@ -31,7 +31,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
     {
         $output = $this->_getList();
         $blockConfig = $this->getRequest()->getParam('block-config');
-        
+
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
@@ -125,6 +125,14 @@ class Blocks_CalendarController extends Blocks_ContentListController
         } else {
             $output['prevDate'] = (string) ($month - 1) . '-' . (string) $year;
         }
+        $output['display']=array();
+        if(isset($blockConfig['display'])){
+            foreach ($blockConfig['display'] as $value){
+                $output['display'][$value] = true;
+            }
+        }
+        
+        
         $singlePage = isset($blockConfig['singlePage'])?$blockConfig['singlePage']:$this->getParam('current-page');
         //var_dump($this->getParam('current-page'));die();
         
@@ -140,7 +148,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
             'controller' => 'calendar',
             'action' => 'xhr-get-calendar'
         ), 'default');
-        
+                
         return $output;
     }
 

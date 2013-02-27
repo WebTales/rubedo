@@ -3,7 +3,7 @@
         <tr>
           <th colspan="7" >
             <a class="btn" href="{{url({'cal-date': prevDate,'prefix':prefix},true)}}" onclick="calendarChangeDate('{{ prevDate }}','{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}');return false;"><i class="icon-chevron-left"></i></a>
-            <a class="btn">{{ month }} {{ year }}</a>
+            <a class="btn" href="{{url({'cal-date': caldate,'prefix':prefix,'pageId':singlePage},true,true,'rewrite')}}">{{ month }} {{ year }}</a>
             <a class="btn" href="{{url({'cal-date': nextDate,'prefix':prefix},true)}}" onclick="calendarChangeDate('{{ nextDate }}','{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}');return false;"><i class="icon-chevron-right"></i></a>
           </th>
         </tr>

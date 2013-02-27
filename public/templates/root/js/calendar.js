@@ -29,6 +29,9 @@ function calendarChangeDate(date, prefix, query, url, singlePage) {
 }
 
 function calendarChangeDateForList(date, prefix, query, url, singlePage) {
+	if(jQuery('#calendar-items-' + prefix).length == 0){
+		return false;
+	}
 	if (jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).length == 0) {
 		var request = jQuery.ajax({
 			url : url + '/blocks/calendar/xhr-get-items',
