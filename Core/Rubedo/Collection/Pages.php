@@ -32,6 +32,69 @@ class Pages extends AbstractCollection implements IPages
         array('keys'=>array('site'=>1,'parentId'=>1,'workspace'=>1,'orderValue'=>1)),
         
     );
+	
+	protected $_model = array(
+		'text' => array(
+			'domain' => 'string',
+			'required' => true,
+		),
+		'maskId' => array(
+			'domain' => 'string',
+			'required' => true,
+		),
+		'site' => array(
+			'domain' => 'string',
+			'required' => true,
+		),
+		'blocks' => array(
+			'domain' => 'list',
+			'required' => true,
+			'items' => array(
+				'domain' => 'string',
+				'required' => false,
+			),
+		),
+		'title' => array(
+			'domain' => 'string',
+			'required' => true,
+		),
+		'description' => array(
+			'domain' => 'string',
+			'required' => true,
+		),
+		/*'keywords' => array(
+			'domain' => 'list',
+			'required' => true,
+			'items' => array(
+				'domain' => 'string',
+				'required' => false,
+			),
+		),*/
+		'pageURL' => array(
+			'domain' => 'string',
+			'required' => true,
+		),
+		'orderValue' => array(
+			'domain' => 'integer',
+			'required' => true,
+		),
+		'excludeFromMenu' => array(
+			'domain' => 'bool',
+			'required' => true,
+		),
+		'expandable' => array(
+			'domain' => 'bool',
+			'required' => true,
+		),
+		'workspace' => array(
+			'domain' => 'string',
+			'required' => true,
+		),
+		'inheritWorkspace' => array(
+			'domain' => 'bool',
+			'required' => true,
+		),
+	);
     
     /**
      * Only access to content with read access
