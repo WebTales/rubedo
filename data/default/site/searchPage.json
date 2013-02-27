@@ -5,6 +5,8 @@
 	"maskId": "",
 	"parentId": "root",
 	"description": "",
+	"orderValue": 200,
+	"expandable": false,
 	"keywords": [],
 	"blocks": [
 		{
