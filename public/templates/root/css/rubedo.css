@@ -5,3 +5,14 @@
 .highlight{
 	background-color:#E3E84D;
 }
+.rubedo-modal
+{
+	max-width:90%;
+	max-height:90%;
+	width:auto;
+	
+}
+.modal-body
+{
+	max-height:90%;
+}
