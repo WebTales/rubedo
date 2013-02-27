@@ -204,21 +204,26 @@ class Sites extends AbstractCollection implements ISites
 	
 	public function destroy(array $obj, $options = array('safe'=>true))
 	{
-		$id=$obj['id'];
-		$pages = \Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($id);
-		if($pages['ok']==1)
-		{
-			$masks = \Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($id);
-			if($masks['ok']==1)
+		if($this->_isReadable($obj)){	
+			$id=$obj['id'];
+			$pages = \Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($id);
+			if($pages['ok']==1)
 			{
-				$returnArray=parent::destroy($obj,$options);
+				$masks = \Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($id);
+				if($masks['ok']==1)
+				{
+					$returnArray=parent::destroy($obj,$options);
+				}else{
+					$returnArray=array('success'=>false, 'msg'=>"error during masks deletion");
+				}
+				
 			}else{
-				$returnArray=array('success'=>false, 'msg'=>"error during masks deletion");
+					$returnArray=array('success'=>false, 'msg'=>"error during pages deletion");
 			}
-			
-		}else{
-				$returnArray=array('success'=>false, 'msg'=>"error during pages deletion");
+		} else {
+			$returnArray=array('success'=>false, 'msg'=>"you don't have the permission to delete this site");
 		}
+		
 		return $returnArray;
 	}
 	
@@ -278,7 +283,7 @@ class Sites extends AbstractCollection implements ISites
 	        }
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 			
-	        if (!in_array($obj['workspace'], $writeWorkspaces)) {
+	        if (!in_array($obj['workspace'], $writeWorkspaces) && $writeWorkspaces[0]!="all") {
 	            $obj['readOnly'] = true;
 	        } else {
 	            
@@ -287,6 +292,23 @@ class Sites extends AbstractCollection implements ISites
 		}
         
         return $obj;
+    }
+	
+	protected function _isReadable ($obj)
+    {
+        if (! self::isUserFilterDisabled()) {
+        	//Set the workspace for old items in database	
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+			
+	        if (!in_array($obj['workspace'], $writeWorkspaces) && $writeWorkspaces[0]!="all") {
+	            return false;
+	        }
+		}
+        
+        return true;
     }
 	
 	/**
