@@ -141,4 +141,15 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $this->_helper->json($data);
     }
     
+    public function xhrGetItemsAction ()
+    {
+        $twigVars = $this->_getList();
+    
+        $html = Manager::getService('FrontOfficeTemplates')->render($template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/calendar/list.html.twig"), $twigVars);
+        $data = array(
+            'html' => $html
+        );
+        $this->_helper->json($data);
+    }
+    
 }
