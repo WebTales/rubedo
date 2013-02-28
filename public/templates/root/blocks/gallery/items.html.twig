@@ -6,9 +6,9 @@
 	{% endfor %}
 
 	{% if previous == true %}
-	<a class="carousel-control left" href="{{url({'page':currentPage-1,'prefix':prefix})}}" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&lsaquo;</a>
+	<a class="carousel-control left" href="{{url({'page':currentPage-1,'galleryId':galleryid,'prefix':prefix})}}" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&lsaquo;</a>
 	{% endif %}
 	{% if next == true %}
-	<a class="carousel-control right" href="{{url({'page':currentPage+1,'prefix':prefix})}}" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&rsaquo;</a>
+	<a class="carousel-control right" href="{{url({'page':currentPage+1,'galleryId':galleryid,'prefix':prefix})}}" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&rsaquo;</a>
 	{% endif %}
 </div>
