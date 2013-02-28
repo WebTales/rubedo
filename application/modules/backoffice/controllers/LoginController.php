@@ -49,6 +49,24 @@ class Backoffice_LoginController extends Zend_Controller_Action
         if($this->_auth->getIdentity()){
 			$this->_helper->redirector->gotoUrl("/backoffice/");
 		}
+		
+		$extjsOptions = Zend_Registry::get('extjs');
+		
+		if(isset($extjsOptions['network']) && $extjsOptions['network']=='cdn'){
+		    $this->view->extJsPath = 'http://cdn.sencha.com/ext-'.$extjsOptions['version'].'-gpl';
+		}else{
+		    $this->view->extJsPath = $this->view->baseUrl().'/components/sencha/extjs';
+		}
+		
+		
+		if(!isset($extjsOptions['debug']) ||$extjsOptions['debug']==true){
+		    $this->view->extJsScript = 'ext-all-debug.js';
+		}else{
+		    $this->view->extJsScript = 'ext-all.js';
+		}
+		
+		$this->getHelper('Layout')
+		->disableLayout();
     }
 	
 }
