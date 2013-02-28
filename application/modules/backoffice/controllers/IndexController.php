@@ -40,28 +40,21 @@ class Backoffice_IndexController extends Zend_Controller_Action
 			$this->_helper->redirector->gotoUrl("/backoffice/login");
 		}
 		
-		/*
-		 $appHtml = file_get_contents(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/app.html');
-        
-		$extjsNativeInclude = '<script src="extjs-4.1.0/ext-all-debug.js"></script>';
-		$rubedoFavIcone='<link rel="shortcut icon" type="image/x-icon" href="/backoffice/resources/icones/faviconRubedo.ico"/>';
 		$extjsOptions = Zend_Registry::get('extjs');
 		
-		if(!isset($extjsOptions['debug']) ||$extjsOptions['debug']==false){
-		    $extjsInclude = '<script src="extjs-4.1.0/ext-all.js"></script>'.$rubedoFavIcone;
-		    //http://cdn.sencha.com/ext-4.1.0-gpl/
-		    
-		}else{
-		    $extjsInclude = $extjsNativeInclude.$rubedoFavIcone;
-		}
-		$appHtml = str_replace($extjsNativeInclude, $extjsInclude, $appHtml);
-		
 		if(isset($extjsOptions['network']) && $extjsOptions['network']=='cdn'){
-		    $appHtml = str_replace('extjs-4.1.0/', 'http://cdn.sencha.com/ext-4.1.0-gpl/', $appHtml);
+		    $this->view->extJsPath = 'http://cdn.sencha.com/ext-'.$extjsOptions['version'].'-gpl';
 		}else{
-		    $appHtml = str_replace('extjs-4.1.0/', $this->view->baseUrl().'/components/sencha/extjs/', $appHtml);
+		    $this->view->extJsPath = $this->view->baseUrl().'/components/sencha/extjs';
 		}
-		*/
+		
+		
+		if(!isset($extjsOptions['debug']) ||$extjsOptions['debug']==true){
+		    $this->view->extJsScript = 'ext-all-debug.js';
+		}else{
+		    $this->view->extJsScript = 'ext-all.js';
+		}
+		
 		
 		
         $this->getHelper('Layout')

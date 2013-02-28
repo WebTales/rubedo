@@ -8,7 +8,7 @@
 <title>Rubedo</title>
 
 <link rel="stylesheet"
-	href="<?php echo $this->baseUrl();?>/components/sencha/extjs/resources/css/ext-all-gray.css"
+	href="<?php echo $this->extJsPath;?>/resources/css/ext-all-gray.css"
 	id="ext_theme">
 <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/css/red_theme.css" id="maintheme">
 
@@ -25,7 +25,7 @@
 
 <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/ux/container/ButtonSegment.css">
 <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/ux/grid/feature/Tileview.css">
-
+<link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->baseUrl();?>/backoffice/resources/icones/faviconRubedo.ico"/>
 </head>
 <body
 	style="background-image: url('<?php echo $this->baseUrl();?>/backoffice/resources/images/logo.png'); 
@@ -127,9 +127,9 @@
     </div>
 	
     <script
-		src="<?php echo $this->baseUrl();?>/components/sencha/extjs/ext-all-debug.js"></script>
+		src="<?php echo $this->extJsPath;?>/<?php echo $this->extJsScript;?>"></script>
 	<script
-		src="<?php echo $this->baseUrl();?>/components/sencha/extjs/locale/ext-lang-fr.js"
+		src="<?php echo $this->extJsPath;?>/locale/ext-lang-fr.js"
 		id="locale"></script>
 	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/boxselect/BoxSelect.js"></script>
 	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/ratingField/Ext.ux.widget.Rating.js"
