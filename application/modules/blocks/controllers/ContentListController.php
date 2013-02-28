@@ -48,14 +48,21 @@ class Blocks_ContentListController extends Blocks_AbstractController
 
     protected function _getList ()
     {
+        //init services
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
+        
+        //get params & context
         $blockConfig = $this->getRequest()->getParam('block-config');
         $queryId = $this->getParam('query-id', $blockConfig['query']);
         
         $queryConfig = $this->getQuery($queryId);
         $queryType = $queryConfig['type'];
+        
+        //build query
+        
+        //getList
         $contentArray = $this->getContentList($this->setFilters($queryConfig), $this->setPaginationValues($blockConfig));
         $nbItems = $contentArray["count"];
         if ($nbItems > 0) {
@@ -148,6 +155,16 @@ class Blocks_ContentListController extends Blocks_AbstractController
         return $contentArray;
     }
 
+    /**
+     * Get query and return filters and sort array
+     * 
+     * Get the query params from block context or GET params
+     * return an array ('filter'=>$filter,'$sort'=>$sort) 
+     *
+     * 
+     * @param array $query the query parameters
+     * @return array filter and sort array
+     */
     protected function setFilters ($query)
     {
         $this->_dateService = Manager::getService('Date');
