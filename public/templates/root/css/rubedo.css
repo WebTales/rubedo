@@ -10,9 +10,16 @@
 	max-width:90%;
 	max-height:90%;
 	width:auto;
-	
 }
+
 .modal-body
 {
 	max-height:90%;
 }
+.rubedo-close
+{
+	font-size:2em;
+	border-bottom:solid;
+	border-radius:10px;
+}
+
