@@ -35,6 +35,10 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
         $blockConfig = $this->getRequest()->getParam('block-config',array());
         
         $flParams['perPage'] = array();
+		$flParams['page'] = $this->getParam('page', 1);
+		
+		//$flParams['flickrId'] = $this->getParam('flickrId', $blockConfig['id']);
+		
         
         if(isset($blockConfig['itemsPerPage'])){
             $flParams['perPage'] = $blockConfig['itemsPerPage'];
@@ -58,13 +62,16 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
             if ($flParams['user']) {
                 $photosArray = $flickrService->userSearch($flParams['user'], array(
-                    'per_page' => $flParams['perPage']
+                    'per_page' => $flParams['perPage'],
+                    'page' => $flParams['page'],
                 ));
             }elseif ($flParams['tags']){
                 $photosArray = $flickrService->tagSearch($flParams['tags'], array(
                     'per_page' => $flParams['perPage'],
-                    'tag_mode'=>$flParams['tag_mode']
+                    'tag_mode'=>$flParams['tag_mode'],
+                    'page' => $flParams['page'],
                 ));
+				$photosArray->next();
             }else{
                 throw new \Rubedo\Exceptions\User('need a criteria to display Flickr Contents');
             }
@@ -86,6 +93,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
         }
         
         $output['items'] = $items;
+		$output['page'] = $flParams['page'];
         
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
@@ -93,7 +101,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/flicker.html.twig");
         }
         $css = array();
-        $js = array();
+        $js = array('/templates/'.Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js"));
         $this->_sendResponse($output, $template, $css, $js);
     }
 }

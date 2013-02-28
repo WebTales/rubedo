@@ -1,16 +1,8 @@
-<div id="page{{currentPage}}" class="active" data-slide-to="{{currentPage}}">
-	{% for slide in items %}
-	<a href="#" data-gallery="gallery" onclick="
-		jQuery('#myModal').modal();
-		jQuery('#fullScreenPicture').attr('src','{{ slide.image }}');
-		jQuery('#myModalLabel').html('{{ slide.title }}');
-	"><img class="" src="{{ slide.thumbnail }}" alt="{{slide.title}}" title="{{slide.title}}"></a>
-	{% endfor %}
+{% for slide in items %}
+<a href="#" data-gallery="gallery" onclick="callModal({% if slide.image %}'{{slide.image}}'{% else %}'{{slide.thumbnail}}'{% endif %}, '{{slide.title|e('js')}}')">
+	<img src="{{ slide.thumbnail }}" alt="{{slide.title}}" title="{{slide.title}}">
+</a>
+{% endfor %}
 
-	{% if previous == true %}
-	<a class="carousel-control left" href="{{url({'page':currentPage-1,'prefix':prefix})}}" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&lsaquo;</a>
-	{% endif %}
-	{% if next == true %}
-	<a class="carousel-control right" href="{{url({'page':currentPage+1,'prefix':prefix})}}" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&rsaquo;</a>
-	{% endif %}
-</div>
+<a class="carousel-control left" href="{{url({'page':page-1})}}">&lsaquo;</a>
+<a class="carousel-control right" href="{{url({'page':page+1})}}">&rsaquo;</a>
