@@ -199,12 +199,13 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId            
+     * @param string $contentId    
+     * @param boolean $forceReload should we ensure reading up-to-date content        
      * @return array
      */
-    public function findById ($contentId)
+    public function findById ($contentId,$forceReload = false)
     {
-        if(!isset(self::$_fetchedObjects[$contentId])){
+        if($forceReload || !isset(self::$_fetchedObjects[$contentId])){
             self::$_fetchedObjects[$contentId] = $this->_dataService->findById($contentId);
         }
         return self::$_fetchedObjects[$contentId];
