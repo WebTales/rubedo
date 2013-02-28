@@ -62,7 +62,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         
         if ($this->getRequest()->isXmlHttpRequest()) {
             $limit = (int)$this->getParam('itemsPerPage', 5);
-            $galleryId = $this->getParam('galleryid');
+            $prefix = $this->getParam('prefix');
             $imgWidth = $this->getParam('width',null);
             $imgHeight = $this->getParam('height',null);
             $query = Zend_Json::decode($this->getParam("query",Zend_Json::encode(null)));
@@ -77,7 +77,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
             $filter = $this->setFilters($query);
             $imgWidth = $blockConfig['imageThumbnailWidth'];
             $imgHeight = $blockConfig['imageThumbnailHeight'];
-            $galleryId = $this->getParam('galleryid', $this->getParam('prefix'));
+            $prefix = $this->getParam('prefix', $this->getParam('prefix'));
         }
         
         $this->_dataService = Manager::getservice('Dam');
@@ -118,7 +118,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         }
         
         // Values sent to the view
-        $output['galleryid']=$galleryId;
+        $output['prefix']=$prefix;
         $output['items'] = $data;
         $output['allDamCount'] = $allDamCount;
         $output['maxPage'] = $maxPage;

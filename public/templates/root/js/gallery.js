@@ -1,5 +1,5 @@
-function changePage(pageNumber, itemCount, itemsPerPage, maxPage,galleryid,width,height,query,url) {
-	if(jQuery('#'+galleryid+' > #page'+pageNumber).length == 0){
+function changePage(pageNumber, itemCount, itemsPerPage, maxPage,prefix,width,height,query,url) {
+	if(jQuery('#'+prefix+' > #page'+pageNumber).length == 0){
 	var request = jQuery.ajax({
 		url : url,
 		type : "POST",
@@ -10,7 +10,7 @@ function changePage(pageNumber, itemCount, itemsPerPage, maxPage,galleryid,width
 			'maxPage' : maxPage,
 			'width': (width) ? width : null,
 			'height': (height) ? height : null,
-			'galleryid':galleryid,
+			'prefix':prefix,
 			'query':query
 		},
 		dataType : "json"
@@ -18,16 +18,16 @@ function changePage(pageNumber, itemCount, itemsPerPage, maxPage,galleryid,width
 
 	request.done(function(data) {
 		var newHtml = data.html;
-		jQuery('#'+galleryid).append(newHtml);
+		jQuery('#'+prefix).append(newHtml);
 	});
 
 	request.fail(function(jqXHR, textStatus) {
 	});
 	}
-	jQuery('#'+galleryid+' > .active').hide();
-	jQuery('#'+galleryid+' > .active').removeClass('active');
-	jQuery('#'+galleryid+' > #page'+pageNumber).show();
-	jQuery('#'+galleryid+' > #page'+pageNumber).addClass('active');
+	jQuery('#'+prefix+' > .active').hide();
+	jQuery('#'+prefix+' > .active').removeClass('active');
+	jQuery('#'+prefix+' > #page'+pageNumber).show();
+	jQuery('#'+prefix+' > #page'+pageNumber).addClass('active');
 	return false;
 }
 	
