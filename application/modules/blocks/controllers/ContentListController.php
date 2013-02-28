@@ -79,7 +79,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
                  */
                 
                 $path = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig");
-                // $contentTypeArray[(string) $dataType['id']]
                 if (Manager::getService('FrontOfficeTemplates')->templateFileExists($path)) {
                     $contentTypeArray[(string) $dataType['id']] = $path;
                 } else {
@@ -111,7 +110,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             
             $output['xhrUrl'] = $this->_helper->url->url(array(
                 'module' => 'blocks',
-                'controller' => 'calendar',
+                'controller' => 'content-list',
                 'action' => 'xhr-get-items'
             ), 'default');
         }

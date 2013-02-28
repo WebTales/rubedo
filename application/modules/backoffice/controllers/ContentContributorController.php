@@ -22,7 +22,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_IndexController extends Zend_Controller_Action
+class Backoffice_ContentContributorController extends Zend_Controller_Action
 {
 
 

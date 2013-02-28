@@ -15,6 +15,8 @@
  * @version $Id$
  */
 
+Use Rubedo\Services\Manager;
+
 /**
  * Plugin to handle preMVC context
  *
@@ -45,12 +47,16 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
         }elseif (($module == 'default' || ! isset($module)) && (($action == 'index' && $controller == 'index') || ($action == 'error' && $controller == 'error') || ($action == 'index' && $controller == 'image') || ($action == 'index' && $controller == 'dam'))) {
             $hasAccess = true;
         } else {
-            $aclService = \Rubedo\Services\Manager::getService('Acl');
+            $aclService = Manager::getService('Acl');
             $hasAccess = $aclService->hasAccess($ressourceName);
         }
         
         if (! $hasAccess) {
             throw new \Rubedo\Exceptions\Access("can't access $ressourceName");
+        }
+        
+        if($module !='backoffice' || $controller !='xhr-authentication' || $action !='is-session-expiring'){
+            Manager::getService('Authentication')->resetExpirationTime();
         }
     }
 }

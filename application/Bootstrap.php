@@ -58,6 +58,17 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $indexContentOptions = Zend_Json::decode($indexContentOptionsJson);
         Rubedo\Elastic\DataAbstract::setContentIndexOption($indexContentOptions);
     }
+    
+    /**
+     * Init the authenticated session lifeTime
+     */
+    protected function _initAuthentication ()
+    {
+        $options = $this->getOption('authentication');
+        if (isset($options['authLifetime'])) {
+            Rubedo\User\Authentication::setAuthLifetime($options['authLifetime']);
+        }
+    }
 
     /**
      * Load services parameter from application.ini to the service manager

@@ -13,6 +13,7 @@
  * @version    $Id:
  */
 
+Use Rubedo\Services\Manager;
 /**
  * Backoffice authentication Controller
  *
@@ -60,6 +61,13 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
         $response['success'] = true;
         return $this->_helper->json($response);
 
+    }
+    
+    public function isSessionExpiringAction(){
+        $hasIdentity = Manager::getService('Authentication')->hasIdentity();
+        $time = Manager::getService('Authentication')->getExpirationTime();
+        $status = $hasIdentity && ($time > 0);
+        $this->_helper->json(array('time'=>$time,'status'=>$status));
     }
 
 }
