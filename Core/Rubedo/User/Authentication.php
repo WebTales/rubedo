@@ -106,16 +106,40 @@ class Authentication implements IAuthentication
     	return $result->isValid();
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\User\IAuthentication::resetExpirationTime()
+     */
     public function resetExpirationTime(){
         
         $namespace = new \Zend_Session_Namespace('Zend_Auth');
         $namespace->setExpirationSeconds(self::$_authLifetime);
-        //\Zend_Debug::dump($_SESSION['__ZF']['Zend_Auth']['ENT']);die();
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\User\IAuthentication::getExpirationTime()
+     */
     public function getExpirationTime(){
         $namespace = new \Zend_Session_Namespace('Zend_Auth');
         return (isset($_SESSION['__ZF']['Zend_Auth']['ENT']))?($_SESSION['__ZF']['Zend_Auth']['ENT'] - time()):0;
     }
+    
+	/**
+     * @return the $_authLifetime
+     */
+    public static function getAuthLifetime ()
+    {
+        return Authentication::$_authLifetime;
+    }
 
+	/**
+     * @param number $_authLifetime
+     */
+    public static function setAuthLifetime ($_authLifetime)
+    {
+        Authentication::$_authLifetime = $_authLifetime;
+    }
+
+    
 }
