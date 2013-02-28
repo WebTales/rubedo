@@ -15,6 +15,7 @@
         "execute.controller.calendar.xhr-get-items.blocks",
         "execute.controller.contentList.xhr-get-items.blocks",
         "execute.controller.workspaces.index.backoffice",
-        "execute.controller.xhr-authentication.login.default"
+        "execute.controller.xhr-authentication.login.default",
+        "execute.controller.xhr-authentication.is-session-expiring.backoffice"
     ]
 }
