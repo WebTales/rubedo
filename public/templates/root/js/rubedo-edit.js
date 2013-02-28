@@ -209,7 +209,7 @@ function createContentWindow(type,typeId,queryId)
 			jQuery('#btn-valid-form').click(function(){
 			selectedTypeId=jQuery("#select-type-box").val();
 			destroyModal("select-type-window");
-				var modalUrl="http://"+siteUrl+"/backoffice/resources/contentContributor/app.html?typeId="+selectedTypeId+"&queryId="+queryId;
+				var modalUrl="http://"+siteUrl+"/backoffice/content-contributor?typeId="+selectedTypeId+"&queryId="+queryId;
 				modal("","<iframe src='"+modalUrl+"'></iframe>","add-content-window",90,90);
 				
 				jQuery("#add-content-window").modal('show');
@@ -218,7 +218,8 @@ function createContentWindow(type,typeId,queryId)
 		}
 		if(type=="simple")
 		{
-			var modalUrl="http://"+siteUrl+"/backoffice/resources/contentContributor/app.html?typeId="+typeId+"&queryId="+queryId;
+			
+			var modalUrl="http://"+siteUrl+"/backoffice/content-contributor?typeId="+typeId+"&queryId="+queryId;
 		modal("","<iframe src='"+modalUrl+"'></iframe>","add-content-window",90,90);
 		jQuery("#add-content-window").modal('show');
 		}
