@@ -1,20 +1,11 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-<!-- carousel -->
-{% set galleryid="gallery-"~random() %}
-{% set pages=count//pageSize %}
+
 <br><br>
-<div data-toggle="modal-gallery" data-target="#modal-gallery">
-	<div id="{{galleryid}}" class="carousel slide">
-		<div class="carousel-inner">
-			{% include 'root/blocks/gallery/items.html.twig' %}
-		    
-		</div>
-	</div>
+<div id="{{galleryid}}" class="carousel slide">
+		{% include 'root/blocks/gallery/items.html.twig' %}
 </div>
-
-
 
 {% endblock %}
 

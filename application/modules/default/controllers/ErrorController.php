@@ -93,6 +93,7 @@ class ErrorController extends Zend_Controller_Action
             $returnArray = array();
             $returnArray['success'] = false;
             $returnArray['msg'] = $errors->exception->getMessage();
+            $returnArray['exceptionClass'] = get_class($errors->exception);
             $this->_helper->json($returnArray);
         }
         
