@@ -15,8 +15,10 @@ function calendarChangeDate(date, prefix, query, url, singlePage) {
 		request.done(function(data) {
 			var calHtml = data.calendarHtml;
 			jQuery('#calendar-' + prefix).append(calHtml);
-			var newHtml = data.html;
-			jQuery('#calendar-items-' + prefix).append(newHtml);
+			if (jQuery('#calendar-items-' + prefix).length > 0) {
+				var newHtml = data.html;
+				jQuery('#calendar-items-' + prefix).append(newHtml);
+			}
 		});
 
 		request.fail(function(jqXHR, textStatus) {
