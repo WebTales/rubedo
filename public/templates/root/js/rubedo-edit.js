@@ -233,10 +233,21 @@ function getDomainName()
 	return window.location.href.substr(7).substr(0,window.location.href.substr(7).indexOf("/"));
 }
 
-(function($){
-    jQuery.extend({
-        rubedoModal: function(options){
-    	if(document.getElementById(options.id))
+(function($) {
+    $.rubedoModal = {
+        defaults: {
+           footer:"<a href='#' class='btn rubedo-close'>Close</a>",
+           body:'',
+           header:'',
+           destroy:false
+        }
+
+    };
+
+    $.extend({
+        rubedoModal:function(config) {
+ 			var options = jQuery.extend({}, jQuery.rubedoModal.defaults, config);
+ 			if(document.getElementById(options.id))
     	{
     		jQuery("#"+options.id).modal("show");
     	}
@@ -246,23 +257,37 @@ function getDomainName()
     * Create modal
     */
         var modal="<div id='"+options.id+"' class='modal hide fade rubedo-modal'>"+
-        "<div class='modal-header'> <a href='#' id='modal-close-btn' class='close'>&times;</a>"+options.header+"</div>"+
-        "<div id='modal-body-content' class='modal-body'>"+options.body+"</div>"+
+        "<div class='modal-header'> <a href='#' id='modal-close-btn' class='close rubedo-close'> &times; </a><h3>"+options.header+"</h3></div>"+
+        "<div id='modal-body-content' class='modal-body '>"+options.body+"</div>"+
+        "<div class='modal-footer'>"+options.footer+"</div>"+
         "</div>";
-
-	
         jQuery(modal).appendTo(document.body);
-        jQuery(document.body).queue(function(){
-      
-        });
-         jQuery("#"+options.id).modal("show");
-       }
+        /*
+         * Define margin
+         */
+        jQuery("#"+options.id).css({
+       		"margin-left":"-"+jQuery("#"+options.id).width()/2+"px"
+       		});
+       	/*
+       	 * if body contains img, define margin after image loaded
+       	 */
+       	if(jQuery("#"+options.id).find("img").length===1)
+       	{
+    	  jQuery("#"+options.id+" img").load(function(){
+		       	jQuery("#"+options.id).css({
+		       		"margin-left":"-"+jQuery("#"+options.id).width()/2+"px"
+		       	});
+       	  });}
+ 
+     
+        
+        jQuery("#"+options.id).modal("show");
    /*
     * Destroy or close  action
     */
-        jQuery("#modal-close-btn").click(function(){
-        	if(options.callback)
-        	{options.callback();}
+        jQuery(".rubedo-close").click(function(){
+        	if(options.callback && typeof options.callback=='function')
+        	options.callback();
         	
         	if(options.destroy)
         	{
@@ -276,8 +301,9 @@ function getDomainName()
   
         });
         jQuery(".modal-backdrop").click(function(){
-        	if(options.callback)
+        	if(options.callback && typeof options.callback=='function')
         	options.callback();
+        	
         	if(options.destroy)
         	{
         		if(options.destroy==true){
@@ -289,11 +315,6 @@ function getDomainName()
         	else{jQuery("#"+options.id).modal("hide");}
   
         });
-        
-     
-        }
+        }}
     });
- 
 })(jQuery);
-
-
