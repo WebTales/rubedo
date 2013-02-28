@@ -19,43 +19,81 @@
 <script type="text/javascript">
       function initialize() {
         var mapOptions = {
-          center: new google.maps.LatLng(-34.397, 150.644),
+          center: new google.maps.LatLng(48.8567, 2.3508),
           zoom: {{blockConfig.zoom}}||12,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         
       
-      var map = new google.maps.Map(document.getElementById("map_canvas"),
+      var map = new google.maps.Map(document.getElementById("{{prefix}}map_canvas"),
             mapOptions);
+      var geocoder = new google.maps.Geocoder();
+      var useLocation = "{{blockConfig.useLocation}}";
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
       var centerLongitude = "{{blockConfig.centerLongitude}}";
-      if (centerAddress) {
-      	geocoder = new google.maps.Geocoder();
+	  if (useLocation&&navigator.geolocation) {
+		  navigator.geolocation.getCurrentPosition(function(position) {
+		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+		      map.setCenter(initialLocation);
+		      new google.maps.Marker({
+			  	map:map,
+			  	position:initialLocation
+			      });
+		    }, function() {
+		      console.log("geolocation Error");
+		    });
+		  
+      } else if (centerAddress) {
+      	
       	geocoder.geocode( { 'address': centerAddress}, function(results, status) {
       		if (status == google.maps.GeocoderStatus.OK) {
       			map.setCenter(results[0].geometry.location);
       		}
       	});
       } else if (centerLatitude&&centerLongitude){
-    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));
-          
+    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
       }
       
-      
+	  {% for content in data %}
+	  handleContent(JSON.parse("{{ content[blockConfig.positionField]|e('js') }}"), "{{ content.title }}", "{% include '/root/blocks/maps/googleItem.html.twig'  %}");
+	  {% endfor %}
+      function handleContent(contentPosition, title, contentString){
+    	  if (contentPosition.address){
+    		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
+    	      		if (status == google.maps.GeocoderStatus.OK) {
+    	      			createContentMarker(results[0].geometry.location, title, contentString);
+    	      		}
+    	      	});  
+    	  } else if (contentPosition.latitude&&contentPosition.longitude){
+    		  createContentMarker(new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude), title, contentString);     
+          }
       }
       
+      function createContentMarker(location,title,contentString){
+    	  var marker = new google.maps.Marker({
+			  	map:map,
+			  	position:location,
+			  	title:title
+			});
+    	  var infowindow = new google.maps.InfoWindow({
+              content: contentString         
+           });
+    	  google.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(map,marker);
+          });
+		  
+      }
+      
+      }
      
       window.onload = initialize;
 </script>
-<div id="map_canvas" style="height:400px;" class="row-fluid"></div>
-<div class="block contentlist" style="margin-top:2em;">
-	<p>gruik</p>
-	<div class="row-fluid">
-		{% for content in data %}
-		{% include content.type  %}
-		{% endfor %}
-	</div>
-	
-</div>
+<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+<style type="text/css">
+#{{prefix}}map_canvas img {
+    max-width: none;
+}	  
+</style>
+
 {% endblock %}

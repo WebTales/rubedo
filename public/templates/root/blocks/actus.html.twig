@@ -1,21 +1,7 @@
-{% extends "root/blocks/contentlist.html.twig" %} {% block mainList %}
-<ul class="nav nav-tabs nav-stacked">
-	{% for content in data %}
-	<li><a href="{{ displaySingleUrl(content.id) }}">
-	    <div class="pull-left">
-	        {% if content.image %}
-	        <img alt=""
-			class="img-rounded"
-			src="/dam?media-id={{content.image}}&width=100&height=60&mode=crop" />
-			{% endif %}
-			</div>
-	       <div style="padding-left: 8em;">{{ content.title }}
-			    
-			</div> 
-			<div class="clearfix"></div>
-			</a>
-			
-			</li> {% endfor %}
-</ul>
+{% extends "root/blocks/contentlist.html.twig" %} 
 
+{% block mainList %}
+    
+	{% include '/root/blocks/contentList/actus.html.twig' %}
+    
 {% endblock %}

@@ -71,4 +71,30 @@ interface IAuthentication
 	 */
 	public function forceReAuth($login, $password);
 	
+	/**
+	 * reset the Session expiration date to the full duration
+	 */
+	public function resetExpirationTime();
+	
+	/**
+	 * return the remaining duration of the session in seconds
+	 * 
+	 * @return integer
+	 */
+	public function getExpirationTime();
+	
+	/**
+	 * the default session duration
+	 * 
+	 * @return $_authLifetime
+	 */
+	public static function getAuthLifetime ();
+	
+	/**
+	 * Set the default session duration
+	 * 
+	 * @param integer $_authLifetime
+	 */
+	public static function setAuthLifetime ($_authLifetime);
+	
 }

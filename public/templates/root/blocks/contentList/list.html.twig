@@ -1,0 +1,9 @@
+<div id="list-{{ prefix }}-{{ page.currentPage }}" class="active">
+
+    <div class="row-fluid">
+		{% for content in data %}
+		{% include content.type  %}
+		{% endfor %}
+	</div>
+	
+</div>

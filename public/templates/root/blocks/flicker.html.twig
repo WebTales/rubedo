@@ -1,18 +1,14 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-
-	<ul class="thumbnails">
-		{% for slide in items %}
-		<li>
-			<div class="thumbnail">
-				<a class="flk_gallery" href="{{ slide.image }}" title="{{ slide.title }}"><img src="{{ slide.thumbnail }}" alt="{{ slide.title }}"></a>
-			</div>
-
-		</li> {% endfor %}
-	</ul>
-
-	
-	
-
+<!-- carousel -->
+{% set galleryid="gallery-"~random() %}
+<br><br>
+<div data-toggle="modal-gallery" data-target="#modal-gallery">
+	<div id="{{galleryid}}" class="carousel slide">
+		<div class="carousel-inner">
+			{% include 'root/blocks/flickr/items.html.twig' %}
+		</div>
+	</div>
+</div>
 {% endblock %}

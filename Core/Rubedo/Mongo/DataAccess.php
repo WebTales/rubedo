@@ -963,11 +963,7 @@ class DataAccess implements IDataAccess
      */
     public function setNumberOfResults ($numberOfResults)
     {
-        if (gettype($numberOfResults) !== 'integer') {
-            throw new \Rubedo\Exceptions\Server("numberOfResults should be an integer", 1);
-        }
-        
-        $this->_numberOfResults = $numberOfResults;
+        $this->_numberOfResults = intval($numberOfResults);
     }
 
     /**

@@ -1,0 +1,25 @@
+<table id="calendar-{{ caldate }}" class="table-condensed table-bordered table-striped active">
+    <thead>
+        <tr>
+          <th colspan="7" >
+            <a class="btn" href="{{url({'cal-date': prevDate,'prefix':prefix},true)}}" onclick="calendarChangeDate('{{ prevDate }}','{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}');return false;"><i class="icon-chevron-left"></i></a>
+            <a class="btn" href="{{url({'cal-date': caldate,'prefix':prefix,'pageId':singlePage},true,true,'rewrite')}}">{{ month }} {{ year }}</a>
+            <a class="btn" href="{{url({'cal-date': nextDate,'prefix':prefix},true)}}" onclick="calendarChangeDate('{{ nextDate }}','{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}');return false;"><i class="icon-chevron-right"></i></a>
+          </th>
+        </tr>
+        <tr>
+            {% for day in days %}
+                <th style='text-align:center;'>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for week in monthArray %}
+            <tr>
+            {% for day in week %}
+                <td style='text-align:center;' {% if not day.inMonth %}class="muted"{% endif %}><span {% if filledDate[day.value] and day.inMonth %}class="badge"{% endif %}>{{ day.value }}</span></td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

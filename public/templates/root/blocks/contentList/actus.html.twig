@@ -1,5 +1,6 @@
-{% extends "root/blocks/contentlist.html.twig" %} {% block mainList %}
-<ul class="nav nav-tabs nav-stacked">
+<div id="list-{{ prefix }}-{{ page.currentPage }}" class="active">
+
+    <ul class="nav nav-tabs nav-stacked">
 	{% for content in data %}
 	<li><a href="{{ displaySingleUrl(content.id) }}">
 	    <div class="pull-left">
@@ -17,5 +18,4 @@
 			
 			</li> {% endfor %}
 </ul>
-
-{% endblock %}
+</div>
