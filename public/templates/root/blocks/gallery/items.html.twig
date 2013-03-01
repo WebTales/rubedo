@@ -1,4 +1,4 @@
-<div id="page{{currentPage}}" class="active" data-slide-to="{{currentPage}}">
+<div id="{{prefix}}-page{{currentPage}}" class="active-items">
 	{% for item in items %}
 	<a href="#" data-gallery="gallery" onclick="callModal('/dam?media-id={{item.image}}', '{{item.title}}')">
 		<img class="" src="/dam?media-id={{item.image}}{%if image.width%}&width={{ image.width }}{%endif%}{%if image.height%}&height={{ image.height }}{%endif%}&mode=crop" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}">
