@@ -509,6 +509,10 @@ class IndexController extends Zend_Controller_Action
             case 'addThis':
                 $controller = 'addthis';
                 break;
+			case 'AddThisFollow':
+            case 'addThisFollow':
+                $controller = 'addthisfollow';
+                break;
             case 'Menu':
             case 'menu':
                 $controller = 'menu';

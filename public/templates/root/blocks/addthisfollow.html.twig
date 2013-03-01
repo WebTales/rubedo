@@ -1,12 +1,13 @@
-
-<p>Follow</p>
-{%if type=='horizontal'%}
-<div class="addthis_toolbox {%if !small%}addthis_32x32_style{%endif%} addthis_default_style">
-{%if type=='vertical'%}
-<div class="addthis_toolbox {%if !small%}addthis_32x32_style{%endif%} addthis_vertical_style">
+{% extends "root/block.html.twig" %}
+{% block mainContent %}
+{%if type=='Horizontal'%}
+<div class="addthis_toolbox {%if small==false%}addthis_32x32_style{%endif%} addthis_default_style">
+{%elseif type=='Vertical'%}
+<div class="addthis_toolbox {%if small==false%}addthis_32x32_style{%endif%} addthis_vertical_style">
 {%endif%}
 {%for network in networks%}
- <a class="addthis_button_{{network.name}}_follow" addthis:userid="{{network.userId}}"></a>
+ <a class="addthis_button_{{network.network}}_follow" addthis:userid="{{network.userId}}"></a>
 {%endfor%}
 </div>
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-511e12046ca42852"></script>
+	{% endblock %}
