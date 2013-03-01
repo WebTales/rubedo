@@ -3,11 +3,12 @@
 	"require": {
 		"jquery/jquery": "1.9.1",
 		"sencha/extjs": "4.1.1a",
-		"webtales/ckeditor": "0.9.1",
+		"webtales/ckeditor": "dev-master",
 		"twitter/bootstrap": "v2.3.0",
 		"zencoder/video-js": "3.2.0",
 		"webtales/bootstrap-image-gallery" : "2.10.0",
-		"webtales/rubedo-backoffice-ui": "0.9.1"
+		"thomaspark/bootswatch" : "v2.3.0",
+		"webtales/rubedo-backoffice-ui": "dev-master"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -72,6 +73,18 @@
 				}
 			}
 		}, {
+			"type": "package",
+			"package": {
+				"name": "thomaspark/bootswatch",
+				"version": "v2.3.0",
+				"dist": {
+					"url": "https://github.com/thomaspark/bootswatch/archive/v2.3.0+1.zip",
+					"type": "zip"
+				}
+			}
+		},
+		
+		 {
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-backoffice-ui.git"
 		}, {

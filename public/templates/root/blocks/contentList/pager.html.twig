@@ -1,0 +1,40 @@
+<div id="list-pager-{{ prefix }}-{{ page.currentPage }}" class="active">
+
+{%if page.limitPage > 1 and  page.currentPage < page.nbPages+1 %}
+		{%set wrapCurrent=page.limitPage//2%}
+		{%set lastWrap=page.nbPages-page.currentPage%}
+		<div class="pagination pagination-mini">
+			<ul>
+				{% if page.currentPage != 1%}
+				<li>
+					<a href="{{url({'page': page.currentPage-1,'prefix':prefix},true)}}" onclick="contentListChangePage({{ page.currentPage-1 }},'{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}',{{ limit }},'{{ displayType }}');return false;"><<</a>
+				</li>
+				{%endif%}
+				{%if page.currentPage < wrapCurrent+1%}
+				{% for  i in 1..page.limitPage %}
+				<li {% if page.currentPage == i%}class="active"{%endif%}>
+					<a href="{{url({'page': i,'prefix':prefix},true)}}" onclick="contentListChangePage({{ i }},'{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}',{{ limit }},'{{ displayType }}');return false;">{{i}}</a>
+				</li>
+				{%endfor%}
+				{%elseif page.limitPage>wrapCurrent and page.currentPage+wrapCurrent < page.nbPages%}
+				{% for  i in page.currentPage-wrapCurrent..page.currentPage+wrapCurrent%}
+				<li {% if page.currentPage == i%}class="active"{%endif%}>
+					<a href="{{url({'page': i,'prefix':prefix},true)}}" onclick="contentListChangePage({{ i }},'{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}',{{ limit }},'{{ displayType }}');return false;">{{i}}</a>
+				</li>
+				{%endfor%}
+				{%else%}
+				{% for  i in page.currentPage-(page.limitPage-(lastWrap)-1)..page.currentPage+lastWrap%}
+				<li {% if page.currentPage == i%}class="active"{%endif%}>
+					<a href="{{url({'page': i,'prefix':prefix},true)}}" onclick="contentListChangePage({{ i }},'{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}',{{ limit }},'{{ displayType }}');return false;">{{i}}</a>
+				</li>
+				{%endfor%}
+				{%endif%}
+				{% if page.currentPage != page.nbPages %}
+				<li>
+					<a href="#{{url({'page': page.currentPage+1,'prefix':prefix},true)}}" onclick="contentListChangePage({{ page.currentPage+1 }},'{{ prefix }}','{{ query.id }}','{{ baseUrl }}','{{ singlePage }}',{{ limit }},'{{ displayType }}');return false;">>></a>
+				</li>
+				{%endif%}
+			</ul>
+		</div>
+		{%endif%}
+</div>

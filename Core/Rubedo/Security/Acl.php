@@ -105,6 +105,11 @@ class Acl implements IAcl
          if (strpos($resource, 'workflows') !== false) {
              return false;
          }
+         
+         // @todo temporary disabling  nested contents
+         if (strpos($resource, 'dependantTypes') !== false) {
+             return false;
+         }
         
         if (is_null($role)) {
             return false;

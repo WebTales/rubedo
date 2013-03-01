@@ -27,6 +27,17 @@ use Rubedo\Services\Manager;
 class Contents extends WorkflowAbstractCollection implements IContents
 {
 
+    protected $_indexes = array(
+        array('keys'=>array('workspace.target'=>1,'createTime'=>-1)),
+        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'createTime'=>-1)),
+        array('keys'=>array('live.target'=>1,'createTime'=>-1)),
+        array('keys'=>array('live.target'=>1,'typeId'=>1,'createTime'=>-1)),
+        array('keys'=>array('workspace.target'=>1,'text'=>1)),
+        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'text'=>1)),
+        array('keys'=>array('live.target'=>1,'text'=>1)),
+        array('keys'=>array('live.target'=>1,'typeId'=>1,'text'=>1)),
+    );
+    
     /**
      * Is the input obj is valid
      *
@@ -126,7 +137,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function create (array $obj, $options = array('safe'=>true), $live = false)
     {
         $obj = $this->_setDefaultWorkspace($obj);	        
-        $obj = $this->_filterInputData($obj);
+        $this->_filterInputData($obj);
 
         if ($this->_isValidInput) {
             $returnArray = parent::create($obj, $options, $live);
@@ -161,7 +172,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 			$obj['target'][] = $obj['writeWorkspace'];
 		}
 		
-        $obj = $this->_filterInputData($obj);
+        $this->_filterInputData($obj);
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
         } else {
@@ -196,6 +207,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         return $returnArray;
     }
+	public function unsetTerms($vocId,$termId)
+	{
+		$data = array('$unset'=>array('taxonomy.'.$vocId.'.$'=>1));
+		$update = array('taxonomy.'.$vocId => $termId);
+		return $this->_dataService->customUpdate($data, $update);
+	}
 
     /**
      * Push the content to Elastic Search
@@ -227,7 +244,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @param array $obj            
      * @return array:
      */
-    protected function _filterInputData (array $obj)
+    protected function _filterInputData (array $obj, array $model = null)
     {        
 		if (! self::isUserFilterDisabled()) {
         	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
@@ -600,6 +617,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
 	{
 		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
 		return $this->getList($filterArray);
+	}
+	public function isTypeUsed($typeId)
+	{
+		$filterArray["typeId"]=$typeId;
+		$result=$this->_dataService->findOne($filterArray);
+		return ($result!=null)?array("used"=>true):array("used"=>false);
 	}
 
 	

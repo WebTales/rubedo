@@ -204,12 +204,12 @@ function createContentWindow(type,typeId,queryId)
 				}
 			}
 		});
-			jQuery("<div class='form-actions'><button type='submit' class='btn btn-primary' id='btn-valid-form' >Continue</button></div>").appendTo("#modal-form");
+			jQuery("<div class='form-actions'><a class='btn btn-primary' id='btn-valid-form' >Continue</a></div>").appendTo("#modal-form");
 			jQuery("#select-type-window").modal('show');
 			jQuery('#btn-valid-form').click(function(){
 			selectedTypeId=jQuery("#select-type-box").val();
 			destroyModal("select-type-window");
-				var modalUrl="http://"+siteUrl+"/backoffice/resources/contentContributor/app.html?typeId="+selectedTypeId+"&queryId="+queryId;
+				var modalUrl="http://"+siteUrl+"/backoffice/content-contributor?typeId="+selectedTypeId+"&queryId="+queryId;
 				modal("","<iframe src='"+modalUrl+"'></iframe>","add-content-window",90,90);
 				
 				jQuery("#add-content-window").modal('show');
@@ -218,7 +218,8 @@ function createContentWindow(type,typeId,queryId)
 		}
 		if(type=="simple")
 		{
-			var modalUrl="http://"+siteUrl+"/backoffice/resources/contentContributor/app.html?typeId="+typeId+"&queryId="+queryId;
+			
+			var modalUrl="http://"+siteUrl+"/backoffice/content-contributor?typeId="+typeId+"&queryId="+queryId;
 		modal("","<iframe src='"+modalUrl+"'></iframe>","add-content-window",90,90);
 		jQuery("#add-content-window").modal('show');
 		}
@@ -233,5 +234,88 @@ function getDomainName()
 	return window.location.href.substr(7).substr(0,window.location.href.substr(7).indexOf("/"));
 }
 
+(function($) {
+    $.rubedoModal = {
+        defaults: {
+           footer:"<a href='#' class='btn rubedo-close'>Close</a>",
+           body:'',
+           header:'',
+           destroy:false
+        }
 
+    };
 
+    $.extend({
+        rubedoModal:function(config) {
+ 			var options = jQuery.extend({}, jQuery.rubedoModal.defaults, config);
+ 			if(document.getElementById(options.id))
+    	{
+    		jQuery("#"+options.id).modal("show");
+    	}
+    	else
+    	{
+   /*
+    * Create modal
+    */
+        var modal="<div id='"+options.id+"' class='modal hide fade rubedo-modal'>"+
+        "<div class='modal-header'> <a href='#' id='modal-close-btn' class='close rubedo-close'> &times; </a><h3>"+options.header+"</h3></div>"+
+        "<div id='modal-body-content' class='modal-body '>"+options.body+"</div>"+
+        "<div class='modal-footer'>"+options.footer+"</div>"+
+        "</div>";
+        jQuery(modal).appendTo(document.body);
+        /*
+         * Define margin
+         */
+        jQuery("#"+options.id).css({
+       		"margin-left":"-"+jQuery("#"+options.id).width()/2+"px"
+       		});
+       	/*
+       	 * if body contains img, define margin after image loaded
+       	 */
+       	if(jQuery("#"+options.id).find("img").length===1)
+       	{
+    	  jQuery("#"+options.id+" img").load(function(){
+		       	jQuery("#"+options.id).css({
+		       		"margin-left":"-"+jQuery("#"+options.id).width()/2+"px"
+		       	});
+       	  });}
+ 
+     
+        
+        jQuery("#"+options.id).modal("show");
+   /*
+    * Destroy or close  action
+    */
+        jQuery(".rubedo-close").click(function(){
+        	if(options.callback && typeof options.callback=='function')
+        	options.callback();
+        	
+        	if(options.destroy)
+        	{
+        		if(options.destroy==true){
+     				jQuery("#"+options.id).remove();
+					jQuery(".modal-backdrop.fade.in").remove();}
+				else{
+					jQuery("#"+options.id).modal("hide");}
+        	}
+        	else{jQuery("#"+options.id).modal("hide");}
+  
+        });
+        jQuery(".modal-backdrop").click(function(){
+        	if(options.callback && typeof options.callback=='function')
+        	options.callback();
+        	
+        	if(options.destroy)
+        	{
+        		if(options.destroy==true){
+     				jQuery("#"+options.id).remove();
+					jQuery(".modal-backdrop.fade.in").remove();}
+				else{
+					jQuery("#"+options.id).modal("hide");}
+        	}
+        	else{jQuery("#"+options.id).modal("hide");}
+  
+        });
+        }}
+    });
+})(jQuery);

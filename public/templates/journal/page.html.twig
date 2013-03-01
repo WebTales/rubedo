@@ -1,0 +1,19 @@
+{% extends "root/page.html.twig" %}
+
+    
+    {% block pageStyle %}
+    <!-- Le styles -->
+    <link href="{{baseUrl}}/components/thomaspark/bootswatch/journal/bootstrap.min.css" rel="stylesheet">
+    <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{{baseUrl}}/components/zencoder/video-js/video-js.min.css" rel="stylesheet">
+    
+    
+    {% for sheet in css %}
+    <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
+    {% endfor %}
+    
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    		<![endif]-->
+    {% endblock %} 

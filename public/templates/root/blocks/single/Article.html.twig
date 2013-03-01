@@ -4,29 +4,19 @@
 
 <div class="block headline">
 	<div class="">
-		<h1 class="editable" id="{{ data.id }}_text">{{ data.text }}</h1>
+		<h2 class="editable" id="{{ data.id }}_text">{{ data.text }}</h2>
 
 		<div class="entry-info">
-			{% if data.dateBegin %}
-			{% if data.dateEnd%}
-			Du {{data.dateBegin}} au {{data.dateEnd}}
-			{% else %}
-			A partir du {{data.dateBegin}}
-			{% endif %}
-			{% endif %}
-			{% if data.Location %}
-			{{data.Location}}
-			{% endif %}
 			{% if data.date %}
-			Le {{data.date}}
+			Le {{data.date|localizeddate('long', 'none', lang)}}
 			{% endif %}
 		</div>
 		<div style="clear:both;"></div>
 		{% if data.image %}
 		
-		<div class="thumbnail alignright" style="margin-top:2em;">
-			<img src="/dam?media-id={{data.image}}&width=400" alt="{{data.text}}" title="{{data.text}}"  />
-		</div>
+		<div class="pull-left" style="margin: 1em;">
+		        <img class="img-rounded" src="/dam?media-id={{data.image}}&width=400" alt="{{data.text}}" title="{{data.text}}"  />
+		    </div>
 		{% endif %}
 		<br/>
 		<div class="editable" id="{{ data.id }}_body">

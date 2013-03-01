@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IQueries,Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IQueries;
 
 /**
  * Service to handle Queries
@@ -27,7 +27,81 @@ use Rubedo\Interfaces\Collection\IQueries,Rubedo\Services\Manager;
  */
 class Queries extends AbstractCollection implements IQueries
 {
-	
+    protected $_model = array(
+		"name" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+		"query" => array(
+			"domain" => "array",
+			"required" => true,
+			"items" => array(
+				"vocabularies" => array(
+					"domain" => "list",
+					"required" => true,
+					"items" => array(
+						"terms" => array(
+							"domain" => "list",
+							"required" => false,
+						),
+						"rule" => array(
+							"domain" => "list",
+							"required" => false,
+						),
+					),
+				),
+				"fieldRules" => array(
+					"domain" => "list",
+					"required" => true,
+					"items" => array(
+						"domain" => "string",
+						"required" => false,
+					),
+				),
+				"contentTypes" => array(
+					"domain" => "list",
+					"required" => true,
+					"items" => array(
+						"domain" => "string",
+						"required" => false,
+					),
+				),
+				"vocabulariesRule" => array(
+					"domain" => "string",
+					"required" => true,
+				),
+				"queryName" => array(
+					"domain" => "string",
+					"required" => true,
+				),
+			),
+		),
+		"averageDuration" => array(
+			"domain" => "integer",
+			"required" => true,
+		),
+		"count" => array(
+			"domain" => "integer",
+			"required" => true,
+		),
+		"usage" => array(
+			"domain" => "list",
+			"required" => true,
+			"items" => array(
+				"domain" => "string",
+				"required" => true,
+			),
+		),
+		"type" => array(
+			"domain" => "string",
+			"required" => true,
+		),
+	);	
+		
+    protected $_indexes = array(
+        array('keys'=>array('type'=>1)),
+    );
+    
 
 	public function __construct(){
 		$this->_collectionName = 'Queries';

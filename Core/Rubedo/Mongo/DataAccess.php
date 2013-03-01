@@ -213,7 +213,7 @@ class DataAccess implements IDataAccess
         if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
             return self::$_dbArray[$mongo . '_' . $dbName];
         } else {
-            $this->_adapter = $this->_getAdapter($mongo.'/'.$dbName);
+            $this->_adapter = $this->_getAdapter($mongo . '/' . $dbName);
             $db = $this->_adapter->$dbName;
             self::$_dbArray[$mongo . '_' . $dbName] = $db;
             return $db;
@@ -303,12 +303,11 @@ class DataAccess implements IDataAccess
         $cursor->limit($numberOfResults);
         
         // switch from cursor to actual array
-        if($cursor->count() > 0){
+        if ($cursor->count() > 0) {
             $data = iterator_to_array($cursor);
-        }else{
+        } else {
             $data = array();
         }
-        
         
         // iterate throught data to convert ID to string and add version nulmber
         // if none
@@ -352,7 +351,7 @@ class DataAccess implements IDataAccess
         }
         
         // Delete the parent
-        $returnArray = $this->destroy($parent, true);
+        $returnArray = $this->destroy($parent);
         
         return $returnArray;
     }
@@ -560,7 +559,15 @@ class DataAccess implements IDataAccess
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
         
-        $resultArray = $this->_collection->insert($obj, $options);
+        try {
+            $resultArray = $this->_collection->insert($obj, $options);
+        } catch (\MongoCursorException $exception) {
+            if (strpos($exception->getMessage(), 'duplicate key error')) {
+                throw new \Rubedo\Exceptions\User('Doublon de contenu');
+            } else {
+                throw $exception;
+            }
+        }
         
         if ($resultArray['ok'] == 1) {
             $obj['id'] = (string) $obj['_id'];
@@ -628,13 +635,20 @@ class DataAccess implements IDataAccess
         if (is_array($this->_filterArray)) {
             $updateCondition = array_merge($this->_filterArray, $updateCondition);
         }
-        
-        $resultArray = $this->_collection->update($updateCondition, array(
-            '$set' => $obj
-        ), $options);
+        try {
+            $resultArray = $this->_collection->update($updateCondition, array(
+                '$set' => $obj
+            ), $options);
+        } catch (\MongoCursorException $exception) {
+            if (strpos($exception->getMessage(), 'duplicate key error')) {
+                throw new \Rubedo\Exceptions\User('Doublon de contenu');
+            } else {
+                throw $exception;
+            }
+        }
         
         $obj = $this->findById($mongoID);
-
+        
         if ($resultArray['ok'] == 1) {
             if ($resultArray['updatedExisting'] == true) {
                 $obj['id'] = $id;
@@ -651,7 +665,7 @@ class DataAccess implements IDataAccess
                 );
             }
         } elseif ($resultArray) {
-        	$returnArray = array(
+            $returnArray = array(
                 'success' => true,
                 "data" => $obj
             );
@@ -706,7 +720,7 @@ class DataAccess implements IDataAccess
                 );
             }
         } elseif ($resultArray) {
-        	$returnArray = array(
+            $returnArray = array(
                 'success' => true
             );
         } else {
@@ -748,7 +762,7 @@ class DataAccess implements IDataAccess
         
         // Delete the parent
         if ($error == false) {
-            $returnArray = $this->destroy($data, true);
+            $returnArray = $this->destroy($data);
         } else {
             $returnArray = array(
                 'success' => false,
@@ -763,6 +777,8 @@ class DataAccess implements IDataAccess
      * Drop The current Collection
      *
      * @deprecated
+     *
+     *
      *
      *
      *
@@ -801,31 +817,7 @@ class DataAccess implements IDataAccess
         }
         
         foreach ($filter as $name => $value) {
-            if (! in_array(gettype($value), array(
-                'array',
-                'string',
-                'float',
-                'integer',
-                'boolean'
-            ))) {
-                throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
-            }
-            if (is_array($value) && count($value) !== 1) {
-                throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
-            }
-            if (is_array($value)) {
-                foreach ($value as $operator => $subvalue) {
-                    if (! in_array(gettype($subvalue), array(
-                        'array',
-                        'string',
-                        'float',
-                        'integer',
-                        'boolean'
-                    )) && ! $subvalue instanceof \MongoRegex) {
-                        throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
-                    }
-                }
-            }
+            
             if ($name === 'id') {
                 $name = '_id';
                 if (is_string($value)) {
@@ -987,11 +979,7 @@ class DataAccess implements IDataAccess
      */
     public function setNumberOfResults ($numberOfResults)
     {
-        if (gettype($numberOfResults) !== 'integer') {
-            throw new \Rubedo\Exceptions\Server("numberOfResults should be an integer", 1);
-        }
-        
-        $this->_numberOfResults = $numberOfResults;
+        $this->_numberOfResults = intval($numberOfResults);
     }
 
     /**
@@ -1174,19 +1162,27 @@ class DataAccess implements IDataAccess
      */
     public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
     {
-        $resultArray = $this->_collection->update($updateCond, $data, $options);
-        if ($resultArray['ok'] == 1) {
-            $returnArray = array(
-                'success' => true
-            );
-        } else {
-            $returnArray = array(
-                'success' => false,
-                "msg" => $resultArray["err"]
-            );
+        try {
+            $resultArray = $this->_collection->update($updateCond, $data, $options);
+            if ($resultArray['ok'] == 1) {
+                $returnArray = array(
+                    'success' => true
+                );
+            } else {
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => $resultArray["err"]
+                );
+            }
+            
+            return $returnArray;
+        } catch (\MongoCursorException $exception) {
+            if (strpos($exception->getMessage(), 'duplicate key error')) {
+                throw new \Rubedo\Exceptions\User('Doublon de contenu');
+            } else {
+                throw $exception;
+            }
         }
-        
-        return $returnArray;
     }
 
     public function customFind ($filter = array(), $fieldRule = array())
@@ -1210,6 +1206,19 @@ class DataAccess implements IDataAccess
     public function ensureIndex ($keys, $options = array())
     {
         $options['safe'] = true;
-        $this->_collection->ensureIndex($keys, $options);
+        $result = $this->_collection->ensureIndex($keys, $options);
+        return $result;
+    }
+
+    /**
+     * check if the index is set
+     *
+     * @param
+     *            array
+     * @return boolean
+     */
+    public function checkIndex ($keys)
+    {
+        return false;
     }
 }

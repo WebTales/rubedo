@@ -27,6 +27,11 @@ use Rubedo\Interfaces\Collection\IDamTypes,Rubedo\Services\Manager;
  */
 class DamTypes extends AbstractCollection implements IDamTypes
 {
+    protected $_indexes = array(
+        array('keys'=>array('type'=>1),'options'=>array('unique'=>true)),
+    );
+    
+    
     /**
      * Only access to content with read access
      * @see \Rubedo\Collection\AbstractCollection::_init()

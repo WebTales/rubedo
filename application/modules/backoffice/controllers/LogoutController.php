@@ -12,7 +12,7 @@
  * @license    yet to be written
  * @version    $Id:
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Mongo;
+use Rubedo\Services\Manager;
 
 /**
  * Logout Defautl Controller
@@ -37,7 +37,7 @@ class Backoffice_LogoutController extends Zend_Controller_Action
 	 * Init the authentication service
 	 */
     public function init() {
-        $this->_auth = Rubedo\Services\Manager::getService('Authentication');
+        $this->_auth = Manager::getService('Authentication');
     }
 	
 	/**

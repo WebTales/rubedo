@@ -5,7 +5,6 @@
 		"ext-fileinfo": "*",
 		"ext-gd": "*",
 		"ext-mongo": "*",
-		"phing/phing": "2.4.*",
 		"twig/twig": "1.*",
 		"twig/extensions": "v1.0.0-alpha",
 		"ruflin/Elastica": "v0.19.8.0",

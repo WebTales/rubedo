@@ -51,7 +51,7 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         $rootlineArray = array();
         
         foreach ($rootline as $pageId){
-            if($pageId == $currentPage){
+            if($pageId == $currentPage && !$this->getParam('content-id')){
                 continue;
             }
             $rootlineArray[] = Manager::getService('Pages')->findById($pageId);

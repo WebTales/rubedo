@@ -46,13 +46,13 @@ class CacheTest extends PHPUnit_Framework_TestCase {
 	public function testDeleteByCacheId(){
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
 		$id="testId";
-		$cacheService=new Rubedo\Collection\Cache();
+		$cacheService=new Cache();
 		$cacheService->deleteByCacheId($id);
 	}
 	public function testDeleteExpired(){
 		$this->_mockCurrentTimeService->expects($this->once())->method('getCurrentTime');
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
-		$cacheService=new Rubedo\Collection\Cache();
+		$cacheService=new Cache();
 		$cacheService->deleteExpired();
 	}
 
@@ -60,15 +60,15 @@ class CacheTest extends PHPUnit_Framework_TestCase {
 	{
 
 		$this->_mockDataAccessService->expects($this->once())->method('customUpdate');
-		$obj=array('value'=>'test');
+		$obj=array('value'=>'test', 'data' => 'test', 'cacheId' => 'test');
 		$cacheId="testChache";
-		$cacheService=new Rubedo\Collection\Cache();
+		$cacheService=new Cache();
 		$cacheService->upsertByCacheId($obj, $cacheId);
 	}
 	public function testFindByCacheId(){
 		$this->_mockDataAccessService->expects($this->once())->method('findOne');
 		$cacheId="testChache";
-		$cacheService=new Rubedo\Collection\Cache();
+		$cacheService=new Cache();
 		$cacheService->findByCacheId($cacheId,"time");
 	}
 	

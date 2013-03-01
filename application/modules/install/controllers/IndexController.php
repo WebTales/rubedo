@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Mongo\DataAccess,Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager;
+use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager;
 
 /**
  * Installer Controller
@@ -70,7 +70,7 @@ class Install_IndexController extends Zend_Controller_Action
             $previous = $page;
         }
     }
-    
+
     public function indexAction ()
     {
         if (! $this->_isConfigWritable()) {
@@ -83,8 +83,6 @@ class Install_IndexController extends Zend_Controller_Action
             $action = $this->_localConfig['installed']['action'];
             $this->redirect($this->_helper->url($action));
         }
-        
-       
     }
 
     public function startWizardAction ()
@@ -96,10 +94,11 @@ class Install_IndexController extends Zend_Controller_Action
         
         $this->_saveLocalConfig();
     }
-    
-    public function finishWizardAction(){
+
+    public function finishWizardAction ()
+    {
         $this->_localConfig['installed'] = array(
-            'status' => 'finished',
+            'status' => 'finished'
         );
         
         $this->_saveLocalConfig();
@@ -201,7 +200,11 @@ class Install_IndexController extends Zend_Controller_Action
             $this->_localConfig['installed']['action'] = 'set-mailer';
         }
         
-        $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array('server'=>null,'port'=>null,'ssl'=>null);
+        $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array(
+            'server' => null,
+            'port' => null,
+            'ssl' => null
+        );
         
         $dbForm = Install_Model_MailConfigForm::getForm($mailerOptions);
         
@@ -234,7 +237,7 @@ class Install_IndexController extends Zend_Controller_Action
         
         $this->_saveLocalConfig();
     }
-    
+
     public function setLocalDomainsAction ()
     {
         $this->view->displayMode = 'regular';
@@ -242,29 +245,28 @@ class Install_IndexController extends Zend_Controller_Action
             $this->view->displayMode = "wizard";
             $this->_localConfig['installed']['action'] = 'set-local-domains';
         }
-    
-    
+        
         $dbForm = Install_Model_DomainAliasForm::getForm();
-    
-            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
-                $params = $dbForm->getValues();
-                $this->_localConfig['site']['override'][$params["domain"]] = $params["localDomain"];
-            } 
-            
-            $connectionValid = true;
-
-            $this->view->isReady = true;
-        if(!isset($this->_localConfig['site']['override'])){
+        
+        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+            $params = $dbForm->getValues();
+            $this->_localConfig['site']['override'][$params["domain"]] = $params["localDomain"];
+        }
+        
+        $connectionValid = true;
+        
+        $this->view->isReady = true;
+        if (! isset($this->_localConfig['site']['override'])) {
             $this->_localConfig['site']['override'] = array();
         }
-            
+        
         $this->view->overrideList = $this->_localConfig['site']['override'];
-    
+        
         $this->view->form = $dbForm;
-    
+        
         $this->_saveLocalConfig();
     }
-    
+
     public function setPhpSettingsAction ()
     {
         $this->view->displayMode = 'regular';
@@ -272,28 +274,27 @@ class Install_IndexController extends Zend_Controller_Action
             $this->view->displayMode = "wizard";
             $this->_localConfig['installed']['action'] = 'set-php-settings';
         }
-    
-    
+        
         $phpOptions = isset($this->_applicationOptions["phpSettings"]) ? $this->_applicationOptions["phpSettings"] : array();
-        //resources.frontController.params.displayExceptions = 0
-        if(isset($this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"])){
+        // resources.frontController.params.displayExceptions = 0
+        if (isset($this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"])) {
             $phpOptions["displayExceptions"] = $this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"];
         }
         $dbForm = Install_Model_PhpSettingsForm::getForm($phpOptions);
-    
+        
         if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
             $params = $dbForm->getValues();
             $this->_localConfig["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
             unset($params["displayExceptions"]);
             $this->_localConfig["phpSettings"] = $params;
         }
-    
+        
         $connectionValid = true;
-    
+        
         $this->view->isReady = true;
-            
+        
         $this->view->form = $dbForm;
-    
+        
         $this->_saveLocalConfig();
     }
 
@@ -307,8 +308,11 @@ class Install_IndexController extends Zend_Controller_Action
         
         if ($this->getParam('doEnsureIndex', false)) {
             $this->view->isIndexed = $this->_doEnsureIndexes();
+            if (! $this->view->isIndexed) {
+                $this->view->shouldIndex = true;
+            }
         } else {
-            $this->view->shouldIndex = true;
+            $this->view->shouldIndex = $this->_shouldIndex();
         }
         
         if ($this->getParam('initContents', false)) {
@@ -434,8 +438,32 @@ class Install_IndexController extends Zend_Controller_Action
 
     protected function _doEnsureIndexes ()
     {
-        $this->view->hasError = true;
-        $this->view->errorMsgs = 'failed to apply indexes';
+        Manager::getService('UrlCache')->drop();
+        Manager::getService('Cache')->drop();
+        $servicesArray = Rubedo\Interfaces\config::getCollectionServices();
+        $result = true;
+        foreach ($servicesArray as $service) {
+            if (! Manager::getService($service)->checkIndexes()) {
+                $result = $result && Manager::getService($service)->ensureIndexes();
+            }
+        }
+        if ($result) {
+            return true;
+        } else {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'failed to apply indexes';
+            return false;
+        }
+    }
+
+    protected function _shouldIndex ()
+    {
+        $servicesArray = Rubedo\Interfaces\config::getCollectionServices();
+        foreach ($servicesArray as $service) {
+            if (! Manager::getService($service)->checkIndexes()) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -28,6 +28,11 @@ use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager;
 class ContentTypes extends AbstractCollection implements IContentTypes
 {
     
+    protected $_indexes = array(
+        array('keys'=>array('type'=>1),'options'=>array('unique'=>true)),
+        array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
+    );
+    
     /**
      * Only access to content with read access
      * @see \Rubedo\Collection\AbstractCollection::_init()
@@ -70,6 +75,8 @@ class ContentTypes extends AbstractCollection implements IContentTypes
                 'domain' => 'array',
                 'required' => false,
                 'items' => array(
+                	'domain' => 'array',
+                	'required' => false,
                     'cType' => array(
                         'domain' => 'string',
                         'required' => true
@@ -150,6 +157,9 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
     {
+        if(empty($obj['CTType'])){
+            $obj['CTType'] = $obj['type'];
+        }
         $returnArray = parent::update($obj, $options, $live);
         
         if ($returnArray["success"]) {

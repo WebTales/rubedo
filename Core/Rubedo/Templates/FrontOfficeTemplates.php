@@ -88,7 +88,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
         $this->_twig = new \Twig_Environment($loader, $this->_options);
         
-        // $this->_twig->addExtension(new \Twig_Extension_Debug());
+        $this->_twig->addExtension(new \Twig_Extension_Debug());
         
         $this->_twig->addExtension(new Translate($lang));
         
@@ -104,6 +104,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         
         $this->_twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
         $this->_twig->addFunction('displaySingleUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displaySingleUrl'));
+        $this->_twig->addFunction('displayCanonicalUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayCanonicalUrl'));
     }
 
     /**
@@ -196,15 +197,21 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return Manager::getService('HtmlCleaner')->clean($html);
     }
 
-    public static function url (array $urlOptions = array(), $reset = false, $encode = true)
+    public static function url (array $urlOptions = array(), $reset = false, $encode = true,$route = null)
     {
-        return Manager::getService('Url')->url($urlOptions, null, $reset, $encode);
+        return Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
     }
 
-    public static function displaySingleUrl ($contentId, $siteId = null)
+    public static function displaySingleUrl ($contentId, $siteId = null, $defaultUrl=null)
     {
-        return Manager::getService('Url')->displaySingleUrl($contentId, $siteId);
+        return Manager::getService('Url')->displaySingleUrl($contentId, $siteId, $defaultUrl);
     }
+    
+    public static function displayCanonicalUrl ($contentId, $siteId = null)
+    {
+        return Manager::getService('Url')->displayCanonicalUrl($contentId, $siteId);
+    }
+    
 
     public function getAvailableThemes ()
     {

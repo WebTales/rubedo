@@ -17,6 +17,7 @@
 	{% endif %}
 	{% if rows %}
 		{% for row in rows %}
+		        {% set nested = true %}
 				{% include row.template with row %}
 		{% endfor %}
 	{% endif %}

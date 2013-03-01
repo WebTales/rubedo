@@ -1,0 +1,14 @@
+<div id="{{prefix}}-page{{page}}" class="active-items">
+	{% for slide in items %}
+	<a href="#" data-gallery="gallery" onclick="callModal({% if slide.image %}'{{slide.image}}'{% else %}'{{slide.thumbnail}}'{% endif %}, '{{slide.title|e('js')}}')">
+		<img src="{{ slide.thumbnail }}" alt="{{slide.title}}" title="{{slide.title}}">
+	</a>
+	{% endfor %}
+	
+	{% if previous == true %}
+	<a class="carousel-control left" href="{{url({'page':page-1,'prefix':prefix}, true)}}" onclick="changePage({{page-1}}, {{allFlickrCount}}, {{pageSize}}, {{maxPage}}, '{{ prefix }}', null, null, null, '{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'default')}}', {% if user %}{{user}}{% else %}null{% endif %}, {% if tags %}{{tags}}, '{{tagMode}}'{% endif %});return false;">&lsaquo;</a>
+	{% endif %}
+	{% if next == true %}
+	<a class="carousel-control right" href="{{url({'page':page+1,'prefix':prefix}, true)}}" onclick="changePage({{page+1}}, {{allFlickrCount}}, {{pageSize}}, {{maxPage}}, '{{ prefix }}', null, null, null, '{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'default')}}', {% if user %}{{user}}{% else %}null{% endif %}, {% if tags %}{{tags}}, '{{tagMode}}'{% endif %});return false;">&rsaquo;</a>
+	{% endif %}
+</div>

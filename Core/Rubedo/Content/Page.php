@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Content;
 
-Use Rubedo\Services\Manager;
 use Rubedo\Interfaces\Content\IPage;
 /**
  * Page service
@@ -52,6 +51,8 @@ class Page implements  IPage
     protected static $_description ='';
     
     protected static $_keywords = array();
+    
+    protected static $_currentPage = null;
     
     /**
      * Current Site
@@ -177,7 +178,25 @@ class Page implements  IPage
     {
         Page::$_keywords = $_keywords;
     }
+    
+	/**
+     * @return the $_currentPage
+     */
+    public static function getCurrentPage ()
+    {
+        return Page::$_currentPage;
+    }
 
+	/**
+     * @param field_type $_currentPage
+     */
+    public static function setCurrentPage ($_currentPage)
+    {
+        Page::$_currentPage = $_currentPage;
+    }
+
+
+    
     
     
 

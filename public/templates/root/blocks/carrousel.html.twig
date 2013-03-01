@@ -1,25 +1,31 @@
-{% extends "root/block.html.twig" %} 
-
-{% block mainContent %}
+{% extends "root/block.html.twig" %} {% block mainContent %}
 <!-- carousel -->
 {%set carouselid="carousel-"~random() %}
 <div id="{{carouselid}}" class="carousel slide">
-<center>
-  <div class="carousel-inner">
-	   {% for slide in items %} 
-		  <div {%if loop.index==1%}class="active item"{%else%} class="item"{%endif%}>
-			<img src="/dam?media-id={{slide.image}}" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" />
-		  <!-- Carousel items -->
-		  <div class="carousel-caption" style="width:100%; margin:auto;">
-           <h4>{{slide.title}}</h4>
-            <p>{{slide.summary}}</p>
-             </div>
-             </div>
+
+	<ol class="carousel-indicators">
+		{% for slide in items %}
+		<li data-target="#{{ carouselid }}" data-slide-to="{{ loop.index0 }}"
+			
+			 {% if loop.first %} class="active"  {% endif %}></li> {% endfor %}
+	</ol>
+
+	<div class="carousel-inner" style="">
+		{% for slide in items %}
+		<div class="item {%if loop.first %}active{%endif%}" >
+			<img src="/dam?media-id={{slide.image}}" alt="{{slide.text}}"
+				title="#htmlcaption_{{prefix}}_{{slide.id}}" style="width:100%" />
+			<div class="carousel-caption">
+				<h4>{{slide.title}}</h4>
+				<p>{{slide.summary}}</p>
+			</div>
+		</div>
 		{% endfor %}
-  </div>
-  </center>
-  <!-- Carousel nav -->
-  <a class="carousel-control left" href="#{{carouselid}}" data-slide="prev">&lsaquo;</a>
-  <a class="carousel-control right" href="#{{carouselid}}" data-slide="next">&rsaquo;</a>
+	</div>
+	<!-- Carousel nav -->
+	<a class="carousel-control left" href="#{{ carouselid }}" data-slide="prev">&lsaquo;</a>
+	<a class="carousel-control right" href="#{{ carouselid }}" data-slide="next">&rsaquo;</a>
+
+
 </div>
 {% endblock %}

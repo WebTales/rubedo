@@ -4,33 +4,30 @@
 
 <div class="block headline">
 	<div class="">
-		<h1 class="editable" id="{{ data.id }}_text">{{ data.text|cleanHtml }}</h1>
+		<h2 class="editable" id="{{ data.id }}_text">{{ data.text }}</h2>
 		<div class="alignright">
 			{% for term in data.terms %}
 			{% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="label label-warning">{{term}}</span>
 			{% endfor %}
 		</div>
 		<div class="entry-info">
-			{% if data.dateBegin %}
+			{% if data.date %}
 			{% if data.dateEnd%}
-			Du {{data.dateBegin}} au {{data.dateEnd}}
+			Du {{data.date|localizeddate('long', 'none', lang)}} au {{data.dateEnd|localizeddate('long', 'none', lang)}}
 			{% else %}
-			A partir du {{data.dateBegin}}
+			A partir du {{data.date|localizeddate('long', 'none', lang)}}
 			{% endif %}
 			{% endif %}
 			{% if data.Location %}
 			{{data.Location}}
 			{% endif %}
-			{% if data.date %}
-			Le {{data.date}}
-			{% endif %}
 		</div>
 		<div style="clear:both;"></div>
 		{% if data.image %}
 		
-		<div class="thumbnail alignright" style="margin-top:2em;">
-			<img src="/dam?media-id={{data.image}}&width=400" alt="{{data.text}}" title="{{data.text}}"  />
-		</div>
+		<div class="pull-left" style="margin: 1em;">
+		        <img class="img-rounded" src="/dam?media-id={{data.image}}&width=400" alt="{{data.text}}" title="{{data.text}}"  />
+		    </div>
 		{% endif %}
 		<br/>
 		<div class="editable" id="{{ data.id }}_body">

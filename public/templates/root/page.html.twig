@@ -1,125 +1,139 @@
 <!DOCTYPE html>
 <html lang="{{lang}}">
 <head>
-{% block pageTitle %}
-<title>{{ title }}</title> {% endblock %} {% block pageMeta %}
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% if description %}
-<meta name="description" content="{{ description }}">
-{% endif %}
-<meta name="author" content="WebTales">
-{% endblock %} {% block pageStyle %}
-<!-- Le styles -->
-<link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-<link href="{{baseUrl}}/components/webtales/bootstrap-image-gallery/css/bootstrap-image-gallery.min.css" rel="stylesheet">
-<link href="{{baseUrl}}/components/zendcoder/video-js/video-js.min.css" rel="stylesheet" type="text/css">
-
-
-{% for sheet in css %}
-<link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
-{% endfor %}
-
-<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-{% endblock %} {% block pageIcons %}
-<!-- Le fav and touch icons -->
-<link rel="shortcut icon" href="../assets/ico/favicon.ico">
-<link rel="apple-touch-icon-precomposed" sizes="144x144"
-	href="../assets/ico/apple-touch-icon-144-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="114x114"
-	href="../assets/ico/apple-touch-icon-114-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="72x72"
-	href="../assets/ico/apple-touch-icon-72-precomposed.png">
-<link rel="apple-touch-icon-precomposed"
-	href="../assets/ico/apple-touch-icon-57-precomposed.png">
-{% endblock %}
+    {% block pageTitle %}
+    <title>{{ title }}</title> 
+    {% endblock %} 
+    
+    {% block pageMeta %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if description %}
+    <meta name="description" content="{{ description }}">
+    {% endif %}
+    <meta name="author" content="WebTales">
+    
+    {% if contentId %}
+    <link rel="canonical" href="{{ displayCanonicalUrl(contentId) }}"/>
+    {% endif %}
+    
+    {% endblock %} 
+    
+    {% block pageStyle %}
+    <!-- Le styles -->
+    <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{{baseUrl}}/components/zencoder/video-js/video-js.min.css" rel="stylesheet">
+    
+    
+    {% for sheet in css %}
+    <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
+    {% endfor %}
+    
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    		<![endif]-->
+    {% endblock %} 
+    
+    {% block pageIcons %}
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144"
+    	href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114"
+    	href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72"
+    	href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed"
+    	href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    {% endblock %}
 
 </head>
 
 <body>
 	{% block topSpace %}
 	<div id="topSpace" class="navbar navbar-fixed-top"></div>
-	{% endblock %} {% block pageContentToolBar %} {% if isLoggedIn %}
-	<div class="navbar hide navbar-inverse" id="contentToolBar">
-		<div class="navbar-inner">
-			<div class="container-fluid">
-				<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-				<a class="btn btn-navbar" data-toggle="collapse"
-					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
-					class="icon-bar"></span> <span class="icon-bar"></span>
-				</a> <a class="brand" href="#">Administration</a>
-				<div id='viewmode'>
-					<div class="btn-group pull-left">
-						<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i>
-							Editer la page
-						</a>
-					</div>
-					<span class="label label-success pull-right">Consultation</span>
-				</div>
-				<div id='editmode' class='hide'>
+	{% endblock %} 
+	{% block pageContentToolBar %} 
+    	{% if isLoggedIn %}
+    	<div class="navbar hide navbar-inverse" id="contentToolBar">
+    		<div class="navbar-inner">
+    			<div class="container-fluid">
+    				<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+    				<a class="btn btn-navbar" data-toggle="collapse"
+    					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+    					class="icon-bar"></span> <span class="icon-bar"></span>
+    				</a> <a class="brand" href="#">Administration</a>
+    				<div id='viewmode'>
+    					<div class="btn-group pull-left">
+    						<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i>
+    							Editer la page
+    						</a>
+    					</div>
+    					<span class="label label-success pull-right">Consultation</span>
+    				</div>
+    				<div id='editmode' class='hide'>
+    
+    					<a class="btn pull-left" href="#" id="btn-cancel"> <i
+    						class="icon-remove"></i> Annuler
+    					</a> <a class="btn pull-left" href="#" id="btn-save"> <i
+    						class="icon-ok"></i> Sauvegarder les modifications
+    					</a> <span class="label label-warning pull-right">Edition</span>
+    				</div>
+    				<div class="span8 offset4" id="alerts"></div>
+    			</div>
+    		</div>
+    	</div>
+    	{% endif %} 
+	{% endblock %} 
+	
+	{% block pageMainContent %}
 
-					<a class="btn pull-left" href="#" id="btn-cancel"> <i
-						class="icon-remove"></i> Annuler
-					</a> <a class="btn pull-left" href="#" id="btn-save"> <i
-						class="icon-ok"></i> Sauvegarder les modifications
-					</a> <span class="label label-warning pull-right">Edition</span>
-				</div>
-				<div class="span8 offset4" id="alerts"></div>
-			</div>
-		</div>
+	<div class="container container-fluid">
+	
+	    {% if rows %} 
+    	    {% for row in rows %} 
+    	        {% include row.template with row %} 
+    	    {% endfor %} 
+	    {% endif %}
 	</div>
-	{% endif %} {% endblock %} {% block pageMainContent %}
-
-	<div class="container container-fluid">{% if rows %} {% for row in rows
-		%} {% include row.template with row %} {% endfor %} {% endif %}</div>
 	{% endblock %}
 
-	<!--/.fluid-container-->
-	<div id="modal-gallery" class="modal modal-gallery hide fade" tabindex="-1">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">&times;</a>
-        <h3 class="modal-title"></h3>
     </div>
-    <div class="modal-body"><div class="modal-image"></div></div>
-    <div class="modal-footer">
-        <a class="btn modal-download" target="_blank">
-            <i class="icon-download"></i>
-            <span>Download</span>
-        </a>
-        <a class="btn btn-success modal-play modal-slideshow" data-slideshow="5000">
-            <i class="icon-play icon-white"></i>
-            <span>Slideshow</span>
-        </a>
-        <a class="btn btn-info modal-prev">
-            <i class="icon-arrow-left icon-white"></i>
-            <span>Previous</span>
-        </a>
-        <a class="btn btn-primary modal-next">
-            <span>Next</span>
-            <i class="icon-arrow-right icon-white"></i>
-        </a>
-    </div>
-</div>
-	{% block pageJavascript %}
-	<!-- Le javascript
-		================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.9.1.min.js"></script>
-	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
-	<script src="{{baseUrl}}/components/webtales/bootstrap-image-gallery/js/load-image.min.js"></script>
-	<script src="{{baseUrl}}/components/webtales/bootstrap-image-gallery/js/bootstrap-image-gallery.min.js"></script>
-  	<script src="{{baseUrl}}/components/zendcoder/video-js/video.min.js"></script>
-  	<script>
-    	_V_.options.flash.swf = "{{baseUrl}}/components/zendcoder/video-js/video-js.swf";
-  	</script>
+    
+    {% block Modal %}
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Picture</h3>
+		</div>
+		<div class="modal-body">
+			<img src="#" id="fullScreenPicture">
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+	{% endblock %}
 	
-	{% for file in js %}
-	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
-	{% endfor %}
+	
+	{% block pageJavascript %}
+    	<!-- Le javascript
+    		================================================== -->
+    	<!-- Placed at the end of the document so the pages load faster -->
+    	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.9.1.min.js"></script>
+    	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
+      	<script src="{{baseUrl}}/components/zencoder/video-js/video.min.js"></script>
+      	<script>
+        	_V_.options.flash.swf = "{{baseUrl}}/components/zendcoder/video-js/video-js.swf";
+      	</script>
+    	
+    	{% for file in js %}
+    	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
+    	{% endfor %}
 	{% endblock %}
 </body>
 </html>

@@ -1,35 +1,18 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-<!-- carousel -->
-{%set galleryid="gallery-"~random() %}
-{%set pages=count//pageSize%}
 
-<div id="gallery" data-toggle="modal-gallery" data-target="#modal-gallery">
-	<div id="{{galleryid}}" class="carousel slide">
-	 <center>
-  <div class="carousel-inner">
- 		
-		  <div class="active item">
-		  	<ul class="thumbnails">
-		  	{%for item in items%}
-		  	<li>
-		  	  <div class="thumbnail">
-			<a data-gallery="gallery" href="/dam?media-id={{item.image}}"><img class="gallery-item" src="/dam?media-id={{item.image}}{%if image.width %}&width={{image.width}}{%if image.height%}&height={{image.height}}&mode=crop{%endif%}{%endif%}" /></a>
+<br><br>
+<div id="{{prefix}}" class="carousel slide">
+		<div class='progress-gallery span6 offset3 hide'>
+			<p>En chargement</p>
+			<div class="progress progress-striped active">
+				<div class="bar" style="width: 100%;"></div>
 			</div>
-			</li>
-		{% endfor %}
-			</ul>
-             </div>
-         
-		 
-  </div>
- </center>
-    <a class="carousel-control left" href="{{url({'page': currentPage-1},true)}}" data-slide="prev">&lsaquo;</a>
-  <a class="carousel-control right" href="{{url({'page': currentPage+1},true)}}" data-slide="next">&rsaquo;</a>
-  </div>
-
-
+		</div>
+		{% include 'root/blocks/gallery/items.html.twig' %}
 </div>
 
 {% endblock %}
+
+

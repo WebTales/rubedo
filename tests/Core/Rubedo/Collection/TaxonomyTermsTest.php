@@ -48,7 +48,8 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete')
 						->will($this->returnValue($customReturn));
 		$obj["id"]="id";
-		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$obj['vocabularyId'] = "test";
+		$taxonomyTermsService=new TaxonomyTerms();
 		$result=$taxonomyTermsService->destroy($obj);
 		$isArray=is_array($result);
 		$this->assertTrue($isArray);
@@ -64,7 +65,8 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 						->will($this->returnValue($customReturn));
 		
 		$obj["id"]="id";
-		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$obj['vocabularyId'] = "test";
+		$taxonomyTermsService=new TaxonomyTerms();
 		$result=$taxonomyTermsService->destroy($obj);
 		$isArray=is_array($result);
 		$this->assertTrue($isArray);
@@ -81,7 +83,8 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 						->will($this->returnValue($customReturn));
 		
 		$obj["id"]="id";
-		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$obj['vocabularyId'] = "test";
+		$taxonomyTermsService=new TaxonomyTerms();
 		$result=$taxonomyTermsService->destroy($obj);
 		$isArray=is_array($result);
 		$this->assertTrue($isArray);
@@ -95,7 +98,7 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 								->will($this->returnValue($findReturn));
 		
 		$id="id";
-		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$taxonomyTermsService=new TaxonomyTerms();
 		$result=$taxonomyTermsService->getTerm($id);
 		$isString=is_string($result);
 		$this->assertTrue($isString);
@@ -108,7 +111,7 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 		$this->_mockDataAccessService->expects($this->any())->method('addFilter');
 		
 		$id="vocabularyId";
-		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$taxonomyTermsService=new TaxonomyTerms();
 		$result=$taxonomyTermsService->findByVocabulary($id);
 	}
 	
@@ -116,7 +119,7 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 	{
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
 		$id="vocabularyId";
-		$taxonomyTermsService=new Rubedo\Collection\TaxonomyTerms();
+		$taxonomyTermsService=new TaxonomyTerms();
 		$result=$taxonomyTermsService->deleteByVocabularyId($id);
 	}
 	

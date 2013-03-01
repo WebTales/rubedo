@@ -2,17 +2,16 @@
 
 {% block mainContent %}
 
-	<ul class="thumbnails">
-		{% for slide in items %}
-		<li>
-			<div class="thumbnail">
-				<a class="flk_gallery" href="{{ slide.image }}" title="{{ slide.title }}"><img src="{{ slide.thumbnail }}" alt="{{ slide.title }}"></a>
-			</div>
-
-		</li> {% endfor %}
-	</ul>
-
+<br><br>
+<div id="{{prefix}}" class="carousel slide">
+	<div class='progress-gallery span6 offset3 hide'>
+		<p>En chargement</p>
+		<div class="progress progress-striped active">
+			<div class="bar" style="width: 100%;"></div>
+		</div>
+	</div>
 	
-	
+	{% include 'root/blocks/flickr/items.html.twig' %}
+</div>
 
 {% endblock %}

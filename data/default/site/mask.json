@@ -1,5 +1,8 @@
 {
 	"site": "",
+	"orderValue": 200,
+	"excludeFromMenu": false,
+	"expandable": false,
 	"text": "Default-Mask",
 	"rows": [
 		{

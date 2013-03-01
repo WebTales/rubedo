@@ -43,9 +43,9 @@ class SitesTest extends PHPUnit_Framework_TestCase {
 	public function testGetHostWithArray()	
 	{
 		$this->_mockDataAccessService->expects($this->never())->method('findById');
-		Rubedo\Collection\Sites::setOverride(array('namesite.test'=>'toto'));
+		Sites::setOverride(array('namesite.test'=>'toto'));
 		$site['text']="namesite.test";
-		$siteService=new Rubedo\Collection\Sites();
+		$siteService=new Sites();
 		$siteService->getHost($site);
 	}
 	public function testGetHostWithString()	
@@ -53,18 +53,18 @@ class SitesTest extends PHPUnit_Framework_TestCase {
 		$findReturn['text']="text";
 		$this->_mockDataAccessService->expects($this->once())->method('findById')
 		 		->will($this->returnValue($findReturn));
-		Rubedo\Collection\Sites::setOverride(array('text'=>'toto'));
+		Sites::setOverride(array('text'=>'toto'));
 		$site="text";
-		$siteService=new Rubedo\Collection\Sites();
+		$siteService=new Sites();
 		$siteService->getHost($site);
 	}
 	public function testFindHostWithBadSite()
 	{
 		$this->_mockDataAccessService->expects($this->once())->method('findByName');
 		$this->_mockDataAccessService->expects($this->once())->method('findOne');
-		Rubedo\Collection\Sites::setOverride(array('value'=>'text'));
+		Sites::setOverride(array('value'=>'text'));
 		$host="text";
-		$siteService=new Rubedo\Collection\Sites();
+		$siteService=new Sites();
 		$siteService->findByHost($host);
 	}
 	

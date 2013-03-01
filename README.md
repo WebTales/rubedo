@@ -22,6 +22,7 @@ Installation
 * Phing (http://www.phing.info)
 * MongoDB (http://www.mongodb.org)
 * ElasticSearch (http://www.elasticsearch.org)
+* Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 
 ### Install Steps
 * Download Source from gitHub (https://github.com/WebTales/rubedo/tags)
@@ -32,6 +33,7 @@ Installation
 * Access the */install* URL and run the config wizard
 
 ### For Developpers
+* You will need versionControl_git `pear install VersionControl_Git-0.4.4`
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
 * Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot

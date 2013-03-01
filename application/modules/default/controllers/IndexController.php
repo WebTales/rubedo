@@ -77,8 +77,17 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * array of parent IDs
+	 * 
+	 * @var array
      */
     protected $_rootlineArray;
+	
+	/**
+	 * ID of the column to display main content instead of page content if content-id given
+	 * 
+	 * @var string
+	 */
+	protected $_mainCol = null;
 
     /**
      * Main Action : render the Front Office view
@@ -135,6 +144,8 @@ class IndexController extends Zend_Controller_Action
         //$this->_servicePage->appendJs('/js/scripts.js');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
+        $this->_servicePage->setCurrentPage($this->_pageId);
+        
         
         if (! $this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found');
@@ -146,6 +157,7 @@ class IndexController extends Zend_Controller_Action
         
         // Build Twig context
         $twigVar = $this->_pageParams;
+        $twigVar['contentId'] = $this->getParam('content-id',false);
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
@@ -302,13 +314,16 @@ class IndexController extends Zend_Controller_Action
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos (array $columns = null)
+    protected function _getColumnsInfos (array $columns = null,$noSpan = false)
     {
         if ($columns === null) {
             return null;
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
+            if($noSpan){
+                $returnArray[$key]['span']=null;
+            }
             $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
             $returnArray[$key]['classHtml'] = isset($column['classHTML']) ? $column['classHTML'] : null;
@@ -316,8 +331,10 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['idHtml'] = isset($column['idHTML']) ? $column['idHTML'] : null;
             if (isset($this->_blocksArray[$column['id']])) {
                 $returnArray[$key]['blocks'] = $this->_getBlocksInfos($this->_blocksArray[$column['id']]);
+                $returnArray[$key]['rows'] = null;
             } else {
                 $returnArray[$key]['rows'] = $this->_getRowsInfos($column['rows']);
+                $returnArray[$key]['blocks'] = null;
             }
         }
         return $returnArray;
@@ -358,7 +375,10 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['idHtml'] = isset($row['idHTML']) ? $row['idHTML'] : null;
             
             if (is_array($row['columns'])) {
-                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns']);
+                $noSpan = (isset($row['displayAsTab']))?$row['displayAsTab']:false;
+                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns'],$noSpan);
+            }else{
+                $returnArray[$key]['columns'] = null;
             }
         }
         return $returnArray;
@@ -377,11 +397,12 @@ class IndexController extends Zend_Controller_Action
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
-        $params['prefix'] = isset($block['urlPrefix']) ? $block['urlPrefix'] : $block['id'];
+        $params['prefix'] = (isset($block['urlPrefix']) && !empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
         $params['idHtml'] = isset($block['idHTML']) ? $block['idHTML'] : null;
         $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : null;
+        $params['current-page'] = $this->_pageId;
         
         $blockQueryParams = $this->getRequest()->getParam($params['prefix'], array());
         foreach ($blockQueryParams as $key => $value) {
@@ -412,7 +433,9 @@ class IndexController extends Zend_Controller_Action
             case 'Liste de Contenus':
             case 'contentList':
                 $controller = 'content-list';
-                
+                break;
+            case 'calendar' : 
+                $controller = 'calendar';
                 break;
             case 'Pied de page':
             case 'footer':
@@ -430,6 +453,9 @@ class IndexController extends Zend_Controller_Action
                 $params['rootline'] = $this->_rootlineArray;
                 $controller = 'breadcrumbs';
                 break;
+			case 'searchForm':
+                $controller = 'search-form';
+				break;				
             case 'Twig':
             case 'twig':
                 $controller = 'twig';
@@ -464,7 +490,12 @@ class IndexController extends Zend_Controller_Action
 			case 'video':
                 $controller = 'video';
                 break;
+				case 'Authentication':
+			case 'authentication':
+                $controller = 'authentication';
+                break;
             case 'Texte':
+			case 'simpleText':
                 $controller = 'text';
                 break;
 			case 'imageGallery':
@@ -472,7 +503,15 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Texte Riche':
             case 'richText':
-                $controller = 'richtext';
+                $controller = 'rich-text';
+                break;
+			case 'AddThis':
+            case 'addThis':
+                $controller = 'addthis';
+                break;
+			case 'AddThisFollow':
+            case 'addThisFollow':
+                $controller = 'addthisfollow';
                 break;
             case 'Menu':
             case 'menu':
@@ -485,7 +524,7 @@ class IndexController extends Zend_Controller_Action
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = isset($block['urlPrefix']) ? $block['urlPrefix'] : $block['id'];
+                $prefix = (isset($block['urlPrefix']) && !empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
                 $route->setPrefix($prefix);
                 
                 $allParams = $this->getAllParams();

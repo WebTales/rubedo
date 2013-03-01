@@ -30,6 +30,16 @@ abstract class AbstractCollection implements IAbstractCollection
 {
 
     /**
+     * Indexes of the collection
+     * 
+     * should be an array of index.
+     * An index should be an array('keys'=>array,'options'=>array) which define fields and options of the index
+     * 
+     * @var array
+     */
+    protected $_indexes = array();
+    
+    /**
      * name of the collection
      *
      * @var string
@@ -49,6 +59,8 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var array
      */
     protected $_model = array();
+	
+	protected $_errors = array();
     
     /**
      * If true, no request should be filtered by user access rights
@@ -56,6 +68,14 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var boolean
      */
     protected static $_isUserFilterDisabled = false;
+    
+    
+    /**
+     * store already found objects
+     * 
+     * @var array
+     */
+   protected static $_fetchedObjects = array();
 
     protected function _init ()
     {
@@ -179,12 +199,16 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId            
+     * @param string $contentId    
+     * @param boolean $forceReload should we ensure reading up-to-date content        
      * @return array
      */
-    public function findById ($contentId)
+    public function findById ($contentId,$forceReload = false)
     {
-        return $this->_dataService->findById($contentId);
+        if($forceReload || !isset(self::$_fetchedObjects[$contentId])){
+            self::$_fetchedObjects[$contentId] = $this->_dataService->findById($contentId);
+        }
+        return self::$_fetchedObjects[$contentId];
     }
 
     /**
@@ -262,9 +286,8 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function create (array $obj, $options = array('safe'=>true))
     {
-        if (count($this->_model) > 0) {
-            $obj = $this->_filterInputData($obj);
-        }
+       	$this->_filterInputData($obj);
+		
         unset($obj['readOnly']);
         return $this->_dataService->create($obj, $options);
     }
@@ -275,11 +298,110 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $obj            
      * @return array:
      */
-    protected function _filterInputData (array $obj)
-    {
-        // do verify $obj structure based on $_model
-        return $obj;
-    }
+    protected function _filterInputData (array $obj, array $model = null)
+    {			
+		if($model == null) {
+			$model = $this->_model;
+		}
+			
+		foreach($model as $key => $value){
+			//If the configuration is not specified for the current field
+			if(!isset($value['domain']) && !isset($value['required'])){
+				continue;
+			}
+			
+			
+			if(isset($obj[$key])){
+				switch ($value['domain']) {
+					
+					/**
+					 * Case with a list domain
+					 * 
+					 * Check if the elements of the object array correspond with the model
+					 */
+					case 'list':
+						if(isset($value['items']) && isset($value['items']['domain']) && isset($value['items']['required'])) {
+							if($this->_isValid($obj[$key], $value['domain'])) {
+								if(count($obj[$key]) > 0) {
+									foreach ($obj[$key] as $subKey => $subValue) {
+										if($value['items']['domain'] != "list" && $value['items']['domain'] != "array") {
+											if(!$this->_isValid($subValue, $value['items']['domain'])) {
+												$this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+											}
+										} else {
+											if($value['items']['domain'] == "list"){
+												if(isset($value['items']['items']['domain']) && isset($value['items']['items']['required'])){
+													$this->_filterInputData(array('key' => $subValue), array('key' => $value['items']['items']));
+												} else {
+													$this->_filterInputData($subValue, $value['items']['items']);
+												}
+											} else {
+												$this->_filterInputData($subValue, $value['items']['items']);
+											}
+										}
+									}
+								} else {
+									if($value['items']['required'] == true) {
+										$this->_errors[$key] = 'this field is required';
+									} else {
+										continue;
+									}
+								}
+							} else {
+								$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
+							}
+						} else {
+							continue;
+						}
+						break;
+					
+					/**
+					 * Case with an array domain
+					 * 
+					 * Recall _filterInputData function with the object array and it's model
+					 */
+					case 'array':
+						if(isset($value['items']) && count($value['items']) > 0) {
+							if($this->_isValid($obj[$key], $value['domain'])) {
+								if(count($obj[$key]) > 0) {
+									$this->_filterInputData($obj[$key], $value['items']);
+								} else {
+									if($value['items']['required'] == true) {
+										$this->_errors[$key] = 'this field is required';
+									} else {
+										continue;
+									}
+								}
+							} else {
+								$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
+							}
+						} else {
+							continue;
+						}
+						break;
+					
+					/**
+					 * Case with a simple domain
+					 * 
+					 * Just check if the current object value correspond with the model
+					 */
+					default :
+						if(!$this->_isValid($obj[$key], $value['domain'])) {
+							$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+						}
+						break;
+				}
+			} else {
+				if(isset($value['items']) && $value['items']['required'] == true) {
+					$this->_errors[$key] = 'this field is required';
+				} else {
+					continue;
+				}
+			}
+		}
+
+		return $obj;
+	}  
 
     /**
      * Is the data a valid input for the domain
@@ -291,7 +413,7 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     protected function _isValid ($data, $domain)
     {
-        $domainClassName = 'Rubedo\\Domains\\' . ucfirst($domain);
+        $domainClassName = 'Rubedo\\Domains\\D' . ucfirst($domain);
         if (! class_exists($domainClassName)) {
             throw new \Rubedo\Exceptions\User('domain not defined :' . (string) $domain);
         }
@@ -510,7 +632,36 @@ abstract class AbstractCollection implements IAbstractCollection
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
         return $oldValue;
     }
+    
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::checkIndexes()
+     */
+    public function checkIndexes ()
+    {
+       $result = true;
+        foreach ($this->_indexes as $index){
+            $result = $result && $this->_dataService->checkIndex($index['keys']);
+        }
+        return $result;
+        
+    }
 
+	/**
+	 *  (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IAbstractCollection::ensureIndexes()
+     */
+    public function ensureIndexes ()
+    {
+        $result = true;
+        foreach ($this->_indexes as $index){
+            $result = $result && $this->_dataService->ensureIndex($index['keys'],isset($index['options'])?$index['options']:array());
+        }
+        return $result;        
+    }
+
+
+    
     
     
 }
