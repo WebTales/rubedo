@@ -73,7 +73,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 return array();
             }
             $currentPage = Manager::getService('Pages')->findById($item['id']);
-            if ($currentPage) {
+            if ($currentPage && isset($currentPage['site'])) {
                 $site = Manager::getService('Sites')->findById($currentPage['site']);
                 $returnArray = array();
                 $returnArray[] = $this->_siteToTerm($site);

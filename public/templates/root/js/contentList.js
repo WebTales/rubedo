@@ -1,7 +1,7 @@
 function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType) {
 	if (jQuery('#list-' + prefix + ' > #list-' + prefix + '-' + page).length == 0) {
 		var request = jQuery.ajax({
-			url : url + '/blocks/contentList/xhr-get-items',
+			url : url + '/blocks/content-list/xhr-get-items',
 			type : "POST",
 			data : {
 				'page' : page,

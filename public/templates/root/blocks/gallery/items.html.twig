@@ -1,4 +1,4 @@
-<div id="page{{currentPage}}" class="active" data-slide-to="{{currentPage}}">
+<div id="{{prefix}}-page{{currentPage}}" class="active-items">
 	{% for item in items %}
 	<a href="#" data-gallery="gallery" onclick="callModal('/dam?media-id={{item.image}}', '{{item.title}}')">
 		<img class="" src="/dam?media-id={{item.image}}{%if image.width%}&width={{ image.width }}{%endif%}{%if image.height%}&height={{ image.height }}{%endif%}&mode=crop" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}">
@@ -6,9 +6,9 @@
 	{% endfor %}
 
 	{% if previous == true %}
-	<a class="carousel-control left" href="{{url({'page':currentPage-1,'galleryId':galleryid,'prefix':prefix})}}" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&lsaquo;</a>
+	<a class="carousel-control left" href="{{url({'page':currentPage-1,"prefix":prefix},true)}}" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&lsaquo;</a>
 	{% endif %}
 	{% if next == true %}
-	<a class="carousel-control right" href="{{url({'page':currentPage+1,'galleryId':galleryid,'prefix':prefix})}}" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ galleryid }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&rsaquo;</a>
+	<a class="carousel-control right" href="{{url({'page':currentPage+1,"prefix":prefix},true)}}" onclick="changePage({{currentPage+1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&rsaquo;</a>
 	{% endif %}
 </div>
