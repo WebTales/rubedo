@@ -31,15 +31,21 @@ class Blocks_AddthisfollowController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array()); 
-		foreach($blockConfig["networks"] as $network)
+		//\Zend_Debug::dump($blockConfig);die();
+		$networks=$blockConfig;
+		unset($networks["disposition"]);
+		unset($networks["small"]);
+		foreach($networks as $name=>$user)
 		{
-			$fields["network"]=$network["name"];
-			$fields["userId"]=$network['userId'];
+			$fields["network"]=$name;
+			$fields["userId"]=$user;
 			$data[]=$fields;
 		}
 		$output['networks']=$data;
-		$output['type']=($blockConfig["horizontal"]==true)? 'horizontal':'vertical';
-		$output['small']=$blockConfig['small'];
+		$output["type"]=isset($blockConfig["disposition"])?$blockConfig["disposition"]:"Horizontal";
+		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;
+		//\Zend_Debug::dump($data);die();
+		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthisfollow.html.twig");
         
         $css = array();

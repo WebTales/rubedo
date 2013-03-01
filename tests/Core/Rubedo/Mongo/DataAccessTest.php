@@ -1755,31 +1755,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     }
 
-    /**
-     * filter should not be empty
-     * @expectedException \Rubedo\Exceptions\Server
-     */
-    public function testAddFilterOnlyOneArrayChild() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $filterExample = array("key" => array('titi', 'toto'));
-        $dataAccessObject->addFilter($filterExample);
-
-    }
-
-    /**
-     * filter should not be empty
-     * @expectedException \Rubedo\Exceptions\Server
-     */
-    public function testAddFilterOnlyArrayOrScalarChild() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $filterExample = array("key" => array(new stdClass()));
-        $dataAccessObject->addFilter($filterExample);
-
-    }
 
     /**
      * Check if getSortArray return an array
@@ -1964,16 +1939,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->setFirstResult("test");
     }
 
-    /**
-     * numberOfResults should be an integer
-     * @expectedException \Rubedo\Exceptions\Server
-     */
-    public function testSetNumberOfResultsWithNoInteger() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $dataAccessObject->setNumberOfResults("test");
-    }
 
     /**
      * Simple test to add a field in the array and read it after
