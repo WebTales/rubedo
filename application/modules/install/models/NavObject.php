@@ -42,6 +42,14 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
+            'label' => 'ElasticSearch',
+            'action' => 'set-elastic-search',
+            'controller' => 'index',
+            'module' => 'install'
+        ));
+        $container->addPage($page);
+        
+        $page = new Zend_Navigation_Page_Mvc(array(
             'label' => 'Contents',
             'action' => 'set-db-contents',
             'controller' => 'index',
@@ -57,13 +65,7 @@ class Install_Model_NavObject
         ));
         $container->addPage($page);
         
-        $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'ElasticSearch',
-            'action' => 'set-elastic-search',
-            'controller' => 'index',
-            'module' => 'install'
-        ));
-        $container->addPage($page);
+        
         
         $page = new Zend_Navigation_Page_Mvc(array(
             'label' => 'Mailer',
