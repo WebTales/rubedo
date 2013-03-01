@@ -3,12 +3,12 @@
 	"require": {
 		"jquery/jquery": "1.9.1",
 		"sencha/extjs": "4.1.1a",
-		"webtales/ckeditor": "dev-master",
+		"webtales/ckeditor": "1.0.0b1",
 		"twitter/bootstrap": "v2.3.0",
 		"zencoder/video-js": "3.2.0",
 		"webtales/bootstrap-image-gallery" : "2.10.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "dev-master"
+		"webtales/rubedo-backoffice-ui": "1.0.0b1"
 	},
 	"require-dev": {},
 	"repositories": [
