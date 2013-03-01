@@ -94,10 +94,9 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
 		$cache = Rubedo\Services\Cache::getCache('flicker');
         $cacheKey = 'flickr_items_'.md5(serialize($flParams));
 		$cacheKeyCount = 'flickr_items_'.md5('count-'.serialize($flParams));
-        
+        $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
+		
         if (! ($photosArrayCount = $cache->load($cacheKeyCount))) {
-            $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
-			
             if (isset($flParams['user'])) {
                 $photosArrayCount = $flickrService->userSearch($flParams['user'], array('per_page' => 1));
             }elseif (isset($flParams['tags'])){
@@ -147,7 +146,13 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
                 $item['id'] = $photo->id;
                 $item['title'] = $photo->title;
                 $item['datetaken'] = new DateTime($photo->datetaken);
-                $item['image'] = $photo->Large->uri;
+				if(isset($photo->Large->uri)){
+                	$item['image'] = $photo->Large->uri;
+				} elseif ($photo->Medium->uri){
+					$item['image'] = $photo->Medium->uri;
+				} else {
+					$item['image'] = $photo->Square->uri;
+				}
                 $item['thumbnail'] = $photo->Square->uri;
                 $item['thumbnail_width'] = $photo->Thumbnail->width;
                 $item['thumbnail_height'] = $photo->Thumbnail->height;
