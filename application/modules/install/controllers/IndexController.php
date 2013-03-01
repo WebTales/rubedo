@@ -438,6 +438,8 @@ class Install_IndexController extends Zend_Controller_Action
 
     protected function _doEnsureIndexes ()
     {
+        Manager::getService('UrlCache')->drop();
+        Manager::getService('Cache')->drop();
         $servicesArray = Rubedo\Interfaces\config::getCollectionServices();
         $result = true;
         foreach ($servicesArray as $service) {

@@ -1,0 +1,37 @@
+{
+	"type": "Texte Riche",
+	"champs": [
+		{
+			"cType": "CKEField",
+			"config": {
+				"name": "body",
+				"fieldLabel": "Corps *",
+				"maxLength": 6000,
+				"minLength": 0,
+				"allowBlank": false,
+				"localizable": false,
+				"searchable": true,
+				"multivalued": false,
+				"CKETBConfig": "Standard",
+				"tooltip": "",
+				"vtype": null,
+				"labelSeparator": ""
+			},
+			"protoId": "506441f8c648043912000020",
+			"openWindow": null
+		}
+	],
+	"vocabularies": [],
+	"dependant": false,
+	"dependantTypes": [],
+	"version": 10,
+	"createTime": "2013-02-18T10:53:46",
+	"createUser": "Admin",
+	"updateTime": null,
+	"lastUpdateTime": "2013-03-01T11:06:32",
+	"workspaces": ["global"],
+	"readOnly": false,
+	"workflow": "Basique",
+	"CTType": "richText",
+	"system": true
+}
