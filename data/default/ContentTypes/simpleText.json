@@ -1,6 +1,6 @@
 {
 	"type": "Texte simple",
-	"champs": [
+	"fields": [
 		{
 			"cType": "textareafield",
 			"config": {
