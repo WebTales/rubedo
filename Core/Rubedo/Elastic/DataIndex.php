@@ -113,7 +113,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping = array();
 		
 		// If there is any fields get them mapped
-		if (is_array($data["fields"])) {
+		if (isset($data["fields"]) && is_array($data["fields"])) {
 
 			foreach($data["fields"] as $key => $field) {
 						
