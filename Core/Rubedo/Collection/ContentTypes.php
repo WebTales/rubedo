@@ -30,7 +30,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
     
     protected $_indexes = array(
         array('keys'=>array('type'=>1),'options'=>array('unique'=>true)),
-        array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
+        //array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
     );
     
     /**
@@ -157,9 +157,6 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
     {
-        if(empty($obj['CTType'])){
-            $obj['CTType'] = $obj['type'];
-        }
         $returnArray = parent::update($obj, $options, $live);
         
         if ($returnArray["success"]) {
