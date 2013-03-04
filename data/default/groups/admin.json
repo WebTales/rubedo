@@ -16,5 +16,6 @@
 	"version" : 1,
 	"writeWorkspaces" : [
 		"global"
-	]
+	],
+	"defaultWorkspace":"global"
 }

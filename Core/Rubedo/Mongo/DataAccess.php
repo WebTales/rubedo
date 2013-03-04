@@ -499,7 +499,7 @@ class DataAccess implements IDataAccess
         $value = array_merge($value, $this->getFilterArray());
         
         $data = $this->_collection->findOne($value, $fieldRule);
-        if ($data === null) {
+        if ($data == null) {
             return null;
         }
         $data['id'] = (string) $data['_id'];

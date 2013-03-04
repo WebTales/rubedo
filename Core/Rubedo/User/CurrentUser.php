@@ -16,8 +16,7 @@
  */
 namespace Rubedo\User;
 
-use Rubedo\Interfaces\User\ICurrentUser;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager;
 
 /**
  * Current User Service
@@ -50,14 +49,14 @@ class CurrentUser implements ICurrentUser
 
     /**
      * current user group list
-     * 
+     *
      * @var array
      */
     protected static $_groups = null;
 
     /**
      * is current User a global Admin ?
-     * 
+     *
      * @var boolean
      */
     protected static $_isGlobalAdmin = null;
@@ -71,7 +70,12 @@ class CurrentUser implements ICurrentUser
     {
         if (! isset(self::$_currentUser)) {
             if ($this->isAuthenticated()) {
-                self::$_currentUser = $this->_fetchCurrentUser();
+                $user = $this->_fetchCurrentUser();
+                if ($user===null) {
+                    Manager::getService('Authentication')->clearIdentity();
+                }
+                
+                self::$_currentUser = $user;
             }
         }
         return self::$_currentUser;
@@ -99,7 +103,7 @@ class CurrentUser implements ICurrentUser
      */
     public function isAuthenticated ()
     {
-        $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+        $serviceAuth = Manager::getService('Authentication');
         return $serviceAuth->hasIdentity();
     }
 
@@ -110,12 +114,13 @@ class CurrentUser implements ICurrentUser
      */
     protected function _fetchCurrentUser ()
     {
-        $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+        $serviceAuth = Manager::getService('Authentication');
         $sessionUser = $serviceAuth->getIdentity();
         
-        $serviceReader = \Rubedo\Services\Manager::getService('Users');
+        $serviceReader = Manager::getService('Users');
         
-        $user = $serviceReader->findById($sessionUser['id']);
+        $user = $serviceReader->findById($sessionUser['id'], true);
+        
         return $user;
     }
 
@@ -134,8 +139,14 @@ class CurrentUser implements ICurrentUser
                     Manager::getService('Groups')->getPublicGroup()
                 );
             }
+            if (isset($user['id'])) {
+                $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
+            } else {
+                $groupsArray = array(
+                    'data' => array()
+                );
+            }
             
-            $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
             if (count($groupsArray['data']) == 0) {
                 return array(
                     Manager::getService('Groups')->getPublicGroup()
@@ -154,12 +165,11 @@ class CurrentUser implements ICurrentUser
     public function getMainGroup ()
     {
         $user = $this->getCurrentUser();
-        if(isset($user['defaultGroup'])){
+        if (isset($user['defaultGroup'])) {
             return $user['defaultGroup'];
-        }else{
+        } else {
             return null;
         }
-        
     }
 
     /**
@@ -174,9 +184,9 @@ class CurrentUser implements ICurrentUser
     {
         $user = $this->getCurrentUser();
         
-        $serviceAuth = \Rubedo\Services\Manager::getService('Authentication');
+        $serviceAuth = Manager::getService('Authentication');
         if ($serviceAuth->forceReAuth($user['login'], $oldPass)) {
-            $serviceUser = \Rubedo\Services\Manager::getService('Users');
+            $serviceUser = Manager::getService('Users');
             return $serviceUser->changePassword($newPass, $user['version'], $user['id']);
         } else {
             return false;
@@ -190,8 +200,8 @@ class CurrentUser implements ICurrentUser
      */
     public function generateToken ()
     {
-        $sessionService = \Rubedo\Services\Manager::getService('Session');
-        $hashService = \Rubedo\Services\Manager::getService('Hash');
+        $sessionService = Manager::getService('Session');
+        $hashService = Manager::getService('Hash');
         
         $user = $sessionService->get('user');
         
@@ -209,7 +219,7 @@ class CurrentUser implements ICurrentUser
      */
     public function getToken ()
     {
-        $sessionService = \Rubedo\Services\Manager::getService('Session');
+        $sessionService = Manager::getService('Session');
         
         $user = $sessionService->get('user');
         $token = isset($user['token']) ? $user['token'] : "";
@@ -237,7 +247,7 @@ class CurrentUser implements ICurrentUser
         
         foreach ($groupArray as $group) {
             $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id'])));
-			$workspaceArray = array_merge($workspaceArray,array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']))));
+            $workspaceArray = array_merge($workspaceArray, array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']))));
         }
         return $workspaceArray;
     }
@@ -251,10 +261,9 @@ class CurrentUser implements ICurrentUser
     public function getMainWorkspace ()
     {
         
-        //return Manager::getService('Workspaces')->findById('global');
-        
+        // return Manager::getService('Workspaces')->findById('global');
         $mainGroup = $this->getMainGroup();
-        if ($mainGroup==null) {
+        if ($mainGroup == null) {
             return Manager::getService('Workspaces')->findById('global');
         }
         return Manager::getService('Groups')->getMainWorkspace($mainGroup);
@@ -267,12 +276,12 @@ class CurrentUser implements ICurrentUser
      */
     public function getWriteWorkspaces ()
     {
-        if($this->_isGlobalAdmin()){
+        if ($this->_isGlobalAdmin()) {
             $workspaceList = Manager::GetService("Workspaces")->getWholeList();
             foreach ($workspaceList['data'] as $workspace) {
                 $workspaceArray[] = $workspace['id'];
             }
-        }else{
+        } else {
             $groupArray = $this->getGroups();
             $workspaceArray = array();
             
@@ -286,6 +295,7 @@ class CurrentUser implements ICurrentUser
 
     /**
      * Is the current user a global admin ?
+     * 
      * @return boolean
      */
     protected function _isGlobalAdmin ()
