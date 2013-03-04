@@ -10,5 +10,6 @@
 		"public"
 	],
 	"version" : 1,
-	"writeWorkspaces" : [ ]
+	"writeWorkspaces" : [ ],
+	"defaultWorkspace":"global"
 }

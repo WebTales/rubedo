@@ -347,7 +347,8 @@ class Install_IndexController extends Zend_Controller_Action
             
             $params['salt'] = $hashService->generateRandomString();
             $params['password'] = $hashService->derivatePassword($params['password'], $params['salt']);
-            
+            $adminGroup = Manager::getService('Groups')->findByName( 'admin');
+            $params['defaultGroup'] = $adminGroup['id'];
             $wasFiltered = AbstractCollection::disableUserFilter();
             $userService = Manager::getService('Users');
             $response = $userService->create($params);
@@ -361,11 +362,7 @@ class Install_IndexController extends Zend_Controller_Action
             } else {
                 $userId = $response['data']['id'];
                 
-                $groupService = Manager::getService('MongoDataAccess');
-                $groupService->init('Groups');
-                $adminGroup = $groupService->findOne(array(
-                    'name' => 'admin'
-                ));
+                $groupService = Manager::getService('Groups');
                 $adminGroup['members'][] = $userId;
                 $groupService->update($adminGroup);
                 $this->view->accountName = $params['name'];
