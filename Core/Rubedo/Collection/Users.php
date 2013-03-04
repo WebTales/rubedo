@@ -159,7 +159,9 @@ class Users extends AbstractCollection implements IUsers
     public function findById ($contentId)
     {
         $result = parent::findById($contentId);
-        $result = $this->_addGroupsInfos($result);
+        if($result){
+            $result = $this->_addGroupsInfos($result);
+        }
         return $result;
     }
 
