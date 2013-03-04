@@ -55,18 +55,51 @@ class DamTypes extends AbstractCollection implements IDamTypes
 		parent::__construct();
 	}
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Rubedo\Collection\AbstractCollection::create()
+	 */
 	public function create (array $obj, $options = array('safe'=>true))
     {
     	$obj = $this->_addDefaultWorkspace($obj);
 		
-		return parent::create($obj, $options);
+		$returnArray = parent::create($obj, $options);
+		
+		if ($returnArray["success"]) {
+		    $this->_indexDamType($returnArray['data']);
+		}
+		
+		return $returnArray;
 	}
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Rubedo\Collection\AbstractCollection::update()
+	 */
 	public function update (array $obj, $options = array('safe'=>true))
     {
     	$obj = $this->_addDefaultWorkspace($obj);
 		
-		return parent::update($obj, $options);
+		$returnArray = parent::update($obj, $options);
+		
+		if ($returnArray["success"]) {
+		    $this->_indexDamType($returnArray['data']);
+		}
+		
+		return $returnArray;
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Rubedo\Collection\AbstractCollection::destroy()
+	 */
+	public function destroy (array $obj, $options = array('safe'=>true))
+	{
+	    $returnArray = parent::destroy($obj, $options);
+	    if ($returnArray["success"]) {
+	        $this->_unIndexDamType($obj);
+	    }
+	    return $returnArray;
 	}
 	
 	protected function _addDefaultWorkspace($obj){
@@ -124,6 +157,38 @@ class DamTypes extends AbstractCollection implements IDamTypes
             $obj = $this->_addReadableProperty($obj);
         }
         return $list;
+    }
+    
+    /**
+     * Push the content type to Elastic Search
+     *
+     * @param array $obj
+     */
+    protected function _indexDamType ($obj)
+    {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+    
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->indexDamType($obj['id'], $obj, TRUE);
+    
+        AbstractCollection::disableUserFilter($wasFiltered);
+    }
+    
+    /**
+     * Remove the content type from Indexed Search
+     *
+     * @param array $obj
+     */
+    protected function _unIndexDamType ($obj)
+    {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+    
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->deleteDamType($obj['id'], TRUE);
+    
+        AbstractCollection::disableUserFilter($wasFiltered);
     }
 	
 }
