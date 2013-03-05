@@ -283,7 +283,7 @@ class Sites extends AbstractCollection implements ISites
 	        }
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 			
-	        if (!in_array($obj['workspace'], $writeWorkspaces) && $writeWorkspaces[0]!="all") {
+	        if (!in_array($obj['workspace'], $writeWorkspaces) && !in_array('all', $writeWorkspaces)) {
 	            $obj['readOnly'] = true;
 	        } else {
 	            
