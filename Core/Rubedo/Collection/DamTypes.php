@@ -168,9 +168,11 @@ class DamTypes extends AbstractCollection implements IDamTypes
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
     
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexDamType($obj['id'], $obj, TRUE);
+        
+        $ElasticDataIndexService->indexAll('dam');
     
         AbstractCollection::disableUserFilter($wasFiltered);
     }
