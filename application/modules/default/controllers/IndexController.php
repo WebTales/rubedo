@@ -401,7 +401,7 @@ class IndexController extends Zend_Controller_Action
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
         $params['idHtml'] = isset($block['idHTML']) ? $block['idHTML'] : null;
-        $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : null;
+        $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : false;
         $params['blockTitle']= isset($block['title'])?$block['title']:null;
         $params['current-page'] = $this->_pageId;
         
