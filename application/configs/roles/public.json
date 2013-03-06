@@ -17,6 +17,8 @@
         "execute.controller.workspaces.index.backoffice",
         "execute.controller.xhr-authentication.login.default",
         "execute.controller.xhr-authentication.is-session-expiring.backoffice",
-        "execute.controller.xhr-authentication.logout.default"
+        "execute.controller.xhr-authentication.logout.default",
+        "execute.controller.logout.confirm-logout.backoffice",
+        "execute.controller.logout.index.backoffice"
     ]
 }

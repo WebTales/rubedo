@@ -12,7 +12,7 @@
  * @license    yet to be written
  * @version    $Id:
  */
-
+Use Rubedo\Services\Manager;
 /**
  * Back Office Defautl Controller
  * 
@@ -34,10 +34,14 @@ class Backoffice_IndexController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
-		$this->_auth = Rubedo\Services\Manager::getService('Authentication');
+		$this->_auth = Manager::getService('Authentication');
 		
 		if(!$this->_auth->getIdentity()){
-			$this->_helper->redirector->gotoUrl("/backoffice/login");
+			$this->_helper->redirector->gotoUrl($this->_helper->url('index','login','backoffice'));
+		}
+		
+		if(! Manager::getService('Acl')->hasAccess('ui.backoffice')){
+		    $this->_helper->redirector->gotoUrl($this->_helper->url('confirm-logout','logout','backoffice'));
 		}
 		
 		$extjsOptions = Zend_Registry::get('extjs');
