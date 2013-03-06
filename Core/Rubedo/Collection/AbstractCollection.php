@@ -205,10 +205,11 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function findById ($contentId,$forceReload = false)
     {
-        if($forceReload || !isset(self::$_fetchedObjects[$contentId])){
-            self::$_fetchedObjects[$contentId] = $this->_dataService->findById($contentId);
+        $className = get_class($this);
+        if($forceReload || !isset(self::$_fetchedObjects[$className][$contentId])){
+            self::$_fetchedObjects[$className][$contentId] = $this->_dataService->findById($contentId);
         }
-        return self::$_fetchedObjects[$contentId];
+        return self::$_fetchedObjects[$className][$contentId];
     }
 
     /**
