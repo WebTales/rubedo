@@ -59,7 +59,40 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         
         // call standard method with merge array
         $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
-        parent::indexAction();
+        $filterJson = $this->getRequest()->getParam('filter');
+        if (isset($filterJson)) {
+            $filters = Zend_Json::decode($filterJson);
+        } else {
+            $filters = null;
+        }
+        $sortJson = $this->getRequest()->getParam('sort');
+        if (isset($sortJson)) {
+            $sort = Zend_Json::decode($sortJson);
+        } else {
+            $sort = null;
+        }
+        $startJson = $this->getRequest()->getParam('start');
+        if (isset($startJson)) {
+            $start = Zend_Json::decode($startJson);
+        } else {
+            $start = null;
+        }
+        $limitJson = $this->getRequest()->getParam('limit');
+        if (isset($limitJson)) {
+            $limit = Zend_Json::decode($limitJson);
+        } else {
+            $limit = null;
+        }
+
+        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit,false);
+
+        $response = array();
+        $response['total'] = $dataValues['count'];
+        $response['data'] = $dataValues['data'];
+        $response['success'] = TRUE;
+        $response['message'] = 'OK';
+
+        $this->_returnJson($response);
     }
 
     /**

@@ -62,10 +62,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      * @return array
      */
     protected function _outputObjectFilter($obj) {
-		if(($obj['workspace']['status'] == "draft" || $obj['workspace']['status'] == "pending")  && $this->_currentWs == "live") {
-            $this->_currentWs = "workspace";
-        }
-		
+
         if (isset($obj[$this->_currentWs])) {
             foreach ($obj[$this->_currentWs] as $key => $value) {
                 $obj[$key] = $value;
