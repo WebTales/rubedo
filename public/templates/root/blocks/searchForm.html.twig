@@ -1,3 +1,8 @@
+{% extends "root/block.html.twig" %}
+
+{% block mainContent %}
 <form class="navbar-search" action="{{ searchPage }}">
   <input type="text" class="search-query" placeholder="Rechercher" name="query">
 </form>
+{% endblock %
+
