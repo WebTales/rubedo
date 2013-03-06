@@ -33,6 +33,7 @@ class Blocks_ImageController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array());
             
         $site = $this->getParam('site');
+        $output = $this->getAllParams();
         $output['imageLink'] = isset($blockConfig['imageLink']) ? $blockConfig['imageLink'] : null;
         $output['imageAlt'] = isset($blockConfig['imageAlt']) ? $blockConfig['imageAlt'] : null;
         $output['imageFile'] = isset($blockConfig['imageFile']) ? $blockConfig['imageFile'] : null;

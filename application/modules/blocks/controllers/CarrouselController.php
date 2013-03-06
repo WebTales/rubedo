@@ -58,6 +58,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
             $fields['id'] = (string)$vignette['id'];
             $data[] = $fields;
         }
+        $output = $this->getAllParams();
         $output["items"] = $data;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html.twig");
         $css = array();

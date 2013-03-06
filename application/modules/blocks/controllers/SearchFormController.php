@@ -44,6 +44,7 @@ class Blocks_SearchFormController extends Blocks_AbstractController
         $css = array();
         $js = array();
         
+        $output = $this->getAllParams();
 		$output['searchPage'] = $searchPage;
 		
         $this->_sendResponse($output, $template, $css, $js);

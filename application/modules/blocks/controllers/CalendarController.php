@@ -105,6 +105,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
             $filledDate[intval(date('d', $vignette['fields'][$dateField]))] = true;
         }
         
+        $output = $this->getAllParams();
         $output['blockConfig'] = $blockConfig;
         $output["data"] = $data;
         $output["query"]['type'] = $queryType;

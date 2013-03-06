@@ -28,6 +28,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
 {
 
     protected $_defaultTemplate = 'contentlist';
+    
 
     public function indexAction ()
     {
@@ -59,6 +60,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         
         $queryConfig = $this->getQuery($queryId);
         $queryType = $queryConfig['type'];
+        $output = $this->getAllParams();
         
         //build query
         

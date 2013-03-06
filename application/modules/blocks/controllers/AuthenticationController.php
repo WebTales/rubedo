@@ -30,7 +30,7 @@ class Blocks_AuthenticationController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-
+        $output = $this->getAllParams();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/authentication.html.twig");
 		$currentUser = Manager::getService('CurrentUser')->getCurrentUser();
         $output=array();
