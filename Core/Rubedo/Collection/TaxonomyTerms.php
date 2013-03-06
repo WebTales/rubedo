@@ -35,9 +35,18 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 "parentId" => 1,
                 "orderValue" => 1
             )
+        ),
+        array(
+            'keys' => array(
+                'text' => 1,
+                'vocabularyId' => 1,
+                "parentId" => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
         )
-    )
-    ;
+    );
 
     public function __construct ()
     {
@@ -354,18 +363,17 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
             throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');
         }
-		$childrenToDelete = $this->_getChildToDelete($obj['id']);
-		
+        $childrenToDelete = $this->_getChildToDelete($obj['id']);
+        
         $deleteCond = array(
             '_id' => array(
                 '$in' => $childrenToDelete
             )
         );
-		foreach($childrenToDelete as $child)
-		{
-			$updateContent=Manager::getService('Contents')->unsetTerms($obj["vocabularyId"],$child);
-		}
-		
+        foreach ($childrenToDelete as $child) {
+            $updateContent = Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
+        }
+        
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
         if ($resultArray['ok'] == 1) {

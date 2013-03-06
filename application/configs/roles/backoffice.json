@@ -5,6 +5,7 @@
     	"en":"Use backoffice"
     },
     "rights":[
+        "ui.backoffice",
         "execute.controller.index.@dot*.backoffice",
         "execute.controller.logout.index.backoffice",
         "execute.controller.current-user.@dot*.backoffice",

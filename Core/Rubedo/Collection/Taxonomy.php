@@ -27,7 +27,10 @@ use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager;
  */
 class Taxonomy extends AbstractCollection implements ITaxonomy
 {
-
+    protected $_indexes = array(
+        array('keys'=>array('name'=>1),'options'=>array('unique'=>true)),   
+    );
+    
     /**
      * Only access to content with read access
      * @see \Rubedo\Collection\AbstractCollection::_init()
