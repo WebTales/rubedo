@@ -16,6 +16,7 @@
         "execute.controller.content-list.xhr-get-items.blocks",
         "execute.controller.workspaces.index.backoffice",
         "execute.controller.xhr-authentication.login.default",
-        "execute.controller.xhr-authentication.is-session-expiring.backoffice"
+        "execute.controller.xhr-authentication.is-session-expiring.backoffice",
+        "execute.controller.xhr-authentication.logout.default"
     ]
 }

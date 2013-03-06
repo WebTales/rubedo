@@ -7,7 +7,8 @@
     "rights":[
         "write.ui.pages",
         "execute.controller.pages.create.backoffice",
-        "execute.controller.pages.delete.backoffice"
+        "execute.controller.pages.delete.backoffice",
+        "execute.controller.pages.update.backoffice"
     ],
     "includes":[
         "pageReader"
