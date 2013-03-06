@@ -1,5 +1,5 @@
 {
-    "id":"ContentReviewer",
+    "id":"contentReviewer",
     "label":{
     	"fr":"Validation des contenus",
     	"en":"Can review contents"
