@@ -2,12 +2,16 @@
 
 <html>
 <head>
-    <meta property="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->baseUrl();?>/backoffice/resources/icones/faviconRubedo.ico"/>
-    <title>Rubedo Connexion</title>
-    <script src="<?php echo $this->extJsPath;?>/<?php echo $this->extJsScript;?>"></script>
-    <link rel="stylesheet" href="<?php echo $this->extJsPath;?>/resources/css/ext-all-gray.css" id="theme">
-    <script type="text/javascript">
+<meta property="Content-Type" content="text/html; charset=UTF-8">
+<link rel="shortcut icon" type="image/x-icon"
+	href="<?php echo $this->baseUrl();?>/backoffice/resources/icones/faviconRubedo.ico" />
+<title>Rubedo Connexion</title>
+<script
+	src="<?php echo $this->extJsPath;?>/<?php echo $this->extJsScript;?>"></script>
+<link rel="stylesheet"
+	href="<?php echo $this->extJsPath;?>/resources/css/ext-all-gray.css"
+	id="theme">
+<script type="text/javascript">
     	Ext.Loader.setConfig({
     enabled: false});
 
@@ -100,15 +104,7 @@ Ext.define('Connector.view.Viewport', {
                             tabIndex:1000,
                             tooltip: 'Votre mot de passe'
                         },
-                        {
-                            xtype: 'button',
-                            anchor: '50%',
-                            margin: '0 10 0 0',
-                            icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/user_add.png',
-                            scale: 'large',
-                            text: 'Inscription',
-                            tooltip: 'Créer un nouveau comte utilisateur'
-                        },
+                        
                         {
                             xtype: 'button',
                             id:'submitBtn',
@@ -138,11 +134,9 @@ Ext.define('Connector.view.Viewport', {
                                     }); 
                                 }
                             }},
-                            anchor: '50%',
-                            margin: '0 0 0 10',
-                            icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/accept.png',
+                            anchor: '100%',
                             scale: 'large',
-                            text: 'Valider',
+                            text: 'Se connecter',
                             tooltip: 'Envoyer les données et se connecter'
                         }
                     ]
