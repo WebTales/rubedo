@@ -609,7 +609,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         
         $obj = parent::findById ($contentId, $live,$raw);
-        $obj = $this->_addReadableProperty($obj);
+        if($obj){
+            $obj = $this->_addReadableProperty($obj);
+        }
+        
         return $obj;
         
     }

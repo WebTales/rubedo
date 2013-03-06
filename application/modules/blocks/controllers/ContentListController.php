@@ -113,7 +113,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
             
             $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
             $output['singlePage'] = $this->getParam('single-page', $singlePage);
-            $output['displayType'] = $this->getParam('displayType',$blockConfig['displayType']);
+            $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->getParam('displayType',null);
+            $output['displayType'] = $displayType;
             
             $output['xhrUrl'] = $this->_helper->url->url(array(
                 'module' => 'blocks',
