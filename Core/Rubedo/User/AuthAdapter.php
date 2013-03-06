@@ -64,7 +64,9 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
         $dataService->addToFieldList(array(
             'login',
             'password',
-            'salt'
+            'salt',
+            'startValidity',
+            'endValidity'
         ));
         
         $hashService = \Rubedo\Services\Manager::getService('Hash');
