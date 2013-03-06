@@ -118,6 +118,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         }
         
         // Values sent to the view
+        $output = $this->getAllParams();
         $output['prefix']=$prefix;
         $output['items'] = $data;
         $output['allDamCount'] = $allDamCount;

@@ -61,6 +61,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             }
             $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
             $templateName .= ".html.twig";
+            $output = $this->getAllParams();
             $output["data"] = $data;
             $output["type"] = $cTypeArray;
             Manager::getService('PageContent')->setPageTitle($data['text']);

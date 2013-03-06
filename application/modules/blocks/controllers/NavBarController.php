@@ -30,6 +30,8 @@ class Blocks_NavBarController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
+        $output = $this->getAllParams();
+        
         $blockConfig = $this->getParam('block-config', array());
 
         if (isset($blockConfig['rootPage'])) {

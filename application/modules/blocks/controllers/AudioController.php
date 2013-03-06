@@ -32,6 +32,7 @@ class Blocks_AudioController extends Blocks_AbstractController
     {
         $blockConfig = $this->getParam('block-config', array());  
         $site = $this->getParam('site');
+        $output = $this->getAllParams();
         $output['audioAutoPlay'] = isset($blockConfig['audioAutoplay']) ? $blockConfig['audioAutoplay'] : false;
         $output['audioPreload'] = isset($blockConfig['audioPreload']) ? $blockConfig['audioPreload'] : false;
 		$output['audioControls'] = isset($blockConfig['audioControls']) ? $blockConfig['audioControls'] : true;

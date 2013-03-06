@@ -30,7 +30,8 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
      * Default Action, return the Ext/Js HTML loader
      */
     public function indexAction() {
-
+        $output = $this->getAllParams();
+        
 		$blockConfig = $this->getParam('block-config', array());
 
         if (isset($blockConfig['rootPage'])) {
@@ -44,6 +45,7 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         $lang = $session->get('lang', 'fr');
         
         $currentPage = $this->getRequest()->getParam('currentPage');
+        
         $output['currentPage'] = Manager::getService('Pages')->findById($currentPage);
         
         $rootline = $this->getRequest()->getParam('rootline', array());

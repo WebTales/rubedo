@@ -30,7 +30,7 @@ class Blocks_FooterController extends Blocks_AbstractController
      * Default Action, return the Ext/Js HTML loader
      */
     public function indexAction() {
-
+        $output = $this->getAllParams();
         $output["items"] = null;
 
 		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');

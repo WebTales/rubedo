@@ -32,6 +32,7 @@ class Blocks_VideoController extends Blocks_AbstractController
     {
         $blockConfig = $this->getParam('block-config', array());  
         $site = $this->getParam('site');
+        $output = $this->getAllParams();
         $output['videoAutoPlay'] = isset($blockConfig['videoAutoplay']) ? $blockConfig['videoAutoplay'] : false;
         $output['videoPreload'] = isset($blockConfig['videoPreload']) ? $blockConfig['videoPreload'] : false;
 		$output['videoControls'] = isset($blockConfig['videoControls']) ? $blockConfig['videoControls'] : false;

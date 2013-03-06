@@ -93,6 +93,7 @@ class Blocks_EmbeddedMediaController extends Blocks_AbstractController
 		
 		}
 		
+		$output = $this->getAllParams();
         $output['item'] = $item;
 		
        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/oembed.html.twig");

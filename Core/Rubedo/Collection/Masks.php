@@ -60,6 +60,7 @@ class Masks extends AbstractCollection implements IMasks
 			
     protected $_indexes = array(
         array('keys'=>array('site'=>1)),
+        array('keys'=>array('text'=>1,'site'=>1),'options'=>array('unique'=>true)),
     );
 
 	public function __construct(){

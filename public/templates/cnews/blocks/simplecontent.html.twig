@@ -1,6 +1,0 @@
-{% extends "root/block.html.twig" %} {% block mainContent %}
-<h2 class="editable" id="{{ id }}_title">{{ title }}</h2>
-<div class="editable" id="{{ id }}_paragraph">{{ paragraph|raw }}</div>
-{% if (link) %}
-<div class="editable" id="{{ id }}_link">{{ link|raw }}</div>
-{% endif %} {% endblock %}

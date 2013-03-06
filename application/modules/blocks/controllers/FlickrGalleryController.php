@@ -161,6 +161,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             $cache->save($items, $cacheKey,array('flickr'));
         }
         
+        $output = $this->getAllParams();
         $output['items'] = $items;
 		if(isset($flParams['user'])){
 			$output['user'] = $flParams['user'];
