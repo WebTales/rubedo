@@ -47,7 +47,7 @@ class Backoffice_LoginController extends Zend_Controller_Action
     public function indexAction ()
     {
         if($this->_auth->getIdentity()){
-			$this->_helper->redirector->gotoUrl($this->_helper->url('index','index','backoffice'));
+			$this->_helper->redirector->gotoUrl($this->view->baseUrl().'/backoffice/');
 		}
 		
 		$extjsOptions = Zend_Registry::get('extjs');
