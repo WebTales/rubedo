@@ -263,7 +263,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 	        }
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
-	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
+	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces))==0 && !in_array("all", $writeWorkspaces)) {
 	            $obj['readOnly'] = true;
 	        } else {
 	            
