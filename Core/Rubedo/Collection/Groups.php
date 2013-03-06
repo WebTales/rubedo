@@ -29,7 +29,7 @@ class Groups extends AbstractCollection implements IGroups
 {
     
     protected $_indexes = array(
-        array('keys'=>array('name'=>1),'options'=>array('unique'=>true)),
+        array('keys'=>array('name'=>1,'parentId'=>1),'options'=>array('unique'=>true)),
         array('keys'=>array('parentId'=>1)),
         array('keys'=>array('members'=>1)),
         
