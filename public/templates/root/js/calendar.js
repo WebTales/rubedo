@@ -1,4 +1,4 @@
-function calendarChangeDate(date, prefix, query, url, singlePage) {
+function calendarChangeDate(date, prefix, query, url, singlePage,dateField) {
 	if (jQuery('#calendar-' + prefix + ' > #calendar-' + date).length == 0) {
 		var request = jQuery.ajax({
 			url : url + '/blocks/calendar/xhr-get-calendar',
@@ -7,7 +7,8 @@ function calendarChangeDate(date, prefix, query, url, singlePage) {
 				'cal-date' : date,
 				'prefix' : prefix,
 				'query-id' : query,
-				'single-page' : singlePage
+				'single-page' : singlePage,
+				'date-field' : dateField
 			},
 			dataType : "json"
 		});

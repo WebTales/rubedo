@@ -46,14 +46,17 @@ class Blocks_CalendarController extends Blocks_ContentListController
 
     protected function _getList ()
     {
-        $dateField = $this->getParam('dateField', 'date');
-        $endDateField = $this->getParam('endDateField', 'endDate');
-        $usedDateField = 'fields.' . $dateField;
+        
+        
         
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getRequest()->getParam('block-config');
+        
+        $dateField = isset($blockConfig['dateField'])?$blockConfig['dateField']:$this->getParam('date-field', 'date');
+        $endDateField = isset($blockConfig['endDateField'])?$blockConfig['endDateField']:$this->getParam('endDateField', 'date_end');
+        $usedDateField = 'fields.' . $dateField;
         
         $date = $this->getParam('cal-date');
         if ($date) {
@@ -146,11 +149,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
         
         $output['caldate'] = $date;
         
-        $output['xhrUrl'] = $this->_helper->url->url(array(
-            'module' => 'blocks',
-            'controller' => 'calendar',
-            'action' => 'xhr-get-calendar'
-        ), 'default');
+        $output['dateField'] = $dateField;
         
         return $output;
     }
