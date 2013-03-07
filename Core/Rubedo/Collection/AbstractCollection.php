@@ -311,96 +311,93 @@ abstract class AbstractCollection implements IAbstractCollection
 			
 		foreach($model as $key => $value){
 			//If the configuration is not specified for the current field
-			if(!isset($value['domain']) || !isset($value['required'])){
-				continue;
-			}
-			
-			
-			if(isset($obj[$key])){
-				switch ($value['domain']) {
-					
-					/**
-					 * Case with a list domain
-					 * 
-					 * Check if the elements of the object array correspond with the model
-					 */
-					case 'list':
-						if(isset($value['items']) && isset($value['items']['domain']) && isset($value['items']['required'])) {
-							if($this->_isValid($obj[$key], $value['domain'])) {
-								if(count($obj[$key]) > 0) {
-									foreach ($obj[$key] as $subKey => $subValue) {
-										if($value['items']['domain'] != "list" && $value['items']['domain'] != "array") {
-											if(!$this->_isValid($subValue, $value['items']['domain'])) {
-												$this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'].'"';
-											}
-										} else {
-											if($value['items']['domain'] == "list"){
-												if(isset($value['items']['items']['domain']) && isset($value['items']['items']['required'])){
-													$this->_filterInputData(array('key' => $subValue), array('key' => $value['items']['items']));
+			if(isset($value['domain']) && isset($value['required'])){
+				if(isset($obj[$key])){
+					switch ($value['domain']) {
+						
+						/**
+						 * Case with a list domain
+						 * 
+						 * Check if the elements of the object array correspond with the model
+						 */
+						case 'list':
+							if(isset($value['items']) && isset($value['items']['domain']) && isset($value['items']['required'])) {
+								if($this->_isValid($obj[$key], $value['domain'])) {
+									if(count($obj[$key]) > 0) {
+										foreach ($obj[$key] as $subKey => $subValue) {
+											if($value['items']['domain'] != "list" && $value['items']['domain'] != "array") {
+												if(!$this->_isValid($subValue, $value['items']['domain'])) {
+													$this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+												}
+											} else {
+												if($value['items']['domain'] == "list"){
+													if(isset($value['items']['items']['domain']) && isset($value['items']['items']['required'])){
+														$this->_filterInputData(array('key' => $subValue), array('key' => $value['items']['items']));
+													} else {
+														$this->_filterInputData($subValue, $value['items']['items']);
+													}
 												} else {
 													$this->_filterInputData($subValue, $value['items']['items']);
 												}
-											} else {
-												$this->_filterInputData($subValue, $value['items']['items']);
 											}
+										}
+									} else {
+										if($value['items']['required'] == true) {
+											$this->_errors[$key] = 'this field is required';
+										} else {
+											continue;
 										}
 									}
 								} else {
-									if($value['items']['required'] == true) {
-										$this->_errors[$key] = 'this field is required';
-									} else {
-										continue;
-									}
+									$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
 								}
 							} else {
-								$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
+								continue;
 							}
-						} else {
-							continue;
-						}
-						break;
-					
-					/**
-					 * Case with an array domain
-					 * 
-					 * Recall _filterInputData function with the object array and it's model
-					 */
-					case 'array':
-						if(isset($value['items']) && count($value['items']) > 0) {
-							if($this->_isValid($obj[$key], $value['domain'])) {
-								if(count($obj[$key]) > 0) {
-									$this->_filterInputData($obj[$key], $value['items']);
+							break;
+						
+						/**
+						 * Case with an array domain
+						 * 
+						 * Recall _filterInputData function with the object array and it's model
+						 */
+						case 'array':
+							if(isset($value['items']) && count($value['items']) > 0) {
+								if($this->_isValid($obj[$key], $value['domain'])) {
+									if(count($obj[$key]) > 0) {
+										$this->_filterInputData($obj[$key], $value['items']);
+									} else {
+										if($value['items']['required'] == true) {
+											$this->_errors[$key] = 'this field is required';
+										} else {
+											continue;
+										}
+									}
 								} else {
-									if($value['items']['required'] == true) {
-										$this->_errors[$key] = 'this field is required';
-									} else {
-										continue;
-									}
+									$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
 								}
 							} else {
-								$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
+								continue;
 							}
-						} else {
-							continue;
-						}
-						break;
-					
-					/**
-					 * Case with a simple domain
-					 * 
-					 * Just check if the current object value correspond with the model
-					 */
-					default :
-						if(!$this->_isValid($obj[$key], $value['domain'])) {
-							$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
-						}
-						break;
-				}
-			} else {
-				if(isset($value['items']) && $value['items']['required'] == true) {
-					$this->_errors[$key] = 'this field is required';
+							break;
+						
+						/**
+						 * Case with a simple domain
+						 * 
+						 * Just check if the current object value correspond with the model
+						 */
+						default :
+							if(!$this->_isValid($obj[$key], $value['domain'])) {
+								$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
+							}
+							break;
+					}
 				} else {
-					continue;
+					if(isset($value['items']) && $value['items']['required'] == true) {
+						$this->_errors[$key] = 'this field is required';
+					} else {
+						continue;
+					}
 				}
 			}
 		}
