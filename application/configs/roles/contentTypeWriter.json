@@ -9,7 +9,8 @@
         "execute.controller.content-types.update.backoffice",
         "execute.controller.content-types.delete.backoffice",
         "execute.controller.content-types.create.backoffice",
-        "execute.controller.content-types.is-changeable.backoffice"
+        "execute.controller.content-types.is-changeable.backoffice",
+        "execute.controller.content-types.is-used.backoffice"
     ],
     "includes":[
         "contentTypeReader"
