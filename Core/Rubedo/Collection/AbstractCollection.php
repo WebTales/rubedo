@@ -311,7 +311,7 @@ abstract class AbstractCollection implements IAbstractCollection
 			
 		foreach($model as $key => $value){
 			//If the configuration is not specified for the current field
-			if(!isset($value['domain']) && !isset($value['required'])){
+			if(!isset($value['domain']) || !isset($value['required'])){
 				continue;
 			}
 			
