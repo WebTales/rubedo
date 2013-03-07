@@ -36,7 +36,14 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
         }
         $pageUrl = Manager::getService('Url')->getPageUrl($pageId);
         
-        $url = 'http://' . Manager::getService('Sites')->getHost($page['site']) . '/' . $pageUrl;
+        $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
+        $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
+        
+        $targetSite = Manager::getService('Sites')->findById($page['site']);
+        $protocol = in_array($httpProtocol, $targetSite['protocol'])?$httpProtocol:array_pop($targetSite['protocol']);
+        $protocol = strtolower($protocol);
+        
+        $url = $protocol.'://' . Manager::getService('Sites')->getHost($page['site']) . '/' . $pageUrl;
         
         $returnArray = array(
             'url' => $url
