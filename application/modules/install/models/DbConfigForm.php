@@ -23,7 +23,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_DbConfigForm
+class Install_Model_DbConfigForm extends Install_Model_BootstrapForm
 {
 
     public static function getForm ($params)
@@ -52,56 +52,14 @@ class Install_Model_DbConfigForm
         $serverPasswordField = new Zend_Form_Element_Text('password');
         $serverPasswordField->setValue(isset($params['password']) ? $params['password'] : null);
         $serverPasswordField->setLabel('Password');
-        
-        $submitButton = new Zend_Form_Element_Submit('Submit');
-        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
-        
-        $resetButton = new Zend_Form_Element_Reset('Reset');
-        $resetButton->setAttrib('class', 'btn btn-large btn-warning');
-        
-        // $buttons = new Zend_Form_DisplayGroup();
-        
+ 
         $dbForm = new Zend_Form();
-        $dbForm->setMethod('post');
-        $dbForm->setAttrib('id', 'installForm');
         $dbForm->addElement($serverNameField);
-        // $dbForm->addElement($serverPortField);
         $dbForm->addElement($dbNameField);
         $dbForm->addElement($serverLoginField);
         $dbForm->addElement($serverPasswordField);
-        $dbForm->addDisplayGroup(array(
-            $resetButton,
-            $submitButton
-        ), 'buttons');
-        $dbForm->getDisplayGroup('buttons')->setDecorators(array(
-            
-            'FormElements',
-            array(
-                'HtmlTag',
-                array(
-                    'tag' => 'div',
-                    'class' => 'form-actions'
-                )
-            )
-        ));
-        foreach ($dbForm->getElements() as $element) {
-            $element->removeDecorator('HtmlTag');
-            if ($element->getDecorator('label')) {
-                $element->removeDecorator('Label');
-                $element->addDecorator('Label');
-            }
-        }
-        foreach ($dbForm->getDisplayGroups() as $group) {
-            foreach ($group->getElements() as $element) {
-                    //$element->clearDecorators();
-                    //$element->addDecorator('FormElements');
-                $element->removeDecorator('HtmlTag');
-                $element->removeDecorator('Label');
-                $element->removeDecorator('Tooltip');
-                $element->removeDecorator('DtDdWrapper');
-            }
-        }
-        $dbForm->removeDecorator('HtmlTag');
+        
+        $dbForm = self::setForm($dbForm);
         
         return $dbForm;
     }
