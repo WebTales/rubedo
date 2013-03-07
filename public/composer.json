@@ -8,7 +8,7 @@
 		"zencoder/video-js": "3.2.0",
 		"webtales/bootstrap-image-gallery" : "2.10.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "1.0.0b2"
+		"webtales/rubedo-backoffice-ui": "1.0.0b3"
 	},
 	"require-dev": {},
 	"repositories": [
