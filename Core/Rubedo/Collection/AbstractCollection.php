@@ -393,7 +393,7 @@ abstract class AbstractCollection implements IAbstractCollection
 							break;
 					}
 				} else {
-					if(isset($value['items']) && $value['items']['required'] == true) {
+					if((isset($value['items']) && isset($value['items']['required']) && $value['items']['required'] == true) || (isset($value['required']) && $value['required'] == true)) {
 						$this->_errors[$key] = 'this field is required';
 					} else {
 						continue;
