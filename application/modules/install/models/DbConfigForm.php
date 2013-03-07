@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
@@ -24,18 +25,20 @@
  */
 class Install_Model_DbConfigForm
 {
-    public static function getForm($params){
-        
+
+    public static function getForm ($params)
+    {
         $serverNameField = new Zend_Form_Element_Text('server');
         $serverNameField->setRequired(true);
         $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost');
         $serverNameField->setLabel('Server Name');
         
-        //$serverPortField = new Zend_Form_Element_Text('serverport');
+        // $serverPortField = new Zend_Form_Element_Text('serverport');
         // $serverPortField->setRequired(true);
-        //$serverPortField->setValue(isset($params['port']) ? $params['port'] : null);
-        //$serverPortField->addValidator('digits');
-        //$serverPortField->setLabel('Server Port');
+        // $serverPortField->setValue(isset($params['port']) ? $params['port'] :
+        // null);
+        // $serverPortField->addValidator('digits');
+        // $serverPortField->setLabel('Server Port');
         
         $dbNameField = new Zend_Form_Element_Text('db');
         $dbNameField->setRequired(true);
@@ -53,15 +56,52 @@ class Install_Model_DbConfigForm
         $submitButton = new Zend_Form_Element_Submit('Submit');
         $submitButton->setAttrib('class', 'btn btn-large btn-primary');
         
+        $resetButton = new Zend_Form_Element_Reset('Reset');
+        $resetButton->setAttrib('class', 'btn btn-large btn-warning');
+        
+        // $buttons = new Zend_Form_DisplayGroup();
+        
         $dbForm = new Zend_Form();
         $dbForm->setMethod('post');
-        $dbForm->setAttrib('id', 'dbForm');
+        $dbForm->setAttrib('id', 'installForm');
         $dbForm->addElement($serverNameField);
         // $dbForm->addElement($serverPortField);
         $dbForm->addElement($dbNameField);
         $dbForm->addElement($serverLoginField);
         $dbForm->addElement($serverPasswordField);
-        $dbForm->addElement($submitButton);
+        $dbForm->addDisplayGroup(array(
+            $resetButton,
+            $submitButton
+        ), 'buttons');
+        $dbForm->getDisplayGroup('buttons')->setDecorators(array(
+            
+            'FormElements',
+            array(
+                'HtmlTag',
+                array(
+                    'tag' => 'div',
+                    'class' => 'form-actions'
+                )
+            )
+        ));
+        foreach ($dbForm->getElements() as $element) {
+            $element->removeDecorator('HtmlTag');
+            if ($element->getDecorator('label')) {
+                $element->removeDecorator('Label');
+                $element->addDecorator('Label');
+            }
+        }
+        foreach ($dbForm->getDisplayGroups() as $group) {
+            foreach ($group->getElements() as $element) {
+                    //$element->clearDecorators();
+                    //$element->addDecorator('FormElements');
+                $element->removeDecorator('HtmlTag');
+                $element->removeDecorator('Label');
+                $element->removeDecorator('Tooltip');
+                $element->removeDecorator('DtDdWrapper');
+            }
+        }
+        $dbForm->removeDecorator('HtmlTag');
         
         return $dbForm;
     }
