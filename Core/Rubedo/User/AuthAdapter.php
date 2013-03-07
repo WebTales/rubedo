@@ -98,15 +98,15 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
         $salt = $user['salt'];
         $targetHash = $user['password'];
         unset($user['password']);
-        
+
         $valid = $hashService->checkPassword($targetHash, $this->_password, $salt);
         
         $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
-        if (isset($user['startValidity'])) {
+        if (isset($user['startValidity']) && !empty($user['startValidity'])) {
             $valid = $valid && ($user['startValidity'] <= $currentTime);
         }
         
-        if (isset($user['endValidity'])) {
+        if (isset($user['endValidity']) && !empty($user['endValidity'])) {
             $valid = $valid && ($user['endValidity'] > $currentTime);
         }
         

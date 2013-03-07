@@ -56,7 +56,7 @@
 	<div id="topSpace" class="navbar navbar-fixed-top"></div>
 	{% endblock %} 
 	{% block pageContentToolBar %} 
-    	{% if isLoggedIn %}
+    	{% if canEdit %}
     	<div class="navbar hide navbar-inverse" id="contentToolBar">
     		<div class="navbar-inner">
     			<div class="container-fluid">

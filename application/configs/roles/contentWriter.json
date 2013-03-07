@@ -11,7 +11,8 @@
         "write.ui.contents.draftToPending",
         "execute.controller.contents.@dot*",
         "execute.controller.versioning.index.backoffice",
-        "execute.controller.taxonomy-terms.index.backoffice"      
+        "execute.controller.taxonomy-terms.index.backoffice" ,
+        "write.frontoffice.contents"     
     ],
     "includes":[
         "contentReader"

@@ -135,8 +135,10 @@ class IndexController extends Zend_Controller_Action
         
         $this->_servicePage->appendCss('/templates/'.$this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
         
+        $canEdit = $isLoggedIn && Manager::getService('Acl')->hasAccess('write.frontoffice.contents');
+        
         // load the javaScripts files
-        if ($isLoggedIn) {
+        if ($canEdit) {
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
             $this->_servicePage->appendJs('/templates/'.$this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
         }
@@ -168,6 +170,7 @@ class IndexController extends Zend_Controller_Action
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
         $twigVar['isLoggedIn'] = $isLoggedIn;
+        $twigVar['canEdit'] = $canEdit;
         
         $pageTemplate = $this->_serviceTemplate->getFileThemePath($this->_pageParams['template']);
         
