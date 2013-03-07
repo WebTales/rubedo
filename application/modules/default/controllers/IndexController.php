@@ -77,17 +77,18 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * array of parent IDs
-	 * 
-	 * @var array
+     *
+     * @var array
      */
     protected $_rootlineArray;
-	
-	/**
-	 * ID of the column to display main content instead of page content if content-id given
-	 * 
-	 * @var string
-	 */
-	protected $_mainCol = null;
+
+    /**
+     * ID of the column to display main content instead of page content if
+     * content-id given
+     *
+     * @var string
+     */
+    protected $_mainCol = null;
 
     /**
      * Main Action : render the Front Office view
@@ -102,6 +103,25 @@ class IndexController extends Zend_Controller_Action
         $this->_servicePage = Manager::getService('PageContent');
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_session = Manager::getService('Session');
+        
+        $this->_pageId = $this->getRequest()->getParam('pageId');
+        $this->_servicePage->setCurrentPage($this->_pageId);
+        
+        // if no page found, maybe installation isn't set
+        if (! $this->_pageId) {
+            $applicationOptions = $this->getFrontController()
+                ->getParam('bootstrap')
+                ->getApplication()
+                ->getOptions();
+            
+            if (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished') {
+                $this->_helper->redirector->gotoUrl($this->_helper->url('index', 'index', 'install')); // redirect
+                                                                                                       // to
+                                                                                                       // install
+                                                                                                       // tool
+            }
+            throw new \Rubedo\Exceptions\NotFound('No Page found');
+        }
         
         // context
         $lang = $this->_session->get('lang', 'fr');
@@ -129,29 +149,17 @@ class IndexController extends Zend_Controller_Action
             Zend_Registry::set('draft', false);
         }
         
-        // $this->_serviceTemplate->setCurrentTheme();
-        
         // Load the CSS files
-        
-        $this->_servicePage->appendCss('/templates/'.$this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
+        $this->_servicePage->appendCss('/templates/' . $this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
         
         $canEdit = $isLoggedIn && Manager::getService('Acl')->hasAccess('write.frontoffice.contents');
         
         // load the javaScripts files
         if ($canEdit) {
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
-            $this->_servicePage->appendJs('/templates/'.$this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
+            $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
         }
         
-        //$this->_servicePage->appendJs('/js/scripts.js');
-        
-        $this->_pageId = $this->getRequest()->getParam('pageId');
-        $this->_servicePage->setCurrentPage($this->_pageId);
-        
-        
-        if (! $this->_pageId) {
-            throw new \Rubedo\Exceptions\NotFound('No Page found');
-        }
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
         
@@ -159,13 +167,44 @@ class IndexController extends Zend_Controller_Action
         
         // Build Twig context
         $twigVar = $this->_pageParams;
-        $twigVar['contentId'] = $this->getParam('content-id',false);
+        
+        // change title & description if displaying a single content as main
+        // content
+        $directContentId = $this->getParam('content-id', false);
+        if ($directContentId) {
+            
+            $singleContent = Manager::getService('Contents')->findById($directContentId, ! Zend_Registry::get('draft'), false);
+            if ($singleContent) {
+                $twigVar['contentId'] = $directContentId;
+                $this->_servicePage->setPageTitle($singleContent['text']);
+                $this->_servicePage->setDescription($singleContent['fields']['summary']);
+            }
+        }
+        
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
-        $twigVar['title'] = $this->_servicePage->getPageTitle();
+        $twigVar['title'] = isset($this->_site['title']) && ! empty($this->_site['title']) ? $this->_site['title'] . ' - ' : '';
+        $twigVar['title'] .= $this->_servicePage->getPageTitle();
+        
+        //set metadata
+        $description = $this->_servicePage->getDescription();
+        if (empty($description)) {
+            $description = $this->_site['description'];
+        }
         $twigVar['description'] = $this->_servicePage->getDescription();
-        $twigVar['keywords'] = $this->_servicePage->getKeywords();
+        
+        $author = $this->_site['author'];
+        if (empty($author)) {
+            $author = $this->_servicePage->getAuthor();
+        }
+        $twigVar['author'] = $author;
+        
+        $keywords = $this->_servicePage->getKeywords();
+        if (count($keywords) === 0) {
+            $keywords = is_array($this->_site['keywords']) ? $this->_site['keywords'] : array();
+        }
+        $twigVar['keywords'] = implode(',', $keywords);
         
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
@@ -197,7 +236,7 @@ class IndexController extends Zend_Controller_Action
     public function testMailAction ()
     {
         $to = $this->getParam('to', null);
-        if(is_null($to)){
+        if (is_null($to)) {
             throw new \Rubedo\Exceptions\User('Please, give an email adresse');
         }
         $message = Manager::getService('Mailer')->getNewMessage();
@@ -245,13 +284,12 @@ class IndexController extends Zend_Controller_Action
             throw new \Rubedo\Exceptions\Server('no mask found');
         }
         
-        $this->_currentContent = $this->getParam('content-id',null);
+        $this->_currentContent = $this->getParam('content-id', null);
         
-        //@todo get main column
-        if($this->_currentContent){
+        // @todo get main column
+        if ($this->_currentContent) {
             $this->_mainCol = $this->_getMainColumn();
         }
-        
         
         $this->_blocksArray = array();
         foreach ($this->_mask['blocks'] as $block) {
@@ -266,7 +304,7 @@ class IndexController extends Zend_Controller_Action
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
-        if($this->_mainCol){
+        if ($this->_mainCol) {
             unset($this->_blocksArray[$this->_mainCol]);
             $this->_blocksArray[$this->_mainCol][] = $this->_getSingleBlock();
         }
@@ -294,21 +332,25 @@ class IndexController extends Zend_Controller_Action
         
         return $pageInfo;
     }
-    
-    protected function _getSingleBlock(){
+
+    protected function _getSingleBlock ()
+    {
         $block = array();
         $block['configBloc'] = array();
         $block['bType'] = 'contentDetail';
         $block['id'] = 'single';
-        $block['responsive']=array('tablet'=>true,
-                    'desktop'=>true,
-                    'phone'=>true);
+        $block['responsive'] = array(
+            'tablet' => true,
+            'desktop' => true,
+            'phone' => true
+        );
         
         return $block;
     }
-    
-    protected function _getMainColumn(){
-        return isset($this->_mask['mainColumnId'])?$this->_mask['mainColumnId']:null;
+
+    protected function _getMainColumn ()
+    {
+        return isset($this->_mask['mainColumnId']) ? $this->_mask['mainColumnId'] : null;
     }
 
     /**
@@ -317,15 +359,15 @@ class IndexController extends Zend_Controller_Action
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos (array $columns = null,$noSpan = false)
+    protected function _getColumnsInfos (array $columns = null, $noSpan = false)
     {
         if ($columns === null) {
             return null;
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
-            if($noSpan){
-                $returnArray[$key]['span']=null;
+            if ($noSpan) {
+                $returnArray[$key]['span'] = null;
             }
             $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
@@ -378,9 +420,9 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['idHtml'] = isset($row['idHTML']) ? $row['idHTML'] : null;
             
             if (is_array($row['columns'])) {
-                $noSpan = (isset($row['displayAsTab']))?$row['displayAsTab']:false;
-                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns'],$noSpan);
-            }else{
+                $noSpan = (isset($row['displayAsTab'])) ? $row['displayAsTab'] : false;
+                $returnArray[$key]['columns'] = $this->_getColumnsInfos($row['columns'], $noSpan);
+            } else {
                 $returnArray[$key]['columns'] = null;
             }
         }
@@ -400,12 +442,12 @@ class IndexController extends Zend_Controller_Action
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
-        $params['prefix'] = (isset($block['urlPrefix']) && !empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
+        $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
         $params['idHtml'] = isset($block['idHTML']) ? $block['idHTML'] : null;
         $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : false;
-        $params['blockTitle']= isset($block['title'])?$block['title']:null;
+        $params['blockTitle'] = isset($block['title']) ? $block['title'] : null;
         $params['current-page'] = $this->_pageId;
         
         $blockQueryParams = $this->getRequest()->getParam($params['prefix'], array());
@@ -427,18 +469,18 @@ class IndexController extends Zend_Controller_Action
             case 'carrousel':
                 $controller = 'carrousel';
                 break;
-           	case 'googleMaps':
+            case 'googleMaps':
                 $controller = 'google-maps';
                 break;
             case 'Gallerie Flickr':
-            case 'flickrGallery' :
+            case 'flickrGallery':
                 $controller = 'flickr-gallery';
                 break;
             case 'Liste de Contenus':
             case 'contentList':
                 $controller = 'content-list';
                 break;
-            case 'calendar' : 
+            case 'calendar':
                 $controller = 'calendar';
                 break;
             case 'Pied de page':
@@ -457,9 +499,9 @@ class IndexController extends Zend_Controller_Action
                 $params['rootline'] = $this->_rootlineArray;
                 $controller = 'breadcrumbs';
                 break;
-			case 'searchForm':
+            case 'searchForm':
                 $controller = 'search-form';
-				break;				
+                break;
             case 'Twig':
             case 'twig':
                 $controller = 'twig';
@@ -486,34 +528,34 @@ class IndexController extends Zend_Controller_Action
             case 'image':
                 $controller = 'image';
                 break;
-			case 'Audio':
-			case 'audio':
+            case 'Audio':
+            case 'audio':
                 $controller = 'audio';
                 break;
-			case 'Video':
-			case 'video':
+            case 'Video':
+            case 'video':
                 $controller = 'video';
                 break;
-				case 'Authentication':
-			case 'authentication':
+            case 'Authentication':
+            case 'authentication':
                 $controller = 'authentication';
                 break;
             case 'Texte':
-			case 'simpleText':
+            case 'simpleText':
                 $controller = 'text';
                 break;
-			case 'imageGallery':
+            case 'imageGallery':
                 $controller = 'gallery';
                 break;
             case 'Texte Riche':
             case 'richText':
                 $controller = 'rich-text';
                 break;
-			case 'AddThis':
+            case 'AddThis':
             case 'addThis':
                 $controller = 'addthis';
                 break;
-			case 'AddThisFollow':
+            case 'AddThisFollow':
             case 'addThisFollow':
                 $controller = 'addthisfollow';
                 break;
@@ -528,7 +570,7 @@ class IndexController extends Zend_Controller_Action
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = (isset($block['urlPrefix']) && !empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
+                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
                 $route->setPrefix($prefix);
                 
                 $allParams = $this->getAllParams();
