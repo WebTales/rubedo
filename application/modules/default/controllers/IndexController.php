@@ -100,7 +100,6 @@ class IndexController extends Zend_Controller_Action
     /**
      * Main Action : render the Front Office view
      *
-     * @todo remove test
      */
     public function indexAction ()
     {
@@ -134,6 +133,8 @@ class IndexController extends Zend_Controller_Action
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
+        
+        //ensure protocol is authorized for this site
         if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
             throw new Rubedo\Exceptions\Server('Protocol is not set for current site');
         }
