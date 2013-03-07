@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
@@ -22,20 +23,22 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_DbConfigForm
+class Install_Model_DbConfigForm extends Install_Model_BootstrapForm
 {
-    public static function getForm($params){
-        
+
+    public static function getForm ($params)
+    {
         $serverNameField = new Zend_Form_Element_Text('server');
         $serverNameField->setRequired(true);
         $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost');
         $serverNameField->setLabel('Server Name');
         
-        //$serverPortField = new Zend_Form_Element_Text('serverport');
+        // $serverPortField = new Zend_Form_Element_Text('serverport');
         // $serverPortField->setRequired(true);
-        //$serverPortField->setValue(isset($params['port']) ? $params['port'] : null);
-        //$serverPortField->addValidator('digits');
-        //$serverPortField->setLabel('Server Port');
+        // $serverPortField->setValue(isset($params['port']) ? $params['port'] :
+        // null);
+        // $serverPortField->addValidator('digits');
+        // $serverPortField->setLabel('Server Port');
         
         $dbNameField = new Zend_Form_Element_Text('db');
         $dbNameField->setRequired(true);
@@ -49,19 +52,14 @@ class Install_Model_DbConfigForm
         $serverPasswordField = new Zend_Form_Element_Text('password');
         $serverPasswordField->setValue(isset($params['password']) ? $params['password'] : null);
         $serverPasswordField->setLabel('Password');
-        
-        $submitButton = new Zend_Form_Element_Submit('Submit');
-        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
-        
+ 
         $dbForm = new Zend_Form();
-        $dbForm->setMethod('post');
-        $dbForm->setAttrib('id', 'dbForm');
         $dbForm->addElement($serverNameField);
-        // $dbForm->addElement($serverPortField);
         $dbForm->addElement($dbNameField);
         $dbForm->addElement($serverLoginField);
         $dbForm->addElement($serverPasswordField);
-        $dbForm->addElement($submitButton);
+        
+        $dbForm = self::setForm($dbForm);
         
         return $dbForm;
     }

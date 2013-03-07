@@ -22,7 +22,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_EsConfigForm
+class Install_Model_EsConfigForm extends Install_Model_BootstrapForm
 {
     public static function getForm($params){
         
@@ -48,17 +48,13 @@ class Install_Model_EsConfigForm
         $damIndexField->setValue(isset($params['damIndex']) ? $params['damIndex'] : 'dam');
         $damIndexField->setLabel('Dam index name');
 
-        $submitButton = new Zend_Form_Element_Submit('Submit');
-        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
-        
         $dbForm = new Zend_Form();
-        $dbForm->setMethod('post');
-        $dbForm->setAttrib('id', 'dbForm');
         $dbForm->addElement($serverNameField);
         $dbForm->addElement($serverPortField);
         $dbForm->addElement($contentIndexField);
         $dbForm->addElement($damIndexField);
-        $dbForm->addElement($submitButton);
+
+        $dbForm = self::setForm($dbForm);
         
         return $dbForm;
     }

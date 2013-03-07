@@ -22,7 +22,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_AdminConfigForm
+class Install_Model_AdminConfigForm extends Install_Model_BootstrapForm
 {
     public static function getForm(){
         $nameField = new Zend_Form_Element_Text('name');
@@ -44,21 +44,21 @@ class Install_Model_AdminConfigForm
         $emailField->addValidator('EmailAddress');
         $emailField->setRequired(true);
         $emailField->setLabel('Email');
-       
         
-        $submitButton = new Zend_Form_Element_Submit('Submit');
-        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
+        
+        
+  
         
         $dbForm = new Zend_Form();
-        $dbForm->setMethod('post');
-        $dbForm->setAttrib('id', 'createAdmin');
         $dbForm->addElement($nameField);
         $dbForm->addElement($loginField);
         $dbForm->addElement($passwordField);
         $dbForm->addElement($emailField);
-        $dbForm->addElement($submitButton);
+        
+        $dbForm = self::setForm($dbForm);
         
         return $dbForm;
+        
     }
 }
 
