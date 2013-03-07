@@ -39,7 +39,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 $connectionString .= ':' . $options['mongo']['password'] . '@';
             }
             $connectionString .= $options['mongo']['server'];
-            if($options['mongo']['port']){
+            if(isset($options['mongo']['port'])){
                 $connectionString .= ':'.$options['mongo']['port'];
             }
             Rubedo\Mongo\DataAccess::setDefaultMongo($connectionString);
