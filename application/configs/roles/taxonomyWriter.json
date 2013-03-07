@@ -8,12 +8,10 @@
         "write.ui.taxonomy",
         "execute.controller.taxonomy.update.backoffice",
         "execute.controller.taxonomy.delete.backoffice",
-        "execute.controller.taxonomy.create.backoffice",
-        "execute.controller.taxonomy-terms.create.backoffice",
-        "execute.controller.taxonomy-terms.update.backoffice",
-        "execute.controller.taxonomy-terms.delete.backoffice"
+        "execute.controller.taxonomy.create.backoffice"
     ],
     "includes":[
-        "taxonomyReader"
+        "taxonomyReader",
+        "taxonomyTermsWriter"
     ]
 }
