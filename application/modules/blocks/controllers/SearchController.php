@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
- *
- * yet to be written
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
 
@@ -33,7 +35,8 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // get search parameters
         $params = $this->getRequest()->getParams();
-        $params['pagesize'] = $this->getRequest()->getParam('pagesize', 10);
+        $params['pagesize'] = $this->getParam('pagesize', 10);
+        $params['pager'] = $this->getParam('pager',0);
         
         if($params['constrainToSite']){
             $site = $this->getRequest()->getParam('site');
@@ -42,7 +45,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         }
 		
         
-        $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+        $query = Manager::getService('ElasticDataSearch');
         $query->init();
         
         $results = $query->search($params);
@@ -61,6 +64,9 @@ class Blocks_SearchController extends Blocks_AbstractController
                 $pagecount-1,
                 10
             ));
+		
+		$results['displayTitle']=$this->getParam('displayTitle');
+		$results['blockTitle']=$this->getParam('blockTitle');
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         

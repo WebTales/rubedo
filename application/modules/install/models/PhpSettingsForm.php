@@ -22,7 +22,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_PhpSettingsForm
+class Install_Model_PhpSettingsForm extends Install_Model_BootstrapForm
 {
     public static function getForm($params){
         
@@ -39,20 +39,13 @@ class Install_Model_PhpSettingsForm
         $displayExceptions = new Zend_Form_Element_Checkbox('displayExceptions');
         $displayExceptions->setValue(isset($params['displayExceptions']) ? $params['displayExceptions'] : null);
         $displayExceptions->setLabel('Display Exceptions');
-
-        //displayExceptions
-        
-        $submitButton = new Zend_Form_Element_Submit('Submit');
-        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
         
         $dbForm = new Zend_Form();
-        $dbForm->setMethod('post');
-        $dbForm->setAttrib('id', 'dbForm');
         $dbForm->addElement($displayStartupErrors);
         $dbForm->addElement($displayErrors);
         $dbForm->addElement($displayExceptions);
         
-        $dbForm->addElement($submitButton);
+        $dbForm = self::setForm($dbForm);
         
         return $dbForm;
     }

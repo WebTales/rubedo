@@ -8,7 +8,8 @@
         "write.ui.damTypes",
         "execute.controller.dam-types.create.backoffice",
         "execute.controller.dam-types.delete.backoffice",
-        "execute.controller.dam-types.update.backoffice"
+        "execute.controller.dam-types.update.backoffice",
+        "execute.controller.dam-types.is-used.backoffice"
     ],
     "includes":[
         "damTypeReader"

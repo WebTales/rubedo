@@ -76,6 +76,14 @@ class CurrentUser implements ICurrentUser
                 }
                 
                 self::$_currentUser = $user;
+                if($user){
+                    $mainWorkspace = $this->getMainWorkspace();
+                    if($mainWorkspace){
+                        $user['defaultWorkspace'] = $mainWorkspace['id'];
+                        self::$_currentUser = $user;
+                    }
+                    
+                }
             }
         }
         return self::$_currentUser;

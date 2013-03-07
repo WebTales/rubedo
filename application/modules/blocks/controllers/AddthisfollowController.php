@@ -41,6 +41,7 @@ class Blocks_AddthisfollowController extends Blocks_AbstractController
 			$fields["userId"]=$user;
 			$data[]=$fields;
 		}
+		$output = $this->getAllParams();
 		$output['networks']=$data;
 		$output["type"]=isset($blockConfig["disposition"])?$blockConfig["disposition"]:"Horizontal";
 		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;

@@ -191,6 +191,8 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContentType($obj['id'], $obj, TRUE);
         
+        $ElasticDataIndexService->indexAll('content');
+        
         AbstractCollection::disableUserFilter($wasFiltered);
     }
 
@@ -263,7 +265,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 	        }
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
-	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
+	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces))==0 && !in_array("all", $writeWorkspaces)) {
 	            $obj['readOnly'] = true;
 	        } else {
 	            

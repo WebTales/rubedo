@@ -16,6 +16,8 @@
  */
 namespace Rubedo\User;
 
+use Rubedo\Services\Manager;
+
 /**
  * Adapter to check authentication against mongoDB user collection
  *
@@ -30,12 +32,14 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
 
     /**
      * submited password
+     *
      * @var string
      */
     private $_password = null;
 
     /**
      * submited login
+     *
      * @var string
      */
     private $_login = null;
@@ -53,19 +57,33 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
      * @throws Zend_Auth_Adapter_Exception If authentication cannot be performed
      * @return Zend_Auth_Result
      */
-    public function authenticate() {
+    public function authenticate ()
+    {
         $dataService = \Rubedo\Services\Manager::getService('MongoDataAccess');
         $dataService->init('Users');
-		$dataService->addToFieldList(array('login','password','salt'));
-
+        $dataService->addToFieldList(array(
+            'login',
+            'password',
+            'salt',
+            'startValidity',
+            'endValidity'
+        ));
+        
         $hashService = \Rubedo\Services\Manager::getService('Hash');
-
-		$loginCond = array(array('login' => $this->_login),array('email' => $this->_login));
-
+        
+        $loginCond = array(
+            array(
+                'login' => $this->_login
+            ),
+            array(
+                'email' => $this->_login
+            )
+        );
+        
         $dataService->addOrFilter($loginCond);
         $resultIdentitiesArray = $dataService->read();
-		$resultIdentities = $resultIdentitiesArray['data'];
-
+        $resultIdentities = $resultIdentitiesArray['data'];
+        
         if (count($resultIdentities) < 1) {
             $this->_authenticateResultInfo['code'] = \Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->_authenticateResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
@@ -75,13 +93,24 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
             $this->_authenticateResultInfo['messages'][] = 'More than one record matches the supplied identity.';
             return $this->_authenticateCreateAuthResult();
         }
-
+        
         $user = array_shift($resultIdentities);
         $salt = $user['salt'];
         $targetHash = $user['password'];
         unset($user['password']);
 
-        if ($hashService->checkPassword($targetHash, $this->_password, $salt)) {
+        $valid = $hashService->checkPassword($targetHash, $this->_password, $salt);
+        
+        $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
+        if (isset($user['startValidity']) && !empty($user['startValidity'])) {
+            $valid = $valid && ($user['startValidity'] <= $currentTime);
+        }
+        
+        if (isset($user['endValidity']) && !empty($user['endValidity'])) {
+            $valid = $valid && ($user['endValidity'] > $currentTime);
+        }
+        
+        if ($valid) {
             $this->_authenticateResultInfo['code'] = \Zend_Auth_Result::SUCCESS;
             $this->_authenticateResultInfo['messages'][] = 'Authentication successful.';
             $this->_authenticateResultInfo['identity'] = $user;
@@ -91,20 +120,22 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
             $this->_authenticateResultInfo['messages'][] = 'Supplied credential is invalid.';
             return $this->_authenticateCreateAuthResult();
         }
-
     }
 
     /**
      * Initialise class with login and password
      *
-     * @param $name
-     * @param $password
+     * @param
+     *            $name
+     * @param
+     *            $password
      */
-    public function __construct($name, $password) {
-        if (!is_string($name)) {
+    public function __construct ($name, $password)
+    {
+        if (! is_string($name)) {
             throw new \Rubedo\Exceptions\Server('$name should be a string', 1);
         }
-        if (!is_string($password)) {
+        if (! is_string($password)) {
             throw new \Rubedo\Exceptions\Server('$password should be a string', 1);
         }
         $this->_authenticateResultInfo['identity'] = null;
@@ -114,12 +145,13 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
 
     /**
      * _authenticateCreateAuthResult() - Creates a Zend_Auth_Result object from
-     * the information that has been collected during the authenticate() attempt.
+     * the information that has been collected during the authenticate()
+     * attempt.
      *
      * @return Zend_Auth_Result
      */
-    protected function _authenticateCreateAuthResult() {
+    protected function _authenticateCreateAuthResult ()
+    {
         return new \Zend_Auth_Result($this->_authenticateResultInfo['code'], $this->_authenticateResultInfo['identity'], $this->_authenticateResultInfo['messages']);
     }
-
 }

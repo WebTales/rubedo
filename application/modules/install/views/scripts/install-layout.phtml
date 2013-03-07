@@ -82,11 +82,11 @@ echo $this->headLink();
                         	<?php if($this->isReady){?>
                             	<?php if($this->next){?>
                             	<li class="next"><a
-    							href="<?php echo $this->next->getHref();?>"><?php echo $this->next->getLabel();?> &rarr;</a></li>
+							href="<?php echo $this->next->getHref();?>"><?php echo $this->next->getLabel();?> &rarr;</a></li>
                             	<?php }else{?>
                             	    <li class="next"><a
-    							href="<?php echo $this->url(array('action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish
-    								&rarr;</a></li>
+							href="<?php echo $this->url(array('action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish
+								&rarr;</a></li>
                             	<?php } ?>
                         	<?php } ?>
                          </ul> 
@@ -98,6 +98,27 @@ echo $this->headLink();
 		</div>
 	</div>
 	<?php echo $this->headScript(); ?>
+	<script>
+	var changed = false;
+	$('#installForm').change(editionMode);
+	$('#installForm').bind("reset", readMode);
+	
+	function editionMode(){
+		changed = true;
+		$(".pager > li").addClass('disabled');
+		$(".pager > .disabled").click(function(e) {
+			if(changed){
+				e.preventDefault();
+			}
+		});
+	}
+
+	function readMode(){
+		changed = false;
+		$(".pager > li").removeClass('disabled');
+	}
 		
+	</script>
+
 </body>
 </html>

@@ -395,6 +395,9 @@ class Install_IndexController extends Zend_Controller_Action
             $connectionString .= ':' . $options['password'] . '@';
         }
         $connectionString .= $options['server'];
+        if(isset($options['port'])){
+            $connectionString .= ':'.$options['port'];
+        }
         return $connectionString;
     }
 

@@ -17,6 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IMasks;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Users
@@ -60,7 +61,26 @@ class Masks extends AbstractCollection implements IMasks
 			
     protected $_indexes = array(
         array('keys'=>array('site'=>1)),
+        array('keys'=>array('text'=>1,'site'=>1),'options'=>array('unique'=>true)),
     );
+    
+    /**
+     * Only access to content with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+    
+        if (! self::isUserFilterDisabled()) {
+            $sites = Manager::getService('Sites')->getList();
+            $sitesArray = array();
+            foreach ($sites['data'] as $site){
+                $sitesArray[]=$site['id'];
+            }            
+            $filter = array('site'=> array('$in'=>$sitesArray));
+            $this->_dataService->addFilter($filter);
+        }
+    }
 
 	public function __construct(){
 		$this->_collectionName = 'Masks';

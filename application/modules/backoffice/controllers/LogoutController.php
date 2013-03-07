@@ -50,8 +50,18 @@ class Backoffice_LogoutController extends Zend_Controller_Action
 
 			$response['success'] =true;
 			
-			return $this->_helper->json($response);
+			
 		}
+		
+		if($this->getRequest()->isXmlHttpRequest()){
+		    $this->_helper->json($response);
+		}else{
+		    $this->_helper->redirector->gotoUrl("/backoffice/login");
+		}
+    }
+    
+    public function confirmLogoutAction(){
+        
     }
 	
 }

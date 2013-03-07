@@ -1,27 +1,12 @@
 {
-    "id":"ContentReviewer",
+    "id":"contentReviewer",
     "label":{
     	"fr":"Validation des contenus",
     	"en":"Can review contents"
     },
     "rights":[
-        "[a-z]+.ui.contents$",
-        "read.ui.contents.[a-z]+",
-        "write.ui.contents.draft",
-        "write.ui.contents.draftToPending",
-        "execute.controller.contents.@dot*",
-        "read.ui.contents",
-        "write.ui.contents.draft",
-        "write.ui.contents.pending",
-        "write.ui.contents.published",
-        "write.ui.contents.draftToPending",
-        "write.ui.contents.pendingToDraft",
-        "write.ui.contents.pendingToPublished",
-        "write.ui.contents.putOnline",
-        "write.ui.contents.putOffline",
-        "read.ui.masks",
-        "read.ui.users",
-        "read.ui.contentTypes"
+        "write.ui.contents",
+        "execute.controller.contents.@dot*"
     ],
     "includes":[
         "contentWriter"

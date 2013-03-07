@@ -1,6 +1,6 @@
 {
 	"type": "Texte Riche",
-	"champs": [
+	"fields": [
 		{
 			"cType": "CKEField",
 			"config": {

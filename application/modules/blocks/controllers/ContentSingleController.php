@@ -12,12 +12,11 @@
  * @license    yet to be written
  * @version    $Id:
  */
-
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractController.php');
+
 /**
- *
  *
  * @author jbourdin
  * @category Rubedo
@@ -29,68 +28,80 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction() {
+    public function indexAction ()
+    {
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
-
+        
         $mongoId = $this->getRequest()->getParam('content-id');
-        if (isset($mongoId) && $mongoId !=0) {
+        if (isset($mongoId) && $mongoId != 0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
             $data = $content['fields'];
-            if(isset($content['taxonomy'])){
-    			$terms = array_pop($content['taxonomy']);
-    			$termsArray = array();
-    			foreach ($terms as $term) {
-    				$termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
-    			}
-    			$data['terms']=$termsArray;
+            $termsArray = array();
+            if (isset($content['taxonomy'])) {
+                if (is_array($content['taxonomy'])) {
+                    foreach ($content['taxonomy'] as $key => $terms) {
+                        if($key == 'navigation'){
+                            continue;
+                        }
+                        foreach ($terms as $term) {
+                            $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+                        }
+                    }
+                }
             }
+            $data['terms'] = $termsArray;
             $data["id"] = $mongoId;
-
+            
             $type = $this->_typeReader->findById($content['typeId'], true, false);
-			$cTypeArray=array();
-			foreach($type["fields"] as $value){
-				
-				$cTypeArray[$value['config']['name']]=$value["cType"];
-			}
+            $cTypeArray = array();
+            foreach ($type["fields"] as $value) {
+                
+                $cTypeArray[$value['config']['name']] = $value["cType"];
+            }
             $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
             $templateName .= ".html.twig";
+            $output = $this->getAllParams();
             $output["data"] = $data;
-			$output["type"]=$cTypeArray;
-			Manager::getService('PageContent')->setPageTitle($data['text']);
-			
+            $output["type"] = $cTypeArray;
+            
+            
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
-            if(!is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template)){
+            if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/default.html.twig");
             }
-        }else{
-        	$output= array();
-        	 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
+        } else {
+            $output = array();
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
         }
-		
+        
         $css = array();
         $js = array();
-
+        
         $this->_sendResponse($output, $template, $css, $js);
     }
-public function getContentsAction()
-	{
-		$this->_dataReader=Manager::getService('Contents');
-		$returnArray=array();
-		$data=$this->getRequest()->getParams();
-		if(isset($data['block']['contentId']))
-		{
-		$content=$this->_dataReader->findById($data['block']['contentId']);
-		$returnArray[]=array('text'=>$content['text'],'id'=>$content['id']);
-		$returnArray['total']=count($returnArray);
-		$returnArray["success"]=true;
-		}else
-			{
-				$returnArray=array("success"=>false,"msg"=>"No query found");
-			}
-			$this->getHelper('Layout')->disableLayout();
-            $this->getHelper('ViewRenderer')->setNoRender();
-            $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
-	}
 
+    public function getContentsAction ()
+    {
+        $this->_dataReader = Manager::getService('Contents');
+        $returnArray = array();
+        $data = $this->getRequest()->getParams();
+        if (isset($data['block']['contentId'])) {
+            $content = $this->_dataReader->findById($data['block']['contentId']);
+            $returnArray[] = array(
+                'text' => $content['text'],
+                'id' => $content['id']
+            );
+            $returnArray['total'] = count($returnArray);
+            $returnArray["success"] = true;
+        } else {
+            $returnArray = array(
+                "success" => false,
+                "msg" => "No query found"
+            );
+        }
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
+    }
 }

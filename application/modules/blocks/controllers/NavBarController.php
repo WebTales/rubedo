@@ -30,6 +30,8 @@ class Blocks_NavBarController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
+        $output = $this->getAllParams();
+        
         $blockConfig = $this->getParam('block-config', array());
 
         if (isset($blockConfig['rootPage'])) {
@@ -71,7 +73,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['useSearchEngine'] = $useSearchEngine;
         $output['searchPage'] = $searchPage;
         $output['pages'] = array();
-        $output['logo']= $blockConfig['logo'];
+        $output['logo']= isset($blockConfig['logo'])?$blockConfig['logo']:null;
         
         $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
         

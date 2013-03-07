@@ -31,7 +31,8 @@ class Blocks_TextController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array());
-		$content=Manager::getService('Contents')->findById($blockConfig["contentId"]);
+        $content = Manager::getService('Contents')->findById($blockConfig["contentId"]);
+        $output = $this->getAllParams();
         $output['text'] = $content["workspace"]["fields"]["body"];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/text.html.twig");
         

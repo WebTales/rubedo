@@ -30,7 +30,8 @@ class Blocks_AddthisController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array()); 
+        $blockConfig = $this->getParam('block-config', array());
+        $output = $this->getAllParams();
 		$output['type']=$blockConfig["disposition"];
 		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;
 		$output['like']=isset($blockConfig['like'])?$blockConfig['like']:false;

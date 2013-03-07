@@ -2,7 +2,7 @@
 <html lang="{{lang}}">
 <head>
     {% block pageTitle %}
-    <title>{{ title }}</title> 
+    <title>{{ prefixTitle }}{{ title }}</title> 
     {% endblock %} 
     
     {% block pageMeta %}
@@ -11,7 +11,15 @@
     {% if description %}
     <meta name="description" content="{{ description }}">
     {% endif %}
-    <meta name="author" content="WebTales">
+    
+    {% if keywords %}
+    <meta name="keywords" content="{{ keywords }}">
+    {% endif %}
+    
+    {% if author %}
+    <meta name="author" content="{{ author }}">
+    {% endif %}
+    
     
     {% if contentId %}
     <link rel="canonical" href="{{ displayCanonicalUrl(contentId) }}"/>
@@ -20,7 +28,7 @@
     {% endblock %} 
     
     {% block pageStyle %}
-    <!-- Le styles -->
+
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="{{baseUrl}}/components/zencoder/video-js/video-js.min.css" rel="stylesheet">
@@ -30,15 +38,19 @@
     <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
     {% endfor %}
     
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    		<![endif]-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     {% endblock %} 
     
     {% block pageIcons %}
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    
+    {% if favicon %}
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{baseUrl}}/{{ favicon }}">
+    {% endif %}
+    
+    {% if AppleIcon %}
+     <!-- touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144"
     	href="../assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114"
@@ -47,6 +59,8 @@
     	href="../assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed"
     	href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    {% endif %}
+    
     {% endblock %}
 
 </head>
@@ -56,7 +70,7 @@
 	<div id="topSpace" class="navbar navbar-fixed-top"></div>
 	{% endblock %} 
 	{% block pageContentToolBar %} 
-    	{% if isLoggedIn %}
+    	{% if canEdit %}
     	<div class="navbar hide navbar-inverse" id="contentToolBar">
     		<div class="navbar-inner">
     			<div class="container-fluid">

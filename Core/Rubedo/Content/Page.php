@@ -55,6 +55,13 @@ class Page implements  IPage
     protected static $_currentPage = null;
     
     /**
+     * Author of the page
+     * 
+     * @var string
+     */
+    protected static $_author = 'Rubedo By Webtales';
+    
+    /**
      * Current Site
      *
      * @var string
@@ -194,6 +201,25 @@ class Page implements  IPage
     {
         Page::$_currentPage = $_currentPage;
     }
+    
+	/**
+     * @return the $_author
+     */
+    public static function getAuthor ()
+    {
+        return Page::$_author;
+    }
+
+	/**
+     * @param string $_author
+     */
+    public static function setAuthor ($_author)
+    {
+        Page::$_author = $_author;
+    }
+
+    
+    
 
 
     

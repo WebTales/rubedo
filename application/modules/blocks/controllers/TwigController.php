@@ -33,7 +33,7 @@ class Blocks_TwigController extends Blocks_AbstractController
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
 
-        $output = array();
+        $output = $this->getAllParams();
 		
 		$templateName = $this->getRequest()->getParam('template','block.html');
 		

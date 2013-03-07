@@ -31,7 +31,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
     {
         $output = $this->_getList();
         $blockConfig = $this->getRequest()->getParam('block-config');
-
+        
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
@@ -46,14 +46,17 @@ class Blocks_CalendarController extends Blocks_ContentListController
 
     protected function _getList ()
     {
-        $dateField = $this->getParam('dateField', 'date');
-        $endDateField = $this->getParam('endDateField', 'endDate');
-        $usedDateField = 'fields.' . $dateField;
+        
+        
         
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getRequest()->getParam('block-config');
+        
+        $dateField = isset($blockConfig['dateField'])?$blockConfig['dateField']:$this->getParam('date-field', 'date');
+        $endDateField = isset($blockConfig['endDateField'])?$blockConfig['endDateField']:$this->getParam('endDateField', 'date_end');
+        $usedDateField = 'fields.' . $dateField;
         
         $date = $this->getParam('cal-date');
         if ($date) {
@@ -74,48 +77,53 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $nextMonthTimeStamp = $nextMonth->getTimestamp();
         
         $queryId = $this->getParam('query-id', $blockConfig['query']);
-        
-        $queryConfig = $this->getQuery($queryId);
-        $queryType = $queryConfig['type'];
-        $queryFilter = $this->setFilters($queryConfig);
-        
-        $condition = array(
-            '$gte' => "$timestamp",
-            '$lt' => "$nextMonthTimeStamp"
-        );
-        $queryFilter['filter'][] = array(
-            'property' => $usedDateField,
-            'value' => $condition
-        );
-        
-        $contentArray = $this->getContentList($queryFilter, array(
-            'limit' => 100,
-            'currentPage' => 1
-        ));
-        $filledDate = array();
         $data = array();
-        foreach ($contentArray['data'] as $vignette) {
-            $fields = $vignette['fields'];
-            $fields['title'] = $fields['text'];
-            unset($fields['text']);
-            $fields['id'] = (string) $vignette['id'];
-            $fields['typeId'] = $vignette['typeId'];
-            $fields['readDate'] = Manager::getService('Date')->getLocalised('%A %e %B %Y', $vignette['fields'][$dateField]);
-            $data[] = $fields;
-            $filledDate[intval(date('d', $vignette['fields'][$dateField]))] = true;
-        }
+        $filledDate = array();
         
+        if ($queryId) { //nothing shown if no query given
+            $queryConfig = $this->getQuery($queryId);
+            $queryType = $queryConfig['type'];
+            $queryFilter = $this->setFilters($queryConfig);
+            
+            $condition = array(
+                '$gte' => "$timestamp",
+                '$lt' => "$nextMonthTimeStamp"
+            );
+            $queryFilter['filter'][] = array(
+                'property' => $usedDateField,
+                'value' => $condition
+            );
+            
+            $contentArray = $this->getContentList($queryFilter, array(
+                'limit' => 100,
+                'currentPage' => 1
+            ));
+            
+            
+            foreach ($contentArray['data'] as $vignette) {
+                $fields = $vignette['fields'];
+                $fields['title'] = $fields['text'];
+                unset($fields['text']);
+                $fields['id'] = (string) $vignette['id'];
+                $fields['typeId'] = $vignette['typeId'];
+                $fields['readDate'] = Manager::getService('Date')->getLocalised('%A %e %B %Y', $vignette['fields'][$dateField]);
+                $data[] = $fields;
+                $filledDate[intval(date('d', $vignette['fields'][$dateField]))] = true;
+            }
+        } else {}
+        
+        $output = $this->getAllParams();
         $output['blockConfig'] = $blockConfig;
         $output["data"] = $data;
-        $output["query"]['type'] = $queryType;
-        $output["query"]['id'] = $queryId;
+        $output["query"]['type'] = isset($queryType)?$queryType:null;
+        $output["query"]['id'] = isset($queryId)?$queryId:null;
         $output['prefix'] = $this->getRequest()->getParam('prefix');
         $output['filledDate'] = $filledDate;
         $output['days'] = Manager::getService('Date')->getShortDayList();
         $output['month'] = Manager::getService('Date')->getLocalised('%B', $timestamp);
         $output['year'] = Manager::getService('Date')->getLocalised('%Y', $timestamp);
         if (intval($month) == 12) {
-            $output['nextDate'] = '01-' . (string) ($year + 1);
+            $output['nextDate'] = '1-' . (string) ($year + 1);
         } else {
             $output['nextDate'] = (string) ($month + 1) . '-' . (string) $year;
         }
@@ -125,30 +133,24 @@ class Blocks_CalendarController extends Blocks_ContentListController
         } else {
             $output['prevDate'] = (string) ($month - 1) . '-' . (string) $year;
         }
-        $output['display']=array();
-        if(isset($blockConfig['display'])){
-            foreach ($blockConfig['display'] as $value){
+        $output['display'] = array();
+        if (isset($blockConfig['display'])) {
+            foreach ($blockConfig['display'] as $value) {
                 $output['display'][$value] = true;
             }
         }
         
-        
-        $singlePage = isset($blockConfig['singlePage'])?$blockConfig['singlePage']:$this->getParam('current-page');
-        //var_dump($this->getParam('current-page'));die();
+        $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
+        // var_dump($this->getParam('current-page'));die();
         
         $output['singlePage'] = $this->getParam('single-page', $singlePage);
-        
         
         $output['monthArray'] = Manager::getService('Date')->getMonthArray($timestamp);
         
         $output['caldate'] = $date;
         
-        $output['xhrUrl'] = $this->_helper->url->url(array(
-            'module' => 'blocks',
-            'controller' => 'calendar',
-            'action' => 'xhr-get-calendar'
-        ), 'default');
-                
+        $output['dateField'] = $dateField;
+        
         return $output;
     }
 
@@ -160,10 +162,9 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $html = Manager::getService('FrontOfficeTemplates')->render($template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/calendar/list.html.twig"), $twigVars);
         
         $data = array(
-            'calendarHtml'=>$calendarHtml,
+            'calendarHtml' => $calendarHtml,
             'html' => $html
         );
         $this->_helper->json($data);
     }
-
 }
