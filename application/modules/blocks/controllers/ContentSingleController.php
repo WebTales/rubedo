@@ -64,7 +64,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $output = $this->getAllParams();
             $output["data"] = $data;
             $output["type"] = $cTypeArray;
-            Manager::getService('PageContent')->setPageTitle($data['text']);
+            
             
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
             if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
