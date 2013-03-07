@@ -12,7 +12,12 @@
         "execute.controller.contents.@dot*",
         "execute.controller.versioning.index.backoffice",
         "execute.controller.taxonomy-terms.index.backoffice" ,
-        "write.frontoffice.contents"     
+        "write.frontoffice.contents",
+        "execute.controller.content-types.get-readable-content-types.backoffice",
+        "execute.controller.content-contributor.index.backoffice",
+        "execute.controller.queries.index.backoffice","exceptionClass",
+        "execute.controller.content-types.find-one.backoffice",
+        "execute.controller.queries.update.backoffice","exceptionClass"
     ],
     "includes":[
         "contentReader"
