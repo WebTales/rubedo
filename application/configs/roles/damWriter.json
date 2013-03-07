@@ -8,7 +8,8 @@
         "write.ui.dam$",
         "read.ui.dam$",
         "execute.controller.dam-types.index.backoffice",
-        "execute.controller.dam.@dot*.backoffice"
+        "execute.controller.dam.@dot*.backoffice",
+        "execute.controller.file.put.backoffice"
     ],
     "includes":[
         "damReader"
