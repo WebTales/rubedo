@@ -184,8 +184,8 @@ class IndexController extends Zend_Controller_Action
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
-        $twigVar['title'] = isset($this->_site['title']) && ! empty($this->_site['title']) ? $this->_site['title'] . ' - ' : '';
-        $twigVar['title'] .= $this->_servicePage->getPageTitle();
+        $twigVar['prefixTitle'] = isset($this->_site['title']) && ! empty($this->_site['title']) ? $this->_site['title'] . ' - ' : '';
+        $twigVar['title'] = $this->_servicePage->getPageTitle();
         
         //set metadata
         $description = $this->_servicePage->getDescription();
@@ -204,7 +204,10 @@ class IndexController extends Zend_Controller_Action
         if (count($keywords) === 0) {
             $keywords = is_array($this->_site['keywords']) ? $this->_site['keywords'] : array();
         }
-        $twigVar['keywords'] = implode(',', $keywords);
+        if(is_array($keywords)){
+            $twigVar['keywords'] = implode(',', $keywords);
+        }
+        
         
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
