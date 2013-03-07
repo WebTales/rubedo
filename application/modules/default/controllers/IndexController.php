@@ -69,6 +69,13 @@ class IndexController extends Zend_Controller_Action
     protected $_pageId;
 
     /**
+     * current page data
+     *
+     * @var array
+     */
+    protected $_pageInfos;
+
+    /**
      * current mask object
      *
      * @var array
@@ -97,6 +104,8 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
+        $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
+        $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
         
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
@@ -116,11 +125,21 @@ class IndexController extends Zend_Controller_Action
             
             if (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished') {
                 $this->_helper->redirector->gotoUrl($this->_helper->url('index', 'index', 'install')); // redirect
-                                                                                                       // to
-                                                                                                       // install
-                                                                                                       // tool
+                                                                                                           // to
+                                                                                                           // install
+                                                                                                           // tool
             }
             throw new \Rubedo\Exceptions\NotFound('No Page found');
+        }
+        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
+        
+        if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
+            throw new Rubedo\Exceptions\Server('Protocol is not set for current site');
+        }
+        
+        if (! in_array($httpProtocol, $this->_site['protocol'])) {
+            $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
         // context
@@ -187,7 +206,7 @@ class IndexController extends Zend_Controller_Action
         $twigVar['prefixTitle'] = isset($this->_site['title']) && ! empty($this->_site['title']) ? $this->_site['title'] . ' - ' : '';
         $twigVar['title'] = $this->_servicePage->getPageTitle();
         
-        //set metadata
+        // set metadata
         $description = $this->_servicePage->getDescription();
         if (empty($description)) {
             $description = $this->_site['description'];
@@ -204,10 +223,9 @@ class IndexController extends Zend_Controller_Action
         if (count($keywords) === 0) {
             $keywords = is_array($this->_site['keywords']) ? $this->_site['keywords'] : array();
         }
-        if(is_array($keywords)){
+        if (is_array($keywords)) {
             $twigVar['keywords'] = implode(',', $keywords);
         }
-        
         
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
@@ -279,10 +297,7 @@ class IndexController extends Zend_Controller_Action
      */
     protected function _getPageInfo ($pageId)
     {
-        $pageService = Manager::getService('Pages');
-        $pageInfo = $pageService->findById($pageId);
-        
-        $this->_mask = Manager::getService('Masks')->findById($pageInfo['maskId']); // maskId
+        $this->_mask = Manager::getService('Masks')->findById($this->_pageInfo['maskId']); // maskId
         if (! $this->_mask) {
             throw new \Rubedo\Exceptions\Server('no mask found');
         }
@@ -301,7 +316,7 @@ class IndexController extends Zend_Controller_Action
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
-        foreach ($pageInfo['blocks'] as $block) {
+        foreach ($this->_pageInfo['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
                 throw new \Rubedo\Exceptions\Server('no orderValue for block ' . $block['id']);
             }
@@ -312,28 +327,27 @@ class IndexController extends Zend_Controller_Action
             $this->_blocksArray[$this->_mainCol][] = $this->_getSingleBlock();
         }
         
-        $pageInfo['rows'] = $this->_mask['rows'];
+        $this->_pageInfo['rows'] = $this->_mask['rows'];
         
-        $this->_site = Manager::getService('Sites')->findById($pageInfo['site']);
         if (! isset($this->_site['theme'])) {
             $this->_site['theme'] = 'default';
         }
         $this->_serviceTemplate->setCurrentTheme($this->_site['theme']);
         
-        $this->_servicePage->setPageTitle($pageInfo['title']);
-        $this->_servicePage->setDescription($pageInfo['description']);
-        $this->_servicePage->setKeywords($pageInfo['keywords']);
+        $this->_servicePage->setPageTitle($this->_pageInfo['title']);
+        $this->_servicePage->setDescription($this->_pageInfo['description']);
+        $this->_servicePage->setKeywords($this->_pageInfo['keywords']);
         
-        $rootline = $pageService->getAncestors($pageInfo);
+        $rootline = Manager::getService('Pages')->getAncestors($this->_pageInfo);
         $this->_rootlineArray = array();
         foreach ($rootline as $ancestor) {
             $this->_rootlineArray[] = $ancestor['id'];
         }
         $this->_rootlineArray[] = $pageId;
-        $pageInfo['rows'] = $this->_getRowsInfos($pageInfo['rows']);
-        $pageInfo['template'] = 'page.html.twig';
+        $this->_pageInfo['rows'] = $this->_getRowsInfos($this->_pageInfo['rows']);
+        $this->_pageInfo['template'] = 'page.html.twig';
         
-        return $pageInfo;
+        return $this->_pageInfo;
     }
 
     protected function _getSingleBlock ()
