@@ -34,7 +34,7 @@ class Install_Model_DbConfigForm extends Install_Model_BootstrapForm
         $serverNameField->setLabel('Server Name');
         
         $serverPortField = new Zend_Form_Element_Text('port');
-        $serverPortField->setValue(isset($params['port']) ? $params['port'] :\MongoClient::DEFAULT_PORT);
+        $serverPortField->setValue(isset($params['port']) ? $params['port'] :27017);
         $serverPortField->addValidator('digits');
         $serverPortField->setLabel('Server Port');
         
