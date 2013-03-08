@@ -92,7 +92,7 @@ class Masks extends AbstractCollection implements IMasks
         if (! self::isUserFilterDisabled()) {
 			$aclServive = Manager::getService('Acl');
 			
-	        if ($aclServive->hasAccess("write.ui.masks") == false) {
+	        if (!$aclServive->hasAccess("write.ui.masks")) {
 	            $obj['readOnly'] = true;
 	        } else {
 	            $obj['readOnly'] = false;
