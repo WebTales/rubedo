@@ -175,13 +175,24 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             $fieldConfig = $field['config'];
             $name = $fieldConfig['name'];
             
-            $obj['fields'][$name] = $this->_uploadFile($name);
+			$uploadResult = $this->_uploadFile($name, $damType['mainFileType']);
+			if(!is_array($uploadResult)){
+				$obj['fields'][$name] = $uploadResult;
+			} else {
+				return $this->_returnJson($uploadResult);
+			}
+			
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
                 throw new \Rubedo\Exceptions\User('required field missing :' . $name);
             }
         }
         
-        $obj['originalFileId'] = $this->_uploadFile('originalFileId');
+		$uploadResult = $this->_uploadFile('originalFileId', $damType['mainFileType']);
+		if(!is_array($uploadResult)){
+        	$obj['originalFileId'] = $uploadResult;
+		} else {
+			return $this->_returnJson($uploadResult);
+		}
         
         $obj['Content-Type'] = $this->mimeType;
         
@@ -192,7 +203,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
                 'msg' => 'no main file uploaded'
             ));
         }
-        
+
         $returnArray = $this->_dataService->create($obj);
         
         if (! $returnArray['success']) {
@@ -209,7 +220,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         $this->getResponse()->setBody($returnValue);
     }
 
-    protected function _uploadFile ($name)
+    protected function _uploadFile ($name, $fileType)
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
@@ -223,7 +234,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         
         $finfo = new finfo(FILEINFO_MIME);
         
-        $mimeType = $finfo->file($fileInfos['tmp_name']);
+        $mimeType = mime_content_type($fileInfos['tmp_name']);
         
         if ($name == 'originalFileId') {
             $this->mimeType = $mimeType;
@@ -235,11 +246,12 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             'serverFilename' => $fileInfos['tmp_name'],
             'text' => $fileInfos['name'],
             'filename' => $fileInfos['name'],
-            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type']
+            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
+            'mainFileType' => $fileType
         );
         $result = $fileService->create($fileObj);
         if (! $result['success']) {
-            return null;
+            return $result;
         }
         return $result['data']['id'];
     }

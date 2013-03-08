@@ -100,6 +100,10 @@ class Dam extends AbstractCollection implements IDam
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteDam($obj['typeId'], $obj['id']);
     }
+	
+	protected function _validateMediaType(array $obj) {
+		
+	}
 
     /**
      * (non-PHPdoc)
