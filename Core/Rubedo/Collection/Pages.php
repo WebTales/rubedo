@@ -328,12 +328,13 @@ class Pages extends AbstractCollection implements IPages
 	        if (! isset($obj['workspace'])) {
 	            $obj['workspace'] = 'global';
 	        }
+			
+			$aclServive = Manager::getService('Acl');
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 			
-	        if (!in_array($obj['workspace'], $writeWorkspaces)) {
+	        if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.pages")) {
 	            $obj['readOnly'] = true;
 	        } else {
-	            
 	            $obj['readOnly'] = false;
 	        }
 		}
@@ -360,19 +361,11 @@ class Pages extends AbstractCollection implements IPages
     public function readChild ($parentId, $filters = null, $sort = null)
     {
         $list = parent::readChild ($parentId,$filters, $sort);
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        $returnArray = array();
-        foreach ($list as $page){
-        	if (! self::isUserFilterDisabled()) {
-	            if(!in_array($page['workspace'], $writeWorkspaces)){
-	                $page['readOnly'] =true;
-	            }else{
-	                $page['readOnly'] =false;
-	            }
-			}
-           $returnArray[] = $page;
+
+        foreach ($list as &$page){
+        	$page = $this->_addReadableProperty($page);
         }
-        return $returnArray;
+        return $list;
         
     }
 
