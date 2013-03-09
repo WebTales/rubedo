@@ -46,7 +46,13 @@ class FileController extends Zend_Controller_Action
             }
             
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileId;
-            $isWritten = $obj->write($tmpImagePath);
+            $now = Manager::getService('CurrentTime')->getCurrentTime();
+            
+            if(!is_file($tmpImagePath) || $now - filemtime($tmpImagePath)>24 * 3600){
+                $isWritten = $obj->write($tmpImagePath);
+            }
+            
+            $filelength = filesize($tmpImagePath);
             
             $meta = $obj->file;
             $filename = $meta['filename'];
@@ -87,22 +93,53 @@ class FileController extends Zend_Controller_Action
                     break;
             }
             
-            $this->getResponse()->clearBody();
-            $this->getResponse()->setHeader('Content-Type', $mimeType);
-            if ($doNotDownload) {
-                $this->getResponse()->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"');
-            } else {
-                $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            $seekStart=0;
+            $seekEnd=-1;
+            if(isset($_SERVER['HTTP_RANGE']) || isset($HTTP_SERVER_VARS['HTTP_RANGE'])) {
+            
+                $seekRange = isset($HTTP_SERVER_VARS['HTTP_RANGE']) ? substr($HTTP_SERVER_VARS['HTTP_RANGE'] , strlen('bytes=')) : substr($_SERVER['HTTP_RANGE'] , strlen('bytes='));
+                $range=explode('-',$seekRange);
+            
+                if($range[0] > 0) {$seekStart = intval($range[0]); }
+            
+                $seekEnd = ($range[1] > 0) ? intval($range[1]) : -1;
             }
-            $this->getResponse()->setHeader('Cache-Control', 'public,
-             max-age=' . 24 * 3600);
-            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")));
+            error_log('range : '.$seekStart.' => '.$seekEnd);
             
-            $this->getResponse()->sendHeaders();
+            $this->getResponse()->clearBody();
+            $this->getResponse()->clearHeaders();
+            $this->getResponse()->setHeader('Content-Type', $mimeType,true);
             
-            readfile($tmpImagePath);
+            if ($doNotDownload) {
+                $this->getResponse()->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"',true);
+            } else {
+                $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"',true);
+            }
             
-            die();
+            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600,true);
+            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")),true);
+
+            if($seekStart > 0){
+                $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
+                $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$filelength/$filelength",true);
+                $this->getResponse()->setHeader('Accept-Ranges',"0-$filelength",true);
+                $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
+                $this->getResponse()->setHttpResponseCode(206);
+                $this->getResponse()->setHeader('Status','206 Partial Content');
+                $this->getResponse()->sendHeaders();
+                $fo = fopen($tmpImagePath, 'rb');
+                
+                fseek($fo, $seekStart);
+                fpassthru($fo);
+                fclose($fo);
+            }else{
+                $this->getResponse()->setHeader('Content-Length',$filelength);
+                $this->getResponse()->sendHeaders();
+                readfile($tmpImagePath);
+            }
+            
+            
+            exit;
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", 1);
         }
