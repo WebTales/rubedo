@@ -50,7 +50,7 @@ class Blocks_AddthisfollowController extends Blocks_AbstractController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthisfollow.html.twig");
         
         $css = array();
-        $js = array();
+        $js = array('//s7.addthis.com/js/300/addthis_widget.js');
         $this->_sendResponse($output, $template, $css, $js);
     }
 }

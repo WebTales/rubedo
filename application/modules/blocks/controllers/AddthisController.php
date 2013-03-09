@@ -37,7 +37,7 @@ class Blocks_AddthisController extends Blocks_AbstractController
 		$output['like']=isset($blockConfig['like'])?$blockConfig['like']:false;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthis.html.twig");
         $css = array();
-        $js = array();
+        $js = array('//s7.addthis.com/js/300/addthis_widget.js');
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
