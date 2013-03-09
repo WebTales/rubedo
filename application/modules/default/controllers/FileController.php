@@ -113,7 +113,7 @@ class FileController extends Zend_Controller_Action
         $this->_forward('index', 'image', 'default', array(
             'size' => 'thumbnail',
             'file-id' => null,
-            'filepath' => realpath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png')
+            'filepath' => realpath(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png')
         ));
     }
 }
