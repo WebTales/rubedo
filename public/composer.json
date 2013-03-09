@@ -5,10 +5,10 @@
 		"sencha/extjs": "4.1.1a",
 		"webtales/ckeditor": "dev-master",
 		"twitter/bootstrap": "v2.3.0",
-		"zencoder/video-js": "3.2.0",
 		"webtales/bootstrap-image-gallery" : "2.10.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "dev-master"
+		"webtales/rubedo-backoffice-ui": "dev-master",
+		"longtailvideo/jwplayer":"6"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -55,16 +55,6 @@
 		}, {
 			"type": "package",
 			"package": {
-				"name": "zencoder/video-js",
-				"version": "3.2.0",
-				"dist": {
-					"url": "https://github.com/downloads/zencoder/video-js/video-js-3.2.0.zip",
-					"type": "zip"
-				}
-			}
-		}, {
-			"type": "package",
-			"package": {
 				"name": "webtales/bootstrap-image-gallery",
 				"version": "2.10.0",
 				"dist": {
@@ -79,6 +69,17 @@
 				"version": "v2.3.0",
 				"dist": {
 					"url": "https://github.com/thomaspark/bootswatch/archive/v2.3.0+1.zip",
+					"type": "zip"
+				}
+			}
+		},
+		 {
+			"type": "package",
+			"package": {
+				"name": "longtailvideo/jwplayer",
+				"version": "6",
+				"dist": {
+					"url": "https://github.com/WebTales/jwplayer/archive/6.zip",
 					"type": "zip"
 				}
 			}

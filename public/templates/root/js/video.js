@@ -14,7 +14,5 @@ function loadVideo(index){
 	if(jQuery(this).attr('data-height')){
 		config.height=jQuery(this).attr('data-height');
 	}
-	console.log(id);
-	console.log(config);
 	jwplayer(id).setup(config);
 }

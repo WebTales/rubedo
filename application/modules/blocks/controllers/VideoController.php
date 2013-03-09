@@ -79,7 +79,7 @@ class Blocks_videoController extends Blocks_AbstractController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/video.html.twig");
         
         $css = array();
-        $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js"));
+        $js = array('/components/longtailvideo/jwplayer/jwplayer.js','/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js"));
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
