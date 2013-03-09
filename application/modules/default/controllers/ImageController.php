@@ -96,10 +96,14 @@ class ImageController extends Zend_Controller_Action
             }
             
             $this->getResponse()->clearBody();
+            $this->getResponse()->clearHeaders();
             $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
-            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600);
-            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")));
+            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600,true);
+            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")),true);
             $this->getResponse()->sendHeaders();
+
+            
+            
             $gdReturnClassName($newImage);
             // imagedestroy($image);
             imagedestroy($newImage);

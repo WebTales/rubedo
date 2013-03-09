@@ -1,6 +1,7 @@
 RewriteEngine On
-# The following rule tells Apache that if the requested filename
-# exists, simply serve it.
+
+RewriteRule ^dam\.(.*)$ /dam [R,QSA,L]
+
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
