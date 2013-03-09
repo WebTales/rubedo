@@ -15,7 +15,7 @@
 				"localizable": false ,
 				"searchable": false ,
 				"multivalued": false ,
-				"tooltip": "" ,
+				"tooltip": "Texte proposé en substitution de l'image" ,
 				"vtype": null  ,
 				"labelSeparator": " "
 			} ,
