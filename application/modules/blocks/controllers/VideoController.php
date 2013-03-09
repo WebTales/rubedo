@@ -58,21 +58,6 @@ class Blocks_videoController extends Blocks_AbstractController
             
             $output['extension'] = pathinfo($filename,PATHINFO_EXTENSION);
             
-           /* if(isset($media['fields']['alternativeFiles'])){
-                if(!is_array($media['fields']['alternativeFiles'])){
-                    $media['fields']['alternativeFiles'] = array($media['fields']['alternativeFiles']);
-                }
-                foreach($media['fields']['alternativeFiles'] as $alternativeFile){
-                    $altFile = Manager::getService('Files')->findById($alternativeFile);
-                    $meta = $altFile->file;
-                    $id = (string)$meta['_id'];
-                    list($contentType) = explode(';',$meta['Content-Type']);
-                    $output['alternativeMediaArray'][]=array(
-                            'id'=> $id,
-                            'contentType'=> $contentType
-                    );
-                }
-            }*/
             $output['alt']= isset($media['fields']['alt'])?$media['fields']['alt']:'';
         }
 
