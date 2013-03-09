@@ -32,7 +32,7 @@ class Blocks_AudioController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());  
+        $blockConfig = $this->getParam('block-config', array()); 
         $site = $this->getParam('site');
         $output = $this->getAllParams();
         //Zend_Debug::dump($blockConfig);die();
@@ -45,28 +45,23 @@ class Blocks_AudioController extends Blocks_AbstractController
         if($output['audioFile']){
             $media = Manager::getService('Dam')->findById($output['audioFile']);
             $output['contentType']=$media['Content-Type'];
-            if(isset($media['fields']['alternativeFiles'])){
-                if(!is_array($media['fields']['alternativeFiles'])){
-                    $media['fields']['alternativeFiles'] = array($media['fields']['alternativeFiles']);
-                }
-                foreach($media['fields']['alternativeFiles'] as $alternativeFile){
-                    $altFile = Manager::getService('Files')->findById($alternativeFile);
-                    $meta = $altFile->file;
-                    $id = (string)$meta['_id'];
-                    list($contentType) = explode(';',$meta['Content-Type']);
-                    $output['alternativeMediaArray'][]=array(
-                            'id'=> $id,
-                            'contentType'=> $contentType
-                    );
-                }
+            
+            $mainFile = Manager::getService('Files')->findById($media['originalFileId']);
+            if (! $mainFile instanceof MongoGridFSFile) {
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", 1);
             }
-            $output['alt']= isset($media['fields']['alt'])?$media['fields']['alt']:'Your browser does not support the audio element.';
+            $meta = $mainFile->file;
+            $filename = $meta['filename'];
+            
+            $output['extension'] = pathinfo($filename,PATHINFO_EXTENSION);
+            
+            $output['alt']= isset($media['fields']['alt'])?$media['fields']['alt']:'';
         }
 
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/audio.html.twig");
         
         $css = array();
-        $js = array('/jwplayer/jwplayer.js');
+        $js = array('/components/longtailvideo/jwplayer/jwplayer.js','/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js"));
         $this->_sendResponse($output, $template, $css, $js);
     }
 }

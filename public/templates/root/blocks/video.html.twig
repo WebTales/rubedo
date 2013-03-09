@@ -2,13 +2,12 @@
 
 {% block mainContent %}
     {% if videoFile %}
-        <div style="max-width:{{ videoWidth }};">
+        <div style="max-width:{{ videoWidth }};margin:1em 0;">
         <div id="video_{{ prefix }}" class="videoPlaceholder" 
         data-videoFile="/dam.{{ extension }}?media-id={{ videoFile }}" 
         {% if videoPoster %}data-image="/dam?media-id={{ videoPoster }}"{% endif %}
         {% if videoWidth %}data-width="{{ videoWidth }}"{% endif %} 
-        {% if videoHeight %}data-height="{{ videoHeight }}"{% endif %}>
-        Loading the player...
+        {% if videoHeight %}data-height="{{ videoHeight }}"{% endif %}>{{ alt }}
         </div>
         
         </div>

@@ -1,6 +1,7 @@
 jQuery(".videoPlaceholder").each(loadVideo);
+jQuery(".audioPlaceholder").each(loadAudio);
 
-function loadVideo(index){
+function loadVideo(){
 	var id =jQuery(this).attr('id');
 	var dataFile =jQuery(this).attr('data-videoFile');
 	var config = new Object();
@@ -16,3 +17,22 @@ function loadVideo(index){
 	}
 	jwplayer(id).setup(config);
 }
+
+function loadAudio(){
+	var id =jQuery(this).attr('id');
+	var dataFile =jQuery(this).attr('data-audioFile');
+	var config = new Object();
+	config.file= dataFile;
+	//config.flashplayer='player.swf';
+	if(jQuery(this).attr('data-width')){
+		config.width=jQuery(this).attr('data-width');
+	}
+	if(jQuery(this).attr('data-height')){
+		config.height=jQuery(this).attr('data-height');
+	}
+	console.log(config);
+	console.log(id);
+	//return false;
+	jwplayer(id).setup(config);
+}
+

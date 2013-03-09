@@ -49,7 +49,7 @@ class FileController extends Zend_Controller_Action
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileId;
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
-            if(!is_file($tmpImagePath) || $now - filemtime($tmpImagePath)>24 * 3600){
+            if(!is_file($tmpImagePath) || $now - filemtime($tmpImagePath)>7 * 24 * 3600){
                 $isWritten = $obj->write($tmpImagePath);
             }
             
@@ -105,7 +105,7 @@ class FileController extends Zend_Controller_Action
             
                 $seekEnd = ($range[1] > 0) ? intval($range[1]) : -1;
             }
-            error_log('test de range : '.$seekStart.' => '.$seekEnd);
+
             $this->getResponse()->clearBody();
             $this->getResponse()->clearHeaders();
             if(strpos($mimeType,'video')!==false){
@@ -119,8 +119,8 @@ class FileController extends Zend_Controller_Action
                 $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"',true);
             }
             
-            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600,true);
-            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")),true);
+            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 7 * 24 * 3600,true);
+            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 7 day")),true);
 
             if($seekStart >= 0 && $seekEnd > 0){
                 $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);

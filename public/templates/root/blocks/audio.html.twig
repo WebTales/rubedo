@@ -1,18 +1,9 @@
-{% extends "root/block.html.twig" %}
+{% extends "root/block.html.twig" %} {% block mainContent %} {% if
+audioFile %}
 
-{% block mainContent %}
-    {% if audioFile %}
-        <audio  
-            {%if audioAutoPlay %} autoplay {%endif%} 
-            {%if audioPreload %} preload="auto" {% else %}preload="none"{%endif%}
-            {%if audioLoop %} loop {%endif%}
-            {%if audioControls %} controls {%endif%}> 
-                <source src="/dam?media-id={{ audioFile }}" type="{{ contentType }}" />
-                {% for alternativeMedia in alternativeMediaArray %}
-                    <source src="/file?file-id={{ alternativeMedia.id }}" type="{{ alternativeMedia.contentType }}" />
-                {% endfor %}
-                {{ alt }}
-        </audio>
-    {% endif %}
-{% endblock %}
+	<div id="audio_{{ prefix }}" class="audioPlaceholder"
+		data-audioFile="/dam.{{ extension }}?media-id={{ audioFile }}"
+		data-width="100%" data-height="24">{{ alt }}</div>
+
+{% endif %} {% endblock %}
 
