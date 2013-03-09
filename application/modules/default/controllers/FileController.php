@@ -39,6 +39,7 @@ class FileController extends Zend_Controller_Action
         $fileId = $this->getRequest()->getParam('file-id');
         
         if (isset($fileId)) {
+            
             $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
             if (! $obj instanceof MongoGridFSFile) {
@@ -104,10 +105,12 @@ class FileController extends Zend_Controller_Action
             
                 $seekEnd = ($range[1] > 0) ? intval($range[1]) : -1;
             }
-            error_log('range : '.$seekStart.' => '.$seekEnd);
             
             $this->getResponse()->clearBody();
             $this->getResponse()->clearHeaders();
+            if(strpos($mimeType,'video')!==false){
+               list($mimeType)  = explode(';',$mimeType);
+            }
             $this->getResponse()->setHeader('Content-Type', $mimeType,true);
             
             if ($doNotDownload) {
