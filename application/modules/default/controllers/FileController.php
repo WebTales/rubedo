@@ -105,7 +105,7 @@ class FileController extends Zend_Controller_Action
             
                 $seekEnd = ($range[1] > 0) ? intval($range[1]) : -1;
             }
-            
+            error_log('test de range : '.$seekStart.' => '.$seekEnd);
             $this->getResponse()->clearBody();
             $this->getResponse()->clearHeaders();
             if(strpos($mimeType,'video')!==false){
@@ -122,7 +122,28 @@ class FileController extends Zend_Controller_Action
             $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600,true);
             $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")),true);
 
-            if($seekStart > 0){
+            if($seekStart >= 0 && $seekEnd > 0){
+                $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
+                $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$seekEnd/$filelength",true);
+                $this->getResponse()->setHeader('Accept-Ranges',"0-$filelength",true);
+                $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
+                $this->getResponse()->setHttpResponseCode(206);
+                $this->getResponse()->setHeader('Status','206 Partial Content');
+                $this->getResponse()->sendHeaders();
+                $fo = fopen($tmpImagePath, 'rb');
+                $bufferSize = 1024*8;
+                $currentByte = $seekStart;
+                fseek($fo, $seekStart);
+                while($currentByte < $seekEnd){
+                    $actualBuffer=($seekEnd - $currentByte > $bufferSize)?$bufferSize:$seekEnd - $currentByte;
+                    echo fread($fo, $actualBuffer);
+                    $currentByte +=$actualBuffer;
+                    flush();
+                }
+                
+                
+                fclose($fo);
+            }elseif($seekStart > 0 && $seekEnd == -1){
                 $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
                 $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$filelength/$filelength",true);
                 $this->getResponse()->setHeader('Accept-Ranges',"0-$filelength",true);
@@ -133,6 +154,7 @@ class FileController extends Zend_Controller_Action
                 $fo = fopen($tmpImagePath, 'rb');
                 
                 fseek($fo, $seekStart);
+                flush();
                 fpassthru($fo);
                 fclose($fo);
             }else{
