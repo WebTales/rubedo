@@ -1,25 +1,25 @@
 {
 	"fields": [
 		{
-			"cType": "Ext.form.field.Text" ,
+			"cType": "Ext.form.field.TextArea" ,
 			"config": {
 				"name": "alt" ,
-				"fieldLabel": "Alternative textuelle" ,
-				"maxLength": 255 ,
+				"fieldLabel": "Alternative Textuelle" ,
+				"maxLength": 60000 ,
 				"minLength": 0 ,
 				"allowBlank": true ,
-				"localizable": false ,
+				"localizable": true ,
 				"searchable": false ,
 				"multivalued": false ,
 				"tooltip": "" ,
 				"vtype": null  ,
 				"labelSeparator": " "
 			} ,
-			"protoId": "50f51f8fc0e0515f0b000000"
+			"protoId": "50f51fe8c0e0514d0b000001"
 		}
 	] ,
-	"mainFileType": "Audio" ,
-	"type": "Audio" ,
+	"mainFileType": "Video" ,
+	"type": "video" ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"workspaces": ["global"]

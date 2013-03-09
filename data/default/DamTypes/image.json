@@ -3,7 +3,8 @@
 	"type": "Image" ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
-	"workspaces": ["global"],"fields": [
+	"workspaces": ["global"],
+	"fields": [
 		{
 			"cType": "Ext.form.field.Text" ,
 			"config": {
