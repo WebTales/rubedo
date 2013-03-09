@@ -195,10 +195,11 @@ class Url implements IUrl
                 continue;
             }
             
-            $key = ($encode) ? urlencode($key) : $key;
+            
             if ($prefix) {
                 $key = $prefix . '[' . $key . ']';
             }
+            $key = ($encode) ? urlencode($key) : $key;
             if (is_array($value)) {
                 foreach ($value as $arrayValue) {
                     $arrayValue = ($encode) ? urlencode($arrayValue) : $arrayValue;
