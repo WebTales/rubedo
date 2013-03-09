@@ -51,7 +51,7 @@ class Files extends AbstractFileCollection implements IFiles
 	
 	protected $_allowedAnimationMimeTypes = array("image/gif", "");
 	
-	protected $_allowedSoundMimeTypes = array("audio/x-wav", "audio/wav", "audio/mp4", "audio/mpeg", "audio/aac");
+	protected $_allowedSoundMimeTypes = array("audio/x-wav", "audio/wav", "audio/mp4", "audio/mpeg", "audio/aac",'audio/ogg');
 		
 	public function create(array $fileObj) {
 		switch ($fileObj['mainFileType']) {
@@ -84,6 +84,10 @@ class Files extends AbstractFileCollection implements IFiles
 					return array('success' => false, 'msg' => 'Not authorized file extension '.$fileObj['Content-Type']);
 				}
 				break;
+			default :
+			    //throw new Rubedo\Exceptions\Server('no main type given');
+			    break;
+			    
 		}
 		
 		return parent::create($fileObj);

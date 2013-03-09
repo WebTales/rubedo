@@ -93,18 +93,20 @@ class Backoffice_FileController extends Zend_Controller_Action
             throw new \Rubedo\Exceptions\Server(implode("\n", $adapter->getMessages()));
         }
         
-        $fileInfo = array_pop($adapter->getFileInfo());
+        $files = $adapter->getFileInfo();
+        $fileInfo = array_pop($files);
         
         $finfo = new finfo(FILEINFO_MIME);
         $mimeType = $finfo->file($fileInfo['tmp_name']);
         
         $fileService = Manager::getService('Files');
-        
+
         $obj = array(
             'serverFilename' => $fileInfo['tmp_name'],
             'text' => $fileInfo['name'],
             'filename' => $fileInfo['name'],
-            'Content-Type' => $mimeType
+            'Content-Type' => $mimeType,
+            'mainFileType' => $this->getParam('mainFileType',null)
         );
         $result = $fileService->create($obj);
         // disable layout and set content type

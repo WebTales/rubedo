@@ -38,6 +38,27 @@ class Blocks_AudioController extends Blocks_AbstractController
 		$output['audioControls'] = isset($blockConfig['audioControls']) ? $blockConfig['audioControls'] : true;
 		$output['audioLoop'] = isset($blockConfig['audioLoop']) ? $blockConfig['audioLoop'] : false;
         $output['audioFile'] = isset($blockConfig['audioFile']) ? $blockConfig['audioFile'] : null;
+        $output['alternativeMediaArray']= array();
+        if($output['audioFile']){
+            $media = Manager::getService('Dam')->findById($output['audioFile']);
+            $output['contentType']=$media['Content-Type'];
+            if(isset($media['fields']['alternativeFiles'])){
+                if(!is_array($media['fields']['alternativeFiles'])){
+                    $media['fields']['alternativeFiles'] = array($media['fields']['alternativeFiles']);
+                }
+                foreach($media['fields']['alternativeFiles'] as $alternativeFile){
+                    $altFile = Manager::getService('Files')->findById($alternativeFile);
+                    $meta = $altFile->file;
+                    $id = (string)$meta['_id'];
+                    list($contentType) = explode(';',$meta['Content-Type']);
+                    $output['alternativeMediaArray'][]=array(
+                            'id'=> $id,
+                            'contentType'=> $contentType
+                    );
+                }
+            }
+            $output['alt']= isset($media['fields']['alt'])?$media['fields']['alt']:'Your browser does not support the audio element.';
+        }
 
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/audio.html.twig");
         

@@ -1,7 +1,18 @@
 {% extends "root/block.html.twig" %}
 
 {% block mainContent %}
-<audio src="{% if audioFile %}/dam?media-id={{ audioFile }}{% else %}/assets/logo.gif{% endif %}"{%if audioAutoplay==true%} autoplay="true" {%endif%} {%if audioPreload==true %} preload="true" {%endif%}{%if audioLoop==true %} loop="true" {%endif%}{%if audioControls==true %} controls="true" {%endif%}>
-</audio>
+    {% if audioFile %}
+        <audio  
+            {%if audioAutoplay==true%} autoplay="true" {%endif%} 
+            {%if audioPreload==true %} preload="true" {%endif%}
+            {%if audioLoop==true %} loop="true" {%endif%}
+            {%if audioControls==true %} controls="true" {%endif%}> 
+                <source src="/dam?media-id={{ audioFile }}" type="{{ contentType }}"></source>
+                {% for alternativeMedia in alternativeMediaArray %}
+                    <source src="/file?file-id={{ alternativeMedia.id }}" type="{{ alternativeMedia.contentType }}"></source>
+                {% endfor %}
+                {{ alt }}
+        </audio>
+    {% endif %}
 {% endblock %}
 
