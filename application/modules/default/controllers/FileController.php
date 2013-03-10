@@ -49,12 +49,13 @@ class FileController extends Zend_Controller_Action
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileId;
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
-            if(!is_file($tmpImagePath) || $now - filemtime($tmpImagePath)>7 * 24 * 3600){
+            if (! is_file($tmpImagePath) ||
+                     $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
                 $isWritten = $obj->write($tmpImagePath);
             }
             
             $filelength = filesize($tmpImagePath);
-            $lastByte = (string) $filelength-1;
+            $lastByte = (string) $filelength - 1;
             
             $meta = $obj->file;
             $filename = $meta['filename'];
@@ -95,91 +96,99 @@ class FileController extends Zend_Controller_Action
                     break;
             }
             
-            $seekStart=0;
-            $seekEnd=-1;
-            if(isset($_SERVER['HTTP_RANGE']) || isset($HTTP_SERVER_VARS['HTTP_RANGE'])) {
-            
-                $seekRange = isset($HTTP_SERVER_VARS['HTTP_RANGE']) ? substr($HTTP_SERVER_VARS['HTTP_RANGE'] , strlen('bytes=')) : substr($_SERVER['HTTP_RANGE'] , strlen('bytes='));
-                $range=explode('-',$seekRange);
-            
-                if($range[0] > 0) {$seekStart = intval($range[0]); }
-            
-                $seekEnd = ($range[1] > 0) ? intval($range[1]) : -1;
+            $seekStart = 0;
+            $seekEnd = - 1;
+            if (isset($_SERVER['HTTP_RANGE']) ||
+                     isset($HTTP_SERVER_VARS['HTTP_RANGE'])) {
+                
+                $seekRange = isset($HTTP_SERVER_VARS['HTTP_RANGE']) ? substr(
+                        $HTTP_SERVER_VARS['HTTP_RANGE'], strlen('bytes=')) : substr(
+                        $_SERVER['HTTP_RANGE'], strlen('bytes='));
+                $range = explode('-', $seekRange);
+                
+                if ($range[0] > 0) {
+                    $seekStart = intval($range[0]);
+                }
+                
+                $seekEnd = ($range[1] > 0) ? intval($range[1]) : - 1;
             }
-
+            
+            //error_log("access par tranche : $filename $seekStart => $seekEnd");
             $this->getResponse()->clearBody();
             $this->getResponse()->clearHeaders();
-            if(strpos($mimeType,'video')!==false){
-               list($mimeType)  = explode(';',$mimeType);
+            if (strpos($mimeType, 'video') !== false) {
+                list ($mimeType) = explode(';', $mimeType);
             }
-            $this->getResponse()->setHeader('Content-Type', $mimeType,true);
+            $this->getResponse()->setHeader('Content-Type', $mimeType, true);
             
             if ($doNotDownload) {
-                $this->getResponse()->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"',true);
+                $this->getResponse()->setHeader('Content-Disposition', 
+                        'inline; filename="' . $filename . '"', true);
             } else {
-                $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"',true);
+                $this->getResponse()->setHeader('Content-Disposition', 
+                        'attachment; filename="' . $filename . '"', true);
             }
             
-            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 7 * 24 * 3600,true);
-            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 7 day")),true);
+            $this->getResponse()->setHeader('Cache-Control', 
+                    'public, max-age=' . 7 * 24 * 3600, true);
+            $this->getResponse()->setHeader('Expires', 
+                    date(DATE_RFC822, strtotime(" 7 day")), true);
             
-            //ensure no buffering for memory issues
-            while (ob_get_level() > 0){
+            // ensure no buffering for memory issues
+            while (ob_get_level() > 0) {
                 ob_end_clean();
             }
             
-            
-            if($seekStart >= 0 && $seekEnd > 0){
-                $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
-                $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$seekEnd/$filelength",true);
-                $this->getResponse()->setHeader('Accept-Ranges',"0-$lastByte",true);
-                $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
+            if ($seekStart >= 0 && $seekEnd > 0) {
+                $this->getResponse()->setHeader('Content-Length', 
+                        $filelength - $seekStart, true);
+                $this->getResponse()->setHeader('Content-Range', 
+                        "bytes $seekStart-$seekEnd/$filelength", true);
+                $this->getResponse()->setHeader('Accept-Ranges', "0-$lastByte", 
+                        true);
+                $this->getResponse()->setRawHeader(
+                        'HTTP/1.1 206 Partial Content');
                 $this->getResponse()->setHttpResponseCode(206);
-                $this->getResponse()->setHeader('Status','206 Partial Content');
+                $this->getResponse()->setHeader('Status', '206 Partial Content');
                 $this->getResponse()->sendHeaders();
                 $fo = fopen($tmpImagePath, 'rb');
-                $bufferSize = 1024*8;
+                $bufferSize = 1024 * 200;
                 $currentByte = $seekStart;
                 fseek($fo, $seekStart);
-                ob_start();
-                $i = 0;
-                while($currentByte < $seekEnd){
-                    $actualBuffer=($seekEnd - $currentByte > $bufferSize)?$bufferSize:$seekEnd - $currentByte;
-                    echo fread($fo, $actualBuffer);
-                    $currentByte +=$actualBuffer;
-                    $i++;
-                    if($i >999){
-                        ob_flush();
-                        $i=0;
-                    }
-                    
-                }
-                ob_flush();
-                ob_end_clean();
                 
+                while ($currentByte <= $seekEnd) {
+                    $actualBuffer = ($seekEnd + 1 - $currentByte > $bufferSize) ? $bufferSize : $seekEnd +
+                             1 - $currentByte;
+                    echo fread($fo, $actualBuffer);
+                    $currentByte += $actualBuffer;
+                    flush();
+                }
                 
                 fclose($fo);
-            }elseif($seekStart > 0 && $seekEnd == -1){
-                $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
-                $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$lastByte/$filelength",true);
-                $this->getResponse()->setHeader('Accept-Ranges',"0-$lastByte",true);
-                $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
+            } elseif ($seekStart > 0 && $seekEnd == - 1) {
+                $this->getResponse()->setHeader('Content-Length', 
+                        $filelength - $seekStart, true);
+                $this->getResponse()->setHeader('Content-Range', 
+                        "bytes $seekStart-$lastByte/$filelength", true);
+                $this->getResponse()->setHeader('Accept-Ranges', "0-$lastByte", 
+                        true);
+                $this->getResponse()->setRawHeader(
+                        'HTTP/1.1 206 Partial Content');
                 $this->getResponse()->setHttpResponseCode(206);
-                $this->getResponse()->setHeader('Status','206 Partial Content');
+                $this->getResponse()->setHeader('Status', '206 Partial Content');
                 $this->getResponse()->sendHeaders();
                 $fo = fopen($tmpImagePath, 'rb');
                 
                 fseek($fo, $seekStart);
                 fpassthru($fo);
                 fclose($fo);
-            }else{
-                $this->getResponse()->setHeader('Content-Length',$filelength);
+            } else {
+                $this->getResponse()->setHeader('Content-Length', $filelength);
                 $this->getResponse()->sendHeaders();
                 readfile($tmpImagePath);
             }
             
-            
-            exit;
+            exit();
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", 1);
         }
@@ -187,10 +196,16 @@ class FileController extends Zend_Controller_Action
 
     public function getThumbnailAction ()
     {
-        $this->_forward('index', 'image', 'default', array(
-            'size' => 'thumbnail',
-            'file-id' => null,
-            'filepath' => realpath(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png')
-        ));
+        $this->_forward('index', 'image', 'default', 
+                array(
+                        'size' => 'thumbnail',
+                        'file-id' => null,
+                        'filepath' => realpath(
+                                APPLICATION_PATH .
+                                         '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' .
+                                         Manager::getService('Session')->get(
+                                                'iconSet', 'red') .
+                                         '/128x128/attach_document.png')
+                ));
     }
 }

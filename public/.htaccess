@@ -1,6 +1,6 @@
 RewriteEngine On
 
-RewriteRule ^dam\.(.*)$ /dam [R,QSA,L]
+RewriteRule ^dam\.(.*)$ /index.php [L]
 
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
