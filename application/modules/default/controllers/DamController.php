@@ -49,7 +49,7 @@ class DamController extends Zend_Controller_Action
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type');
         }
-        if ($mediaType['mainFileType'] == 'Image') {
+        if (isset($mediaType['mainFileType']) && $mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
                 'file-id' => $media['originalFileId']
             ));
