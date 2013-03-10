@@ -45,6 +45,8 @@ class Install_IndexController extends Zend_Controller_Action
         
         $this->_localConfigDir = realpath(APPLICATION_PATH . '/configs/local/');
         $this->_localConfigFile = $this->_localConfigDir . '/config.json';
+        $this->view->moduleDir = realpath(__DIR__.'/..');
+        $this->view->localConfigFile = $this->_localConfigFile;
         $this->_loadLocalConfig();
         $this->_applicationOptions = $this->getFrontController()
             ->getParam('bootstrap')
