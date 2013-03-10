@@ -96,15 +96,13 @@ class Install_IndexController extends Zend_Controller_Action
                 'status' => 'begin',
                 'action' => 'start-wizard'
         );
-        
+        $this->view->displayMode = "start-wizard";
         $this->_saveLocalConfig();
     }
 
     public function finishWizardAction ()
     {
-        $this->_localConfig['installed'] = array(
-                'status' => 'finished'
-        );
+        $this->_localConfig['installed']['status'] = 'finished';
         
         $this->_saveLocalConfig();
         $this->_forward('index');
@@ -361,7 +359,7 @@ class Install_IndexController extends Zend_Controller_Action
         if ($this->getParam('doInsertGroups', false)) {
             $this->view->groupCreated = $this->_docreateDefaultsGroup();
         }
-        if ($this->_isDefaultGroupsExists() && !$this->view->shouldIndex && !$this->view->shouldInitialize) {
+        if ($this->_isDefaultGroupsExists() && !$this->view->shouldIndex) {
             $this->view->isReady = true;
         }
         
@@ -590,7 +588,12 @@ class Install_IndexController extends Zend_Controller_Action
                 if ($file->getExtension() == 'json') {
                     $itemJson = file_get_contents($file->getPathname());
                     $item = Zend_Json::decode($itemJson);
-                    $result = Manager::getService($collection)->create($item);
+                    try{
+                        $result = Manager::getService($collection)->create($item);
+                    }catch (Rubedo\Exceptions\User $exception){
+                        $result['success'] = true;
+                    }
+                    
                     $success = $result['success'] && $success;
                 }
             }
