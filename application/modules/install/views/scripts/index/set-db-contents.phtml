@@ -8,9 +8,6 @@
     <div class="alert alert-success">Indexes had been applied</div>
     <?php }?>
     
-    <?php if(!$this->shouldIndex){?>
-    <div class="alert alert-success">Indexes are set</div>
-    <?php }?>
     <?php if($this->isGroupsCreated){?>
     <div class="alert alert-success">Groups had been created</div>
     <?php }?>
@@ -21,45 +18,43 @@
     
     
     <?php if(!$this->isDefaultGroupsExists){?>
-    <div class="alert alert-warning">Default groups are not set</div>
+    <div class="alert alert-error">Default groups are not set</div>
     <?php }?>
+    
+    <?php if($this->isReady){?>
+    <div class="alert alert-success"><h4>All contents are sets!</h4></div>
+	<?php }?>
 </div>
 
-<div class="row-fluid">
-    <?php if($this->shouldIndex){?>
-	<div class="span6">
-
-		<h2>Apply indexes</h2>
-		<a
-			href="<?php echo $this->url(array('doEnsureIndex'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
-			class="btn btn-large btn-primary" type="button"><i
-			class="icon-tasks icon-white"></i> Run Indexes</a>
-
-	</div>
-    <?php }?>
-	<div class="span6">
 <?php if(!$this->isDefaultGroupsExists){?>
-<h2>Initialize default groups</h2>
-		<a
-			href="<?php echo $this->url(array('doInsertGroups'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
-			class="btn btn-large btn-primary" type="button"><i
-			class="icon-user icon-white"></i> Create groups</a>
-<?php }?>
+<div class="row-fluid">
+	<h4>Initialize default groups</h4>
+	<a
+		href="<?php echo $this->url(array('doInsertGroups'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+		class="btn btn-large btn-primary" type="button"><i
+		class="icon-user icon-white"></i> Create groups</a>
 </div>
-</div>
 
-
-
-<?php if($this->shouldInitialize){?>
+<?php }elseif($this->shouldIndex){?>
 <div class="row-fluid">
 
-	<h2>Initialize Db Contents</h2>
+	<h4>Apply indexes</h4>
+	<a
+		href="<?php echo $this->url(array('doEnsureIndex'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+		class="btn btn-large btn-primary" type="button"><i
+		class="icon-bookmark icon-white"></i> Run Indexes</a>
+
+</div>
+<?php }elseif($this->shouldInitialize){?>
+<div class="row-fluid">
+
+	<h4>Initialize Db Contents</h4>
 	<a
 		href="<?php echo $this->url(array('initContents'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
 		class="btn btn-large btn-primary" type="button"><i
 		class="icon-user icon-white"></i> Initialize Contents</a>
 </div>
-<?php }?>
+<?php } ?>
 
 
 <br />

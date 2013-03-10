@@ -28,22 +28,40 @@ class Install_Model_PhpSettingsForm extends Install_Model_BootstrapForm
         
         
         
-        $displayStartupErrors = new Zend_Form_Element_Checkbox('display_startup_errors');
-        $displayStartupErrors->setValue(isset($params['display_startup_errors']) ? $params['display_startup_errors'] : null);
-        $displayStartupErrors->setLabel('Display Startup Errors');
+//         $displayStartupErrors = new Zend_Form_Element_Checkbox('display_startup_errors');
+//         $displayStartupErrors->setValue(isset($params['display_startup_errors']) ? $params['display_startup_errors'] : null);
+//         $displayStartupErrors->setLabel('Display Startup Errors');
+        
         
         $displayErrors = new Zend_Form_Element_Checkbox('display_errors');
         $displayErrors->setValue(isset($params['display_errors']) ? $params['display_errors'] : null);
-        $displayErrors->setLabel('Display Errors');
+        $displayErrors->setLabel('Display PHP Errors');
         
         $displayExceptions = new Zend_Form_Element_Checkbox('displayExceptions');
         $displayExceptions->setValue(isset($params['displayExceptions']) ? $params['displayExceptions'] : null);
-        $displayExceptions->setLabel('Display Exceptions');
+        $displayExceptions->setLabel('Display application exceptions');
+        
+        $extDebug = new Zend_Form_Element_Checkbox('extDebug');
+        $extDebug->setValue(isset($params['extDebug']) ? $params['extDebug'] : null);
+        $extDebug->setLabel('Use debug mode of ExtJs');
+        
+        $sessionName = new Zend_Form_Element_Text('sessionName');
+        $sessionName->setRequired(true);
+        $sessionName->setValue(isset($params['sessionName']) ? $params['sessionName'] : 'rubedo');
+        $sessionName->setLabel('Name of the session cookie');
+        
+        $authLifetime = new Zend_Form_Element_Text('authLifetime');
+        $authLifetime->setRequired(true);
+        $authLifetime->setValue(isset($params['authLifetime']) ? $params['authLifetime'] : '3600');
+        $authLifetime->setLabel('Session lifetime');
         
         $dbForm = new Zend_Form();
-        $dbForm->addElement($displayStartupErrors);
+        //$dbForm->addElement($displayStartupErrors);
         $dbForm->addElement($displayErrors);
         $dbForm->addElement($displayExceptions);
+        $dbForm->addElement($extDebug);
+        $dbForm->addElement($sessionName);
+        $dbForm->addElement($authLifetime);
         
         $dbForm = self::setForm($dbForm);
         
