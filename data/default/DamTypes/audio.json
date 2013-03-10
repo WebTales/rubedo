@@ -1,17 +1,17 @@
 {
 	"fields": [
 		{
-			"cType": "Ext.form.field.Text" ,
+			"cType": "Ext.form.field.TextArea" ,
 			"config": {
 				"name": "alt" ,
-				"fieldLabel": "Alternative textuelle" ,
-				"maxLength": 255 ,
+				"fieldLabel": "Alternative Textuelle" ,
+				"maxLength": 60000 ,
 				"minLength": 0 ,
 				"allowBlank": true ,
-				"localizable": false ,
-				"searchable": false ,
+				"localizable": true ,
+				"searchable": true ,
 				"multivalued": false ,
-				"tooltip": "" ,
+				"tooltip": "Texte proposé en substitution" ,
 				"vtype": null  ,
 				"labelSeparator": " "
 			} ,
