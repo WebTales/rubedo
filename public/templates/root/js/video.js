@@ -27,6 +27,7 @@ function loadVideo() {
 		config.autostart = jQuery(this).attr('data-autostart');
 	}
 	jwplayer(id).setup(config);
+	//jQuery(this).replaceWith('<video src="'+config.file+'" width="'+config.width+'" type="'+jQuery(this).attr('data-contentType')+'" poster="'+config.image+'" controls/>');
 }
 
 function loadAudio() {
@@ -35,7 +36,7 @@ function loadAudio() {
 	var config = new Object();
 	config.file = dataFile;
 	config.width = '100%';
-
+	config.primary = 'flash';
 	config.height = '40';
 
 	if (jQuery(this).attr('data-controls')) {
@@ -49,8 +50,6 @@ function loadAudio() {
 	if (jQuery(this).attr('data-autostart')) {
 		config.autostart = jQuery(this).attr('data-autostart');
 	}
-	console.log(config);
-	console.log(id);
 	//return false;
 	jwplayer(id).setup(config);
 }

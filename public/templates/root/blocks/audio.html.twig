@@ -7,6 +7,7 @@ audioFile %}
         data-controls={% if audioControls %}true{% else %}false{% endif %}
         {% if audioLoop %}data-repeat=true{% endif %}
         data-autostart={% if audioAutoPlay %}true{% else %}false{% endif %}
+        data-contentType={{ contentType }}
         >{{ alt }}
         </div>
         

@@ -11,6 +11,7 @@
         data-controls={% if videoControls %}true{% else %}false{% endif %}
         {% if videoLoop %}data-repeat=true{% endif %}
         data-autostart={% if videoAutoPlay %}true{% else %}false{% endif %}
+        data-contentType={{ contentType }}
         >{{ alt }}
         </div>
         

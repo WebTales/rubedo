@@ -129,23 +129,18 @@ class FileController extends Zend_Controller_Action
                         'attachment; filename="' . $filename . '"', true);
             }
             
-            $this->getResponse()->setHeader('Cache-Control', 
-                    'public, max-age=' . 7 * 24 * 3600, true);
-            $this->getResponse()->setHeader('Expires', 
-                    date(DATE_RFC822, strtotime(" 7 day")), true);
-            
             // ensure no buffering for memory issues
             while (ob_get_level() > 0) {
                 ob_end_clean();
             }
             
-            if ($seekStart >= 0 && $seekEnd > 0) {
+            if ($seekStart >= 0 && $seekEnd > 0 &&
+                     ! ($filelength == $seekEnd - $seekStart)) {
                 $this->getResponse()->setHeader('Content-Length', 
                         $filelength - $seekStart, true);
                 $this->getResponse()->setHeader('Content-Range', 
                         "bytes $seekStart-$seekEnd/$filelength", true);
-                $this->getResponse()->setHeader('Accept-Ranges', "0-$lastByte", 
-                        true);
+                $this->getResponse()->setHeader('Accept-Ranges', "bytes", true);
                 $this->getResponse()->setRawHeader(
                         'HTTP/1.1 206 Partial Content');
                 $this->getResponse()->setHttpResponseCode(206);
@@ -170,8 +165,7 @@ class FileController extends Zend_Controller_Action
                         $filelength - $seekStart, true);
                 $this->getResponse()->setHeader('Content-Range', 
                         "bytes $seekStart-$lastByte/$filelength", true);
-                $this->getResponse()->setHeader('Accept-Ranges', "0-$lastByte", 
-                        true);
+                $this->getResponse()->setHeader('Accept-Ranges', "bytes", true);
                 $this->getResponse()->setRawHeader(
                         'HTTP/1.1 206 Partial Content');
                 $this->getResponse()->setHttpResponseCode(206);
@@ -183,7 +177,14 @@ class FileController extends Zend_Controller_Action
                 fpassthru($fo);
                 fclose($fo);
             } else {
+                $this->getResponse()->setHeader('Accept-Ranges', "bytes", true);
+                $this->getResponse()->setHeader('Content-Range', 
+                        "bytes 0-$lastByte/$filelength", true);
                 $this->getResponse()->setHeader('Content-Length', $filelength);
+                $this->getResponse()->setHeader('Cache-Control', 
+                        'public, max-age=' . 7 * 24 * 3600, true);
+                $this->getResponse()->setHeader('Expires', 
+                        date(DATE_RFC822, strtotime(" 7 day")), true);
                 $this->getResponse()->sendHeaders();
                 readfile($tmpImagePath);
             }
