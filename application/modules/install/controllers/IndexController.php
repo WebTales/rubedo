@@ -361,7 +361,7 @@ class Install_IndexController extends Zend_Controller_Action
         if ($this->getParam('doInsertGroups', false)) {
             $this->view->groupCreated = $this->_docreateDefaultsGroup();
         }
-        if ($this->_isDefaultGroupsExists() && !$this->view->shouldIndex) {
+        if ($this->_isDefaultGroupsExists() && !$this->view->shouldIndex  && !$this->$this->view->shouldInitialize) {
             $this->view->isReady = true;
         }
         
