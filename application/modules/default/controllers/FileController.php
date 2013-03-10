@@ -122,7 +122,13 @@ class FileController extends Zend_Controller_Action
             
             $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 7 * 24 * 3600,true);
             $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 7 day")),true);
-
+            
+            //ensure no buffering for memory issues
+            while (ob_get_level() > 0){
+                ob_end_clean();
+            }
+            
+            
             if($seekStart >= 0 && $seekEnd > 0){
                 $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
                 $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$seekEnd/$filelength",true);
@@ -136,12 +142,19 @@ class FileController extends Zend_Controller_Action
                 $currentByte = $seekStart;
                 fseek($fo, $seekStart);
                 ob_start();
+                $i = 0;
                 while($currentByte < $seekEnd){
                     $actualBuffer=($seekEnd - $currentByte > $bufferSize)?$bufferSize:$seekEnd - $currentByte;
                     echo fread($fo, $actualBuffer);
                     $currentByte +=$actualBuffer;
-                    ob_flush();
+                    $i++;
+                    if($i >999){
+                        ob_flush();
+                        $i=0;
+                    }
+                    
                 }
+                ob_flush();
                 ob_end_clean();
                 
                 
