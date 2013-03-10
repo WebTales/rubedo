@@ -36,7 +36,7 @@ class Blocks_AudioController extends Blocks_AbstractController
         $site = $this->getParam('site');
         $output = $this->getAllParams();
         //Zend_Debug::dump($blockConfig);die();
-        $output['audioAutoPlay'] = isset($blockConfig['audioPlay']) ? $blockConfig['audioPlay'] : false;
+        $output['audioAutoPlay'] = isset($blockConfig['audioAutoPlay']) ? $blockConfig['audioAutoPlay'] : false;
         $output['audioPreload'] = isset($blockConfig['audioPreload']) ? $blockConfig['audioPreload'] : false;
 		$output['audioControls'] = isset($blockConfig['audioControls']) ? $blockConfig['audioControls'] : true;
 		$output['audioLoop'] = isset($blockConfig['audioLoop']) ? $blockConfig['audioLoop'] : false;

@@ -7,7 +7,11 @@
         data-videoFile="/dam.{{ extension }}?media-id={{ videoFile }}" 
         {% if videoPoster %}data-image="/dam?media-id={{ videoPoster }}"{% endif %}
         {% if videoWidth %}data-width="{{ videoWidth }}"{% endif %} 
-        {% if videoHeight %}data-height="{{ videoHeight }}"{% endif %}>{{ alt }}
+        {% if videoHeight %}data-height="{{ videoHeight }}"{% endif %}
+        data-controls={% if videoControls %}true{% else %}false{% endif %}
+        {% if videoLoop %}data-repeat=true{% endif %}
+        data-autostart={% if videoAutoPlay %}true{% else %}false{% endif %}
+        >{{ alt }}
         </div>
         
         </div>

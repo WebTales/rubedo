@@ -36,9 +36,9 @@ class Blocks_videoController extends Blocks_AbstractController
         $site = $this->getParam('site');
         $output = $this->getAllParams();
         //Zend_Debug::dump($blockConfig);die();
-        $output['videoAutoPlay'] = isset($blockConfig['videoPlay']) ? $blockConfig['videoPlay'] : false;
+        $output['videoAutoPlay'] = isset($blockConfig['videoAutoPlay']) ? $blockConfig['videoAutoPlay'] : false;
         $output['videoPreload'] = isset($blockConfig['videoPreload']) ? $blockConfig['videoPreload'] : false;
-		$output['videoControls'] = isset($blockConfig['videoControls']) ? $blockConfig['videoControls'] : true;
+		$output['videoControls'] = isset($blockConfig['videoControls']) ? $blockConfig['videoControls'] : false;
 		$output['videoLoop'] = isset($blockConfig['videoLoop']) ? $blockConfig['videoLoop'] : false;
         $output['videoFile'] = isset($blockConfig['videoFile']) ? $blockConfig['videoFile'] : null;
         $output['videoWidth'] = isset($blockConfig['videoWidth']) ? $blockConfig['videoWidth'].'px' : '100%';

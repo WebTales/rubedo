@@ -1,9 +1,16 @@
 {% extends "root/block.html.twig" %} {% block mainContent %} {% if
 audioFile %}
 
-	<div id="audio_{{ prefix }}" class="audioPlaceholder"
-		data-audioFile="/dam.{{ extension }}?media-id={{ audioFile }}"
-		data-width="100%" data-height="24">{{ alt }}</div>
+	<div style="max-width:{{ audioWidth }};margin:1em 0;">
+        <div id="audio_{{ prefix }}" class="audioPlaceholder" 
+        data-audioFile="/dam.{{ extension }}?media-id={{ audioFile }}" 
+        data-controls={% if audioControls %}true{% else %}false{% endif %}
+        {% if audioLoop %}data-repeat=true{% endif %}
+        data-autostart={% if audioAutoPlay %}true{% else %}false{% endif %}
+        >{{ alt }}
+        </div>
+        
+        </div>
 
 {% endif %} {% endblock %}
 

@@ -134,12 +134,14 @@ class FileController extends Zend_Controller_Action
                 $bufferSize = 1024*8;
                 $currentByte = $seekStart;
                 fseek($fo, $seekStart);
+                ob_start();
                 while($currentByte < $seekEnd){
                     $actualBuffer=($seekEnd - $currentByte > $bufferSize)?$bufferSize:$seekEnd - $currentByte;
                     echo fread($fo, $actualBuffer);
                     $currentByte +=$actualBuffer;
-                    flush();
+                    ob_flush();
                 }
+                ob_end_clean;
                 
                 
                 fclose($fo);
@@ -154,7 +156,6 @@ class FileController extends Zend_Controller_Action
                 $fo = fopen($tmpImagePath, 'rb');
                 
                 fseek($fo, $seekStart);
-                flush();
                 fpassthru($fo);
                 fclose($fo);
             }else{
