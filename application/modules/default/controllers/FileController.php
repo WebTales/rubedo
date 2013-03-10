@@ -54,6 +54,7 @@ class FileController extends Zend_Controller_Action
             }
             
             $filelength = filesize($tmpImagePath);
+            $lastByte = (string) $filelength-1;
             
             $meta = $obj->file;
             $filename = $meta['filename'];
@@ -125,7 +126,7 @@ class FileController extends Zend_Controller_Action
             if($seekStart >= 0 && $seekEnd > 0){
                 $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
                 $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$seekEnd/$filelength",true);
-                $this->getResponse()->setHeader('Accept-Ranges',"0-$filelength",true);
+                $this->getResponse()->setHeader('Accept-Ranges',"0-$lastByte",true);
                 $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
                 $this->getResponse()->setHttpResponseCode(206);
                 $this->getResponse()->setHeader('Status','206 Partial Content');
@@ -141,14 +142,14 @@ class FileController extends Zend_Controller_Action
                     $currentByte +=$actualBuffer;
                     ob_flush();
                 }
-                ob_end_clean;
+                ob_end_clean();
                 
                 
                 fclose($fo);
             }elseif($seekStart > 0 && $seekEnd == -1){
                 $this->getResponse()->setHeader('Content-Length',$filelength-$seekStart,true);
-                $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$filelength/$filelength",true);
-                $this->getResponse()->setHeader('Accept-Ranges',"0-$filelength",true);
+                $this->getResponse()->setHeader('Content-Range',"bytes $seekStart-$lastByte/$filelength",true);
+                $this->getResponse()->setHeader('Accept-Ranges',"0-$lastByte",true);
                 $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
                 $this->getResponse()->setHttpResponseCode(206);
                 $this->getResponse()->setHeader('Status','206 Partial Content');
