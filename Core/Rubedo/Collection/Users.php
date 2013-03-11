@@ -206,7 +206,7 @@ class Users extends AbstractCollection implements IUsers
         $obj['groups'] = null;
         $result = parent::update($obj, $options);
         if($result){
-            $result = $this->_addGroupsInfos($result);
+            $result['data'] = $this->_addGroupsInfos($result['data']);
         }
         return $result;
     }
