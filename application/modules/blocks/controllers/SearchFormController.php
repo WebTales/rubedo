@@ -38,6 +38,8 @@ class Blocks_SearchFormController extends Blocks_AbstractController
         } else {
             $searchPage = null;
         }		
+        
+        
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/searchForm.html.twig");
         
@@ -46,6 +48,7 @@ class Blocks_SearchFormController extends Blocks_AbstractController
         
         $output = $this->getAllParams();
 		$output['searchPage'] = $searchPage;
+		$output['placeholder']=isset($blockConfig['placeholder'])?$blockConfig['placeholder']:null;
 		
         $this->_sendResponse($output, $template, $css, $js);
     }

@@ -1,5 +1,9 @@
 <h1>Local Domain Override</h1>
 <br />
+<p>In order to use Rubedo on server other than production, you can override production domain names with environnement specific ones.</p>
+<p>Only domains managed by a vHost on your current server will work. If you want to simulate production on another domain, juste add overriden domain and local domain below.</p>
+<p><em>Note: only one local domain override per domain name</em></p>
+
 <div id="alerts">
     <?php if($this->hasError){?>
     <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
@@ -10,7 +14,7 @@
 
 <?php if(count($this->overrideList)){?>
 <div class="well">
-	<h2>Defined Override</h2>
+	<h4>Configured local domains</h4>
 	<ul>
    <?php foreach ($this->overrideList as $domain => $localDomain){?>
    <li><?php echo $this->escape($domain);?> => <?php echo $this->escape($localDomain);?></li>
@@ -19,5 +23,5 @@
 </div>
 <?php }?>
 
-<h2>Add local override</h2>
+<h4>Add local override</h4>
 <?php echo $this->form->render();?>

@@ -281,9 +281,11 @@ class Sites extends AbstractCollection implements ISites
 	        if (! isset($obj['workspace'])) {
 	            $obj['workspace'] = 'global';
 	        }
+			
+			$aclServive = Manager::getService('Acl');
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 			
-	        if (!in_array($obj['workspace'], $writeWorkspaces) && !in_array('all', $writeWorkspaces)) {
+	        if ((!in_array($obj['workspace'], $writeWorkspaces) && !in_array('all', $writeWorkspaces)) || !$aclServive->hasAccess("write.ui.dam")) {
 	            $obj['readOnly'] = true;
 	        } else {
 	            

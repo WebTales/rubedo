@@ -97,6 +97,8 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements
             foreach ($data as $key => $value) {
                 if (! isset($params[$key])) {
                     $params[$key] = array();
+                }elseif(!is_array($params[$key])){
+                    $params[$key] = array($params[$key]);
                 }
                 if (! is_array($value)) {
                     $value = array(

@@ -47,9 +47,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
         $data = array(
             'html' => $html
         );
-		
-		//var_dump($data);die();
-		
+				
         $this->_helper->json($data);
 	}
 

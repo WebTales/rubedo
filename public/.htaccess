@@ -1,14 +1,42 @@
+####################################################################
+#  Activate URL Rewriting
+####################################################################
 RewriteEngine On
-# The following rule tells Apache that if the requested filename
-# exists, simply serve it.
+
+####################################################################
+#  /!\ activate to forbid access to the install tool /!\
+####################################################################
+#RewriteRule install$ - [F,L]
+#RewriteRule install/ - [F,L]
+
+####################################################################
+#  Every request to dam.mp4/dam.ogg/dam.flv are dealt by Rubedo
+####################################################################
+RewriteRule ^dam\.(.*)$ /index.php [L]
+
+####################################################################
+#  Existing document are directly served
+####################################################################
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 
+####################################################################
+#  / is sent to the application
+####################################################################
 RewriteRule ^/$ /index.php [L]
 
+####################################################################
+#  Backoffice alias
+####################################################################
 RewriteRule ^backoffice(/)?$ /index.php [L]
 RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [L]
 
+####################################################################
+#  non image, js or css requests are sent to Rubedo
+####################################################################
 RewriteRule !\.(js|ico|txt|gif|jpg|png|css)$ /index.php [L]
+
+
+

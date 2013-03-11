@@ -84,7 +84,7 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
-            'label' => 'PHP settings',
+            'label' => 'Application settings',
             'action' => 'set-php-settings',
             'controller' => 'index',
             'module' => 'install'

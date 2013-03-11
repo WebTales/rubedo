@@ -149,6 +149,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
          */
         $router = $front->getRouter();
         
+        $route = new Zend_Controller_Router_Route_Regex('dam\..*', array('controller' => 'dam', 'action' => 'index', 'module' => 'default'));
+		$router->addRoute('dam', $route);
+        
         // default front office route
         $route = new Rubedo\Router\Route();
         $router->addRoute('rewrite', $route);

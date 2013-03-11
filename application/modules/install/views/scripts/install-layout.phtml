@@ -42,6 +42,7 @@ echo $this->headLink();
 			<a class="brand"
 				href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>">Rubedo
 				Install Tool</a>
+			<?php if($this->displayMode!='wizard' && $this->displayMode!='start-wizard'){?>
 			<div class="nav-collapse collapse">
 				<ul class="nav">
                    <?php foreach ($this->navigationContainer as $page){?>
@@ -51,6 +52,7 @@ echo $this->headLink();
                    <?php } ?>
                </ul>
 			</div>
+			<?php }?>
 			<!-- <ul class="nav">
 				<li class="active">
 					<a href="#">Home</a>

@@ -100,6 +100,10 @@ class Dam extends AbstractCollection implements IDam
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteDam($obj['typeId'], $obj['id']);
     }
+	
+	protected function _validateMediaType(array $obj) {
+		
+	}
 
     /**
      * (non-PHPdoc)
@@ -233,11 +237,10 @@ class Dam extends AbstractCollection implements IDam
             }
 			
 	        $damTypeId = $obj['typeId'];
+			$aclServive = Manager::getService('Acl');
 	        $damType = Manager::getService('DamTypes')->findById($damTypeId);
-			
-			//var_dump($damType, $writeWorkspaces, $obj['writeWorkpace']);die();
-			
-	        if ($damType['readOnly']) {
+						
+	        if ($damType['readOnly'] || !$aclServive->hasAccess("write.ui.dam")) {
 	            $obj['readOnly'] = true;
 	        } elseif (in_array($obj['writeWorkspace'], $writeWorkspaces) == false) {
 	            $obj['readOnly'] = true;
@@ -256,11 +259,9 @@ class Dam extends AbstractCollection implements IDam
      */
     public function findById ($contentId)
     {
-        
         $obj = parent::findById ($contentId);
         $obj = $this->_addReadableProperty($obj);
-        return $obj;
-        
+        return $obj; 
     }
 }
 

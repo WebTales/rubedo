@@ -357,7 +357,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 							$collection = Manager::getService('DamTypes');
 							foreach ($temp['terms'] as $key => $value) {
 								$termItem = $collection->findById($value['term']);
-								$temp['terms'][$key]['label'] = $termItem['type'];
+								if($termItem && isset($termItem['type'])){
+								    $temp['terms'][$key]['label'] = $termItem['type'];
+								}
+								
 							}
 						} else {
 							$renderFacet = false;

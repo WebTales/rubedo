@@ -31,7 +31,6 @@
 
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="{{baseUrl}}/components/zencoder/video-js/video-js.min.css" rel="stylesheet">
     
     
     {% for sheet in css %}
@@ -62,7 +61,6 @@
     {% endif %}
     
     {% endblock %}
-
 </head>
 
 <body>
@@ -114,7 +112,6 @@
 	</div>
 	{% endblock %}
 
-    </div>
     
     {% block Modal %}
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog"
@@ -125,7 +122,7 @@
 			<h3 id="myModalLabel">Picture</h3>
 		</div>
 		<div class="modal-body">
-			<img src="#" id="fullScreenPicture">
+			<img src="{{baseUrl}}/components/webtales/rubedo-backoffice-ui/www/resources/images/logo.png" id="fullScreenPicture" alt="">
 		</div>
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -140,10 +137,7 @@
     	<!-- Placed at the end of the document so the pages load faster -->
     	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.9.1.min.js"></script>
     	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
-      	<script src="{{baseUrl}}/components/zencoder/video-js/video.min.js"></script>
-      	<script>
-        	_V_.options.flash.swf = "{{baseUrl}}/components/zendcoder/video-js/video-js.swf";
-      	</script>
+
     	
     	{% for file in js %}
     	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>

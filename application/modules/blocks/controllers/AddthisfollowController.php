@@ -31,7 +31,6 @@ class Blocks_AddthisfollowController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array()); 
-		//\Zend_Debug::dump($blockConfig);die();
 		$networks=$blockConfig;
 		unset($networks["disposition"]);
 		unset($networks["small"]);
@@ -45,12 +44,11 @@ class Blocks_AddthisfollowController extends Blocks_AbstractController
 		$output['networks']=$data;
 		$output["type"]=isset($blockConfig["disposition"])?$blockConfig["disposition"]:"Horizontal";
 		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;
-		//\Zend_Debug::dump($data);die();
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthisfollow.html.twig");
         
         $css = array();
-        $js = array();
+        $js = array('//s7.addthis.com/js/300/addthis_widget.js');
         $this->_sendResponse($output, $template, $css, $js);
     }
 }

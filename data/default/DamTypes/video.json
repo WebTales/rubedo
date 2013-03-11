@@ -1,0 +1,26 @@
+{
+	"fields": [
+		{
+			"cType": "Ext.form.field.TextArea" ,
+			"config": {
+				"name": "alt" ,
+				"fieldLabel": "Alternative Textuelle" ,
+				"maxLength": 60000 ,
+				"minLength": 0 ,
+				"allowBlank": true ,
+				"localizable": true ,
+				"searchable": true ,
+				"multivalued": false ,
+				"tooltip": "Texte proposé en substitution" ,
+				"vtype": null  ,
+				"labelSeparator": " "
+			} ,
+			"protoId": "50f51fe8c0e0514d0b000001"
+		}
+	] ,
+	"mainFileType": "Video" ,
+	"type": "Video" ,
+	"version": 1 ,
+	"vocabularies": ["navigation"] ,
+	"workspaces": ["global"]
+}

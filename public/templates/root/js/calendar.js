@@ -34,8 +34,8 @@ function calendarChangeDate(date, prefix, query, url, singlePage,dateField) {
 	}
 	jQuery('#calendar-items-' + prefix + ' > .active').hide();
 	jQuery('#calendar-items-' + prefix + ' > .active').removeClass('active');
-	jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).show();
-	jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).addClass(
+	jQuery('#calendar-items-' + prefix + ' > #calendar-items-' + date).show();
+	jQuery('#calendar-items-' + prefix + ' > #calendar-items-' + date).addClass(
 			'active');
 	return false;
 }

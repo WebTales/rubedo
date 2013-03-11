@@ -35,6 +35,7 @@ class Install_Model_BootstrapForm
         
         $dbForm->setMethod('post');
         $dbForm->setAttrib('id', 'installForm');
+        $dbForm->setAttrib('class','form-horizontal');
         
         $dbForm->addDisplayGroup(array(
             $resetButton,
@@ -55,7 +56,9 @@ class Install_Model_BootstrapForm
             $element->removeDecorator('HtmlTag');
             if ($element->getDecorator('label')) {
                 $element->removeDecorator('Label');
-                $element->addDecorator('Label');
+                $element->addDecorator(array('controls'=>'HTMLTag'),array('tag'=>'div','class'=>'controls'));
+                $element->addDecorator('Label',array('tag'=>'div','class'=>'control-label'));
+                $element->addDecorator('HTMLTag',array('tag'=>'div','class'=>'control-group'));
             }
         }
         foreach ($dbForm->getDisplayGroups() as $group) {
@@ -64,6 +67,7 @@ class Install_Model_BootstrapForm
                 $element->removeDecorator('Label');
                 $element->removeDecorator('Tooltip');
                 $element->removeDecorator('DtDdWrapper');
+                
             }
         }
         $dbForm->removeDecorator('HtmlTag');

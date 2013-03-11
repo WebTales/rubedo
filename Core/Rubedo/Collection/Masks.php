@@ -87,6 +87,31 @@ class Masks extends AbstractCollection implements IMasks
 		parent::__construct();
 	}
 	
+	protected function _addReadableProperty ($obj)
+    {
+        if (! self::isUserFilterDisabled()) {
+			$aclServive = Manager::getService('Acl');
+			
+	        if (!$aclServive->hasAccess("write.ui.masks")) {
+	            $obj['readOnly'] = true;
+	        } else {
+	            $obj['readOnly'] = false;
+	        }
+		}
+        
+        return $obj;
+    }
+	
+	public function getList ($filters = null, $sort = null, $start = null, $limit = null) {
+		$list = parent::getList($filters, $sort, $start, $limit);
+		
+		foreach ($list['data'] as &$mask) {
+			$mask = $this->_addReadableProperty($mask);
+		}
+		
+		return $list;
+	}
+	
 	public function deleteBySiteId($id)
 	{
 		$this->_isUserFilterDisabled = true;	

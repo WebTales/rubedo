@@ -46,16 +46,13 @@ class Blocks_CalendarController extends Blocks_ContentListController
 
     protected function _getList ()
     {
-        
-        
-        
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getRequest()->getParam('block-config');
         
-        $dateField = isset($blockConfig['dateField'])?$blockConfig['dateField']:$this->getParam('date-field', 'date');
-        $endDateField = isset($blockConfig['endDateField'])?$blockConfig['endDateField']:$this->getParam('endDateField', 'date_end');
+        $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->getParam('date-field', 'date');
+        $endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->getParam('endDateField', 'date_end');
         $usedDateField = 'fields.' . $dateField;
         
         $date = $this->getParam('cal-date');
@@ -80,10 +77,10 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $data = array();
         $filledDate = array();
         
-        if ($queryId) { //nothing shown if no query given
-            $queryConfig = $this->getQuery($queryId);
-            $queryType = $queryConfig['type'];
-            $queryFilter = $this->setFilters($queryConfig);
+        if ($queryId) { // nothing shown if no query given
+            $queryFilter = Manager::getService('Queries')->getFilterArrayById($queryId);
+            
+            $queryType = $queryFilter["queryType"];
             
             $condition = array(
                 '$gte' => "$timestamp",
@@ -98,7 +95,6 @@ class Blocks_CalendarController extends Blocks_ContentListController
                 'limit' => 100,
                 'currentPage' => 1
             ));
-            
             
             foreach ($contentArray['data'] as $vignette) {
                 $fields = $vignette['fields'];
@@ -115,8 +111,8 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $output = $this->getAllParams();
         $output['blockConfig'] = $blockConfig;
         $output["data"] = $data;
-        $output["query"]['type'] = isset($queryType)?$queryType:null;
-        $output["query"]['id'] = isset($queryId)?$queryId:null;
+        $output["query"]['type'] = isset($queryType) ? $queryType : null;
+        $output["query"]['id'] = isset($queryId) ? $queryId : null;
         $output['prefix'] = $this->getRequest()->getParam('prefix');
         $output['filledDate'] = $filledDate;
         $output['days'] = Manager::getService('Date')->getShortDayList();
@@ -141,7 +137,6 @@ class Blocks_CalendarController extends Blocks_ContentListController
         }
         
         $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
-        // var_dump($this->getParam('current-page'));die();
         
         $output['singlePage'] = $this->getParam('single-page', $singlePage);
         

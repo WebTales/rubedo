@@ -115,9 +115,6 @@ class NestedContentsTest extends PHPUnit_Framework_TestCase {
 		
 		$expectedResult = $content1; 
         $result = $collection->findById($item['id'], $content1['id']);
-		Zend_Debug::dump($content1['id']);
-		Zend_Debug::dump($expectedResult);
-		Zend_Debug::dump($result);
 
         $this->assertEquals($result, $expectedResult);
     }*/
