@@ -204,7 +204,11 @@ class Users extends AbstractCollection implements IUsers
         $groups = isset($obj['groups']) ? $obj['groups'] : array();
         Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
         $obj['groups'] = null;
-        return parent::update($obj, $options);
+        $result = parent::update($obj, $options);
+        if($result){
+            $result = $this->_addGroupsInfos($result);
+        }
+        return $result;
     }
     
     /*
