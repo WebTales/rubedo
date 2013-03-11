@@ -239,9 +239,7 @@ class Dam extends AbstractCollection implements IDam
 	        $damTypeId = $obj['typeId'];
 			$aclServive = Manager::getService('Acl');
 	        $damType = Manager::getService('DamTypes')->findById($damTypeId);
-			
-			//var_dump($damType, $writeWorkspaces, $obj['writeWorkpace']);die();
-			
+						
 	        if ($damType['readOnly'] || !$aclServive->hasAccess("write.ui.dam")) {
 	            $obj['readOnly'] = true;
 	        } elseif (in_array($obj['writeWorkspace'], $writeWorkspaces) == false) {
@@ -261,11 +259,9 @@ class Dam extends AbstractCollection implements IDam
      */
     public function findById ($contentId)
     {
-        
         $obj = parent::findById ($contentId);
         $obj = $this->_addReadableProperty($obj);
-        return $obj;
-        
+        return $obj; 
     }
 }
 

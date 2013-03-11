@@ -137,7 +137,6 @@ class Blocks_CalendarController extends Blocks_ContentListController
         }
         
         $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
-        // var_dump($this->getParam('current-page'));die();
         
         $output['singlePage'] = $this->getParam('single-page', $singlePage);
         

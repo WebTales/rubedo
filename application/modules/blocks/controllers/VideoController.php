@@ -35,7 +35,6 @@ class Blocks_videoController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array()); 
         $site = $this->getParam('site');
         $output = $this->getAllParams();
-        //Zend_Debug::dump($blockConfig);die();
         $output['videoAutoPlay'] = isset($blockConfig['videoAutoPlay']) ? $blockConfig['videoAutoPlay'] : false;
         $output['videoPreload'] = isset($blockConfig['videoPreload']) ? $blockConfig['videoPreload'] : false;
 		$output['videoControls'] = isset($blockConfig['videoControls']) ? $blockConfig['videoControls'] : false;

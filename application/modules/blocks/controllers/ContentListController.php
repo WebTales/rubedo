@@ -170,7 +170,6 @@ class Blocks_ContentListController extends Blocks_AbstractController
     {
         $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $pageData['limit'] = $this->getParam('limit', $defaultLimit);
-        // var_dump($pageData['limit']);die();
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         return $pageData;
     }

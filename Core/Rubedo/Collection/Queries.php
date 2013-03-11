@@ -191,7 +191,7 @@ class Queries extends AbstractCollection implements IQueries
 
     protected function _getFilterArrayForQuery ($query)
     {
-        $this->_workspace = \Zend_Registry::get('draft')?'draft':'live';
+        $this->_workspace = \Zend_Registry::get('draft') ? 'draft' : 'live';
         $this->_dateService = Manager::getService('Date');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
         
@@ -218,14 +218,10 @@ class Queries extends AbstractCollection implements IQueries
             'value' => 'published'
         );
         
-        // \Zend_Debug::dump($query);die();
-        
+        // add computed filter for vocabularies rules
         if (is_array($query['vocabularies'])) {
             $filterArray[] = $this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']);
         }
-        
-        // \Zend_Debug::dump($query);
-        // \Zend_Debug::dump($filterArray);die();
         
         /* Add filter on FieldRule */
         foreach ($query['fieldRules'] as $property => $value) {
@@ -280,17 +276,25 @@ class Queries extends AbstractCollection implements IQueries
                 );
             }
         }
-        // \Zend_Debug::dump($filterArray);die();
+        
         return array(
             "filter" => $filterArray,
             "sort" => $sort
         );
     }
 
+    /**
+     * Build the taxonomy filter
+     *
+     * @param array $vocabularies
+     *            array of rules by vocabulary
+     * @param string $vocabulariesRule
+     *            OU | ET rule to assemble all filters
+     * @return array
+     */
     protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
     {
         $filterArray = array();
-        /* Add filter on taxonomy */
         foreach ($vocabularies as $key => $value) {
             if (count($value['terms']) > 0) {
                 $filterArray[] = $this->_getVocabularyCondition($key, $value);
@@ -298,12 +302,12 @@ class Queries extends AbstractCollection implements IQueries
         }
         if ($vocabulariesRule == 'OU') {
             $filterArray = array(
-                'operator'=>'$or',
+                'operator' => '$or',
                 'value' => $filterArray
             );
-        }else{
+        } else {
             $filterArray = array(
-                'operator'=>'$and',
+                'operator' => '$and',
                 'value' => $filterArray
             );
         }
@@ -311,11 +315,20 @@ class Queries extends AbstractCollection implements IQueries
         return $filterArray;
     }
 
+    /**
+     * Build filter for a given vocabulary
+     *
+     * @param string $key
+     *            vocabulary name
+     * @param array $value
+     *            vocabulary parameters (rule and terms)
+     * @return array
+     */
     protected function _getVocabularyCondition ($key, $value)
     {
-        if(is_array($value['rule'])){
+        if (is_array($value['rule'])) {
             $rule = array_pop($value['rule']);
-        }else{
+        } else {
             $rule = $value['rule'];
         }
         
@@ -324,35 +337,42 @@ class Queries extends AbstractCollection implements IQueries
                 $subArray = array();
                 foreach ($value['terms'] as $child) {
                     $terms = $this->_taxonomyReader->fetchAllChildren($child);
-                    $termsArray = array($child);
+                    $termsArray = array(
+                        $child
+                    );
                     foreach ($terms as $taxonomyTerms) {
                         $termsArray[] = $taxonomyTerms["id"];
                     }
-                    $subArray[]=array(
-                    $this->_workspace.'.taxonomy.'.$key => array(
-                        '$in' => $termsArray
-                    ));
+                    // some of a branch
+                    $subArray[] = array(
+                        $this->_workspace . '.taxonomy.' . $key => array(
+                            '$in' => $termsArray
+                        )
+                    );
                 }
-                $result = array('$and'=>$subArray);
-                break;
-            case 'all':
+                // verify all branches => at least one of each branch
                 $result = array(
-                    $this->_workspace.'.taxonomy.'.$key => array(
+                    '$and' => $subArray
+                );
+                break;
+            case 'all': // include all terms
+                $result = array(
+                    $this->_workspace . '.taxonomy.' . $key => array(
                         '$all' => $value['terms']
                     )
                 );
                 break;
-            case 'someRec'://just add children and do 'some' condition
+            case 'someRec': // just add children and do 'some' condition
                 foreach ($value['terms'] as $child) {
                     $terms = $this->_taxonomyReader->fetchAllChildren($child);
                     foreach ($terms as $taxonomyTerms) {
                         $value['terms'][] = $taxonomyTerms["id"];
                     }
                 }
-            case 'some':
+            case 'some': // simplest one: at least on of the termes
             default:
                 $result = array(
-                    $this->_workspace.'.taxonomy.'.$key => array(
+                    $this->_workspace . '.taxonomy.' . $key => array(
                         '$in' => $value['terms']
                     )
                 );
@@ -360,34 +380,5 @@ class Queries extends AbstractCollection implements IQueries
         }
         
         return $result;
-        
-//         if (isset($value['rule'])) {
-//             if ($value['rule'] == "some") {
-//                 $taxOperator = '$in';
-//             } elseif ($value['rule'] == "all") {
-//                 $taxOperator = '$all';
-//             } elseif ($value['rule'] == "someRec") {
-//                 if (count($value['terms']) > 0) {
-//                     foreach ($value['terms'] as $child) {
-//                         $terms = $this->_taxonomyReader->fetchAllChildren($child);
-//                         foreach ($terms as $taxonomyTerms) {
-//                             $value['terms'][] = $taxonomyTerms["id"];
-//                         }
-//                     }
-//                 }
-//                 $taxOperator = '$in';
-//             } else {
-//                 $taxOperator = '$in';
-//             }
-//         } else {
-//             $taxOperator = '$in';
-//         }
-//         if (count($value['terms']) > 0) {
-//             $filterArray[] = array(
-//                 'operator' => $taxOperator,
-//                 'property' => 'taxonomy.' . $key,
-//                 'value' => $value['terms']
-//             );
-//         }
     }
 }

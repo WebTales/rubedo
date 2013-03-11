@@ -108,7 +108,7 @@ class ImageController extends Zend_Controller_Action
             // imagedestroy($image);
             imagedestroy($newImage);
             
-            die();
+            exit;
         } else {
             throw new \Rubedo\Exceptions\User("No Image Given", 1);
         }
