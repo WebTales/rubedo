@@ -50,10 +50,26 @@
 			} ,
 			"protoId": "506441f8c648043912991123" ,
 			"openWindow": null
+		} , {
+			"cType": "localiserField" ,
+			"config": {
+				"name": "position" ,
+				"fieldLabel": "Localisation" ,
+				"allowBlank": true ,
+				"localizable": false ,
+				"searchable": false ,
+				"multivalued": false ,
+				"tooltip": "" ,
+				"labelSeparator": " "
+			} ,
+			"protoId": "51234e09c0e0516a0b00000d" ,
+			"openWindow": null
 		}
 	] ,
+
 	"system": false ,
-	"type": "Article" ,
+	"type": "Evènement" ,
+	"updateTime": null  ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"workflow": "Basique" ,

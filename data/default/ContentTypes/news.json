@@ -53,7 +53,8 @@
 		}
 	] ,
 	"system": false ,
-	"type": "Article" ,
+	"type": "Actualité" ,
+	"updateTime": null  ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"workflow": "Basique" ,
