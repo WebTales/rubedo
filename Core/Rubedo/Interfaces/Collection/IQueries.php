@@ -37,7 +37,7 @@ interface IQueries extends IAbstractCollection
      * )
      * 
      * @param string $id            
-     * @return array
+     * @return array | false
      */
     public function getFilterArrayById ($id);
 
@@ -51,7 +51,7 @@ interface IQueries extends IAbstractCollection
      * )
      *
      * @param array $query
-     * @return array
+     * @return array | false
      */
     public function getFilterArrayByQuery ($query);
 }

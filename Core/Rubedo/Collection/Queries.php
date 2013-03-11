@@ -123,7 +123,7 @@ class Queries extends AbstractCollection implements IQueries
      * )
      *
      * @param string $id            
-     * @return array
+     * @return array | false
      */
     public function getFilterArrayById ($id = null)
     {
@@ -148,21 +148,56 @@ class Queries extends AbstractCollection implements IQueries
      * )
      *
      * @param array $query            
-     * @return array
+     * @return array | false
      */
     public function getFilterArrayByQuery ($query = null)
     {
-        $this->_dateService = Manager::getService('Date');
-        $this->_dataReader = Manager::getService('Contents');
-        $this->_typeReader = Manager::getService('ContentTypes');
-        $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
-        
         if ($query === null) {
             return false;
         }
+        
         $queryType = $query['type'];
+        
+        if (isset($query['query']) && $query['type'] != 'manual') {
+            $returnArray = $this->_getFilterArrayForQuery($query['query']);
+        } else {
+            $returnArray = $this->_getFilterArrayForManual($query);
+        }
+        $returnArray["queryType"] = $queryType;
+        return $returnArray;
+    }
 
+    protected function _getFilterArrayForManual ($query)
+    {
+        $filterArray = array();
+        $filterArray[] = array(
+            'operator' => '$in',
+            'property' => 'id',
+            'value' => $query['query']
+        );
+        $filterArray[] = array(
+            'property' => 'status',
+            'value' => 'published'
+        );
+        $sort[] = array(
+            'property' => 'id',
+            'direction' => 'DESC'
+        );
+        return array(
+            "filter" => $filterArray,
+            "sort" => $sort
+        );
+    }
+
+    protected function _getFilterArrayForQuery ($query)
+    {
+        $this->_workspace = \Zend_Registry::get('draft')?'draft':'live';
+        $this->_dateService = Manager::getService('Date');
+        $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
+        
         $sort = array();
+        $filterArray = array();
+        
         $operatorsArray = array(
             '$lt' => '<',
             '$lte' => '<=',
@@ -171,123 +206,188 @@ class Queries extends AbstractCollection implements IQueries
             '$ne' => '!=',
             'eq' => '='
         );
-        if (isset($query['query']) && $query['type'] != 'manual') {
-            $query = $query['query'];
-            /* Add filters on TypeId and publication */
-            $filterArray[] = array(
-                'operator' => '$in',
-                'property' => 'typeId',
-                'value' => $query['contentTypes']
-            );
-            $filterArray[] = array(
-                'property' => 'status',
-                'value' => 'published'
-            );
-            
-            /* Add filter on taxonomy */
-            foreach ($query['vocabularies'] as $key => $value) {
-                if (isset($value['rule'])) {
-                    if ($value['rule'] == "some") {
-                        $taxOperator = '$in';
-                    } elseif ($value['rule'] == "all") {
-                        $taxOperator = '$all';
-                    } elseif ($value['rule'] == "someRec") {
-                        if (count($value['terms']) > 0) {
-                            foreach ($value['terms'] as $child) {
-                                $terms = $this->_taxonomyReader->fetchAllChildren($child);
-                                foreach ($terms as $taxonomyTerms) {
-                                    $value['terms'][] = $taxonomyTerms["id"];
-                                }
-                            }
-                        }
-                        $taxOperator = '$in';
-                    } else {
-                        $taxOperator = '$in';
-                    }
-                } else {
-                    $taxOperator = '$in';
-                }
-                if (count($value['terms']) > 0) {
+        
+        /* Add filters on TypeId and publication */
+        $filterArray[] = array(
+            'operator' => '$in',
+            'property' => 'typeId',
+            'value' => $query['contentTypes']
+        );
+        $filterArray[] = array(
+            'property' => 'status',
+            'value' => 'published'
+        );
+        
+        // \Zend_Debug::dump($query);die();
+        
+        if (is_array($query['vocabularies'])) {
+            $filterArray[] = $this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']);
+        }
+        
+        // \Zend_Debug::dump($query);
+        // \Zend_Debug::dump($filterArray);die();
+        
+        /* Add filter on FieldRule */
+        foreach ($query['fieldRules'] as $property => $value) {
+            if (isset($value['rule']) && isset($value['value'])) {
+                $ruleOperator = array_search($value['rule'], $operatorsArray);
+                $nextDate = new \DateTime($value['value']);
+                $nextDate->add(new \DateInterval('PT23H59M59S'));
+                $nextDate = (array) $nextDate;
+                if ($ruleOperator === 'eq') {
                     $filterArray[] = array(
-                        'operator' => $taxOperator,
-                        'property' => 'taxonomy.' . $key,
-                        'value' => $value['terms']
-                    );
-                }
-            }
-            /* Add filter on FieldRule */
-            foreach ($query['fieldRules'] as $property => $value) {
-                if (isset($value['rule']) && isset($value['value'])) {
-                    $ruleOperator = array_search($value['rule'], $operatorsArray);
-                    $nextDate = new \DateTime($value['value']);
-                    $nextDate->add(new \DateInterval('PT23H59M59S'));
-                    $nextDate = (array) $nextDate;
-                    if ($ruleOperator === 'eq') {
-                        $filterArray[] = array(
-                            'operator' => '$gt',
-                            'property' => $property,
-                            'value' => $this->_dateService->convertToTimeStamp($value['value'])
-                        );
-                        $filterArray[] = array(
-                            'operator' => '$lt',
-                            'property' => $property,
-                            'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                        );
-                    } elseif ($ruleOperator === '$gt') {
-                        $filterArray[] = array(
-                            'operator' => $ruleOperator,
-                            'property' => $property,
-                            'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                        );
-                    } elseif ($ruleOperator === '$lte') {
-                        $filterArray[] = array(
-                            'operator' => $ruleOperator,
-                            'property' => $property,
-                            'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                        );
-                    } else {
-                        $filterArray[] = array(
-                            'operator' => $ruleOperator,
-                            'property' => $property,
-                            'value' => $this->_dateService->convertToTimeStamp($value['value'])
-                        );
-                    }
-                }
-                /*
-                 * Add Sort
-                 */
-                if (isset($value['sort'])) {
-                    $sort[] = array(
+                        'operator' => '$gt',
                         'property' => $property,
-                        'direction' => $value['sort']
+                        'value' => $this->_dateService->convertToTimeStamp($value['value'])
+                    );
+                    $filterArray[] = array(
+                        'operator' => '$lt',
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
+                    );
+                } elseif ($ruleOperator === '$gt') {
+                    $filterArray[] = array(
+                        'operator' => $ruleOperator,
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
+                    );
+                } elseif ($ruleOperator === '$lte') {
+                    $filterArray[] = array(
+                        'operator' => $ruleOperator,
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
                     );
                 } else {
-                    $sort[] = array(
-                        'property' => 'id',
-                        'direction' => 'DESC'
+                    $filterArray[] = array(
+                        'operator' => $ruleOperator,
+                        'property' => $property,
+                        'value' => $this->_dateService->convertToTimeStamp($value['value'])
                     );
                 }
             }
-        } else {
-            $filterArray[] = array(
-                'operator' => '$in',
-                'property' => 'id',
-                'value' => $query['query']
+            /*
+             * Add Sort
+             */
+            if (isset($value['sort'])) {
+                $sort[] = array(
+                    'property' => $property,
+                    'direction' => $value['sort']
+                );
+            } else {
+                $sort[] = array(
+                    'property' => 'id',
+                    'direction' => 'DESC'
+                );
+            }
+        }
+        // \Zend_Debug::dump($filterArray);die();
+        return array(
+            "filter" => $filterArray,
+            "sort" => $sort
+        );
+    }
+
+    protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
+    {
+        $filterArray = array();
+        /* Add filter on taxonomy */
+        foreach ($vocabularies as $key => $value) {
+            if (count($value['terms']) > 0) {
+                $filterArray[] = $this->_getVocabularyCondition($key, $value);
+            }
+        }
+        if ($vocabulariesRule == 'OU') {
+            $filterArray = array(
+                'operator'=>'$or',
+                'value' => $filterArray
             );
-            $filterArray[] = array(
-                'property' => 'status',
-                'value' => 'published'
-            );
-            $sort[] = array(
-                'property' => 'id',
-                'direction' => 'DESC'
+        }else{
+            $filterArray = array(
+                'operator'=>'$and',
+                'value' => $filterArray
             );
         }
-        $returnArray = array(
-            "filter" => $filterArray,
-            "sort" => $sort,
-            "queryType" => $queryType
-        );
-        return $returnArray;
+        
+        return $filterArray;
+    }
+
+    protected function _getVocabularyCondition ($key, $value)
+    {
+        if(is_array($value['rule'])){
+            $rule = array_pop($value['rule']);
+        }else{
+            $rule = $value['rule'];
+        }
+        
+        switch ($rule) {
+            case 'allRec':
+                $subArray = array();
+                foreach ($value['terms'] as $child) {
+                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                    $termsArray = array($child);
+                    foreach ($terms as $taxonomyTerms) {
+                        $termsArray[] = $taxonomyTerms["id"];
+                    }
+                    $subArray[]=array(
+                    $this->_workspace.'.taxonomy.'.$key => array(
+                        '$in' => $termsArray
+                    ));
+                }
+                $result = array('$and'=>$subArray);
+                break;
+            case 'all':
+                $result = array(
+                    $this->_workspace.'.taxonomy.'.$key => array(
+                        '$all' => $value['terms']
+                    )
+                );
+                break;
+            case 'someRec'://just add children and do 'some' condition
+                foreach ($value['terms'] as $child) {
+                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                    foreach ($terms as $taxonomyTerms) {
+                        $value['terms'][] = $taxonomyTerms["id"];
+                    }
+                }
+            case 'some':
+            default:
+                $result = array(
+                    $this->_workspace.'.taxonomy.'.$key => array(
+                        '$in' => $value['terms']
+                    )
+                );
+                break;
+        }
+        
+        return $result;
+        
+//         if (isset($value['rule'])) {
+//             if ($value['rule'] == "some") {
+//                 $taxOperator = '$in';
+//             } elseif ($value['rule'] == "all") {
+//                 $taxOperator = '$all';
+//             } elseif ($value['rule'] == "someRec") {
+//                 if (count($value['terms']) > 0) {
+//                     foreach ($value['terms'] as $child) {
+//                         $terms = $this->_taxonomyReader->fetchAllChildren($child);
+//                         foreach ($terms as $taxonomyTerms) {
+//                             $value['terms'][] = $taxonomyTerms["id"];
+//                         }
+//                     }
+//                 }
+//                 $taxOperator = '$in';
+//             } else {
+//                 $taxOperator = '$in';
+//             }
+//         } else {
+//             $taxOperator = '$in';
+//         }
+//         if (count($value['terms']) > 0) {
+//             $filterArray[] = array(
+//                 'operator' => $taxOperator,
+//                 'property' => 'taxonomy.' . $key,
+//                 'value' => $value['terms']
+//             );
+//         }
     }
 }
