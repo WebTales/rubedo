@@ -24,6 +24,34 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IQueries extends IAbstractCollection{
-	
+interface IQueries extends IAbstractCollection
+{
+
+    /**
+     * Return an array of filter and sort params for the query given by its ID
+     *
+     * result is formatted 
+     * array(
+     * "filter" => $filterArray,
+     * "sort" => $sort
+     * )
+     * 
+     * @param string $id            
+     * @return array
+     */
+    public function getFilterArrayById ($id);
+
+    /**
+     * Return an array of filter and sort params for the given query
+     *
+     * result is formatted
+     * array(
+     * "filter" => $filterArray,
+     * "sort" => $sort
+     * )
+     *
+     * @param array $query
+     * @return array
+     */
+    public function getFilterArrayByQuery ($query);
 }
