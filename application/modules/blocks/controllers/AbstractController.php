@@ -50,10 +50,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     }
     
 
-    public function indexAction ()
-    {        
-        $this->_sendResponse($output, $template, $css, $js);
-    }
+    abstract public function indexAction ();
 
 
     /**
