@@ -115,6 +115,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 					{
 						$updateData=$site['data'];
 						$updateData['homePage']=$homePage['data']['id'];
+						$updateData['defaultSingle']=$page['data']['id'];
 						$updateSiteReturn=$this->_dataService->update($updateData);
 						if($updateSiteReturn['success']===true)
 						{
