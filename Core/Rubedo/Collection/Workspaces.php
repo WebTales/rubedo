@@ -93,6 +93,10 @@ class Workspaces extends AbstractCollection implements IWorkspaces
      */
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
     {
+        if (isset($filters['notAll'])) {
+            $this->_addAll = ! $filters['notAll'];
+            unset($filters['notAll']);
+        }
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
             $this->_virtualGlobalWorkspace
