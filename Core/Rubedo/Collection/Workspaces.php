@@ -31,12 +31,15 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         array('keys'=>array('text'=>1),'options'=>array('unique'=>true)),
     );
     
+   protected $_addAll=false;
+    
     protected function _init(){
         parent::_init();
         
 		if (! self::isUserFilterDisabled()) {	
 	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
 	        if(in_array('all',$readWorkspaceArray)){
+	            $this->_addAll = true;	             
 	            return;
 	        }
 	        $mongoIdArray = array();
@@ -49,12 +52,14 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 	        $filter = array('_id'=> array('$in'=>$mongoIdArray));
 	        
 	        $this->_dataService->addFilter($filter);
+		}else{
+		    $this->_addAll = true;
 		}
     }
     
     
     /**
-     * a virtual taxonomy which reflects sites & pages trees
+     * a virtual workspace which is the main & public one
      *
      * @var array
      */
@@ -62,6 +67,18 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         'id' => 'global',
         'text' => 'Global',
         'readOnly' => true
+    );
+    
+    /**
+     * a virtual workspace whichis an alias for "all" workspaces
+     *
+     * @var array
+     */
+    protected $_virtualAllWorkspaces = array(
+            'id' => 'all',
+            'text' => 'Tous les espaces',
+            'readOnly' => true,
+            'canContribute'=>false
     );
 
     public function __construct ()
@@ -93,6 +110,14 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 		}
 		
         $list['count'] = $list['count'] + 1;
+        
+        if($this->_addAll){
+            $list['data'] = array_merge(array(
+                    $this->_virtualAllWorkspaces
+            ), $list['data']);
+            $list['count'] = $list['count'] + 1;
+        }
+        
         return $list;
     }
 
@@ -103,14 +128,14 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
-            $this->_virtualGlobalWorkspace
+            $this->_virtualGlobalWorkspace,$this->_virtualAllWorkspaces
         ), $list['data']);
         
         foreach ($list['data'] as &$workspace) {
             $workspace['canContribute'] = true;
         }
 		
-        $list['count'] = $list['count'] + 1;
+        $list['count'] = $list['count'] + 2;
         return $list;
     }
 
@@ -121,6 +146,8 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     {
         if ($contentId == 'global') {
             return $this->_virtualGlobalWorkspace;
+        } elseif ($contentId == 'all') {
+            return $this->_virtualAllWorkspaces;
         } else {
             return parent::findById($contentId);
         }

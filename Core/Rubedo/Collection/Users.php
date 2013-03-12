@@ -219,4 +219,23 @@ class Users extends AbstractCollection implements IUsers
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
         return parent::destroy($obj, $options);
     }
+    
+    /**
+     * Add a readOnly field to contents based on user rights
+     *
+     * @param array $obj
+     * @return array
+     */
+    protected function _addReadableProperty ($obj)
+    {
+        if (! self::isUserFilterDisabled()) {
+            //$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+    
+            if (!Manager::getService('Acl')->hasAccess("write.ui.users")) {
+                $obj['readOnly'] = true;
+            }
+        }
+    
+        return $obj;
+    }
 }

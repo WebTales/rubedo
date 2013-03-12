@@ -7,7 +7,8 @@
 	"name" : "admin",
 	"parentId" : "root",
 	"readWorkspaces" : [
-		"global"
+		"global",
+		"all"
 	],
 	"rights" : [ ],
 	"roles" : [
@@ -15,7 +16,8 @@
 	],
 	"version" : 1,
 	"writeWorkspaces" : [
-		"global"
+		"global",
+		"all"
 	],
 	"defaultWorkspace":"global"
 }
