@@ -28,7 +28,7 @@ use Rubedo\Services\Manager, Rubedo\Interfaces\Time\IDate, DateTime, DateInterva
 class Date implements IDate
 {
 
-    protected static $_startOnSunday = false;
+    protected static $_startOnSunday;
 
     protected static $_lang = null;
 
@@ -53,7 +53,7 @@ class Date implements IDate
         if (! $timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        $dayOfWeekFormat = self::$_startOnSunday ? 'w' : 'N';
+        $dayOfWeekFormat = $this->_sundayIsFirst() ? 'w' : 'N';
         
         // init the year and month info
         $year = date('Y', $timestamp);
@@ -66,7 +66,7 @@ class Date implements IDate
                 $firstDayOfMonthTimeStamp);
         $firstDay = new DateTime();
         $firstDay->setTimestamp($firstDayOfMonthTimeStamp);
-        if (self::$_startOnSunday) {
+        if ($this->_sundayIsFirst()) {
             $offset = $firstDayOfMonthInWeek;
         } else {
             $offset = $firstDayOfMonthInWeek - 1;
@@ -82,7 +82,7 @@ class Date implements IDate
         $lastDayOfMonthInWeek = date($dayOfWeekFormat, $lastDayOfMonthTimeStamp);
         $lastDay = new DateTime();
         $lastDay->setTimestamp($lastDayOfMonthTimeStamp);
-        if (self::$_startOnSunday) {
+        if ($this->_sundayIsFirst()) {
             $offset = 6 - $lastDayOfMonthInWeek;
         } else {
             $offset = 7 - $lastDayOfMonthInWeek;
@@ -116,6 +116,15 @@ class Date implements IDate
         }
         return $returnArray;
     }
+    
+    protected function _sundayIsFirst(){
+        if(!isset(self::$_startOnSunday)){
+            $lastSunday = $this->convertToTimeStamp('last sunday');
+            $number = $this->getLocalised('e',$lastSunday);
+            self::$_startOnSunday = $number == '1';
+        }
+        return self::$_startOnSunday;        
+    }
 
     /**
      * (non-PHPdoc)
@@ -132,7 +141,7 @@ class Date implements IDate
                 5 => 'Friday',
                 6 => 'Saturday'
         );
-        if (self::$_startOnSunday) {
+        if ($this->_sundayIsFirst()) {
             $daysOfWeek[0] = 'Sunday';
         } else {
             $daysOfWeek[7] = 'Sunday';
