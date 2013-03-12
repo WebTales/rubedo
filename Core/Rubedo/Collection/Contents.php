@@ -64,24 +64,25 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected function _init ()
     {
         parent::_init();
-        $this->_dataService->addToExcludeFieldList(array(
-            'nestedContents'
-        ));
+        $this->_dataService->addToExcludeFieldList(
+                array(
+                        'nestedContents'
+                ));
         
-        //filter contents with user rights
+        // filter contents with user rights
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-            if (in_array('all', $readWorkspaceArray)) {
-                return;
+            if (! in_array('all', $readWorkspaceArray)) {
+                $readWorkspaceArray[] = null;
+                $readWorkspaceArray[] = 'all';
+                $filter = array(
+                        'target' => array(
+                                '$in' => $readWorkspaceArray
+                        )
+                );
+                $this->_dataService->addFilter($filter);
             }
-            $readWorkspaceArray[] = null;
-            $readWorkspaceArray[] = 'all';
-            $filter = array(
-                'target' => array(
-                    '$in' => $readWorkspaceArray
-                )
-            );
-            $this->_dataService->addFilter($filter);
+            
         }
     }
 

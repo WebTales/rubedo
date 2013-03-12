@@ -33,6 +33,47 @@ class Users extends AbstractCollection implements IUsers
     );
 
     /**
+     * Only access to content with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+
+        $this->_dataService->addToExcludeFieldList(array(
+                'password'
+        ));
+    
+        if (! self::isUserFilterDisabled()) {
+            $wasFiltered = AbstractCollection::disableUserFilter();
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if(!in_array('all',$readWorkspaceArray)){
+                $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+                $this->_dataService->addFilter($filter);
+            }
+            AbstractCollection::disableUserFilter($wasFiltered);
+        }
+    }
+    
+    protected function _addReadableProperty ($obj)
+	{
+	    if (! self::isUserFilterDisabled()) {
+	        //Set the workspace for old items in database
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	        	
+	        $aclServive = Manager::getService('Acl');
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+	        	
+	        if (!$aclServive->hasAccess("write.ui.users") || !in_array($obj['workspace'], $writeWorkspaces)) {
+	            $obj['readOnly'] = true;
+	        }
+	    }
+	
+	    return $obj;
+	}
+    
+    /**
      * Change the password of the user given by its id
      * Check version conflict
      *
@@ -100,19 +141,6 @@ class Users extends AbstractCollection implements IUsers
     }
 
     /**
-     * ensure that no password field is sent outside of the service layer
-     */
-    protected function _init ()
-    {
-        parent::_init();
-        $this->_dataService->addToExcludeFieldList(array(
-            'password'
-        ));
-        
-        //$readWorkspaceArray[] = 'all';
-    }
-
-    /**
      * Create an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
@@ -130,6 +158,11 @@ class Users extends AbstractCollection implements IUsers
 		}		
 		
         $obj['groups'] = null;
+        
+        // Define default workspace for a user if it's not set
+        if(!isset($obj['workspace']) || $obj['workspace']==""){
+            $obj['workspace'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
+        }
         
         $returnValue = parent::create($obj, $options);
         $createUser = $returnValue['data'];
@@ -202,6 +235,11 @@ class Users extends AbstractCollection implements IUsers
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
+        // Define default workspace for a user if it's not set
+        if(!isset($obj['workspace']) || $obj['workspace']==""){
+            $obj['workspace'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
+        }
+        
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
         $groups = isset($obj['groups']) ? $obj['groups'] : array();
         Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
@@ -222,22 +260,4 @@ class Users extends AbstractCollection implements IUsers
         return parent::destroy($obj, $options);
     }
     
-    /**
-     * Add a readOnly field to contents based on user rights
-     *
-     * @param array $obj
-     * @return array
-     */
-    protected function _addReadableProperty ($obj)
-    {
-        if (! self::isUserFilterDisabled()) {
-            //$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-    
-            if (!Manager::getService('Acl')->hasAccess("write.ui.users")) {
-                $obj['readOnly'] = true;
-            }
-        }
-    
-        return $obj;
-    }
 }

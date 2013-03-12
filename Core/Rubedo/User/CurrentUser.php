@@ -272,6 +272,15 @@ class CurrentUser implements ICurrentUser
         }
         return Manager::getService('Groups')->getMainWorkspace($mainGroup);
     }
+    
+    public function getMainWorkspaceId(){
+        $workspace = $this->getMainWorkspace();
+        if($workspace){
+            return $workspace['id'];
+        }else{
+            return 'global';
+        }
+    }
 
     /**
      * return current user "can write" workspaces

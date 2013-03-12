@@ -51,11 +51,10 @@ class Groups extends AbstractCollection implements IGroups
         if (! self::isUserFilterDisabled()) {
             $wasFiltered = AbstractCollection::disableUserFilter();
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-            if(in_array('all',$readWorkspaceArray)){
-                return;
+            if(!in_array('all',$readWorkspaceArray)){
+                $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+                $this->_dataService->addFilter($filter);
             }
-            $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
-            $this->_dataService->addFilter($filter);
             AbstractCollection::disableUserFilter($wasFiltered);
         }
     }
@@ -90,7 +89,7 @@ class Groups extends AbstractCollection implements IGroups
     {
     	// Define default read workspace for groups if it's not set
     	if(!isset($obj['readWorkspaces']) || $obj['readWorkspaces']=="" || $obj['readWorkspaces'] == array()){
-    		$obj['readWorkspaces'] = array(Manager::getService('CurrentUser')->getMainWorkspace());
+    		$obj['readWorkspaces'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
     	}	
     	$obj = $this->_initObject($obj);
     	

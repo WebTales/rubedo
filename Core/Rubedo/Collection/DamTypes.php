@@ -127,11 +127,8 @@ class DamTypes extends AbstractCollection implements IDamTypes
 			$aclServive = Manager::getService('Acl');
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 	        
-	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 || !$aclServive->hasAccess("write.ui.damTypes")) {
+        if (!Manager::getService('Acl')->hasAccess("write.ui.damTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces))==0 && !in_array("all", $writeWorkspaces))) {
 	            $obj['readOnly'] = true;
-	        } else {
-	            
-	            $obj['readOnly'] = false;
 	        }
 		}
         

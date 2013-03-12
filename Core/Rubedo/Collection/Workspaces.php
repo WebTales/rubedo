@@ -227,4 +227,13 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         return $obj;
     }
     
+    public function getAdminWorkspaceId(){
+        $adminWorkspace = Manager::getService('Workspaces')->findByName('admin');
+        if($adminWorkspace){
+            return $adminWorkspace['id'];
+        }else{
+            return null;
+        }
+    }
+    
 }

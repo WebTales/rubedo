@@ -40,7 +40,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
 
     /**
      * Only access to content with read access
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init ()
@@ -49,17 +49,16 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-            if (in_array('all', $readWorkspaceArray)) {
-                return;
+            if (! in_array('all', $readWorkspaceArray)) {
+                $readWorkspaceArray[] = null;
+                $readWorkspaceArray[] = 'all';
+                $filter = array(
+                        'workspaces' => array(
+                                '$in' => $readWorkspaceArray
+                        )
+                );
+                $this->_dataService->addFilter($filter);
             }
-            $readWorkspaceArray[] = null;
-            $readWorkspaceArray[] = 'all';
-            $filter = array(
-                    'workspaces' => array(
-                            '$in' => $readWorkspaceArray
-                    )
-            );
-            $this->_dataService->addFilter($filter);
         }
     }
 
