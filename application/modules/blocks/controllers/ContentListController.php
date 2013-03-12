@@ -28,17 +28,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
 {
 
     protected $_defaultTemplate = 'contentlist';
-
-    public function init ()
-    {
-        //handle preview for ajax request, only if user is a backoffice user
-        if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
-            $isDraft = $this->getParam('is-draft', null);
-            if (! is_null($isDraft)) {
-                Zend_Registry::set('draft', $isDraft);
-            }
-        }
-    }
+    
+    
 
     public function indexAction ()
     {
@@ -190,6 +181,13 @@ class Blocks_ContentListController extends Blocks_AbstractController
      */
     protected function getContentList ($filters, $pageData)
     {
+        $filter = array(
+            'property' => 'target',
+            'value' => $this->_workspace
+        );
+        
+        $filters["filter"][] = $filter;
+        
         $contentArray = $this->_dataReader->getOnlineList($filters["filter"], 
                 $filters["sort"], 
                 (($pageData['currentPage'] - 1) * $pageData['limit']), 
