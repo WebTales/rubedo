@@ -102,15 +102,6 @@ class Masks extends AbstractCollection implements IMasks
         return $obj;
     }
 	
-	public function getList ($filters = null, $sort = null, $start = null, $limit = null) {
-		$list = parent::getList($filters, $sort, $start, $limit);
-		
-		foreach ($list['data'] as &$mask) {
-			$mask = $this->_addReadableProperty($mask);
-		}
-		
-		return $list;
-	}
 	
 	public function deleteBySiteId($id)
 	{

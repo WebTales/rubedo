@@ -176,4 +176,23 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         unset($obj['canContribute']);
         return parent::update($obj, $options);
     }
+    
+    /**
+     * Add a readOnly field to contents based on user rights
+     *
+     * @param array $obj
+     * @return array
+     */
+    protected function _addReadableProperty ($obj)
+    {
+        if (! self::isUserFilterDisabled()) {
+    
+            if (!Manager::getService('Acl')->hasAccess("write.ui.workspaces")) {
+                $obj['readOnly'] = true;
+            }
+        }
+    
+        return $obj;
+    }
+    
 }

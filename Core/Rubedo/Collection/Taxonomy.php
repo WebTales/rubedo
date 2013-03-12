@@ -87,10 +87,6 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         
-        foreach ($list['data'] as &$obj) {
-            $obj = $this->_addReadableProperty($obj);
-        }
-        
         $list['data'] = array_merge(
                 array(
                         $this->_virtualNavigationVocabulary
@@ -214,9 +210,6 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
             return $this->_virtualNavigationVocabulary;
         } else {
             $data = parent::findById($contentId);
-            if ($data) {
-                $data = $this->_addReadableProperty($data);
-            }
             return $data;
         }
     }

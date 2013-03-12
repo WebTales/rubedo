@@ -342,32 +342,7 @@ class Pages extends AbstractCollection implements IPages
         return $obj;
     }
 	
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::getList()
-     */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
-    {
-        $list = parent::getList($filters,$sort,$start,$limit);
-        foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-        return $list;
-    } 
 
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::readChild()
-     */
-    public function readChild ($parentId, $filters = null, $sort = null)
-    {
-        $list = parent::readChild ($parentId,$filters, $sort);
-
-        foreach ($list as &$page){
-        	$page = $this->_addReadableProperty($page);
-        }
-        return $list;
-        
-    }
 
     public function propagateWorkspace ($parentId, $workspaceId, $siteId = null)
     {

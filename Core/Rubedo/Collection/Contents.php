@@ -115,21 +115,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $returnArray;
     }
     
-    
-    
-    /* (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::getList()
-     */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null, $live = true)
-    {
-        $list = parent::getList($filters,$sort,$start,$limit,$live);
-		
-		foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-		
-        return $list;
-    }
+
 
 	/*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
@@ -604,22 +590,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         return $obj;
     }
-	
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::findById()
-     */
-    public function findById ($contentId, $live = true, $raw = true)
-    {
-        
-        $obj = parent::findById ($contentId, $live,$raw);
-        if($obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-        
-        return $obj;
-        
-    }
+
 	public function getListByTypeId($typeId)
 	{
 		$filterArray[]=array("property"=>"typeId","value"=>$typeId);

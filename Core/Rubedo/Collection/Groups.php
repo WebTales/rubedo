@@ -128,6 +128,25 @@ class Groups extends AbstractCollection implements IGroups
         
         return $groupList;
     }
+    
+    /**
+     * Add a readOnly field to contents based on user rights
+     *
+     * @param array $obj
+     * @return array
+     */
+    protected function _addReadableProperty ($obj)
+    {
+        if (! self::isUserFilterDisabled()) {
+            //$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+    
+            if (!Manager::getService('Acl')->hasAccess("write.ui.groups")) {
+                $obj['readOnly'] = true;
+            } 
+        }
+    
+        return $obj;
+    }
 
     public function getPublicGroup ()
     {
