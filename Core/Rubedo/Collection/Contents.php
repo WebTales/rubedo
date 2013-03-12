@@ -255,14 +255,14 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
 	        $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
 	        if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
-	            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+	            throw new \Rubedo\Exceptions\Access('You can not assign as target to this workspace');
 	        }
 		}
         
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
         if (! self::isUserFilterDisabled() && ! in_array($obj['writeWorkspace'], $contentType['workspaces'])) {
-            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            throw new \Rubedo\Exceptions\Access('You can not assign this content type to this workspace');
         }
         $contentTypeFields = $contentType['fields'];
 		
