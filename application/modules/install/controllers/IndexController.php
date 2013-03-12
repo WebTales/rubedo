@@ -532,6 +532,15 @@ class Install_IndexController extends Zend_Controller_Action
         if ($this->_isDefaultGroupsExists()) {
             return;
         }
+        try {
+            Manager::getService('Workspaces')->create(array(
+                    'text'=>'admin'
+            ));
+        } catch (Rubedo\Exceptions\User $exception) {
+            //dont stop if already exists
+        }
+        $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
+        
         $success = true;
         $groupsJsonPath = APPLICATION_PATH . '/../data/default/groups';
         $groupsJson = new DirectoryIterator($groupsJsonPath);
@@ -542,6 +551,10 @@ class Install_IndexController extends Zend_Controller_Action
             if ($file->getExtension() == 'json') {
                 $itemJson = file_get_contents($file->getPathname());
                 $item = Zend_Json::decode($itemJson);
+                if ($item['name'] == 'admin') {
+                    $item['workspace'] = $adminWorkspaceId;
+                    $item['inheritWorkspace'] = false;
+                }
                 $result = Manager::getService('Groups')->create($item);
                 $success = $result['success'] && $success;
             }
