@@ -1213,6 +1213,7 @@ class DataAccess implements IDataAccess
     /**
      * check if the index is set
      *
+     * @todo implement check index
      * @param
      *            array
      * @return boolean
