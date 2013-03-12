@@ -90,7 +90,7 @@ class Groups extends AbstractCollection implements IGroups
     {
     	// Define default read workspace for groups if it's not set
     	if(!isset($obj['readWorkspaces']) || $obj['readWorkspaces']=="" || $obj['readWorkspaces'] == array()){
-    		$obj['readWorkspaces'] = array('global');
+    		$obj['readWorkspaces'] = array(Manager::getService('CurrentUser')->getMainWorkspace());
     	}	
     	$obj = $this->_initObject($obj);
     	
@@ -174,8 +174,6 @@ class Groups extends AbstractCollection implements IGroups
 	        	
 	        if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.groups")) {
 	            $obj['readOnly'] = true;
-	        } else {
-	            $obj['readOnly'] = false;
 	        }
 	    }
 	

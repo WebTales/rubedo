@@ -19,5 +19,6 @@
 	],
 	"defaultWorkspace":"global",
 	"workspace":"global",
-	"readOnly":true
+	"readOnly":true,
+	"system":true
 }
