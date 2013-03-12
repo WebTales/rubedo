@@ -176,6 +176,12 @@ class Blocks_GalleryController extends Blocks_ContentListController
                     );
                 }
             }
+            
+            $filterArray[] = array(
+                    'property' => 'target',
+                    'value' => $this->_workspace
+            );
+            
             /*
              * Add Sort
              */
