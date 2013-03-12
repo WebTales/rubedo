@@ -3,7 +3,8 @@
 	"orderValue": 200,
 	"excludeFromMenu": false,
 	"expandable": false,
-	"text": "Default-Mask",
+	"text": "Masque par défaut",
+	"mainColumnId":"",
 	"rows": [
 		{
 			"mType": "row",

@@ -77,6 +77,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 			$maskObj['rows'][1]['id']=(string) new MongoId();
 			$maskObj['rows'][0]['columns'][0]['id']=$firstColumnId;
 			$maskObj['rows'][1]['columns'][0]['id']=$secondColumnId;
+			$maskObj['mainColumnId']=$secondColumnId;
 			$maskObj['blocks'][0]['id']=(string) new MongoId();
 			$maskObj['blocks'][0]['parentCol']=$firstColumnId;
 			
