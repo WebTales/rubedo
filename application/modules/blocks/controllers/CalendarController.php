@@ -102,7 +102,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
                 unset($fields['text']);
                 $fields['id'] = (string) $vignette['id'];
                 $fields['typeId'] = $vignette['typeId'];
-                $fields['readDate'] = Manager::getService('Date')->getLocalised('%A %e %B %Y', $vignette['fields'][$dateField]);
+                $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField]);
                 $data[] = $fields;
                 $filledDate[intval(date('d', $vignette['fields'][$dateField]))] = true;
             }
@@ -116,8 +116,8 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $output['prefix'] = $this->getRequest()->getParam('prefix');
         $output['filledDate'] = $filledDate;
         $output['days'] = Manager::getService('Date')->getShortDayList();
-        $output['month'] = Manager::getService('Date')->getLocalised('%B', $timestamp);
-        $output['year'] = Manager::getService('Date')->getLocalised('%Y', $timestamp);
+        $output['month'] = Manager::getService('Date')->getLocalised('MMMM', $timestamp);
+        $output['year'] = Manager::getService('Date')->getLocalised('y', $timestamp);
         if (intval($month) == 12) {
             $output['nextDate'] = '1-' . (string) ($year + 1);
         } else {
