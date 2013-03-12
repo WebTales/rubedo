@@ -37,6 +37,7 @@ class Install_IndexController extends Zend_Controller_Action
 
     public function init ()
     {
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $this->_helper->_layout->setLayout('install-layout');
         
         $this->_navigation = Install_Model_NavObject::getNav();

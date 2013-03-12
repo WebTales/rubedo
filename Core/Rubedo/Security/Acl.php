@@ -55,7 +55,7 @@ class Acl implements IAcl
         
         $wasFiltered = AbstractCollection::disableUserFilter();
         $groups = $currentUserService->getGroups();
-        AbstractCollection::disableUserFilter($wasFiltered);
+        
         
         $roleArray = array();
         foreach ($groups as $group) {
@@ -63,6 +63,7 @@ class Acl implements IAcl
         }
         $roleArray = $this->_addGroupToRoleArray($roleArray, Manager::getService('Groups')->getPublicGroup());
         
+        AbstractCollection::disableUserFilter($wasFiltered);
         foreach ($roleArray as $role) {
             if ($this->_roleHasAccess($resource, $role)) {
                 return true;

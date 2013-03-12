@@ -37,6 +37,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         parent::_init();
         
 		if (! self::isUserFilterDisabled()) {	
+		    $wasFiltered = AbstractCollection::disableUserFilter();
 	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
 	        if(in_array('all',$readWorkspaceArray)){
 	            $this->_addAll = true;	             
@@ -52,6 +53,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 	        $filter = array('_id'=> array('$in'=>$mongoIdArray));
 	        
 	        $this->_dataService->addFilter($filter);
+	         AbstractCollection::disableUserFilter($wasFiltered);
 		}else{
 		    $this->_addAll = true;
 		}
