@@ -75,6 +75,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 return;
             }
             $readWorkspaceArray[] = null;
+            $readWorkspaceArray[] = 'all';
             $filter = array(
                 'target' => array(
                     '$in' => $readWorkspaceArray

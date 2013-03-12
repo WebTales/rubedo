@@ -53,6 +53,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
                 return;
             }
             $readWorkspaceArray[] = null;
+            $readWorkspaceArray[] = 'all';
             $filter = array(
                     'workspaces' => array(
                             '$in' => $readWorkspaceArray

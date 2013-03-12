@@ -108,6 +108,8 @@ class Users extends AbstractCollection implements IUsers
         $this->_dataService->addToExcludeFieldList(array(
             'password'
         ));
+        
+        //$readWorkspaceArray[] = 'all';
     }
 
     /**

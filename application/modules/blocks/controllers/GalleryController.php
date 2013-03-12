@@ -179,9 +179,13 @@ class Blocks_GalleryController extends Blocks_ContentListController
                 }
             }
             
-            $filterArray[] = array(
+            $filter = array(
                     'property' => 'target',
-                    'value' => $this->_workspace
+                    'operator' => '$in',
+                    'value' => array(
+                            $this->_workspace,
+                            'all'
+                    )
             );
             
             /*

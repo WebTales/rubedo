@@ -78,7 +78,6 @@ class Workspaces extends AbstractCollection implements IWorkspaces
             'id' => 'all',
             'text' => 'Tous les espaces',
             'readOnly' => true,
-            'canContribute'=>false
     );
 
     public function __construct ()
@@ -97,7 +96,16 @@ class Workspaces extends AbstractCollection implements IWorkspaces
             $this->_virtualGlobalWorkspace
         ), $list['data']);
         
+        if($this->_addAll){
+            $list['data'] = array_merge(array(
+                    $this->_virtualAllWorkspaces
+            ), $list['data']);
+            $list['count'] = $list['count'] + 1;
+        }
+        
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        
+        
         
 		if (! self::isUserFilterDisabled()) {	
 	        foreach ($list['data'] as &$workspace){
@@ -111,12 +119,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 		
         $list['count'] = $list['count'] + 1;
         
-        if($this->_addAll){
-            $list['data'] = array_merge(array(
-                    $this->_virtualAllWorkspaces
-            ), $list['data']);
-            $list['count'] = $list['count'] + 1;
-        }
+        
         
         return $list;
     }

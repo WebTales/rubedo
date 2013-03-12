@@ -48,6 +48,7 @@ class Dam extends AbstractCollection implements IDam
 	            return;
 	        }
 	        $readWorkspaceArray[] = null;
+	        $readWorkspaceArray[] = 'all';
 	        $filter = array(
 	            'target' => array(
 	                '$in' => $readWorkspaceArray

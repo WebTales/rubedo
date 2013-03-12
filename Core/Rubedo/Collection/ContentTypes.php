@@ -46,6 +46,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		        return;
 		    }
 		    $readWorkspaceArray[] = null;
+		    $readWorkspaceArray[] = 'all';
 		    $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
 		    $this->_dataService->addFilter($filter);
 		}

@@ -182,8 +182,12 @@ class Blocks_ContentListController extends Blocks_AbstractController
     protected function getContentList ($filters, $pageData)
     {
         $filter = array(
-            'property' => 'target',
-            'value' => $this->_workspace
+                'property' => 'target',
+                'operator' => '$in',
+                'value' => array(
+                        $this->_workspace,
+                        'all'
+                )
         );
         
         $filters["filter"][] = $filter;
