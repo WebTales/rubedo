@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Security;
 
-use Rubedo\Interfaces\Security\IAcl, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Security\IAcl, Rubedo\Services\Manager, Rubedo\Collection\AbstractCollection;
 
 /**
  * Interface of Access Control List Implementation
@@ -52,8 +52,11 @@ class Acl implements IAcl
     public function hasAccess ($resource)
     {
         $currentUserService = Manager::getService('CurrentUser');
+        
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $groups = $currentUserService->getGroups();
-
+        AbstractCollection::disableUserFilter($wasFiltered);
+        
         $roleArray = array();
         foreach ($groups as $group) {
             $roleArray = $this->_addGroupToRoleArray($roleArray, $group);
