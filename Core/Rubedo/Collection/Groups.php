@@ -161,24 +161,26 @@ class Groups extends AbstractCollection implements IGroups
         return $groupList;
     }
     
-    /**
-     * Add a readOnly field to contents based on user rights
-     *
-     * @param array $obj
-     * @return array
-     */
     protected function _addReadableProperty ($obj)
-    {
-        if (! self::isUserFilterDisabled()) {
-            //$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-    
-            if (!Manager::getService('Acl')->hasAccess("write.ui.groups")) {
-                $obj['readOnly'] = true;
-            } 
-        }
-    
-        return $obj;
-    }
+	{
+	    if (! self::isUserFilterDisabled()) {
+	        //Set the workspace for old items in database
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	        	
+	        $aclServive = Manager::getService('Acl');
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+	        	
+	        if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.groups")) {
+	            $obj['readOnly'] = true;
+	        } else {
+	            $obj['readOnly'] = false;
+	        }
+	    }
+	
+	    return $obj;
+	}
 
     public function getPublicGroup ()
     {
@@ -365,4 +367,5 @@ class Groups extends AbstractCollection implements IGroups
 	        }
 	    }
 	}
+
 }
