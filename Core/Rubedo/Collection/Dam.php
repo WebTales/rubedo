@@ -112,6 +112,8 @@ class Dam extends AbstractCollection implements IDam
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
+        $this->_filterInputData($obj);
+        
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Rubedo\Exceptions\Server('no file found');
@@ -140,6 +142,8 @@ class Dam extends AbstractCollection implements IDam
     public function create (array $obj, $options = array('safe'=>true,))
     {
         $obj = $this->_setDefaultWorkspace($obj);
+        
+        $this->_filterInputData($obj);
         
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
@@ -262,6 +266,30 @@ class Dam extends AbstractCollection implements IDam
         $obj = parent::findById ($contentId);
         $obj = $this->_addReadableProperty($obj);
         return $obj; 
+    }
+    
+    protected function _filterInputData (array $obj, array $model = null)
+    {
+        if (! self::isUserFilterDisabled()) {
+            $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+    
+            if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            }
+    
+            $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            }
+            
+            $damTypeId = $obj['typeId'];
+            $damType = Manager::getService('DamTypes')->findById($damTypeId);
+            if (! in_array($obj['writeWorkspace'], $damType['workspaces'])) {
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            }
+        }
+        
+        return parent::_filterInputData ($obj,$model);
     }
 }
 
