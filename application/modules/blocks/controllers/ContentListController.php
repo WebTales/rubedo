@@ -28,7 +28,17 @@ class Blocks_ContentListController extends Blocks_AbstractController
 {
 
     protected $_defaultTemplate = 'contentlist';
-    
+
+    public function init ()
+    {
+        //handle preview for ajax request, only if user is a backoffice user
+        if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
+            $isDraft = $this->getParam('is-draft', null);
+            if (! is_null($isDraft)) {
+                Zend_Registry::set('draft', $isDraft);
+            }
+        }
+    }
 
     public function indexAction ()
     {
@@ -36,50 +46,56 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $blockConfig = $this->getRequest()->getParam('block-config');
         
         if (isset($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/" . $this->_defaultTemplate . ".html.twig");
         }
         $css = array();
         $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/contentList.js")
+                '/templates/' .
+                         Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                                "js/contentList.js")
         );
         $this->_sendResponse($output, $template, $css, $js);
     }
 
     protected function _getList ()
     {
-        //init services
+        // init services
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
         
-        //get params & context
+        // get params & context
         $blockConfig = $this->getRequest()->getParam('block-config');
         $queryId = $this->getParam('query-id', $blockConfig['query']);
         
-        //$queryConfig = $this->getQuery($queryId);
-        //$queryType = $queryConfig['type'];
+        // $queryConfig = $this->getQuery($queryId);
+        // $queryType = $queryConfig['type'];
         $output = $this->getAllParams();
         
-        //build query
+        // build query
         $filters = Manager::getService('Queries')->getFilterArrayById($queryId);
-        if($filters!==false){
+        if ($filters !== false) {
             $queryType = $filters["queryType"];
-            //getList
-            $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
+            // getList
+            $contentArray = $this->getContentList($filters, 
+                    $this->setPaginationValues($blockConfig));
             $nbItems = $contentArray["count"];
-        }else{
+        } else {
             $nbItems = 0;
         }
         
-        
         if ($nbItems > 0) {
-            $contentArray['page']['nbPages'] = (int) ceil(($nbItems) / $contentArray['page']['limit']);
-            $contentArray['page']['limitPage'] = min(array(
-                $contentArray['page']['nbPages'],
-                10
-            ));
+            $contentArray['page']['nbPages'] = (int) ceil(
+                    ($nbItems) / $contentArray['page']['limit']);
+            $contentArray['page']['limitPage'] = min(
+                    array(
+                            $contentArray['page']['nbPages'],
+                            10
+                    ));
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
             foreach ($typeArray['data'] as $dataType) {
@@ -94,11 +110,17 @@ class Blocks_ContentListController extends Blocks_AbstractController
                  * $dataType['type']); // to special char e.g. '&oelig;'
                  */
                 
-                $path = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig");
-                if (Manager::getService('FrontOfficeTemplates')->templateFileExists($path)) {
+                $path = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                        "/blocks/shortsingle/" .
+                                 preg_replace('#[^a-zA-Z]#', '', 
+                                        $dataType['type']) . ".html.twig");
+                if (Manager::getService('FrontOfficeTemplates')->templateFileExists(
+                        $path)) {
                     $contentTypeArray[(string) $dataType['id']] = $path;
                 } else {
-                    $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/Default.html.twig");
+                    $contentTypeArray[(string) $dataType['id']] = Manager::getService(
+                            'FrontOfficeTemplates')->getFileThemePath(
+                            "/blocks/shortsingle/Default.html.twig");
                 }
             }
             foreach ($contentArray['data'] as $vignette) {
@@ -120,16 +142,19 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
             $output['limit'] = $this->getParam('limit', $defaultLimit);
             
-            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
+            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam(
+                    'current-page');
             $output['singlePage'] = $this->getParam('single-page', $singlePage);
-            $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->getParam('displayType',null);
+            $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->getParam(
+                    'displayType', null);
             $output['displayType'] = $displayType;
             
-            $output['xhrUrl'] = $this->_helper->url->url(array(
-                'module' => 'blocks',
-                'controller' => 'content-list',
-                'action' => 'xhr-get-items'
-            ), 'default');
+            $output['xhrUrl'] = $this->_helper->url->url(
+                    array(
+                            'module' => 'blocks',
+                            'controller' => 'content-list',
+                            'action' => 'xhr-get-items'
+                    ), 'default');
         }
         return $output;
     }
@@ -138,19 +163,24 @@ class Blocks_ContentListController extends Blocks_AbstractController
     {
         $twigVars = $this->_getList();
         
-        $displayType = $this->getParam('displayType',false);
+        $displayType = $this->getParam('displayType', false);
         if ($displayType) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/" . $displayType . ".html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/contentList/" . $displayType . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/list.html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                    "blocks/contentList/list.html.twig");
         }
         
-        $html = Manager::getService('FrontOfficeTemplates')->render($template, $twigVars);
-        $pager = Manager::getService('FrontOfficeTemplates')->render(Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/pager.html.twig"), $twigVars);
+        $html = Manager::getService('FrontOfficeTemplates')->render($template, 
+                $twigVars);
+        $pager = Manager::getService('FrontOfficeTemplates')->render(
+                Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                        "blocks/contentList/pager.html.twig"), $twigVars);
         
         $data = array(
-            'html' => $html,
-            'pager'=> $pager
+                'html' => $html,
+                'pager' => $pager
         );
         $this->_helper->json($data);
     }
@@ -160,11 +190,13 @@ class Blocks_ContentListController extends Blocks_AbstractController
      */
     protected function getContentList ($filters, $pageData)
     {
-        $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']), $pageData['limit']);
+        $contentArray = $this->_dataReader->getOnlineList($filters["filter"], 
+                $filters["sort"], 
+                (($pageData['currentPage'] - 1) * $pageData['limit']), 
+                $pageData['limit']);
         $contentArray['page'] = $pageData;
         return $contentArray;
     }
-
 
     protected function setPaginationValues ($blockConfig)
     {
@@ -174,38 +206,44 @@ class Blocks_ContentListController extends Blocks_AbstractController
         return $pageData;
     }
 
-
     public function getContentsAction ()
     {
         $this->_dataReader = Manager::getService('Contents');
         $data = $this->getRequest()->getParams();
         if (isset($data['block']['query'])) {
-
-            $filters = Manager::getService('Queries')->getFilterArrayById($data['block']['query']);
-            if($filters !==false){
-                $contentList = $this->_dataReader->getOnlineList($filters['filter'], $filters["sort"], (($data['pagination']['page'] - 1) * $data['pagination']['limit']), intval($data['pagination']['limit']));
-            }else{
-                $contentList=array('count'=>0);
+            
+            $filters = Manager::getService('Queries')->getFilterArrayById(
+                    $data['block']['query']);
+            if ($filters !== false) {
+                $contentList = $this->_dataReader->getOnlineList(
+                        $filters['filter'], $filters["sort"], 
+                        (($data['pagination']['page'] - 1) *
+                                 $data['pagination']['limit']), 
+                                intval($data['pagination']['limit']));
+            } else {
+                $contentList = array(
+                        'count' => 0
+                );
             }
             if ($contentList["count"] > 0) {
                 foreach ($contentList['data'] as $content) {
                     $returnArray[] = array(
-                        'text' => $content['text'],
-                        'id' => $content['id']
+                            'text' => $content['text'],
+                            'id' => $content['id']
                     );
                 }
                 $returnArray['total'] = count($returnArray);
                 $returnArray["success"] = true;
             } else {
                 $returnArray = array(
-                    "success" => false,
-                    "msg" => "No contents found"
+                        "success" => false,
+                        "msg" => "No contents found"
                 );
             }
         } else {
             $returnArray = array(
-                "success" => false,
-                "msg" => "No query found"
+                    "success" => false,
+                    "msg" => "No query found"
             );
         }
         

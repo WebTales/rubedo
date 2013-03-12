@@ -146,7 +146,7 @@ class IndexController extends Zend_Controller_Action
         // context
         $lang = $this->_session->get('lang', 'fr');
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
-        if (! $isLoggedIn) {
+        if (! $isLoggedIn || !Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $isPreview = false;
         } else {
             $isPreview = $this->getRequest()->getParam('preview', false);
@@ -200,7 +200,8 @@ class IndexController extends Zend_Controller_Action
                 $this->_servicePage->setDescription($singleContent['fields']['summary']);
             }
         }
-        
+        $twigVar['currentPage']=$this->_pageId;
+        $twigVar['isDraft'] = Zend_Registry::get('draft');
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;

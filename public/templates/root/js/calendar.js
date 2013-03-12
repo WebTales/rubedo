@@ -1,5 +1,10 @@
 function calendarChangeDate(date, prefix, query, url, singlePage,dateField) {
 	if (jQuery('#calendar-' + prefix + ' > #calendar-' + date).length == 0) {
+		if (jQuery('body').attr('data-is-draft')){
+			var isDraft = true;
+		}else{
+			var isDraft = false;
+		}
 		var request = jQuery.ajax({
 			url : url + '/blocks/calendar/xhr-get-calendar',
 			type : "POST",
@@ -8,7 +13,9 @@ function calendarChangeDate(date, prefix, query, url, singlePage,dateField) {
 				'prefix' : prefix,
 				'query-id' : query,
 				'single-page' : singlePage,
-				'date-field' : dateField
+				'date-field' : dateField,
+				'is-draft':isDraft,
+				'current-page':jQuery('body').attr('data-current-page')
 			},
 			dataType : "json"
 		});
