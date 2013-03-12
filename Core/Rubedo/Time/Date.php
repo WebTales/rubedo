@@ -139,7 +139,7 @@ class Date implements IDate
         }
         foreach ($daysOfWeek as $key => $day) {
             $dayDateTime = new DateTime("last $day");
-            $nameArray[$key] = $this->getLocalised('EE', 
+            $nameArray[$key] = $this->getLocalised('EEEEE', 
                     $dayDateTime->getTimestamp());
         }
         ksort($nameArray);
