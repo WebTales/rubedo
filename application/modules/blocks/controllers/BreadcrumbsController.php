@@ -34,11 +34,9 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         $output = $this->getAllParams();
         
 		$blockConfig = $this->getParam('block-config', array());
-
-        if (isset($blockConfig['rootPage'])) {
-            $rootPage = $blockConfig['rootPage'];
-        } else {
-            $rootPage = $this->getParam('rootPage');
+		$output['displayBlock'] = false;
+        if (($site = $this->getParam('site',false)) && isset($site['homePage'])) {
+            $rootPage = $site['homePage'];
         }
         
         
@@ -54,6 +52,9 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         $rootlineArray = array();
         
         foreach ($rootline as $pageId){
+            if($pageId == $rootPage){
+                $output['displayBlock'] = true;
+            }
             if($pageId == $currentPage && !$this->getParam('content-id')){
                 continue;
             }
