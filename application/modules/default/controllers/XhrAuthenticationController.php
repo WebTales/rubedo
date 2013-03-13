@@ -46,7 +46,6 @@ class XhrAuthenticationController extends Zend_Controller_Action
         $login = $this->getRequest()->getParam('login');
         $password = $this->getRequest()->getParam('password');
         if ($this->getRequest()->isPost()) {
-
             if (!empty($login) && !empty($password)) {
                 $loginResult = $this->_auth->authenticate($login, $password);
 
@@ -57,7 +56,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
                     $response['message'] = 'Wrong crendentials';
                 }
             } else {
-                $response['succes'] = false;
+                $response['success'] = false;
                 $response['message'] = 'The login and the password should not be empty';
             }
         } else {
