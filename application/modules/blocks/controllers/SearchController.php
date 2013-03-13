@@ -38,22 +38,26 @@ class Blocks_SearchController extends Blocks_AbstractController
         $params['pagesize'] = $this->getParam('pagesize', 10);
         $params['pager'] = $this->getParam('pager',0);
         
-        if($params['constrainToSite']){
+        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
             $site = $this->getRequest()->getParam('site');
-            $params['Navigation'][]=$site['text'];
-            $serverParams['Navigation'][]=$site['text'];
+            $siteId = $site['id'];
+            $params['navigation'][]=$siteId;
+            $serverParams['navigation'][]=$siteId;
         }
-		
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
         
         $results = $query->search($params);
         
+        $results['currentSite'] = isset($siteId)?$siteId:null;
+        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
+            $results['constrainToSite'] = true;
+        }
         // Pagination
         
         if ($params['pagesize'] != "all") {
-            $pagecount = intval( $results['total'] / $params['pagesize']+1);
+            $pagecount = intval( ($results['total']-1) / $params['pagesize']+1);
         } else {
             $pagecount = 1;
         }

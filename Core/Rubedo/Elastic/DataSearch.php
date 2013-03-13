@@ -422,19 +422,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$result['activeFacets']= array();
 		foreach ($filters as $vocabularyId => $termId) {
 			switch ($vocabularyId) {
-				case 'navigation':
-					$termItem = Manager::getService('Pages')->findById($termId);
-					$temp = array(
-						'id' => $vocabularyId,
-						'label' => 'Navigation',
-						'terms' => array(
-							array(
-								'term' => $termId,
-								'label' => $termItem['text']
-							)
-						)
-					);
-					break;
 					
 				case 'damType' :
 					$termItem  = Manager::getService('DamTypes')->findById($termId);
@@ -516,7 +503,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 						)
 					);
 					break;								
-											
+				case 'navigation':
 				default:
 					$vocabularyItem = Manager::getService('Taxonomy')->findById($vocabularyId);	
 					
