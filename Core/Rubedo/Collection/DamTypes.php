@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -45,6 +45,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	            return;
 	        }
 	        $readWorkspaceArray[] = null;
+	        $readWorkspaceArray[] = 'all';
 	        $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
 	        $this->_dataService->addFilter($filter);
 		}
@@ -55,18 +56,51 @@ class DamTypes extends AbstractCollection implements IDamTypes
 		parent::__construct();
 	}
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Rubedo\Collection\AbstractCollection::create()
+	 */
 	public function create (array $obj, $options = array('safe'=>true))
     {
     	$obj = $this->_addDefaultWorkspace($obj);
 		
-		return parent::create($obj, $options);
+		$returnArray = parent::create($obj, $options);
+		
+		if ($returnArray["success"]) {
+		    $this->_indexDamType($returnArray['data']);
+		}
+		
+		return $returnArray;
 	}
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Rubedo\Collection\AbstractCollection::update()
+	 */
 	public function update (array $obj, $options = array('safe'=>true))
     {
     	$obj = $this->_addDefaultWorkspace($obj);
 		
-		return parent::update($obj, $options);
+		$returnArray = parent::update($obj, $options);
+		
+		if ($returnArray["success"]) {
+		    $this->_indexDamType($returnArray['data']);
+		}
+		
+		return $returnArray;
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Rubedo\Collection\AbstractCollection::destroy()
+	 */
+	public function destroy (array $obj, $options = array('safe'=>true))
+	{
+	    $returnArray = parent::destroy($obj, $options);
+	    if ($returnArray["success"]) {
+	        $this->_unIndexDamType($obj);
+	    }
+	    return $returnArray;
 	}
 	
 	protected function _addDefaultWorkspace($obj){
@@ -79,17 +113,6 @@ class DamTypes extends AbstractCollection implements IDamTypes
 		return $obj;
 	}
 	
-	/**
-     *  (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::findById()
-     */
-    public function findById ($contentId)
-    {
-        $obj = parent::findById ($contentId);
-        $obj= $this->_addReadableProperty ($obj);
-        return $obj;
-        
-    }
 	
 	protected function _addReadableProperty ($obj)
     {
@@ -100,30 +123,51 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	                'global'
 	            );
 	        }
+	        
+			$aclServive = Manager::getService('Acl');
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 	        
-	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0) {
+        if (!Manager::getService('Acl')->hasAccess("write.ui.damTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces))==0 && !in_array("all", $writeWorkspaces))) {
 	            $obj['readOnly'] = true;
-	        } else {
-	            
-	            $obj['readOnly'] = false;
 	        }
 		}
         
         return $obj;
     }
 	
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::getList()
+    
+    /**
+     * Push the content type to Elastic Search
+     *
+     * @param array $obj
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    protected function _indexDamType ($obj)
     {
-        $list = parent::getList($filters,$sort,$start,$limit);
-        foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-        return $list;
+        $wasFiltered = AbstractCollection::disableUserFilter();
+    
+        $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->indexDamType($obj['id'], $obj, TRUE);
+        
+        $ElasticDataIndexService->indexAll('dam');
+    
+        AbstractCollection::disableUserFilter($wasFiltered);
+    }
+    
+    /**
+     * Remove the content type from Indexed Search
+     *
+     * @param array $obj
+     */
+    protected function _unIndexDamType ($obj)
+    {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+    
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->deleteDamType($obj['id'], TRUE);
+    
+        AbstractCollection::disableUserFilter($wasFiltered);
     }
 	
 }

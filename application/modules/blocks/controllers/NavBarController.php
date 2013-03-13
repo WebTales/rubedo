@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
- *
- * yet to be written
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
 
@@ -30,6 +32,8 @@ class Blocks_NavBarController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
+        $output = $this->getAllParams();
+        
         $blockConfig = $this->getParam('block-config', array());
 
         if (isset($blockConfig['rootPage'])) {
@@ -71,7 +75,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['useSearchEngine'] = $useSearchEngine;
         $output['searchPage'] = $searchPage;
         $output['pages'] = array();
-        $output['logo']= $blockConfig['logo'];
+        $output['logo']= isset($blockConfig['logo'])?$blockConfig['logo']:null;
         
         $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
         

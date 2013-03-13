@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 use Rubedo\Services\Manager;
@@ -49,7 +49,7 @@ class DamController extends Zend_Controller_Action
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type');
         }
-        if ($mediaType['mainFileType'] == 'Image') {
+        if (isset($mediaType['mainFileType']) && $mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
                 'file-id' => $media['originalFileId']
             ));

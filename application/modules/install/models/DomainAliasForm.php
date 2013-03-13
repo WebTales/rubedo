@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
@@ -22,7 +22,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_DomainAliasForm
+class Install_Model_DomainAliasForm extends Install_Model_BootstrapForm
 {
     public static function getForm(){
         
@@ -37,16 +37,11 @@ class Install_Model_DomainAliasForm
         $localDomainField->setRequired(true);
         $localDomainField->setLabel('Local domain');
         
-
-        $submitButton = new Zend_Form_Element_Submit('Submit');
-        $submitButton->setAttrib('class', 'btn btn-large btn-primary');
-        
         $dbForm = new Zend_Form();
-        $dbForm->setMethod('post');
-        $dbForm->setAttrib('id', 'domainForm');
         $dbForm->addElement($domainField);
         $dbForm->addElement($localDomainField);
-        $dbForm->addElement($submitButton);
+        
+        $dbForm = self::setForm($dbForm);
         
         return $dbForm;
     }

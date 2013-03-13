@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,13 +11,12 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Interfaces\Elastic\IDataSearch;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Elastic\IDataSearch, Rubedo\Services\Manager;
 
 /**
  * Class implementing the Rubedo API to Elastic Search using Elastica API
@@ -43,7 +42,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$result['data'] = array();
 
 		// Get taxonomies
-		$collection = \Rubedo\Services\Manager::getService('Taxonomy');
+		$collection = Manager::getService('Taxonomy');
 		$taxonomyList = $collection->getList();
 		$taxonomies = $taxonomyList['data'];
 		
@@ -307,11 +306,11 @@ class DataSearch extends DataAbstract implements IDataSearch
 			} 
 			switch ($data['objectType']) {
 				case 'content':
-					$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($data['contentType']);
+					$contentType = Manager::getService('ContentTypes')->findById($data['contentType']);
 					$tmp['type'] = $contentType['type'];
 					break;
 				case 'dam':
-					$damType = \Rubedo\Services\Manager::getService('DamTypes')->findById($data['damType']);
+					$damType = Manager::getService('DamTypes')->findById($data['damType']);
 					$tmp['type'] = $damType['type'];
 					break;
 			}
@@ -341,10 +340,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 						
 						$temp['label'] = 'Navigation';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
-							$collection = \Rubedo\Services\Manager::getService('Pages');
+							$collection = Manager::getService('TaxonomyTerms');
 							foreach ($temp['terms'] as $key => $value) {
-								$termItem = $collection->findById($value['term']);
-								$temp['terms'][$key]['label'] = $termItem['type'];
+								$termItem = $collection->getTerm($value['term'],'navigation');
+								$temp['terms'][$key]['label'] = $termItem;
 							}
 						} else {
 							$renderFacet = false;
@@ -355,10 +354,13 @@ class DataSearch extends DataAbstract implements IDataSearch
 
 						$temp['label'] = 'Type de document';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
-							$collection = \Rubedo\Services\Manager::getService('DamTypes');
+							$collection = Manager::getService('DamTypes');
 							foreach ($temp['terms'] as $key => $value) {
 								$termItem = $collection->findById($value['term']);
-								$temp['terms'][$key]['label'] = $termItem['type'];
+								if($termItem && isset($termItem['type'])){
+								    $temp['terms'][$key]['label'] = $termItem['type'];
+								}
+								
 							}
 						} else {
 							$renderFacet = false;
@@ -369,7 +371,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 						
 						$temp['label'] = 'Type de contenu';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
-							$collection = \Rubedo\Services\Manager::getService('ContentTypes');
+							$collection = Manager::getService('ContentTypes');
 							foreach ($temp['terms'] as $key => $value) {
 								$termItem = $collection->findById($value['term']);
 								$temp['terms'][$key]['label'] = $termItem['type'];
@@ -384,7 +386,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 						
 						$temp['label'] = 'Auteur';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
-							$collection = \Rubedo\Services\Manager::getService('Users');
+							$collection = Manager::getService('Users');
 							foreach ($temp['terms'] as $key => $value) {
 								$termItem = $collection->findById($value['term']);
 								$temp['terms'][$key]['label'] = $termItem['name'];
@@ -396,10 +398,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 						
 					default:
 						
-						$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($id);
+						$vocabularyItem = Manager::getService('Taxonomy')->findById($id);
 						$temp['label'] = $vocabularyItem['name'];
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
-							$collection = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+							$collection = Manager::getService('TaxonomyTerms');
 							foreach ($temp['terms'] as $key => $value) {
 								$termItem = $collection->findById($value['term']);
 								$temp['terms'][$key]['label'] = $termItem['text'];
@@ -421,7 +423,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 		foreach ($filters as $vocabularyId => $termId) {
 			switch ($vocabularyId) {
 				case 'navigation':
-					$termItem = \Rubedo\Services\Manager::getService('Pages')->findById($termId);
+					$termItem = Manager::getService('Pages')->findById($termId);
 					$temp = array(
 						'id' => $vocabularyId,
 						'label' => 'Navigation',
@@ -435,7 +437,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					break;
 					
 				case 'damType' :
-					$termItem  = \Rubedo\Services\Manager::getService('DamTypes')->findById($termId);
+					$termItem  = Manager::getService('DamTypes')->findById($termId);
 					$temp = array(
 						'id' => $vocabularyId,
 						'label' => 'Types de documents',
@@ -449,7 +451,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					break;
 					
 				case 'type' :
-					$termItem  = \Rubedo\Services\Manager::getService('ContentTypes')->findById($termId);
+					$termItem  = Manager::getService('ContentTypes')->findById($termId);
 					$temp = array(
 						'id' => $vocabularyId,
 						'label' => 'Types de Contenus',
@@ -463,7 +465,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					break;
 					
 				case 'author' :
-					$termItem  = \Rubedo\Services\Manager::getService('Users')->findById($termId);
+					$termItem  = Manager::getService('Users')->findById($termId);
 					$temp = array(
 						'id' => $vocabularyId,
 						'label' => 'Auteur',
@@ -516,7 +518,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					break;								
 											
 				default:
-					$vocabularyItem = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);	
+					$vocabularyItem = Manager::getService('Taxonomy')->findById($vocabularyId);	
 					
 					$temp = array(
 						'id' => $vocabularyId,
@@ -524,7 +526,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					);
 					
 					foreach ($termId as $term) {
-						$termItem = \Rubedo\Services\Manager::getService('TaxonomyTerms')->findById($term);
+						$termItem = Manager::getService('TaxonomyTerms')->findById($term);
 						$temp['terms'][]=array(
 							'term' => $term,
 							'label' => $termItem['text']								

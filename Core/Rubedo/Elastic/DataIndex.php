@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Elastic;
@@ -113,7 +113,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping = array();
 		
 		// If there is any fields get them mapped
-		if (is_array($data["fields"])) {
+		if (isset($data["fields"]) && is_array($data["fields"])) {
 
 			foreach($data["fields"] as $key => $field) {
 						
@@ -442,7 +442,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add default meta's
 		$contentData['objectType'] = 'content';
 		$contentData['contentType'] = $typeId;
-		$contentData['writeWorkspace'] = $data['writeWorkspace'];
+		$contentData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:array();
 		$damData['text'] =  (string) $data['text'];
 		$damData['text_not_analyzed'] =  (string) $data['text'];
 		if (isset($data['lastUpdateTime'])) {
@@ -622,7 +622,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add default meta's
 		$damData['damType'] = $typeId;
 		$damData['objectType'] = 'dam';
-		$damData['writeWorkspace'] = $data['writeWorkspace'];
+		$damData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:array();
 		$damData['text'] =  (string) $data['title'];
 		$damData['text_not_analyzed'] =  (string) $data['title'];
 		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;

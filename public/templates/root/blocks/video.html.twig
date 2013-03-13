@@ -1,6 +1,21 @@
 {% extends "root/block.html.twig" %}
 
 {% block mainContent %}
-<video class="video-js vjs-default-skin" src="{% if videoFile %}/dam?media-id={{ videoFile }}{% if videoWidth %}&width={{ videoWidth }}{% endif %}{% if videoHeight %}&height={{ videoHeight }}{% endif %}{% else %}/assets/logo.gif{% endif %}"{%if videoAutoplay==true%} autoplay="true" {%endif%} {%if videoPreload==true %} preload="true" {%endif%}{%if videoLoop==true %} loop="true" {%endif%}{%if videoControls==true %} controls="true" {%endif%} {%if videoPoster %} poster="{{videoPoster}}" {%endif%} data-setup="{}">
-</video>
+    {% if videoFile %}
+        <div style="max-width:{{ videoWidth }};margin:1em 0;">
+        <div id="video_{{ prefix }}" class="videoPlaceholder" 
+        data-videoFile="/dam.{{ extension }}?media-id={{ videoFile }}" 
+        {% if videoPoster %}data-image="/dam?media-id={{ videoPoster }}"{% endif %}
+        {% if videoWidth %}data-width="{{ videoWidth }}"{% endif %} 
+        {% if videoHeight %}data-height="{{ videoHeight }}"{% endif %}
+        data-controls={% if videoControls %}true{% else %}false{% endif %}
+        {% if videoLoop %}data-repeat=true{% endif %}
+        data-autostart={% if videoAutoPlay %}true{% else %}false{% endif %}
+        data-contentType={{ contentType }}
+        >{{ alt }}
+        </div>
+        
+        </div>
+    {% endif %}
 {% endblock %}
+

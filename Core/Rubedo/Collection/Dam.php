@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -34,26 +34,27 @@ class Dam extends AbstractCollection implements IDam
         array('keys'=>array('mainFileType'=>1,'target'=>1,'createTime'=>-1)),
         array('keys'=>array('originalFileId'=>1),'options'=>array('unique'=>true)),
     );
-    
+
     /**
      * ensure that no nested contents are requested directly
      */
     protected function _init ()
     {
         parent::_init();
-		
-		if (! self::isUserFilterDisabled()) {
-	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-	        if (in_array('all', $readWorkspaceArray)) {
-	            return;
+        
+        if (! self::isUserFilterDisabled()) {
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if (! in_array('all', $readWorkspaceArray)) {
+                $readWorkspaceArray[] = null;
+                $readWorkspaceArray[] = 'all';
+                $filter = array(
+                        'target' => array(
+                                '$in' => $readWorkspaceArray
+                        )
+                );
+                $this->_dataService->addFilter($filter);
 	        }
-	        $readWorkspaceArray[] = null;
-	        $filter = array(
-	            'target' => array(
-	                '$in' => $readWorkspaceArray
-	            )
-	        );
-	        $this->_dataService->addFilter($filter);
+	        
 		}
     }
 
@@ -100,6 +101,10 @@ class Dam extends AbstractCollection implements IDam
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteDam($obj['typeId'], $obj['id']);
     }
+	
+	protected function _validateMediaType(array $obj) {
+		
+	}
 
     /**
      * (non-PHPdoc)
@@ -108,6 +113,8 @@ class Dam extends AbstractCollection implements IDam
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
+        $this->_filterInputData($obj);
+        
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Rubedo\Exceptions\Server('no file found');
@@ -137,6 +144,8 @@ class Dam extends AbstractCollection implements IDam
     {
         $obj = $this->_setDefaultWorkspace($obj);
         
+        $this->_filterInputData($obj);
+        
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
             throw new \Rubedo\Exceptions\Server('no file found');
@@ -163,17 +172,6 @@ class Dam extends AbstractCollection implements IDam
         return $this->getList($filter);
 	}
 
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::getList()
-     */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
-    {
-        $list = parent::getList($filters,$sort,$start,$limit);
-        foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-        return $list;
-    }
 	
 	public function getListByDamTypeId($typeId)
 	{
@@ -233,11 +231,10 @@ class Dam extends AbstractCollection implements IDam
             }
 			
 	        $damTypeId = $obj['typeId'];
+			$aclServive = Manager::getService('Acl');
 	        $damType = Manager::getService('DamTypes')->findById($damTypeId);
-			
-			//var_dump($damType, $writeWorkspaces, $obj['writeWorkpace']);die();
-			
-	        if ($damType['readOnly']) {
+						
+	        if ($damType['readOnly'] || !$aclServive->hasAccess("write.ui.dam")) {
 	            $obj['readOnly'] = true;
 	        } elseif (in_array($obj['writeWorkspace'], $writeWorkspaces) == false) {
 	            $obj['readOnly'] = true;
@@ -250,17 +247,30 @@ class Dam extends AbstractCollection implements IDam
         return $obj;
     }
 	
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::findById()
-     */
-    public function findById ($contentId)
+
+    
+    protected function _filterInputData (array $obj, array $model = null)
     {
+        if (! self::isUserFilterDisabled()) {
+            $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+    
+            if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            }
+    
+            $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            }
+            
+            $damTypeId = $obj['typeId'];
+            $damType = Manager::getService('DamTypes')->findById($damTypeId);
+            if (! in_array($obj['writeWorkspace'], $damType['workspaces'])) {
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+            }
+        }
         
-        $obj = parent::findById ($contentId);
-        $obj = $this->_addReadableProperty($obj);
-        return $obj;
-        
+        return parent::_filterInputData ($obj,$model);
     }
 }
 

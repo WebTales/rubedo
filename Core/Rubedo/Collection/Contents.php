@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Rubedo -- ECM solution Copyright (c) 2012, WebTales
+ * Rubedo -- ECM solution Copyright (c) 2013, WebTales
  * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
  * Open Source License
  * ------------------------------------------------------------------------------------------
@@ -9,7 +9,7 @@
  *
  * @category Rubedo
  * @package Rubedo
- * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -64,23 +64,25 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected function _init ()
     {
         parent::_init();
-        $this->_dataService->addToExcludeFieldList(array(
-            'nestedContents'
-        ));
+        $this->_dataService->addToExcludeFieldList(
+                array(
+                        'nestedContents'
+                ));
         
-        //filter contents with user rights
+        // filter contents with user rights
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-            if (in_array('all', $readWorkspaceArray)) {
-                return;
+            if (! in_array('all', $readWorkspaceArray)) {
+                $readWorkspaceArray[] = null;
+                $readWorkspaceArray[] = 'all';
+                $filter = array(
+                        'target' => array(
+                                '$in' => $readWorkspaceArray
+                        )
+                );
+                $this->_dataService->addFilter($filter);
             }
-            $readWorkspaceArray[] = null;
-            $filter = array(
-                'target' => array(
-                    '$in' => $readWorkspaceArray
-                )
-            );
-            $this->_dataService->addFilter($filter);
+            
         }
     }
 
@@ -115,21 +117,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $returnArray;
     }
     
-    
-    
-    /* (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::getList()
-     */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null, $live = true)
-    {
-        $list = parent::getList($filters,$sort,$start,$limit,$live);
-		
-		foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-		
-        return $list;
-    }
+
 
 	/*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
@@ -255,12 +243,15 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
 	        $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
 	        if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
-	            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+	            throw new \Rubedo\Exceptions\Access('You can not assign as target to this workspace');
 	        }
 		}
         
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
+        if (! self::isUserFilterDisabled() && ! in_array($obj['writeWorkspace'], $contentType['workspaces'])) {
+            throw new \Rubedo\Exceptions\Access('You can not assign this content type to this workspace');
+        }
         $contentTypeFields = $contentType['fields'];
 		
         $fieldsArray = array();
@@ -586,9 +577,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
             
             $contentTypeId = $obj['typeId'];
+			$aclServive = Manager::getService('Acl');
             $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
             
-            if ($contentType['readOnly']) {
+            if ($contentType['readOnly'] || !$aclServive->hasAccess("write.ui.contents")) {
                 $obj['readOnly'] = true;
             } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
                 $obj['readOnly'] = true;
@@ -600,19 +592,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         return $obj;
     }
-	
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::findById()
-     */
-    public function findById ($contentId, $live = true, $raw = true)
-    {
-        
-        $obj = parent::findById ($contentId, $live,$raw);
-        $obj = $this->_addReadableProperty($obj);
-        return $obj;
-        
-    }
+
 	public function getListByTypeId($typeId)
 	{
 		$filterArray[]=array("property"=>"typeId","value"=>$typeId);

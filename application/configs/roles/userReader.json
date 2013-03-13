@@ -8,6 +8,7 @@
         "read.ui.users",
         "execute.controller.users.index.backoffice",
         "execute.controller.delegations.index.backoffice",
-        "execute.controller.xhr-authentication.logout.default"
+        "execute.controller.xhr-authentication.logout.default",
+        "execute.controller.groups.index.backoffice"
     ]
 }

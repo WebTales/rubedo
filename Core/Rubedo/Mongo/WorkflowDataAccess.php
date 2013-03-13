@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Mongo;
@@ -86,7 +86,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $this->clearFilter();
 
             foreach ($filterArray as $key => $value) {
-                if (in_array($key, $this->_metaDataFields)) {
+                if (in_array($key, $this->_metaDataFields) || substr($key,0,1)=='$') {
                     $this->addFilter(array($key => $value));
                     continue;
                 }

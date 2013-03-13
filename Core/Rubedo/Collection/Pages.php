@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -30,6 +30,7 @@ class Pages extends AbstractCollection implements IPages
     protected $_indexes = array(
         array('keys'=>array('site'=>1,'parentId'=>1,'orderValue'=>1)),
         array('keys'=>array('site'=>1,'parentId'=>1,'workspace'=>1,'orderValue'=>1)),
+        array('keys'=>array('text'=>1,'parentId'=>1,'site'=>1),'options'=>array('unique'=>true)),
         
     );
 	
@@ -327,12 +328,13 @@ class Pages extends AbstractCollection implements IPages
 	        if (! isset($obj['workspace'])) {
 	            $obj['workspace'] = 'global';
 	        }
+			
+			$aclServive = Manager::getService('Acl');
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 			
-	        if (!in_array($obj['workspace'], $writeWorkspaces)) {
+	        if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.pages")) {
 	            $obj['readOnly'] = true;
 	        } else {
-	            
 	            $obj['readOnly'] = false;
 	        }
 		}
@@ -340,40 +342,7 @@ class Pages extends AbstractCollection implements IPages
         return $obj;
     }
 	
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::getList()
-     */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
-    {
-        $list = parent::getList($filters,$sort,$start,$limit);
-        foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-        return $list;
-    } 
 
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::readChild()
-     */
-    public function readChild ($parentId, $filters = null, $sort = null)
-    {
-        $list = parent::readChild ($parentId,$filters, $sort);
-        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        $returnArray = array();
-        foreach ($list as $page){
-        	if (! self::isUserFilterDisabled()) {
-	            if(!in_array($page['workspace'], $writeWorkspaces)){
-	                $page['readOnly'] =true;
-	            }else{
-	                $page['readOnly'] =false;
-	            }
-			}
-           $returnArray[] = $page;
-        }
-        return $returnArray;
-        
-    }
 
     public function propagateWorkspace ($parentId, $workspaceId, $siteId = null)
     {

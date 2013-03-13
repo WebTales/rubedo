@@ -9,7 +9,8 @@
         "execute.controller.users.update.backoffice",
         "execute.controller.users.change-password.backoffice",
         "execute.controller.users.delete.backoffice",
-        "execute.controller.users.create.backoffice"
+        "execute.controller.users.create.backoffice",
+        "execute.controller.users.index.backoffice"
     ],
     "includes":[
         "userReader"

@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
@@ -77,6 +77,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 			$maskObj['rows'][1]['id']=(string) new MongoId();
 			$maskObj['rows'][0]['columns'][0]['id']=$firstColumnId;
 			$maskObj['rows'][1]['columns'][0]['id']=$secondColumnId;
+			$maskObj['mainColumnId']=$secondColumnId;
 			$maskObj['blocks'][0]['id']=(string) new MongoId();
 			$maskObj['blocks'][0]['parentCol']=$firstColumnId;
 			
@@ -114,6 +115,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 					{
 						$updateData=$site['data'];
 						$updateData['homePage']=$homePage['data']['id'];
+						$updateData['defaultSingle']=$page['data']['id'];
 						$updateSiteReturn=$this->_dataService->update($updateData);
 						if($updateSiteReturn['success']===true)
 						{

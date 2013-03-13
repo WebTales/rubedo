@@ -1,6 +1,7 @@
 {
 	"site": "",
-	"title": "accueil",
+	"title": "Accueil",
+	"orderValue":100,
 	"maskId": "",
 	"parentId": "root",
 	"description": "",

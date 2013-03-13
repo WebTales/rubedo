@@ -1,5 +1,10 @@
-function calendarChangeDate(date, prefix, query, url, singlePage) {
+function calendarChangeDate(date, prefix, query, url, singlePage,dateField) {
 	if (jQuery('#calendar-' + prefix + ' > #calendar-' + date).length == 0) {
+		if (jQuery('body').attr('data-is-draft')){
+			var isDraft = true;
+		}else{
+			var isDraft = false;
+		}
 		var request = jQuery.ajax({
 			url : url + '/blocks/calendar/xhr-get-calendar',
 			type : "POST",
@@ -7,7 +12,10 @@ function calendarChangeDate(date, prefix, query, url, singlePage) {
 				'cal-date' : date,
 				'prefix' : prefix,
 				'query-id' : query,
-				'single-page' : singlePage
+				'single-page' : singlePage,
+				'date-field' : dateField,
+				'is-draft':isDraft,
+				'current-page':jQuery('body').attr('data-current-page')
 			},
 			dataType : "json"
 		});
@@ -33,8 +41,8 @@ function calendarChangeDate(date, prefix, query, url, singlePage) {
 	}
 	jQuery('#calendar-items-' + prefix + ' > .active').hide();
 	jQuery('#calendar-items-' + prefix + ' > .active').removeClass('active');
-	jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).show();
-	jQuery('#calendar-items-' + prefix + ' > #calendar-' + date).addClass(
+	jQuery('#calendar-items-' + prefix + ' > #calendar-items-' + date).show();
+	jQuery('#calendar-items-' + prefix + ' > #calendar-items-' + date).addClass(
 			'active');
 	return false;
 }

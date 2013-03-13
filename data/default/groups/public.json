@@ -1,6 +1,7 @@
 {
 	"canDeleteElements" : 0,
 	"canWriteUnownedElements" : 0,
+	"expandable" : false,
 	"members" : [
 	],
 	"name" : "public",
@@ -10,5 +11,9 @@
 		"public"
 	],
 	"version" : 1,
-	"writeWorkspaces" : [ ]
+	"writeWorkspaces" : [ ],
+	"defaultWorkspace":"global",
+	"workspace":"global",
+	"readOnly":true,
+	"system":true
 }

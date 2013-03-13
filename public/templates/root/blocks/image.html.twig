@@ -1,5 +1,5 @@
 {% extends "root/block.html.twig" %}
 
 {% block mainContent %}
-<a href="{% if imageLink  %}{{ url({'pageId':imageLink},true) }}{% endif %}" title="{{ imageAlt }}"><img src="{% if imageFile %}/dam?media-id={{ imageFile }}{% if imageWidth %}&width={{ imageWidth }}{% endif %}{% if imageHeight %}&height={{ imageHeight }}{% endif %}{% else %}/assets/logo.gif{% endif %}" alt="" /></a>
+<a href="{% if imageLink  %}{{ url({'pageId':imageLink},true) }}{% endif %}" title="{{ imageAlt }}"><img src="{% if imageFile %}/dam?media-id={{ imageFile }}{% if imageWidth %}&amp;width={{ imageWidth }}{% endif %}{% if imageHeight %}&amp;height={{ imageHeight }}{% endif %}{% else %}/assets/logo.gif{% endif %}" alt="" /></a>
 {% endblock %}

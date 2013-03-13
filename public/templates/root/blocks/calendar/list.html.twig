@@ -1,4 +1,4 @@
-<ul id="calendar-{{ caldate }}" class="nav nav-tabs nav-stacked active">
+<ul id="calendar-items-{{ caldate }}" class="nav nav-tabs nav-stacked active">
 	{% for content in data %}
 	<li>
 	<a href="{{ displaySingleUrl(content.id,null,singlePage) }}">
@@ -7,7 +7,7 @@
 	        {% if content.image %}
 	        <img alt=""
 			class="img-rounded"
-			src="/dam?media-id={{content.image}}&width=100&height=60&mode=crop" />
+			src="/dam?media-id={{content.image}}&amp;width=100&amp;height=60&amp;mode=crop" />
 			{% endif %}
 	    </div>
 		

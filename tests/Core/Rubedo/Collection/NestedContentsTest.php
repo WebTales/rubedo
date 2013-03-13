@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
- * yet to be written
- *
- * @category Rubedo-Test
- * @package Rubedo-Test
- * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license yet to be written
- * @version $Id$
+ * @category   Rubedo
+ * @package    Rubedo
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
 Use Rubedo\Collection\NestedContents;
@@ -115,9 +117,6 @@ class NestedContentsTest extends PHPUnit_Framework_TestCase {
 		
 		$expectedResult = $content1; 
         $result = $collection->findById($item['id'], $content1['id']);
-		Zend_Debug::dump($content1['id']);
-		Zend_Debug::dump($expectedResult);
-		Zend_Debug::dump($result);
 
         $this->assertEquals($result, $expectedResult);
     }*/

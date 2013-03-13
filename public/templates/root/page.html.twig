@@ -2,7 +2,7 @@
 <html lang="{{lang}}">
 <head>
     {% block pageTitle %}
-    <title>{{ title }}</title> 
+    <title>{{ prefixTitle }}{{ title }}</title> 
     {% endblock %} 
     
     {% block pageMeta %}
@@ -11,7 +11,15 @@
     {% if description %}
     <meta name="description" content="{{ description }}">
     {% endif %}
-    <meta name="author" content="WebTales">
+    
+    {% if keywords %}
+    <meta name="keywords" content="{{ keywords }}">
+    {% endif %}
+    
+    {% if author %}
+    <meta name="author" content="{{ author }}">
+    {% endif %}
+    
     
     {% if contentId %}
     <link rel="canonical" href="{{ displayCanonicalUrl(contentId) }}"/>
@@ -20,25 +28,28 @@
     {% endblock %} 
     
     {% block pageStyle %}
-    <!-- Le styles -->
+
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="{{baseUrl}}/components/zencoder/video-js/video-js.min.css" rel="stylesheet">
     
     
     {% for sheet in css %}
     <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
     {% endfor %}
     
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    		<![endif]-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     {% endblock %} 
     
     {% block pageIcons %}
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    
+    {% if favicon %}
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{baseUrl}}/{{ favicon }}">
+    {% endif %}
+    
+    {% if AppleIcon %}
+     <!-- touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144"
     	href="../assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114"
@@ -47,16 +58,17 @@
     	href="../assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed"
     	href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    {% endif %}
+    
     {% endblock %}
-
 </head>
 
-<body>
+<body data-current-page="{{ currentPage }}" data-is-draft="{{ isDraft }}">
 	{% block topSpace %}
 	<div id="topSpace" class="navbar navbar-fixed-top"></div>
 	{% endblock %} 
 	{% block pageContentToolBar %} 
-    	{% if isLoggedIn %}
+    	{% if canEdit %}
     	<div class="navbar hide navbar-inverse" id="contentToolBar">
     		<div class="navbar-inner">
     			<div class="container-fluid">
@@ -100,7 +112,6 @@
 	</div>
 	{% endblock %}
 
-    </div>
     
     {% block Modal %}
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog"
@@ -111,7 +122,7 @@
 			<h3 id="myModalLabel">Picture</h3>
 		</div>
 		<div class="modal-body">
-			<img src="#" id="fullScreenPicture">
+			<img src="{{baseUrl}}/components/webtales/rubedo-backoffice-ui/www/resources/images/logo.png" id="fullScreenPicture" alt="">
 		</div>
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -126,10 +137,7 @@
     	<!-- Placed at the end of the document so the pages load faster -->
     	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.9.1.min.js"></script>
     	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
-      	<script src="{{baseUrl}}/components/zencoder/video-js/video.min.js"></script>
-      	<script>
-        	_V_.options.flash.swf = "{{baseUrl}}/components/zendcoder/video-js/video-js.swf";
-      	</script>
+
     	
     	{% for file in js %}
     	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>

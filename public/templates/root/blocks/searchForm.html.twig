@@ -1,3 +1,9 @@
-<form class="navbar-search" action="{{ searchPage }}">
-  <input type="text" class="search-query" placeholder="Rechercher" name="query">
+{% extends "root/block.html.twig" %} 
+{% block mainContent %}
+<form class="navbar-search" action="{{url({'pageId': searchPage})}}">
+	<input type="text" class="search-query"
+		placeholder="{% if placeholder %}{{placeholder}}{% else %}Rechercher{% endif %}"
+		name="query">
 </form>
+{% endblock %}
+

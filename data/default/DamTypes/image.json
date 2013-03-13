@@ -1,0 +1,26 @@
+{
+	"mainFileType": "Image" ,
+	"type": "Image" ,
+	"version": 1 ,
+	"vocabularies": ["navigation"] ,
+	"workspaces": ["global"],
+	"fields": [
+		{
+			"cType": "Ext.form.field.Text" ,
+			"config": {
+				"name": "alt" ,
+				"fieldLabel": "Alternative Textuelle" ,
+				"maxLength": 255 ,
+				"minLength": 0 ,
+				"allowBlank": true ,
+				"localizable": true ,
+				"searchable": true ,
+				"multivalued": false ,
+				"tooltip": "Texte proposé en substitution de l'image" ,
+				"vtype": null  ,
+				"labelSeparator": " "
+			} ,
+			"protoId": "50f51f8fc0e0515f0b000000"
+		}
+	]
+}

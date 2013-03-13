@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,11 +11,10 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-
 use Rubedo\Interfaces\Collection\IAbstractCollection;
 use Rubedo\Services\Manager;
 
@@ -31,14 +30,15 @@ abstract class AbstractCollection implements IAbstractCollection
 
     /**
      * Indexes of the collection
-     * 
+     *
      * should be an array of index.
-     * An index should be an array('keys'=>array,'options'=>array) which define fields and options of the index
-     * 
+     * An index should be an array('keys'=>array,'options'=>array) which define
+     * fields and options of the index
+     *
      * @var array
      */
     protected $_indexes = array();
-    
+
     /**
      * name of the collection
      *
@@ -59,23 +59,22 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var array
      */
     protected $_model = array();
-	
-	protected $_errors = array();
-    
+
+    protected $_errors = array();
+
     /**
      * If true, no request should be filtered by user access rights
-     * 
+     *
      * @var boolean
      */
     protected static $_isUserFilterDisabled = false;
-    
-    
+
     /**
      * store already found objects
-     * 
+     *
      * @var array
      */
-   protected static $_fetchedObjects = array();
+    protected static $_fetchedObjects = array();
 
     protected function _init ()
     {
@@ -99,39 +98,59 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
-    {        	
+    {
         if (isset($filters)) {
             foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(array(
-                        $value["property"] => $value["value"]
-                    ));
+                if ((! (isset($value["operator"]))) ||
+                         ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(
+                            array(
+                                    $value["property"] => $value["value"]
+                            ));
+                } elseif (in_array($value["operator"], 
+                        array(
+                                '$or',
+                                '$and'
+                        ))) {
+                    if (isset($value['value']) && ! empty($value['value'])) {
+                        $this->_dataService->addFilter(
+                                array(
+                                        $value["operator"] => $value["value"]
+                                ));
+                    }
                 } else 
                     if ($value["operator"] == 'like') {
-                        $this->_dataService->addFilter(array(
-                            $value["property"] => array(
-                                '$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i')
-                            )
-                        ));
+                        $this->_dataService->addFilter(
+                                array(
+                                        $value["property"] => array(
+                                                '$regex' => $this->_dataService->getRegex(
+                                                        '/.*' . $value["value"] .
+                                                                 '.*/i')
+                                        )
+                                ));
                     } elseif (isset($value["operator"])) {
-                    	if($value['value']==array() || $value['value']=="" || !isset($value['value'])){
-                    		continue;
-                    	}
-						
-                		$this->_dataService->addFilter(array(
-                        $value["property"] => array(
-                            $value["operator"] => $value["value"]
-                        )
-                        ));
+                        if ($value['value'] == array() || $value['value'] == "" ||
+                                 ! isset($value['value'])) {
+                            continue;
+                        }
+                        
+                        $this->_dataService->addFilter(
+                                array(
+                                        $value["property"] => array(
+                                                $value["operator"] => $value["value"]
+                                        )
+                                ));
                     }
             }
         }
         if (isset($sort)) {
             foreach ($sort as $value) {
                 
-                $this->_dataService->addSort(array(
-                    $value["property"] => strtolower($value["direction"])
-                ));
+                $this->_dataService->addSort(
+                        array(
+                                $value["property"] => strtolower(
+                                        $value["direction"])
+                        ));
             }
         }
         if (isset($start)) {
@@ -142,7 +161,9 @@ abstract class AbstractCollection implements IAbstractCollection
         }
         
         $dataValues = $this->_dataService->read();
-        
+        foreach ($dataValues['data'] as &$obj) {
+            $obj = $this->_addReadableProperty($obj);
+        }
         return $dataValues;
     }
 
@@ -157,6 +178,9 @@ abstract class AbstractCollection implements IAbstractCollection
         $returnArray = array();
         $listResult = $this->getList($filters);
         $list = $listResult['data'];
+        foreach ($list as &$obj) {
+            $obj = $this->_addReadableProperty($obj);
+        }
         foreach ($list as $item) {
             $returnArray = $this->_addParentToArray($returnArray, $item);
         }
@@ -199,16 +223,27 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId    
-     * @param boolean $forceReload should we ensure reading up-to-date content        
+     * @param string $contentId            
+     * @param boolean $forceReload
+     *            should we ensure reading up-to-date content
      * @return array
      */
-    public function findById ($contentId,$forceReload = false)
+    public function findById ($contentId, $forceReload = false)
     {
-        if($forceReload || !isset(self::$_fetchedObjects[$contentId])){
-            self::$_fetchedObjects[$contentId] = $this->_dataService->findById($contentId);
+        $contentId = (string) $contentId;
+        $className = (string) get_class($this);
+        if (! isset(self::$_fetchedObjects[$className])) {
+            self::$_fetchedObjects[$className] = array();
         }
-        return self::$_fetchedObjects[$contentId];
+        if ($forceReload ||
+                 ! isset(self::$_fetchedObjects[$className][$contentId])) {
+            $obj = $this->_dataService->findById($contentId);
+            if ($obj) {
+                $obj = $this->_addReadableProperty($obj);
+            }
+            self::$_fetchedObjects[$className][$contentId] = $obj;
+        }
+        return self::$_fetchedObjects[$className][$contentId];
     }
 
     /**
@@ -219,7 +254,11 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function findByName ($name)
     {
-        return $this->_dataService->findByName($name);
+        $obj = $this->_dataService->findByName($name);
+        if ($obj) {
+            $obj = $this->_addReadableProperty($obj);
+        }
+        return $obj;
     }
 
     /**
@@ -228,20 +267,22 @@ abstract class AbstractCollection implements IAbstractCollection
      * @deprecated
      *
      *
-     *
      * @param array $value
      *            search condition
      * @return array
      */
     public function findOne ($value)
     {
-        return $this->_dataService->findOne($value);
+        $obj = $this->_dataService->findOne($value);
+        if ($obj) {
+            $obj = $this->_addReadableProperty($obj);
+        }
+        return $obj;
     }
 
     /**
      *
      * @deprecated
-     *
      *
      *
      * @param unknown $filter            
@@ -262,6 +303,11 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      *
      *
+     *
+     *
+     *
+     *
+     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
@@ -270,7 +316,8 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
+    public function customUpdate (array $data, array $updateCond, 
+            $options = array('safe'=>true))
     {
         return $this->_dataService->customUpdate($data, $updateCond, $options);
     }
@@ -286,122 +333,148 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function create (array $obj, $options = array('safe'=>true))
     {
-       	$this->_filterInputData($obj);
-		
+        $this->_filterInputData($obj);
+        
         unset($obj['readOnly']);
         return $this->_dataService->create($obj, $options);
     }
-
+    
     /**
      * Return validated data from input data based on collection rules
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array:
      */
     protected function _filterInputData (array $obj, array $model = null)
-    {			
-		if($model == null) {
-			$model = $this->_model;
-		}
-			
-		foreach($model as $key => $value){
-			//If the configuration is not specified for the current field
-			if(!isset($value['domain']) && !isset($value['required'])){
-				continue;
-			}
-			
-			
-			if(isset($obj[$key])){
-				switch ($value['domain']) {
-					
-					/**
-					 * Case with a list domain
-					 * 
-					 * Check if the elements of the object array correspond with the model
-					 */
-					case 'list':
-						if(isset($value['items']) && isset($value['items']['domain']) && isset($value['items']['required'])) {
-							if($this->_isValid($obj[$key], $value['domain'])) {
-								if(count($obj[$key]) > 0) {
-									foreach ($obj[$key] as $subKey => $subValue) {
-										if($value['items']['domain'] != "list" && $value['items']['domain'] != "array") {
-											if(!$this->_isValid($subValue, $value['items']['domain'])) {
-												$this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'].'"';
-											}
-										} else {
-											if($value['items']['domain'] == "list"){
-												if(isset($value['items']['items']['domain']) && isset($value['items']['items']['required'])){
-													$this->_filterInputData(array('key' => $subValue), array('key' => $value['items']['items']));
-												} else {
-													$this->_filterInputData($subValue, $value['items']['items']);
-												}
-											} else {
-												$this->_filterInputData($subValue, $value['items']['items']);
-											}
-										}
-									}
-								} else {
-									if($value['items']['required'] == true) {
-										$this->_errors[$key] = 'this field is required';
-									} else {
-										continue;
-									}
-								}
-							} else {
-								$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
-							}
-						} else {
-							continue;
-						}
-						break;
-					
-					/**
-					 * Case with an array domain
-					 * 
-					 * Recall _filterInputData function with the object array and it's model
-					 */
-					case 'array':
-						if(isset($value['items']) && count($value['items']) > 0) {
-							if($this->_isValid($obj[$key], $value['domain'])) {
-								if(count($obj[$key]) > 0) {
-									$this->_filterInputData($obj[$key], $value['items']);
-								} else {
-									if($value['items']['required'] == true) {
-										$this->_errors[$key] = 'this field is required';
-									} else {
-										continue;
-									}
-								}
-							} else {
-								$this->_errors[$key] = 'doesn\'t correspond with the domain "'.$value['domain'].'"';
-							}
-						} else {
-							continue;
-						}
-						break;
-					
-					/**
-					 * Case with a simple domain
-					 * 
-					 * Just check if the current object value correspond with the model
-					 */
-					default :
-						if(!$this->_isValid($obj[$key], $value['domain'])) {
-							$this->_errors[$key] = '"'.$obj[$key].'" doesn\'t correspond with the domain "'.$value['domain'].'"';
-						}
-						break;
-				}
-			} else {
-				if(isset($value['items']) && $value['items']['required'] == true) {
-					$this->_errors[$key] = 'this field is required';
-				} else {
-					continue;
-				}
-			}
-		}
-
-		return $obj;
-	}  
+    {
+        if ($model == null) {
+            $model = $this->_model;
+        }
+    
+        foreach ($model as $key => $value) {
+            // If the configuration is not specified for the current field
+            if (isset($value['domain']) && isset($value['required'])) {
+                if (isset($obj[$key])) {
+                    switch ($value['domain']) {
+    
+                        /**
+                         * Case with a list domain
+                         *
+                         * Check if the elements of the object array correspond
+                         * with the model
+                         */
+                        case 'list':
+                            if (isset($value['items']) &&
+                            isset($value['items']['domain']) &&
+                            isset($value['items']['required'])) {
+                                if ($this->_isValid($obj[$key],
+                                        $value['domain'])) {
+                                    if (count($obj[$key]) > 0) {
+                                        foreach ($obj[$key] as $subKey => $subValue) {
+                                            if ($value['items']['domain'] !=
+                                            "list" &&
+                                            $value['items']['domain'] != "array") {
+                                                if (! $this->_isValid($subValue,
+                                                        $value['items']['domain'])) {
+                                                    $this->_errors[$key][$subKey] = '"' .
+                                                            $subValue .
+                                                            '" doesn\'t correspond with the domain "' .
+                                                            $value['domain'] . '"';
+                                                }
+                                            } else {
+                                                if ($value['items']['domain'] == "list") {
+                                                    if (isset(
+                                                            $value['items']['items']['domain']) &&
+                                                            isset(
+                                                                    $value['items']['items']['required'])) {
+                                                        $this->_filterInputData(
+                                                                array(
+                                                                        'key' => $subValue
+                                                                ),
+                                                                array(
+                                                                        'key' => $value['items']['items']
+                                                                ));
+                                                    } else {
+                                                        $this->_filterInputData($subValue,
+                                                                $value['items']['items']);
+                                                    }
+                                                } else {
+                                                    $this->_filterInputData($subValue,
+                                                            $value['items']['items']);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if ($value['items']['required'] == true) {
+                                            $this->_errors[$key] = 'this field is required';
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                } else {
+                                    $this->_errors[$key] = 'doesn\'t correspond with the domain "' .
+                                            $value['domain'] . '"';
+                                }
+                            } else {
+                                continue;
+                            }
+                            break;
+    
+                            /**
+                             * Case with an array domain
+                             *
+                             * Recall _filterInputData function with the object
+                             * array and it's model
+                             */
+                        case 'array':
+                            if (isset($value['items']) && count($value['items']) > 0) {
+                                if ($this->_isValid($obj[$key], $value['domain'])) {
+                                    if (count($obj[$key]) > 0) {
+                                        $this->_filterInputData($obj[$key], $value['items']);
+                                    } else {
+                                        if ($value['items']['required'] == true) {
+                                            $this->_errors[$key] = 'this field is required';
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                } else {
+                                    $this->_errors[$key] = 'doesn\'t correspond with the domain "' .
+                                            $value['domain'] . '"';
+                                }
+                            } else {
+                                continue;
+                            }
+                            break;
+    
+                            /**
+                             * Case with a simple domain
+                             *
+                             * Just check if the current object value correspond
+                             * with the model
+                             */
+                        default:
+                            if (! $this->_isValid($obj[$key], $value['domain'])) {
+                                $this->_errors[$key] = '"' . $obj[$key] .
+                                '" doesn\'t correspond with the domain "' .
+                                $value['domain'] . '"';
+                            }
+                            break;
+                    }
+                } else {
+                    if ((isset($value['items']) && isset($value['items']['required']) &&
+                            $value['items']['required'] == true) ||
+                            (isset($value['required']) && $value['required'] == true)) {
+                        $this->_errors[$key] = 'this field is required';
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
+    
+        return $obj;
+    }
 
     /**
      * Is the data a valid input for the domain
@@ -415,7 +488,8 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         $domainClassName = 'Rubedo\\Domains\\D' . ucfirst($domain);
         if (! class_exists($domainClassName)) {
-            throw new \Rubedo\Exceptions\User('domain not defined :' . (string) $domain);
+            throw new \Rubedo\Exceptions\User(
+                    'domain not defined :' . (string) $domain);
         }
         return $domainClassName::isValid($data);
     }
@@ -467,23 +541,29 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         if (isset($filters)) {
             foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(array(
-                        $value["property"] => $value["value"]
-                    ));
+                if ((! (isset($value["operator"]))) ||
+                         ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(
+                            array(
+                                    $value["property"] => $value["value"]
+                            ));
                 } else 
                     if ($value["operator"] == 'like') {
-                        $this->_dataService->addFilter(array(
-                            $value["property"] => array(
-                                '$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i')
-                            )
-                        ));
+                        $this->_dataService->addFilter(
+                                array(
+                                        $value["property"] => array(
+                                                '$regex' => $this->_dataService->getRegex(
+                                                        '/.*' . $value["value"] .
+                                                                 '.*/i')
+                                        )
+                                ));
                     } elseif (isset($value["operator"])) {
-                        $this->_dataService->addFilter(array(
-                            $value["property"] => array(
-                                $value["operator"] => $value["value"]
-                            )
-                        ));
+                        $this->_dataService->addFilter(
+                                array(
+                                        $value["property"] => array(
+                                                $value["operator"] => $value["value"]
+                                        )
+                                ));
                     }
             }
         }
@@ -493,6 +573,11 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      *
      * @deprecated
+     *
+     *
+     *
+     *
+     *
      *
      *
      *
@@ -520,36 +605,44 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         if (isset($filters)) {
             foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(array(
-                        $value["property"] => $value["value"]
-                    ));
+                if ((! (isset($value["operator"]))) ||
+                         ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(
+                            array(
+                                    $value["property"] => $value["value"]
+                            ));
                 } else 
                     if ($value["operator"] == 'like') {
-                        $this->_dataService->addFilter(array(
-                            $value["property"] => array(
-                                '$regex' => new \MongoRegex('/.*' . $value["value"] . '.*/i')
-                            )
-                        ));
+                        $this->_dataService->addFilter(
+                                array(
+                                        $value["property"] => array(
+                                                '$regex' => new \MongoRegex(
+                                                        '/.*' . $value["value"] .
+                                                                 '.*/i')
+                                        )
+                                ));
                     } elseif (isset($value["operator"])) {
-                        $this->_dataService->addFilter(array(
-                            $value["property"] => array(
-                                $value["operator"] => $value["value"]
-                            )
-                        ));
+                        $this->_dataService->addFilter(
+                                array(
+                                        $value["property"] => array(
+                                                $value["operator"] => $value["value"]
+                                        )
+                                ));
                     }
             }
         }
         
         if (isset($sort)) {
             foreach ($sort as $value) {
-                $this->_dataService->addSort(array(
-                    $value["property"] => strtolower($value["direction"])
-                ));
+                $this->_dataService->addSort(
+                        array(
+                                $value["property"] => strtolower(
+                                        $value["direction"])
+                        ));
             }
         } else {
             $this->_dataService->addSort(array(
-                "orderValue" => 1
+                    "orderValue" => 1
             ));
         }
         
@@ -582,7 +675,8 @@ abstract class AbstractCollection implements IAbstractCollection
         return $returnArray;
     }
 
-    public function fetchAllChildren ($parentId, $filters = null, $sort = null, $limit = 10)
+    public function fetchAllChildren ($parentId, $filters = null, $sort = null, 
+            $limit = 10)
     {
         $returnArray = array();
         $children = $this->readChild($parentId, $filters, $sort); // Read child
@@ -594,14 +688,18 @@ abstract class AbstractCollection implements IAbstractCollection
                                         // do another read child.
             $returnArray[] = $value;
             if ($value['leaf'] === false && $limit > 0) {
-                $returnArray = array_merge($returnArray, $this->readChild($value['id'], $filters, $sort, $limit - 1));
+                $returnArray = array_merge($returnArray, 
+                        $this->readChild($value['id'], $filters, $sort, 
+                                $limit - 1));
             }
         }
         return $returnArray;
     }
-    
-    public function readTree(){
-        return $this->_dataService->readTree();
+
+    public function readTree ()
+    {
+        $tree = $this->_dataService->readTree();
+        return $tree;
     }
 
     public function drop ()
@@ -613,8 +711,9 @@ abstract class AbstractCollection implements IAbstractCollection
             return false;
         }
     }
-    
-	/**
+
+    /**
+     *
      * @return the $_isUserFilterDisabled
      */
     public static final function isUserFilterDisabled ()
@@ -622,47 +721,58 @@ abstract class AbstractCollection implements IAbstractCollection
         return self::$_isUserFilterDisabled;
     }
 
-	/**
-     * @param boolean $_isUserFilterDisabled
+    /**
+     *
+     * @param boolean $_isUserFilterDisabled            
      * @return boolean previous value of the param
      */
-    public static final function disableUserFilter ($_isUserFilterDisabled=true)
+    public static final function disableUserFilter (
+            $_isUserFilterDisabled = true)
     {
         $oldValue = self::$_isUserFilterDisabled;
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
         return $oldValue;
     }
-    
-	/**
-	 *  (non-PHPdoc)
+
+    /**
+     * (non-PHPdoc)
+     *
      * @see \Rubedo\Interfaces\Collection\IAbstractCollection::checkIndexes()
      */
     public function checkIndexes ()
     {
-       $result = true;
-        foreach ($this->_indexes as $index){
+        $result = true;
+        foreach ($this->_indexes as $index) {
             $result = $result && $this->_dataService->checkIndex($index['keys']);
         }
         return $result;
-        
     }
 
-	/**
-	 *  (non-PHPdoc)
+    /**
+     * (non-PHPdoc)
+     *
      * @see \Rubedo\Interfaces\Collection\IAbstractCollection::ensureIndexes()
      */
     public function ensureIndexes ()
     {
         $result = true;
-        foreach ($this->_indexes as $index){
-            $result = $result && $this->_dataService->ensureIndex($index['keys'],isset($index['options'])?$index['options']:array());
+        foreach ($this->_indexes as $index) {
+            $result = $result && $this->_dataService->ensureIndex(
+                    $index['keys'], 
+                    isset($index['options']) ? $index['options'] : array());
         }
-        return $result;        
+        return $result;
     }
 
-
-    
-    
-    
+    /**
+     * Add a readOnly field to contents based on user rights
+     *
+     * @param array $obj            
+     * @return array
+     */
+    protected function _addReadableProperty ($obj)
+    {
+        return $obj;
+    }
 }
 	

@@ -1,12 +1,12 @@
 {
 	"site": "",
-	"title": "single",
+	"title": "Détail",
 	"maskId": "",
 	"excludeFromMenu": true,
 	"parentId": "root",
 	"description": "",
 	"keywords": [],
-	"orderValue": 200,
+	"orderValue": 300,
 	"expandable": false,
 	"blocks": [
 		{
@@ -33,36 +33,40 @@
 			"champsConfig": {
 				"avance": [],
 				"simple": [
-					{
-						"categorie": "Affichage",
-						"champs": [
-							{
-								"config": {
-									"fieldLabel": "Type d'affichage",
-									"name": "displayType"
-								},
-								"type": "Ext.form.field.Text"
-							}
-						]
-					}, {
-						"categorie": "Contenu",
-						"champs": [
-							{
-								"config": {
-									"fieldLabel": "Contenu \u00e0 afficher",
-									"name": "contentId"
-								},
-								"type": "Rubedo.view.FCCField"
-							}, {
-								"config": {
-									"fieldLabel": "Param\u00e8tre externe",
-									"name": "recievesParam"
-								},
-								"type": "Ext.form.field.Checkbox"
-							}
-						]
-					}
-				]
+                        {
+                            "categorie": "Affichage",
+                            "champs": [
+                               
+                                {
+                                    "type": "Ext.form.field.Text",
+                                    "config": {
+                                        "fieldLabel": "Type d'affichage",
+                                        "name": "displayType"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "categorie": "Contenu",
+                            "champs": [
+                                {
+                                    "type": "Rubedo.view.DCEField",
+                                    "config": {
+                                        "fieldLabel": "Contenu à afficher",
+                                        "name": "contentId",
+                                        "chooseOnly":true
+                                    }
+                                },
+                                {
+                                    "type": "Ext.form.field.Checkbox",
+                                    "config": {
+                                        "fieldLabel": "Paramètre externe",
+                                        "name": "recievesParam"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
 			}
 		}
 	]

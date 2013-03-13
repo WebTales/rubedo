@@ -1,0 +1,63 @@
+{
+	"dependant": false ,
+	"dependantTypes": [] ,
+	"fields": [
+		{
+			"cType": "datefield" ,
+			"config": {
+				"name": "date" ,
+				"fieldLabel": "Date" ,
+				"allowBlank": true ,
+				"localizable": false ,
+				"searchable": false ,
+				"multivalued": false ,
+				"tooltip": "" ,
+				"labelSeparator": " "
+			} ,
+			"protoId": "506441f8c64804391200001b" ,
+			"openWindow": null
+		} , {
+			"cType": "CKEField" ,
+			"config": {
+				"name": "body" ,
+				"fieldLabel": "Corps" ,
+				"maxLength": 600000 ,
+				"minLength": 0 ,
+				"allowBlank": true ,
+				"localizable": true ,
+				"searchable": true ,
+				"multivalued": false ,
+				"resumed": false ,
+				"hidden": false ,
+				"tooltip": "" ,
+				"vtype": null  ,
+				"CKETBConfig": "Standard"
+			} ,
+			"protoId": "506441f8c648043912000020" ,
+			"openWindow": null
+		} , {
+			"cType": "ImagePickerField" ,
+			"config": {
+				"name": "image" ,
+				"fieldLabel": "Image" ,
+				"localizable": false ,
+				"searchable": false ,
+				"multivalued": false ,
+				"resumed": false ,
+				"hidden": false ,
+				"tooltip": "" ,
+				"allowedDAMTypes": null  ,
+				"allowedFileType": "Image"
+			} ,
+			"protoId": "506441f8c648043912991123" ,
+			"openWindow": null
+		}
+	] ,
+	"system": false ,
+	"type": "Actualité" ,
+	"updateTime": null  ,
+	"version": 1 ,
+	"vocabularies": ["navigation"] ,
+	"workflow": "Basique" ,
+	"workspaces": ["global"]
+}

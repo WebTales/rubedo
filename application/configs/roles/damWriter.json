@@ -5,10 +5,11 @@
     	"en":"Can write DAM contents"
     },
     "rights":[
-        "write.ui.dam",
-        "read.ui.dam",
+        "write.ui.dam$",
+        "read.ui.dam$",
         "execute.controller.dam-types.index.backoffice",
-        "execute.controller.dam.@dot*.backoffice"
+        "execute.controller.dam.@dot*.backoffice",
+        "execute.controller.file.put.backoffice"
     ],
     "includes":[
         "damReader"

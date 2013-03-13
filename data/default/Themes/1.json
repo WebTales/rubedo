@@ -1,0 +1,8 @@
+{
+	"name": "Red",
+	"stylesheet": "resources/css/red_theme.css",
+	"wallpaper": "resources/wallpapers/rubedo.jpg",
+	"preview": "resources/previews/red.jpg",
+	"iconSet": "red",
+	"themeColor": "#D7251D"
+}
