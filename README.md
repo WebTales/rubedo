@@ -1,7 +1,7 @@
 Rubedo
 ======
 
-An open source PHP CMS, based on Zend Framework &amp; MongoDB
+An open source PHP CMS, based on Zend Framework &amp; MongoDB : http://www.rubedo-project.org/
 
 Copyright (c) 2013, WebTales (http://www.webtales.fr/).
 All rights reserved.
