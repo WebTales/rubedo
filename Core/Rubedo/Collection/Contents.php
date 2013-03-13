@@ -153,11 +153,13 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {        
         $origObj = $this->findById($obj['id'],$live,false);
         if (! self::isUserFilterDisabled()) {
-            if ($origObj['readOnly']) {
+            if (isset($origObj['readOnly']) && $origObj['readOnly']) {
                 throw new \Rubedo\Exceptions\Access('no rights to update this content');
             }
         }
-        
+        if(!is_array($obj['target'])){
+            $obj['target']= array($obj['target']);
+        }
 		if(count(array_intersect(array($obj['writeWorkspace']), $obj['target']))==0){
 			$obj['target'][] = $obj['writeWorkspace'];
 		}
@@ -552,6 +554,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
 			}
         }
 		
+        if(!is_array($content['target'])){
+            $content['target']= array($content['target']);
+        }
+        
 		if(!in_array($content['writeWorkspace'], $content['target'])){
 			$content['target'][] = $content['writeWorkspace'];
 		}
@@ -587,7 +593,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
             } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
                 $obj['readOnly'] = true;
             } else {
-                
                 $obj['readOnly'] = false;
             }
         }

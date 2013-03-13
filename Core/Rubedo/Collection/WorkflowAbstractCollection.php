@@ -117,9 +117,11 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
 			$this->_dataService->setWorkspace();
 		}
 		
-        $returnArray = $this->_dataService->findById($contentId,$raw);
-		
-		return $returnArray;
+        $obj = $this->_dataService->findById($contentId,$raw);
+        if ($obj) {
+            $obj = $this->_addReadableProperty($obj);
+        }
+		return $obj;
     }
     
     /* (non-PHPdoc)
