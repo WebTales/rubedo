@@ -51,6 +51,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @var array
      */
     protected $_inputDataErrors = array();
+    
+    protected static $_userFilter;
 
     public function __construct ()
     {

@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\User;
-use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager;
+use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager, Rubedo\Collection\AbstractCollection;
 
 /**
  * Current User Service
@@ -52,6 +52,12 @@ class CurrentUser implements ICurrentUser
      * @var array
      */
     protected static $_groups = null;
+    
+    protected static $_readWorkspaces = null;
+    
+    protected static $_mainWorkspace = null;
+    
+    protected static $_writeWorkspaces = null;
 
     /**
      * Return the authenticated user array
@@ -239,21 +245,27 @@ class CurrentUser implements ICurrentUser
      */
     public function getReadWorkspaces ()
     {
-        $groupArray = $this->getGroups();
-        $workspaceArray = array();
-        
-        foreach ($groupArray as $group) {
-            $workspaceArray = array_unique(
-                    array_merge($workspaceArray, 
-                            Manager::getService('Groups')->getReadWorkspaces(
-                                    $group['id'])));
-            $workspaceArray = array_merge($workspaceArray, 
-                    array_unique(
-                            array_merge($workspaceArray, 
-                                    Manager::getService('Groups')->getWriteWorkspaces(
-                                            $group['id']))));
+        if(!isset(self::$_readWorkspaces)){
+            $wasFiltered = AbstractCollection::disableUserFilter();
+            $groupArray = $this->getGroups();
+            $workspaceArray = array();
+            
+            foreach ($groupArray as $group) {
+                $workspaceArray = array_unique(
+                        array_merge($workspaceArray,
+                                Manager::getService('Groups')->getReadWorkspaces(
+                                        $group['id'])));
+                $workspaceArray = array_merge($workspaceArray,
+                        array_unique(
+                                array_merge($workspaceArray,
+                                        Manager::getService('Groups')->getWriteWorkspaces(
+                                                $group['id']))));
+            }
+            self::$_readWorkspaces = array_unique($workspaceArray);
+            AbstractCollection::disableUserFilter($wasFiltered);
         }
-        return array_unique($workspaceArray);
+        return self::$_readWorkspaces;
+        
     }
 
     /**
@@ -264,13 +276,17 @@ class CurrentUser implements ICurrentUser
      */
     public function getMainWorkspace ()
     {
-        
-        // return Manager::getService('Workspaces')->findById('global');
-        $mainGroup = $this->getMainGroup();
-        if ($mainGroup == null) {
-            return Manager::getService('Workspaces')->findById('global');
+        if(!isset(self::$_mainWorkspace)){
+            // return Manager::getService('Workspaces')->findById('global');
+            $mainGroup = $this->getMainGroup();
+            if ($mainGroup == null) {
+                return Manager::getService('Workspaces')->findById('global');
+            }
+            self::$_mainWorkspace = Manager::getService('Groups')->getMainWorkspace($mainGroup);
         }
-        return Manager::getService('Groups')->getMainWorkspace($mainGroup);
+        return self::$_mainWorkspace;
+        
+        
     }
     
     public function getMainWorkspaceId(){
@@ -289,23 +305,27 @@ class CurrentUser implements ICurrentUser
      */
     public function getWriteWorkspaces ()
     {
-        $groupArray = $this->getGroups();
-        $workspaceArray = array();
-        
-        foreach ($groupArray as $group) {
-            $workspaceArray = array_unique(
-                    array_merge($workspaceArray, 
-                            Manager::getService('Groups')->getWriteWorkspaces(
-                                    $group['id'])));
-        }
-        if (in_array('all', $workspaceArray)) {
+        if(!isset(self::$_writeWorkspaces)){
+            $groupArray = $this->getGroups();
             $workspaceArray = array();
-            $workspaceList = Manager::GetService("Workspaces")->getWholeList();
-            foreach ($workspaceList['data'] as $workspace) {
-                $workspaceArray[] = $workspace['id'];
+            
+            foreach ($groupArray as $group) {
+                $workspaceArray = array_unique(
+                        array_merge($workspaceArray,
+                                Manager::getService('Groups')->getWriteWorkspaces(
+                                        $group['id'])));
             }
+            if (in_array('all', $workspaceArray)) {
+                $workspaceArray = array();
+                $workspaceList = Manager::GetService("Workspaces")->getWholeList();
+                foreach ($workspaceList['data'] as $workspace) {
+                    $workspaceArray[] = $workspace['id'];
+                }
+            }
+            
+            self::$_writeWorkspaces = $workspaceArray;
         }
+        return self::$_writeWorkspaces;
         
-        return $workspaceArray;
     }
 }

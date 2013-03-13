@@ -45,13 +45,13 @@ class Files extends AbstractFileCollection implements IFiles
 		"application/vnd.oasis.opendocument.presentation",
 	);
 	
-	protected $_allowedIllustrationMimeTypes = array("image/jpeg", "image/png", "image/gif", "image/x-icon");
+	protected $_allowedIllustrationMimeTypes = array("image/jpeg","image/jpg", "image/png", "image/gif", "image/x-icon");
 	
-	protected $_allowedVideoMimeTypes = array("video/mp4", "video/mpeg", "video/x-flv", "video/x-ms-wmv", "video/x-msvideo");
+	protected $_allowedVideoMimeTypes = array("video/mp4", "video/mpeg", "video/x-flv");
 	
-	protected $_allowedAnimationMimeTypes = array("image/gif", "");
+	protected $_allowedAnimationMimeTypes = array("application/x-shockwave-flash");
 	
-	protected $_allowedSoundMimeTypes = array("audio/x-wav", "audio/wav", "audio/mp4", "audio/mpeg", "audio/aac",'audio/ogg');
+	protected $_allowedSoundMimeTypes = array("audio/mp3","audio/mp4", "audio/mpeg", "audio/aac",'audio/ogg');
 		
 	public function create(array $fileObj) {
 		switch ($fileObj['mainFileType']) {

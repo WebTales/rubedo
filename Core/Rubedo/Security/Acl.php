@@ -35,6 +35,8 @@ class Acl implements IAcl
      * @var string
      */
     protected $_rolesDirectory;
+    
+    protected static $_hasAccessRults = array();
 
     public function __construct ()
     {
@@ -51,26 +53,31 @@ class Acl implements IAcl
      */
     public function hasAccess ($resource)
     {
-        $currentUserService = Manager::getService('CurrentUser');
-        
-        $wasFiltered = AbstractCollection::disableUserFilter();
-        $groups = $currentUserService->getGroups();
-        
-        
-        $roleArray = array();
-        foreach ($groups as $group) {
-            $roleArray = $this->_addGroupToRoleArray($roleArray, $group);
-        }
-        $roleArray = $this->_addGroupToRoleArray($roleArray, Manager::getService('Groups')->getPublicGroup());
-        
-        AbstractCollection::disableUserFilter($wasFiltered);
-        foreach ($roleArray as $role) {
-            if ($this->_roleHasAccess($resource, $role)) {
-                return true;
+        if (! isset(self::$_hasAccessRults[$resource])) {
+            $result = false;
+            $currentUserService = Manager::getService('CurrentUser');
+            
+            $wasFiltered = AbstractCollection::disableUserFilter();
+            $groups = $currentUserService->getGroups();
+            AbstractCollection::disableUserFilter($wasFiltered);
+            
+            $roleArray = array();
+            foreach ($groups as $group) {
+                $roleArray = $this->_addGroupToRoleArray($roleArray, $group);
             }
+            $wasFiltered = AbstractCollection::disableUserFilter();
+            $roleArray = $this->_addGroupToRoleArray($roleArray, Manager::getService('Groups')->getPublicGroup());
+            AbstractCollection::disableUserFilter($wasFiltered);
+            
+            foreach ($roleArray as $role) {
+                if ($this->_roleHasAccess($resource, $role)) {
+                    $result = true || $result;
+                    break;
+                }
+            }
+            self::$_hasAccessRults[$resource] = $result;
         }
-        
-        return false;
+        return self::$_hasAccessRults[$resource];
     }
 
     /**
@@ -83,12 +90,9 @@ class Acl implements IAcl
     protected function _addGroupToRoleArray (array $roleArray, array $group=null)
     {
         if(is_null($group)){
-            return array();
+            return $roleArray;
         }
         
-        if (! isset($group['roles'])) {
-            $group['roles'] = $this->_getRoleByGroup($group);
-        }
         if (isset($group['roles']) && is_array($group['roles'])) {
             $groupRoleArray = array_values($group['roles']);
             $roleArray = array_merge($roleArray, $groupRoleArray);
@@ -131,28 +135,6 @@ class Acl implements IAcl
         return false;
     }
 
-    /**
-     * return the array of roles set to a given group.
-     *
-     * @param string $group            
-     * @return array
-     */
-    protected function _getRoleByGroup ($group)
-    {
-        switch ($group['name']) {
-            case 'admin':
-                $roles = array(
-                    'admin'
-                );
-                break;
-            default:
-                $roles = array(
-                    'public'
-                );
-                break;
-        }
-        return $roles;
-    }
 
     /**
      * Return the role configuration from its name
