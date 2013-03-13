@@ -729,6 +729,7 @@ abstract class AbstractCollection implements IAbstractCollection
     public static final function disableUserFilter (
             $_isUserFilterDisabled = true)
     {
+        //error_log('disableUserFilter =>'.print_r(debug_backtrace(),true));
         $oldValue = self::$_isUserFilterDisabled;
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
         return $oldValue;

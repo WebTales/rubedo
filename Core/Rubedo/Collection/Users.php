@@ -44,13 +44,11 @@ class Users extends AbstractCollection implements IUsers
         ));
     
         if (! self::isUserFilterDisabled()) {
-            $wasFiltered = AbstractCollection::disableUserFilter();
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if(!in_array('all',$readWorkspaceArray)){
                 $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
                 $this->_dataService->addFilter($filter);
             }
-            AbstractCollection::disableUserFilter($wasFiltered);
         }
     }
     

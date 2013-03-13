@@ -112,29 +112,24 @@ class DamTypes extends AbstractCollection implements IDamTypes
 				
 		return $obj;
 	}
-	
-	
-	protected function _addReadableProperty ($obj)
+
+    protected function _addReadableProperty ($obj)
     {
-        $obj['readOnly'] = false;
-        if (! self::isUserFilterDisabled()) {
-            // Set the workspace for old items in database
-            if (! isset($obj['workspaces']) || $obj['workspaces'] == "") {
-                $obj['workspaces'] = array(
-                        'global'
-                );
-            }
-            
-            $aclServive = Manager::getService('Acl');
-            $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-            
-            if (! Manager::getService('Acl')->hasAccess("write.ui.damTypes") ||
-                     (count(
-                            array_intersect($obj['workspaces'], 
-                                    $writeWorkspaces)) == 0 &&
-                     ! in_array("all", $writeWorkspaces))) {
-                $obj['readOnly'] = true;
-            }
+        
+        // Set the workspace for old items in database
+        if (! isset($obj['workspaces']) || $obj['workspaces'] == "") {
+            $obj['workspaces'] = array(
+                'global'
+            );
+        }
+        
+        $aclServive = Manager::getService('Acl');
+        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        
+        if (! Manager::getService('Acl')->hasAccess("write.ui.damTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 && ! in_array("all", $writeWorkspaces))) {
+            $obj['readOnly'] = true;
+        } else {
+            $obj['readOnly'] = false;
         }
         return $obj;
     }

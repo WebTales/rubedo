@@ -34,7 +34,7 @@ class Groups extends AbstractCollection implements IGroups
         array('keys'=>array('members'=>1)),
         
     );
-
+    
     public function __construct ()
     {
         $this->_collectionName = 'Groups';
@@ -49,13 +49,11 @@ class Groups extends AbstractCollection implements IGroups
         parent::_init();
     
         if (! self::isUserFilterDisabled()) {
-            $wasFiltered = AbstractCollection::disableUserFilter();
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if(!in_array('all',$readWorkspaceArray)){
                 $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
                 $this->_dataService->addFilter($filter);
             }
-            AbstractCollection::disableUserFilter($wasFiltered);
         }
     }
     

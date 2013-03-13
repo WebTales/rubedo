@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\User;
-use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager;
+use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager, Rubedo\Collection\AbstractCollection;
 
 /**
  * Current User Service
@@ -246,6 +246,7 @@ class CurrentUser implements ICurrentUser
     public function getReadWorkspaces ()
     {
         if(!isset(self::$_readWorkspaces)){
+            $wasFiltered = AbstractCollection::disableUserFilter();
             $groupArray = $this->getGroups();
             $workspaceArray = array();
             
@@ -261,6 +262,7 @@ class CurrentUser implements ICurrentUser
                                                 $group['id']))));
             }
             self::$_readWorkspaces = array_unique($workspaceArray);
+            AbstractCollection::disableUserFilter($wasFiltered);
         }
         return self::$_readWorkspaces;
         
