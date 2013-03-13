@@ -218,8 +218,14 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      * @todo remove the temp hack when database starter is ready
      */
     public function treeAction() {
-
-        $dataValues = $this->_dataService->readTree();
+        $filterJson = $this->getRequest()->getParam('filter');
+        if (isset($filterJson)) {
+            $filters = Zend_Json::decode($filterJson);
+        } else {
+            $filters = null;
+        }
+        
+        $dataValues = $this->_dataService->readTree($filters);
 
         $response = array();
         $response["expanded"] = true;

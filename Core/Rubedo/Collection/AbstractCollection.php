@@ -696,8 +696,36 @@ abstract class AbstractCollection implements IAbstractCollection
         return $returnArray;
     }
 
-    public function readTree ()
+    public function readTree ($filters=null)
     {
+        if (isset($filters)) {
+            foreach ($filters as $value) {
+                if ((! (isset($value["operator"]))) ||
+                ($value["operator"] == "eq")) {
+                    $this->_dataService->addFilter(
+                            array(
+                                    $value["property"] => $value["value"]
+                            ));
+                } else
+                if ($value["operator"] == 'like') {
+                    $this->_dataService->addFilter(
+                            array(
+                                    $value["property"] => array(
+                                            '$regex' => new \MongoRegex(
+                                                    '/.*' . $value["value"] .
+                                                    '.*/i')
+                                    )
+                            ));
+                } elseif (isset($value["operator"])) {
+                    $this->_dataService->addFilter(
+                            array(
+                                    $value["property"] => array(
+                                            $value["operator"] => $value["value"]
+                                    )
+                            ));
+                }
+            }
+        }
         $tree = $this->_dataService->readTree();
         return $tree;
     }
