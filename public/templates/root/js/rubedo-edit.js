@@ -18,7 +18,6 @@ CKEDITOR.on( 'instanceCreated', function( event ) {
 		editor.on( 'configLoaded', function() {
 
 			editor.config.language = '{{ lang }}';
-			//editor.config.extraPlugins ='stylesheetparser,rubedosave,rubedodiscard,rubedoelementspath';
 
 			// Remove unnecessary plugins to make the editor simpler.
 			editor.config.removePlugins = 'colorbutton,find,flash,font,' +
@@ -33,11 +32,21 @@ CKEDITOR.on( 'instanceCreated', function( event ) {
 			];
 		});
 	} else {
+		editor.config.language = '{{ lang }}';
 		editor.on( 'configLoaded', function() {
-		// set file and media explorer path
+			// set standard configuration
+			editor.config.toolbarGroups = [
+			   { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+			   { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ]},
+			   { name: 'colors', groups: [ 'color'] },'/',
+			   { name: 'styles', groups: [ 'styles'] },
+			   { name: 'insert' },
+			   { name: 'managing', items: [ 'maximize','-','Undo', 'Redo'  ] }
+		   ];
+			// set file and media explorer path
 			editor.config.filebrowserImageBrowseUrl="/backoffice/resources/extFinder/app.html?type=Image";
 			editor.config.filebrowserImageUploadUrl="/backoffice/resources/extFinder/app.html?type=Image";
-		});		
+		});
 	}
 });
 
