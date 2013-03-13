@@ -33,10 +33,12 @@ class Blocks_ImageController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array());
-            
+
         $site = $this->getParam('site');
         $output = $this->getAllParams();
+        $output['mode'] = isset($blockConfig['mode']) ? $blockConfig['mode'] : 'morph';
         $output['imageLink'] = isset($blockConfig['imageLink']) ? $blockConfig['imageLink'] : null;
+        $output['externalURL'] = isset($blockConfig['externalURL']) ? $blockConfig['externalURL']:null;
         $output['imageAlt'] = isset($blockConfig['imageAlt']) ? $blockConfig['imageAlt'] : null;
         $output['imageFile'] = isset($blockConfig['imageFile']) ? $blockConfig['imageFile'] : null;
         $output['imageWidth'] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
