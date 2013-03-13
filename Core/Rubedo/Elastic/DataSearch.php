@@ -178,7 +178,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$elasticaQuery = new \Elastica_Query();
 		
 		$elasticaQuery->setQuery($elasticaQueryString);
-
+        //\Zend_Debug::dump($globalFilter);die();
 		// Apply filter if needed
 		if ($setFilter) {
 			$elasticaQuery->setFilter($globalFilter);
@@ -283,6 +283,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$resultsList = $elasticaResultSet->getResults();
 		$result['total'] = $elasticaResultSet->getTotalHits();
 		$result['query'] = $params['query'];
+		$userWriteWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		$userCanWriteContents = Manager::getService('Acl')->hasAccess("write.ui.contents");
+		$userCanWriteDam = Manager::getService('Acl')->hasAccess("write.ui.dam");
 		foreach($resultsList as $resultItem) {
 			$temp = array();
 			$tmp['id'] = $resultItem->getId();
@@ -307,10 +310,20 @@ class DataSearch extends DataAbstract implements IDataSearch
 			switch ($data['objectType']) {
 				case 'content':
 					$contentType = Manager::getService('ContentTypes')->findById($data['contentType']);
+					if (!$userCanWriteContents || $contentType['readOnly']) {
+					    $tmp['readOnly'] = true;
+					} elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
+					    $tmp['readOnly'] = true;
+					}
 					$tmp['type'] = $contentType['type'];
 					break;
 				case 'dam':
 					$damType = Manager::getService('DamTypes')->findById($data['damType']);
+					if (!$userCanWriteDam || $damType['readOnly']) {
+					    $tmp['readOnly'] = true;
+					} elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
+					    $tmp['readOnly'] = true;
+					}
 					$tmp['type'] = $damType['type'];
 					break;
 			}
