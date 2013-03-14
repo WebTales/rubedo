@@ -220,6 +220,9 @@ class Queries extends AbstractCollection implements IQueries
         
         // add computed filter for vocabularies rules
         if (is_array($query['vocabularies'])) {
+            if(!isset($query['vocabulariesRule'])){
+                $query['vocabulariesRule']='ET';
+            }
             $filterArray[] = $this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']);
         }
         
