@@ -162,7 +162,7 @@ class IndexController extends Zend_Controller_Action
                 Manager::getService('CurrentTime')->setSimulatedTime($simulatedTime);
             }
             $isDraft = $this->getRequest()->getParam('preview_draft', null);
-            if (isset($isDraft)) {
+            if (isset($isDraft) && $isDraft === "true") {
                 Zend_Registry::set('draft', true);
             } else {
                 Zend_Registry::set('draft', false);
