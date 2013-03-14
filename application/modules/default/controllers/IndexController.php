@@ -157,7 +157,7 @@ class IndexController extends Zend_Controller_Action
         if ($isPreview) {
             $isLoggedIn = false;
             Manager::getService('Url')->disableNavigation();
-            $simulatedTime = $this->getRequest()->getParam('preview_time', null);
+            $simulatedTime = $this->getRequest()->getParam('preview_date', null);
             if (isset($simulatedTime)) {
                 Manager::getService('CurrentTime')->setSimulatedTime($simulatedTime);
             }
