@@ -56,7 +56,7 @@ class XhrEditController extends Zend_Controller_Action
     {
         $contentId = $this->getRequest()->getParam('id');
         $data = $this->getRequest()->getParam('data');
-        if (! empty($contentId['id'])) {
+        if (! empty($contentId)) {
             $contentId = explode("_", $contentId);
             $id = $contentId[0];
             $field = $contentId[1];
