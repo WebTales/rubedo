@@ -6,7 +6,7 @@
 		"webtales/ckeditor": "1.0.0b1",
 		"twitter/bootstrap": "v2.3.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "1.0.0b4",
+		"webtales/rubedo-backoffice-ui": "1.0.0rc1",
 		"longtailvideo/jwplayer":"6"
 	},
 	"require-dev": {},
