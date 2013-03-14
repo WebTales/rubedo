@@ -48,8 +48,8 @@ class Backoffice_CacheController extends Zend_Controller_Action
     public function indexAction ()
     {
         $countArray = array();
-        $countArray['Cached items'] = Manager::getService('Cache')->count();
-        $countArray['Cached Url'] = Manager::getService('UrlCache')->count();
+        $countArray['cachedItems'] = Manager::getService('Cache')->count();
+        $countArray['cachedUrl'] = Manager::getService('UrlCache')->count();
         $this->_helper->json($countArray);
     }
 
