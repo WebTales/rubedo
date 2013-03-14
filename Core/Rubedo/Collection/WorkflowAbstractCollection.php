@@ -133,7 +133,6 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
 		} else {
 			$this->_dataService->setWorkspace();
 		}
-
         $returnArray = parent::getList($filters, $sort, $start, $limit);
 		
 		return $returnArray;

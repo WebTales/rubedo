@@ -26,6 +26,7 @@ use Rubedo\Services\Manager;
  */
 class Contents extends WorkflowAbstractCollection implements IContents
 {
+    protected static $_isFrontEnd = false;
 
     protected $_indexes = array(
         array('keys'=>array('workspace.target'=>1,'createTime'=>-1)),
@@ -66,10 +67,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected function _init ()
     {
         parent::_init();
-        $this->_dataService->addToExcludeFieldList(
-                array(
-                        'nestedContents'
-                ));
+        $this->_dataService->addToExcludeFieldList(array(
+            'nestedContents'
+        ));
         
         // filter contents with user rights
         if (! self::isUserFilterDisabled()) {
@@ -78,14 +78,54 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
                 $filter = array(
-                        'target' => array(
-                                '$in' => $readWorkspaceArray
-                        )
+                    'target' => array(
+                        '$in' => $readWorkspaceArray
+                    )
                 );
                 $this->_dataService->addFilter($filter);
             }
-            
         }
+        
+        if(self::$_isFrontEnd){
+            if (\Zend_Registry::isRegistered('draft')) {
+                $live = ! \Zend_Registry::get('draft');
+            } else {
+                $live = true;
+            }
+            $now = Manager::getService('CurrentTime')->getCurrentTime();
+            $startPublicationDateField = ($live?'live':'draft').'.startPublicationDate';
+            $endPublicationDateField = ($live?'live':'draft').'.endPublicationDate';
+            $dateFilter = array(
+                '$and' => array(
+                    array(
+                        '$or' => array(
+                            array(
+                                $startPublicationDateField => array(
+                                    '$lte' => "$now"
+                                )
+                            ),
+                            array(
+                                $startPublicationDateField => null
+                            )
+                        )
+                    ),
+                    array(
+                        '$or' => array(
+                            array(
+                                $endPublicationDateField => array(
+                                    '$gte' => "$now"
+                                )
+                            ),
+                            array(
+                                $endPublicationDateField => null
+                            )
+                        )
+                    ),
+                )
+            );
+            $this->_dataService->addFilter($dateFilter);
+        }
+        
     }
 
     /**
@@ -113,6 +153,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         } else {
             $live = true;
         }
+        
         
         $returnArray = $this->getList($filters, $sort, $start, $limit, $live);
         
@@ -611,7 +652,25 @@ class Contents extends WorkflowAbstractCollection implements IContents
 		$result=$this->_dataService->findOne($filterArray);
 		return ($result!=null)?array("used"=>true):array("used"=>false);
 	}
+	
+	/**
+     * @return the $_isFrontEnd
+     */
+    public static function getIsFrontEnd ()
+    {
+        return Contents::$_isFrontEnd;
+    }
 
+	/**
+     * @param boolean $_isFrontEnd
+     */
+    public static function setIsFrontEnd ($_isFrontEnd)
+    {
+        Contents::$_isFrontEnd = $_isFrontEnd;
+    }
+
+
+	
 	
 	
 }

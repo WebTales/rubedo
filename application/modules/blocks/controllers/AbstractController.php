@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
+use Rubedo;
 
 /**
  *
@@ -29,6 +30,8 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     
     public function init ()
     {
+        Rubedo\Collection\Contents::setIsFrontEnd(true);
+        
         //handle preview for ajax request, only if user is a backoffice user
         if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $isDraft = $this->getParam('is-draft', null);
