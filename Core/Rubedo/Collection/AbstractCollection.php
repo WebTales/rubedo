@@ -646,7 +646,11 @@ abstract class AbstractCollection implements IAbstractCollection
             ));
         }
         
-        return $this->_dataService->readChild($parentId);
+        $result = $this->_dataService->readChild($parentId);
+        foreach ($result as &$obj) {
+            $obj = $this->_addReadableProperty($obj);
+        }
+        return $result;
     }
 
     /**
