@@ -282,11 +282,13 @@ class Pages extends AbstractCollection implements IPages
 	
 	public function deleteBySiteId($id)
 	{
-		$this->_isUserFilterDisabled = true;
+		$wasFiltered = AbstractCollection::disableUserFilter();
 		
-		return $this->_dataService->customDelete(array('site' => $id));
+		$result = $this->_dataService->customDelete(array('site' => $id));
 		
-		$this->_isUserFilterDisabled = false;
+		AbstractCollection::disableUserFilter($wasFiltered);
+		
+		return $result;
 	}
 	
 	public function clearOrphanPages() {
