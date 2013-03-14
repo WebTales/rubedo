@@ -37,6 +37,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         array('keys'=>array('workspace.target'=>1,'typeId'=>1,'text'=>1)),
         array('keys'=>array('live.target'=>1,'text'=>1)),
         array('keys'=>array('live.target'=>1,'typeId'=>1,'text'=>1)),
+        array('keys'=>array('live.startPublicationDate'=>1)),
+        array('keys'=>array('live.endPublicationDate'=>1)),
     );
     
     /**
