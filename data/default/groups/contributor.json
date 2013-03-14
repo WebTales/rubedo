@@ -1,0 +1,17 @@
+{
+	"canDeleteElements": "" ,
+	"canWriteUnownedElements": "" ,
+	"defaultWorkspace": "global" ,
+	"expandable": false ,
+	"inheritWorkspace": true ,
+	"members": [] ,
+	"name": "Contributeurs" ,
+	"parentId": "root" ,
+	"readWorkspaces": ["global"] ,
+	"rights": [] ,
+	"roles": ["backoffice" , "contentWriter" , "damWriter"] ,
+	"updateTime": null  ,
+	"version": 1 ,
+	"workspace": "global" ,
+	"writeWorkspaces": ["global"]
+}
