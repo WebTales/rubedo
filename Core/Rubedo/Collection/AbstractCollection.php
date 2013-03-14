@@ -731,7 +731,7 @@ abstract class AbstractCollection implements IAbstractCollection
             }
         }
         $tree = $this->_dataService->readTree();
-        return $tree;
+        return $tree['children'];
     }
 
     public function drop ()
