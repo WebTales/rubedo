@@ -89,10 +89,14 @@ class DataSearch extends DataAbstract implements IDataSearch
 		if (!in_array('all',$readWorkspaceArray) && !empty($readWorkspaceArray)) {
 				
 			$workspacesFilter = new \Elastica_Filter_Or();
-			 
-			 $workspaceFilter = new \Elastica_Filter_Terms();
-			 $workspaceFilter->setTerms('target',$readWorkspaceArray);
-			 $workspacesFilter->addFilter($workspaceFilter);
+			 foreach ($readWorkspaceArray as $wsTerm){
+			     $workspaceFilter = new \Elastica_Filter_Term();
+			     $workspaceFilter->setTerm('target',$wsTerm);
+			     $workspacesFilter->addFilter($workspaceFilter);
+			 }
+// 			 $workspaceFilter = new \Elastica_Filter_Terms();
+// 			 $workspaceFilter->setTerms('target',$readWorkspaceArray);
+// 			 $workspacesFilter->addFilter($workspaceFilter);
 			  	
 			$globalFilter->addFilter($workspacesFilter);
 			$setFilter = true;
