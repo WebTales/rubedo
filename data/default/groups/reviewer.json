@@ -1,0 +1,16 @@
+{
+	"canDeleteElements": "" ,
+	"canWriteUnownedElements": "" ,
+	"defaultWorkspace": "global" ,
+	"expandable": false ,
+	"inheritWorkspace": false ,
+	"members": [] ,
+	"name": "Valideurs" ,
+	"parentId": "root" ,
+	"readWorkspaces": ["global"] ,
+	"rights": [] ,
+	"roles": ["contentReviewer" , "backoffice" , "damWriter"] ,
+	"version": 1 ,
+	"workspace": "global" ,
+	"writeWorkspaces": ["global"]
+}

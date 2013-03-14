@@ -1,13 +1,13 @@
 {
 	"canDeleteElements" : 1,
 	"canWriteUnownedElements" : 1,
-	"leaf" : true,
+	"expandable" : false,
 	"members" : [
 	],
 	"name" : "admin",
 	"parentId" : "root",
 	"readWorkspaces" : [
-		"global"
+		"all"
 	],
 	"rights" : [ ],
 	"roles" : [
@@ -15,7 +15,10 @@
 	],
 	"version" : 1,
 	"writeWorkspaces" : [
-		"global"
+		"all"
 	],
-	"defaultWorkspace":"global"
+	"defaultWorkspace":"global",
+	"workspace":"global",
+	"readOnly":true,
+	"system":true
 }

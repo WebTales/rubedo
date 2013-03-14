@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,11 +11,11 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Time;
-use Rubedo\Services\Manager,Rubedo\Interfaces\Time\IDate,\DateTime,\DateInterval;
+use Rubedo\Services\Manager, Rubedo\Interfaces\Time\IDate, DateTime, DateInterval, IntlDateFormatter;
 
 /**
  * Current Time Service
@@ -28,63 +28,68 @@ use Rubedo\Services\Manager,Rubedo\Interfaces\Time\IDate,\DateTime,\DateInterval
 class Date implements IDate
 {
 
-    public static $startOnSunday = false;
-    
-    public static $local = 'fr_FR';
+    protected static $_startOnSunday;
+
+    protected static $_lang = null;
 
     /**
-     * Convert to timestamp
-     *
-     * @return string timestamp format datetime (number of second since unix
-     *         dawn of time)
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Time\IDate::convertToTimeStamp()
      */
-    public function convertToTimeStamp ($dateString, $format = null)
+    public function convertToTimeStamp ($dateString)
     {
         $date = new DateTime($dateString);
-        // $date->format("U");
         return $date->getTimestamp();
     }
 
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Time\IDate::getMonthArray()
+     */
     public function getMonthArray ($timestamp = null)
     {
         if (! $timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        $dayOfWeekFormat = self::$startOnSunday?'w':'N';
-
-        //init the year and month info
-        $year = date('Y',$timestamp);
-        $month = date('m',$timestamp);
+        $dayOfWeekFormat = $this->_sundayIsFirst() ? 'w' : 'N';
         
-        //define the first day to display based on the first day of the month and it position in the week
-        $firstDayOfMonthTimeStamp = mktime(0,0,0,$month,1,$year);
-        $firstDayOfMonthInWeek = date($dayOfWeekFormat,$firstDayOfMonthTimeStamp);
+        // init the year and month info
+        $year = date('Y', $timestamp);
+        $month = date('m', $timestamp);
+        
+        // define the first day to display based on the first day of the month
+        // and it position in the week
+        $firstDayOfMonthTimeStamp = mktime(0, 0, 0, $month, 1, $year);
+        $firstDayOfMonthInWeek = date($dayOfWeekFormat, 
+                $firstDayOfMonthTimeStamp);
         $firstDay = new DateTime();
         $firstDay->setTimestamp($firstDayOfMonthTimeStamp);
-        if(self::$startOnSunday){
+        if ($this->_sundayIsFirst()) {
             $offset = $firstDayOfMonthInWeek;
-        }else{
-            $offset = $firstDayOfMonthInWeek-1;
+        } else {
+            $offset = $firstDayOfMonthInWeek - 1;
         }
-        $firstDay->sub(new DateInterval('P'.$offset.'D'));
-        $dayIterator = clone($firstDay);
+        $firstDay->sub(new DateInterval('P' . $offset . 'D'));
+        $dayIterator = clone ($firstDay);
         
-        //define the last day to display based on the last day of the month and it position in the week
-        $days_in_month = date('t',mktime(0,0,0,$month,1,$year));
-        $lastDayOfMonthTimeStamp = mktime(0,0,0,$month,$days_in_month,$year);
-        $lastDayOfMonthInWeek = date($dayOfWeekFormat,$lastDayOfMonthTimeStamp);
+        // define the last day to display based on the last day of the month and
+        // it position in the week
+        $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
+        $lastDayOfMonthTimeStamp = mktime(0, 0, 0, $month, $days_in_month, 
+                $year);
+        $lastDayOfMonthInWeek = date($dayOfWeekFormat, $lastDayOfMonthTimeStamp);
         $lastDay = new DateTime();
         $lastDay->setTimestamp($lastDayOfMonthTimeStamp);
-        if(self::$startOnSunday){
-            $offset = 6-$lastDayOfMonthInWeek;
-        }else{
-            $offset = 7-$lastDayOfMonthInWeek;
+        if ($this->_sundayIsFirst()) {
+            $offset = 6 - $lastDayOfMonthInWeek;
+        } else {
+            $offset = 7 - $lastDayOfMonthInWeek;
         }
-        $lastDay->add(new DateInterval('P'.$offset.'D'));
-        
+        $lastDay->add(new DateInterval('P' . $offset . 'D'));
         
         $finalTimestamp = $lastDay->getTimestamp();
-        
         
         $max = 0;
         $aDay = new DateInterval('P1D');
@@ -92,47 +97,40 @@ class Date implements IDate
         $returnArray = array();
         $currentWeek = 1;
         $previous = 0;
-        //iterate day by day up to the last day of the month
-        while((($iterateTimestamp = $dayIterator->getTimestamp()) <= $finalTimestamp) && ($max < 45)){
-            $max++;
-            $number = date('d',$iterateTimestamp);
-            $dayOfWeek = date($dayOfWeekFormat,$iterateTimestamp);
-            $inMonth = (date('m',$iterateTimestamp)==$month);
-            if($previous > intval($dayOfWeek)){
-                $currentWeek++;
+        // iterate day by day up to the last day of the month
+        while ((($iterateTimestamp = $dayIterator->getTimestamp()) <=
+                 $finalTimestamp) && ($max < 45)) {
+                    $max ++;
+            $number = date('d', $iterateTimestamp);
+            $dayOfWeek = date($dayOfWeekFormat, $iterateTimestamp);
+            $inMonth = (date('m', $iterateTimestamp) == $month);
+            if ($previous > intval($dayOfWeek)) {
+                $currentWeek ++;
             }
-            $returnArray[$currentWeek][$dayOfWeek]=array('value'=>$number,'inMonth'=>$inMonth);
+            $returnArray[$currentWeek][$dayOfWeek] = array(
+                    'value' => $number,
+                    'inMonth' => $inMonth
+            );
             $previous = $dayOfWeek;
             $dayIterator->add($aDay);
         }
         return $returnArray;
-        
-        
+    }
+    
+    protected function _sundayIsFirst(){
+        if(!isset(self::$_startOnSunday)){
+            $lastSunday = $this->convertToTimeStamp('last sunday');
+            $number = $this->getLocalised('e',$lastSunday);
+            self::$_startOnSunday = $number == '1';
+        }
+        return self::$_startOnSunday;        
     }
 
-    public function getDayList ()
-    {
-        $daysOfWeek = array(
-                1 => 'Monday',
-                2 => 'Tuesday',
-                3 => 'Wednesday',
-                4 => 'Thursday',
-                5 => 'Friday',
-                6 => 'Saturday'
-        );
-        if (self::$startOnSunday) {
-            $daysOfWeek[0] = 'Sunday';
-        } else {
-            $daysOfWeek[7] = 'Sunday';
-        }
-        setlocale(LC_ALL, self::$local);
-        foreach ($daysOfWeek as $key=>$day) {
-            $nameArray[$key] = strftime('%A', strtotime("last $day"));
-        }
-        ksort($nameArray);
-        return $nameArray;
-    }
-
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Time\IDate::getShortDayList()
+     */
     public function getShortDayList ()
     {
         $daysOfWeek = array(
@@ -143,25 +141,51 @@ class Date implements IDate
                 5 => 'Friday',
                 6 => 'Saturday'
         );
-        if (self::$startOnSunday) {
+        if ($this->_sundayIsFirst()) {
             $daysOfWeek[0] = 'Sunday';
         } else {
             $daysOfWeek[7] = 'Sunday';
         }
-        setlocale(LC_ALL, self::$local);
-        foreach ($daysOfWeek as $key=>$day) {
-            $nameArray[$key] = strftime('%a', strtotime("last $day"));
+        foreach ($daysOfWeek as $key => $day) {
+            $dayDateTime = new DateTime("last $day");
+            $nameArray[$key] = $this->getLocalised('EEEEE', 
+                    $dayDateTime->getTimestamp());
         }
         ksort($nameArray);
         return $nameArray;
     }
 
-    public function getLocalised ($format, $timestamp = null)
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Time\IDate::getLocalised()
+     */
+    public function getLocalised ($format = null, $timestamp = null)
     {
         if (! $timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        setlocale(LC_ALL, self::$local);
-        return strftime($format, $timestamp);
+        
+        $formatter = new IntlDateFormatter($this->_getLang(), 
+                IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        if ($format) {
+            $formatter->setPattern($format);
+        }
+        $date = new \DateTime();
+        $date->setTimestamp($timestamp);
+        return $formatter->format($date);
+    }
+
+    /**
+     * return the current language
+     *
+     * @return string
+     */
+    protected function _getLang ()
+    {
+        if (! isset(self::$_lang)) {
+            self::$_lang = Manager::getService('Session')->get('lang', 'en');
+        }
+        return self::$_lang;
     }
 }

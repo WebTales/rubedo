@@ -1,5 +1,10 @@
 function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType) {
 	if (jQuery('#list-' + prefix + ' > #list-' + prefix + '-' + page).length == 0) {
+		if (jQuery('body').attr('data-is-draft')){
+			var isDraft = true;
+		}else{
+			var isDraft = false;
+		}
 		var request = jQuery.ajax({
 			url : url + '/blocks/content-list/xhr-get-items',
 			type : "POST",
@@ -9,7 +14,9 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 				'query-id' : query,
 				'single-page' : singlePage,
 				'limit' : limit,
-				'displayType':displayType
+				'displayType':displayType,
+				'is-draft':isDraft,
+				'current-page':jQuery('body').attr('data-current-page')
 			},
 			dataType : "json"
 		});

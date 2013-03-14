@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -34,13 +34,29 @@ class Groups extends AbstractCollection implements IGroups
         array('keys'=>array('members'=>1)),
         
     );
-
+    
     public function __construct ()
     {
         $this->_collectionName = 'Groups';
         parent::__construct();
     }
 	
+    /**
+     * Only access to groups with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+    
+        if (! self::isUserFilterDisabled()) {
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if(!in_array('all',$readWorkspaceArray)){
+                $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+                $this->_dataService->addFilter($filter);
+            }
+        }
+    }
+    
 	/**
      *
      * @param string $id
@@ -71,12 +87,25 @@ class Groups extends AbstractCollection implements IGroups
     {
     	// Define default read workspace for groups if it's not set
     	if(!isset($obj['readWorkspaces']) || $obj['readWorkspaces']=="" || $obj['readWorkspaces'] == array()){
-    		$obj['readWorkspaces'] = array('global');
+    		$obj['readWorkspaces'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
     	}	
-			
+    	$obj = $this->_initObject($obj);
+    	
     	return parent::create($obj, $options);
 	}
 	
+	
+	
+	
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::update()
+     */
+    public function update (array $obj, $options = array('safe'=>true,))
+    {
+        $obj = $this->_initObject($obj);
+        return parent::update($obj,$options);        
+    }
+
 	/**
      * Delete objects in the current collection
      *
@@ -128,6 +157,25 @@ class Groups extends AbstractCollection implements IGroups
         
         return $groupList;
     }
+    
+    protected function _addReadableProperty ($obj)
+	{
+	    if (! self::isUserFilterDisabled()) {
+	        //Set the workspace for old items in database
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	        	
+	        $aclServive = Manager::getService('Acl');
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+	        	
+	        if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.groups")) {
+	            $obj['readOnly'] = true;
+	        }
+	    }
+	
+	    return $obj;
+	}
 
     public function getPublicGroup ()
     {
@@ -264,4 +312,55 @@ class Groups extends AbstractCollection implements IGroups
 	    $updateCond = array('_id'=>array('$in'=>$inArray));
 	    $result = $this->_dataService->customUpdate($data, $updateCond,$options);
 	}
+	
+	protected function _initObject($obj){
+	    //set inheritance for workspace
+	    if (! isset($obj['inheritWorkspace']) || $obj['inheritWorkspace']!==false) {
+	        $obj['inheritWorkspace'] = true;
+	    }
+	    //resolve inheritance if not forced
+	    if ($obj['inheritWorkspace']) {
+	        unset($obj['workspace']);
+	        $ancestorsLine = array_reverse($this->getAncestors($obj));
+	        foreach ($ancestorsLine as $key => $ancestor) {
+	            if (isset($ancestor['inheritWorkspace']) && $ancestor['inheritWorkspace'] == false) {
+	                $obj['workspace'] = $ancestor['workspace'];
+	                break;
+	            }
+	        }
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	    }
+	    //verify workspace can be attributed
+	    if (! self::isUserFilterDisabled()) {
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+	    
+	        if (! in_array($obj['workspace'], $writeWorkspaces)) {
+	            throw new \Rubedo\Exceptions\Access('You can not assign group to this workspace');
+	        }
+	    }
+	    return $obj;
+	}
+	
+	public function propagateWorkspace ($parentId, $workspaceId)
+	{
+	    $filters = array();
+	    
+	    $pageList = $this->readChild($parentId,$filters);
+	    foreach ($pageList as $group) {
+	        if (! self::isUserFilterDisabled()) {
+	            if (! $group['readOnly']) {
+	                if ($group['workspace'] != $workspaceId) {
+	                    $this->update($group);
+	                }
+	            }
+	        } else {
+	            if ($group['workspace'] != $workspaceId) {
+	                $this->update($group);
+	            }
+	        }
+	    }
+	}
+
 }

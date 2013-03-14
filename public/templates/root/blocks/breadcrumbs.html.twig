@@ -1,7 +1,7 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %} 	  	
-
+{% if displayBlock %}
 <ul class="breadcrumb">
 
 		{% for page in rootline %} 
@@ -11,4 +11,5 @@
 		 {% endfor %}
         <li class="active">{{ title }}</li>
 </ul>
+{% endif %}
 {% endblock %}

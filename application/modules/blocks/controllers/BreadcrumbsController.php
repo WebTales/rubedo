@@ -1,18 +1,19 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
- *
- * yet to be written
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractController.php');
@@ -33,11 +34,9 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         $output = $this->getAllParams();
         
 		$blockConfig = $this->getParam('block-config', array());
-
-        if (isset($blockConfig['rootPage'])) {
-            $rootPage = $blockConfig['rootPage'];
-        } else {
-            $rootPage = $this->getParam('rootPage');
+		$output['displayBlock'] = false;
+        if (($site = $this->getParam('site',false)) && isset($site['homePage'])) {
+            $rootPage = $site['homePage'];
         }
         
         
@@ -53,6 +52,9 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         $rootlineArray = array();
         
         foreach ($rootline as $pageId){
+            if($pageId == $rootPage){
+                $output['displayBlock'] = true;
+            }
             if($pageId == $currentPage && !$this->getParam('content-id')){
                 continue;
             }

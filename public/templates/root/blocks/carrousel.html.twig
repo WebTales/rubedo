@@ -13,12 +13,14 @@
 	<div class="carousel-inner" style="">
 		{% for slide in items %}
 		<div class="item {%if loop.first %}active{%endif%}" >
+			<a href="{{ displaySingleUrl(slide.id,null,singlePage) }}">
 			<img src="/dam?media-id={{slide.image}}" alt="{{slide.text}}"
 				title="#htmlcaption_{{prefix}}_{{slide.id}}" style="width:100%" />
 			<div class="carousel-caption">
 				<h4>{{slide.title}}</h4>
 				<p>{{slide.summary}}</p>
 			</div>
+			</a>
 		</div>
 		{% endfor %}
 	</div>

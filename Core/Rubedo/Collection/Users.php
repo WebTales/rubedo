@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -32,6 +32,45 @@ class Users extends AbstractCollection implements IUsers
         array('keys'=>array('email'=>1),'options'=>array('unique'=>true)),
     );
 
+    /**
+     * Only access to content with read access
+     * @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init(){
+        parent::_init();
+
+        $this->_dataService->addToExcludeFieldList(array(
+                'password'
+        ));
+    
+        if (! self::isUserFilterDisabled()) {
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if(!in_array('all',$readWorkspaceArray)){
+                $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+                $this->_dataService->addFilter($filter);
+            }
+        }
+    }
+    
+    protected function _addReadableProperty ($obj)
+	{
+	    if (! self::isUserFilterDisabled()) {
+	        //Set the workspace for old items in database
+	        if (! isset($obj['workspace'])) {
+	            $obj['workspace'] = 'global';
+	        }
+	        	
+	        $aclServive = Manager::getService('Acl');
+	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+	        	
+	        if (!$aclServive->hasAccess("write.ui.users") || !in_array($obj['workspace'], $writeWorkspaces)) {
+	            $obj['readOnly'] = true;
+	        }
+	    }
+	
+	    return $obj;
+	}
+    
     /**
      * Change the password of the user given by its id
      * Check version conflict
@@ -100,17 +139,6 @@ class Users extends AbstractCollection implements IUsers
     }
 
     /**
-     * ensure that no password field is sent outside of the service layer
-     */
-    protected function _init ()
-    {
-        parent::_init();
-        $this->_dataService->addToExcludeFieldList(array(
-            'password'
-        ));
-    }
-
-    /**
      * Create an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::create
@@ -128,6 +156,11 @@ class Users extends AbstractCollection implements IUsers
 		}		
 		
         $obj['groups'] = null;
+        
+        // Define default workspace for a user if it's not set
+        if(!isset($obj['workspace']) || $obj['workspace']==""){
+            $obj['workspace'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
+        }
         
         $returnValue = parent::create($obj, $options);
         $createUser = $returnValue['data'];
@@ -200,11 +233,20 @@ class Users extends AbstractCollection implements IUsers
      */
     public function update (array $obj, $options = array('safe'=>true,))
     {
+        // Define default workspace for a user if it's not set
+        if(!isset($obj['workspace']) || $obj['workspace']==""){
+            $obj['workspace'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
+        }
+        
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
         $groups = isset($obj['groups']) ? $obj['groups'] : array();
         Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
         $obj['groups'] = null;
-        return parent::update($obj, $options);
+        $result = parent::update($obj, $options);
+        if($result){
+            $result['data'] = $this->_addGroupsInfos($result['data']);
+        }
+        return $result;
     }
     
     /*
@@ -215,4 +257,5 @@ class Users extends AbstractCollection implements IUsers
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
         return parent::destroy($obj, $options);
     }
+    
 }

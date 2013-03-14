@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Rubedo -- ECM solution Copyright (c) 2012, WebTales
+ * Rubedo -- ECM solution Copyright (c) 2013, WebTales
  * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
  * Open Source License
  * ------------------------------------------------------------------------------------------
@@ -9,11 +9,10 @@
  *
  * @category Rubedo
  * @package Rubedo
- * @copyright Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-
 use Rubedo\Interfaces\Collection\IContents;
 use Rubedo\Services\Manager;
 
@@ -27,17 +26,73 @@ use Rubedo\Services\Manager;
 class Contents extends WorkflowAbstractCollection implements IContents
 {
 
+    protected static $_isFrontEnd = false;
+
     protected $_indexes = array(
-        array('keys'=>array('workspace.target'=>1,'createTime'=>-1)),
-        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'createTime'=>-1)),
-        array('keys'=>array('live.target'=>1,'createTime'=>-1)),
-        array('keys'=>array('live.target'=>1,'typeId'=>1,'createTime'=>-1)),
-        array('keys'=>array('workspace.target'=>1,'text'=>1)),
-        array('keys'=>array('workspace.target'=>1,'typeId'=>1,'text'=>1)),
-        array('keys'=>array('live.target'=>1,'text'=>1)),
-        array('keys'=>array('live.target'=>1,'typeId'=>1,'text'=>1)),
+            array(
+                    'keys' => array(
+                            'workspace.target' => 1,
+                            'createTime' => - 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'workspace.target' => 1,
+                            'typeId' => 1,
+                            'createTime' => - 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'live.target' => 1,
+                            'createTime' => - 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'live.target' => 1,
+                            'typeId' => 1,
+                            'createTime' => - 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'workspace.target' => 1,
+                            'text' => 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'workspace.target' => 1,
+                            'typeId' => 1,
+                            'text' => 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'live.target' => 1,
+                            'text' => 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'live.target' => 1,
+                            'typeId' => 1,
+                            'text' => 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'live.startPublicationDate' => 1
+                    )
+            ),
+            array(
+                    'keys' => array(
+                            'live.endPublicationDate' => 1
+                    )
+            )
     );
-    
+
     /**
      * Is the input obj is valid
      *
@@ -52,6 +107,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected $_inputDataErrors = array();
 
+    protected static $_userFilter;
+
     public function __construct ()
     {
         $this->_collectionName = 'Contents';
@@ -64,23 +121,72 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected function _init ()
     {
         parent::_init();
-        $this->_dataService->addToExcludeFieldList(array(
-            'nestedContents'
-        ));
+        $this->_dataService->addToExcludeFieldList(
+                array(
+                        'nestedContents'
+                ));
         
-        //filter contents with user rights
+        // filter contents with user rights
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-            if (in_array('all', $readWorkspaceArray)) {
-                return;
+            if (! in_array('all', $readWorkspaceArray)) {
+                $readWorkspaceArray[] = null;
+                $readWorkspaceArray[] = 'all';
+                $filter = array(
+                        'target' => array(
+                                '$in' => $readWorkspaceArray
+                        )
+                );
+                $this->_dataService->addFilter($filter);
             }
-            $readWorkspaceArray[] = null;
-            $filter = array(
-                'target' => array(
-                    '$in' => $readWorkspaceArray
-                )
+        }
+        
+        if (self::$_isFrontEnd) {
+            if (\Zend_Registry::isRegistered('draft')) {
+                $live = ! \Zend_Registry::get('draft');
+            } else {
+                $live = true;
+            }
+            $now = Manager::getService('CurrentTime')->getCurrentTime();
+            $startPublicationDateField = ($live ? 'live' : 'draft') .
+                     '.startPublicationDate';
+            $endPublicationDateField = ($live ? 'live' : 'draft') .
+                     '.endPublicationDate';
+            $dateFilter = array(
+                    '$and' => array(
+                            array(
+                                    '$or' => array(
+                                            array(
+                                                    $startPublicationDateField => array(
+                                                            '$lte' => "$now"
+                                                    )
+                                            ),
+                                            array(
+                                                    $startPublicationDateField => null
+                                            ),
+                                            array(
+                                                    $endPublicationDateField => ""
+                                            )
+                                    )
+                            ),
+                            array(
+                                    '$or' => array(
+                                            array(
+                                                    $endPublicationDateField => array(
+                                                            '$gte' => "$now"
+                                                    )
+                                            ),
+                                            array(
+                                                    $endPublicationDateField => null
+                                            ),
+                                            array(
+                                                    $endPublicationDateField => ""
+                                            )
+                                    )
+                            )
+                    )
             );
-            $this->_dataService->addFilter($filter);
+            $this->_dataService->addFilter($dateFilter);
         }
     }
 
@@ -97,11 +203,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
      *            max number of items in the list
      * @return array:
      */
-    public function getOnlineList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getOnlineList ($filters = null, $sort = null, $start = null, 
+            $limit = null)
     {
         $filters[] = array(
-            'property' => 'online',
-            'value' => true
+                'property' => 'online',
+                'value' => true
         );
         
         if (\Zend_Registry::isRegistered('draft')) {
@@ -115,37 +222,21 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $returnArray;
     }
     
-    
-    
-    /* (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::getList()
-     */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null, $live = true)
-    {
-        $list = parent::getList($filters,$sort,$start,$limit,$live);
-		
-		foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-		
-        return $list;
-    }
-
-	/*
+    /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true), $live = false)
     {
-        $obj = $this->_setDefaultWorkspace($obj);	        
+        $obj = $this->_setDefaultWorkspace($obj);
         $this->_filterInputData($obj);
-
+        
         if ($this->_isValidInput) {
             $returnArray = parent::create($obj, $options, $live);
         } else {
             $returnArray = array(
-                'success' => false,
-                'msg' => 'invalid input data',
-                'inputErrors' => $this->_inputDataErrors
+                    'success' => false,
+                    'msg' => 'invalid input data',
+                    'inputErrors' => $this->_inputDataErrors
             );
         }
         
@@ -160,26 +251,34 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::update()
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
-    {        
-        $origObj = $this->findById($obj['id'],$live,false);
+    {
+        $origObj = $this->findById($obj['id'], $live, false);
         if (! self::isUserFilterDisabled()) {
-            if ($origObj['readOnly']) {
-                throw new \Rubedo\Exceptions\Access('no rights to update this content');
+            if (isset($origObj['readOnly']) && $origObj['readOnly']) {
+                throw new \Rubedo\Exceptions\Access(
+                        'no rights to update this content');
             }
         }
+        if (! is_array($obj['target'])) {
+            $obj['target'] = array(
+                    $obj['target']
+            );
+        }
+        if (count(
+                array_intersect(array(
+                        $obj['writeWorkspace']
+                ), $obj['target'])) == 0) {
+            $obj['target'][] = $obj['writeWorkspace'];
+        }
         
-		if(count(array_intersect(array($obj['writeWorkspace']), $obj['target']))==0){
-			$obj['target'][] = $obj['writeWorkspace'];
-		}
-		
         $this->_filterInputData($obj);
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
         } else {
             $returnArray = array(
-                'success' => false,
-                'msg' => 'invalid input data',
-                'inputErrors' => $this->_inputDataErrors
+                    'success' => false,
+                    'msg' => 'invalid input data',
+                    'inputErrors' => $this->_inputDataErrors
             );
         }
         
@@ -189,8 +288,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         return $returnArray;
     }
-        
-        /*
+    
+    /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
     public function destroy (array $obj, $options = array('safe'=>true))
@@ -198,7 +297,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $origObj = $this->findById($obj['id'], false, false);
         if (! self::isUserFilterDisabled()) {
             if ($origObj['readOnly']) {
-                throw new \Rubedo\Exceptions\Access('no rights to destroy this content');
+                throw new \Rubedo\Exceptions\Access(
+                        'no rights to destroy this content');
             }
         }
         $returnArray = parent::destroy($obj, $options);
@@ -207,12 +307,19 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         return $returnArray;
     }
-	public function unsetTerms($vocId,$termId)
-	{
-		$data = array('$unset'=>array('taxonomy.'.$vocId.'.$'=>1));
-		$update = array('taxonomy.'.$vocId => $termId);
-		return $this->_dataService->customUpdate($data, $update);
-	}
+
+    public function unsetTerms ($vocId, $termId)
+    {
+        $data = array(
+                '$unset' => array(
+                        'taxonomy.' . $vocId . '.$' => 1
+                )
+        );
+        $update = array(
+                'taxonomy.' . $vocId => $termId
+        );
+        return $this->_dataService->customUpdate($data, $update);
+    }
 
     /**
      * Push the content to Elastic Search
@@ -221,7 +328,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _indexContent ($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService(
+                'ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContent($obj['id']);
     }
@@ -233,7 +341,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _unIndexContent ($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService(
+                'ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id']);
     }
@@ -245,52 +354,65 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @return array:
      */
     protected function _filterInputData (array $obj, array $model = null)
-    {        
-		if (! self::isUserFilterDisabled()) {
-        	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+    {
+        if (! self::isUserFilterDisabled()) {
+            $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
             
             if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+                throw new \Rubedo\Exceptions\Access(
+                        'You can not assign to this workspace');
             }
-        
-	        $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
-	        if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
-	            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
-	        }
-		}
+            
+            $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if ((! in_array('all', $readWorkspaces)) &&
+                     count(array_intersect($obj['target'], $readWorkspaces)) == 0) {
+                throw new \Rubedo\Exceptions\Access(
+                        'You can not assign as target to this workspace');
+            }
+        }
         
         $contentTypeId = $obj['typeId'];
-        $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
+        $contentType = Manager::getService('ContentTypes')->findById(
+                $contentTypeId);
+        if (! self::isUserFilterDisabled() &&
+                 ! in_array($obj['writeWorkspace'], $contentType['workspaces'])) {
+            throw new \Rubedo\Exceptions\Access(
+                    'You can not assign this content type to this workspace');
+        }
         $contentTypeFields = $contentType['fields'];
-		
+        
         $fieldsArray = array();
         $missingField = array();
-		
-		$tempFields = array();
-		$tempFields['text'] = $obj['text'];
+        
+        $tempFields = array();
+        $tempFields['text'] = $obj['text'];
         $tempFields['summary'] = $obj['fields']['summary'];
-		
+        
         foreach ($contentTypeFields as $value) {
             $fieldsArray[$value['config']['name']] = $value;
-            if (! isset($value['config']['allowBlank']) || ! $value['config']['allowBlank']) {
-            	$result = false;
-            	if($value['config']['name'] == "text" || $value['config']['name'] == "summary"){
-            		$field = $value['config']['name'];
-            		$result = $this->_controlAllowBlank($tempFields[$field], false);
-            	}
-				if($result == false){
-                	$missingField[$value['config']['name']] = $value['config']['name'];
-				}
+            if (! isset($value['config']['allowBlank']) ||
+                     ! $value['config']['allowBlank']) {
+                $result = false;
+                if ($value['config']['name'] == "text" ||
+                         $value['config']['name'] == "summary") {
+                    $field = $value['config']['name'];
+                    $result = $this->_controlAllowBlank($tempFields[$field], 
+                            false);
+                }
+                if ($result == false) {
+                    $missingField[$value['config']['name']] = $value['config']['name'];
+                }
             }
         }
         
         $fieldsList = array_keys($fieldsArray);
         
         foreach ($obj['fields'] as $key => $value) {
-            if (in_array($key, array(
-                'text',
-                'summary'
-            ))) {
+            if (in_array($key, 
+                    array(
+                            'text',
+                            'summary'
+                    ))) {
                 continue;
             }
             if (! in_array($key, $fieldsList)) {
@@ -298,21 +420,26 @@ class Contents extends WorkflowAbstractCollection implements IContents
             } else {
                 unset($missingField[$key]);
                 
-                if (isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true) {
+                if (isset($fieldsArray[$key]['config']['multivalued']) &&
+                         $fieldsArray[$key]['config']['multivalued'] == true) {
                     $tempFields[$key] = array();
                     if (! is_array($value)) {
                         $value = array(
-                            $value
+                                $value
                         );
                     }
                     foreach ($value as $valueItem) {
-                        $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
-                        $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType']);
+                        $this->_validateFieldValue($valueItem, 
+                                $fieldsArray[$key]['config'], $key);
+                        $tempFields[$key][] = $this->_filterFieldValue(
+                                $valueItem, $fieldsArray[$key]['cType']);
                     }
                 } else {
-                    $this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
-
-                    $tempFields[$key] = $this->_filterFieldValue($value, $fieldsArray[$key]['cType']);
+                    $this->_validateFieldValue($value, 
+                            $fieldsArray[$key]['config'], $key);
+                    
+                    $tempFields[$key] = $this->_filterFieldValue($value, 
+                            $fieldsArray[$key]['cType']);
                 }
             }
         }
@@ -330,7 +457,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         
         return $obj;
-	}
+    }
 
     /**
      * Check if value is valid based on field config from type content
@@ -349,7 +476,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $result = $this->_controlAllowBlank($value, $config['allowBlank']);
             
             if (! $result) {
-                $this->_inputDataErrors[] = "The field " . $key . " must be specified";
+                $this->_inputDataErrors[] = "The field " . $key .
+                         " must be specified";
             }
         }
         
@@ -357,7 +485,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $result = $this->_controlMinLength($value, $config['minLength']);
             
             if (! $result) {
-                $this->_inputDataErrors[] = "The Length of the field " . $key . " must be greater than " . $config['minLength'];
+                $this->_inputDataErrors[] = "The Length of the field " . $key .
+                         " must be greater than " . $config['minLength'];
             }
         }
         
@@ -365,7 +494,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $result = $this->_controlMaxLength($value, $config['maxLength']);
             
             if (! $result) {
-                $this->_inputDataErrors[] = "The Length of the field " . $key . " must be greater than " . $config['maxLength'];
+                $this->_inputDataErrors[] = "The Length of the field " . $key .
+                         " must be greater than " . $config['maxLength'];
             }
         }
         
@@ -373,7 +503,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $result = $this->_controlVtype($value, $config['vtype']);
             
             if (! $result) {
-                $this->_inputDataErrors[] = "The value \"" . $value . "\" doesn't match with the condition of validation \"" . $config['vtype'] . "\"";
+                $this->_inputDataErrors[] = "The value \"" . $value .
+                         "\" doesn't match with the condition of validation \"" .
+                         $config['vtype'] . "\"";
             }
         }
     }
@@ -484,14 +616,18 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     }
                     break;
                 case 'url':
-                    if (preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $value)) {
+                    if (preg_match(
+                            '|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', 
+                            $value)) {
                         return true;
                     } else {
                         return false;
                     }
                     break;
                 case 'email':
-                    if (preg_match('|^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]{2,})+$|i', $value)) {
+                    if (preg_match(
+                            '|^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]{2,})+$|i', 
+                            $value)) {
                         return true;
                     } else {
                         return false;
@@ -503,132 +639,187 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
     }
 
-	public function getByType($typeId) {
-		$filter = array(array('property' => 'typeId', 'value' => $typeId));
-		
-		return $this->getList($filter);
-	}
+    public function getByType ($typeId)
+    {
+        $filter = array(
+                array(
+                        'property' => 'typeId',
+                        'value' => $typeId
+                )
+        );
+        
+        return $this->getList($filter);
+    }
 
-	public function clearOrphanContents() {
-		$contentTypesService = Manager::getService('ContentTypes');
-		
-		$result = $contentTypesService->getList();
-		
-		//recovers the list of contentTypes id
-		foreach ($result['data'] as $value) {
-			$contentTypesArray[] = $value['id'];
-		}
-
-		$result = $this->customDelete(array('typeId' => array('$nin' => $contentTypesArray)));
-		
-		if($result['ok'] == 1){
-			return array('success' => 'true');
-		} else {
-			return array('success' => 'false');
-		}
-	}
-	
-	public function countOrphanContents() {
-		$contentTypesService = Manager::getService('ContentTypes');
-
-		$result = $contentTypesService->getList();
-		
-		//recovers the list of contentTypes id
-		foreach ($result['data'] as $value) {
-			$contentTypesArray[] = $value['id'];
-		}
-		
-		return $this->count(array(array('property' => 'typeId', 'operator' => '$nin', 'value' => $contentTypesArray)));
-	}
-	
-	/**
-	 * Set workspace if none given based on User main group.
-	 * 
-	 * @param array $content
-	 * @return array
-	 */
-	protected function _setDefaultWorkspace($content){
-	    if(!isset($content['writeWorkspace']) || $content['writeWorkspace']=='' || $content['writeWorkspace']==array()){
-	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $content['writeWorkspace'] = $mainWorkspace['id'];
-	    } else {
-        	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
-			
-			if(count(array_intersect(array($content['writeWorkspace']), $readWorkspaces))==0 && $readWorkspaces[0]!="all"){
-				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
-			}
+    public function clearOrphanContents ()
+    {
+        $contentTypesService = Manager::getService('ContentTypes');
+        
+        $result = $contentTypesService->getList();
+        
+        // recovers the list of contentTypes id
+        foreach ($result['data'] as $value) {
+            $contentTypesArray[] = $value['id'];
         }
-		
-		if(!in_array($content['writeWorkspace'], $content['target'])){
-			$content['target'][] = $content['writeWorkspace'];
-		}
-		
+        
+        $result = $this->customDelete(
+                array(
+                        'typeId' => array(
+                                '$nin' => $contentTypesArray
+                        )
+                ));
+        
+        if ($result['ok'] == 1) {
+            return array(
+                    'success' => 'true'
+            );
+        } else {
+            return array(
+                    'success' => 'false'
+            );
+        }
+    }
+
+    public function countOrphanContents ()
+    {
+        $contentTypesService = Manager::getService('ContentTypes');
+        
+        $result = $contentTypesService->getList();
+        
+        // recovers the list of contentTypes id
+        foreach ($result['data'] as $value) {
+            $contentTypesArray[] = $value['id'];
+        }
+        
+        return $this->count(
+                array(
+                        array(
+                                'property' => 'typeId',
+                                'operator' => '$nin',
+                                'value' => $contentTypesArray
+                        )
+                ));
+    }
+
+    /**
+     * Set workspace if none given based on User main group.
+     *
+     * @param array $content            
+     * @return array
+     */
+    protected function _setDefaultWorkspace ($content)
+    {
+        if (! isset($content['writeWorkspace']) || $content['writeWorkspace'] ==
+                 '' || $content['writeWorkspace'] == array()) {
+            $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+            $content['writeWorkspace'] = $mainWorkspace['id'];
+        } else {
+            $readWorkspaces = array_values(
+                    Manager::getService('CurrentUser')->getReadWorkspaces());
+            
+            if (count(
+                    array_intersect(array(
+                            $content['writeWorkspace']
+                    ), $readWorkspaces)) == 0 && $readWorkspaces[0] != "all") {
+                throw new \Rubedo\Exceptions\Access(
+                        'You don\'t have access to this workspace ');
+            }
+        }
+        
+        if (! is_array($content['target'])) {
+            $content['target'] = array(
+                    $content['target']
+            );
+        }
+        
+        if (! in_array($content['writeWorkspace'], $content['target'])) {
+            $content['target'][] = $content['writeWorkspace'];
+        }
+        
         return $content;
     }
 
     /**
      * Add a readOnly field to contents based on user rights
-     * 
-     * @param array $obj
+     *
+     * @param array $obj            
      * @return array
      */
     protected function _addReadableProperty ($obj)
     {
         if (! self::isUserFilterDisabled()) {
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-
-            //Set the workspace/target for old items in database
-            if(!isset($obj['writeWorkspace']) || $obj['writeWorkspace']=="" || $obj['writeWorkspace']==array()){
-            	$obj['writeWorkspace'] = "";
+            
+            // Set the workspace/target for old items in database
+            if (! isset($obj['writeWorkspace']) || $obj['writeWorkspace'] == "" ||
+                     $obj['writeWorkspace'] == array()) {
+                $obj['writeWorkspace'] = "";
             }
-            if(!isset($obj['target']) || $obj['target']=="" || $obj['target']==array()){
-            	$obj['target'] = array('global');
+            if (! isset($obj['target']) || $obj['target'] == "" ||
+                     $obj['target'] == array()) {
+                $obj['target'] = array(
+                        'global'
+                );
             }
             
             $contentTypeId = $obj['typeId'];
-			$aclServive = Manager::getService('Acl');
-            $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
+            $aclServive = Manager::getService('Acl');
+            $contentType = Manager::getService('ContentTypes')->findById(
+                    $contentTypeId);
             
-            if ($contentType['readOnly'] || !$aclServive->hasAccess("write.ui.contents")) {
+            if ($contentType['readOnly'] ||
+                     ! $aclServive->hasAccess("write.ui.contents")) {
                 $obj['readOnly'] = true;
             } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
                 $obj['readOnly'] = true;
             } else {
-                
                 $obj['readOnly'] = false;
             }
         }
         
         return $obj;
     }
-	
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::findById()
-     */
-    public function findById ($contentId, $live = true, $raw = true)
-    {
-        
-        $obj = parent::findById ($contentId, $live,$raw);
-        if($obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-        
-        return $obj;
-        
-    }
-	public function getListByTypeId($typeId)
-	{
-		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
-		return $this->getList($filterArray);
-	}
-	public function isTypeUsed($typeId)
-	{
-		$filterArray["typeId"]=$typeId;
-		$result=$this->_dataService->findOne($filterArray);
-		return ($result!=null)?array("used"=>true):array("used"=>false);
-	}
 
+    public function getListByTypeId ($typeId)
+    {
+        $filterArray[] = array(
+                "property" => "typeId",
+                "value" => $typeId
+        );
+        return $this->getList($filterArray);
+    }
+
+    public function isTypeUsed ($typeId)
+    {
+        $filterArray["typeId"] = $typeId;
+        $result = $this->_dataService->findOne($filterArray);
+        return ($result != null) ? array(
+                "used" => true
+        ) : array(
+                "used" => false
+        );
+    }
+
+    /**
+     *
+     * @return the $_isFrontEnd
+     */
+    public static function getIsFrontEnd ()
+    {
+        return Contents::$_isFrontEnd;
+    }
+
+    /**
+     *
+     * @param boolean $_isFrontEnd            
+     */
+    public static function setIsFrontEnd ($_isFrontEnd)
+    {
+        Contents::$_isFrontEnd = $_isFrontEnd;
+    }
+
+
+	
 	
 	
 }

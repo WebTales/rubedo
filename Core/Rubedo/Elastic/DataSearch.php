@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Elastic;
@@ -27,7 +27,13 @@ use Rubedo\Interfaces\Elastic\IDataSearch, Rubedo\Services\Manager;
  */
 class DataSearch extends DataAbstract implements IDataSearch
 {
-
+    /**
+     * Is the context a front office rendering ?
+     * 
+     * @var boolean
+     */
+    protected static $_isFrontEnd;
+    
     /**
      * ES search
      *     
@@ -89,15 +95,42 @@ class DataSearch extends DataAbstract implements IDataSearch
 		if (!in_array('all',$readWorkspaceArray) && !empty($readWorkspaceArray)) {
 				
 			$workspacesFilter = new \Elastica_Filter_Or();
-			 
-			 $workspaceFilter = new \Elastica_Filter_Terms();
-			 $workspaceFilter->setTerms('target',$readWorkspaceArray);
-			 $workspacesFilter->addFilter($workspaceFilter);
+			 foreach ($readWorkspaceArray as $wsTerm){
+			     $workspaceFilter = new \Elastica_Filter_Term();
+			     $workspaceFilter->setTerm('target',$wsTerm);
+			     $workspacesFilter->addFilter($workspaceFilter);
+			 }
+// 			 $workspaceFilter = new \Elastica_Filter_Terms();
+// 			 $workspaceFilter->setTerms('target',$readWorkspaceArray);
+// 			 $workspacesFilter->addFilter($workspaceFilter);
 			  	
 			$globalFilter->addFilter($workspacesFilter);
 			$setFilter = true;
 		}
 		
+		
+		if(self::$_isFrontEnd){
+		    $now = Manager::getService('CurrentTime')->getCurrentTime();
+		    
+		    //filter on start
+		    $beginFilter = new \Elastica_Filter_NumericRange('startPublicationDate',array('to'=>$now));
+		    
+		    //filter on end : not set or not ended
+		    $endFilter = new \Elastica_Filter_Or();
+		    $endFilterWithValue = new \Elastica_Filter_NumericRange('endPublicationDate',array('from'=>$now));
+		    $endFilterWithoutValue = new \Elastica_Filter_Term();
+		    $endFilterWithoutValue->setTerm('endPublicationDate',0);
+		    $endFilter->addFilter($endFilterWithoutValue);
+		    $endFilter->addFilter($endFilterWithValue);
+		    
+		    //build complete filter
+		    $frontEndFilter = new \Elastica_Filter_And();
+		    $frontEndFilter->addFilter($beginFilter);
+		    $frontEndFilter->addFilter($endFilter);
+
+		    //push filter to global
+ 		    $globalFilter->addFilter($frontEndFilter);
+		}
 						
 		// filter on lang TOTO add lang filter
 		/*
@@ -283,6 +316,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$resultsList = $elasticaResultSet->getResults();
 		$result['total'] = $elasticaResultSet->getTotalHits();
 		$result['query'] = $params['query'];
+		$userWriteWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		$userCanWriteContents = Manager::getService('Acl')->hasAccess("write.ui.contents");
+		$userCanWriteDam = Manager::getService('Acl')->hasAccess("write.ui.dam");
 		foreach($resultsList as $resultItem) {
 			$temp = array();
 			$tmp['id'] = $resultItem->getId();
@@ -307,10 +343,20 @@ class DataSearch extends DataAbstract implements IDataSearch
 			switch ($data['objectType']) {
 				case 'content':
 					$contentType = Manager::getService('ContentTypes')->findById($data['contentType']);
+					if (!$userCanWriteContents || $contentType['readOnly']) {
+					    $tmp['readOnly'] = true;
+					} elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
+					    $tmp['readOnly'] = true;
+					}
 					$tmp['type'] = $contentType['type'];
 					break;
 				case 'dam':
 					$damType = Manager::getService('DamTypes')->findById($data['damType']);
+					if (!$userCanWriteDam || $damType['readOnly']) {
+					    $tmp['readOnly'] = true;
+					} elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
+					    $tmp['readOnly'] = true;
+					}
 					$tmp['type'] = $damType['type'];
 					break;
 			}
@@ -422,19 +468,6 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$result['activeFacets']= array();
 		foreach ($filters as $vocabularyId => $termId) {
 			switch ($vocabularyId) {
-				case 'navigation':
-					$termItem = Manager::getService('Pages')->findById($termId);
-					$temp = array(
-						'id' => $vocabularyId,
-						'label' => 'Navigation',
-						'terms' => array(
-							array(
-								'term' => $termId,
-								'label' => $termItem['text']
-							)
-						)
-					);
-					break;
 					
 				case 'damType' :
 					$termItem  = Manager::getService('DamTypes')->findById($termId);
@@ -516,7 +549,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 						)
 					);
 					break;								
-											
+				case 'navigation':
 				default:
 					$vocabularyItem = Manager::getService('Taxonomy')->findById($vocabularyId);	
 					
@@ -544,6 +577,15 @@ class DataSearch extends DataAbstract implements IDataSearch
 				
 		return($result); 	
 
+    }
+    
+
+	/**
+     * @param field_type $_isFrontEnd
+     */
+    public static function setIsFrontEnd ($_isFrontEnd)
+    {
+        DataSearch::$_isFrontEnd = $_isFrontEnd;
     }
 	
 }

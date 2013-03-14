@@ -30,7 +30,8 @@
 				"resumed": false ,
 				"hidden": false ,
 				"tooltip": "" ,
-				"vtype": null
+				"vtype": null  ,
+				"CKETBConfig": "Standard"
 			} ,
 			"protoId": "506441f8c648043912000020" ,
 			"openWindow": null

@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager;
@@ -37,6 +37,9 @@ class Install_IndexController extends Zend_Controller_Action
 
     public function init ()
     {
+        Rubedo\User\CurrentUser::setIsInstallerUser(true);
+        
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $this->_helper->_layout->setLayout('install-layout');
         
         $this->_navigation = Install_Model_NavObject::getNav();
@@ -531,6 +534,15 @@ class Install_IndexController extends Zend_Controller_Action
         if ($this->_isDefaultGroupsExists()) {
             return;
         }
+        try {
+            Manager::getService('Workspaces')->create(array(
+                    'text'=>'admin'
+            ));
+        } catch (Rubedo\Exceptions\User $exception) {
+            //dont stop if already exists
+        }
+        $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
+        
         $success = true;
         $groupsJsonPath = APPLICATION_PATH . '/../data/default/groups';
         $groupsJson = new DirectoryIterator($groupsJsonPath);
@@ -541,6 +553,10 @@ class Install_IndexController extends Zend_Controller_Action
             if ($file->getExtension() == 'json') {
                 $itemJson = file_get_contents($file->getPathname());
                 $item = Zend_Json::decode($itemJson);
+                if ($item['name'] == 'admin') {
+                    $item['workspace'] = $adminWorkspaceId;
+                    $item['inheritWorkspace'] = false;
+                }
                 $result = Manager::getService('Groups')->create($item);
                 $success = $result['success'] && $success;
             }

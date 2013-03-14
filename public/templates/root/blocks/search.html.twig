@@ -63,8 +63,7 @@
 	<div class="navbar-inner">
 		<p class="brand">Critères de recherche :&nbsp;&nbsp;
 		{% for facet in activeFacets %}
-		    {% if facet.id == 'navigation' %}
-		    {% elseif facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
+		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
                 {% for term in facet.terms %}
 	                <a href="{{url({(facet.id): null})}}" >
 					<span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
@@ -72,9 +71,11 @@
 		        {% endfor %}
             {% else %}
                 {% for term in facet.terms %}
+                    {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
 		            <a href="{{url({(facet.id): term.term},'sub')}}" >
 				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
 			        </a>
+			        {% endif %}
 		        {% endfor %}
             {% endif %}
 		        
@@ -120,17 +121,21 @@
     	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
     	          <ul>
     				{% for term in facet.terms %}
+    				
     				<li>
     					<a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
+    				
     				{% endfor %}
 			    </ul>
     	        {% else %}
     	        <ul>
     				{% for term in facet.terms %}
+    				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
     				<li>
     					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
+    				{% endif %}
     				{% endfor %}
 			    </ul>
     					

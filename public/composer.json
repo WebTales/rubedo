@@ -5,7 +5,6 @@
 		"sencha/extjs": "4.1.1a",
 		"webtales/ckeditor": "1.0.0b1",
 		"twitter/bootstrap": "v2.3.0",
-		"webtales/bootstrap-image-gallery" : "2.10.0",
 		"thomaspark/bootswatch" : "v2.3.0",
 		"webtales/rubedo-backoffice-ui": "1.0.0b4",
 		"longtailvideo/jwplayer":"6"
@@ -39,26 +38,6 @@
 				"version": "v2.3.0",
 				"dist": {
 					"url": "http://twitter.github.com/bootstrap/assets/bootstrap.zip",
-					"type": "zip"
-				}
-			}
-		}, {
-			"type": "package",
-			"package": {
-				"name": "zencoder/video-js",
-				"version": "3.2.0",
-				"dist": {
-					"url": "https://github.com/downloads/zencoder/video-js/video-js-3.2.0.zip",
-					"type": "zip"
-				}
-			}
-		}, {
-			"type": "package",
-			"package": {
-				"name": "webtales/bootstrap-image-gallery",
-				"version": "2.10.0",
-				"dist": {
-					"url": "https://github.com/WebTales/Bootstrap-Image-Gallery/archive/2.10.0.zip",
 					"type": "zip"
 				}
 			}
