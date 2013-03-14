@@ -1,7 +1,7 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-
+{% if not doNotShow %}
 <br><br>
 <div id="{{prefix}}" class="carousel slide">
 	<div class='progress-gallery span6 offset3 hide'>
@@ -13,5 +13,5 @@
 	
 	{% include 'root/blocks/flickr/items.html.twig' %}
 </div>
-
+{% endif %}
 {% endblock %}
