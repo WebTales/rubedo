@@ -397,9 +397,9 @@ class Pages extends AbstractCollection implements IPages
      */
     public function readTree ($filters = null)
     {
-        $this->_dataService->addToExcludeFieldList(array(
-            'blocks'
-        ));
+//         $this->_dataService->addToExcludeFieldList(array(
+//             'blocks'
+//         ));
         return parent::readTree($filters);
         
     }
