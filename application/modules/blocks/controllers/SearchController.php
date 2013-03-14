@@ -33,6 +33,7 @@ class Blocks_SearchController extends Blocks_AbstractController
     public function indexAction ()
     {
         
+        
         // get search parameters
         $params = $this->getRequest()->getParams();
         $params['pagesize'] = $this->getParam('pagesize', 10);
@@ -44,6 +45,8 @@ class Blocks_SearchController extends Blocks_AbstractController
             $params['navigation'][]=$siteId;
             $serverParams['navigation'][]=$siteId;
         }
+        
+        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();

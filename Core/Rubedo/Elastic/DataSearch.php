@@ -27,7 +27,13 @@ use Rubedo\Interfaces\Elastic\IDataSearch, Rubedo\Services\Manager;
  */
 class DataSearch extends DataAbstract implements IDataSearch
 {
-
+    /**
+     * Is the context a front office rendering ?
+     * 
+     * @var boolean
+     */
+    protected static $_isFrontEnd;
+    
     /**
      * ES search
      *     
@@ -102,6 +108,29 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$setFilter = true;
 		}
 		
+		
+		if(self::$_isFrontEnd){
+		    $now = Manager::getService('CurrentTime')->getCurrentTime();
+		    
+		    //filter on start
+		    $beginFilter = new \Elastica_Filter_NumericRange('startPublicationDate',array('to'=>$now));
+		    
+		    //filter on end : not set or not ended
+		    $endFilter = new \Elastica_Filter_Or();
+		    $endFilterWithValue = new \Elastica_Filter_NumericRange('endPublicationDate',array('from'=>$now));
+		    $endFilterWithoutValue = new \Elastica_Filter_Term();
+		    $endFilterWithoutValue->setTerm('endPublicationDate',0);
+		    $endFilter->addFilter($endFilterWithoutValue);
+		    $endFilter->addFilter($endFilterWithValue);
+		    
+		    //build complete filter
+		    $frontEndFilter = new \Elastica_Filter_And();
+		    $frontEndFilter->addFilter($beginFilter);
+		    $frontEndFilter->addFilter($endFilter);
+
+		    //push filter to global
+ 		    $globalFilter->addFilter($frontEndFilter);
+		}
 						
 		// filter on lang TOTO add lang filter
 		/*
@@ -182,7 +211,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$elasticaQuery = new \Elastica_Query();
 		
 		$elasticaQuery->setQuery($elasticaQueryString);
-        //\Zend_Debug::dump($globalFilter);die();
+
 		// Apply filter if needed
 		if ($setFilter) {
 			$elasticaQuery->setFilter($globalFilter);
@@ -548,6 +577,15 @@ class DataSearch extends DataAbstract implements IDataSearch
 				
 		return($result); 	
 
+    }
+    
+
+	/**
+     * @param field_type $_isFrontEnd
+     */
+    public static function setIsFrontEnd ($_isFrontEnd)
+    {
+        DataSearch::$_isFrontEnd = $_isFrontEnd;
     }
 	
 }

@@ -184,6 +184,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["startPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["endPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
 		
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -436,7 +438,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add default meta's
 		$contentData['objectType'] = 'content';
 		$contentData['contentType'] = $typeId;
-		$contentData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:array();
+		$contentData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:null;
+		$contentData['startPublicationDate'] = isset($data['startPublicationDate'])?intval($data['startPublicationDate']):null;
+		$contentData['endPublicationDate'] = isset($data['endPublicationDate'])?intval($data['endPublicationDate']):null;
 		$damData['text'] =  (string) $data['text'];
 		$damData['text_not_analyzed'] =  (string) $data['text'];
 		if (isset($data['lastUpdateTime'])) {
@@ -497,6 +501,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		if (empty($contentData['target']))	{
 			$contentData['target'][] = 'global';
 		}
+		
 			
 		// Add document 
 		$currentDocument = new \Elastica_Document($id, $contentData);
