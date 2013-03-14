@@ -26,6 +26,7 @@ function loadVideo() {
 	if (jQuery(this).attr('data-autostart')) {
 		config.autostart = jQuery(this).attr('data-autostart');
 	}
+	config.analytics = {'enabled':false,'cookies': false};
 	jwplayer(id).setup(config);
 	//jQuery(this).replaceWith('<video src="'+config.file+'" width="'+config.width+'" type="'+jQuery(this).attr('data-contentType')+'" poster="'+config.image+'" controls/>');
 }
