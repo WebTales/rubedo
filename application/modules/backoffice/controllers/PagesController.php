@@ -66,7 +66,7 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 		$data=$this->getRequest()->getParams();
 		$params["pagination"]=array("page"=>$data['page'],"start"=>$data["start"],"limit"=>$data["limit"]);
 		$page=$this->_dataService->findById($data['id']);
-		
+		$params['current-page']=$data['id'];
 		$mask=Rubedo\Services\Manager::getService('Masks')->findById($page['maskId']);
 		
 		$pageBlocks=array_merge($page['blocks'],$mask['blocks']);
