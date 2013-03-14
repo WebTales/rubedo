@@ -285,7 +285,8 @@ function createContentWindow(type, typeId, queryId) {
 					var modalUrl = "http://" + siteUrl
 							+ "/backoffice/content-contributor?typeId="
 							+ selectedTypeId + "&queryId=" + queryId
-							+ "&current-page=" + jQuery('body').attr('data-current-page');
+							+ "&current-page=" + jQuery('body').attr('data-current-page')
+							+ "&current-workspace=" + jQuery('body').attr('data-current-workspace');
 					modal("", "<iframe src='" + modalUrl + "'></iframe>",
 							"add-content-window", 90, 90);
 
@@ -298,7 +299,8 @@ function createContentWindow(type, typeId, queryId) {
 		var modalUrl = "http://" + siteUrl
 				+ "/backoffice/content-contributor?typeId=" + typeId
 				+ "&queryId=" + queryId
-				+ "&current-page=" + jQuery('body').attr('data-current-page');
+				+ "&current-page=" + jQuery('body').attr('data-current-page')
+				+ "&current-workspace=" + jQuery('body').attr('data-current-workspace');
 		modal("", "<iframe src='" + modalUrl + "'></iframe>",
 				"add-content-window", 90, 90);
 		jQuery("#add-content-window").modal('show');

@@ -203,6 +203,7 @@ class IndexController extends Zend_Controller_Action
             }
         }
         $twigVar['currentPage']=$this->_pageId;
+        $twigVar['currentWorkspace']=$this->_pageInfo['workspace'];
         $twigVar['isDraft'] = Zend_Registry::get('draft');
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
