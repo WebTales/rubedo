@@ -364,15 +364,16 @@ class DataAccess implements IDataAccess
      */
     public function readTree ()
     {
-        $dataStore = $this->read();
-        $dataStore = $dataStore['data'];
+        $read = $this->read();
+        $dataStore = $read['data'];
+        $dataStore[]=array('parentId'=>'none','id'=>'root');
         
         $this->_lostChildren = array();
         $rootAlreadyFound = false;
         
         foreach ($dataStore as $record) {
             $id = $record['id'];
-            if (isset($record['parentId']) && $record['parentId'] != 'root') {
+            if (isset($record['parentId']) && $record['parentId'] != 'none') {
                 $parentId = $record['parentId'];
                 $this->_lostChildren[$parentId][$id] = $record;
             } else {

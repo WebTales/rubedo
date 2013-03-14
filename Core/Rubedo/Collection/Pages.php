@@ -391,4 +391,19 @@ class Pages extends AbstractCollection implements IPages
     
         return $returnArray;
     }
+    
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::readTree()
+     */
+    public function readTree ($filters = null)
+    {
+        $this->_dataService->addToExcludeFieldList(array(
+            'blocks'
+        ));
+        return parent::readTree($filters);
+        
+    }
+
+    
+    
 }
