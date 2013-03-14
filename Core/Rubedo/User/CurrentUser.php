@@ -58,6 +58,10 @@ class CurrentUser implements ICurrentUser
     protected static $_mainWorkspace = null;
     
     protected static $_writeWorkspaces = null;
+    
+    protected static $_rubedoUser = array('fullName'=>'Rubedo','id'=>'rubedo','login'=>'rubedo');
+    
+    protected static $_isInstallerUser = false;
 
     /**
      * Return the authenticated user array
@@ -93,6 +97,9 @@ class CurrentUser implements ICurrentUser
      */
     public function getCurrentUserSummary ()
     {
+        if(self::$_isInstallerUser){
+            return self::$_rubedoUser;
+        }
         $userInfos = $this->getCurrentUser();
         return array(
                 'id' => $userInfos['id'],
@@ -328,4 +335,16 @@ class CurrentUser implements ICurrentUser
         return self::$_writeWorkspaces;
         
     }
+    
+
+	/**
+     * @param boolean $_isInstallerUser
+     */
+    public static function setIsInstallerUser ($_isInstallerUser)
+    {
+        CurrentUser::$_isInstallerUser = $_isInstallerUser;
+    }
+
+    
+    
 }

@@ -3,7 +3,7 @@
 	"canWriteUnownedElements": "" ,
 	"defaultWorkspace": "global" ,
 	"expandable": false ,
-	"inheritWorkspace": true ,
+	"inheritWorkspace": false ,
 	"members": [] ,
 	"name": "Contributeurs" ,
 	"parentId": "root" ,

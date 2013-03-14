@@ -37,6 +37,8 @@ class Install_IndexController extends Zend_Controller_Action
 
     public function init ()
     {
+        Rubedo\User\CurrentUser::setIsInstallerUser(true);
+        
         $wasFiltered = AbstractCollection::disableUserFilter();
         $this->_helper->_layout->setLayout('install-layout');
         

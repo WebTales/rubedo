@@ -71,7 +71,11 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
             'id' => 'navigation',
             'name' => 'Navigation',
             'multiSelect' => true,
-            'readOnly' => true
+            'readOnly' => true,
+            'createUser'=>array('fullName'=>'Rubedo'),
+            'createTime'=>1363374000,
+            'lastUpdateUser'=>array('fullName'=>'Rubedo'),
+            'lastUpdateTime'=>1363374000
     );
 
     public function __construct ()
