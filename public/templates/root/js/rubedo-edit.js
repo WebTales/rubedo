@@ -90,8 +90,8 @@ CKEDITOR
 																'Redo' ]
 													} ];
 											// set file and media explorer path
-											editor.config.filebrowserImageBrowseUrl = "/backoffice/resources/extFinder/app.html?type=Image";
-											editor.config.filebrowserImageUploadUrl = "/backoffice/resources/extFinder/app.html?type=Image";
+											editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
+											editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
 										});
 					}
 				});
