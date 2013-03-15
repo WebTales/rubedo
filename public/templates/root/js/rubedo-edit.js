@@ -230,11 +230,14 @@ function modal(header, body, modalId, modalWidth, modalHeight) {
 	jQuery(".modal").css({
 		"margin" : "0 0 0 0"
 	});
+	
 	jQuery("#" + modalId).css({
 		"width" : modalWidth + "%",
-		"height" : modalHeight + "%",
+		"min-height" : modalHeight + "%",
+		"max-height" :'90%',
 		"top" : top + "%",
-		"left" : left + "%"
+		"left" : left + "%",
+		"overflow":'scroll'
 	});
 
 	jQuery("#" + modalId + " iframe").css({
@@ -258,7 +261,7 @@ function createContentWindow(type, typeId, queryId) {
 		modal(
 				"<h3>Selectionnez le type de contenu à ajouter</h3>",
 				"<form name='modalfrom' id='modal-form'><select id='select-type-box'></select></form>",
-				"select-type-window", 30, 25);
+				"select-type-window", 30, 30);
 		jQuery
 				.ajax({
 					"url" : "/backoffice/content-types/get-readable-content-types/",
