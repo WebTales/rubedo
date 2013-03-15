@@ -103,10 +103,10 @@ class Users extends AbstractCollection implements IUsers
             if ($result['success'] == true) {
                 return true;
             } else {
-                return false;
+                throw new \Rubedo\Exceptions\User('Impossible de modifier le mot de passe');
             }
         } else {
-            return false;
+            throw new \Rubedo\Exceptions\User('Données proposées erronnées');
         }
     }
 
