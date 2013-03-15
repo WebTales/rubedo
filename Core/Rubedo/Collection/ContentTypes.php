@@ -264,12 +264,14 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		} else {
 			$filter = array(array('property' => 'workspaces', 'operator' => '$in', 'value' => $readWorkspaces));
 		}
-		
+		$filter[] = array('property' => 'system', 'operator' => '$ne', 'value' => true);
 		$readableContentTypes = $this->getList($filter);
 		
 		foreach ($readableContentTypes['data'] as $value) {
-			$contentTypesList[] = array('type' => $value['type'], 'id' => $value['id']);
+			$contentTypesList[$value['type']] = array('type' => $value['type'], 'id' => $value['id']);
 		}
+		ksort($contentTypesList);
+		$contentTypesList = array_values($contentTypesList);
 		
 		return $contentTypesList;
 	}
