@@ -271,6 +271,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $workspace['text'];
         $term['id'] = $workspace['id'];
         $term['vocabularyId'] = 'wokspaces';
+        $term['isNotPage']=true;
         if (! self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
@@ -291,6 +292,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $site['text'];
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
+        $term['isNotPage'] = true;
         $term['canAssign'] = (isset($site['readOnly']) && $site['readOnly']) ? false : true;
         if (! self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
@@ -306,6 +308,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $mainRoot['text'] = 'Tous les sites';
         $mainRoot['id'] = 'all';
         $mainRoot['canAssign'] = true;
+        $mainRoot['isNotPage'] = true;
         $mainRoot['vocabularyId'] = 'navigation';
         if (! self::isUserFilterDisabled()) {
             $mainRoot['readOnly'] = true;
