@@ -22,8 +22,9 @@
  * @author jbourdin
  * @category Rubedo-Test
  * @package Rubedo-Test
+ * @todo : do not use real data for Tests !!!
  */
-class CurrentUserTest extends PHPUnit_Framework_TestCase {
+class CurrentUserTest {//extends PHPUnit_Framework_TestCase {
     
 	 
 	 /**
