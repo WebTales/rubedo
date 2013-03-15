@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
- *
- * yet to be written
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
 /**
@@ -44,7 +46,6 @@ class XhrAuthenticationController extends Zend_Controller_Action
         $login = $this->getRequest()->getParam('login');
         $password = $this->getRequest()->getParam('password');
         if ($this->getRequest()->isPost()) {
-
             if (!empty($login) && !empty($password)) {
                 $loginResult = $this->_auth->authenticate($login, $password);
 
@@ -55,7 +56,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
                     $response['message'] = 'Wrong crendentials';
                 }
             } else {
-                $response['succes'] = false;
+                $response['success'] = false;
                 $response['message'] = 'The login and the password should not be empty';
             }
         } else {

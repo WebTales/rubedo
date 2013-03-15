@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -271,6 +271,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $workspace['text'];
         $term['id'] = $workspace['id'];
         $term['vocabularyId'] = 'wokspaces';
+        $term['isNotPage']=true;
         if (! self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
@@ -291,6 +292,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $site['text'];
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
+        $term['isNotPage'] = true;
         $term['canAssign'] = (isset($site['readOnly']) && $site['readOnly']) ? false : true;
         if (! self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
@@ -306,6 +308,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $mainRoot['text'] = 'Tous les sites';
         $mainRoot['id'] = 'all';
         $mainRoot['canAssign'] = true;
+        $mainRoot['isNotPage'] = true;
         $mainRoot['vocabularyId'] = 'navigation';
         if (! self::isUserFilterDisabled()) {
             $mainRoot['readOnly'] = true;
@@ -384,7 +387,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => 'no record had been deleted'
+                    "msg" => 'La suppression a échoué'
                 );
             }
         } else {

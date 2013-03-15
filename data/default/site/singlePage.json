@@ -1,12 +1,12 @@
 {
 	"site": "",
-	"title": "single",
+	"title": "Détail",
 	"maskId": "",
 	"excludeFromMenu": true,
 	"parentId": "root",
 	"description": "",
 	"keywords": [],
-	"orderValue": 200,
+	"orderValue": 300,
 	"expandable": false,
 	"blocks": [
 		{

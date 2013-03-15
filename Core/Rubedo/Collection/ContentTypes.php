@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
@@ -46,6 +46,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		        return;
 		    }
 		    $readWorkspaceArray[] = null;
+		    $readWorkspaceArray[] = 'all';
 		    $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
 		    $this->_dataService->addFilter($filter);
 		}
@@ -138,7 +139,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true), $live = true)
-    {        
+    {    
         if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $obj['workspaces'] = array($mainWorkspace['id']);
@@ -148,7 +149,6 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         if ($returnArray["success"]) {
             $this->_indexContentType($returnArray['data']);
         }
-        
         return $returnArray;
     }
     
@@ -157,6 +157,10 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
     {
+        if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
+            $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+            $obj['workspaces'] = array($mainWorkspace['id']);
+        }
         $returnArray = parent::update($obj, $options, $live);
         
         if ($returnArray["success"]) {
@@ -225,34 +229,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         ));
     }
 
-    
-    
-    /**
-     *  (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::findById()
-     */
-    public function findById ($contentId)
-    {
-        $obj = parent::findById ($contentId);
-        $obj= $this->_addReadableProperty ($obj);
-        return $obj;
-        
-    }
 
-	/**
-	 *  (non-PHPdoc)
-     * @see \Rubedo\Collection\AbstractCollection::getList()
-     */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
-    {			
-        $list = parent::getList($filters,$sort,$start,$limit);
-
-        foreach ($list['data'] as &$obj){
-            $obj = $this->_addReadableProperty($obj);
-        }
-
-        return $list;
-    }
 
     protected function _addReadableProperty ($obj)
     {
@@ -265,10 +242,9 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 	        }
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
-	        if (count(array_intersect($obj['workspaces'], $writeWorkspaces))==0 && !in_array("all", $writeWorkspaces)) {
+	        if (!Manager::getService('Acl')->hasAccess("write.ui.contentTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces))==0 && !in_array("all", $writeWorkspaces))) {
 	            $obj['readOnly'] = true;
-	        } else {
-	            
+	        }else{
 	            $obj['readOnly'] = false;
 	        }
 		}
@@ -288,12 +264,14 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		} else {
 			$filter = array(array('property' => 'workspaces', 'operator' => '$in', 'value' => $readWorkspaces));
 		}
-		
+		$filter[] = array('property' => 'system', 'operator' => '$ne', 'value' => true);
 		$readableContentTypes = $this->getList($filter);
 		
 		foreach ($readableContentTypes['data'] as $value) {
-			$contentTypesList[] = array('type' => $value['type'], 'id' => $value['id']);
+			$contentTypesList[$value['type']] = array('type' => $value['type'], 'id' => $value['id']);
 		}
+		ksort($contentTypesList);
+		$contentTypesList = array_values($contentTypesList);
 		
 		return $contentTypesList;
 	}

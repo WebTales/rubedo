@@ -1,16 +1,18 @@
 <?php
 /**
- * Rubedo
+ * Rubedo -- ECM solution
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
+ * All rights reserved.
+ * licensing@webtales.fr
  *
- * LICENSE
- *
- * yet to be written
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
- * @license    yet to be written
- * @version    $Id:
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
 
@@ -102,7 +104,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
                 unset($fields['text']);
                 $fields['id'] = (string) $vignette['id'];
                 $fields['typeId'] = $vignette['typeId'];
-                $fields['readDate'] = Manager::getService('Date')->getLocalised('%A %e %B %Y', $vignette['fields'][$dateField]);
+                $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField]);
                 $data[] = $fields;
                 $filledDate[intval(date('d', $vignette['fields'][$dateField]))] = true;
             }
@@ -116,8 +118,8 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $output['prefix'] = $this->getRequest()->getParam('prefix');
         $output['filledDate'] = $filledDate;
         $output['days'] = Manager::getService('Date')->getShortDayList();
-        $output['month'] = Manager::getService('Date')->getLocalised('%B', $timestamp);
-        $output['year'] = Manager::getService('Date')->getLocalised('%Y', $timestamp);
+        $output['month'] = Manager::getService('Date')->getLocalised('MMMM', $timestamp);
+        $output['year'] = Manager::getService('Date')->getLocalised('y', $timestamp);
         if (intval($month) == 12) {
             $output['nextDate'] = '1-' . (string) ($year + 1);
         } else {

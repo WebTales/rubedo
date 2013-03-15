@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
@@ -33,27 +33,34 @@ class Blocks_SearchController extends Blocks_AbstractController
     public function indexAction ()
     {
         
+        
         // get search parameters
         $params = $this->getRequest()->getParams();
         $params['pagesize'] = $this->getParam('pagesize', 10);
         $params['pager'] = $this->getParam('pager',0);
         
-        if($params['constrainToSite']){
+        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
             $site = $this->getRequest()->getParam('site');
-            $params['Navigation'][]=$site['text'];
-            $serverParams['Navigation'][]=$site['text'];
+            $siteId = $site['id'];
+            $params['navigation'][]=$siteId;
+            $serverParams['navigation'][]=$siteId;
         }
-		
+        
+        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
         
         $results = $query->search($params);
         
+        $results['currentSite'] = isset($siteId)?$siteId:null;
+        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
+            $results['constrainToSite'] = true;
+        }
         // Pagination
         
         if ($params['pagesize'] != "all") {
-            $pagecount = intval( $results['total'] / $params['pagesize']+1);
+            $pagecount = intval( ($results['total']-1) / $params['pagesize']+1);
         } else {
             $pagecount = 1;
         }

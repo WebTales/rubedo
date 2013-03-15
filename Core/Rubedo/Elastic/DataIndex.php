@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Elastic;
@@ -184,6 +184,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["contentType"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["startPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["endPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
 		
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -400,17 +402,11 @@ class DataIndex extends DataAbstract implements IDataIndex
 	 * @param boolean $live live if true, workspace if live
      * @return array
      */
-	public function indexContent ($id, $live = false) {
+	public function indexContent ($id, $live = true) {
 
-	     // content data to index
-	     if ($live) {
-	            $space = "live";
-	     } else {
-	            $space = "workspace";
-	     }
             
         // retrieve type id and content data if null
-        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id);
+        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id,$live,false);
         $typeId = $data['typeId'];
 					
 		// Load ES type 
@@ -422,7 +418,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 	
 		// Add fields to index	
 		$contentData = array();
-		foreach($data[$space]['fields'] as $field => $var) {
+		foreach($data['fields'] as $field => $var) {
 
 			// only index searchable fields
 			if (in_array($field,$typeStructure['searchableFields']))  {	
@@ -442,7 +438,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add default meta's
 		$contentData['objectType'] = 'content';
 		$contentData['contentType'] = $typeId;
-		$contentData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:array();
+		$contentData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:null;
+		$contentData['startPublicationDate'] = isset($data['startPublicationDate'])?intval($data['startPublicationDate']):null;
+		$contentData['endPublicationDate'] = isset($data['endPublicationDate'])?intval($data['endPublicationDate']):null;
 		$damData['text'] =  (string) $data['text'];
 		$damData['text_not_analyzed'] =  (string) $data['text'];
 		if (isset($data['lastUpdateTime'])) {
@@ -450,8 +448,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		} else {
 			$contentData['lastUpdateTime'] = 0;
 		}
-		if (isset($data[$space]['status'])) {
-			$contentData['status'] = (string) $data[$space]['status'];
+		if (isset($data['status'])) {
+			$contentData['status'] = (string) $data['status'];
 		} else {
 			$contentData['status'] = "unknown";
 		}
@@ -463,9 +461,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 		}
 		
         // Add taxonomy
-         if (isset($data[$space]["taxonomy"])) {
+         if (isset($data["taxonomy"])) {
                 $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
-                foreach ($data[$space]["taxonomy"] as $vocabulary => $terms) {
+                foreach ($data["taxonomy"] as $vocabulary => $terms) {
                     if(!is_array($terms)){
                         continue;
                     }
@@ -493,6 +491,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Add read workspace
 		$contentData['target']=array();
 		if (isset($data['target'])) {
+		    if(!is_array($data['target'])){
+		        $data['target'] = array($data['target']);
+		    }
 			foreach ($data['target'] as $key => $target) {
 				$contentData['target'][] = (string) $target;
 			}
@@ -500,6 +501,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		if (empty($contentData['target']))	{
 			$contentData['target'][] = 'global';
 		}
+		
 			
 		// Add document 
 		$currentDocument = new \Elastica_Document($id, $contentData);
@@ -534,16 +536,16 @@ class DataIndex extends DataAbstract implements IDataIndex
 	     }
             
         // retrieve type id and content data if null
-        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id);
+        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id,true,false);
         $typeId = $data['typeId'];
 		
 		// Retrieve type label
 		$contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($typeId);
 		
         // Add taxonomy
-         if (isset($data[$space]["taxonomy"])) {
+         if (isset($data["taxonomy"])) {
                 $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
-                foreach ($data[$space]["taxonomy"] as $vocabulary => $terms) {
+                foreach ($data["taxonomy"] as $vocabulary => $terms) {
                     if(!is_array($terms)){
                         continue;
                     }

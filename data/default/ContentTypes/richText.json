@@ -29,7 +29,7 @@
 	"createUser": "Admin",
 	"updateTime": null,
 	"lastUpdateTime": "2013-03-01T11:06:32",
-	"workspaces": ["global"],
+	"workspaces": ["all"],
 	"readOnly": false,
 	"workflow": "Basique",
 	"CTType": "richText",

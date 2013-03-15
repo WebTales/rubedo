@@ -63,7 +63,7 @@
     {% endblock %}
 </head>
 
-<body>
+<body data-current-page="{{ currentPage }}" data-is-draft="{{ isDraft }}" data-current-workspace="{{ currentWorkspace }}">
 	{% block topSpace %}
 	<div id="topSpace" class="navbar navbar-fixed-top"></div>
 	{% endblock %} 

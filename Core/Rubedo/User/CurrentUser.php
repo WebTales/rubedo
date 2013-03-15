@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2012, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,12 +11,11 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2012 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\User;
-
-use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager;
+use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager, Rubedo\Collection\AbstractCollection;
 
 /**
  * Current User Service
@@ -53,13 +52,16 @@ class CurrentUser implements ICurrentUser
      * @var array
      */
     protected static $_groups = null;
-
-    /**
-     * is current User a global Admin ?
-     *
-     * @var boolean
-     */
-    protected static $_isGlobalAdmin = null;
+    
+    protected static $_readWorkspaces = null;
+    
+    protected static $_mainWorkspace = null;
+    
+    protected static $_writeWorkspaces = null;
+    
+    protected static $_rubedoUser = array('fullName'=>'Rubedo','id'=>'rubedo','login'=>'rubedo');
+    
+    protected static $_isInstallerUser = false;
 
     /**
      * Return the authenticated user array
@@ -71,18 +73,17 @@ class CurrentUser implements ICurrentUser
         if (! isset(self::$_currentUser)) {
             if ($this->isAuthenticated()) {
                 $user = $this->_fetchCurrentUser();
-                if ($user===null) {
+                if ($user === null) {
                     Manager::getService('Authentication')->clearIdentity();
                 }
                 
                 self::$_currentUser = $user;
-                if($user){
+                if ($user) {
                     $mainWorkspace = $this->getMainWorkspace();
-                    if($mainWorkspace){
+                    if ($mainWorkspace) {
                         $user['defaultWorkspace'] = $mainWorkspace['id'];
                         self::$_currentUser = $user;
                     }
-                    
                 }
             }
         }
@@ -96,11 +97,14 @@ class CurrentUser implements ICurrentUser
      */
     public function getCurrentUserSummary ()
     {
+        if(self::$_isInstallerUser){
+            return self::$_rubedoUser;
+        }
         $userInfos = $this->getCurrentUser();
         return array(
-            'id' => $userInfos['id'],
-            'login' => $userInfos['login'],
-            'fullName' => $userInfos['name']
+                'id' => $userInfos['id'],
+                'login' => $userInfos['login'],
+                'fullName' => $userInfos['name']
         );
     }
 
@@ -144,20 +148,21 @@ class CurrentUser implements ICurrentUser
             $user = $this->getCurrentUser();
             if (is_null($user)) {
                 return array(
-                    Manager::getService('Groups')->getPublicGroup()
+                        Manager::getService('Groups')->getPublicGroup()
                 );
             }
             if (isset($user['id'])) {
-                $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
+                $groupsArray = Manager::getService('Groups')->getListByUserId(
+                        $user['id']);
             } else {
                 $groupsArray = array(
-                    'data' => array()
+                        'data' => array()
                 );
             }
             
             if (count($groupsArray['data']) == 0) {
                 return array(
-                    Manager::getService('Groups')->getPublicGroup()
+                        Manager::getService('Groups')->getPublicGroup()
                 );
             }
             self::$_groups = $groupsArray['data'];
@@ -195,9 +200,10 @@ class CurrentUser implements ICurrentUser
         $serviceAuth = Manager::getService('Authentication');
         if ($serviceAuth->forceReAuth($user['login'], $oldPass)) {
             $serviceUser = Manager::getService('Users');
-            return $serviceUser->changePassword($newPass, $user['version'], $user['id']);
+            return $serviceUser->changePassword($newPass, $user['version'], 
+                    $user['id']);
         } else {
-            return false;
+            throw new \Rubedo\Exceptions\User('Mot de passe initial erroné');
         }
     }
 
@@ -214,7 +220,8 @@ class CurrentUser implements ICurrentUser
         $user = $sessionService->get('user');
         
         $token = $hashService->generateRandomString(20);
-        $user['token'] = $hashService->derivatePassword($token, $hashService->generateRandomString(10));
+        $user['token'] = $hashService->derivatePassword($token, 
+                $hashService->generateRandomString(10));
         $sessionService->set('user', $user);
         
         return $user['token'];
@@ -245,19 +252,27 @@ class CurrentUser implements ICurrentUser
      */
     public function getReadWorkspaces ()
     {
-        $groupArray = $this->getGroups();
-        if ($this->_isGlobalAdmin()) {
-            return array(
-                'all'
-            );
+        if(!isset(self::$_readWorkspaces)){
+            $wasFiltered = AbstractCollection::disableUserFilter();
+            $groupArray = $this->getGroups();
+            $workspaceArray = array();
+            
+            foreach ($groupArray as $group) {
+                $workspaceArray = array_unique(
+                        array_merge($workspaceArray,
+                                Manager::getService('Groups')->getReadWorkspaces(
+                                        $group['id'])));
+                $workspaceArray = array_merge($workspaceArray,
+                        array_unique(
+                                array_merge($workspaceArray,
+                                        Manager::getService('Groups')->getWriteWorkspaces(
+                                                $group['id']))));
+            }
+            self::$_readWorkspaces = array_unique($workspaceArray);
+            AbstractCollection::disableUserFilter($wasFiltered);
         }
-        $workspaceArray = array();
+        return self::$_readWorkspaces;
         
-        foreach ($groupArray as $group) {
-            $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id'])));
-            $workspaceArray = array_merge($workspaceArray, array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']))));
-        }
-        return $workspaceArray;
     }
 
     /**
@@ -268,13 +283,26 @@ class CurrentUser implements ICurrentUser
      */
     public function getMainWorkspace ()
     {
-        
-        // return Manager::getService('Workspaces')->findById('global');
-        $mainGroup = $this->getMainGroup();
-        if ($mainGroup == null) {
-            return Manager::getService('Workspaces')->findById('global');
+        if(!isset(self::$_mainWorkspace)){
+            // return Manager::getService('Workspaces')->findById('global');
+            $mainGroup = $this->getMainGroup();
+            if ($mainGroup == null) {
+                return Manager::getService('Workspaces')->findById('global');
+            }
+            self::$_mainWorkspace = Manager::getService('Groups')->getMainWorkspace($mainGroup);
         }
-        return Manager::getService('Groups')->getMainWorkspace($mainGroup);
+        return self::$_mainWorkspace;
+        
+        
+    }
+    
+    public function getMainWorkspaceId(){
+        $workspace = $this->getMainWorkspace();
+        if($workspace){
+            return $workspace['id'];
+        }else{
+            return 'global';
+        }
     }
 
     /**
@@ -284,39 +312,39 @@ class CurrentUser implements ICurrentUser
      */
     public function getWriteWorkspaces ()
     {
-        if ($this->_isGlobalAdmin()) {
-            $workspaceList = Manager::GetService("Workspaces")->getWholeList();
-            foreach ($workspaceList['data'] as $workspace) {
-                $workspaceArray[] = $workspace['id'];
-            }
-        } else {
+        if(!isset(self::$_writeWorkspaces)){
             $groupArray = $this->getGroups();
             $workspaceArray = array();
             
             foreach ($groupArray as $group) {
-                $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id'])));
+                $workspaceArray = array_unique(
+                        array_merge($workspaceArray,
+                                Manager::getService('Groups')->getWriteWorkspaces(
+                                        $group['id'])));
             }
-        }
-        
-        return $workspaceArray;
-    }
-
-    /**
-     * Is the current user a global admin ?
-     * 
-     * @return boolean
-     */
-    protected function _isGlobalAdmin ()
-    {
-        if (! isset(self::$_isGlobalAdmin)) {
-            self::$_isGlobalAdmin = false;
-            $groupList = $this->getGroups();
-            foreach ($groupList as $group) {
-                if ($group['name'] == 'admin') {
-                    self::$_isGlobalAdmin = true;
+            if (in_array('all', $workspaceArray)) {
+                $workspaceArray = array();
+                $workspaceList = Manager::GetService("Workspaces")->getWholeList();
+                foreach ($workspaceList['data'] as $workspace) {
+                    $workspaceArray[] = $workspace['id'];
                 }
             }
+            
+            self::$_writeWorkspaces = $workspaceArray;
         }
-        return self::$_isGlobalAdmin;
+        return self::$_writeWorkspaces;
+        
     }
+    
+
+	/**
+     * @param boolean $_isInstallerUser
+     */
+    public static function setIsInstallerUser ($_isInstallerUser)
+    {
+        CurrentUser::$_isInstallerUser = $_isInstallerUser;
+    }
+
+    
+    
 }
