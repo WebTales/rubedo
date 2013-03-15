@@ -35,6 +35,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
     {
         $output = $this->_getList();
         $blockConfig = $this->getRequest()->getParam('block-config');
+        $output["blockConfig"]=$blockConfig;
         
         if (isset($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(

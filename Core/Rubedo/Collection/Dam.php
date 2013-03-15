@@ -265,7 +265,7 @@ class Dam extends AbstractCollection implements IDam
             
             $damTypeId = $obj['typeId'];
             $damType = Manager::getService('DamTypes')->findById($damTypeId);
-            if (! in_array($obj['writeWorkspace'], $damType['workspaces'])) {
+            if (! in_array($obj['writeWorkspace'], $damType['workspaces']) && ! in_array('all', $damType['workspaces'])) {
                 throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
             }
         }

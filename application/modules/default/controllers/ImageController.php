@@ -66,7 +66,7 @@ class ImageController extends Zend_Controller_Action
             $filename = isset($filename) ? $filename : basename($filePath);
             $nameSegment = explode('.', $filename);
             $extension = array_pop($nameSegment);
-            if (! in_array($extension, array(
+            if (! in_array(strtolower($extension), array(
                 'gif',
                 'jpg',
                 'png',

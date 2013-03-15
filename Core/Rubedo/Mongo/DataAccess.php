@@ -841,8 +841,14 @@ class DataAccess implements IDataAccess
                     }
                 }
             }
+            if(in_array($name,array('$or','$and')) && isset($this->_filterArray[$name])){
+                $existing = $this->_filterArray[$name];
+                $this->_filterArray[$name] = array_merge($existing,$value);
+            }else{
+                $this->_filterArray[$name] = $value;
+            }
             // add validated input
-            $this->_filterArray[$name] = $value;
+            
         }
     }
 
