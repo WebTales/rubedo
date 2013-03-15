@@ -139,7 +139,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array('safe'=>true), $live = true)
-    {        
+    {    
         if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
 	        $obj['workspaces'] = array($mainWorkspace['id']);
@@ -149,7 +149,6 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         if ($returnArray["success"]) {
             $this->_indexContentType($returnArray['data']);
         }
-        
         return $returnArray;
     }
     
@@ -158,6 +157,10 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     public function update (array $obj, $options = array('safe'=>true), $live = true)
     {
+        if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
+            $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+            $obj['workspaces'] = array($mainWorkspace['id']);
+        }
         $returnArray = parent::update($obj, $options, $live);
         
         if ($returnArray["success"]) {
