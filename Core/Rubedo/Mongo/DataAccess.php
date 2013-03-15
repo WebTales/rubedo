@@ -662,7 +662,7 @@ class DataAccess implements IDataAccess
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => 'no record had been updated'
+                    "msg" => 'Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.'
                 );
             }
         } elseif ($resultArray) {
@@ -717,7 +717,7 @@ class DataAccess implements IDataAccess
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => 'no record had been deleted'
+                    "msg" => 'Impossible de supprimer le contenu'
                 );
             }
         } elseif ($resultArray) {

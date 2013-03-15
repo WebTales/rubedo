@@ -161,9 +161,12 @@ abstract class AbstractCollection implements IAbstractCollection
         }
         
         $dataValues = $this->_dataService->read();
-        foreach ($dataValues['data'] as &$obj) {
-            $obj = $this->_addReadableProperty($obj);
+        if($dataValues && is_array($dataValues)){
+            foreach ($dataValues['data'] as &$obj) {
+                $obj = $this->_addReadableProperty($obj);
+            }  
         }
+        
         return $dataValues;
     }
 
@@ -647,8 +650,10 @@ abstract class AbstractCollection implements IAbstractCollection
         }
         
         $result = $this->_dataService->readChild($parentId);
-        foreach ($result as &$obj) {
-            $obj = $this->_addReadableProperty($obj);
+        if($result && is_array($result)){
+            foreach ($result as &$obj) {
+                $obj = $this->_addReadableProperty($obj);
+            }
         }
         return $result;
     }

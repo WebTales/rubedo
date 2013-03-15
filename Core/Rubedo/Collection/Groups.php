@@ -134,7 +134,7 @@ class Groups extends AbstractCollection implements IGroups
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => 'no record had been deleted'
+                    "msg" => 'La suppression du groupe a échoué'
                 );
             }
         } else {

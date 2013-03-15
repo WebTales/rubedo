@@ -142,7 +142,7 @@ class Pages extends AbstractCollection implements IPages
 	        if ($resultArray['n'] > 0) {
 	            $returnArray = array('success' => true);
 	        } else {
-	            $returnArray = array('success' => false, "msg" => 'no record had been deleted');
+	            $returnArray = array('success' => false, "msg" => 'La suppression de la page a échoué');
 	        }
 	    } else {
 	        $returnArray = array('success' => false, "msg" => $resultArray["err"]);

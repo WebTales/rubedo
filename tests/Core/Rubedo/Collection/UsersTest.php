@@ -50,7 +50,17 @@ class UsersTest extends PHPUnit_Framework_TestCase {
 	public function testChangePassword(){
 		$this->_mockHash->expects($this->once())->method('generateRandomString')->will($this->returnValue('1234567890'));
 		$this->_mockHash->expects($this->once())->method('derivatePassword')->with($this->equalTo('test', '1234567890'))->will($this->returnValue('0987654321'));
-		$this->_mockDataAccessService->expects($this->once())->method('update')->with($this->equalTo(array('id' => '123456789', 'version' => 1, 'password' => '0987654321', 'salt' => '1234567890')));
+        $this->_mockDataAccessService->expects($this->once())
+            ->method('update')
+            ->with($this->equalTo(array(
+            'id' => '123456789',
+            'version' => 1,
+            'password' => '0987654321',
+            'salt' => '1234567890'
+        )))
+            ->will($this->returnValue(array(
+            'success' => true
+        )));
 			
 		$collection = new Users();
 		$collection->changePassword("test", 1, "123456789");

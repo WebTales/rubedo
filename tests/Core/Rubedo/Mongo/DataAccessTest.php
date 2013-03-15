@@ -876,7 +876,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $updateArray = $dataAccessObject->update($item, array('safe' => true));
 
         $this->assertFalse($updateArray['success']);
-        $this->assertEquals('no record had been updated', $updateArray['msg']);
+        $this->assertEquals('Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.', $updateArray['msg']);
 
     }
 
@@ -977,7 +977,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
         $this->assertFalse($updateArray['success']);
-        $this->assertEquals('no record had been deleted', $updateArray['msg']);
+        $this->assertEquals('Impossible de supprimer le contenu', $updateArray['msg']);
     }
 
     /**

@@ -387,7 +387,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => 'no record had been deleted'
+                    "msg" => 'La suppression a échoué'
                 );
             }
         } else {

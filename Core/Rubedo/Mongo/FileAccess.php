@@ -227,7 +227,7 @@ class FileAccess extends DataAccess implements IFileAccess
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => 'no record had been deleted'
+                    "msg" => 'Impossible de supprimer le fichier'
                 );
             }
         } else {
