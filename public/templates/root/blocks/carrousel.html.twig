@@ -1,7 +1,7 @@
 {% extends "root/block.html.twig" %} {% block mainContent %}
 <!-- carousel -->
 {%set carouselid="carousel-"~random() %}
-<div id="{{carouselid}}" class="carousel slide">
+<div id="{{carouselid}}" class="carousel slide" style="{% if imageWidth %}max-width:{{ imageWidth }}px;{% endif %}{% if imageHeight %}max-height:{{ imageHeight }}px;{% endif %}">
 
 	<ol class="carousel-indicators">
 		{% for slide in items %}
@@ -10,15 +10,17 @@
 			 {% if loop.first %} class="active"  {% endif %}></li> {% endfor %}
 	</ol>
 
-	<div class="carousel-inner" style="">
+	<div class="carousel-inner">
 		{% for slide in items %}
 		<div class="item {%if loop.first %}active{%endif%}" >
 			<a href="{{ displaySingleUrl(slide.id,null,singlePage) }}">
-			<img src="/dam?media-id={{slide.image}}" alt="{{slide.text}}"
+			{% if slide.image %}
+			<img src="/dam?media-id={{slide.image}}{% if imageWidth %}&amp;width={{ imageWidth }}{% endif %}{% if imageHeight %}&amp;height={{ imageHeight }}{% endif %}&amp;mode={{ mode }}" alt="{{slide.text}}"
 				title="#htmlcaption_{{prefix}}_{{slide.id}}" style="width:100%" />
+			{% endif %}
 			<div class="carousel-caption">
 				<h4>{{slide.title}}</h4>
-				<p>{{slide.summary}}</p>
+				<p class="visible-desktop">{{slide.summary}}</p>
 			</div>
 			</a>
 		</div>

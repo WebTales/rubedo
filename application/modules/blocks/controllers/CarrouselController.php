@@ -35,7 +35,6 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $this->_dataReader = Manager::getService('Contents');
         $isDraft = Zend_Registry::get('draft');
         $this->_queryReader = Manager::getService('Queries');
-
         $blockConfig = $this->getRequest()->getParam('block-config');
 
         $filters = Manager::getService('Queries')->getFilterArrayById($blockConfig['query']);
@@ -70,6 +69,9 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         }
         $output = $this->getAllParams();
         $output["items"] = $data;
+        $output["imageWidth"]=isset($blockConfig['imageWidth'])?$blockConfig['imageWidth']:null;
+        $output["imageHeight"]=isset($blockConfig['imageHeight'])?$blockConfig['imageHeight']:null;
+        $output["mode"]=isset($blockConfig['mode'])?$blockConfig['mode']:null;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html.twig");
         $css = array();
         $js = array();
