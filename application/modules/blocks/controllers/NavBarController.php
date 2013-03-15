@@ -33,6 +33,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
     public function indexAction ()
     {
         $output = $this->getAllParams();
+        //Zend_Debug::dump($this->getAllParams());die();
         
         $blockConfig = $this->getParam('block-config', array());
 
@@ -52,6 +53,11 @@ class Blocks_NavBarController extends Blocks_AbstractController
             $searchPage = $blockConfig['searchPage'];
         } else {
             $searchPage = null;
+        }
+        if (isset($blockConfig['displayRootPage'])) {
+            $displayRootPage = $blockConfig['displayRootPage'];
+        } else {
+            $displayRootPage = true;
         }
         
         $site = $this->getParam('site');
@@ -76,6 +82,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['searchPage'] = $searchPage;
         $output['pages'] = array();
         $output['logo']= isset($blockConfig['logo'])?$blockConfig['logo']:null;
+        $output['displayRootPage'] = $displayRootPage;
         
         $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
         
@@ -105,8 +112,13 @@ class Blocks_NavBarController extends Blocks_AbstractController
         }
                 
         $twigVar["data"] = $output;
+
+        if(isset($blockConfig['style']) && $blockConfig['style']=='Vertical'){
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/menu.html.twig");
+        }else{
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
+        }
         
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
         
         $css = array();
         $js = array();

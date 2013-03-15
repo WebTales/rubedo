@@ -33,6 +33,7 @@ class Blocks_MenuController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array());
+        Zend_Debug::dump($this->getAllParams());die();
         if (isset($blockConfig['rootPage'])) {
             $rootPage = $blockConfig['rootPage'];
         } else {

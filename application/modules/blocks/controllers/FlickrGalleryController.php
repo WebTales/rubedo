@@ -57,7 +57,8 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
 		$flParams = array();
 		$flParams['page'] = $this->getParam('page', 1);
 		$prefix = $this->getParam('prefix', $this->getParam('prefix'));
-        
+		$output = $this->getAllParams();
+		
 		if ($this->getRequest()->isXmlHttpRequest()) {
 			$flParams['perPage'] = $this->getParam('itemsPerPage', 12);
 			$flParams['user'] = $this->getParam('user', null);
@@ -90,7 +91,10 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
 	            $flParams['tag_mode'] = ($blockConfig['tagmode']=='ALL')?'all':'or';
 	        }
 		}
-        
+        if(!isset($flParams['user']) && !isset($flParams['tags'])){
+            $output['doNotShow']=true;
+            return $output;
+        }
 		$cache = Rubedo\Services\Cache::getCache('flicker');
         $cacheKey = 'flickr_items_'.md5(serialize($flParams));
 		$cacheKeyCount = 'flickr_items_'.md5('count-'.serialize($flParams));
@@ -161,7 +165,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             $cache->save($items, $cacheKey,array('flickr'));
         }
         
-        $output = $this->getAllParams();
+        
         $output['items'] = $items;
 		if(isset($flParams['user'])){
 			$output['user'] = $flParams['user'];
