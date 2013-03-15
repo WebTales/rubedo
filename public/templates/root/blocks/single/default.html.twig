@@ -31,7 +31,10 @@
   							<div class="bar" style="width:{{value}}%"></div>
 						</div>
 						{%elseif(cValue=="treepicker")%}
-						<div><a href="{{url({pageId: value},true)}}">{{value}}</a></div>
+						{% if value %}
+						{% include 'root/blocks/fields/link-to-page.html.twig' %}
+						
+						{% endif %}
 						{%elseif(cValue=="localiserField")%}
 						
       					{%endif%}

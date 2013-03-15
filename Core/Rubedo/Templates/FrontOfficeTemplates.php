@@ -105,6 +105,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
         $this->_twig->addFunction('displaySingleUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displaySingleUrl'));
         $this->_twig->addFunction('displayCanonicalUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayCanonicalUrl'));
+        $this->_twig->addFunction('getPageTitle', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getPageTitle'));
     }
 
     /**
@@ -205,6 +206,16 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public static function displaySingleUrl ($contentId, $siteId = null, $defaultUrl=null)
     {
         return Manager::getService('Url')->displaySingleUrl($contentId, $siteId, $defaultUrl);
+    }
+    
+    public static function getPageTitle ($contentId)
+    {
+        $page = Manager::getService('Pages')->findByID($contentId);
+        if($page){
+            return $page['title'];
+        }else{
+            return null;
+        }
     }
     
     public static function displayCanonicalUrl ($contentId, $siteId = null)
