@@ -1,0 +1,19 @@
+
+{%set fvalue=value|number_format(0, '.', '') %}
+{%if value==fvalue%}
+{%set decimal="false"%}
+{%else%}
+{%set decimal="true"%}
+{%endif%}
+<div>
+{%if decimal=="true"%}
+{%set value=value+1%}
+{%endif%}
+	{%for i in 1..value%}
+		{%if loop.index==value and decimal=="true"%}
+		<i class="icon-star-empty"></i>
+		{%else%}
+		<i class="icon-star"></i>
+		{%endif%}
+	{%endfor%}
+</div>

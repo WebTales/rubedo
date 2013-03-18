@@ -81,7 +81,7 @@ CKEDITOR
 														groups : [ 'styles' ]
 													},
 													{
-														name : 'insert'
+														items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', 'Unlink']
 													},
 													{
 														name : 'managing',
