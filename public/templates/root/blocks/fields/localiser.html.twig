@@ -1,0 +1,98 @@
+{{value}}
+{{data.text}}
+{% if isLoggedIn %}
+{%if query.type=="manual" or query.type=="simple"%}
+<div id="list-editmode" class="hide">
+	<div class="btn-group pull-left">
+	<a class="btn" href="#" id="btn-add-content" onclick="createContentWindow('{{query.type}}','{{data[0].typeId}}','{{query.id}}')"> <i class="icon-plus-sign"></i>
+	Ajouter un contenu
+	</a>
+	</div>
+</div>
+<div class="clearfix"></div>
+{%endif%}
+{%endif%}
+<script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
+    </script>
+<script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(48.8567, 2.3508),
+          zoom: 14,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+      var options={{value|replace({'"': "'"})|cleanHtml}};
+      {%set mapid="map-"~random() %}
+      var map = new google.maps.Map(document.getElementById("{{mapid}}map_canvas"),
+            mapOptions);
+      var geocoder = new google.maps.Geocoder();
+      var useLocation = true;
+      var centerAddress = options.address;
+      var centerLatitude = options.latitude;
+      var centerLongitude = options.longitude;
+	  if (useLocation&&navigator.geolocation) {
+
+		  navigator.geolocation.getCurrentPosition(function(position) {
+		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+		      map.setCenter(initialLocation);
+		      new google.maps.Marker({
+			  	map:map,
+			  	position:initialLocation,
+			  	title:"You are here",
+			  	icon:"https://maps.gstatic.com/mapfiles/ms2/micons/man.png"
+			      });
+		    }, function() {
+		      console.log("geolocation Error");
+		    });
+		  
+      } else if (centerAddress) {
+      	
+      	geocoder.geocode( { 'address': centerAddress}, function(results, status) {
+      		if (status == google.maps.GeocoderStatus.OK) {
+      			map.setCenter(results[0].geometry.location);
+      		}
+      	});
+      } else if (centerLatitude&&centerLongitude){
+    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
+      }
+		
+		
+		
+      function handleContent(contentPosition, title, contentString){
+    	  if (contentPosition.address){
+    		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
+    	      		if (status == google.maps.GeocoderStatus.OK) {
+    	      			createContentMarker(results[0].geometry.location, title, contentString);
+    	      		}
+    	      	});  
+    	  } else if (contentPosition.latitude&&contentPosition.longitude){
+    		  createContentMarker(new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude), title, contentString);     
+          }
+      }
+      
+      function createContentMarker(location,title,contentString){
+    	  var marker = new google.maps.Marker({
+			  	map:map,
+			  	position:location,
+			  	title:title
+			});
+    	  var infowindow = new google.maps.InfoWindow({
+              content: contentString         
+           });
+    	  google.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(map,marker);
+          });
+		  
+      }
+      handleContent(options,"{{data.text}}","{{data.summary}}");
+      }
+     
+      window.onload = initialize;
+</script>
+<div id="{{mapid}}map_canvas" style="height:500px; margin-bottom:10px;" class="row-fluid"></div>
+<style type="text/css">
+#{{mapid}}map_canvas img {
+    max-width: none;
+}	  
+</style>
