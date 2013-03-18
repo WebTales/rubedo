@@ -1,5 +1,3 @@
-{{value}}
-{{data.text}}
 {% if isLoggedIn %}
 {%if query.type=="manual" or query.type=="simple"%}
 <div id="list-editmode" class="hide">
@@ -90,7 +88,7 @@
      
       window.onload = initialize;
 </script>
-<div id="{{mapid}}map_canvas" style="height:500px; margin-bottom:10px;" class="row-fluid"></div>
+<div id="{{mapid}}map_canvas" style="height:400px; margin-bottom:10px;" class="row-fluid"></div>
 <style type="text/css">
 #{{mapid}}map_canvas img {
     max-width: none;
