@@ -106,6 +106,24 @@ class Queries extends AbstractCollection implements IQueries
             )
         )
     );
+    
+    /**
+     * Add a readOnly field to contents based on user rights
+     *
+     * @param array $obj
+     * @return array
+     */
+    protected function _addReadableProperty ($obj)
+    {
+    	if (! self::isUserFilterDisabled()) {
+    
+    		if (!Manager::getService('Acl')->hasAccess("write.ui.queries")) {
+    			$obj['readOnly'] = true;
+    		}
+    	}
+    
+    	return $obj;
+    }
 
     public function __construct ()
     {
