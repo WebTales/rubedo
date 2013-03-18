@@ -3,10 +3,10 @@
 	"require": {
 		"jquery/jquery": "1.9.1",
 		"sencha/extjs": "4.1.1a",
-		"webtales/ckeditor": "dev-master",
+		"webtales/ckeditor": "dev-develop",
 		"twitter/bootstrap": "v2.3.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "dev-master",
+		"webtales/rubedo-backoffice-ui": "dev-develop",
 		"longtailvideo/jwplayer":"6"
 	},
 	"require-dev": {},
