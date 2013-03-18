@@ -35,7 +35,7 @@ class Blocks_AddthisController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array());
         $output = $this->getAllParams();
 		$output['type']=$blockConfig["disposition"];
-		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;
+		$output['small']=$blockConfig['small']==1?false:true;
 		$output['like']=isset($blockConfig['like'])?$blockConfig['like']:false;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthis.html.twig");
         $css = array();
