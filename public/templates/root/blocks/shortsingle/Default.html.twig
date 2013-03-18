@@ -4,14 +4,14 @@
 
 	<header class="entry-header">
 		<h2 class="post-title-small">
-			<a href='{{ displaySingleUrl(content.id) }}' title='Actu'>{{content.title}}</a>
+			<a href='{{ displaySingleUrl(content.id,null,singlePage) }}' title='Actu'>{{content.title}}</a>
 		</h2>
 	</header>
 	<div class="entry-content editable" id="{{ content.id }}_summary">
 		{{content.summary|cleanHtml}}</div>
 
 	<div class="btn btn-small pull-right">
-		<a href="{{ displaySingleUrl(content.id) }}">En savoir plus <span
+		<a href="{{ displaySingleUrl(content.id,null,singlePage) }}">En savoir plus <span
 			class="icon-forward"></span></a>
 	</div>
 
