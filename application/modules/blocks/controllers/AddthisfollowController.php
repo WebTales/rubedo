@@ -45,7 +45,7 @@ class Blocks_AddthisfollowController extends Blocks_AbstractController
 		$output = $this->getAllParams();
 		$output['networks']=$data;
 		$output["type"]=isset($blockConfig["disposition"])?$blockConfig["disposition"]:"Horizontal";
-		$output['small']=isset($blockConfig['small'])?$blockConfig['small']:false;
+		$output['small']=$blockConfig['small']==1?false:true;
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthisfollow.html.twig");
         

@@ -9,31 +9,20 @@
       		{%for cKey,cValue in type %}
       			{%if(key==cKey)%}
       					{%if cValue=="ImagePickerField"%}
-      					    <div class="pull-left thumbnail" style="margin: 1em;">
-      						<img alt=""  style="max-height: 200px; max-width: 200px;" class="imageLeft" src="/dam?media-id={{value}}" />
-      						</div>
+      					   {% include 'root/blocks/fields/imageField.html.twig' %}
       					{%elseif(cValue=="CKEField")%}
-      					<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}">
-						{{value|cleanHtml}}
-						</div>
+      						{% include 'root/blocks/fields/CKEfield.html.twig' %}
       					{%elseif(cValue=="ratingField")%}
-      						<div>
-      							{%for i in 0..value%}
-      							<i class="icon-star"></i>
-      							{%endfor%}
-      						</div>
+      						{% include 'root/blocks/fields/rating.html.twig' %}
       					{%elseif(cValue=="textareafield")%}
-      					<div style="clear:right;"><p class="editable "  id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}</p></div>
+      						{% include 'root/blocks/fields/textarea.html.twig' %}
       					{%elseif(cValue=="textfield")%}
-      					<div><span class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}</span></div>
+      						{% include 'root/blocks/fields/text.html.twig' %}
       					{%elseif(cValue=="slider")%}
-      					<div class="progress progress-info progress-striped" style="clear:both;">
-  							<div class="bar" style="width:{{value}}%"></div>
-						</div>
+      						{% include 'root/blocks/fields/slider.html.twig' %}
 						{%elseif(cValue=="treepicker")%}
 						{% if value %}
-						{% include 'root/blocks/fields/link-to-page.html.twig' %}
-						
+							{% include 'root/blocks/fields/link-to-page.html.twig' %}
 						{% endif %}
 						{%elseif(cValue=="localiserField")%}
 						
