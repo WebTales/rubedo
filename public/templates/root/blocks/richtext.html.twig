@@ -1,4 +1,4 @@
 {% extends "root/block.html.twig" %}
 {% block mainContent %}
-<div class="editable" id="{{ data.id }}_text">{{ text|raw }}</div>
+<div class="editable" id="{{ contentId }}_body">{{ text|cleanHtml }}</div>
 {% endblock %}

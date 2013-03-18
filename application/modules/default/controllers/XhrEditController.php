@@ -1,4 +1,5 @@
 <?php
+use Rubedo;
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -14,7 +15,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
+Use Rubedo\Services\Manager;
 /**
  * Front End Edition controller
  *
@@ -46,7 +47,7 @@ class XhrEditController extends Zend_Controller_Action
      */
     public function init ()
     {
-        $this->_dataService = Rubedo\services\Manager::getService('Contents');
+        $this->_dataService = Manager::getService('Contents');
     }
 
     /**
@@ -60,8 +61,8 @@ class XhrEditController extends Zend_Controller_Action
             $contentId = explode("_", $contentId);
             $id = $contentId[0];
             $field = $contentId[1];
-            
             $baseData = $this->_dataService->findById($id, false, false);
+            
             if ($baseData["status"] !== 'published') {
                 $returnArray['success'] = false;
                 $returnArray['msg'] = 'Content already have a draft version';
@@ -72,7 +73,7 @@ class XhrEditController extends Zend_Controller_Action
                 }
                 $returnArray = $this->_dataService->update($baseData, array(
                     'safe' => true
-                ), true);
+                ), false);
                 
             }
         } else {

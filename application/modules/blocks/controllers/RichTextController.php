@@ -37,6 +37,7 @@ class Blocks_RichTextController extends Blocks_AbstractController
 		$content=Manager::getService('Contents')->findById($blockConfig["contentId"]);
 		
 		$output = $this->getAllParams();
+		$output['contentId']= $blockConfig["contentId"];
         $output['text'] = $content["workspace"]["fields"]["body"];
 		$output['editorConfig'] = isset($blockConfig['editorConfig']) ? $blockConfig['editorConfig'] : null;                
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/richtext.html.twig");
