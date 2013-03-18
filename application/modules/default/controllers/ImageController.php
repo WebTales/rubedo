@@ -79,36 +79,44 @@ class ImageController extends Zend_Controller_Action
             $type = ($type == 'jpg') ? 'jpeg' : $type;
             $gdReturnClassName = 'image' . $type;
             
-            $imageService = new Rubedo\Image\Image();
-            $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, $size);
+            $tmpImagePath = sys_get_temp_dir() . '/' . $fileId . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
+            $now = Manager::getService('CurrentTime')->getCurrentTime();
             
-            switch ($this->getParam('attachment', null)) {
-                case 'download':
-                    $forceDownload = true;
-                    break;
-                default:
-                    $forceDownload = false;
-                    break;
+            //Zend_Debug::dump($tmpImagePath);die();
+            
+            if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
+                
+                $imageService = new Rubedo\Image\Image();
+                $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, $size);
+                
+                switch ($this->getParam('attachment', null)) {
+                    case 'download':
+                        $forceDownload = true;
+                        break;
+                    default:
+                        $forceDownload = false;
+                        break;
+                }
+                
+                if ($forceDownload) {
+                    $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
+                }
+                
+                
+                
+                $gdReturnClassName($newImage, $tmpImagePath);
+                // imagedestroy($image);
+                imagedestroy($newImage);
             }
-            
-            if ($forceDownload) {
-                $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
-            }
-            
             $this->getResponse()->clearBody();
             $this->getResponse()->clearHeaders();
             $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
-            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600,true);
-            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")),true);
+            $this->getResponse()->setHeader('Pragma', 'Public');
+            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600, true);
+            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")), true);
             $this->getResponse()->sendHeaders();
-
-            
-            
-            $gdReturnClassName($newImage);
-            // imagedestroy($image);
-            imagedestroy($newImage);
-            
-            exit;
+            readfile($tmpImagePath);
+            exit();
         } else {
             throw new \Rubedo\Exceptions\User("No Image Given", 1);
         }
