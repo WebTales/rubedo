@@ -2,7 +2,7 @@
 
     <ul class="nav nav-tabs nav-stacked">
 	{% for content in data %}
-	<li><a href="{{ displaySingleUrl(content.id) }}">
+	<li><a href="{{ displaySingleUrl(content.id,null,singlePage) }}">
 	    <div class="pull-left">
 	        {% if content.image %}
 	        <img alt=""
