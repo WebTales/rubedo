@@ -14,6 +14,7 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
 <script type="text/javascript">
+
       function initialize() {
         var mapOptions = {
           center: new google.maps.LatLng(48.8567, 2.3508),
@@ -33,7 +34,7 @@
 
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-		      map.setCenter(initialLocation);
+		     map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));   
 		      new google.maps.Marker({
 			  	map:map,
 			  	position:initialLocation,
@@ -54,8 +55,6 @@
       } else if (centerLatitude&&centerLongitude){
     	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
       }
-		
-		
 		
       function handleContent(contentPosition, title, contentString){
     	  if (contentPosition.address){
@@ -85,7 +84,6 @@
       }
       handleContent(options,"{{data.text}}","{{data.summary}}");
       }
-     
       window.onload = initialize;
 </script>
 <div id="{{mapid}}map_canvas" style="height:400px; margin-bottom:10px;" class="row-fluid"></div>
@@ -94,3 +92,27 @@
     max-width: none;
 }	  
 </style>
+{% if isLoggedIn %}
+<div id="list-editmode" class="hide">
+<div id="wrap-control" style="padding:10px 10px 10px 10px; background-color:#eee; border-radius:10px;" >
+<div style="float:left;">
+<label class="control-label" for="inputAddress">Address</label>
+<input class="input-xxlarge" id="inputAddress" type="text" >
+</div>
+<div style="float:right;">
+<label class="control-label" for="inputLocation">Location</label>
+<input class="input-xxlarge" id="inputLocation" type="text" placeholder="Location">
+</div>
+<div style="float:left;">
+<label class="control-label" for="inputLatitude">Latitude</label>
+<input class="input-xxlarge" id="inputLatitude" type="text" placeholder="Latitude">
+</div>
+<div style="float:right;">
+<label class="control-label" for="inputLongitude" >Longitude</label>
+<input class="input-xxlarge" id="inputLongitude" type="text" placeholder="Longitude">
+</div>
+   <a class="btn btn" style="width:90%; margin-left:2.5%;"type="button" onclick="refreshMap()">Rafraichir</a>
+</div>
+</div>
+<div class="clearfix"></div>
+{%endif%}
