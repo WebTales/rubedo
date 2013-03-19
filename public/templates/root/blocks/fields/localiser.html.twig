@@ -93,14 +93,12 @@ function initialize() {
       marker.setMap(null);
      options={
       	'address':document.getElementById("inputAddress").value,
-      	'title':document.getElementById("inputTitle").value,
       	'latitude':document.getElementById("inputLatitude").value,
       	'longitude':document.getElementById("inputLongitude").value
       	
       }
      console.log(options);
-     markerTitle=options.title!=""?options.title:"{{ data.text }}";
-     handleContent(options,markerTitle,"{{data.summary}}");
+     handleContent(options,"{{ data.text }}","{{data.summary}}");
 
      if(options.address!="")
      {
@@ -128,13 +126,9 @@ function initialize() {
 {% if isLoggedIn %}
 <div id="list-editmode" class="hide">
 <div id="wrap-control" style="padding:10px 10px 10px 10px; background-color:#eee; border-radius:10px;" >
-<div style="float:left;">
+<div>
 <label class="control-label" for="inputAddress">Address</label>
-<input class="input-xxlarge" id="inputAddress" type="text" placeholder="Address" >
-</div>
-<div style="float:right;">
-<label class="control-label" for="inputTitle">Title</label>
-<input class="input-xxlarge" id="inputTitle" type="text" placeholder="Title">
+<input class="input-xxlarge"  style="width:99%;"id="inputAddress" type="text" placeholder="Address" >
 </div>
 <div style="float:left;">
 <label class="control-label" for="inputLatitude">Latitude</label>
