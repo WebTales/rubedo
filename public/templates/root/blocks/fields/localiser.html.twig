@@ -104,7 +104,6 @@ function initialize() {
      {
      geocoder.geocode( { 'address': options.address}, function(results, status) {
     		if (status == google.maps.GeocoderStatus.OK) {
-        		console.log(results[0].geometry.location);
     			map.setCenter(new google.maps.LatLng(results[0].geometry.location.kb,results[0].geometry.location.lb));
     		}
     	});  
