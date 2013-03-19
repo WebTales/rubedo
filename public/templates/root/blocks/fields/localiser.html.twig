@@ -14,26 +14,30 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
 <script type="text/javascript">
-      function initialize() {
+var map;
+var options={{value|replace({'"': "'"})|cleanHtml}};
+var useLocation = true;
+var centerAddress = options.address;
+var centerLatitude = options.latitude;
+var centerLongitude = options.longitude;
+var geocoder = new google.maps.Geocoder();
+var marker; 
+
+function initialize() {
         var mapOptions = {
           center: new google.maps.LatLng(48.8567, 2.3508),
           zoom: 14,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-      var options={{value|replace({'"': "'"})|cleanHtml}};
       {%set mapid="map-"~random() %}
-      var map = new google.maps.Map(document.getElementById("{{mapid}}map_canvas"),
+      map = new google.maps.Map(document.getElementById("{{mapid}}map_canvas"),
             mapOptions);
-      var geocoder = new google.maps.Geocoder();
-      var useLocation = true;
-      var centerAddress = options.address;
-      var centerLatitude = options.latitude;
-      var centerLongitude = options.longitude;
+      
 	  if (useLocation&&navigator.geolocation) {
 
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-		      map.setCenter(initialLocation);
+		     map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));   
 		      new google.maps.Marker({
 			  	map:map,
 			  	position:initialLocation,
@@ -54,9 +58,10 @@
       } else if (centerLatitude&&centerLongitude){
     	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
       }
-		
-		
-		
+      handleContent(options,"{{data.text}}","{{data.summary}}");
+      }
+     
+      
       function handleContent(contentPosition, title, contentString){
     	  if (contentPosition.address){
     		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
@@ -68,9 +73,9 @@
     		  createContentMarker(new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude), title, contentString);     
           }
       }
-      
+         
       function createContentMarker(location,title,contentString){
-    	  var marker = new google.maps.Marker({
+    	  marker = new google.maps.Marker({
 			  	map:map,
 			  	position:location,
 			  	title:title
@@ -81,12 +86,38 @@
     	  google.maps.event.addListener(marker, 'click', function() {
               infowindow.open(map,marker);
           });
-		  
       }
-      handleContent(options,"{{data.text}}","{{data.summary}}");
+
+          function refreshMap()
+      {
+      marker.setMap(null);
+     options={
+      	'address':document.getElementById("inputAddress").value,
+      	'title':document.getElementById("inputTitle").value,
+      	'latitude':document.getElementById("inputLatitude").value,
+      	'longitude':document.getElementById("inputLongitude").value
+      	
       }
+     console.log(options);
+     markerTitle=options.title!=""?options.title:"{{ data.text }}";
+     handleContent(options,markerTitle,"{{data.summary}}");
+
+     if(options.address!="")
+     {
+     geocoder.geocode( { 'address': options.address}, function(results, status) {
+    		if (status == google.maps.GeocoderStatus.OK) {
+        		console.log(results[0].geometry.location);
+    			map.setCenter(new google.maps.LatLng(results[0].geometry.location.kb,results[0].geometry.location.lb));
+    		}
+    	});  
+     }
+     else if( options.latitude!="" && options.longitude!=""){
+      map.setCenter(new google.maps.LatLng(options.latitude,options.longitude));}
+       initialize;
      
-      window.onload = initialize;
+      }  
+         window.onload = initialize; 
+     
 </script>
 <div id="{{mapid}}map_canvas" style="height:400px; margin-bottom:10px;" class="row-fluid"></div>
 <style type="text/css">
@@ -94,3 +125,27 @@
     max-width: none;
 }	  
 </style>
+{% if isLoggedIn %}
+<div id="list-editmode" class="hide">
+<div id="wrap-control" style="padding:10px 10px 10px 10px; background-color:#eee; border-radius:10px;" >
+<div style="float:left;">
+<label class="control-label" for="inputAddress">Address</label>
+<input class="input-xxlarge" id="inputAddress" type="text" placeholder="Address" >
+</div>
+<div style="float:right;">
+<label class="control-label" for="inputTitle">Title</label>
+<input class="input-xxlarge" id="inputTitle" type="text" placeholder="Title">
+</div>
+<div style="float:left;">
+<label class="control-label" for="inputLatitude">Latitude</label>
+<input class="input-xxlarge" id="inputLatitude" type="text" placeholder="Latitude">
+</div>
+<div style="float:right;">
+<label class="control-label" for="inputLongitude" >Longitude</label>
+<input class="input-xxlarge" id="inputLongitude" type="text" placeholder="Longitude">
+</div>
+   <a class="btn btn" style="width:90%; margin-left:2.5%;"type="button" onclick="refreshMap()">Rafraichir</a>
+</div>
+</div>
+<div class="clearfix"></div>
+{%endif%}
