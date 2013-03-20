@@ -65,7 +65,17 @@
 	</target>
 	
 	<target name="git.pull">
-		<gitpull repository="." source="origin" />
+		<if>
+			<not>
+				<os family="windows"/>
+			</not>
+			<then>
+        		<gitpull repository="." source="origin" />
+    		</then>
+    		<else>
+        		<exec command="git pull" passthru="true" dir="${project.basedir}"/>
+    		</else>
+		</if>
 	</target>
 	
 	<target name="phpunit">
