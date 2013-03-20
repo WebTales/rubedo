@@ -95,7 +95,6 @@ function initialize() {
       	'address':document.getElementById("inputAddress").value,
       	'latitude':document.getElementById("inputLatitude").value,
       	'longitude':document.getElementById("inputLongitude").value
-      	
       }
      handleContent(options,"{{ data.text }}","{{data.summary}}");
 
@@ -104,6 +103,8 @@ function initialize() {
      geocoder.geocode( { 'address': options.address}, function(results, status) {
     		if (status == google.maps.GeocoderStatus.OK) {
     			map.setCenter(new google.maps.LatLng(results[0].geometry.location.kb,results[0].geometry.location.lb));
+    			document.getElementById("inputLatitude").value=results[0].geometry.location.kb;
+    			document.getElementById("inputLongitude").value=results[0].geometry.location.lb;
     		}
     	});  
      }
