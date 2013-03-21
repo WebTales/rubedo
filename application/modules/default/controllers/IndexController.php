@@ -502,6 +502,10 @@ class IndexController extends Zend_Controller_Action
             case 'contentList':
                 $controller = 'content-list';
                 break;
+             case 'Formulaire':
+             case 'form':
+                	$controller = 'forms';
+                	break;
             case 'calendar':
                 $controller = 'calendar';
                 break;
