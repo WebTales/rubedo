@@ -56,12 +56,12 @@ class XhrEditController extends Zend_Controller_Action
     {
         $contentId = $this->getRequest()->getParam('id');
         $data = $this->getRequest()->getParam('data');
+ 
         if (! empty($contentId)) {
             $contentId = explode("_", $contentId);
             $id = $contentId[0];
             $field = $contentId[1];
             $baseData = $this->_dataService->findById($id, false, false);
-            
             if ($baseData["status"] !== 'published') {
                 $returnArray['success'] = false;
                 $returnArray['msg'] = 'Content already have a draft version';
