@@ -23,3 +23,6 @@
 	border-radius:10px;
 }
 
+.gMap img {
+    max-width: none;
+}	  
