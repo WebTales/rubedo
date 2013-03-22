@@ -13,7 +13,7 @@
 <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&amp;sensor=true">
     </script>
-<div id="{{ data.id }}_{{key}}" data-conf='{{value|cleanHtml}}' data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder gMap"></div>
+<div id="{{ data.id }}_{{key}}" data-conf='{{value|cleanHtml}}' data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
 
 {% if isLoggedIn %}
 <div  class="hide list-editmode">
