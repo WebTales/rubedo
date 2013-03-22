@@ -26,7 +26,10 @@
 						{% endif %}
 						{%elseif(cValue=="localiserField")%}
 							{% include 'root/blocks/fields/localiser.html.twig' %}
+      					{%elseif(cValue=="datefield")%}
+							{% include 'root/blocks/fields/date.html.twig' %}
       					{%endif%}
+      					
       			{%endif%}
       		{%endfor%}
       		{%endif%}

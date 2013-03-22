@@ -25,8 +25,8 @@
 		<input type="password" id="password" class="input-medium" placeholder="Mot de passe">
 		</span>
  	 </div>
- 	 <div id="error-msg" style="color:red; font-style:italic; margin-left:5%;">
- 	 </div>
+ 	 <div id="error-msg" class="alert alert-error" style="display:none;">
+     </div>
  	 <div class="modal-footer">
     <a href="#"  data-dismiss="modal" class="btn">Annuler</a>
     <a href="#" onclick="loggin()" class="btn btn-primary">Connexion</a></div>
@@ -43,6 +43,7 @@ function loggin()
 		   data: { login: jQuery('#password').val(), password: jQuery('#login').val() },
 		   success: function(msg){
 		   if(msg.success==false){
+		   jQuery("#error-msg").show();
 		   jQuery("#error-msg").html(msg.message);
 		   }else{
 		   	jQuery('#password').val("");

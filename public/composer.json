@@ -7,7 +7,8 @@
 		"twitter/bootstrap": "v2.3.0",
 		"thomaspark/bootswatch" : "v2.3.0",
 		"webtales/rubedo-backoffice-ui": "dev-develop",
-		"longtailvideo/jwplayer":"6"
+		"longtailvideo/jwplayer":"6",
+		"st3ph/easyWizard":"1.0"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -70,6 +71,16 @@
 		}, {
 			"type": "vcs",
 			"url": "git://github.com/WebTales/ckeditor.git"
+		},{
+			"type": "package",
+			"package": {
+				"name": "st3ph/easyWizard",
+				"version": "1.0",
+				"dist": {
+					"url": "https://github.com/WebTales/jquery.easyWizard/archive/1.0.zip",
+					"type": "zip"
+				}
+			}
 		}
 	],
 	"minimum-stability": "stable",
