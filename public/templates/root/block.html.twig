@@ -1,6 +1,10 @@
-<div class=" {{ classHtml }}"   {% if idHtml %} id="{{ idHtml }}"
-	
-	{% endif %}>
+
+{% if renderDiv %}
+<{% if elementTag %}{{elementTag}}{% else %}div{% endif %} class=" {{ classHtml }}"   
+    {% if idHtml %} id="{{ idHtml }}"{% endif %}
+	{% if elementStyle %}style="{{ elementStyle }}"{% endif %}
+	>
+{% endif %}
 	
 {% if displayTitle and blockTitle %}<h4>{{ blockTitle }}</h4>{% endif %}
 	{% block mainContent %}
@@ -16,4 +20,6 @@
 
 
 	{% endblock %}
-</div>
+{% if renderDiv %}
+</{% if elementTag %}{{elementTag}}{% else %}div{% endif %}>
+{% endif %}

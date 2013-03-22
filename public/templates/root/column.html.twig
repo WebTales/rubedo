@@ -1,5 +1,8 @@
-<div class="{% if span > 0 %}span{{span}}{% endif %}{% if offset > 0 %} offset{{offset}}{% endif %} {{ classHtml }}"
- {% if idHtml %}id="{{ idHtml }}"{% endif %}>
+<{% if elementTag %}{{elementTag}}{% else %}div{% endif %} 
+        class="{% if renderSpan and span > 0 %}span{{span}}{% endif %}{% if renderSpan and offset > 0 %} offset{{offset}}{% endif %} {{ classHtml }}"
+       {% if idHtml %}id="{{ idHtml }}"{% endif %}
+       {% if elementStyle %}style="{{ elementStyle }}"{% endif %}
+       >
      {% if displayTitle %}
 	<h3>{{ eTitle }}</h3>
 	{% endif %}
@@ -21,4 +24,4 @@
 				{% include row.template with row %}
 		{% endfor %}
 	{% endif %}
-</div>
+</{% if elementTag %}{{elementTag}}{% else %}div{% endif %}>
