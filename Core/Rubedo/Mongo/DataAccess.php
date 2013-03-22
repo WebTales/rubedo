@@ -304,7 +304,13 @@ class DataAccess implements IDataAccess
         
         // switch from cursor to actual array
         if ($cursor->count() > 0) {
-            $data = iterator_to_array($cursor);
+            try{
+                $data = iterator_to_array($cursor);
+            }catch (\Exception $e){
+
+                \Zend_Debug::dump($sort);
+                die();
+            }
         } else {
             $data = array();
         }
@@ -941,7 +947,7 @@ class DataAccess implements IDataAccess
             }
             
             // add validated input
-            $this->_sortArray[$name] = $value;
+            $this->_sortArray[$name] = intval($value);
         }
     }
 
@@ -1214,6 +1220,11 @@ class DataAccess implements IDataAccess
     {
         $options['safe'] = true;
         $result = $this->_collection->ensureIndex($keys, $options);
+        return $result;
+    }
+    
+    public function dropIndexes(){
+        $result = $this->_collection->deleteIndexes();
         return $result;
     }
 

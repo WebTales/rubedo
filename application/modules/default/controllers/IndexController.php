@@ -394,6 +394,9 @@ class IndexController extends Zend_Controller_Action
                 $returnArray[$key]['span'] = null;
             }
             $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
+            $returnArray[$key]['elementTag'] = isset($column['elementTag']) ? $column['elementTag'] : null;
+            $returnArray[$key]['elementStyle'] = isset($column['elementStyle']) ? $column['elementStyle'] : null;
+            $returnArray[$key]['renderSpan'] = isset($column['renderSpan']) ? $column['renderSpan'] : true;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('column.html.twig');
             $returnArray[$key]['classHtml'] = isset($column['classHTML']) ? $column['classHTML'] : null;
             $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($column['responsive']);
@@ -442,6 +445,12 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['classHtml'] = isset($row['classHTML']) ? $row['classHTML'] : null;
             $returnArray[$key]['classHtml'] .= $this->_buildResponsiveClass($row['responsive']);
             $returnArray[$key]['idHtml'] = isset($row['idHTML']) ? $row['idHTML'] : null;
+            $returnArray[$key]['elementTag'] = isset($row['elementTag']) ? $row['elementTag'] : null;
+            $returnArray[$key]['elementStyle'] = isset($row['elementStyle']) ? $row['elementStyle'] : null;
+            $returnArray[$key]['displayRow'] = isset($row['displayRow']) ? $row['displayRow'] : true;
+            $returnArray[$key]['displayRowFluid'] = isset($row['displayRowFluid']) ? $row['displayRowFluid'] : false;
+            $returnArray[$key]['includeContainer'] = isset($row['includeContainer']) ? $row['includeContainer'] : false;
+            $returnArray[$key]['includeContainerFluid'] = isset($row['includeContainerFluid']) ? $row['includeContainerFluid'] : false;
             
             if (is_array($row['columns'])) {
                 $noSpan = (isset($row['displayAsTab'])) ? $row['displayAsTab'] : false;
@@ -469,6 +478,9 @@ class IndexController extends Zend_Controller_Action
         $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
+        $params['elementTag'] = isset($block['elementTag']) ? $block['elementTag'] : null;
+        $params['elementStyle'] = isset($block['elementStyle']) ? $block['elementStyle'] : null;
+        $params['renderDiv'] = isset($block['renderDiv']) ? $block['renderDiv'] : true;
         $params['idHtml'] = isset($block['idHTML']) ? $block['idHTML'] : null;
         $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : false;
         $params['blockTitle'] = isset($block['title']) ? $block['title'] : null;

@@ -801,6 +801,11 @@ abstract class AbstractCollection implements IAbstractCollection
         }
         return $result;
     }
+    
+    public function dropIndexes(){
+        $result = $this->_dataService->dropIndexes();
+        return $result;
+    }
 
     /**
      * Add a readOnly field to contents based on user rights
