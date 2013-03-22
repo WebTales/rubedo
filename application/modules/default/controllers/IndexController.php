@@ -171,6 +171,9 @@ class IndexController extends Zend_Controller_Action
             Zend_Registry::set('draft', false);
         }
         
+        // build contents tree
+        $this->_pageParams = $this->_getPageInfo($this->_pageId);
+        
         // Load the CSS files
         $this->_servicePage->appendCss('/templates/' . $this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
         
@@ -182,8 +185,7 @@ class IndexController extends Zend_Controller_Action
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
         }
         
-        // build contents tree
-        $this->_pageParams = $this->_getPageInfo($this->_pageId);
+       
         
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
         

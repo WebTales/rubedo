@@ -71,14 +71,15 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
             if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/default.html.twig");
+                $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/rubedo-map.js"),'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/map.js"));
             }
         } else {
             $output = array();
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
+            $js = array();
         }
         
         $css = array();
-        $js = array();
         
         $this->_sendResponse($output, $template, $css, $js);
     }
