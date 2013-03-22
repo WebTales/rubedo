@@ -94,6 +94,18 @@ class Install_IndexController extends Zend_Controller_Action
             $this->redirect($this->_helper->url($action));
         }
     }
+    
+    public function dropIndexesAction ()
+    {
+        Manager::getService('UrlCache')->drop();
+        Manager::getService('Cache')->drop();
+        $servicesArray = Rubedo\Interfaces\config::getCollectionServices();
+        $result = array();
+        foreach ($servicesArray as $service) {
+           $result[] =  Manager::getService($service)->dropIndexes();
+        }
+        $this->_helper->json($result);
+    }
 
     public function startWizardAction ()
     {
@@ -504,6 +516,9 @@ class Install_IndexController extends Zend_Controller_Action
             return false;
         }
     }
+    
+    
+    
 
     protected function _shouldIndex ()
     {

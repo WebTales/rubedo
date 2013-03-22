@@ -1216,6 +1216,11 @@ class DataAccess implements IDataAccess
         $result = $this->_collection->ensureIndex($keys, $options);
         return $result;
     }
+    
+    public function dropIndexes(){
+        $result = $this->_collection->deleteIndexes();
+        return $result;
+    }
 
     /**
      * check if the index is set
