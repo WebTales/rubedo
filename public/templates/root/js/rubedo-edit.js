@@ -124,6 +124,11 @@ jQuery('#btn-save').click(
 							CKEDITOR.instances[i].getData());
 				}
 			}
+			//for every maps 
+			var maps=gMap.getAllInstances();
+			maps.forEach(function(map){
+				save(map.id,JSON.stringify(map.getValues()));
+			});
 			// switch to wiew mode
 			swithToViewMode();
 		});
@@ -141,6 +146,7 @@ function swithToEditMode() {
 	jQuery('#viewmode').hide();
 	jQuery('#editmode').show();
 	jQuery("#list-editmode").show();
+	jQuery(".list-editmode").show();
 }
 
 function swithToViewMode() {
@@ -151,6 +157,7 @@ function swithToViewMode() {
 	jQuery('#viewmode').show();
 	jQuery('#editmode').hide();
 	jQuery("#list-editmode").hide();
+	jQuery(".list-editmode").hide();
 }
 
 function checkIfDirty() {
