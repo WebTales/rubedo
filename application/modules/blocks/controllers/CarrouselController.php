@@ -72,7 +72,12 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $output["imageWidth"]=isset($blockConfig['imageWidth'])?$blockConfig['imageWidth']:null;
         $output["imageHeight"]=isset($blockConfig['imageHeight'])?$blockConfig['imageHeight']:null;
         $output["mode"]=isset($blockConfig['mode'])?$blockConfig['mode']:null;
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html.twig");
+        if (isset($blockConfig['displayType'])) {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+        			"blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html.twig");
+        }
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
