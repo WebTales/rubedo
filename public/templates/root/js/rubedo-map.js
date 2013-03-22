@@ -1,14 +1,14 @@
-var gMap = function (options,id,field,title,text) {
+var gMap = function (options,id,title,text,field) {
 	//Create Class attr
 	gMap.instances.push(this); // Add map into static array of map instances
 		var self=this;
-		this.field=(field)?field:false;
+		this.field=(field=="true")?true:false;
 		this.title=title;
 		this.text=text;
 		this.map;
 		this.options=(typeof options =="string")?JSON.parse(options):options;
 		this.id=id;
-		this.useLocation=true;
+		this.useLocation=(options.useLocation)?options.useLocation:true;
 		this.address=this.options.address;
 		this.latitude=this.options.latitude;
 		this.longitude=this.options.longitude;
@@ -62,6 +62,15 @@ var gMap = function (options,id,field,title,text) {
 			      }
 			
 		},
+		getValues:function(){
+			var self=this;
+			var opt={
+					address:self.address,
+					latitude:self.latitude,
+					longitude:self.longitude
+			}
+			return opt;
+		},
 		createMarker:function(location,title,contentString){
 			var self=this;
 			marker = new google.maps.Marker({
@@ -86,6 +95,9 @@ var gMap = function (options,id,field,title,text) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
 	    	      			self.createMarker(results[0].geometry.location, title, contentString);
 	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.kb,results[0].geometry.location.lb));
+	    	      			self.latitude=results[0].geometry.location.kb;
+			      			self.longitude=results[0].geometry.location.lb;
+			      			self.address=location.address;
 	    	      		}else {
 		    		    	  console.log("geocodage failed :" +status);
 		    		    }
@@ -93,9 +105,22 @@ var gMap = function (options,id,field,title,text) {
 	    	  } else if (location.latitude && location.longitude){
 	    		 self.createMarker(new google.maps.LatLng(location.latitude,location.longitude), title, contentString); 
 	    		 self.map.setCenter(new google.maps.LatLng(location.latitude,location.longitude));
+	    		 this.geocoder.geocode({'latLng': new google.maps.LatLng(location.latitude,location.longitude)}, function(results, status) {
+		    		    
+		    		    if (status == google.maps.GeocoderStatus.OK) {
+		    		     if (results[1]) {
+		    		    	 self.address=results[1].formatted_address;
+		    		    	 self.latitude=location.latitude;
+				      		self.longitude=location.longitude;
+		    		     }
+		    		    } else {
+		    		    	  console.log("geocodage failed :" +status);
+		    		    }
+		    		   });
 	          }
+			return true;
+			
 		},
-		
 		addUserMarker:function(){// Add marker on user position if geolocation is enabled on his navigator
 			var self=this;
 			if(navigator.geolocation)
@@ -122,9 +147,49 @@ var gMap = function (options,id,field,title,text) {
 			self.markers.forEach(function(marker){
 				marker.setMap(null);
 			});
+			self.markers=new Array();
 		}
 	}
 	gMap.instances=new Array();
 	gMap.getAllInstances=function(){
 		return gMap.instances;
+	}
+	gMap.findInstance=function(id){
+		var instance=null;
+		gMap.instances.forEach(function(map){
+			if(map.id==id)
+			{
+				instance=map;
+			}
+		});
+		return instance;
+	}
+	gMap.mapRefresh=function(id){
+		//Add input values
+		var newAddress=jQuery("#"+id+"-edit .address").val();
+		var newLat=jQuery("#"+id+"-edit .latitude").val();
+		var newLong=jQuery("#"+id+"-edit .longitude").val();
+		this.map=gMap.findInstance(id);
+		var self=this;
+		this.address=newAddress;
+		this.latitude=newLat;
+		this.longitude=newLong;
+		/*this.address=(newAddress!="")?newAddress:this.map.address;
+		this.latitude=(newLat!="")?newLat:this.map.latitude;
+		this.longitude=(newLong!="")?newLong:this.map.longitude;*/
+		this.location={
+				address:this.address,
+				latitude:this.latitude,
+				longitude:this.longitude
+		}
+		
+		this.map.addMarker(this.location,this.map.title,this.map.text);
+			/*jQuery("#"+id+"-edit .latitude").val(self.map.latitude);
+			jQuery("#"+id+"-edit .longitude").val(self.map.longitude);
+			jQuery("#"+id+"-edit .address").val(self.map.address);*/
+		//console.log(this.map);
+				
+	   
+	
+		
 	};
