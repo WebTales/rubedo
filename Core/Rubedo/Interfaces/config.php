@@ -61,6 +61,7 @@ class config
 		'ContentTypes'				=>	'Rubedo\\Interfaces\\Collection\\IContentTypes',
 		'Delegations'				=>	'Rubedo\\Interfaces\\Collection\\IDelegations',
 		'Forms'						=>	'Rubedo\\Interfaces\\Collection\\IForms',
+		'FormsResponses'			=>	'Rubedo\\Interfaces\\Collection\\IFormsResponses',
 		'FieldTypes'				=>	'Rubedo\\Interfaces\\Collection\\IFieldTypes',
 		'Groups'					=>	'Rubedo\\Interfaces\\Collection\\IGroups',
 		'Icons'						=>	'Rubedo\\Interfaces\\Collection\\IIcons',
