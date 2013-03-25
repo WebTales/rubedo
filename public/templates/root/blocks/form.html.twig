@@ -1,8 +1,13 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-<form id="{{ form.id }}" type="POST" action="" class="form-vertical">
-
+<form id="{{ form.id }}" method="post" action="" class="form-horizontal">
+	<input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
+	{% for field in formFields.elements %}
+	<input type='text' name='{{ field.id }}' value='{{ values[field.id] }}' />
+	{% endfor %}
+	
+	<input class="button" type="submit" value="suivant"/>
 </form>
 {% endblock %}
 
