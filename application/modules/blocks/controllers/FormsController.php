@@ -35,13 +35,16 @@ class Blocks_FormsController extends Blocks_AbstractController
     	$blockConfig = $this->getParam('block-config', array());
     	
     	$form=Manager::getService('Forms')->findById($blockConfig["formId"]);
-    	\Zend_Debug::dump($form);die();
-    	$output["form"]["pages"] = Zend_Json::encode($form["formPages"]);
-    	$output["form"]["id"]=$form["id"];
+    	
     	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
     	$css = array();
-    	$js = array('/components/st3ph/easyWizard/lib/jquery.easyWizard.js','/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/easyForm.js"));
+    	$js = array();
     	$this->_sendResponse($output, $template, $css, $js);
      
     }
+    
+    public function newAction(){}
+    public function formAction(){}
+    public function finishAction(){}
+   private function _doForm(){}
 }
