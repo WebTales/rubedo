@@ -35,6 +35,17 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         
+        $blockConfig = $this->getRequest()->getParam('block-config');
+        $output["blockConfig"]=$blockConfig;
+        
+        if (isset($blockConfig['displayType'])) {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+        			"blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+        			"blocks/" . $this->_defaultTemplate . ".html.twig");
+        }
+        
         $mongoId = $this->getRequest()->getParam('content-id');
         if (isset($mongoId) && $mongoId != 0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
@@ -67,12 +78,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $output["data"] = $data;
             $output["type"] = $cTypeArray;
             
-            
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
-            if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
-                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/default.html.twig");
-                $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/rubedo-map.js"),'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/map.js"));
-            }
         } else {
             $output = array();
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
@@ -80,7 +85,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         }
         
         $css = array();
-        
         $this->_sendResponse($output, $template, $css, $js);
     }
 
