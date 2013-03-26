@@ -32,6 +32,7 @@ class Blocks_FormsController extends Blocks_AbstractController
 	protected $_hasError = true;
 	protected $_formId;
 	protected $_form;
+	protected $_errors=array();
 	
 	public function init(){
 		parent::init();
@@ -71,7 +72,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
-    		$output['errors'] = array();
+    		$output['errors'] = $this->_errors;
     	}else{
     		//stockage eventuel
     		$this->_updateResponse();
@@ -81,8 +82,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     	}
     	
     	//pass fields to the form template
+    	$output["form"]["id"]=$this->_formId;
     	$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
-
     	//affichage de la page
     	$output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
     	
@@ -108,66 +109,21 @@ class Blocks_FormsController extends Blocks_AbstractController
     
     public function finishAction(){
     	
-    $this->_formResponse["status"]="finished";
+    /*$this->_formResponse["status"]="finished";
     	$result=Manager::getService('FormsResponses')->update($this->_formResponse);
     	if($result['success']){
     		$this->_formResponse = $result['data'];
     		$this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
     		$this->formsSessionArray[$this->_formId]['currentPage'] = 0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    	}
+    	}*/
     	//Ferme le formulaire et renvois a une page de remerciement
     }
     
     private function _validInput($field,$response)
     {
-    	$this->_hasError = true;
+    	$this->_hasError = false;
 		return;
-    	if($field["itemConfig"]["fType"]!="richText")
-    	{
-	    	$validationRules=$field["itemConfig"]["fieldConfig"];
-	    	if($validationRules["allowBlank"]==false){
-	    		if(!empty($response)){
-	    			$valid=true;
-	    		}
-	    		else{
-	    			$valid=false;
-	    		}
-	    	}else{$valid=true;}
-	    	if(isset($validationRules["vtype"]) && $valid==true){
-		    	switch($validationRules["vtype"])
-		    	{
-		    		case "alpha":
-		    			$valid=ctype_alpha($response);
-		    			break;
-		    		case "alphanum":
-		    			$valid=ctype_alnum($response);
-		    			break;
-		    		case "email":
-		    			$valid=preg_match('#^(([a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+\.?)*[a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+)@(([a-z0-9-_]+\.?)*[a-z0-9-_]+)\.[a-z]{2,}$#i',$response)==1?true:false;
-		    			break;
-		    		case "url":
-		    			$valid=preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i',$response)==1?true:false;
-		    			break;
-		    		default:
-		    			$valid=true;
-		    			break;
-		    	}
-	    	}
-	    	if($valid==true){
-	    		if(isset($validationRules["minLenght"])){
-	    			if($response.length<$validationRules["minLenght"]){
-	    				$valid=false;
-	    			}
-	    		}
-	    		if(isset($validationRules["maxLenght"])){
-	    			if($response.length>$validationRules["maxLenght"]){
-	    				$valid=false;
-	    			}
-	    		}
-	    	}
-    	}
-    	return $valid;
     }
 
     
@@ -191,6 +147,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     protected function _computeNewPage(){
     	$this->formsSessionArray[$this->_formId]['currentFormPage'] = 0;
     	Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    	
     }
 
 }

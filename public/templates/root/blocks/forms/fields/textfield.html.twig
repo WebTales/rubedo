@@ -1,0 +1,9 @@
+<div class="control-group">
+    <label class="control-label" for="{{ field.id }}">{{ field.itemConfig.label }}</label>
+       <a href="#" class="help" data-toggle="tooltip"  data-placement="right"  title="{{ field.itemConfig.tooltip }}" data-original-title="{{ field.itemConfig.tooltip }}">
+      <i class="icon-exclamation-sign" style="margin-left:10px;"></i></a>
+    <div class="controls">
+      <input type="text" id="{{ field.id }}" name="{{ field.id }}" value="{{ values[field.id] }}">
+   
+    </div>
+  </div>
