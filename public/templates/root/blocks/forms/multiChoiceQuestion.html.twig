@@ -21,7 +21,7 @@
 	{% endif %}
 	<td>
     <label class="{{ type }}">
-    <input type="{{ type }}" name="{{ item.name }}" value="{{item.inputValue }}"> {{item.boxLabel }}
+    <input type="{{ type }}" name="{{ item.name }}[]" value="{{item.inputValue}}"> {{item.boxLabel }}
   </label>
   </td>
   {% set rank=rank+1 %}

@@ -87,8 +87,9 @@ class Blocks_FormsController extends Blocks_AbstractController
     	
     	//pass fields to the form template
     	$output["form"]["id"]=$this->_formId;
-    	$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
-    	//$output['formFields'] = $this->_pagesArray[$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	//$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	//Zend_Debug::dump($this->_pagesArray);die();
+    	$output['formFields'] = $this->_pagesArray[$this->formsSessionArray[$this->_formId]['currentFormPage']];
     	//affichage de la page
     	$output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
     	
@@ -132,7 +133,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	/*
     	 * Check if field is required
     	 */
-    	if($validationRules["allowBlank"]==false){
+    	if($validationRules["mandatory"]==true){
     		if(empty($response)){
     			$is_valid=false;
     			$this->_errors[$field["id"]]="Ce champ est obligatoire";
@@ -202,36 +203,59 @@ class Blocks_FormsController extends Blocks_AbstractController
     }
     
     protected function _computeNewPage(){
-    
     	if($this->formsSessionArray[$this->_formId]['currentFormPage']>=count($this->_form["formPages"]))
     	{
     		$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
     	}else{
-    		//$this->getParam($field['id'])
-    		$nextPage=$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
-    	foreach($nextPage["elements"] as $field)
+    	$nextPage=$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	foreach($nextPage["elements"] as $key=>$field)
     	{
+   
     		if(!empty($field["itemConfig"]["conditionals"]))
     		{
     			foreach($field["itemConfig"]["conditionals"] as $condition)
     			{
-    				Zend_Debug::dump($this->getAllParams());die();
+    				
+    		
     				if($this->getParam($condition["field"])!=null)
     				{
-    					
-    						/*switch($condition["operator"])
+    						$conditionsArray=array();
+    						switch($condition["operator"])
     						{
     							case "=":
-    								if
-    								if($this->getParam($condition["field"])!=$condition["value"]["value"]);
+    								foreach($condition["value"]["value"] as $value)
+    								{
+    									$conditionsArray[]=in_array($value,$this->getParam($condition["field"]));
+    									
+    								}
+    								if(in_array(false,$conditionsArray))
+    								{
+    									$nextPage["elements"][$key]["itemConfig"]["hidden"]=true;
+    									
+    								}
     								break;
-    						}*/
+    							case"!=":
+    								foreach($condition["value"]["value"] as $value)
+    								{
+    									$conditionsArray[]=in_array($value,$this->getParam($condition["field"]));
+    										
+    								}
+    								if(in_array(true,$conditionsArray))
+    								{
+    									$nextPage["elements"][$key]["itemConfig"]["hidden"]=true;
+    								}
+    								break;
+    						}
     				}
     			}
     		}
     	}
-    	$this->_pagesArray[$this->formsSessionArray[$this->_formId]['currentFormPage']]=$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	/*
+    	 * @todo look why page doesn't display look into pageArray and if the prog pass here
+    	 */
+    	//Zend_Debug::dump($nextPage);die();
+    	$this->_pagesArray[$this->formsSessionArray[$this->_formId]['currentFormPage']]=$nextPage;
     	Manager::getService('Session')->set("forms",$this->formsSessionArray);
     	}
     		
