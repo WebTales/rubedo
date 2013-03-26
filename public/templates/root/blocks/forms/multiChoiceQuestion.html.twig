@@ -1,0 +1,29 @@
+<label>{{ field.itemConfig.label }}</label>
+  <a href="#" class="help" data-toggle="tooltip"  data-placement="right"  title="{{ field.itemConfig.tooltip }}" data-original-title="{{ field.itemConfig.tooltip }}">
+      <i class="icon-exclamation-sign" style="margin-left:10px;"></i></a>
+
+   {% if field.itemConfig.fieldType=="checkboxgroup" %}
+   	{% set type="checkbox" %}  
+   {% elseif field.itemConfig.fieldType=="radiogroup" %} 
+   {% set type="radio" %}  
+   {% endif %}
+
+<table class="table table-condensed">
+   <tr>
+{%  set rank=0 %}
+{% for item in field.itemConfig.fieldConfig.items %}
+	{% if rank ==field.itemConfig.fieldConfig.columns %}
+	</tr>
+	<tr> 
+	{% set rank=0 %}
+	{% endif %}
+	<td>
+    <label class="{{ type }}">
+    <input type="{{ type }}" name="{{ item.name }}"> {{item.boxLabel }}
+  </label>
+  </td>
+  {% set rank=rank+1 %}
+
+{% endfor %}
+</table>
+    

@@ -1,14 +1,13 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-<form id="{{ form.id }}" method="post" action="" class="form-horizontal">
+<form id="{{ form.id }}" method="post" action="" class="form-horizontal rubedo-form" >
 	<input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
 	{% for field in formFields.elements %}
 	{%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
-	<!--  <input type='text' name='{{ field.id }}' value='{{ values[field.id] }}' />-->
 	{% endfor %}
-	
-	<input class="button" type="submit" value="suivant"/>
+
+	<input class="btn" style="float:right;" type="submit" value="Suivant"/>
 </form>
 {% endblock %}
 
