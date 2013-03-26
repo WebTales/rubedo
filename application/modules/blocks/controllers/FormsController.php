@@ -33,6 +33,7 @@ class Blocks_FormsController extends Blocks_AbstractController
 	protected $_formId;
 	protected $_form;
 	protected $_errors=array();
+	protected $_pagesArray=array();
 	
 	public function init(){
 		parent::init();
@@ -40,7 +41,6 @@ class Blocks_FormsController extends Blocks_AbstractController
 		$blockConfig = $this->getParam('block-config', array());
 		$this->_formId = $blockConfig["formId"];
 		$this->_form = Manager::getService('Forms')->findById($this->_formId);
-		 
 		//Check if form already exist on current session
 		$this->formsSessionArray = Manager::getService('Session')->get("forms",array()); //get forms from session
 		if(isset($this->formsSessionArray[$this->_formId]) && isset($this->formsSessionArray[$this->_formId]['id'])){
@@ -60,6 +60,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	 
     	//traitement et vérification
     	if($this->getRequest()->isPost()){
+    		//Zend_Debug::dump($this->getAllParams());die();
     		/*Verification des champs envoyés*/
     		foreach($this->_form["formPages"][$currentFormPage]["elements"] as $field)
     		{
@@ -67,9 +68,12 @@ class Blocks_FormsController extends Blocks_AbstractController
     				continue;
     			}
     			$this->_validInput($field, $this->getParam($field['id']));
+    		
     		}
+    		if(empty($this->_errors)){$this->_hasError=false;
+    		}else{$this->_hasError=true;}
+    		if($this->_hasError==false){$this->formsSessionArray[$this->_formId]['currentFormPage'] ++;}
     	}
-    	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
     		$output['errors'] = $this->_errors;
@@ -84,6 +88,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	//pass fields to the form template
     	$output["form"]["id"]=$this->_formId;
     	$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	//$output['formFields'] = $this->_pagesArray[$this->formsSessionArray[$this->_formId]['currentFormPage']];
     	//affichage de la page
     	$output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
     	
@@ -122,8 +127,60 @@ class Blocks_FormsController extends Blocks_AbstractController
     
     private function _validInput($field,$response)
     {
-    	$this->_hasError = false;
-		return;
+    	$is_valid = true;
+    	$validationRules=$field["itemConfig"]["fieldConfig"];
+    	/*
+    	 * Check if field is required
+    	 */
+    	if($validationRules["allowBlank"]==false){
+    		if(empty($response)){
+    			$is_valid=false;
+    			$this->_errors[$field["id"]]="Ce champ est obligatoire";
+    			
+    		}
+    	}
+    	/*
+    	 * Check validation rules
+    	 */
+    	if(isset($validationRules["vtype"]) && $is_valid == true){
+    		switch($validationRules["vtype"])
+    		{
+    			case "alpha":
+    				$is_valid=ctype_alpha($response)==true?true:false;
+    				break;
+    			case "alphanum":
+    				$is_valid=ctype_alnum($response)==true?true:false;
+    				break;
+    			case "email":
+    				$is_valid=preg_match('#^(([a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+\.?)*[a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+)@(([a-z0-9-_]+\.?)*[a-z0-9-_]+)\.[a-z]{2,}$#i',$response)==1?true:false;
+    				break;
+    			case "url":
+    				$is_valid=preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i',$response)==1?true:false;
+    				break;
+    			default:
+    				$is_valid=true;
+    				break;
+    		}
+    		if($is_valid==false){
+    		$this->_errors[$field["id"]]="Saisie incorrecte";}
+    	}
+    	/*
+    	 * Check Other params
+    	 */
+    	if($is_valid){
+    		if(isset($validationRules["minLength"]) && !empty($validationRules["minLength"])){
+    			if(strlen($response)<$validationRules["minLength"]){
+    				$is_valid=false;
+    				$this->_errors[$field["id"]]="Minimum ".$validationRules["minLength"]." caractères";
+    			}
+    		}
+    		if(isset($validationRules["maxLength"]) && !empty($validationRules["maxLength"])){
+    			if(strlen($response)>$validationRules["maxLength"]){
+    				$is_valid=false;
+    				$this->_errors[$field["id"]]="Maximum ".$validationRules["maxLength"]." caractères";
+    			}
+    		}
+    	}
     }
 
     
@@ -145,9 +202,40 @@ class Blocks_FormsController extends Blocks_AbstractController
     }
     
     protected function _computeNewPage(){
-    	$this->formsSessionArray[$this->_formId]['currentFormPage'] = 0;
+    
+    	if($this->formsSessionArray[$this->_formId]['currentFormPage']>=count($this->_form["formPages"]))
+    	{
+    		$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
+    		Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    	}else{
+    		//$this->getParam($field['id'])
+    		$nextPage=$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	foreach($nextPage["elements"] as $field)
+    	{
+    		if(!empty($field["itemConfig"]["conditionals"]))
+    		{
+    			foreach($field["itemConfig"]["conditionals"] as $condition)
+    			{
+    				Zend_Debug::dump($this->getAllParams());die();
+    				if($this->getParam($condition["field"])!=null)
+    				{
+    					
+    						/*switch($condition["operator"])
+    						{
+    							case "=":
+    								if
+    								if($this->getParam($condition["field"])!=$condition["value"]["value"]);
+    								break;
+    						}*/
+    				}
+    			}
+    		}
+    	}
+    	$this->_pagesArray[$this->formsSessionArray[$this->_formId]['currentFormPage']]=$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
     	Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    	
+    	}
+    		
+    		
     }
 
 }
