@@ -12,3 +12,4 @@ library/HTMLPurifier
 .buildpath
 /vendor
 /composer.lock
+public/templates/fps-tower-theme
