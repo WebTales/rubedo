@@ -25,4 +25,14 @@
 
 .mapPlaceholder img {
     max-width: none;
-}	  
+}
+
+label{
+	display:inline-block;
+}
+.rubedo-form .control-label {
+float: left;
+width:auto;
+text-align:left;
+padding-top: 5px;
+}
