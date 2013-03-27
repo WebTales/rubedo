@@ -31,9 +31,14 @@ class Blocks_ContactController extends Blocks_AbstractController
     
     public function indexAction ()
     {
-        $contactForm = new Application_Form_Contact();
     	$blockConfig = $this->getRequest()->getParam('block-config');
-        
+    	
+    	if(isset($blockConfig['captcha'])){
+    		$contactForm = new Application_Form_Contact(null, $blockConfig['captcha']);
+    	} else {
+    		$contactForm = new Application_Form_Contact();
+    	}
+    	
         $output["blockConfig"]=$blockConfig;
         
         if (isset($blockConfig['displayType'])) {

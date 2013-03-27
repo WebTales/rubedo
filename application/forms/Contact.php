@@ -26,7 +26,15 @@
 
 class Application_Form_Contact extends Zend_Form
 {
-    public function init()
+	protected $_captcha;
+	
+	public function __construct($options = null, $captcha = false)
+	{
+		$this->_captcha = $captcha;
+		parent::__construct($options);
+	}
+	
+	public function init()
     {
     	$this->setMethod('post');
     	
@@ -47,28 +55,34 @@ class Application_Form_Contact extends Zend_Form
     	$message->setLabel('Message *');
     	$message->setRequired(true);
     	$message->setAttrib('rows', 5);
+    	
+    	$this->addElements(array($name, $email, $subject, $message));
 		
-		$captcha = new Zend_Form_Element_Captcha ('captcha',
-			array(
-				'label' => "Merci de saisir le code ci-dessous :",
-				'required' => true,
-				'captcha'=> array(
-					'captcha' => 'image',
-					'wordLen' => 6,
-					'font' => APPLICATION_PATH."/../public/captcha/fonts/fonts-japanese-gothic.ttf",
-					'height' => 100,
-					'width' => 300,
-					'fontSize' => 50,
-					'imgDir' => APPLICATION_PATH."/../public/captcha/",
-					'imgUrl' => Zend_Controller_Front::getInstance()->getBaseUrl()."/captcha",
-					'dotNoiseLevel' => 200,
-					'lineNoiseLevel' => 20,
+    	if($this->_captcha){
+			$captcha = new Zend_Form_Element_Captcha ('captcha',
+				array(
+					'label' => "Merci de saisir le code ci-dessous :",
+					'required' => true,
+					'captcha'=> array(
+						'captcha' => 'image',
+						'wordLen' => 6,
+						'font' => APPLICATION_PATH."/../public/fonts/fonts-japanese-gothic.ttf",
+						'height' => 100,
+						'width' => 300,
+						'fontSize' => 50,
+						'imgDir' => APPLICATION_PATH."/../public/captcha/",
+						'imgUrl' => Zend_Controller_Front::getInstance()->getBaseUrl()."/captcha",
+						'dotNoiseLevel' => 200,
+						'lineNoiseLevel' => 20,
+					)
 				)
-			)
-		);
+			);
+			
+			$this->addElement($captcha);
+    	}
 		
 		$submit = new Zend_Form_Element_Submit('Valider');
 		    	
-    	$this->addElements(array($name, $email, $subject, $message, $captcha, $submit));
+    	$this->addElement($submit);
     }
 }
