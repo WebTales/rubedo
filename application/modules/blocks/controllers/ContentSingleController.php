@@ -27,6 +27,8 @@ require_once ('AbstractController.php');
 class Blocks_ContentSingleController extends Blocks_AbstractController
 {
 
+	protected $_defaultTemplate = 'singlecontent';
+	
     /**
      * Default Action, return the Ext/Js HTML loader
      */
@@ -47,6 +49,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         }
         
         $mongoId = $this->getRequest()->getParam('content-id');
+        
         if (isset($mongoId) && $mongoId != 0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
             $data = $content['fields'];
