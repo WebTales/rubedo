@@ -31,7 +31,8 @@ class Blocks_ContactController extends Blocks_AbstractController
     
     public function indexAction ()
     {
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $contactForm = new Application_Form_Contact();
+    	$blockConfig = $this->getRequest()->getParam('block-config');
         
         $output["blockConfig"]=$blockConfig;
         
@@ -42,6 +43,8 @@ class Blocks_ContactController extends Blocks_AbstractController
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
                     "blocks/" . $this->_defaultTemplate . ".html.twig");
         }
+        
+        $output['contactForm'] = $contactForm;
         
         $css = array();
         $js = array();
