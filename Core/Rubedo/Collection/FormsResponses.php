@@ -27,11 +27,35 @@ use Rubedo\Interfaces\Collection\IFormsResponses;
  */
 class FormsResponses extends AbstractCollection implements IFormsResponses
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'FormsResponses';
-		parent::__construct();
-	}
-	
+    public function __construct ()
+    {
+        $this->_collectionName = 'FormsResponses';
+        parent::__construct();
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
+     */
+    public function getValidResponsesByFormId ($formId,$start = null, $limit = null)
+    {
+        $filter = array();
+        $filter[] = array(
+            'property' => 'status',
+            'value' => 'finished'
+        );
+        $filter[] = array(
+            'property' => 'formId',
+            'value' => $formId
+        );
+        
+        $sort = array(
+            'property' => 'lastUpdateTime',
+            'direction' => 'ASC'
+        );
+        
+        return $this->getList($filter, $sort,$start,$limit);
+    }
 }
