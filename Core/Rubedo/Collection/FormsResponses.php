@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -25,37 +26,58 @@ use Rubedo\Interfaces\Collection\IFormsResponses;
  * @category Rubedo
  * @package Rubedo
  */
-class FormsResponses extends AbstractCollection implements IFormsResponses
-{
-
-    public function __construct ()
-    {
-        $this->_collectionName = 'FormsResponses';
-        parent::__construct();
-    }
-
-    /**
-     * (non-PHPdoc)
-     * 
-     * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
-     */
-    public function getValidResponsesByFormId ($formId,$start = null, $limit = null)
-    {
-        $filter = array();
-        $filter[] = array(
-            'property' => 'status',
-            'value' => 'finished'
-        );
-        $filter[] = array(
-            'property' => 'formId',
-            'value' => $formId
-        );
-        
-        $sort = array(
-            'property' => 'lastUpdateTime',
-            'direction' => 'ASC'
-        );
-        
-        return $this->getList($filter, $sort,$start,$limit);
-    }
+class FormsResponses extends AbstractCollection implements IFormsResponses {
+	public function __construct() {
+		$this->_collectionName = 'FormsResponses';
+		parent::__construct ();
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
+	 */
+	public function getValidResponsesByFormId($formId, $start = null, $limit = null) {
+		$filter = array ();
+		$filter [] = array (
+				'property' => 'status',
+				'value' => 'finished' 
+		);
+		$filter [] = array (
+				'property' => 'formId',
+				'value' => $formId 
+		);
+		
+		$sort = array (
+				'property' => 'lastUpdateTime',
+				'direction' => 'ASC' 
+		);
+		
+		return $this->getList ( $filter, $sort, $start, $limit );
+	}
+	public function countValidResponsesByFormId($formId) {
+		$filter = array ();
+		$filter [] = array (
+				'property' => 'status',
+				'value' => 'finished' 
+		);
+		$filter [] = array (
+				'property' => 'formId',
+				'value' => $formId 
+		);
+		return $this->count ( $filter );
+	}
+	public function countInvalidResponsesByFormId($formId) {
+		$filter = array ();
+		$filter [] = array (
+				'property' => 'status',
+				'value' => 'finished',
+				'operator' => '$ne' 
+		);
+		$filter [] = array (
+				'property' => 'formId',
+				'value' => $formId 
+		);
+		return $this->count ( $filter );
+	}
 }
