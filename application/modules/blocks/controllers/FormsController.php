@@ -354,7 +354,33 @@ class Blocks_FormsController extends Blocks_AbstractController
     						case "=":
     							$pageToCheck["elements"][$key]["itemConfig"]["conditionalQuestion"]=true;
     							$pageToCheck["elements"][$key]["itemConfig"]["target"]=$condition["field"];
-    							$pageToCheck["elements"][$key]["itemConfig"]["value"]=$condition["value"]["value"];
+    							if(is_array($condition["value"]))
+    							{
+    								if(is_array($condition["value"]["value"]))
+    								{
+    									$dataValues="";
+    									foreach($condition["value"]["value"] as $conditionnalValues)
+    									{
+    										$dataValues.=";".$conditionnalValues;
+    									}
+    									$pageToCheck["elements"][$key]["itemConfig"]["value"]=$dataValues;
+    								}elseif(is_string($condition["value"]["value"]))
+    								{
+    									$pageToCheck["elements"][$key]["itemConfig"]["value"]=$condition["value"]["value"];
+    								}
+    							}elseif(is_string($condition["value"]))
+    							{
+    								$type=$this->_getFieldType($condition["field"]);
+    								if($type=="datefield")
+    								{
+    									$dataValue=Manager::getService('Date')->convertToYmd($condition["value"]);
+    								}
+    								else{
+    									$dataValue=$condition["value"];
+    								}
+    								$pageToCheck["elements"][$key]["itemConfig"]["value"]=$dataValue;
+    							}
+    							
     							if(isset($this->_formResponse['data'][$condition["field"]])){
     							$conditionsArray=$this->_checkCondition($condition);}
     							else {
@@ -412,17 +438,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     		}
     	}elseif(is_string($condition["value"]))
     	{
-    		$type=null;
-    		foreach($this->_form["formPages"] as $pages)
-    		{
-    			foreach($pages["elements"] as $item){
-    				if($condition["field"]==$item['id'])
-    				{
-    					$type=$item["itemConfig"]["fieldType"];
-    				}
-    			
-    			}
-    		}
+    		$type=$this->_getFieldType($condition["field"]);
     		switch($type)
     		{
     			case "textfield":
@@ -444,5 +460,19 @@ class Blocks_FormsController extends Blocks_AbstractController
     	}
     	return $returnArray;
     }
-
+    protected function _getFieldType($fieldId)
+    {
+    	$toReturn="";
+    	foreach($this->_form["formPages"] as $pages)
+    	{
+    		foreach($pages["elements"] as $field)
+    		{
+    			if($field["id"]==$fieldId)
+    			{
+    				$toReturn=$field["itemConfig"]["fieldType"];
+    			}
+    		}
+    	}
+    	return $toReturn;
+    }
 }
