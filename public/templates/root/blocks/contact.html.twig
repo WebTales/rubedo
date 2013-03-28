@@ -1,3 +1,20 @@
 <div class="container">
+	{% if errors is defined %}
+		<div class="alert alert-error">
+			<button type="button" class="close" data-dismiss="alert">×</button>
+			<ul>
+				{% for error in errors %}
+					<li>{{ error }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	{% endif %}
+	
+	{% if sendResult %}
+		<div class="alert alert-success">
+		  <button type="button" class="close" data-dismiss="alert">×</button>
+		  Votre e-mail à été envoyé avec succés !
+		</div>
+	{% endif %}
 	{{ contactForm | raw }}
 </div>
