@@ -1,8 +1,12 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-
-<form id="{{ form.id }}" method="post" action="" class="form-horizontal rubedo-form" >
+{% set progress= (currentFormPage*100)/nbFormPages %}
+<div id="form-container-{{ form.id }}" class="rubedo-form-container" >
+<div class="progress progress-info progress-striped">
+  <div class="bar" style="width:{{ progress }}%"></div>
+</div>
+<form id="{{ form.id }}" method="post" action="" class="form-horizontal rubedo-form hero-unit" >
 	<input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
 	{% for field in formFields.elements %}
 	{%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
@@ -13,5 +17,5 @@
 	{% endif %}
 	<input class="btn" style="float:right;" type="submit" value="Suivant"/>
 </form>
-
+</div>
 {% endblock %}
