@@ -42,3 +42,12 @@ padding-top: 5px;
 .rubedo-form .table-condensed tr{
 	border-top:1px solid #ddd !important;
 }
+.rubedo-form .controls{
+	clear:both;
+	margin-left:0px !important;
+}
+.rubedo-form-container{
+	border:2px solid #ddd;
+	padding:10px 20px 5px 20px;
+	border-radius:5px;
+}
