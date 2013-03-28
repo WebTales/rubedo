@@ -275,4 +275,21 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		
 		return $contentTypesList;
 	}
+	
+	public function getGeolocatedContentTypes() {
+		
+		$contentTypesList = $this->getList();
+		$geolocatedContentTypes = array();
+
+		foreach ($contentTypesList['data'] as $contentType) {
+
+			$fields=$contentType["fields"];
+			foreach($fields as $field) {
+				if ($field['config']['name']=='position') {
+					$geolocatedContentTypes[] = $contentType['id'];
+				}
+			}			
+		}
+		return $geolocatedContentTypes;
+	}
 }

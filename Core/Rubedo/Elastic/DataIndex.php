@@ -166,6 +166,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 						case 'document' :
 							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
 							break;
+						//case 'localiserField' :
+							//$indexMapping[$name] = array('type' => 'geo_point', 'store' => 'yes');
 						default :
 							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
 							break;
@@ -186,12 +188,14 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["startPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["endPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
-		
+		$indexMapping["position"] = array('type' => 'geo_point', 'store' => 'yes');
+				
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
 			$indexMapping["taxonomy.".$vocabularyName] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'no');
 		}
 		
+		print_r($indexMapping);
 		// Create new ES type if not empty
 		if (!empty($indexMapping)) {
 			// Create new type
@@ -295,6 +299,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 						case 'document' :
 							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
 							break;
+						//case 'localiserField' :
+						//	$indexMapping[$name] = array('type' => 'geo_point', 'store' => 'yes');
 						default :
 							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
 							break;
@@ -315,6 +321,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["file"] = array('type' => 'attachment', 'store'=>'no');
 		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["position"] = array('type' => 'geo_point', 'store' => 'yes');
 		
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -407,6 +414,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             
         // retrieve type id and content data if null
         $data = \Rubedo\Services\Manager::getService('Contents')->findById($id,$live,false);
+		
         $typeId = $data['typeId'];
 					
 		// Load ES type 
@@ -418,23 +426,28 @@ class DataIndex extends DataAbstract implements IDataIndex
 	
 		// Add fields to index	
 		$contentData = array();
+		
 		foreach($data['fields'] as $field => $var) {
 
 			// only index searchable fields
 			if (in_array($field,$typeStructure['searchableFields']))  {	
 				if(is_array($var)){
-				    foreach ($var as $subvalue){
-				        $contentData[$field][] = (string) $subvalue;
+				    //foreach ($var as $subvalue){
+				    foreach ($var as $key=>$subvalue){
+				        //$contentData[$field][] = (string) $subvalue;
+				        if ($key=="latitude") $key="lat";
+						if ($key=="longitude") $key="lon";	
+						$contentData[$field][$key] = (string) $subvalue;
 				    }
 				}else{
 				    $contentData[$field] = (string) $var;
 				}
 			}
-
 			// Date format fix
 			if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
+			
 		}
-
+		
 		// Add default meta's
 		$contentData['objectType'] = 'content';
 		$contentData['contentType'] = $typeId;
@@ -485,8 +498,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     	
 					}
                 }
-         }
-		 
+         }	 
         
 		// Add read workspace
 		$contentData['target']=array();
@@ -501,8 +513,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 		if (empty($contentData['target']))	{
 			$contentData['target'][] = 'global';
 		}
-		
-			
+
 		// Add document 
 		$currentDocument = new \Elastica_Document($id, $contentData);
 		
