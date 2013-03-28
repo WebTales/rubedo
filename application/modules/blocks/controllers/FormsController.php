@@ -47,9 +47,9 @@ class Blocks_FormsController extends Blocks_AbstractController
 		if(isset($this->formsSessionArray[$this->_formId]) && isset($this->formsSessionArray[$this->_formId]['id'])){
 			 $this->_formResponse = Manager::getService('FormsResponses')->findById($this->formsSessionArray[$this->_formId]['id']);
 		}else{
-			
 			$this->getRequest()->setActionName('new');
 		}
+		
 	}
 	
     /**
@@ -58,7 +58,6 @@ class Blocks_FormsController extends Blocks_AbstractController
     public function indexAction ()
     {
     	//recupération de paramètre éventuels de la page en cours
-    	
     	$currentFormPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
     	
 
@@ -95,7 +94,6 @@ class Blocks_FormsController extends Blocks_AbstractController
     		$this->_computeNewPage();
     	}else{
     		$this->_updateResponse();
-
     		$this->_computeNewPage();
     	}
     	
@@ -129,8 +127,8 @@ class Blocks_FormsController extends Blocks_AbstractController
      * @todo finishAction
      */
     public function finishAction(){
-    	
-    /*$this->_formResponse["status"]="finished";
+    	die("joué");
+    	/*$this->_formResponse["status"]="finished";
     	$result=Manager::getService('FormsResponses')->update($this->_formResponse);
     	if($result['success']){
     		$this->_formResponse = $result['data'];
@@ -283,9 +281,13 @@ class Blocks_FormsController extends Blocks_AbstractController
   
     	if($this->formsSessionArray[$this->_formId]['currentFormPage']>=count($this->_form["formPages"]))
     	{
-    		//$this->forward('finish');
+    		
+    		//$this->forward('finish',"forms");
+    		//$this->_helper->redirector ('finish');
     		$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    		$this->forward('finish');
+    	
     		
     	}
     	/*

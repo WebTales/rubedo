@@ -15,7 +15,11 @@
 	{% if currentFormPage !=0 %}
 		<a class="btn" style="float:left;" href="?getPrevious=1">Précédent</a>
 	{% endif %}
+	{% if currentFormPage==nbFormPages-1 %}
+		<input class="btn btn-info" style="float:right;" type="submit" value="Terminer"/>
+	{% else %}
 	<input class="btn" style="float:right;" type="submit" value="Suivant"/>
+	{% endif %}
 </form>
 </div>
 {% endblock %}
