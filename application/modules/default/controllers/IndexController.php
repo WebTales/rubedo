@@ -648,6 +648,11 @@ class IndexController extends Zend_Controller_Action
                     'template' => 'root/zend.html.twig'
                 );
                 break;
+            case 'Contact':
+            case 'contact':
+            	$controller = "contact";
+            	break; 
+             
             default:
                 
                 $data = array();
