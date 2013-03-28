@@ -36,3 +36,9 @@ width:auto;
 text-align:left;
 padding-top: 5px;
 }
+.rubedo-form .table-condensed td{
+	border:none !important;
+}
+.rubedo-form .table-condensed tr{
+	border-top:1px solid #ddd !important;
+}
