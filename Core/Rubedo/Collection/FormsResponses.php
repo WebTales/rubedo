@@ -48,7 +48,8 @@ class FormsResponses extends AbstractCollection implements IFormsResponses {
 				'value' => $formId 
 		);
 		
-		$sort = array (
+		$sort = array();
+		$sort[] = array (
 				'property' => 'lastUpdateTime',
 				'direction' => 'ASC' 
 		);
