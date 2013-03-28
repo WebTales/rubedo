@@ -37,6 +37,7 @@ class Blocks_FormsController extends Blocks_AbstractController
 	protected $_send=true;
 	
 	public function init(){
+		//Zend_Debug::dump($this->getRequest());die();
 		parent::init();
 	
 		$blockConfig = $this->getParam('block-config', array());
@@ -47,7 +48,7 @@ class Blocks_FormsController extends Blocks_AbstractController
 		if(isset($this->formsSessionArray[$this->_formId]) && isset($this->formsSessionArray[$this->_formId]['id'])){
 			 $this->_formResponse = Manager::getService('FormsResponses')->findById($this->formsSessionArray[$this->_formId]['id']);
 		}else{
-			$this->getRequest()->setActionName('new');
+			$this->_new();
 		}
 		
 	}
@@ -62,7 +63,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	
 
     	//traitement et vérification
-
+    
     	if($this->getRequest()->isPost()){
     		/*Verification des champs envoyés*/
     		$this->_lastAnsweredPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
@@ -106,36 +107,35 @@ class Blocks_FormsController extends Blocks_AbstractController
     	
     	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
     	$css = array();
-    	$js = array();
+    	 $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js"));
     	$this->_sendResponse($output, $template, $css, $js);
     }
     
     
-    public function newAction(){
+    protected function _new(){
     	$this->formsSessionArray[$this->_formId] = array('status'=>'new');
-    	$this->_formResponse = array('status'=>'new');
+    	$this->_formResponse = array('status'=>'new','formId'=>$this->_formId);
     	$result = Manager::getService('FormsResponses')->create($this->_formResponse);
     	if($result['success']){
     		$this->_formResponse = $result['data'];
     		$this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
     		$this->formsSessionArray[$this->_formId]['currentFormPage'] = 0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    		$this->forward('index');
     	}    	
     }
     /*
      * @todo finishAction
      */
-    public function finishAction(){
-    	die("joué");
-    	/*$this->_formResponse["status"]="finished";
+    protected function _finish(){
+    	$this->_formResponse["status"]="finished";
     	$result=Manager::getService('FormsResponses')->update($this->_formResponse);
     	if($result['success']){
     		$this->_formResponse = $result['data'];
     		$this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
     		$this->formsSessionArray[$this->_formId]['currentPage'] = 0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    	}*/
+    	}
+    	
     	//Ferme le formulaire et renvois a une page de remerciement
     }
     
@@ -281,14 +281,9 @@ class Blocks_FormsController extends Blocks_AbstractController
   
     	if($this->formsSessionArray[$this->_formId]['currentFormPage']>=count($this->_form["formPages"]))
     	{
-    		
-    		//$this->forward('finish',"forms");
-    		//$this->_helper->redirector ('finish');
+    		$this->_finish();
     		$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    		$this->forward('finish');
-    	
-    		
     	}
     	/*
     	 * Verifications des conditions
@@ -311,14 +306,14 @@ class Blocks_FormsController extends Blocks_AbstractController
     			switch($condition["operator"])
     			{
     				case "=":
-    					
     					$conditionsArray=$this->_checkCondition($condition);
     					if(in_array(false,$conditionsArray))
     					{
     						$this->formsSessionArray[$this->_formId]['currentFormPage']++;
     						Manager::getService('Session')->set("forms",$this->formsSessionArray);
     						$checkFields=false;
-    						$this->forward('index');
+    						$this->_computeNewPage();
+    						return;
     					    		
     					}
     					break;
@@ -329,6 +324,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     							$this->formsSessionArray[$this->_formId]['currentFormPage']++;
     						Manager::getService('Session')->set("forms",$this->formsSessionArray);
     						$checkFields=false;
+    						$this->_computeNewPage();
+    						return;
     						}
     						break;
     					
@@ -344,21 +341,32 @@ class Blocks_FormsController extends Blocks_AbstractController
     			{
     				foreach($field["itemConfig"]["conditionals"] as $condition)
     				{
-    		
+    					foreach ($pageToCheck["elements"] as $id=>$item)
+    					{
+    						if($condition["field"]==$item["id"])
+    						{
+    							$pageToCheck["elements"][$id]["itemConfig"]["check"]=true;
+    						}
+    					}
     					$conditionsArray=array();
     					switch($condition["operator"])
     					{
     						case "=":
-    							
-    							$conditionsArray=$this->_checkCondition($condition);
-    							
+    							$pageToCheck["elements"][$key]["itemConfig"]["check"]=true;
+    							$pageToCheck["elements"][$key]["itemConfig"]["target"]=$condition["field"];
+    							$pageToCheck["elements"][$key]["itemConfig"]["value"]=$condition["value"]["value"];
+    							if(isset($this->_formResponse['data'][$condition["field"]])){
+    							$conditionsArray=$this->_checkCondition($condition);}
+    							else {
+    							$conditionsArray[]=false;}
+    		
     							if(in_array(false,$conditionsArray))
     							{
     								$pageToCheck["elements"][$key]["itemConfig"]["hidden"]=true;
-    									
     							}
     							break;
     						case"!=":
+    							
     							$conditionsArray=$this->_checkCondition($condition);
     							if(in_array(true,$conditionsArray))
     							{
@@ -381,6 +389,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     protected function _checkCondition($condition)
     {
     	$returnArray=array();
+  
     	if(is_array($condition["value"]))
     	{
     		if(is_array($condition["value"]["value"]))
