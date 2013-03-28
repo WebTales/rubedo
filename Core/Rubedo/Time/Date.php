@@ -42,6 +42,18 @@ class Date implements IDate
         $date = new DateTime($dateString);
         return $date->getTimestamp();
     }
+    public function convertToYmd($dateString)
+    {
+    	$date=new DateTime();
+    	$date->setTimestamp($dateString);
+    	return $date->format('Y-m-d');
+    }
+    public function convertToHis($dateString)
+    {
+    	$date = new DateTime($dateString);
+    	$date=date("H:i:s");
+    	return $date;
+    }
 
     /**
      * (non-PHPdoc)

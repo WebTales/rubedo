@@ -34,8 +34,10 @@ class Blocks_FormsController extends Blocks_AbstractController
 	protected $_form;
 	protected $_errors=array();
 	protected $_lastAnsweredPage;
+	protected $_send=true;
 	
 	public function init(){
+		//Zend_Debug::dump($this->getRequest());die();
 		parent::init();
 	
 		$blockConfig = $this->getParam('block-config', array());
@@ -46,9 +48,9 @@ class Blocks_FormsController extends Blocks_AbstractController
 		if(isset($this->formsSessionArray[$this->_formId]) && isset($this->formsSessionArray[$this->_formId]['id'])){
 			 $this->_formResponse = Manager::getService('FormsResponses')->findById($this->formsSessionArray[$this->_formId]['id']);
 		}else{
-			
-			$this->getRequest()->setActionName('new');
+			$this->_new();
 		}
+		
 	}
 	
     /**
@@ -58,11 +60,13 @@ class Blocks_FormsController extends Blocks_AbstractController
     {
     	//recupération de paramètre éventuels de la page en cours
     	$currentFormPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
-    	 $this->_lastAnsweredPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
+    	
+
     	//traitement et vérification
+    
     	if($this->getRequest()->isPost()){
     		/*Verification des champs envoyés*/
-    		
+    		$this->_lastAnsweredPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
     		foreach($this->_form["formPages"][$currentFormPage]["elements"] as $field)
     		{
     			if($field['itemConfig']['fType']=='richText'){
@@ -78,54 +82,60 @@ class Blocks_FormsController extends Blocks_AbstractController
     		}else{
     		$this->_hasError=true;}
     	}
+    	//Si on demande la page précédente
+    	if(!$this->getRequest()->isPost() && $this->getParam("getPrevious")==1)
+    	{
+    		$this->formsSessionArray[$this->_formId]['currentFormPage']=$this->_formResponse["lastAnsweredPage"];;
+    		Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    	}
+    	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
     		$output['errors'] = $this->_errors;
+    		$this->_computeNewPage();
     	}else{
-    	
-    		//stockage eventuel
     		$this->_updateResponse();
-    		
-    		//mise à jour de la page à afficher
     		$this->_computeNewPage();
     	}
     	
     	//pass fields to the form template
     	$output["form"]["id"]=$this->_formId;
+    	$output["nbFormPages"]=count($this->_form["formPages"]);
     	$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
     	//affichage de la page
     	$output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
     	
     	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
     	$css = array();
-    	$js = array();
+    	 $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js"));
     	$this->_sendResponse($output, $template, $css, $js);
     }
     
     
-    public function newAction(){
+    protected function _new(){
     	$this->formsSessionArray[$this->_formId] = array('status'=>'new');
-    	$this->_formResponse = array('status'=>'new');
+    	$this->_formResponse = array('status'=>'new','formId'=>$this->_formId);
     	$result = Manager::getService('FormsResponses')->create($this->_formResponse);
     	if($result['success']){
     		$this->_formResponse = $result['data'];
     		$this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
     		$this->formsSessionArray[$this->_formId]['currentFormPage'] = 0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    		$this->forward('index');
     	}    	
     }
-    
-    public function finishAction(){
-    	
-    /*$this->_formResponse["status"]="finished";
+    /*
+     * @todo finishAction
+     */
+    protected function _finish(){
+    	$this->_formResponse["status"]="finished";
     	$result=Manager::getService('FormsResponses')->update($this->_formResponse);
     	if($result['success']){
     		$this->_formResponse = $result['data'];
     		$this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
     		$this->formsSessionArray[$this->_formId]['currentPage'] = 0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    	}*/
+    	}
+    	
     	//Ferme le formulaire et renvois a une page de remerciement
     }
     
@@ -136,8 +146,9 @@ class Blocks_FormsController extends Blocks_AbstractController
     	/*
     	 * Check if field is required
     	 */
+    
     	if($validationRules["mandatory"]==true){
-    		if(empty($response)){
+    		if(empty($response)||$response==""){
     			$is_valid=false;
     			$this->_errors[$field["id"]]="Ce champ est obligatoire";
     		}
@@ -145,6 +156,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     	/*
     	 * Check validation rules
     	 */
+    	if(!empty($response))
+    	{
     	if(isset($validationRules["vtype"]) && $is_valid == true){
     		switch($validationRules["vtype"])
     		{
@@ -186,6 +199,62 @@ class Blocks_FormsController extends Blocks_AbstractController
     	}
     	if($is_valid)
     	{
+    		if(isset($validationRules["minValue"]))
+    		{
+    			switch($field["itemConfig"]["fieldType"]){
+    				case "numberfield":
+    					if($validationRules["minValue"]>intval($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
+    					}
+    					break;
+    				case "datefield":
+    					if($validationRules["minValue"]>Manager::getService('Date')->convertToTimeStamp($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur minimum ".Manager::getService('Date')->convertToYmd($validationRules["minValue"]);
+    					}
+    					break;
+    				case "timefield":
+    						if(Manager::getService('Date')->convertToTimeStamp($validationRules["minValue"])>Manager::getService('Date')->convertToTimeStamp($response))
+    						{
+    							$is_valid=false;
+    							$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
+    						}
+    						break;
+    			}
+    		}
+    		if(isset($validationRules["maxValue"]))
+    		{
+    			switch($field["itemConfig"]["fieldType"]){
+    				case "numberfield":
+    					if($validationRules["maxValue"]<intval($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
+    					}
+    					break;
+    				case "datefield":
+    					if($validationRules["maxValue"]<Manager::getService('Date')->convertToTimeStamp($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur maximum ".Manager::getService('Date')->convertToYmd($validationRules["maxValue"]);
+    					}
+    					break;
+    					case "timefield":
+    						if(Manager::getService('Date')->convertToTimeStamp($validationRules["maxValue"])<Manager::getService('Date')->convertToTimeStamp($response))
+    						{
+    							$is_valid=false;
+    							$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
+    						}
+    						break;
+    			}
+    		}
+    	}
+    	}
+    	if($is_valid)
+    	{
     		$this->_validatedFields[$field['id']]=$response;
     	}
     }
@@ -194,8 +263,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     protected function _updateResponse(){
     	//mise à jour du status de la réponse
     	$this->_formResponse["status"]="pending";
-    	$this->_formResponse["lastAnsweredPage"]=$this->formsSessionArray[$this->_formId]['currentFormPage'];
-    	//$this->_formResponse["lastAnsweredPage"]=$this->_lastAnsweredPage;
+    	//$this->_formResponse["lastAnsweredPage"]=$this->formsSessionArray[$this->_formId]['currentFormPage'];
+    	$this->_formResponse["lastAnsweredPage"]=$this->_lastAnsweredPage;
     	if(!isset($this->_formResponse['data'])){
     		$this->_formResponse['data'] = array();
     	}
@@ -212,10 +281,9 @@ class Blocks_FormsController extends Blocks_AbstractController
   
     	if($this->formsSessionArray[$this->_formId]['currentFormPage']>=count($this->_form["formPages"]))
     	{
-    		//$this->forward('finish');
-    		$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
-    		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    		
+    		$this->_finish();
+    		/*$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
+    		Manager::getService('Session')->set("forms",$this->formsSessionArray);*/
     	}
     	/*
     	 * Verifications des conditions
@@ -223,6 +291,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	
     	//sur la page
     	//Definit la page a verifier
+   
     	$pageToCheck=$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
   
     	$checkFields=true;
@@ -237,14 +306,14 @@ class Blocks_FormsController extends Blocks_AbstractController
     			switch($condition["operator"])
     			{
     				case "=":
-    					
     					$conditionsArray=$this->_checkCondition($condition);
     					if(in_array(false,$conditionsArray))
     					{
     						$this->formsSessionArray[$this->_formId]['currentFormPage']++;
     						Manager::getService('Session')->set("forms",$this->formsSessionArray);
     						$checkFields=false;
-    						//$this->forward('index');
+    						$this->_computeNewPage();
+    						return;
     					    		
     					}
     					break;
@@ -255,6 +324,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     							$this->formsSessionArray[$this->_formId]['currentFormPage']++;
     						Manager::getService('Session')->set("forms",$this->formsSessionArray);
     						$checkFields=false;
+    						$this->_computeNewPage();
+    						return;
     						}
     						break;
     					
@@ -270,20 +341,32 @@ class Blocks_FormsController extends Blocks_AbstractController
     			{
     				foreach($field["itemConfig"]["conditionals"] as $condition)
     				{
-    		
+    					foreach ($pageToCheck["elements"] as $id=>$item)
+    					{
+    						if($condition["field"]==$item["id"])
+    						{
+    							$pageToCheck["elements"][$id]["itemConfig"]["check"]=true;
+    						}
+    					}
     					$conditionsArray=array();
     					switch($condition["operator"])
     					{
     						case "=":
-    							
-    							$conditionsArray=$this->_checkCondition($condition);
+    							$pageToCheck["elements"][$key]["itemConfig"]["conditionalQuestion"]=true;
+    							$pageToCheck["elements"][$key]["itemConfig"]["target"]=$condition["field"];
+    							$pageToCheck["elements"][$key]["itemConfig"]["value"]=$condition["value"]["value"];
+    							if(isset($this->_formResponse['data'][$condition["field"]])){
+    							$conditionsArray=$this->_checkCondition($condition);}
+    							else {
+    							$conditionsArray[]=false;}
+    		
     							if(in_array(false,$conditionsArray))
     							{
     								$pageToCheck["elements"][$key]["itemConfig"]["hidden"]=true;
-    									
     							}
     							break;
     						case"!=":
+    							
     							$conditionsArray=$this->_checkCondition($condition);
     							if(in_array(true,$conditionsArray))
     							{
@@ -295,11 +378,9 @@ class Blocks_FormsController extends Blocks_AbstractController
     			}
     		}
     	}
-    	
     	//sur les champs (a faire que si celles de la page sont bonne)
-    	//Zend_Debug::dump($pageToCheck);die();
     	$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']]=$pageToCheck;
-    	//Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    	Manager::getService('Session')->set("forms",$this->formsSessionArray);
     	
     		
     		
@@ -308,27 +389,58 @@ class Blocks_FormsController extends Blocks_AbstractController
     protected function _checkCondition($condition)
     {
     	$returnArray=array();
+  
     	if(is_array($condition["value"]))
     	{
     		if(is_array($condition["value"]["value"]))
     		{
-    		foreach($condition["value"]["value"] as $value)
-    		{
-    				
-    			$returnArray[]=in_array($value,$this->_formResponse['data'][$condition["field"]]);
-    				
-    		}
+    			foreach($condition["value"]["value"] as $value)
+    			{
+    				 
+    				$returnArray[]=in_array($value,$this->_formResponse['data'][$condition["field"]]);
+    				 
+    			}
     		}elseif(is_string($condition["value"]["value"]))
     		{
     			if(is_array($this->_formResponse['data'][$condition["field"]]))
     			{
     				$returnArray[]=in_array($condition["value"]["value"],$this->_formResponse['data'][$condition["field"]]);
+    				
     			}elseif(is_string($this->_formResponse['data'][$condition["field"]])){
-    			$returnArray[]=$condition["value"]["value"]==$this->_formResponse['data'][$condition["field"]]?true:false;}
+    				
+    				$returnArray[]=$condition["value"]["value"]==$this->_formResponse['data'][$condition["field"]]?true:false;}
     		}
     	}elseif(is_string($condition["value"]))
     	{
-    		$returnArray[]=$condition["value"]==$this->_formResponse['data'][$condition["field"]]?true:false;
+    		$type=null;
+    		foreach($this->_form["formPages"] as $pages)
+    		{
+    			foreach($pages["elements"] as $item){
+    				if($condition["field"]==$item['id'])
+    				{
+    					$type=$item["itemConfig"]["fieldType"];
+    				}
+    			
+    			}
+    		}
+    		switch($type)
+    		{
+    			case "textfield":
+    			case "textareafield":
+    				$returnArray[]=strtolower($condition["value"])==strtolower($this->_formResponse['data'][$condition["field"]])?true:false;
+    				break;
+    			case "datefield":
+    				$returnArray[]=$condition["value"]==Manager::getService('Date')->convertToTimeStamp($this->_formResponse['data'][$condition["field"]])?true:false;
+    				break;
+    			case "timefield":
+    				$returnArray[]=Manager::getService('Date')->convertToTimeStamp($condition["value"])==Manager::getService('Date')->convertToTimeStamp($this->_formResponse['data'][$condition["field"]])?true:false;
+    				break;
+    			case "numberfield":
+    				$returnArray[]=intval($condition["value"])==intval($this->_formResponse['data'][$condition["field"]])?true:false;
+    				break;
+    				
+    		}
+    		
     	}
     	return $returnArray;
     }
