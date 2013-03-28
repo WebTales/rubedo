@@ -25,5 +25,11 @@ namespace Rubedo\Interfaces\Collection;
  * @package Rubedo
  */
 interface IFormsResponses extends IAbstractCollection{
-	
+    
+    /**
+     * Get list of finished results for a given form
+     * 
+     * @param string $formId
+     */
+    public function getValidResponsesByFormId($formId);
 }
