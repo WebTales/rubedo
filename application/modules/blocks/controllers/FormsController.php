@@ -62,6 +62,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	$currentFormPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
     	$this->_lastAnsweredPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
     	//traitement et vérification
+
     	if($this->getRequest()->isPost()){
     		/*Verification des champs envoyés*/
     		
@@ -138,8 +139,9 @@ class Blocks_FormsController extends Blocks_AbstractController
     	/*
     	 * Check if field is required
     	 */
+    
     	if($validationRules["mandatory"]==true){
-    		if(empty($response)){
+    		if(empty($response)||$response==""){
     			$is_valid=false;
     			$this->_errors[$field["id"]]="Ce champ est obligatoire";
     		}
@@ -201,11 +203,19 @@ class Blocks_FormsController extends Blocks_AbstractController
     					}
     					break;
     				case "datefield":
-    					if(Manager::getService('Date')->convertToTimeStamp($validationRules["minValue"])>Manager::getService('Date')->convertToTimeStamp($response))
+    					if($validationRules["minValue"]>Manager::getService('Date')->convertToTimeStamp($response))
     					{
     						$is_valid=false;
-    						$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
+    						$this->_errors[$field["id"]]="Valeur minimum ".Manager::getService('Date')->convertToYmd($validationRules["minValue"]);
     					}
+    					break;
+    				case "timefield":
+    						if(Manager::getService('Date')->convertToTimeStamp($validationRules["minValue"])>Manager::getService('Date')->convertToTimeStamp($response))
+    						{
+    							$is_valid=false;
+    							$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
+    						}
+    						break;
     			}
     		}
     		if(isset($validationRules["maxValue"]))
@@ -219,11 +229,19 @@ class Blocks_FormsController extends Blocks_AbstractController
     					}
     					break;
     				case "datefield":
-    					if(Manager::getService('Date')->convertToTimeStamp($validationRules["maxValue"])<Manager::getService('Date')->convertToTimeStamp($response))
+    					if($validationRules["maxValue"]<Manager::getService('Date')->convertToTimeStamp($response))
     					{
     						$is_valid=false;
-    						$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
+    						$this->_errors[$field["id"]]="Valeur maximum ".Manager::getService('Date')->convertToYmd($validationRules["maxValue"]);
     					}
+    					break;
+    					case "timefield":
+    						if(Manager::getService('Date')->convertToTimeStamp($validationRules["maxValue"])<Manager::getService('Date')->convertToTimeStamp($response))
+    						{
+    							$is_valid=false;
+    							$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
+    						}
+    						break;
     			}
     		}
     	}
