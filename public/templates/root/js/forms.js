@@ -4,8 +4,21 @@ function addcheck() {
 	jQuery(this).attr('onchange',"checkField()");
 }
 
-function checkField(obj){
-	jQuery(".formcheck").each(addcheck);
+function checkField(){
+	self=this;
+	jQuery(".conditional").each(function(){
+		var target=jQuery(this).attr('data-target');
+		var value=jQuery(this).attr('data-value');
+console.log(self);
+		if(self.value==value)
+			jQuery(this).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("hide").addClass("show");
+		else{
+			jQuery(this).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("show").addClass("hide");
+		}
+		
+		
+	});
+	/*jQuery(".formcheck").each(addcheck);
 	console.log(obj.value);
 	var target=jQuery(obj).attr('data-target');
 	var value=jQuery(obj).attr('data-value');
@@ -18,5 +31,5 @@ function checkField(obj){
 			{
 			jQuery("#"+target).parentsUntil(jQuery(".control-group"),".control-group").removeClass("show").addClass("hide");
 			}
-			}
+			}*/
 }
