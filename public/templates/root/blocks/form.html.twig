@@ -1,11 +1,25 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %}
-{% set progress= (currentFormPage*100)/nbFormPages %}
+{% set progress= ((currentFormPage+1)*100)/nbFormPages %}
+
 <div id="form-container-{{ form.id }}" class="rubedo-form-container" >
+{% if newButton==true %}
+<div class="btn-group pull-right">
+<a class="btn btn-warning" href="?getNew=1"  style="margin:5px 5px 5px 5px;"><i class="icon-file icon-white"></i> Nouveau</a>
+</div>
+{% endif %}
+{% if finished %}
+<div class="hero-unit" >{{ finished }}</div>
+{% else %}
+{% if progression==0 %}
 <div class="progress progress-info progress-striped">
   <div class="bar" style="width:{{ progress }}%"></div>
 </div>
+{% else %}
+<div style="width:100%;"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
+{% endif %}
+
 <form id="{{ form.id }}" method="post" action="" class="form-horizontal rubedo-form hero-unit" >
 	<input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
 	{% for field in formFields.elements %}
@@ -21,5 +35,6 @@
 	<input class="btn" style="float:right;" type="submit" value="Suivant"/>
 	{% endif %}
 </form>
+{% endif %}
 </div>
 {% endblock %}
