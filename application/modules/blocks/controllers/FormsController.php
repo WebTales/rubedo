@@ -117,7 +117,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     		$output["finished"]=$this->_form["endMessage"];
     	//affichage de la page
     	$output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
-	$output["progression"]=$this->_blockConfig["progression"];
+		$output["progression"]=$this->_blockConfig["progression"];
     	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
     	$css = array();
     	 $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js"));
