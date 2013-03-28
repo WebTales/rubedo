@@ -282,8 +282,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     	if($this->formsSessionArray[$this->_formId]['currentFormPage']>=count($this->_form["formPages"]))
     	{
     		$this->_finish();
-    		$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
-    		Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    		/*$this->formsSessionArray[$this->_formId]['currentFormPage']=0;
+    		Manager::getService('Session')->set("forms",$this->formsSessionArray);*/
     	}
     	/*
     	 * Verifications des conditions
@@ -352,7 +352,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     					switch($condition["operator"])
     					{
     						case "=":
-    							$pageToCheck["elements"][$key]["itemConfig"]["check"]=true;
+    							$pageToCheck["elements"][$key]["itemConfig"]["conditionalQuestion"]=true;
     							$pageToCheck["elements"][$key]["itemConfig"]["target"]=$condition["field"];
     							$pageToCheck["elements"][$key]["itemConfig"]["value"]=$condition["value"]["value"];
     							if(isset($this->_formResponse['data'][$condition["field"]])){
