@@ -44,9 +44,9 @@ class Date implements IDate
     }
     public function convertToYmd($dateString)
     {
-    	$date = new DateTime($dateString);
-    	$date=date("Y-m-d");
-    	return $date;
+    	$date=new DateTime();
+    	$date->setTimestamp($dateString);
+    	return $date->format('Y-m-d');
     }
     public function convertToHis($dateString)
     {
