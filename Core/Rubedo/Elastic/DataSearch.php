@@ -100,14 +100,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 			     $workspaceFilter->setTerm('target',$wsTerm);
 			     $workspacesFilter->addFilter($workspaceFilter);
 			 }
-// 			 $workspaceFilter = new \Elastica_Filter_Terms();
-// 			 $workspaceFilter->setTerms('target',$readWorkspaceArray);
-// 			 $workspacesFilter->addFilter($workspaceFilter);
 			  	
 			$globalFilter->addFilter($workspacesFilter);
 			$setFilter = true;
 		}
 		
+		// Frontend filter on start and end publication date
 		
 		if(self::$_isFrontEnd){
 		    $now = Manager::getService('CurrentTime')->getCurrentTime();
@@ -152,8 +150,23 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$typeFilter = new \Elastica_Filter_Term();
     		$typeFilter->setTerm('contentType', $params['type']);
 			$globalFilter->addFilter($typeFilter);
-			$filters["type"]=$params['type'];
+			$filters['type']=$params['type'];
 			$setFilter = true;
+		}
+		
+		// add filter for geo search on content types with 'position' field
+		if ($option=='geo') {
+			$contentTypeList  = Manager::getService('ContentTypes')->getGeolocatedContentTypes();
+			if (!empty($contentTypeList)) {
+				$geoFilter = new \Elastica_Filter_Or();
+				foreach ($contentTypeList as $contentTypeId){
+					$geoTypeFilter = new \Elastica_Filter_Term();
+					$geoTypeFilter->setTerm('contentType',$contentTypeId);
+					$geoFilter->addFilter($geoTypeFilter);
+				}		
+				$globalFilter->addFilter($geoFilter);
+				$setFilter = true;
+			}
 		}
 
 		// filter on dam type
@@ -161,7 +174,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			$typeFilter = new \Elastica_Filter_Term();
     		$typeFilter->setTerm('damType', $params['damType']);
 			$globalFilter->addFilter($typeFilter);
-			$filters["damType"]=$params['damType'];
+			$filters['damType']=$params['damType'];
 			$setFilter = true;
 		}
 					
@@ -183,7 +196,19 @@ class DataSearch extends DataAbstract implements IDataSearch
     		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
 			$globalFilter->addFilter($dateFilter);
 			$setFilter = true;
-		}		
+		}	
+		
+		// filter on geolocalisation
+		if (array_key_exists('geo_bbox',$params)) {
+			//$topleft="40.73, -74.1";
+			$topleft=array('lat' => 40.73, 'lon' => -74.1);
+			//$bottomright="40.717, -73.99";
+			$bottomright=array('lat' => 40.717, 'lon' => -73.99);
+			$geoFilter = new \Elastica_Filter_GeoBoundingBox('position',array($topleft,$bottomright));
+			//$geoFilter->addCoordinates();
+			$globalFilter->addFilter($geoFilter);
+			$setFilter = true;
+		}			
 
 		// filter on taxonomy
 		foreach ($taxonomies as $taxonomy) {
@@ -310,6 +335,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 				$search->addIndex(self::$_content_index);
 				$elasticaResultSet = $search->search($elasticaQuery);
 				break;
+			case 'geo' :
+				$elasticaResultSet = self::$_content_index->search($elasticaQuery);
+				break;				
 		}
 		
 		// Update data

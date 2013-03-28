@@ -35,8 +35,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 		// get params 
 		$params = $this->getRequest()->getParams();
 		
-		// get option : all, dam, content
-		
+		// get option : all, dam, content, geo
 		if (isset($params['option'])) {
 			$this->_option = $params['option'];
 		}
@@ -66,7 +65,7 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action {
 
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setHeader('Content-Type', "application/json", true);
+        $this->getResponse()->setHeader('Content-Type', 'application/json', true);
 
         $returnValue = Zend_Json::encode($results);
         $returnValue = Zend_Json::prettyPrint($returnValue);

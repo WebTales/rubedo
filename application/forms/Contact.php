@@ -36,25 +36,35 @@ class Application_Form_Contact extends Zend_Form
 	
 	public function init()
     {
+    	$request = new Zend_Controller_Request_Http();
+    	
     	$this->setMethod('post');
+    	$this->setAttrib('action', $this->getView()->baseUrl().$request->getPathInfo());
+    	
+    	$status = new Zend_Form_Element_Hidden('status');
+    	$status->setValue('true');
     	
     	$name = new Zend_Form_Element_Text('name');
     	$name->setLabel('Nom *');
     	$name->setRequired(true);
+    	$name->addErrorMessage("Le champ suivant ne doit pas etre vide");
     	
     	$email = new Zend_Form_Element_Text('email');
     	$email->setLabel('Adresse e-mail *');
     	$email->setRequired(true);
     	$email->addValidator('EmailAddress');
+    	$email->addErrorMessage("Le champ suivant ne doit pas etre vide et l'adresse e-mail doit etre sous la forme : exemple@exemple.fr");
     	
     	$subject = new Zend_Form_Element_Text('subject');
     	$subject->setLabel('Objet *');
     	$subject->setRequired(true);
+    	$subject->addErrorMessage("Le champ suivant ne doit pas etre vide");
     	
     	$message = new Zend_Form_Element_Textarea('message');
     	$message->setLabel('Message *');
     	$message->setRequired(true);
     	$message->setAttrib('rows', 5);
+    	$message->addErrorMessage("Le champ suivant ne doit pas etre vide");
     	
     	$this->addElements(array($name, $email, $subject, $message));
 		
@@ -66,7 +76,7 @@ class Application_Form_Contact extends Zend_Form
 					'captcha'=> array(
 						'captcha' => 'image',
 						'wordLen' => 6,
-						'font' => APPLICATION_PATH."/../public/fonts/fonts-japanese-gothic.ttf",
+						'font' => APPLICATION_PATH."/../data/fonts/fonts-japanese-gothic.ttf",
 						'height' => 100,
 						'width' => 300,
 						'fontSize' => 50,
@@ -77,6 +87,7 @@ class Application_Form_Contact extends Zend_Form
 					)
 				)
 			);
+			$captcha->addErrorMessage("Le code que vous avez saisi ne correspond pas avec l'image");
 			
 			$this->addElement($captcha);
     	}
