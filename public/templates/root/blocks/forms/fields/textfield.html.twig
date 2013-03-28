@@ -4,7 +4,7 @@
        <a href="#" class="help" data-toggle="tooltip"  data-placement="right"  title="{{ field.itemConfig.tooltip }}" data-original-title="{{ field.itemConfig.tooltip }}">
       <i class="icon-exclamation-sign" style="margin-left:10px;"></i></a>
     <div class="controls">
-      <input type="text" id="{{ field.id }}" name="{{ field.id }}" value="{{ values[field.id] }}">
+      <input class="{% if field.itemConfig.conditionalQuestion %}conditional{% endif %}" {% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %}{% if field.itemConfig.target %}data-value="{{field.itemConfig.value}}"{% endif %}  type="text" id="{{ field.id }}" name="{{ field.id }}" value="{{ values[field.id] }}">
       {% if field.id in errors|keys %}<span class="help-inline">{{ errors[field.id] }}</span>{% endif %}
    
     </div>
