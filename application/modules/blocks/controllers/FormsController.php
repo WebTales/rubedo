@@ -35,14 +35,24 @@ class Blocks_FormsController extends Blocks_AbstractController
 	protected $_errors=array();
 	protected $_lastAnsweredPage;
 	protected $_send=true;
+	protected $_blockConfig;
 	
 	public function init(){
 		//Zend_Debug::dump($this->getRequest());die();
 		parent::init();
 	
-		$blockConfig = $this->getParam('block-config', array());
-		$this->_formId = $blockConfig["formId"];
+		$this->_blockConfig = $this->getParam('block-config', array());
+		$this->_formId = $this->_blockConfig["formId"];
 		$this->_form = Manager::getService('Forms')->findById($this->_formId);
+		if(!$this->getRequest()->isPost() && $this->getParam("getNew")==1)
+		{
+			if($this->_form["uniqueAnswer"]!=true)
+			{
+			$this->_new();
+			return;
+			}
+		}
+		
 		//Check if form already exist on current session
 		$this->formsSessionArray = Manager::getService('Session')->get("forms",array()); //get forms from session
 		if(isset($this->formsSessionArray[$this->_formId]) && isset($this->formsSessionArray[$this->_formId]['id'])){
@@ -87,7 +97,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	{
     		$this->formsSessionArray[$this->_formId]['currentFormPage']=$this->_formResponse["lastAnsweredPage"];;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    	}
+    	}	
     	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
@@ -102,9 +112,12 @@ class Blocks_FormsController extends Blocks_AbstractController
     	$output["form"]["id"]=$this->_formId;
     	$output["nbFormPages"]=count($this->_form["formPages"]);
     	$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	$output["newButton"]=$this->_form["uniqueAnswer"]==""?true:false;
+    	if($this->_formResponse["status"]=="finished")
+    		$output["finished"]=$this->_form["endMessage"];
     	//affichage de la page
     	$output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
-    	
+		$output["progression"]=$this->_blockConfig["progression"];
     	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
     	$css = array();
     	 $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js"));
@@ -354,7 +367,33 @@ class Blocks_FormsController extends Blocks_AbstractController
     						case "=":
     							$pageToCheck["elements"][$key]["itemConfig"]["conditionalQuestion"]=true;
     							$pageToCheck["elements"][$key]["itemConfig"]["target"]=$condition["field"];
-    							$pageToCheck["elements"][$key]["itemConfig"]["value"]=$condition["value"]["value"];
+    							if(is_array($condition["value"]))
+    							{
+    								if(is_array($condition["value"]["value"]))
+    								{
+    									$dataValues="";
+    									foreach($condition["value"]["value"] as $conditionnalValues)
+    									{
+    										$dataValues.=";".$conditionnalValues;
+    									}
+    									$pageToCheck["elements"][$key]["itemConfig"]["value"]=$dataValues;
+    								}elseif(is_string($condition["value"]["value"]))
+    								{
+    									$pageToCheck["elements"][$key]["itemConfig"]["value"]=$condition["value"]["value"];
+    								}
+    							}elseif(is_string($condition["value"]))
+    							{
+    								$type=$this->_getFieldType($condition["field"]);
+    								if($type=="datefield")
+    								{
+    									$dataValue=Manager::getService('Date')->convertToYmd($condition["value"]);
+    								}
+    								else{
+    									$dataValue=$condition["value"];
+    								}
+    								$pageToCheck["elements"][$key]["itemConfig"]["value"]=$dataValue;
+    							}
+    							
     							if(isset($this->_formResponse['data'][$condition["field"]])){
     							$conditionsArray=$this->_checkCondition($condition);}
     							else {
@@ -412,17 +451,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     		}
     	}elseif(is_string($condition["value"]))
     	{
-    		$type=null;
-    		foreach($this->_form["formPages"] as $pages)
-    		{
-    			foreach($pages["elements"] as $item){
-    				if($condition["field"]==$item['id'])
-    				{
-    					$type=$item["itemConfig"]["fieldType"];
-    				}
-    			
-    			}
-    		}
+    		$type=$this->_getFieldType($condition["field"]);
     		switch($type)
     		{
     			case "textfield":
@@ -444,5 +473,19 @@ class Blocks_FormsController extends Blocks_AbstractController
     	}
     	return $returnArray;
     }
-
+    protected function _getFieldType($fieldId)
+    {
+    	$toReturn="";
+    	foreach($this->_form["formPages"] as $pages)
+    	{
+    		foreach($pages["elements"] as $field)
+    		{
+    			if($field["id"]==$fieldId)
+    			{
+    				$toReturn=$field["itemConfig"]["fieldType"];
+    			}
+    		}
+    	}
+    	return $toReturn;
+    }
 }
