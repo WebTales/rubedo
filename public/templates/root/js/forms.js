@@ -5,12 +5,23 @@ function addcheck() {
 }
 
 function checkField(){
-	self=this;
 	jQuery(".conditional").each(function(){
+		var value=jQuery(this).attr('data-value').split(";");
 		var target=jQuery(this).attr('data-target');
-		var value=jQuery(this).attr('data-value');
-console.log(self);
-		if(self.value==value)
+		if(value.length>1)
+			{
+			var checked;
+			jQuery("."+target).each(function(){
+				if(jQuery(this).is(":checked"))
+					{
+					checked=jQuery.inArray(jQuery(this).val(),value)!="-1"?true:false;
+					}
+			})
+			}
+		else{
+			checked=jQuery.inArray(jQuery("#"+target).val(),value)!="-1"?true:false;
+		}
+		if(checked==true)
 			jQuery(this).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("hide").addClass("show");
 		else{
 			jQuery(this).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("show").addClass("hide");
@@ -18,18 +29,4 @@ console.log(self);
 		
 		
 	});
-	/*jQuery(".formcheck").each(addcheck);
-	console.log(obj.value);
-	var target=jQuery(obj).attr('data-target');
-	var value=jQuery(obj).attr('data-value');
-	if(obj.value==value)
-		{
-		jQuery("#"+target).parentsUntil(jQuery(".control-group"),".control-group").removeClass("hide").addClass("show");
-		}else
-			{
-			if(obj.value!=value)
-			{
-			jQuery("#"+target).parentsUntil(jQuery(".control-group"),".control-group").removeClass("show").addClass("hide");
-			}
-			}*/
 }
