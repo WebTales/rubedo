@@ -34,6 +34,7 @@ class Blocks_FormsController extends Blocks_AbstractController
 	protected $_form;
 	protected $_errors=array();
 	protected $_lastAnsweredPage;
+	protected $_send=true;
 	
 	public function init(){
 		parent::init();
@@ -56,9 +57,10 @@ class Blocks_FormsController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
+    	//die("coucou");
     	//recupération de paramètre éventuels de la page en cours
     	$currentFormPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
-    	 $this->_lastAnsweredPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
+    	$this->_lastAnsweredPage=$this->formsSessionArray[$this->_formId]['currentFormPage'];
     	//traitement et vérification
     	if($this->getRequest()->isPost()){
     		/*Verification des champs envoyés*/
@@ -85,8 +87,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     	
     		//stockage eventuel
     		$this->_updateResponse();
-    		
     		//mise à jour de la page à afficher
+    		//die("ok");
     		$this->_computeNewPage();
     	}
     	
@@ -145,6 +147,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     	/*
     	 * Check validation rules
     	 */
+    	if(!empty($response))
+    	{
     	if(isset($validationRules["vtype"]) && $is_valid == true){
     		switch($validationRules["vtype"])
     		{
@@ -183,6 +187,46 @@ class Blocks_FormsController extends Blocks_AbstractController
     				$this->_errors[$field["id"]]="Maximum ".$validationRules["maxLength"]." caractères";
     			}
     		}
+    	}
+    	if($is_valid)
+    	{
+    		if(isset($validationRules["minValue"]))
+    		{
+    			switch($field["itemConfig"]["fieldType"]){
+    				case "numberfield":
+    					if($validationRules["minValue"]>intval($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
+    					}
+    					break;
+    				case "datefield":
+    					if(Manager::getService('Date')->convertToTimeStamp($validationRules["minValue"])>Manager::getService('Date')->convertToTimeStamp($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
+    					}
+    			}
+    		}
+    		if(isset($validationRules["maxValue"]))
+    		{
+    			switch($field["itemConfig"]["fieldType"]){
+    				case "numberfield":
+    					if($validationRules["maxValue"]<intval($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
+    					}
+    					break;
+    				case "datefield":
+    					if(Manager::getService('Date')->convertToTimeStamp($validationRules["maxValue"])<Manager::getService('Date')->convertToTimeStamp($response))
+    					{
+    						$is_valid=false;
+    						$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
+    					}
+    			}
+    		}
+    	}
     	}
     	if($is_valid)
     	{
@@ -244,7 +288,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     						$this->formsSessionArray[$this->_formId]['currentFormPage']++;
     						Manager::getService('Session')->set("forms",$this->formsSessionArray);
     						$checkFields=false;
-    						//$this->forward('index');
+    						$this->forward('index');
     					    		
     					}
     					break;
@@ -277,6 +321,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     						case "=":
     							
     							$conditionsArray=$this->_checkCondition($condition);
+    							
     							if(in_array(false,$conditionsArray))
     							{
     								$pageToCheck["elements"][$key]["itemConfig"]["hidden"]=true;
@@ -295,11 +340,11 @@ class Blocks_FormsController extends Blocks_AbstractController
     			}
     		}
     	}
-    	
+    
     	//sur les champs (a faire que si celles de la page sont bonne)
     	//Zend_Debug::dump($pageToCheck);die();
     	$this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']]=$pageToCheck;
-    	//Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    	Manager::getService('Session')->set("forms",$this->formsSessionArray);
     	
     		
     		
@@ -312,23 +357,25 @@ class Blocks_FormsController extends Blocks_AbstractController
     	{
     		if(is_array($condition["value"]["value"]))
     		{
-    		foreach($condition["value"]["value"] as $value)
-    		{
-    				
-    			$returnArray[]=in_array($value,$this->_formResponse['data'][$condition["field"]]);
-    				
-    		}
+    			foreach($condition["value"]["value"] as $value)
+    			{
+    				 
+    				$returnArray[]=in_array($value,$this->_formResponse['data'][$condition["field"]]);
+    				 
+    			}
     		}elseif(is_string($condition["value"]["value"]))
     		{
     			if(is_array($this->_formResponse['data'][$condition["field"]]))
     			{
     				$returnArray[]=in_array($condition["value"]["value"],$this->_formResponse['data'][$condition["field"]]);
+    				
     			}elseif(is_string($this->_formResponse['data'][$condition["field"]])){
-    			$returnArray[]=$condition["value"]["value"]==$this->_formResponse['data'][$condition["field"]]?true:false;}
+    				
+    				$returnArray[]=$condition["value"]["value"]==$this->_formResponse['data'][$condition["field"]]?true:false;}
     		}
     	}elseif(is_string($condition["value"]))
     	{
-    		$returnArray[]=$condition["value"]==$this->_formResponse['data'][$condition["field"]]?true:false;
+    		$returnArray[]=strtolower($condition["value"])==strtolower($this->_formResponse['data'][$condition["field"]])?true:false;
     	}
     	return $returnArray;
     }
