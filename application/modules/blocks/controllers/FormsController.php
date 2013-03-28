@@ -35,14 +35,24 @@ class Blocks_FormsController extends Blocks_AbstractController
 	protected $_errors=array();
 	protected $_lastAnsweredPage;
 	protected $_send=true;
+	protected $_blockConfig;
 	
 	public function init(){
 		//Zend_Debug::dump($this->getRequest());die();
 		parent::init();
 	
-		$blockConfig = $this->getParam('block-config', array());
-		$this->_formId = $blockConfig["formId"];
+		$this->_blockConfig = $this->getParam('block-config', array());
+		$this->_formId = $this->_blockConfig["formId"];
 		$this->_form = Manager::getService('Forms')->findById($this->_formId);
+		if(!$this->getRequest()->isPost() && $this->getParam("getNew")==1)
+		{
+			if($this->_form["uniqueAnswer"]!=true)
+			{
+			$this->_new();
+			return;
+			}
+		}
+		
 		//Check if form already exist on current session
 		$this->formsSessionArray = Manager::getService('Session')->get("forms",array()); //get forms from session
 		if(isset($this->formsSessionArray[$this->_formId]) && isset($this->formsSessionArray[$this->_formId]['id'])){
@@ -87,7 +97,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	{
     		$this->formsSessionArray[$this->_formId]['currentFormPage']=$this->_formResponse["lastAnsweredPage"];;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    	}
+    	}	
     	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
@@ -102,9 +112,12 @@ class Blocks_FormsController extends Blocks_AbstractController
     	$output["form"]["id"]=$this->_formId;
     	$output["nbFormPages"]=count($this->_form["formPages"]);
     	$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+    	$output["newButton"]=$this->_form["uniqueAnswer"]==""?true:false;
+    	if($this->_formResponse["status"]=="finished")
+    		$output["finished"]=$this->_form["endMessage"];
     	//affichage de la page
     	$output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
-    	
+	$output["progression"]=$this->_blockConfig["progression"];
     	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
     	$css = array();
     	 $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js"));
