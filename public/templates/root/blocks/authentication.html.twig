@@ -40,7 +40,7 @@ function loggin()
 		   url: "/xhr-authentication/login",
 		   async:true,
 		   dataType: "json",
-		   data: { login: jQuery('#password').val(), password: jQuery('#login').val() },
+		   data: { login: jQuery('#login').val(), password: jQuery('#password').val() },
 		   success: function(msg){
 		   if(msg.success==false){
 		   jQuery("#error-msg").show();
