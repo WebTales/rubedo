@@ -10,17 +10,18 @@
 </div>
 {% endif %}
 {% if finished %}
-<div class="hero-unit" >{{ finished }}</div>
+<div class="hero-unit" style="margin-top:40px;" >{{ finished }}</div>
 {% else %}
+{% if nbFormPages!=1 %}
 {% if progression==0 %}
 <div class="progress progress-info progress-striped">
   <div class="bar" style="width:{{ progress }}%"></div>
 </div>
 {% else %}
-<div style="width:100%;"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
+<div style="width:80%;"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
 {% endif %}
-
-<form id="{{ form.id }}" method="post" action="" class="form-horizontal rubedo-form hero-unit" >
+{% endif %}
+<form id="{{ form.id }}" method="post" action="{{ url({},true) }}" class="form-horizontal rubedo-form hero-unit" >
 	<input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
 	{% for field in formFields.elements %}
 	{%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
