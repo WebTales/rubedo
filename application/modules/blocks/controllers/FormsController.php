@@ -469,9 +469,10 @@ class Blocks_FormsController extends Blocks_AbstractController
     protected function _checkCondition($condition)
     {
     	$returnArray=array();
-  if(!isset($this->_formResponse['data'][$condition["field"]])|| empty($this->_formResponse['data'][$condition["field"]]))
+    	
+  if(!isset($this->_formResponse['data'][$condition["field"]]) || empty($this->_formResponse['data'][$condition["field"]]))
   {
-  	$resultArray[]=false;
+  	$returnArray[]=false;
   }else{
     	if(is_array($condition["value"]))
     	{
@@ -479,22 +480,41 @@ class Blocks_FormsController extends Blocks_AbstractController
     		{
     			foreach($condition["value"]["value"] as $value)
     			{
-    				 
-    				$returnArray[]=in_array($value,$this->_formResponse['data'][$condition["field"]]);
+    				if(is_array($this->_formResponse['data'][$condition["field"]]))
+    				{
+	    				foreach($this->_formResponse['data'][$condition["field"]] as $response)
+	    				{
+	    					$returnArray[]=in_array($response,$condition["value"]["value"]);
+	    				}
+    					
+    				}elseif(is_string($this->_formResponse['data'][$condition["field"]])){
+    				
+    					$returnArray[]=in_array($value,$this->_formResponse['data'][$condition["field"]]);
+    				}
+    				
+    				
     				 
     			}
     		}elseif(is_string($condition["value"]["value"]))
     		{
     			if(is_array($this->_formResponse['data'][$condition["field"]]))
     			{
-    				$returnArray[]=in_array($condition["value"]["value"],$this->_formResponse['data'][$condition["field"]]);
     				
+    				$returnArray[]=in_array($condition["value"]["value"],$this->_formResponse['data'][$condition["field"]]);
     			}elseif(is_string($this->_formResponse['data'][$condition["field"]])){
     				
     				$returnArray[]=$condition["value"]["value"]==$this->_formResponse['data'][$condition["field"]]?true:false;}
     		}
     	}elseif(is_string($condition["value"]))
     	{
+    		if(is_array($this->_formResponse['data'][$condition["field"]]))
+    		{
+    			$returnArray[]=in_array($condition["value"],$this->_formResponse['data'][$condition["field"]]);
+    				
+    		}elseif(is_string($this->_formResponse['data'][$condition["field"]])){
+    		
+    			$returnArray[]=in_array($value,$this->_formResponse['data'][$condition["field"]]);
+    		
     		$type=$this->_getFieldType($condition["field"]);
     		switch($type)
     		{
@@ -512,7 +532,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     				$returnArray[]=intval($condition["value"])==intval($this->_formResponse['data'][$condition["field"]])?true:false;
     				break;
     				
-    		}
+    		}}
     		
     	}}
     	return $returnArray;
