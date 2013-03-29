@@ -45,6 +45,15 @@ class Blocks_SearchController extends Blocks_AbstractController
             $params['navigation'][]=$siteId;
             $serverParams['navigation'][]=$siteId;
         }
+        //apply predefined facets
+        $facetsToHide=array();
+        if(isset($params['block-config']['predefinedFacets'])){
+        	$predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
+        	foreach ($predefParamsArray as $key => $value){
+        		$params[$key] = $value;
+        		$facetsToHide[]=$key;
+        	}
+        }
         
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
@@ -64,7 +73,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         } else {
             $pagecount = 1;
         }
-		
+        $results['facetsToHide']=$facetsToHide;
 		$results['current']=$params['pager'];
         $results['pagecount'] = $pagecount;
 		$results['limit']=min(array(
