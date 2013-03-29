@@ -97,7 +97,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     	{
     		$this->formsSessionArray[$this->_formId]['currentFormPage']=$this->_formResponse["lastAnsweredPage"];
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    		$output['values'] = $this->getAllParams();
+    		$output['values'] = $this->_formResponse["data"];
+   
     	}	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
@@ -370,14 +371,14 @@ class Blocks_FormsController extends Blocks_AbstractController
     					{
     						if($condition["field"]==$item["id"])
     						{
-    							$pageToCheck["elements"][$id]["itemConfig"]["check"]=true;
+    							$pageToCheck["elements"][$id]["itemConfig"]["isMother"]=true;
     						}
     					}
     					$conditionsArray=array();
     					switch($condition["operator"])
     					{
     						case "=":
-    							$pageToCheck["elements"][$key]["itemConfig"]["conditionalQuestion"]=true;
+    							$pageToCheck["elements"][$key]["itemConfig"]["isChild"]=true;
     							$pageToCheck["elements"][$key]["itemConfig"]["target"]=$condition["field"];
     							if(is_array($condition["value"]))
     							{

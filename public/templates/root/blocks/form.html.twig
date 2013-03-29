@@ -10,7 +10,7 @@
 </div>
 {% endif %}
 {% if finished %}
-<div class="hero-unit" style="margin-top:40px;" >{{ finished }}</div>
+<div class="hero-unit" style="margin-top:40px;" >{%if uniqueAnswerText%}{{ uniqueAnswerText }}{%else%}{{ finished }}{% endif %}</div>
 {% else %}
 {% if nbFormPages!=1 %}
 {% if progression==0 %}
