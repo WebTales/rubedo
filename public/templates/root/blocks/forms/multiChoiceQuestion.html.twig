@@ -1,5 +1,5 @@
 <div class="control-group {% if field.id in errors|keys %}error{% endif %} {% if field.itemConfig.hidden %}hide{% endif %}">
-<label class="control-label">{{ field.itemConfig.label }}</label>
+<label class="control-label">{{ field.itemConfig.label }}</label>{% if field.itemConfig.fieldConfig.mandatory %} *{% endif %}
 {% if field.itemConfig.tooltip !=""%}
   <a href="#" class="help" data-toggle="tooltip"  data-placement="right"  title="{{ field.itemConfig.tooltip }}" data-original-title="{{ field.itemConfig.tooltip }}">
       <i class="icon-exclamation-sign" style="margin-left:10px;"></i></a>
@@ -23,7 +23,7 @@
 	{% endif %}
 	<td>
     <label class="{{ type }}">
-    <input  class="{{ item.name }} {% if field.itemConfig.check %}formcheck{% endif %} {% if field.itemConfig.conditionalQuestion %}conditional{% endif %}"  {% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %} {% if field.itemConfig.value %}data-value="{{field.itemConfig.value}}"{% endif %} type="{{ type }}" name="{{ item.name }}[]" value="{{item.inputValue}}"> {{item.boxLabel }}
+    <input {% if item.value in values[field.id]|keys %} checked="true"{% endif %}class="{{ item.name }} {% if field.itemConfig.check %}formcheck{% endif %} {% if field.itemConfig.conditionalQuestion %}conditional{% endif %}"  {% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %} {% if field.itemConfig.value %}data-value="{{field.itemConfig.value}}"{% endif %} type="{{ type }}" name="{{ item.name }}[]" value="{{item.inputValue}}"> {{item.boxLabel }}
   </label>
   </td>
   {% set rank=rank+1 %}
