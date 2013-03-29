@@ -371,14 +371,14 @@ class Blocks_FormsController extends Blocks_AbstractController
     					{
     						if($condition["field"]==$item["id"])
     						{
-    							$pageToCheck["elements"][$id]["itemConfig"]["check"]=true;
+    							$pageToCheck["elements"][$id]["itemConfig"]["isMother"]=true;
     						}
     					}
     					$conditionsArray=array();
     					switch($condition["operator"])
     					{
     						case "=":
-    							$pageToCheck["elements"][$key]["itemConfig"]["conditionalQuestion"]=true;
+    							$pageToCheck["elements"][$key]["itemConfig"]["isChild"]=true;
     							$pageToCheck["elements"][$key]["itemConfig"]["target"]=$condition["field"];
     							if(is_array($condition["value"]))
     							{
