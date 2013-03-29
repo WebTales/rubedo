@@ -469,7 +469,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     protected function _checkCondition($condition)
     {
     	$returnArray=array();
-  if(empty($this->_formResponse['data'][$condition["field"]]))
+  if(!isset($this->_formResponse['data'][$condition["field"]])|| empty($this->_formResponse['data'][$condition["field"]]))
   {
   	$resultArray[]=false;
   }else{
