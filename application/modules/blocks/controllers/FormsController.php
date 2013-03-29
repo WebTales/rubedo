@@ -147,6 +147,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     		$this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
     		$this->formsSessionArray[$this->_formId]['currentPage'] = 0;
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    	}else{
+    		throw new Rubedo\Exceptions\Server('Impossible de mettre à jour la réponse.');
     	}
     	
     	//Ferme le formulaire et renvois a une page de remerciement
@@ -287,6 +289,8 @@ class Blocks_FormsController extends Blocks_AbstractController
     	$result=Manager::getService('FormsResponses')->update($this->_formResponse);
     	if(!$result['success']){
     		throw new Rubedo\Exceptions\Server('Impossible de mettre à jour la réponse.');
+    	}else{
+    		$this->_formResponse=$result['data'];
     	}
     }
     
@@ -330,15 +334,15 @@ class Blocks_FormsController extends Blocks_AbstractController
     					    		
     					}
     					break;
-    					case"!=":
+    					case"≠":
     						$conditionsArray=$this->_checkCondition($condition);
     						if(in_array(true,$conditionsArray))
     						{
-    							$this->formsSessionArray[$this->_formId]['currentFormPage']++;
-    						Manager::getService('Session')->set("forms",$this->formsSessionArray);
-    						$checkFields=false;
-    						$this->_computeNewPage();
-    						return;
+	    						$this->formsSessionArray[$this->_formId]['currentFormPage']++;
+	    						Manager::getService('Session')->set("forms",$this->formsSessionArray);
+	    						$checkFields=false;
+	    						$this->_computeNewPage();
+	    						return;
     						}
     						break;
     					
@@ -404,7 +408,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     								$pageToCheck["elements"][$key]["itemConfig"]["hidden"]=true;
     							}
     							break;
-    						case"!=":
+    						case"≠":
     							
     							$conditionsArray=$this->_checkCondition($condition);
     							if(in_array(true,$conditionsArray))
