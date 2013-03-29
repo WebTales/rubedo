@@ -95,10 +95,10 @@ class Blocks_FormsController extends Blocks_AbstractController
     	//Si on demande la page précédente
     	if(!$this->getRequest()->isPost() && $this->getParam("getPrevious")==1)
     	{
-    		$this->formsSessionArray[$this->_formId]['currentFormPage']=$this->_formResponse["lastAnsweredPage"];;
+    		$this->formsSessionArray[$this->_formId]['currentFormPage']=$this->_formResponse["lastAnsweredPage"];
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
+    		$output['values'] = $this->getAllParams();
     	}	
-    	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
     		$output['errors'] = $this->_errors;
