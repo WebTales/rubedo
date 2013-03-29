@@ -1,0 +1,195 @@
+{% extends "root/blocks/contentlist.html.twig" %} 
+{% block mainContent %}
+
+<br />
+<div class="navbar">
+	<div class="navbar-inner">
+		<a class="brand">{% if nbresults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
+	</div>
+</div>
+{% if activeFacets|length > 0 %}
+<div class="navbar">
+	<div class="navbar-inner">
+		<p class="brand">Critères de recherche :&nbsp;&nbsp;
+		{% for facet in activeFacets %}
+		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
+                {% for term in facet.terms %}
+	                <a href="{{url({(facet.id): null})}}" >
+					<span class="badge badge-info"> {% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
+				    </a>
+		        {% endfor %}
+            {% else %}
+                {% for term in facet.terms %}
+                    {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+		            <a href="{{url({(facet.id): term.term},'sub')}}" >
+				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
+			        </a>
+			        {% endif %}
+		        {% endfor %}
+            {% endif %}
+		        
+		{% endfor %}
+		</p>
+	</div>
+</div>
+{% endif %}
+<div class="row-fluid">
+	<div class="span3 well well-large">
+		<p>
+			<i class="icon-search"></i> {{"full_text_search"|trans}}
+		</p>
+			<form class="form-search" action="{{url({},true)}}">
+				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
+			</form>
+		
+		{% for facet in facets %}
+
+			{% if facet.terms|length > 0 %}
+
+    			{% if facet.id == 'type' %}
+    			<p>
+    				<i class="icon-file"></i> {{"content_type"|trans}}
+    			</p>	
+    			{% elseif facet.id == 'damType' %}
+    			<p>
+    				<i class="icon-file"></i> {{"dam_type"|trans}}
+    			</p>	
+    			{% elseif facet.id == 'author' %}
+    			<p>
+    				<i class="icon-user"></i> {{"author"|trans}}
+    			</p>		
+    			{% elseif facet.id == 'date' %}
+    			<p>
+    				<i class="icon-calendar"></i> {{"date"|trans}}
+    			</p>	
+    			{% else %}
+    			<p>
+    				<i class="icon-tags"></i> {{facet.label}}
+    			</p>			
+    			{% endif %}	
+    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
+    	          <ul>
+    				{% for term in facet.terms %}
+    				
+    				<li>
+    					<a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
+    				</li>
+    				
+    				{% endfor %}
+			    </ul>
+    	        {% else %}
+    	        <ul>
+    				{% for term in facet.terms %}
+    				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+    				<li>
+    					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
+    				</li>
+    				{% endif %}
+    				{% endfor %}
+			    </ul>
+    					
+    			{% endif %}	
+			
+			
+			{% endif %}
+		
+		{% endfor %}
+		
+	</div>
+	<div class="span8">
+		{% if total == 0 %}
+		<div class="alert alert-error">
+			{{"no_result"|trans}}
+		</div>
+		{% else %}
+
+		<table class="table">
+			{% for result in data %}
+			{% if result.objectType == 'content' %}
+			<tr>
+				<td><h3><a href="{{ displaySingleUrl(result.id) }}">{{ result.title }}</a></h3>
+				<div class="progress progress-success" style="width:50px; float: left;">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
+						{{ result.score }}%
+					</div>
+				</div> &nbsp;<span class="label">{{ result.type }}</span>
+				<br />
+				<br />
+				{% if result.summary %}
+				<p>{{ result.summary|cleanHtml }}</p>
+				{% endif %}
+				<br />
+				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+			</tr>
+			{% else %}
+			<tr>
+				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
+				<div class="progress progress-success" style="width:50px; float: left;">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
+						{{ result.score }}%
+					</div>
+				</div> &nbsp;<span class="label">{{ result.type }}</span>
+				<br />
+				<br />
+				{% if result.summary %}
+				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.summary|cleanHtml }}</p>
+				{% endif %}
+				<br />
+				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+		</table>
+		{% if pagecount > 1 %}
+		<div class="pagination pagination-centered">
+		{%set wrap=limit//2%}
+		{%set lastWrap=(pagecount-1)-current%}
+			<ul>
+			<li class="disabled">
+					<a href="#">Page {{ current+1 }} {{"on"|trans}} {{ pagecount }}</a>
+				</li>
+				{% if current==0 %}
+				<li class="disabled">
+					<a href="#"><<</a>
+				</li>
+				{% else %}
+				<li>
+					<a href="{{url({'pager': current-1})}}"><<</a>
+				</li>
+				{% endif %}
+				{%if current<wrap+1 or limit<10%}
+				{% for i in range(0, limit) %}
+				<li {% if current==i %}class="disabled"{% endif %}>
+					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
+				</li>
+				{% endfor %}
+				{%elseif limit>wrap and current+wrap<pagecount %}
+				{% for  i in current-(wrap)..current+wrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%else%}
+				{% for  i in current-(limit-(lastWrap)-1)..current+lastWrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%endif%}
+				{% if current==pagecount-1%}
+				<li class="disabled">
+					<a href="#">>></a>
+				</li>
+				{% else %}
+				<li>
+					<a href="{{url({'pager': current+1})}}">>></a>
+				</li>
+				{% endif %}
+			</ul>
+		</div>
+		{% endif %}
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}

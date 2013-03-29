@@ -73,6 +73,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         } else {
             $pagecount = 1;
         }
+        $results['blockConfig']=$params['block-config'];
         $results['facetsToHide']=$facetsToHide;
 		$results['current']=$params['pager'];
         $results['pagecount'] = $pagecount;
@@ -84,7 +85,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 		$results['displayTitle']=$this->getParam('displayTitle');
 		$results['blockTitle']=$this->getParam('blockTitle');
 		
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         
         $css = array();
         $js = array();
