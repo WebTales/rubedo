@@ -61,7 +61,6 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $query->init();
         
         $results = $query->search($params,'geo');
-        
         $results['currentSite'] = isset($siteId)?$siteId:null;
         if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
             $results['constrainToSite'] = true;
