@@ -5,57 +5,6 @@
 <div class="navbar">
 	<div class="navbar-inner">
 		<a class="brand">{% if nbresults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
-		<ul class="nav pull-right">
-			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if orderby == "_score" or orderby == "" %}
-				{{"order_by_relevance"|trans}}
-				{% endif %}
-				{% if orderby == "lastUpdateTime" %}
-				{{"order_by_date"|trans}}
-				{% endif %}
-				{% if orderby == "author" %}
-				{{"order_by_author"|trans}}
-				{% endif %} <b class="caret"></b> </a>
-				<ul class="dropdown-menu">
-					{% if orderby != "_score" %}
-					<li>
-						<a href="{{url({'orderby': '_score'})}}">{{"order_by_relevance"|trans}}</a>
-					</li>
-					{% endif %}
-					{% if orderby != "lastUpdateTime" %}
-					<li>
-						<a href="{{url({'orderby': 'lastUpdateTime'})}}">{{"order_by_date"|trans}}</a>
-					</li>
-					{% endif %}
-					{% if orderby != "author" %}
-					<li>
-						<a href="{{url({'orderby': 'author'})}}">{{"order_by_author"|trans}}</a>
-					</li>
-					{% endif %}
-				</ul>
-			</li>
-			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if pagesize=="all" %}
-				{{"all_on_one_page"|trans}}
-				{% else %}
-				{{ pagesize }} {{"by_page"|trans}}
-				{% endif %} <b class="caret"></b> </a>
-				<ul class="dropdown-menu">
-					<li>
-						<a href="{{url({'pagesize': '10'})}}">10 {{"by_page"|trans}}</a>
-					</li>
-					<li>
-						<a href="{{url({'pagesize': '20'})}}">20 {{"by_page"|trans}}</a>
-					</li>
-					<li>
-						<a href="{{url({'pagesize': '50'})}}">50 {{"by_page"|trans}}</a>
-					</li>
-					<li>
-						<a href="{{url({'pagesize': 'all'})}}">{{"all_on_one_page"|trans}}</a>
-					</li>
-				</ul>
-			</li>
-		</ul>
 	</div>
 </div>
 {% if activeFacets|length > 0 %}

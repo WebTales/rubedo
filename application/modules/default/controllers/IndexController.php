@@ -533,6 +533,12 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'search';
                 
                 break;
+            case 'geoSearchResults':
+                $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
+                $controller = 'geo-search';
+                
+                break;
+               
             case 'Fil d\'Ariane':
             case 'breadcrumb':
                 $params['currentPage'] = $this->_pageId;
