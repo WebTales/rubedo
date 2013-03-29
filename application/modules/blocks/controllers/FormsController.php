@@ -83,7 +83,33 @@ class Blocks_FormsController extends Blocks_AbstractController
     				continue;
     			}
     			$this->_validInput($field, $this->getParam($field['id']));
-    		
+    			
+    		}
+    		foreach($this->_form["formPages"][$currentFormPage]["elements"] as $field)
+    		{
+    			foreach($field["itemConfig"]["conditionals"] as $condition)
+    			{
+    				
+    				switch($condition["operator"])
+    				{
+    					case "=":
+    						$conditionArray=$this->_checkCondition($condition);
+    						if(in_array(false,$conditionArray))//si condition pas remplie
+    						{
+    							unset($this->_errors[$field["id"]]);
+    							unset($this->_formResponse["data"][$field["id"]]);
+    						}
+    						break;
+    					case"≠":
+    						$conditionArray=$this->_checkCondition($condition);
+    						if(in_array(true,$conditionArray))
+    						{
+    							unset($this->_errors[$field["id"]]);
+    							unset($this->_formResponse["data"][$field["id"]]);
+    						}
+    						break;
+    				}
+    			}
     		}
     		if(empty($this->_errors)){
     			$this->_hasError=false;
@@ -95,10 +121,13 @@ class Blocks_FormsController extends Blocks_AbstractController
     	//Si on demande la page précédente
     	if(!$this->getRequest()->isPost() && $this->getParam("getPrevious")==1)
     	{
-    		$this->formsSessionArray[$this->_formId]['currentFormPage']=$this->_formResponse["lastAnsweredPage"];
+    		$pageToBeSet = $this->_formResponse["lastAnsweredPage"][$currentFormPage];
+    		unset($this->_formResponse["lastAnsweredPage"][$currentFormPage]);
+    		$this->_clearPageInDb($currentFormPage);
+    		$currentFormPage = $this->formsSessionArray[$this->_formId]['currentFormPage'] = $pageToBeSet;
+    		
     		Manager::getService('Session')->set("forms",$this->formsSessionArray);
     		$output['values'] = $this->_formResponse["data"];
-   
     	}	
     	if($this->_hasError){
     		$output['values'] = $this->getAllParams();
@@ -154,146 +183,145 @@ class Blocks_FormsController extends Blocks_AbstractController
     	
     	//Ferme le formulaire et renvois a une page de remerciement
     }
-    
-    private function _validInput($field,$response)
-    {
-    	$is_valid = true;
-    	$validationRules=$field["itemConfig"]["fieldConfig"];
-    	/*
-    	 * Check if field is required
-    	 */
-    
-    	if($validationRules["mandatory"]==true){
-    		if(empty($response)||$response==""){
-    			$is_valid=false;
-    			$this->_errors[$field["id"]]="Ce champ est obligatoire";
-    		}
-    	}
-    	/*
-    	 * Check validation rules
-    	 */
-    	$fieldType=$this->_getFieldType($field["id"]);
-    
-    	if(!empty($response))
+	protected function _validInput($field, $response) {
+		$is_valid = true;
+		$validationRules = $field ["itemConfig"] ["fieldConfig"];
+		/*
+		 * Check if field is required
+		 */
+		
+		if ($validationRules ["mandatory"] == true) {
+			if (empty ( $response ) || $response == "") {
+				$is_valid = false;
+				$this->_errors [$field ["id"]] = "Ce champ est obligatoire";
+			}
+		}
+
+		/*
+		 * Check validation rules
+		 */
+		$fieldType = $this->_getFieldType ( $field ["id"] );
+		
+		if (! empty ( $response )) {
+			if ($fieldType == "numberfield") {
+				$is_valid = ctype_digit ( $response ) == true ? true : false;
+				if ($is_valid == false)
+					$this->_errors [$field ["id"]] = "Ce champ ne doit contenir que des caractères numériques";
+			}
+			if (isset ( $validationRules ["vtype"] ) && $is_valid == true) {
+				switch ($validationRules ["vtype"]) {
+					case "alpha" :
+						$is_valid = ctype_alpha ( $response ) == true ? true : false;
+						break;
+					case "alphanum" :
+						$is_valid = ctype_alnum ( $response ) == true ? true : false;
+						break;
+					case "email" :
+						$is_valid = preg_match ( '#^(([a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+\.?)*[a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+)@(([a-z0-9-_]+\.?)*[a-z0-9-_]+)\.[a-z]{2,}$#i', $response ) == 1 ? true : false;
+						break;
+					case "url" :
+						$is_valid = preg_match ( '|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $response ) == 1 ? true : false;
+						break;
+					default :
+						$is_valid = true;
+						break;
+				}
+				if ($is_valid == false) {
+					$this->_errors [$field ["id"]] = "Saisie incorrecte";
+				}
+			}
+			/*
+			 * Check Other params
+			 */
+			if ($is_valid) {
+				if (isset ( $validationRules ["minLength"] ) && ! empty ( $validationRules ["minLength"] )) {
+					if (strlen ( $response ) < $validationRules ["minLength"]) {
+						$is_valid = false;
+						$this->_errors [$field ["id"]] = "Minimum " . $validationRules ["minLength"] . " caractères";
+					}
+				}
+				if (isset ( $validationRules ["maxLength"] ) && ! empty ( $validationRules ["maxLength"] )) {
+					if (strlen ( $response ) > $validationRules ["maxLength"]) {
+						$is_valid = false;
+						$this->_errors [$field ["id"]] = "Maximum " . $validationRules ["maxLength"] . " caractères";
+					}
+				}
+			}
+			if ($is_valid) {
+				if (isset ( $validationRules ["minValue"] )) {
+					switch ($field ["itemConfig"] ["fieldType"]) {
+						case "numberfield" :
+							if ($validationRules ["minValue"] > intval ( $response )) {
+								$is_valid = false;
+								$this->_errors [$field ["id"]] = "Valeur minimum " . $validationRules ["minValue"];
+							}
+							break;
+						case "datefield" :
+							if ($validationRules ["minValue"] > Manager::getService ( 'Date' )->convertToTimeStamp ( $response )) {
+								$is_valid = false;
+								$this->_errors [$field ["id"]] = "Valeur minimum " . Manager::getService ( 'Date' )->convertToYmd ( $validationRules ["minValue"] );
+							}
+							break;
+						case "timefield" :
+							if (Manager::getService ( 'Date' )->convertToTimeStamp ( $validationRules ["minValue"] ) > Manager::getService ( 'Date' )->convertToTimeStamp ( $response )) {
+								$is_valid = false;
+								$this->_errors [$field ["id"]] = "Valeur minimum " . $validationRules ["minValue"];
+							}
+							break;
+					}
+				}
+				if (isset ( $validationRules ["maxValue"] )) {
+					switch ($field ["itemConfig"] ["fieldType"]) {
+						case "numberfield" :
+							if ($validationRules ["maxValue"] < intval ( $response )) {
+								$is_valid = false;
+								$this->_errors [$field ["id"]] = "Valeur maximum " . $validationRules ["maxValue"];
+							}
+							break;
+						case "datefield" :
+							if ($validationRules ["maxValue"] < Manager::getService ( 'Date' )->convertToTimeStamp ( $response )) {
+								$is_valid = false;
+								$this->_errors [$field ["id"]] = "Valeur maximum " . Manager::getService ( 'Date' )->convertToYmd ( $validationRules ["maxValue"] );
+							}
+							break;
+						case "timefield" :
+							if (Manager::getService ( 'Date' )->convertToTimeStamp ( $validationRules ["maxValue"] ) < Manager::getService ( 'Date' )->convertToTimeStamp ( $response )) {
+								$is_valid = false;
+								$this->_errors [$field ["id"]] = "Valeur maximum " . $validationRules ["maxValue"];
+							}
+							break;
+					}
+				}
+			}
+		}
+		if ($is_valid) {
+			$this->_validatedFields [$field ['id']] = $response;
+			if(!isset($this->_formResponse['data'])){
+				$this->_formResponse['data'] = array();
+			}
+			$this->_formResponse['data'][$field ['id']] = $response;
+		}
+	}
+
+    protected function _clearPageInDb($pageId){
+    	foreach($pageId["elements"] as $field)
     	{
-    		if($fieldType=="numberfield")
+    		foreach($this->_formResponse["data"] as $key=>$fieldOnDb)
     		{
-    			$is_valid=ctype_digit($response)==true?true:false;
-    			if($is_valid==false)
-    			$this->_errors[$field["id"]]="Ce champ ne doit contenir que des caractères numériques";
-    		}
-    	if(isset($validationRules["vtype"]) && $is_valid == true){
-    		switch($validationRules["vtype"])
-    		{
-    			case "alpha":
-    				$is_valid=ctype_alpha($response)==true?true:false;
-    				break;
-    			case "alphanum":
-    				$is_valid=ctype_alnum($response)==true?true:false;
-    				break;
-    			case "email":
-    				$is_valid=preg_match('#^(([a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+\.?)*[a-z0-9!\#$%&\\\'*+/=?^_`{|}~-]+)@(([a-z0-9-_]+\.?)*[a-z0-9-_]+)\.[a-z]{2,}$#i',$response)==1?true:false;
-    				break;
-    			case "url":
-    				$is_valid=preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i',$response)==1?true:false;
-    				break;
-    			default:
-    				$is_valid=true;
-    				break;
-    		}
-    		if($is_valid==false){
-    		$this->_errors[$field["id"]]="Saisie incorrecte";}
-    	}
-    	/*
-    	 * Check Other params
-    	 */
-    	if($is_valid){
-    		if(isset($validationRules["minLength"]) && !empty($validationRules["minLength"])){
-    			if(strlen($response)<$validationRules["minLength"]){
-    				$is_valid=false;
-    				$this->_errors[$field["id"]]="Minimum ".$validationRules["minLength"]." caractères";
+    			if($field["id"]==$key){
+    				unset($this->_formResponse["data"][$key]);
     			}
     		}
-    		if(isset($validationRules["maxLength"]) && !empty($validationRules["maxLength"])){
-    			if(strlen($response)>$validationRules["maxLength"]){
-    				$is_valid=false;
-    				$this->_errors[$field["id"]]="Maximum ".$validationRules["maxLength"]." caractères";
-    			}
-    		}
-    	}
-    	if($is_valid)
-    	{
-    		if(isset($validationRules["minValue"]))
-    		{
-    			switch($field["itemConfig"]["fieldType"]){
-    				case "numberfield":
-    					if($validationRules["minValue"]>intval($response))
-    					{
-    						$is_valid=false;
-    						$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
-    					}
-    					break;
-    				case "datefield":
-    					if($validationRules["minValue"]>Manager::getService('Date')->convertToTimeStamp($response))
-    					{
-    						$is_valid=false;
-    						$this->_errors[$field["id"]]="Valeur minimum ".Manager::getService('Date')->convertToYmd($validationRules["minValue"]);
-    					}
-    					break;
-    				case "timefield":
-    						if(Manager::getService('Date')->convertToTimeStamp($validationRules["minValue"])>Manager::getService('Date')->convertToTimeStamp($response))
-    						{
-    							$is_valid=false;
-    							$this->_errors[$field["id"]]="Valeur minimum ".$validationRules["minValue"];
-    						}
-    						break;
-    			}
-    		}
-    		if(isset($validationRules["maxValue"]))
-    		{
-    			switch($field["itemConfig"]["fieldType"]){
-    				case "numberfield":
-    					if($validationRules["maxValue"]<intval($response))
-    					{
-    						$is_valid=false;
-    						$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
-    					}
-    					break;
-    				case "datefield":
-    					if($validationRules["maxValue"]<Manager::getService('Date')->convertToTimeStamp($response))
-    					{
-    						$is_valid=false;
-    						$this->_errors[$field["id"]]="Valeur maximum ".Manager::getService('Date')->convertToYmd($validationRules["maxValue"]);
-    					}
-    					break;
-    					case "timefield":
-    						if(Manager::getService('Date')->convertToTimeStamp($validationRules["maxValue"])<Manager::getService('Date')->convertToTimeStamp($response))
-    						{
-    							$is_valid=false;
-    							$this->_errors[$field["id"]]="Valeur maximum ".$validationRules["maxValue"];
-    						}
-    						break;
-    			}
-    		}
-    	}
-    	}
-    	if($is_valid)
-    	{
-    		$this->_validatedFields[$field['id']]=$response;
     	}
     }
-
     
     protected function _updateResponse(){
     	//mise à jour du status de la réponse
     	$this->_formResponse["status"]="pending";
+    	$currentPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
     	//$this->_formResponse["lastAnsweredPage"]=$this->formsSessionArray[$this->_formId]['currentFormPage'];
-    	$this->_formResponse["lastAnsweredPage"]=$this->_lastAnsweredPage;
-    	if(!isset($this->_formResponse['data'])){
-    		$this->_formResponse['data'] = array();
-    	}
-    	foreach ($this->_validatedFields as $key => $value){
-    		$this->_formResponse['data'][$key]=$value;
+    	if(intval($this->formsSessionArray[$this->_formId]['currentFormPage'])> intval($this->_lastAnsweredPage) && !isset($this->_formResponse["lastAnsweredPage"][$currentPage])){
+    		$this->_formResponse["lastAnsweredPage"][$currentPage]=$this->_lastAnsweredPage;
     	}
     	$result=Manager::getService('FormsResponses')->update($this->_formResponse);
     	if(!$result['success']){
@@ -441,7 +469,10 @@ class Blocks_FormsController extends Blocks_AbstractController
     protected function _checkCondition($condition)
     {
     	$returnArray=array();
-  
+  if(empty($this->_formResponse['data'][$condition["field"]]))
+  {
+  	$resultArray[]=false;
+  }else{
     	if(is_array($condition["value"]))
     	{
     		if(is_array($condition["value"]["value"]))
@@ -483,7 +514,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     				
     		}
     		
-    	}
+    	}}
     	return $returnArray;
     }
     protected function _getFieldType($fieldId)
@@ -501,4 +532,5 @@ class Blocks_FormsController extends Blocks_AbstractController
     	}
     	return $toReturn;
     }
+
 }
