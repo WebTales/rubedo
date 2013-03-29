@@ -24,7 +24,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_SearchController extends Blocks_AbstractController
+class Blocks_GeoSearchController extends Blocks_AbstractController
 {
 
     /**
@@ -60,8 +60,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
         
-        $results = $query->search($params);
-        
+        $results = $query->search($params,'geo');
         $results['currentSite'] = isset($siteId)?$siteId:null;
         if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
             $results['constrainToSite'] = true;
@@ -73,6 +72,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         } else {
             $pagecount = 1;
         }
+        $results['blockConfig']=$params['block-config'];
         $results['facetsToHide']=$facetsToHide;
 		$results['current']=$params['pager'];
         $results['pagecount'] = $pagecount;
@@ -84,7 +84,7 @@ class Blocks_SearchController extends Blocks_AbstractController
 		$results['displayTitle']=$this->getParam('displayTitle');
 		$results['blockTitle']=$this->getParam('blockTitle');
 		
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         
         $css = array();
         $js = array();
