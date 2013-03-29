@@ -46,7 +46,7 @@ class Blocks_FormsController extends Blocks_AbstractController
 		$this->_form = Manager::getService('Forms')->findById($this->_formId);
 		if(!$this->getRequest()->isPost() && $this->getParam("getNew")==1)
 		{
-			if($this->_form["uniqueAnswer"]!=true)
+			if($this->_form["uniqueAnswer"]=="false")
 			{
 			$this->_new();
 			return;
@@ -112,7 +112,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     	$output["form"]["id"]=$this->_formId;
     	$output["nbFormPages"]=count($this->_form["formPages"]);
     	$output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
-    	$output["newButton"]=$this->_form["uniqueAnswer"]==""?true:false;
+    	$output["displayNew"]=$this->_form["uniqueAnswer"]=="true"?false:true;
     	if($this->_formResponse["status"]=="finished")
     		$output["finished"]=$this->_form["endMessage"];
     	//affichage de la page
@@ -171,8 +171,16 @@ class Blocks_FormsController extends Blocks_AbstractController
     	/*
     	 * Check validation rules
     	 */
+    	$fieldType=$this->_getFieldType($field["id"]);
+    
     	if(!empty($response))
     	{
+    		if($fieldType=="numberfield")
+    		{
+    			$is_valid=ctype_digit($response)==true?true:false;
+    			if($is_valid==false)
+    			$this->_errors[$field["id"]]="Ce champ ne doit contenir que des caractères numériques";
+    		}
     	if(isset($validationRules["vtype"]) && $is_valid == true){
     		switch($validationRules["vtype"])
     		{

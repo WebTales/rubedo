@@ -4,7 +4,7 @@
 {% set progress= ((currentFormPage+1)*100)/nbFormPages %}
 
 <div id="form-container-{{ form.id }}" class="rubedo-form-container" >
-{% if newButton==true %}
+{% if displayNew==true %}
 <div class="btn-group pull-right">
 <a class="btn btn-warning" href="?getNew=1"  style="margin:5px 5px 5px 5px;"><i class="icon-file icon-white"></i> Nouveau</a>
 </div>
