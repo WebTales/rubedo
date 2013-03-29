@@ -84,7 +84,7 @@ class Blocks_ContactController extends Blocks_AbstractController
     	
         $output["blockConfig"]=$blockConfig;
         
-        if (isset($blockConfig['displayType'])) {
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
                     "blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {

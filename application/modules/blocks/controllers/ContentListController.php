@@ -37,7 +37,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $blockConfig = $this->getRequest()->getParam('block-config');
         $output["blockConfig"]=$blockConfig;
         
-        if (isset($blockConfig['displayType'])) {
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
                     "blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {

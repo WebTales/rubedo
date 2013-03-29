@@ -37,7 +37,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         
         $blockConfig = $this->getParam('block-config', array());
         
-        if (isset($blockConfig['displayType'])) {
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
         	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
 	        if(isset($blockConfig['style']) && $blockConfig['style']=='Vertical'){

@@ -34,7 +34,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $output = $this->_getList();
         $blockConfig = $this->getRequest()->getParam('block-config');
         
-        if (isset($blockConfig['displayType'])) {
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
