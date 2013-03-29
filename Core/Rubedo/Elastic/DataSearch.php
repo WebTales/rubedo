@@ -368,6 +368,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 			if (array_key_exists('fileSize',$data)) {
 				$tmp['fileSize'] = $data['fileSize'];
 			} 
+			if (array_key_exists('geo_bbox',$params)) {
+				$tmp['position'] = $data['position'];
+			}
 			switch ($data['objectType']) {
 				case 'content':
 					$contentType = Manager::getService('ContentTypes')->findById($data['contentType']);
