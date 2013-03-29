@@ -72,7 +72,16 @@ interface IDate
      * get a localized date with format and timestamp arguments
      *
      * @param string $format            
-     * @param string $timestamp            
+     * @param string $timestamp
+     * @return string            
      */
     public function getLocalised ($format = null, $timestamp = null);
+    
+    /**
+     * Get a date time in local format
+     * 
+     * @param string $timestamp
+     * @return string
+     */
+    public function getDefaultDatetime ($timestamp = null);
 }

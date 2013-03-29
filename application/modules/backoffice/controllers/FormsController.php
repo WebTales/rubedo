@@ -143,7 +143,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
         
         foreach ($list['data'] as $response) {
             $csvLine = array(
-                Manager::getService('Date')->getLocalised(null, $response['lastUpdateTime']),
+                Manager::getService('Date')->getDefaultDatetime($response['lastUpdateTime']),
                 $response['status']=='finished'?'oui':'non'
             );
             foreach ($fieldsArray as $element) {
