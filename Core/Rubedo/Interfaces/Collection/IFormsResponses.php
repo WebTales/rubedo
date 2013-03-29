@@ -32,4 +32,16 @@ interface IFormsResponses extends IAbstractCollection{
      * @param string $formId
      */
     public function getValidResponsesByFormId($formId);
+    /**
+     * Get count of finished results for a given form
+     *
+     * @param string $formId
+     */
+    public function countValidResponsesByFormId($formId);
+    /**
+     * Get count of unfinished results for a given form
+     *
+     * @param string $formId
+     */
+    public function countInvalidResponsesByFormId($formId);
 }

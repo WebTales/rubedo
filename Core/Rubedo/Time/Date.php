@@ -187,6 +187,24 @@ class Date implements IDate
         $date->setTimestamp($timestamp);
         return $formatter->format($date);
     }
+    
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Rubedo\Interfaces\Time\IDate::getDefaultDatetime()
+     */
+    public function getDefaultDatetime ($timestamp = null)
+    {
+        if (! $timestamp) {
+            $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
+        }
+    
+        $formatter = new IntlDateFormatter($this->_getLang(),
+            IntlDateFormatter::FULL, IntlDateFormatter::SHORT);
+        $date = new \DateTime();
+        $date->setTimestamp($timestamp);
+        return $formatter->format($date);
+    }
 
     /**
      * return the current language

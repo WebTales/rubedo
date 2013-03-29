@@ -36,6 +36,16 @@ class Blocks_NavBarController extends Blocks_AbstractController
         //Zend_Debug::dump($this->getAllParams());die();
         
         $blockConfig = $this->getParam('block-config', array());
+        
+        if (isset($blockConfig['displayType'])) {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+	        if(isset($blockConfig['style']) && $blockConfig['style']=='Vertical'){
+	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/menu.html.twig");
+	        }else{
+	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
+	        }
+        }
 
         if (isset($blockConfig['rootPage'])) {
             $rootPage = $blockConfig['rootPage'];
@@ -112,12 +122,6 @@ class Blocks_NavBarController extends Blocks_AbstractController
         }
                 
         $twigVar["data"] = $output;
-
-        if(isset($blockConfig['style']) && $blockConfig['style']=='Vertical'){
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/menu.html.twig");
-        }else{
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
-        }
         
         
         $css = array();
