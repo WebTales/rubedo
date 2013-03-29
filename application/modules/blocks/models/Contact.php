@@ -40,6 +40,7 @@ class Blocks_Model_Contact extends Zend_Form
     	
     	$this->setMethod('post');
     	$this->setAttrib('action', $this->getView()->baseUrl().$request->getPathInfo());
+    	$this->setAttrib('class','form-horizontal');
     	
     	$status = new Zend_Form_Element_Hidden('status');
     	$status->setValue('true');
@@ -93,7 +94,44 @@ class Blocks_Model_Contact extends Zend_Form
     	}
 		
 		$submit = new Zend_Form_Element_Submit('Valider');
+		$submit->setAttrib('class', 'btn btn-success custom-btn btn-large');
 		    	
     	$this->addElement($submit);
+    	
+    	$this->addDisplayGroup(array(
+    			$submit
+    	), 'button');
+    	
+    	$this->getDisplayGroup('button')->setDecorators(array(
+    	
+    			'FormElements',
+    			array(
+    					'HtmlTag',
+    					array(
+    							'tag' => 'div',
+    							'class' => 'align-button'
+    					)
+    			)
+    	));
+    	
+    	foreach ($this->getElements() as $element) {
+    		$element->removeDecorator('HtmlTag');
+    		if ($element->getDecorator('label')) {
+    			$element->removeDecorator('Label');
+    			$element->addDecorator(array('controls'=>'HTMLTag'),array('tag'=>'div','class'=>'controls'));
+    			$element->addDecorator('Label',array('tag'=>'div','class'=>'control-label'));
+    			$element->addDecorator('HTMLTag',array('tag'=>'div','class'=>'control-group'));
+    		}
+    	}
+    	foreach ($this->getDisplayGroups() as $group) {
+    		foreach ($group->getElements() as $element) {
+    			$element->removeDecorator('HtmlTag');
+    			$element->removeDecorator('Label');
+    			$element->removeDecorator('Tooltip');
+    			$element->removeDecorator('DtDdWrapper');
+    	
+    		}
+    	}
+    	$this->removeDecorator('HtmlTag');
     }
 }

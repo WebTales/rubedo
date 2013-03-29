@@ -51,3 +51,7 @@ padding-top: 5px;
 	padding:10px 20px 5px 20px;
 	border-radius:5px;
 }
+
+.align-button {
+	text-align: center;
+}
