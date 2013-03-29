@@ -304,13 +304,7 @@ class DataAccess implements IDataAccess
         
         // switch from cursor to actual array
         if ($cursor->count() > 0) {
-            try{
                 $data = iterator_to_array($cursor);
-            }catch (\Exception $e){
-
-                \Zend_Debug::dump($sort);
-                die();
-            }
         } else {
             $data = array();
         }

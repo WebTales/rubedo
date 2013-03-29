@@ -48,13 +48,36 @@ class FormsResponses extends AbstractCollection implements IFormsResponses {
 				'value' => $formId 
 		);
 		
-		$sort = array (
+		$sort = array();
+		$sort[] = array (
 				'property' => 'lastUpdateTime',
 				'direction' => 'ASC' 
 		);
 		
 		return $this->getList ( $filter, $sort, $start, $limit );
 	}
+	
+	/**
+	 * (non-PHPdoc)
+	 *
+	 * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
+	 */
+	public function getResponsesByFormId($formId, $start = null, $limit = null) {
+	    $filter = array ();
+	    $filter [] = array (
+	        'property' => 'formId',
+	        'value' => $formId
+	    );
+	
+	    $sort = array();
+	    $sort[] = array (
+	        'property' => 'lastUpdateTime',
+	        'direction' => 'ASC'
+	    );
+	
+	    return $this->getList ( $filter, $sort, $start, $limit );
+	}
+	
 	public function countValidResponsesByFormId($formId) {
 		$filter = array ();
 		$filter [] = array (
