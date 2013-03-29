@@ -56,7 +56,7 @@
       }
       
 	  {% for content in data %}
-	  handleContent(JSON.parse("{{ content[blockConfig.positionField]|e('js') }}"), "{{ content.title }}", "{% include '/root/blocks/maps/googleItem.html.twig'  %}");
+	  handleContent(JSON.parse("{{ content.jsonLocalisation|e('js') }}"), "{{ content.title }}", "{% include '/root/blocks/maps/googleItem.html.twig'  %}");
 	  {% endfor %}
       function handleContent(contentPosition, title, contentString){
     	  if (contentPosition.address){
@@ -65,8 +65,8 @@
     	      			createContentMarker(results[0].geometry.location, title, contentString);
     	      		}
     	      	});  
-    	  } else if (contentPosition.latitude&&contentPosition.longitude){
-    		  createContentMarker(new google.maps.LatLng(contentPosition.latitude,contentPosition.longitude), title, contentString);     
+    	  } else if (contentPosition.lat&&contentPosition.lon){
+    		  createContentMarker(new google.maps.LatLng(contentPosition.lat,contentPosition.lon), title, contentString);     
           }
       }
       

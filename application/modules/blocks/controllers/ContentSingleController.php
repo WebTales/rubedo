@@ -40,13 +40,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $blockConfig = $this->getRequest()->getParam('block-config');
         $output["blockConfig"]=$blockConfig;
         
-        if (isset($blockConfig['displayType'])) {
-        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-        			"blocks/" . $blockConfig['displayType'] . ".html.twig");
-        } else {
-        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-        			"blocks/" . $this->_defaultTemplate . ".html.twig");
-        }
+        
         
         $mongoId = $this->getRequest()->getParam('content-id');
         
@@ -80,6 +74,20 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $output = $this->getAllParams();
             $output["data"] = $data;
             $output["type"] = $cTypeArray;
+            
+            if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
+            	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+            			"blocks/" . $blockConfig['displayType'] . ".html.twig");
+            } else {
+	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
+	            
+	            if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
+	            	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/default.html.twig");
+	            	$js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/rubedo-map.js"),'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/map.js"));
+	            }
+            }
+            
+            
             
         } else {
             $output = array();
