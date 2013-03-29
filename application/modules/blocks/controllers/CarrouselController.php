@@ -72,7 +72,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $output["imageWidth"]=isset($blockConfig['imageWidth'])?$blockConfig['imageWidth']:null;
         $output["imageHeight"]=isset($blockConfig['imageHeight'])?$blockConfig['imageHeight']:null;
         $output["mode"]=isset($blockConfig['mode'])?$blockConfig['mode']:null;
-        if (isset($blockConfig['displayType'])) {
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
         	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
         			"blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
