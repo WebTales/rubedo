@@ -24,7 +24,7 @@
  *
  */
 
-class Application_Form_Contact extends Zend_Form
+class Blocks_Model_Contact extends Zend_Form
 {
 	protected $_captcha;
 	

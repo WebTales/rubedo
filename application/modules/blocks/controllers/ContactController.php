@@ -35,9 +35,9 @@ class Blocks_ContactController extends Blocks_AbstractController
     	$errors = array();
     	
     	if(isset($blockConfig['captcha'])){
-    		$contactForm = new Application_Form_Contact(null, $blockConfig['captcha']);
+    		$contactForm = new Blocks_Model_Contact(null, $blockConfig['captcha']);
     	} else {
-    		$contactForm = new Application_Form_Contact();
+    		$contactForm = new Blocks_Model_Contact();
     	}
     	
     	//Check if the form was send
@@ -93,7 +93,7 @@ class Blocks_ContactController extends Blocks_AbstractController
         }
         
         $output['contactForm'] = $contactForm;
-        
+
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
