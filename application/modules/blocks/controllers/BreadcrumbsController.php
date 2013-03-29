@@ -70,8 +70,12 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         
         $output['rootPage'] = $rootPage;
         $output['rootline'] = $rootlineArray;
-
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/breadcrumbs.html.twig");
+		
+        if (isset($blockConfig['displayType'])) {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/breadcrumbs.html.twig");
+        }
 
         $css = array();
         $js = array();
