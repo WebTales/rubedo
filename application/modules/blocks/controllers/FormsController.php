@@ -146,8 +146,16 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output["nbFormPages"] = count($this->_form["formPages"]);
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
         $output["displayNew"] = $this->_form["uniqueAnswer"] == "true" ? false : true;
-        if ($this->_formResponse["status"] == "finished")
-            $output["finished"] = $this->_form["endMessage"];
+        if ($this->_formResponse["status"] == "finished"){
+            if($this->_justFinished || $output["displayNew"]){
+                $output["finished"] = $this->_form["endMessage"];
+            }else{
+                //Zend_Debug::dump($this->_form);die();
+                $output["finished"] = $this->_form["uniqueAnswerText"];
+            }
+            
+        }
+            
             // affichage de la page
         $output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
         $output["progression"] = $this->_blockConfig["progression"];
@@ -181,16 +189,22 @@ class Blocks_FormsController extends Blocks_AbstractController
      */
     protected function _finish ()
     {
-        $this->_formResponse["status"] = "finished";
-        $result = Manager::getService('FormsResponses')->update($this->_formResponse);
-        if ($result['success']) {
-            $this->_formResponse = $result['data'];
-            $this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
-            $this->formsSessionArray[$this->_formId]['currentPage'] = 0;
-            Manager::getService('Session')->set("forms", $this->formsSessionArray);
-        } else {
-            throw new Rubedo\Exceptions\Server('Impossible de mettre à jour la réponse.');
+        if($this->_formResponse["status"] != 'finished'){
+            $this->_formResponse["status"] = "finished";
+            $result = Manager::getService('FormsResponses')->update($this->_formResponse);
+            if ($result['success']) {
+                $this->_formResponse = $result['data'];
+                $this->formsSessionArray[$this->_formId]['id'] = $this->_formResponse['id'];
+                $this->formsSessionArray[$this->_formId]['currentPage'] = 0;
+                Manager::getService('Session')->set("forms", $this->formsSessionArray);
+            } else {
+                throw new Rubedo\Exceptions\Server('Impossible de mettre à jour la réponse.');
+            }
+            $this->_justFinished = true;
+        }else{
+            $this->_justFinished = false;
         }
+        
         
         // Ferme le formulaire et renvois a une page de remerciement
     }
@@ -329,6 +343,9 @@ class Blocks_FormsController extends Blocks_AbstractController
 
     protected function _updateResponse ()
     {
+        if($this->_formResponse["status"] != 'finished' || $this->getParam("getNew") == 1){
+            
+        
         // mise à jour du status de la réponse
         $this->_formResponse["status"] = "pending";
         $currentPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
@@ -342,6 +359,7 @@ class Blocks_FormsController extends Blocks_AbstractController
             throw new Rubedo\Exceptions\Server('Impossible de mettre à jour la réponse.');
         } else {
             $this->_formResponse = $result['data'];
+        }
         }
     }
 
@@ -360,8 +378,13 @@ class Blocks_FormsController extends Blocks_AbstractController
         
         // sur la page
         // Definit la page a verifier
+        $idToCheck =$this->formsSessionArray[$this->_formId]['currentFormPage'];
+        if(isset($this->_form["formPages"][$idToCheck])){
+            $pageToCheck = $this->_form["formPages"][$idToCheck];
+        }else{
+            $pageToCheck = array('elements'=>array());
+        }
         
-        $pageToCheck = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
         
         $checkFields = true;
         // On regarde si elle a des conditions
