@@ -412,9 +412,11 @@ class Blocks_FormsController extends Blocks_AbstractController
                                 if (is_array($condition["value"])) {
                                     if (is_array($condition["value"]["value"])) {
                                         $dataValues = "";
+                                        $dataValuesArray = array();
                                         foreach ($condition["value"]["value"] as $conditionnalValues) {
-                                            $dataValues .= ";" . $conditionnalValues;
+                                            $dataValuesArray[] = $conditionnalValues;
                                         }
+                                        $dataValues = implode(';', $dataValuesArray);
                                         $pageToCheck["elements"][$key]["itemConfig"]["value"] = $dataValues;
                                     } elseif (is_string($condition["value"]["value"])) {
                                         $pageToCheck["elements"][$key]["itemConfig"]["value"] = $condition["value"]["value"];
