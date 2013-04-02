@@ -69,13 +69,38 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $output = $this->getAllParams();
         
         // build query
-        $filters = Manager::getService('Queries')->getFilterArrayById($queryId);
+        $filters = $this->_queryReader->getFilterArrayById($queryId);
         if ($filters !== false) {
             $queryType = $filters["queryType"];
-            // getList
-            $contentArray = $this->getContentList($filters, 
-                    $this->setPaginationValues($blockConfig));
-            $nbItems = $contentArray["count"];
+            $query = $this->_queryReader->getQueryById($queryId);
+            
+            if($queryType === "manual" && $query != false && isset($query['query']) && is_array($query['query'])) {
+            	$contentOrder = $query['query'];
+            	$keyOrder = array();
+            	$contentArray = array();
+            		
+            	// getList
+            	$unorderedContentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
+            	
+            	foreach ($contentOrder as $value){
+            		foreach ($unorderedContentArray['data'] as $subKey => $subValue){
+            			if ($value === $subValue['id']){
+            				$keyOrder[] = $subKey;
+            			} 
+            		}
+            	}
+            	
+            	foreach ($keyOrder as $key => $value) {
+            		$contentArray["data"][] = $unorderedContentArray["data"][$value]; 
+            	}
+            		
+            	$nbItems = $unorderedContentArray["count"];
+            } else {
+	            // getList
+	            $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
+	            
+	            $nbItems = $contentArray["count"];
+            }
         } else {
             $nbItems = 0;
         }

@@ -130,7 +130,27 @@ class Queries extends AbstractCollection implements IQueries
         $this->_collectionName = 'Queries';
         parent::__construct();
     }
-
+	
+    /**
+     * Return a query
+     * 
+     * @param string $id
+     * @return boolean|multitype:
+     */
+    public function getQueryById($id = null) {
+    	if ($id === null) {
+    		return false;
+    	}
+    	
+    	$query = $this->findById($id);
+    	
+    	if($query) {
+    		return $query;
+    	} else {
+    		return false;
+    	}
+    }
+    
     /**
      * Return an array of filter and sort params for the query given by its ID
      *
