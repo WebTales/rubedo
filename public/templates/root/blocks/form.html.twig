@@ -5,8 +5,12 @@
 
 <div id="form-container-{{ form.id }}" class="rubedo-form-container" data-currentPage="{{ currentFormPage }}">
 {% if displayNew==true %}
+<div class="row">
+<div class="span2 offset9">
 <div class="btn-group pull-right">
 <a class="btn btn-warning" href="?getNew=1"  style="margin:5px 5px 5px 5px;"><i class="icon-file icon-white"></i> Nouveau</a>
+</div>
+</div>
 </div>
 {% endif %}
 {% if finished %}
@@ -26,15 +30,16 @@
 	{% for field in formFields.elements %}
 	{%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
 	{% endfor %}
-
+<div class="row">
 	{% if currentFormPage !=0 %}
-		<a class="btn" style="float:left;" href="?getPrevious=1">Précédent</a>
+	<a class="btn" href="?getPrevious=1">Précédent</a>
 	{% endif %}
 	{% if currentFormPage==nbFormPages-1 %}
-		<input class="btn btn-info" style="float:right;" type="submit" value="Terminer"/>
+	<input class="btn btn-info"   style="float:right;" type="submit" value="Terminer"/>
 	{% else %}
 	<input class="btn" style="float:right;" type="submit" value="Suivant"/>
 	{% endif %}
+	</div>
 </form>
 {% endif %}
 </div>

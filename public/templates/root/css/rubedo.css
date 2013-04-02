@@ -63,3 +63,11 @@ padding-top: 5px;
      -moz-border-radius: 6px;
           border-radius: 6px;
 }
+@media screen and (max-width: 640px) {
+  .rubedo-form .controls input {
+		width:100%;
+  }
+  .rubedo-form .btn{
+	padding:5px;
+  }
+}
