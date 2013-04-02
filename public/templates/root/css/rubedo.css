@@ -70,11 +70,9 @@ padding-top: 5px;
  .rubedo-form .controls textarea {
 		width:100%;
   }
-  .rubedo-form .btn{
-	padding:5px;
-  }
+
 }
-@media screen and (max-width: 340px) {
+@media screen and (max-width: 440px) {
   .rubedo-form .controls input {
 		width:100%;
   }
@@ -82,5 +80,8 @@ padding-top: 5px;
 	float:none !important;
   	margin-top:5px;
   	width:100%;
+  }
+  .rubedo-form a{
+	padding:5px 0px 5px 0px;
   }
 }

@@ -32,12 +32,12 @@
 	{% endfor %}
 <div class="row">
 	{% if currentFormPage !=0 %}
-	<div class="span5"><a class="btn" href="?getPrevious=1">Précédent</a></div>
+<a class="btn" href="?getPrevious=1">Précédent</a>
 	{% endif %}
 	{% if currentFormPage==nbFormPages-1 %}
-	<div {% if currentFormPage !=0 %}class="span5"{% else %}class="span10"{% endif %}><input class="btn btn-info" style="float:right;" type="submit" value="Terminer"/></div>
+<input class="btn btn-info" style="float:right;" type="submit" value="Terminer"/>
 	{% else %}
-	<div {% if currentFormPage !=0 %}class="span5"{% else %}class="span10"{% endif %}><input class="btn" style="float:right;" type="submit" value="Suivant"/></div>
+<input class="btn" style="float:right;" type="submit" value="Suivant"/>
 	{% endif %}
 	</div>
 </form>
