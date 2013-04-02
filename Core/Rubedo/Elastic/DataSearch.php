@@ -201,12 +201,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 		// filter on geolocalisation
 		if (array_key_exists('geo_bbox',$params)) {
 			//$topleft="40.73, -74.1";
-			$topleft=array('lat' => 40.73, 'lon' => -74.1);
+			$topleft=array(40,73,-74,1);
 			//$bottomright="40.717, -73.99";
-			$bottomright=array('lat' => 40.717, 'lon' => -73.99);
-			$geoFilter = new \Elastica_Filter_GeoBoundingBox('position',array($topleft,$bottomright));
+			$bottomright=array(40,717,-73,99);
+			$geoFilter = new \Elastica_Filter_GeoBoundingBox('position.location.coordinates',array($topleft,$bottomright));
 			//$geoFilter->addCoordinates();
-			$globalFilter->addFilter($geoFilter);
+			//$globalFilter->addFilter($geoFilter);
 			$setFilter = true;
 		}			
 
