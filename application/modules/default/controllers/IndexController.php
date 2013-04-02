@@ -451,6 +451,8 @@ class IndexController extends Zend_Controller_Action
             $returnArray[$key]['displayRowFluid'] = isset($row['displayRowFluid']) ? $row['displayRowFluid'] : false;
             $returnArray[$key]['includeContainer'] = isset($row['includeContainer']) ? $row['includeContainer'] : false;
             $returnArray[$key]['includeContainerFluid'] = isset($row['includeContainerFluid']) ? $row['includeContainerFluid'] : false;
+            $returnArray[$key]['containerId'] = isset($row['containerId']) ? $row['containerId'] : false;
+            $returnArray[$key]['containerClass'] = isset($row['containerClass']) ? $row['containerClass'] : false;
             
             if (is_array($row['columns'])) {
                 $noSpan = (isset($row['displayAsTab'])) ? $row['displayAsTab'] : false;

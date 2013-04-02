@@ -22,8 +22,10 @@ function checkField(){
 							if(jQuery.inArray(jQuery(this).val(),value)!="-1"){
 								jQuery(self).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("hide").addClass("show");
 							}else{
+								if(jQuery.inArray(jQuery(this).val(),value)!="-1"){
 								jQuery(self).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("show").addClass("hide");
-								shoudClear = true;
+								if(jQuery(self).hasClass("mother"))
+								shoudClear = true;}
 							}
 						}
 					if(!jQuery(this).prop('checked'))
@@ -42,13 +44,16 @@ function checkField(){
 										});
 								if(notAlone==false)
 									{
+									if(jQuery.inArray(jQuery(this).val(),value)!="-1"){
 									jQuery(self).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("show").addClass("hide");
-									shoudClear = true;
+									if(jQuery(self).hasClass("mother"))
+									shoudClear = true;}
 									}	
 								}else{
-									if(jQuery.inArray(jQuery(this).val(),value)!="-1")
+									if(jQuery.inArray(jQuery(this).val(),value)!="-1"){
 									jQuery(self).parentsUntil(jQuery(".rubedo-form"),".control-group").removeClass("show").addClass("hide");
-									shoudClear = true;
+									if(jQuery(self).hasClass("mother"))
+									shoudClear = true;}
 								}
 						}
 				}else{
@@ -61,7 +66,15 @@ function checkField(){
 				}
 			});
 			if(shoudClear){
-				jQuery(this).val(null);
+				if(jQuery(this).attr('type')=="checkbox"||jQuery(this).attr('type')=="radio")
+				{
+				jQuery(this).each(function(){
+					jQuery(this).removeAttr("checked");
+				});
+				}
+				else{
+					jQuery(this).val(null);
+				}
 			}
 			
 	});

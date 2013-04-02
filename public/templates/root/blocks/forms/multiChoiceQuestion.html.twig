@@ -11,22 +11,29 @@
    {% elseif field.itemConfig.fieldType=="radiogroup" %} 
    {% set type="radio" %}  
    {% endif %}
-
    <div class="row" style="clear:both;">
-{%  set rank=0 %}
+{% set itemsCount=field.itemConfig.fieldConfig.items|length %}
+{% set itemsPerCol=(itemsCount /field.itemConfig.fieldConfig.columns)|number_format %}
+{% if itemsCount==field.itemConfig.fieldConfig.columns %}
+{% set spanClass=(12// field.itemConfig.fieldConfig.columns)%}
+{% else %}
+{% set spanClass=(12// field.itemConfig.fieldConfig.columns)-1%}
+{% endif %}
+{% set index=0 %}
+<div class="span{{ spanClass }}">
 {% for item in field.itemConfig.fieldConfig.items %}
-	{% if rank ==field.itemConfig.fieldConfig.columns %}
+{% if index==itemsPerCol%}
 </div>
-   <div class="row" style="clear:both;">
-	{% set rank=0 %}
-	{% endif %}
-	<div class="span{% if field.itemConfig.fieldConfig.columns>4%}{{(12//field.itemConfig.fieldConfig.columns)}}{% else %}{{(12//field.itemConfig.fieldConfig.columns)-1}}{% endif %}">
+<div class="span{{ spanClass }}">
+{% set index=0%}
+{% endif %}
+<div style="clear:both;">
     <label class="{{ type }}">
     <input {% if item.inputValue in values[field.id] %} checked="true"{% endif %}class="{{ item.name }} {% if field.itemConfig.isMother %}mother{% endif %} {% if field.itemConfig.isChild %}child{% endif %}"  {% if field.itemConfig.isMother %}data-id="{{ field.id }}"{% endif %}{% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %} {% if field.itemConfig.value %}data-value="{{field.itemConfig.value}}"{% endif %} type="{{ type }}" name="{{ item.name }}[]" value="{{item.inputValue}}"> <p>{{item.boxLabel }}</p>
   </label>
- </div>
-  {% set rank=rank+1 %}
-
+  </div>
+  {% set index=index+1 %}
 {% endfor %}
  </div>
-    </div>
+</div>
+</div>
