@@ -65,7 +65,7 @@
 {% block body %}
 <body data-current-page="{{ currentPage }}" data-is-draft="{{ isDraft }}" data-current-workspace="{{ currentWorkspace }}">
 {% endblock %}
-
+	
 	{% block pageContentToolBar %} 
     	{% if canEdit %}
     	<div class="navbar hide navbar-inverse" id="contentToolBar">
@@ -96,15 +96,19 @@
 	{% endblock %} 
 	
 	{% block pageMainContent %}
-
+		{% if pageProperties.showInDiv %}
+			<div class="{% if pageProperties.divClass is not empty %}{{ pageProperties.divClass }}{% endif %}" 
+					id="{% if pageProperties.divId is not empty %}{{ pageProperties.divId }}{% endif %}">
+		{% endif %}
 	
 	    {% if rows %} 
     	    {% for row in rows %} 
     	        {% include row.template with row %} 
     	    {% endfor %} 
 	    {% endif %}
+	    
+	    {% if pageProperties.showInDiv %}</div>{% endif %}
 	{% endblock %}
-
     
     {% block Modal %}
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog"
