@@ -58,4 +58,16 @@ class Blocks_GoogleMapsController extends Blocks_ContentListController
 		);
 		$this->_sendResponse($output, $template, $css, $js);
 	}
+	
+	public function xhrGetItemsAction ()
+	{
+		$twigVars = $this->_getList();
+	
+
+		
+	
+		$data = array(
+				'data' => $twigVars['data']		);
+		$this->_helper->json($data);
+	}
 }

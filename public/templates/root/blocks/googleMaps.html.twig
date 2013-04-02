@@ -18,6 +18,13 @@
     </script>
 <script type="text/javascript">
       function initialize() {
+    	  if (typeof google == "undefined") {
+   		   var e = document.createElement("script");
+   		   e.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true";
+   		   e.type = "text/javascript";
+   		   document.getElementsByTagName("head")[0].appendChild(e); 
+   		}
+          
         var mapOptions = {
           center: new google.maps.LatLng(48.8567, 2.3508),
           zoom: {{blockConfig.zoom}}||12,
@@ -54,10 +61,38 @@
       } else if (centerLatitude&&centerLongitude){
     	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
       }
+	  var mapTimer=null;
+	  google.maps.event.addListener(map, 'bounds_changed', function() {
+		  clearTimeout(mapTimer);
+		  mapTimer=setTimeout(function(){
+			fetchData();
+		  },1000);
+      });
+      function fetchData (){
+    	  var request = jQuery.ajax({
+    			url : window.location.origin + '/blocks/google-maps/xhr-get-items',
+    			type : "POST",
+    			data : {
+    				'query-id' : "{{blockConfig.query}}",
+    				'current-page':jQuery('body').attr('data-current-page')
+    			},
+    			dataType : "json"
+    		});
+
+    		request.done(function(data) {
+        		var rezArray=data.data;
+    			for(var i= 0; i < rezArray.length; i++)
+    			{
+    			     handleContent(rezArray[i].position,rezArray[i].title,rezArray[i].summary);
+    			}
+    		});
+
+    		request.fail(function(jqXHR, textStatus) {
+        		console.log("failed to fetch data");
+    		});
+      }
       
-	  {% for content in data %}
-	  handleContent(JSON.parse("{{ content.jsonLocalisation|e('js') }}"), "{{ content.title }}", "{% include '/root/blocks/maps/googleItem.html.twig'  %}");
-	  {% endfor %}
+	  
       function handleContent(contentPosition, title, contentString){
     	  if (contentPosition.address){
     		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
@@ -69,19 +104,23 @@
     		  createContentMarker(new google.maps.LatLng(contentPosition.lat,contentPosition.lon), title, contentString);     
           }
       }
-      
+      var usedMarkers=[ ];
       function createContentMarker(location,title,contentString){
-    	  var marker = new google.maps.Marker({
-			  	map:map,
-			  	position:location,
-			  	title:title
-			});
-    	  var infowindow = new google.maps.InfoWindow({
-              content: contentString         
-           });
-    	  google.maps.event.addListener(marker, 'click', function() {
-              infowindow.open(map,marker);
-          });
+          if (usedMarkers.indexOf(location.toString())==-1){
+	    	  var marker = new google.maps.Marker({
+				  	map:map,
+				  	position:location,
+				  	title:title
+				});
+			  usedMarkers.push(location.toString());
+			  
+	    	  var infowindow = new google.maps.InfoWindow({
+	              content: contentString         
+	           });
+	    	  google.maps.event.addListener(marker, 'click', function() {
+	              infowindow.open(map,marker);
+	          });
+          }
 		  
       }
       
