@@ -93,14 +93,15 @@ class Blocks_ContentListController extends Blocks_AbstractController
             	foreach ($keyOrder as $key => $value) {
             		$contentArray["data"][] = $unorderedContentArray["data"][$value]; 
             	}
-            		
+            	
+            	$contentArray["page"] = $unorderedContentArray["page"];
+            	
             	$nbItems = $unorderedContentArray["count"];
             } else {
-	            // getList
 	            $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
-	            
 	            $nbItems = $contentArray["count"];
             }
+            
         } else {
             $nbItems = 0;
         }
@@ -173,6 +174,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                             'action' => 'xhr-get-items'
                     ), 'default');
         }
+
         return $output;
     }
 
