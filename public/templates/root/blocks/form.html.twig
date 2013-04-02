@@ -21,7 +21,7 @@
 <div style="width:80%;"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
 {% endif %}
 {% endif %}
-<form id="{{ form.id }}" method="post" action="{{ url({},true) }}" class="form-horizontal rubedo-form hero-unit" >
+<form id="{{ form.id }}" method="post" action="{{ url({},true) }}" class="form-horizontal rubedo-form no-hero" >
 	<input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
 	{% for field in formFields.elements %}
 	{%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
