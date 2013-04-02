@@ -55,3 +55,32 @@ padding-top: 5px;
 .align-button {
 	text-align: center;
 }
+.no-hero{
+  padding: 60px;
+  margin-bottom: 30px;
+  background-color: #eeeeee;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+@media screen and (max-width: 640px) {
+  .rubedo-form .controls input {
+		width:100%;
+  }
+ .rubedo-form .controls textarea {
+		width:100%;
+  }
+  .rubedo-form .btn{
+	padding:5px;
+  }
+}
+@media screen and (max-width: 340px) {
+  .rubedo-form .controls input {
+		width:100%;
+  }
+  .rubedo-form .btn{
+	float:none !important;
+  	margin-top:5px;
+  	width:100%;
+  }
+}

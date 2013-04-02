@@ -24,6 +24,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
+
 class Blocks_FormsController extends Blocks_AbstractController
 {
 
@@ -231,9 +232,18 @@ class Blocks_FormsController extends Blocks_AbstractController
         
         if (! empty($response)) {
             if ($fieldType == "numberfield") {
-                $is_valid = ctype_digit($response) == true ? true : false;
+            	//Zend_Debug::dump(isset($field["itemConfig"]["fieldConfig"]["allowDecimals"]));die();
+                $is_valid = is_numeric($response) == true ? true : false;
                 if ($is_valid == false)
                     $this->_errors[$field["id"]] = "Ce champ ne doit contenir que des caractères numériques";
+                else{
+                	if(!isset($field["itemConfig"]["fieldConfig"]["allowDecimals"])|| $field["itemConfig"]["fieldConfig"]["allowDecimals"]!="on")
+                	{
+                		$is_valid=preg_match ( "/\d\.|,\d/" ,$response)==1?false:true;
+                	}
+                	if ($is_valid == false)
+                		$this->_errors[$field["id"]] = "Les décimales ne sont pas autorisées";
+                }
             }
             if (isset($validationRules["vtype"]) && $is_valid == true) {
                 switch ($validationRules["vtype"]) {
