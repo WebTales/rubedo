@@ -12,22 +12,21 @@
    {% set type="radio" %}  
    {% endif %}
 
-<table class="table table-condensed">
-   <tr>
+   <div class="row" style="clear:both;">
 {%  set rank=0 %}
 {% for item in field.itemConfig.fieldConfig.items %}
 	{% if rank ==field.itemConfig.fieldConfig.columns %}
-	</tr>
-	<tr> 
+</div>
+   <div class="row" style="clear:both;">
 	{% set rank=0 %}
 	{% endif %}
-	<td>
+	<div class="span{% if field.itemConfig.fieldConfig.columns>4%}{{(12//field.itemConfig.fieldConfig.columns)}}{% else %}{{(12//field.itemConfig.fieldConfig.columns)-1}}{% endif %}">
     <label class="{{ type }}">
     <input {% if item.inputValue in values[field.id] %} checked="true"{% endif %}class="{{ item.name }} {% if field.itemConfig.isMother %}mother{% endif %} {% if field.itemConfig.isChild %}child{% endif %}"  {% if field.itemConfig.isMother %}data-id="{{ field.id }}"{% endif %}{% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %} {% if field.itemConfig.value %}data-value="{{field.itemConfig.value}}"{% endif %} type="{{ type }}" name="{{ item.name }}[]" value="{{item.inputValue}}"> <p>{{item.boxLabel }}</p>
   </label>
-  </td>
+ </div>
   {% set rank=rank+1 %}
 
 {% endfor %}
-</table>
+ </div>
     </div>
