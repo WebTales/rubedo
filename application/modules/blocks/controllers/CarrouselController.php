@@ -40,10 +40,38 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $filters = Manager::getService('Queries')->getFilterArrayById($blockConfig['query']);
         
         if ($filters !== false) {
-            $queryType = $filters["queryType"];
-            // getList
-            $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
-            $nbItems = $contentArray["count"];
+        	$queryType = $filters["queryType"];
+        	$queryId = $this->getParam('query-id', $blockConfig['query']);
+        
+            $query = $this->_queryReader->getQueryById($queryId);
+            
+            if($queryType === "manual" && $query != false && isset($query['query']) && is_array($query['query'])) {
+            	$contentOrder = $query['query'];
+            	$keyOrder = array();
+            	$contentArray = array();
+            		
+            	// getList
+            	$unorderedContentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
+            	
+            	foreach ($contentOrder as $value){
+            		foreach ($unorderedContentArray['data'] as $subKey => $subValue){
+            			if ($value === $subValue['id']){
+            				$keyOrder[] = $subKey;
+            			} 
+            		}
+            	}
+            	
+            	foreach ($keyOrder as $key => $value) {
+            		$contentArray["data"][] = $unorderedContentArray["data"][$value]; 
+            	}
+            	
+            	$nbItems = $unorderedContentArray["count"];
+            } else {
+	            $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
+	            
+	            $nbItems = $contentArray["count"];
+            }
+            
         } else {
             $nbItems = 0;
         }
@@ -78,6 +106,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         } else {
         	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/carrousel.html.twig");
         }
+              
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
