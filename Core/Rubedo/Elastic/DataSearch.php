@@ -200,8 +200,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 		
 		// filter on geolocalisation if inflat, suplat, inflon and suplon are set
 		if (isset($params['inflat'])&&isset($params['suplat'])&&isset($params['inflon'])&&isset($params['suplon'])) {
-			$topleft=array($params['suplat'], $params['inflon']);
-			$bottomright=array($params['inflat'], $params['suplon']);
+			$topleft=array($params['inflon'],$params['suplat']);
+			$bottomright=array($params['suplon'],$params['inflat']);
 			$geoFilter = new \Elastica_Filter_GeoBoundingBox('position_location', array($topleft,$bottomright));
 			$globalFilter->addFilter($geoFilter);
 			$setFilter = true;
