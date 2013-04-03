@@ -93,4 +93,65 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         
         $this->_sendResponse($results, $template, $css, $js);
     }
+    
+    protected $_option = 'geo';
+    
+    
+    public function xhrSearchAction () {
+    
+    	// get params
+    	$params = $this->getRequest()->getParams();
+    
+    	// get option : all, dam, content, geo
+    	if (isset($params['option'])) {
+    		$this->_option = $params['option'];
+    	}
+    
+	    if(isset($params['constrainToSite']) && $params['constrainToSite']){
+	            $site = $this->getRequest()->getParam('site');
+	            $siteId = $site['id'];
+	            $params['navigation'][]=$siteId;
+	            $serverParams['navigation'][]=$siteId;
+	        }
+        //apply predefined facets
+        if(isset($params['predefinedFacets'])){
+        	$predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
+        	foreach ($predefParamsArray as $key => $value){
+        		$params[$key] = $value;
+        	}
+        }
+    	Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+    	
+    	$query = Manager::getService('ElasticDataSearch');
+    
+    	$query->init();
+    	if (isset($params['limit'])) {
+    		$params['pagesize'] = (int) $params['limit'];
+    	}
+    	if (isset($params['page'])) {
+    		$params['pager'] = (int) $params['page']-1;
+    	}
+    	if (isset($params['sort'])) {
+    		$sort = Zend_Json::decode($params['sort']);
+    		$params['orderby'] = ($sort[0]['property']=='score') ? '_score' : $sort[0]['property'];
+    		$params['orderbyDirection'] = $sort[0]['direction'];
+    	}
+    
+    	$results = $query->search($params,$this->_option);
+    
+    	$results['success']=true;
+    	$results['message']='OK';
+    
+    	$this->getHelper('Layout')->disableLayout();
+    	$this->getHelper('ViewRenderer')->setNoRender();
+    	$this->getResponse()->setHeader('Content-Type', 'application/json', true);
+    
+    	$returnValue = Zend_Json::encode($results);
+    	$returnValue = Zend_Json::prettyPrint($returnValue);
+    
+    	$this->getResponse()->setBody($returnValue);
+    
+    }
+    
+   
 }

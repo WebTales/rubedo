@@ -20,6 +20,8 @@
         "execute.controller.xhr-authentication.logout.default",
         "execute.controller.logout.confirm-logout.backoffice",
         "execute.controller.logout.index.backoffice",
-        "execute.controller.file.index.default"
+        "execute.controller.file.index.default",
+        "execute.controller.geo-search.xhr-search.blocks",
+        "execute.controller.google-maps.xhr-get-items.blocks"
     ]
 }
