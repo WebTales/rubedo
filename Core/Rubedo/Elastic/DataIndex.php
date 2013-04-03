@@ -166,8 +166,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 						case 'document' :
 							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
 							break;
-						//case 'localiserField' :
-							//$indexMapping[$name] = array('type' => 'geo_point', 'store' => 'yes');
+						case 'localiserField' :
+							break;
 						default :
 							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
 							break;
@@ -188,7 +188,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["startPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["endPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["position.location.coordinates"] = array('type' => 'geo_point', 'store' => 'yes');
+		$indexMapping["position_location"] = array('type' => 'geo_point', 'store' => 'yes');
+		$indexMapping["position_address"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 				
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -298,8 +299,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 						case 'document' :
 							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
 							break;
-						//case 'localiserField' :
-						//	$indexMapping[$name] = array('type' => 'geo_point', 'store' => 'yes');
 						default :
 							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
 							break;
@@ -320,7 +319,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["file"] = array('type' => 'attachment', 'store'=>'no');
 		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["position.location.coordinates"] = array('type' => 'geo_point', 'store' => 'yes');
 		
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -434,10 +432,15 @@ class DataIndex extends DataAbstract implements IDataIndex
 				    //foreach ($var as $subvalue){
 				    foreach ($var as $key=>$subvalue){
 				        //$contentData[$field][] = (string) $subvalue;
-						if ($key!="location") {
+						if ($field!="position") {
 							$contentData[$field][$key] = (string) $subvalue;
-						} else {						
-							$contentData["position"]["location"]["coordinates"] = (array) $subvalue["coordinates"];
+						} else {
+							if ($key=='address') {						
+								$contentData["position_address"] = (string) $subvalue;
+							}
+							if ($key=='location') {
+								$contentData["position_location"] = (array) $subvalue["coordinates"];
+							}							
 						}
 				    }
 				}else{
@@ -455,8 +458,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:null;
 		$contentData['startPublicationDate'] = isset($data['startPublicationDate'])?intval($data['startPublicationDate']):null;
 		$contentData['endPublicationDate'] = isset($data['endPublicationDate'])?intval($data['endPublicationDate']):null;
-		$damData['text'] =  (string) $data['text'];
-		$damData['text_not_analyzed'] =  (string) $data['text'];
+		$contentData['text'] =  (string) $data['text'];
+		$contentData['text_not_analyzed'] =  (string) $data['text'];
 		if (isset($data['lastUpdateTime'])) {
 			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
 		} else {
@@ -473,7 +476,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 		} else {
 			$contentData['author'] = "unknown";
 		}
-		
         // Add taxonomy
          if (isset($data["taxonomy"])) {
                 $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
