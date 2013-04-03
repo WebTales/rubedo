@@ -45,6 +45,7 @@
 		      map.setCenter(initialLocation);
 		      new google.maps.Marker({
 			  	map:map,
+			  	icon:"/templates/root/img/target.png",
 			  	position:initialLocation
 			      });
 		    }, function() {
@@ -68,20 +69,25 @@
 			fetchData();
 		  },250);
       });
+      window.activeFacets={ };
 	  var usedMarkers=[ ];
+	  window.fireQuery=fetchData;
       function fetchData (){
-          var bounds=map.getBounds();
-    	  var request = jQuery.ajax({
-    			url : window.location.origin + '/blocks/geo-search/xhr-search',
-    			type : "POST",
-    			data : {
+    	  var bounds=map.getBounds();
+          var params={
     				'current-page':jQuery('body').attr('data-current-page'),
     				'constrainToSite':{% if blockConfig.constrainToSite%}true{% else %}false{% endif %} ,
     				'inflat':bounds.Z.b,
     				'suplat':bounds.Z.d,
     				'inflon':bounds.fa.b,
-    				'suplon':bounds.fa.d 
-    			},
+    				'suplon':bounds.fa.d
+    			}
+          var currentFacets=window.activeFacets;
+          for (var attrname in currentFacets) { params[attrname] = currentFacets[attrname]; }
+    	  var request = jQuery.ajax({
+    			url : window.location.origin + '/blocks/geo-search/xhr-search',
+    			type : "POST",
+    			data :params,
     			dataType : "json"
     		});
 
@@ -91,6 +97,15 @@
     			     usedMarkers[j].setMap(null);
     			}
         		console.log(data);
+        		var recievedFacets=data.activeFacets;
+        		window.activeFacets={ };
+        		for(var m= 0; m < recievedFacets.length; m++)
+    			{
+    			     if (recievedFacets[m].terms.length==1){
+    			    	 window.activeFacets[recievedFacets[m].id]=recievedFacets[m].terms[0].term;
+        			 } 
+        			 //implement multi term here
+    			}
         		jQuery("#facetBox").replaceWith(data.facetsHtml);
         		jQuery("#activeFacetBox").replaceWith(data.activeFacetsHtml);
         		var rezArray=data.data;
@@ -105,7 +120,15 @@
         		console.log("failed to fetch data");
     		});
       }
-      
+      window.updateFacets=updateFacets;
+      function updateFacets(id,term,add){
+          if (add){
+        	  window.activeFacets[id]=term;
+          } else {
+			  delete window.activeFacets[id];
+          }
+          window.fireQuery();
+      }
 	  
       function handleContent(contentPosition, title, contentString){
     	   if (contentPosition[0]&&contentPosition[1]){
@@ -116,6 +139,7 @@
       function createContentMarker(location,title,contentString){
 	    	  var marker = new google.maps.Marker({
 				  	map:map,
+				  	icon:"/templates/root/img/map_pin.png",
 				  	position:location,
 				  	title:title
 				});
