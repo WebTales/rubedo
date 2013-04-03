@@ -4,31 +4,13 @@
 <br />
 <div class="navbar">
 	<div class="navbar-inner">
-		<a class="brand">{% if nbresults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
+		<a class="brand"> <span class="badge badge-important">TEST</span> </a>
 	</div>
 </div>
 {% if activeFacets|length > 0 %}
 <div class="navbar">
 	<div class="navbar-inner">
 		<p class="brand">Critères de recherche :&nbsp;&nbsp;
-		{% for facet in activeFacets %}
-		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
-                {% for term in facet.terms %}
-	                <a href="{{url({(facet.id): null})}}" >
-					<span class="badge badge-info"> {% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
-				    </a>
-		        {% endfor %}
-            {% else %}
-                {% for term in facet.terms %}
-                    {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
-		            <a href="{{url({(facet.id): term.term},'sub')}}" >
-				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
-			        </a>
-			        {% endif %}
-		        {% endfor %}
-            {% endif %}
-		        
-		{% endfor %}
 		</p>
 	</div>
 </div>
@@ -41,70 +23,13 @@
 			<form class="form-search" action="{{url({},true)}}">
 				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
 			</form>
-		
-		{% for facet in facets %}
 
-			{% if facet.terms|length > 0 %}
-
-    			{% if facet.id == 'type' %}
-    			<p>
-    				<i class="icon-file"></i> {{"content_type"|trans}}
-    			</p>	
-    			{% elseif facet.id == 'damType' %}
-    			<p>
-    				<i class="icon-file"></i> {{"dam_type"|trans}}
-    			</p>	
-    			{% elseif facet.id == 'author' %}
-    			<p>
-    				<i class="icon-user"></i> {{"author"|trans}}
-    			</p>		
-    			{% elseif facet.id == 'date' %}
-    			<p>
-    				<i class="icon-calendar"></i> {{"date"|trans}}
-    			</p>	
-    			{% else %}
-    			<p>
-    				<i class="icon-tags"></i> {{facet.label}}
-    			</p>			
-    			{% endif %}	
-    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
-    	          <ul>
-    				{% for term in facet.terms %}
-    				
-    				<li>
-    					<a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
-    				</li>
-    				
-    				{% endfor %}
-			    </ul>
-    	        {% else %}
-    	        <ul>
-    				{% for term in facet.terms %}
-    				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
-    				<li>
-    					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
-    				</li>
-    				{% endif %}
-    				{% endfor %}
-			    </ul>
-    					
-    			{% endif %}	
-			
-			
-			{% endif %}
-		
-		{% endfor %}
-		
 	</div>
 	<div class="span8">
-		{% if total == 0 %}
-		<div class="alert alert-error">
-			{{"no_result"|trans}}
-		</div>
-		{% else %}
-
-		<table class="table">
-		<script type="text/javascript"
+		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+	</div>
+</div>
+<script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
 <script type="text/javascript">
@@ -162,26 +87,26 @@
       function fetchData (){
           var bounds=map.getBounds();
     	  var request = jQuery.ajax({
-    			url : window.location.origin + '/blocks/google-maps/xhr-get-items',
+    			url : window.location.origin + '/blocks/geo-search/xhr-search',
     			type : "POST",
     			data : {
-    				'query-id' : "{{blockConfig.query}}",
     				'current-page':jQuery('body').attr('data-current-page'),
     				'infLat':bounds.Z.b,
     				'supLat':bounds.Z.d,
     				'infLon':bounds.fa.b,
-    				'supLon':bounds.fa.d,
-    				'positionField':"{{blockConfig.positionField}}"
+    				'supLon':bounds.fa.d
     			},
     			dataType : "json"
     		});
 
     		request.done(function(data) {
+        		/*
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
     			     handleContent(rezArray[i].position,rezArray[i].title,rezArray[i].summary);
-    			}
+    			}*/
+    			console.log(data);
     			console.log("data fetch done");
     		});
 
@@ -227,69 +152,10 @@
      
       window.onload = initialize;
 </script>
-<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+
 <style type="text/css">
 #{{prefix}}map_canvas img {
     max-width: none;
 }	  
 </style>
-		
-			{% for result in data %}
-			{% if result.objectType == 'content' %}
-			{% else %}
-			{% endif %}
-			{% endfor %}
-		</table>
-		{% if pagecount > 1 %}
-		<div class="pagination pagination-centered">
-		{%set wrap=limit//2%}
-		{%set lastWrap=(pagecount-1)-current%}
-			<ul>
-			<li class="disabled">
-					<a href="#">Page {{ current+1 }} {{"on"|trans}} {{ pagecount }}</a>
-				</li>
-				{% if current==0 %}
-				<li class="disabled">
-					<a href="#"><<</a>
-				</li>
-				{% else %}
-				<li>
-					<a href="{{url({'pager': current-1})}}"><<</a>
-				</li>
-				{% endif %}
-				{%if current<wrap+1 or limit<10%}
-				{% for i in range(0, limit) %}
-				<li {% if current==i %}class="disabled"{% endif %}>
-					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
-				</li>
-				{% endfor %}
-				{%elseif limit>wrap and current+wrap<pagecount %}
-				{% for  i in current-(wrap)..current+wrap%}
-				<li {% if current == i%}class="active"{%endif%}>
-					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
-				</li>
-				{%endfor%}
-				{%else%}
-				{% for  i in current-(limit-(lastWrap)-1)..current+lastWrap%}
-				<li {% if current == i%}class="active"{%endif%}>
-					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
-				</li>
-				{%endfor%}
-				{%endif%}
-				{% if current==pagecount-1%}
-				<li class="disabled">
-					<a href="#">>></a>
-				</li>
-				{% else %}
-				<li>
-					<a href="{{url({'pager': current+1})}}">>></a>
-				</li>
-				{% endif %}
-			</ul>
-		</div>
-		{% endif %}
-		{% endif %}
-	</div>
-</div>
-
 {% endblock %}
