@@ -189,7 +189,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["startPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["endPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["position.location.coordinates"] = array('type' => 'geo_point', 'store' => 'yes');
+		$indexMapping["position_location"] = array('type' => 'geo_point', 'store' => 'yes');
+		$indexMapping["position_adress"] = array('type' => 'string', 'store' => 'yes');
 				
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -299,9 +300,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 						case 'document' :
 							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
 							break;
-						case 'localiserField' :
-						//	$indexMapping[$name] = array('type' => 'geo_point', 'store' => 'yes');
-							break;
 						default :
 							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
 							break;
@@ -322,7 +320,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["file"] = array('type' => 'attachment', 'store'=>'no');
 		$indexMapping["target"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["position.location.coordinates"] = array('type' => 'geo_point', 'store' => 'yes');
 		
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -436,14 +433,14 @@ class DataIndex extends DataAbstract implements IDataIndex
 				    //foreach ($var as $subvalue){
 				    foreach ($var as $key=>$subvalue){
 				        //$contentData[$field][] = (string) $subvalue;
-						if ($f!="position") {
+						if ($field!='position') {
 							$contentData[$field][$key] = (string) $subvalue;
 						} else {
 							if ($key=='address') {						
-								$contentData["position"]["address"] = (string) $subvalue;
+								$contentData['position_address'] = (string) $subvalue;
 							}
 							if ($key=='location') {
-								$contentData["position"]["location"] = (array) $subvalue["coordinates"];
+								$contentData['position_location'] = (array) $subvalue['coordinates'];
 							}							
 						}
 				    }
