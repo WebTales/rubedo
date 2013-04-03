@@ -188,8 +188,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["startPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["endPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["position.location"] = array('type' => 'geo_point', 'store' => 'yes');
-		$indexMapping["position.address"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
+		$indexMapping["position_location"] = array('type' => 'geo_point', 'store' => 'yes');
+		$indexMapping["position_address"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 				
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -436,10 +436,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 							$contentData[$field][$key] = (string) $subvalue;
 						} else {
 							if ($key=='address') {						
-								$contentData["position"]["address"] = (string) $subvalue;
+								$contentData["position_address"] = (string) $subvalue;
 							}
 							if ($key=='location') {
-								$contentData["position"]["location"] = (array) $subvalue["coordinates"];
+								$contentData["position_location"] = (array) $subvalue["coordinates"];
 							}							
 						}
 				    }
