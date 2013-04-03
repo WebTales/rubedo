@@ -1,0 +1,33 @@
+<div id="activeFacetBox">
+<div class="navbar">
+	<div class="navbar-inner">
+		<a class="brand">{% if nbresults > 1 %}{{"there_are"|trans}}{% else %}{{"there_is"|trans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if nbResults > 1 %}{{"result_pl"|trans}}{% else %}{{"result_sg"|trans}}{% endif %}</a>
+	</div>
+</div>
+{% if activeFacets|length > 0 %}
+<div class="navbar">
+	<div class="navbar-inner">
+		<p class="brand">Critères de recherche :&nbsp;&nbsp;
+		{% for facet in activeFacets %}
+		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
+                {% for term in facet.terms %}
+	                <a href="{{url({(facet.id): null})}}" >
+					<span class="badge badge-info"> {% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
+				    </a>
+		        {% endfor %}
+            {% else %}
+                {% for term in facet.terms %}
+                    {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+		            <a href="{{url({(facet.id): term.term},'sub')}}" >
+				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
+			        </a>
+			        {% endif %}
+		        {% endfor %}
+            {% endif %}
+		        
+		{% endfor %}
+		</p>
+	</div>
+</div>
+{% endif %}
+</div>

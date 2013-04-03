@@ -2,28 +2,12 @@
 {% block mainContent %}
 
 <br />
-<div class="navbar">
-	<div class="navbar-inner">
-		<a class="brand"> <span class="badge badge-important">TEST</span> </a>
-	</div>
-</div>
-{% if activeFacets|length > 0 %}
-<div class="navbar">
-	<div class="navbar-inner">
-		<p class="brand">Critères de recherche :&nbsp;&nbsp;
-		</p>
-	</div>
-</div>
-{% endif %}
-<div class="row-fluid">
-	<div class="span3 well well-large">
-		<p>
-			<i class="icon-search"></i> {{"full_text_search"|trans}}
-		</p>
-			<form class="form-search" action="{{url({},true)}}">
-				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
-			</form>
 
+<div id="activeFacetBox">
+</div>
+
+<div class="row-fluid">
+	<div class="span3 well well-large" id="facetBox">
 	</div>
 	<div class="span8">
 		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
@@ -82,7 +66,7 @@
 		  clearTimeout(mapTimer);
 		  mapTimer=setTimeout(function(){
 			fetchData();
-		  },1000);
+		  },250);
       });
 	  var usedMarkers=[ ];
       function fetchData (){
@@ -107,6 +91,8 @@
     			     usedMarkers[j].setMap(null);
     			}
         		console.log(data);
+        		jQuery("#facetBox").replaceWith(data.facetsHtml);
+        		jQuery("#activeFacetBox").replaceWith(data.activeFacetsHtml);
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{

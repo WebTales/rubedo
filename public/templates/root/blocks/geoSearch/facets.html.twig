@@ -1,0 +1,62 @@
+<div class="span3 well well-large" id="facetBox">
+		<p>
+			<i class="icon-search"></i> {{"full_text_search"|trans}}
+		</p>
+			<form class="form-search" action="{{url({},true)}}">
+				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
+			</form>
+		
+		{% for facet in facets %}
+
+			{% if facet.terms|length > 0 %}
+
+    			{% if facet.id == 'type' %}
+    			<p>
+    				<i class="icon-file"></i> {{"content_type"|trans}}
+    			</p>	
+    			{% elseif facet.id == 'damType' %}
+    			<p>
+    				<i class="icon-file"></i> {{"dam_type"|trans}}
+    			</p>	
+    			{% elseif facet.id == 'author' %}
+    			<p>
+    				<i class="icon-user"></i> {{"author"|trans}}
+    			</p>		
+    			{% elseif facet.id == 'date' %}
+    			<p>
+    				<i class="icon-calendar"></i> {{"date"|trans}}
+    			</p>	
+    			{% else %}
+    			<p>
+    				<i class="icon-tags"></i> {{facet.label}}
+    			</p>			
+    			{% endif %}	
+    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
+    	          <ul>
+    				{% for term in facet.terms %}
+    				
+    				<li>
+    					<a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
+    				</li>
+    				
+    				{% endfor %}
+			    </ul>
+    	        {% else %}
+    	        <ul>
+    				{% for term in facet.terms %}
+    				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+    				<li>
+    					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
+    				</li>
+    				{% endif %}
+    				{% endfor %}
+			    </ul>
+    					
+    			{% endif %}	
+			
+			
+			{% endif %}
+		
+		{% endfor %}
+		
+</div>

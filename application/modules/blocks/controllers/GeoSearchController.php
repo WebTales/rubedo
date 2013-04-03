@@ -139,6 +139,14 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	}
     	$results = $query->search($params,$this->_option);
     
+    	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+    			"blocks/geoSearch/activeFacets.html.twig");
+    	$facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+    			"blocks/geoSearch/facets.html.twig");
+    	$results['activeFacetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($activeFacetsTemplate,
+    			$results);
+    	$results['facetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($facetsTemplate,
+    			$results);
     	$results['success']=true;
     	$results['message']='OK';
     
