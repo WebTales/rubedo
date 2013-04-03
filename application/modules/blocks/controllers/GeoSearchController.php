@@ -64,7 +64,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         //\Zend_Debug::dump($results);
         //die;
         $results['currentSite'] = isset($siteId)?$siteId:null;
-        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
+        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']==true){
             $results['constrainToSite'] = true;
         }
         // Pagination
@@ -107,11 +107,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     		$this->_option = $params['option'];
     	}
     
-	    if(isset($params['constrainToSite']) && $params['constrainToSite']){
-	            $site = $this->getRequest()->getParam('site');
+	    if(isset($params['constrainToSite']) && $params['constrainToSite']==='true'){
+	    	  //deduce site from current page
+	          /*  $site = $this->getRequest()->getParam('site');
 	            $siteId = $site['id'];
 	            $params['navigation'][]=$siteId;
-	            $serverParams['navigation'][]=$siteId;
+	            $serverParams['navigation'][]=$siteId; */
 	        }
         //apply predefined facets
         if(isset($params['predefinedFacets'])){
@@ -136,7 +137,6 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     		$params['orderby'] = ($sort[0]['property']=='score') ? '_score' : $sort[0]['property'];
     		$params['orderbyDirection'] = $sort[0]['direction'];
     	}
-    
     	$results = $query->search($params,$this->_option);
     
     	$results['success']=true;

@@ -84,6 +84,7 @@
 			fetchData();
 		  },1000);
       });
+	  var usedMarkers=[ ];
       function fetchData (){
           var bounds=map.getBounds();
     	  var request = jQuery.ajax({
@@ -91,22 +92,26 @@
     			type : "POST",
     			data : {
     				'current-page':jQuery('body').attr('data-current-page'),
-    				'infLat':bounds.Z.b,
-    				'supLat':bounds.Z.d,
-    				'infLon':bounds.fa.b,
-    				'supLon':bounds.fa.d
+    				'constrainToSite':{% if blockConfig.constrainToSite%}true{% else %}false{% endif %} ,
+    				'inflat':bounds.Z.b,
+    				'suplat':bounds.Z.d,
+    				'inflon':bounds.fa.b,
+    				'suplon':bounds.fa.d 
     			},
     			dataType : "json"
     		});
 
     		request.done(function(data) {
-        		/*
+    			for(var j= 0; j < usedMarkers.length; j++)
+    			{
+    			     usedMarkers[j].setMap(null);
+    			}
+        		console.log(data);
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position,rezArray[i].title,rezArray[i].summary);
-    			}*/
-    			console.log(data);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary);
+    			}
     			console.log("data fetch done");
     		});
 
@@ -117,25 +122,18 @@
       
 	  
       function handleContent(contentPosition, title, contentString){
-    	  if (contentPosition.address){
-    		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
-    	      		if (status == google.maps.GeocoderStatus.OK) {
-    	      			createContentMarker(results[0].geometry.location, title, contentString);
-    	      		}
-    	      	});  
-    	  } else if (contentPosition.lat&&contentPosition.lon){
-    		  createContentMarker(new google.maps.LatLng(contentPosition.lat,contentPosition.lng), title, contentString);     
+    	   if (contentPosition[0]&&contentPosition[1]){
+    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title, contentString);     
           }
       }
-      var usedMarkers=[ ];
+      
       function createContentMarker(location,title,contentString){
-          if (usedMarkers.indexOf(location.toString())==-1){
 	    	  var marker = new google.maps.Marker({
 				  	map:map,
 				  	position:location,
 				  	title:title
 				});
-			  usedMarkers.push(location.toString());
+			  usedMarkers.push(marker);
 			  console.log("added new");
 			  
 	    	  var infowindow = new google.maps.InfoWindow({
@@ -144,7 +142,7 @@
 	    	  google.maps.event.addListener(marker, 'click', function() {
 	              infowindow.open(map,marker);
 	          });
-          }
+          
 		  
       }
       
