@@ -104,39 +104,139 @@
 		{% else %}
 
 		<table class="table">
+		<script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
+    </script>
+<script type="text/javascript">
+      function initialize() {
+    	  if (typeof google == "undefined") {
+   		   var e = document.createElement("script");
+   		   e.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true";
+   		   e.type = "text/javascript";
+   		   document.getElementsByTagName("head")[0].appendChild(e); 
+   		}
+          
+        var mapOptions = {
+          center: new google.maps.LatLng(48.8567, 2.3508),
+          zoom: {{blockConfig.zoom}}||12,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+      
+      var map = new google.maps.Map(document.getElementById("{{prefix}}map_canvas"),
+            mapOptions);
+      var geocoder = new google.maps.Geocoder();
+      var useLocation = "{{blockConfig.useLocation}}";
+      var centerAddress = "{{blockConfig.centerAddress}}";
+      var centerLatitude = "{{blockConfig.centerLatitude}}";
+      var centerLongitude = "{{blockConfig.centerLongitude}}";
+	  if (useLocation&&navigator.geolocation) {
+		  navigator.geolocation.getCurrentPosition(function(position) {
+		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+		      map.setCenter(initialLocation);
+		      new google.maps.Marker({
+			  	map:map,
+			  	position:initialLocation
+			      });
+		    }, function() {
+		      console.log("geolocation Error");
+		    });
+		  
+      } else if (centerAddress) {
+      	
+      	geocoder.geocode( { 'address': centerAddress}, function(results, status) {
+      		if (status == google.maps.GeocoderStatus.OK) {
+      			map.setCenter(results[0].geometry.location);
+      		}
+      	});
+      } else if (centerLatitude&&centerLongitude){
+    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
+      }
+	  var mapTimer=null;
+	  google.maps.event.addListener(map, 'bounds_changed', function() {
+		  clearTimeout(mapTimer);
+		  mapTimer=setTimeout(function(){
+			fetchData();
+		  },1000);
+      });
+      function fetchData (){
+          var bounds=map.getBounds();
+    	  var request = jQuery.ajax({
+    			url : window.location.origin + '/blocks/google-maps/xhr-get-items',
+    			type : "POST",
+    			data : {
+    				'query-id' : "{{blockConfig.query}}",
+    				'current-page':jQuery('body').attr('data-current-page'),
+    				'infLat':bounds.Z.b,
+    				'supLat':bounds.Z.d,
+    				'infLon':bounds.fa.b,
+    				'supLon':bounds.fa.d,
+    				'positionField':"{{blockConfig.positionField}}"
+    			},
+    			dataType : "json"
+    		});
+
+    		request.done(function(data) {
+        		var rezArray=data.data;
+    			for(var i= 0; i < rezArray.length; i++)
+    			{
+    			     handleContent(rezArray[i].position,rezArray[i].title,rezArray[i].summary);
+    			}
+    			console.log("data fetch done");
+    		});
+
+    		request.fail(function(jqXHR, textStatus) {
+        		console.log("failed to fetch data");
+    		});
+      }
+      
+	  
+      function handleContent(contentPosition, title, contentString){
+    	  if (contentPosition.address){
+    		  geocoder.geocode( { 'address': contentPosition.address}, function(results, status) {
+    	      		if (status == google.maps.GeocoderStatus.OK) {
+    	      			createContentMarker(results[0].geometry.location, title, contentString);
+    	      		}
+    	      	});  
+    	  } else if (contentPosition.lat&&contentPosition.lon){
+    		  createContentMarker(new google.maps.LatLng(contentPosition.lat,contentPosition.lng), title, contentString);     
+          }
+      }
+      var usedMarkers=[ ];
+      function createContentMarker(location,title,contentString){
+          if (usedMarkers.indexOf(location.toString())==-1){
+	    	  var marker = new google.maps.Marker({
+				  	map:map,
+				  	position:location,
+				  	title:title
+				});
+			  usedMarkers.push(location.toString());
+			  console.log("added new");
+			  
+	    	  var infowindow = new google.maps.InfoWindow({
+	              content: contentString         
+	           });
+	    	  google.maps.event.addListener(marker, 'click', function() {
+	              infowindow.open(map,marker);
+	          });
+          }
+		  
+      }
+      
+      }
+     
+      window.onload = initialize;
+</script>
+<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+<style type="text/css">
+#{{prefix}}map_canvas img {
+    max-width: none;
+}	  
+</style>
+		
 			{% for result in data %}
 			{% if result.objectType == 'content' %}
-			<tr>
-				<td><h3><a href="{{ displaySingleUrl(result.id) }}">{{ result.title }}</a></h3>
-				<div class="progress progress-success" style="width:50px; float: left;">
-					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
-						{{ result.score }}%
-					</div>
-				</div> &nbsp;<span class="label">{{ result.type }}</span>
-				<br />
-				<br />
-				{% if result.summary %}
-				<p>{{ result.summary|cleanHtml }}</p>
-				{% endif %}
-				<br />
-				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
-			</tr>
 			{% else %}
-			<tr>
-				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
-				<div class="progress progress-success" style="width:50px; float: left;">
-					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
-						{{ result.score }}%
-					</div>
-				</div> &nbsp;<span class="label">{{ result.type }}</span>
-				<br />
-				<br />
-				{% if result.summary %}
-				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.summary|cleanHtml }}</p>
-				{% endif %}
-				<br />
-				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
-			</tr>
 			{% endif %}
 			{% endfor %}
 		</table>

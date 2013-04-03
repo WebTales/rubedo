@@ -91,6 +91,7 @@
     			{
     			     handleContent(rezArray[i].position,rezArray[i].title,rezArray[i].summary);
     			}
+    			console.log("data fetch done");
     		});
 
     		request.fail(function(jqXHR, textStatus) {
@@ -119,6 +120,7 @@
 				  	title:title
 				});
 			  usedMarkers.push(location.toString());
+			  console.log("added new");
 			  
 	    	  var infowindow = new google.maps.InfoWindow({
 	              content: contentString         
