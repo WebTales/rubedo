@@ -11,14 +11,14 @@
 		{% for facet in activeFacets %}
 		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
                 {% for term in facet.terms %}
-	                <a onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)" >
+	                <a style="cursor:pointer;" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)" >
 					<span class="badge badge-info"> {% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
 				    </a>
 		        {% endfor %}
             {% else %}
                 {% for term in facet.terms %}
                     {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
-		            <a onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)" >
+		            <a style="cursor:pointer;" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)" >
 				        <span class="badge badge-info"><i class="icon-remove-sign"></i> {{ term.label }}</span>
 			        </a>
 			        {% endif %}
