@@ -377,12 +377,8 @@ abstract class AbstractCollection implements IAbstractCollection
                                             if ($value['items']['domain'] !=
                                             "list" &&
                                             $value['items']['domain'] != "array") {
-                                                if (! $this->_isValid($subValue,
-                                                        $value['items']['domain'])) {
-                                                    $this->_errors[$key][$subKey] = '"' .
-                                                            $subValue .
-                                                            '" doesn\'t correspond with the domain "' .
-                                                            $value['domain'] . '"';
+                                                if (!is_array($subValue) && !$this->_isValid($subValue, $value['items']['domain'])) {
+                                                    $this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'] . '"';
                                                 }
                                             } else {
                                                 if ($value['items']['domain'] == "list") {
@@ -457,10 +453,8 @@ abstract class AbstractCollection implements IAbstractCollection
                              * with the model
                              */
                         default:
-                            if (! $this->_isValid($obj[$key], $value['domain'])) {
-                                $this->_errors[$key] = '"' . $obj[$key] .
-                                '" doesn\'t correspond with the domain "' .
-                                $value['domain'] . '"';
+                            if (!is_array($obj[$key]) && !$this->_isValid($obj[$key], $value['domain'])) {
+                                $this->_errors[$key] = '"' . $obj[$key] . '" doesn\'t correspond with the domain "' . $value['domain'] . '"';
                             }
                             break;
                     }
