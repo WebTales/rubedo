@@ -150,14 +150,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     			$twigCVars);
     	}*/
     
-    	$this->getHelper('Layout')->disableLayout();
-    	$this->getHelper('ViewRenderer')->setNoRender();
-    	$this->getResponse()->setHeader('Content-Type', 'application/json', true);
-    
-    	$returnValue = Zend_Json::encode($results);
-    	$returnValue = Zend_Json::prettyPrint($returnValue);
-    
-    	$this->getResponse()->setBody($returnValue);
+    	$this->_helper->json($results);
     
     }
     
