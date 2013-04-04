@@ -107,7 +107,7 @@
         		newPositions=[ ];
     			for(var j= 0; j < usedMarkers.length; j++)
     			{
-    			     oldPositions.push(usedMarkers[j].getPosition().toString());
+    			     oldPositions.push(usedMarkers[j].entityId);
     			}
         		//console.log(data);
         		var recievedFacets=data.activeFacets;
@@ -124,12 +124,12 @@
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary,rezArray[i].id);
     			}
     			var newUsed=[];
     			for(var u= 0; u < usedMarkers.length; u++)
     			{
-    			     if (newPositions.indexOf(usedMarkers[u].getPosition().toString())==-1){
+    			     if (newPositions.indexOf(usedMarkers[u].entityId)==-1){
     			    	 usedMarkers[u].setMap(null);
     			    	 //console.log("removed old");
         			 } else {
@@ -157,20 +157,21 @@
           window.fireQuery();
       }
 	  
-      function handleContent(contentPosition, title, contentString){
+      function handleContent(contentPosition, title, contentString,entityId){
     	   if (contentPosition[0]&&contentPosition[1]){
-    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title, contentString);     
+    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title, contentString,entityId);     
           }
       }
       
-      function createContentMarker(location,title,contentString){
-    	  	  newPositions.push(location.toString());
-    	  	  if (oldPositions.indexOf(location.toString())==-1){
+      function createContentMarker(location,title,contentString,entityId){
+    	  	  newPositions.push(entityId);
+    	  	  if (oldPositions.indexOf(entityId)==-1){
 	    	  var marker = new google.maps.Marker({
 				  	map:map,
 				  	icon:"/templates/root/img/map_pin.png",
 				  	position:location,
-				  	title:title
+				  	title:title,
+				  	entityId:entityId
 				});
 			  usedMarkers.push(marker);
 			  //console.log("added new");
