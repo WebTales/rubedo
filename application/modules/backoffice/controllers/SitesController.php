@@ -60,16 +60,21 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 	public function wizardCreateAction()
 	{
 	 $data = $this->getRequest()->getParam('data');
-
+		
+	 	//Create the site
         if (!is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
                 $site= $this->_dataService->create($insertData);
-            }}
+            }
+       	}
+       	
 		if($site['success']===true)
 		{
 			$firstColumnId=(string) new MongoId();
 			$secondColumnId=(string) new MongoId();
+			
+			//Make the mask skeleton
 			$jsonMask=realpath(APPLICATION_PATH."/../data/default/site/mask.json");
 			$maskObj=(Zend_Json::decode(file_get_contents($jsonMask),true));
 			$maskObj['site']=$site['data']['id'];
@@ -81,34 +86,51 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 			$maskObj['blocks'][0]['id']=(string) new MongoId();
 			$maskObj['blocks'][0]['parentCol']=$firstColumnId;
 			
-			$mask=Rubedo\Services\Manager::getService('Masks')->create($maskObj);
-			if($mask['success']===true)
+			//Home mask
+			$homeMask = $maskObj;
+			$homeMask['text'] = "Masque de la page d'accueil";
+			$homeMaskCreation=Rubedo\Services\Manager::getService('Masks')->create($homeMask);
+			
+			//Detail mask
+			$detailMask = $maskObj;
+			$detailMask['text'] = "Masque de la page détail";
+			$detailMaskCreation=Rubedo\Services\Manager::getService('Masks')->create($detailMask);
+			
+			//Search mask
+			$searchMask = $maskObj;
+			$searchMask['text'] = "Masque de la page de recherche";
+			$searchMaskCreation=Rubedo\Services\Manager::getService('Masks')->create($searchMask);
+			
+			if($homeMaskCreation['success'] && $detailMaskCreation['success'] && $searchMaskCreation['success'])
 			{
 				/*Create Home Page*/
 				$jsonHomePage=realpath(APPLICATION_PATH."/../data/default/site/homePage.json");
 				$homePageObj=(Zend_Json::decode(file_get_contents($jsonHomePage),true));
 				$homePageObj['site']=$site['data']['id'];
-				$homePageObj['maskId']=$mask['data']['id'];
+				$homePageObj['maskId']=$homeMaskCreation['data']['id'];
 				$homePage=Rubedo\Services\Manager::getService('Pages')->create($homePageObj);
+				
 				/*Create Single Page*/
 				$jsonSinglePage=realpath(APPLICATION_PATH."/../data/default/site/singlePage.json");
 				$singlePageObj=(Zend_Json::decode(file_get_contents($jsonSinglePage),true));
 				$singlePageObj['site']=$site['data']['id'];
-				$singlePageObj['maskId']=$mask['data']['id'];
+				$singlePageObj['maskId']=$detailMaskCreation['data']['id'];
 				$singlePageObj['blocks'][0]['id']=(string) new MongoId();
 				$singlePageObj['blocks'][0]['parentCol']=$secondColumnId;
 				$page=Rubedo\Services\Manager::getService('Pages')->create($singlePageObj);
+				
 				/*Create Search Page*/
 				$jsonSearchPage=realpath(APPLICATION_PATH."/../data/default/site/searchPage.json");
 				$searchPageObj=(Zend_Json::decode(file_get_contents($jsonSearchPage),true));
 				$searchPageObj['site']=$site['data']['id'];
-				$searchPageObj['maskId']=$mask['data']['id'];
+				$searchPageObj['maskId']=$searchMaskCreation['data']['id'];
 				$searchPageObj['blocks'][0]['id']=(string) new MongoId();
 				$searchPageObj['blocks'][0]['parentCol']=$secondColumnId;
 				$searchPage=Rubedo\Services\Manager::getService('Pages')->create($searchPageObj);
-				if($page['success']===true)
+				
+				if($page['success'] && $homePage['success'] && $searchPage['success'])
 				{
-					$updateMask=$mask['data'];
+					$updateMask=$homeMaskCreation['data'];
 					$updateMask["blocks"][0]['configBloc']=array("useSearchEngine"=>true,"rootPage"=>$homePage['data']['id'],"searchPage"=>$searchPage['data']['id']);
 					$updateMaskReturn=Rubedo\Services\Manager::getService('Masks')->update($updateMask);
 					if($updateMaskReturn['success']===true)
@@ -132,7 +154,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 					$returnArray = array('success' => false, "msg" => 'error during pages creation');
 				}
 			}else{
-				$returnArray = array('success' => false, "msg" => 'error during mask creation');
+				$returnArray = array('success' => false, "msg" => 'error during masks creation');
 			}
 		}else
 		{
