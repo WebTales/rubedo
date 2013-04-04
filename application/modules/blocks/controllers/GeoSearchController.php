@@ -135,21 +135,22 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     			"blocks/geoSearch/activeFacets.html.twig");
     	$facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
     			"blocks/geoSearch/facets.html.twig");
+    	$contentOrDamTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+    			"blocks/geoSearch/contentOrDam.html.twig");
     	$results['activeFacetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($activeFacetsTemplate,
     			$results);
     	$results['facetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($facetsTemplate,
     			$results);
     	$results['success']=true;
     	$results['message']='OK';
+    	/*foreach ($results['data'] as $key => $value){
+    		$twigCVars=array();
+    		$twigCVars['result']=$value;
+    		$results['data'][$key]['htmlSummary']=Manager::getService('FrontOfficeTemplates')->render($contentOrDamTemplate,
+    			$twigCVars);
+    	}*/
     
-    	$this->getHelper('Layout')->disableLayout();
-    	$this->getHelper('ViewRenderer')->setNoRender();
-    	$this->getResponse()->setHeader('Content-Type', 'application/json', true);
-    
-    	$returnValue = Zend_Json::encode($results);
-    	$returnValue = Zend_Json::prettyPrint($returnValue);
-    
-    	$this->getResponse()->setBody($returnValue);
+    	$this->_helper->json($results);
     
     }
     
