@@ -9,7 +9,7 @@
 <div class="row-fluid">
 	<div class="span3 well well-large" id="facetBox">
 	</div>
-	<div class="span8">
+	<div class="span9">
 		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
 	</div>
 </div>
@@ -39,6 +39,7 @@
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
       var centerLongitude = "{{blockConfig.centerLongitude}}";
+      var pagesize = {{blockConfig.pageSize}};
 	  if (useLocation&&navigator.geolocation) {
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
@@ -76,6 +77,7 @@
     	  var bounds=map.getBounds();
           var params={
     				'current-page':jQuery('body').attr('data-current-page'),
+    				'pagesize':pagesize,
     				'constrainToSite':{% if blockConfig.constrainToSite%}true{% else %}false{% endif %} ,
     				'inflat':bounds.Z.b,
     				'suplat':bounds.Z.d,

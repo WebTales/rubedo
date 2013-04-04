@@ -126,7 +126,6 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	$query = Manager::getService('ElasticDataSearch');
     
     	$query->init();
-    	$params['pagesize'] = "all";
     	$results = $query->search($params,$this->_option);
     
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
