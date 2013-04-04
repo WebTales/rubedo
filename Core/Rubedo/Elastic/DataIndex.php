@@ -440,7 +440,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 								$contentData['position_address'] = (string) $subvalue;
 							}
 							if ($key=='location') {
-								$contentData['position_location'] = (array) $subvalue['coordinates'];
+								list($lon,$lat) = $subvalue['coordinates'];
+								$contentData['position_location'] = array((float)$lon,(float)$lat);
 							}							
 						}
 				    }

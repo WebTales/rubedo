@@ -126,17 +126,6 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	$query = Manager::getService('ElasticDataSearch');
     
     	$query->init();
-    	if (isset($params['limit'])) {
-    		$params['pagesize'] = (int) $params['limit'];
-    	}
-    	if (isset($params['page'])) {
-    		$params['pager'] = (int) $params['page']-1;
-    	}
-    	if (isset($params['sort'])) {
-    		$sort = Zend_Json::decode($params['sort']);
-    		$params['orderby'] = ($sort[0]['property']=='score') ? '_score' : $sort[0]['property'];
-    		$params['orderbyDirection'] = $sort[0]['direction'];
-    	}
     	$results = $query->search($params,$this->_option);
     
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
