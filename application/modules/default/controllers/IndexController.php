@@ -239,7 +239,7 @@ class IndexController extends Zend_Controller_Action
         $twigVar['isLoggedIn'] = $isLoggedIn;
         $twigVar['canEdit'] = $canEdit;
         
-        $twigVar['pageProperties'] = $this->_mask['pageProperties'];
+        $twigVar['pageProperties'] = isset($this->_mask['pageProperties']) ? $this->_mask['pageProperties'] : null;
         
         $pageTemplate = $this->_serviceTemplate->getFileThemePath($this->_pageParams['template']);
         
