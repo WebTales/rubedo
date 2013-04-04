@@ -160,6 +160,11 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     		$entity=Rubedo\Services\Manager::getService('Dam')->findById($id);
     	}
     	if (isset($entity)){
+    		if ($type=="content") {
+    			$entity['type']=Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+    		} else {
+    			$entity['type']=Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+    		}
     		$contentOrDamTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
     				"blocks/geoSearch/contentOrDam.html.twig");
     		$entity['objectType']=$type;
