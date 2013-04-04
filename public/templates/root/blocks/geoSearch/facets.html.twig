@@ -2,7 +2,7 @@
 		<p>
 			<i class="icon-search"></i> {{"full_text_search"|trans}}
 		</p>
-			<form class="form-search" action="{{url({},true)}}">
+			<form name="searchForm" class="form-search" action="javascript:window.updateFacets('query',document.searchForm.elements['query'].value,true)">
 				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
 			</form>
 		
