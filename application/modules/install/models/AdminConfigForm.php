@@ -40,19 +40,22 @@ class Install_Model_AdminConfigForm extends Install_Model_BootstrapForm
         $passwordField->setAttrib('autocomplete', 'off');
         $passwordField->setLabel('Password');
         
+        $confirmPasswordField = new Zend_Form_Element_Password('confirmPassword');
+        $confirmPasswordField->setRequired(true);
+        $confirmPasswordField->setAttrib('autocomplete', 'off');
+        $confirmPasswordField->setLabel('Confirm password');
+        $confirmPasswordField->addValidator('identical', true, array('password'));
+        
         $emailField = new Zend_Form_Element_Text('email');
         $emailField->addValidator('EmailAddress');
         $emailField->setRequired(true);
         $emailField->setLabel('Email');
         
-        
-        
-  
-        
         $dbForm = new Zend_Form();
         $dbForm->addElement($nameField);
         $dbForm->addElement($loginField);
         $dbForm->addElement($passwordField);
+        $dbForm->addElement($confirmPasswordField);
         $dbForm->addElement($emailField);
         
         $dbForm = self::setForm($dbForm);
