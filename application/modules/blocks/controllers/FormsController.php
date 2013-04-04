@@ -484,7 +484,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                                     $conditionsArray[] = false;
                                 }
                                 
-                                if (in_array(false, $conditionsArray)) {
+                                if (!in_array(true, $conditionsArray)) {
                                     $pageToCheck["elements"][$key]["itemConfig"]["hidden"] = true;
                                 }
                                 break;
