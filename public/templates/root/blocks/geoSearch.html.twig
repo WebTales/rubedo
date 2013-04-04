@@ -95,8 +95,10 @@
     			for(var j= 0; j < usedMarkers.length; j++)
     			{
     			     usedMarkers[j].setMap(null);
+    			     console.log("removed old");
     			}
         		console.log(data);
+        		usedMarkers=[];
         		var recievedFacets=data.activeFacets;
         		window.activeFacets={ };
         		for(var m= 0; m < recievedFacets.length; m++)
