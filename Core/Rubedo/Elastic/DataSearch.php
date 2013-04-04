@@ -307,9 +307,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 		}
 			
 		// Add pagination 		
-		if ($params['pagesize']!="all") {
+		if (is_numeric($params['pagesize'])) {
 			$elasticaQuery->setSize($params['pagesize'])->setFrom($params['pager']*$params['pagesize']);
-		} 
+		}
 					
 		// add sort
 		if ($params['orderby'] == 'text') {
