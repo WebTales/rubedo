@@ -115,10 +115,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 	            $serverParams['navigation'][]=$siteId; */
 	        }
         //apply predefined facets
+	     $facetsToHide=array();
         if(isset($params['predefinedFacets'])){
         	$predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
         	foreach ($predefParamsArray as $key => $value){
         		$params[$key] = $value;
+        		$facetsToHide[]=$key;
         	}
         }
     	Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
@@ -127,7 +129,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     
     	$query->init();
     	$results = $query->search($params,$this->_option);
-    
+    	$results['facetsToHide']=$facetsToHide;
+    	 
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
     			"blocks/geoSearch/activeFacets.html.twig");
     	$facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(

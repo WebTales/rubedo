@@ -39,6 +39,7 @@
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
       var centerLongitude = "{{blockConfig.centerLongitude}}";
+      var predefinedFacets = {% if blockConfig.predefinedFacets%}"{{blockConfig.predefinedFacets| e('js')}}"{% else %}"{ }"{% endif %} ;
       var pagesize = {{blockConfig.pageSize}};
 	  if (useLocation&&navigator.geolocation) {
 		  navigator.geolocation.getCurrentPosition(function(position) {
@@ -81,6 +82,7 @@
     				'current-page':jQuery('body').attr('data-current-page'),
     				'pagesize':pagesize,
     				'constrainToSite':{% if blockConfig.constrainToSite%}true{% else %}false{% endif %} ,
+    				'predefinedFacets':predefinedFacets,
     				'inflat':bounds.Z.b,
     				'suplat':bounds.Z.d,
     				'inflon':bounds.fa.b,
