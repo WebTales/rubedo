@@ -16,9 +16,7 @@
 <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
-    <script type="text/javascript"
-      src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js">
-    </script>
+    
 <script type="text/javascript">
       function initialize() {
     	  if (typeof google == "undefined") {
@@ -39,7 +37,6 @@
             mapOptions);
       var geocoder = new google.maps.Geocoder();
       var usedMarkers=[ ];
-      var markerCluster = new MarkerClusterer(map, usedMarkers);
       var useLocation = "{{blockConfig.useLocation}}";
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
@@ -138,8 +135,7 @@
     			}
     			usedMarkers=[ ];
     			usedMarkers=newUsed;
-    			markerCluster.clearMarkers();
-    			markerCluster.addMarkers(usedMarkers);
+    			
     			console.log("data fetch done");
     		});
 
