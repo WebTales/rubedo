@@ -16,6 +16,9 @@
 <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
+    <script type="text/javascript"
+      src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js">
+    </script>
 <script type="text/javascript">
       function initialize() {
     	  if (typeof google == "undefined") {
@@ -35,6 +38,8 @@
       var map = new google.maps.Map(document.getElementById("{{prefix}}map_canvas"),
             mapOptions);
       var geocoder = new google.maps.Geocoder();
+      var usedMarkers=[ ];
+      var markerCluster = new MarkerClusterer(map, usedMarkers);
       var useLocation = "{{blockConfig.useLocation}}";
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
@@ -72,7 +77,7 @@
 		  },250);
       });
       window.activeFacets={ };
-	  var usedMarkers=[ ];
+	  
 	  var oldPositions=[ ];
 	  var newPositions=[ ];
 	  window.fireQuery=fetchData;
@@ -119,7 +124,7 @@
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].htmlSummary);
     			}
     			var newUsed=[];
     			for(var u= 0; u < usedMarkers.length; u++)
@@ -133,6 +138,8 @@
     			}
     			usedMarkers=[ ];
     			usedMarkers=newUsed;
+    			markerCluster.clearMarkers();
+    			markerCluster.addMarkers(usedMarkers);
     			console.log("data fetch done");
     		});
 
