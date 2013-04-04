@@ -16,7 +16,9 @@
 <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
-    
+    <script type="text/javascript"
+      src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js">
+    </script>
 <script type="text/javascript">
       function initialize() {
     	  if (typeof google == "undefined") {
@@ -37,6 +39,7 @@
             mapOptions);
       var geocoder = new google.maps.Geocoder();
       var usedMarkers=[ ];
+      var markerCluster = new MarkerClusterer(map, usedMarkers);
       var useLocation = "{{blockConfig.useLocation}}";
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
@@ -106,7 +109,7 @@
     			{
     			     oldPositions.push(usedMarkers[j].getPosition().toString());
     			}
-        		console.log(data);
+        		//console.log(data);
         		var recievedFacets=data.activeFacets;
         		window.activeFacets={ };
         		for(var m= 0; m < recievedFacets.length; m++)
@@ -128,18 +131,20 @@
     			{
     			     if (newPositions.indexOf(usedMarkers[u].getPosition().toString())==-1){
     			    	 usedMarkers[u].setMap(null);
-    			    	 console.log("removed old");
+    			    	 markerCluster.removeMarker(usedMarkers[u],true);
+    			    	 //console.log("removed old");
         			 } else {
             			 newUsed.push(usedMarkers[u]);
             		 }
     			}
     			usedMarkers=[ ];
-    			usedMarkers=newUsed;   			
-    			console.log("data fetch done");
+    			usedMarkers=newUsed;
+    			markerCluster.redraw();
+    			//console.log("data fetch done");
     		});
 
     		request.fail(function(jqXHR, textStatus) {
-        		console.log("failed to fetch data");
+        		//console.log("failed to fetch data");
     		});
       }
       window.updateFacets=updateFacets;
@@ -168,7 +173,8 @@
 				  	title:title
 				});
 			  usedMarkers.push(marker);
-			  console.log("added new");
+			  markerCluster.addMarker(marker,true);
+			  //console.log("added new");
 			  
 	    	  var infowindow = new google.maps.InfoWindow({
 	              content: contentString         
