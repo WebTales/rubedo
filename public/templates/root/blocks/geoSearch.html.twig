@@ -121,7 +121,7 @@
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].htmlSummary);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary);
     			}
     			var newUsed=[];
     			for(var u= 0; u < usedMarkers.length; u++)
@@ -134,8 +134,7 @@
             		 }
     			}
     			usedMarkers=[ ];
-    			usedMarkers=newUsed;
-    			
+    			usedMarkers=newUsed;   			
     			console.log("data fetch done");
     		});
 

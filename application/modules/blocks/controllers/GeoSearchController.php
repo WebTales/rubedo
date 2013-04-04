@@ -143,12 +143,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     			$results);
     	$results['success']=true;
     	$results['message']='OK';
-    	foreach ($results['data'] as $key => $value){
+    	/*foreach ($results['data'] as $key => $value){
     		$twigCVars=array();
     		$twigCVars['result']=$value;
     		$results['data'][$key]['htmlSummary']=Manager::getService('FrontOfficeTemplates')->render($contentOrDamTemplate,
     			$twigCVars);
-    	}
+    	}*/
     
     	$this->getHelper('Layout')->disableLayout();
     	$this->getHelper('ViewRenderer')->setNoRender();
