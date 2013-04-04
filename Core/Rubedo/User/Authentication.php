@@ -62,6 +62,9 @@ class Authentication implements IAuthentication
     public function authenticate($login, $password){
     	$authAdapter = new \Rubedo\User\AuthAdapter($login,$password);
 		$result = $this->_getZendAuth()->authenticate($authAdapter);
+		if(!$result->isValid()){
+		    Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()) );
+		}
     	return $result->isValid();
     }
 	

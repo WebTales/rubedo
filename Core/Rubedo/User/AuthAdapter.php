@@ -102,12 +102,18 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
         $valid = $hashService->checkPassword($targetHash, $this->_password, $salt);
         
         $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
-        if (isset($user['startValidity']) && !empty($user['startValidity'])) {
+        if ($valid && isset($user['startValidity']) && !empty($user['startValidity'])) {
             $valid = $valid && ($user['startValidity'] <= $currentTime);
+            if(!$valid){
+                $this->_authenticateResultInfo['messages'][]='User account is not yet active';
+            }
         }
         
-        if (isset($user['endValidity']) && !empty($user['endValidity'])) {
+        if ($valid && isset($user['endValidity']) && !empty($user['endValidity'])) {
             $valid = $valid && ($user['endValidity'] > $currentTime);
+            if(!$valid){
+                $this->_authenticateResultInfo['messages'][]='User account is no longer active';
+            }
         }
         
         if ($valid) {
