@@ -72,6 +72,8 @@
       });
       window.activeFacets={ };
 	  var usedMarkers=[ ];
+	  var oldPositions=[ ];
+	  var newPositions=[ ];
 	  window.fireQuery=fetchData;
       function fetchData (){
     	  var bounds=map.getBounds();
@@ -94,13 +96,13 @@
     		});
 
     		request.done(function(data) {
+        		oldPositions=[ ];
+        		newPositions=[ ];
     			for(var j= 0; j < usedMarkers.length; j++)
     			{
-    			     usedMarkers[j].setMap(null);
-    			     console.log("removed old");
+    			     oldPositions.push(usedMarkers[j].getPosition().toString());
     			}
         		console.log(data);
-        		usedMarkers=[];
         		var recievedFacets=data.activeFacets;
         		window.activeFacets={ };
         		for(var m= 0; m < recievedFacets.length; m++)
@@ -117,6 +119,18 @@
     			{
     			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary);
     			}
+    			var newUsed=[];
+    			for(var u= 0; u < usedMarkers.length; u++)
+    			{
+    			     if (newPositions.indexOf(usedMarkers[u].getPosition().toString())==-1){
+    			    	 usedMarkers[u].setMap(null);
+    			    	 console.log("removed old");
+        			 } else {
+            			 newUsed.push(usedMarkers[u]);
+            		 }
+    			}
+    			usedMarkers=[ ];
+    			usedMarkers=newUsed;
     			console.log("data fetch done");
     		});
 
@@ -141,6 +155,8 @@
       }
       
       function createContentMarker(location,title,contentString){
+    	  	  newPositions.push(location.toString());
+    	  	  if (oldPositions.indexOf(location.toString())==-1){
 	    	  var marker = new google.maps.Marker({
 				  	map:map,
 				  	icon:"/templates/root/img/map_pin.png",
@@ -156,6 +172,7 @@
 	    	  google.maps.event.addListener(marker, 'click', function() {
 	              infowindow.open(map,marker);
 	          });
+    	  	  }
           
 		  
       }
