@@ -106,19 +106,21 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	if (isset($params['option'])) {
     		$this->_option = $params['option'];
     	}
-    
+    	$facetsToHide=array();
 	    if(isset($params['constrainToSite']) && $params['constrainToSite']==='true'){
-	    	  //deduce site from current page
-	          /*  $site = $this->getRequest()->getParam('site');
-	            $siteId = $site['id'];
+	    	    $currentPageId = $this->getRequest()->getParam('current-page');
+	    	    $currentPage = Rubedo\Services\Manager::getService('Pages')->findById($currentPageId);
+	            $siteId = $currentPage['site'];
 	            $params['navigation'][]=$siteId;
-	            $serverParams['navigation'][]=$siteId; */
+	            $facetsToHide[]="navigation";
+	            $serverParams['navigation'][]=$siteId; 
 	        }
         //apply predefined facets
         if(isset($params['predefinedFacets'])){
         	$predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
         	foreach ($predefParamsArray as $key => $value){
         		$params[$key] = $value;
+        		$facetsToHide[]=$key;
         	}
         }
     	Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
@@ -127,7 +129,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     
     	$query->init();
     	$results = $query->search($params,$this->_option);
-    
+    	$results['facetsToHide']=$facetsToHide;
+    	 
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
     			"blocks/geoSearch/activeFacets.html.twig");
     	$facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
