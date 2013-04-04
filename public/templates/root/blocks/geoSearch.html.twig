@@ -74,7 +74,7 @@
 		  clearTimeout(mapTimer);
 		  mapTimer=setTimeout(function(){
 			fetchData();
-		  },250);
+		  },400);
       });
       window.activeFacets={ };
 	  
@@ -124,7 +124,7 @@
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary,rezArray[i].id);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].summary,rezArray[i].id,rezArray[i].objectType);
     			}
     			var newUsed=[];
     			for(var u= 0; u < usedMarkers.length; u++)
@@ -157,13 +157,13 @@
           window.fireQuery();
       }
 	  
-      function handleContent(contentPosition, title, contentString,entityId){
+      function handleContent(contentPosition, title, contentString,entityId,entityType){
     	   if (contentPosition[0]&&contentPosition[1]){
-    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title, contentString,entityId);     
+    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title, contentString,entityId,entityType);     
           }
       }
-      
-      function createContentMarker(location,title,contentString,entityId){
+      var activeInfoWindows=[ ];
+      function createContentMarker(location,title,contentString,entityId,entityType){
     	  	  newPositions.push(entityId);
     	  	  if (oldPositions.indexOf(entityId)==-1){
 	    	  var marker = new google.maps.Marker({
@@ -171,15 +171,23 @@
 				  	icon:"/templates/root/img/map_pin.png",
 				  	position:location,
 				  	title:title,
-				  	entityId:entityId
+				  	entityId:entityId,
+				  	entityType:entityType
 				});
 			  usedMarkers.push(marker);
 			  //console.log("added new");
 			  
-	    	  var infowindow = new google.maps.InfoWindow({
-	              content: contentString         
-	           });
+	    	  
 	    	  google.maps.event.addListener(marker, 'click', function() {
+	    		  var infowindow = new google.maps.InfoWindow({
+		              content: contentString         
+		           });
+	    		  for(var p= 0; p < activeInfoWindows.length; p++)
+	    			{
+	    			  activeInfoWindows[p].close();
+	    			}
+	    		  activeInfoWindows=[];
+	    		  activeInfoWindows.push(infowindow);
 	              infowindow.open(map,marker);
 	          });
     	  	  }
