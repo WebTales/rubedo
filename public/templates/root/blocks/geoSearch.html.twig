@@ -131,7 +131,6 @@
     			{
     			     if (newPositions.indexOf(usedMarkers[u].getPosition().toString())==-1){
     			    	 usedMarkers[u].setMap(null);
-    			    	 markerCluster.removeMarker(usedMarkers[u],true);
     			    	 //console.log("removed old");
         			 } else {
             			 newUsed.push(usedMarkers[u]);
@@ -139,7 +138,8 @@
     			}
     			usedMarkers=[ ];
     			usedMarkers=newUsed;
-    			markerCluster.redraw();
+    			markerCluster.clearMarkers();
+    			markerCluster.addMarkers(usedMarkers);
     			//console.log("data fetch done");
     		});
 
@@ -173,7 +173,6 @@
 				  	title:title
 				});
 			  usedMarkers.push(marker);
-			  markerCluster.addMarker(marker,true);
 			  //console.log("added new");
 			  
 	    	  var infowindow = new google.maps.InfoWindow({
