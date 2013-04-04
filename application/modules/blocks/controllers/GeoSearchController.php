@@ -135,23 +135,46 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     			"blocks/geoSearch/activeFacets.html.twig");
     	$facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
     			"blocks/geoSearch/facets.html.twig");
-    	$contentOrDamTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-    			"blocks/geoSearch/contentOrDam.html.twig");
+    	
     	$results['activeFacetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($activeFacetsTemplate,
     			$results);
     	$results['facetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($facetsTemplate,
     			$results);
     	$results['success']=true;
     	$results['message']='OK';
-    	/*foreach ($results['data'] as $key => $value){
-    		$twigCVars=array();
-    		$twigCVars['result']=$value;
-    		$results['data'][$key]['htmlSummary']=Manager::getService('FrontOfficeTemplates')->render($contentOrDamTemplate,
-    			$twigCVars);
-    	}*/
+    	
     
     	$this->_helper->json($results);
     
+    }
+    public function xhrGetDetailAction () {
+    	
+    	//get params
+    	$id= $this->getRequest()->getParam('id');
+    	$type= $this->getRequest()->getParam('type');
+    	
+    	$result=array();
+    	if ($type=="content") {
+    		$entity=Rubedo\Services\Manager::getService('Contents')->findById($id);
+    	} else {
+    		$entity=Rubedo\Services\Manager::getService('Dam')->findById($id);
+    	}
+    	if (isset($entity)){
+    		$contentOrDamTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+    				"blocks/geoSearch/contentOrDam.html.twig");
+    		$entity['objectType']=$type;
+    		$twigVars=array();
+    		$twigVars['result']=$entity;
+    		$result["data"]=Manager::getService('FrontOfficeTemplates')->render($contentOrDamTemplate,
+    			$twigVars);
+    		$result['success']=true;
+    		$result['message']='OK';
+    	} else {
+    		$result['success']=false;
+    		$result['message']="No entity found";
+    	}
+    	$this->_helper->json($result);
+    	
     }
     
    
