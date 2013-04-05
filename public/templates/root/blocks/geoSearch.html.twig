@@ -19,6 +19,10 @@
     <script type="text/javascript"
       src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js">
     </script>
+    <script type="text/javascript"
+      src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.8/src/markerwithlabel_packed.js">
+    </script>
+    
 <script type="text/javascript">
       function initialize() {
     	  if (typeof google == "undefined") {
@@ -177,11 +181,14 @@
       function createContentMarker(location,title,entityId,idArray,count){
     	  	  newPositions.push(entityId);
     	  	  if (oldPositions.indexOf(entityId)==-1){
-	    	  var marker = new google.maps.Marker({
+	    	  var marker = new MarkerWithLabel({
 				  	map:map,
 				  	icon:"/templates/root/img/map_pin.png",
 				  	position:location,
 				  	title:title,
+				  	labelContent:count,
+				  	labelAnchor: new google.maps.Point(4, 31),
+				  	labelStyle: {color: "white"},
 				  	count:count,
 				  	entityId:entityId,
 				  	idArray:idArray
