@@ -17,7 +17,7 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
     <script type="text/javascript"
-      src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js">
+      src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js">
     </script>
 <script type="text/javascript">
       function initialize() {
@@ -141,6 +141,7 @@
     			for(var u= 0; u < usedMarkers.length; u++)
     			{
     			     if (newPositions.indexOf(usedMarkers[u].entityId)==-1){
+    			    	 markerCluster.removeMarker(usedMarkers[u],true);
     			    	 usedMarkers[u].setMap(null);
     			    	 //console.log("removed old");
         			 } else {
@@ -149,8 +150,7 @@
     			}
     			usedMarkers=[ ];
     			usedMarkers=newUsed;
-    			markerCluster.clearMarkers();
-    			markerCluster.addMarkers(usedMarkers);
+    			markerCluster.repaint();
     			//console.log("data fetch done");
     		});
 
@@ -187,6 +187,8 @@
 				  	idArray:idArray
 				});
 			  usedMarkers.push(marker);
+		      markerCluster.addMarker(marker,true);
+				
 			  //console.log("added new");
 			  
 	    	  
