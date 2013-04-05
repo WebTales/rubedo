@@ -40,6 +40,17 @@
       var geocoder = new google.maps.Geocoder();
       var usedMarkers=[ ];
       var markerCluster = new MarkerClusterer(map, usedMarkers);
+      markerCluster.setCalculator(function (a,b){
+          var total=0;
+          for(var i= 0; i < a.length; i++)
+			{
+			     total=total+a[i].count;
+			}
+          for(var c=0,f=total,g=f;g!==0;)
+              g=parseInt(g/10,10),c++;
+          c=Math.min(c,b);
+          return{text:f,index:c}
+          });
       var useLocation = "{{blockConfig.useLocation}}";
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
@@ -124,7 +135,7 @@
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].id,rezArray[i].idArray);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].id,rezArray[i].idArray,rezArray[i].count);
     			}
     			var newUsed=[];
     			for(var u= 0; u < usedMarkers.length; u++)
@@ -157,13 +168,13 @@
           window.fireQuery();
       }
 	  
-      function handleContent(contentPosition, title,entityId,idArray){
+      function handleContent(contentPosition, title,entityId,idArray,count){
     	   if (contentPosition[0]&&contentPosition[1]){
-    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,idArray);     
+    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,idArray,count);     
           }
       }
       var activeInfoWindows=[ ];
-      function createContentMarker(location,title,entityId,idArray){
+      function createContentMarker(location,title,entityId,idArray,count){
     	  	  newPositions.push(entityId);
     	  	  if (oldPositions.indexOf(entityId)==-1){
 	    	  var marker = new google.maps.Marker({
@@ -171,6 +182,7 @@
 				  	icon:"/templates/root/img/map_pin.png",
 				  	position:location,
 				  	title:title,
+				  	count:count,
 				  	entityId:entityId,
 				  	idArray:idArray
 				});
