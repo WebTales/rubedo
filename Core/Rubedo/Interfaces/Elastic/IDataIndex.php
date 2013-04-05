@@ -113,8 +113,17 @@ interface IDataIndex
 	 * @param boolean $live live if true, workspace if live
      * @return array
      */
-	public function indexContent ($id, $live = true);
+	public function indexContentById ($id, $live = true);
 
+	/**
+	 * Create or update index for existing content
+	 *
+     * @param obj $data content data
+     * @param boolean $live live if true, workspace if live
+     * @return array
+	 */
+	public function indexContent ($data);
+	
     /**
      * Update Content Taxonomy
      *    
@@ -132,7 +141,16 @@ interface IDataIndex
      * @return array
      */
 
-    public function indexDam ($id);
+    public function indexDamById ($id);
+    
+    /**
+     * Create or update index for existing Dam document
+     *
+     * @param obj $data dam data
+     * @return array
+     */
+    
+    public function indexDam ($data);
 	
     /**
      * Reindex all content or dam

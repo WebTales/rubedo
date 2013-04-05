@@ -402,12 +402,12 @@ class DataIndex extends DataAbstract implements IDataIndex
     /**
      * Create or update index for existing content
      *    
-	 * @see \Rubedo\Interfaces\IDataIndex::indexContent()
+	 * @see \Rubedo\Interfaces\IDataIndex::indexContentById()
 	 * @param string $id content id
 	 * @param boolean $live live if true, workspace if live
      * @return array
      */
-	public function indexContent ($id, $live = true) {
+	public function indexContentById ($id,  $live = true) {
 
             
         // retrieve type id and content data if null
@@ -533,6 +533,137 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentType->getIndex()->refresh();    
     	
     }
+    
+    /**
+     * Create or update index for existing content
+     *
+     * @see \Rubedo\Interfaces\IDataIndex::indexContent()
+     * @param obj $data content data
+     * @param boolean $live live if true, workspace if live
+     * @return array
+     */
+    public function indexContent ($data) {
+    
+    	$typeId = $data['typeId'];
+    		
+    	// Load ES type
+    	$contentType = self::$_content_index
+    	->getType($typeId);
+    
+    	// Get content type structure
+    	$typeStructure = $this->getContentTypeStructure($typeId);
+    
+    	// Add fields to index
+    	$contentData = array();
+    
+    	foreach($data['fields'] as $field => $var) {
+    
+    		// only index searchable fields
+    		if (in_array($field,$typeStructure['searchableFields']))  {
+    			if(is_array($var)){
+    				//foreach ($var as $subvalue){
+    				foreach ($var as $key=>$subvalue){
+    					//$contentData[$field][] = (string) $subvalue;
+    					if ($field!='position') {
+    						$contentData[$field][$key] = (string) $subvalue;
+    					} else {
+    						if ($key=='address') {
+    							$contentData['position_address'] = (string) $subvalue;
+    						}
+    						if ($key=='location') {
+    							list($lon,$lat) = $subvalue['coordinates'];
+    							$contentData['position_location'] = array((float)$lon,(float)$lat);
+    						}
+    					}
+    				}
+    			}else{
+    				$contentData[$field] = (string) $var;
+    			}
+    		}
+    		// Date format fix
+    		if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
+    			
+    	}
+    
+    	// Add default meta's
+    	$contentData['objectType'] = 'content';
+    	$contentData['contentType'] = $typeId;
+    	$contentData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:null;
+    	$contentData['startPublicationDate'] = isset($data['startPublicationDate'])?intval($data['startPublicationDate']):null;
+    	$contentData['endPublicationDate'] = isset($data['endPublicationDate'])?intval($data['endPublicationDate']):null;
+    	$contentData['text'] =  (string) $data['text'];
+    	$contentData['text_not_analyzed'] =  (string) $data['text'];
+    	if (isset($data['lastUpdateTime'])) {
+    		$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
+    	} else {
+    		$contentData['lastUpdateTime'] = 0;
+    	}
+    	if (isset($data['status'])) {
+    		$contentData['status'] = (string) $data['status'];
+    	} else {
+    		$contentData['status'] = "unknown";
+    	}
+    	if (isset($data['createUser'])) {
+    		$contentData['author'] = (string) $data['createUser']['id'];
+    		$contentData['authorName'] = (string) $data['createUser']['fullName'];
+    	} else {
+    		$contentData['author'] = "unknown";
+    	}
+    	// Add taxonomy
+    	if (isset($data["taxonomy"])) {
+    		$tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+    		foreach ($data["taxonomy"] as $vocabulary => $terms) {
+    			if(!is_array($terms)){
+    				continue;
+    			}
+    			$collection = \Rubedo\Services\Manager::getService('Taxonomy');
+    			$taxonomy = $collection->findById($vocabulary);
+    			$termsArray = array();
+    
+    			foreach ($terms as $term) {
+    				$term = $tt->findById($term);
+    				if(!$term){
+    					continue;
+    				}
+    				$termsArray = $tt->getAncestors($term);
+    				$termsArray[] = $term;
+    				$tmp = array();
+    				foreach ($termsArray as $tempTerm) {
+    					$contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+    				}
+    				 
+    			}
+    		}
+    	}
+    
+    	// Add read workspace
+    	$contentData['target']=array();
+    	if (isset($data['target'])) {
+    		if(!is_array($data['target'])){
+    			$data['target'] = array($data['target']);
+    		}
+    		foreach ($data['target'] as $key => $target) {
+    			$contentData['target'][] = (string) $target;
+    		}
+    	}
+    	if (empty($contentData['target']))	{
+    		$contentData['target'][] = 'global';
+    	}
+    
+    	// Add document
+    	$currentDocument = new \Elastica_Document($data['id'], $contentData);
+    
+    	if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
+    		$currentDocument->addFile('file', $contentData['attachment']);
+    	}
+    
+    	// Add content to content type index
+    	$contentType->addDocument($currentDocument);
+    
+    	// Refresh index
+    	$contentType->getIndex()->refresh();
+    	 
+    }
 
     /**
      * Update Content Taxonomy
@@ -601,7 +732,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      * @return array
      */
 
-    public function indexDam ($id) {
+    public function indexDamById ($id) {
     	        
         // retrieve Dam Type id and dam data if null
         $data = \Rubedo\Services\Manager::getService('Dam')->findById($id);
@@ -728,7 +859,140 @@ class DataIndex extends DataAbstract implements IDataIndex
 		// Refresh index
 		$damType->getIndex()->refresh();       	
     }
-	
+
+    /**
+     * Create or update index for existing Dam document
+     *
+     * @param obj $data dam data
+     * @return array
+     */
+    
+    public function indexDam ($data) {
+
+    	$typeId = $data['typeId'];
+    
+    	// Load ES dam type
+    	$damType = self::$_dam_index
+    	->getType($typeId);
+    
+    	// Get dam type structure
+    	$typeStructure = $this->getDamTypeStructure($typeId);
+    
+    	// Add fields to index
+    	$damData = array();
+    
+    	if (array_key_exists('fields', $data) && is_array($data['fields'])) {
+    		foreach($data['fields'] as $field => $var) {
+    
+    			// only index searchable fields
+    			if (in_array($field,$typeStructure['searchableFields']))  {
+    				if(is_array($var)){
+    					foreach ($var as $key=>$subvalue){
+    						//$damData[$field][] = (string) $subvalue;
+    						//if ($key=="lng") $key="lon"; // fix for ES convention
+    						$damData[$field][] = (string) $subvalue;
+    					}
+    				}else{
+    					$damData[$field] = (string) $var;
+    				}
+    					
+    			}
+    
+    			// Date format fix
+    			if ($field=="lastUpdateTime") $damData[$field] = date("Y-m-d", (int) $var);
+    		}
+    	}
+    
+    	// Add default meta's
+    	$damData['damType'] = $typeId;
+    	$damData['objectType'] = 'dam';
+    	$damData['writeWorkspace'] = isset($data['writeWorkspace'])?$data['writeWorkspace']:array();
+    	$damData['text'] =  (string) $data['title'];
+    	$damData['text_not_analyzed'] =  (string) $data['title'];
+    	$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
+    	$damData['fileSize'] = $fileSize;
+    	if (isset($data['lastUpdateTime'])) {
+    		$damData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
+    	} else {
+    		$damData['lastUpdateTime'] = 0;
+    	}
+    	if (isset($data['createUser'])) {
+    		$damData['author'] = (string) $data['createUser']['id'];
+    		$damData['authorName'] = (string) $data['createUser']['fullName'];
+    	} else {
+    		$damData['author'] = "unknown";
+    	}
+    
+    	// Add taxonomy
+    	if (isset($data["taxonomy"])) {
+    		$tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+    		foreach ($data["taxonomy"] as $vocabulary => $terms) {
+    			if(!is_array($terms)){
+    				continue;
+    			}
+    			$taxonomy = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabulary);
+    			$termsArray = array();
+    
+    			foreach ($terms as $term) {
+    				$term = $tt->findById($term);
+    				if(!$term){
+    					continue;
+    				}
+    				$termsArray = $tt->getAncestors($term);
+    				$termsArray[] = $term;
+    				$tmp = array();
+    				foreach ($termsArray as $tempTerm) {
+    					$damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+    				}
+    				 
+    			}
+    		}
+    	}
+    
+    	// Add target
+    	$damData['target']=array();
+    	if (isset($data['target'])) {
+    		foreach ($data['target'] as $key => $target) {
+    			$damData['target'][] = (string) $target;
+    		}
+    	}
+    
+    	// Add document
+    	$currentDam = new \Elastica_Document($data['id'], $damData);
+    
+    	if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
+    
+    		$indexedFiles = array(
+    				'application/pdf',
+    				'application/rtf',
+    				'text/html',
+    				'text/plain',
+    				'text/richtext',
+    				'application/msword',
+    				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    				'application/vnd.ms-excel',
+    				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    				'application/vnd.ms-powerpoint',
+    				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    				'application/vnd.oasis.opendocument.text',
+    				'application/vnd.oasis.opendocument.spreadsheet',
+    				'application/vnd.oasis.opendocument.presentation'
+    		);
+    		$mime = explode(';',$data['Content-Type']);
+    
+    		if (in_array($mime[0],$indexedFiles)) {
+    			$mongoFile = \Rubedo\Services\Manager::getService('Files')->FindById($data['originalFileId']);
+    			$currentDam->addFileContent('file', $mongoFile->getBytes());
+    		}
+    	}
+    
+    	// Add dam to dam type index
+    	$damType->addDocument($currentDam);
+    
+    	// Refresh index
+    	$damType->getIndex()->refresh();
+    }
+    
     /**
      * Reindex all content or dam
 	 * @param string $option : dam, content or all  
@@ -736,7 +1000,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      * @return array
      */
     public function indexAll ($option='all') {
-    	
+    	 	
 		// Initialize result array
 		$result = array();
 		
@@ -764,7 +1028,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 				$contentList = \Rubedo\Services\Manager::getService('Contents')->getByType($contentType["id"]);
 				$contentCount = 0;
 				foreach($contentList["data"] as $content) {
-					$this->indexContent($content["id"]);
+					$this->indexContent($content);
 					$contentCount++;
 				}
 				$result[$contentType["type"]]=$contentCount;
@@ -783,7 +1047,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 				$damList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
 				$damCount = 0;
 				foreach($damList["data"] as $dam) {
-					$this->indexDam($dam["id"]);
+					$this->indexDam($dam);
 					$damCount++;
 				}
 				$result[$damType["type"]]=$damCount;

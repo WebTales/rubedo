@@ -331,7 +331,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService(
                 'ElasticDataIndex');
         $ElasticDataIndexService->init();
-        $ElasticDataIndexService->indexContent($obj['id']);
+        $ElasticDataIndexService->indexContent($obj);
     }
 
     /**

@@ -87,7 +87,7 @@ class Dam extends AbstractCollection implements IDam
     {
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
-        $ElasticDataIndexService->indexDam($obj['id']);
+        $ElasticDataIndexService->indexDam($obj);
     }
 
     /**
