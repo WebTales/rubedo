@@ -62,7 +62,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 	 * @params array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search (array $params, $option = 'all') {
+    public function search (array $params, $option = 'all',$withSummary = true) {
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
 		$filters = array();
@@ -383,7 +383,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 			if ($data['objectType'] === 'dam') {
 				$tmp['damType'] = $data['damType'];
 			}
-			$tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];		
+			if($withSummary){
+			    $tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];
+			}	
 			$tmp['author'] = $data['author'];
 			$tmp['authorName'] = $data['authorName'];
 			$tmp['lastUpdateTime'] = $data['lastUpdateTime'];

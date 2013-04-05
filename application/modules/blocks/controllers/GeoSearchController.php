@@ -128,7 +128,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	$query = Manager::getService('ElasticDataSearch');
     
     	$query->init();
-    	$results = $query->search($params,$this->_option);
+    	$results = $query->search($params,$this->_option,false);
     	$results['facetsToHide']=$facetsToHide;
     	 
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
