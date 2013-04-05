@@ -173,7 +173,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 
     public function xhrGetDetailAction ()
     {
-        
+        $templateService = Manager::getService('FrontOfficeTemplates');
         // get params
         $idArray = $this->getRequest()->getParam('idArray');
         $itemHtml = '';
@@ -191,19 +191,20 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                 } else {
                     $entity['type'] = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
                 }
-                $contentOrDamTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
+                $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
                 $entity['objectType'] = $type;
                 $twigVars = array();
                 $twigVars['result'] = $entity;
-                $itemHtml .= Manager::getService('FrontOfficeTemplates')->render($contentOrDamTemplate, $twigVars);
+                $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);
             }
         }
         
         $result = array();
         
         if ($itemHtml !=='') {
-            
-            $result["data"] = $itemHtml;
+            $markerTemplate = $templateService->getFileThemePath("blocks/geoSearch/marker.html.twig");
+            $html = $templateService->render($markerTemplate,array('content'=>$itemHtml));
+            $result["data"] = $html;
             $result['success'] = true;
             $result['message'] = 'OK';
         } else {
