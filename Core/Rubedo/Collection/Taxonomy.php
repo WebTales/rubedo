@@ -72,6 +72,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
             'name' => 'Navigation',
             'multiSelect' => true,
             'readOnly' => true,
+    		'inputAsTree'=> true,
             'createUser'=>array('fullName'=>'Rubedo'),
             'createTime'=>1363374000,
             'lastUpdateUser'=>array('fullName'=>'Rubedo'),

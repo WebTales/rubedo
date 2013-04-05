@@ -124,7 +124,7 @@
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].id,rezArray[i].objectType);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].id,rezArray[i].idArray);
     			}
     			var newUsed=[];
     			for(var u= 0; u < usedMarkers.length; u++)
@@ -157,13 +157,13 @@
           window.fireQuery();
       }
 	  
-      function handleContent(contentPosition, title,entityId,entityType){
+      function handleContent(contentPosition, title,entityId,idArray){
     	   if (contentPosition[0]&&contentPosition[1]){
-    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,entityType);     
+    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,idArray);     
           }
       }
       var activeInfoWindows=[ ];
-      function createContentMarker(location,title,entityId,entityType){
+      function createContentMarker(location,title,entityId,idArray){
     	  	  newPositions.push(entityId);
     	  	  if (oldPositions.indexOf(entityId)==-1){
 	    	  var marker = new google.maps.Marker({
@@ -172,7 +172,7 @@
 				  	position:location,
 				  	title:title,
 				  	entityId:entityId,
-				  	entityType:entityType
+				  	idArray:idArray
 				});
 			  usedMarkers.push(marker);
 			  //console.log("added new");
@@ -189,8 +189,7 @@
 		      			type : "POST",
 		      			data :{
 		      				'current-page':jQuery('body').attr('data-current-page'),
-							'id':marker.entityId,
-							'type':marker.entityType
+							'idArray':marker.idArray
 			      			},
 		      			dataType : "json"
 		      		});
