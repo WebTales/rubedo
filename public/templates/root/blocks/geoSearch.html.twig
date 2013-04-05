@@ -96,7 +96,7 @@
           var currentFacets=window.activeFacets;
           for (var attrname in currentFacets) { params[attrname] = currentFacets[attrname]; }
     	  var request = jQuery.ajax({
-    			url : window.location.origin + '/blocks/geo-search/xhr-search',
+    			url : window.location.protocol+'//'+window.location.host+ '/blocks/geo-search/xhr-search',
     			type : "POST",
     			data :params,
     			dataType : "json"
@@ -185,7 +185,7 @@
 	    			}
 	    		  activeInfoWindows=[];
 	    		  var request2 = jQuery.ajax({
-		      			url : window.location.origin + '/blocks/geo-search/xhr-get-detail',
+		      			url : window.location.protocol+'//'+window.location.host + '/blocks/geo-search/xhr-get-detail',
 		      			type : "POST",
 		      			data :{
 		      				'current-page':jQuery('body').attr('data-current-page'),
