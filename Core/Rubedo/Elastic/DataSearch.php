@@ -34,6 +34,27 @@ class DataSearch extends DataAbstract implements IDataSearch
      */
     protected static $_isFrontEnd;
     
+    
+    protected function _getContentType($contentTypeId){
+        if(!isset($this->contentTypesService)){
+            $this->contentTypesService = Manager::getService('ContentTypes');
+        }
+        if(!isset($this->contentTypesArray['id'])){
+            $this->contentTypesArray['id'] = $this->contentTypesService->findById($contentTypeId);
+        }
+        return $this->contentTypesArray['id'];
+    }
+    
+    protected function _getDamType($damTypeId){
+        if(!isset($this->damTypesService)){
+            $this->damTypesService = Manager::getService('DamTypes');
+        }
+        if(!isset($this->damTypesArray['id'])){
+            $this->damTypesArray['id'] = $this->damTypesService->findById($damTypeId);
+        }
+        return $this->damTypesArray['id'];
+    }
+    
     /**
      * ES search
      *     
@@ -41,8 +62,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 	 * @params array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search (array $params, $option = 'all') {
-
+    public function search (array $params, $option = 'all',$withSummary = true) {
+        $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+        
 		$filters = array();
 		$result = array();
 		$result['data'] = array();
@@ -344,6 +366,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$userWriteWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 		$userCanWriteContents = Manager::getService('Acl')->hasAccess("write.ui.contents");
 		$userCanWriteDam = Manager::getService('Acl')->hasAccess("write.ui.dam");
+		
+		$writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+		
 		foreach($resultsList as $resultItem) {
 			$temp = array();
 			$tmp['id'] = $resultItem->getId();
@@ -358,7 +383,9 @@ class DataSearch extends DataAbstract implements IDataSearch
 			if ($data['objectType'] === 'dam') {
 				$tmp['damType'] = $data['damType'];
 			}
-			$tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];		
+			if($withSummary){
+			    $tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];
+			}	
 			$tmp['author'] = $data['author'];
 			$tmp['authorName'] = $data['authorName'];
 			$tmp['lastUpdateTime'] = $data['lastUpdateTime'];
@@ -371,7 +398,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			}
 			switch ($data['objectType']) {
 				case 'content':
-					$contentType = Manager::getService('ContentTypes')->findById($data['contentType']);
+					$contentType = $this->_getContentType($data['contentType']);
 					if (!$userCanWriteContents || $contentType['readOnly']) {
 					    $tmp['readOnly'] = true;
 					} elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
@@ -380,7 +407,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					$tmp['type'] = $contentType['type'];
 					break;
 				case 'dam':
-					$damType = Manager::getService('DamTypes')->findById($data['damType']);
+					$damType = $this->_getDamType($data['damType']);
 					if (!$userCanWriteDam || $damType['readOnly']) {
 					    $tmp['readOnly'] = true;
 					} elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
@@ -390,7 +417,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					break;
 			}
 			// Set read only
-			$writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+			
 			if (in_array($data['writeWorkspace'],$writeWorkspaceArray)) {
 				$tmp['readOnly'] = false;
 			} else {
@@ -415,9 +442,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 						
 						$temp['label'] = 'Navigation';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
-							$collection = Manager::getService('TaxonomyTerms');
 							foreach ($temp['terms'] as $key => $value) {
-								$termItem = $collection->getTerm($value['term'],'navigation');
+								$termItem = $taxonomyTermsService->getTerm($value['term'],'navigation');
 								$temp['terms'][$key]['label'] = $termItem;
 							}
 						} else {
@@ -429,9 +455,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 
 						$temp['label'] = 'Type de document';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
-							$collection = Manager::getService('DamTypes');
 							foreach ($temp['terms'] as $key => $value) {
-								$termItem = $collection->findById($value['term']);
+								$termItem = $this->_getDamType($value['term']);
 								if($termItem && isset($termItem['type'])){
 								    $temp['terms'][$key]['label'] = $termItem['type'];
 								}
@@ -446,9 +471,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 						
 						$temp['label'] = 'Type de contenu';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
-							$collection = Manager::getService('ContentTypes');
 							foreach ($temp['terms'] as $key => $value) {
-								$termItem = $collection->findById($value['term']);
+								$termItem = $this->_getContentType($value['term']);
 								$temp['terms'][$key]['label'] = $termItem['type'];
 							}
 								
@@ -476,9 +500,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 						$vocabularyItem = Manager::getService('Taxonomy')->findById($id);
 						$temp['label'] = $vocabularyItem['name'];
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
-							$collection = Manager::getService('TaxonomyTerms');
 							foreach ($temp['terms'] as $key => $value) {
-								$termItem = $collection->findById($value['term']);
+								$termItem = $taxonomyTermsService->findById($value['term']);
 								$temp['terms'][$key]['label'] = $termItem['text'];
 							}
 						} else {
@@ -499,7 +522,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 			switch ($vocabularyId) {
 					
 				case 'damType' :
-					$termItem  = Manager::getService('DamTypes')->findById($termId);
+					$termItem  = $this->_getDamType($termId);
 					$temp = array(
 						'id' => $vocabularyId,
 						'label' => 'Types de documents',
@@ -513,7 +536,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					break;
 					
 				case 'type' :
-					$termItem  = Manager::getService('ContentTypes')->findById($termId);
+					$termItem  = $this->_getContentType($termId);
 					$temp = array(
 						'id' => $vocabularyId,
 						'label' => 'Types de Contenus',
@@ -588,7 +611,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 					);
 					
 					foreach ($termId as $term) {
-						$termItem = Manager::getService('TaxonomyTerms')->findById($term);
+						$termItem = $taxonomyTermsService->findById($term);
 						$temp['terms'][]=array(
 							'term' => $term,
 							'label' => $termItem['text']								
