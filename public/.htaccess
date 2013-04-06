@@ -38,5 +38,36 @@ RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [
 ####################################################################
 RewriteRule !\.(js|ico|txt|gif|jpg|png|css)$ /index.php [L]
 
+####################################################################
+#  Data compression
+####################################################################
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/css text/x-component application/x-javascript application/javascript text/javascript text/x-js text/html text/richtext image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon application/json
+</IfModule>
+
+####################################################################
+#  Data expire conditions
+####################################################################
+<ifModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/x-icon "access plus 7 days"
+  ExpiresByType image/jpeg "access plus 7 days"
+  ExpiresByType image/png "access plus 7 days"
+  ExpiresByType image/gif "access plus 7 days"
+  ExpiresByType application/x-shockwave-flash "access plus 7 days"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType text/javascript "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType application/x-javascript "access plus 7 days"
+</ifModule>
+
+####################################################################
+#  Header vary
+####################################################################
+  <ifModule mod_headers.c>
+  	Header set Vary "Vary: Cookie"
+  	Header add Vary "Accept-Encoding"
+  </ifModule>
+
 
 

@@ -22,7 +22,7 @@
         "execute.controller.logout.index.backoffice",
         "execute.controller.file.index.default",
         "execute.controller.geo-search.xhr-search.blocks",
-        "execute.controller.google-maps.xhr-get-items.blocks",
-        "execute.controller.mailing-list.xhr-add-email.blocks"
-    ]
+        "execute.controller.mailing-list.xhr-add-email.blocks",
+        "execute.controller.geo-search.xhr-get-detail.blocks",
+        "execute.controller.google-maps.xhr-get-items.blocks"
 }

@@ -128,31 +128,89 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	$query = Manager::getService('ElasticDataSearch');
     
     	$query->init();
-    	$results = $query->search($params,$this->_option);
+    	$results = $query->search($params,$this->_option,false);
+    	$results = $this->_clusterResults($results);
+    	
+    	
     	$results['facetsToHide']=$facetsToHide;
     	 
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
     			"blocks/geoSearch/activeFacets.html.twig");
     	$facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
     			"blocks/geoSearch/facets.html.twig");
-    	$contentOrDamTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-    			"blocks/geoSearch/contentOrDam.html.twig");
+    	
     	$results['activeFacetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($activeFacetsTemplate,
     			$results);
     	$results['facetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($facetsTemplate,
     			$results);
     	$results['success']=true;
     	$results['message']='OK';
-    	/*foreach ($results['data'] as $key => $value){
-    		$twigCVars=array();
-    		$twigCVars['result']=$value;
-    		$results['data'][$key]['htmlSummary']=Manager::getService('FrontOfficeTemplates')->render($contentOrDamTemplate,
-    			$twigCVars);
-    	}*/
+    	
     
     	$this->_helper->json($results);
     
     }
     
-   
+    protected function _clusterResults($results){
+        //return $results;
+        $tmpResults = array();
+        foreach ($results['data'] as $item){
+            $subkey =(string) $item['position_location'][0].'_'.(string) $item['position_location'][1];
+            if(!isset($tmpResults[$subkey])){
+                $tmpResults[$subkey]['position_location'] = $item['position_location'];
+                $tmpResults[$subkey]['count']=0;
+                $tmpResults[$subkey]['id']='';
+            }
+            unset($item['position_location']);
+            $tmpResults[$subkey]['count']++;
+            $tmpResults[$subkey]['title']=$tmpResults[$subkey]['count'].' offres';
+            $tmpResults[$subkey]['id'].=$item['id'];
+            $tmpResults[$subkey]['idArray'][]=$item['id'];
+        }
+        $results['data']=array_values($tmpResults);
+        return $results;
+    }
+
+    public function xhrGetDetailAction ()
+    {
+        $templateService = Manager::getService('FrontOfficeTemplates');
+        // get params
+        $idArray = $this->getRequest()->getParam('idArray');
+        $itemHtml = '';
+        foreach ($idArray as $id) {
+            $entity = Rubedo\Services\Manager::getService('Contents')->findById($id);
+            if (isset($entity)) {
+                $type = "content";
+            } else {
+                $entity = Rubedo\Services\Manager::getService('Dam')->findById($id);
+                $type = "dam";
+            }
+            if (isset($entity)) {
+                if ($type == "content") {
+                    $entity['type'] = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+                } else {
+                    $entity['type'] = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+                }
+                $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
+                $entity['objectType'] = $type;
+                $twigVars = array();
+                $twigVars['result'] = $entity;
+                $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);
+            }
+        }
+        
+        $result = array();
+        
+        if ($itemHtml !=='') {
+            $markerTemplate = $templateService->getFileThemePath("blocks/geoSearch/marker.html.twig");
+            $html = $templateService->render($markerTemplate,array('content'=>$itemHtml));
+            $result["data"] = $html;
+            $result['success'] = true;
+            $result['message'] = 'OK';
+        } else {
+            $result['success'] = false;
+            $result['message'] = "No entity found";
+        }
+        $this->_helper->json($result);
+    }
 }

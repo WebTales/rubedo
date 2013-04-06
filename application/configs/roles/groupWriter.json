@@ -10,7 +10,7 @@
         "execute.controller.groups.delete.backoffice",
         "execute.controller.groups.update.backoffice",
         "execute.controller.users.index.backoffice",
-        "xecute.controller.roles.index.backoffice"
+        "execute.controller.roles.index.backoffice"
     ],
     "includes":[
         "groupReader"
