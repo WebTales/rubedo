@@ -58,6 +58,13 @@ class MailingList extends AbstractCollection implements IMailingList
 		$user = Manager::getService("Users")->findByEmail($email);
 		AbstractCollection::disableUserFilter($wasFiltered);
 		
+		//Create hash
+		$salt = Manager::getService("Hash")->generateRandomString();
+		$hash = Manager::getService("Hash")->hashString($email.$mailingListId, $salt);
+		
+		//Get current time
+		$date = Manager::getService("CurrentTime")->getCurrentTime();
+		
 		//Check if the user exist
 		if($user != null) {
 			//Check if the user is already registered
@@ -67,9 +74,9 @@ class MailingList extends AbstractCollection implements IMailingList
 				$isRegistered = true;
 			}
 			
-			if($isRegistered === false){
+			if($isRegistered === false){				
 				//Add new mailing list to the user
-				$user["mailingLists"][$mailingList["id"]] =array("id" => $mailingList["id"], "status" => true, "date" => time());
+				$user["mailingLists"][$mailingList["id"]] =array("id" => $mailingList["id"], "status" => true, "date" => $date, "hash" => $hash, "salt" => $salt);
 				
 				//Update user
 				$wasFiltered = AbstractCollection::disableUserFilter();
@@ -92,10 +99,12 @@ class MailingList extends AbstractCollection implements IMailingList
 				"email" => $email,
 				"workspace" => $mailingList["workspaces"],
 				"mailingLists" => array(
-					array(
+					$mailingList["id"] => array(
 						"id" => $mailingList["id"],
 						"status" => true,
-						"date" => time(),
+						"date" => $date,
+						"hash" => $hash,
+						"salt" => $salt,
 					),
 				),
 			);
