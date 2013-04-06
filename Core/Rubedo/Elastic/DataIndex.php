@@ -1058,5 +1058,53 @@ class DataIndex extends DataAbstract implements IDataIndex
 
     }
 	
-	
+    /**
+     * Reindex all content or dam for one type
+     * @param string $option : dam or content
+     * @param string $id : dam type or content type id
+     * 
+     * @return array
+     */
+    public function indexByType ($option,$id) {
+    	 
+    	// Initialize result array
+    	$result = array();
+      
+    	switch ($option)
+    	{
+    		case 'content':
+    			$serviceType = 'ContentTypes';
+    			$serviceData = 'Contents';    	
+    			break;		
+    		case 'dam' :
+    			$serviceType = 'DamTypes';
+    			$serviceData = 'Dam';
+    			break;
+    		default:
+    			throw new \Exception("option should be set to content or dam");
+    			break;
+    	}
+		
+    	// Retrieve data from type
+    	
+    	$type = \Rubedo\Services\Manager::getService($serviceType)->findById($id);
+    	
+    	// Index all dam or contents from given type
+    	$itemList = \Rubedo\Services\Manager::getService($serviceData)->getByType($id);
+    	$itemCount = 0;
+    	foreach($itemList["data"] as $item) {
+    		if ($option=='content') {
+    			$this->indexContent($item);
+    		}
+    		if ($option=='dam') {
+    			$this->indexDam($item);
+    		}    		
+    		$itemCount++;
+    	}
+    	$result[$type['type']]=$itemCount;
+    
+    	return($result);
+    
+    }
+    	
 }

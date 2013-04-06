@@ -159,5 +159,14 @@ interface IDataIndex
      * @return array
      */
     public function indexAll ($option);
+    
+    /**
+     * Reindex all content or dam for one type
+     * @param string $option : dam or content
+     * @param string $id : dam type or content type id
+     *
+     * @return array
+     */
+    public function indexByType ($option,$id);
 		
 }

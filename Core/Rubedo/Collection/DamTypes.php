@@ -136,7 +136,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	
     
     /**
-     * Push the content type to Elastic Search
+     * Push the dam type to Elastic Search
      *
      * @param array $obj
      */
@@ -148,7 +148,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexDamType($obj['id'], $obj, TRUE);
         
-        $ElasticDataIndexService->indexAll('dam');
+        $ElasticDataIndexService->indexByType('dam',$obj['id']);
     
         AbstractCollection::disableUserFilter($wasFiltered);
     }

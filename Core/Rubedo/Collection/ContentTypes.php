@@ -195,7 +195,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContentType($obj['id'], $obj, TRUE);
         
-        $ElasticDataIndexService->indexAll('content');
+        $ElasticDataIndexService->indexByType('content',$obj['id']);
         
         AbstractCollection::disableUserFilter($wasFiltered);
     }
