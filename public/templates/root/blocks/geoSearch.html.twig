@@ -17,8 +17,12 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&sensor=true">
     </script>
     <script type="text/javascript"
-      src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js">
+      src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js">
     </script>
+    <script type="text/javascript"
+      src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.8/src/markerwithlabel_packed.js">
+    </script>
+    
 <script type="text/javascript">
       function initialize() {
     	  if (typeof google == "undefined") {
@@ -40,6 +44,17 @@
       var geocoder = new google.maps.Geocoder();
       var usedMarkers=[ ];
       var markerCluster = new MarkerClusterer(map, usedMarkers);
+      markerCluster.setCalculator(function (a,b){
+          var total=0;
+          for(var i= 0; i < a.length; i++)
+			{
+			     total=total+a[i].count;
+			}
+          for(var c=0,f=total,g=f;g!==0;)
+              g=parseInt(g/10,10),c++;
+          c=Math.min(c,b);
+          return{text:f,index:c}
+          });
       var useLocation = "{{blockConfig.useLocation}}";
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
@@ -96,7 +111,7 @@
           var currentFacets=window.activeFacets;
           for (var attrname in currentFacets) { params[attrname] = currentFacets[attrname]; }
     	  var request = jQuery.ajax({
-    			url : window.location.origin + '/blocks/geo-search/xhr-search',
+    			url : window.location.protocol+'//'+window.location.host+ '/blocks/geo-search/xhr-search',
     			type : "POST",
     			data :params,
     			dataType : "json"
@@ -124,12 +139,13 @@
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
-    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].id,rezArray[i].objectType);
+    			     handleContent(rezArray[i].position_location,rezArray[i].title,rezArray[i].id,rezArray[i].idArray,rezArray[i].count);
     			}
     			var newUsed=[];
     			for(var u= 0; u < usedMarkers.length; u++)
     			{
     			     if (newPositions.indexOf(usedMarkers[u].entityId)==-1){
+    			    	 markerCluster.removeMarker(usedMarkers[u],true);
     			    	 usedMarkers[u].setMap(null);
     			    	 //console.log("removed old");
         			 } else {
@@ -138,8 +154,7 @@
     			}
     			usedMarkers=[ ];
     			usedMarkers=newUsed;
-    			markerCluster.clearMarkers();
-    			markerCluster.addMarkers(usedMarkers);
+    			markerCluster.repaint();
     			//console.log("data fetch done");
     		});
 
@@ -157,24 +172,30 @@
           window.fireQuery();
       }
 	  
-      function handleContent(contentPosition, title,entityId,entityType){
+      function handleContent(contentPosition, title,entityId,idArray,count){
     	   if (contentPosition[0]&&contentPosition[1]){
-    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,entityType);     
+    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,idArray,count);     
           }
       }
       var activeInfoWindows=[ ];
-      function createContentMarker(location,title,entityId,entityType){
+      function createContentMarker(location,title,entityId,idArray,count){
     	  	  newPositions.push(entityId);
     	  	  if (oldPositions.indexOf(entityId)==-1){
-	    	  var marker = new google.maps.Marker({
+	    	  var marker = new MarkerWithLabel({
 				  	map:map,
 				  	icon:"/templates/root/img/map_pin.png",
 				  	position:location,
 				  	title:title,
+				  	labelContent:count,
+				  	labelAnchor: new google.maps.Point(4, 31),
+				  	labelStyle: {'color': "white",'font-weight': "bold", 'font-size': "15px"},
+				  	count:count,
 				  	entityId:entityId,
-				  	entityType:entityType
+				  	idArray:idArray
 				});
 			  usedMarkers.push(marker);
+		      markerCluster.addMarker(marker,true);
+				
 			  //console.log("added new");
 			  
 	    	  
@@ -185,12 +206,11 @@
 	    			}
 	    		  activeInfoWindows=[];
 	    		  var request2 = jQuery.ajax({
-		      			url : window.location.origin + '/blocks/geo-search/xhr-get-detail',
+		      			url : window.location.protocol+'//'+window.location.host + '/blocks/geo-search/xhr-get-detail',
 		      			type : "POST",
 		      			data :{
 		      				'current-page':jQuery('body').attr('data-current-page'),
-							'id':marker.entityId,
-							'type':marker.entityType
+							'idArray':marker.idArray
 			      			},
 		      			dataType : "json"
 		      		});

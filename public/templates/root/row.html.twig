@@ -1,4 +1,9 @@
-{% if includeContainer or includeContainerFluid %}<div class="{% if includeContainer %}container{% endif %}{% if includeContainerFluid %} container-fluid{% endif %} {% if containerClass %}{{ containerClass }}{% endif %}" id="{% if containerId %}{{ containerId }}{% endif %}">{% endif %}
+{% if includeContainer or includeContainerFluid %}
+<div class="{% if includeContainer %}container{% endif %}
+            {% if includeContainerFluid %} container-fluid{% endif %} 
+            {% if containerClass %}{{ containerClass }}{% endif %}" 
+            {% if containerId and containerId|trim is not empty %}id="{{ containerId }}"{% endif %}>
+{% endif %}
     
 <{% if elementTag %}{{elementTag}}{% else %}div{% endif %} 
     class="{% if displayRow %}row{% endif %} {% if displayRowFluid %}row-fluid{% endif %} {{ classHtml }}" 

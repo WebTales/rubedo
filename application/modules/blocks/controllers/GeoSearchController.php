@@ -129,6 +129,9 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     
     	$query->init();
     	$results = $query->search($params,$this->_option,false);
+    	$results = $this->_clusterResults($results);
+    	
+    	
     	$results['facetsToHide']=$facetsToHide;
     	 
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
@@ -147,40 +150,67 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	$this->_helper->json($results);
     
     }
-    public function xhrGetDetailAction () {
-    	
-    	//get params
-    	$id= $this->getRequest()->getParam('id');
-    	$type= $this->getRequest()->getParam('type');
-    	
-    	$result=array();
-    	if ($type=="content") {
-    		$entity=Rubedo\Services\Manager::getService('Contents')->findById($id);
-    	} else {
-    		$entity=Rubedo\Services\Manager::getService('Dam')->findById($id);
-    	}
-    	if (isset($entity)){
-    		if ($type=="content") {
-    			$entity['type']=Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
-    		} else {
-    			$entity['type']=Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
-    		}
-    		$contentOrDamTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
-    				"blocks/geoSearch/contentOrDam.html.twig");
-    		$entity['objectType']=$type;
-    		$twigVars=array();
-    		$twigVars['result']=$entity;
-    		$result["data"]=Manager::getService('FrontOfficeTemplates')->render($contentOrDamTemplate,
-    			$twigVars);
-    		$result['success']=true;
-    		$result['message']='OK';
-    	} else {
-    		$result['success']=false;
-    		$result['message']="No entity found";
-    	}
-    	$this->_helper->json($result);
-    	
-    }
     
-   
+    protected function _clusterResults($results){
+        //return $results;
+        $tmpResults = array();
+        foreach ($results['data'] as $item){
+            $subkey =(string) $item['position_location'][0].'_'.(string) $item['position_location'][1];
+            if(!isset($tmpResults[$subkey])){
+                $tmpResults[$subkey]['position_location'] = $item['position_location'];
+                $tmpResults[$subkey]['count']=0;
+                $tmpResults[$subkey]['id']='';
+            }
+            unset($item['position_location']);
+            $tmpResults[$subkey]['count']++;
+            $tmpResults[$subkey]['title']=$tmpResults[$subkey]['count'].' offres';
+            $tmpResults[$subkey]['id'].=$item['id'];
+            $tmpResults[$subkey]['idArray'][]=$item['id'];
+        }
+        $results['data']=array_values($tmpResults);
+        return $results;
+    }
+
+    public function xhrGetDetailAction ()
+    {
+        $templateService = Manager::getService('FrontOfficeTemplates');
+        // get params
+        $idArray = $this->getRequest()->getParam('idArray');
+        $itemHtml = '';
+        foreach ($idArray as $id) {
+            $entity = Rubedo\Services\Manager::getService('Contents')->findById($id);
+            if (isset($entity)) {
+                $type = "content";
+            } else {
+                $entity = Rubedo\Services\Manager::getService('Dam')->findById($id);
+                $type = "dam";
+            }
+            if (isset($entity)) {
+                if ($type == "content") {
+                    $entity['type'] = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+                } else {
+                    $entity['type'] = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+                }
+                $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
+                $entity['objectType'] = $type;
+                $twigVars = array();
+                $twigVars['result'] = $entity;
+                $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);
+            }
+        }
+        
+        $result = array();
+        
+        if ($itemHtml !=='') {
+            $markerTemplate = $templateService->getFileThemePath("blocks/geoSearch/marker.html.twig");
+            $html = $templateService->render($markerTemplate,array('content'=>$itemHtml));
+            $result["data"] = $html;
+            $result['success'] = true;
+            $result['message'] = 'OK';
+        } else {
+            $result['success'] = false;
+            $result['message'] = "No entity found";
+        }
+        $this->_helper->json($result);
+    }
 }

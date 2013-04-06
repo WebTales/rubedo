@@ -257,5 +257,16 @@ class Users extends AbstractCollection implements IUsers
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
         return parent::destroy($obj, $options);
     }
+	
+	/**
+	 * (non-PHPdoc)
+	 * 
+	 * @see \Rubedo\Interfaces\Collection\IUsers::findByEmail()
+	 */
+	public function findByEmail($email) {
+		return $this->_dataService->findOne ( array (
+				'email' => $email 
+		) );
+	}
     
 }
