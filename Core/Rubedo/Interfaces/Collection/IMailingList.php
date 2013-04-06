@@ -17,31 +17,33 @@
 namespace Rubedo\Interfaces\Collection;
 
 /**
- * Interface of service handling users
+ * Interface of service handling Mailing list
  *
  *
- * @author jbourdin
+ * @author mgoncalves
  * @category Rubedo
  * @package Rubedo
  */
-interface IUsers extends IAbstractCollection{
+interface IMailingList extends IAbstractCollection{
 	
 	/**
-	 * Change the password of the user given by its id
-	 * Check version conflict
-	 * 
-	 * @param string $$password new password
-	 * @param int $version version number
-	 * @param string $userId id of the user to be changed
-	 */
-	public function changePassword($password,$version,$userId);
-	
-	/**
-	 * Return the user associeted to the id
-	 * 
+	 * Add a user into a specified mailing list
+	 *
+	 * @param string $mailingListId
 	 * @param string $email
-	 * 
+	 *
 	 * @return array
 	 */
-	public function findByEmail($email);
+	public function subscribe($mailingListId, $email);
+	
+	/**
+	 * Remove a user from a specified mailing list
+	 *
+	 * @param string $mailingListId
+	 * @param string $email
+	 *
+	 * @return array
+	 */
+	public function unSubscribe($mailingListId, $email);
+	
 }
