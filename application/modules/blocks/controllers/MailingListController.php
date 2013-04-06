@@ -35,7 +35,7 @@ class Blocks_MailingListController extends Zend_Controller_Action
 	 * 
 	 * @return json
 	 */
-	/*public function xhrAddEmailAction(){
+	public function xhrAddEmailAction(){
 		//Default mailing list
 		$mailingListId = $this->getParam("mailing-list-id");
 		if(!$mailingListId){
@@ -60,6 +60,6 @@ class Blocks_MailingListController extends Zend_Controller_Action
 		} else {
 			$this->_helper->json(array("success" => false, "msg" => "Adresse e-mail invalide"));
 		}
-	}*/
+	}
 
 }
