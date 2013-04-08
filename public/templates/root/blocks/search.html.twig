@@ -65,14 +65,14 @@
 		{% for facet in activeFacets %}
 		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
                 {% for term in facet.terms %}
-	                <a href="{{url({(facet.id): null})}}" >
+	                <a {% if facet.id not in facetsToHide %}href="{{url({(facet.id): null})}}"{% endif %}>
 					<span class="badge badge-info"> {% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
 				    </a>
 		        {% endfor %}
             {% else %}
                 {% for term in facet.terms %}
                     {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
-		            <a href="{{url({(facet.id): term.term},'sub')}}" >
+		            <a {% if facet.id not in facetsToHide %}href="{{url({(facet.id): term.term},'sub')}}"{% endif %} >
 				        <span class="badge badge-info">{% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
 			        </a>
 			        {% endif %}
