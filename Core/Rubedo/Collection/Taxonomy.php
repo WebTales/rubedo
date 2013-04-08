@@ -158,7 +158,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {
-            if ($origObj['readOnly']) {
+            if ((isset($origObj['readOnly']))&&($origObj['readOnly'])) {
                 throw new \Rubedo\Exceptions\Access('no rights to update this content');
             }
         }
@@ -168,6 +168,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         }
         $childrenToDelete = Manager::getService('TaxonomyTerms')->findByVocabulary(
                 $obj["id"]);
+        $deletedTerms=array();
         foreach ($childrenToDelete["data"] as $child) {
             $deletedTerms[] = Manager::getService('TaxonomyTerms')->destroy(
                     $child);
@@ -226,7 +227,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {
-            if ($origObj['readOnly']) {
+            if ((isset($origObj['readOnly']))&&($origObj['readOnly'])) {
                 throw new \Rubedo\Exceptions\Access('no rights to update this content');
             }
         }
