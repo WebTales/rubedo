@@ -39,10 +39,10 @@ class DataSearch extends DataAbstract implements IDataSearch
         if(!isset($this->contentTypesService)){
             $this->contentTypesService = Manager::getService('ContentTypes');
         }
-        if(!isset($this->contentTypesArray['id'])){
-            $this->contentTypesArray['id'] = $this->contentTypesService->findById($contentTypeId);
+        if(!isset($this->contentTypesArray[$contentTypeId])){
+            $this->contentTypesArray[$contentTypeId] = $this->contentTypesService->findById($contentTypeId);
         }
-        return $this->contentTypesArray['id'];
+        return $this->contentTypesArray[$contentTypeId];
     }
     
     protected function _getDamType($damTypeId){
@@ -472,6 +472,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 						$temp['label'] = 'Type de contenu';
 						if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
 							foreach ($temp['terms'] as $key => $value) {
+							    
 								$termItem = $this->_getContentType($value['term']);
 								$temp['terms'][$key]['label'] = $termItem['type'];
 							}
