@@ -167,7 +167,8 @@ class DataIndex extends DataAbstract implements IDataIndex
 							$indexMapping[$name] = array('type' => 'attachment', 'store' => 'no');
 							break;
 						case 'localiserField' :
-							//$indexMapping[$name] = array('type' => 'geo_point', 'store' => 'yes');
+							$indexMapping["position_location"] = array('type' => 'geo_point', 'store' => 'yes');
+							$indexMapping["position_adress"] = array('type' => 'string', 'store' => 'yes');
 							break;
 						default :
 							$indexMapping[$name] = array('type' => 'string', 'store' => '$store');
@@ -189,8 +190,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$indexMapping["writeWorkspace"] = array('type' => 'string', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["startPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
 		$indexMapping["endPublicationDate"] = array('type' => 'integer', 'index'=> 'not_analyzed', 'store' => 'yes');
-		$indexMapping["position_location"] = array('type' => 'geo_point', 'store' => 'yes');
-		$indexMapping["position_adress"] = array('type' => 'string', 'store' => 'yes');
 				
 		// Add Taxonomies
 		foreach($vocabularies as $vocabularyName) {
@@ -462,22 +461,11 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$contentData['endPublicationDate'] = isset($data['endPublicationDate'])?intval($data['endPublicationDate']):null;
 		$contentData['text'] =  (string) $data['text'];
 		$contentData['text_not_analyzed'] =  (string) $data['text'];
-		if (isset($data['lastUpdateTime'])) {
-			$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
-		} else {
-			$contentData['lastUpdateTime'] = 0;
-		}
-		if (isset($data['status'])) {
-			$contentData['status'] = (string) $data['status'];
-		} else {
-			$contentData['status'] = "unknown";
-		}
-		if (isset($data['createUser'])) {
-			$contentData['author'] = (string) $data['createUser']['id'];
-			$contentData['authorName'] = (string) $data['createUser']['fullName'];
-		} else {
-			$contentData['author'] = "unknown";
-		}
+    	$contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+    	$contentData['status'] = (isset($data['status'])) ? (string) $data['status'] : 'unknown';
+    	$contentData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
+    	$contentData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
+    	
         // Add taxonomy
          if (isset($data["taxonomy"])) {
                 $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
@@ -593,22 +581,11 @@ class DataIndex extends DataAbstract implements IDataIndex
     	$contentData['endPublicationDate'] = isset($data['endPublicationDate'])?intval($data['endPublicationDate']):null;
     	$contentData['text'] =  (string) $data['text'];
     	$contentData['text_not_analyzed'] =  (string) $data['text'];
-    	if (isset($data['lastUpdateTime'])) {
-    		$contentData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
-    	} else {
-    		$contentData['lastUpdateTime'] = 0;
-    	}
-    	if (isset($data['status'])) {
-    		$contentData['status'] = (string) $data['status'];
-    	} else {
-    		$contentData['status'] = "unknown";
-    	}
-    	if (isset($data['createUser'])) {
-    		$contentData['author'] = (string) $data['createUser']['id'];
-    		$contentData['authorName'] = (string) $data['createUser']['fullName'];
-    	} else {
-    		$contentData['author'] = "unknown";
-    	}
+    	$contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+    	$contentData['status'] = (isset($data['status'])) ? (string) $data['status'] : 'unknown';
+    	$contentData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
+    	$contentData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
+
     	// Add taxonomy
     	if (isset($data["taxonomy"])) {
     		$tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
@@ -778,18 +755,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 		$damData['text_not_analyzed'] =  (string) $data['title'];
 		$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
 		$damData['fileSize'] = $fileSize;
-		if (isset($data['lastUpdateTime'])) {
-			$damData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
-		} else {
-			$damData['lastUpdateTime'] = 0;
-		}
-		if (isset($data['createUser'])) {
-			$damData['author'] = (string) $data['createUser']['id'];
-			$damData['authorName'] = (string) $data['createUser']['fullName'];
-		} else {
-			$damData['author'] = "unknown";
-		}
-        
+		$damData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+		$damData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
+		$damData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';		
+		       
         // Add taxonomy
          if (isset($data["taxonomy"])) {
                 $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
@@ -911,17 +880,9 @@ class DataIndex extends DataAbstract implements IDataIndex
     	$damData['text_not_analyzed'] =  (string) $data['title'];
     	$fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
     	$damData['fileSize'] = $fileSize;
-    	if (isset($data['lastUpdateTime'])) {
-    		$damData['lastUpdateTime'] = (string) $data['lastUpdateTime'];
-    	} else {
-    		$damData['lastUpdateTime'] = 0;
-    	}
-    	if (isset($data['createUser'])) {
-    		$damData['author'] = (string) $data['createUser']['id'];
-    		$damData['authorName'] = (string) $data['createUser']['fullName'];
-    	} else {
-    		$damData['author'] = "unknown";
-    	}
+		$damData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+		$damData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
+		$damData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
     
     	// Add taxonomy
     	if (isset($data["taxonomy"])) {
