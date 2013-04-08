@@ -817,8 +817,40 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         Contents::$_isFrontEnd = $_isFrontEnd;
     }
-
-
+	
+    /**
+     * Do a find request on the current collection
+     *
+     * @param array $filters
+     *            filter the list with mongo syntax
+     * @param array $sort
+     *            sort the list with mongo syntax
+     * @return array
+     */
+	public function getList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
+		if($filters[0]['operator'] == "$"."in"){
+			$order = $filters[0]['value'];
+			$orderedContents = array();
+			
+			$unorderedResults = parent::getList($filters, $sort, $start, $limit, $live);
+			
+			$orderedContents = $unorderedResults;
+			
+			unset($orderedContents['data']);
+			
+			foreach ($order as $id) {
+				foreach ($unorderedResults['data'] as $content) {
+					if($id === $content['id']) {
+						$orderedContents['data'][] = $content;
+					}
+				}
+			}
+			
+			return $orderedContents;
+		} else {
+			return parent::getList($filters, $sort, $start, $limit, $live);
+		}
+	}
 	
 	
 	
