@@ -40,7 +40,8 @@ class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
         'navigation-tree',
         'clear-orphan-terms',
         'count-orphan-terms',
-        'model'
+        'model',
+        'tree'
     );
 
     public function init ()
