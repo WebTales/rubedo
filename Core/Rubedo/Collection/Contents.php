@@ -828,7 +828,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @return array
      */
 	public function getList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
-		if($filters[0]['operator'] == "$"."in"){
+		if((isset($filters[0]))&&(isset($filters[0]['operator']))&&($filters[0]['operator'] == "$"."in")){
 			$order = $filters[0]['value'];
 			$orderedContents = array();
 			
