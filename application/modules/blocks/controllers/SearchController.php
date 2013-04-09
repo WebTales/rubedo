@@ -27,9 +27,6 @@ require_once ('AbstractController.php');
 class Blocks_SearchController extends Blocks_AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
     public function indexAction ()
     {
         

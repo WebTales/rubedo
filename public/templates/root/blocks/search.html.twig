@@ -146,9 +146,11 @@
     			</p>
     	        <ul>
     			{% for range in facet.ranges %}
+    			{% if range.count < total and range.count > 0 %}
     				<li>
     					<a href="{{url({lastupdatetime : range.from})}}">{{ range.label }} ({{ range.count }})</a>
     				</li>
+    				{% endif %}
     			{% endfor %}
 			    </ul>
     			{% endif %}			
