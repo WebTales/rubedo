@@ -95,27 +95,23 @@
 		
 		{% for facet in facets %}
 
-			{% if facet.terms|length > 0 %}
+			{% if facet._type == 'terms' and facet.terms|length > 0 %}
 
     			{% if facet.id == 'type' %}
     			<p>
-    				<i class="icon-file"></i> {{"content_type"|trans}}
+    				<i class="icon-file"></i> {{facet.label|trans}}
     			</p>	
     			{% elseif facet.id == 'damType' %}
     			<p>
-    				<i class="icon-file"></i> {{"dam_type"|trans}}
+    				<i class="icon-file"></i> {{facet.label|trans}}
     			</p>	
     			{% elseif facet.id == 'author' %}
     			<p>
-    				<i class="icon-user"></i> {{"author"|trans}}
+    				<i class="icon-user"></i> {{facet.label|trans}}
     			</p>		
-    			{% elseif facet.id == 'date' %}
-    			<p>
-    				<i class="icon-calendar"></i> {{"date"|trans}}
-    			</p>	
     			{% else %}
     			<p>
-    				<i class="icon-tags"></i> {{facet.label}}
+    				<i class="icon-tags"></i> {{facet.label|trans}}
     			</p>			
     			{% endif %}	
     	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
@@ -139,10 +135,24 @@
     				{% endfor %}
 			    </ul>
     					
-    			{% endif %}	
-			
+    			{% endif %}			
 			
 			{% endif %}
+			
+			{% if facet._type == 'range' and facet.ranges|length > 0 %}
+    			{% if facet.id == 'date' %}
+    			<p>
+    				<i class="icon-calendar"></i> {{facet.label|trans}}
+    			</p>
+    	        <ul>
+    			{% for range in facet.ranges %}
+    				<li>
+    					<a href="{{url({lastupdatetime : range.from})}}">{{ range.label }} ({{ range.count }})</a>
+    				</li>
+    			{% endfor %}
+			    </ul>
+    			{% endif %}			
+			{% endif %}		
 		
 		{% endfor %}
 		
