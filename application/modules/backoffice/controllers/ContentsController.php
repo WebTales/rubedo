@@ -33,7 +33,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-contents','count-orphan-contents',);
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-contents','count-orphan-contents','get-ordered-list');
 	
     public function init() {
         parent::init();
@@ -59,32 +59,13 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         
         // call standard method with merge array
         $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
-        $filterJson = $this->getRequest()->getParam('filter');
-        if (isset($filterJson)) {
-            $filters = Zend_Json::decode($filterJson);
-        } else {
-            $filters = null;
-        }
-        $sortJson = $this->getRequest()->getParam('sort');
-        if (isset($sortJson)) {
-            $sort = Zend_Json::decode($sortJson);
-        } else {
-            $sort = null;
-        }
-        $startJson = $this->getRequest()->getParam('start');
-        if (isset($startJson)) {
-            $start = Zend_Json::decode($startJson);
-        } else {
-            $start = null;
-        }
-        $limitJson = $this->getRequest()->getParam('limit');
-        if (isset($limitJson)) {
-            $limit = Zend_Json::decode($limitJson);
-        } else {
-            $limit = null;
-        }
+        
+        $filters = Zend_Json::decode($this->getRequest()->getParam('filter', null));
+        $sort = Zend_Json::decode($this->getRequest()->getParam('sort', null));
+        $start = Zend_Json::decode($this->getRequest()->getParam('start', null));
+        $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
 
-        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit,false);
+        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit, false);
 
         $response = array();
         $response['total'] = $dataValues['count'];
@@ -204,6 +185,28 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 		}
 		
 			$this->_returnJson($returnArray);
+	}
+	
+	/**
+	 * Return a list of ordered objects
+	 */
+	public function getOrderedListAction() {
+	    // merge filter and tFilter
+	    $jsonFilter = $this->getParam('filter', Zend_Json::encode(array()));
+	    $jsonTFilter = $this->getParam('tFilter', Zend_Json::encode(array()));
+	    $filterArray = Zend_Json::decode($jsonFilter);
+	    $tFilterArray = Zend_Json::decode($jsonTFilter);
+	    $globalFilterArray = array_merge($tFilterArray, $filterArray);
+	    
+	    // call standard method with merge array
+	    $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
+	    
+	    $filters = Zend_Json::decode($this->getRequest()->getParam('filter', null));
+	    $sort = Zend_Json::decode($this->getRequest()->getParam('sort', null));
+	    $start = Zend_Json::decode($this->getRequest()->getParam('start', null));
+	    $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
+	    
+	    $this->_helper->json($this->_dataService->getOrderedList($filters, $sort, $start, $limit, false));
 	}
 	
 	public function clearOrphanContentsAction() {
