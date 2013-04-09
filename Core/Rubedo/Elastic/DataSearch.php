@@ -210,15 +210,23 @@ class DataSearch extends DataAbstract implements IDataSearch
 		}
 		
 		// filter on date
+		/*
 		if (array_key_exists('date',$params)) {
-			$dateFilter = new \Elastica_Filter_Range();
-			$d = $params['date']/1000;
-			$dateFrom = $dateTo = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d))*1000; 
-			$dateTo = mktime(0, 0, 0, date('m',$d)+1, date('d',$d), date('Y',$d))*1000;  
-    		$dateFilter->addField('lastUpdateTime', array('from' => $dateFrom, "to" => $dateTo));
+			$d=date('YYYYmmdd');
+			$dateFrom = $dateTo = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d))*1000;
+			$dateTo = mktime(0, 0, 0, date('m',$d)+1, date('d',$d), date('Y',$d))*1000;
+			$dateFilter = new \Elastica_Filter_Range('lastUpdateTime',array('from' => $dateFrom, "to" => $dateTo));
+
+			//$d = $params['date']/1000;
+
+			//print_r($d);
+			//exit;
+
+
 			$globalFilter->addFilter($dateFilter);
 			$setFilter = true;
 		}	
+		*/
 		
 		// filter on geolocalisation if inflat, suplat, inflon and suplon are set
 		if (isset($params['inflat'])&&isset($params['suplat'])&&isset($params['inflon'])&&isset($params['suplon'])) {
@@ -304,13 +312,34 @@ class DataSearch extends DataAbstract implements IDataSearch
 		$elasticaQuery->addFacet($elasticaFacetAuthor);
 
 		// Define the date facet.
+		/*
 		$elasticaFacetDate = new \Elastica_Facet_DateHistogram('date');
 		$elasticaFacetDate->setField('lastUpdateTime');
 		$elasticaFacetDate->setInterval('month');
 		if ($setFilter) $elasticaFacetDate->setFilter($globalFilter);
+		*/
+		$elasticaFacetDate = new \Elastica_Facet_Range('lastUpdateTime');
+		$elasticaFacetDate->setField('lastUpdateTime');
+		$d = Manager::getService('CurrentTime')->getCurrentTime();
+		$today = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d));
+		$lastday = mktime(0, 0, 0, date('m',$d), date('d',$d)-1, date('Y',$d));
+		$lastweek = mktime(0, 0, 0, date('m',$d), date('d',$d)-7, date('Y',$d));
+		$lastmonth = mktime(0, 0, 0, date('m',$d)-1, date('d',$d), date('Y',$d));
+		$lastyear = mktime(0, 0, 0, date('m',$d), date('d',$d), date('Y',$d)-1);
+		$ranges = array(
+				array('from'=> $lastday),
+				array('from'=> $lastweek),
+				array('from'=> $lastmonth),
+				array('from'=> $lastyear)
+		);
+		$elasticaFacetDate->setRanges($ranges);
+		if ($setFilter) $elasticaFacetDate->setFilter($globalFilter);		
 											
 		// Add that facet to the search query object.
 		$elasticaQuery->addFacet($elasticaFacetDate);
+		
+		//\Zend_debug::dump($elasticaFacetDate);
+		//exit;
 
 		// Define taxonomy facets
 		foreach ($taxonomies as $taxonomy) {
@@ -495,7 +524,15 @@ class DataSearch extends DataAbstract implements IDataSearch
 							$renderFacet = false;
 						}
 						break;
+
+					case 'lastUpdateTime' :
 						
+						$temp['label'] = 'Date';
+						if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
+						} else {
+							$renderFacet = false;
+						}
+						break;
 					default:
 						
 						$vocabularyItem = Manager::getService('Taxonomy')->findById($id);
