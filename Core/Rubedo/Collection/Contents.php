@@ -833,12 +833,13 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $filterKey = null;
         
         foreach ($filters as $key => $filter) {
+            
             if($filter["property"] == "id" && $filter["operator"] == "$"."in") {
                 $filterKey = $key;
             }
         }
         
-        if($filterKey != null) {
+        if($filterKey !== null) {
             $orderFilter = $filters[$filterKey];
             $order = $orderFilter['value'];
             $orderedContents = array();
