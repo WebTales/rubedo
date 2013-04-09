@@ -569,7 +569,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     			}
     		}
     		// Date format fix
-    		if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
+    		//if ($field=="lastUpdateTime") $contentData[$field] = date("Y-m-d", (int) $var);
     			
     	}
     
