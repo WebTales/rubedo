@@ -33,26 +33,26 @@ class Blocks_SearchController extends Blocks_AbstractController
     public function indexAction ()
     {
         
-        
         // get search parameters
         $params = $this->getRequest()->getParams();
         $params['pagesize'] = $this->getParam('pagesize', 10);
-        $params['pager'] = $this->getParam('pager',0);
+        $params['pager'] = $this->getParam('pager', 0);
         
-        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
+        if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $site = $this->getRequest()->getParam('site');
             $siteId = $site['id'];
-            $params['navigation'][]=$siteId;
-            $serverParams['navigation'][]=$siteId;
+            $params['navigation'][] = $siteId;
+            $serverParams['navigation'][] = $siteId;
         }
-        //apply predefined facets
-        $facetsToHide=array();
-        if(isset($params['block-config']['predefinedFacets'])){
-        	$predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
-        	foreach ($predefParamsArray as $key => $value){
-        		$params[$key] = $value;
-        		$facetsToHide[]=$key;
-        	}
+        
+        // apply predefined facets
+        $facetsToHide = array();
+        if (isset($params['block-config']['predefinedFacets'])) {
+            $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
+            foreach ($predefParamsArray as $key => $value) {
+                $params[$key] = $value;
+                $facetsToHide[] = $key;
+            }
         }
         
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
@@ -62,28 +62,28 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $results = $query->search($params);
         
-        $results['currentSite'] = isset($siteId)?$siteId:null;
-        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
+        $results['currentSite'] = isset($siteId) ? $siteId : null;
+        if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
         }
-        // Pagination
         
+        // Pagination
         if ($params['pagesize'] != "all") {
-            $pagecount = intval( ($results['total']-1) / $params['pagesize']+1);
+            $pagecount = intval(($results['total'] - 1) / $params['pagesize'] + 1);
         } else {
             $pagecount = 1;
         }
-        $results['facetsToHide']=$facetsToHide;
-		$results['current']=$params['pager'];
+        $results['facetsToHide'] = $facetsToHide;
+        $results['current'] = $params['pager'];
         $results['pagecount'] = $pagecount;
-		$results['limit']=min(array(
-                $pagecount-1,
-                10
-            ));
-		
-		$results['displayTitle']=$this->getParam('displayTitle');
-		$results['blockTitle']=$this->getParam('blockTitle');
-		
+        $results['limit'] = min(array(
+            $pagecount - 1,
+            10
+        ));
+        
+        $results['displayTitle'] = $this->getParam('displayTitle');
+        $results['blockTitle'] = $this->getParam('blockTitle');
+        
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
         $css = array();
