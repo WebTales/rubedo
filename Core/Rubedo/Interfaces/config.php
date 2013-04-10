@@ -83,6 +83,7 @@ class config
 		'Workspaces'                =>  'Rubedo\\Interfaces\\Collection\\IWorkspaces',
 		'Mailer'					=>	'Rubedo\\Interfaces\\Mail\\IMailer',
 		'MailingList'				=>	'Rubedo\\Interfaces\\Collection\\IMailingList',
+		'Localisation'				=>	'Rubedo\\Interfaces\\Collection\\ILocalisation',
 	);
 
 	/**

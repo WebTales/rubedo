@@ -48,24 +48,24 @@ class Blocks_Model_Contact extends Zend_Form
     	$name = new Zend_Form_Element_Text('name');
     	$name->setLabel('Nom *');
     	$name->setRequired(true);
-    	$name->addErrorMessage("Le champ suivant ne doit pas etre vide");
+    	$name->addErrorMessage("Le champ suivant ne doit pas être vide");
     	
     	$email = new Zend_Form_Element_Text('email');
     	$email->setLabel('Adresse e-mail *');
     	$email->setRequired(true);
     	$email->addValidator('EmailAddress');
-    	$email->addErrorMessage("Le champ suivant ne doit pas etre vide et l'adresse e-mail doit etre sous la forme : exemple@exemple.fr");
+    	$email->addErrorMessage("Le champ suivant ne doit pas être vide et l'adresse e-mail doit etre sous la forme : exemple@exemple.fr");
     	
     	$subject = new Zend_Form_Element_Text('subject');
     	$subject->setLabel('Objet *');
     	$subject->setRequired(true);
-    	$subject->addErrorMessage("Le champ suivant ne doit pas etre vide");
+    	$subject->addErrorMessage("Le champ suivant ne doit pas être vide");
     	
     	$message = new Zend_Form_Element_Textarea('message');
     	$message->setLabel('Message *');
     	$message->setRequired(true);
     	$message->setAttrib('rows', 5);
-    	$message->addErrorMessage("Le champ suivant ne doit pas etre vide");
+    	$message->addErrorMessage("Le champ suivant ne doit pas être vide");
     	
     	$this->addElements(array($name, $email, $subject, $message));
 		
@@ -109,7 +109,7 @@ class Blocks_Model_Contact extends Zend_Form
     					'HtmlTag',
     					array(
     							'tag' => 'div',
-    							'class' => 'align-button'
+    							'class' => 'form-actions'
     					)
     			)
     	));

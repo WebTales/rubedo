@@ -33,7 +33,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         
         //handle preview for ajax request, only if user is a backoffice user
         if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
-            $isDraft = $this->getParam('is-draft', null);
+            $isDraft = $this->getParam('is-draft', false);
             if (! is_null($isDraft)) {
                 Zend_Registry::set('draft', $isDraft);
             }
@@ -41,10 +41,13 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     
         //get current page property
         $this->currentPage = $this->getParam('current-page');
+       
     
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
         if(is_null($currentPage)){
             throw new Rubedo\Exceptions\Access('Accès impossible à cette page');
+        } else{
+            Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
         //set current workspace
         $this->_workspace = $currentPage['workspace'];
