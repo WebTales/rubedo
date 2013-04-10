@@ -230,6 +230,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
 
     protected function setPaginationValues ($blockConfig)
     {
+        //Zend_Debug::dump($blockConfig);die();
         $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $pageData['limit'] = $this->getParam('limit', $defaultLimit);
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);

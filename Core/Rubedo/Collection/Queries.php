@@ -229,7 +229,15 @@ class Queries extends AbstractCollection implements IQueries
 
     protected function _getFilterArrayForQuery ($query)
     {
-        $this->_workspace = \Zend_Registry::isRegistered('draft')?(\Zend_Registry::get('draft') ? 'draft' : 'live'):'live';
+        if(\Zend_Registry::isRegistered('draft')){
+            if(\Zend_Registry::get('draft') !== 'false' || \Zend_Registry::get('draft') !== false){
+                $this->_workspace = 'live';
+            }else{
+                $this->_workspace = 'draft';
+            }
+        }else{
+            $this->_workspace = 'live';
+        }
         $this->_dateService = Manager::getService('Date');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
         
