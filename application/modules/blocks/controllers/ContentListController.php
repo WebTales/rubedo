@@ -222,15 +222,19 @@ class Blocks_ContentListController extends Blocks_AbstractController
         
         $contentArray = $this->_dataReader->getOnlineList($filters["filter"], 
                 $filters["sort"], 
-                (($pageData['currentPage'] - 1) * $pageData['limit']), 
+                (($pageData['currentPage'] - 1) * $pageData['limit'])+$pageData['skip'], 
                 $pageData['limit']);
         $contentArray['page'] = $pageData;
+        $contentArray['count'] = max(0,$contentArray['count'] - $pageData['skip']);
         return $contentArray;
     }
 
     protected function setPaginationValues ($blockConfig)
     {
+        //Zend_Debug::dump($blockConfig);die();
         $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
+        $defaultSkip = isset($blockConfig['resultsSkip']) ? $blockConfig['resultsSkip'] : 0;
+        $pageData['skip'] = $this->getParam('skip', $defaultSkip);
         $pageData['limit'] = $this->getParam('limit', $defaultLimit);
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         return $pageData;

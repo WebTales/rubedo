@@ -60,6 +60,23 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      * @var array
      */
     protected static $_termsArray = array();
+
+    /**
+     * Virtual term for navigation taxonomy : alias for the current Page when doing queries
+     * 
+     * @var array
+     */
+    protected $_virtualCurrentPageTerm = array(
+        "parentId" => 'root',
+        "text" => "Page Courante",
+        "id" => "currentPage",
+        "expandable" => false,
+        "vocabularyId" => 'navigation',
+        "canAssign" => 'true',
+        "readOnly" => true
+    );
+    
+
     
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
@@ -199,11 +216,14 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         }
     }
 
-    public function getNavigationTree ()
+    public function getNavigationTree ($withCurrentPage = false)
     {
         $mainRoot = $this->_getMainRoot();
         $siteArray = Manager::getService('Sites')->getList();
         $childrenArray = array();
+        if($withCurrentPage){
+            $childrenArray[]=$this->_virtualCurrentPageTerm;
+        }
         foreach ($siteArray['data'] as $site) {
             $childrenArray[] = $this->_siteToTerm($site);
         }

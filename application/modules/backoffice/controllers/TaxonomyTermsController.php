@@ -73,7 +73,8 @@ class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
 
     public function navigationTreeAction ()
     {
-        $result = $this->_dataService->getNavigationTree();
+        $withCurrentPage = $this->getParam('add-current-page',false);
+        $result = $this->_dataService->getNavigationTree($withCurrentPage);
         $resultArray = array();
         $resultArray['success'] = true;
         $resultArray['children'] = $result;
