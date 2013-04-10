@@ -23,10 +23,13 @@
 	{% endblock %}
     </div>
     
+    {% if blockConfig.showPager %}
     <div id='list-pager-{{ prefix }}'>
 	{% block pager %}
 	{% include '/root/blocks/contentList/pager.html.twig' %}
 	{% endblock %}
-		</div>
+	</div>
+	{% endif %}
+	
 
 {% endblock %}
