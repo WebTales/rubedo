@@ -367,6 +367,17 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getVocabularyCondition ($key, $value)
     {
+        if($key == 'navigation'){
+            foreach ($value['terms'] as &$term){
+                if($term == "currentPage"){
+                    $currentPage = Manager::getService('PageContent')->getCurrentPage();
+                    if(!$currentPage){
+                        throw new \Rubedo\Exceptions\Server('Pas de page courante définie.');
+                    }
+                    $term = $currentPage;
+                }
+            }
+        }
         if (is_array($value['rule'])) {
             $rule = array_pop($value['rule']);
         } else {
