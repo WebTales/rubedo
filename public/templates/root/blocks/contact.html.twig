@@ -20,7 +20,7 @@
 		  Votre e-mail à été envoyé avec succés !
 		</div>
 	{% endif %}
-	{{ contactForm | cleanHtml }}
+	{{ contactForm | raw }}
 </div>
 
 {% endblock %}
