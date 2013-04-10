@@ -189,14 +189,6 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	
 	/**
 	 * Return a list of ordered objects
-	 * 
-	 * @param array $filters
-	 * @param array $sort
-	 * @param string $start
-	 * @param string $limit
-	 * @param bool $live
-	 * 
-	 * @return array Return the contents list
 	 */
 	public function getOrderedListAction() {
 	    // merge filter and tFilter
@@ -214,7 +206,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	    $start = Zend_Json::decode($this->getRequest()->getParam('start', null));
 	    $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
 	    
-	    $this->_helper->json($this->getOrderedList($filters, $sort, $start, $limit, false));
+	    $this->_helper->json($this->_dataService->getOrderedList($filters, $sort, $start, $limit, false));
 	}
 	
 	public function clearOrphanContentsAction() {

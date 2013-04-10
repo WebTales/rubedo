@@ -661,9 +661,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                     $contentData[$field] = (string) $var;
                 }
             }
-            // Date format fix
-            if ($field == "lastUpdateTime")
-                $contentData[$field] = date("Y-m-d", (int) $var);
         }
         
         // Add default meta's
@@ -951,10 +948,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                         $damData[$field] = (string) $var;
                     }
                 }
-                
-                // Date format fix
-                if ($field == "lastUpdateTime")
-                    $damData[$field] = date("Y-m-d", (int) $var);
             }
         }
         
@@ -1072,10 +1065,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                         $damData[$field] = (string) $var;
                     }
                 }
-                
-                // Date format fix
-                if ($field == "lastUpdateTime")
-                    $damData[$field] = date("Y-m-d", (int) $var);
             }
         }
         

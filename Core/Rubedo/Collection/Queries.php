@@ -229,7 +229,15 @@ class Queries extends AbstractCollection implements IQueries
 
     protected function _getFilterArrayForQuery ($query)
     {
-        $this->_workspace = \Zend_Registry::isRegistered('draft')?(\Zend_Registry::get('draft') ? 'draft' : 'live'):'live';
+        if(\Zend_Registry::isRegistered('draft')){
+            if(\Zend_Registry::get('draft') !== 'false' || \Zend_Registry::get('draft') !== false){
+                $this->_workspace = 'live';
+            }else{
+                $this->_workspace = 'draft';
+            }
+        }else{
+            $this->_workspace = 'live';
+        }
         $this->_dateService = Manager::getService('Date');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
         
@@ -367,6 +375,17 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getVocabularyCondition ($key, $value)
     {
+        if($key == 'navigation'){
+            foreach ($value['terms'] as &$term){
+                if($term == "currentPage"){
+                    $currentPage = Manager::getService('PageContent')->getCurrentPage();
+                    if(!$currentPage){
+                        throw new \Rubedo\Exceptions\Server('Pas de page courante définie.');
+                    }
+                    $term = $currentPage;
+                }
+            }
+        }
         if (is_array($value['rule'])) {
             $rule = array_pop($value['rule']);
         } else {
