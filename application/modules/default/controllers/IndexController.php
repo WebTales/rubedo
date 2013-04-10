@@ -609,10 +609,6 @@ class IndexController extends Zend_Controller_Action
             case 'addThisFollow':
                 $controller = 'addthisfollow';
                 break;
-            case 'Menu':
-            case 'menu':
-                $controller = 'menu';
-                break;
             case 'Controleur Zend':
             case 'zendController':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
