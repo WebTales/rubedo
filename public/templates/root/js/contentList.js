@@ -1,4 +1,4 @@
-function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType) {
+function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType,skip) {
 	if (jQuery('#list-' + prefix + ' > #list-' + prefix + '-' + page).length == 0) {
 		if (jQuery('body').attr('data-is-draft')){
 			var isDraft = true;
@@ -16,6 +16,7 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 				'limit' : limit,
 				'displayType':displayType,
 				'is-draft':isDraft,
+				'skip':skip,
 				'current-page':jQuery('body').attr('data-current-page')
 			},
 			dataType : "json"
