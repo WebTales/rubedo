@@ -1,73 +1,69 @@
 {
-	"site": "",
-	"title": "Détail",
-	"maskId": "",
-	"excludeFromMenu": true,
-	"parentId": "root",
-	"description": "",
-	"keywords": [],
-	"orderValue": 300,
-	"expandable": false,
-	"blocks": [
-		{
-			"bType": "D\u00e9tail de contenu",
-			"canEdit": true,
-			"classHTML": null,
-			"displayTitle": null,
-			"flex": 1,
-			"id": "",
-			"idHTML": null,
-			"mType": "block",
-			"orderValue": 1,
-			"parentCol": "",
-			"title": "D\u00e9tail de contenu",
-			"urlPrefix": null,
-			"responsive": {
-				"phone": true,
-				"tablet": true,
-				"desktop": true
-			},
-			"configBloc": {
-				"recievesParam": true
-			},
-			"champsConfig": {
-				"avance": [],
-				"simple": [
-                        {
-                            "categorie": "Affichage",
-                            "champs": [
-                               
-                                {
-                                    "type": "Ext.form.field.Text",
-                                    "config": {
-                                        "fieldLabel": "Type d'affichage",
-                                        "name": "displayType"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "categorie": "Contenu",
-                            "champs": [
-                                {
-                                    "type": "Rubedo.view.DCEField",
-                                    "config": {
-                                        "fieldLabel": "Contenu à afficher",
-                                        "name": "contentId",
-                                        "chooseOnly":true
-                                    }
-                                },
-                                {
-                                    "type": "Ext.form.field.Checkbox",
-                                    "config": {
-                                        "fieldLabel": "Paramètre externe",
-                                        "name": "recievesParam"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-			}
-		}
-	]
+  "blocks": [
+    {
+      "bType": "contentDetail",
+      "mType": "block",
+      "champsConfig": {
+        "simple": [
+          {
+            "categorie": "Contenu",
+            "champs": [
+              {
+                "type": "Rubedo.view.DCEField",
+                "config": {
+                  "fieldLabel": "Contenu à  afficher",
+                  "name": "contentId",
+                  "chooseOnly": true
+                }
+              }
+            ]
+          }
+        ],
+        "avance": [
+          {
+            "categorie": "Affichage",
+            "champs": [
+              {
+                "type": "Ext.form.field.Text",
+                "config": {
+                  "fieldLabel": "Template alternatif",
+                  "name": "displayType"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "configBloc": {
+        "contentId": ""
+      },
+      "orderValue": 1,
+      "title": "Détail de contenu",
+      "elementStyle": "",
+      "elementTag": "div",
+      "renderDiv": true,
+      "responsive": {
+        "phone": true,
+        "tablet": true,
+        "desktop": true
+      },
+      "classHTML": null,
+      "displayTitle": null,
+      "idHTML": null,
+      "urlPrefix": null,
+      "flex": 1,
+      "canEdit": true
+    }
+  ],
+  "description": "",
+  "excludeFromMenu": false,
+  "expandable": false,
+  "inheritWorkspace": true,
+  "keywords": "",
+  "orderValue": 300,
+  "pageURL": "detail",
+  "parentId": "root",
+  "text": "Détail",
+  "title": "Détail",
+  "workspace": "global"
 }

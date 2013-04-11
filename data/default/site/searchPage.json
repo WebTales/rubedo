@@ -1,58 +1,63 @@
 {
-	"site": "",
-	"title": "Recherche",
-	"excludeFromMenu": true,
-	"maskId": "",
-	"parentId": "root",
-	"description": "",
-	"orderValue": 200,
-	"expandable": false,
-	"keywords": [],
-	"blocks": [
-		{
-			"bType": "R\u00e9sultat de recherche",
-			"canEdit": true,
-			"classHTML": null,
-			"displayTitle": null,
-			"flex": 1,
-			"id": "",
-			"idHTML": null,
-			"mType": "block",
-			"orderValue": 1,
-			"responsive": {
-				"phone": true,
-				"tablet": true,
-				"desktop": true
-			},
-			"parentCol": "",
-			"title": "R\u00e9sultat de recherche",
-			"urlPrefix": null,
-			"configBloc": {
-				"constrainToSite": true
-			},
-			"champsConfig": {
-				"avance": [],
-				"simple": [
-					{
-						"categorie": "Filtrage",
-						"champs": [
-							{
-								"config": {
-									"fieldLabel": "Restreindre au site",
-									"name": "constrainToSite"
-								},
-								"type": "Ext.form.field.Checkbox"
-							}, {
-								"config": {
-									"fieldLabel": "Filtres",
-									"name": "filters"
-								},
-								"type": "Ext.form.field.TextArea"
-							}
-						]
-					}
-				]
-			}
-		}
-	]
+  "blocks": [
+    {
+      "bType": "searchResults",
+      "mType": "block",
+      "champsConfig": {
+        "simple": [
+          {
+            "categorie": "Filtrage",
+            "champs": [
+              {
+                "type": "Ext.form.field.Checkbox",
+                "config": {
+                  "fieldLabel": "Restreindre au site",
+                  "name": "constrainToSite"
+                }
+              },
+              {
+                "type": "Rubedo.view.ESQfield",
+                "config": {
+                  "fieldLabel": "Facettes prÃ©dÃ©finies",
+                  "name": "predefinedFacets"
+                }
+              }
+            ]
+          }
+        ],
+        "avance": []
+      },
+      "configBloc": {
+        "constrainToSite": false,
+        "predefinedFacets": ""
+      },
+      "orderValue": 1,
+      "title": "Page de recherche",
+      "elementStyle": "",
+      "elementTag": "div",
+      "renderDiv": true,
+      "responsive": {
+        "phone": true,
+        "tablet": true,
+        "desktop": true
+      },
+      "classHTML": null,
+      "displayTitle": null,
+      "idHTML": null,
+      "urlPrefix": null,
+      "flex": 1,
+      "canEdit": true
+    }
+  ],
+  "description": "",
+  "excludeFromMenu": false,
+  "expandable": false,
+  "inheritWorkspace": true,
+  "keywords": "",
+  "orderValue": 200,
+  "pageURL": "recherche",
+  "parentId": "root",
+  "text": "Recherche",
+  "title": "Recherche",
+  "workspace": "global"
 }
