@@ -609,6 +609,18 @@ class IndexController extends Zend_Controller_Action
             case 'addThisFollow':
                 $controller = 'addthisfollow';
                 break;
+            case 'Menu':
+            case 'menu':
+                $controller = 'menu';
+                break;
+            case 'Contact':
+            case 'contact':
+                    $controller = "contact";
+                    break;
+            case 'siteMap':
+            case 'sitemap':
+                    $controller = "site-map";
+                    break;
             case 'Controleur Zend':
             case 'zendController':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
@@ -654,11 +666,7 @@ class IndexController extends Zend_Controller_Action
                     'template' => 'root/zend.html.twig'
                 );
                 break;
-            case 'Contact':
-            case 'contact':
-            	$controller = "contact";
-            	break; 
-             
+                
             default:
                 
                 $data = array();
