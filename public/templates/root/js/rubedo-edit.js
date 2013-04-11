@@ -85,18 +85,31 @@ jQuery('#cancel-confirm').click(function() {
 });
 
 jQuery('#btn-save').click(function() {
+	var errors = new Array();
+	
 	// for every modified content
 	for ( var i in CKEDITOR.instances) {
 		if (CKEDITOR.instances[i].checkDirty()) {
 			// saving content
-			save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
+			save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData(), errors);
+			
+			//Remove dirty flag
+			CKEDITOR.instances[i].resetDirty();
 		}
 	}
+	
+	if(errors.length > 0) {
+		notify('failure', 'Une erreur est survenue, il est possible que vos modifications soient perdues');
+	} else {
+		notify('success', 'Les données ont été sauvegardées.');
+	}
+	
 	// for every maps
-	var maps = gMap.getAllInstances();
-	maps.forEach(function(map) {
-		save(map.id, JSON.stringify(map.getValues()));
-	});
+	//var maps = gMap.getAllInstances();
+	//maps.forEach(function(map) {
+	//	save(map.id, JSON.stringify(map.getValues()));
+	//});
+	
 	// switch to wiew mode
 	swithToViewMode();
 });
@@ -150,16 +163,13 @@ function undo(editor) {
 	editor.execCommand('undo');
 }
 
-function save(id, data) {
+function save(id, data, errors) {
 	jQuery.ajax({
 	type : 'POST',
 	url : "/xhr-edit",
 	data : {
 	'id' : id,
 	'data' : data
-	},
-	"success" : function(data, textStatus, jqXHR) {
-		notify('success', 'Les données ont été sauvegardées.');
 	},
 	"error" : function(jqXHR, textStatus, errorThrown) {
 		var response = jqXHR.responseText;
@@ -168,15 +178,9 @@ function save(id, data) {
 		if (returnMsg == "Content already have a draft version") {
 			returnMsg = 'Un brouillon empêche les modifications.';
 		}
-		notify('failure', returnMsg);
+		errors.push(returnMsg);
 	}
 	});
-	
-	for ( var i in CKEDITOR.instances) {
-		if(CKEDITOR.instances[i].checkDirty()){
-			CKEDITOR.instances[i].resetDirty();
-		}
-	}
 }
 
 function notify(notify_type, msg) {
