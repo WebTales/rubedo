@@ -234,6 +234,19 @@ class IndexController extends Zend_Controller_Action
             $twigVar['keywords'] = implode(',', $keywords);
         }
         
+        if(isset($this->_site['googleAnalyticsKey'])){
+            $twigVar['googleAnalyticsKey']=$this->_site['googleAnalyticsKey'];
+        }
+        
+        if(isset($this->_site['googleMapsKey'])){
+            $twigVar['googleMapsKey']=$this->_site['googleMapsKey'];
+        }
+        
+        if(isset($this->_site['disqusKey'])){
+            $twigVar['disqusKey']=$this->_site['disqusKey'];
+        }
+        
+        
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
         $twigVar['isLoggedIn'] = $isLoggedIn;

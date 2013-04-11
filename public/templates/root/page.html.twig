@@ -61,9 +61,30 @@
     {% endif %}
     
     {% endblock %}
+    
+    {%  if googleAnalyticsKey %}
+    	<script type="text/javascript">
+
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', '{{ googleAnalyticsKey }}']);
+          _gaq.push(['_trackPageview']);
+        
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+        
+        </script>
+    	{% endif %}
+    
 </head>
 {% block body %}
-<body data-current-page="{{ currentPage }}" data-is-draft="{{ isDraft }}" data-current-workspace="{{ currentWorkspace }}">
+<body data-current-page="{{ currentPage }}" 
+      data-is-draft="{{ isDraft }}" 
+      data-current-workspace="{{ currentWorkspace }}" 
+      {% if disqusKey %}data-disqusKey="{{ disqusKey }}"{% endif %}
+      {% if googleMapsKey %}data-googleMapsKey="{{ googleMapsKey }}"{% endif %}>
 {% endblock %}
 	
 	{% block pageContentToolBar %} 
@@ -162,6 +183,9 @@
     	{% for file in js %}
     	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
     	{% endfor %}
+    	
+    	
 	{% endblock %}
+	
 </body>
 </html>
