@@ -42,8 +42,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
             $site = $this->getRequest()->getParam('site');
             $siteId = $site['id'];
-            $params['navigation'][]=$siteId;
-            $serverParams['navigation'][]=$siteId;
+            
+            if (!in_array($siteId,$params['navigation'])){
+            	$params['navigation'][]=$siteId;
+            	$serverParams['navigation'][]=$siteId;
+            }
+            
         }
         //apply predefined facets
         $facetsToHide=array();
@@ -101,6 +105,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     
     	// get params
     	$params = $this->getRequest()->getParams();
+    	
+    	
     
     	// get option : all, dam, content, geo
     	if (isset($params['option'])) {
@@ -111,9 +117,14 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 	    	    $currentPageId = $this->getRequest()->getParam('current-page');
 	    	    $currentPage = Rubedo\Services\Manager::getService('Pages')->findById($currentPageId);
 	            $siteId = $currentPage['site'];
-	            $params['navigation'][]=$siteId;
 	            $facetsToHide[]="navigation";
-	            $serverParams['navigation'][]=$siteId; 
+	            if (!isset($params['navigation'])){
+	            	$params['navigation']=array();
+	            }
+	            if (!in_array($siteId,$params['navigation'])){
+	            	$params['navigation'][]=$siteId;
+	            	$serverParams['navigation'][]=$siteId;
+	            }
 	        }
         //apply predefined facets
         if(isset($params['predefinedFacets'])){
@@ -126,7 +137,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
     	
     	$query = Manager::getService('ElasticDataSearch');
-    
+    	
     	$query->init();
     	$results = $query->search($params,$this->_option,false);
     	$results = $this->_clusterResults($results);
@@ -187,9 +198,11 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
             }
             if (isset($entity)) {
                 if ($type == "content") {
-                    $entity['type'] = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+                	$intermedVar = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId']);
+                    $entity['type'] = $intermedVar['type'];
                 } else {
-                    $entity['type'] = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId'])['type'];
+                    $intermedVar = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId']);
+                    $entity['type'] = $intermedVar['type'];
                 }
                 $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
                 $entity['objectType'] = $type;

@@ -79,10 +79,20 @@
       	geocoder.geocode( { 'address': centerAddress}, function(results, status) {
       		if (status == google.maps.GeocoderStatus.OK) {
       			map.setCenter(results[0].geometry.location);
+      			new google.maps.Marker({
+    			  	map:map,
+    			  	icon:"/templates/root/img/target.png",
+    			  	position:results[0].geometry.location
+    			      });
       		}
       	});
       } else if (centerLatitude&&centerLongitude){
-    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));        
+    	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));  
+    	  new google.maps.Marker({
+			  	map:map,
+			  	icon:"/templates/root/img/target.png",
+			  	position:new google.maps.LatLng(centerLatitude, centerLongitude)
+			      });      
       }
 	  var mapTimer=null;
 	  google.maps.event.addListener(map, 'bounds_changed', function() {
@@ -129,9 +139,17 @@
         		window.activeFacets={ };
         		for(var m= 0; m < recievedFacets.length; m++)
     			{
-    			     if (recievedFacets[m].terms.length==1){
+    			     if ((recievedFacets[m].id=="type")||(recievedFacets[m].id=="damtype")||(recievedFacets[m].id=="author")||(recievedFacets[m].id=="date")){
     			    	 window.activeFacets[recievedFacets[m].id]=recievedFacets[m].terms[0].term;
-        			 } 
+        			 } else {
+            			 var intermed=[ ];
+        				 for(var p= 0; p < recievedFacets[m].terms.length; p++)
+	     	    			{
+        					 intermed.push(recievedFacets[m].terms[p].term);
+	     	    			}
+        				 window.activeFacets[recievedFacets[m].id]=intermed;
+
+            		 } 
         			 //implement multi term here
     			}
         		jQuery("#facetBox").replaceWith(data.facetsHtml);
@@ -164,10 +182,30 @@
       }
       window.updateFacets=updateFacets;
       function updateFacets(id,term,add){
-          if (add){
-        	  window.activeFacets[id]=term;
+          if ((id=="type")||(id=="damtype")||(id=="author")||(id=="date")){ 
+	          if (add){
+	        	  window.activeFacets[id]=term;
+	          } else {
+				  delete window.activeFacets[id];
+	          }
           } else {
-			  delete window.activeFacets[id];
+        	  if (add){
+            	  if (Array.isArray(window.activeFacets[id])){
+					  if (window.activeFacets[id].indexOf(term)==-1){
+						  window.activeFacets[id].push(term);
+					  }
+                  } else {
+                	  window.activeFacets[id]=[term];
+                  }
+	        	  
+	          } else {
+		          if (window.activeFacets[id].length==1){
+				  	delete window.activeFacets[id];
+		          } else {
+			        var myInterIndex=window.activeFacets[id].indexOf(term);
+			        window.activeFacets[id]=window.activeFacets[id].splice(myInterIndex,1);
+			      }
+	          }
           }
           window.fireQuery();
       }
