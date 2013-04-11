@@ -1,157 +1,235 @@
-{
-	"blocks": [
-		{
-			"bType": "Bloc de navigation" ,
-			"id": "515d361dd34da41616000005" ,
-			"parentCol": "515d361dd34da41616000001" ,
-			"mType": "block" ,
-			"champsConfig": {
-				"avance": [] ,
-				"simple": [
-					{
-						"categorie": "Pages" ,
-						"champs": [
-							{
-								"config": {
-									"fieldLabel": "Racine" ,
-									"name": "rootPage"
-								} ,
-								"type": "Ext.ux.TreePicker"
-							} , {
-								"config": {
-									"fieldLabel": "Page de recherche" ,
-									"name": "searchPage"
-								} ,
-								"type": "Ext.ux.TreePicker"
-							} , {
-								"config": {
-									"fieldLabel": "Moteur de recherche" ,
-									"name": "useSearchEngine"
-								} ,
-								"type": "Ext.form.field.Checkbox"
-							}
-						]
-					}
-				]
-			} ,
-			"orderValue": 100 ,
-			"configBloc": [] ,
-			"elementStyle": null  ,
-			"elementTag": null  ,
-			"renderDiv": null  ,
-			"title": "Bloc de navigation" ,
-			"responsive": {
-				"phone": true ,
-				"tablet": true ,
-				"desktop": true
-			} ,
-			"classHTML": null  ,
-			"displayTitle": null  ,
-			"idHTML": null  ,
-			"urlPrefix": null  ,
-			"flex": 1 ,
-			"canEdit": null
-		}
+{ 
+	"blocks" : [ 
+	 	{ 
+	 		"bType" : "navigation" ,
+	 		"mType" : "block" ,
+	 		"champsConfig" : { 
+	 		    "simple" : [ 
+	 		        { 
+	 		            "categorie" : "Pages" ,
+	 		            "champs" : [
+	 		                { 
+	 		                    "type" : "Ext.ux.TreePicker" ,
+	 		                    "config" : { 
+	 		                        "fieldLabel" : "Racine" ,
+	 		                        "name" : "rootPage"
+	 		                    }
+	 		                } ,
+	 		                { 
+	 		                    "type" : "Ext.ux.TreePicker" ,
+	 		                    "config" : {
+	 		                        "fieldLabel" : "Page de recherche" ,
+	 		                        "name" : "searchPage"
+	 		                    }
+	 		                } ,
+	 		                {
+	 		                    "type" : "Ext.form.field.Number" ,
+	 		                    "config" : { 
+	 		                        "fieldLabel" : "Niveau" ,
+	 		                        "name" : "menuLevel" ,
+	 		                        "allowDecimals" : false ,
+	 		                        "editable" : false ,
+	 		                        "minValue" : 1
+	 		                    }
+	 		                } , 
+	 		                {
+	 		                    "type" : "Ext.form.field.Checkbox" ,
+	 		                    "config" : { 
+	 		                        "fieldLabel" : "Moteur de recherche" ,
+	 		                        "name" : "useSearchEngine" ,
+	 		                        "inputValue" : true
+	 		                    }
+	 		                } ,
+	 		                { 
+	 		                    "type" : "Ext.form.field.Checkbox" ,
+	 		                    "config" : { 
+	 		                        "fieldLabel" : "Afficher la racine" ,
+	 		                        "name" : "displayRootPage" ,
+	 		                        "inputValue" : true
+	 		                    }
+	 		                }
+	 		            ]
+	 		        } , 
+	 		        { 
+	 		            "categorie" : "Options" ,
+	 		            "champs" : [
+	 		                { 
+	 		                    "type" : "Ext.form.field.ComboBox" ,
+	 		                    "config" : { 
+	 		                        "fieldLabel" : "Style" ,
+	 		                        "name" : "style" ,
+	 		                        "editable" : false ,
+	 		                        "forceSelection" : true ,
+	 		                        "queryMode" : "local" ,
+	 		                        "value" : "Vertical" ,
+	 		                        "store" : [ 
+	 		                            "Vertical" , "Horizontal"
+	 		                        ]
+	 		                    }
+	 		                } , 
+	 		                { 
+	 		                    "type" : "Rubedo.view.ImagePickerField" ,
+	 		                    "config" : { 
+	 		                        "fieldLabel" : "Logo" ,
+	 		                        "name" : "logo" ,
+	 		                        "allowedFileType" : "Image" ,
+	 		                        "smallMode" : true
+	 		                    }
+	 		                }
+	 		            ]
+	 		        }
+	 		    ] , 
+	 		    "avance" : [ 
+	 		        { 
+	 		            "categorie" : "Affichage" ,
+	 		            "champs" : [ 
+	 		                { 
+	 		                    "type" : "Ext.form.field.Text" ,
+	 		                    "config" : { 
+	 		                        "fieldLabel" : "Template alternatif" ,
+	 		                        "name" : "displayType"
+	 		                    }
+	 		                }
+	 		            ]
+	 		        }
+	 		    ]
+	 		} , 
+	 		"orderValue" : 100 ,
+	 		"configBloc" : { 
+	 		    "style" : "Horizontal" ,
+	 		    "displayRootPage" : true ,
+	 		    "menuLevel" : 1
+	 		} , 
+	 		"elementStyle" : "" ,
+	 		"elementTag" : "div" ,
+	 		"renderDiv" : true ,
+	 		"title" : "Menu" ,
+	 		"responsive" : { 
+	 		    "phone" : true ,
+	 		    "tablet" : true ,
+	 		    "desktop" : true
+	 		} , 
+	 		"classHTML" :  null  ,
+	 		"displayTitle" :  null  ,
+	 		"idHTML" :  null  ,
+	 		"urlPrefix" :  null  ,
+	 		"flex" : 1 ,
+	 		"canEdit" :  null 
+	    }
 	] ,
-	"excludeFromMenu": false ,
-	"expandable": false ,
-	"mainColumnId": "" ,
-	"orderValue": 200 ,
-	"pageProperties": {
-		"showInDiv": false
-	} ,
-	"rows": [
-		{
-			"height": null  ,
-			"eTitle": "title" ,
-			"id": "" ,
-			"elementStyle": null  ,
-			"elementTag": "header" ,
-			"displayRow": false ,
-			"displayRowFluid": null  ,
-			"includeContainer": null  ,
-			"includeContainerFluid": null  ,
-			"mType": "row" ,
-			"displayAsTab": null  ,
-			"responsive": {
-				"phone": true ,
-				"tablet": true ,
-				"desktop": true
-			} ,
-			"displayTitle": null  ,
-			"containerId": null  ,
-			"containerClass": null  ,
-			"classHTML": null  ,
-			"idHTML": null  ,
-			"columns": [
-				{
-					"eTitle": "title" ,
-					"responsive": {
-						"phone": true ,
-						"tablet": true ,
-						"desktop": true
-					} ,
-					"classHTML": null  ,
-					"idHTML": null  ,
-					"elementStyle": null  ,
-					"elementTag": null  ,
-					"renderSpan": false ,
-					"displayTitle": null  ,
-					"span": 12 ,
-					"id": "" ,
-					"mType": "col" ,
-					"offset": 0 ,
-					"rows": null  ,
-					"isTerminal": true
-				}
-			]
-		} , {
-			"height": null  ,
-			"eTitle": "title" ,
-			"id": "" ,
-			"elementStyle": null  ,
-			"elementTag": null  ,
-			"displayRow": true ,
-			"displayRowFluid": null  ,
-			"includeContainer": true ,
-			"includeContainerFluid": null  ,
-			"mType": "row" ,
-			"displayAsTab": null  ,
-			"responsive": {
-				"phone": true ,
-				"tablet": true ,
-				"desktop": true
-			} ,
-			"displayTitle": null  ,
-			"containerId": null  ,
-			"containerClass": null  ,
-			"classHTML": null  ,
-			"idHTML": null  ,
-			"columns": [
-				{
-					"eTitle": "title" ,
-					"responsive": {
-						"phone": true ,
-						"tablet": true ,
-						"desktop": true
-					} ,
-					"classHTML": null  ,
-					"idHTML": null  ,
-					"elementStyle": null  ,
-					"elementTag": null  ,
-					"renderSpan": true ,
-					"displayTitle": null  ,
-					"span": 12 ,
-					"id": "" ,
-					"mType": "col" ,
-					"offset": 0 ,
-					"rows": null  ,
-					"isTerminal": true
-				}
-			]
-		}
-	] ,
-	"site": "" ,
-	"text": "Masque par défaut" ,
-	"version": 1
+	"pageProperties" : { 
+	    "showInDiv" : true ,
+	    "divClass" : "container"
+	} , 
+	"rows" : [ 
+	    { 
+	        "height" :  null  ,
+	        "eTitle" : "titre" ,
+	        "elementStyle" : "" ,
+	        "elementTag" : "div" ,
+	        "displayRow" : true ,
+	        "displayRowFluid" : false ,
+	        "includeContainer" : false ,
+	        "includeContainerFluid" : false ,
+	        "mType" : "row" ,
+	        "displayAsTab" :  null  ,
+	        "responsive" : { 
+	            "phone" : true ,
+	            "tablet" : true ,
+	            "desktop" : true
+	        } , 
+	        "displayTitle" :  null  ,
+	        "containerId" :  null  ,
+	        "containerClass" :  null  ,
+	        "classHTML" :  null  ,
+	        "idHTML" :  null  ,
+	        "columns" : [ 
+	            { 
+	                "eTitle" : "titre" ,
+	                "responsive" : { 
+	                    "phone" : true ,
+	                    "tablet" : true ,
+	                    "desktop" : true
+	                } ,
+	                "classHTML" :  null  ,
+	                "idHTML" :  null  ,
+	                "elementStyle" : "" ,
+	                "elementTag" : "div" ,
+	                "renderSpan" : true ,
+	                "displayTitle" :  null  ,
+	                "span" : 12 ,
+	                "mType" : "col" ,
+	                "offset" : 0 ,
+	                "rows" :  null  ,
+	                "isTerminal" : true
+	            }
+	        ]
+	    } , 
+	    { 
+	        "height" :  null  ,
+	        "eTitle" : "titre" ,
+	        "elementStyle" : "" ,
+	        "elementTag" : "div" ,
+	        "displayRow" : true ,
+	        "displayRowFluid" : false ,
+	        "includeContainer" : false ,
+	        "includeContainerFluid" : false ,
+	        "mType" : "row" ,
+	        "displayAsTab" :  null  ,
+	        "responsive" : { 
+	            "phone" : true ,
+	            "tablet" : true ,
+	            "desktop" : true
+	        } , 
+	        "displayTitle" :  null  ,
+	        "containerId" :  null  ,
+	        "containerClass" :  null  ,
+	        "classHTML" :  null  ,
+	        "idHTML" :  null  ,
+	        "columns" : [
+	            {
+	                "eTitle" : "titre" ,
+	                "responsive" : { 
+	                    "phone" : true ,
+	                    "tablet" : true ,
+	                    "desktop" : true
+	                } , 
+	                "classHTML" :  null  ,
+	                "idHTML" :  null  ,
+	                "elementStyle" : "" ,
+	                "elementTag" : "div" ,
+	                "renderSpan" : true ,
+	                "displayTitle" :  null  ,
+	                "span" : 12 ,
+	                "mType" : "col" ,
+	                "offset" : 0 ,
+	                "rows" :  null  ,
+	                "isTerminal" : true
+	            }
+	        ]
+	    }
+	]
 }
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
+	 		            
