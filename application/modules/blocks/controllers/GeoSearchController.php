@@ -174,7 +174,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
             }
             unset($item['position_location']);
             $tmpResults[$subkey]['count']++;
-            $tmpResults[$subkey]['title']=$tmpResults[$subkey]['count'].' offres';
+            $tmpResults[$subkey]['title']=$tmpResults[$subkey]['count'];
             $tmpResults[$subkey]['id'].=$item['id'];
             $tmpResults[$subkey]['idArray'][]=$item['id'];
         }

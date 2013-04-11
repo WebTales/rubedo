@@ -29,7 +29,7 @@
 		<div style="clear:both;"></div>
 	</div>
 </div>
-{% if activateDisqus %}
+{% if activateDisqus and disqusKey %}
 {{ include('root/blocks/disqus/disqus.html.twig') }}
 {% endif %}
 {% endblock %}
