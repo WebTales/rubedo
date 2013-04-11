@@ -690,7 +690,7 @@ abstract class AbstractCollection implements IAbstractCollection
                                         // they can have children (leaf===false)
                                         // do another read child.
             $returnArray[] = $value;
-            if ($value['leaf'] === false && $limit > 0) {
+            if ((!isset($value['leaf']) || $value['leaf'] === false) && $limit > 0) {
                 $returnArray = array_merge($returnArray, 
                         $this->readChild($value['id'], $filters, $sort, 
                                 $limit - 1));

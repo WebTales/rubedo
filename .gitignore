@@ -13,3 +13,4 @@ library/HTMLPurifier
 /vendor
 /composer.lock
 public/templates/fps-tower-theme
+public/templates/citroen

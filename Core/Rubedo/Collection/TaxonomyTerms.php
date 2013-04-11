@@ -153,7 +153,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         }
     }
     
-    /*
+    
+
+	/*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::readChild()
      */
     public function readChild ($parentId, $filters = null, $sort = null)
@@ -168,7 +170,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 }
             }
         }
-        
+        $parentItem = $this->findById($parentId);
+        if($parentItem['vocabularyId']=='navigation'){
+            $navigation = true;
+        }
         if ($navigation) {
             if ($parentId == 'root') {
                 $returnArray = array();
@@ -185,7 +190,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 
                 return array_values($returnArray);
             } else {
-                
                 $rootPage = Manager::getService('Pages')->findById($parentId);
                 
                 if ($rootPage) {
@@ -203,6 +207,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 
                 $returnArray = array();
                 $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
+               
                 
                 foreach ($childrenArray as $page) {
                     $returnArray[] = $this->_pageToTerm($page);
