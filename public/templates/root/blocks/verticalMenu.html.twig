@@ -18,7 +18,7 @@
             {% endif %}
             {% for page in pages %}
             	<li id="menu-item-{{page.id}}"
-            		class="{% if page.id in rootline %}active{% endif %} {% if page.pages %}dropdown{% endif %}">
+            		class="{% if page.id in rootline %}active{% endif %}">
             		<a href="{{page.url}}">{{page.title}}</a> 
             	</li> 
             {% endfor %}

@@ -227,7 +227,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getAvailableThemes ()
     {
         $templateDirIterator = new \DirectoryIterator($this->getTemplateDir());
-        if(!$templateDirIterator){
+        if(!isset($templateDirIterator)){
             throw new \Rubedo\Exceptions\Server('cannnot instanciate iterator for template dir');
         }
         

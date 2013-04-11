@@ -36,21 +36,27 @@ class Blocks_NavBarController extends Blocks_AbstractController
         //Zend_Debug::dump($this->getAllParams());die();
         
         $blockConfig = $this->getParam('block-config', array());
+        if(isset($blockConfig['menuLevel'])){
+            $startLevel = $blockConfig['menuLevel'];
+        }else{
+            $startLevel = 1;
+        }
+        
         
         if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
         	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
 	        if(isset($blockConfig['style']) && $blockConfig['style']=='Vertical'){
-	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/menu.html.twig");
+	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/verticalMenu.html.twig");
 	        }else{
 	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
 	        }
         }
 
         if (isset($blockConfig['rootPage'])) {
-            $rootPage = $blockConfig['rootPage'];
+            $this->rootPage = $blockConfig['rootPage'];
         } else {
-            $rootPage = $this->getParam('rootPage');
+            $this->rootPage = $this->getParam('rootPage');
         }
         
         if (isset($blockConfig['useSearchEngine'])) {
@@ -86,17 +92,23 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $lang = $session->get('lang', 'fr');
         
         $output['currentPage'] = $this->getRequest()->getParam('currentPage');
-        $output['rootPage'] = $rootPage;
-        $output['rootline'] = $this->getRequest()->getParam('rootline', array());
+        $this->currentPage = $output['currentPage'];
+         
+        
+        $output['rootPage'] = $this->rootPage;
+        $output['rootline'] = $this->rootline = $this->getRequest()->getParam('rootline', array());
         $output['useSearchEngine'] = $useSearchEngine;
         $output['searchPage'] = $searchPage;
         $output['pages'] = array();
         $output['logo']= isset($blockConfig['logo'])?$blockConfig['logo']:null;
         $output['displayRootPage'] = $displayRootPage;
         
-        $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
+        $this->excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
         
-        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],array($excludeFromMenuCondition));
+        $this->pageService = Manager::getService('Pages');
+        
+        $levelOnePages = $this->_getPagesByLevel($output['rootPage'],$startLevel);
+                
         foreach ($levelOnePages as $page) {
             $tempArray = array();
             $tempArray['url'] = $this->_helper->url->url(array(
@@ -104,7 +116,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
             ), null, true);
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
-            $levelTwoPages = Manager::getService('Pages')->readChild($page['id'],array($excludeFromMenuCondition));
+            $levelTwoPages = $this->pageService->readChild($page['id'],array($this->excludeFromMenuCondition));
             if (count($levelTwoPages)) {
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {
@@ -127,5 +139,18 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
+    }
+    
+    protected function _getPagesByLevel($rootPage,$targetLevel,$currentLevel=1){
+        $pages = $this->pageService->readChild($rootPage,array($this->excludeFromMenuCondition));
+        if($currentLevel===$targetLevel){
+            return $pages;
+        }
+        foreach ($pages as $page){
+            if(in_array($page['id'],$this->rootline)){
+                return $this->_getPagesByLevel($page['id'], $targetLevel,$currentLevel+1);
+            }
+        }
+        return array();
     }
 }
