@@ -132,6 +132,10 @@ class Blocks_Model_Contact extends Zend_Form
     	
     		}
     	}
-    	$this->removeDecorator('HtmlTag');
+    	$this->setDecorators(array(
+            'FormElements',
+            'HtmlTag',
+            'Form',
+        ));
     }
 }

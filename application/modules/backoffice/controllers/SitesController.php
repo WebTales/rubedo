@@ -71,33 +71,65 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
        	
 		if($site['success']===true)
 		{
-			$firstColumnId=(string) new MongoId();
-			$secondColumnId=(string) new MongoId();
-			
 			//Make the mask skeleton
 			$jsonMask=realpath(APPLICATION_PATH."/../data/default/site/mask.json");
 			$maskObj=(Zend_Json::decode(file_get_contents($jsonMask),true));
 			$maskObj['site']=$site['data']['id'];
-			$maskObj['rows'][0]['id']=(string) new MongoId();
-			$maskObj['rows'][1]['id']=(string) new MongoId();
-			$maskObj['rows'][0]['columns'][0]['id']=$firstColumnId;
-			$maskObj['rows'][1]['columns'][0]['id']=$secondColumnId;
-			$maskObj['mainColumnId']=$secondColumnId;
-			$maskObj['blocks'][0]['id']=(string) new MongoId();
-			$maskObj['blocks'][0]['parentCol']=$firstColumnId;
 			
 			//Home mask
 			$homeMask = $maskObj;
+			
+			$homeFirstColumnId=(string) new MongoId();
+			$homeSecondColumnId=(string) new MongoId();
+			
+			$homeMask['rows'][0]['id']=(string) new MongoId();
+			$homeMask['rows'][1]['id']=(string) new MongoId();
+			$homeMask['rows'][0]['columns'][0]['id']=$homeFirstColumnId;
+			$homeMask['rows'][1]['columns'][0]['id']=$homeSecondColumnId;
+			
+			$homeMask['mainColumnId']=$homeSecondColumnId;
+			
+			$homeMask['blocks'][0]['id']=(string) new MongoId();
+			$homeMask['blocks'][0]['parentCol']=$homeFirstColumnId;
+			
 			$homeMask['text'] = "Masque de la page d'accueil";
 			$homeMaskCreation=Rubedo\Services\Manager::getService('Masks')->create($homeMask);
 			
 			//Detail mask
 			$detailMask = $maskObj;
+			
+			$detailFirstColumnId=(string) new MongoId();
+			$detailSecondColumnId=(string) new MongoId();
+				
+			$detailMask['rows'][0]['id']=(string) new MongoId();
+			$detailMask['rows'][1]['id']=(string) new MongoId();
+			$detailMask['rows'][0]['columns'][0]['id']=$detailFirstColumnId;
+			$detailMask['rows'][1]['columns'][0]['id']=$detailSecondColumnId;
+				
+			$detailMask['mainColumnId']=$detailSecondColumnId;
+				
+			$detailMask['blocks'][0]['id']=(string) new MongoId();
+			$detailMask['blocks'][0]['parentCol']=$detailFirstColumnId;
+			
 			$detailMask['text'] = "Masque de la page détail";
 			$detailMaskCreation=Rubedo\Services\Manager::getService('Masks')->create($detailMask);
 			
 			//Search mask
 			$searchMask = $maskObj;
+			
+			$searchFirstColumnId=(string) new MongoId();
+			$searchSecondColumnId=(string) new MongoId();
+			
+			$searchMask['rows'][0]['id']=(string) new MongoId();
+			$searchMask['rows'][1]['id']=(string) new MongoId();
+			$searchMask['rows'][0]['columns'][0]['id']=$searchFirstColumnId;
+			$searchMask['rows'][1]['columns'][0]['id']=$searchSecondColumnId;
+			
+			$searchMask['mainColumnId']=$searchSecondColumnId;
+			
+			$searchMask['blocks'][0]['id']=(string) new MongoId();
+			$searchMask['blocks'][0]['parentCol']=$searchFirstColumnId;
+			
 			$searchMask['text'] = "Masque de la page de recherche";
 			$searchMaskCreation=Rubedo\Services\Manager::getService('Masks')->create($searchMask);
 			
@@ -116,7 +148,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$singlePageObj['site']=$site['data']['id'];
 				$singlePageObj['maskId']=$detailMaskCreation['data']['id'];
 				$singlePageObj['blocks'][0]['id']=(string) new MongoId();
-				$singlePageObj['blocks'][0]['parentCol']=$secondColumnId;
+				$singlePageObj['blocks'][0]['parentCol']=$detailSecondColumnId;
 				$page=Rubedo\Services\Manager::getService('Pages')->create($singlePageObj);
 				
 				/*Create Search Page*/
@@ -125,7 +157,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$searchPageObj['site']=$site['data']['id'];
 				$searchPageObj['maskId']=$searchMaskCreation['data']['id'];
 				$searchPageObj['blocks'][0]['id']=(string) new MongoId();
-				$searchPageObj['blocks'][0]['parentCol']=$secondColumnId;
+				$searchPageObj['blocks'][0]['parentCol']=$searchSecondColumnId;
 				$searchPage=Rubedo\Services\Manager::getService('Pages')->create($searchPageObj);
 				
 				if($page['success'] && $homePage['success'] && $searchPage['success'])
