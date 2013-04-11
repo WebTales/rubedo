@@ -84,7 +84,9 @@
       data-is-draft="{{ isDraft }}" 
       data-current-workspace="{{ currentWorkspace }}" 
       {% if disqusKey %}data-disqusKey="{{ disqusKey }}"{% endif %}
-      {% if googleMapsKey %}data-googleMapsKey="{{ googleMapsKey }}"{% endif %}>
+      {% if googleMapsKey %}data-googleMapsKey="{{ googleMapsKey }}"{% endif %}
+      data-site-id="{{ siteID }}"
+      >
 {% endblock %}
 	
 	{% block pageContentToolBar %} 
