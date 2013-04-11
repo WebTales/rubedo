@@ -63,7 +63,11 @@
     {% endblock %}
 </head>
 {% block body %}
-<body data-current-page="{{ currentPage }}" data-is-draft="{{ isDraft }}" data-current-workspace="{{ currentWorkspace }}">
+<body data-current-page="{{ currentPage }}" 
+      data-is-draft="{{ isDraft }}" 
+      data-current-workspace="{{ currentWorkspace }}" 
+      {% if disqusKey %}data-disqusKey="{{ disqusKey }}"{% endif %}
+      {% if googleMapsKey %}data-googleMapsKey="{{ googleMapsKey }}"{% endif %}>
 {% endblock %}
 	
 	{% block pageContentToolBar %} 
