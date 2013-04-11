@@ -73,6 +73,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $templateName .= ".html.twig";
             $output = $this->getAllParams();
             $output["data"] = $data;
+            $output['activateDisqus']=$type['activateDisqus'];
             $output["type"] = $cTypeArray;
             
             if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
