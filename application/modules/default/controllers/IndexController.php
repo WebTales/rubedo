@@ -233,7 +233,7 @@ class IndexController extends Zend_Controller_Action
         if (is_array($keywords)) {
             $twigVar['keywords'] = implode(',', $keywords);
         }
-
+        
         if(isset($this->_site['googleAnalyticsKey'])){
             $twigVar['googleAnalyticsKey']=$this->_site['googleAnalyticsKey'];
         }
@@ -241,6 +241,11 @@ class IndexController extends Zend_Controller_Action
         if(isset($this->_site['googleMapsKey'])){
             $twigVar['googleMapsKey']=$this->_site['googleMapsKey'];
         }
+        
+        if(isset($this->_site['disqusKey'])){
+            $twigVar['disqusKey']=$this->_site['disqusKey'];
+        }
+        
         
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
