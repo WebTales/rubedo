@@ -1,13 +1,14 @@
 {
-	"site": "",
-	"title": "Accueil",
-	"orderValue":100,
-	"maskId": "",
-	"parentId": "root",
-	"description": "",
-	"keywords": [],
-	"orderValue": 200,
-	"excludeFromMenu": false,
-	"expandable": false,
-	"blocks": []
+  "blocks": [],
+  "description": "",
+  "excludeFromMenu": false,
+  "expandable": false,
+  "inheritWorkspace": true,
+  "keywords": "",
+  "orderValue": 100,
+  "pageURL": "accueil",
+  "parentId": "root",
+  "text": "Accueil",
+  "title": "Accueil",
+  "workspace": "global"
 }
