@@ -40,19 +40,34 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
 
     public function analyseAction ()
     {
-        
-        $returnArray = array();
-        $returnArray['detectedFields']=array();
-        $returnArray['detectedFieldsCount']=4;
-        $returnArray['detectedContentsCount']=200;
-        $csvColumns=array("test","test2","test3","test4");
-        foreach ($csvColumns as $column){
-        	$intermed=array();
-        	$intermed['name']=$column;
-        	$returnArray['detectedFields'][]=$intermed;
-        }
-        $returnArray['success']=true;
-        $returnArray['message']="OK";
+    	$adapter = new Zend_File_Transfer_Adapter_Http();
+    	
+    	if (! $adapter->receive("csvFile")) {
+    		$returnArray['success']=false;
+        	$returnArray['message']="Pas de fichier reçu.";
+    	} else {
+    		$filesArray = $adapter->getFileInfo();    		
+    		$fileInfos = $filesArray["csvFile"];
+    		if (($fileInfos['type']!="text/plain")&&($fileInfos['type']!="text/csv")){
+    			$returnArray['success']=false;
+    			$returnArray['message']="Le fichier doit doit être au format CSV.";
+    		} else {
+    			$recievedFile=fopen($fileInfos['tmp_name'],'r');
+    			$csvColumns=fgetcsv($recievedFile,10000,';','"','\\');   			
+    			fclose($recievedFile);
+		        $returnArray = array();	
+		        $returnArray['detectedFields']=array();		
+		        $returnArray['detectedFieldsCount']=count($csvColumns);
+		        $returnArray['detectedContentsCount']=200;		        
+		        foreach ($csvColumns as $column){
+		        	$intermed=array();
+		        	$intermed['name']=$column;
+		        	$returnArray['detectedFields'][]=$intermed;
+		        }
+		        $returnArray['success']=true;
+		        $returnArray['message']="OK";
+    		}
+    	}
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $returnValue = Zend_Json::encode($returnArray);
