@@ -67,7 +67,8 @@ class Blocks_SiteMapController extends Blocks_AbstractController
         }
         
         $css = array();
-        $js = array();
+        $js = array('/templates/'.Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/tree.js"));
+        
         $this->_sendResponse($output, $template, $css, $js);
     }
     
