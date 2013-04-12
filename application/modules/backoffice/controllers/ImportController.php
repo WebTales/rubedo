@@ -43,6 +43,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         
         $returnArray = array();
         $returnArray['detectedFields']=array();
+        $returnArray['detectedFieldsCount']=4;
+        $returnArray['detectedContentsCount']=200;
         $csvColumns=array("test","test2","test3","test4");
         foreach ($csvColumns as $column){
         	$intermed=array();
@@ -58,6 +60,21 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
             $returnValue = Zend_Json::prettyPrint($returnValue);
         }
         $this->getResponse()->setBody($returnValue);
+    }
+    
+    public function importAction ()
+    {
+    	$returnArray = array();
+    	$returnArray['importedContentsCount']=200;
+    	$returnArray['success']=true;
+    	$returnArray['message']="OK";
+    	$this->getHelper('Layout')->disableLayout();
+    	$this->getHelper('ViewRenderer')->setNoRender();
+    	$returnValue = Zend_Json::encode($returnArray);
+    	if ($this->_prettyJson) {
+    		$returnValue = Zend_Json::prettyPrint($returnValue);
+    	}
+    	$this->getResponse()->setBody($returnValue);
     }
 
     
