@@ -3,16 +3,16 @@
 {% set displayBoth =  display.showList and display.showCal %}
 
 {% if displayBoth %}
-<div class='row'>
+<div class='row-fluid'>
 {% endif %}
     {% if display.showCal %}
-    <div id='calendar-{{ prefix }}' class='{% if display.showList %}span4{% endif %}'>
+    <div id='calendar-{{ prefix }}' class='{% if display.showList %}span3{% endif %}'>
         {% include 'root/blocks/calendar/table.html.twig' %}
     </div>
     {% endif %}
     
     {% if display.showList %}
-    <div id='calendar-items-{{ prefix }}' class=" span8">
+    <div id='calendar-items-{{ prefix }}' class=" span9">
         {% include 'root/blocks/calendar/list.html.twig' %}
     </div>
     {% endif %}
