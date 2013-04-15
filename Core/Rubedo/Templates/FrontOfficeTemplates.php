@@ -56,6 +56,13 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * @var string
      */
     protected static $_currentTheme = null;
+    
+    /**
+     * had main theme been set ?
+     * 
+     * @var boolean
+     */
+    protected static $_themeHasBeenSet = false;
 
     /**
      * Constructor
@@ -188,7 +195,13 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function setCurrentTheme ($theme)
     {
         self::$_currentTheme = $theme;
+        self::$_themeHasBeenSet = true;
     }
+    
+    public function themeHadBeenSet(){
+        return self::$_themeHasBeenSet;
+    }
+    
 
     /**
      * Call the Html Cleaner Service

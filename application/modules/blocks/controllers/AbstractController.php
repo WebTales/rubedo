@@ -29,6 +29,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     
     public function init ()
     {
+        $templateService = Manager::getService('FrontOfficeTemplates');
         Rubedo\Collection\Contents::setIsFrontEnd(true);
         
         //handle preview for ajax request, only if user is a backoffice user
@@ -41,6 +42,8 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     
         //get current page property
         $this->currentPage = $this->getParam('current-page');
+        
+      
        
     
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
@@ -49,6 +52,13 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         } else{
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
+        
+        if(!$templateService->themeHadBeenSet()){
+            $currentSite = Manager::getService('Sites')->findById($currentPage['site']);
+            $theme = $currentSite['theme'];
+            $templateService->setCurrentTheme($theme);
+        }
+        
         //set current workspace
         $this->_workspace = $currentPage['workspace'];
     
