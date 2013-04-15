@@ -40,6 +40,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
 
     public function analyseAction ()
     {
+    	$separator = $this->getParam('separator', ";");
     	$adapter = new Zend_File_Transfer_Adapter_Http();
     	
     	if (! $adapter->receive("csvFile")) {
@@ -53,7 +54,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     			$returnArray['message']="Le fichier doit doit être au format CSV.";
     		} else {
     			$recievedFile=fopen($fileInfos['tmp_name'],'r');
-    			$csvColumns=fgetcsv($recievedFile,10000,';','"','\\');   
+    			$csvColumns=fgetcsv($recievedFile,10000, $separator,'"','\\');   
     			$lineCounter=0;		
     			while (fgets($recievedFile) !== false) $lineCounter++;
     			fclose($recievedFile);
