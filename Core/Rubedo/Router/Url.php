@@ -263,11 +263,10 @@ class Url implements IUrl
         
         $content = Manager::getService('Contents')->findById($contentId);
         if (\Zend_Registry::getInstance()->offsetExists('draft')) {
-            $ws = \Zend_Registry::get('draft');
+            $ws = \Zend_Registry::get('draft')?'draft':'live';
         } else {
             $ws = 'live';
         }
-        
         if (isset($content[$ws]['taxonomy']['navigation'])) {
             foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
                 $page = Manager::getService('Pages')->findById($pageId);
@@ -332,8 +331,8 @@ class Url implements IUrl
         }
         
         $content = Manager::getService('Contents')->findById($contentId);
-        if (\Zend_Registry::get('draft', false)) {
-            $ws = 'draft';
+        if (\Zend_Registry::getInstance()->offsetExists('draft')) {
+            $ws = \Zend_Registry::get('draft')?'draft':'live';
         } else {
             $ws = 'live';
         }
