@@ -80,7 +80,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         if ($nbItems > 0) {
             foreach ($contentArray['data'] as $vignette) {
                 $fields = $vignette['fields'];
-                $terms = array_pop($vignette['taxonomy']);
+                $terms = isset($vignette['taxonomy']) && count($vignette['taxonomy'])>0 ? array_pop($vignette['taxonomy']) : array();
                 $termsArray = array();
                 foreach ($terms as $term) {
                     if ($term == 'navigation') {
@@ -108,7 +108,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         }
               
         $css = array();
-        $js = array();
+        $js = array('/templates/'.Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js"));
         $this->_sendResponse($output, $template, $css, $js);
     }
 

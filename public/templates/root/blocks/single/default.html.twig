@@ -35,7 +35,7 @@
       		{%endif%}
     {% endfor %}
 </div>
-{% if activateDisqus %}
+{% if activateDisqus and disqusKey %}
 {{ include('root/blocks/disqus/disqus.html.twig') }}
 {% endif %}
 {% endblock %}
