@@ -59,28 +59,4 @@ class TinyController extends Zend_Controller_Action
             $this->_forward($action, $controller, $module, $params);
         }
     }
-
-    //for debug purpose only
-    function xhrGenerateAction ()
-    {
-        $params = $this->getAllParams();
-        unset($params['controller']);
-        unset($params['action']);
-        unset($params['module']);
-        unset($params['target-controller']);
-        unset($params['target-action']);
-        unset($params['target-module']);
-        
-        $controller = $this->getParam('target-controller', 'index');
-        $action = $this->getParam('target-action', 'index');
-        $module = $this->getParam('target-module', 'default');
-        
-        $generatedKey = $this->tinyUrlService->createFromParameters($action, 
-                $controller, $module, $params);
-        
-        $returnArray = array(
-                'key' => $generatedKey
-        );
-        return $this->_helper->json($returnArray);
-    }
 }
