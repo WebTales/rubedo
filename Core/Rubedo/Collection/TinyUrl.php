@@ -27,6 +27,10 @@ use Rubedo\Interfaces\Collection\ITinyUrl;
 class TinyUrl extends AbstractCollection implements ITinyUrl
 {
 
+    protected $_indexes = array(
+            array('keys'=>array('expire'=>1),'options'=>array('expireAfterSeconds'=> 172800)),
+    );
+    
     public function __construct ()
     {
         $this->_collectionName = 'TinyUrl';
@@ -61,6 +65,9 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
         if ($expire || ! $tinyUrlObj) {
             $obj = array();
             $obj['url'] = $url;
+            if($expire){
+                $obj['expire'] = new \MongoDate();
+            }
             $result = $this->create($obj);
             $tinyUrlObj = $result['data'];
         }
@@ -86,7 +93,7 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
     }
 
     public function createFromParameters ($action, $controller, $module, 
-            $params = array(), $email = false, $expire = false)
+            $params = array(), $email = false, $expire = true)
     {
         $tinyUrlObj = $this->findByParameters($action, $controller, $module, 
                 $params, $email);
@@ -96,10 +103,22 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
             $obj['controller'] = $controller;
             $obj['action'] = $action;
             $obj['module'] = $module;
-            $result = $this->tinyUrlService->create($obj);
+            if($expire){
+                $obj['expire'] = new \MongoDate();
+            }
+            $result = $this->create($obj);
             $tinyUrlObj = $result['data'];
         }
         $generatedKey = $tinyUrlObj['id'];
         return $generatedKey;
+    }
+    
+    public function creamDamAccessLink($damId,$email){
+        $action = 'index';
+        $controller ="dam";
+        $module ="default";
+        $params = array('media-id'=>$damId,'attachment'=>"download");
+        $this->createFromParameters ($action, $controller, $module, 
+            $params, $email, true);
     }
 }

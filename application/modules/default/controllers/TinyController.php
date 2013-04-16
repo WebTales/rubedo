@@ -38,7 +38,6 @@ class TinyController extends Zend_Controller_Action
 
     function indexAction ()
     {
-        
         $tinyKey = $this->getParam('tk');
         if (! $tinyKey) {
             throw new \Rubedo\Exceptions\User('Aucune URL courte fournie');
@@ -56,31 +55,28 @@ class TinyController extends Zend_Controller_Action
             $action = $tinyUrlObj['action'];
             $module = $tinyUrlObj['module'];
             $params = $tinyUrlObj['params'];
-            $params['tk']=false;
-            $this->_forward($action,$controller,$module,$params);
+            $params['tk'] = false;
+            $this->_forward($action, $controller, $module, $params);
         }
     }
 
+    //for debug purpose only
     function xhrGenerateAction ()
     {
-        $url = $this->getParam('url', null);
-        if ($url) {
-            $generatedKey =  $this->tinyUrlService->createUrlAlias($url);
-        } else {
-            $params = $this->getAllParams();
-            unset($params['controller']);
-            unset($params['action']);
-            unset($params['module']);
-            unset($params['target-controller']);
-            unset($params['target-action']);
-            unset($params['target-module']);
-            
-            $controller = $this->getParam('target-controller', 'index');
-            $action = $this->getParam('target-action', 'index');
-            $module = $this->getParam('target-module', 'default');
-
-            $generatedKey = $this->tinyUrlService->createFromParameters($action,$controller,$module,$params);
-        }
+        $params = $this->getAllParams();
+        unset($params['controller']);
+        unset($params['action']);
+        unset($params['module']);
+        unset($params['target-controller']);
+        unset($params['target-action']);
+        unset($params['target-module']);
+        
+        $controller = $this->getParam('target-controller', 'index');
+        $action = $this->getParam('target-action', 'index');
+        $module = $this->getParam('target-module', 'default');
+        
+        $generatedKey = $this->tinyUrlService->createFromParameters($action, 
+                $controller, $module, $params);
         
         $returnArray = array(
                 'key' => $generatedKey
