@@ -23,6 +23,9 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 		});
 
 		request.done(function(data) {
+			if((data.columnsNb).length > 0) {
+				{% set columnsNb = data.columnsNb %}
+			}
 			var newHtml = data.html;
 			jQuery('#list-' + prefix).append(newHtml);
 			var pagerHtml = data.pager;
