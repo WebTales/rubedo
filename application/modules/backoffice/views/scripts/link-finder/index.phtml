@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<!-- Auto Generated with Sencha Architect -->
+<!-- Modifications to this file will be overwritten. -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Rubedo</title>
+
+<link rel="stylesheet"
+	href="<?php echo $this->extJsPath;?>/resources/css/ext-all-gray.css"
+	id="ext_theme">
+<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/css/red_theme.css" id="maintheme">
+
+
+<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/boxselect/BoxSelect.css">
+<link rel="stylesheet"
+	href="<?php echo $this->baseUrl();?>/backoffice/resources/ratingField/Ext.ux.widget.Rating.css"
+	id="ratingFieldCSS">
+
+<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/css/data-view.css"
+	id="dataViewUX">
+
+<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/css/uxs.css">
+
+<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/ux/container/ButtonSegment.css">
+<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/ux/grid/feature/Tileview.css">
+<link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->baseUrl();?>/backoffice/resources/icones/faviconRubedo.ico"/>
+</head>
+<body
+	style="background-image: url('<?php echo $this->baseUrl();?>/backoffice/resources/images/logo.png'); 
+	background-position: 50% 100px; background-repeat: no-repeat no-repeat;"
+	class="x-body x-webkit x-chrome x-mac x-reset"
+	>
+	
+	
+	<style id="loading-bar-style">
+       
+		/*---------------------------*/			
+        
+        .progress-bar-rubedo {
+            background-color: #1a1a1a;
+            height: 25px !important;
+            padding: 5px;
+            width: 350px;
+            margin: 20px 0 20px -175px;			
+            -moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			border-radius: 5px;
+            -moz-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+			-webkit-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+			box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444; 
+        	position: absolute;
+        	top: 500px;
+        	left:50%;
+        	z-index: -5000;
+        	          
+        }
+        
+        .progress-bar-rubedo span {
+            display: inline-block;
+            height: 100% !important;
+			background-color: #777;
+            -moz-border-radius: 3px;
+			-webkit-border-radius: 3px;
+			border-radius: 3px;
+            -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+			-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+			box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+			-webkit-transition: width .4s ease-in-out;
+			-moz-transition: width .4s ease-in-out;
+			-ms-transition: width .4s ease-in-out;
+			-o-transition: width .4s ease-in-out;
+			transition: width .4s ease-in-out;		
+        }
+		
+		/*---------------------------*/			
+		
+        .red-rubedo span {
+            background-color: #D90F27;   
+        }
+
+	
+		
+		/*---------------------------*/		
+		
+		.stripes-rubedo span {
+            -webkit-background-size: 30px 30px;
+            -moz-background-size: 30px 30px;
+            background-size: 30px 30px;			
+			background-image: -webkit-gradient(linear, left top, right bottom,
+								color-stop(.25, rgba(255, 255, 255, .15)), color-stop(.25, transparent),
+								color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .15)),
+								color-stop(.75, rgba(255, 255, 255, .15)), color-stop(.75, transparent),
+								to(transparent));
+            background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                                transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                                transparent 75%, transparent);
+            background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                                transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                                transparent 75%, transparent);
+            background-image: -ms-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                                transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                                transparent 75%, transparent);
+            background-image: -o-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                                transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                                transparent 75%, transparent);
+            background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                                transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                                transparent 75%, transparent);            
+            
+            -webkit-animation: animate-stripes 1s linear infinite;
+            -moz-animation: animate-stripes 1s linear infinite;       		
+		}
+        
+        @-webkit-keyframes animate-stripes { 
+			0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+        }
+        
+        
+        @-moz-keyframes animate-stripes {
+			0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+        }
+    </style>
+	<div id="loading-bar" class="progress-bar-rubedo red-rubedo stripes-rubedo">
+        <span style="width: 100%"></span>
+    </div>
+	
+    <script
+		src="<?php echo $this->extJsPath;?>/<?php echo $this->extJsScript;?>"></script>
+	<script
+		src="<?php echo $this->extJsPath;?>/locale/ext-lang-fr.js"
+		id="locale"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/boxselect/BoxSelect.js"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/ratingField/Ext.ux.widget.Rating.js"
+		id="ratingFieldJS"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/ColorField.js" id="Ext.ux.ColorFieldJS"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/FilterBar.js"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/ClearButton.js"></script>
+	<script src="/components/webtales/ckeditor/ckeditor.js"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/plupload/js/plupload.js"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/plupload/js/plupload.html4.js"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/plupload/js/plupload.html5.js"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/plupload/js/plupload.flash.js"></script>
+	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/plupload/js/plupload.silverlight.js"></script>
+	<script type="text/javascript" src="resources/linkfinder/app.js?_dc=1361290173305"></script>
+</body>
+</html>
