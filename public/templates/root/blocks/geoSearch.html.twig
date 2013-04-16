@@ -2,16 +2,23 @@
 {% block mainContent %}
 
 <br />
-
+{% if blockConfig.activateSearch %}
 <div id="activeFacetBox">
 </div>
+{% endif %}
 
 <div class="row-fluid">
+	{% if blockConfig.activateSearch %}
 	<div class="span3 well well-large" id="facetBox">
 	</div>
 	<div class="span9">
 		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
 	</div>
+	{% else %}
+	<div class="span12">
+		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+	</div>
+	{% endif %}
 </div>
 <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key={{ googleMapsKey }}&sensor=true">
@@ -59,6 +66,7 @@
       var centerAddress = "{{blockConfig.centerAddress}}";
       var centerLatitude = "{{blockConfig.centerLatitude}}";
       var centerLongitude = "{{blockConfig.centerLongitude}}";
+      var activateSearch = {% if blockConfig.activateSearch %}true{% else %}false{% endif %};
       var predefinedFacets = {% if blockConfig.predefinedFacets%}"{{blockConfig.predefinedFacets| e('js')}}"{% else %}"{ }"{% endif %} ;
       var pagesize = {{blockConfig.pageSize}};
 	  if (useLocation&&navigator.geolocation) {
@@ -151,9 +159,10 @@
 
             		 } 
         			 //implement multi term here
-    			}
+    			} if (activateSearch) {
         		jQuery("#facetBox").replaceWith(data.facetsHtml);
         		jQuery("#activeFacetBox").replaceWith(data.activeFacetsHtml);
+    			}
         		var rezArray=data.data;
     			for(var i= 0; i < rezArray.length; i++)
     			{
@@ -230,7 +239,7 @@
 				  	count:count,
 				  	entityId:entityId,
 				  	idArray:idArray
-				});
+			  });
 			  usedMarkers.push(marker);
 		      markerCluster.addMarker(marker,true);
 				
