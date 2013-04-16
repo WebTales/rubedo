@@ -85,4 +85,29 @@ class XhrEditController extends Zend_Controller_Action
         
         return $this->_helper->json($returnArray);
     }
+    
+    public function saveImageAction() {
+        $contentId = $this->getParam("contentId", null);
+        $newImageId = $this->getParam("newImageId", null);
+        
+        if($contentId === null || $newImageId === null){
+            throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné et l'identifiant de la nouvelle image");
+        }
+        
+        $content = $this->_dataService->findById($contentId);
+        
+        if(!$content) {
+            throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
+        }
+        
+        $content['fields']['image'] = $newImageId;
+        
+        $updateResult = $this->_dataService->update($content);
+        
+        if($updateResult['success']){
+            return $this->_helper->json(array("success" => true));
+        } else {
+            return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
+        }
+    }
 }
