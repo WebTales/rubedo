@@ -1,4 +1,4 @@
-function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType,skip) {
+function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType,skip,columnsNb) {
 	if (jQuery('#list-' + prefix + ' > #list-' + prefix + '-' + page).length == 0) {
 		if (jQuery('body').attr('data-is-draft')){
 			var isDraft = true;
@@ -17,15 +17,13 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 				'displayType':displayType,
 				'is-draft':isDraft,
 				'skip':skip,
+				'columnsNb':columnsNb,
 				'current-page':jQuery('body').attr('data-current-page')
 			},
 			dataType : "json"
 		});
 
 		request.done(function(data) {
-			if((data.columnsNb).length > 0) {
-				{% set columnsNb = data.columnsNb %}
-			}
 			var newHtml = data.html;
 			jQuery('#list-' + prefix).append(newHtml);
 			var pagerHtml = data.pager;
