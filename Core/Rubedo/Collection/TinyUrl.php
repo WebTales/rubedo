@@ -58,7 +58,7 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
      * @param string $url            
      * @return string
      */
-    public function createUrlAlias ($url, $email = false, $expire = false)
+    public function createUrlAlias ($url, $expire = false)
     {
         $tinyUrlObj = $this->findByUrl($url);
         
@@ -76,8 +76,16 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
         return $generatedKey;
     }
 
-    public function findByParameters ($action, $controller, $module, $params, 
-            $email)
+    /**
+     * find a tinyUrl object base on MVC context
+     * 
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param array $params
+     * @return array
+     */
+    public function findByParameters ($action, $controller, $module, $params)
     {
         $cond = array();
         $cond['action'] = $action;
@@ -86,17 +94,23 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
         foreach ($params as $key => $value) {
             $cond['params.' . $key] = $value;
         }
-        if ($email) {
-            $cond['email'] = $email;
-        }
         return $this->_dataService->findOne($cond);
     }
 
+    /**
+     * create a tinyUrl object base on MVC context
+     *
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param array $params
+     * @return string
+     */
     public function createFromParameters ($action, $controller, $module, 
-            $params = array(), $email = false, $expire = true)
+            $params = array(), $expire = true)
     {
         $tinyUrlObj = $this->findByParameters($action, $controller, $module, 
-                $params, $email);
+                $params);
         if ($expire || ! $tinyUrlObj) {
             $obj = array();
             $obj['params'] = $params;
@@ -113,12 +127,18 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
         return $generatedKey;
     }
     
-    public function creamDamAccessLink($damId,$email){
+    /**
+     * Create an access link to download a document
+     * 
+     * @param string $damId
+     * @return string
+     */
+    public function creamDamAccessLinkKey($damId){
         $action = 'index';
         $controller ="dam";
         $module ="default";
         $params = array('media-id'=>$damId,'attachment'=>"download");
-        $this->createFromParameters ($action, $controller, $module, 
-            $params, $email, true);
+        return $this->createFromParameters ($action, $controller, $module, 
+            $params, true);
     }
 }
