@@ -1,7 +1,7 @@
 <div id="{{prefix}}-page{{currentPage}}" class="active-items">
 	{% for item in items %}
 	<a href="#" data-gallery="gallery" onclick="callModal('/dam?media-id={{item.image}}', '{{item.title}}')">
-		<img class="" src="/dam?media-id={{item.image}}{%if image.width%}&amp;width={{ image.width }}{%endif%}{%if image.height%}&amp;height={{ image.height }}{%endif%}&amp;mode=crop" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" heigth="184" alt="{{item.title}}" title="{{item.title}}">
+		<img class="" src="/dam?media-id={{item.image}}{%if image.width%}&amp;width={{ image.width }}{%endif%}{%if image.height%}&amp;height={{ image.height }}{%endif%}&amp;mode=crop" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" alt="{{item.title}}" title="{{item.title}}">
 	</a>
 	{% endfor %}
 
