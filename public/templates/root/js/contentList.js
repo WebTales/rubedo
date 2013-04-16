@@ -23,7 +23,7 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 		});
 
 		request.done(function(data) {
-			if((data.columnsNb).lenght > 0) {
+			if((data.columnsNb).length > 0) {
 				{% set columnsNb = data.columnsNb %}
 			}
 			var newHtml = data.html;
