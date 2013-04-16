@@ -24,6 +24,8 @@
         "execute.controller.geo-search.xhr-search.blocks",
         "execute.controller.mailing-list.xhr-add-email.blocks",
         "execute.controller.geo-search.xhr-get-detail.blocks",
-        "execute.controller.google-maps.xhr-get-items.blocks"
+        "execute.controller.google-maps.xhr-get-items.blocks",
+        "execute.controller.tiny.index.default",
+        "execute.controller.tiny.xhr-generate.default"
  	]
 }

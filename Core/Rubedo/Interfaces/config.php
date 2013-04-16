@@ -70,6 +70,7 @@ class config
 		'Taxonomy'					=>	'Rubedo\\Interfaces\\Collection\\ITaxonomy',
 		'TaxonomyTerms'				=>	'Rubedo\\Interfaces\\Collection\\ITaxonomyTerms',
 		'Themes'					=>	'Rubedo\\Interfaces\\Collection\\IThemes',
+		'TinyUrl'					=>	'Rubedo\\Interfaces\\Collection\\ITinyUrl',
 		'Wallpapers'				=>	'Rubedo\\Interfaces\\Collection\\IWallpapers',
 		'NestedContents'			=>	'Rubedo\\Interfaces\\Collection\\INestedContents',
 		'Pages'						=>	'Rubedo\\Interfaces\\Collection\\IPages',

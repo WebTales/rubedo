@@ -105,6 +105,11 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
+        if($this->getParam('tk',null)){
+            $this->_forward('index','tiny');
+            return;
+        }
+        
         $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
         $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
         
