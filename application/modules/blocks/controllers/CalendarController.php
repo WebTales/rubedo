@@ -117,10 +117,12 @@ class Blocks_CalendarController extends Blocks_ContentListController
             		$contentArray["data"][] = $unorderedContentArray["data"][$value];
             	}
             } else {
-	            $contentArray = $this->getContentList($queryFilter, array(
-	                'limit' => 100,
-	                'currentPage' => 1
-	            ));
+                $contentArray = $this->getContentList($queryFilter, 
+                        array(
+                                'limit' => 100,
+                                'currentPage' => 1,
+                                'skip' => 0
+                        ));
             }
             
             foreach ($contentArray['data'] as $vignette) {
