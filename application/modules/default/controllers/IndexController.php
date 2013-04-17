@@ -640,6 +640,11 @@ class IndexController extends Zend_Controller_Action
             case 'sitemap':
                     $controller = "site-map";
                     break;
+            case 'protectedResource':
+                $controller = "protected-resource";
+                break;
+                    
+            
             case 'Controleur Zend':
             case 'zendController':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
@@ -687,7 +692,6 @@ class IndexController extends Zend_Controller_Action
                 break;
                 
             default:
-                
                 $data = array();
                 $template = 'root/block.html';
                 return array(
