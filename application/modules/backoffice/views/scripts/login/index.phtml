@@ -117,7 +117,7 @@ Ext.define('Connector.view.Viewport', {
                                     myForm.submit({
                                         url:"<?php echo $this->baseUrl();?>/backoffice/xhr-authentication/login",
                                         success: function(form, action) {
-										window.location.href = 'index';
+										window.location.reload();
                                         },
                                         failure: function(form, action) {
                                             switch (action.failureType) {

@@ -34,10 +34,14 @@ class Backoffice_IndexController extends Zend_Controller_Action
     public function indexAction ()
     {
         $this->_auth = Manager::getService('Authentication');
+      
         
         if (! $this->_auth->getIdentity()) {
-            $this->_helper->redirector->gotoUrl(
-                    $this->_helper->url('index', 'login', 'backoffice'));
+        	$backofficeUrl =$this->_helper->url('index', 'login', 'backoffice');
+        	if($this->getParam('content')){
+        		$backofficeUrl .='?content='.$this->getParam('content');
+        	}
+            $this->_helper->redirector->gotoUrl($backofficeUrl);
         }
         
         if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
