@@ -643,6 +643,9 @@ class IndexController extends Zend_Controller_Action
             case 'protectedResource':
                 $controller = "protected-resource";
                 break;
+            case 'resource':
+                $controller = "resource";
+                break;
                     
             
             case 'Controleur Zend':
