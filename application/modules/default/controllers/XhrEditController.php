@@ -103,9 +103,7 @@ class XhrEditController extends Zend_Controller_Action
         
         $content['fields'][$contentField] = $newImageId;
         
-        $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
         $updateResult = $this->_dataService->update($content);
-        Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
         
         if($updateResult['success']){
             return $this->_helper->json(array("success" => true));
