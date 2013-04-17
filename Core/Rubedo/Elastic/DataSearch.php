@@ -51,10 +51,10 @@ class DataSearch extends DataAbstract implements IDataSearch
         if (! isset($this->damTypesService)) {
             $this->damTypesService = Manager::getService('DamTypes');
         }
-        if (! isset($this->damTypesArray['id'])) {
-            $this->damTypesArray['id'] = $this->damTypesService->findById($damTypeId);
+        if (! isset($this->damTypesArray[$damTypeId])) {
+            $this->damTypesArray[$damTypeId] = $this->damTypesService->findById($damTypeId);
         }
-        return $this->damTypesArray['id'];
+        return $this->damTypesArray[$damTypeId];
     }
 
     /**
