@@ -1,17 +1,28 @@
-{% extends "root/block.html.twig" %} 
-{% block mainContent %}
-
-<button type="submit" class="btn btn-primary" onClick="jQuery('#download-form-{{prefix}}').show();">Télécharger <span class="caret"></span></button>
+{% extends "root/block.html.twig" %} {% block mainContent %} {% if
+introduction %}
+<div id="introduction-{{prefix}}">{{ introduction | cleanHtml }}</div>
+{% endif %}
+<button type="submit" class="btn btn-primary"
+	onClick="toggleDownloadForm('{{ prefix }}')">
+	Télécharger <span class="caret"></span>
+</button>
 <div id="download-form-{{prefix}}" class="well hide">
-<form action="#">
-    <label class="control-label" for="email-{{prefix}}">Email</label>
-      <input type="text" name="email" id="email-{{prefix}}" placeholder="Email" />
-      <input type="hidden" name="mailList" id="mailingListId-{{prefix}}" value="{{mailingListId}}" />
-      <input type="hidden" name="dam-id" id="damId-{{prefix}}" value="{{damId}}" />
-      <button class="btn" onClick="submitEmail('{{prefix}}');return false;">Envoyer</button>
-</form>
-<div id="message-{{prefix}}"></div>
+	<form action="#">
+		<input type="hidden" name="mailList" id="mailingListId-{{prefix}}"
+			value="{{mailingListId}}" /> 
+		<input type="hidden" name="dam-id"
+			id="damId-{{prefix}}" value="{{damId}}" /> 
+		<label
+			class="control-label" for="email-{{prefix}}">Email</label>
+		<div class="input-append">
+			<input type="text" class="input-medium" name="email" id="email-{{prefix}}"
+				placeholder="Email" />
+
+			<button class="btn" onClick="submitEmail('{{prefix}}');return false;">Envoyer</button>
+		</div>
+	</form>
+	<div id="message-{{prefix}}"></div>
 </div>
-  
+
 {% endblock %}
 

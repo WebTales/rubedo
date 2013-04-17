@@ -26,3 +26,13 @@ function submitEmail(prefix) {
 	
 	return false;
 }
+
+function toggleDownloadForm(prefix){
+	var currentDiv = jQuery('#download-form-'+prefix);
+	if(currentDiv.hasClass('hide')){
+		jQuery('#download-form-'+prefix).removeClass('hide');
+	}else{
+		jQuery('#download-form-'+prefix).addClass('hide');
+	}
+	
+}

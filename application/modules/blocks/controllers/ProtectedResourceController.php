@@ -45,6 +45,11 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
        
         $blockConfig = $this->getParam('block-config', array());
         $output = $this->getAllParams();
+        
+        if(isset($blockConfig['introduction'])){
+            $output['introduction']= $blockConfig['introduction'];
+        }
+        
         $output['mailingListId']= $blockConfig['mailingListId'];
         $output['damId'] = $blockConfig['documentId'];
         
@@ -125,21 +130,23 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
     protected function _sendEmail($url){
         $twigVar = array('downloadUrl'=>$url);
         $twigVar['signature']='Le site '.Manager::getService('Sites')->getHost($this->siteId);
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/protected-resource/mail-body.html.twig");;
-        
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/protected-resource/mail-body.html.twig");
         $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
+        
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/protected-resource/mail-body.plain.twig");
+        $plainMailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
         
         $mailService = Manager::getService('Mailer');
         
-        $message = $mailService->getNewMessage();
+        $message = Manager::getService('MailingList')->getNewMessage($this->mailingListId);  
         
+        $message->setTo(array($this->email));        
         $message->setSubject('['.Manager::getService('Sites')->getHost($this->siteId).'] Téléchargement du votre fichier');
-        $message->setReplyTo(array('jbourdin@gmail.com' => 'Julien Bourdin'));
-        $message->setFrom(array('jbourdin@gmail.com' => 'Julien Bourdin'));
-        $message->setSender('jbourdin@gmail.com');
-        $message->setTo(array($this->email));
+        
+        
                
-        $message->setBody($mailBody, 'text/html');
+        $message->setBody($plainMailBody);
+        $message->addPart($mailBody, 'text/html');
         
         $result = $mailService->sendMessage($message);
         if($result ===1){
