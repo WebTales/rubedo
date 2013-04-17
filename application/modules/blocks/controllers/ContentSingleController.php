@@ -40,8 +40,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $blockConfig = $this->getRequest()->getParam('block-config');
         $output["blockConfig"]=$blockConfig;
         
-        
-        
         $mongoId = $this->getRequest()->getParam('content-id');
         
         if (isset($mongoId) && $mongoId != 0) {
@@ -65,9 +63,12 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
+            $CKEConfigArray = array();
             foreach ($type["fields"] as $value) {
-                
                 $cTypeArray[$value['config']['name']] = $value["cType"];
+                if($value["cType"] == "CKEField"){
+                    $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
+                }
             }
             $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
             $templateName .= ".html.twig";
@@ -75,6 +76,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $output["data"] = $data;
             $output['activateDisqus']=$type['activateDisqus'];
             $output["type"] = $cTypeArray;
+            $output["CKEFields"] = $CKEConfigArray;
             
             if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
@@ -87,9 +89,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
 	            	$js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/rubedo-map.js"),'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/map.js"));
 	            }
             }
-            
-            
-            
         } else {
             $output = array();
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
