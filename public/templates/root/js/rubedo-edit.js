@@ -15,65 +15,108 @@ CKEDITOR.on('instanceCreated', function(event) {
 	var editor = event.editor, element = editor.element;
 	editor.config.entities = false;
 	editor.config.entities_latin = false;
-
-	// Customize editors for headers and tag list.
-	// These editors don't need features like smileys,
-	// templates, iframes etc.
-	if (element.is('h1', 'h2', 'h3') || element.getAttribute('id') == 'taglist') {
-		// Customize the editor configurations on "configLoaded"
-		// event,
-		// which is fired after the configuration file loading
-		// and
-		// execution. This makes it possible to change the
-		// configurations before the editor initialization takes
-		// place.
+	editor.config.language = jQuery("body").attr("data-language");
+	
+	// Customize CKEditor
+	if (element.getAttribute("data-field-type") =="title" || element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="text-area") {
+		
+		//Minimal configuration for titles
 		editor.on('configLoaded', function() {
-
-			editor.config.language = '{{ lang }}';
-
-			// Remove unnecessary plugins to
-			// make the editor simpler.
+			// Remove unnecessary plugins
 			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
 
-			// Rearrange the layout of the
-			// toolbar.
-			editor.config.toolbarGroups = [ {
-			name : 'clipboard',
-			groups : [ 'clipboard' ]
-			}, {
-			name : 'editing',
-			groups : [ 'basicstyles', 'links' ]
-			}, {
-				name : 'undo'
-			} ];
+			// Make toolbar
+			editor.config.toolbarGroups = [{
+					name : 'clipboard',
+					groups : [ 'clipboard' ]
+				}, {
+					name : 'undo'
+				} 
+			];
 		});
+		
+	} else if (element.getAttribute("data-field-type") =="CKEField"){
+		
+		var idAndField = (jQuery(element).attr("id")).split("_");
+		var field = idAndField[1];
+
+		if( element.getAttribute("data-cke-config") == "Standard"){
+			editor.on('configLoaded', function() {
+				// set standard configuration
+				editor.config.toolbar = [
+                   { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+                   { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+                   { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+                   { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+                   { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink'] },
+                   { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
+               ];
+				
+				// set file and media explorer path
+				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+			});
+		} else if (element.getAttribute("data-cke-config") == "Basic") {
+			editor.on('configLoaded', function() {
+				// set standard configuration
+				editor.config.toolbar = [
+	                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline','Strike', '-', 'RemoveFormat' ] },
+	                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock','-','Image']},
+	                { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+	                { name: 'styles', items: [ 'Font', 'FontSize' ] }
+                ];
+				
+				// set file and media explorer path
+				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+			});
+		} else {
+			editor.on('configLoaded', function() {
+				// set standard configuration
+				editor.config.toolbar = [
+					{ name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'NewPage', 'Preview', 'Print', '-', 'Templates' ] },
+					{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+					{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll', '-', 'Scayt' ] },
+					{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+					'/',
+					{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+					{ name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+					'/',
+					{ name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+					{ name: 'tools', items: [ 'Maximize', '-','ShowBlocks' ] },
+					{ name: 'links', items: [ 'Link', "Rubedolink", 'Unlink','-','Anchor' ] },
+					{ name: 'insert', items: [ 'Image',  '-', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak', 'Iframe' ] }
+				];
+				
+				// set file and media explorer path
+				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.extraPlugins = 'rubedolink';
+			});
+		}
+		
 	} else {
-		editor.config.language = '{{ lang }}';
+		
 		editor.on('configLoaded', function() {
 			// set standard configuration
-			editor.config.toolbarGroups = [ {
-			name : 'basicstyles',
-			groups : [ 'basicstyles', 'cleanup' ]
-			}, {
-			name : 'paragraph',
-			groups : [ 'list', 'indent', 'blocks', 'align', 'bidi' ]
-			}, {
-			name : 'colors',
-			groups : [ 'color' ]
-			}, '/', {
-			name : 'styles',
-			groups : [ 'styles' ]
-			}, {
-				items : [ 'Image', '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', 'Unlink' ]
-			}, {
-			name : 'managing',
-			items : [ 'maximize', '-', 'Undo', 'Redo' ]
-			} ];
+			editor.config.toolbar = [
+			    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+	            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+	            { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+	            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+	            { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink'] },
+	            { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
+	        ];
+			
 			// set file and media explorer path
 			editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
 			editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
 		});
+		
 	}
+	
+	//var targetId = element.getInputId();
+	//element.editor= editor.replace(targetId,{toolbar:  myTBConfig, extraPlugins:'rubedolink',resize_enabled:false, filebrowserImageBrowseUrl:"ext-finder?type=Image", filebrowserImageUploadUrl:"ext-finder?type=Image"}); 
 });
 
 jQuery('#btn-edit').click(function() {
