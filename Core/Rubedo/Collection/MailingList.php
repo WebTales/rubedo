@@ -39,12 +39,13 @@ class MailingList extends AbstractCollection implements IMailingList
 	 *
 	 * @param string $mailingListId
 	 * @param string $email
+	 * @param boolean $doNotDuplicate
 	 *
 	 * @return array
 	 * 
 	 * @see \Rubedo\Interfaces\Collection\IMailingList::subscribe()
 	 */
-	public function subscribe($mailingListId, $email) {
+	public function subscribe($mailingListId, $email,$doNotDuplicate = true) {
 		//Get mailing list
 		$mailingList = $this->findById($mailingListId);
 		
@@ -94,7 +95,8 @@ class MailingList extends AbstractCollection implements IMailingList
 					throw new \Rubedo\Exceptions\User("Erreur lors de la mise à jour de l'utilisateur");
 				}
 			} else {
-				$response = array("success" => false, "msg" => "Vous êtes déjà inscrit à cette newsletter");
+			    $success = $doNotDuplicate?false:true;
+				$response = array("success" => $success, "msg" => "Vous êtes déjà inscrit à cette newsletter");
 			}
 		} else {
 			//Make the default skeleton for the user if it's a new user

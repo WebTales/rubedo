@@ -31,10 +31,11 @@ interface IMailingList extends IAbstractCollection{
 	 *
 	 * @param string $mailingListId
 	 * @param string $email
+	 * @param boolean $doNotDuplicate
 	 *
 	 * @return array
 	 */
-	public function subscribe($mailingListId, $email);
+	public function subscribe($mailingListId, $email, $doNotDuplicate=true);
 	
 	/**
 	 * Remove a user from a specified mailing list
