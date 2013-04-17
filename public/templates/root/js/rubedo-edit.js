@@ -1,3 +1,13 @@
+/******************************
+ * 		Global variables
+ *****************************/
+var contentId = "";
+var imageId = "";
+var cache = new Array();
+var object = null;
+var errors = new Array();
+/*****************************/
+
 jQuery('#contentToolBar').css('top', '0');
 jQuery('#contentToolBar').show();
 
@@ -72,7 +82,13 @@ jQuery('#btn-edit').click(function() {
 
 jQuery('#btn-cancel').click(function() {
 	var changed = checkIfDirty();
-	if (changed) {
+	var cacheChanged = 0;
+	
+	for(var i in cache){
+		cacheChanged++;
+	}
+	
+	if (changed || cacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -85,17 +101,26 @@ jQuery('#cancel-confirm').click(function() {
 });
 
 jQuery('#btn-save').click(function() {
-	var errors = new Array();
-	
 	// for every modified content
 	for ( var i in CKEDITOR.instances) {
 		if (CKEDITOR.instances[i].checkDirty()) {
 			// saving content
-			save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData(), errors);
+			save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
 			
 			//Remove dirty flag
 			CKEDITOR.instances[i].resetDirty();
 		}
+	}
+	
+	/**
+	 * Save images
+	 */
+	for( var i in cache ) {
+		var idAndField = i.split("_");
+		var id = idAndField[0];
+		var field = idAndField[1];
+		
+		confirmImage(id, cache[i].newImage, field);
 	}
 	
 	if(errors.length > 0) {
@@ -103,6 +128,8 @@ jQuery('#btn-save').click(function() {
 	} else {
 		notify('success', 'Les données ont été sauvegardées.');
 	}
+	
+	errors = new Array();
 	
 	// for every maps
 	//var maps = gMap.getAllInstances();
@@ -113,6 +140,66 @@ jQuery('#btn-save').click(function() {
 	// switch to wiew mode
 	swithToViewMode();
 });
+
+/***************************************************
+ * 			jQuery for images editing
+ **************************************************/
+
+jQuery(".editable-img").click(function() {
+	if(jQuery('#viewmode').css("display") == "none"){
+		object = this;
+		var idAndField = (object.id).split("_");
+		var id = idAndField[0];
+		var field = idAndField[1];
+		
+		var width = screen.width/2;
+		var height = screen.height/2;
+        var left = (screen.width-width)/2;
+        var top = +((screen.height-height)/2);
+
+		window.open(
+		    "/backoffice/ext-finder?soloMode=true&contentId="+id+"",
+		    "Médiathèque",
+		    "menubar=no, status=no, scrollbars=no, top="+top+", left="+left+", width="+width+", height="+height+""
+		);
+	}
+});
+
+function saveImage(currentContentId, newImageId) {
+	contentId = currentContentId;
+	imageId = newImageId;
+
+	if(typeof(cache[object.id]) == "undefined"){
+		cache[object.id] = { "html" : jQuery(object).html(), "newImage" :imageId };
+	} else {
+		cache[object.id]["newImage"] = imageId;
+	}
+	
+	jQuery("#"+object.id+" > img").attr("src", "/dam?media-id="+imageId);
+	
+	object = null;
+	contentId = "";
+	imageId = "";
+}
+
+function confirmImage(content, image, field) {
+	var request = $.ajax({
+		url: "/xhr-edit/save-image",
+		type: "POST",
+		data: {
+			contentId : content,
+			newImageId : image,
+			field : field
+		},
+		dataType: "json"
+	});
+	 
+	request.fail(function(jqXHR, textStatus) {
+		errors.push(jQuery.parseJSON(jqXHR['responseText']));
+	});
+}
+
+/**************************************************/
 
 jQuery('.block').mouseover(function() {
 	jQuery(this).css('cursor', 'pointer');
@@ -157,13 +244,19 @@ function undoAllChanges() {
 			undo(CKEDITOR.instances[i]);
 		}
 	}
+	
+	for(var i in cache) {
+		jQuery("#"+i+"").html(cache[i]['html']);
+	}
+	
+	cache = new Array();
 }
 
 function undo(editor) {
 	editor.execCommand('undo');
 }
 
-function save(id, data, errors) {
+function save(id, data) {
 	jQuery.ajax({
 	type : 'POST',
 	url : "/xhr-edit",
