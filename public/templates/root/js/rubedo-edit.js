@@ -9,6 +9,8 @@ var object = null;
 var errors = new Array();
 /*****************************/
 
+jQuery("body").css("cursor" , "default");
+
 jQuery('#contentToolBar').css('top', '0');
 jQuery('#contentToolBar').show();
 
@@ -285,7 +287,7 @@ jQuery(".date").click( function () {
 					dateCache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")]["newDate"] = serverDate;
 				}
 				
-				jQuery(this).parent().html("Le " + date + " <div class=\"btn btn-primary\"><i class=\"icon-calendar icon-white\"></i></div><div class=\"datepicker\"></div>");
+				jQuery(this).parent().html("Le " + date + " <div class=\"datepicker\"></div>");
 				
 				jQuery("#"+currentDatePicker+" .datepicker").datepicker("destroy");
 			}
@@ -317,7 +319,7 @@ function confirmDate(id, date) {
 /*************************************************/
 
 jQuery('.block').mouseover(function() {
-	jQuery(this).css('cursor', 'pointer');
+	//jQuery(this).css('cursor', 'pointer');
 	var position = jQuery(this).offset();
 	jQuery('#blockToolBar').css(position);
 	jQuery('#blockToolBar').show();
@@ -325,18 +327,20 @@ jQuery('.block').mouseover(function() {
 
 function swithToEditMode() {
 	jQuery('.editable').attr('contenteditable', 'true');
+	jQuery('.editable, .editable-img, .date, .time').css('cursor', 'text');
 	CKEDITOR.inlineAll();
 	jQuery('#viewmode').hide();
 	jQuery('#editmode').show();
 	jQuery("#list-editmode").show();
 	jQuery(".list-editmode").show();
 	
-	jQuery('.date').each(function(i, obj) {
-		jQuery(this).html(jQuery(this).html() + "<div class=\"btn btn-primary\"><i class=\"icon-calendar icon-white\"></i></div><div class=\"datepicker\"></div>");
+	jQuery('.date').each(function() {
+		jQuery(this).html(jQuery(this).html() + "<div class=\"datepicker\"></div>");
 	});
 }
 
 function swithToViewMode() {
+	jQuery('.editable, .editable-img, .date, .time').css('cursor', 'default');
 	for ( var i in CKEDITOR.instances) {
 		CKEDITOR.instances[i].destroy(true);
 	}
@@ -345,6 +349,13 @@ function swithToViewMode() {
 	jQuery('#editmode').hide();
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
+	
+	jQuery('.date').each(function() {
+		var html = jQuery(this).html().split("<");
+		var dateOnly = html[0];
+		
+		jQuery(this).html(dateOnly);
+	});
 }
 
 function checkIfDirty() {
