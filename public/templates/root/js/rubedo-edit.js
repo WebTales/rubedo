@@ -4,6 +4,7 @@
 var contentId = "";
 var imageId = "";
 var cache = new Array();
+var dateCache = new Array();
 var object = null;
 var errors = new Array();
 /*****************************/
@@ -18,7 +19,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	editor.config.language = jQuery("body").attr("data-language");
 	
 	// Customize CKEditor
-	if (element.getAttribute("data-field-type") =="title" || element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="text-area") {
+	if (element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="textfield" || element.getAttribute("data-field-type") =="textareafield") {
 		
 		//Minimal configuration for titles
 		editor.on('configLoaded', function() {
@@ -126,12 +127,23 @@ jQuery('#btn-edit').click(function() {
 jQuery('#btn-cancel').click(function() {
 	var changed = checkIfDirty();
 	var cacheChanged = 0;
+	var dateCacheChanged = 0;
 	
+	/**
+	 * Count modifications on images
+	 */
 	for(var i in cache){
 		cacheChanged++;
 	}
 	
-	if (changed || cacheChanged > 0) {
+	/**
+	 *  Count modifications on dates
+	 */
+	for(var contentId in dateCache) {
+		dateCacheChanged++;
+	}
+	
+	if (changed || cacheChanged > 0 || dateCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -164,6 +176,13 @@ jQuery('#btn-save').click(function() {
 		var field = idAndField[1];
 		
 		confirmImage(id, cache[i].newImage, field);
+	}
+	
+	/**
+	 * Save dates
+	 */
+	for( var contentId in dateCache) {
+		confirmDate(contentId, dateCache[contentId].newDate);
 	}
 	
 	if(errors.length > 0) {
@@ -244,6 +263,59 @@ function confirmImage(content, image, field) {
 
 /**************************************************/
 
+/**************************************************
+ * 			jQuery for date editing
+ *************************************************/
+
+jQuery(".date").click( function () {
+	var currentDatePicker = jQuery(this).parent().context.id;
+	jQuery("#"+currentDatePicker+" .datepicker").datepicker({
+			regional: jQuery("body").attr("data-language"),
+			dateFormat : "d MM yy",
+			onSelect : function(date) {
+				// Divided by 1000 to correspond with php format
+				var serverDate = jQuery.datepicker.formatDate('@', jQuery("#"+currentDatePicker+" .datepicker").datepicker("getDate"))/1000;
+				
+				var html = jQuery("#"+currentDatePicker+" .datepicker").parent().html().split("<");
+				var cachedHtml = html[0];
+				
+				if(typeof(cache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")]) == "undefined"){
+					dateCache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")] = {"html" : cachedHtml, "newDate" : serverDate};
+				} else {
+					dateCache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")]["newDate"] = serverDate;
+				}
+				
+				jQuery(this).parent().html("Le " + date + " <div class=\"btn btn-primary\"><i class=\"icon-calendar icon-white\"></i></div><div class=\"datepicker\"></div>");
+				
+				jQuery("#"+currentDatePicker+" .datepicker").datepicker("destroy");
+			}
+		}
+	);
+});
+
+function confirmDate(id, date) {
+	var idAndField = id.split("_");
+	var contentId = idAndField[0];
+	var fieldName = idAndField[1];
+	
+	var request = $.ajax({
+		url: "/xhr-edit/save-date",
+		type: "POST",
+		data: {
+			contentId : contentId,
+			newDate : date,
+			field : fieldName
+		},
+		dataType: "json"
+	});
+	 
+	request.fail(function(jqXHR, textStatus) {
+		errors.push(jQuery.parseJSON(jqXHR['responseText']));
+	});
+}
+
+/*************************************************/
+
 jQuery('.block').mouseover(function() {
 	jQuery(this).css('cursor', 'pointer');
 	var position = jQuery(this).offset();
@@ -258,6 +330,10 @@ function swithToEditMode() {
 	jQuery('#editmode').show();
 	jQuery("#list-editmode").show();
 	jQuery(".list-editmode").show();
+	
+	jQuery('.date').each(function(i, obj) {
+		jQuery(this).html(jQuery(this).html() + "<div class=\"btn btn-primary\"><i class=\"icon-calendar icon-white\"></i></div><div class=\"datepicker\"></div>");
+	});
 }
 
 function swithToViewMode() {
@@ -288,11 +364,22 @@ function undoAllChanges() {
 		}
 	}
 	
+	/**
+	 * Undo modifications on images
+	 */
 	for(var i in cache) {
 		jQuery("#"+i+"").html(cache[i]['html']);
 	}
 	
+	/**
+	 * Undo modifications on dates
+	 */
+	for(var contentId in dateCache) {
+		jQuery("#"+contentId).html(dateCache[contentId]['html']);
+	}
+	
 	cache = new Array();
+	dateCache = new Array();
 }
 
 function undo(editor) {

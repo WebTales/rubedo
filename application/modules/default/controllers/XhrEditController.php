@@ -111,4 +111,30 @@ class XhrEditController extends Zend_Controller_Action
             return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
         }
     }
+    
+    public function saveDateAction() {
+        $contentId = $this->getParam("contentId", null);
+        $newDate = $this->getParam("newDate", null);
+        $contentField = $this->getParam("field", null);
+    
+        if($contentId === null || $newDate === null || $contentField === null){
+            throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle date et le champ à mettre à jour en base de donnée");
+        }
+    
+        $content = $this->_dataService->findById($contentId, true, false);
+    
+        if(!$content) {
+            throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
+        }
+    
+        $content['fields'][$contentField] = $newDate;
+    
+        $updateResult = $this->_dataService->update($content);
+    
+        if($updateResult['success']){
+            return $this->_helper->json(array("success" => true));
+        } else {
+            return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
+        }
+    }
 }
