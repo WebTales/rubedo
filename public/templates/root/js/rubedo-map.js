@@ -64,12 +64,13 @@ var gMap = function (options,id,title,text,field) {
 		},
 		getValues:function(){
 			var self=this;
-			var opt={
-					address:self.address,
-					latitude:self.latitude,
-					longitude:self.longitude
+			var values={ 
+					"address" : self.address , 
+					"location" : { "type" : "Point" , "coordinates" : [ self.longitude , self.latitude]} ,
+					"lat" : self.latitude ,
+					"lon" : self.longitude
 			}
-			return opt;
+			return values;
 		},
 		createMarker:function(location,title,contentString){
 			var self=this;
@@ -185,10 +186,9 @@ var gMap = function (options,id,title,text,field) {
 		}
 		
 		this.map.addMarker(this.location,this.map.title,this.map.text);
-			/*jQuery("#"+id+"-edit .latitude").val(self.map.latitude);
+			jQuery("#"+id+"-edit .latitude").val(self.map.latitude);
 			jQuery("#"+id+"-edit .longitude").val(self.map.longitude);
-			jQuery("#"+id+"-edit .address").val(self.map.address);*/
-		//console.log(this.map);
+			jQuery("#"+id+"-edit .address").val(self.map.address);
 				
 	   
 	

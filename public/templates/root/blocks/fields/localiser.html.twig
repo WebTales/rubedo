@@ -13,25 +13,30 @@
 <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&amp;sensor=true">
     </script>
+    {{ key }}
 <div id="{{ data.id }}_{{key}}" data-lat='{{ value.lat|cleanHtml }}' data-lon='{{ value.lon|cleanHtml }}' data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
 
 {% if isLoggedIn %}
 <div  class="hide list-editmode">
-<div id="{{ data.id }}_{{key}}-edit" style="padding:10px 10px 10px 10px; margin:10px 10px 10px 10px; background-color:#eee; border-radius:10px;" >
+<div id="{{ data.id }}_{{key}}-edit" class="btn-group">
+<legend>Edition</legend>
 <div>
-<label class="control-label" for="inputAddress">Address</label>
+<label class="control-label" style="display:block; clear:both;" for="inputAddress">Address</label>
 <input class="input-xxlarge address"  style="width:99%;"  type="text" placeholder="Address" >
 </div>
-<div style="float:left;">
+<div class="btn-group pull-left">
 <label class="control-label" style="display:block; clear:both;" for="inputLatitude">Latitude</label>
 <input class="input-xxlarge latitude"  type="text" placeholder="Latitude">
 </div>
-<div style="float:right;">
+<div class="btn-group pull-right">
 <label class="control-label" style="display:block; clear:both;" for="inputLongitude" >Longitude</label>
 <input class="input-xxlarge longitude" type="text" placeholder="Longitude">
 </div>
-   <a class="btn btn" style="width:90%; margin-left:2.5%;"type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>Rafraichir</a>
+<div class="btn-group pull-right" style="clear:both;">
+   <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>Rafraichir</a>
+   </div>
 </div>
 </div>
+
 <div class="clearfix"></div>
 {%endif%}
