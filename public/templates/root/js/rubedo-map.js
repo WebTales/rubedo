@@ -93,11 +93,12 @@ var gMap = function (options,id,title,text,field) {
 			if (location.address){
 	    		  self.geocoder.geocode( { 'address': location.address}, function(results, status) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
-	    	      			self.createMarker(results[0].geometry.location, title, contentString);
-	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.kb,results[0].geometry.location.lb));
-	    	      			self.latitude=results[0].geometry.location.kb;
-			      			self.longitude=results[0].geometry.location.lb;
-			      			self.address=location.address;
+	    	      			console.log(results);
+	    	      			self.createMarker(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb), title, contentString);
+	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb));
+	    	      			self.latitude=results[0].geometry.location.jb;
+			      			self.longitude=results[0].geometry.location.kb;
+			      			self.address=results[0].formatted_address;
 	    	      		}else {
 		    		    	  console.log("geocodage failed :" +status);
 		    		    }
