@@ -196,10 +196,10 @@ jQuery('#btn-save').click(function() {
 	errors = new Array();
 	
 	// for every maps
-	//var maps = gMap.getAllInstances();
-	//maps.forEach(function(map) {
-	//	save(map.id, JSON.stringify(map.getValues()));
-	//});
+	var maps = gMap.getAllInstances();
+    maps.forEach(function(map) {
+        save(map.id, map.getValues());
+    }); 
 	
 	// switch to wiew mode
 	swithToViewMode();
@@ -317,6 +317,14 @@ function confirmDate(id, date) {
 }
 
 /*************************************************/
+
+/*************************************************
+ * 			jQuery for time editing
+ ************************************************/
+
+
+
+/************************************************/
 
 jQuery('.block').mouseover(function() {
 	//jQuery(this).css('cursor', 'pointer');
