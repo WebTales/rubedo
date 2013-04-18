@@ -131,22 +131,25 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     				} else if ($value['protoId']=='summary'){
     					$summaryFieldIndex=$value['csvIndex'];
     				} else {
-    				$newFieldForCT=array(
-                           "cType" => $value['cType'],
-                           "config" => array(
-                                  "name" => $value['newName'],
-                                  "fieldLabel" => $value['label'],
-                                  "allowBlank" => true,
-                                  "localizable" => false,
-                                  "searchable" => true,
-                                  "multivalued" => false,
-                                  "tooltip" => "",
-                                  "labelSeparator" => " "
-                           ),
-                           "protoId" => $value['protoId'],
-                           "openWindow" => null
-                    );
-    				$CTfields[]=$newFieldForCT;
+    					if ($value['cType']=="localiserField"){
+    						$value['newName']="position";
+    					}
+	    				$newFieldForCT=array(
+	                           "cType" => $value['cType'],
+	                           "config" => array(
+	                                  "name" => $value['newName'],
+	                                  "fieldLabel" => $value['label'],
+	                                  "allowBlank" => true,
+	                                  "localizable" => false,
+	                                  "searchable" => true,
+	                                  "multivalued" => false,
+	                                  "tooltip" => "",
+	                                  "labelSeparator" => " "
+	                           ),
+	                           "protoId" => $value['protoId'],
+	                           "openWindow" => null
+	                    );
+	    				$CTfields[]=$newFieldForCT;
     				}
     			}
     			
@@ -180,7 +183,25 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     				}
     				foreach ($importAsField as $key => $value){
     					if (($value['protoId']!='text')&&($value['protoId']!='summary')){
-    						$contentParamsFields[$value['newName']]=$currentLine[$value['csvIndex']];   						
+    						if ($value['cType']=="localiserField"){
+    							if (!empty($currentLine[$value['csvIndex']])){
+    								$splitedLatLon=explode(",", $currentLine[$value['csvIndex']]);
+    								if ((isset($splitedLatLon[0]))&&(isset($splitedLatLon[1]))){
+	    								$contentParamsFields['position']=array(
+	    										"address"=>"",
+	    										"altitude"=>"",
+	    										"lat"=>$splitedLatLon[0],
+	    										"lon"=>$splitedLatLon[1],
+	    										"location"=>array(
+	    											"type"=>"Point",
+	    											"coordinates"=>array($splitedLatLon[1],$splitedLatLon[0])		
+	    										)
+	    								);
+    								}
+    							}
+    						} else {
+    							$contentParamsFields[$value['newName']]=$currentLine[$value['csvIndex']];   
+    						}						
     					}
     				}
     				//create content taxo
