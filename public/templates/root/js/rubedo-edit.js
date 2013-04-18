@@ -4,9 +4,12 @@
 var contentId = "";
 var imageId = "";
 var cache = new Array();
+var dateCache = new Array();
 var object = null;
 var errors = new Array();
 /*****************************/
+
+jQuery("body").css("cursor" , "default");
 
 jQuery('#contentToolBar').css('top', '0');
 jQuery('#contentToolBar').show();
@@ -18,7 +21,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	editor.config.language = jQuery("body").attr("data-language");
 	
 	// Customize CKEditor
-	if (element.getAttribute("data-field-type") =="title" || element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="text-area") {
+	if (element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="textfield" || element.getAttribute("data-field-type") =="textareafield") {
 		
 		//Minimal configuration for titles
 		editor.on('configLoaded', function() {
@@ -126,12 +129,23 @@ jQuery('#btn-edit').click(function() {
 jQuery('#btn-cancel').click(function() {
 	var changed = checkIfDirty();
 	var cacheChanged = 0;
+	var dateCacheChanged = 0;
 	
+	/**
+	 * Count modifications on images
+	 */
 	for(var i in cache){
 		cacheChanged++;
 	}
 	
-	if (changed || cacheChanged > 0) {
+	/**
+	 *  Count modifications on dates
+	 */
+	for(var contentId in dateCache) {
+		dateCacheChanged++;
+	}
+	
+	if (changed || cacheChanged > 0 || dateCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -166,6 +180,13 @@ jQuery('#btn-save').click(function() {
 		confirmImage(id, cache[i].newImage, field);
 	}
 	
+	/**
+	 * Save dates
+	 */
+	for( var contentId in dateCache) {
+		confirmDate(contentId, dateCache[contentId].newDate);
+	}
+	
 	if(errors.length > 0) {
 		notify('failure', 'Une erreur est survenue, il est possible que vos modifications soient perdues');
 	} else {
@@ -175,10 +196,10 @@ jQuery('#btn-save').click(function() {
 	errors = new Array();
 	
 	// for every maps
-	//var maps = gMap.getAllInstances();
-	//maps.forEach(function(map) {
-	//	save(map.id, JSON.stringify(map.getValues()));
-	//});
+	var maps = gMap.getAllInstances();
+    maps.forEach(function(map) {
+        save(map.id, map.getValues());
+    }); 
 	
 	// switch to wiew mode
 	swithToViewMode();
@@ -244,8 +265,69 @@ function confirmImage(content, image, field) {
 
 /**************************************************/
 
+/**************************************************
+ * 			jQuery for date editing
+ *************************************************/
+
+jQuery(".date").click( function () {
+	var currentDatePicker = jQuery(this).parent().context.id;
+	jQuery("#"+currentDatePicker+" .datepicker").datepicker({
+			regional: jQuery("body").attr("data-language"),
+			dateFormat : "d MM yy",
+			onSelect : function(date) {
+				// Divided by 1000 to correspond with php format
+				var serverDate = jQuery.datepicker.formatDate('@', jQuery("#"+currentDatePicker+" .datepicker").datepicker("getDate"))/1000;
+				
+				var html = jQuery("#"+currentDatePicker+" .datepicker").parent().html().split("<");
+				var cachedHtml = html[0];
+				
+				if(typeof(cache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")]) == "undefined"){
+					dateCache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")] = {"html" : cachedHtml, "newDate" : serverDate};
+				} else {
+					dateCache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")]["newDate"] = serverDate;
+				}
+				
+				jQuery(this).parent().html("Le " + date + " <div class=\"datepicker\"></div>");
+				
+				jQuery("#"+currentDatePicker+" .datepicker").datepicker("destroy");
+			}
+		}
+	);
+});
+
+function confirmDate(id, date) {
+	var idAndField = id.split("_");
+	var contentId = idAndField[0];
+	var fieldName = idAndField[1];
+	
+	var request = $.ajax({
+		url: "/xhr-edit/save-date",
+		type: "POST",
+		data: {
+			contentId : contentId,
+			newDate : date,
+			field : fieldName
+		},
+		dataType: "json"
+	});
+	 
+	request.fail(function(jqXHR, textStatus) {
+		errors.push(jQuery.parseJSON(jqXHR['responseText']));
+	});
+}
+
+/*************************************************/
+
+/*************************************************
+ * 			jQuery for time editing
+ ************************************************/
+
+
+
+/************************************************/
+
 jQuery('.block').mouseover(function() {
-	jQuery(this).css('cursor', 'pointer');
+	//jQuery(this).css('cursor', 'pointer');
 	var position = jQuery(this).offset();
 	jQuery('#blockToolBar').css(position);
 	jQuery('#blockToolBar').show();
@@ -253,14 +335,20 @@ jQuery('.block').mouseover(function() {
 
 function swithToEditMode() {
 	jQuery('.editable').attr('contenteditable', 'true');
+	jQuery('.editable, .editable-img, .date, .time').css('cursor', 'text');
 	CKEDITOR.inlineAll();
 	jQuery('#viewmode').hide();
 	jQuery('#editmode').show();
 	jQuery("#list-editmode").show();
 	jQuery(".list-editmode").show();
+	
+	jQuery('.date').each(function() {
+		jQuery(this).html(jQuery(this).html() + "<div class=\"datepicker\"></div>");
+	});
 }
 
 function swithToViewMode() {
+	jQuery('.editable, .editable-img, .date, .time').css('cursor', 'default');
 	for ( var i in CKEDITOR.instances) {
 		CKEDITOR.instances[i].destroy(true);
 	}
@@ -269,6 +357,13 @@ function swithToViewMode() {
 	jQuery('#editmode').hide();
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
+	
+	jQuery('.date').each(function() {
+		var html = jQuery(this).html().split("<");
+		var dateOnly = html[0];
+		
+		jQuery(this).html(dateOnly);
+	});
 }
 
 function checkIfDirty() {
@@ -288,11 +383,22 @@ function undoAllChanges() {
 		}
 	}
 	
+	/**
+	 * Undo modifications on images
+	 */
 	for(var i in cache) {
 		jQuery("#"+i+"").html(cache[i]['html']);
 	}
 	
+	/**
+	 * Undo modifications on dates
+	 */
+	for(var contentId in dateCache) {
+		jQuery("#"+contentId).html(dateCache[contentId]['html']);
+	}
+	
 	cache = new Array();
+	dateCache = new Array();
 }
 
 function undo(editor) {

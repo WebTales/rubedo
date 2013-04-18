@@ -3,6 +3,7 @@
 	"require": {
 		"jquery/jquery": "1.9.1",
 		"jquery/jqueryui": "1.10.2",
+		"jquery/timepicker": "0.3.2",
 		"sencha/extjs": "4.1.1a",
 		"webtales/ckeditor": "dev-newPlugin",
 		"twitter/bootstrap": "v2.3.0",
@@ -76,6 +77,18 @@
 				}
 			}
 		},
+		 {
+			"type": "package",
+			"package": {
+				"name": "jquery/timepicker",
+				"version": "0.3.2",
+				"dist": {
+					"url": "http://fgelinas.com/code/timepicker/releases/jquery-ui-timepicker-0.3.2.zip",
+					"type": "zip"
+				}
+			}
+		},
+		
 		
 		 {
 			"type": "vcs",

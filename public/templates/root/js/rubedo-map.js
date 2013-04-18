@@ -64,12 +64,13 @@ var gMap = function (options,id,title,text,field) {
 		},
 		getValues:function(){
 			var self=this;
-			var opt={
-					address:self.address,
-					latitude:self.latitude,
-					longitude:self.longitude
+			var values={ 
+					"address" : self.address , 
+					"location" : { "type" : "Point" , "coordinates" : [ self.longitude , self.latitude]} ,
+					"lat" : self.latitude ,
+					"lon" : self.longitude
 			}
-			return opt;
+			return values;
 		},
 		createMarker:function(location,title,contentString){
 			var self=this;
@@ -93,11 +94,11 @@ var gMap = function (options,id,title,text,field) {
 			if (location.address){
 	    		  self.geocoder.geocode( { 'address': location.address}, function(results, status) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
-	    	      			self.createMarker(results[0].geometry.location, title, contentString);
-	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.kb,results[0].geometry.location.lb));
-	    	      			self.latitude=results[0].geometry.location.kb;
-			      			self.longitude=results[0].geometry.location.lb;
-			      			self.address=location.address;
+	    	      			self.createMarker(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb), title, contentString);
+	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb));
+	    	      			self.latitude=results[0].geometry.location.jb;
+			      			self.longitude=results[0].geometry.location.kb;
+			      			self.address=results[0].formatted_address;
 	    	      		}else {
 		    		    	  console.log("geocodage failed :" +status);
 		    		    }
@@ -187,7 +188,6 @@ var gMap = function (options,id,title,text,field) {
 			/*jQuery("#"+id+"-edit .latitude").val(self.map.latitude);
 			jQuery("#"+id+"-edit .longitude").val(self.map.longitude);
 			jQuery("#"+id+"-edit .address").val(self.map.address);*/
-		//console.log(this.map);
 				
 	   
 	
