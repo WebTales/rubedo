@@ -500,6 +500,21 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         );
         return $this->getList($filters);
     }
+    
+    /**
+	 * Allow to find term by vocabularyId and name
+	 *
+	 * @param string $vocabularyId Contain the id of the vocabulary
+	 * @param string $name Contain the name of the term
+	 * @return array Contain the terms associated to the vocabulary given in parameter
+	 */
+    public function findByVocabularyIdAndName ($vocabularyId,$name)
+    {
+        $cond = array();
+        $cond['vocabularyId'] = $vocabularyId;
+        $cond['text'] = $name;
+        return $this->_dataService->findOne($cond);
+    }
 
     /**
      * (non-PHPdoc)

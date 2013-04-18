@@ -55,7 +55,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     			$returnArray['message']="Le fichier doit doit être au format CSV.";
     		} else {
     			$recievedFile=fopen($fileInfos['tmp_name'],'r');
-    			$csvColumns=fgetcsv($recievedFile,10000, $separator,'"','\\');   
+    			$csvColumns=fgetcsv($recievedFile,1000000, $separator,'"','\\');   
     			$lineCounter=0;		
     			while (fgets($recievedFile) !== false) $lineCounter++;
     			fclose($recievedFile);		       	
@@ -83,6 +83,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     
     public function importAction ()
     {
+    set_time_limit(120);
     $separator = $this->getParam('separator', ";");
     	$adapter = new Zend_File_Transfer_Adapter_Http();
     	$returnArray = array();
@@ -122,7 +123,14 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     			}
     			// create CT fields array
     			$CTfields=array();
+    			$textFieldIndex=0;
+    			$summaryFieldIndex=null;
     			foreach ($importAsField as $key => $value){
+    				if ($value['protoId']=='text'){
+    					$textFieldIndex=$value['csvIndex'];
+    				} else if ($value['protoId']=='summary'){
+    					$summaryFieldIndex=$value['csvIndex'];
+    				} else {
     				$newFieldForCT=array(
                            "cType" => $value['cType'],
                            "config" => array(
@@ -139,6 +147,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                            "openWindow" => null
                     );
     				$CTfields[]=$newFieldForCT;
+    				}
     			}
     			
     			//create CT
@@ -155,8 +164,71 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     			);
     			$contentType=Rubedo\Services\Manager::getService('ContentTypes')->create($contentTypeParams);
     			
-    			//add contents to CT and terms to vocabularies	       		        	        
-		        $returnArray['importedContentsCount']=0;
+    			//add contents to CT and terms to vocabularies
+    			$recievedFile=fopen($fileInfos['tmp_name'],'r');
+    			$csvColumns=fgetcsv($recievedFile,1000000, $separator,'"','\\');
+    			$lineCounter=0;
+    			while (($currentLine = fgetcsv($recievedFile,1000000, $separator,'"','\\')) !== false) {
+    				//add taxo terms if not already in correspondent vocabulary
+    				//create content fields
+    				$contentParamsFields=array(
+    					"text" => $currentLine[$textFieldIndex],
+    				    "summary"=>""
+    				);
+    				if ($summaryFieldIndex !== null){
+    					$contentParamsFields['summary']=$currentLine[$summaryFieldIndex];
+    				}
+    				foreach ($importAsField as $key => $value){
+    					if (($value['protoId']!='text')&&($value['protoId']!='summary')){
+    						$contentParamsFields[$value['newName']]=$currentLine[$value['csvIndex']];   						
+    					}
+    				}
+    				//create content taxo
+    				$contentParamsTaxonomy=array();
+    				foreach ($importAsTaxo as $key => $value){
+    					$theTaxoId=$newTaxos[$key]['data']['id'];
+    					$contentParamsTaxonomy[$theTaxoId]=array();
+    					if (isset($currentLine[$value['csvIndex']])){
+    						$detectedTermText=utf8_encode($currentLine[$value['csvIndex']]); 
+    						if (!empty($detectedTermText)){
+	    						$theTerm=Rubedo\Services\Manager::getService('TaxonomyTerms')->findByVocabularyIdAndName($theTaxoId,$detectedTermText);
+	    						if ($theTerm==null){
+	    							$termParams= array(
+							             "text"=>$detectedTermText,
+							             "vocabularyId"=>$theTaxoId,
+							             "parentId"=>"root",
+							             "leaf"=>true,
+	    								 "expandable"=>false
+							       );
+	    							$theTerm=Rubedo\Services\Manager::getService('TaxonomyTerms')->create($termParams);
+	    						}
+	    						if (isset($theTerm['id'])){
+	    							$contentParamsTaxonomy[$theTaxoId][]=$theTerm['id'];
+	    						}
+    						}
+    					}
+    				}
+    				//create content
+    				$contentParams =   array(
+    						"online" => "true",
+    						"text" => $currentLine[$textFieldIndex],
+    						"typeId" => $contentType['data']['id'],
+    						"fields" =>$contentParamsFields,
+    						"status" => "published",
+    						"taxonomy" => $contentParamsTaxonomy,
+    						"target" => $configs['ContentsTarget'],
+    						"writeWorkspace" => $configs['ContentsWriteWorkspace'],
+    						"pageId"=>"",
+    						"maskId"=>"",
+    						"blockId"=>"",
+    						"readOnly"=>false
+    				);
+    				$newContent=Rubedo\Services\Manager::getService('Contents')->create($contentParams);
+    				$lineCounter++;
+    			}
+    			fclose($recievedFile);
+    			
+		        $returnArray['importedContentsCount']=$lineCounter;
 		        $returnArray['success']=true;
 		        $returnArray['message']="OK";
     		}

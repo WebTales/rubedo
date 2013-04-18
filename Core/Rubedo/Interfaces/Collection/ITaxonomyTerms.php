@@ -67,6 +67,14 @@ interface ITaxonomyTerms extends IAbstractCollection{
 	 * @return array Contain the terms associated to the vocabulary given in parameter
 	 */
 	public function findByVocabulary($vocabularyId);
+	/**
+	 * Allow to find term by vocabularyId and name
+	 *
+	 * @param string $vocabularyId Contain the id of the vocabulary
+	 * @param string $name Contain the name of the term
+	 * @return array Contain the terms associated to the vocabulary given in parameter
+	 */
+	public function findByVocabularyIdAndName($vocabularyId,$name);
 
 	
 }
