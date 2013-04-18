@@ -94,7 +94,6 @@ var gMap = function (options,id,title,text,field) {
 			if (location.address){
 	    		  self.geocoder.geocode( { 'address': location.address}, function(results, status) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
-	    	      			console.log(results);
 	    	      			self.createMarker(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb), title, contentString);
 	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb));
 	    	      			self.latitude=results[0].geometry.location.jb;
@@ -186,9 +185,9 @@ var gMap = function (options,id,title,text,field) {
 		}
 		
 		this.map.addMarker(this.location,this.map.title,this.map.text);
-			jQuery("#"+id+"-edit .latitude").val(self.map.latitude);
+			/*jQuery("#"+id+"-edit .latitude").val(self.map.latitude);
 			jQuery("#"+id+"-edit .longitude").val(self.map.longitude);
-			jQuery("#"+id+"-edit .address").val(self.map.address);
+			jQuery("#"+id+"-edit .address").val(self.map.address);*/
 				
 	   
 	

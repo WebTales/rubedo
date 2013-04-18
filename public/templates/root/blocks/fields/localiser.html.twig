@@ -13,7 +13,7 @@
 <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&amp;sensor=true">
     </script>
-    {{ key }}
+ 
 <div id="{{ data.id }}_{{key}}" data-lat='{{ value.lat|cleanHtml }}' data-lon='{{ value.lon|cleanHtml }}' data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
 
 {% if isLoggedIn %}
@@ -22,15 +22,15 @@
 <legend>Edition</legend>
 <div>
 <label class="control-label" style="display:block; clear:both;" for="inputAddress">Address</label>
-<input class="input-xxlarge address"  style="width:99%;"  type="text" placeholder="Address" >
+<input class="input-xxlarge address"  style="width:99%;"  type="text" placeholder="{{ value.address|cleanHtml }}" >
 </div>
 <div class="btn-group pull-left">
 <label class="control-label" style="display:block; clear:both;" for="inputLatitude">Latitude</label>
-<input class="input-xxlarge latitude"  type="text" placeholder="Latitude">
+<input class="input-xxlarge latitude"  type="text" placeholder="{{ value.lat|cleanHtml }}">
 </div>
 <div class="btn-group pull-right">
 <label class="control-label" style="display:block; clear:both;" for="inputLongitude" >Longitude</label>
-<input class="input-xxlarge longitude" type="text" placeholder="Longitude">
+<input class="input-xxlarge longitude" type="text" placeholder="{{ value.lon|cleanHtml }}">
 </div>
 <div class="btn-group pull-right" style="clear:both;">
    <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>Rafraichir</a>
