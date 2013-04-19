@@ -556,7 +556,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     
                     case 'date':
                         
-                        $temp['label'] = 'Date de modification :';
+                        $temp['label'] = 'Date de modification';
                         if (array_key_exists('ranges', $temp) and count($temp['ranges']) > 1) {
                             foreach ($temp['ranges'] as $key => $value) {                               
                                 $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
