@@ -565,6 +565,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                             $renderFacet = false;
                         }
                         break;
+                        
                     default:
                         
                         $vocabularyItem = Manager::getService('Taxonomy')->findById($id);
