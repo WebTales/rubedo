@@ -22,7 +22,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	editor.config.language = jQuery("body").attr("data-language");
 	
 	// Customize CKEditor
-	if (element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="textfield" || element.getAttribute("data-field-type") =="textareafield") {
+	if (element.getAttribute("data-field-type") =="title" || element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="textfield" || element.getAttribute("data-field-type") =="textareafield") {
 		
 		//Minimal configuration for titles
 		editor.on('configLoaded', function() {
@@ -115,6 +115,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 			// set file and media explorer path
 			editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
 			editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+			editor.config.extraPlugins = 'rubedolink';
 		});
 		
 	}

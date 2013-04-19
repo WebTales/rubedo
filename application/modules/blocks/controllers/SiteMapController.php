@@ -45,6 +45,15 @@ class Blocks_SiteMapController extends Blocks_AbstractController
         
         $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
         $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],array($excludeFromMenuCondition));
+        
+        $rootPage = Manager::getService('Pages')->findById($output['rootPage']);
+        
+        $output['pages'][] = array(
+            "url"      => $this->_helper->url->url(array('pageId' => $rootPage['id']), null, true),
+            "title"    => $rootPage["title"],
+            "id"       => $rootPage["id"],
+        );
+        
         foreach ($levelOnePages as $page) {
             $tempArray = array();
             $tempArray['url'] = $this->_helper->url->url(array(
@@ -58,7 +67,7 @@ class Blocks_SiteMapController extends Blocks_AbstractController
                 $this->_getPages($tempArray, $levelTwoPages);
             }
         
-            $output['pages'][] = $tempArray;
+            $output['pages'][0]["pages"][] = $tempArray;
         }
         if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
