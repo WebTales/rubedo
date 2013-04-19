@@ -453,8 +453,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $tmp['fileSize'] = $data['fileSize'];
             }
             if ($option == 'geo') {
-                $tmp['position_location'] = $data['position_location'];
-                $tmp['position_address'] = $data['position_address'];
+                $tmp['position_location'] = isset($data['position_location'])?$data['position_location']:null;
+                $tmp['position_address'] = isset($data['position_address'])?$data['position_address']:null;
             }
             switch ($data['objectType']) {
                 case 'content':

@@ -186,15 +186,24 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     						if ($value['cType']=="localiserField"){
     							if (!empty($currentLine[$value['csvIndex']])){
     								$splitedLatLon=explode(",", $currentLine[$value['csvIndex']]);
-    								if ((isset($splitedLatLon[0]))&&(isset($splitedLatLon[1]))){
+    								$lat=null;
+    								$lon=null;
+    								if (count($splitedLatLon)==2){
+    									$lat=$splitedLatLon[0];
+    									$lon=$splitedLatLon[1];
+    								} else if (count($splitedLatLon)==4){
+    									$lat=(float) ($splitedLatLon[0].'.'.$splitedLatLon[1]);
+    									$lon=(float) ($splitedLatLon[2].'.'.$splitedLatLon[3]);
+    								}
+    								if (($lat)&&($lon)){
 	    								$contentParamsFields['position']=array(
 	    										"address"=>"",
 	    										"altitude"=>"",
-	    										"lat"=>$splitedLatLon[0],
-	    										"lon"=>$splitedLatLon[1],
+	    										"lat"=>$lat,
+	    										"lon"=>$lon,
 	    										"location"=>array(
 	    											"type"=>"Point",
-	    											"coordinates"=>array($splitedLatLon[1],$splitedLatLon[0])		
+	    											"coordinates"=>array($lon,$lat)		
 	    										)
 	    								);
     								}
@@ -239,6 +248,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     						"taxonomy" => $contentParamsTaxonomy,
     						"target" => $configs['ContentsTarget'],
     						"writeWorkspace" => $configs['ContentsWriteWorkspace'],
+    						"startPublicationDate" => "",
+    						"endPublicationDate" => "",
     						"pageId"=>"",
     						"maskId"=>"",
     						"blockId"=>"",
