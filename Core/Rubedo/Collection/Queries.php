@@ -391,7 +391,6 @@ class Queries extends AbstractCollection implements IQueries
         } else {
             $rule = $value['rule'];
         }
-        
         switch ($rule) {
             case 'allRec':
                 $subArray = array();
@@ -430,12 +429,29 @@ class Queries extends AbstractCollection implements IQueries
                     }
                 }
             case 'some': // simplest one: at least on of the termes
-            default:
+                
                 $result = array(
                     $this->_workspace . '.taxonomy.' . $key => array(
                         '$in' => $value['terms']
                     )
                 );
+                break;
+            case 'notRec':
+                foreach ($value['terms'] as $child) {
+                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                    foreach ($terms as $taxonomyTerms) {
+                        $value['terms'][] = $taxonomyTerms["id"];
+                    }
+                }
+            case 'not': // include all terms
+                $result = array(
+                    $this->_workspace . '.taxonomy.' . $key => array(
+                        '$nin' => $value['terms']
+                    )
+                );
+                break;
+            default:
+                Throw new \Rubedo\Exceptions\Server("rule \"$rule\" not implemented.");
                 break;
         }
         
