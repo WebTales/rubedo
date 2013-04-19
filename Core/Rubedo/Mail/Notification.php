@@ -26,8 +26,9 @@ use Rubedo\Interfaces\Mail\INotification, Rubedo\Services\Manager;
  */
 class Notification implements INotification
 {
-    protected static $sendNotification = true;
+    protected static $_sendNotification = true;
     
+    protected static $_options = array();
     
     
     /**
@@ -35,7 +36,7 @@ class Notification implements INotification
      */
     public static function getSendNotification ()
     {
-        return Notification::$sendNotification;
+        return Notification::$_sendNotification;
     }
 
 	/**
@@ -43,57 +44,116 @@ class Notification implements INotification
      */
     public static function setSendNotification ($sendNotification)
     {
-        Notification::$sendNotification = $sendNotification;
+        Notification::$_sendNotification = $sendNotification;
     }
 
-	/**
-     * (non-PHPdoc) @see \Rubedo\Interfaces\Mail\IMailer::getNewMessage()
-     */
+    
+    
+    public function getOptions ($name,$defaultValue=null)
+    {
+        if(isset(self::$_options[$name])){
+            return self::$_options[$name];
+        }else{
+            return $defaultValue;
+        }
+        
+    }
+
+    public static function setOptions ($name,$value)
+    {
+        Notification::$_options[$name] = $value;
+    }
+
+
     public function getNewMessage ()
     {
-        return \Swift_Message::newInstance();
+        $this->mailService = Manager::getService('Mailer');
+         
+        $message = $this->mailService->getNewMessage();
+        $message->setFrom(array($this->getOptions('fromEmailNotification')));
+        
+        return $message;
     }
 
     public function notify ($obj, $notificationType)
     {
-        if (! self::$sendNotification) {
+        if (! self::$_sendNotification) {
             return;
         }
         switch ($notificationType) {
             case 'published':
                 return $this->_notifyPublished($obj);
                 break;
+            case 'refused':
+                return $this->_notifyRefused($obj);
+                break;
         }
     }
     
-    protected function _notifyPublished($obj){
+    protected function setTo($message,$userIdArray){
+        $userService = Manager::getService("Users");
+        $toArray = array();
+        foreach($userIdArray as $userId){
+            $user = $userService->findById($userId);
+            $name = (isset($user['name']) && ! empty($user['name'])) ? $user['name'] : $user['login'];
+            $toArray[$user['email']]=$name;
+            
+            
+        }
+        $message->setTo($toArray);
+    }
+
+    protected function _directUrl($id){
+        return ($this->getOptions('isBackofficeSsl') ? 'https' : 'http') . '://' . $this->getOptions('defaultBackofficeHost') . '/backoffice/?content=' . $id;
+    }
+    
+    protected function _notifyPublished ($obj)
+    {
+        if (! isset($obj["lastPendingUser"])) {
+            return;
+        }
         $twigVar = array();
-        $twigVar['signature']='';
-        $publishAuthor = $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
-        $twigVar['publishAuthor']=(isset($publishAuthor['name']) && !empty($publishAuthor['name']))?$publishAuthor['name']:$publishAuthor['login'];
-        $twigVar['title']=$obj['text'];
-        $twigVar['directUrl']=(isset($_SERVER['HTTPS'])?'https':'http').'://'.$_SERVER['HTTP_HOST'].'/backoffice/?content='.$obj['id'];
-         
-         
+        $publishAuthor = Manager::getService('CurrentUser')->getCurrentUserSummary();
+        $twigVar['publishingAuthor'] = (isset($publishAuthor['name']) && ! empty($publishAuthor['name'])) ? $publishAuthor['name'] : $publishAuthor['login'];
+        $twigVar['title'] = $obj['text'];
+        $twigVar['directUrl'] = $this->_directUrl($obj['id']);
+        
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("notification/published-body.html.twig");
         $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
-         
-         
-        $mailService = Manager::getService('Mailer');
-         
-        $message = $mailService->getNewMessage();
-        $message->setFrom(array('jbourdin@gmail.com'=>'Julien Bourdin'));
-        $message->setTo(array('jbourdin@gmail.com'=>'Julien Bourdin'));
-        $message->setSubject('[] Publication du contenu '. $obj['text']);
-         
+        
+        $message = $this->getNewMessage();
+        $this->setTo($message, array(
+            $obj["lastPendingUser"]["id"]
+        ));
+        $message->setSubject('[' . $this->getOptions('defaultBackofficeHost') . '] Publication du contenu "' . $obj['text'] . '"');
         $message->setBody($mailBody, 'text/html');
-         
-        $result = $mailService->sendMessage($message);
-         
+        
+        $result = $this->mailService->sendMessage($message);
+        return $result;
     }
     
     protected function _notifyRefused($obj){
-    
+        if (! isset($obj["lastPendingUser"])) {
+            return;
+        }
+        $twigVar = array();
+        $publishAuthor = Manager::getService('CurrentUser')->getCurrentUserSummary();
+        $twigVar['publishingAuthor'] = (isset($publishAuthor['name']) && ! empty($publishAuthor['name'])) ? $publishAuthor['name'] : $publishAuthor['login'];
+        $twigVar['title'] = $obj['text'];
+        $twigVar['directUrl'] = $this->_directUrl($obj['id']);
+        
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("notification/refused-body.html.twig");
+        $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
+        
+        $message = $this->getNewMessage();
+        $this->setTo($message, array(
+            $obj["lastPendingUser"]["id"]
+        ));
+        $message->setSubject('[' . $this->getOptions('defaultBackofficeHost') . '] Refus du contenu "' . $obj['text'] . '"');
+        $message->setBody($mailBody, 'text/html');
+        
+        $result = $this->mailService->sendMessage($message);
+        return $result;
     }
     
     protected function _notifyPending($obj){

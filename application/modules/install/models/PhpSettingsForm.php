@@ -55,6 +55,24 @@ class Install_Model_PhpSettingsForm extends Install_Model_BootstrapForm
         $authLifetime->setValue(isset($params['authLifetime']) ? $params['authLifetime'] : '3600');
         $authLifetime->setLabel('Session lifetime');
         
+        $defaultBackofficeHost = new Zend_Form_Element_Text('defaultBackofficeHost');
+        $defaultBackofficeHost->setRequired(true);
+        $defaultBackofficeHost->setValue(isset($params['defaultBackofficeHost']) ? $params['defaultBackofficeHost'] : $_SERVER['HTTP_HOST']);
+        $defaultBackofficeHost->setLabel('Default backoffice domain');
+        
+        $isBackofficeSSL = new Zend_Form_Element_Checkbox('isBackofficeSSL');
+        $isBackofficeSSL->setValue(isset($params['isBackofficeSSL']) ? $params['isBackofficeSSL'] : isset($_SERVER['HTTPS']));
+        $isBackofficeSSL->setLabel('Use SSL for BackOffice');
+        
+        $enableEmailNotification = new Zend_Form_Element_Checkbox('enableEmailNotification');
+        $enableEmailNotification->setValue(isset($params['enableEmailNotification']) ? $params['enableEmailNotification'] : false);
+        $enableEmailNotification->setLabel('Enable email notifications');
+        
+        $fromEmailNotification = new Zend_Form_Element_Text('fromEmailNotification');
+        $fromEmailNotification->setValue(isset($params['fromEmailNotification']) ? $params['fromEmailNotification']:null);
+        $fromEmailNotification->setLabel('Sender of notifications');
+        
+        
         $dbForm = new Zend_Form();
         //$dbForm->addElement($displayStartupErrors);
         $dbForm->addElement($displayErrors);
@@ -62,6 +80,13 @@ class Install_Model_PhpSettingsForm extends Install_Model_BootstrapForm
         $dbForm->addElement($extDebug);
         $dbForm->addElement($sessionName);
         $dbForm->addElement($authLifetime);
+        $dbForm->addElement($defaultBackofficeHost);
+        $dbForm->addElement($isBackofficeSSL);
+        $dbForm->addElement($enableEmailNotification);
+        $dbForm->addElement($fromEmailNotification);
+        
+        
+        
         
         $dbForm = self::setForm($dbForm);
         

@@ -133,6 +133,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $options = $this->getOption('swiftmail');
         if (isset($options)) {
             Zend_Registry::set('swiftMail', $options);
+            
+            $options = $this->getOption('phpSettings');
+            if (isset($options['enableEmailNotification'])) {
+                Rubedo\Mail\Notification::setSendNotification(true);
+                Rubedo\Mail\Notification::setOptions('defaultBackofficeHost', isset($options['defaultBackofficeHost']) ? $options['defaultBackofficeHost'] : null);
+                Rubedo\Mail\Notification::setOptions('isBackofficeSSL', isset($options['isBackofficeSSL']) ? $options['isBackofficeSSL'] : false);
+                Rubedo\Mail\Notification::setOptions('fromEmailNotification', isset($options['fromEmailNotification']) ? $options['fromEmailNotification'] : null);
+            }
         }
     }
 
