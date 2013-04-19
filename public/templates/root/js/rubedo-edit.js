@@ -8,6 +8,7 @@ var dateCache = new Array();
 var object = null;
 var errors = new Array();
 var timeCache = new Array();
+var numberCache = new Array();
 /*****************************/
 
 jQuery("body").css("cursor" , "default");
@@ -133,6 +134,7 @@ jQuery('#btn-cancel').click(function() {
 	var cacheChanged = 0;
 	var dateCacheChanged = 0;
 	var timeCacheChanged = 0;
+	var numberCacheChanged = 0;
 	
 	/**
 	 * Count modifications on images
@@ -148,11 +150,21 @@ jQuery('#btn-cancel').click(function() {
 		dateCacheChanged++;
 	}
 	
+	/**
+	 * Count modifications on times
+	 */
 	for(var contentId in timeCache) {
 		timeCacheChanged++;
 	}
 	
-	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0) {
+	/**
+	 * Count modifications on numbers
+	 */
+	for(var contentId in numberCache) {
+		numberCacheChanged++;
+	}
+	
+	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -205,6 +217,14 @@ jQuery('#btn-save').click(function() {
 	for( var contentId in timeCache) {
 		modified = true;
 		confirmTime(contentId, timeCache[contentId].newTime);
+	}
+	
+	/**
+	 * save numbers
+	 */
+	for( var contentId in numberCache) {
+		modified = true;
+		confirmNumber(contentId, numberCache[contentId].newNumber);
 	}
 	
 	if(errors.length > 0) {
@@ -425,6 +445,62 @@ function confirmTime(contentId, newTime) {
 
 /************************************************/
 
+/************************************************
+ * 			jQuery for number editing
+ ***********************************************/
+
+jQuery(".number").click( function() {
+	if(jQuery('#viewmode').css("display") == "none"){
+		var currentNumberDiv = jQuery(this).parent().context.id;
+		var currentNumber = jQuery("#"+currentNumberDiv+" > .currentNumber").html().trim();
+		
+		if(jQuery("#"+currentNumberDiv+" > .currentNumber").html() != "") {
+			jQuery("#"+currentNumberDiv+" > .currentNumber").html("");
+		
+			jQuery("#"+currentNumberDiv).html(jQuery("#"+currentNumberDiv).html() + "<input class=\"numberSelector\" type=\"number\" value=\""+currentNumber+"\">");
+		}
+	}
+});
+
+$( document ).on( 'blur', '.numberSelector', function () {
+	var currentNumberDiv = jQuery(this).parent().context.parentNode.id;
+	var newNumber = jQuery(this).val();
+	
+	if(newNumber != jQuery(this).attr("value")){
+		if(typeof(numberCache[currentNumberDiv]) == "undefined"){
+			numberCache[currentNumberDiv] = {"number" : jQuery(this).attr("value"), "newNumber" : newNumber};
+		} else {
+			numberCache[currentNumberDiv]["newNumber"] = newNumber;
+		}
+	}
+	
+	jQuery("#"+currentNumberDiv + " > .currentNumber").html(newNumber);
+	jQuery("#"+currentNumberDiv + " .numberSelector").remove();
+});
+
+function confirmNumber(contentId, newNumber) {
+	var idAndField = contentId.split("_");
+	var contentId = idAndField[0];
+	var fieldName = idAndField[1];
+	
+	var request = $.ajax({
+		url: "/xhr-edit/save-number",
+		type: "POST",
+		data: {
+			contentId : contentId,
+			newNumber : newNumber,
+			field : fieldName
+		},
+		dataType: "json"
+	});
+	 
+	request.fail(function(jqXHR, textStatus) {
+		errors.push(jQuery.parseJSON(jqXHR['responseText']));
+	});
+}
+
+/***********************************************/
+
 jQuery('.block').mouseover(function() {
 	//jQuery(this).css('cursor', 'pointer');
 	var position = jQuery(this).offset();
@@ -434,7 +510,7 @@ jQuery('.block').mouseover(function() {
 
 function swithToEditMode() {
 	jQuery('.editable').attr('contenteditable', 'true');
-	jQuery('.editable, .editable-img, .date, .time').css('cursor', 'text');
+	jQuery('.editable, .editable-img, .date, .time, .number').css('cursor', 'text');
 	CKEDITOR.inlineAll();
 	jQuery('#viewmode').hide();
 	jQuery('#editmode').show();
@@ -451,7 +527,7 @@ function swithToEditMode() {
 }
 
 function swithToViewMode() {
-	jQuery('.editable, .editable-img, .date, .time').css('cursor', 'default');
+	jQuery('.editable, .editable-img, .date, .time, .number').css('cursor', 'default');
 	for ( var i in CKEDITOR.instances) {
 		CKEDITOR.instances[i].destroy(true);
 	}
@@ -503,9 +579,17 @@ function undoAllChanges() {
 		jQuery("#"+contentId+" .currentTime").html(timeCache[contentId]['time']);
 	}
 	
+	/**
+	 * Undo modifications on numbers
+	 */
+	for(var contentId in numberCache) {
+		jQuery("#"+contentId+" .currentNumber").html(numberCache[contentId]['number']);
+	}
+	
 	cache = new Array();
 	dateCache = new Array();
 	timeCache = new Array();
+	numberCache = new Array();
 }
 
 function undo(editor) {
