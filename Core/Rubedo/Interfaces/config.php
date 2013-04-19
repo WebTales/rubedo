@@ -83,6 +83,7 @@ class config
 		'DamTypes'					=>	'Rubedo\\Interfaces\\Collection\\IDamTypes',
 		'Workspaces'                =>  'Rubedo\\Interfaces\\Collection\\IWorkspaces',
 		'Mailer'					=>	'Rubedo\\Interfaces\\Mail\\IMailer',
+		'Notification'				=>	'Rubedo\\Interfaces\\Mail\\INotification',
 		'MailingList'				=>	'Rubedo\\Interfaces\\Collection\\IMailingList',
 		'Localisation'				=>	'Rubedo\\Interfaces\\Collection\\ILocalisation',
 	);

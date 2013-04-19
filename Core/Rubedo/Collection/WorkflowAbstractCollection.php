@@ -30,6 +30,7 @@ use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection, Rubedo\Services\Ma
  */
 abstract class WorkflowAbstractCollection extends AbstractCollection implements IWorkflowAbstractCollection
 {
+    
 
     protected function _init() {
         // init the data access service
@@ -46,23 +47,24 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      * @return array
      */
 	public function update(array $obj, $options = array('safe'=>true), $live = true){
-		if($live === true){
+		
+	    if($live === true){
 			$this->_dataService->setLive();
 		} else {
 			$this->_dataService->setWorkspace();
 		}
 		
+		$previousVersion = $this->findById($obj['id'],$live,false);
+		$previousStatus = $previousVersion['status'];
+		
 		$returnArray = parent::update($obj, $options);
 		if($returnArray['success']){
-			if($returnArray['data']['status'] === 'published' && !$live){
-				$result = $this->publish($returnArray['data']['id']);
-				
-				if(!$result['success']){
-					$returnArray['success'] = false;
-					$returnArray['msg'] = "failed to publish the content";
-					unset($returnArray['data']);
-				}
-			}
+		    if(!$live){
+		        $transitionResult = $this->_transitionEvent($returnArray['data'], $previousStatus);
+		        if($transitionResult){
+		            $returnArray = $transitionResult;
+		        }
+		    }
 		} else {
 			$returnArray = array('success' => false, 'msg' => 'failed to update');
 		}
@@ -160,5 +162,46 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
 	public function publish($objectId) {
 		return $this->_dataService->publish($objectId);
 	}
+	
+	protected function _transitionEvent($obj,$previousStatus){
+	       if($obj['status'] === 'published'){
+	           $returnArray = array();
+				$result = $this->publish($obj['id']);
+				
+				if(!$result['success']){
+					$returnArray['success'] = false;
+					$returnArray['msg'] = "failed to publish the content";
+					unset($returnArray['data']);
+				}
+				
+			}elseif($previousStatus!='pending' && $obj['status']=="pending"){
+                $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
+                $obj['lastPendingUser'] = $currentUser;
+                $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
+                $obj['lastPendingTime'] = $currentTime;
+			    $returnArray = parent::update($obj);
+			    $this->_notify($obj,'pending');
+			    
+			}else{
+			  $returnArray = null;
+			}
+			
+			if($previousStatus == 'pending' && $obj['status'] == 'refused'){
+			    $this->_notify($obj,'refused');
+			}
+			if($previousStatus == 'pending' && $obj['status'] == 'published'){
+			    $this->_notify($obj,'published');
+			}
+			
+			
+			    
+			return $returnArray;
+	}
+	
+	protected function _notify($obj,$notificationType){
+	    return Manager::getService('Notification')->notify($obj,$notificationType);
+	}
+	
+	
 
 }
