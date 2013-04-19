@@ -5,7 +5,7 @@
 
     <ul id="siteMap">
         {% for page in pages %}
-            <li>{% if page.pages is defined %}<a href="#" class="expend" onclick="editList(this, '{{ page.id }}');"><i class="icon-minus min"></i></a>{% endif %}<a href="{{ page.url }}">{{ page.title }}</a></li>
+            <li>{% if page.pages is defined %}<a href="#" class="expend" onclick="editList(this, '{{ page.id }}');return false;"><i class="icon-minus min"></i></a>{% endif %}<a href="{{ page.url }}">{{ page.title }}</a></li>
             {% if page.pages is defined %}
                 {% include "root/blocks/tree/pages.html.twig" with {"pages" : page.pages, "rootPage" : page} only %}
             {% endif %}
