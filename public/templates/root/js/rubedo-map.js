@@ -8,6 +8,8 @@ var gMap = function (options,id,title,text,field) {
 		this.map;
 		this.options=(typeof options =="string")?JSON.parse(options):options;
 		this.id=id;
+		console.log(options.length);
+		this.zoom=(options.length>1)?3:14;
 		this.useLocation=(options.useLocation)?options.useLocation:true;
 		this.address=this.options.address;
 		this.latitude=this.options.latitude;
@@ -24,7 +26,7 @@ var gMap = function (options,id,title,text,field) {
 			var self=this;
 			var mapOptions={
 					center: new google.maps.LatLng(48.8567, 2.3508),
-			        zoom: 14,
+			        zoom: self.zoom,
 			        mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
 
@@ -34,10 +36,17 @@ var gMap = function (options,id,title,text,field) {
 				//Get user location, create marker at position and setCenter of map on user icon
 				this.addUserMarker();
 			      }
-			if (self.address) {
-			      	this.geocoder.geocode( { 'address': self.address}, function(results, status) {
+		/*
+		 * 
+		 * If more than one marker on the map
+		 * 
+		 */
+			jQuery(self.options).each(function(){
+				var marker=this;
+				if (this.address) {
+			      	self.geocoder.geocode( { 'address': this.address}, function(results, status) {
 			      		if (status == google.maps.GeocoderStatus.OK) {
-			      			self.addMarker(self.options,self.title,self.text);
+			      			self.addMarker(marker,self.title,self.text);
 			      			self.map.setCenter(results[0].geometry.location);
 			      			self.latitude=results[0].geometry.location.kb;
 			      			self.longitude=results[0].geometry.location.lb;
@@ -45,8 +54,8 @@ var gMap = function (options,id,title,text,field) {
 			    		   
 		    		    }
 			      	});
-			      } else if (self.latitude && self.longitude){
-			    		self.addMarker(self.options,self.title,self.text);
+			      } else if (this.lat && this.lon){
+			    	self.addMarker(this,self.title,self.text);
 			    	  self.map.setCenter(new google.maps.LatLng(self.latitude, self.longitude));
 			    	  
 			    	  this.geocoder.geocode({'latLng': new google.maps.LatLng(self.latitude,self.longitude)}, function(results, status) {
@@ -60,6 +69,8 @@ var gMap = function (options,id,title,text,field) {
 			    		    }
 			    		   });
 			      }
+			})
+			
 			
 		},
 		getValues:function(){
@@ -92,6 +103,7 @@ var gMap = function (options,id,title,text,field) {
 			var self=this;
 			if(self.field==true){self.deleteAllMarkers();}
 			if (location.address){
+				
 	    		  self.geocoder.geocode( { 'address': location.address}, function(results, status) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
 	    	      			self.createMarker(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb), title, contentString);
@@ -172,8 +184,9 @@ var gMap = function (options,id,title,text,field) {
 		});
 		return instance;
 	}
-	gMap.mapRefresh=function(id){
+	gMap.mapRefresh=function(id,marker){
 		//Add input values
+		if(marker==null){
 		var newAddress=jQuery("#"+id+"-edit .address").val();
 		var newLat=jQuery("#"+id+"-edit .latitude").val();
 		var newLong=jQuery("#"+id+"-edit .longitude").val();
@@ -187,7 +200,7 @@ var gMap = function (options,id,title,text,field) {
 				latitude:this.latitude,
 				longitude:this.longitude
 		}
-		
 		this.map.addMarker(this.location,this.map.title,this.map.text);
+		}
 
 	};

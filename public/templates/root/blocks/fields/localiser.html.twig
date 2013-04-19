@@ -15,10 +15,8 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&amp;sensor=true">
     </script>
 {% if(cValue["config"]["multivalued"]) %}
-{% for marker in value %}
-	<div id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-lat='{{ value[loop.index-1].lat|cleanHtml }}' data-lon='{{ value[loop.index-1].lon|cleanHtml }}' data-field="false" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
+	<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
 
-{% endfor %}
 {% else %}
 <div id="{{ data.id }}_{{key}}" data-lat='{{ value.lat|cleanHtml }}' data-lon='{{ value.lon|cleanHtml }}' data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
 {% endif %}
