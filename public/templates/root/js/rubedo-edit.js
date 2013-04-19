@@ -115,6 +115,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 			// set file and media explorer path
 			editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
 			editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+			editor.config.extraPlugins = 'rubedolink';
 		});
 		
 	}
