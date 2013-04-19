@@ -26,8 +26,6 @@ require_once ('AbstractController.php');
  */
 class Blocks_ContentSingleController extends Blocks_AbstractController
 {
-
-	protected $_defaultTemplate = 'singlecontent';
 	
     /**
      * Default Action, return the Ext/Js HTML loader
@@ -63,9 +61,11 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
+            $multiValuedArray=array();
             $CKEConfigArray = array();
             foreach ($type["fields"] as $value) {
-                $cTypeArray[$value['config']['name']] = $value["cType"];
+            	
+                $cTypeArray[$value['config']['name']] = $value;
                 if($value["cType"] == "CKEField"){
                     $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
                 }
@@ -77,7 +77,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $output['activateDisqus']=$type['activateDisqus'];
             $output["type"] = $cTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
-            
             if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
             			"blocks/" . $blockConfig['displayType'] . ".html.twig");

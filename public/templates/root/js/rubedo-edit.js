@@ -7,6 +7,7 @@ var cache = new Array();
 var dateCache = new Array();
 var object = null;
 var errors = new Array();
+var timeCache = new Array();
 /*****************************/
 
 jQuery("body").css("cursor" , "default");
@@ -130,6 +131,7 @@ jQuery('#btn-cancel').click(function() {
 	var changed = checkIfDirty();
 	var cacheChanged = 0;
 	var dateCacheChanged = 0;
+	var timeCacheChanged = 0;
 	
 	/**
 	 * Count modifications on images
@@ -145,7 +147,11 @@ jQuery('#btn-cancel').click(function() {
 		dateCacheChanged++;
 	}
 	
-	if (changed || cacheChanged > 0 || dateCacheChanged > 0) {
+	for(var contentId in timeCache) {
+		timeCacheChanged++;
+	}
+	
+	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -158,9 +164,12 @@ jQuery('#cancel-confirm').click(function() {
 });
 
 jQuery('#btn-save').click(function() {
+	var modified = false;
+	
 	// for every modified content
 	for ( var i in CKEDITOR.instances) {
 		if (CKEDITOR.instances[i].checkDirty()) {
+			modified = true;
 			// saving content
 			save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
 			
@@ -173,6 +182,7 @@ jQuery('#btn-save').click(function() {
 	 * Save images
 	 */
 	for( var i in cache ) {
+		modified = true;
 		var idAndField = i.split("_");
 		var id = idAndField[0];
 		var field = idAndField[1];
@@ -184,22 +194,33 @@ jQuery('#btn-save').click(function() {
 	 * Save dates
 	 */
 	for( var contentId in dateCache) {
+		modified = true;
 		confirmDate(contentId, dateCache[contentId].newDate);
+	}
+	
+	/**
+	 * save times
+	 */
+	for( var contentId in timeCache) {
+		modified = true;
+		confirmTime(contentId, timeCache[contentId].newTime);
 	}
 	
 	if(errors.length > 0) {
 		notify('failure', 'Une erreur est survenue, il est possible que vos modifications soient perdues');
-	} else {
+	} else if (modified == true){
 		notify('success', 'Les données ont été sauvegardées.');
 	}
 	
 	errors = new Array();
 	
 	// for every maps
-	var maps = gMap.getAllInstances();
-    maps.forEach(function(map) {
-        save(map.id, map.getValues());
-    }); 
+	if(typeof(gMap) != "undefined"){
+		var maps = gMap.getAllInstances();
+	    maps.forEach(function(map) {
+	        save(map.id, map.getValues());
+	    }); 
+	}
 	
 	// switch to wiew mode
 	swithToViewMode();
@@ -322,7 +343,84 @@ function confirmDate(id, date) {
  * 			jQuery for time editing
  ************************************************/
 
+jQuery(".time").click( function () {
+	var currentTimePicker = jQuery(this).parent().context.id;
+	var currentTime = "";
+	var olderTime= "";
+	var houresAreSet = false;
+	
+	jQuery("#"+currentTimePicker+" .timepicker").timepicker({
+		regional: jQuery("body").attr("data-language"),
+		showPeriodLabels: false,
+		minutes: { interval: 15 },
+		minuteText: 'Min',
+		timeSeparator: ':',
+		onSelect: function(time) {
+			var html = jQuery("#"+currentTimePicker+" .currentTime").html();
+			
+			olderTime = html.trim();
+			currentTime = time;
+			
+			var fullCurrentTime = currentTime.split(":");
+			var currentHoures = fullCurrentTime[0];
+			var currentMinutes = fullCurrentTime[1];
+			
+			var fullOlderTime = olderTime.split(":");
+			var olderHoures = fullOlderTime[0];
+			var olderMinutes = fullOlderTime[1];
+			
+			if(currentTime != olderTime) {
+				jQuery("#"+currentTimePicker+" .currentTime").html(currentTime);
+				
+				if(currentHoures != olderHoures) {
+					houresAreSet = true;
+				}
 
+				if(currentMinutes != olderMinutes) {
+					if(typeof(timeCache[currentTimePicker]) == "undefined"){
+						timeCache[currentTimePicker] = {time : jQuery("#"+currentTimePicker).attr("data-time"), newTime : currentTime};
+					} else {
+						timeCache[currentTimePicker]['newTime'] = currentTime;
+					}
+					
+					jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
+				}
+			} else if(currentMinutes == olderMinutes && currentHoures == olderHoures && houresAreSet){
+				if(typeof(timeCache[currentTimePicker]) == "undefined"){
+					timeCache[currentTimePicker] = {time : jQuery("#"+currentTimePicker).attr("data-time"), newTime : currentTime};
+				} else {
+					timeCache[currentTimePicker]['newTime'] = currentTime;
+				}
+				
+				jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
+			}
+		}
+	});
+
+	currentTime = jQuery("#"+currentTimePicker+" .currentTime").html().trim();
+	jQuery("#"+currentTimePicker+" .timepicker").timepicker('setTime', currentTime);
+});
+
+function confirmTime(contentId, newTime) {
+	var idAndField = contentId.split("_");
+	var contentId = idAndField[0];
+	var fieldName = idAndField[1];
+	
+	var request = $.ajax({
+		url: "/xhr-edit/save-time",
+		type: "POST",
+		data: {
+			contentId : contentId,
+			newTime : newTime,
+			field : fieldName
+		},
+		dataType: "json"
+	});
+	 
+	request.fail(function(jqXHR, textStatus) {
+		errors.push(jQuery.parseJSON(jqXHR['responseText']));
+	});
+}
 
 /************************************************/
 
@@ -345,6 +443,10 @@ function swithToEditMode() {
 	jQuery('.date').each(function() {
 		jQuery(this).html(jQuery(this).html() + "<div class=\"datepicker\"></div>");
 	});
+	
+	jQuery('.time').each(function() {
+		jQuery(this).html(jQuery(this).html() + "<div class=\"timepicker\"></div>");
+	});
 }
 
 function swithToViewMode() {
@@ -358,12 +460,8 @@ function swithToViewMode() {
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
 	
-	jQuery('.date').each(function() {
-		var html = jQuery(this).html().split("<");
-		var dateOnly = html[0];
-		
-		jQuery(this).html(dateOnly);
-	});
+	jQuery(".datepicker").remove();
+	jQuery(".timepicker").remove();
 }
 
 function checkIfDirty() {
@@ -397,8 +495,16 @@ function undoAllChanges() {
 		jQuery("#"+contentId).html(dateCache[contentId]['html']);
 	}
 	
+	/**
+	 * Undo modifications on times
+	 */
+	for(var contentId in timeCache) {
+		jQuery("#"+contentId+" .currentTime").html(timeCache[contentId]['time']);
+	}
+	
 	cache = new Array();
 	dateCache = new Array();
+	timeCache = new Array();
 }
 
 function undo(editor) {
