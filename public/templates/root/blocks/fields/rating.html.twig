@@ -5,15 +5,16 @@
 {%else%}
 {%set decimal="true"%}
 {%endif%}
+
 <div>
 {%if decimal=="true"%}
 {%set value=value+1%}
 {%endif%}
 	{%for i in 1..value%}
 		{%if loop.index==value and decimal=="true"%}
-		<i class="icon-star-empty"></i>
+		<i class="icon-star-empty star-edit" data-value="{{ loop.index }}"></i>
 		{%else%}
-		<i class="icon-star"></i>
+		<i class="icon-star star-edit"  data-value="{{ loop.index }}"></i>
 		{%endif%}
 	{%endfor%}
 </div>
