@@ -8,25 +8,25 @@
 	        {% if value %}
       		{%for cKey,cValue in type %}
       			{%if(key==cKey)%}
-      					{%if cValue=="ImagePickerField"%}
+      					{%if cValue["cType"]=="ImagePickerField"%}
       					   {% include 'root/blocks/fields/imageField.html.twig' %}
-      					{%elseif(cValue=="CKEField")%}
+      					{%elseif(cValue["cType"]=="CKEField")%}
       						{% include 'root/blocks/fields/CKEfield.html.twig' %}
-      					{%elseif(cValue=="ratingField")%}
+      					{%elseif(cValue["cType"]=="ratingField")%}
       						{% include 'root/blocks/fields/rating.html.twig' %}
-      					{%elseif(cValue=="textareafield")%}
+      					{%elseif(cValue["cType"]=="textareafield")%}
       						{% include 'root/blocks/fields/textarea.html.twig' %}
-      					{%elseif(cValue=="textfield")%}
+      					{%elseif(cValue["cType"]=="textfield")%}
       						{% include 'root/blocks/fields/text.html.twig' %}
-      					{%elseif(cValue=="slider")%}
+      					{%elseif(cValue["cType"]=="slider")%}
       						{% include 'root/blocks/fields/slider.html.twig' %}
-						{%elseif(cValue=="treepicker")%}
+						{%elseif(cValue["cType"]=="treepicker")%}
 						{% if value %}
 							{% include 'root/blocks/fields/link-to-page.html.twig' %}
 						{% endif %}
-						{%elseif(cValue=="localiserField")%}
+						{%elseif(cValue["cType"]=="localiserField")%}
 							{% include 'root/blocks/fields/localiser.html.twig' %}
-      					{%elseif(cValue=="datefield")%}
+      					{%elseif(cValue["cType"]=="datefield")%}
 							{% include 'root/blocks/fields/date.html.twig' %}
       					{%endif%}
       					
