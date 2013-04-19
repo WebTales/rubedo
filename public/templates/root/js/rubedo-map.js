@@ -99,6 +99,10 @@ var gMap = function (options,id,title,text,field) {
 	    	      			self.latitude=results[0].geometry.location.jb;
 			      			self.longitude=results[0].geometry.location.kb;
 			      			self.address=results[0].formatted_address;
+			      			
+			      			jQuery("#"+self.id+"-edit .latitude").val(self.latitude);
+			    			jQuery("#"+self.id+"-edit .longitude").val(self.longitude);
+			    			jQuery("#"+self.id+"-edit .address").val(self.address);
 	    	      		}else {
 		    		    	  console.log("geocodage failed :" +status);
 		    		    }
@@ -113,6 +117,9 @@ var gMap = function (options,id,title,text,field) {
 		    		    	 self.address=results[1].formatted_address;
 		    		    	 self.latitude=location.latitude;
 				      		self.longitude=location.longitude;
+				      		jQuery("#"+self.id+"-edit .latitude").val(self.latitude);
+			    			jQuery("#"+self.id+"-edit .longitude").val(self.longitude);
+			    			jQuery("#"+self.id+"-edit .address").val(self.address);
 		    		     }
 		    		    } else {
 		    		    	  console.log("geocodage failed :" +status);
@@ -175,9 +182,6 @@ var gMap = function (options,id,title,text,field) {
 		this.address=newAddress;
 		this.latitude=newLat;
 		this.longitude=newLong;
-		/*this.address=(newAddress!="")?newAddress:this.map.address;
-		this.latitude=(newLat!="")?newLat:this.map.latitude;
-		this.longitude=(newLong!="")?newLong:this.map.longitude;*/
 		this.location={
 				address:this.address,
 				latitude:this.latitude,
@@ -185,11 +189,5 @@ var gMap = function (options,id,title,text,field) {
 		}
 		
 		this.map.addMarker(this.location,this.map.title,this.map.text);
-			/*jQuery("#"+id+"-edit .latitude").val(self.map.latitude);
-			jQuery("#"+id+"-edit .longitude").val(self.map.longitude);
-			jQuery("#"+id+"-edit .address").val(self.map.address);*/
-				
-	   
-	
-		
+
 	};
