@@ -158,6 +158,63 @@ class Groups extends AbstractCollection implements IGroups
         return $groupList;
     }
     
+    public function getValidatingGroupsId(){
+        //contentReviewer
+        $filters = array();
+        $filters[] = array(
+            'property' => "roles",
+            'value' => 'contentReviewer'
+        );
+        $groupList = $this->getList($filters);
+        
+        //fetchAllChildren
+        $groupsArray = array();
+        $list = $groupList['data'];
+        foreach ($list as &$obj) {
+            $groupsArray[]=$obj['id'];
+            $childrenArray = Manager::getService('Groups')->fetchAllChildren($obj['id']);
+            foreach ($childrenArray as $child){
+                $groupsArray[]=$child['id'];
+            }
+        }
+        
+        return array_unique($groupsArray);
+    }
+    
+    public function getValidatingGroupsForWorkspace($workspace){
+        $validatingGroups = Manager::getService('Groups')->getValidatingGroupsId();
+
+        $filters = array();
+        $filters[] = array(
+            'property' => "writeWorkspaces",
+            'value' => array('$in'=>array($workspace,'all'))
+        );
+        
+        $groupList = $this->getList($filters);
+        
+        //fetchAllChildren
+        $groupsArray = array();
+        $list = $groupList['data'];
+        
+        
+        foreach ($list as &$obj) {
+            if (in_array($obj['id'], $validatingGroups)) {
+                $groupsArray[$obj['id']] = $obj;
+            }
+            
+            $childrenArray = Manager::getService('Groups')->fetchAllChildren($obj['id']);
+            
+            foreach ($childrenArray as $child) {
+                if (in_array($child['id'], $validatingGroups)) {
+                    $groupsArray[$child['id']] = $child;
+                }
+            }
+        }
+        
+        return array_values($groupsArray);
+    }
+    
+    
     protected function _addReadableProperty ($obj)
 	{
 	    if (! self::isUserFilterDisabled()) {

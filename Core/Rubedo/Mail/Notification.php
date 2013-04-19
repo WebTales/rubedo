@@ -69,7 +69,7 @@ class Notification implements INotification
         
         $message = $this->mailService->getNewMessage();
         $message->setFrom(array(
-            $this->getOptions('fromEmailNotification')=>'Rubedo'
+            $this->getOptions('fromEmailNotification') => 'Rubedo'
         ));
         
         return $message;
@@ -86,6 +86,9 @@ class Notification implements INotification
                 break;
             case 'refused':
                 return $this->_notifyRefused($obj);
+                break;
+            case 'pending':
+                return $this->_notifyPending($obj);
                 break;
         }
     }
@@ -123,13 +126,16 @@ class Notification implements INotification
 
     protected function _notifyPending ($obj)
     {
-        $userIdArray = array();
+        $userIdArray = Manager::getService('Users')->findValidatingUsersByWorkspace($obj['writeWorkspace']);
+        if(count($userIdArray)===0){
+            return;
+        }
         $template = 'pending-body.html.twig';
-        $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Soumission d\'un contenu "' . $obj['text'] . '"';
-        return $this->_sendNotification($userIdArray, $obj, $template, $subject);
+        $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Soumission pour validation d\'un contenu "' . $obj['text'] . '"';
+        return $this->_sendNotification($userIdArray, $obj, $template, $subject,true);
     }
 
-    protected function _sendNotification ($userIdArray, $obj, $template, $subject, $hideTo = true)
+    protected function _sendNotification ($userIdArray, $obj, $template, $subject, $hideTo = false)
     {
         $twigVar = array();
         $publishAuthor = Manager::getService('CurrentUser')->getCurrentUserSummary();
@@ -158,11 +164,10 @@ class Notification implements INotification
             $name = (isset($user['name']) && ! empty($user['name'])) ? $user['name'] : $user['login'];
             $toArray[$user['email']] = $name;
         }
-        if($hideTo){
+        if ($hideTo) {
             $message->setBcc($toArray);
-        }else{
+        } else {
             $message->setTo($toArray);
         }
-        
     }
 }

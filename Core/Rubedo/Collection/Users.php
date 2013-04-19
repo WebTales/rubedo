@@ -273,5 +273,23 @@ class Users extends AbstractCollection implements IUsers
 		
 		return $result;
 	}
+
+    public function findValidatingUsersByWorkspace ($workspace)
+    {
+        $members = array();
+        
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $groups = Manager::getService('Groups')->getValidatingGroupsForWorkspace($workspace);
+        AbstractCollection::disableUserFilter($wasFiltered);
+        foreach ($groups as $group) {
+            foreach ($group['members'] as $member) {
+                if (! empty($member)) {
+                    $members[$member] = $member;
+                }
+            }
+        }
+        
+        return array_values($members);
+    }
     
 }

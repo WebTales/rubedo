@@ -159,7 +159,6 @@ abstract class AbstractCollection implements IAbstractCollection
         if (isset($limit)) {
             $this->_dataService->setNumberOfResults($limit);
         }
-        
         $dataValues = $this->_dataService->read();
         if($dataValues && is_array($dataValues)){
             foreach ($dataValues['data'] as &$obj) {
