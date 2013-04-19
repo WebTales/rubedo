@@ -239,6 +239,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     						"taxonomy" => $contentParamsTaxonomy,
     						"target" => $configs['ContentsTarget'],
     						"writeWorkspace" => $configs['ContentsWriteWorkspace'],
+    						"startPublicationDate" => "",
+    						"endPublicationDate" => "",
     						"pageId"=>"",
     						"maskId"=>"",
     						"blockId"=>"",
