@@ -26,8 +26,6 @@ require_once ('AbstractController.php');
  */
 class Blocks_ContentSingleController extends Blocks_AbstractController
 {
-
-	protected $_defaultTemplate = 'singlecontent';
 	
     /**
      * Default Action, return the Ext/Js HTML loader
