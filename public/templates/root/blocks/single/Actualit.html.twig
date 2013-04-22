@@ -4,29 +4,33 @@
 
 <div class="block headline">
 	<div class="">
-		<h2 class="editable" id="{{ data.id }}_text">{{ data.text }}</h2>
+		<h2 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h2>
 		<div class="alignright">
 			{% for term in data.terms %}
 			{% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="label label-warning">{{term}}</span>
 			{% endfor %}
 		</div>
-		<div class="entry-info">
-			{% if data.date %}
-			Le {{data.date|localizeddate('long', 'none', lang)}}
-			{% endif %}
-		</div>
+		{% if data.date %}
+            <div class="entry-info date" id="{{ data.id }}_date">
+                Le {{data.date|localizeddate('long', 'none', lang)}}
+            </div>
+        {% endif %}
 		<div style="clear:both;"></div>
-		{% if data.image %}
-		    <div class="pull-left" style="margin: 1em;">
-		        <img class="img-rounded" src="/dam?media-id={{data.image}}&amp;width=400" alt="{{data.text}}" title="{{data.text}}"  />
-		    </div>
-			
-		{% endif %}
-		<br/>
-		<div class="editable" id="{{ data.id }}_body">
-			{{ data.body|cleanHtml }}
-		</div>
-		<div style="clear:both;"></div>
+		<div class="row-fluid">
+            {% if data.image %}
+                <div class="span3 editable-img" id="{{ data.id }}_image">
+                    <img class="img-rounded" src="/dam?media-id={{data.image}}&amp;" alt="{{data.text}}" title="{{data.text}}"  />
+                </div>
+            {% endif %}
+    
+            {% if data.image %}
+                <div class="span9 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
+            {% else %}
+                <div class="span12 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
+            {% endif %}
+                {{ data.body|cleanHtml }}
+            </div>
+        </div>
 	</div>
 </div>
 {% if activateDisqus and disqusKey %}
