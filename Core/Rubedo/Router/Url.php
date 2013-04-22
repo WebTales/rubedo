@@ -261,12 +261,12 @@ class Url implements IUrl
             $doNotAddSite = false;
         }
         
-        $content = Manager::getService('Contents')->findById($contentId);
         if (\Zend_Registry::getInstance()->offsetExists('draft')) {
             $ws = \Zend_Registry::get('draft')?'draft':'live';
         } else {
             $ws = 'live';
         }
+        $content = Manager::getService('Contents')->findById($contentId,$ws==='live',false);
         if (isset($content[$ws]['taxonomy']['navigation'])) {
             foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
                 $page = Manager::getService('Pages')->findById($pageId);
@@ -330,12 +330,12 @@ class Url implements IUrl
             $doNotAddSite = false;
         }
         
-        $content = Manager::getService('Contents')->findById($contentId);
         if (\Zend_Registry::getInstance()->offsetExists('draft')) {
             $ws = \Zend_Registry::get('draft')?'draft':'live';
         } else {
             $ws = 'live';
         }
+        $content = Manager::getService('Contents')->findById($contentId,$ws==='live',false);
         
         if (isset($content[$ws]['taxonomy']['navigation'])) {
             foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
