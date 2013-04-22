@@ -6,8 +6,8 @@
 {%set decimal="true"%}
 {%endif%}
 {%  if(cValue["config"]["multivalued"]) %}
+<div id="{{ data.id }}_{{ key }}">
 {% for item in value %}
-<div>
 {%if decimal=="true"%}
 {%set item=item+1%}
 {%endif%}
@@ -18,13 +18,11 @@
 		<i class="icon-star star-edit"  data-value="{{ loop.index }}" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}"></i>
 		{%endif%}
 	{%endfor%}
-</div>
+
 {% endfor %}
-{% else %}
-<div class="progress" id="test">
-  <div class="bar" id="infos" style="width: 60%;"></div>
 </div>
-<div>
+{% else %}
+<div id="{{ data.id }}_{{ key }}">
 {%if decimal=="true"%}
 {%set value=value+1%}
 {%endif%}
