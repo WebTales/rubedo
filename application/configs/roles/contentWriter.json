@@ -9,6 +9,8 @@
         "read.ui.contents.[a-z]+",
         "write.ui.contents.draft",
         "write.ui.contents.draftToPending",
+        "write.ui.contents.refused",
+        "write.ui.contents.refusedToPending",
         "execute.controller.contents.@dot*",
         "execute.controller.versioning.index.backoffice",
         "execute.controller.taxonomy-terms.index.backoffice" ,

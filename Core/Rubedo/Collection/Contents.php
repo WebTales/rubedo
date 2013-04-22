@@ -767,13 +767,17 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $contentType = Manager::getService('ContentTypes')->findById(
                     $contentTypeId);
             
-            if ($contentType['readOnly'] ||
-                     ! $aclServive->hasAccess("write.ui.contents")) {
+            if (! $aclServive->hasAccess("write.ui.contents")) {
                 $obj['readOnly'] = true;
             } elseif (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
                 $obj['readOnly'] = true;
             } else {
-                $obj['readOnly'] = false;
+                $obj['readOnly'] = true;
+                foreach ($writeWorkspaces as $writeWorkspace){
+                    if(in_array($writeWorkspace, $contentType['workspaces'])){
+                        $obj['readOnly'] = false;
+                    }
+                }
             }
         }
         
