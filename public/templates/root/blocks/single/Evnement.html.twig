@@ -4,7 +4,7 @@
 
 <div class="block headline">
 	<div class="">
-		<h2 class="editable" id="{{ data.id }}_text">{{ data.text }}</h2>
+		<h2 class="editable" id="{{ data.id }}_text"  data-field-type="title">{{ data.text }}</h2>
 		<div class="alignright">
 			{% for term in data.terms %}
 			{% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="label label-warning">{{term}}</span>
@@ -13,9 +13,13 @@
 		<div class="entry-info">
 			{% if data.date %}
 			{% if data.dateEnd%}
-			Du {{data.date|localizeddate('long', 'none', lang)}} au {{data.dateEnd|localizeddate('long', 'none', lang)}}
+			<div class="entry-info">
+                <span class="date" id="{{ data.id }}_date">Du {{data.date|localizeddate('long', 'none', lang)}}</span> au <span class="date" id="{{ data.id }}_date">{{data.dateEnd|localizeddate('long', 'none', lang)}}</span>
+            </div>
 			{% else %}
-			A partir du {{data.date|localizeddate('long', 'none', lang)}}
+			<div class="entry-info date" id="{{ data.id }}_date">
+                A partir du {{data.date|localizeddate('long', 'none', lang)}}
+            </div>
 			{% endif %}
 			{% endif %}
 			{% if data.Location %}
@@ -25,12 +29,12 @@
 		<div style="clear:both;"></div>
 		{% if data.image %}
 		
-		<div class="pull-left" style="margin: 1em;">
+		<div class="pull-left editable-img" style="margin: 1em;" id="{{ data.id }}_image">
 		        <img class="img-rounded" src="/dam?media-id={{data.image}}&amp;width=400" alt="{{data.text}}" title="{{data.text}}"  />
 		    </div>
 		{% endif %}
 		<br/>
-		<div class="editable" id="{{ data.id }}_body">
+		<div class="editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
 			{{ data.body|cleanHtml }}
 		</div>
 		<div style="clear:both;"></div>
