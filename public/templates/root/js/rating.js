@@ -1,5 +1,5 @@
 
-
+/*
 jQuery(".star-edit").click(function(){
 	starEdit=(starEdit==true)?false:true;
 });
@@ -20,4 +20,16 @@ jQuery(".star-edit").hover(function(){
 					}
 			}
 	})
+});*/
+
+jQuery(".star-edit").hover(function(e){
+	var self=this;
+		var x = e.pageX - this.offsetLeft;
+		var y = e.pageY - this.offsetTop;
+	     var maxPerCent=jQuery("#test").width();
+	     jQuery("#infos").width(x);
+	     var rate=Math.round((x*100)/maxPerCent);
+	     jQuery("#infos").html(rate+"%");
+	     var max=parseInt(jQuery(this).attr("data-max-value"));
+	     console.log(rate);
 });

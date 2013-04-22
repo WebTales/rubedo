@@ -9,11 +9,12 @@ var gMap = function (options,id,title,text,field) {
 		this.map;
 		this.options=options;
 		this.id=id;
-		this.zoom=(options.length>1)?3:14;
+		this.zoom=(options.length>1)?2:14;
 		this.useLocation=(options.useLocation)?options.useLocation:false;
 		this.markerToEdit;
 		this.geocoder=new google.maps.Geocoder();
 		this.markers=new Array();
+		this.center=true;
 
 	//Constructor call
 		this.initialize();
@@ -42,6 +43,7 @@ var gMap = function (options,id,title,text,field) {
 			 
 		 if(self.options.length==null){
 			 self.options=[self.options];
+			 self.center=false;
 		 }
 			jQuery(self.options).each(function(){
 				var marker=this;
@@ -49,14 +51,24 @@ var gMap = function (options,id,title,text,field) {
 			      	self.geocoder.geocode( { 'address': this.address}, function(results, status) {
 			      		if (status == google.maps.GeocoderStatus.OK) {
 			      			self.addMarker(marker,self.title,self.text);
-			      			self.map.setCenter(results[0].geometry.location);
+			      			if(self.center==true){
+			      				self.map.setCenter(new google.maps.LatLng(30,-40));
+			      			}else{
+			      				self.map.setCenter(results[0].geometry.location);
+			      			}
+			      			
 			      		}else {
 			    		   
 		    		    }
 			      	});
 			      } else if (this.lat && this.lon){
 			    	self.addMarker(this,self.title,self.text);
-			    	  self.map.setCenter(new google.maps.LatLng(this.lat,this.lon));
+			    	if(self.center==true){
+	      				self.map.setCenter(new google.maps.LatLng(30,-40));
+	      			}else{
+	      			  self.map.setCenter(new google.maps.LatLng(this.lat,this.lon));
+	      			}
+			    	
 			    	  
 			    	  this.geocoder.geocode({'latLng': new google.maps.LatLng(this.lat,this.lon)}, function(results, status) {
 			    		    
@@ -128,7 +140,9 @@ var gMap = function (options,id,title,text,field) {
 	    		  self.geocoder.geocode( { 'address': location.address}, function(results, status) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
 	    	      			self.createMarker(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb), title, contentString,results[0].formatted_address);
+	    	      			if(self.center==false)
 	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb));
+	    	      			
 	    	      			if(self.options.length==1){
 			      			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.jb);
 			    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.kb);
@@ -141,7 +155,8 @@ var gMap = function (options,id,title,text,field) {
 	    	      	});  
 	    	  } else if (location.latitude && location.longitude){
 	    		 self.createMarker(new google.maps.LatLng(location.latitude,location.longitude), title, contentString); 
-	    		 self.map.setCenter(new google.maps.LatLng(location.latitude,location.longitude));
+	    		 if(self.center==false)
+	    		self.map.setCenter(new google.maps.LatLng(location.latitude,location.longitude));
 	    		 this.geocoder.geocode({'latLng': new google.maps.LatLng(location.latitude,location.longitude)}, function(results, status) {
 		    		    
 		    		    if (status == google.maps.GeocoderStatus.OK) {
@@ -234,6 +249,7 @@ var gMap = function (options,id,title,text,field) {
 			if(this.map.markerToEdit){
 				this.map.deleteMarker(this.map.markerToEdit.__gm_id);
 				this.map.addMarker(this.location,this.map.title,this.map.text);
+				this.map.markerToEdit=null;
 			}else{
 				jQuery("#"+id+"-error-msg").show();
 				jQuery("#"+id+"-error-msg .msg").html("Please select a marker by right click.");
