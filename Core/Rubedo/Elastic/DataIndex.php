@@ -53,16 +53,24 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Get content type config by id
         $contentTypeConfig = \Rubedo\Services\Manager::getService('ContentTypes')->findById($id);
         
-        // Get indexable fields
-        $fields = $contentTypeConfig["fields"];
-        foreach ($fields as $field) {
-            if ($field['config']['searchable']) {
-                $searchableFields[] = $field['config']['name'];
-            }
-        }
+        // System contents are not indexed
+        if (isset($contentTypeConfig['system']) and $contentTypeConfig['system']==TRUE) {
+            
+            return array();
+            
+        } else {
         
-        $returnArray['searchableFields'] = $searchableFields;
-        return $returnArray;
+            // Get indexable fields
+            $fields = $contentTypeConfig["fields"];
+            foreach ($fields as $field) {
+                if ($field['config']['searchable']) {
+                    $searchableFields[] = $field['config']['name'];
+                }
+            }
+            
+            $returnArray['searchableFields'] = $searchableFields;
+            return $returnArray;
+        }
     }
 
     /**
@@ -135,7 +143,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Create mapping
         $indexMapping = array();
         
-        // If there is any fields get them mapped
+        // If there are any fields get them mapped
         if (isset($data["fields"]) && is_array($data["fields"])) {
             
             foreach ($data["fields"] as $key => $field) {
@@ -366,7 +374,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Create mapping
         $indexMapping = array();
         
-        // If there is any fields get them mapped
+        // If there are any fields get them mapped
         if (is_array($data["fields"])) {
             
             foreach ($data["fields"] as $key => $field) {
@@ -744,6 +752,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexContent ($data)
     {
+        
         $typeId = $data['typeId'];
         
         // Load ES type
@@ -752,32 +761,37 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Get content type structure
         $typeStructure = $this->getContentTypeStructure($typeId);
         
+        // System contents are not indexed
+        if (empty($typeStructure)) exit;
+        
         // Add fields to index
         $contentData = array();
         
-        foreach ($data['fields'] as $field => $var) {
-            
-            // only index searchable fields
-            if (in_array($field, $typeStructure['searchableFields'])) {
-                if (is_array($var)) {
-                    foreach ($var as $key => $subvalue) {
-                        if ($field != 'position') {
-                            $contentData[$field][$key] = (string) $subvalue;
-                        } else {
-                            if ($key == 'address') {
-                                $contentData['position_address'] = (string) $subvalue;
-                            }
-                            if ($key == 'location') {
-                                list ($lon, $lat) = $subvalue['coordinates'];
-                                $contentData['position_location'] = array(
-                                    (float) $lon,
-                                    (float) $lat
-                                );
+        if (isset($data['fields'])) {
+            foreach ($data['fields'] as $field => $var) {
+                
+                // only index searchable fields
+                if (in_array($field, $typeStructure['searchableFields'])) {
+                    if (is_array($var)) {
+                        foreach ($var as $key => $subvalue) {
+                            if ($field != 'position') {
+                                $contentData[$field][$key] = (string) $subvalue;
+                            } else {
+                                if ($key == 'address') {
+                                    $contentData['position_address'] = (string) $subvalue;
+                                }
+                                if ($key == 'location') {
+                                    list ($lon, $lat) = $subvalue['coordinates'];
+                                    $contentData['position_location'] = array(
+                                        (float) $lon,
+                                        (float) $lat
+                                    );
+                                }
                             }
                         }
+                    } else {
+                        $contentData[$field] = (string) $var;
                     }
-                } else {
-                    $contentData[$field] = (string) $var;
                 }
             }
         }
