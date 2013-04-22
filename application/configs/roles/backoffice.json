@@ -16,6 +16,7 @@
         "execute.controller.icons.@dot*.backoffice",
         "execute.controller.content-types.index.backoffice",
         "execute.controller.taxonomy.index.backoffice",
-        "execute.controller.elastic-search.index.backoffice"
+        "execute.controller.elastic-search.index.backoffice",
+        "execute.controller.mailing-lists.index.backoffice"
     ]
 }
