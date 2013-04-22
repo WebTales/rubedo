@@ -5,6 +5,22 @@
 {%else%}
 {%set decimal="true"%}
 {%endif%}
+{%  if(cValue["config"]["multivalued"]) %}
+{% for item in value %}
+<div>
+{%if decimal=="true"%}
+{%set item=item+1%}
+{%endif%}
+	{%for i in 1..cValue["config"]["numberOfStars"]%}
+		{%if loop.index>item%}
+		<i class="icon-star-empty star-edit" data-value="{{ loop.index }}" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}"></i>
+		{%else%}
+		<i class="icon-star star-edit"  data-value="{{ loop.index }}" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}"></i>
+		{%endif%}
+	{%endfor%}
+</div>
+{% endfor %}
+{% else %}
 
 <div>
 {%if decimal=="true"%}
@@ -19,3 +35,4 @@
 		{%endif%}
 	{%endfor%}
 </div>
+{% endif %}

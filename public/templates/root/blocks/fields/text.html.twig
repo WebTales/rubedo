@@ -1,1 +1,7 @@
-<div><span class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}</span></div>
+{%  if(cValue["config"]["multivalued"]) %}
+	{% for item in value %}
+		<div><span class="editable" id="{{ data.id }}_{{key}}">{{ item|cleanHtml }}</span></div>
+	{% endfor %}
+{% else %}
+	<div><span class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}</span></div>
+{% endif %}
