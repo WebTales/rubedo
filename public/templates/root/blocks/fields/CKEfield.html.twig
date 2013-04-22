@@ -1,7 +1,7 @@
 
 {%  if(cValue["config"]["multivalued"]) %}
 	{% for item in value %}
-		<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}[{{ loop.index }}]">
+		<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}">
 						{{item|cleanHtml}}
 						</div>
 	{% endfor %}
