@@ -148,11 +148,9 @@ class MailingList extends AbstractCollection implements IMailingList
         if (! $mailingList) {
             throw new \Rubedo\Exceptions\Server('Impossible de trouver la mailing liste');
         }
-        
         $mailService = Manager::getService('Mailer');
         $message = $mailService->getNewMessage();
-        
-        if (isset($mailingList['replyToAddress'])) {
+        if (isset($mailingList['replyToAddress']) && ! empty($mailingList['replyToAddress'])) {
             $replyTo = array();
             
             $replyTo[$mailingList['replyToAddress']] = isset($mailingList['replyToName']) ? $mailingList['replyToName'] : $mailingList['replyToAddress'];
@@ -160,7 +158,7 @@ class MailingList extends AbstractCollection implements IMailingList
             $message->setReplyTo($replyTo);
         }
         
-        if (isset($mailingList['fromAddress'])) {
+        if (isset($mailingList['fromAddress']) && ! empty($mailingList['fromAddress'])) {
             $from = array();
             
             $from[$mailingList['fromAddress']] = isset($mailingList['fromName']) ? $mailingList['fromName'] : $mailingList['fromAddress'];
@@ -168,7 +166,7 @@ class MailingList extends AbstractCollection implements IMailingList
             $message->setFrom($from);
         }
         
-        if (isset($mailingList['returnPathAddress'])) {
+        if (isset($mailingList['returnPathAddress']) && ! empty($mailingList['returnPathAddress'])) {
             $returnPath = $mailingList['returnPathAddress'];
             $message->setReturnPath($returnPath);
         }
