@@ -762,7 +762,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         $typeStructure = $this->getContentTypeStructure($typeId);
         
         // System contents are not indexed
-        if (empty($typeStructure)) exit;
+        if (empty($typeStructure)){
+            return;
+        }
         
         // Add fields to index
         $contentData = array();
