@@ -180,17 +180,46 @@ jQuery('#cancel-confirm').click(function() {
 jQuery('#btn-save').click(function() {
 	var modified = false;
 	
-	// for every modified content
+	/**
+	 * Save CKE fields (Rich text & TextArea)
+	 */
 	for ( var i in CKEDITOR.instances) {
 		if (CKEDITOR.instances[i].checkDirty()) {
 			modified = true;
 			// saving content
-			save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
+			/*
+			 * Check if CKE instance id can be splitted
+			 */
+			var CKEId=CKEDITOR.instances[i].element.getId().split("#");
+			if(CKEId.length>1)
+				{
+				//if CKE instance can be splitted, search all instance with same ID and add them to data
+				var data=Array();
+					for ( var z in CKEDITOR.instances) {
+						var id=CKEDITOR.instances[z].element.getId().split("#");
+						if(id.length>1){
+							if(id[0]==CKEId[0]){
+									data.push(CKEDITOR.instances[z].getData());
+								}
+						}
+						//Remove dirty flag
+						CKEDITOR.instances[z].resetDirty();
+					}
+					save(CKEId[0],data);
+				}else{
+					save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
+					//Remove dirty flag
+					CKEDITOR.instances[i].resetDirty();
+				}
 			
 			//Remove dirty flag
-			CKEDITOR.instances[i].resetDirty();
+			
 		}
 	}
+	/**
+	 * Sate normal Text
+	 */
+	
 	
 	/**
 	 * Save images
