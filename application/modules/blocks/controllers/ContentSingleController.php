@@ -39,6 +39,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $output["blockConfig"]=$blockConfig;
         
         $mongoId = $this->getRequest()->getParam('content-id');
+        $frontOfficeTemplatesService = Manager::getService('FrontOfficeTemplates');
         
         if (isset($mongoId) && $mongoId != 0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
@@ -78,26 +79,31 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $output["type"] = $cTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
             if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
-            	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+            	$template = $frontOfficeTemplatesService->getFileThemePath(
             			"blocks/" . $blockConfig['displayType'] . ".html.twig");
             } else {
-	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/" . $templateName);
+	            $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/" . $templateName);
 	            
-	            if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
-	            	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/default.html.twig");
-					$js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/rubedo-map.js"),
-							'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/map.js"),
-							'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/rating.js"),
+	            if (! is_file($frontOfficeTemplatesService->getTemplateDir() . '/' . $template)) {
+	            	$template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/default.html.twig");
+					$js = array('/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
+							'/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
+							'/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
+    					    '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+    					    '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
+    					    '/components/jquery/timepicker/jquery.ui.timepicker.js',
 					);
 	            }
             }
         } else {
             $output = array();
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
+            $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
             $js = array();
         }
         
-        $css = array();
+        $css = array(   "/components/jquery/timepicker/jquery.ui.timepicker.css",
+                        "/components/jquery/jqueryui/themes/base/jquery-ui.css",
+        );
         $this->_sendResponse($output, $template, $css, $js);
     }
 

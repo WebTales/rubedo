@@ -141,38 +141,39 @@ class MailingList extends AbstractCollection implements IMailingList
 	public function unSubscribe($mailingListId, $email) {
 		return true;
 	}
-	
-	public function getNewMessage($mailingListId){
-	    $mailingList = $this->findById($mailingListId);
-	    if(!$mailingList){
-	        throw new \Rubedo\Exceptions\Server('Impossible de trouver la mailing liste');
-	    }
-	    
-	    $mailService = Manager::getService('Mailer');
-	    $message = $mailService->getNewMessage();
-	    if(isset($mailingList['replyTo'])){
+
+    public function getNewMessage ($mailingListId)
+    {
+        $mailingList = $this->findById($mailingListId);
+        if (! $mailingList) {
+            throw new \Rubedo\Exceptions\Server('Impossible de trouver la mailing liste');
+        }
+        
+        $mailService = Manager::getService('Mailer');
+        $message = $mailService->getNewMessage();
+        
+        if (isset($mailingList['replyToAddress'])) {
             $replyTo = array();
-	        foreach($mailingList['replyTo'] as $value){
-	            $replyTo[$value['address']] = $value['name'];
-	        }
-	        $message->setReplyTo($replyTo);
-	    }
-	   
-	    if(isset($mailingList['from'])){
-	        $from = array();
-	        foreach($mailingList['from'] as $value){
-	            $from[$value['address']] = $value['name'];
-	        }
-	        $message->setFrom($from);
-	    }
-	    
-	    
-	    if(isset($mailingList['returnPath'])){
-	        $returnPath = $mailingList['returnPath'];
-	        $message->setReturnPath($returnPath);
-	    }
+            
+            $replyTo[$mailingList['replyToAddress']] = isset($mailingList['replyToName']) ? $mailingList['replyToName'] : $mailingList['replyToAddress'];
+            
+            $message->setReplyTo($replyTo);
+        }
+        
+        if (isset($mailingList['fromAddress'])) {
+            $from = array();
+            
+            $from[$mailingList['fromAddress']] = isset($mailingList['fromName']) ? $mailingList['fromName'] : $mailingList['fromAddress'];
+            
+            $message->setFrom($from);
+        }
+        
+        if (isset($mailingList['returnPathAddress'])) {
+            $returnPath = $mailingList['returnPathAddress'];
+            $message->setReturnPath($returnPath);
+        }
         
         return $message;
-	}
+    }
 	
 }
