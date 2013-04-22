@@ -91,7 +91,7 @@ class ErrorController extends Zend_Controller_Action
                 break;
         }
         
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest() || (Zend_Registry::getInstance()->isRegistered('Expects_Json') && Zend_Registry::get('Expects_Json'))) {
             $returnArray = array();
             $returnArray['success'] = false;
             $returnArray['msg'] = $errors->exception->getMessage();
