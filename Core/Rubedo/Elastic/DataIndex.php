@@ -755,29 +755,31 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add fields to index
         $contentData = array();
         
-        foreach ($data['fields'] as $field => $var) {
-            
-            // only index searchable fields
-            if (in_array($field, $typeStructure['searchableFields'])) {
-                if (is_array($var)) {
-                    foreach ($var as $key => $subvalue) {
-                        if ($field != 'position') {
-                            $contentData[$field][$key] = (string) $subvalue;
-                        } else {
-                            if ($key == 'address') {
-                                $contentData['position_address'] = (string) $subvalue;
-                            }
-                            if ($key == 'location') {
-                                list ($lon, $lat) = $subvalue['coordinates'];
-                                $contentData['position_location'] = array(
-                                    (float) $lon,
-                                    (float) $lat
-                                );
+        if (isset($data['fields'])) {
+            foreach ($data['fields'] as $field => $var) {
+                
+                // only index searchable fields
+                if (in_array($field, $typeStructure['searchableFields'])) {
+                    if (is_array($var)) {
+                        foreach ($var as $key => $subvalue) {
+                            if ($field != 'position') {
+                                $contentData[$field][$key] = (string) $subvalue;
+                            } else {
+                                if ($key == 'address') {
+                                    $contentData['position_address'] = (string) $subvalue;
+                                }
+                                if ($key == 'location') {
+                                    list ($lon, $lat) = $subvalue['coordinates'];
+                                    $contentData['position_location'] = array(
+                                        (float) $lon,
+                                        (float) $lat
+                                    );
+                                }
                             }
                         }
+                    } else {
+                        $contentData[$field] = (string) $var;
                     }
-                } else {
-                    $contentData[$field] = (string) $var;
                 }
             }
         }
