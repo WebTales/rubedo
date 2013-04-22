@@ -10,9 +10,7 @@ jQuery(".star-edit").hover(function(){
 		//console.log(jQuery(this).attr("data-value")+"_____"+jQuery(self).attr("data-value"));
 		if(parseInt(jQuery(this).attr("data-value"))>=parseInt(jQuery(self).attr("data-value"))&& starEdit==true)
 			{
-			console.log('passe ici');
 				if(parseInt(jQuery(this).attr("data-value"))>=parseInt(jQuery(this).attr("data-min-value"))){
-					console.log("et là");
 				jQuery(this).removeClass("icon-star").addClass("icon-star-empty");}
 			}
 		if(parseInt(jQuery(this).attr("data-value"))<=parseInt(jQuery(self).attr("data-value"))&&starEdit==true)
