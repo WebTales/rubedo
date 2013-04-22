@@ -22,6 +22,8 @@
 
 {% if isLoggedIn %}
 <div  class="hide list-editmode">
+ <div id="{{ data.id }}_{{key}}-error-msg" class="alert alert-error" style="display:none;">
+     </div>
 <div id="{{ data.id }}_{{key}}-edit" class="btn-group">
 <legend>Edition</legend>
 <div>

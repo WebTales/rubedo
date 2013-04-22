@@ -230,10 +230,20 @@ var gMap = function (options,id,title,text,field) {
 				latitude:this.latitude,
 				longitude:this.longitude
 		}
-		if(this.map.markers.length>1 && this.map.markerToEdit){
-			this.map.deleteMarker(this.map.markerToEdit.__gm_id);
+		if(this.map.markers.length>1){
+			if(this.map.markerToEdit){
+				this.map.deleteMarker(this.map.markerToEdit.__gm_id);
+				this.map.addMarker(this.location,this.map.title,this.map.text);
+			}else{
+				jQuery("#"+id+"-error-msg").show();
+				jQuery("#"+id+"-error-msg").html("Please select a marker by right click.");
+			}
+			
 		}
-		this.map.addMarker(this.location,this.map.title,this.map.text);
+		else{
+			this.map.addMarker(this.location,this.map.title,this.map.text);
+		}
+		
 		}
 
 	};
