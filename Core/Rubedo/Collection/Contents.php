@@ -779,6 +779,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     }
                 }
             }
+            
+            $status = $obj['status'];
+            $obj['readOnly']= $obj['readOnly'] || ! $aclServive->hasAccess("write.ui.contents.".$status); 
         }
         
         return $obj;

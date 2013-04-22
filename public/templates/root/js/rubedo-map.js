@@ -10,7 +10,7 @@ var gMap = function (options,id,title,text,field) {
 		this.options=options;
 		this.id=id;
 		this.zoom=(options.length>1)?3:14;
-		this.useLocation=(options.useLocation)?options.useLocation:true;
+		this.useLocation=(options.useLocation)?options.useLocation:false;
 		this.markerToEdit;
 		this.geocoder=new google.maps.Geocoder();
 		this.markers=new Array();
@@ -230,10 +230,20 @@ var gMap = function (options,id,title,text,field) {
 				latitude:this.latitude,
 				longitude:this.longitude
 		}
-		if(this.map.markers.length>1 && this.map.markerToEdit){
-			this.map.deleteMarker(this.map.markerToEdit.__gm_id);
+		if(this.map.markers.length>1){
+			if(this.map.markerToEdit){
+				this.map.deleteMarker(this.map.markerToEdit.__gm_id);
+				this.map.addMarker(this.location,this.map.title,this.map.text);
+			}else{
+				jQuery("#"+id+"-error-msg").show();
+				jQuery("#"+id+"-error-msg .msg").html("Please select a marker by right click.");
+			}
+			
 		}
-		this.map.addMarker(this.location,this.map.title,this.map.text);
+		else{
+			this.map.addMarker(this.location,this.map.title,this.map.text);
+		}
+		
 		}
 
 	};
