@@ -83,8 +83,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     
     public function importAction ()
     {
-    set_time_limit(120);
-    $separator = $this->getParam('separator', ";");
+        Zend_Registry::set('Expects_Json', true);
+        set_time_limit(120);
+        $separator = $this->getParam('separator', ";");
     	$adapter = new Zend_File_Transfer_Adapter_Http();
     	$returnArray = array();
     	
