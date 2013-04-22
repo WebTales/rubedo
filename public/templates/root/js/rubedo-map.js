@@ -10,7 +10,7 @@ var gMap = function (options,id,title,text,field) {
 		this.options=options;
 		this.id=id;
 		this.zoom=(options.length>1)?3:14;
-		this.useLocation=(options.useLocation)?options.useLocation:true;
+		this.useLocation=(options.useLocation)?options.useLocation:false;
 		this.markerToEdit;
 		this.geocoder=new google.maps.Geocoder();
 		this.markers=new Array();
