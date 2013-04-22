@@ -1,1 +1,9 @@
-<div><a href="{{url({pageId: value},true)}}">{{getPageTitle(value)}}</a></div>
+ {% if(cValue["config"]["multivalued"]) %} {% for item in value %}
+<div>
+	<a href="{{url({pageId: item},true)}}">{{getPageTitle(item)}}</a>
+</div>
+{% endfor %} {% else %}
+<div>
+	<a href="{{url({pageId: value},true)}}">{{getPageTitle(value)}}</a>
+</div>
+{% endif %}

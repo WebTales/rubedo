@@ -1,3 +1,11 @@
- <div class="pull-left thumbnail" style="margin: 1em;">
-      						<img alt=""  style="max-height: 200px; max-width: 200px;" class="imageLeft" src="/dam?media-id={{value}}" />
-      						</div>
+ {% if(cValue["config"]["multivalued"]) %} {% for item in value %}
+<div class="pull-left thumbnail" style="margin: 1em;">
+	<img alt="" style="max-height: 200px; max-width: 200px;"
+		class="imageLeft" src="/dam?media-id={{item}}" />
+</div>
+{% endfor %} {% else %}
+<div class="pull-left thumbnail" style="margin: 1em;">
+	<img alt="" style="max-height: 200px; max-width: 200px;"
+		class="imageLeft" src="/dam?media-id={{value}}" />
+</div>
+{% endif %}

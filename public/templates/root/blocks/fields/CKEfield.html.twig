@@ -1,3 +1,12 @@
-<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}">
+
+{%  if(cValue["config"]["multivalued"]) %}
+	{% for item in value %}
+		<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}[{{ loop.index }}]">
+						{{item|cleanHtml}}
+						</div>
+	{% endfor %}
+{% else %}
+	<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}">
 						{{value|cleanHtml}}
 						</div>
+{% endif %}

@@ -9,6 +9,7 @@ var object = null;
 var errors = new Array();
 var timeCache = new Array();
 var numberCache = new Array();
+var starEdit=false;
 /*****************************/
 
 jQuery("body").css("cursor" , "default");
@@ -234,7 +235,9 @@ jQuery('#btn-save').click(function() {
 	}
 	
 	errors = new Array();
-	
+	/**
+	 * save maps
+	 */
 	// for every maps
 	if(typeof(gMap) != "undefined"){
 		var maps = gMap.getAllInstances();
@@ -524,6 +527,7 @@ function swithToEditMode() {
 	jQuery('.time').each(function() {
 		jQuery(this).html(jQuery(this).html() + "<div class=\"timepicker\"></div>");
 	});
+	 starEdit=true;
 }
 
 function swithToViewMode() {

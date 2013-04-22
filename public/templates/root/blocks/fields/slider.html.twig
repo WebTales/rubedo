@@ -1,3 +1,11 @@
-<div class="progress progress-info progress-striped" style="clear:both;">
-  							<div class="bar" style="width:{{value}}%">{{value}}%</div>
-						</div>
+ {% if(cValue["config"]["multivalued"]) %} {% for item in value %}
+<div class="progress progress-info progress-striped"
+	style="clear: both;">
+	<div class="bar" style="width:{{item}}%">{{item}}%</div>
+</div>
+{% endfor %} {% else %}
+<div class="progress progress-info progress-striped"
+	style="clear: both;">
+	<div class="bar" style="width:{{value}}%">{{value}}%</div>
+</div>
+{% endif %}

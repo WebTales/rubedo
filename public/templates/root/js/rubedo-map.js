@@ -2,18 +2,16 @@ var gMap = function (options,id,title,text,field) {
 	//Create Class attr
 	gMap.instances.push(this); // Add map into static array of map instances
 		var self=this;
+		this.options=Object();
 		this.field=(field=="true")?true:false;
 		this.title=title;
 		this.text=text;
 		this.map;
-		this.options=(typeof options =="string")?JSON.parse(options):options;
+		this.options=options;
 		this.id=id;
-		console.log(options.length);
 		this.zoom=(options.length>1)?3:14;
 		this.useLocation=(options.useLocation)?options.useLocation:true;
-		this.address=this.options.address;
-		this.latitude=this.options.latitude;
-		this.longitude=this.options.longitude;
+		this.markerToEdit;
 		this.geocoder=new google.maps.Geocoder();
 		this.markers=new Array();
 
@@ -41,6 +39,10 @@ var gMap = function (options,id,title,text,field) {
 		 * If more than one marker on the map
 		 * 
 		 */
+			 
+		 if(self.options.length==null){
+			 self.options=[self.options];
+		 }
 			jQuery(self.options).each(function(){
 				var marker=this;
 				if (this.address) {
@@ -48,17 +50,15 @@ var gMap = function (options,id,title,text,field) {
 			      		if (status == google.maps.GeocoderStatus.OK) {
 			      			self.addMarker(marker,self.title,self.text);
 			      			self.map.setCenter(results[0].geometry.location);
-			      			self.latitude=results[0].geometry.location.kb;
-			      			self.longitude=results[0].geometry.location.lb;
 			      		}else {
 			    		   
 		    		    }
 			      	});
 			      } else if (this.lat && this.lon){
 			    	self.addMarker(this,self.title,self.text);
-			    	  self.map.setCenter(new google.maps.LatLng(self.latitude, self.longitude));
+			    	  self.map.setCenter(new google.maps.LatLng(this.lat,this.lon));
 			    	  
-			    	  this.geocoder.geocode({'latLng': new google.maps.LatLng(self.latitude,self.longitude)}, function(results, status) {
+			    	  this.geocoder.geocode({'latLng': new google.maps.LatLng(this.lat,this.lon)}, function(results, status) {
 			    		    
 			    		    if (status == google.maps.GeocoderStatus.OK) {
 			    		     if (results[1]) {
@@ -69,27 +69,42 @@ var gMap = function (options,id,title,text,field) {
 			    		    }
 			    		   });
 			      }
-			})
+			});
+				
 			
 			
 		},
 		getValues:function(){
 			var self=this;
+			if(self.markers.length>1){
+				var values=Object();
+				self.markers.forEach(function(marker){
+					values[self.markers.indexOf(marker)]={
+						"address" : marker.position.address, 
+						"location" : { "type" : "Point" , "coordinates" : [ marker.position.kb, marker.position.jb]},
+						"lat" : marker.position.jb,
+						"lon" : marker.position.kb
+					}
+					
+				});
+			}else{
 			var values={ 
-					"address" : self.address , 
-					"location" : { "type" : "Point" , "coordinates" : [ self.longitude , self.latitude]} ,
-					"lat" : self.latitude ,
-					"lon" : self.longitude
+					"address" : self.markers[0].position.address, 
+					"location" : { "type" : "Point" , "coordinates" : [ self.markers[0].position.kb ,self.markers[0].position.jb]},
+					"lat" : self.markers[0].position.jb,
+					"lon" : self.markers[0].position.kb
+				}
 			}
 			return values;
 		},
-		createMarker:function(location,title,contentString){
+		createMarker:function(location,title,contentString,f_address){
 			var self=this;
 			marker = new google.maps.Marker({
 			  	map:self.map,
 			  	position:location,
 			  	title:title
 			});
+			marker.position.address=f_address;
 			self.markers.push(marker);
 		  var infowindow = new google.maps.InfoWindow({
 	          content: contentString         
@@ -98,6 +113,12 @@ var gMap = function (options,id,title,text,field) {
 		  google.maps.event.addListener(marker, 'click', function() {
 			  infowindow.open(self.map,this);
 	      });
+		  google.maps.event.addListener(marker, 'rightclick', function() {
+			 self.markerToEdit=this;
+			jQuery("#"+self.id+"-edit .latitude").val(this.position.jb);
+  			jQuery("#"+self.id+"-edit .longitude").val(this.position.kb);
+  			jQuery("#"+self.id+"-edit .address").val(this.position.address);
+		    });
 		},
 		addMarker:function(location,title,contentString) {
 			var self=this;
@@ -106,15 +127,14 @@ var gMap = function (options,id,title,text,field) {
 				
 	    		  self.geocoder.geocode( { 'address': location.address}, function(results, status) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
-	    	      			self.createMarker(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb), title, contentString);
+	    	      			self.createMarker(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb), title, contentString,results[0].formatted_address);
 	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb));
-	    	      			self.latitude=results[0].geometry.location.jb;
-			      			self.longitude=results[0].geometry.location.kb;
-			      			self.address=results[0].formatted_address;
-			      			
-			      			jQuery("#"+self.id+"-edit .latitude").val(self.latitude);
-			    			jQuery("#"+self.id+"-edit .longitude").val(self.longitude);
-			    			jQuery("#"+self.id+"-edit .address").val(self.address);
+	    	      			if(self.options.length==1){
+			      			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.jb);
+			    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.kb);
+			    			jQuery("#"+self.id+"-edit .address").val(results[0].formatted_address);
+			    			}
+	  
 	    	      		}else {
 		    		    	  console.log("geocodage failed :" +status);
 		    		    }
@@ -126,12 +146,11 @@ var gMap = function (options,id,title,text,field) {
 		    		    
 		    		    if (status == google.maps.GeocoderStatus.OK) {
 		    		     if (results[1]) {
-		    		    	 self.address=results[1].formatted_address;
-		    		    	 self.latitude=location.latitude;
-				      		self.longitude=location.longitude;
-				      		jQuery("#"+self.id+"-edit .latitude").val(self.latitude);
-			    			jQuery("#"+self.id+"-edit .longitude").val(self.longitude);
-			    			jQuery("#"+self.id+"-edit .address").val(self.address);
+		    		 		if(self.options.length==1){
+		    		 			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.jb);
+				    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.kb);
+				    			jQuery("#"+self.id+"-edit .address").val(results[0].formatted_address);
+				    			}
 		    		     }
 		    		    } else {
 		    		    	  console.log("geocodage failed :" +status);
@@ -168,6 +187,17 @@ var gMap = function (options,id,title,text,field) {
 				marker.setMap(null);
 			});
 			self.markers=new Array();
+		},
+		deleteMarker:function(gmId)
+		{
+			var self=this;
+			self.markers.forEach(function(marker){
+				if(marker.__gm_id==gmId)
+					{
+					self.markers.splice(self.markers.indexOf(marker),1).sort();
+					marker.setMap(null);
+					}
+			});
 		}
 	}
 	gMap.instances=new Array();
@@ -199,6 +229,9 @@ var gMap = function (options,id,title,text,field) {
 				address:this.address,
 				latitude:this.latitude,
 				longitude:this.longitude
+		}
+		if(this.map.markers.length>1 && this.map.markerToEdit){
+			this.map.deleteMarker(this.map.markerToEdit.__gm_id);
 		}
 		this.map.addMarker(this.location,this.map.title,this.map.text);
 		}
