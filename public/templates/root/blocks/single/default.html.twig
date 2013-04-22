@@ -30,6 +30,8 @@
 							{% include 'root/blocks/fields/date.html.twig' %}
 						{%elseif(cValue["cType"]=="timefield")%}
 							{% include 'root/blocks/fields/time.html.twig' %}
+						{%elseif(cValue["cType"]=="numberfield")%}
+							{% include 'root/blocks/fields/number.html.twig' %}
       					{%endif%}
       					
       			{%endif%}
