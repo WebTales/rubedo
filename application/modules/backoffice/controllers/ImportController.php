@@ -141,7 +141,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
 	                                  "fieldLabel" => $value['label'],
 	                                  "allowBlank" => true,
 	                                  "localizable" => false,
-	                                  "searchable" => true,
+	                                  "searchable" => $value['searchable'],
 	                                  "multivalued" => false,
 	                                  "tooltip" => "",
 	                                  "labelSeparator" => " "
