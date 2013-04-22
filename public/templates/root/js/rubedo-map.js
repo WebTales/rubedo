@@ -236,7 +236,7 @@ var gMap = function (options,id,title,text,field) {
 				this.map.addMarker(this.location,this.map.title,this.map.text);
 			}else{
 				jQuery("#"+id+"-error-msg").show();
-				jQuery("#"+id+"-error-msg").html("Please select a marker by right click.");
+				jQuery("#"+id+"-error-msg .msg").html("Please select a marker by right click.");
 			}
 			
 		}
