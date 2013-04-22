@@ -142,7 +142,7 @@
 			{% if facet._type == 'range' and facet.ranges|length > 0 %}
     			{% if facet.id == 'date' %}
     				{% for range in facet.ranges %}
-    					{% if range.count < total and range.count > 0 %}
+    					{% if range.count < total %}
     						{% if loop.first %}
      							<p>
     								<i class="icon-calendar"></i> {{facet.label|trans}}
