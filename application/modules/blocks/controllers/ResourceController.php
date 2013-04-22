@@ -49,9 +49,11 @@ class Blocks_ResourceController extends Blocks_AbstractController
         if(isset($blockConfig['introduction'])){
             $output['introduction']= $blockConfig['introduction'];
         }
-        
-        $params = array('media-id'=>$blockConfig['documentId'],'attachment'=>'download');
-        $output['downloadUrl'] = $this->_helper->url('index','dam','default',$params);
+        if(isset($blockConfig['documentId'])){
+            $params = array('media-id'=>$blockConfig['documentId'],'attachment'=>'download');
+            $output['downloadUrl'] = $this->_helper->url('index','dam','default',$params);
+        }
+       
         
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {

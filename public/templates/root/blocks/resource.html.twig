@@ -1,10 +1,16 @@
 {% extends "root/block.html.twig" %} {% block mainContent %} {% if
 introduction %}
 <div id="introduction-{{prefix}}">{{ introduction | cleanHtml }}</div>
+<div class="clearfix"></div>
 {% endif %}
+{% if downloadUrl %}
+<div>
 <a type="submit" class="btn btn-primary" href="{{ downloadUrl }}">   
 	<i class="icon-download icon-white"></i> Télécharger
 </a>
+</div>
+{% endif %}
+
 
 {% endblock %}
 
