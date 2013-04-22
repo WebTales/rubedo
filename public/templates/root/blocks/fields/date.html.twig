@@ -1,3 +1,12 @@
-<div class="entry-info date" id="{{ data.id }}_{{ key }}">
+
+{%  if(cValue["config"]["multivalued"]) %}
+	{% for item in data.date %}
+		<div class="entry-info date" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+    Le {{item|localizeddate('long', 'none', lang)}}
+	</div>
+	{% endfor %}
+{% else %}
+	<div class="entry-info date" id="{{ data.id }}_{{ key }}">
     Le {{data.date|localizeddate('long', 'none', lang)}}
-</div>
+	</div>
+{% endif %}

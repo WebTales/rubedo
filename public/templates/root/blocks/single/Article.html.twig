@@ -6,7 +6,7 @@
 <div class="block headline">
     <h2 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h2>
 
-    {% if data.date or data.date1 %}
+    {% if data.date %}
         <div class="entry-info date" id="{{ data.id }}_date">
             Le {{data.date|localizeddate('long', 'none', lang)}}
         </div>
@@ -20,9 +20,9 @@
         {% endif %}
 
         {% if data.image %}
-            <div class="span9 editable" id="{{ data.id }}_body" data-field-type="{{ type.body }}" data-cke-config="{{ CKEFields.body }}">
+            <div class="span9 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
         {% else %}
-            <div class="span12 editable" id="{{ data.id }}_body" data-field-type="{{ type.body }}" data-cke-config="{{ CKEFields.body }}">
+            <div class="span12 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
         {% endif %}
             {{ data.body|cleanHtml }}
         </div>

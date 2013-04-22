@@ -217,8 +217,9 @@ jQuery('#btn-save').click(function() {
 		}
 	}
 	/**
-	 * Sate normal Text
+	 * Multivalued save
 	 */
+	
 	
 	
 	/**
@@ -238,14 +239,15 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in dateCache) {
 		modified = true;
-		confirmDate(contentId, dateCache[contentId].newDate);
-	}
+		confirmDate(contentId, dateCache[contentId].newDate)
+		}
 	
 	/**
 	 * save times
 	 */
 	for( var contentId in timeCache) {
 		modified = true;
+		console.log(contentId);
 		confirmTime(contentId, timeCache[contentId].newTime);
 	}
 	
@@ -254,7 +256,9 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in numberCache) {
 		modified = true;
-		confirmNumber(contentId, numberCache[contentId].newNumber);
+			confirmNumber(contentId, numberCache[contentId].newNumber);
+		
+		
 	}
 	
 	if(errors.length > 0) {
@@ -278,6 +282,32 @@ jQuery('#btn-save').click(function() {
 	// switch to wiew mode
 	swithToViewMode();
 });
+
+/*function multiSave(contentId,contentCache,type){
+	var globalId=contentId.split("-");
+	if(globalId.length>1)
+		{
+		var data=Array();
+			for( var childId in contentCache)
+				{
+				var id=childId.split("-");
+				if(globalId[0]==id[0]){
+					switch(type)
+					{
+					case 'date':
+						data.push(contentCache[childId].newDate);
+						break;
+					}
+				}
+				
+				}
+			return data;
+		}
+	else{
+		return false;
+	}
+	
+}*/
 
 /***************************************************
  * 			jQuery for images editing
