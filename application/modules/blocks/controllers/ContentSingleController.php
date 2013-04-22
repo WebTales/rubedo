@@ -75,9 +75,18 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $templateName .= ".html.twig";
             $output = $this->getAllParams();
             $output["data"] = $data;
-            $output['activateDisqus']=$type['activateDisqus'];
+            $output['activateDisqus']=isset($type['activateDisqus']) ? $type['activateDisqus'] : false ;
             $output["type"] = $cTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
+            
+            $js = array('/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
+                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
+                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
+                '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+                '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
+                '/components/jquery/timepicker/jquery.ui.timepicker.js',
+            );
+            
             if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             	$template = $frontOfficeTemplatesService->getFileThemePath(
             			"blocks/" . $blockConfig['displayType'] . ".html.twig");
@@ -86,26 +95,18 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
 	            
 	            if (! is_file($frontOfficeTemplatesService->getTemplateDir() . '/' . $template)) {
 	            	$template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/default.html.twig");
-					$js = array('/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
-							'/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
-							'/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
-    					    '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
-    					    '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
-    					    '/components/jquery/timepicker/jquery.ui.timepicker.js',
-					);
 	            }
             }
         } else {
             $output = array();
             $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
-            $js = array('/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
-    					    '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
-    					    '/components/jquery/timepicker/jquery.ui.timepicker.js',);
+            $js = array();
         }
         
         $css = array(   "/components/jquery/timepicker/jquery.ui.timepicker.css",
                         "/components/jquery/jqueryui/themes/base/jquery-ui.css",
         );
+        
         $this->_sendResponse($output, $template, $css, $js);
     }
 
