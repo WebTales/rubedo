@@ -1,12 +1,12 @@
 
 {%  if(cValue["config"]["multivalued"]) %}
 	{% for item in value %}
-		<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}">
+		<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
 						{{item|cleanHtml}}
 						</div>
 	{% endfor %}
 {% else %}
-	<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}">
+	<div class="entry-content editable " style="clear:both;"  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
 						{{value|cleanHtml}}
 						</div>
 {% endif %}

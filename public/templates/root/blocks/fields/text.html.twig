@@ -1,7 +1,7 @@
 {%  if(cValue["config"]["multivalued"]) %}
 	{% for item in value %}
-		<div class="editable" id="{{ data.id }}_{{key}}#{{ loop.index-1 }}">{{ item|cleanHtml}}</div>
+		<div class="editable" id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item|cleanHtml}}</div>
 	{% endfor %}
 {% else %}
-	<div class="editable" id="{{ data.id }}_{{key}}">{{ value |cleanHtml }}</div>
+	<div class="editable" id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">{{ value |cleanHtml }}</div>
 {% endif %}
