@@ -1197,7 +1197,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             foreach ($contentTypeList["data"] as $contentType) {
                 
                 // System contents are not indexed
-                if (!isset($contentTypeConfig['system']) or $contentTypeConfig['system']==TRUE) {
+                if (!isset($contentType['system']) or $contentType['system']==TRUE) {
                                 
                     // Create content type with overwrite set to true
                     $this->indexContentType($contentType["id"], $contentType, TRUE);
