@@ -234,7 +234,9 @@ jQuery('#btn-save').click(function() {
 	}
 	
 	errors = new Array();
-	
+	/**
+	 * save maps
+	 */
 	// for every maps
 	if(typeof(gMap) != "undefined"){
 		var maps = gMap.getAllInstances();
