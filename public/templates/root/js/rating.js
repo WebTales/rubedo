@@ -1,5 +1,5 @@
 
-var starEdit=true;
+
 jQuery(".star-edit").click(function(){
 	starEdit=(starEdit==true)?false:true;
 });
