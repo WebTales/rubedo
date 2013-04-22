@@ -132,7 +132,7 @@ var gMap = function (options,id,title,text,field) {
 	    	      			if(self.options.length==1){
 			      			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.jb);
 			    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.kb);
-			    			jQuery("#"+self.id+"-edit .address").val(results[0].geometry.location.formatted_address);
+			    			jQuery("#"+self.id+"-edit .address").val(results[0].formatted_address);
 			    			}
 	  
 	    	      		}else {
@@ -149,7 +149,7 @@ var gMap = function (options,id,title,text,field) {
 		    		 		if(self.options.length==1){
 		    		 			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.jb);
 				    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.kb);
-				    			jQuery("#"+self.id+"-edit .address").val(results[0].geometry.location.formatted_address);
+				    			jQuery("#"+self.id+"-edit .address").val(results[0].formatted_address);
 				    			}
 		    		     }
 		    		    } else {
