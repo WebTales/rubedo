@@ -98,7 +98,9 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         } else {
             $output = array();
             $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
-            $js = array();
+            $js = array('/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+    					    '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
+    					    '/components/jquery/timepicker/jquery.ui.timepicker.js',);
         }
         
         $css = array(   "/components/jquery/timepicker/jquery.ui.timepicker.css",
