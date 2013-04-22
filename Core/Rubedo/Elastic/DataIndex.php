@@ -1195,16 +1195,21 @@ class DataIndex extends DataAbstract implements IDataIndex
             $contentTypeList = \Rubedo\Services\Manager::getService('ContentTypes')->getList();
             
             foreach ($contentTypeList["data"] as $contentType) {
-                // Create content type with overwrite set to true
-                $this->indexContentType($contentType["id"], $contentType, TRUE);
-                // Index all contents from type
-                $contentList = \Rubedo\Services\Manager::getService('Contents')->getByType($contentType["id"]);
-                $contentCount = 0;
-                foreach ($contentList["data"] as $content) {
-                    $this->indexContent($content);
-                    $contentCount ++;
+                
+                // System contents are not indexed
+                if (!isset($contentTypeConfig['system']) or $contentTypeConfig['system']==TRUE) {
+                                
+                    // Create content type with overwrite set to true
+                    $this->indexContentType($contentType["id"], $contentType, TRUE);
+                    // Index all contents from type
+                    $contentList = \Rubedo\Services\Manager::getService('Contents')->getByType($contentType["id"]);
+                    $contentCount = 0;
+                    foreach ($contentList["data"] as $content) {
+                        $this->indexContent($content);
+                        $contentCount ++;
+                    }
+                    $result[$contentType["type"]] = $contentCount;
                 }
-                $result[$contentType["type"]] = $contentCount;
             }
         }
         
