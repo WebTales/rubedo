@@ -28,6 +28,10 @@
 							{% include 'root/blocks/fields/localiser.html.twig' %}
       					{%elseif(cValue["cType"]=="datefield")%}
 							{% include 'root/blocks/fields/date.html.twig' %}
+						{%elseif(cValue["cType"]=="timefield")%}
+							{% include 'root/blocks/fields/time.html.twig' %}
+						{%elseif(cValue["cType"]=="numberfield")%}
+							{% include 'root/blocks/fields/number.html.twig' %}
       					{%endif%}
       					
       			{%endif%}

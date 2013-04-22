@@ -21,7 +21,9 @@
 </div>
 {% endfor %}
 {% else %}
-
+<div class="progress" id="test">
+  <div class="bar" id="infos" style="width: 60%;"></div>
+</div>
 <div>
 {%if decimal=="true"%}
 {%set value=value+1%}
@@ -36,3 +38,4 @@
 	{%endfor%}
 </div>
 {% endif %}
+
