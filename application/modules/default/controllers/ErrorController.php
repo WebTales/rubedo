@@ -96,7 +96,6 @@ class ErrorController extends Zend_Controller_Action
             $returnArray['success'] = false;
             $returnArray['msg'] = $errors->exception->getMessage();
             $returnArray['exceptionClass'] = get_class($errors->exception);
-            error_reporting(0);//do invalid characters are written in exception message?
             $this->_helper->json($returnArray);
         }
         
