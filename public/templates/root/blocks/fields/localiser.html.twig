@@ -16,9 +16,8 @@
     </script>
 {% if(cValue["config"]["multivalued"]) %}
 	<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
-
 {% else %}
-<div id="{{ data.id }}_{{key}}" data-lat='{{ value.lat|cleanHtml }}' data-lon='{{ value.lon|cleanHtml }}' data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
+<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
 {% endif %}
 
 {% if isLoggedIn %}
@@ -42,6 +41,5 @@
    </div>
 </div>
 </div>
-
 <div class="clearfix"></div>
 {%endif%}
