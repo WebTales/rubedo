@@ -126,8 +126,12 @@ class XhrEditController extends Zend_Controller_Action
         if(!$content) {
             throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
         }
-    
-        $content['fields'][$contentField] = $newDate;
+        
+    	$field=explode("-", $contentField);
+    	if(count($field)>1)
+        $content['fields'][$field[0]][$field[1]] = $newDate;
+    	else
+    		$content['fields'][$contentField] = $newDate;
     
         $updateResult = $this->_dataService->update($content);
     
@@ -153,7 +157,11 @@ class XhrEditController extends Zend_Controller_Action
             throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
         }
     
-        $content['fields'][$contentField] = $newTime;
+        $field=explode("-", $contentField);
+        if(count($field)>1)
+        	$content['fields'][$field[0]][$field[1]] = $newTime;
+        else
+        	$content['fields'][$contentField] = $newTime;
     
         $updateResult = $this->_dataService->update($content);
     
@@ -178,8 +186,12 @@ class XhrEditController extends Zend_Controller_Action
         if(!$content) {
             throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
         }
-    
-        $content['fields'][$contentField] = $newNumber;
+
+        $field=explode("-", $contentField);
+        if(count($field)>1)
+        	$content['fields'][$field[0]][$field[1]] = $newNumber;
+        else
+        	$content['fields'][$contentField] = $newNumber;
     
         $updateResult = $this->_dataService->update($content);
     
