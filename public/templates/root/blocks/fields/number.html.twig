@@ -1,4 +1,4 @@
-{%  if(cValue["config"]["multivalued"]) %}
+{%  if(cValue["config"]["multivalued"]) and value is iterable%}
 	{% for item in value %}
 		<div class="number" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
     <span class="currentNumber">{{ item }}</span>
@@ -6,6 +6,6 @@
 	{% endfor %}
 {% else %}
 	<div class="number" id="{{ data.id }}_{{ key }}">
-    <span class="currentNumber">{{ data[key] }}</span>
+    <span class="currentNumber">{{ value }}</span>
 </div>
 {% endif %}

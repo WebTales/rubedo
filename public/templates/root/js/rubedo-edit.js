@@ -10,6 +10,7 @@ var errors = new Array();
 var timeCache = new Array();
 var numberCache = new Array();
 var starEdit=false;
+var ratingCache=new Array();
 /*****************************/
 
 jQuery("body").css("cursor" , "default");
@@ -31,13 +32,12 @@ CKEDITOR.on('instanceCreated', function(event) {
 			// Remove unnecessary plugins
 			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
 
+			editor.getData=function(){return(editor.editable().getText());};
+			editor.forcePasteAsPlainText = true;
+			
 			// Make toolbar
-			editor.config.toolbarGroups = [{
-					name : 'clipboard',
-					groups : [ 'clipboard' ]
-				}, {
-					name : 'undo'
-				} 
+			editor.config.toolbar = [
+				{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
 			];
 		});
 		
@@ -128,6 +128,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 
 jQuery('#btn-edit').click(function() {
 	swithToEditMode();
+	starEdit=true;
 });
 
 jQuery('#btn-cancel').click(function() {
@@ -169,17 +170,18 @@ jQuery('#btn-cancel').click(function() {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
+		location.reload();
 	}
 });
 
 jQuery('#cancel-confirm').click(function() {
-	undoAllChanges();
+	//undoAllChanges();
 	swithToViewMode();
+	location.reload()
 });
 
 jQuery('#btn-save').click(function() {
 	var modified = false;
-	
 	/**
 	 * Save CKE fields (Rich text & TextArea)
 	 */
@@ -217,8 +219,13 @@ jQuery('#btn-save').click(function() {
 		}
 	}
 	/**
-	 * Multivalued save
+	 * Save rating fields
 	 */
+	for( var contentId in ratingCache) {
+		modified = true;
+		
+		defaultSave(contentId, ratingCache[contentId])
+		}
 	
 	
 	
@@ -247,7 +254,6 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in timeCache) {
 		modified = true;
-		console.log(contentId);
 		confirmTime(contentId, timeCache[contentId].newTime);
 	}
 	
@@ -283,31 +289,6 @@ jQuery('#btn-save').click(function() {
 	swithToViewMode();
 });
 
-/*function multiSave(contentId,contentCache,type){
-	var globalId=contentId.split("-");
-	if(globalId.length>1)
-		{
-		var data=Array();
-			for( var childId in contentCache)
-				{
-				var id=childId.split("-");
-				if(globalId[0]==id[0]){
-					switch(type)
-					{
-					case 'date':
-						data.push(contentCache[childId].newDate);
-						break;
-					}
-				}
-				
-				}
-			return data;
-		}
-	else{
-		return false;
-	}
-	
-}*/
 
 /***************************************************
  * 			jQuery for images editing
@@ -366,7 +347,6 @@ function confirmImage(content, image, field) {
 		errors.push(jQuery.parseJSON(jqXHR['responseText']));
 	});
 }
-
 /**************************************************/
 
 /**************************************************
@@ -403,7 +383,6 @@ function confirmDate(id, date) {
 	var idAndField = id.split("_");
 	var contentId = idAndField[0];
 	var fieldName = idAndField[1];
-	
 	var request = $.ajax({
 		url: "/xhr-edit/save-date",
 		type: "POST",
@@ -483,6 +462,20 @@ jQuery(".time").click( function () {
 	currentTime = jQuery("#"+currentTimePicker+" .currentTime").html().trim();
 	jQuery("#"+currentTimePicker+" .timepicker").timepicker('setTime', currentTime);
 });
+/*************************************************/
+
+/*************************************************
+ * 			jQuery for rating editing
+ ************************************************/
+
+jQuery(".star-edit").click( function () {
+	var rate=jQuery(this).parent();
+	var rateId = jQuery(this).parent().attr("id");
+	var newRate=jQuery(rate).attr("data-rate");
+		
+		ratingCache[rateId] = newRate;
+	
+	});
 
 function confirmTime(contentId, newTime) {
 	var idAndField = contentId.split("_");
@@ -551,6 +544,26 @@ function confirmNumber(contentId, newNumber) {
 		data: {
 			contentId : contentId,
 			newNumber : newNumber,
+			field : fieldName
+		},
+		dataType: "json"
+	});
+	 
+	request.fail(function(jqXHR, textStatus) {
+		errors.push(jQuery.parseJSON(jqXHR['responseText']));
+	});
+}
+function defaultSave(contentId, newRate) {
+	var idAndField = contentId.split("_");
+	var contentId = idAndField[0];
+	var fieldName = idAndField[1];
+	
+	var request = $.ajax({
+		url: "/xhr-edit/generic-save",
+		type: "POST",
+		data: {
+			contentId : contentId,
+			value : newRate,
 			field : fieldName
 		},
 		dataType: "json"

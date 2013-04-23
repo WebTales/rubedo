@@ -100,9 +100,12 @@ class XhrEditController extends Zend_Controller_Action
         if(!$content) {
             throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
         }
-        
-        $content['fields'][$contentField] = $newImageId;
-        
+       
+        $field=explode("-", $contentField);
+        if(count($field)>1)
+        	$content['fields'][$field[0]][$field[1]] = $newImageId;
+        else
+        	$content['fields'][$contentField] = $newImageId;;
         $updateResult = $this->_dataService->update($content);
         
         if($updateResult['success']){
@@ -126,8 +129,12 @@ class XhrEditController extends Zend_Controller_Action
         if(!$content) {
             throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
         }
-    
-        $content['fields'][$contentField] = $newDate;
+        
+    	$field=explode("-", $contentField);
+    	if(count($field)>1)
+        $content['fields'][$field[0]][$field[1]] = $newDate;
+    	else
+    	$content['fields'][$contentField] = $newDate;
     
         $updateResult = $this->_dataService->update($content);
     
@@ -153,7 +160,11 @@ class XhrEditController extends Zend_Controller_Action
             throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
         }
     
-        $content['fields'][$contentField] = $newTime;
+        $field=explode("-", $contentField);
+        if(count($field)>1)
+        	$content['fields'][$field[0]][$field[1]] = $newTime;
+        else
+        	$content['fields'][$contentField] = $newTime;
     
         $updateResult = $this->_dataService->update($content);
     
@@ -178,8 +189,12 @@ class XhrEditController extends Zend_Controller_Action
         if(!$content) {
             throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
         }
-    
-        $content['fields'][$contentField] = $newNumber;
+
+        $field=explode("-", $contentField);
+        if(count($field)>1)
+        	$content['fields'][$field[0]][$field[1]] = $newNumber;
+        else
+        	$content['fields'][$contentField] = $newNumber;
     
         $updateResult = $this->_dataService->update($content);
     
@@ -188,5 +203,35 @@ class XhrEditController extends Zend_Controller_Action
         } else {
             return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
         }
+    }
+    public function genericSaveAction()
+    {
+    	$contentId = $this->getParam("contentId", null);
+    	$value = $this->getParam("value", null);
+    	$contentField = $this->getParam("field", null);
+    	
+    	if($contentId === null || $value === null || $contentField === null){
+    		throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle valeur et le champ à mettre à jour en base de donnée");
+    	}
+    	
+    	$content = $this->_dataService->findById($contentId, true, false);
+    	
+    	if(!$content) {
+    		throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
+    	}
+    	
+    	$field=explode("-", $contentField);
+    	if(count($field)>1)
+    		$content['fields'][$field[0]][$field[1]] = $value;
+    	else
+    		$content['fields'][$contentField] = $value;
+    	
+    	$updateResult = $this->_dataService->update($content);
+    	
+    	if($updateResult['success']){
+    		return $this->_helper->json(array("success" => true));
+    	} else {
+    		return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
+    	}	
     }
 }
