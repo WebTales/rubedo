@@ -32,7 +32,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 			// Remove unnecessary plugins
 			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
 
-			editor.config.startupMode = 'source';
+			editor.getData=function(){return(editor.editable().getText());};
 			
 			// Make toolbar
 			editor.config.toolbarGroups = [{
