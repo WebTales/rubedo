@@ -131,6 +131,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 
 jQuery('#btn-edit').click(function() {
 	swithToEditMode();
+	starEdit=true;
 });
 
 jQuery('#btn-cancel').click(function() {
@@ -179,13 +180,11 @@ jQuery('#btn-cancel').click(function() {
 jQuery('#cancel-confirm').click(function() {
 	//undoAllChanges();
 	swithToViewMode();
-	starEdit=false;
 	location.reload()
 });
 
 jQuery('#btn-save').click(function() {
 	var modified = false;
-	starEdit=false;
 	/**
 	 * Save CKE fields (Rich text & TextArea)
 	 */
@@ -225,8 +224,10 @@ jQuery('#btn-save').click(function() {
 	/**
 	 * Save rating fields
 	 */
+	console.log(ratingCache);
 	for( var contentId in ratingCache) {
 		modified = true;
+		
 		defaultSave(contentId, ratingCache[contentId])
 		}
 	

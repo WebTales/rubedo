@@ -8,16 +8,16 @@
 		{%else%}
 		{%set decimal="true"%}
 		{%endif%}
-		<div id="{{ data.id }}_{{ key }}-{{ loop.index }}" data-rate="{{ value }}">
+		<div id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-rate="{{item }}">
 			{%for i in 1..cValue["config"]["numberOfStars"]%}
 				{%if loop.index==fvalue and decimal=="true" %}
-				<i class="half-star star-edit" data-index="{{ loop.index }}" data-value="{{ cValue["config"]["maxValue"]/cValue["config"]["numberOfStars"]}}" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
+				<i class="half-star star-edit" data-index="{{ loop.index }}" data-value="0.5" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
 				</i>
-				{%elseif loop.index>value%}
-				<i class="empty-star star-edit" data-index="{{ loop.index }}" data-value="{{ cValue["config"]["maxValue"]/cValue["config"]["numberOfStars"]}}" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
+				{%elseif loop.index>item%}
+				<i class="empty-star star-edit" data-index="{{ loop.index }}" data-value="0" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
 				</i>
 				{%else%}
-				<i class="full-star star-edit" data-index="{{ loop.index }}" data-value="{{ cValue["config"]["maxValue"]/cValue["config"]["numberOfStars"]}}" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}">
+				<i class="full-star star-edit" data-index="{{ loop.index }}" data-value="1" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}">
 				</i>
 				{%endif%}
 				{% endfor %}
