@@ -169,12 +169,14 @@ jQuery('#btn-cancel').click(function() {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
+		location.reload();
 	}
 });
 
 jQuery('#cancel-confirm').click(function() {
-	undoAllChanges();
+	//undoAllChanges();
 	swithToViewMode();
+	location.reload()
 });
 
 jQuery('#btn-save').click(function() {
@@ -247,7 +249,6 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in timeCache) {
 		modified = true;
-		console.log(contentId);
 		confirmTime(contentId, timeCache[contentId].newTime);
 	}
 	
