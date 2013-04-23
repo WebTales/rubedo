@@ -1,39 +1,48 @@
 
-{%set fvalue=value|number_format(0, '.', '') %}
-{%if value==fvalue%}
-{%set decimal="false"%}
-{%else%}
-{%set decimal="true"%}
-{%endif%}
+
 {%  if(cValue["config"]["multivalued"])and value is iterable %}
-<div id="{{ data.id }}_{{ key }}">
-{% for item in value %}
-{%if decimal=="true"%}
-{%set item=item+1%}
-{%endif%}
-	{%for i in 1..cValue["config"]["numberOfStars"]%}
-		{%if loop.index>item%}
-		<i class="icon-star-empty star-edit" data-value="{{ loop.index }}" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}"></i>
+	{% for item in value %}
+		{%set fvalue=item|number_format(0, '.', '') %}
+		{%if item==fvalue%}
+		{%set decimal="false"%}
 		{%else%}
-		<i class="icon-star star-edit"  data-value="{{ loop.index }}" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}"></i>
+		{%set decimal="true"%}
 		{%endif%}
+		<div id="{{ data.id }}_{{ key }}-{{ loop.index }}" data-rate="{{ value }}">
+			{%for i in 1..cValue["config"]["numberOfStars"]%}
+				{%if loop.index==fvalue and decimal=="true" %}
+				<i class="half-star star-edit" data-index="{{ loop.index }}" data-value="{{ cValue["config"]["maxValue"]/cValue["config"]["numberOfStars"]}}" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
+				</i>
+				{%elseif loop.index>value%}
+				<i class="empty-star star-edit" data-index="{{ loop.index }}" data-value="{{ cValue["config"]["maxValue"]/cValue["config"]["numberOfStars"]}}" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
+				</i>
+				{%else%}
+				<i class="full-star star-edit" data-index="{{ loop.index }}" data-value="{{ cValue["config"]["maxValue"]/cValue["config"]["numberOfStars"]}}" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}">
+				</i>
+				{%endif%}
+				{% endfor %}
+		</div>
 	{%endfor%}
-
-{% endfor %}
-</div>
 {% else %}
-<div id="{{ data.id }}_{{ key }}">
-{%if decimal=="true"%}
-{%set value=value+1%}
-{%endif%}
-
-	{%for i in 1..cValue["config"]["numberOfStars"]%}
-		{%if loop.index>value%}
-		<i class="icon-star-empty star-edit" data-value="{{ loop.index }}" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}"></i>
-		{%else%}
-		<i class="icon-star star-edit"  data-value="{{ loop.index }}" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}"></i>
-		{%endif%}
-	{%endfor%}
-</div>
+	{%set fvalue=value|number_format(0, '.', '') %}
+	{%if value==fvalue%}
+	{%set decimal="false"%}
+	{%else%}
+	{%set decimal="true"%}
+	{%endif%}
+	<div id="{{ data.id }}_{{ key }}" data-rate="{{ value }}">
+		{%for i in 1..cValue["config"]["numberOfStars"]%}
+			{%if loop.index==fvalue and decimal=="true" %}
+			<i class="half-star star-edit" data-index="{{ loop.index }}" data-value="0.5" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
+			</i>
+			{%elseif loop.index>value%}
+			<i class="empty-star star-edit" data-index="{{ loop.index }}" data-value="0" data-min-value="{{ cValue["config"]["minValue"] }}" data-max-value="{{ cValue["config"]["maxValue"] }}">
+			</i>
+			{%else%}
+			<i class="full-star star-edit" data-index="{{ loop.index }}" data-value="1" data-min-value="{{ cValue["config"]["minValue"] }}"  data-max-value="{{ cValue["config"]["maxValue"] }}">
+			</i>
+			{%endif%}
+		{%endfor%}
+	</div>
 {% endif %}
 

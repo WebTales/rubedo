@@ -10,6 +10,7 @@ var errors = new Array();
 var timeCache = new Array();
 var numberCache = new Array();
 var starEdit=false;
+var ratingCache=new Array();
 /*****************************/
 
 jQuery("body").css("cursor" , "default");
@@ -178,12 +179,13 @@ jQuery('#btn-cancel').click(function() {
 jQuery('#cancel-confirm').click(function() {
 	//undoAllChanges();
 	swithToViewMode();
+	starEdit=false;
 	location.reload()
 });
 
 jQuery('#btn-save').click(function() {
 	var modified = false;
-	
+	starEdit=false;
 	/**
 	 * Save CKE fields (Rich text & TextArea)
 	 */
@@ -221,8 +223,12 @@ jQuery('#btn-save').click(function() {
 		}
 	}
 	/**
-	 * Multivalued save
+	 * Save rating fields
 	 */
+	for( var contentId in ratingCache) {
+		modified = true;
+		defaultSave(contentId, ratingCache[contentId])
+		}
 	
 	
 	
@@ -486,6 +492,20 @@ jQuery(".time").click( function () {
 	currentTime = jQuery("#"+currentTimePicker+" .currentTime").html().trim();
 	jQuery("#"+currentTimePicker+" .timepicker").timepicker('setTime', currentTime);
 });
+/*************************************************/
+
+/*************************************************
+ * 			jQuery for rating editing
+ ************************************************/
+
+jQuery(".star-edit").click( function () {
+	var rate=jQuery(this).parent();
+	var rateId = jQuery(this).parent().attr("id");
+	var newRate=jQuery(rate).attr("data-rate");
+		
+		ratingCache[rateId] = newRate;
+	
+	});
 
 function confirmTime(contentId, newTime) {
 	var idAndField = contentId.split("_");
@@ -554,6 +574,26 @@ function confirmNumber(contentId, newNumber) {
 		data: {
 			contentId : contentId,
 			newNumber : newNumber,
+			field : fieldName
+		},
+		dataType: "json"
+	});
+	 
+	request.fail(function(jqXHR, textStatus) {
+		errors.push(jQuery.parseJSON(jqXHR['responseText']));
+	});
+}
+function defaultSave(contentId, newRate) {
+	var idAndField = contentId.split("_");
+	var contentId = idAndField[0];
+	var fieldName = idAndField[1];
+	
+	var request = $.ajax({
+		url: "/xhr-edit/generic-save",
+		type: "POST",
+		data: {
+			contentId : contentId,
+			value : newRate,
 			field : fieldName
 		},
 		dataType: "json"

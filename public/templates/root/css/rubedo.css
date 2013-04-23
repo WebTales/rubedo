@@ -5,6 +5,27 @@
 .highlight{
 	background-color:#E3E84D;
 }
+
+.empty-star {
+  background: url('../img/empty-star.png');
+	width:15px;
+	height:15px;
+	display:inline-block;
+}
+
+.full-star {
+  background-image: url('../img/full-star.png');
+	width:15px;
+	height:15px;
+	display:inline-block;
+}
+.half-star {
+  background-image: url('../img/half-star.png');
+	width:15px;
+	height:15px;
+	display:inline-block;
+}
+
 .rubedo-modal
 {
 	max-width:90%;
