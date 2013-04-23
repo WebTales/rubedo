@@ -398,6 +398,8 @@ class Install_IndexController extends Zend_Controller_Action
             $params = $form->getValues();
             $hashService = \Rubedo\Services\Manager::getService('Hash');
             
+            unset($params["confirmPassword"]);
+            
             $params['salt'] = $hashService->generateRandomString();
             $params['password'] = $hashService->derivatePassword(
                     $params['password'], $params['salt']);
