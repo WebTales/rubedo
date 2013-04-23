@@ -3,7 +3,7 @@
 {% block mainContent %} 
 
 	<div class="block headline">
-	<h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text |cleanHtml }}</h1>
+	<h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text | cleanHtml }}</h1>
 	 {% for key, value in data %}
 	        {% if value is not null %}
       		{%for cKey,cValue in type %}
@@ -30,6 +30,8 @@
 							{% include 'root/blocks/fields/time.html.twig' %}
 						{%elseif(cValue["cType"]=="numberfield")%}
 							{% include 'root/blocks/fields/number.html.twig' %}
+						{%elseif(cValue["cType"]=="externalMediaField")%}
+							{% include 'root/blocks/fields/external-media.html.twig' %}
       					{%endif%}
       					
       			{%endif%}
