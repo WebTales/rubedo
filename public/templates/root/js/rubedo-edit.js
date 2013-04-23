@@ -224,7 +224,6 @@ jQuery('#btn-save').click(function() {
 	/**
 	 * Save rating fields
 	 */
-	console.log(ratingCache);
 	for( var contentId in ratingCache) {
 		modified = true;
 		
@@ -293,31 +292,6 @@ jQuery('#btn-save').click(function() {
 	swithToViewMode();
 });
 
-/*function multiSave(contentId,contentCache,type){
-	var globalId=contentId.split("-");
-	if(globalId.length>1)
-		{
-		var data=Array();
-			for( var childId in contentCache)
-				{
-				var id=childId.split("-");
-				if(globalId[0]==id[0]){
-					switch(type)
-					{
-					case 'date':
-						data.push(contentCache[childId].newDate);
-						break;
-					}
-				}
-				
-				}
-			return data;
-		}
-	else{
-		return false;
-	}
-	
-}*/
 
 /***************************************************
  * 			jQuery for images editing
@@ -376,7 +350,6 @@ function confirmImage(content, image, field) {
 		errors.push(jQuery.parseJSON(jqXHR['responseText']));
 	});
 }
-
 /**************************************************/
 
 /**************************************************
@@ -413,7 +386,6 @@ function confirmDate(id, date) {
 	var idAndField = id.split("_");
 	var contentId = idAndField[0];
 	var fieldName = idAndField[1];
-	
 	var request = $.ajax({
 		url: "/xhr-edit/save-date",
 		type: "POST",
