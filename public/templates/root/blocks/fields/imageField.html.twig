@@ -1,9 +1,10 @@
- {% if(cValue["config"]["multivalued"])and value is iterable %} {% for item in value %}
-<div class="pull-left thumbnail" style="margin: 1em;">
-	<img alt="" style="max-height: 200px; max-width: 200px;"
-		class="imageLeft" src="/dam?media-id={{item}}" />
+ {% if(cValue["config"]["multivalued"])and value is iterable %}
+  {% for item in value %}
+<div class="pull-left thumbnail editable-img" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" style="margin: 1em;">
+    <img class="img-rounded imageLeft" src="/dam?media-id={{ item }}" alt="{{data.text}}" title="{{data.text}}" style="max-width:200px; max-height: 200px;" />
 </div>
-{% endfor %} {% else %}
+{% endfor %} 
+{% else %}
 <div class="pull-left thumbnail editable-img" id="{{ data.id }}_{{ key }}" style="margin: 1em;">
     <img class="img-rounded imageLeft" src="/dam?media-id={{ value }}" alt="{{data.text}}" title="{{data.text}}" style="max-width:200px; max-height: 200px;" />
 </div>
