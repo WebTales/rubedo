@@ -88,6 +88,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         $separator = $this->getParam('separator', ";");
     	$adapter = new Zend_File_Transfer_Adapter_Http();
     	$returnArray = array();
+    	$taxonomyService=Rubedo\Services\Manager::getService('Taxonomy');
+    	$taxonomyTermsService=Rubedo\Services\Manager::getService('TaxonomyTerms');
+    	$contentsService=Rubedo\Services\Manager::getService('Contents');
     	
     	if (! $adapter->receive("csvFile")) {
     		$returnArray['success']=false;
@@ -118,7 +121,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
 			             "multiSelect"=>true,
 			             "mandatory"=>$value['mandatory']			
 			       );
-    				$newTaxo=Rubedo\Services\Manager::getService('Taxonomy')->create($newTaxoParams);
+    				$newTaxo=$taxonomyService->create($newTaxoParams);
     				$newTaxos[]=$newTaxo;
     				$CTvocabularies[]=$newTaxo['data']['id'];
     			}
@@ -140,7 +143,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
 	                           "config" => array(
 	                                  "name" => $value['newName'],
 	                                  "fieldLabel" => $value['label'],
-	                                  "allowBlank" => true,
+	                                  "allowBlank" => !$value['mandatory'],
 	                                  "localizable" => false,
 	                                  "searchable" => $value['searchable'],
 	                                  "multivalued" => false,
@@ -222,7 +225,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     					if (isset($currentLine[$value['csvIndex']])){
     						$detectedTermText=utf8_encode($currentLine[$value['csvIndex']]); 
     						if (!empty($detectedTermText)){
-	    						$theTerm=Rubedo\Services\Manager::getService('TaxonomyTerms')->findByVocabularyIdAndName($theTaxoId,$detectedTermText);
+	    						$theTerm=$taxonomyTermsService->findByVocabularyIdAndName($theTaxoId,$detectedTermText);
 	    						if ($theTerm==null){
 	    							$termParams= array(
 							             "text"=>$detectedTermText,
@@ -231,7 +234,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
 							             "leaf"=>true,
 	    								 "expandable"=>false
 							       );
-	    							$theTerm=Rubedo\Services\Manager::getService('TaxonomyTerms')->create($termParams);
+	    							$theTerm=$taxonomyTermsService->create($termParams);
 	    						}
 	    						if (isset($theTerm['id'])){
 	    							$contentParamsTaxonomy[$theTaxoId][]=$theTerm['id'];
@@ -256,7 +259,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     						"blockId"=>"",
     						"readOnly"=>false
     				);
-    				$newContent=Rubedo\Services\Manager::getService('Contents')->create($contentParams);
+    				$newContent=$contentsService->create($contentParams);
     				$lineCounter++;
     			}
     			fclose($recievedFile);
