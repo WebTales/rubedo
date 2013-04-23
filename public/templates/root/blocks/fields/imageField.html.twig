@@ -1,4 +1,4 @@
- {% if(cValue["config"]["multivalued"]) %} {% for item in value %}
+ {% if(cValue["config"]["multivalued"])and value is iterable %} {% for item in value %}
 <div class="pull-left thumbnail" style="margin: 1em;">
 	<img alt="" style="max-height: 200px; max-width: 200px;"
 		class="imageLeft" src="/dam?media-id={{item}}" />

@@ -5,7 +5,7 @@
 {%else%}
 {%set decimal="true"%}
 {%endif%}
-{%  if(cValue["config"]["multivalued"]) %}
+{%  if(cValue["config"]["multivalued"])and value is iterable %}
 <div id="{{ data.id }}_{{ key }}">
 {% for item in value %}
 {%if decimal=="true"%}

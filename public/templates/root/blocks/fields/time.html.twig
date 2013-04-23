@@ -1,6 +1,5 @@
 
-
-{%  if(cValue["config"]["multivalued"]) %}
+{%  if(cValue["config"]["multivalued"]) and value is iterable%}
 	{% for item in value %}
 <div class="time" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
     <span class="currentTime">{{ item }}</span>

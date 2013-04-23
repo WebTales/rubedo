@@ -1,4 +1,4 @@
-{%  if(cValue["config"]["multivalued"]) %}
+{%  if(cValue["config"]["multivalued"])and value is iterable %}
 	{% for item in value %}
 		<div class="editable" id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item|cleanHtml}}</div>
 	{% endfor %}

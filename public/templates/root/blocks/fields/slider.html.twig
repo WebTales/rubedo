@@ -1,4 +1,4 @@
- {% if(cValue["config"]["multivalued"]) %} {% for item in value %}
+ {% if(cValue["config"]["multivalued"])and value is iterable %} {% for item in value %}
 <div class="progress progress-info progress-striped"
 	style="clear: both;">
 	<div class="bar" style="width:{{item}}%">{{item}}%</div>

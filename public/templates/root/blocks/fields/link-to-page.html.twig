@@ -1,4 +1,4 @@
- {% if(cValue["config"]["multivalued"]) %} {% for item in value %}
+ {% if(cValue["config"]["multivalued"])and value is iterable %} {% for item in value %}
 <div>
 	<a href="{{url({pageId: item},true)}}">{{getPageTitle(item)}}</a>
 </div>
