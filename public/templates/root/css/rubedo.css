@@ -25,12 +25,20 @@
 	height:15px;
 	display:inline-block;
 }
-
+.modal-backdrop, .modal-backdrop.fade.in{
+	opacity: .3;
+}
+.rubedo-modal .rubedo-body img{
+	max-height:80%;
+}
 .rubedo-modal
 {
 	max-width:90%;
 	max-height:90%;
+	height:auto;
 	width:auto;
+	border:3px solid;
+	border-color: rgba(0, 0, 0, 0.2);
 }
 .gallery-control
 {

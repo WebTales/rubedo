@@ -112,7 +112,7 @@ centerAll();
 		       */
 		      jQuery('#fullScreenPicture').attr('src', src);
 		  	  jQuery('#myModalLabel').html(title);
-		  	jQuery("#"+id+" .modal-footer").html("");
+		  	jQuery("#"+id+" .modal-footer").remove();
 		  	  /**
 		  	   * Modal center after loading image
 		  	   */
@@ -120,7 +120,7 @@ centerAll();
 		       	{
 		    	  jQuery("#"+id+" .modal-body img").load(function(){
 				       	jQuery(self).css({
-				       		"margin-left":"-"+jQuery(self).width()/2+"px"
+				       		"margin-left":"-"+jQuery(self).width()/2+"px",
 				       	});
 		       	  });}
 		        jQuery(self).modal();
