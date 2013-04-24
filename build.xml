@@ -54,6 +54,9 @@
 		<chmod file="${project.basedir}/cache/twig" mode="777"/>
 		<chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
 		<chmod file="${project.basedir}/cache/zend" mode="777"/>
+		
+		<mkdir dir="${project.basedir}/public/captcha"/>
+		<chmod file="${project.basedir}/public/captcha" mode="777"/>
 	</target>
 	<target name="prepare-config" depends="">
 		<mkdir dir="${project.basedir}/application/configs"/>
