@@ -180,7 +180,15 @@ jQuery('#cancel-confirm').click(function() {
 	swithToViewMode();
 	location.reload()
 });
-
+/**
+ * Save button popover
+ */
+jQuery("#btn-save").mouseenter(function(){
+	jQuery("#btn-save").popover("show");
+});
+jQuery("#btn-save").mouseleave(function(){
+	jQuery("#btn-save").popover("hide");
+})
 /**
  * Ctrl+s
  * Save function
@@ -197,13 +205,6 @@ $(document).keydown(function(event) {
 		   }
 		}
 	});
-
-jQuery("#btn-save").mouseenter(function(){
-	jQuery("#btn-save").popover("show");
-});
-jQuery("#btn-save").mouseleave(function(){
-	jQuery("#btn-save").popover("hide");
-})
 jQuery('#btn-save').click(function() {
 	var modified = false;
 	/**
