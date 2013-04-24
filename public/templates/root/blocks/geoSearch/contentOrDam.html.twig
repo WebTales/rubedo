@@ -1,8 +1,8 @@
 {% if result.objectType == 'content' %}
 			<tr>
 				<td><h3><a href="{{ displaySingleUrl(result.id) }}">{{ result.text }}</a></h3>
-				{% if result.live.fields.summary %}
-				<p>{{ result.live.fields.summary|cleanHtml }}</p>
+				{% if result.fields.summary %}
+				<p>{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}
 				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a style="cursor:pointer;" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
