@@ -10,6 +10,7 @@ var errors = new Array();
 var timeCache = new Array();
 var numberCache = new Array();
 var starEdit=false;
+var EditMode=true;
 var ratingCache=new Array();
 /*****************************/
 
@@ -180,6 +181,29 @@ jQuery('#cancel-confirm').click(function() {
 	location.reload()
 });
 
+/**
+ * Ctrl+s
+ * Save function
+ */
+$(document).keydown(function(event) {
+	if(event.ctrlKey)
+		{
+		 if (event.which == 83 ) {
+			 if(EditMode==true)
+				 {
+		     event.preventDefault();
+		    jQuery('#btn-save').click();
+				 }
+		   }
+		}
+	});
+
+jQuery("#btn-save").mouseenter(function(){
+	jQuery("#btn-save").popover("show");
+});
+jQuery("#btn-save").mouseleave(function(){
+	jQuery("#btn-save").popover("hide");
+})
 jQuery('#btn-save').click(function() {
 	var modified = false;
 	/**
@@ -600,6 +624,7 @@ function swithToEditMode() {
 		jQuery(this).html(jQuery(this).html() + "<div class=\"timepicker\"></div>");
 	});
 	 starEdit=true;
+	 EditMode=true;
 }
 
 function swithToViewMode() {
@@ -615,6 +640,7 @@ function swithToViewMode() {
 	
 	jQuery(".datepicker").remove();
 	jQuery(".timepicker").remove();
+	EditMode=false;
 }
 
 function checkIfDirty() {
