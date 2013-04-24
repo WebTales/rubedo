@@ -193,7 +193,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $idArray = $this->getRequest()->getParam('idArray');
         $itemHtml = '';
         foreach ($idArray as $id) {
-            $entity = Rubedo\Services\Manager::getService('Contents')->findById($id);
+            $entity = Rubedo\Services\Manager::getService('Contents')->findById($id,true,false);
             if (isset($entity)) {
                 $type = "content";
             } else {
