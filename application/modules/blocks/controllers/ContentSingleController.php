@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
+Use Alb\OEmbed;
 
 require_once ('AbstractController.php');
 
@@ -64,16 +65,85 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $cTypeArray = array();
             $multiValuedArray=array();
             $CKEConfigArray = array();
+            $output = $this->getAllParams();
             foreach ($type["fields"] as $value) {
             	
                 $cTypeArray[$value['config']['name']] = $value;
+
                 if($value["cType"] == "CKEField"){
                     $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
+                } else if ($value["cType"] == "externalMediaField"){
+                    $mediaConfig = $data[$value["config"]["name"]];
+                    
+                    if(isset($mediaConfig['url'])) {
+                    
+                        $oembedParams['url'] = $mediaConfig['url'];
+                    
+                        $cache = Rubedo\Services\Cache::getCache('oembed');
+                    
+                        $options = array();
+                        	
+                        if(isset($mediaConfig['maxWidth']) && is_integer($mediaConfig['minHeight'])){
+                            $oembedParams['maxWidth'] = $mediaConfig['maxWidth'];
+                            $options['maxWidth'] = $mediaConfig['maxWidth'];
+                        } else {
+                            $oembedParams['maxWidth'] = 0;
+                        }
+                        	
+                        if(isset($mediaConfig['maxHeight']) && is_integer($mediaConfig['maxHeight'])){
+                            $oembedParams['maxHeight'] = $mediaConfig['maxHeight'];
+                            $options['maxHeight'] = $mediaConfig['maxHeight'];
+                        } else {
+                            $oembedParams['maxHeight'] = 0;
+                        }
+                    
+                        $cacheKey = 'oembed_item_'.md5(serialize($oembedParams));
+                        	
+                        if (!($item = $cache->load($cacheKey))) {
+                            $response = OEmbed\Simple::request($oembedParams['url'], $options);
+
+                            $item['width'] = $oembedParams['maxWidth'];
+                            $item['height'] = $oembedParams['maxHeight'];
+                            if($response){
+                                if (!stristr($oembedParams['url'],'www.flickr.com')) {
+                                    $item['html'] = $response->getHtml();
+                                } else {
+                                    $raw= $response->getRaw();
+                                    if ($oembedParams['maxWidth'] > 0) {
+                                        $width_ratio = $raw->width / $oembedParams['maxWidth'];
+                                    } else {
+                                        $width_ratio = 1;
+                                    }
+                                    if ($oembedParams['maxHeight'] > 0) {
+                                        $height_ratio = $raw->height / $oembedParams['maxHeight'];
+                                    } else {
+                                        $height_ratio = 1;
+                                    }
+                                    	
+                                    $size="";
+                                    if ($width_ratio>$height_ratio) {
+                                        $size = "width='".$oembedParams['maxWidth']."'";
+                                    }
+                                    if ($width_ratio<$height_ratio) {
+                                        $size = "height='".$oembedParams['maxHeight']."'";
+                                    }
+                                    $item['html'] = "<img src='".$raw->url."' ".$size."' title='".$raw->title."'>";
+                                }
+                        
+                                $cache->save($item, $cacheKey,array('oembed'));
+                            } else {
+                                $item["html"] = "<div class=\"alert alert-error\">Le média éxterne n'a pas pu être chargé</div>";
+                            }
+                            	
+                        }
+                    
+                        $output['item'] = $item;
+                    }
                 }
             }
+            
             $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
             $templateName .= ".html.twig";
-            $output = $this->getAllParams();
             $output["data"] = $data;
             $output['activateDisqus']=isset($type['activateDisqus']) ? $type['activateDisqus'] : false ;
             $output["type"] = $cTypeArray;

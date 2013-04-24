@@ -32,15 +32,12 @@ CKEDITOR.on('instanceCreated', function(event) {
 			// Remove unnecessary plugins
 			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
 
-			editor.config.startupMode = 'source';
+			editor.getData=function(){return(editor.editable().getText());};
+			editor.forcePasteAsPlainText = true;
 			
 			// Make toolbar
-			editor.config.toolbarGroups = [{
-					name : 'clipboard',
-					groups : [ 'clipboard' ]
-				}, {
-					name : 'undo'
-				} 
+			editor.config.toolbar = [
+				{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
 			];
 		});
 		

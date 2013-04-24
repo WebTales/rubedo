@@ -170,7 +170,7 @@ class Users extends AbstractCollection implements IUsers
         $personalPrefsObj = array(
             'userId' => $createUser['id'],
             'stylesheet' => 'resources/css/red_theme.css',
-            'wallpaper' => 'resources/wallpapers/rubedo.jpg',
+            'wallpaper' => 'resources/wallpapers/rubedo.png',
             'iconSet' => 'red',
             'themeColor' => '#D7251D',
             'lastEdited' => array(),
