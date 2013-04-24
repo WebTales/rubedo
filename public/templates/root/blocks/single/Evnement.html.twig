@@ -23,6 +23,7 @@
 			{%  if(type["date"]["config"]["multivalued"]) and data.date is iterable%}
 	{% for item in data.date %}
 	<div class="entry-info date" id="{{ data.id }}_date-{{ loop.index-1 }}">
+	{{ item }}
                 A partir du {{item|localizeddate('long', 'none', lang)}}
             </div>
 	{% endfor %}
@@ -82,7 +83,7 @@
 		{% if data.image %}
  {% if(type["image"]["config"]["multivalued"])and data.image is iterable %}
   {% for item in data.image%}
-		<div class="pull-left editable-img" style="margin: 1em;" id="{{ data.id }}_image-{{ loop.index+1 }}">
+		<div class="pull-left editable-img" style="margin: 1em;" id="{{ data.id }}_image-{{ loop.index-1 }}">
 		        <img class="img-rounded" src="/dam?media-id={{item}}&amp;width=400" alt="{{data.text}}" title="{{data.text}}"  />
 		    </div>
 {% endfor %} 
@@ -98,7 +99,7 @@
 {%  if(type["body"]["config"]["multivalued"])and data.body is iterable %}
 	{% for item in data.body %}
 		<br/>
-		<div class="editable" id="{{ data.id }}_body#{{ loop.index+1 }}" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
+		<div class="editable" id="{{ data.id }}_body#{{ loop.index-1 }}" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
 			{{ item|cleanHtml }}
 		</div>
 		<div style="clear:both;"></div>
