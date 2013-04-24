@@ -112,7 +112,7 @@ centerAll();
 		       */
 		      jQuery('#fullScreenPicture').attr('src', src);
 		  	  jQuery('#myModalLabel').html(title);
-		  	jQuery("#"+id+" .modal-footer").remove();
+		  	jQuery("#"+id+" .modal-footer").hide();
 		  	  /**
 		  	   * Modal center after loading image
 		  	   */
