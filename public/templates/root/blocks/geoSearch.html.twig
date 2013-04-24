@@ -45,7 +45,7 @@
             mapOptions);
       var geocoder = new google.maps.Geocoder();
       var usedMarkers=[ ];
-      var markerCluster = new MarkerClusterer(map, usedMarkers,{batchSize:20000,averageCenter:false,gridSize:60,batchSizeIE:2500});
+      var markerCluster = new MarkerClusterer(map, usedMarkers,{batchSize:20000,averageCenter:false,gridSize:60});
       markerCluster.setCalculator(function (a,b){
           var total=0;
           for(var i= 0; i < a.length; i++)
