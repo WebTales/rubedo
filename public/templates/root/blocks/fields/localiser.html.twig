@@ -29,7 +29,7 @@
 <div id="{{ data.id }}_{{key}}-edit" class="btn-group">
 <legend>Edition</legend>
 <div>
-<label class="control-label" style="display:block; clear:both;" for="inputAddress">Address</label>
+<label class="control-label" style="display:block; clear:both;" for="inputAddress">Adresse</label>
 <input class="input-xxlarge address"  style="width:99%;"  type="text" placeholder="{{ value.address|cleanHtml }}" >
 </div>
 <div class="btn-group pull-left">
@@ -41,7 +41,7 @@
 <input class="input-xxlarge longitude" type="text" placeholder="{{ value.lon|cleanHtml }}">
 </div>
 <div class="btn-group pull-right" style="clear:both;">
-   <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>Rafraichir</a>
+   <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>Rafraîchir</a>
    </div>
 </div>
 </div>

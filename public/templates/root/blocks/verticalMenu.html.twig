@@ -3,9 +3,11 @@
 				<!-- search component-->
 					<form class=""
 						action="{{ url({'pageId':searchPage},true) }}">
-						<input type="text" class="input-medium search-query" name="query"
-							placeholder="{{"search"|trans}}">
-						<!-- <button type="submit" class="btn">{{"search"|trans}}</button> -->
+						<div class="input-append">
+							<input type="text" class="input-medium search-query" name="query"
+								placeholder="{{"search"|trans}}">
+							 <button type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
+						</div>
 					</form>
 
 				<!-- /search component-->
