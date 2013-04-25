@@ -250,7 +250,7 @@ jQuery('#btn-save').click(function() {
 	for( var contentId in ratingCache) {
 		modified = true;
 		
-		defaultSave(contentId, ratingCache[contentId])
+		save(contentId, ratingCache[contentId])
 		}
 	
 	
@@ -258,13 +258,9 @@ jQuery('#btn-save').click(function() {
 	/**
 	 * Save images
 	 */
-	for( var i in cache ) {
+	for( var id in cache ) {
 		modified = true;
-		var idAndField = i.split("_");
-		var id = idAndField[0];
-		var field = idAndField[1];
-		
-		confirmImage(id, cache[i].newImage, field);
+		save(id, cache[id].newImage);
 	}
 	
 	/**
@@ -272,7 +268,7 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in dateCache) {
 		modified = true;
-		confirmDate(contentId, dateCache[contentId].newDate)
+		save(contentId, dateCache[contentId].newDate)
 		}
 	
 	/**
@@ -280,7 +276,7 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in timeCache) {
 		modified = true;
-		confirmTime(contentId, timeCache[contentId].newTime);
+		save(contentId, timeCache[contentId].newTime);
 	}
 	
 	/**
@@ -288,7 +284,7 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in numberCache) {
 		modified = true;
-			confirmNumber(contentId, numberCache[contentId].newNumber);
+			save(contentId, numberCache[contentId].newNumber);
 		
 		
 	}
@@ -356,23 +352,6 @@ function saveImage(currentContentId, newImageId) {
 	contentId = "";
 	imageId = "";
 }
-
-function confirmImage(content, image, field) {
-	var request = $.ajax({
-		url: "/xhr-edit/save-image",
-		type: "POST",
-		data: {
-			contentId : content,
-			newImageId : image,
-			field : field
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
 /**************************************************/
 
 /**************************************************
@@ -404,26 +383,6 @@ jQuery(".date").click( function () {
 		}
 	);
 });
-
-function confirmDate(id, date) {
-	var idAndField = id.split("_");
-	var contentId = idAndField[0];
-	var fieldName = idAndField[1];
-	var request = $.ajax({
-		url: "/xhr-edit/save-date",
-		type: "POST",
-		data: {
-			contentId : contentId,
-			newDate : date,
-			field : fieldName
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
 
 /*************************************************/
 
@@ -503,26 +462,6 @@ jQuery(".star-edit").click( function () {
 	
 	});
 
-function confirmTime(contentId, newTime) {
-	var idAndField = contentId.split("_");
-	var contentId = idAndField[0];
-	var fieldName = idAndField[1];
-	
-	var request = $.ajax({
-		url: "/xhr-edit/save-time",
-		type: "POST",
-		data: {
-			contentId : contentId,
-			newTime : newTime,
-			field : fieldName
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
 
 /************************************************/
 
@@ -559,46 +498,6 @@ $( document ).on( 'blur', '.numberSelector', function () {
 	jQuery("#"+currentNumberDiv + " .numberSelector").remove();
 });
 
-function confirmNumber(contentId, newNumber) {
-	var idAndField = contentId.split("_");
-	var contentId = idAndField[0];
-	var fieldName = idAndField[1];
-	
-	var request = $.ajax({
-		url: "/xhr-edit/save-number",
-		type: "POST",
-		data: {
-			contentId : contentId,
-			newNumber : newNumber,
-			field : fieldName
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
-function defaultSave(contentId, newRate) {
-	var idAndField = contentId.split("_");
-	var contentId = idAndField[0];
-	var fieldName = idAndField[1];
-	
-	var request = $.ajax({
-		url: "/xhr-edit/generic-save",
-		type: "POST",
-		data: {
-			contentId : contentId,
-			value : newRate,
-			field : fieldName
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
 
 /***********************************************/
 

@@ -134,7 +134,6 @@ var gMap = function (options,id,title,text,field) {
 		},
 		addMarker:function(location,title,contentString) {
 			var self=this;
-			console.log(location);
 			if(self.field==true){self.deleteAllMarkers();}
 			if (location.address){
 				
