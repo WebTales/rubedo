@@ -735,77 +735,75 @@ function notify(notify_type, msg) {
 		alert.addClass('alert alert-error').fadeIn('fast');
 	}
 }
-function modal(header, body, modalId, modalWidth, modalHeight) {
-	var top = (100 - modalHeight) / 2;
-	var left = (100 - modalWidth) / 2;
-	var stringModalId = "#" + modalId;
-	jQuery("<div id='" + modalId + "' class='modal hide fade'><div class='modal-header'> <a href='#' onclick='destroyModal(" + '"' + modalId + '"' + ")' class='close'>&times;</a>" + header + "</div><div id='modal-body-content' class='modal-body'>" + body + "</div></div>").appendTo(document.body);
-	jQuery(".modal").css({
-		"margin" : "0 0 0 0"
-	});
-
-	jQuery("#" + modalId).css({
-	"width" : modalWidth + "%",
-	"min-height" : modalHeight + "%",
-	"max-height" : '90%',
-	"top" : top + "%",
-	"left" : left + "%",
-	"overflow" : 'scroll'
-	});
-
-	jQuery("#" + modalId + " iframe").css({
-	"width" : "99.9%",
-	"height" : "90%",
-	"border" : "none"
-	});
-	jQuery(".modal-header").css({
-		"min-height" : "2.5%"
-	});
-	jQuery("#modal-body-content").css({
-	"max-height" : jQuery("#add-content-window").height(),
-	"height" : jQuery("#add-content-window").height()
-	});
-}
-
-function createContentWindow(type, typeId, queryId) {
-	var selectedTypeId = typeId;
+function addContent(type,typeId,queryId){
 	var siteUrl = getDomainName();
-	if (type == "manual") {
-		modal("<h3>Selectionnez le type de contenu à ajouter</h3>", "<form name='modalfrom' id='modal-form'><select id='select-type-box'></select></form>", "select-type-window", 30, 30);
+	/**
+	 * Check query type
+	 */
+	if(type=="manual")
+		{
+		/*
+		 * Set Css and Html for contentModal
+		 */
+		jQuery("#contentLabel").empty().html("Selectionnez le type de contenu à ajouter");
+		jQuery("#contentBody").empty();
+	    jQuery("#contentModal").css({
+	    	"width":"auto",
+	    	"height":"auto",
+	    	"margin-left":"-10%",
+	    	"margin-top":"auto"
+	    });
+		jQuery("#contentBody").append("<form name='modalfrom' id='modal-form'><select id='select-type-box'></select><div style='clear:both;'><button type='submit' id='btn-valid-form' class='btn pull-right'>Valider</button></div></form>")
 		jQuery.ajax({
-		"url" : "/backoffice/content-types/get-readable-content-types/",
-		"async" : false,
-		"type" : "GET",
-		"dataType" : "json",
-		"success" : function(msg) {
-			for ( var i in msg) {
-				jQuery("<option value='" + msg[i].id + "'>" + msg[i].type + "</option>").appendTo("#select-type-box");
+			"url" : "/backoffice/content-types/get-readable-content-types/",
+			"async" : false,
+			"type" : "GET",
+			"dataType" : "json",
+			"success" : function(msg) {
+				for ( var i in msg) {
+					jQuery("<option value='" + msg[i].id + "'>" + msg[i].type + "</option>").appendTo("#select-type-box");
+				}
 			}
-		}
-		});
-		jQuery("<div class='form-actions'><a class='btn btn-primary' id='btn-valid-form' >Continue</a></div>").appendTo("#modal-form");
-		jQuery("#select-type-window").modal('show');
+			});
+		/**
+		 *Get type of content to add and call iframe
+		 */
 		jQuery('#btn-valid-form').click(function() {
 			selectedTypeId = jQuery("#select-type-box").val();
-			destroyModal("select-type-window");
-			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
-			modal("", "<iframe src='" + modalUrl + "'></iframe>", "add-content-window", 90, 90);
-
-			jQuery("#add-content-window").modal('show');
+			
+		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
+			var iWidth=screen.availWidth*(90/100);
+			var iHeight=screen.availHeight*(90/100);
+			var availHeight=window.innerHeight*(90/100);
+			var iFrameHeight=availHeight*(90/100);
+			jQuery("#contentLabel").empty().html("Ajout de contenu");
+		    jQuery("#contentBody").empty().html("<iframe  style='width:99%; height:"+(iFrameHeight)+"px; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentModal").css({
+		    	"width":iWidth+"px",
+		    	"height":iHeight+"px",
+		    	"margin-left":-(iWidth/2)+"px",
+		    	"margin-top":-((screen.availHeight-iHeight)/2)+"px"
+		    });
 		});
-
-	}
-	if (type == "simple") {
-
-		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
-		modal("", "<iframe src='" + modalUrl + "'></iframe>", "add-content-window", 90, 90);
-		jQuery("#add-content-window").modal('show');
-	}
-}
-function destroyModal(modalId) {
-	jQuery("#" + modalId).remove();
-	jQuery(".modal-backdrop.fade.in").remove();
+		}else{
+			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
+			var iWidth=screen.availWidth*(90/100);
+			var iHeight=screen.availHeight*(90/100);
+			jQuery("#contentLabel").empty().html("Ajout de contenu");
+		    jQuery("#contentBody").empty().html("<iframe style='width:99%; height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentModal").css({
+		    	"width":iWidth+"px",
+		    	"height":iHeight+"px",
+		    	"margin-left":-(iWidth/2)+"px",
+		    	"margin-top":-((screen.availHeight-iHeight)/2)+"px"
+		    });
+		   
+		}
+	jQuery("#contentModal").modal("show");	
 }
 function getDomainName() {
 	return window.location.href.substr(7).substr(0, window.location.href.substr(7).indexOf("/"));
+}
+function destroyModal(){
+	jQuery("#contentModal").modal("hide");	
 }

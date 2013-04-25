@@ -134,6 +134,7 @@
 	    
 	    {% if pageProperties.showInDiv %}</div>{% endif %}
 	{% endblock %}
+	
     
     {% block Modal %}
     <div id="myModal" class="rubedo-modal modal hide fade" tabindex="-1" role="dialog"
@@ -148,6 +149,20 @@
 		</div>
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+	{% endblock %}
+	    {% block contentModal %}
+    <div id="contentModal" class="rubedo-modal modal hide fade" tabindex="-1" role="dialog"
+		aria-labelledby="contentLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true">×</button>
+			<h4 id="contentLabel">Edition de contenu</h4>
+		</div>
+		<div class="modal-body rubedo-body">
+			<div id="contentBody">
+			</div>
 		</div>
 	</div>
 	{% endblock %}

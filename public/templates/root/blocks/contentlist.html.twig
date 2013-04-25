@@ -5,7 +5,7 @@
 {%if query.type=="manual" or query.type=="simple"%}
 <div id="list-editmode" class="hide">
 	<div class="btn-group pull-left">
-	<a class="btn" href="#" style="margin-top:10px;" id="btn-add-content" onclick="createContentWindow('{{query.type}}','{{data[0].typeId}}','{{query.id}}')"> <i class="icon-plus-sign"></i>
+	<a class="btn" href="#" style="margin-top:10px;" id="btn-add-content" onclick="addContent('{{query.type}}','{{data[0].typeId}}','{{query.id}}')"> <i class="icon-plus-sign"></i>
 	Ajouter un contenu
 	</a>
 	</div>
