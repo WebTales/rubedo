@@ -90,7 +90,7 @@ function centerAll()
 		}
 	var pagerWidth=jQuery(".active-items .pagination ul").width();
 	jQuery(".active-items .pagination ul").css({
-		"margin-left":(galleryWidth/2)-pagerWidth+"px"
+		"margin-left":+(galleryWidth/2)-pagerWidth+"px"
 	});
 	
 	}
