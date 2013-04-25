@@ -62,5 +62,6 @@ Interface IFrontOfficeTemplates
      * @param string $theme
      */
     public function setCurrentTheme($theme);
-
+    
+    public function getAvailableThemes ();
 }
