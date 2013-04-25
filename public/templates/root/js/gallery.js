@@ -111,8 +111,12 @@ centerAll();
 		       * set image src and modal header text
 		       */
 		      jQuery(self).css({
-		    	  "height":window.innerHeight*(80/100)+"px"
+		    	  "max-height":window.innerHeight*(80/100)+"px",
 		      });
+		      jQuery("#"+id+" .modal-body").css({
+		    	  "overflow":"hidden"
+		      });
+		      //jQuery("#"+id+" .modal-body").height(jQuery(self).height()*(90/100));
 		      jQuery('#fullScreenPicture').attr('src', src);
 		  	  jQuery('#myModalLabel').html(title);
 		  	jQuery("#"+id+" .modal-footer").hide();
@@ -126,7 +130,7 @@ centerAll();
 				       		"margin-left":"-"+jQuery(self).width()/2+"px"
 				       	});
 		    		    jQuery("#"+id+" .modal-body img").css({
-					    	   "height":(jQuery(self).height()*(90/100))+"px"
+					    	   "max-height":(parseFloat(jQuery(self).css("max-height"))*(90/100))+"px"
 					       });
 		       	  });
 		    	  }
