@@ -1,11 +1,10 @@
 {% extends "root/block.html.twig" %}
 
 {% block mainContent %} 
-
 	<div class="block headline">
-	<h1 class="editable" id="{{ data.id }}_text">{{ data.text |cleanHtml }}</h1>
+	<h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h1>
 	 {% for key, value in data %}
-	        {% if value %}
+	        {% if value is not null %}
       		{%for cKey,cValue in type %}
       			{%if(key==cKey)%}
       					{%if cValue["cType"]=="ImagePickerField"%}
@@ -21,9 +20,7 @@
       					{%elseif(cValue["cType"]=="slider")%}
       						{% include 'root/blocks/fields/slider.html.twig' %}
 						{%elseif(cValue["cType"]=="treepicker")%}
-						{% if value %}
 							{% include 'root/blocks/fields/link-to-page.html.twig' %}
-						{% endif %}
 						{%elseif(cValue["cType"]=="localiserField")%}
 							{% include 'root/blocks/fields/localiser.html.twig' %}
       					{%elseif(cValue["cType"]=="datefield")%}
@@ -32,6 +29,8 @@
 							{% include 'root/blocks/fields/time.html.twig' %}
 						{%elseif(cValue["cType"]=="numberfield")%}
 							{% include 'root/blocks/fields/number.html.twig' %}
+						{%elseif(cValue["cType"]=="externalMediaField")%}
+							{% include 'root/blocks/fields/external-media.html.twig' %}
       					{%endif%}
       					
       			{%endif%}

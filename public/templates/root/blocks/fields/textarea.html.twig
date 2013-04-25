@@ -1,7 +1,7 @@
-{%  if(cValue["config"]["multivalued"]) %}
+{%  if(cValue["config"]["multivalued"])and value is iterable %}
 	{% for item in value %}
-	<div style="clear:right;"><p class="editable "  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item |cleanHtml }}</p></div>
+	<div style="clear:right;"><p class="editable "  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item }}</p></div>
 	{% endfor %}
 {% else %}
-<div style="clear:right;"><p class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">{{ value |cleanHtml }}</p></div>
+<div style="clear:right;"><p class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">{{ value }}</p></div>
 {% endif %}

@@ -36,4 +36,5 @@ interface ICurrentTime
 	 */
     public function getCurrentTime();
 	
+    public function setSimulatedTime ($time);
 }

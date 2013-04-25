@@ -32,6 +32,9 @@ class Blocks_ContactController extends Blocks_AbstractController
     public function indexAction ()
     {
     	$blockConfig = $this->getRequest()->getParam('block-config');
+    	
+    	$output = $this->getAllParams();
+    	
     	$errors = array();
     	
     	if(isset($blockConfig['captcha'])){

@@ -48,6 +48,19 @@ interface ICurrentUser
      *
      * @return boolean
      */
+    /**
+     * Return the token of the current user
+     *
+     * @return string
+     */
+    public function getToken ();
+    /**
+     * Generate a token for the current user
+     *
+     * @return string
+     */
+    public function generateToken ();
+    
     public function isAuthenticated();
 	
 	/**
@@ -93,4 +106,8 @@ interface ICurrentUser
 	 * @return array
 	 */
 	public function getWriteWorkspaces ();
+	/**
+	 * @param boolean $_isInstallerUser
+	 */
+	public static function setIsInstallerUser ($_isInstallerUser);
 }

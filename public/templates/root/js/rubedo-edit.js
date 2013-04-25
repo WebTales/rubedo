@@ -10,6 +10,8 @@ var errors = new Array();
 var timeCache = new Array();
 var numberCache = new Array();
 var starEdit=false;
+var EditMode=true;
+var ratingCache=new Array();
 /*****************************/
 
 jQuery("body").css("cursor" , "default");
@@ -31,13 +33,12 @@ CKEDITOR.on('instanceCreated', function(event) {
 			// Remove unnecessary plugins
 			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
 
+			editor.getData=function(){return(editor.editable().getText());};
+			editor.forcePasteAsPlainText = true;
+			
 			// Make toolbar
-			editor.config.toolbarGroups = [{
-					name : 'clipboard',
-					groups : [ 'clipboard' ]
-				}, {
-					name : 'undo'
-				} 
+			editor.config.toolbar = [
+				{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
 			];
 		});
 		
@@ -61,6 +62,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				// set file and media explorer path
 				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
 				editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.extraPlugins = 'rubedolink';
 			});
 		} else if (element.getAttribute("data-cke-config") == "Basic") {
 			editor.on('configLoaded', function() {
@@ -128,6 +130,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 
 jQuery('#btn-edit').click(function() {
 	swithToEditMode();
+	starEdit=true;
 });
 
 jQuery('#btn-cancel').click(function() {
@@ -169,17 +172,42 @@ jQuery('#btn-cancel').click(function() {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
+		location.reload();
 	}
 });
 
 jQuery('#cancel-confirm').click(function() {
-	undoAllChanges();
+	//undoAllChanges();
 	swithToViewMode();
+	location.reload()
 });
-
+/**
+ * Save button popover
+ */
+jQuery("#btn-save").mouseenter(function(){
+	jQuery("#btn-save").popover("show");
+});
+jQuery("#btn-save").mouseleave(function(){
+	jQuery("#btn-save").popover("hide");
+})
+/**
+ * Ctrl+s
+ * Save function
+ */
+$(document).keydown(function(event) {
+	if(event.ctrlKey)
+		{
+		 if (event.which == 83 ) {
+			 if(EditMode==true)
+				 {
+		     event.preventDefault();
+		    jQuery('#btn-save').click();
+				 }
+		   }
+		}
+	});
 jQuery('#btn-save').click(function() {
 	var modified = false;
-	
 	/**
 	 * Save CKE fields (Rich text & TextArea)
 	 */
@@ -217,21 +245,22 @@ jQuery('#btn-save').click(function() {
 		}
 	}
 	/**
-	 * Multivalued save
+	 * Save rating fields
 	 */
+	for( var contentId in ratingCache) {
+		modified = true;
+		
+		save(contentId, ratingCache[contentId])
+		}
 	
 	
 	
 	/**
 	 * Save images
 	 */
-	for( var i in cache ) {
+	for( var id in cache ) {
 		modified = true;
-		var idAndField = i.split("_");
-		var id = idAndField[0];
-		var field = idAndField[1];
-		
-		confirmImage(id, cache[i].newImage, field);
+		save(id, cache[id].newImage);
 	}
 	
 	/**
@@ -239,7 +268,7 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in dateCache) {
 		modified = true;
-		confirmDate(contentId, dateCache[contentId].newDate)
+		save(contentId, dateCache[contentId].newDate)
 		}
 	
 	/**
@@ -247,8 +276,7 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in timeCache) {
 		modified = true;
-		console.log(contentId);
-		confirmTime(contentId, timeCache[contentId].newTime);
+		save(contentId, timeCache[contentId].newTime);
 	}
 	
 	/**
@@ -256,7 +284,7 @@ jQuery('#btn-save').click(function() {
 	 */
 	for( var contentId in numberCache) {
 		modified = true;
-			confirmNumber(contentId, numberCache[contentId].newNumber);
+			save(contentId, numberCache[contentId].newNumber);
 		
 		
 	}
@@ -283,31 +311,6 @@ jQuery('#btn-save').click(function() {
 	swithToViewMode();
 });
 
-/*function multiSave(contentId,contentCache,type){
-	var globalId=contentId.split("-");
-	if(globalId.length>1)
-		{
-		var data=Array();
-			for( var childId in contentCache)
-				{
-				var id=childId.split("-");
-				if(globalId[0]==id[0]){
-					switch(type)
-					{
-					case 'date':
-						data.push(contentCache[childId].newDate);
-						break;
-					}
-				}
-				
-				}
-			return data;
-		}
-	else{
-		return false;
-	}
-	
-}*/
 
 /***************************************************
  * 			jQuery for images editing
@@ -349,24 +352,6 @@ function saveImage(currentContentId, newImageId) {
 	contentId = "";
 	imageId = "";
 }
-
-function confirmImage(content, image, field) {
-	var request = $.ajax({
-		url: "/xhr-edit/save-image",
-		type: "POST",
-		data: {
-			contentId : content,
-			newImageId : image,
-			field : field
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
-
 /**************************************************/
 
 /**************************************************
@@ -398,27 +383,6 @@ jQuery(".date").click( function () {
 		}
 	);
 });
-
-function confirmDate(id, date) {
-	var idAndField = id.split("_");
-	var contentId = idAndField[0];
-	var fieldName = idAndField[1];
-	
-	var request = $.ajax({
-		url: "/xhr-edit/save-date",
-		type: "POST",
-		data: {
-			contentId : contentId,
-			newDate : date,
-			field : fieldName
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
 
 /*************************************************/
 
@@ -483,27 +447,21 @@ jQuery(".time").click( function () {
 	currentTime = jQuery("#"+currentTimePicker+" .currentTime").html().trim();
 	jQuery("#"+currentTimePicker+" .timepicker").timepicker('setTime', currentTime);
 });
+/*************************************************/
 
-function confirmTime(contentId, newTime) {
-	var idAndField = contentId.split("_");
-	var contentId = idAndField[0];
-	var fieldName = idAndField[1];
+/*************************************************
+ * 			jQuery for rating editing
+ ************************************************/
+
+jQuery(".star-edit").click( function () {
+	var rate=jQuery(this).parent();
+	var rateId = jQuery(this).parent().attr("id");
+	var newRate=jQuery(rate).attr("data-rate");
+		
+		ratingCache[rateId] = newRate;
 	
-	var request = $.ajax({
-		url: "/xhr-edit/save-time",
-		type: "POST",
-		data: {
-			contentId : contentId,
-			newTime : newTime,
-			field : fieldName
-		},
-		dataType: "json"
 	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
+
 
 /************************************************/
 
@@ -540,26 +498,6 @@ $( document ).on( 'blur', '.numberSelector', function () {
 	jQuery("#"+currentNumberDiv + " .numberSelector").remove();
 });
 
-function confirmNumber(contentId, newNumber) {
-	var idAndField = contentId.split("_");
-	var contentId = idAndField[0];
-	var fieldName = idAndField[1];
-	
-	var request = $.ajax({
-		url: "/xhr-edit/save-number",
-		type: "POST",
-		data: {
-			contentId : contentId,
-			newNumber : newNumber,
-			field : fieldName
-		},
-		dataType: "json"
-	});
-	 
-	request.fail(function(jqXHR, textStatus) {
-		errors.push(jQuery.parseJSON(jqXHR['responseText']));
-	});
-}
 
 /***********************************************/
 
@@ -587,6 +525,7 @@ function swithToEditMode() {
 		jQuery(this).html(jQuery(this).html() + "<div class=\"timepicker\"></div>");
 	});
 	 starEdit=true;
+	 EditMode=true;
 }
 
 function swithToViewMode() {
@@ -602,6 +541,7 @@ function swithToViewMode() {
 	
 	jQuery(".datepicker").remove();
 	jQuery(".timepicker").remove();
+	EditMode=false;
 }
 
 function checkIfDirty() {
@@ -695,77 +635,77 @@ function notify(notify_type, msg) {
 		alert.addClass('alert alert-error').fadeIn('fast');
 	}
 }
-function modal(header, body, modalId, modalWidth, modalHeight) {
-	var top = (100 - modalHeight) / 2;
-	var left = (100 - modalWidth) / 2;
-	var stringModalId = "#" + modalId;
-	jQuery("<div id='" + modalId + "' class='modal hide fade'><div class='modal-header'> <a href='#' onclick='destroyModal(" + '"' + modalId + '"' + ")' class='close'>&times;</a>" + header + "</div><div id='modal-body-content' class='modal-body'>" + body + "</div></div>").appendTo(document.body);
-	jQuery(".modal").css({
-		"margin" : "0 0 0 0"
-	});
-
-	jQuery("#" + modalId).css({
-	"width" : modalWidth + "%",
-	"min-height" : modalHeight + "%",
-	"max-height" : '90%',
-	"top" : top + "%",
-	"left" : left + "%",
-	"overflow" : 'scroll'
-	});
-
-	jQuery("#" + modalId + " iframe").css({
-	"width" : "99.9%",
-	"height" : "90%",
-	"border" : "none"
-	});
-	jQuery(".modal-header").css({
-		"min-height" : "2.5%"
-	});
-	jQuery("#modal-body-content").css({
-	"max-height" : jQuery("#add-content-window").height(),
-	"height" : jQuery("#add-content-window").height()
-	});
-}
-
-function createContentWindow(type, typeId, queryId) {
-	var selectedTypeId = typeId;
+function addContent(type,typeId,queryId){
 	var siteUrl = getDomainName();
-	if (type == "manual") {
-		modal("<h3>Selectionnez le type de contenu à ajouter</h3>", "<form name='modalfrom' id='modal-form'><select id='select-type-box'></select></form>", "select-type-window", 30, 30);
+	/**
+	 * Check query type
+	 */
+	if(type=="manual")
+		{
+		/*
+		 * Set Css and Html for contentModal
+		 */
+		jQuery("#contentLabel").empty().html("Selectionnez le type de contenu à ajouter");
+		jQuery("#contentBody").empty();
+	    jQuery("#contentModal").css({
+	    	"width":"auto",
+	    	"height":"auto",
+	    	"margin-left":"-10%",
+	    	"margin-top":"auto"
+	    });
+		jQuery("#contentBody").append("<form name='modalfrom' id='modal-form'><select id='select-type-box'></select><div style='clear:both;'><button type='submit' id='btn-valid-form' class='btn pull-right'>Valider</button></div></form>")
 		jQuery.ajax({
-		"url" : "/backoffice/content-types/get-readable-content-types/",
-		"async" : false,
-		"type" : "GET",
-		"dataType" : "json",
-		"success" : function(msg) {
-			for ( var i in msg) {
-				jQuery("<option value='" + msg[i].id + "'>" + msg[i].type + "</option>").appendTo("#select-type-box");
+			"url" : "/backoffice/content-types/get-readable-content-types/",
+			"async" : false,
+			"type" : "GET",
+			"dataType" : "json",
+			"success" : function(msg) {
+				for ( var i in msg) {
+					jQuery("<option value='" + msg[i].id + "'>" + msg[i].type + "</option>").appendTo("#select-type-box");
+				}
 			}
-		}
-		});
-		jQuery("<div class='form-actions'><a class='btn btn-primary' id='btn-valid-form' >Continue</a></div>").appendTo("#modal-form");
-		jQuery("#select-type-window").modal('show');
+			});
+		/**
+		 *Get type of content to add and call iframe
+		 */
 		jQuery('#btn-valid-form').click(function() {
 			selectedTypeId = jQuery("#select-type-box").val();
-			destroyModal("select-type-window");
-			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
-			modal("", "<iframe src='" + modalUrl + "'></iframe>", "add-content-window", 90, 90);
-
-			jQuery("#add-content-window").modal('show');
+			
+		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
+			var iWidth=screen.availWidth*(90/100);
+			var iHeight=screen.availHeight*(90/100);
+			var availHeight=window.innerHeight*(90/100);
+			var iFrameHeight=availHeight*(90/100);
+			jQuery("#contentLabel").empty().html("Ajout de contenu");
+		    jQuery("#contentBody").empty().html("<iframe  style='width:99%; height:"+(iFrameHeight)+"px; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentModal").css({
+		    	"width":iWidth+"px",
+		    	"height":iHeight+"px",
+		    	"margin-left":-(iWidth/2)+"px",
+		    	"margin-top":-((screen.availHeight-iHeight)/2)+"px"
+		    });
 		});
-
-	}
-	if (type == "simple") {
-
-		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
-		modal("", "<iframe src='" + modalUrl + "'></iframe>", "add-content-window", 90, 90);
-		jQuery("#add-content-window").modal('show');
-	}
-}
-function destroyModal(modalId) {
-	jQuery("#" + modalId).remove();
-	jQuery(".modal-backdrop.fade.in").remove();
+		}else{
+			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
+			var iWidth=screen.availWidth*(90/100);
+			var iHeight=screen.availHeight*(90/100);
+			var availHeight=window.innerHeight*(90/100);
+			var iFrameHeight=availHeight*(90/100);
+			jQuery("#contentLabel").empty().html("Ajout de contenu");
+		    jQuery("#contentBody").empty().html("<iframe style='width:99%; height:"+(iFrameHeight)+"px; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentModal").css({
+		    	"width":iWidth+"px",
+		    	"height":iHeight+"px",
+		    	"margin-left":-(iWidth/2)+"px",
+		    	"margin-top":-((screen.availHeight-iHeight)/2)+"px"
+		    });
+		   
+		}
+	jQuery("#contentModal").modal("show");	
 }
 function getDomainName() {
 	return window.location.href.substr(7).substr(0, window.location.href.substr(7).indexOf("/"));
+}
+function destroyModal(){
+	jQuery("#contentModal").modal("hide");	
 }

@@ -18,10 +18,9 @@
 	{% endif %}
 	<div class="editable" id="{{ content.id }}_summary">
 		{{content.summary|cleanHtml}}</div>
-	<div class="btn btn-small pull-right">
-		<a href="{{ displaySingleUrl(content.id,null,singlePage) }}">Lire la suite <span
-			class="icon-forward"></span></a>
-	</div>
+	
+	
+	<a class="pull-right" href="{{ displaySingleUrl(content.id,null,singlePage) }}">Lire la suite</a>
 
 
 </div>

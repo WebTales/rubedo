@@ -70,7 +70,7 @@ var gMap = function (options,id,title,text,field) {
 	      			}
 			    	
 			    	  
-			    	  this.geocoder.geocode({'latLng': new google.maps.LatLng(this.lat,this.lon)}, function(results, status) {
+			    	 self.geocoder.geocode({'latLng': new google.maps.LatLng(this.lat,this.lon)}, function(results, status) {
 			    		    
 			    		    if (status == google.maps.GeocoderStatus.OK) {
 			    		     if (results[1]) {
@@ -153,11 +153,11 @@ var gMap = function (options,id,title,text,field) {
 		    		    	  console.log("geocodage failed :" +status);
 		    		    }
 	    	      	});  
-	    	  } else if (location.latitude && location.longitude){
-	    		 self.createMarker(new google.maps.LatLng(location.latitude,location.longitude), title, contentString); 
+	    	  } else if (location.lat && location.lon){
+	    		 self.createMarker(new google.maps.LatLng(location.lat,location.lon), title, contentString); 
 	    		 if(self.center==false)
-	    		self.map.setCenter(new google.maps.LatLng(location.latitude,location.longitude));
-	    		 this.geocoder.geocode({'latLng': new google.maps.LatLng(location.latitude,location.longitude)}, function(results, status) {
+	    		self.map.setCenter(new google.maps.LatLng(location.lat,location.lon));
+	    		 self.geocoder.geocode({'latLng': new google.maps.LatLng(location.lat,location.lon)}, function(results, status) {
 		    		    
 		    		    if (status == google.maps.GeocoderStatus.OK) {
 		    		     if (results[1]) {
@@ -242,8 +242,8 @@ var gMap = function (options,id,title,text,field) {
 		this.longitude=newLong;
 		this.location={
 				address:this.address,
-				latitude:this.latitude,
-				longitude:this.longitude
+				lat:this.latitude,
+				lon:this.longitude
 		}
 		if(this.map.markers.length>1){
 			if(this.map.markerToEdit){

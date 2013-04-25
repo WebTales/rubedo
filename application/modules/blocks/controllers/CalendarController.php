@@ -101,9 +101,10 @@ class Blocks_CalendarController extends Blocks_ContentListController
             	$contentOrder = $query['query'];
             	$keyOrder = array();
             	$contentArray = array();
+            	$contentArray['data'] = array();
             
             	// getList
-				$unorderedContentArray = $this->getContentList($queryFilter, array('limit' => 100, 'currentPage' => 1));
+				$unorderedContentArray = $this->getContentList($queryFilter, array('limit' => 100, 'currentPage' => 1,'skip' => 0));
 
 				foreach ($contentOrder as $value){
             		foreach ($unorderedContentArray['data'] as $subKey => $subValue){

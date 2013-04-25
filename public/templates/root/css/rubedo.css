@@ -5,34 +5,83 @@
 .highlight{
 	background-color:#E3E84D;
 }
+/**
+ * Rating field
+ */
+.empty-star {
+  background: url('../img/empty-star.png');
+	width:15px;
+	height:15px;
+	display:inline-block;
+}
+.full-star {
+  background-image: url('../img/full-star.png');
+	width:15px;
+	height:15px;
+	display:inline-block;
+}
+.half-star {
+  background-image: url('../img/half-star.png');
+	width:15px;
+	height:15px;
+	display:inline-block;
+}
+
+/**
+ * Rubedo Modal
+ */
+.modal-backdrop, .modal-backdrop.fade.in{
+	opacity: .3;
+}
+.rubedo-modal .rubedo-body img{
+	max-height:90%;
+}
 .rubedo-modal
 {
 	max-width:90%;
 	max-height:90%;
+	height:auto;
 	width:auto;
+	border:3px solid;
+	border-color: rgba(0, 0, 0, 0.2);
 }
-
 .modal-body
 {
 	max-height:90%;
 }
-.rubedo-close
+/**
+ * Gallery
+ */
+.gallery-control
 {
-	font-size:2em;
-	border-bottom:solid;
-	border-radius:10px;
+font-size:60px;
+font-weight: 100;
+text-align: center;
+border: 3px solid #fff;
+opacity: .5;
+margin-top:1px;
 }
-
+.gallery-control-wrap{
+	border:solid red;
+	width:50px;
+	height:50px;
+}
+/**
+ * Map
+ */
 .mapPlaceholder img {
     max-width: none;
 }
 
+/**
+ * Rubedo Form
+ */
 label{
 	display:inline-block;
 }
 .rubedo-form .control-label {
 float: left;
-width:auto;
+width:auto !important;
 text-align:left;
 padding-top: 5px;
 }
@@ -75,6 +124,16 @@ padding-top: 5px;
  .rubedo-form .controls textarea {
 		width:100%;
   }
+  .active-items .pagination ul{
+	margin-left:auto !impotant;
+  }
+
+}
+@media screen and (max-width: 700px) {
+
+  .active-items .pagination ul{
+	margin-left:auto !impotant;
+  }
 
 }
 @media screen and (max-width: 440px) {
@@ -89,4 +148,8 @@ padding-top: 5px;
   .rubedo-form a{
 	padding:5px 0px 5px 0px;
   }
+    .active-items .pagination ul{
+	margin-left:auto !important;
+  }
+  
 }

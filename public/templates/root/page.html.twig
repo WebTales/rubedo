@@ -107,9 +107,11 @@
     
     					<a class="btn pull-left" href="#" id="btn-cancel"> <i
     						class="icon-remove"></i> Annuler
-    					</a> <a class="btn pull-left" href="#" id="btn-save"> <i
-    						class="icon-ok"></i> Sauvegarder les modifications
-    					</a> <span class="label label-warning pull-right">Edition</span>
+    					</a>
+    					 <a class="btn pull-left" href="#" id="btn-save" data-toggle="tooltip" data-placement="bottom" data-content="Appuyez sur ctr+s pour sauvegarder" title="" data-original-title="">
+    					  <iclass="icon-ok"></i> Sauvegarder les modifications	
+    					</a>
+    					<span class="label label-warning pull-right">Edition</span>
     				</div>
     				<div class="span8 offset4" id="alerts"></div>
     			</div>
@@ -132,20 +134,35 @@
 	    
 	    {% if pageProperties.showInDiv %}</div>{% endif %}
 	{% endblock %}
+	
     
     {% block Modal %}
-    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog"
+    <div id="myModal" class="rubedo-modal modal hide fade" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal"
 				aria-hidden="true">×</button>
 			<h3 id="myModalLabel">Picture</h3>
 		</div>
-		<div class="modal-body">
+		<div class="modal-body rubedo-body">
 			<img src="{{baseUrl}}/components/webtales/rubedo-backoffice-ui/www/resources/images/logo.png" id="fullScreenPicture" alt="">
 		</div>
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+	{% endblock %}
+	{% block contentModal %}
+    <div id="contentModal" class="rubedo-modal modal hide fade" tabindex="-1" role="dialog"
+		aria-labelledby="contentLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true">×</button>
+			<h4 id="contentLabel">Edition de contenu</h4>
+		</div>
+		<div class="modal-body rubedo-body">
+			<div id="contentBody">
+			</div>
 		</div>
 	</div>
 	{% endblock %}
