@@ -210,8 +210,24 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                 }
                 $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
                 $entity['objectType'] = $type;
-                $twigVars = array();
+                				
+	            $termsArray = array();
+	            if (isset($entity['taxonomy'])) {
+	                if (is_array($entity['taxonomy'])) {
+	                    foreach ($entity['taxonomy'] as $key => $terms) {
+	                        if($key == 'navigation'){
+	                            continue;
+	                        }
+	                        foreach ($terms as $term) {
+	                            $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+	                        }
+	                    }
+	                }
+	            }
+				
+				$twigVars = array();
                 $twigVars['result'] = $entity;
+				$twigVars['result']['terms'] = $termsArray;
                 $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);
             }
         }
