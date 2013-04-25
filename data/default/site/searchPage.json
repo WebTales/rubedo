@@ -18,7 +18,7 @@
               {
                 "type": "Rubedo.view.ESQfield",
                 "config": {
-                  "fieldLabel": "Facettes prÃ©dÃ©finies",
+                  "fieldLabel": "Facettes prédéfinies",
                   "name": "predefinedFacets"
                 }
               }
