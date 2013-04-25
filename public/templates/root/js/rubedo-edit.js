@@ -790,8 +790,10 @@ function addContent(type,typeId,queryId){
 			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
 			var iWidth=screen.availWidth*(90/100);
 			var iHeight=screen.availHeight*(90/100);
+			var availHeight=window.innerHeight*(90/100);
+			var iFrameHeight=availHeight*(90/100);
 			jQuery("#contentLabel").empty().html("Ajout de contenu");
-		    jQuery("#contentBody").empty().html("<iframe style='width:99%; height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentBody").empty().html("<iframe style='width:99%; height:"+(iFrameHeight)+"px; border:none;' src='" + modalUrl + "'></iframe>");
 		    jQuery("#contentModal").css({
 		    	"width":iWidth+"px",
 		    	"height":iHeight+"px",
