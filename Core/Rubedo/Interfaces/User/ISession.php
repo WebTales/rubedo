@@ -29,7 +29,6 @@ namespace Rubedo\Interfaces\User;
  */
 interface ISession
 {
-	
 	 /**
      * Set the session object with name and value params
      *
