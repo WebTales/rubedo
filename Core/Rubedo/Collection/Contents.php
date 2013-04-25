@@ -165,7 +165,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                                                     $startPublicationDateField => null
                                             ),
                                             array(
-                                                    $endPublicationDateField => ""
+                                                    $startPublicationDateField => ""
                                             )
                                     )
                             ),
