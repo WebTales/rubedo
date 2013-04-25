@@ -1,7 +1,6 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
 
-<br />
 {% if blockConfig.activateSearch %}
 <div id="activeFacetBox">
 </div>
@@ -45,7 +44,7 @@
             mapOptions);
       var geocoder = new google.maps.Geocoder();
       var usedMarkers=[ ];
-      var markerCluster = new MarkerClusterer(map, usedMarkers,{batchSize:20000,averageCenter:false,gridSize:60});
+      var markerCluster = new MarkerClusterer(map, usedMarkers,{batchSize:20000,averageCenter:false,gridSize:60,batchSizeIE:20000});
       markerCluster.setCalculator(function (a,b){
           var total=0;
           for(var i= 0; i < a.length; i++)
@@ -102,7 +101,7 @@
 		  clearTimeout(mapTimer);
 		  mapTimer=setTimeout(function(){
 			fetchData();
-		  },250);
+		  },300);
       });
       window.activeFacets={ };
 	  
@@ -223,14 +222,14 @@
       function createContentMarker(location,title,entityId,idArray,count){
     	  	  newPositions.push(entityId);
     	  	  if (oldPositions.indexOf(entityId)==-1){
-	    	  var marker = new MarkerWithLabel({
+	    	  var marker = new google.maps.Marker({
 				  	map:map,
 				  	icon:"/templates/root/img/map_pin.png",
 				  	position:location,
 				  	title:""+title,
-				  	labelContent:count,
-				  	labelAnchor: new google.maps.Point(3, 31),
-				  	labelStyle: {'color': "white",'font-weight': "bold", 'font-size': "12px"},
+				  	//labelContent:count,
+				  	//labelAnchor: new google.maps.Point(3, 31),
+				  	//labelStyle: {'color': "white",'font-weight': "bold", 'font-size': "12px"},
 				  	count:count,
 				  	entityId:entityId,
 				  	idArray:idArray
