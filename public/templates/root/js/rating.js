@@ -6,8 +6,9 @@ jQuery(".star-edit").click(function(){
 		    jQuery(this).parent().attr("data-edit",false);
 		}else{
 			jQuery(this).parent().attr("data-edit",true);	
-		}}
-
+		}
+	}
+	
 	var rateValue=null;
 	var mother=jQuery(this).parent();
 	var children=jQuery(mother[0]).children();
