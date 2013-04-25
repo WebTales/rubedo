@@ -90,13 +90,11 @@ function centerAll()
 		}
 	var pagerWidth=jQuery(".active-items .pagination ul").width();
 	var pagerMargin=parseFloat((galleryWidth/2)-pagerWidth);
-	if(parseFloat(pagerMargin)<0){
-	 pagerMargin=pagerMargin*(-1);
-	}
-	jQuery(".active-items .pagination ul").css({
+		if(parseFloat(pagerMargin)<0){
+			jQuery(".active-items .pagination ul").css({
 		"margin-left":+(galleryWidth/2)-pagerWidth+"px"
-	});
-	
+			});
+		}
 	}
 $(document).ready(function(){
 centerAll();
