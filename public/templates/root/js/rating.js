@@ -57,7 +57,7 @@ jQuery(".star-edit").mousemove(function(e){
 		     /*
 		      * else add full-star class
 		      */
-		     else if (x>=7 &&(parseFloat(jQuery(current).attr("data-index"))-1)+0.5>parseFloat(jQuery(current).attr("data-max-value"))){
+		     else if (x>=7 &&(parseFloat(jQuery(current).attr("data-index"))-1)+0.5<parseFloat(jQuery(current).attr("data-max-value"))){
 		    	 jQuery(current).attr("data-value","1");
 		    	 jQuery(current).addClass("full-star").removeClass("half-star").removeClass("empty-star");
 		    }
