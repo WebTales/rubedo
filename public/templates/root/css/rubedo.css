@@ -5,7 +5,9 @@
 .highlight{
 	background-color:#E3E84D;
 }
-
+/**
+ * Rating field
+ */
 .empty-star {
   background: url('../img/empty-star.png');
 	width:15px;
@@ -25,11 +27,15 @@
 	height:15px;
 	display:inline-block;
 }
+
+/**
+ * Rubedo Modal
+ */
 .modal-backdrop, .modal-backdrop.fade.in{
 	opacity: .3;
 }
 .rubedo-modal .rubedo-body img{
-	max-height:80%;
+	max-height:90%;
 }
 .rubedo-modal
 {
@@ -40,6 +46,13 @@
 	border:3px solid;
 	border-color: rgba(0, 0, 0, 0.2);
 }
+.modal-body
+{
+	max-height:90%;
+}
+/**
+ * Gallery
+ */
 .gallery-control
 {
 font-size:60px;
@@ -54,22 +67,16 @@ margin-top:1px;
 	width:50px;
 	height:50px;
 }
-
-.modal-body
-{
-	max-height:90%;
-}
-.rubedo-close
-{
-	font-size:2em;
-	border-bottom:solid;
-	border-radius:10px;
-}
-
+/**
+ * Map
+ */
 .mapPlaceholder img {
     max-width: none;
 }
 
+/**
+ * Rubedo Form
+ */
 label{
 	display:inline-block;
 }
