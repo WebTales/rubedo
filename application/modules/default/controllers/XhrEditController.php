@@ -54,184 +54,41 @@ class XhrEditController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
-        $contentId = $this->getRequest()->getParam('id');
-        $data = $this->getRequest()->getParam('data');
- 
-        if (! empty($contentId)) {
-            $contentId = explode("_", $contentId);
-            $id = $contentId[0];
-            $field = $contentId[1];
-            $baseData = $this->_dataService->findById($id, false, false);
-            if ($baseData["status"] !== 'published') {
-                $returnArray['success'] = false;
-                $returnArray['msg'] = 'Content already have a draft version';
-            } else {
-                $baseData['fields'][$field] = $data;
-                if ($field == "text") {
-                    $baseData['text'] = $data;
-                }
-                $returnArray = $this->_dataService->update($baseData, array(
-                    'safe' => true
-                ), false);
-                
-            }
-        } else {
-            $returnArray['success'] = false;
-            $returnArray['msg'] = 'No content id given.';
-        }
-        if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
-        }
-        
-        return $this->_helper->json($returnArray);
-    }
-    
-    public function saveImageAction() {
-        $contentId = $this->getParam("contentId", null);
-        $newImageId = $this->getParam("newImageId", null);
-        $contentField = $this->getParam("field", null);
-        
-        if($contentId === null || $newImageId === null || $contentField === null){
-            throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, l'identifiant de la nouvelle image et le champ à mettre à jour en base de donnée");
-        }
-        
-        $content = $this->_dataService->findById($contentId, true, false);
-        
-        if(!$content) {
-            throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
-        }
-       
-        $field=explode("-", $contentField);
-        if(count($field)>1)
-        	$content['fields'][$field[0]][$field[1]] = $newImageId;
-        else
-        	$content['fields'][$contentField] = $newImageId;;
-        $updateResult = $this->_dataService->update($content);
-        
-        if($updateResult['success']){
-            return $this->_helper->json(array("success" => true));
-        } else {
-            return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
-        }
-    }
-    
-    public function saveDateAction() {
-        $contentId = $this->getParam("contentId", null);
-        $newDate = $this->getParam("newDate", null);
-        $contentField = $this->getParam("field", null);
-    
-        if($contentId === null || $newDate === null || $contentField === null){
-            throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle date et le champ à mettre à jour en base de donnée");
-        }
-    
-        $content = $this->_dataService->findById($contentId, true, false);
-    
-        if(!$content) {
-            throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
-        }
-        
-    	$field=explode("-", $contentField);
-    	if(count($field)>1)
-        $content['fields'][$field[0]][$field[1]] = $newDate;
-    	else
-    	$content['fields'][$contentField] = $newDate;
-    
-        $updateResult = $this->_dataService->update($content);
-    
-        if($updateResult['success']){
-            return $this->_helper->json(array("success" => true));
-        } else {
-            return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
-        }
-    }
-    
-    public function saveTimeAction() {
-        $contentId = $this->getParam("contentId", null);
-        $newTime = $this->getParam("newTime", null);
-        $contentField = $this->getParam("field", null);
-    
-        if($contentId === null || $newTime === null || $contentField === null){
-            throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle heure et le champ à mettre à jour en base de donnée");
-        }
-    
-        $content = $this->_dataService->findById($contentId, true, false);
-    
-        if(!$content) {
-            throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
-        }
-    
-        $field=explode("-", $contentField);
-        if(count($field)>1)
-        	$content['fields'][$field[0]][$field[1]] = $newTime;
-        else
-        	$content['fields'][$contentField] = $newTime;
-    
-        $updateResult = $this->_dataService->update($content);
-    
-        if($updateResult['success']){
-            return $this->_helper->json(array("success" => true));
-        } else {
-            return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
-        }
-    }
-    
-    public function saveNumberAction() {
-        $contentId = $this->getParam("contentId", null);
-        $newNumber = $this->getParam("newNumber", null);
-        $contentField = $this->getParam("field", null);
-    
-        if($contentId === null || $newNumber === null || $contentField === null){
-            throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, le nouveau nombre et le champ à mettre à jour en base de donnée");
-        }
-    
-        $content = $this->_dataService->findById($contentId, true, false);
-    
-        if(!$content) {
-            throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
-        }
-
-        $field=explode("-", $contentField);
-        if(count($field)>1)
-        	$content['fields'][$field[0]][$field[1]] = $newNumber;
-        else
-        	$content['fields'][$contentField] = $newNumber;
-    
-        $updateResult = $this->_dataService->update($content);
-    
-        if($updateResult['success']){
-            return $this->_helper->json(array("success" => true));
-        } else {
-            return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
-        }
-    }
-    public function genericSaveAction()
-    {
-    	$contentId = $this->getParam("contentId", null);
-    	$value = $this->getParam("value", null);
-    	$contentField = $this->getParam("field", null);
+    	$contentId = $this->getParam("id", null);
+    	$data = $this->getParam("data", null);
     	
-    	if($contentId === null || $value === null || $contentField === null){
+    	$contentId = explode("_", $contentId);
+    	$id = $contentId[0];
+    	$field = $contentId[1];
+    	
+    	$field=explode("-",$field);
+    	$name=$field[0];
+    	$index=$field[1];	
+    	if($id === null || $data === null || $name === null){
     		throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle valeur et le champ à mettre à jour en base de donnée");
     	}
     	
-    	$content = $this->_dataService->findById($contentId, true, false);
-    	
+    	$content = $this->_dataService->findById($id, true, false);
     	if(!$content) {
     		throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
     	}
-    	
-    	$field=explode("-", $contentField);
-    	if(count($field)>1)
-    		$content['fields'][$field[0]][$field[1]] = $value;
-    	else
-    		$content['fields'][$contentField] = $value;
-    	
-    	$updateResult = $this->_dataService->update($content);
-    	
-    	if($updateResult['success']){
-    		return $this->_helper->json(array("success" => true));
-    	} else {
-    		return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
-    	}	
+    	if ($content["status"] !== 'published') {
+    		$returnArray['success'] = false;
+    		$returnArray['msg'] = 'Content already have a draft version';
+    	}else{
+	    	if(count($field)>1)
+	    		$content['fields'][$name][$index] = $data;
+	    	else
+	    		$content['fields'][$name] = $data;
+	    	
+	    	$updateResult = $this->_dataService->update($content,array("safe"=>true),false);
+	    	
+	    	if($updateResult['success']){
+	    		return $this->_helper->json(array("success" => true));
+	    	} else {
+	    		return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
+	    	}	
+    	}
     }
+   
 }

@@ -259,8 +259,12 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     						"blockId"=>"",
     						"readOnly"=>false
     				);
+    				try{
     				$newContent=$contentsService->create($contentParams);
     				$lineCounter++;
+    				} catch(Exception $e){
+    					
+    				}
     			}
     			fclose($recievedFile);
     			
