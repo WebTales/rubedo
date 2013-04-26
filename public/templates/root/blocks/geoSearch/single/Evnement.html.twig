@@ -1,6 +1,10 @@
 {% if result.objectType == 'content' %}
 			<tr>
 				<td><h3><a href="{{ displaySingleUrl(result.id) }}">{{ result.text }}</a></h3>
+				<div class="pull-left" style="margin-right:1em;">{% if result.fields.image %} <img
+				alt="" class="imageLeft"
+				src="/dam?media-id={{result.fields.image}}&amp;width=80&amp;height=80&amp;mode=boxed"
+				style="max-height: 80px; max-width: 80px;" /> {% endif %}</div>
 				{% if result.fields.summary %}
 				<p>{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}
