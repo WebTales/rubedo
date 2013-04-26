@@ -106,7 +106,7 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
                     $userId = $result['id'];
 
                     if ($userId === $insertData['id']) {
-                        $returnArray = $usersService->update($insertData, true);
+                        $returnArray = $usersService->update($insertData);
                     } else {
                         $returnArray = array('success' => false, 'message' => 'Bad id');
                     }
