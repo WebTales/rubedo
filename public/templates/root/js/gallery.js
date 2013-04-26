@@ -89,10 +89,14 @@ function centerAll()
 	});
 		}
 	var pagerWidth=jQuery(".active-items .pagination ul").width();
-	jQuery(".active-items .pagination ul").css({
-		"margin-left":(galleryWidth/2)-pagerWidth+"px"
-	});
-	
+	var pagerMargin=parseFloat((galleryWidth/2)-pagerWidth);
+		if(parseFloat(pagerMargin)<0){
+			pagerMargin=pagerMargin*(-1);
+		
+		}
+		jQuery(".active-items .pagination ul").css({
+			"margin-left":+pagerMargin+"px"
+				});
 	}
 $(document).ready(function(){
 centerAll();

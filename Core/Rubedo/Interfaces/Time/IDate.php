@@ -38,7 +38,22 @@ interface IDate
      *         dawn of time)
      */
     public function convertToTimeStamp ($dateString);
-
+    
+    /**
+     * Format to Y-m-d date string or timestamp 
+     * 
+     * @param string $dateString
+     * @return formatted date
+     */
+    public function convertToYmd($dateString);
+    /**
+     * Format to H:i:s date string or timestamp
+     *
+     * @param string $dateString
+     * @return formatted date
+     */
+    
+    public function convertToHis($dateString);
     /**
      * Return an array of a month (current or including given timestamp)
      *
