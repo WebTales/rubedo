@@ -7,7 +7,7 @@
         <div class="control-group">
             <label class="control-label" for="inputMotCle">Mot clé</label>
             <div class="controls">
-                <input type="text" placeholder="{% if placeholder %}{{placeholder}}{% else %}Rechercher{% endif %}" name="query">
+                <input id="inputMotCle" type="text" placeholder="{% if placeholder %}{{placeholder}}{% else %}Rechercher{% endif %}" name="query">
             </div>
         </div>
         
@@ -16,7 +16,7 @@
                 <div class="control-group">
                     <label class="control-label" for="input{{ taxonomy }}">{{ taxonomy }}</label>
                     <div class="controls">
-                        <select name="{{ taxonomyMeta.id }}">
+                        <select name="{{ taxonomyMeta.id }}[]" id="input{{ taxonomy }}">
                             <option></option>
                             {% for termId, term in taxonomyMeta.terms  %}
                                 <option value="{{ termId }}">{{ term }}</option>
