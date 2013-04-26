@@ -60,5 +60,6 @@ interface IHash {
      * @return bool
      */
     public function checkPassword($hash, $password, $salt);
+    public function generateRandomString($length = 10);
 
 }

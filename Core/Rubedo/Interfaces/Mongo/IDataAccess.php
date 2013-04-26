@@ -162,6 +162,21 @@ interface IDataAccess
      *
      * @return bool
      */
+    /**
+     * Set the main MongoDB connection string
+     *
+     * @param string $mongo
+     * @throws \Exception
+     */
+    public static function setDefaultMongo ($mongo);
+    /**
+     * Set the main Database name
+     *
+     * @param string $dbName
+     * @throws \Exception
+     */
+    public static function setDefaultDb ($dbName);
+    
     public function clearFilter ();
 
     /**
@@ -297,5 +312,25 @@ interface IDataAccess
      * @param array
      * @return boolean
      */
+    public function dropIndexes();
     public function checkIndex($keys);
+    public function customDelete ($deleteCond, $options = array('safe'=>true));
+    public function customFind ($filter = array(), $fieldRule = array());
+    /**
+     * Update an objet in the current collection
+     *
+     * Shouldn't be used if doing a simple update action
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::customUpdate
+     * @param array $data
+     *            data to update
+     * @param array $updateCond
+     *            array of condition to determine what should be updated
+     * @param array $options
+     * @return array
+     */
+    public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true));
+    public function getMongoDate ();
+    public function getId ($idString = null);
+    public function getRegex ($expr);
 }

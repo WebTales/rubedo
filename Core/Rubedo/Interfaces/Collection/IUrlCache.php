@@ -42,4 +42,5 @@ interface IUrlCache extends IAbstractCollection
      * @return array
      */
     public function findByUrl ($url, $siteid);
+    public function verifyIndexes();
 }

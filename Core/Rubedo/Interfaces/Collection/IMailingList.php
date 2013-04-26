@@ -46,5 +46,6 @@ interface IMailingList extends IAbstractCollection{
 	 * @return array
 	 */
 	public function unSubscribe($mailingListId, $email);
+	public function getNewMessage ($mailingListId);
 	
 }

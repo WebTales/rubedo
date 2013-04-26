@@ -43,4 +43,5 @@ interface ISites extends IAbstractCollection
      * @return array site data
      */
     public function findByHost ($host);
+    public function deleteById($id);
 }

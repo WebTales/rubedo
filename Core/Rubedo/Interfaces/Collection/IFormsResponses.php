@@ -44,4 +44,10 @@ interface IFormsResponses extends IAbstractCollection{
      * @param string $formId
      */
     public function countInvalidResponsesByFormId($formId);
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
+     */
+    public function getResponsesByFormId($formId, $start = null, $limit = null);
 }
