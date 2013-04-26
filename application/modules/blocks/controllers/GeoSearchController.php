@@ -189,6 +189,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     public function xhrGetDetailAction ()
     {
         $templateService = Manager::getService('FrontOfficeTemplates');
+        $sessionService = Manager::getService('Session');
         // get params
         $idArray = $this->getRequest()->getParam('idArray');
         $itemHtml = '';
@@ -208,7 +209,14 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                     $intermedVar = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId']);
                     $entity['type'] = $intermedVar['type'];
                 }
-                $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
+                $templateName = preg_replace('#[^a-zA-Z]#', '', $entity['type']);
+                $templateName .= ".html.twig";
+                $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/single/" . $templateName);
+                 
+                if (! is_file($templateService->getTemplateDir() . '/' . $contentOrDamTemplate)) {
+                	$contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/contentOrDam.html.twig");
+                }
+                
                 $entity['objectType'] = $type;
                 				
 	            $termsArray = array();
@@ -227,7 +235,9 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 				
 				$twigVars = array();
                 $twigVars['result'] = $entity;
+                $twigVars['lang'] = $sessionService->get('lang', 'fr');
 				$twigVars['result']['terms'] = $termsArray;
+				
                 $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);
             }
         }
