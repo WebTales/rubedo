@@ -162,15 +162,3 @@ padding-top: 5px;
 	margin-left: auto;
 	margin-right: auto;
 }
-
-[id^='calendar-items'] li a {
-	border-radius: 0 !important;
-	border: 0 !important;
-	color: #000;
-}
-
-[id^='calendar-items'] li {
-	margin-bottom: 10px;
-	background: #fff;
-	border-bottom: thin solid #008fc9;
-}
