@@ -32,6 +32,11 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // get search parameters
         $params = $this->getRequest()->getParams();
+        foreach ($params as $key => $value){
+            if(empty($value)){
+                unset($params[$key]);
+            }
+        }
         $params['pagesize'] = $this->getParam('pagesize', 10);
         $params['pager'] = $this->getParam('pager', 0);
         
