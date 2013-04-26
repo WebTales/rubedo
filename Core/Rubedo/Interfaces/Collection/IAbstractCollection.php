@@ -114,5 +114,88 @@ interface IAbstractCollection {
      * @return booelan
      */
     public function ensureIndexes();
+    /**
+     * Do a findone request
+     *
+     * @deprecated
+     *
+     *
+     * @param array $value
+     *            search condition
+     * @return array
+     */
+    public function findOne ($value);
+    /**
+     *
+     * @deprecated
+     *
+     *
+     * @param unknown $filter
+     * @param unknown $fieldRule
+     * @return MongoCursor
+     */
+    public function customFind ($filter = array(), $fieldRule = array());
+    /**
+     * Update an objet in the current collection
+     *
+     * Shouldn't be used if doing a simple update action
+     *
+     * @deprecated
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * @see \Rubedo\Interfaces\IDataAccess::customUpdate
+     * @param array $data
+     *            data to update
+     * @param array $updateCond
+     *            array of condition to determine what should be updated
+     * @param array $options
+     * @return array
+     */
+    public function customUpdate (array $data, array $updateCond,
+    		$options = array('safe'=>true));
+    /**
+     *
+     * @deprecated
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * @param unknown $deleteCond
+     * @param unknown $options
+     * @return Ambigous <boolean, multitype:>
+     */
+    public function customDelete ($deleteCond, $options = array('safe'=>true));
+    /**
+     * getter of the model
+     *
+     * @return array
+     */
+    public function getModel ();
+    /**
+     * Return the array of ancestors for a given item
+     *
+     * @param array $item
+     *            object whose ancestors we're looking for
+     * @param number $limit
+     *            max number of ancestors to be found
+     * @return array array of ancestors
+     */
+    public function getAncestors ($item, $limit = 10);
+    public function fetchAllChildren ($parentId, $filters = null, $sort = null,
+    		$limit = 10);
+    public function readTree ($filters=null);
+    public function drop ();
+    public function dropIndexes();
+    
     
 }

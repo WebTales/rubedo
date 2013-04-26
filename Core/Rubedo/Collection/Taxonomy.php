@@ -149,6 +149,37 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         }
         return $data;
     }
+    
+    /**
+     * Allow to find taxonomies associated to the content type id
+     * 
+     * @param string $contentTypeId Id of the content type
+     * @return array Array of results
+     */
+    public function findByContentTypeID($contentTypeId) {
+        $taxonomies = array();
+        $contentTypeService = Manager::getService("ContentTypes");
+        
+        $contentType = $contentTypeService->findById($contentTypeId);
+        $taxonomiesId = $contentType["vocabularies"];
+        
+        foreach ($taxonomiesId as $taxonomyId) {
+            $taxonomy = $this->findById($taxonomyId);
+            $taxonomyTerms = array();
+            $taxonomyTermsObj = Manager::getService("TaxonomyTerms")->findByVocabulary($taxonomyId);
+            
+            foreach ($taxonomyTermsObj["data"] as $term) {
+                $taxonomyTerms[$term["id"]] = $term["text"];
+            }
+            
+            $taxonomies[$taxonomy["name"]] = array(
+                "id" => $taxonomyId,
+                "terms" => $taxonomyTerms,
+            );
+        }
+        
+        return $taxonomies;
+    }
 
     /**
      * (non-PHPdoc)

@@ -1,8 +1,19 @@
 <div id="list-{{ prefix }}-{{ page.currentPage }}" class="active">
 
     <div class="row-fluid">
+    {% set perColumn = ((data|length)/blockConfig.columns) |number_format(0, '.', '')  %}
+    {% set flag=0 %}
 		{% for content in data %}
+		{% set flag=flag+1%}
+		{% if flag==1 %}
+		<div class="span{{ (12/blockConfig.columns) }}">
+		{% endif %}
 		{% include content.type  %}
+			{% if flag==perColumn%}
+		</div>
+		{% set flag=0 %}
+		{% endif %}
+		
 		{% endfor %}
 	</div>
 	

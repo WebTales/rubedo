@@ -60,4 +60,18 @@ interface IServicesProxy
      * @param array $arguments service method array of arguments
      */
     public function __call($name, $arguments);
+    /**
+     * Dependancy setter : set the nested object and inform the nested object
+     * of the manager instance
+     *
+     * @param object $obj
+     */
+    public function setServiceObj($obj);
+    /**
+     * Dependancy getter : get the nested object and inform the nested object
+     * of the manager instance
+     *
+     * @return object $obj
+     */
+    public function getServiceObj();
 }

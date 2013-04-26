@@ -49,5 +49,10 @@ interface IDataSearch
      * @return Elastica_ResultSet
      */
     public function search (array $params, $option = 'all',$withSummary = true);
+    /**
+     *
+     * @param field_type $_isFrontEnd
+     */
+    public static function setIsFrontEnd ($_isFrontEnd);
 		
 }

@@ -87,4 +87,13 @@ Interface IPage
     * @param string $siteId site id
     */
     public function setCurrentSite($siteId);
+    public function getDescription ();
+    public function getKeywords ();
+    public function setDescription ($_description);
+    public function setKeywords ($_keywords);
+    public static function getCurrentPage ();
+    public static function setCurrentPage ($_currentPage);
+    public static function getAuthor ();
+    public static function setAuthor ($_author);
+    
     }

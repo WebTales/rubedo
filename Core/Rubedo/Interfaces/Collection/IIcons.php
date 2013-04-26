@@ -25,6 +25,7 @@ namespace Rubedo\Interfaces\Collection;
  * @package Rubedo
  */
 interface IIcons extends IAbstractCollection{
-	
+	public function clearOrphanIcons();
+	public function countOrphanIcons();
 	
 }

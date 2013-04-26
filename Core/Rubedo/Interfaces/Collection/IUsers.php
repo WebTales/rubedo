@@ -44,4 +44,6 @@ interface IUsers extends IAbstractCollection{
 	 * @return array
 	 */
 	public function findByEmail($email);
+	public function findValidatingUsersByWorkspace ($workspace);
+	public function getAdminUsers ();
 }
