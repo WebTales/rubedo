@@ -1,0 +1,39 @@
+{% extends "root/block.html.twig" %} 
+
+{% block mainContent %}
+
+    <form class="form-horizontal" action="{{url({'pageId': searchPage})}}" method="get">
+    
+        <div class="control-group">
+            <label class="control-label" for="inputMotCle">Mot clé</label>
+            <div class="controls">
+                <input id="inputMotCle" type="text" placeholder="{% if placeholder %}{{placeholder}}{% else %}Rechercher{% endif %}" name="query">
+            </div>
+        </div>
+        
+        {% for contentType, contentTypeMeta in taxonomies %}
+            {% for taxonomy, taxonomyMeta in contentTypeMeta.taxonomies %}
+                <div class="control-group">
+                    <label class="control-label" for="input{{ taxonomy }}">{{ taxonomy }}</label>
+                    <div class="controls">
+                        <select name="{{ taxonomyMeta.id }}[]" id="input{{ taxonomy }}">
+                            <option></option>
+                            {% for termId, term in taxonomyMeta.terms  %}
+                                <option value="{{ termId }}">{{ term }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="control-group">
+            <label class="control-label"><a href="{{url({'pageId': searchPage})}}">Voir tous les résultats</a></label>
+            <div class="controls">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </div>
+        </div>
+    	
+    </form>
+
+{% endblock %}

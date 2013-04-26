@@ -646,7 +646,9 @@ class IndexController extends Zend_Controller_Action
             case 'resource':
                 $controller = "resource";
                 break;
-                    
+            case 'advancedSearchForm':
+                $controller = "advanced-search";
+                break;
             
             case 'Controleur Zend':
             case 'zendController':
