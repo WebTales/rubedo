@@ -6,6 +6,7 @@
 		"ext-gd": "*",
 		"ext-mongo": "*",
 		"twig/twig": "1.*",
+		"webtales/mongo-filters": "dev-master",
 		"twig/extensions": "v1.0.0-alpha",
 		"ruflin/Elastica": "v0.19.8.0",
 		"ezyang/htmlpurifier": "v4.5.0",
@@ -20,6 +21,12 @@
 	"minimum-stability": "stable",
 	"config": {
 		"process-timeout": 600
-	}
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "git://github.com/WebTales/MongoFilters.git"
+		}
+	]
 }
 

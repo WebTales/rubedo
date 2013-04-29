@@ -76,5 +76,6 @@ interface ITaxonomyTerms extends IAbstractCollection{
 	 */
 	public function findByVocabularyIdAndName($vocabularyId,$name);
 
-	
+	public function countOrphanTerms ();
+	public function getNavigationTree ($withCurrentPage = false);
 }

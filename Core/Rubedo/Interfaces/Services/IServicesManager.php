@@ -53,6 +53,17 @@ interface IServicesManager
      * @return static instance of the manager
      */
     public static function getService($serviceName);
+    /**
+     * Set a mock service for testing purpose
+     *
+     * @param string $serviceName Name of the service overridden
+     * @param object $obj mock object substituted to the service
+     */
+    public static function setMockService($serviceName, $obj);
+    /**
+     * Reset the mockObject array for isolation purpose
+     */
+    public static function resetMocks();
     
     
 }

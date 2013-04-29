@@ -63,4 +63,28 @@ Interface IUrl
      * @return string
      */
     public function getUrl ($data, $encode = false);
+    /**
+     * Return the url of the single content page of the site if the single page
+     * exist
+     *
+     * @param string $contentId
+     *            Id of the content to display
+     * @param string $siteId
+     *            Id of the site
+     *
+     * @return string Url
+     */
+    public function displaySingleUrl ($contentId, $siteId = null, $defaultPage = null);
+    /**
+     * Return the url of the single content page of the site if the single page
+     * exist
+     *
+     * @param string $contentId
+     *            Id of the content to display
+     * @param string $siteId
+     *            Id of the site
+     *
+     * @return string Url
+     */
+    public function displayCanonicalUrl ($contentId, $siteId = null);
 }

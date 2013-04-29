@@ -25,5 +25,6 @@ namespace Rubedo\Interfaces\Collection;
  * @package Rubedo
  */
 interface IDam extends IAbstractCollection{
-	
+	public function getByType ($typeId);
+	public function getListByDamTypeId($typeId);
 }

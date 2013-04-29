@@ -41,4 +41,6 @@ interface ICache extends IAbstractCollection
      * @return boolean
      */
     public function deleteExpired ();
+    public function deleteByCacheId($id);
+    public function findByCacheId ($cacheId, $time = null);
 }

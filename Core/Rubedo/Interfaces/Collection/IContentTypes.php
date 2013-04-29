@@ -25,5 +25,6 @@ namespace Rubedo\Interfaces\Collection;
  * @package Rubedo
  */
 interface IContentTypes extends IAbstractCollection{
-	
+	public function getReadableContentTypes();
+	public function getGeolocatedContentTypes();
 }

@@ -54,4 +54,11 @@ interface IQueries extends IAbstractCollection
      * @return array | false
      */
     public function getFilterArrayByQuery ($query);
+    /**
+     * Return a query
+     *
+     * @param string $id
+     * @return boolean|multitype:
+     */
+    public function getQueryById($id = null);
 }

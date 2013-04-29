@@ -37,4 +37,11 @@ interface IPages extends IAbstractCollection{
  * 
  */
 		public function findByNameAndSite($name,$siteId);
+		public function matchSegment($urlSegment,$parentId,$siteId);
+		public function getListByMaskId($maskId);
+		public function isMaskUsed($maskId);
+		public function deleteBySiteId($id);
+		public function clearOrphanPages();
+		public function countOrphanPages();
+		public function propagateWorkspace ($parentId, $workspaceId, $siteId = null);
 }
