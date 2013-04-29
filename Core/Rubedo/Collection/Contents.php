@@ -870,5 +870,28 @@ class Contents extends WorkflowAbstractCollection implements IContents
             return array("success" => false, "msg" => "Invalid filter");
         }
     }
+    
+    public function deleteByContentType($contentTypeId){
+        if(!is_string($contentTypeId)){
+            throw new \Rubedo\Exceptions\User('ContentTypeId should be a string');
+        }
+        $contentTypeService = Manager::getService('ContentTypes');
+        $contentType = $contentTypeService->findById($contentTypeId);
+        if(!$contentType){
+            throw new \Rubedo\Exceptions\User('ContentType not found');
+        }
+        
+        $deleteCond = array('typeId'=>$contentTypeId);
+        $result = $this->_dataService->customDelete($deleteCond, array('safe'=>true));
+        
+        if(isset($result['ok']) && $result['ok']){
+            $contentTypeService->unIndexContentType($contentType);
+            $contentTypeService->indexContentType($contentType);
+            return array('success'=>true);
+        }else{
+            throw new \Rubedo\Exceptions\Server($result['err']);
+        }
+        
+    }
 	
 }

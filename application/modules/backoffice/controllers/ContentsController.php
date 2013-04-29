@@ -33,7 +33,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-contents','count-orphan-contents','get-ordered-list');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-contents','count-orphan-contents','get-ordered-list','delete-by-content-id');
 	
     public function init() {
         parent::init();
@@ -219,6 +219,16 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 		$result = $this->_dataService->countOrphanContents();
 		
 		$this->_returnJson($result);
+	}
+	
+	public function deleteByContentIdAction(){
+	    $typeId = $this->getParam('type-id');
+	    if(!$typeId){
+	        throw new Rubedo\Exceptions\User('Un type de contenu est nécessaire en argument type-id');
+	    }
+	    $deleteResult = $this->_dataService->deleteByContentType($typeId);
+	    
+	    $this->_returnJson($deleteResult);
 	}
 
 }
