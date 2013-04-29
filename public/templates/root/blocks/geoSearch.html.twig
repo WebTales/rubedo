@@ -61,17 +61,18 @@
       var centerLatitude = "{{blockConfig.centerLatitude}}";
       var centerLongitude = "{{blockConfig.centerLongitude}}";
       var activateSearch = {% if blockConfig.activateSearch %}true{% else %}false{% endif %};
+      var showCenterMarker = {% if blockConfig.showCenterMarker %}true{% else %}false{% endif %};
       var predefinedFacets = {% if blockConfig.predefinedFacets%}"{{blockConfig.predefinedFacets| e('js')}}"{% else %}"{ }"{% endif %} ;
       var pagesize = {{blockConfig.pageSize}};
 	  if (useLocation&&navigator.geolocation) {
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		      var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 		      map.setCenter(initialLocation);
-		      new google.maps.Marker({
+		      if (showCenterMarker){new google.maps.Marker({
 			  	map:map,
 			  	icon:"/templates/root/img/target.png",
 			  	position:initialLocation
-			      });
+			      });}
 		    }, function() {
 		      console.log("geolocation Error");
 		    });
@@ -81,20 +82,22 @@
       	geocoder.geocode( { 'address': centerAddress}, function(results, status) {
       		if (status == google.maps.GeocoderStatus.OK) {
       			map.setCenter(results[0].geometry.location);
+      			if (showCenterMarker){
       			new google.maps.Marker({
     			  	map:map,
     			  	icon:"/templates/root/img/target.png",
     			  	position:results[0].geometry.location
     			      });
+      			}
       		}
       	});
       } else if (centerLatitude&&centerLongitude){
     	  map.setCenter(new google.maps.LatLng(centerLatitude, centerLongitude));  
-    	  new google.maps.Marker({
+    	  if (showCenterMarker){new google.maps.Marker({
 			  	map:map,
 			  	icon:"/templates/root/img/target.png",
 			  	position:new google.maps.LatLng(centerLatitude, centerLongitude)
-			      });      
+			      });   }   
       }
 	  var mapTimer=null;
 	  google.maps.event.addListener(map, 'bounds_changed', function() {
