@@ -147,7 +147,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         $returnArray = parent::create($obj, $options, $live);
         
         if ($returnArray["success"]) {
-            $this->_indexContentType($returnArray['data']);
+            $this->indexContentType($returnArray['data']);
         }
         return $returnArray;
     }
@@ -164,7 +164,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         $returnArray = parent::update($obj, $options, $live);
         
         if ($returnArray["success"]) {
-            $this->_indexContentType($returnArray['data']);
+            $this->indexContentType($returnArray['data']);
         }
         
         return $returnArray;
@@ -177,7 +177,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
     {
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
-            $this->_unIndexContentType($obj);
+            $this->unIndexContentType($obj);
         }
         return $returnArray;
     }
@@ -187,7 +187,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      *
      * @param array $obj            
      */
-    protected function _indexContentType ($obj)
+    public function indexContentType ($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         
@@ -205,7 +205,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      *
      * @param array $obj            
      */
-    protected function _unIndexContentType ($obj)
+    public function unIndexContentType ($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         
@@ -252,6 +252,10 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         return $obj;
     }
 	
+    /**
+     * (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IContentTypes::getReadableContentTypes()
+     */
 	public function getReadableContentTypes() {
 		$currentUserService = Manager::getService('CurrentUser');
 		$contentTypesList = array();
@@ -276,6 +280,10 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		return $contentTypesList;
 	}
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Rubedo\Interfaces\Collection\IContentTypes::getGeolocatedContentTypes()
+	 */
 	public function getGeolocatedContentTypes() {
 		
 		$contentTypesList = $this->getList();
