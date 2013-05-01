@@ -54,12 +54,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         $contentTypeConfig = \Rubedo\Services\Manager::getService('ContentTypes')->findById($id);
         
         // System contents are not indexed
-        if (isset($contentTypeConfig['system']) and $contentTypeConfig['system']==TRUE) {
+        if (isset($contentTypeConfig['system']) and $contentTypeConfig['system'] == TRUE) {
             
             return array();
-            
         } else {
-        
+            
             // Get indexable fields
             $fields = $contentTypeConfig["fields"];
             foreach ($fields as $field) {
@@ -750,7 +749,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      *            live if true, workspace if live
      * @return array
      */
-    public function indexContent ($data)
+    public function indexContent ($data, $indexRefresh = TRUE, $bulk = FALSE)
     {
         
         $typeId = $data['typeId'];
@@ -762,7 +761,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $typeStructure = $this->getContentTypeStructure($typeId);
         
         // System contents are not indexed
-        if (empty($typeStructure)){
+        if (empty($typeStructure)) {
             return;
         }
         
@@ -861,10 +860,17 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
         
         // Add content to content type index
-        $contentType->addDocument($currentDocument);
+        if (! $bulk) {
+            $contentType->addDocument($currentDocument);
+        } else {
+            return $currentDocument;
+        }
         
         // Refresh index
-        $contentType->getIndex()->refresh();
+        if ($this->indexRefresh) {
+            $contentType->getIndex()->refresh();
+        }
+
     }
 
     /**
@@ -1055,7 +1061,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      *            dam data
      * @return array
      */
-    public function indexDam ($data)
+    public function indexDam ($data, $indexRefresh = TRUE, $bulk = FALSE)
     {
         $typeId = $data['typeId'];
         
@@ -1157,12 +1163,20 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $currentDam->addFileContent('file', $mongoFile->getBytes());
             }
         }
-        
+       
         // Add dam to dam type index
-        $damType->addDocument($currentDam);
+        
+        if (! $bulk) {
+            $damType->addDocument($currentDam);
+        } else {
+            return $currentDam;
+        }
         
         // Refresh index
-        $damType->getIndex()->refresh();
+        if ($this->indexRefresh) {
+            $damType->getIndex()->refresh();
+        }
+
     }
 
     /**
@@ -1175,6 +1189,11 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexAll ($option = 'all')
     {
+
+        // Bulk size
+        $bulkSize = 500;
+        $indexRefresh = false;
+        $bulk = true;
         
         // Initialize result array
         $result = array();
@@ -1191,6 +1210,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             self::$_dam_index->create(self::$_dam_index_param, true);
         }
         
+        $contentsService = \Rubedo\Services\Manager::getService('Contents');
+        
         if ($option == 'all' or $option == 'content') {
             
             // Retreive all content types
@@ -1199,18 +1220,31 @@ class DataIndex extends DataAbstract implements IDataIndex
             foreach ($contentTypeList["data"] as $contentType) {
                 
                 // System contents are not indexed
-                if (!isset($contentType['system']) or $contentType['system']==FALSE) {
-                                
+                if (! isset($contentType['system']) or $contentType['system'] == FALSE) {
+                    
                     // Create content type with overwrite set to true
                     $this->indexContentType($contentType["id"], $contentType, TRUE);
+                    
+                    // Get content type ES type
+                    $ESType = self::$_content_index->getType($contentType["id"]);
+                    
                     // Index all contents from type
-                    $contentList = \Rubedo\Services\Manager::getService('Contents')->getByType($contentType["id"]);
-                    $contentCount = 0;
-                    foreach ($contentList["data"] as $content) {
-                        $this->indexContent($content);
-                        $contentCount ++;
+                    $itemList = $contentsService->getByType($contentType["id"]);
+                    $bulkCount = 0;
+                    $documents = array();
+                    $itemCount = 0;
+                    foreach ($itemList["data"] as $content) {
+                        $documents[] = $this->indexContent($content, $indexRefresh, $bulk);
+                        if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
+                            $ESType->addDocuments($documents);
+                            $ESType->getIndex()->refresh();
+                            $bulkCount = 0;
+                            $documents = array();
+                        }
+                        $itemCount ++;
+                        $bulkCount ++;
                     }
-                    $result[$contentType["type"]] = $contentCount;
+                    $result[$contentType["type"]] = $itemCount;
                 }
             }
         }
@@ -1221,16 +1255,30 @@ class DataIndex extends DataAbstract implements IDataIndex
             $damTypeList = \Rubedo\Services\Manager::getService('DamTypes')->getList();
             
             foreach ($damTypeList["data"] as $damType) {
+                
                 // Create dam type with overwrite set to true
                 $this->indexdamType($damType["id"], $damType, TRUE);
+                
+                // Get dam type ES type
+                $ESType = self::$_content_index->getType($damType["id"]);
+                
                 // Index all dams from type
-                $damList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
-                $damCount = 0;
-                foreach ($damList["data"] as $dam) {
-                    $this->indexDam($dam);
-                    $damCount ++;
+                $itemList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
+                $bulkCount = 0;
+                $documents = array();
+                $itemCount = 0;
+                foreach ($itemList["data"] as $dam) {
+                    $documents[] = $this->indexDam($dam, $indexRefresh, $bulk);
+                    if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
+                        $ESType->addDocuments($documents);
+                        $ESType->getIndex()->refresh();
+                        $bulkCount = 0;
+                        $documents = array();
+                    }
+                    $itemCount ++;
+                    $bulkCount ++;
                 }
-                $result[$damType["type"]] = $damCount;
+                $result[$damType["type"]] = $itemCount;
             }
         }
         
@@ -1249,6 +1297,10 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexByType ($option, $id)
     {
+        // bulk size
+        $bulkSize = 500;
+        $indexRefresh = false;
+        $bulk = true;
         
         // Initialize result array
         $result = array();
@@ -1270,18 +1322,28 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Retrieve data from type
         
         $type = \Rubedo\Services\Manager::getService($serviceType)->findById($id);
+        $contentType = self::$_content_index->getType($id);
         
         // Index all dam or contents from given type
         $itemList = \Rubedo\Services\Manager::getService($serviceData)->getByType($id);
         $itemCount = 0;
+        $bulkCount = 0;
+        $documents = array();
         foreach ($itemList["data"] as $item) {
             if ($option == 'content') {
-                $this->indexContent($item);
+                $documents[] = $this->indexContent($item, $indexRefresh, $bulk);
+                if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
+                    $contentType->addDocuments($documents);
+                    $contentType->getIndex()->refresh();
+                    $bulkCount = 0;
+                    $documents = array();
+                }
             }
             if ($option == 'dam') {
                 $this->indexDam($item);
             }
             $itemCount ++;
+            $bulkCount ++;
         }
         $result[$type['type']] = $itemCount;
         
