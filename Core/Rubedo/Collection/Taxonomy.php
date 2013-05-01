@@ -172,10 +172,12 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
                 $taxonomyTerms[$term["id"]] = $term["text"];
             }
             
-            $taxonomies[$taxonomy["name"]] = array(
-                "id" => $taxonomyId,
-                "terms" => $taxonomyTerms,
-            );
+            if($taxonomy["name"] != "Navigation") {
+                $taxonomies[$taxonomy["name"]] = array(
+                    "id" => $taxonomyId,
+                    "terms" => $taxonomyTerms,
+                );
+            }
         }
         
         return $taxonomies;
