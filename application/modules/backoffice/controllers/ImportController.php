@@ -84,7 +84,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     public function importAction ()
     {
         Zend_Registry::set('Expects_Json', true);
-        set_time_limit(120);
+        set_time_limit(5000);
         $separator = $this->getParam('separator', ";");
     	$adapter = new Zend_File_Transfer_Adapter_Http();
     	$returnArray = array();
@@ -260,13 +260,17 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     						"readOnly"=>false
     				);
     				try{
-    				$newContent=$contentsService->create($contentParams);
+    				$newContent=$contentsService->create($contentParams,array('safe'=>true), false, false);
     				$lineCounter++;
     				} catch(Exception $e){
     					
     				}
     			}
     			fclose($recievedFile);
+    			$ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+    			$ElasticDataIndexService->init();
+    			
+    			$ElasticDataIndexService->indexByType('content',$contentType['data']['id']);
     			
 		        $returnArray['importedContentsCount']=$lineCounter;
 		        $returnArray['success']=true;

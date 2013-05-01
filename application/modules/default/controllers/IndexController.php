@@ -641,6 +641,10 @@ class IndexController extends Zend_Controller_Action
             case 'contact':
                     $controller = "contact";
                     break;
+            case 'AdvancedContact':
+            case 'advancedContact':
+                $controller = "advanced-contact";
+                break;
             case 'siteMap':
             case 'sitemap':
                     $controller = "site-map";

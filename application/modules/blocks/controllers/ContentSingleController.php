@@ -53,7 +53,11 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             continue;
                         }
                         foreach ($terms as $term) {
-                            $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+                            $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
+                            
+                            foreach ($readTerm as $key => $value) {
+                                $termsArray[$key] = $value;
+                            }
                         }
                     }
                 }

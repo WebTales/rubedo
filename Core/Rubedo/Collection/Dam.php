@@ -140,7 +140,7 @@ class Dam extends AbstractCollection implements IDam
      *
      * @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true,))
+    public function create (array $obj, $options = array('safe'=>true), $index = true)
     {
         $obj = $this->_setDefaultWorkspace($obj);
         
@@ -153,7 +153,7 @@ class Dam extends AbstractCollection implements IDam
         $obj['fileSize'] = $originalFilePointer->getSize();
         $returnArray = parent::create($obj, $options);
         
-        if ($returnArray["success"]) {
+        if ($returnArray["success"] and $index) {
             $this->_indexDam($returnArray['data']);
         }
         

@@ -225,7 +225,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true), $live = false)
+    public function create (array $obj, $options = array('safe'=>true), $live = false, $index = true)
     {
         $obj = $this->_setDefaultWorkspace($obj);
         $this->_filterInputData($obj);
@@ -240,7 +240,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             );
         }
         
-        if ($returnArray["success"]) {
+        if ($returnArray["success"] and $index) {
             $this->_indexContent($returnArray['data']);
         }
         
@@ -327,7 +327,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @param array $obj            
      */
     protected function _indexContent ($obj)
-    {
+    {   
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService(
                 'ElasticDataIndex');
         $ElasticDataIndexService->init();

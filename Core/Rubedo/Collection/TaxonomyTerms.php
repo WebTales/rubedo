@@ -478,7 +478,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             if (! isset($term['text'])) {
                 return null;
             }
-            self::$_termsArray[$id] = $term['text'];
+            
+            $vocabulary = Manager::getService('Taxonomy')->findById($term["vocabularyId"]);
+            
+            self::$_termsArray[$id] = array($vocabulary["name"] => $term['text']);
         }
         return self::$_termsArray[$id];
     }
