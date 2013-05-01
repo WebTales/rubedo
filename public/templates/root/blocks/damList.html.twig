@@ -1,0 +1,112 @@
+{% extends "root/blocks/contentlist.html.twig" %} 
+{% block mainContent %}
+
+<br />
+<div class="navbar">
+	<div class="navbar-inner">
+		<ul class="nav pull-right">
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if pagesize=="all" %}
+				{{"all_on_one_page"|trans}}
+				{% else %}
+				{{ pagesize }} {{"by_page"|trans}}
+				{% endif %} <b class="caret"></b> </a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="{{url({'pagesize': '10'})}}">10 {{"by_page"|trans}}</a>
+					</li>
+					<li>
+						<a href="{{url({'pagesize': '20'})}}">20 {{"by_page"|trans}}</a>
+					</li>
+					<li>
+						<a href="{{url({'pagesize': '50'})}}">50 {{"by_page"|trans}}</a>
+					</li>
+					<li>
+						<a href="{{url({'pagesize': 'all'})}}">{{"all_on_one_page"|trans}}</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div class="row-fluid">
+	
+	<div class="span12">
+		{% if total == 0 %}
+		<div class="alert alert-error">
+			{{"no_result"|trans}}
+		</div>
+		{% else %}
+
+		<table class="table">
+			{% for result in data %}
+			{% if result.objectType == 'content' %}
+			{% else %}
+			<tr>
+				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
+				<span class="label">{{ result.type }}</span>
+				<br />
+				<br />
+				{% if result.summary %}
+				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.fileSize }}</p>
+				{% endif %}
+				<br />
+				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+		</table>
+		{% if pagecount > 1 %}
+		<div class="pagination pagination-centered">
+		{%set wrap=limit//2%}
+		{%set lastWrap=(pagecount-1)-current%}
+			<ul>
+			<li class="disabled">
+					<a href="#">Page {{ current+1 }} {{"on"|trans}} {{ pagecount }}</a>
+				</li>
+				{% if current==0 %}
+				<li class="disabled">
+					<a href="#"><<</a>
+				</li>
+				{% else %}
+				<li>
+					<a href="{{url({'pager': current-1})}}"><<</a>
+				</li>
+				{% endif %}
+				{%if current<wrap+1 or limit<10%}
+				{% for i in range(0, limit) %}
+				<li {% if current==i %}class="disabled"{% endif %}>
+					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
+				</li>
+				{% endfor %}
+				{%elseif limit>wrap and current+wrap<pagecount %}
+				{% for  i in current-(wrap)..current+wrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%else%}
+				{% for  i in current-(limit-(lastWrap)-1)..current+lastWrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%endif%}
+				{% if current==pagecount-1%}
+				<li class="disabled">
+					<a href="#">>></a>
+				</li>
+				{% else %}
+				<li>
+					<a href="{{url({'pager': current+1})}}">>></a>
+				</li>
+				{% endif %}
+			</ul>
+		</div>
+		{% endif %}
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}

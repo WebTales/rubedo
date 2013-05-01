@@ -562,6 +562,11 @@ class IndexController extends Zend_Controller_Action
                 
                 break;
                
+                case 'damList':
+                	$params['constrainToSite'] = $block['configBloc']['constrainToSite'];
+                	$controller = 'dam-list';
+                
+                	break;
             case 'Fil d\'Ariane':
             case 'breadcrumb':
                 $params['currentPage'] = $this->_pageId;
