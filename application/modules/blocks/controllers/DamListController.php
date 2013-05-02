@@ -26,7 +26,7 @@ require_once ('AbstractController.php');
  */
 class Blocks_DamListController extends Blocks_AbstractController
 {
-
+	
     public function indexAction ()
     {
         
@@ -78,6 +78,10 @@ class Blocks_DamListController extends Blocks_AbstractController
             $pagecount - 1,
             10
         ));
+        foreach ($results['data'] as $key => $value ){
+        	$results['data'][$key]['fileSize']=$this->humanfilesize($value['fileSize']);
+        	
+        }
         
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
@@ -89,4 +93,10 @@ class Blocks_DamListController extends Blocks_AbstractController
         
         $this->_sendResponse($results, $template, $css, $js);
     }
+    protected function humanfilesize($bytes, $decimals = 0) {
+    	$size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+    	$factor = floor((strlen($bytes) - 1) / 3);
+    	return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+    }
+    
 }
