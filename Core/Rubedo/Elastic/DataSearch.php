@@ -136,7 +136,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Frontend filter on start and end publication date
         
-        if (self::$_isFrontEnd) {
+        if ((self::$_isFrontEnd)&&($option!="dam")) {
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             // filter on start
