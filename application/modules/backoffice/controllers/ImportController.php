@@ -223,7 +223,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     					$theTaxoId=$newTaxos[$key]['data']['id'];
     					$contentParamsTaxonomy[$theTaxoId]=array();
     					if (isset($currentLine[$value['csvIndex']])){
-    						$detectedTermText=utf8_encode($currentLine[$value['csvIndex']]); 
+    						$detectedTermText=$currentLine[$value['csvIndex']]; 
     						if (!empty($detectedTermText)){
 	    						$theTerm=$taxonomyTermsService->findByVocabularyIdAndName($theTaxoId,$detectedTermText);
 	    						if ($theTerm==null){
