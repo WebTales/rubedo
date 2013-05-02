@@ -68,21 +68,25 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
     			//Get recipients from block config
     			$recipients = $blockConfig['contacts'];
     			
-    			//Build e-mail
-    			$subject = "[Rubedo]";
-    			
-    			$mailerObject->setSubject($subject);
-    			$mailerObject->setFrom("admin@rubedo.fr");
-    			$mailerObject->setTo($recipients);
-    			$mailerObject->setBody($mailBody);
-    			
-    			//Send e-mail
-    			$sendResult = $mailerService->sendMessage($mailerObject, $errors);
-    			
-    			if(!$sendResult){
-    				$errors[] = "L'envoi du mail à échoué, merci de réessayer ultèrieurement";
+    			if($recipients){
+        			//Build e-mail
+        			$subject = "[Rubedo]";
+        			
+        			$mailerObject->setSubject($subject);
+        			$mailerObject->setFrom("admin@rubedo.fr");
+        			$mailerObject->setTo($recipients);
+        			$mailerObject->setBody($mailBody);
+        			
+        			//Send e-mail
+        			$sendResult = $mailerService->sendMessage($mailerObject, $errors);
+        			
+        			if(!$sendResult){
+        			    $errors[] = "L'envoi du mail à échoué, merci de réessayer ultèrieurement";
+        			} else {
+        			    $output['sendResult'] = true;
+        			}
     			} else {
-    				$output['sendResult'] = true;
+    			    $errors[] = "Merci de renseigner un destinataire dans les paramètres de configuration du bloc contact avancé.";
     			}
     	    }
     	}

@@ -1,1 +1,10 @@
+{% if errors %}
+    {% for error in errors %}
+        <div class="alert alert-error">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ error }}
+        </div>
+    {% endfor %}
+{% endif %}
+
 {{ form | raw }}
