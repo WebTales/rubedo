@@ -78,7 +78,11 @@ function centerAll()
 		nbItems++;
 		}
 	var galleryWidth=jQuery(".active-items").width();
-	var width=jQuery(".active-items img").css("max-width").split("px");
+	if(jQuery(".active-items img").css("max-width")){
+		var width= jQuery(".active-items img").css("max-width").split("px");
+	} else {
+		var width = new Array("100");
+	}
 	var img=parseInt(width[0]);
 	var r=parseInt(galleryWidth)-(parseInt(img)*nbItems);
 	var m=(r/nbItems)-(10*nbItems);
