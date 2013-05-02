@@ -37,6 +37,7 @@ class Blocks_DamListController extends Blocks_AbstractController
         $params['pager'] = $this->getParam('pager', 0);
         $params['orderbyDirection']='asc';
         $params['orderby']='text';
+        $params['pagesize']=25;
         
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $site = $this->getRequest()->getParam('site');
@@ -46,6 +47,9 @@ class Blocks_DamListController extends Blocks_AbstractController
         }
         if (isset($params['block-config']['sort']) && ($params['block-config']['sort']=="desc")) {
         	$params['orderbyDirection']='desc';
+        }
+        if (isset($params['block-config']['pagesize'])) {
+        	$params['pagesize']=$params['block-config']['pagesize'];
         }
         
         // apply predefined facets

@@ -1,34 +1,6 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
 
-<div class="navbar">
-	<div class="navbar-inner">
-		<ul class="nav pull-right">
-			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if pagesize=="all" %}
-				{{"all_on_one_page"|trans}}
-				{% else %}
-				{{ pagesize }} {{"by_page"|trans}}
-				{% endif %} <b class="caret"></b> </a>
-				<ul class="dropdown-menu">
-					<li>
-						<a href="{{url({'pagesize': '10'})}}">10 {{"by_page"|trans}}</a>
-					</li>
-					<li>
-						<a href="{{url({'pagesize': '20'})}}">20 {{"by_page"|trans}}</a>
-					</li>
-					<li>
-						<a href="{{url({'pagesize': '50'})}}">50 {{"by_page"|trans}}</a>
-					</li>
-					<li>
-						<a href="{{url({'pagesize': 'all'})}}">{{"all_on_one_page"|trans}}</a>
-					</li>
-				</ul>
-			</li>
-		</ul>
-	</div>
-</div>
-
 <div class="row-fluid">
 	
 	<div class="span12">
