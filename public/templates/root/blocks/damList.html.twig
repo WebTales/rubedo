@@ -1,7 +1,6 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
 
-<br />
 <div class="navbar">
 	<div class="navbar-inner">
 		<ul class="nav pull-right">
@@ -39,24 +38,24 @@
 		</div>
 		{% else %}
 
-		<table class="table">
+		<ul class="media-list">
 			{% for result in data %}
 			{% if result.objectType == 'content' %}
 			{% else %}
-			<tr>
-				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
-				<span class="label">{{ result.type }}</span>
-				<br />
-				<br />
-				{% if result.summary %}
-				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.fileSize }}</p>
-				{% endif %}
-				<br />
-				{{"published_by"|trans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
-			</tr>
+			<li class="media">
+			<a class="pull-left" href="/dam?media-id={{ result.id }}">
+		    	<img class="media-object" height="50" width="50" src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'>
+		    </a>
+		    <div class="media-body">
+      			<h4 class="media-heading">{{ result.title }} </h4>
+      			<p><span class="label">{{ result.type }}&nbsp;[{{ result.fileSize }}]</span>&nbsp;{{"published_by"|trans}} {{ result.authorName }} {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}.</p>
+      		</div>
+				
+				
+			</li>
 			{% endif %}
 			{% endfor %}
-		</table>
+		</ul>
 		{% if pagecount > 1 %}
 		<div class="pagination pagination-centered">
 		{%set wrap=limit//2%}
