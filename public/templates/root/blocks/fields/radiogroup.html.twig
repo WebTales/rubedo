@@ -1,0 +1,24 @@
+{%  if(cValue["config"]["multivalued"]) and value is iterable%}
+<p>{{ cValue["config"]["fieldLabel"] }} </p>
+	{% for item in value %}
+	<div class="radiogroup" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+	{% for radioButton in cValue["config"]["items"] %}
+		<label class="radio" style="cursor:default !important;">
+		  <input type="radio" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==item[radioButton.name]%}checked{% endif %}>
+		  {{ radioButton.boxLabel }}
+		</label>
+	{% endfor %}
+	</div>
+
+	{% endfor %}
+{% else %}
+<p>{{ cValue["config"]["fieldLabel"] }}</p> 
+	<div class="radiogroup" id="{{ data.id }}_{{ key }}">
+	{% for radioButton in cValue["config"]["items"] %}
+		<label class="radio" style="cursor:default !important;">
+		  <input type="radio" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==value[radioButton.name]%}checked{% endif %}>
+		  {{ radioButton.boxLabel }}
+		</label>
+	{% endfor %}
+	</div>
+{% endif %}

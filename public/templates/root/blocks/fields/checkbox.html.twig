@@ -6,7 +6,7 @@
 	{% endfor %}
 {% else %}
 	
-<label class="checkbox" id="{{ data.id }}_{{ key }}">
+<label class="checkbox" id="{{ data.id }}_{{ key }}" style="cursor:default !important;">
    <input disabled type="checkbox" {%  if (value) %}checked{% endif %}>  {{ cValue["config"]["fieldLabel"] }} 
 </label>
 {% endif %}
