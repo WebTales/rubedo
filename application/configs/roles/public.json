@@ -28,6 +28,7 @@
         "execute.controller.tiny.index.default",
         "execute.controller.tiny.xhr-generate.default",
         "execute.controller.protected-resource.xhr-submit-email.blocks",
-        "execute.controller.localisation.index.backoffice"
+        "execute.controller.localisation.index.backoffice",
+        "execute.controller.form.xhr-get-form.zimmer"
  	]
 }
