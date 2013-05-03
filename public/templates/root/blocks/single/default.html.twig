@@ -31,6 +31,8 @@
 							{% include 'root/blocks/fields/number.html.twig' %}
 						{%elseif(cValue["cType"]=="externalMediaField")%}
 							{% include 'root/blocks/fields/external-media.html.twig' %}
+						{%elseif(cValue["cType"]=="checkboxfield")%}
+							{% include 'root/blocks/fields/checkbox.html.twig' %}
       					{%endif%}
       					
       			{%endif%}
