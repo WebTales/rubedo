@@ -33,7 +33,6 @@ class Blocks_DamListController extends Blocks_AbstractController
         // get search parameters
         $params = $this->getRequest()->getParams();
 
-        $params['pagesize'] = $this->getParam('pagesize', 10);
         $params['pager'] = $this->getParam('pager', 0);
         $params['orderbyDirection']='asc';
         $params['orderby']='text';
@@ -81,6 +80,8 @@ class Blocks_DamListController extends Blocks_AbstractController
             $pagecount = 1;
         }
         $results['facetsToHide'] = $facetsToHide;
+        $results['prefix']=$params['prefix'];
+        $results['blockConfig']=$params['block-config'];
         $results['current'] = $params['pager'];
         $results['pagecount'] = $pagecount;
         $results['limit'] = min(array(
@@ -99,8 +100,16 @@ class Blocks_DamListController extends Blocks_AbstractController
         
         $css = array();
         $js = array();
-        
-        $this->_sendResponse($results, $template, $css, $js);
+        if ((isset($params['xhrRefreshMode']))&&($params['xhrRefreshMode'])){
+        	$answer=array();
+        	$results['xhrRefreshMode']=true;
+        	$answer['data']=Manager::getService('FrontOfficeTemplates')->render($template, $results);
+        	$answer['success'] = true;
+        	$answer['message'] = 'OK';
+        	$this->_helper->json($answer);
+        } else {
+        	$this->_sendResponse($results, $template, $css, $js);
+        }
     }
     protected function humanfilesize($bytes, $decimals = 0) {
     	$size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');

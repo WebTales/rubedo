@@ -1,8 +1,7 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
 
-<div class="row-fluid">
-	
+<div class="row-fluid" id="{{ prefix }}">
 	<div class="span12">
 		{% if total == 0 %}
 		<div class="alert alert-error">
@@ -19,7 +18,7 @@
 		    	<img class="media-object" height="50" width="50" src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'>
 		    </a>
 		    <div class="media-body">
-      			<h4 class="media-heading">{{ result.title }} </h4>
+      			<h4 class="media-heading">{{ result.title }}</h4>
       			<p><span class="label">{{ result.type }}</span>&nbsp;[{{ result.fileSize }}]&nbsp;{{"published_by"|trans}} {{ result.authorName }} {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}.</p>
       		</div>
 				
@@ -42,25 +41,25 @@
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': current-1})}}"><<</a>
+					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ current-1 }})"><<</a>
 				</li>
 				{% endif %}
 				{%if current<wrap+1 or limit<10%}
 				{% for i in range(0, limit) %}
 				<li {% if current==i %}class="disabled"{% endif %}>
-					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
+					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ i }})">{{ i+1 }}</a>
 				</li>
 				{% endfor %}
 				{%elseif limit>wrap and current+wrap<pagecount %}
 				{% for  i in current-(wrap)..current+wrap%}
 				<li {% if current == i%}class="active"{%endif%}>
-					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ i }})">{{i+1}}</a>
 				</li>
 				{%endfor%}
 				{%else%}
 				{% for  i in current-(limit-(lastWrap)-1)..current+lastWrap%}
 				<li {% if current == i%}class="active"{%endif%}>
-					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ i }})">{{i+1}}</a>
 				</li>
 				{%endfor%}
 				{%endif%}
@@ -70,7 +69,7 @@
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': current+1})}}">>></a>
+					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ current+1 }})">>></a>
 				</li>
 				{% endif %}
 			</ul>
@@ -79,5 +78,36 @@
 		{% endif %}
 	</div>
 </div>
+{% if not xhrRefreshMode %}
+<script type="text/javascript">
+		window['{{ prefix }}refresh']=function(targetPage){
+			var prefix= "{{ prefix }}";
+			var blockConfig = window[prefix+"config"];
+			var request2 = jQuery.ajax({
+      			url : window.location.protocol+'//'+window.location.host + '/blocks/dam-list/',
+      			type : "POST",
+      			data :{
+      				'current-page':jQuery('body').attr('data-current-page'),
+					'pager':targetPage,
+					'prefix':prefix,
+					'block-config':blockConfig,
+					'xhrRefreshMode':true
+	      			},
+      			dataType : "json"
+      		});
 
+      		request2.done(function(data) {
+      			jQuery("#{{ prefix }}").replaceWith(data.data);
+      			
+          		
+      		});
+
+      		request2.fail(function(jqXHR, textStatus) {
+          		console.log("failed to refresh dam list");
+      		});
+			};
+		window['{{ prefix }}config']=JSON.parse("{{ blockConfig|json_encode|e('js') }}");
+		console.log("{{ prefix }}");
+</script>
+{% endif %}
 {% endblock %}

@@ -27,78 +27,27 @@ require_once ('AbstractController.php');
 class Blocks_GeoSearchController extends Blocks_AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
+    protected $_option = 'geo';
+    
     public function indexAction ()
-    {
-        
-        
-        // get search parameters
+    {       
         $params = $this->getRequest()->getParams();
-        $params['pagesize'] = "all";
-        $params['pager'] = $this->getParam('pager',0);
-        
-        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']){
-            $site = $this->getRequest()->getParam('site');
-            $siteId = $site['id'];
-            
-            if (!in_array($siteId,$params['navigation'])){
-            	$params['navigation'][]=$siteId;
-            	$serverParams['navigation'][]=$siteId;
-            }
-            
-        }
-        //apply predefined facets
-        $facetsToHide=array();
-        if(isset($params['block-config']['predefinedFacets'])){
-        	$predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
-        	foreach ($predefParamsArray as $key => $value){
-        		$params[$key] = $value;
-        		$facetsToHide[]=$key;
-        	}
-        }
-        
-        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
-        
-        $query = Manager::getService('ElasticDataSearch');
-        $query->init();
-        
-        $results = $query->search($params,'geo');
-        	
-        
+        $results = array();
         $results['currentSite'] = isset($siteId)?$siteId:null;
         if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']==true){
             $results['constrainToSite'] = true;
         }
-        // Pagination
-        
-        if ($params['pagesize'] != "all") {
-            $pagecount = intval( ($results['total']-1) / $params['pagesize']+1);
-        } else {
-            $pagecount = 1;
-        }
         $results['blockConfig']=$params['block-config'];
         $results['facetsToHide']=$facetsToHide;
-		$results['current']=$params['pager'];
-        $results['pagecount'] = $pagecount;
-		$results['limit']=min(array(
-                $pagecount-1,
-                10
-            ));
-		
 		$results['displayTitle']=$this->getParam('displayTitle');
 		$results['blockTitle']=$this->getParam('blockTitle');
-		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
-        
         $css = array();
         $js = array();
-        
         $this->_sendResponse($results, $template, $css, $js);
     }
     
-    protected $_option = 'geo';
+    
     
     
     public function xhrSearchAction () {
