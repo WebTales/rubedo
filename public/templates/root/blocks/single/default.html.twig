@@ -37,6 +37,8 @@
 							{% include 'root/blocks/fields/checkboxgroup.html.twig' %}
 						{%elseif(cValue["cType"]=="radiogroup")%}
 							{% include 'root/blocks/fields/radiogroup.html.twig' %}
+						{%elseif(cValue["cType"]=="DCEField")%}
+							{% include 'root/blocks/fields/dcefield.html.twig' %}
       					{%endif%}
       					
       			{%endif%}
