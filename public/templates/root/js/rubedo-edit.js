@@ -482,7 +482,7 @@ jQuery(".number").click( function() {
 	}
 });
 
-$( document ).on( 'blur', '.numberSelector', function () {
+jQuery( document ).on( 'blur', '.numberSelector', function () {
 	var currentNumberDiv = jQuery(this).parent().context.parentNode.id;
 	var newNumber = jQuery(this).val();
 	
