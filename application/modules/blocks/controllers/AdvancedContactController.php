@@ -39,56 +39,51 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
     	
     	$objectPath = "Blocks_Model_".$formName;
     	
-    	if(isset($blockConfig['captcha'])){
+    	$formPath = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/forms/".$formName.".html.twig");
+    	$form = Manager::getService('FrontOfficeTemplates')->render($formPath, array());
+    	
+    	/*if(isset($blockConfig['captcha'])){
     		$form = new $objectPath(null, $blockConfig['captcha']);
     	} else {
     		$form = new $objectPath();
-    	}
+    	}*/
     	
     	//Check if the form was send
-    	$request = $this->getRequest();
-    	
-    	if ($this->getRequest()->isPost()) {
-    	    if ($form->isValid($request->getPost())) {
-    	        $inputs = $this->getRequest()->getParams();
-    	        $twigVar = array();
-    	        
-    	        foreach ($form->getElements() as $name => $value) {
-    	            $twigVar[$name] = $inputs[$name];
-    	        }
-    	        
-    	        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/email-templates/".$formName.".html.twig");
-                $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
-    	        
-    			//Create a mailer object
-    			$mailerService = Manager::getService('Mailer');
-    			$mailerObject = $mailerService->getNewMessage();
-    			$stringRecipients = "";
+    	if ($this->getParam("post")) {
+    	    
+	        $twigVar = $this->_request->getPost();
+	        
+	        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/email-templates/".$formName.".html.twig");
+            $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
+	        
+			//Create a mailer object
+			$mailerService = Manager::getService('Mailer');
+			$mailerObject = $mailerService->getNewMessage();
+			$stringRecipients = "";
+			
+			//Get recipients from block config
+			$recipients = $blockConfig['contacts'];
+			
+			if($recipients){
+    			//Build e-mail
+    			$subject = "[Rubedo]";
     			
-    			//Get recipients from block config
-    			$recipients = $blockConfig['contacts'];
+    			$mailerObject->setSubject($subject);
+    			$mailerObject->setFrom("admin@rubedo.fr");
+    			$mailerObject->setTo($recipients);
+    			$mailerObject->setBody($mailBody);
     			
-    			if($recipients){
-        			//Build e-mail
-        			$subject = "[Rubedo]";
-        			
-        			$mailerObject->setSubject($subject);
-        			$mailerObject->setFrom("admin@rubedo.fr");
-        			$mailerObject->setTo($recipients);
-        			$mailerObject->setBody($mailBody);
-        			
-        			//Send e-mail
-        			$sendResult = $mailerService->sendMessage($mailerObject, $errors);
-        			
-        			if(!$sendResult){
-        			    $errors[] = "L'envoi du mail à échoué, merci de réessayer ultèrieurement";
-        			} else {
-        			    $output['sendResult'] = true;
-        			}
+    			//Send e-mail
+    			$sendResult = $mailerService->sendMessage($mailerObject, $errors);
+    			
+    			if(!$sendResult){
+    			    $errors[] = "L'envoi du mail à échoué, merci de réessayer ultèrieurement";
     			} else {
-    			    $errors[] = "Merci de renseigner un destinataire dans les paramètres de configuration du bloc contact avancé.";
+    			    $output['sendResult'] = true;
     			}
-    	    }
+			} else {
+			    $errors[] = "Merci de renseigner un destinataire dans les paramètres de configuration du bloc contact avancé.";
+			}
     	}
     	
     	if(count($errors)>0){
@@ -106,7 +101,7 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
         }
         
         $output['form'] = $form;
-
+        
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);

@@ -79,6 +79,9 @@ class Blocks_SearchController extends Blocks_AbstractController
             10
         ));
         
+        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->getParam('current-page');
+        $results['singlePage'] = $this->getParam('single-page', $singlePage);
+        
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
         
