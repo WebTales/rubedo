@@ -172,7 +172,7 @@
 			{% for result in data %}
 			{% if result.objectType == 'content' %}
 			<tr>
-				<td><h3><a href="{{ displaySingleUrl(result.id) }}">{{ result.title }}</a></h3>
+				<td><h3><a href="{{ displaySingleUrl(result.id,null,singlePage) }}">{{ result.title }}</a></h3>
 				<div class="progress progress-success" style="width:50px; float: left;">
 					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
 						{{ result.score }}%
