@@ -867,7 +867,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
         
         // Refresh index
-        if ($this->indexRefresh) {
+        if ($indexRefresh) {
             $contentType->getIndex()->refresh();
         }
 
