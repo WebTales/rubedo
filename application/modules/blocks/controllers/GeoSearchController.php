@@ -176,7 +176,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 	                            continue;
 	                        }
 	                        foreach ($terms as $term) {
-	                            $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+	                            $intermedTerm = Manager::getService('TaxonomyTerms')->findById($term);
+	                            $termsArray[]=$intermedTerm['text'];
 	                        }
 	                    }
 	                }

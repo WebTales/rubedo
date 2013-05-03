@@ -37,7 +37,6 @@ class Blocks_DamListController extends Blocks_AbstractController
         $params['orderbyDirection']='asc';
         $params['orderby']='text';
         $params['pagesize']=25;
-        
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $site = $this->getRequest()->getParam('site');
             $siteId = $site['id'];
@@ -50,7 +49,6 @@ class Blocks_DamListController extends Blocks_AbstractController
         if (isset($params['block-config']['pagesize'])) {
         	$params['pagesize']=$params['block-config']['pagesize'];
         }
-        
         // apply predefined facets
         $facetsToHide = array();
         if (isset($params['block-config']['predefinedFacets'])) {
@@ -60,19 +58,14 @@ class Blocks_DamListController extends Blocks_AbstractController
                 $facetsToHide[] = $key;
             }
         }
-        
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
-        
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
-        
         $results = $query->search($params,'dam');
-        
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
         }
-        
         // Pagination
         if ($params['pagesize'] != "all") {
             $pagecount = intval(($results['total'] - 1) / $params['pagesize'] + 1);
@@ -90,14 +83,10 @@ class Blocks_DamListController extends Blocks_AbstractController
         ));
         foreach ($results['data'] as $key => $value ){
         	$results['data'][$key]['fileSize']=$this->humanfilesize($value['fileSize']);
-        	
         }
-        
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
-        
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/damList.html.twig");
-        
         $css = array();
         $js = array();
         if ((isset($params['xhrRefreshMode']))&&($params['xhrRefreshMode'])){
