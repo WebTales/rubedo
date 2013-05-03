@@ -69,12 +69,23 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $cTypeArray = array();
             $multiValuedArray=array();
             $CKEConfigArray = array();
+            $contentTitlesArray = array();
             $output = $this->getAllParams();
             foreach ($type["fields"] as $value) {
             	
                 $cTypeArray[$value['config']['name']] = $value;
-
-                if($value["cType"] == "CKEField"){
+                if($value["cType"] == "DCEField"){
+                	if (is_array($data[$value['config']['name']])){
+                		$contentTitlesArray[$value['config']['name']]=array();
+                		foreach($data[$value['config']['name']] as $intermedValue){
+                			$intermedContent =$this->_dataReader->findById($intermedValue, true, false);
+                			$contentTitlesArray[$value['config']['name']][]=$intermedContent['text'];
+                		}
+                	} else {
+	                	$intermedContent =$this->_dataReader->findById($data[$value['config']['name']], true, false);
+	                	$contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
+                	}
+                } else if($value["cType"] == "CKEField"){
                     $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
                 } else if ($value["cType"] == "externalMediaField"){
                     $mediaConfig = $data[$value["config"]["name"]];
@@ -152,6 +163,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $output['activateDisqus']=isset($type['activateDisqus']) ? $type['activateDisqus'] : false ;
             $output["type"] = $cTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
+            $output["contentTitles"] = $contentTitlesArray;
             
             $js = array('/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
