@@ -78,7 +78,6 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 	}
 	
 	protected function createFromModel($insertData){
-		//work in progress on this method
 		$model=$this->_dataService->findById($insertData['builtOnModelSiteId']);
 		if (empty($model)){
 			$returnArray=array('success' => false, "msg" => 'site model not found');
@@ -126,24 +125,29 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 				$newSite[$key]=$value;
 			}
 		}
-		$newSite['_id']=$newSite['id'];
+		$newSite['_id']=new MongoId($newSite['id']);
+		unset($newSite['id']);
+		unset($newSite['version']); 
 		$returnArray=$this->_dataService->create($newSite);
 		foreach ($newMasksJsonArray as $key=>$value){
 			$newMask=Zend_Json::decode($newMasksJsonArray[$key]);
 			if (is_array($newMask)){
-				$newMask['_id']=$newMask['id'];
+				$newMask['_id']=new MongoId($newMask['id']);
+				unset($newMask['id']);
+				unset($newMask['version']);
 				$masksService->create($newMask);
 			}
 		}
 		foreach ($newPagesJsonArray as $key=>$value){
 			$newPage=Zend_Json::decode($newPagesJsonArray[$key]);
 			if (is_array($newPage)){
-				$newPage['_id']=$newPage['id'];
+				$newPage['_id']=new MongoId($newPage['id']);
+				unset($newPage['id']);
+				unset($newPage['version']);
 				$pagesService->create($newPage);
 			}
 		}
 		
-		//work in progress on this method
 		return($returnArray);
 	}
 	
