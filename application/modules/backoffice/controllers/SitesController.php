@@ -66,7 +66,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 	 	if ((isset($insertData['builtOnEmptySite']))&&($insertData['builtOnEmptySite'])){
 	 		$returnArray=$this->createFromEmpty($insertData);
 	 	} else if ((isset($insertData['builtOnModelSiteId']))&&(!empty($insertData['builtOnModelSiteId']))){
-	 		$returnArray=array('success' => false, "msg" => 'creating from model yet implemented');
+	 		$returnArray=$this->createFromModel($insertData);
 	 	} else {
 	 		$returnArray=array('success' => false, "msg" => 'no site model provided');
 	 	}
@@ -75,6 +75,76 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 	 	$this->getResponse()->setHttpResponseCode(500);
 	 }
 	 $this->_returnJson($returnArray);
+	}
+	
+	protected function createFromModel($insertData){
+		//work in progress on this method
+		$model=$this->_dataService->findById($insertData['builtOnModelSiteId']);
+		if (empty($model)){
+			$returnArray=array('success' => false, "msg" => 'site model not found');
+			return($returnArray);
+		}
+		$masksService=Rubedo\Services\Manager::getService('Masks');
+		$pagesService=Rubedo\Services\Manager::getService('Pages');
+		$oldIdArray=array();
+		$theBigString="";
+		
+		$modelId=$model['id'];
+		$oldIdArray[]=$modelId;
+		$theBigString=$theBigString.Zend_Json::encode($model);
+		$theBigString=$theBigString."SEntityS";
+		$oldMasksArray=$masksService->getList(array(array("property"=>"site", "value"=>$modelId)));
+		
+		foreach ($oldMasksArray['data'] as $key=>$value){
+			$oldIdArray[]=$value['id'];
+			$theBigString=$theBigString.Zend_Json::encode($oldMasksArray['data'][$key]);
+			$theBigString=$theBigString."SMaskS";
+		}
+		$theBigString.="SEntityS";
+		$oldPagesArray=$pagesService->getList(array(array("property"=>"site", "value"=>$modelId)));
+		foreach ($oldPagesArray['data'] as $key=>$value){
+			$oldIdArray[]=$value['id'];
+			$theBigString=$theBigString.Zend_Json::encode($oldPagesArray['data'][$key]);
+			$theBigString=$theBigString."SPageS";
+		}
+		$newIdArray=array();
+		
+		foreach ($oldIdArray as $value){
+			$MongoId = new MongoId();
+			$MongoId = (string) $MongoId;
+			$newIdArray[]=$MongoId;
+			$theBigString=str_replace($value, $MongoId, $theBigString);
+		}
+		$explodedBigString=array();
+		$explodedBigString=explode("SEntityS", $theBigString);
+		
+		$newSite=Zend_Json::decode($explodedBigString[0]);
+		$newMasksJsonArray=explode("SMaskS", $explodedBigString[1]);
+		$newPagesJsonArray=explode("SPageS", $explodedBigString[2]);
+		foreach ($insertData as $key=>$value){
+			if (!empty($value)){
+				$newSite[$key]=$value;
+			}
+		}
+		$newSite['_id']=$newSite['id'];
+		$returnArray=$this->_dataService->create($newSite);
+		foreach ($newMasksJsonArray as $key=>$value){
+			$newMask=Zend_Json::decode($newMasksJsonArray[$key]);
+			if (is_array($newMask)){
+				$newMask['_id']=$newMask['id'];
+				$masksService->create($newMask);
+			}
+		}
+		foreach ($newPagesJsonArray as $key=>$value){
+			$newPage=Zend_Json::decode($newPagesJsonArray[$key]);
+			if (is_array($newPage)){
+				$newPage['_id']=$newPage['id'];
+				$pagesService->create($newPage);
+			}
+		}
+		
+		//work in progress on this method
+		return($returnArray);
 	}
 	
 	protected function createFromEmpty($insertData){
