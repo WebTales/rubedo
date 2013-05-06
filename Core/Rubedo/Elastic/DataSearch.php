@@ -432,62 +432,52 @@ class DataSearch extends DataAbstract implements IDataSearch
         $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
         
         foreach ($resultsList as $resultItem) {
-            $temp = array();
-            $tmp['id'] = $resultItem->getId();
-            $tmp['typeId'] = $resultItem->getType();
-            $tmp['score'] = $resultItem->getScore();
-            if (! is_float($tmp['score']))
-                $tmp['score'] = 1;
-            $tmp['score'] = round($tmp['score'] * 100);
-            $data = $resultItem->getData();
-            $tmp['title'] = $data['text'];
-            $tmp['objectType'] = $data['objectType'];
             
-            if ($data['objectType'] === 'dam') {
-                $tmp['damType'] = $data['damType'];
+            $data = $resultItem->getData();
+        
+            $data['id'] = $resultItem->getId();
+            $data['typeId'] = $resultItem->getType();
+            $score = $resultItem->getScore();
+            if (! is_float($score))
+               $data['score'] = 1;
+            $data['score'] = round($score * 100);
+            
+            $data['title'] = $data['text'];
+            
+            if ($withSummary and !isset( $data['summary'])) {
+                $data['summary'] = $data['text'];
             }
-            if ($withSummary) {
-                $tmp['summary'] = isset($data['summary']) ? $data['summary'] : $data['text'];
-            }
-            $tmp['author'] = $data['author'];
-            $tmp['authorName'] = $data['authorName'];
-            $tmp['lastUpdateTime'] = $data['lastUpdateTime'];
-            if (array_key_exists('fileSize', $data)) {
-                $tmp['fileSize'] = $data['fileSize'];
-            }
-            if ($option == 'geo') {
-                $tmp['position_location'] = isset($data['position_location'])?$data['position_location']:null;
-                $tmp['position_address'] = isset($data['position_address'])?$data['position_address']:null;
-            }
+
             switch ($data['objectType']) {
                 case 'content':
                     $contentType = $this->_getContentType($data['contentType']);
                     if (! $userCanWriteContents || $contentType['readOnly']) {
-                        $tmp['readOnly'] = true;
+                        $data['readOnly'] = true;
                     } elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
-                        $tmp['readOnly'] = true;
+                        $data['readOnly'] = true;
                     }
-                    $tmp['type'] = $contentType['type'];
+                    $data['type'] = $contentType['type'];
                     break;
                 case 'dam':
                     $damType = $this->_getDamType($data['damType']);
                     if (! $userCanWriteDam || $damType['readOnly']) {
-                        $tmp['readOnly'] = true;
+                        $data['readOnly'] = true;
                     } elseif (! in_array($resultItem->writeWorkspace, $userWriteWorkspaces)) {
-                        $tmp['readOnly'] = true;
+                        $data['readOnly'] = true;
                     }
-                    $tmp['type'] = $damType['type'];
+                    $data['type'] = $damType['type'];
                     break;
             }
+            
             // Set read only
             
             if (in_array($data['writeWorkspace'], $writeWorkspaceArray)) {
-                $tmp['readOnly'] = false;
+                $data['readOnly'] = false;
             } else {
-                $tmp['readOnly'] = true;
-            }
-            
-            $result['data'][] = $tmp;
+                $data['readOnly'] = true;
+            }   
+
+            $result['data'][] = $data;
         }
         
         // Add label to Facets, hide facets with 1 result,

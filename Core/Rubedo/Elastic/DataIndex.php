@@ -151,7 +151,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 if ($field['config']['searchable']) {
                     
                     $name = $field['config']['fieldLabel'];
-                    $store = "no";
+                    $store = "yes";
                     
                     switch ($field['cType']) {
                         case 'checkbox':
