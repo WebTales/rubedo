@@ -112,7 +112,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if (! array_key_exists('query', $params))
             $params['query'] = $defaultVars['query'];
             
-            // Build global filter
+        // Build global filter
         
         $setFilter = false;
         $globalFilter = new \Elastica_Filter_And();
@@ -292,7 +292,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($setFilter)
             $elasticaFacetType->setFilter($globalFilter);
             
-            // Add type facet to the search query object.
+        // Add type facet to the search query object.
         $elasticaQuery->addFacet($elasticaFacetType);
         
         // Define the dam type facet.
@@ -367,9 +367,6 @@ class DataSearch extends DataAbstract implements IDataSearch
             
         // Add that facet to the search query object.
         $elasticaQuery->addFacet($elasticaFacetDate);
-        
-        //\Zend_debug::dump($elasticaFacetDate);
-        // exit;
         
         // Define taxonomy facets
         foreach ($taxonomies as $taxonomy) {

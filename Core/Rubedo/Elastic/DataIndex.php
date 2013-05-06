@@ -751,67 +751,6 @@ class DataIndex extends DataAbstract implements IDataIndex
     }
 
     /**
-     * Update Content Taxonomy
-     *
-     * @see \Rubedo\Interfaces\IDataIndex::updateContentTaxonomy()
-     * @param string $id
-     *            content id
-     * @param boolean $live
-     *            live if true, workspace if live
-     * @return array
-     */
-    public function updateContentTaxonomy ($id, $live = false)
-    {
-        
-        // content data to index
-        if ($live) {
-            $space = "live";
-        } else {
-            $space = "workspace";
-        }
-        
-        // retrieve type id and content data if null
-        $data = \Rubedo\Services\Manager::getService('Contents')->findById($id, true, false);
-        $typeId = $data['typeId'];
-        
-        // Retrieve type label
-        $contentType = \Rubedo\Services\Manager::getService('ContentTypes')->findById($typeId);
-        
-        // Add taxonomy
-        if (isset($data["taxonomy"])) {
-            $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
-            foreach ($data["taxonomy"] as $vocabulary => $terms) {
-                if (! is_array($terms)) {
-                    continue;
-                }
-                $collection = \Rubedo\Services\Manager::getService('Taxonomy');
-                $taxonomy = $collection->findById($vocabulary);
-                $termsArray = array();
-                
-                foreach ($terms as $term) {
-                    $term = $tt->findById($term);
-                    if (! $term) {
-                        continue;
-                    }
-                    $termsArray = $tt->getAncestors($term);
-                    $termsArray[] = $term;
-                    $tmp = array();
-                    foreach ($termsArray as $tempTerm) {
-                        $contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
-                    }
-                }
-            }
-        }
-        $currentDocument = new \Elastica_Document($id, $contentData);
-        
-        // Add content to content type index
-        $contentType->addDocument($currentDocument);
-        
-        // Refresh index
-        $contentType->getIndex()->refresh();
-    }
-
-    /**
      * Create or update index for existing Dam document
      *
      * @param obj $data
