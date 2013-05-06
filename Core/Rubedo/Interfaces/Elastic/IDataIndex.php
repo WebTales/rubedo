@@ -116,16 +116,6 @@ interface IDataIndex
 	public function indexContent ($data);
 	
     /**
-     * Update Content Taxonomy
-     *    
-	 * @see \Rubedo\Interfaces\IDataIndex::updateContentTaxonomy()
-	 * @param string $id content id
-	 * @param boolean $live live if true, workspace if live
-     * @return array
-     */
-	public function updateContentTaxonomy ($id, $live = false);
-	  
-    /**
      * Create or update index for existing Dam document
      *
      * @param obj $data dam data
