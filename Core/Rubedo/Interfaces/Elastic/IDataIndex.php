@@ -106,15 +106,6 @@ interface IDataIndex
      */
     public function deleteDam ($typeId, $id);
 			
-    /**
-     * Create or update index for existing content
-     *    
-	 * @param string $id content id
-	 * @param boolean $live live if true, workspace if live
-     * @return array
-     */
-	public function indexContentById ($id, $live = true);
-
 	/**
 	 * Create or update index for existing content
 	 *
@@ -133,16 +124,7 @@ interface IDataIndex
      * @return array
      */
 	public function updateContentTaxonomy ($id, $live = false);
-	
-    /**
-     * Create or update index for existing Dam document
-	 * 
-	 * @param string $id dam id
-     * @return array
-     */
-
-    public function indexDamById ($id);
-    
+	  
     /**
      * Create or update index for existing Dam document
      *
