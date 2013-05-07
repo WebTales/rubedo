@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Rubedo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-14 13:10+0100\n"
-"PO-Revision-Date: 2012-11-14 13:10+0100\n"
+"PO-Revision-Date: 2013-05-06 17:52+0100\n"
 "Last-Translator: Nicolas Trenti <nicolas.trenti@webtales.fr>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -112,7 +112,7 @@ msgstr "Publié par"
 #: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:419
 #: c:/projets/rubedo/cache/twig/cb/4b/7481464771cded3a472267f318b9.php:446
 msgid "on"
-msgstr "le"
+msgstr "sur"
 
 #: c:/projets/rubedo/cache/twig/fe/10/6b36de9efb82de653ec090a292aa.php:197
 msgid "language"
