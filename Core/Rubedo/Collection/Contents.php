@@ -639,7 +639,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
     }
 
-    public function getByType ($typeId)
+    public function getByType ($typeId, $start = null, $limit = null)
     {
         $filter = array(
                 array(
@@ -648,7 +648,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 )
         );
         
-        return $this->getList($filter);
+        return $this->getList($filter,null,$start,$limit);
     }
 
     public function clearOrphanContents ()

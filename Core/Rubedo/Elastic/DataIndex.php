@@ -1015,32 +1015,50 @@ class DataIndex extends DataAbstract implements IDataIndex
                 break;
         }
         
-        // Retrieve data from type
+        // Retrieve data and ES index for type
         
         $type = \Rubedo\Services\Manager::getService($serviceType)->findById($id);
         $contentType = self::$_content_index->getType($id);
         
-        // Index all dam or contents from given type
-        $itemList = \Rubedo\Services\Manager::getService($serviceData)->getByType($id);
         $itemCount = 0;
-        $bulkCount = 0;
+        $start = 0;
         $documents = array();
-        foreach ($itemList["data"] as $item) {
-            if ($option == 'content') {
-                $documents[] = $this->indexContent($item, $indexRefresh, $bulk);
-                if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
-                    $contentType->addDocuments($documents);
-                    $contentType->getIndex()->refresh();
-                    $bulkCount = 0;
-                    $documents = array();
+        
+        // Index all dam or contents from given type
+        
+        $dataService = \Rubedo\Services\Manager::getService($serviceData);
+    
+        do {
+            
+            $itemList = $dataService->getByType($id,$start,$bulkSize); 
+            
+            foreach ($itemList["data"] as $item) {
+                
+                if ($option == 'content') {
+                    $documents[] = $this->indexContent($item, $indexRefresh, $bulk);
                 }
+                
+                if ($option == 'dam') {
+                    $documents[] = $this->indexDam($item);
+                }
+                
+                $itemCount ++;
+                
             }
-            if ($option == 'dam') {
-                $this->indexDam($item);
+            
+            if (!empty($documents)) {
+               
+                $contentType->addDocuments($documents);
+                $contentType->getIndex()->refresh();
+                empty($documents);
+                
             }
-            $itemCount ++;
-            $bulkCount ++;
-        }
+            
+            $start=$start+$bulkSize+1;
+
+        } while (count($itemList['data']) == $bulkSize);
+
+        
         $result[$type['type']] = $itemCount;
         
         return ($result);
