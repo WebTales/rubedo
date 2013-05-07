@@ -118,10 +118,10 @@
     				'pagesize':pagesize,
     				'constrainToSite':{% if blockConfig.constrainToSite%}true{% else %}false{% endif %} ,
     				'predefinedFacets':predefinedFacets,
-    				'inflat':bounds.Z.b,
-    				'suplat':bounds.Z.d,
-    				'inflon':bounds.fa.b,
-    				'suplon':bounds.fa.d
+    				'inflat': bounds.getSouthWest().lat(),
+    				'suplat': bounds.getNorthEast().lat(),	
+    				'inflon': bounds.getSouthWest().lng(),
+    				'suplon': bounds.getNorthEast().lng()
     			}
           var currentFacets=window.activeFacets;
           for (var attrname in currentFacets) { params[attrname] = currentFacets[attrname]; }
