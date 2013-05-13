@@ -810,5 +810,32 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         return $obj;
     }
+    
+    /**
+     * Return differences between two arrays with recursivity
+     * @param Array $array1
+     * @param Array $array2
+     * @return Array
+     */
+    protected function _arrayDiffRecursive($array1, $array2) {
+    	$returnArray = array();
+    
+    	foreach ($array1 as $key => $value) {
+    		if (array_key_exists($key, $array2)) {
+    			if (is_array($value)) {
+    				$diff = $this->_arrayDiffRecursive($value, $array2[$key]);
+    				if (count($diff)) { $returnArray[$key] = $array1[$key]; }
+    			} else {
+    				if ($value != $array2[$key]) {
+    					$returnArray[$key] = $array1[$key];
+    				}
+    			}
+    		} else {
+    			$returnArray[$key] = $array1[$key];
+    		}
+    	}
+    	return $returnArray;
+    }
+     
 }
 	

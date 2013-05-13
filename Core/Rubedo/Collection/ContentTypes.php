@@ -300,4 +300,64 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		}
 		return $geolocatedContentTypes;
 	}
+	public function isChangeableContentType($originalType,$newType){
+		
+		$newFieldsArray=array();
+		$deletedFieldsArray=array();
+		$oldFieldsArray=array();
+		$modifiedFieldsArray=array();
+		$authorizedCtype=array(
+				"text"=>array("textfield","textareafield"),
+				"number"=>array("numberfield","slider","ratingField")
+		);
+		/*
+		 * Check for modified fields
+		*/
+		foreach($originalType as $key=>$originalField){
+			if(isset($newType[$key])){
+				if($newType[$key]["config"]["name"]==$originalField["config"]["name"]){
+					if(count($this->_arrayDiffRecursive($newType[$key], $originalField))>0){
+						$modifiedFieldsArray[]=$newType[$key];
+						$oldFieldsArray[]=$originalField;
+					}
+					if($newType[$key]["cType"]!=$originalField["cType"]){
+						/*
+						 * Check if new cType is authorized with same name
+						*/
+						if(in_array($originalField["cType"],$authorizedCtype["text"]))
+						{
+		
+							$result=in_array($newType[$key]["cType"],$authorizedCtype["text"]);
+		
+						}
+						elseif(in_array($originalField["cType"],$authorizedCtype["number"]))
+						{
+							$result=in_array($newType[$key]["cType"],$authorizedCtype["number"]);
+						}
+					}else{
+						$result=true;
+					}
+				}else{
+						$result=true;
+					}
+			}
+			if(!$result){
+				return false;
+			}
+		}
+		/*
+		 * Check for new fields
+		*/
+		$diffNew=$this->_arrayDiffRecursive($newType, $originalType);
+		$newFieldsArray=$this->_arrayDiffRecursive($diffNew, $modifiedFieldsArray);
+		 
+		/*
+		 * Check for deleted fields
+		*/
+		$diffDel=$this->_arrayDiffRecursive($originalType,$newType);
+		$deletedFieldsArray=$this->_arrayDiffRecursive($diffDel,$oldFieldsArray);
+		
+		return $result;
+		
+	}
 }

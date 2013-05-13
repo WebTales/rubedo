@@ -56,11 +56,12 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 
     public function isChangeableAction() {
         $data = $this->getRequest()->getParams();
-        $modifiedType = Zend_Json::decode($data['fields']);
+        $newType = Zend_Json::decode($data['fields']);
         $id = $data['id'];
         $originalType = $this->_dataService->findById($id);
         $originalType = $originalType['fields'];
         
+       
         /*
         $listResult = Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
         if (is_array($listResult) && $listResult['count'] == 0) {
@@ -73,43 +74,15 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
         	$resultArray = array("modify" => "ok");
         }
         else {
-
-            if (count($originalType) > count($modifiedType)) {
-                $greaterData = $originalType;
-                $tinierData = $modifiedType;
-            } elseif (count($originalType) < count($modifiedType)) {
-                $greaterData = $modifiedType;
-                $tinierData = $originalType;
-            } else {
-                $greaterData = $originalType;
-                $tinierData = $modifiedType;
-            }
-
-            $unauthorized = 0;
-
-            $authorizedModif = array("text" => array('506441f8c648043912000017', '506441f8c648043912000018', '506441f8c648043912000019'), "number" => array('506441f8c64804391200001d', '506441f8c64804391200001e', '506441f8c64804391200001f'));
-            foreach ($greaterData as $fieldToCompare) {
-                foreach ($tinierData as $field) {
-                    if ($fieldToCompare['config']['name'] == $field['config']['name']) {
-                        if ($fieldToCompare['protoId'] != $field['protoId']) {
-                            if (in_array($fieldToCompare['protoId'], $authorizedModif['text'])) {
-                                if (!in_array($field['protoId'], $authorizedModif['text'])) {
-                                    $unauthorized++;
-                                }
-                            } elseif (in_array($fieldToCompare['protoId'], $authorizedModif['number'])) {
-                                if (!in_array($field['protoId'], $authorizedModif['number'])) {
-                                    $unauthorized++;
-                                }
-                            } else {
-                                $unauthorized++;
-                            }
-                        }
-                    }
-                }
-            }
-            $resultArray = ($unauthorized != 0) ? array("modify" => "no") : array("modify" => "possible");
-        }
+        	
+        	$result=$this->_dataService->isChangeableContentType($originalType,$newType);
+        	$resultArray=($result==true)?array("modify" => "ok"):array("modify" => "not");
+        	
         $this->_returnJson($resultArray);
     }
+    }
+    
+ 
+    
 
 }
