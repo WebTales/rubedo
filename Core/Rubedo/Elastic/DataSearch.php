@@ -436,7 +436,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $data['typeId'] = $resultItem->getType();
             $score = $resultItem->getScore();
             if (! is_float($score))
-               $data['score'] = 1;
+               $score = 1;
             $data['score'] = round($score * 100);
             
             $data['title'] = $data['text'];
