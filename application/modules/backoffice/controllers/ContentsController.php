@@ -33,7 +33,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-contents','count-orphan-contents','get-ordered-list','delete-by-content-type-id');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-contents','count-orphan-contents','get-ordered-list');
 	
     public function init() {
         parent::init();
