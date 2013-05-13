@@ -138,7 +138,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true), $live = true)
+    public function create (array $obj, $options = array(), $live = true)
     {    
         if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
 	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
@@ -155,7 +155,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true), $live = true)
+    public function update (array $obj, $options = array(), $live = true)
     {
         if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
             $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
@@ -173,7 +173,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {

@@ -87,7 +87,6 @@ class Cache extends AbstractCollection implements ICache
     {
         $this->_filterInputData($obj);
         $options = array();
-        $options['safe'] = true;
         $options['upsert'] = true;
         
         $updateCond = array(
@@ -110,7 +109,6 @@ class Cache extends AbstractCollection implements ICache
     public function deleteExpired ()
     {
         $options = array();
-        $options['safe'] = true;
         $updateCond["expire"] = array(
             '$lt' => Manager::getService('CurrentTime')->getCurrentTime()
         );
@@ -126,7 +124,6 @@ class Cache extends AbstractCollection implements ICache
             'cacheId' => $id
         );
         $options = array();
-        $options['safe'] = true;
 		$result = $this->_dataService->customDelete($updateCond, $options);
         if ($result['success']) {
             return true;

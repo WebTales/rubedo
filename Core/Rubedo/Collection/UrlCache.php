@@ -62,7 +62,7 @@ class UrlCache extends AbstractCollection implements IUrlCache
     /* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>false))
+    public function create (array $obj, $options = array('w'=>false))
     {
         $obj['date'] = $this->_dataService->getMongoDate();
         

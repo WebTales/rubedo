@@ -260,7 +260,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     						"readOnly"=>false
     				);
     				try{
-    				$newContent=$contentsService->create($contentParams,array('safe'=>true), false, false);
+    				$newContent=$contentsService->create($contentParams,array(), false, false);
     				$lineCounter++;
     				} catch(Exception $e){
     					

@@ -81,7 +81,7 @@ class XhrEditController extends Zend_Controller_Action
 	    	else
 	    		$content['fields'][$name] = $data;
 	    	
-	    	$updateResult = $this->_dataService->update($content,array("safe"=>true),false);
+	    	$updateResult = $this->_dataService->update($content,array(),false);
 	    	
 	    	if($updateResult['success']){
 	    		return $this->_helper->json(array("success" => true));

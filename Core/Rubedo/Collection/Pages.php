@@ -133,7 +133,7 @@ class Pages extends AbstractCollection implements IPages
 	 *            should we wait for a server response
 	 * @return array
 	 */
-	public function destroy(array $obj, $options = array('safe'=>true)) {
+	public function destroy(array $obj, $options = array()) {
 	    $deleteCond = array('_id' => array('$in' => $this->_getChildToDelete($obj['id'])));
 	
 	    $resultArray = $this->_dataService->customDelete($deleteCond);
@@ -155,7 +155,7 @@ class Pages extends AbstractCollection implements IPages
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true))
+    public function update (array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         
@@ -227,7 +227,7 @@ class Pages extends AbstractCollection implements IPages
         $pageId = $obj['id'];
         Manager::getService('UrlCache')->customDelete(array(
         'pageId' => $pageId
-        ), array('safe'=>false));
+        ), array('w'=>false));
     }
     
 	public function findByNameAndSite($name,$siteId){
@@ -247,7 +247,7 @@ class Pages extends AbstractCollection implements IPages
 		return ($result!=null)?array("used"=>true):array("used"=>false);
 	}
 
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         return parent::create($obj, $options);

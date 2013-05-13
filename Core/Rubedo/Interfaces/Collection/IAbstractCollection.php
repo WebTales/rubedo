@@ -56,7 +56,7 @@ interface IAbstractCollection {
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true));
+    public function create(array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
@@ -65,7 +65,7 @@ interface IAbstractCollection {
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function update(array $obj, $options = array('safe'=>true));
+    public function update(array $obj, $options = array());
 
     /**
      * Delete objets in the current collection
@@ -74,7 +74,7 @@ interface IAbstractCollection {
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $options = array('safe'=>true));
+    public function destroy(array $obj, $options = array());
 	
 	/**
      * Find child of a node tree
@@ -158,7 +158,7 @@ interface IAbstractCollection {
      * @return array
      */
     public function customUpdate (array $data, array $updateCond,
-    		$options = array('safe'=>true));
+    		$options = array());
     /**
      *
      * @deprecated
@@ -174,7 +174,7 @@ interface IAbstractCollection {
      * @param unknown $options
      * @return Ambigous <boolean, multitype:>
      */
-    public function customDelete ($deleteCond, $options = array('safe'=>true));
+    public function customDelete ($deleteCond, $options = array());
     /**
      * getter of the model
      *

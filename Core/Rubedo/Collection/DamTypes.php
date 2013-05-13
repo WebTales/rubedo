@@ -60,7 +60,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	 * (non-PHPdoc)
 	 * @see \Rubedo\Collection\AbstractCollection::create()
 	 */
-	public function create (array $obj, $options = array('safe'=>true))
+	public function create (array $obj, $options = array())
     {
     	$obj = $this->_addDefaultWorkspace($obj);
 		
@@ -77,7 +77,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	 * (non-PHPdoc)
 	 * @see \Rubedo\Collection\AbstractCollection::update()
 	 */
-	public function update (array $obj, $options = array('safe'=>true))
+	public function update (array $obj, $options = array())
     {
     	$obj = $this->_addDefaultWorkspace($obj);
 		
@@ -94,7 +94,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	 * (non-PHPdoc)
 	 * @see \Rubedo\Collection\AbstractCollection::destroy()
 	 */
-	public function destroy (array $obj, $options = array('safe'=>true))
+	public function destroy (array $obj, $options = array())
 	{
 	    $returnArray = parent::destroy($obj, $options);
 	    if ($returnArray["success"]) {

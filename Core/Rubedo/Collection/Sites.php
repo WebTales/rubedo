@@ -202,7 +202,7 @@ class Sites extends AbstractCollection implements ISites
 		return $this->_dataService->customDelete(array('_id' => $mongoId));
 	}
 	
-	public function destroy(array $obj, $options = array('safe'=>true))
+	public function destroy(array $obj, $options = array())
 	{
 		if($this->_isReadable($obj)){	
 			$id=$obj['id'];
@@ -231,7 +231,7 @@ class Sites extends AbstractCollection implements ISites
 	 *  (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true,))
+    public function update (array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         
@@ -254,7 +254,7 @@ class Sites extends AbstractCollection implements ISites
 	/** (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true,))
+    public function create (array $obj, $options = array())
     {
         $obj = $this->_setDefaultWorkspace($obj);
         $obj = $this->_initContent($obj);
