@@ -371,7 +371,12 @@ class Url implements IUrl
     protected function _getDefaultSingleBySiteID($siteId){
         $site = Manager::getService('Sites')->findById($siteId);
         if(isset($site['defaultSingle'])){
-            return $site['defaultSingle'];
+            if(Manager::getService('Pages')->findById($site['defaultSingle'])){
+                return $site['defaultSingle'];
+            }else{
+                return null;
+            }
+            
         }else{
            return null;
         }
