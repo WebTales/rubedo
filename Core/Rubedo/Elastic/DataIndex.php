@@ -869,7 +869,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
         
         // Refresh index
-        if ($this->indexRefresh) {
+        if ($indexRefresh) {
             $damType->getIndex()->refresh();
         }
 
