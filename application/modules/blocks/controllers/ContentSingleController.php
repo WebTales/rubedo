@@ -40,6 +40,9 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $output["blockConfig"]=$blockConfig;
         
         $mongoId = $this->getRequest()->getParam('content-id');
+        if (isset($output["blockConfig"]["contentId"])) {
+            $mongoId = $output["blockConfig"]["contentId"];
+        }
         $frontOfficeTemplatesService = Manager::getService('FrontOfficeTemplates');
         
         if (isset($mongoId) && $mongoId != 0) {

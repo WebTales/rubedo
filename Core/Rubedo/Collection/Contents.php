@@ -225,7 +225,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true), $live = false, $index = true)
+    public function create (array $obj, $options = array(), $live = false, $index = true)
     {
         $obj = $this->_setDefaultWorkspace($obj);
         $this->_filterInputData($obj);
@@ -250,7 +250,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true), $live = true)
+    public function update (array $obj, $options = array(), $live = true)
     {
         $origObj = $this->findById($obj['id'], $live, false);
         if (! self::isUserFilterDisabled()) {
@@ -292,7 +292,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $origObj = $this->findById($obj['id'], false, false);
         if (! self::isUserFilterDisabled()) {
@@ -882,7 +882,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         
         $deleteCond = array('typeId'=>$contentTypeId);
-        $result = $this->_dataService->customDelete($deleteCond, array('safe'=>true));
+        $result = $this->_dataService->customDelete($deleteCond, array());
         
         if(isset($result['ok']) && $result['ok']){
             $contentTypeService->unIndexContentType($contentType);

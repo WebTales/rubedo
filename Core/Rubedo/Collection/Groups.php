@@ -83,7 +83,7 @@ class Groups extends AbstractCollection implements IGroups
         return $returnArray;
     }
 	
-	public function create (array $obj, $options = array('safe'=>true))
+	public function create (array $obj, $options = array())
     {
     	// Define default read workspace for groups if it's not set
     	if(!isset($obj['readWorkspaces']) || $obj['readWorkspaces']=="" || $obj['readWorkspaces'] == array()){
@@ -100,7 +100,7 @@ class Groups extends AbstractCollection implements IGroups
 	/* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true,))
+    public function update (array $obj, $options = array())
     {
         $obj = $this->_initObject($obj);
         return parent::update($obj,$options);        
@@ -116,7 +116,7 @@ class Groups extends AbstractCollection implements IGroups
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $deleteCond = array(
             '_id' => array(
@@ -352,7 +352,7 @@ class Groups extends AbstractCollection implements IGroups
 	}
 	
 	public function clearUserFromGroups($userId){
-	    $options = array('safe'=>true,'multiple'=>true);
+	    $options = array('multiple'=>true);
 	    $data = array('$unset'=>array('members.$'=>''));
 	    $updateCond = array('members'=>$userId);
 	    $result = $this->_dataService->customUpdate($data, $updateCond,$options);
@@ -364,7 +364,7 @@ class Groups extends AbstractCollection implements IGroups
 	        $inArray[] = $this->_dataService->getId($groupId);
 	    }
 
-	    $options = array('safe'=>true,'multiple'=>true);
+	    $options = array('multiple'=>true);
 	    $data = array('$push'=>array('members'=>$userId));
 	    $updateCond = array('_id'=>array('$in'=>$inArray));
 	    $result = $this->_dataService->customUpdate($data, $updateCond,$options);

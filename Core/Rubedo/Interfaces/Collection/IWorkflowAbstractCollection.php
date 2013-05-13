@@ -33,7 +33,7 @@ interface IWorkflowAbstractCollection extends IAbstractCollection{
      * @param bool $options should we wait for a server response
      * @return array
      */
-	public function update(array $obj, $options = array('safe'=>true), $live = true);
+	public function update(array $obj, $options = array(), $live = true);
 	
 	/**
      * Create an objet in the current collection
@@ -43,7 +43,7 @@ interface IWorkflowAbstractCollection extends IAbstractCollection{
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true), $live = false);
+    public function create(array $obj, $options = array(), $live = false);
 	
 	/**
      * Find an item given by its literral ID

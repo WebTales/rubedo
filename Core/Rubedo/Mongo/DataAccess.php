@@ -192,10 +192,10 @@ class DataAccess implements IDataAccess
      */
     protected function _getAdapter ($mongo)
     {
-        if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \Mongo) {
+        if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \MongoClient) {
             return self::$_adapterArray[$mongo];
         } else {
-            $adapter = new \Mongo($mongo);
+            $adapter = new \MongoClient($mongo);
             self::$_adapterArray[$mongo] = $adapter;
             return $adapter;
         }
@@ -545,7 +545,7 @@ class DataAccess implements IDataAccess
      *            should we wait for a server response
      * @return array
      */
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
         $obj['version'] = 1;
         
@@ -597,7 +597,7 @@ class DataAccess implements IDataAccess
      *            should we wait for a server response
      * @return array
      */
-    public function update (array $obj, $options = array('safe'=>true))
+    public function update (array $obj, $options = array())
     {
         $id = $obj['id'];
         unset($obj['id']);
@@ -690,7 +690,7 @@ class DataAccess implements IDataAccess
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $id = $obj['id'];
         if (! isset($obj['version'])) {
@@ -1167,7 +1167,7 @@ class DataAccess implements IDataAccess
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true))
+    public function customUpdate (array $data, array $updateCond, $options = array())
     {
         try {
             $resultArray = $this->_collection->update($updateCond, $data, $options);
@@ -1199,7 +1199,7 @@ class DataAccess implements IDataAccess
         return $cursor;
     }
 
-    public function customDelete ($deleteCond, $options = array('safe'=>true))
+    public function customDelete ($deleteCond, $options = array())
     {
         return $this->_collection->remove($deleteCond, $options);
     }
@@ -1212,7 +1212,7 @@ class DataAccess implements IDataAccess
      */
     public function ensureIndex ($keys, $options = array())
     {
-        $options['safe'] = true;
+        $options['w'] = true;
         $result = $this->_collection->ensureIndex($keys, $options);
         return $result;
     }

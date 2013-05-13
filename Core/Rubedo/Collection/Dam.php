@@ -64,7 +64,7 @@ class Dam extends AbstractCollection implements IDam
         parent::__construct();
     }
 
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $obj = $this->_dataService->findById($obj['id']);
         $destroyOriginal = Manager::getService('Files')->destroy(array(
@@ -111,7 +111,7 @@ class Dam extends AbstractCollection implements IDam
      *
      * @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true,))
+    public function update (array $obj, $options = array())
     {
         $this->_filterInputData($obj);
         
@@ -140,7 +140,7 @@ class Dam extends AbstractCollection implements IDam
      *
      * @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true), $index = true)
+    public function create (array $obj, $options = array(), $index = true)
     {
         $obj = $this->_setDefaultWorkspace($obj);
         

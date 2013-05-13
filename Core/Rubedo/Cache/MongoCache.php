@@ -158,7 +158,6 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
         $updateCond = array();
         
         $options = array();
-        $options['safe'] = true;
         
         switch ($mode) {
             case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:

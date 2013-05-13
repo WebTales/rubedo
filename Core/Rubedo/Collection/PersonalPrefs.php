@@ -41,7 +41,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         $this->_userId = $currentUser['id'];
     }
 
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
         if(!isset($obj['userId'])){
         	$obj['userId'] = $this->_userId;
@@ -63,7 +63,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         return $returnArray;
     }
 
-    public function update (array $obj, $options = array('safe'=>true))
+    public function update (array $obj, $options = array())
     {
         $this->_dataService->addFilter(array(
             'userId' => $this->_userId
@@ -75,7 +75,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         return $returnArray;
     }
 
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $this->_dataService->addFilter(array(
             'userId' => $this->_userId

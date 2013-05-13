@@ -81,7 +81,7 @@ interface IDataAccess
      * @param array $options            
      * @return array
      */
-    public function create (array $obj, $options = array('safe'=>true));
+    public function create (array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
@@ -91,7 +91,7 @@ interface IDataAccess
      * @param array $options            
      * @return array
      */
-    public function update (array $obj, $options = array('safe'=>true));
+    public function update (array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
@@ -101,7 +101,7 @@ interface IDataAccess
      * @param array $options            
      * @return array
      */
-    public function destroy (array $obj, $options = array('safe'=>true));
+    public function destroy (array $obj, $options = array());
 
     /**
      * Do a find request on the current collection and return content as tree
@@ -314,7 +314,7 @@ interface IDataAccess
      */
     public function dropIndexes();
     public function checkIndex($keys);
-    public function customDelete ($deleteCond, $options = array('safe'=>true));
+    public function customDelete ($deleteCond, $options = array());
     public function customFind ($filter = array(), $fieldRule = array());
     /**
      * Update an objet in the current collection
@@ -329,7 +329,7 @@ interface IDataAccess
      * @param array $options
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, $options = array('safe'=>true));
+    public function customUpdate (array $data, array $updateCond, $options = array());
     public function getMongoDate ();
     public function getId ($idString = null);
     public function getRegex ($expr);

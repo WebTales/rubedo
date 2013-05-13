@@ -96,9 +96,7 @@ class Users extends AbstractCollection implements IUsers
             $insertData['password'] = $password;
             $insertData['salt'] = $salt;
             
-            $result = $this->_dataService->update($insertData, array(
-                'safe' => true
-            ));
+            $result = $this->_dataService->update($insertData);
             
             if ($result['success'] == true) {
                 return true;
@@ -147,7 +145,7 @@ class Users extends AbstractCollection implements IUsers
      * @param array $options            
      * @return array
      */
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
 		if(!isset($obj['groups']) || $obj['groups']==""){
 			$groups= array();
@@ -231,7 +229,7 @@ class Users extends AbstractCollection implements IUsers
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true,))
+    public function update (array $obj, $options = array())
     {
         // Define default workspace for a user if it's not set
         if(!isset($obj['workspace']) || $obj['workspace']==""){
@@ -252,7 +250,7 @@ class Users extends AbstractCollection implements IUsers
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $options = array('safe'=>true,))
+    public function destroy (array $obj, $options = array())
     {
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
         return parent::destroy($obj, $options);

@@ -119,7 +119,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
             	$insertData["target"]=isset($insertData["target"])?$insertData["target"]:array();
-                $returnArray = $this->_dataService->create($insertData, array('safe'=>true), false);
+                $returnArray = $this->_dataService->create($insertData, array(), false);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');
@@ -144,7 +144,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
             $updateData = Zend_Json::decode($data);
             if (is_array($updateData)) {
 
-                $returnArray = $this->_dataService->update($updateData, array('safe'=>true), false);
+                $returnArray = $this->_dataService->update($updateData, array(), false);
 
             } else {
                 $returnArray = array('success' => false, "msg" => 'Not an array');

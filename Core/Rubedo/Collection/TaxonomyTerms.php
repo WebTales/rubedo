@@ -81,7 +81,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true,))
+    public function create (array $obj, $options = array())
     {
         if ($obj['vocabularyId'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t create navigation terms ');
@@ -368,7 +368,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true,))
+    public function update (array $obj, $options = array())
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
             throw new \Rubedo\Exceptions\Access('can\'t alter navigation terms ');
@@ -386,7 +386,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
             throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');

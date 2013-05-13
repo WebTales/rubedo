@@ -187,7 +187,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
      * (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {
@@ -229,7 +229,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true,))
+    public function create (array $obj, $options = array())
     {
         if ($obj['name'] == 'Navigation') {
             throw new \Rubedo\Exceptions\Access(
@@ -256,7 +256,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true,))
+    public function update (array $obj, $options = array())
     {
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {

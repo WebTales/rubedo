@@ -124,7 +124,7 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *            data object
      * @return array
      */
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
         return $this->_dataService->create($obj, $options);
     }
@@ -138,7 +138,7 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      * @param array $options            
      * @return array
      */
-    public function update (array $obj, $options = array('safe'=>true))
+    public function update (array $obj, $options = array())
     {
         return $this->_dataService->update($obj, $options);
     }
@@ -152,7 +152,7 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      * @param array $options            
      * @return array
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         return $this->_dataService->destroy($obj, $options);
     }

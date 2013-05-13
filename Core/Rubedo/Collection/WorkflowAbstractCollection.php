@@ -46,7 +46,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      * @param bool $options should we wait for a server response
      * @return array
      */
-	public function update(array $obj, $options = array('safe'=>true), $live = true){
+	public function update(array $obj, $options = array(), $live = true){
 		
 	    if($live === true){
 			$this->_dataService->setLive();
@@ -80,7 +80,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true), $live = false) {
+    public function create(array $obj, $options = array(), $live = false) {
     	if($live === true){
     		throw new \Rubedo\Exceptions\Access('Can\'t create directly in live');
 		}

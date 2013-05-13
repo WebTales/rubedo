@@ -631,7 +631,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
         //end of application run
 
         $this->assertTrue($updateArray["success"]);
@@ -670,7 +670,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
     
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
         //end of application run
     
         $this->assertTrue($updateArray["success"]);
@@ -709,7 +709,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
@@ -742,7 +742,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
@@ -773,7 +773,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
@@ -803,7 +803,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
         //end of application run
 
         $this->assertTrue($updateArray["success"]);
@@ -844,7 +844,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['version']);
         $item['name'] .= ' updated';
 
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
     }
 
     /**
@@ -873,7 +873,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $item['name'] .= ' updated';
 
-        $updateArray = $dataAccessObject->update($item, array('safe' => true));
+        $updateArray = $dataAccessObject->update($item);
 
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.', $updateArray['msg']);
@@ -906,7 +906,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
+        $updateArray = $dataAccessObject->destroy($item);
 
         $this->assertTrue($updateArray["success"]);
 
@@ -945,7 +945,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
+        $updateArray = $dataAccessObject->destroy($item);
     }
 
     /**
@@ -975,7 +975,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item, array('safe' => true));
+        $updateArray = $dataAccessObject->destroy($item);
         $this->assertFalse($updateArray['success']);
         $this->assertEquals('Impossible de supprimer le contenu', $updateArray['msg']);
     }

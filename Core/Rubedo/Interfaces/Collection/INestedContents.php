@@ -43,7 +43,7 @@ interface INestedContents
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create($parentContentId, array $obj, $options = array('safe'=>true));
+    public function create($parentContentId, array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
@@ -53,7 +53,7 @@ interface INestedContents
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function update($parentContentId, array $obj, $options = array('safe'=>true));
+    public function update($parentContentId, array $obj, $options = array());
 
     /**
      * Delete objets in the current collection
@@ -63,7 +63,7 @@ interface INestedContents
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy($parentContentId, array $obj, $options = array('safe'=>true));
+    public function destroy($parentContentId, array $obj, $options = array());
 	
 	/**
 	 * Find a nested content by its id and its parentId
