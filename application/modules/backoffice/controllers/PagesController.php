@@ -33,7 +33,7 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 	/**
 	 * Array with the read only actions
 	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-pages','count-orphan-pages','model','get-content-list');
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-pages','count-orphan-pages','model','get-content-list','holds-site-default');
 	
     public function init(){
 		parent::init();
@@ -58,6 +58,18 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
 		
 		$this->_returnJson($result);
    	}
+   	/**
+   	 * Check if page is or is the father of the default page of its site
+   	 *
+   	 */
+   	public function holdsSiteDefaultAction() {
+   		$id = $this->getRequest()->getParam('id');
+   		$result = array();
+   		$result['holdsDefault']=$this->_dataService->hasDefaultPageAsChild($id);
+   		$result['success']=true;
+   		$this->_returnJson($result);
+   	}
+   	
 	public function getContentListAction()
 	{
 		$returnArray=array();
