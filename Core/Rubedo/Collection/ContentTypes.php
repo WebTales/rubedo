@@ -310,38 +310,49 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 				"text"=>array("textfield","textareafield"),
 				"number"=>array("numberfield","slider","ratingField")
 		);
-		/*
+			/*
 		 * Check for modified fields
-		*/
-		foreach($originalType as $key=>$originalField){
-			if(isset($newType[$key])){
-				if($newType[$key]["config"]["name"]==$originalField["config"]["name"]){
-					if(count($this->_arrayDiffRecursive($newType[$key], $originalField))>0){
-						$modifiedFieldsArray[]=$newType[$key];
-						$oldFieldsArray[]=$originalField;
-					}
-					if($newType[$key]["cType"]!=$originalField["cType"]){
-						/*
-						 * Check if new cType is authorized with same name
-						*/
-						if(in_array($originalField["cType"],$authorizedCtype["text"]))
-						{
-		
-							$result=in_array($newType[$key]["cType"],$authorizedCtype["text"]);
-		
-						}
-						elseif(in_array($originalField["cType"],$authorizedCtype["number"]))
-						{
-							$result=in_array($newType[$key]["cType"],$authorizedCtype["number"]);
-						}
-					}else{
-						$result=true;
-					}
-				}else{
-						$result=true;
-					}
+		 */
+		foreach ( $originalType as $originalField ) {
+			$found = false;
+			/*
+			 * Search for corresponding new field
+			 */
+			foreach ( $newType as $newField ) {
+				if ($newField ["config"] ["name"] == $originalField ["config"] ["name"]) {
+					$found = true;
+					break;
+				}
 			}
-			if(!$result){
+			// if no field found
+			if (! $found) {
+				$result = true;
+			} else {
+				// check if newField and originalField has same name and check differences
+				if ($newField ["config"] ["name"] == $originalField ["config"] ["name"]) {
+					if (count ( $this->_compareFields ( $originalField, $newField ) ) > 0) {
+						$modifiedFieldsArray [] = $newField;
+						$oldFieldsArray [] = $originalField;
+						// if field has been modified check if cType changed
+						if ($newField ["cType"] != $originalField ["cType"]) {
+							/*
+							 * Check if new cType is authorized with same name
+							 */
+							if (in_array ( $originalField ["cType"], $authorizedCtype ["text"] )) {
+								$result = in_array ( $newField ["cType"], $authorizedCtype ["text"] );
+							} elseif (in_array ( $originalField ["cType"], $authorizedCtype ["number"] )) {
+								$result = in_array ( $newField ["cType"], $authorizedCtype ["number"] );
+							}
+						} else {
+							$result = true;
+						}
+					}
+				} else {
+					$result = true;
+				}
+			}
+			
+			if (! $result) {
 				return false;
 			}
 		}
@@ -359,5 +370,15 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		
 		return $result;
 		
+	}
+
+	/**
+	 * Check 2 fields and return if there are differences
+	 * @param array $original
+	 * @param array $new
+	 * @return array
+	 */
+	protected function _compareFields($original,$new){
+		return $this->_arrayDiffRecursive ($new, $original);
 	}
 }
