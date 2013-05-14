@@ -133,7 +133,10 @@ class Pages extends AbstractCollection implements IPages
 	 *            should we wait for a server response
 	 * @return array
 	 */
-	public function destroy(array $obj, $options = array('safe'=>true)) {
+	public function destroy(array $obj, $options = array()) {
+		if ($this->hasDefaultPageAsChild($obj['id'])){
+			throw new \Rubedo\Exceptions\User("Page is or is father of site default single page");
+		}
 	    $deleteCond = array('_id' => array('$in' => $this->_getChildToDelete($obj['id'])));
 	
 	    $resultArray = $this->_dataService->customDelete($deleteCond);
@@ -151,11 +154,35 @@ class Pages extends AbstractCollection implements IPages
 	    $this->_clearCacheForPage($obj);
 	    return $returnArray;
 	}
+	/**
+	 * Check if page is or is the father of the default page of its site
+	 * 
+	 * @return bool
+	 *
+	 */
+	public function hasDefaultPageAsChild($pageId){
+		$wasFiltered = AbstractCollection::disableUserFilter();
+		$service = Manager::getService('Pages');
+		$sitesService = Manager::getService('Sites');
+		AbstractCollection::disableUserFilter($wasFiltered);
+		
+		//find site for $page ID
+		$page = $service->findById($pageId);
+		//find site
+		$sitedId=$page['site'];
+		$site=$sitesService->findById($sitedId);
+		$defaultPage=$site['defaultSingle'];
+		//find children
+		$children = $service->_getChildToDelete($pageId);
+		//do site default page match a child ?
+		$response=in_array($defaultPage, $children);
+		return($response);
+	}
 
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true))
+    public function update (array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         
@@ -227,7 +254,7 @@ class Pages extends AbstractCollection implements IPages
         $pageId = $obj['id'];
         Manager::getService('UrlCache')->customDelete(array(
         'pageId' => $pageId
-        ), array('safe'=>false));
+        ), array('w'=>false));
     }
     
 	public function findByNameAndSite($name,$siteId){
@@ -247,7 +274,7 @@ class Pages extends AbstractCollection implements IPages
 		return ($result!=null)?array("used"=>true):array("used"=>false);
 	}
 
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         return parent::create($obj, $options);

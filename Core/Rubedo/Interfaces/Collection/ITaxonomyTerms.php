@@ -43,7 +43,7 @@ interface ITaxonomyTerms extends IAbstractCollection{
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $options = array('safe'=>true));
+    public function destroy(array $obj, $options = array());
 	
 	/**
 	 * Allow to find a term by its id

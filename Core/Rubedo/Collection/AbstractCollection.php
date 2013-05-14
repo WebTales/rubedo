@@ -319,7 +319,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @return array
      */
     public function customUpdate (array $data, array $updateCond, 
-            $options = array('safe'=>true))
+            $options = array())
     {
         return $this->_dataService->customUpdate($data, $updateCond, $options);
     }
@@ -333,7 +333,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
         $this->_filterInputData($obj);
         
@@ -509,7 +509,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function update (array $obj, $options = array('safe'=>true))
+    public function update (array $obj, $options = array())
     {
         unset($obj['readOnly']);
         return $this->_dataService->update($obj, $options);
@@ -524,7 +524,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         return $this->_dataService->destroy($obj, $options);
     }
@@ -581,7 +581,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param unknown $options            
      * @return Ambigous <boolean, multitype:>
      */
-    public function customDelete ($deleteCond, $options = array('safe'=>true))
+    public function customDelete ($deleteCond, $options = array())
     {
         return $this->_dataService->customDelete($deleteCond, $options);
     }

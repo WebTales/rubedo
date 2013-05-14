@@ -254,7 +254,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return bool
      */
-    public function update(array $obj, $options = array('safe'=>true)) {
+    public function update(array $obj, $options = array()) {
         $obj = $this->_inputObjectFilter($obj);
 
         $result = parent::update($obj, $options);
@@ -274,7 +274,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return array
      */
-    public function create(array $obj, $options = array('safe'=>true)) {
+    public function create(array $obj, $options = array()) {
         $obj = $this->_inputObjectFilter($obj);
 
         if ($this->_currentWs === 'workspace') {
@@ -297,7 +297,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy(array $obj, $options = array('safe'=>true)) {
+    public function destroy(array $obj, $options = array()) {
         $result = parent::destroy($obj, $options);
 
         return $result;

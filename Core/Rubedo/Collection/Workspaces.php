@@ -165,7 +165,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
      *
      * @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         if ($obj['id'] == 'global') {
             throw new \Rubedo\Exceptions\Access('can\'t destroy global workspace');
@@ -187,7 +187,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array('safe'=>true,))
+    public function create (array $obj, $options = array())
     {
         if ($obj['text'] == 'Global') {
             throw new \Rubedo\Exceptions\Access('can\'t create global workspace');
@@ -199,7 +199,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array('safe'=>true,))
+    public function update (array $obj, $options = array())
     {
         if ($obj['id'] == 'global') {
             throw new \Rubedo\Exceptions\Access('can\'t update global workspace');

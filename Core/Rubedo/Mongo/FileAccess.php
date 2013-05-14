@@ -144,7 +144,7 @@ class FileAccess extends DataAccess implements IFileAccess
      *            should we wait for a server response
      * @return array
      */
-    public function create (array $obj, $options = array('safe'=>true))
+    public function create (array $obj, $options = array())
     {
         $filename = $obj['serverFilename'];
         $partList = explode('.', $filename);
@@ -205,7 +205,7 @@ class FileAccess extends DataAccess implements IFileAccess
      *            data object
      * @return array
      */
-    public function destroy (array $obj, $options = array('safe'=>true))
+    public function destroy (array $obj, $options = array())
     {
         $id = $obj['id'];
         $mongoID = $this->getId($id);
