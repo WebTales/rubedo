@@ -15,6 +15,7 @@
 namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IContents;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle contents
@@ -186,15 +187,15 @@ class Contents extends WorkflowAbstractCollection implements IContents
                             )
                     )
             );
-            $this->_dataService->addFilter($dateFilter);
+//             $this->_dataService->addFilter($dateFilter);
         }
     }
 
     /**
      * Return the visible contents list
      *
-     * @param array $filters
-     *            array of filter
+     * @param \WebTales\MongoFilters\IFilter $filters
+     *            filters
      * @param array $sort
      *            array of sorting fields
      * @param integer $start
@@ -203,13 +204,14 @@ class Contents extends WorkflowAbstractCollection implements IContents
      *            max number of items in the list
      * @return array:
      */
-    public function getOnlineList ($filters = null, $sort = null, $start = null, 
+    public function getOnlineList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, 
             $limit = null)
     {
-        $filters[] = array(
-                'property' => 'online',
-                'value' => true
-        );
+        if(is_null($filters)){
+            $filters = Filter::Factory();
+        }
+        $filters->addFilter(Filter::Factory('Value')->setName('online')->setValue(true));
+        
         
         if (\Zend_Registry::isRegistered('draft')) {
             $live = ! \Zend_Registry::get('draft');

@@ -53,9 +53,8 @@ class UrlCache extends AbstractCollection implements IUrlCache
      */
     public function findByPageId ($pageId)
     {
-        return $this->_dataService->findOne(array(
-            'pageId' => $pageId
-        ));
+        
+        return $this->_dataService->findOne(Filter::Factory('value')->setName('pageId')->setValue($pageId));
     }
     
 

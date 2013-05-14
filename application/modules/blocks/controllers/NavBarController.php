@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+Use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 require_once ('AbstractController.php');
 
@@ -103,7 +103,8 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['logo']= isset($blockConfig['logo'])?$blockConfig['logo']:null;
         $output['displayRootPage'] = $displayRootPage;
         
-        $this->excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
+        $this->excludeFromMenuCondition = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(true);
+        //array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
         
         $this->pageService = Manager::getService('Pages');
         
@@ -116,7 +117,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
             ), null, true);
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
-            $levelTwoPages = $this->pageService->readChild($page['id'],array($this->excludeFromMenuCondition));
+            $levelTwoPages = $this->pageService->readChild($page['id'],$this->excludeFromMenuCondition);
             if (count($levelTwoPages)) {
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {
@@ -142,7 +143,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
     }
     
     protected function _getPagesByLevel($rootPage,$targetLevel,$currentLevel=1){
-        $pages = $this->pageService->readChild($rootPage,array($this->excludeFromMenuCondition));
+        $pages = $this->pageService->readChild($rootPage,$this->excludeFromMenuCondition);
         if($currentLevel===$targetLevel){
             return $pages;
         }

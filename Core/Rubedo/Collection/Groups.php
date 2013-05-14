@@ -147,12 +147,8 @@ class Groups extends AbstractCollection implements IGroups
     }
 
     public function getListByUserId ($userId)
-    {
-        $filters = array();
-        $filters[] = array(
-            'property' => "members",
-            'value' => $userId
-        );
+    {      
+        $filters = Filter::Factory('Value')->setName('members')->setValue($userId);
         $groupList = $this->getListWithAncestors($filters);
         
         return $groupList;

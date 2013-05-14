@@ -74,9 +74,9 @@ class Masks extends AbstractCollection implements IMasks
             $sites = Manager::getService('Sites')->getList();
             $sitesArray = array();
             foreach ($sites['data'] as $site){
-                $sitesArray[]=$site['id'];
+                $sitesArray[]=(string)$site['id'];
             }            
-            $filter = Filter::Factory('In');;
+            $filter = Filter::Factory('In');
             $filter->setName('site')->setValue($sitesArray);
             $this->_dataService->addFilter($filter);
         }

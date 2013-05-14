@@ -90,12 +90,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $key = $filters->getName();
             $value = $filters->getValue();
             
-            if (in_array($key, $this->_metaDataFields) || strpos($key, $this->_currentWs)!==false || substr($key,0,1)=='$') {
-                //do not change protected keys or already adaptated keys
-                continue;
+            if (!in_array($key, $this->_metaDataFields) && strpos($key, $this->_currentWs)===false && substr($key,0,1)!='$') {
+                $newKey = $this->_currentWs . "." . $key;
+                $filters->setName($newKey);
+            
             }
-            $newKey = $this->_currentWs . "." . $key;
-            $filters->setName($newKey);
+            
         }
     }
 
@@ -316,7 +316,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         return $this->findOne($filter,$raw);
     }
 	
-	public function findOne(\WebTales\MongoFilters\IFilter $value,$raw=true){
+	public function findOne(\WebTales\MongoFilters\IFilter $value=null,$raw=true){
 		if($raw){
 			return parent::findOne($value);
 		}

@@ -482,7 +482,7 @@ class DataAccess implements IDataAccess
      *            search condition
      * @return array
      */
-    public function findOne (\WebTales\MongoFilters\IFilter $localFilter)
+    public function findOne (\WebTales\MongoFilters\IFilter $localFilter=null)
     {
         // get the UI parameters
         $includedFields = $this->getFieldList();
@@ -496,8 +496,10 @@ class DataAccess implements IDataAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         $filters = clone $this->getFilters();
-        $filters->addFilter($localFilter);
-                
+        if($localFilter){
+             $filters->addFilter($localFilter);
+        }
+       
         $data = $this->_collection->findOne($filters->toArray(), $fieldRule);
         if ($data == null) {
             return null;
