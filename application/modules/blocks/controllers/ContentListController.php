@@ -224,8 +224,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
         
         $filters["filter"][] = $filter;
         
-        $contentArray = $this->_dataReader->getOnlineList($filters["filter"], 
-                $filters["sort"], 
+        $contentArray = Manager::getService('Contents')->getOnlineList($filters["filter"], 
+                isset($filters["sort"]) ? $filters["sort"] : array(), 
                 (($pageData['currentPage'] - 1) * $pageData['limit'])+$pageData['skip'], 
                 $pageData['limit']);
         $contentArray['page'] = $pageData;
