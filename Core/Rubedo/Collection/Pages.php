@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Pages
@@ -109,7 +109,8 @@ class Pages extends AbstractCollection implements IPages
 	        if(in_array('all',$readWorkspaceArray)){
 	            return;
 	        }
-	        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+	        $filter = Filter::Factory('In');
+	        $filter->setName('workspace')->setValue($readWorkspaceArray);
 	        $this->_dataService->addFilter($filter);
 		}
     }
@@ -120,7 +121,21 @@ class Pages extends AbstractCollection implements IPages
 	}
 	
 	public function matchSegment($urlSegment,$parentId,$siteId){
-	    return $this->_dataService->findOne(array('pageURL'=>$urlSegment,'parentId'=>$parentId,'site'=>$siteId));
+	    $filters = Filter::Factory('And');
+	    
+	    $filter = Filter::Factory('Value');
+	    $filter->setName('pageUrl')->setValue($urlSegment);
+	    $filters->addFilter($filter);
+	    
+	    $filter = Filter::Factory('Value');
+	    $filter->setName('parentId')->setValue($parentId);
+	    $filters->addFilter($filter);
+	    
+	    $filter = Filter::Factory('Value');
+	    $filter->setName('site')->setValue($siteId);
+	    $filters->addFilter($filter);
+	    
+	    return $this->_dataService->findOne($filters);
 	}
 
 	/**

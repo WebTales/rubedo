@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle PersonalPrefs
@@ -40,7 +40,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         $currentUser = $currentUserService->getCurrentUserSummary();
         $this->_userId = $currentUser['id'];
         
-        $userFilter = new \WebTales\MongoFilters\ValueFilter();
+        $userFilter = Filter::Factory('Value');;
         $userFilter->setName('userId')->setValue($this->_userId);
         $this->_dataService->addFilter($userFilter);
     }
@@ -89,8 +89,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 			$usersArray[] = $value['id'];
 		}
 
-		$ninFilter = new \WebTales\MongoFilters\NotInFilter();
-		$ninFilter->setName('userId')->setValue($usersArray);
+		$ninFilter = Filter::Factory('Value')->setName('userId')->setValue($usersArray);
 		$result = $this->customDelete($ninFilter);
 		
 		if($result['ok'] == 1){
@@ -109,8 +108,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 		foreach ($result['data'] as $value) {
 			$usersArray[] = $value['id'];
 		}
-		$ninFilter = new \WebTales\MongoFilters\NotInFilter();
-		$ninFilter->setName('userId')->setValue($usersArray);
+		$ninFilter = Filter::Factory('Value')->setName('userId')->setValue($usersArray);
 		return $this->count($ninFilter);
 	}
 }

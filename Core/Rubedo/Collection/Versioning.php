@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IVersioning;
+use Rubedo\Interfaces\Collection\IVersioning, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Versioning
@@ -49,7 +49,7 @@ class Versioning extends AbstractCollection implements IVersioning
 		
 		$sort = array('publishVersion' => 'desc');
 		
-		$filter = new \WebTales\MongoFilters\ValueFilter();
+		$filter = Filter::Factory('Value');
         $filter->setName('contentId')->setValue($contentId);
         
 		$this->_dataService->addFilter($filter);

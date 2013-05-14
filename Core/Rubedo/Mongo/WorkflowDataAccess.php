@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Mongo;
 
-use Rubedo\Interfaces\Mongo\IWorkflowDataAccess;
+use Rubedo\Interfaces\Mongo\IWorkflowDataAccess, \WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the API to MongoDB
@@ -203,8 +203,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             //copy the workspace into the live
             $obj['live'] = $obj['workspace'];
 
-            $updateCond = new \WebTales\MongoFilters\UidFilter();
-            $updateCond->setValue($objectId);
+            $updateCond = Filter::Factory('Uid')->setValue($objectId);
 
             //update the content with the new values for the live array
             $returnArray = $this->customUpdate($obj, $updateCond);
@@ -313,8 +312,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      * @return array
      */
     public function findById($contentId,$raw=true) {
-        $filter = new \WebTales\MongoFilters\UidFilter();
-        $filter->setValue($contentId);
+        $filter = Filter::Factory('Uid')->setValue($contentId);
         return $this->findOne($filter,$raw);
     }
 	

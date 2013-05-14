@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Mongo;
 
-use Rubedo\Interfaces\Mongo\IDataAccess;
+use Rubedo\Interfaces\Mongo\IDataAccess, \WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the API to MongoDB
@@ -153,7 +153,7 @@ class DataAccess implements IDataAccess
      * init the filter with a global "and" filter
      */
     public function __construct(){
-        $this->_filters = new \WebTales\MongoFilters\AndFilter();
+        $this->_filters = Filter::Factory();
     }
     /**
      * Initialize a data service handler to read or write in a MongoDb
@@ -445,7 +445,7 @@ class DataAccess implements IDataAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         
-        $parentFilter = new \WebTales\MongoFilters\ValueFilter();
+        $parentFilter = Filter::Factory('Value');
         $parentFilter->setName('parentId')->setValue($parentId);
         $filter->addFilter($parentFilter);
         
@@ -516,7 +516,7 @@ class DataAccess implements IDataAccess
      */
     public function findById ($contentId)
     {
-        $filter = new \WebTales\MongoFilters\UidFilter();
+        $filter = Filter::Factory('Uid');
         $filter->setValue($contentId);
         return $this->findOne($filter);
     }
@@ -529,7 +529,7 @@ class DataAccess implements IDataAccess
      */
     public function findByName ($name)
     {
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter = Filter::Factory('Value');
         $filter->setValue($name)->setName('text');
         return $this->findOne($filter);
     }
@@ -627,10 +627,10 @@ class DataAccess implements IDataAccess
             }
         }
         
-        $updateConditionId = new \WebTales\MongoFilters\UidFilter();
+        $updateConditionId = Filter::Factory('Uid');
         $updateConditionId->setValue($mongoID);
         
-        $updateConditionVersion = new \WebTales\MongoFilters\ValueFilter();
+        $updateConditionVersion = Filter::Factory('Value');
         $updateConditionVersion->setValue($oldVersion)->setName('version');
         
         $updateCondition = clone $this->getFilters();
@@ -707,10 +707,10 @@ class DataAccess implements IDataAccess
         
         
         
-        $updateConditionId = new \WebTales\MongoFilters\UidFilter();
+        $updateConditionId = Filter::Factory('Uid');
         $updateConditionId->setValue($mongoID);
         
-        $updateConditionVersion = new \WebTales\MongoFilters\ValueFilter();
+        $updateConditionVersion = Filter::Factory('Value');
         $updateConditionVersion->setValue($version)->setName('version');
         
         $updateCondition = clone $this->getFilters();

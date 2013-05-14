@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IGroups, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IGroups, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Groups
@@ -51,7 +51,7 @@ class Groups extends AbstractCollection implements IGroups
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if(!in_array('all',$readWorkspaceArray)){
-                $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+                $filter = Filter::Factory('In')->setName('workspace')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
@@ -241,9 +241,8 @@ class Groups extends AbstractCollection implements IGroups
 
     public function findByName ($name)
     {
-        return $this->_dataService->findOne(array(
-            'name' => $name
-        ));
+        $filter = Filter::Factory('Value')->setValue($name)->setName('name');
+        return $this->_dataService->findOne($filter);
     }
 
     /**

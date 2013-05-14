@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Icons
@@ -39,7 +39,7 @@ class Icons extends AbstractCollection implements IIcons
 		$currentUser = $currentUserService->getCurrentUserSummary();
 		$this->_userId = $currentUser['id'];
 		
-		$userFilter = new \WebTales\MongoFilters\ValueFilter();
+		$userFilter = Filter::Factory('Value');
 		$userFilter->setName('userId')->setValue($this->_userId);
 		$this->_dataService->addFilter($userFilter);
 	}
@@ -61,7 +61,7 @@ class Icons extends AbstractCollection implements IIcons
 			$usersArray[] = $value['id'];
 		}
 
-		$ninFilter = new \WebTales\MongoFilters\NotInFilter();
+		$ninFilter = Filter::Factory('NotIn');
 		$ninFilter->setName('userId')->setValue($usersArray);
 		
 		$result = $this->customDelete($ninFilter);
@@ -83,7 +83,7 @@ class Icons extends AbstractCollection implements IIcons
 			$usersArray[] = $value['id'];
 		}
 		
-		$ninFilter = new \WebTales\MongoFilters\NotInFilter();
+		$ninFilter = Filter::Factory('NotIn');
 		$ninFilter->setName('userId')->setValue($usersArray);
 		
 		return $this->count($ninFilter);

@@ -16,7 +16,7 @@
  */
 namespace Rubedo\User;
 
-use Rubedo\Services\Manager;
+use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Adapter to check authentication against mongoDB user collection
@@ -80,14 +80,12 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
             )
         );
         
-        $loginCond = new \WebTales\MongoFilters\OrFilter();
+        $loginCond = Filter::Factory('Or');
         
-        $loginFilter = new \WebTales\MongoFilters\ValueFilter();
-        $loginFilter->setName('login')->setValue($this->_login);
+        $loginFilter = Filter::Factory('Value')->setName('login')->setValue($this->_login);
         $loginCond->addFilter($loginFilter);
         
-        $emailFilter = new \WebTales\MongoFilters\ValueFilter();
-        $emailFilter->setName('email')->setValue($this->_login);
+        $emailFilter = Filter::Factory('Value')->setName('email')->setValue($this->_login);
         $loginCond->addFilter($emailFilter);
         
         
