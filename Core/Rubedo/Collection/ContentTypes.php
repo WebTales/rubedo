@@ -300,87 +300,63 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		}
 		return $geolocatedContentTypes;
 	}
-	public function isChangeableContentType($originalType,$newType){
-	    $result = true;
-		$newFieldsArray=array();
-		$deletedFieldsArray=array();
-		$oldFieldsArray=array();
-		$modifiedFieldsArray=array();
-		$authorizedCtype=array(
-				"text"=>array("textfield","textareafield"),
-				"number"=>array("numberfield","slider","ratingField")
-		);
-			/*
-		 * Check for modified fields
-		 */
-		foreach ( $originalType as $originalField ) {
-		    
-			$found = false;
-			/*
-			 * Search for corresponding new field
-			 */
-			foreach ( $newType as $newField ) {
-				if ($newField ["config"] ["name"] == $originalField ["config"] ["name"]) {
-					$found = true;
-					break;
-				}
-			}
-			
-			// if no field found
-			if (! $found) {
-				$result = true;
-			} else {
-				// check if newField and originalField has same name and check differences
-				if ($newField ["config"] ["name"] == $originalField ["config"] ["name"]) {
-					if (count ( $this->_compareFields ( $originalField, $newField ) ) > 0) {
-						$modifiedFieldsArray [] = $newField;
-						$oldFieldsArray [] = $originalField;
-						// if field has been modified check if cType changed
-						if ($newField ["cType"] != $originalField ["cType"]) {
-							/*
-							 * Check if new cType is authorized with same name
-							 */
-							if (in_array ( $originalField ["cType"], $authorizedCtype ["text"] )) {
-								$result = in_array ( $newField ["cType"], $authorizedCtype ["text"] );
-							} elseif (in_array ( $originalField ["cType"], $authorizedCtype ["number"] )) {
-								$result = in_array ( $newField ["cType"], $authorizedCtype ["number"] );
-							}
-						} else {
-							$result = true;
-						}
-					}
-				} else {
-					$result = true;
-				}
-			}
-			
-			if (!$result) {
-				return false;
-			}
-		}
-		/*
-		 * Check for new fields
-		*/
-		$diffNew=$this->_arrayDiffRecursive($newType, $originalType);
-		$newFieldsArray=$this->_arrayDiffRecursive($diffNew, $modifiedFieldsArray);
-		 
-		/*
-		 * Check for deleted fields
-		*/
-		$diffDel=$this->_arrayDiffRecursive($originalType,$newType);
-		$deletedFieldsArray=$this->_arrayDiffRecursive($diffDel,$oldFieldsArray);
-		
-		return $result;
-		
-	}
 
-	/**
-	 * Check 2 fields and return if there are differences
-	 * @param array $original
-	 * @param array $new
-	 * @return array
-	 */
-	protected function _compareFields($original,$new){
-		return $this->_arrayDiffRecursive ($new, $original);
-	}
+    public function isChangeableContentType ($originalType, $newType)
+    {
+        $result = true;
+        $newFieldsArray = array();
+        $deletedFieldsArray = array();
+        $oldFieldsArray = array();
+        $modifiedFieldsArray = array();
+        $authorizedCtype = array(
+            "text" => array(
+                "textfield",
+                "textareafield"
+            ),
+            "number" => array(
+                "numberfield",
+                "slider",
+                "ratingField"
+            )
+        );
+        /*
+         * Check for modified fields
+         */
+        foreach ($originalType as $originalField) {
+            if (! $result) {
+                break;
+            }
+            $found = false;
+            
+            /*
+             * Search for corresponding new field
+             */
+            foreach ($newType as $newField) {
+                if ($newField["config"]["name"] == $originalField["config"]["name"]) {
+                    $found = true;
+                    break;
+                }
+            }
+            
+            // if no field found
+            if (! $found) {
+                $result = true;
+            } else {
+                if ($newField["cType"] != $originalField["cType"]) {
+                    // Check if new cType is authorized with same name
+                    if (in_array($originalField["cType"], $authorizedCtype["text"])) {
+                        $result = in_array($newField["cType"], $authorizedCtype["text"]);
+                    } elseif (in_array($originalField["cType"], $authorizedCtype["number"])) {
+                        $result = in_array($newField["cType"], $authorizedCtype["number"]);
+                    } else {
+                        $result = false;
+                    }
+                } else {
+                    $result = true;
+                }
+            }
+        }
+        
+        return $result;
+    }
 }

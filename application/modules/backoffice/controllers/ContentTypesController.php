@@ -61,12 +61,6 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
         $originalType = $this->_dataService->findById($id);
         $originalType = $originalType['fields'];
         
-       
-        /*
-        $listResult = Rubedo\Services\Manager::getService('Contents')->getListByTypeId($id);
-        if (is_array($listResult) && $listResult['count'] == 0) {
-            $resultArray = array("modify" => "ok");
-        } */
         $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
         $isUsedResult = Rubedo\Services\Manager::getService('Contents')->isTypeUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
@@ -76,7 +70,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
         else {
         	
         	$result=$this->_dataService->isChangeableContentType($originalType,$newType);
-        	$resultArray=($result==true)?array("modify" => "ok"):array("modify" => "not");
+        	$resultArray=($result==true)?array("modify" => "possible"):array("modify" => "no");
         	
         $this->_returnJson($resultArray);
     }
