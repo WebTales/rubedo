@@ -77,22 +77,25 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     /**
      * Adapt filter for the workflow
      *
-     * @param $filter is the current filter
-     * @return array compatible with the data in mongoDb
+     * @param \WebTales\MongoFilters\IFilter $filter
      */
-    protected function _adaptFilter($filterArray) {
+    protected function _adaptFilter(\WebTales\MongoFilters\IFilter $filters) {
         
-        if (count($filterArray) > 0) {
-            $this->clearFilter();
-
-            foreach ($filterArray as $key => $value) {
-                if (in_array($key, $this->_metaDataFields) || substr($key,0,1)=='$') {
-                    $this->addFilter(array($key => $value));
-                    continue;
-                }
-                $newKey = $this->_currentWs . "." . $key;
-                $this->addFilter(array($newKey => $value));
+        if($filters instanceof \WebTales\MongoFilters\ICompositeFilter){ //do recursive adaptation to composite filter
+            $filtersArray = $filters->getFilters();
+            foreach ($filtersArray as $filter){
+                $this->_adaptFilter($filter);
             }
+        }elseif($filters instanceof \WebTales\MongoFilters\ValueFilter){ // adapt simple filters
+            $key = $filters->getName();
+            $value = $filters->getValue();
+            
+            if (in_array($key, $this->_metaDataFields) || strpos($key, $this->_currentWs)!==false || substr($key,0,1)=='$') {
+                //do not change protected keys or already adaptated keys
+                continue;
+            }
+            $newKey = $this->_currentWs . "." . $key;
+            $filters->setName($newKey);
         }
     }
 
@@ -309,7 +312,9 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      * @return array
      */
     public function findById($contentId,$raw=true) {
-        return $this->findOne(array('_id' => $this->getId($contentId)),$raw);
+        $filter = new \WebTales\MongoFilters\UidFilter();
+        $filter->setValue($contentId);
+        return $this->findOne($filter,$raw);
     }
 	
 	public function findOne(\WebTales\MongoFilters\IFilter $value,$raw=true){

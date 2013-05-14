@@ -47,9 +47,11 @@ class Versioning extends AbstractCollection implements IVersioning
 		
 		$contentId = (string)$obj['_id'];
 		
-		$filter = array('contentId' => $contentId);
 		$sort = array('publishVersion' => 'desc');
 		
+		$filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('contentId')->setValue($contentId);
+        
 		$this->_dataService->addFilter($filter);
 		$this->_dataService->addSort($sort);
 		

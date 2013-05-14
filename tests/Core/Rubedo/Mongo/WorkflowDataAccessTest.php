@@ -180,9 +180,11 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array( array('id' => $item['id'], 'version' => 1, 'label' => 'test draft 1'));
 
-        $filter = array('label' => $item['workspace']['label']);
-        $result = $dataAccessObject->addFilter($filter);
-
+        
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('label')->setValue($item['workspace']['label']);
+        $dataAccessObject->addFilter($filter);
+        
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
         $this->assertEquals($expectedResult, $readArray);
@@ -211,8 +213,9 @@ class WorkflowDataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array( array('id' => $item2['id'], 'version' => 1, 'label' => 'test draft 2'));
 
-        $filter = array('id' => $item2['id']);
-        $result = $dataAccessObject->addFilter($filter);
+        $filter = new \WebTales\MongoFilters\UidFilter();
+        $filter->setValue($item2['id']);
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
