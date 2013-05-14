@@ -214,8 +214,8 @@ class FileAccess extends DataAccess implements IFileAccess
             '_id' => $mongoID
         );
         
-        if (is_array($this->_filterArray)) {
-            $updateCondition = array_merge($this->_filterArray, $updateCondition);
+        if (is_array($this->_filters)) {
+            $updateCondition = array_merge($this->_filters, $updateCondition);
         }
         
         $resultArray = $this->_collection->remove($updateCondition, $options);

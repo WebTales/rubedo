@@ -81,7 +81,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      * @return array compatible with the data in mongoDb
      */
     protected function _adaptFilter($filterArray) {
-
+        
         if (count($filterArray) > 0) {
             $this->clearFilter();
 
@@ -229,7 +229,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      */
     public function read() {
         //Adaptation of the conditions for the workflow
-        $filter = $this->getFilterArray();
+        $filter = $this->getFilters();
         $this->_adaptFilter($filter);
         $sort = $this->getSortArray();
         $this->_adaptSort($sort);
@@ -312,12 +312,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         return $this->findOne(array('_id' => $this->getId($contentId)),$raw);
     }
 	
-	public function findOne($value,$raw=true){
+	public function findOne(\WebTales\MongoFilters\IFilter $value,$raw=true){
 		if($raw){
 			return parent::findOne($value);
 		}
         //Adaptation of the conditions for the workflow
-        $filter = $this->getFilterArray();
+        $filter = $this->getFilters();
         $this->_adaptFilter($filter);
         $sort = $this->getSortArray();
         $this->_adaptSort($sort);

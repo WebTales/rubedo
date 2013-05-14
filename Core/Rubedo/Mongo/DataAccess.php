@@ -93,9 +93,9 @@ class DataAccess implements IDataAccess
     /**
      * Filter condition to be used when reading
      *
-     * @var array
+     * @var \WebTales\MongoFilters\CompositeFilter
      */
-    protected $_filterArray = array();
+    protected $_filters;
 
     /**
      * Sort condition to be used when reading
@@ -149,6 +149,12 @@ class DataAccess implements IDataAccess
      */
     protected $_lostChildren = array();
 
+    /**
+     * init the filter with a global "and" filter
+     */
+    public function __construct(){
+        $this->_filters = new \WebTales\MongoFilters\AndFilter();
+    }
     /**
      * Initialize a data service handler to read or write in a MongoDb
      * Collection
@@ -278,7 +284,7 @@ class DataAccess implements IDataAccess
     public function read ()
     {
         // get the UI parameters
-        $filter = $this->getFilterArray();
+        $filter = clone $this->getFilters();
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
@@ -294,7 +300,7 @@ class DataAccess implements IDataAccess
         }
         
         // get the cursor
-        $cursor = $this->_collection->find($filter, $fieldRule);
+        $cursor = $this->_collection->find($filter->toArray(), $fieldRule);
         $nbItems = $cursor->count();
         
         // apply sort, paging, filter
@@ -426,7 +432,7 @@ class DataAccess implements IDataAccess
     public function readChild ($parentId)
     {
         // get the UI parameters
-        $filter = $this->getFilterArray();
+        $filter = clone $this->getFilters();
         $sort = $this->getSortArray();
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
@@ -439,20 +445,13 @@ class DataAccess implements IDataAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         
-        // get the cursor
-        if (empty($filter)) {
-            $cursor = $this->_collection->find(array(
-                'parentId' => $parentId
-            ), $fieldRule);
-        } else {
-            $cursor = $this->_collection->find(array(
-                'parentId' => $parentId,
-                '$and' => array(
-                    $filter
-                )
-            ), $fieldRule);
-        }
+        $parentFilter = new \WebTales\MongoFilters\ValueFilter();
+        $parentFilter->setName('parentId')->setValue($parentId);
+        $filter->addFilter($parentFilter);
         
+        // get the cursor
+        $cursor = $this->_collection->find($filter->toArray(), $fieldRule);
+                
         // apply sort, paging, filter
         $cursor->sort($sort);
         
@@ -479,11 +478,11 @@ class DataAccess implements IDataAccess
      * Do a findone request on the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::findOne()
-     * @param array $value
+     * @param \WebTales\MongoFilters\IFilter $localFilter
      *            search condition
      * @return array
      */
-    public function findOne ($value)
+    public function findOne (\WebTales\MongoFilters\IFilter $localFilter)
     {
         // get the UI parameters
         $includedFields = $this->getFieldList();
@@ -496,10 +495,10 @@ class DataAccess implements IDataAccess
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-        
-        $value = array_merge($value, $this->getFilterArray());
-        
-        $data = $this->_collection->findOne($value, $fieldRule);
+        $filters = clone $this->getFilters();
+        $filters->addFilter($localFilter);
+                
+        $data = $this->_collection->findOne($filters->toArray(), $fieldRule);
         if ($data == null) {
             return null;
         }
@@ -517,9 +516,9 @@ class DataAccess implements IDataAccess
      */
     public function findById ($contentId)
     {
-        return $this->findOne(array(
-            '_id' => $this->getId($contentId)
-        ));
+        $filter = new \WebTales\MongoFilters\UidFilter();
+        $filter->setValue($contentId);
+        return $this->findOne($filter);
     }
 
     /**
@@ -628,16 +627,18 @@ class DataAccess implements IDataAccess
             }
         }
         
-        $updateCondition = array(
-            '_id' => $mongoID,
-            'version' => $oldVersion
-        );
+        $updateConditionId = new \WebTales\MongoFilters\UidFilter();
+        $updateConditionId->setValue($mongoID);
         
-        if (is_array($this->_filterArray)) {
-            $updateCondition = array_merge($this->_filterArray, $updateCondition);
-        }
+        $updateConditionVersion = new \WebTales\MongoFilters\ValueFilter();
+        $updateConditionVersion->setValue($oldVersion)->setName('version');
+        
+        $updateCondition = clone $this->getFilters();
+        $updateCondition->addFilter($updateConditionId);
+        $updateCondition->addFilter($updateConditionVersion);
+        
         try {
-            $resultArray = $this->_collection->update($updateCondition, array(
+            $resultArray = $this->_collection->update($updateCondition->toArray(), array(
                 '$set' => $obj
             ), $options);
         } catch (\MongoCursorException $exception) {
@@ -704,11 +705,19 @@ class DataAccess implements IDataAccess
             'version' => $version
         );
         
-        if (is_array($this->_filterArray)) {
-            $updateCondition = array_merge($this->_filterArray, $updateCondition);
-        }
         
-        $resultArray = $this->_collection->remove($updateCondition, $options);
+        
+        $updateConditionId = new \WebTales\MongoFilters\UidFilter();
+        $updateConditionId->setValue($mongoID);
+        
+        $updateConditionVersion = new \WebTales\MongoFilters\ValueFilter();
+        $updateConditionVersion->setValue($version)->setName('version');
+        
+        $updateCondition = clone $this->getFilters();
+        $updateCondition->addFilter($updateConditionId);
+        $updateCondition->addFilter($updateConditionVersion);
+        
+        $resultArray = $this->_collection->remove($updateCondition->toArray(), $options);
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
                 $returnArray = array(
@@ -795,8 +804,8 @@ class DataAccess implements IDataAccess
      */
     public function count ()
     {
-        $filter = $this->getFilterArray();
-        return $this->_collection->count($filter);
+        $filter = clone $this->getFilters();
+        return $this->_collection->count($filter->toArray());
     }
 
     /**
@@ -810,46 +819,9 @@ class DataAccess implements IDataAccess
      * @param array $filter
      *            Native Mongo syntax filter array
      */
-    public function addFilter (array $filter)
+    public function addFilter (\WebTales\MongoFilters\IFilter $filter)
     {
-        // check valid input
-        if (count($filter) !== 1) {
-            throw new \Rubedo\Exceptions\Server("Invalid filter array", 1);
-        }
-        
-        foreach ($filter as $name => $value) {
-            
-            if ($name === 'id') {
-                $name = '_id';
-                if (is_string($value)) {
-                    $value = $this->getId($value);
-                } elseif (is_array($value)) {
-                    if (isset($value['$in'])) {
-                        foreach ($value['$in'] as $key => $localId) {
-                            $value['$in'][$key] = $this->getId($localId);
-                        }
-                    }
-                    if (isset($value['$nin'])) {
-                        foreach ($value['$nin'] as $key => $localId) {
-                            $value['$nin'][$key] = $this->getId($localId);
-                        }
-                    }
-                    if (isset($value['$all'])) {
-                        foreach ($value['$all'] as $key => $localId) {
-                            $value['$all'][$key] = $this->getId($localId);
-                        }
-                    }
-                }
-            }
-            if(in_array($name,array('$or','$and')) && isset($this->_filterArray[$name])){
-                $existing = $this->_filterArray[$name];
-                $this->_filterArray[$name] = array_merge($existing,$value);
-            }else{
-                $this->_filterArray[$name] = $value;
-            }
-            // add validated input
-            
-        }
+        $this->_filters->addFilter($filter);
     }
 
     /**
@@ -862,11 +834,12 @@ class DataAccess implements IDataAccess
      */
     public function addOrFilter (array $condArray)
     {
-        if (! isset($this->_filterArray['$or'])) {
-            $this->_filterArray['$or'] = array();
+        throw new \Exception('method obsolete');
+        if (! isset($this->_filters['$or'])) {
+            $this->_filters['$or'] = array();
         }
         
-        $this->_filterArray['$or'] = array_merge($this->_filterArray['$or'], $condArray);
+        $this->_filters['$or'] = array_merge($this->_filters['$or'], $condArray);
     }
 
     /**
@@ -874,17 +847,17 @@ class DataAccess implements IDataAccess
      */
     public function clearFilter ()
     {
-        $this->_filterArray = array();
+        $this->_filters->clearFilters();
     }
 
     /**
-     * Return the current array of conditions.
+     * Return the current MongoDB conditions.
      *
-     * @return array
+     * @return \WebTales\MongoFilters\IFilter
      */
-    public function getFilterArray ()
+    public function getFilters ()
     {
-        return $this->_filterArray;
+        return $this->_filters;
     }
 
     /**

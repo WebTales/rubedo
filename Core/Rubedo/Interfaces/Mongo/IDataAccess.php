@@ -51,11 +51,11 @@ interface IDataAccess
      * Do a findone request on the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::findOne()
-     * @param array $value
+     * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
      */
-    public function findOne ($value);
+    public function findOne (\WebTales\MongoFilters\IFilter $value);
 
     /**
      * Find an item given by its literral ID
@@ -134,28 +134,28 @@ interface IDataAccess
      * or
      * array('field'=>array('operator'=>value))
      *
-     * @param array $filter
-     *            Native Mongo syntax filter array
+     * @param \WebTales\MongoFilters\IFilter $filter
      * @return bool
      */
-    public function addFilter (array $filter);
+    public function addFilter (\WebTales\MongoFilters\IFilter $filter);
 
     /**
      * Add a OR filter condition to the service
      *
      * Filter should be an array of array('field'=>'value')
      *
+     * @deprecated
      * @param array $filter
      *            Native Mongo syntax filter array
      */
     public function addOrFilter (array $condArray);
 
     /**
-     * Return the current array of conditions.
-     * 
-     * @return array
+     * Return the current MongoDB conditions.
+     *
+     * @return \WebTales\MongoFilters\IFilter
      */
-    public function getFilterArray ();
+    public function getFilters ();
 
     /**
      * Unset all filter condition to the service
