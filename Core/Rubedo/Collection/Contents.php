@@ -780,7 +780,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 }
             }
             
-            $status = $obj['status'];
+            $status = isset($obj['status'])?$obj['status']:null;
             $obj['readOnly']= $obj['readOnly'] || ! $aclServive->hasAccess("write.ui.contents.".$status); 
         }
         
@@ -892,6 +892,19 @@ class Contents extends WorkflowAbstractCollection implements IContents
             throw new \Rubedo\Exceptions\Server($result['err']);
         }
         
+    }
+    
+    public function getReflexiveLinkedContents($contentId,$typeId,$fieldName){
+        $filterArray = array();
+        $filterArray[] = array(
+            "property" => "typeId",
+            "value" => $typeId
+        );
+        $filterArray[] = array(
+            "property" => 'fields.'.$fieldName,
+            "value" => $contentId
+        );
+        return $this->getList($filterArray, null, null, null, true);
     }
   
 	
