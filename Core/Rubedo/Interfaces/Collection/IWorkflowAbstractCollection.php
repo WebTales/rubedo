@@ -55,7 +55,7 @@ interface IWorkflowAbstractCollection extends IAbstractCollection{
 	/* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList($filters = null, $sort = null, $start = null, $limit = null, $live = true);
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null, $live = true);
 	
 	/**
      * Find child of a node tree
@@ -64,7 +64,7 @@ interface IWorkflowAbstractCollection extends IAbstractCollection{
      * @param array $sort  array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild($parentId, $filters = null, $sort = null, $live = true);
+    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $live = true);
 	
 	public function publish($objectId);
 	

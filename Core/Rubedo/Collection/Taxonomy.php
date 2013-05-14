@@ -88,7 +88,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         
@@ -221,7 +221,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::count()
      */
-    public function count ($filters = null)
+    public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
         return parent::count($filters) + 2;
     }

@@ -119,17 +119,12 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $navigation = false;
         
-        if (is_array($filters)) {
-            foreach ($filters as $key => $filter) {
-                if (($filter['property'] == 'vocabularyId' && $filter['value'] == 'navigation')) {
-                    $navigation = true;
-                    unset($filters[$key]);
-                }
-            }
+        if($filters){
+            $navigation = $this->_lookForNavigation($filters);
         }
         
         if ($navigation) {
@@ -153,23 +148,36 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         }
     }
     
+    protected function _lookForNavigation(\WebTales\MongoFilters\IFilter $filters){
+        if($filters instanceof \WebTales\MongoFilters\ICompositeFilter){ //do recursive adaptation to composite filter
+            $filtersArray = $filters->getFilters();
+            foreach ($filtersArray as $filter){
+               $result = $this->_lookForNavigation($filter) || $result;
+            }
+        }elseif($filters instanceof \WebTales\MongoFilters\ValueFilter){ // adapt simple filters
+            $key = $filters->getName();
+            $value = $filters->getValue();
+            if($key == 'vocabularyId' && $value == 'navigation'){
+                unset($filters);
+                $result = true;                
+            }
+        }
+        return $result;
+    }
+    
     
 
 	/*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::readChild()
      */
-    public function readChild ($parentId, $filters = null, $sort = null)
+    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
         $navigation = false;
         
-        if (is_array($filters)) {
-            foreach ($filters as $key => $filter) {
-                if (($filter['property'] == 'vocabularyId' && $filter['value'] == 'navigation')) {
-                    $navigation = true;
-                    unset($filters[$key]);
-                }
-            }
+        if($filters){
+            $navigation = $this->_lookForNavigation($filters);
         }
+        
         $parentItem = $this->findById($parentId);
         if($parentItem['vocabularyId']=='navigation'){
             $navigation = true;

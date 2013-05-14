@@ -129,7 +129,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
     /* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null, $live = true) {
     	if($live === true){
 			$this->_dataService->setLive();
 		} else {
@@ -143,11 +143,11 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
 	/**
      * Find child of a node tree
      * @param string $parentId id of the parent node
-     * @param array $filters array of data filters (mongo syntax)
+     * @param \WebTales\MongoFilters\IFilter $filters data filters
      * @param array $sort  array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild($parentId, $filters = null, $sort = null, $live = true) {
+    public function readChild($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $live = true) {
         if($live === true){
 			$this->_dataService->setLive();
 		} else {

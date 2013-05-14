@@ -216,7 +216,7 @@ class Users extends AbstractCollection implements IUsers
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         

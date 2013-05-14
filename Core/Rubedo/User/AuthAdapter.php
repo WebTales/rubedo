@@ -80,7 +80,18 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
             )
         );
         
-        $dataService->addOrFilter($loginCond);
+        $loginCond = new \WebTales\MongoFilters\OrFilter();
+        
+        $loginFilter = new \WebTales\MongoFilters\ValueFilter();
+        $loginFilter->setName('login')->setValue($this->_login);
+        $loginCond->addFilter($loginFilter);
+        
+        $emailFilter = new \WebTales\MongoFilters\ValueFilter();
+        $emailFilter->setName('email')->setValue($this->_login);
+        $loginCond->addFilter($emailFilter);
+        
+        
+        $dataService->addFilter($loginCond);
         $resultIdentitiesArray = $dataService->read();
         $resultIdentities = $resultIdentitiesArray['data'];
         

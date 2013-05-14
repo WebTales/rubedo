@@ -314,8 +314,8 @@ interface IDataAccess
      */
     public function dropIndexes();
     public function checkIndex($keys);
-    public function customDelete ($deleteCond, $options = array());
-    public function customFind ($filter = array(), $fieldRule = array());
+    public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array());
+    public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array());
     /**
      * Update an objet in the current collection
      *
@@ -324,12 +324,12 @@ interface IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
-     * @param array $updateCond
-     *            array of condition to determine what should be updated
+     * @param \WebTales\MongoFilters\IFilter $updateCond
+     *            condition to determine what should be updated
      * @param array $options
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, $options = array());
+    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array());
     public function getMongoDate ();
     public function getId ($idString = null);
     public function getRegex ($expr);

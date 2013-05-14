@@ -529,9 +529,9 @@ class DataAccess implements IDataAccess
      */
     public function findByName ($name)
     {
-        return $this->findOne(array(
-            'text' => $name
-        ));
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setValue($name)->setName('text');
+        return $this->findOne($filter);
     }
 
     /**
@@ -1135,15 +1135,15 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
-     * @param array $updateCond
+     * @param \WebTales\MongoFilters\IFilter $updateCond
      *            array of condition to determine what should be updated
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, $options = array())
+    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array())
     {
         try {
-            $resultArray = $this->_collection->update($updateCond, $data, $options);
+            $resultArray = $this->_collection->update($updateCond->toArray(), $data, $options);
             if ($resultArray['ok'] == 1) {
                 $returnArray = array(
                     'success' => true
@@ -1165,16 +1165,17 @@ class DataAccess implements IDataAccess
         }
     }
 
-    public function customFind ($filter = array(), $fieldRule = array())
+    public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array())
     {
+        $filterArray = is_null($filter)?array():$filter->toArray();
         // get the cursor
-        $cursor = $this->_collection->find($filter, $fieldRule);
+        $cursor = $this->_collection->find($filterArray, $fieldRule);
         return $cursor;
     }
 
-    public function customDelete ($deleteCond, $options = array())
+    public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array())
     {
-        return $this->_collection->remove($deleteCond, $options);
+        return $this->_collection->remove($deleteCond->toArray(), $options);
     }
 
     /**

@@ -29,11 +29,11 @@ interface IAbstractCollection {
     /**
      * Do a find request on the current collection
      *
-	 * @param array $filters filter the list with mongo syntax
+	 * @param \WebTales\MongoFilters\IFilter $filters filter the list with mongo syntax
 	 * @param array $sort sort the list with mongo syntax
      * @return array
      */
-    public function getList($filters = null, $sort = null, $start = null, $limit = null);
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null);
 
     /**
      * Find an item given by its literral ID
@@ -79,27 +79,27 @@ interface IAbstractCollection {
 	/**
      * Find child of a node tree
      * @param string $parentId id of the parent node
-	 * @param array $filters array of data filters (mongo syntax) 
+	 * @param \WebTales\MongoFilters\IFilter $filters array of data filters (mongo syntax) 
 	 * @param array $sort  array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild($parentId, $filters = null, $sort = null);
+    public function readChild($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null);
     
     /**
      * Do a count of item matching filter
      * 
-     * @param array $filters
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return integer
      */
-    public function count($filters = null);
+    public function count( \WebTales\MongoFilters\IFilter $filters = null);
     
     /**
      * return a list with its parent-line
      *
-     * @param array $filters
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function getListWithAncestors ($filters = null);
+    public function getListWithAncestors (\WebTales\MongoFilters\IFilter $filters = null);
     
     /**
      * Verify if all indexes are sets in DB
@@ -120,21 +120,22 @@ interface IAbstractCollection {
      * @deprecated
      *
      *
-     * @param array $value
+     * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
      */
-    public function findOne ($value);
+    public function findOne (\WebTales\MongoFilters\IFilter $value);
+    
     /**
      *
      * @deprecated
      *
      *
-     * @param unknown $filter
-     * @param unknown $fieldRule
+     * @param \WebTales\MongoFilters\IFilter $filter
+     * @param array $fieldRule
      * @return MongoCursor
      */
-    public function customFind ($filter = array(), $fieldRule = array());
+    public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array());
     /**
      * Update an objet in the current collection
      *
@@ -152,12 +153,12 @@ interface IAbstractCollection {
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
-     * @param array $updateCond
-     *            array of condition to determine what should be updated
+     * @param \WebTales\MongoFilters\IFilter $updateCond
+     *            condition to determine what should be updated
      * @param array $options
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond,
+    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond,
     		$options = array());
     /**
      *
@@ -170,11 +171,11 @@ interface IAbstractCollection {
      *
      *
      *
-     * @param unknown $deleteCond
+     * @param \WebTales\MongoFilters\IFilter $deleteCond
      * @param unknown $options
      * @return Ambigous <boolean, multitype:>
      */
-    public function customDelete ($deleteCond, $options = array());
+    public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array());
     /**
      * getter of the model
      *
@@ -191,9 +192,9 @@ interface IAbstractCollection {
      * @return array array of ancestors
      */
     public function getAncestors ($item, $limit = 10);
-    public function fetchAllChildren ($parentId, $filters = null, $sort = null,
+    public function fetchAllChildren ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null,
     		$limit = 10);
-    public function readTree ($filters=null);
+    public function readTree (\WebTales\MongoFilters\IFilter $filters=null);
     public function drop ();
     public function dropIndexes();
     

@@ -203,7 +203,8 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             //copy the workspace into the live
             $obj['live'] = $obj['workspace'];
 
-            $updateCond = array('_id' => $this->getId($objectId));
+            $updateCond = new \WebTales\MongoFilters\UidFilter();
+            $updateCond->setValue($objectId);
 
             //update the content with the new values for the live array
             $returnArray = $this->customUpdate($obj, $updateCond);
