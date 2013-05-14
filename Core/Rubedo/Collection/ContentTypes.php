@@ -301,7 +301,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		return $geolocatedContentTypes;
 	}
 	public function isChangeableContentType($originalType,$newType){
-		
+	    $result = true;
 		$newFieldsArray=array();
 		$deletedFieldsArray=array();
 		$oldFieldsArray=array();
@@ -314,6 +314,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		 * Check for modified fields
 		 */
 		foreach ( $originalType as $originalField ) {
+		    
 			$found = false;
 			/*
 			 * Search for corresponding new field
@@ -324,6 +325,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 					break;
 				}
 			}
+			
 			// if no field found
 			if (! $found) {
 				$result = true;
@@ -352,7 +354,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 				}
 			}
 			
-			if (! $result) {
+			if (!$result) {
 				return false;
 			}
 		}
