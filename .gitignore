@@ -1,6 +1,7 @@
 *~
 library/Zend
 application/rubedo-backoffice-ui
+application/modules/zimmer
 build
 .DS_Store
 library/Phactory
