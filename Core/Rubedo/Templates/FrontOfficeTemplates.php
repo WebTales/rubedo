@@ -114,6 +114,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('displayCanonicalUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayCanonicalUrl'));
         $this->_twig->addFunction('getPageTitle', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getPageTitle'));
         $this->_twig->addFunction('getLinkedContents', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getLinkedContents'));
+        $this->_twig->addFunction('getTaxonomyTerm', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getTaxonomyTerm'));
     }
 
     /**
@@ -242,6 +243,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return Manager::getService('Contents')->getReflexiveLinkedContents($contentId,$typeId,$fieldName);
     }
     
+    public static function getTaxonomyTerm($id){
+        return Manager::getService('TaxonomyTerms')->findById($id);
+    }
 
     public function getAvailableThemes ()
     {
@@ -289,4 +293,6 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getCurrentThemeInfos(){
         return $this->getThemeInfos($this->getCurrentTheme());
     }
+    
+    
 }
