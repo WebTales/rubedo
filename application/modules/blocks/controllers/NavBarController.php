@@ -33,7 +33,6 @@ class Blocks_NavBarController extends Blocks_AbstractController
     public function indexAction ()
     {
         $output = $this->getAllParams();
-        //Zend_Debug::dump($this->getAllParams());die();
         
         $blockConfig = $this->getParam('block-config', array());
         if(isset($blockConfig['menuLevel'])){

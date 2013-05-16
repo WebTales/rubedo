@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle ContentTypes
@@ -47,7 +47,8 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		    }
 		    $readWorkspaceArray[] = null;
 		    $readWorkspaceArray[] = 'all';
-		    $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+// 		    $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+		    $filter = Filter::Factory('OperatorToValue')->setName('workspaces')->setOperator('$in')->setValue($readWorkspaceArray);
 		    $this->_dataService->addFilter($filter);
 		}
     }

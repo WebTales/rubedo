@@ -66,7 +66,7 @@ class FileAccess extends DataAccess implements IFileAccess
     public function read ()
     {
         // get the UI parameters
-        $filter = $this->getFilterArray();
+        $filters = clone $this->getFilters();
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
@@ -82,7 +82,7 @@ class FileAccess extends DataAccess implements IFileAccess
         }
         
         // get the cursor
-        $cursor = $this->_collection->find($filter, $fieldRule);
+        $cursor = $this->_collection->find($filters->toArray(), $fieldRule);
         $nbItems = $cursor->count();
         
         // apply sort, paging, filter
@@ -113,7 +113,7 @@ class FileAccess extends DataAccess implements IFileAccess
      *            search condition
      * @return array
      */
-    public function findOne ($value)
+    public function findOne (\WebTales\MongoFilters\IFilter $localFilter = null)
     {
         // get the UI parameters
         $includedFields = $this->getFieldList();
@@ -127,9 +127,12 @@ class FileAccess extends DataAccess implements IFileAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         
-        $value = array_merge($value, $this->getFilterArray());
+        $filters = clone $this->getFilters();
+        if($localFilter){
+             $filters->addFilter($localFilter);
+        }
         
-        $mongoFile = $this->_collection->findOne($value, $fieldRule);
+        $mongoFile = $this->_collection->findOne($filters->toArray(), $fieldRule);
         
         return $mongoFile;
     }

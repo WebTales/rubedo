@@ -133,61 +133,25 @@ class Contents extends WorkflowAbstractCollection implements IContents
             if (! in_array('all', $readWorkspaceArray)) {
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
-                $filter = array(
-                        'target' => array(
-                                '$in' => $readWorkspaceArray
-                        )
-                );
+                $filter = Filter::Factory('In')->setName('target')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
         
         if (self::$_isFrontEnd) {
             if (\Zend_Registry::isRegistered('draft')) {
-                $live = ! \Zend_Registry::get('draft');
+                $live = (\Zend_Registry::get('draft')==='false'||\Zend_Registry::get('draft')===false)?true:false;
             } else {
                 $live = true;
             }
             $now = Manager::getService('CurrentTime')->getCurrentTime();
-            $startPublicationDateField = ($live ? 'live' : 'draft') .
+            $startPublicationDateField = ($live ? 'live' : 'workspace') .
                      '.startPublicationDate';
-            $endPublicationDateField = ($live ? 'live' : 'draft') .
+            $endPublicationDateField = ($live ? 'live' : 'workspace') .
                      '.endPublicationDate';
-            $dateFilter = array(
-                    '$and' => array(
-                            array(
-                                    '$or' => array(
-                                            array(
-                                                    $startPublicationDateField => array(
-                                                            '$lte' => "$now"
-                                                    )
-                                            ),
-                                            array(
-                                                    $startPublicationDateField => null
-                                            ),
-                                            array(
-                                                    $startPublicationDateField => ""
-                                            )
-                                    )
-                            ),
-                            array(
-                                    '$or' => array(
-                                            array(
-                                                    $endPublicationDateField => array(
-                                                            '$gte' => "$now"
-                                                    )
-                                            ),
-                                            array(
-                                                    $endPublicationDateField => null
-                                            ),
-                                            array(
-                                                    $endPublicationDateField => ""
-                                            )
-                                    )
-                            )
-                    )
-            );
-//             $this->_dataService->addFilter($dateFilter);
+
+             $this->_dataService->addFilter(Filter::Factory('EmptyOrOperator')->setName($startPublicationDateField)->setOperator('$lte')->setValue($now));
+             $this->_dataService->addFilter(Filter::Factory('EmptyOrOperator')->setName($endPublicationDateField)->setOperator('$gte')->setValue($now));
         }
     }
 
@@ -214,11 +178,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         
         if (\Zend_Registry::isRegistered('draft')) {
-            $live = ! \Zend_Registry::get('draft');
+            $live = (\Zend_Registry::get('draft')==='false'||\Zend_Registry::get('draft')===false)?true:false;
         } else {
             $live = true;
         }
-        
         $returnArray = $this->getList($filters, $sort, $start, $limit, $live);
         
         return $returnArray;

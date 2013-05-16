@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IQueries, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IQueries, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Queries
@@ -205,6 +205,12 @@ class Queries extends AbstractCollection implements IQueries
         return $returnArray;
     }
 
+    /**
+     * Return an array of filters and sorting based on a query object of manual type
+     * 
+     * @param array $query
+     * @return array  unknown
+     */
     protected function _getFilterArrayForManual ($query)
     {
         $filterArray = array();
@@ -217,16 +223,27 @@ class Queries extends AbstractCollection implements IQueries
             'property' => 'status',
             'value' => 'published'
         );
+                
+        $filters = Filter::Factory()
+                    ->addFilter(Filter::Factory('InUid')->setValue($query['query']))
+                    ->addFilter(Filter::Factory('Value')->setName('status')->setValue('published'));
+        
         $sort[] = array(
             'property' => 'id',
             'direction' => 'DESC'
         );
         return array(
-            "filter" => $filterArray,
+            "filter" => $filters,
             "sort" => $sort
         );
     }
 
+    /**
+     * Return an array of filters and sorting based on a query object
+     *
+     * @param array $query
+     * @return array  unknown
+     */
     protected function _getFilterArrayForQuery ($query)
     {
         if(\Zend_Registry::isRegistered('draft')){
@@ -243,6 +260,8 @@ class Queries extends AbstractCollection implements IQueries
         
         $sort = array();
         $filterArray = array();
+        $filters = Filter::Factory();
+        
         
         $operatorsArray = array(
             '$lt' => '<',
@@ -254,22 +273,16 @@ class Queries extends AbstractCollection implements IQueries
         );
         
         /* Add filters on TypeId and publication */
-        $filterArray[] = array(
-            'operator' => '$in',
-            'property' => 'typeId',
-            'value' => $query['contentTypes']
-        );
-        $filterArray[] = array(
-            'property' => 'status',
-            'value' => 'published'
-        );
+        $filters->addFilter(Filter::Factory('In')->setName('typeId')->setValue($query['contentTypes']));
+        
+        $filters->addFilter(Filter::Factory('Value')->setName('status')->setValue('published'));
         
         // add computed filter for vocabularies rules
         if (is_array($query['vocabularies'])) {
             if(!isset($query['vocabulariesRule'])){
                 $query['vocabulariesRule']='ET';
             }
-            $filterArray[] = $this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']);
+            $filters->addFilter($this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']));
         }
         
         /* Add filter on FieldRule */
@@ -280,34 +293,26 @@ class Queries extends AbstractCollection implements IQueries
                 $nextDate->add(new \DateInterval('PT23H59M59S'));
                 $nextDate = (array) $nextDate;
                 if ($ruleOperator === 'eq') {
-                    $filterArray[] = array(
-                        'operator' => '$gt',
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($value['value'])
-                    );
-                    $filterArray[] = array(
-                        'operator' => '$lt',
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                    );
+                    
+                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                        ->setOperator('$gt')
+                        ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                    
+                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                        ->setOperator('$lt')
+                        ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
                 } elseif ($ruleOperator === '$gt') {
-                    $filterArray[] = array(
-                        'operator' => $ruleOperator,
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                    );
+                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                        ->setOperator($ruleOperator)
+                        ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
                 } elseif ($ruleOperator === '$lte') {
-                    $filterArray[] = array(
-                        'operator' => $ruleOperator,
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($nextDate['date'])
-                    );
+                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                        ->setOperator('$lte')
+                        ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
                 } else {
-                    $filterArray[] = array(
-                        'operator' => $ruleOperator,
-                        'property' => $property,
-                        'value' => $this->_dateService->convertToTimeStamp($value['value'])
-                    );
+                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                        ->setOperator($ruleOperator)
+                        ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
                 }
             }
             /*
@@ -327,7 +332,7 @@ class Queries extends AbstractCollection implements IQueries
         }
         
         return array(
-            "filter" => $filterArray,
+            "filter" => $filters,
             "sort" => $sort
         );
     }
@@ -339,29 +344,24 @@ class Queries extends AbstractCollection implements IQueries
      *            array of rules by vocabulary
      * @param string $vocabulariesRule
      *            OU | ET rule to assemble all filters
-     * @return array
+     * @return \WebTales\MongoFilters\IFilter
      */
     protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
     {
-        $filterArray = array();
-        foreach ($vocabularies as $key => $value) {
-            if (count($value['terms']) > 0) {
-                $filterArray[] = $this->_getVocabularyCondition($key, $value);
-            }
-        }
+        
         if ($vocabulariesRule == 'OU') {
-            $filterArray = array(
-                'operator' => '$or',
-                'value' => $filterArray
-            );
+            $filters = Filter::Factory('Or');
         } else {
-            $filterArray = array(
-                'operator' => '$and',
-                'value' => $filterArray
-            );
+            $filters = Filter::Factory('And');
         }
         
-        return $filterArray;
+        foreach ($vocabularies as $key => $value) {
+            if (count($value['terms']) > 0) {
+                $filters->addFilter($this->_getVocabularyCondition($key, $value));
+            }
+        }
+        
+        return $filters;
     }
 
     /**
@@ -371,7 +371,7 @@ class Queries extends AbstractCollection implements IQueries
      *            vocabulary name
      * @param array $value
      *            vocabulary parameters (rule and terms)
-     * @return array
+     * @return \WebTales\MongoFilters\IFilter
      */
     protected function _getVocabularyCondition ($key, $value)
     {
@@ -393,7 +393,10 @@ class Queries extends AbstractCollection implements IQueries
         }
         switch ($rule) {
             case 'allRec':
-                $subArray = array();
+                // verify all branches => at least one of each branch
+                $filters = Filter::Factory('And');
+                
+                //Definie each sub conditions
                 foreach ($value['terms'] as $child) {
                     $terms = $this->_taxonomyReader->fetchAllChildren($child);
                     $termsArray = array(
@@ -403,23 +406,15 @@ class Queries extends AbstractCollection implements IQueries
                         $termsArray[] = $taxonomyTerms["id"];
                     }
                     // some of a branch
-                    $subArray[] = array(
-                        $this->_workspace . '.taxonomy.' . $key => array(
-                            '$in' => $termsArray
-                        )
-                    );
+                    $filters->addFilter(Filter::Factory('In')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($termsArray));
                 }
-                // verify all branches => at least one of each branch
-                $result = array(
-                    '$and' => $subArray
-                );
+
                 break;
             case 'all': // include all terms
-                $result = array(
-                    $this->_workspace . '.taxonomy.' . $key => array(
-                        '$all' => $value['terms']
-                    )
-                );
+                $filters = Filter::Factory('OperatorToValue')
+                            ->setName($this->_workspace . '.taxonomy.' . $key)
+                            ->setOperator('$all')
+                            ->setValue($value['terms']);
                 break;
             case 'someRec': // just add children and do 'some' condition
                 foreach ($value['terms'] as $child) {
@@ -429,12 +424,7 @@ class Queries extends AbstractCollection implements IQueries
                     }
                 }
             case 'some': // simplest one: at least on of the termes
-                
-                $result = array(
-                    $this->_workspace . '.taxonomy.' . $key => array(
-                        '$in' => $value['terms']
-                    )
-                );
+                $filters = Filter::Factory('In')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
                 break;
             case 'notRec':
                 foreach ($value['terms'] as $child) {
@@ -444,17 +434,14 @@ class Queries extends AbstractCollection implements IQueries
                     }
                 }
             case 'not': // include all terms
-                $result = array(
-                    $this->_workspace . '.taxonomy.' . $key => array(
-                        '$nin' => $value['terms']
-                    )
-                );
+                $filters = Filter::Factory('NotIn')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
+
                 break;
             default:
                 Throw new \Rubedo\Exceptions\Server("rule \"$rule\" not implemented.");
                 break;
         }
         
-        return $result;
+        return $filters;
     }
 }

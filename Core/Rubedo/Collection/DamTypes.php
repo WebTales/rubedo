@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IDamTypes,Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IDamTypes,Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Groups
@@ -47,6 +47,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 	        $readWorkspaceArray[] = null;
 	        $readWorkspaceArray[] = 'all';
 	        $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+	        $filter = Filter::Factory('OperatorToValue')->setName('workspaces')->setOperator('$in')->setValue($readWorkspaceArray);
 	        $this->_dataService->addFilter($filter);
 		}
     }
