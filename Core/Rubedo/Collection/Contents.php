@@ -754,17 +754,14 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getListByTypeId ($typeId)
     {
-        $filterArray[] = array(
-                "property" => "typeId",
-                "value" => $typeId
-        );
-        return $this->getList($filterArray);
+        $filter = Filter::Factory('Value')->setName('typeId')->setValue($typeId);
+        return $this->getList($filter);
     }
 
     public function isTypeUsed ($typeId)
     {
-        $filterArray["typeId"] = $typeId;
-        $result = $this->_dataService->findOne($filterArray);
+        $filter = Filter::Factory('Value')->setName('typeId')->setValue($typeId);
+        $result = $this->_dataService->findOne($filter);
         return ($result != null) ? array(
                 "used" => true
         ) : array(
@@ -802,6 +799,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @return array Return the contents list
      */
     public function getOrderedList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
+        throw new \Exception('migrate to new Filters');
         $filterKey = null;
         
         foreach ($filters as $key => $filter) {
@@ -846,7 +844,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             throw new \Rubedo\Exceptions\User('ContentType not found');
         }
         
-        $deleteCond = array('typeId'=>$contentTypeId);
+        $deleteCond = Filter::Factory('Value')->setName('typeId')->setValue($contentTypeId);
         $result = $this->_dataService->customDelete($deleteCond, array());
         
         if(isset($result['ok']) && $result['ok']){

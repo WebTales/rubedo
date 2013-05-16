@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager;
+use WebTales;
+use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle TaxonomyTerms
@@ -199,18 +200,14 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 return array_values($returnArray);
             } else {
                 $rootPage = Manager::getService('Pages')->findById($parentId);
-                
+                if(!filters instanceof \WebTales\MongoFilters\IFilter){
+                    $filters = Filter::Factory();
+                }
                 if ($rootPage) {
-                    $filters[] = array(
-                        'property' => 'site',
-                        'value' => $rootPage["site"]
-                    );
+                    $filters->addFilter(Filter::Factory('Value')->setName('site')->setValue($rootPage["site"]));
                 } else {
-                    $filters[] = array(
-                        'property' => 'site',
-                        'value' => $parentId
-                    );
                     $parentId = 'root';
+                    $filters->addFilter(Filter::Factory('Value')->setName('site')->setValue($parentId));
                 }
                 
                 $returnArray = array();
@@ -255,10 +252,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             'property' => 'orderValue',
             'direction' => 'ASC'
         );
-        $filters[] = array(
-            'property' => 'site',
-            'value' => $array['id']
-        );
+
+        $filters = Filter::Factory('Value')->setName('site')->setValue($array['id']);
+
         $children = Manager::getService('Pages')->readChild('root', $filters, $sort);
         if (count($children) > 0) {
             $array['expandable'] = true;

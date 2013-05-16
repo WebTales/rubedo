@@ -129,8 +129,8 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
             $sort = null;
         }
 
-
-        $dataValues = $this->_dataService->getList($this->_parentId, $filters, $sort);
+        $mongoFilters = $this->_buildFilter($filters);
+        $dataValues = $this->_dataService->getList($this->_parentId, $mongoFilters, $sort);
 
         $response = array();
         $response['total'] = count($dataValues);

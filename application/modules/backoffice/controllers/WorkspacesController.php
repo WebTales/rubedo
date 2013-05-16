@@ -70,11 +70,11 @@ class Backoffice_WorkspacesController extends Backoffice_DataAccessController
         
         $notAll = $this->getParam('notAll',false);
         
-        if($notAll){
-            $filters['notAll']=true;
-        }
-        
-        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit);
+//         if($notAll){
+//             $filters['notAll']=true;
+//         }
+        $mongoFilters = $this->_buildFilter($filters);
+        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
         
         $response = array();
         $response['total'] = $dataValues['count'];
