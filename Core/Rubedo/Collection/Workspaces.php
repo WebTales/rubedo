@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IWorkspaces,Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IWorkspaces,Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Workspaces
@@ -47,9 +47,9 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 	            if($workspaceId == 'global'){
 	                continue;
 	            }
-	            $mongoIdArray[]=$this->_dataService->getId($workspaceId);
+	            $mongoIdArray[]=$workspaceId;
 	        }
-	        $filter = array('_id'=> array('$in'=>$mongoIdArray));
+	        $filter = Filter::Factory('InUid')->setValue($mongoIdArray);
 	        
 	        $this->_dataService->addFilter($filter);
 		}else{

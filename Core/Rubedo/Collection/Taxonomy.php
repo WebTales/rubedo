@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Taxonomy
@@ -57,6 +57,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
                                 '$in' => $readWorkspaceArray
                         )
                 );
+                $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
