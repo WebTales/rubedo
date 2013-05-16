@@ -88,6 +88,8 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
+     * 
+     * @todo implement notAll Filters
      */
     public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {

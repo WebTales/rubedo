@@ -103,7 +103,6 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['displayRootPage'] = $displayRootPage;
         
         $this->excludeFromMenuCondition = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(true);
-        //array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
         
         $this->pageService = Manager::getService('Pages');
         

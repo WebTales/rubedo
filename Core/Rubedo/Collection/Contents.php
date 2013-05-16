@@ -796,6 +796,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @param string $limit
      * @param bool $live
      *
+     * @todo migrate to new filters
      * @return array Return the contents list
      */
     public function getOrderedList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
