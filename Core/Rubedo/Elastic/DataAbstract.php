@@ -80,11 +80,8 @@ class DataAbstract
      *
      * @var \Elastica_Index
      */
-    // TODO : get params into .ini
-    protected static $_content_index_param = array('index' => array(
-		'number_of_shards' => 1, 
-		'number_of_replicas' => 0 ));
-		
+    protected static $_content_index_param; 
+    		
     /**
      * Object which represent the dam ES index
      *
@@ -97,10 +94,7 @@ class DataAbstract
      *
      * @var \Elastica_Index
      */
-     // TODO : get params into .ini
-    protected static $_dam_index_param = array('index' => array(
-		'number_of_shards' => 1, 
-		'number_of_replicas' => 0 ));
+    protected static $_dam_index_param;
 	
     /**
      * Initialize a search service handler to index or query Elastic Search
