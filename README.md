@@ -21,7 +21,7 @@ Installation
 * Composer (http://getcomposer.org)
 * Phing (http://www.phing.info)
 * MongoDB (http://www.mongodb.org)
-* ElasticSearch (http://www.elasticsearch.org)
+* ElasticSearch (http://www.elasticsearch.org), last version compatible with Elastica PHP client, 0.19.8 at this moment (https://github.com/ruflin/Elastica/)
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 
 ### Install Steps
