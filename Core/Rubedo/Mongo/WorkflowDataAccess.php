@@ -234,6 +234,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         //Adaptation of the conditions for the workflow
         $filter = $this->getFilters();
         $this->_adaptFilter($filter);
+        //\Zend_Debug::dump($filter->toJson());die();
         $sort = $this->getSortArray();
         $this->_adaptSort($sort);
         $includedFields = $this->getFieldList();

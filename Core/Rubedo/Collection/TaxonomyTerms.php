@@ -150,6 +150,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     }
     
     protected function _lookForNavigation(\WebTales\MongoFilters\IFilter $filters){
+        $result = false;
         if($filters instanceof \WebTales\MongoFilters\ICompositeFilter){ //do recursive adaptation to composite filter
             $filtersArray = $filters->getFilters();
             foreach ($filtersArray as $filter){
@@ -200,7 +201,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 return array_values($returnArray);
             } else {
                 $rootPage = Manager::getService('Pages')->findById($parentId);
-                if(!filters instanceof \WebTales\MongoFilters\IFilter){
+                if(!$filters instanceof \WebTales\MongoFilters\IFilter){
                     $filters = Filter::Factory();
                 }
                 if ($rootPage) {
