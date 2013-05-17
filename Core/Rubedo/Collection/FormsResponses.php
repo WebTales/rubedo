@@ -17,7 +17,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IFormsResponses;
+use Rubedo\Interfaces\Collection\IFormsResponses, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Delegations
@@ -38,23 +38,17 @@ class FormsResponses extends AbstractCollection implements IFormsResponses {
 	 * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
 	 */
 	public function getValidResponsesByFormId($formId, $start = null, $limit = null) {
-		$filter = array ();
-		$filter [] = array (
-				'property' => 'status',
-				'value' => 'finished' 
-		);
-		$filter [] = array (
-				'property' => 'formId',
-				'value' => $formId 
-		);
-		
+	    $filters = Filter::Factory();
+	    $filters->addFilter(Filter::Factory('Value')->setName('status')->setValue('finished'));
+	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
+	   	
 		$sort = array();
 		$sort[] = array (
 				'property' => 'lastUpdateTime',
 				'direction' => 'ASC' 
 		);
 		
-		return $this->getList ( $filter, $sort, $start, $limit );
+		return $this->getList ( $filters, $sort, $start, $limit );
 	}
 	
 	/**
@@ -63,11 +57,10 @@ class FormsResponses extends AbstractCollection implements IFormsResponses {
 	 * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
 	 */
 	public function getResponsesByFormId($formId, $start = null, $limit = null) {
-	    $filter = array ();
-	    $filter [] = array (
-	        'property' => 'formId',
-	        'value' => $formId
-	    );
+	    $filters = Filter::Factory();
+	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
+
+	    	    
 	
 	    $sort = array();
 	    $sort[] = array (
@@ -75,32 +68,19 @@ class FormsResponses extends AbstractCollection implements IFormsResponses {
 	        'direction' => 'ASC'
 	    );
 	
-	    return $this->getList ( $filter, $sort, $start, $limit );
+	    return $this->getList ( $filters, $sort, $start, $limit );
 	}
 	
 	public function countValidResponsesByFormId($formId) {
-		$filter = array ();
-		$filter [] = array (
-				'property' => 'status',
-				'value' => 'finished' 
-		);
-		$filter [] = array (
-				'property' => 'formId',
-				'value' => $formId 
-		);
-		return $this->count ( $filter );
+	    $filters = Filter::Factory();
+	    $filters->addFilter(Filter::Factory('Value')->setName('status')->setValue('finished'));
+	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
+		return $this->count ( $filters );
 	}
 	public function countInvalidResponsesByFormId($formId) {
-		$filter = array ();
-		$filter [] = array (
-				'property' => 'status',
-				'value' => 'finished',
-				'operator' => '$ne' 
-		);
-		$filter [] = array (
-				'property' => 'formId',
-				'value' => $formId 
-		);
-		return $this->count ( $filter );
+	    $filters = Filter::Factory();
+	    $filters->addFilter(Filter::Factory('Not')->setName('status')->setValue('finished'));
+	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
+		return $this->count ( $filters );
 	}
 }

@@ -212,18 +212,7 @@ class Queries extends AbstractCollection implements IQueries
      * @return array  unknown
      */
     protected function _getFilterArrayForManual ($query)
-    {
-        $filterArray = array();
-        $filterArray[] = array(
-            'operator' => '$in',
-            'property' => 'id',
-            'value' => $query['query']
-        );
-        $filterArray[] = array(
-            'property' => 'status',
-            'value' => 'published'
-        );
-                
+    {                
         $filters = Filter::Factory()
                     ->addFilter(Filter::Factory('InUid')->setValue($query['query']))
                     ->addFilter(Filter::Factory('Value')->setName('status')->setValue('published'));
