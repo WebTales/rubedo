@@ -532,6 +532,28 @@ jQuery(".radiogroup-edit").click( function () {
 	}
 	
 	});
+/*************************************************/
+
+/*************************************************
+ * 			jQuery for checkboxgroup editing
+ ************************************************/
+
+jQuery(".checkboxgroup-edit").click( function () {
+	if(!jQuery(this).find("input").is(":disabled")){
+		var checkboxGroupId=jQuery(this).attr("id");
+		var newValue={ };
+		newValue[jQuery(this).find("input").attr("name")]=new Array();
+		jQuery(this).find("input").each(function(b,a){
+			if(jQuery(this).is(":checked")){
+				newValue[jQuery(this).attr("name")].push(jQuery(this).attr("value"));
+			}
+		});
+		
+		checkboxgroupCache[checkboxGroupId]=newValue;
+		console.log(checkboxgroupCache);
+	}
+	
+	});
 /************************************************/
 
 /************************************************
