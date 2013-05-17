@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Mongo;
 
-use Rubedo\Interfaces\Mongo\IFileAccess;
+use Rubedo\Interfaces\Mongo\IFileAccess,WebTales\MongoFilters\IFilter;
 
 /**
  * Class implementing the API to MongoDB
@@ -63,10 +63,16 @@ class FileAccess extends DataAccess implements IFileAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read ()
+    public function read (\WebTales\MongoFilters\IFilter $filters = null)
     {
         // get the UI parameters
-        $filters = clone $this->getFilters();
+        $LocalFilter = clone $this->getFilters();
+        
+        //add Read Filters
+        if($filters){
+            $LocalFilter->addFilter($filters);
+        }
+        
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
@@ -82,7 +88,7 @@ class FileAccess extends DataAccess implements IFileAccess
         }
         
         // get the cursor
-        $cursor = $this->_collection->find($filters->toArray(), $fieldRule);
+        $cursor = $this->_collection->find($LocalFilter->toArray(), $fieldRule);
         $nbItems = $cursor->count();
         
         // apply sort, paging, filter

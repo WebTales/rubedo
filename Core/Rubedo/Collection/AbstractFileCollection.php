@@ -58,22 +58,6 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      */
     public function getList ($filters = null, $sort = null, $start = null, $limit = null)
     {
-        if (isset($filters)) {
-            foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) || ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(array(
-                        $value["property"] => $value["value"]
-                    ));
-                } else 
-                    if ($value["operator"] == 'like') {
-                        $this->_dataService->addFilter(array(
-                            $value["property"] => array(
-                                '$regex' => $this->_dataService->getRegex('/.*' . $value["value"] . '.*/i')
-                            )
-                        ));
-                    }
-            }
-        }
         if (isset($sort)) {
             foreach ($sort as $value) {
                 
@@ -89,7 +73,7 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
             $this->_dataService->setNumberOfResults($limit);
         }
         
-        $dataValues = $this->_dataService->read();
+        $dataValues = $this->_dataService->read($filters);
         
         return $dataValues;
     }

@@ -43,9 +43,10 @@ interface IDataAccess
     /**
      * Do a find request on the current collection
      *
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function read ();
+    public function read (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Do a findone request on the current collection
@@ -106,28 +107,33 @@ interface IDataAccess
     /**
      * Do a find request on the current collection and return content as tree
      *
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function readTree ();
+    public function readTree (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Find child of a node tree
      * 
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @param $parentId id
      *            of the parent node
      * @return array children array
      */
-    public function readChild ($parentId);
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Do a count request based on current filter
-     * 
+     *
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return integer
      */
-    public function count ();
+    public function count (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Add a filter condition to the service
+     * 
+     * These filters are shared between all queries to the service
      *
      * Filter should be
      * array('field'=>'value')
@@ -177,6 +183,9 @@ interface IDataAccess
      */
     public static function setDefaultDb ($dbName);
     
+    /**
+     * Clear the current Filters for this instance of the service
+     */
     public function clearFilter ();
 
     /**

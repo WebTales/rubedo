@@ -158,21 +158,15 @@ class Dam extends AbstractCollection implements IDam
 
     public function getByType ($typeId)
     {
-        $filter = array(
-            array(
-                'property' => 'typeId',
-                'value' => $typeId
-            )
-        );
-        
+        $filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
         return $this->getList($filter);
 	}
 
 	
 	public function getListByDamTypeId($typeId)
 	{
-		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
-		return $this->getList($filterArray);
+		$filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
+		return $this->getList($filter);
 	}
 	
 	/**

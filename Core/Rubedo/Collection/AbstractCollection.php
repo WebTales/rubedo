@@ -98,9 +98,6 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
-        if($filters){
-            $this->_dataService->addFilter($filters);
-        }
 
         if (isset($sort)) {
             foreach ($sort as $value) {
@@ -118,7 +115,7 @@ abstract class AbstractCollection implements IAbstractCollection
         if (isset($limit)) {
             $this->_dataService->setNumberOfResults($limit);
         }
-        $dataValues = $this->_dataService->read();
+        $dataValues = $this->_dataService->read($filters);
         if($dataValues && is_array($dataValues)){
             foreach ($dataValues['data'] as &$obj) {
                 $obj = $this->_addReadableProperty($obj);
@@ -139,9 +136,6 @@ abstract class AbstractCollection implements IAbstractCollection
         $returnArray = array();
         $listResult = $this->getList($filters);
         $list = $listResult['data'];
-        foreach ($list as &$obj) {
-            $obj = $this->_addReadableProperty($obj);
-        }
         foreach ($list as $item) {
             $returnArray = $this->_addParentToArray($returnArray, $item);
         }
@@ -171,7 +165,7 @@ abstract class AbstractCollection implements IAbstractCollection
             return $array;
         }
         
-        $parentItem = Manager::getService('Groups')->findById($item['parentId']);
+        $parentItem = $this->findById($item['parentId']);
         
         if ($parentItem) {
             $array[$parentItem['id']] = $parentItem;
@@ -494,38 +488,7 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
-        if($filters){
-            $this->_dataService->addFilter($filters);
-        }
-//         if (isset($filters)) {
-//             foreach ($filters as $value) {
-//                 if ((! (isset($value["operator"]))) ||
-//                          ($value["operator"] == "eq")) {
-//                     $this->_dataService->addFilter(
-//                             array(
-//                                     $value["property"] => $value["value"]
-//                             ));
-//                 } else 
-//                     if ($value["operator"] == 'like') {
-//                         $this->_dataService->addFilter(
-//                                 array(
-//                                         $value["property"] => array(
-//                                                 '$regex' => $this->_dataService->getRegex(
-//                                                         '/.*' . $value["value"] .
-//                                                                  '.*/i')
-//                                         )
-//                                 ));
-//                     } elseif (isset($value["operator"])) {
-//                         $this->_dataService->addFilter(
-//                                 array(
-//                                         $value["property"] => array(
-//                                                 $value["operator"] => $value["value"]
-//                                         )
-//                                 ));
-//                     }
-//             }
-//         }
-        return $this->_dataService->count();
+        return $this->_dataService->count($filters);
     }
 
     /**
@@ -561,9 +524,7 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
-        if($filters){
-            $this->_dataService->addFilter($filters);
-        }        
+      
         if (isset($sort)) {
             foreach ($sort as $value) {
                 $this->_dataService->addSort(
@@ -578,7 +539,7 @@ abstract class AbstractCollection implements IAbstractCollection
             ));
         }
         
-        $result = $this->_dataService->readChild($parentId);
+        $result = $this->_dataService->readChild($parentId,$filters);
         if($result && is_array($result)){
             foreach ($result as &$obj) {
                 $obj = $this->_addReadableProperty($obj);
@@ -636,10 +597,7 @@ abstract class AbstractCollection implements IAbstractCollection
 
     public function readTree (\WebTales\MongoFilters\IFilter $filters = null)
     {
-        if ($filters) {
-            $this->_dataService->addFilter($filters);
-        }
-        $tree = $this->_dataService->readTree();
+        $tree = $this->_dataService->readTree($filters);
         return $tree['children'];
     }
 

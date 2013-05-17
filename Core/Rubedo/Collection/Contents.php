@@ -605,13 +605,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getByType ($typeId, $start = null, $limit = null)
     {
-        $filter = array(
-                array(
-                        'property' => 'typeId',
-                        'value' => $typeId
-                )
-        );
-        
+        $filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
         return $this->getList($filter,null,$start,$limit);
     }
 
@@ -625,13 +619,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         foreach ($result['data'] as $value) {
             $contentTypesArray[] = $value['id'];
         }
-        
-        $result = $this->customDelete(
-                array(
-                        'typeId' => array(
-                                '$nin' => $contentTypesArray
-                        )
-                ));
+        $filter = Filter::Factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
+        $result = $this->customDelete($filter);
         
         if ($result['ok'] == 1) {
             return array(
@@ -654,15 +643,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         foreach ($result['data'] as $value) {
             $contentTypesArray[] = $value['id'];
         }
-        
-        return $this->count(
-                array(
-                        array(
-                                'property' => 'typeId',
-                                'operator' => '$nin',
-                                'value' => $contentTypesArray
-                        )
-                ));
+        $filter = Filter::Factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
+        return $this->count($filter);
     }
 
     /**

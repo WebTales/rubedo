@@ -281,10 +281,16 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read ()
+    public function read (\WebTales\MongoFilters\IFilter $filters = null)
     {
         // get the UI parameters
-        $filter = clone $this->getFilters();
+        $localFilter = clone $this->getFilters();
+        
+        //add Read Filters
+        if($filters){
+            $localFilter->addFilter($filters);
+        }
+        
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
@@ -300,7 +306,7 @@ class DataAccess implements IDataAccess
         }
         
         // get the cursor
-        $cursor = $this->_collection->find($filter->toArray(), $fieldRule);
+        $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
         $nbItems = $cursor->count();
         
         // apply sort, paging, filter
@@ -366,11 +372,12 @@ class DataAccess implements IDataAccess
      * Do a find request on the current collection and return content as tree
      *
      * @see \Rubedo\Interfaces\IDataAccess::readTree()
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function readTree ()
+    public function readTree (\WebTales\MongoFilters\IFilter $filters = null)
     {
-        $read = $this->read();
+        $read = $this->read($filters);
         $dataStore = $read['data'];
         $dataStore[]=array('parentId'=>'none','id'=>'root');
         
@@ -427,12 +434,17 @@ class DataAccess implements IDataAccess
      *
      * @param $parentId id
      *            of the parent node
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array children array
      */
-    public function readChild ($parentId)
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null)
     {
         // get the UI parameters
-        $filter = clone $this->getFilters();
+        $localFilter = clone $this->getFilters();
+        if($filters){
+            $localFilter->addFilter($filters);
+        }
+        
         $sort = $this->getSortArray();
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
@@ -447,10 +459,10 @@ class DataAccess implements IDataAccess
         
         $parentFilter = Filter::Factory('Value');
         $parentFilter->setName('parentId')->setValue($parentId);
-        $filter->addFilter($parentFilter);
+        $localFilter->addFilter($parentFilter);
         
         // get the cursor
-        $cursor = $this->_collection->find($filter->toArray(), $fieldRule);
+        $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
                 
         // apply sort, paging, filter
         $cursor->sort($sort);
@@ -804,10 +816,14 @@ class DataAccess implements IDataAccess
     /*
      * (non-PHPdoc) @see \Rubedo\Interfaces\Mongo\IDataAccess::count()
      */
-    public function count ()
+    public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
-        $filter = clone $this->getFilters();
-        return $this->_collection->count($filter->toArray());
+        $localFilter = clone $this->getFilters();
+        if($filters){
+            $localFilter->addFilter($filters);
+        }
+        
+        return $this->_collection->count($localFilter->toArray());
     }
 
     /**

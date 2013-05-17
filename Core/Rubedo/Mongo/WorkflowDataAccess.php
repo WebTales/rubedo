@@ -230,11 +230,17 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return array
      */
-    public function read() {
+    public function read(\WebTales\MongoFilters\IFilter $filters = null) {
         //Adaptation of the conditions for the workflow
-        $filter = $this->getFilters();
-        $this->_adaptFilter($filter);
-        //\Zend_Debug::dump($filter->toJson());die();
+        $localFilter = $this->getFilters();
+        
+        //add Read Filters
+        if($filters){
+            $this->_adaptFilter($filters);
+        }
+        
+        $this->_adaptFilter($localFilter);
+
         $sort = $this->getSortArray();
         $this->_adaptSort($sort);
         $includedFields = $this->getFieldList();
@@ -242,7 +248,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         $excludedFields = $this->getExcludeFieldList();
         $this->_adaptExcludeFields($excludedFields);
 
-        $content = parent::read();
+        $content = parent::read($filters);
 		$count = $content['count'];
 		$content = $content['data'];
 		

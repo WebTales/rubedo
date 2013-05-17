@@ -52,10 +52,9 @@ class Versioning extends AbstractCollection implements IVersioning
 		$filter = Filter::Factory('Value');
         $filter->setName('contentId')->setValue($contentId);
         
-		$this->_dataService->addFilter($filter);
 		$this->_dataService->addSort($sort);
 		
-		$contentVersions = $this->_dataService->read();
+		$contentVersions = $this->_dataService->read($filter);
 		$contentVersions = $contentVersions['data'];
 		
 		if(isset($obj['createUser'])){
