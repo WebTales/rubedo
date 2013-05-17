@@ -54,7 +54,7 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
         
         $url = $protocol . '://' .
                  Manager::getService('Sites')->getHost($page['site']) . '/' .
-                 $pageUrl;
+                 ltrim($pageUrl,'/');
         
         $returnArray = array(
                 'url' => $url
