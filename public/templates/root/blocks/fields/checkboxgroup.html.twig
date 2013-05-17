@@ -3,7 +3,7 @@
 	{% for item in value %}
 <div class="checkboxgroup" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" >
 	{% for radioButton in cValue["config"]["items"] %}
-		<label class="checkbox" style="cursor:default !important;">
+		<label class="checkbox-edit" style="cursor:default !important;">
 		  <input type="checkbox" disabled {% if radioButton.inputValue==item[radioButton.name]%}checked{% elseif item[radioButton.name] is iterable and radioButton.inputValue in item[radioButton.name] %}checked{% endif  %}>
 		  {{ radioButton.boxLabel }}
 		</label>
@@ -14,7 +14,7 @@
 <p>{{ cValue["config"]["fieldLabel"] }} </p>
   <div class="checkboxgroup" id="{{ data.id }}_{{ key }}" > 
 	{% for radioButton in cValue["config"]["items"] %}
-		<label class="checkbox" style="cursor:default !important;">
+		<label class="checkbox-edit" style="cursor:default !important;">
 		  <input type="checkbox" disabled {% if radioButton.inputValue==value[radioButton.name]%}checked{% elseif value[radioButton.name] is iterable and radioButton.inputValue in value[radioButton.name] %}checked{% endif  %}>
 		  {{ radioButton.boxLabel }}
 		</label>

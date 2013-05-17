@@ -524,6 +524,15 @@ function swithToEditMode() {
 	jQuery('.time').each(function() {
 		jQuery(this).html(jQuery(this).html() + "<div class=\"timepicker\"></div>");
 	});
+	jQuery('.checkbox-edit').each(function() {
+		jQuery(this).find("input").removeAttr("disabled");
+	});
+	jQuery('.checkbox-edit').each(function() {
+		jQuery(this).find("input").removeAttr("disabled");
+	});
+	jQuery('.radiogroup-edit').each(function() {
+		jQuery(this).find("input").removeAttr("disabled");
+	});
 	 starEdit=true;
 	 EditMode=true;
 }
@@ -538,7 +547,15 @@ function swithToViewMode() {
 	jQuery('#editmode').hide();
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
-	
+	jQuery('.checkbox-edit').each(function() {
+		jQuery(this).find("input").attr("disabled","diabled");
+	});
+	jQuery('.checkbox-edit').each(function() {
+		jQuery(this).find("input").attr("disabled","diabled");
+	});
+	jQuery('.radiogroup-edit').each(function() {
+		jQuery(this).find("input").attr("disabled","diabled");
+	});
 	jQuery(".datepicker").remove();
 	jQuery(".timepicker").remove();
 	EditMode=false;
