@@ -7,8 +7,10 @@ var cache = new Array();
 var dateCache = new Array();
 var object = null;
 var errors = new Array();
+var asyncIncrementor= 0;
 var timeCache = new Array();
 var numberCache = new Array();
+var checkboxCache = new Array();
 var starEdit=false;
 var EditMode=true;
 var ratingCache=new Array();
@@ -138,6 +140,7 @@ jQuery('#btn-cancel').click(function() {
 	var cacheChanged = 0;
 	var dateCacheChanged = 0;
 	var timeCacheChanged = 0;
+	var checkboxCacheChanged = 0;
 	var numberCacheChanged = 0;
 	
 	/**
@@ -152,6 +155,12 @@ jQuery('#btn-cancel').click(function() {
 	 */
 	for(var contentId in dateCache) {
 		dateCacheChanged++;
+	}
+	/**
+	 *  Count modifications on checkboxes
+	 */
+	for(var contentId in checkboxCache) {
+		checkboxCacheChanged++;
 	}
 	
 	/**
@@ -168,7 +177,7 @@ jQuery('#btn-cancel').click(function() {
 		numberCacheChanged++;
 	}
 	
-	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0) {
+	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0 || checkboxCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -270,6 +279,13 @@ jQuery('#btn-save').click(function() {
 		modified = true;
 		save(contentId, dateCache[contentId].newDate)
 		}
+	/**
+	 * Save checkboxes
+	 */
+	for( var contentId in checkboxCache) {
+		modified = true;
+		save(contentId, checkboxCache[contentId])
+		}
 	
 	/**
 	 * save times
@@ -289,13 +305,6 @@ jQuery('#btn-save').click(function() {
 		
 	}
 	
-	if(errors.length > 0) {
-		notify('failure', 'Une erreur est survenue, il est possible que vos modifications soient perdues');
-	} else if (modified == true){
-		notify('success', 'Les données ont été sauvegardées.');
-	}
-	
-	errors = new Array();
 	/**
 	 * save maps
 	 */
@@ -462,6 +471,21 @@ jQuery(".star-edit").click( function () {
 	
 	});
 
+/*************************************************/
+
+/*************************************************
+ * 			jQuery for checkbox editing
+ ************************************************/
+
+jQuery(".checkbox-edit").click( function () {
+	if(!jQuery(this).find("input").is(":disabled")){
+		var newValue=jQuery(this).find("input").is(":checked");
+		var checkboxId=jQuery(this).attr("id");
+		checkboxCache[checkboxId]=newValue;
+		console.log(newValue);
+	}
+	
+	});
 
 /************************************************/
 
@@ -509,6 +533,7 @@ jQuery('.block').mouseover(function() {
 });
 
 function swithToEditMode() {
+	jQuery('#alerts').html("");
 	jQuery('.editable').attr('contenteditable', 'true');
 	jQuery('.editable, .editable-img, .date, .time, .number').css('cursor', 'text');
 	CKEDITOR.inlineAll();
@@ -527,7 +552,7 @@ function swithToEditMode() {
 	jQuery('.checkbox-edit').each(function() {
 		jQuery(this).find("input").removeAttr("disabled");
 	});
-	jQuery('.checkbox-edit').each(function() {
+	jQuery('.checkboxgroupel-edit').each(function() {
 		jQuery(this).find("input").removeAttr("disabled");
 	});
 	jQuery('.radiogroup-edit').each(function() {
@@ -550,7 +575,7 @@ function swithToViewMode() {
 	jQuery('.checkbox-edit').each(function() {
 		jQuery(this).find("input").attr("disabled","diabled");
 	});
-	jQuery('.checkbox-edit').each(function() {
+	jQuery('.checkboxgroupel-edit').each(function() {
 		jQuery(this).find("input").attr("disabled","diabled");
 	});
 	jQuery('.radiogroup-edit').each(function() {
@@ -610,6 +635,7 @@ function undoAllChanges() {
 	dateCache = new Array();
 	timeCache = new Array();
 	numberCache = new Array();
+	checkboxCache=new Array();
 }
 
 function undo(editor) {
@@ -617,23 +643,46 @@ function undo(editor) {
 }
 
 function save(id, data) {
+	asyncIncrementor=asyncIncrementor+1;
 	jQuery.ajax({
-	type : 'POST',
-	url : "/xhr-edit",
-	data : {
-	'id' : id,
-	'data' : data
-	},
-	"error" : function(jqXHR, textStatus, errorThrown) {
-		var response = jqXHR.responseText;
-		var responseObject = jQuery.parseJSON(response);
-		var returnMsg = responseObject.msg;
-		if (returnMsg == "Content already have a draft version") {
-			returnMsg = 'Un brouillon empêche les modifications.';
+		type : 'POST',
+		url : "/xhr-edit",
+		data : {
+		'id' : id,
+		'data' : data
+		},
+		"error" : function(jqXHR, textStatus, errorThrown) {
+			var response = jqXHR.responseText;
+			var responseObject = jQuery.parseJSON(response);
+			var returnMsg = responseObject.msg;
+			if (returnMsg == "Content already have a draft version") {
+				returnMsg = 'Un brouillon empêche les modifications.';
+			}
+			errors.push(returnMsg);
+			asyncIncrementor=asyncIncrementor-1;
+			if (asyncIncrementor==0){
+				afterAllSavesAreDone();
+			}
+		},
+		"success":function(data){
+			asyncIncrementor=asyncIncrementor-1;
+			if (data.success===false){
+				errors.push(data.msg);
+			}
+			if (asyncIncrementor==0){
+				afterAllSavesAreDone();
+			}
 		}
-		errors.push(returnMsg);
-	}
 	});
+}
+function afterAllSavesAreDone(){
+	if(errors.length > 0) {
+		notify('failure', 'Une erreur est survenue, il est possible que vos modifications soient perdues');
+	} else {
+		notify('success', 'Les données ont été sauvegardées.');
+	}
+	errors = new Array();
+	asyncIncrementor= 0;
 }
 
 function notify(notify_type, msg) {
