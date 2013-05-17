@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
+use WebTales\MongoFilters\Filter;
 require_once('DataAccessController.php');
  
 /**
@@ -92,7 +92,9 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 		$oldIdArray[]=$modelId;
 		$theBigString=$theBigString.Zend_Json::encode($model);
 		$theBigString=$theBigString."SEntityS";
-		$oldMasksArray=$masksService->getList(array(array("property"=>"site", "value"=>$modelId)));
+		
+		$oldMaskFilters = Filter::Factory('value')->setName('site')->setValue($modelId);
+		$oldMasksArray=$masksService->getList($oldMaskFilters);
 		
 		foreach ($oldMasksArray['data'] as $key=>$value){
 			$oldIdArray[]=$value['id'];
@@ -100,7 +102,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 			$theBigString=$theBigString."SMaskS";
 		}
 		$theBigString.="SEntityS";
-		$oldPagesArray=$pagesService->getList(array(array("property"=>"site", "value"=>$modelId)));
+		$oldPagesArray=$pagesService->getList($oldMaskFilters);
 		foreach ($oldPagesArray['data'] as $key=>$value){
 			$oldIdArray[]=$value['id'];
 			$theBigString=$theBigString.Zend_Json::encode($oldPagesArray['data'][$key]);

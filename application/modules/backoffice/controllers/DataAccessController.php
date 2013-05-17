@@ -155,7 +155,11 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $mongoFilters = Filter::Factory();
 
         foreach($filters as $filter){
-            if(isset($filter['operator'])){
+            if(isset($filter['operator']) && $filter['operator']=='like'){
+                $mongoFilter = Filter::Factory('Regex')
+                ->setName($filter['property'])
+                ->setValue('/.*' . $filter["value"] .'.*/i');
+            }elseif(isset($filter['operator'])){
                 $mongoFilter = Filter::Factory('OperatorToValue')
                 ->setName($filter['property'])
                 ->setValue($filter['value'])
