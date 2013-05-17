@@ -71,9 +71,9 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
         	
         	$result=$this->_dataService->isChangeableContentType($originalType,$newType);
         	$resultArray=($result==true)?array("modify" => "possible"):array("modify" => "no");
-        	
+        }	
         $this->_returnJson($resultArray);
-    }
+    
     }
     
  
