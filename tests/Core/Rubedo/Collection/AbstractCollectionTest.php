@@ -68,12 +68,11 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if getList method call addFilter when a filter is given in parameter
 	 */
 	public function testGetListWithFilter(){
-		$this->_mockDataAccessService->expects($this->once())->method('read');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
+		
 		
 		$filter = new \WebTales\MongoFilters\ValueFilter();
 		$filter->setName('test')->setValue('test');
-		
+		$this->_mockDataAccessService->expects($this->once())->method('read')->with($filter);
 		$collection = new testCollection();
 		$collection->getList($filter);
 	}
@@ -95,13 +94,14 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if getList method call addFilter and addSort when a filter and a sort are given in parameters
 	 */
 	public function testGetListWithFilterAndSort(){
-		$this->_mockDataAccessService->expects($this->once())->method('read');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
-		$this->_mockDataAccessService->expects($this->once())->method('addSort');
+		
 		
 		$filter = new \WebTales\MongoFilters\ValueFilter();
 		$filter->setName('test')->setValue('test');
 		$sort = array(array("property" => "test", "direction" => "test"));
+		
+		$this->_mockDataAccessService->expects($this->once())->method('read')->with($filter);
+		$this->_mockDataAccessService->expects($this->once())->method('addSort');
 		
 		$collection = new testCollection();
 		$collection->getList($filter, $sort);
@@ -241,12 +241,13 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if readChild method call addFilter method when a filter is given in parameter
 	 */
 	public function testReadChildWithFilter(){
-		$this->_mockDataAccessService->expects($this->once())->method('readChild');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
+		
 		
 		$parentId = '123456798';
 		$filter = new \WebTales\MongoFilters\ValueFilter();
 		$filter->setName('test')->setValue('test');
+		
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')->with($parentId,$filter);
 		
 		$collection = new testCollection();
 		$collection->readChild($parentId, $filter);
@@ -270,14 +271,15 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if readChild method call addFilter and addSort methods when a filter and a sort are given in parameters
 	 */
 	public function testReadChildWithFilterAndSort(){
-		$this->_mockDataAccessService->expects($this->once())->method('readChild');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
-		$this->_mockDataAccessService->expects($this->once())->method('addSort');
+		
 		
 		$parentId = '123456798';
 		$filter = new \WebTales\MongoFilters\OperatorToValueFilter();
 		$filter->setName('test')->setValue('test')->setOperator('test');
 		$sort = array(array("property" => "test", "direction" => "test"));
+		
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')->with($parentId,$filter);
+		$this->_mockDataAccessService->expects($this->once())->method('addSort');
 		
 		$collection = new testCollection();
 		$collection->readChild($parentId, $filter, $sort);
