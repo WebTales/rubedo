@@ -69,11 +69,11 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $year = intval($year);
         $date = (string) $month . '-' . (string) $year;
         
-        $timestamp = mktime(0, 0, 0, $month, 1, $year);
+        $timestamp = (string) mktime(0, 0, 0, $month, 1, $year); //cast to string as date are stored as text in DB
         $nextMonth = new DateTime();
         $nextMonth->setTimestamp($timestamp);
         $nextMonth->add(new DateInterval('P1M'));
-        $nextMonthTimeStamp = $nextMonth->getTimestamp();
+        $nextMonthTimeStamp = (string) $nextMonth->getTimestamp(); //cast to string as date are stored as text in DB
         
         $queryId = $this->getParam('query-id', $blockConfig['query']);
         $data = array();

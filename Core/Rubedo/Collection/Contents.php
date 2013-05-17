@@ -144,7 +144,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             } else {
                 $live = true;
             }
-            $now = Manager::getService('CurrentTime')->getCurrentTime();
+            $now = (string) Manager::getService('CurrentTime')->getCurrentTime(); //cast to string as date are stored as text in DB
             $startPublicationDateField = ($live ? 'live' : 'workspace') .
                      '.startPublicationDate';
             $endPublicationDateField = ($live ? 'live' : 'workspace') .
