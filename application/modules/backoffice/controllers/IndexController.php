@@ -59,6 +59,12 @@ class Backoffice_IndexController extends Zend_Controller_Action
             $this->view->extJsPath = $this->view->baseUrl() .
                      '/components/sencha/extjs';
         }
+        //setting user language for loading proper extjs locale file
+        $this->view->userLang='fr'; //default value
+        $currentUser=Manager::getService('CurrentUser')->getCurrentUser();
+        if (isset($currentUser['language'])){
+        	$this->view->userLang=$currentUser['language'];
+        }
         
         if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {
             $this->view->extJsScript = 'ext-all-debug.js';
