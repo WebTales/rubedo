@@ -956,7 +956,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $this->indexdamType($damType["id"], $damType, TRUE);
                 
                 // Get dam type ES type
-                $ESType = self::$_content_index->getType($damType["id"]);
+                $ESType = self::$_dam_index->getType($damType["id"]);
                 
                 // Index all dams from type
                 $itemList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
