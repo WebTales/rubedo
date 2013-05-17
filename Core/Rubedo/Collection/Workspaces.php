@@ -17,6 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IWorkspaces,Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use WebTales;
 
 /**
  * Service to handle Workspaces
@@ -89,14 +90,11 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      * 
-     * @todo implement notAll Filters
      */
     public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
-//         if (isset($filters['notAll'])) {
-//             $this->_addAll = ! $filters['notAll'];
-//             unset($filters['notAll']);
-//         }
+        $this->_addAll = !$this->_hasNotAllWorkspacesFilter($filters);
+
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
             $this->_virtualGlobalWorkspace
@@ -238,6 +236,31 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         }else{
             return null;
         }
+    }
+
+    /**
+     * Return true if $filters contains a Rubedo\Mongo\NotAllWorkspacesFilter
+     *
+     * @param WebTales\MongoFilters\IFilter $filters            
+     * @return boolean
+     */
+    protected function _hasAllWorkspacesFilter (
+            \WebTales\MongoFilters\IFilter $filters = null)
+    {
+        if ($filters instanceof WebTales\MongoFilters\CompositeFilter) {
+            foreach ($filters as $filter) {
+                if ($this->_hasAllWorkspacesFilter($filter)) {
+                    return true;
+                }
+            }
+        }
+        
+        if ($filters instanceof \Rubedo\Mongo\NotAllWorkspacesFilter) {
+            
+            return true;
+        }
+        
+        return false;
     }
     
 }

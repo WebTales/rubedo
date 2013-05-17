@@ -68,12 +68,14 @@ class Backoffice_WorkspacesController extends Backoffice_DataAccessController
             $limit = null;
         }
         
-        $notAll = $this->getParam('notAll',false);
         
-//         if($notAll){
-//             $filters['notAll']=true;
-//         }
         $mongoFilters = $this->_buildFilter($filters);
+        
+        $notAll = $this->getParam('notAll',false);
+        if($notAll){
+            $mongoFilters->addFilter(new \Rubedo\Mongo\NotAllWorkspacesFilter());
+        }
+        
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
         
         $response = array();
