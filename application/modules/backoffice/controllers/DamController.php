@@ -45,6 +45,11 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         'get-original-file',
         'get-thumbnail'
     );
+    
+    /**
+     * Contain the MIME type
+     */
+    protected $_mimeType = "";
 
     public function init ()
     {
@@ -194,7 +199,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
 			return $this->_returnJson($uploadResult);
 		}
         
-        $obj['Content-Type'] = $this->mimeType;
+        $obj['Content-Type'] = $this->_mimeType;
         
         if (! $obj['originalFileId']) {
             $this->getResponse()->setHttpResponseCode(500);
@@ -237,7 +242,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         
         if ($name == 'originalFileId') {
-            $this->mimeType = $mimeType;
+            $this->_mimeType = $mimeType;
         }
         
         $fileService = Manager::getService('Files');
