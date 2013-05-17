@@ -1,5 +1,4 @@
 <?php
-use WebTales;
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).

@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Mongo;
 
-use Rubedo\Interfaces\Mongo\IFileAccess,WebTales\MongoFilters\IFilter;
+use Rubedo\Interfaces\Mongo\IFileAccess;
 
 /**
  * Class implementing the API to MongoDB

@@ -16,7 +16,6 @@
  */
 require_once ('DataAccessController.php');
 
-Use Rubedo\Services\Manager;
 
 /**
  * Controller providing data import for csv

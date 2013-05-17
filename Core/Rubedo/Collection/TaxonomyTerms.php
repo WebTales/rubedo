@@ -17,7 +17,6 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
-use WebTales;
 
 /**
  * Service to handle TaxonomyTerms
