@@ -777,23 +777,13 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @param string $limit
      * @param bool $live
      *
-     * @todo migrate to new filters
      * @return array Return the contents list
      */
     public function getOrderedList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
-        throw new \Exception('migrate to new Filters');
-        $filterKey = null;
+        $inUidFilter = $this->_getInUidFilter($filters);
         
-        foreach ($filters as $key => $filter) {
-            
-            if($filter["property"] == "id" && $filter["operator"] == "$"."in") {
-                $filterKey = $key;
-            }
-        }
-        
-        if($filterKey !== null) {
-            $orderFilter = $filters[$filterKey];
-            $order = $orderFilter['value'];
+        if($inUidFilter !== null) {
+            $order = $inUidFilter->getValue();
             $orderedContents = array();
             
             $unorderedResults = $this->getList($filters, $sort, $start, $limit, $live);
@@ -812,8 +802,31 @@ class Contents extends WorkflowAbstractCollection implements IContents
             
             return $orderedContents;
         } else {
-            return array("success" => false, "msg" => "Invalid filter");
+            throw new \Rubedo\Exceptions\User("Invalid filter");
         }
+    }
+    
+    /**
+     * Search filter for a InUidFilter in a Filter
+     * 
+     * Return null if not found
+     * 
+     * @param \WebTales\MongoFilters\IFilter $filter
+     * @return \WebTales\MongoFilters\InUidFilter|null
+     */
+    protected function _getInUidFilter(\WebTales\MongoFilters\IFilter $filter){
+        if($filter instanceof \WebTales\MongoFilters\InUidFilter){
+            return $filter;
+        }
+        if($filter instanceof \WebTales\MongoFilters\CompositeFilter){
+            foreach ($filter as $subFilter){
+                $subResult = $this->_getInUidFilter($subFilter);
+                if($subResult){
+                    return $subResult;
+                }
+            }
+        }
+        return null;
     }
     
     public function deleteByContentType($contentTypeId){
