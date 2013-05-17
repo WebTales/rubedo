@@ -7,7 +7,7 @@
 			<a href='{{ displaySingleUrl(content.id,null,singlePage) }}' title='Actu'>{{content.title}}</a>
 		</h2>
 	</header>
-	<div class="pull-left" style="margin-right:1em;">{% if content.image %} <a href="{{ displaySingleUrl(content.id,null,singlePage) }}"><img
+	<div class="pull-left" style="margin-right:1em;margin-bottom:1em;">{% if content.image %} <a href="{{ displaySingleUrl(content.id,null,singlePage) }}"><img
 		alt="" class="imageLeft"
 		src="/dam?media-id={{content.image}}&amp;width=80&amp;height=80&amp;mode=boxed"
 		style="max-height: 80px; max-width: 80px;" /></a> {% endif %}</div>
