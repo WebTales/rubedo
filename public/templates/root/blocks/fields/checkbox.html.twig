@@ -1,12 +1,12 @@
 {%  if(cValue["config"]["multivalued"]) and value is iterable%}
 	{% for item in value %}
-<label class="checkbox" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" style="cursor:default !important;">
+<label class="checkbox-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" style="cursor:default !important;">
    <input disabled type="checkbox" {%  if (item) %}checked{% endif %}>  {{ cValue["config"]["fieldLabel"] }} 
 </label>
 	{% endfor %}
 {% else %}
 	
-<label class="checkbox" id="{{ data.id }}_{{ key }}" style="cursor:default !important;">
+<label class="checkbox-edit" id="{{ data.id }}_{{ key }}" style="cursor:default !important;">
    <input disabled type="checkbox" {%  if (value) %}checked{% endif %}>  {{ cValue["config"]["fieldLabel"] }} 
 </label>
 {% endif %}
