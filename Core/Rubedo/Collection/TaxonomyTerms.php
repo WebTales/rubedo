@@ -16,8 +16,8 @@
  */
 namespace Rubedo\Collection;
 
-use WebTales;
 use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use WebTales;
 
 /**
  * Service to handle TaxonomyTerms
@@ -398,14 +398,11 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         }
         $childrenToDelete = $this->_getChildToDelete($obj['id']);
         
-        $deleteCond = array(
-            '_id' => array(
-                '$in' => $childrenToDelete
-            )
-        );
         foreach ($childrenToDelete as $child) {
             $updateContent = Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
         }
+        
+        $deleteCond = Filter::Factory('InUid')->setValue($childrenToDelete);
         
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
@@ -501,11 +498,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function findByVocabulary ($vocabularyId)
     {
-        $filters = array();
-        $filters[] = array(
-            "property" => "vocabularyId",
-            "value" => $vocabularyId
-        );
+        $filters = Filter::Factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
         return $this->getList($filters);
     }
     
@@ -518,10 +511,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
 	 */
     public function findByVocabularyIdAndName ($vocabularyId,$name)
     {
-        $cond = array();
-        $cond['vocabularyId'] = $vocabularyId;
-        $cond['text'] = $name;
-        return $this->_dataService->findOne($cond);
+        $filters = Filter::Factory()
+                        ->addFilter(Filter::Factory('Value')->SetName('vocabularyId')->setValue($vocabularyId))
+                        ->addFilter(Filter::Factory('Value')->SetName('text')->setValue($name));
+        return $this->_dataService->findOne($filters);
     }
 
     /**
@@ -534,9 +527,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         if ($id == 'navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');
         }
-        $deleteCond = array(
-            'vocabularyId' => $id
-        );
+        $deleteCond = Filter::Factory('Value')->SetName('vocabularyId')->setValue($id);
         return $this->_dataService->customDelete($deleteCond);
     }
 
@@ -599,20 +590,11 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $termsIdArray[] = $value['id'];
         }
         
-        $orphansArray = $this->_dataService->customFind(array(
-            '$or' => array(
-                array(
-                    'parentId' => array(
-                        '$nin' => $termsIdArray
-                    )
-                ),
-                array(
-                    'vocabularyId' => array(
-                        '$nin' => $taxonomyIdArray
-                    )
-                )
-            )
-        ));
+        $Filters = Filter::Factory('Or')
+                            ->addFilter(Filter::Factory('NotIn')->setName('parentId')->setValue($termsIdArray))
+                            ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')->setValue($taxonomyIdArray));
+        
+        $orphansArray = $this->_dataService->customFind($Filters);
         
         if ($orphansArray->count() > 0) {
             $orphansArray = iterator_to_array($orphansArray);
@@ -659,20 +641,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $termsIdArray[] = $value['id'];
         }
         
-        $orphansArray = $this->_dataService->customFind(array(
-            '$or' => array(
-                array(
-                    'parentId' => array(
-                        '$nin' => $termsIdArray
-                    )
-                ),
-                array(
-                    'vocabularyId' => array(
-                        '$nin' => $taxonomyIdArray
-                    )
-                )
-            )
-        ));
+        $Filters = Filter::Factory('Or')
+                    ->addFilter(Filter::Factory('NotIn')->setName('parentId')->setValue($termsIdArray))
+                    ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')->setValue($taxonomyIdArray));
+        $orphansArray = $this->_dataService->customFind($Filters);
         
         if ($orphansArray->count() > 0) {
             $orphansArray = iterator_to_array($orphansArray);
@@ -689,10 +661,8 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         foreach ($arrayId as $stringId) {
             $deleteArray[] = $this->_dataService->getId($stringId);
         }
-        return $this->_dataService->customDelete(array(
-            '_id' => array(
-                '$in' => $deleteArray
-            )
-        ));
+        
+        $Filters = Filter::Factory('InUid')->setValue($deleteArray);
+        return $this->_dataService->customDelete($Filters);
     }
 }

@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Pages
@@ -267,25 +267,24 @@ class Pages extends AbstractCollection implements IPages
 	
     protected function _clearCacheForPage($obj){
         $pageId = $obj['id'];
-        Manager::getService('UrlCache')->customDelete(array(
-        'pageId' => $pageId
-        ), array('w'=>false));
+        Manager::getService('UrlCache')->customDelete(Filter::Factory('Value')->setName('pageId')->setValue($pageId), array('w'=>false));
     }
     
 	public function findByNameAndSite($name,$siteId){
-		$filterArray['site'] = $siteId;
-        $filterArray['text'] = $name;
-		return $this->_dataService->findOne($filterArray);
+        $filters = Filter::Factory()
+                    ->addFilter(Filter::Factory('Value')->setName('site')->setValue($siteId))
+                    ->addFilter(Filter::Factory('Value')->setName('text')->setValue($name));
+		return $this->_dataService->findOne($filters);
 	}
 	public function getListByMaskId($maskId)
 	{
-		$filterArray[]=array("property"=>"maskId","value"=>$maskId);
-		return $this->getList($filterArray);
+		$filters= Filter::Factory('Value')->setName('maskId')->setValue($maskId);
+		return $this->getList($filters);
 	}
 	public function isMaskUsed($maskId)
 	{
-		$filterArray["maskId"]=$maskId;
-		$result=$this->_dataService->findOne($filterArray);
+		$filters= Filter::Factory('Value')->setName('maskId')->setValue($maskId);
+		$result=$this->_dataService->findOne($filters);
 		return ($result!=null)?array("used"=>true):array("used"=>false);
 	}
 
@@ -325,8 +324,8 @@ class Pages extends AbstractCollection implements IPages
 	public function deleteBySiteId($id)
 	{
 		$wasFiltered = AbstractCollection::disableUserFilter();
-		
-		$result = $this->_dataService->customDelete(array('site' => $id));
+		$filters= Filter::Factory('Value')->setName('site')->setValue($id);
+		$result = $this->_dataService->customDelete($filters);
 		
 		AbstractCollection::disableUserFilter($wasFiltered);
 		
@@ -343,7 +342,9 @@ class Pages extends AbstractCollection implements IPages
 			$masksArray[] = $value['id'];
 		}
 
-		$result = $this->customDelete(array('maskId' => array('$nin' => $masksArray)));
+		$filters= Filter::Factory('NotIn')->setName('maskId')->setValue($masksArray);
+		
+		$result = $this->customDelete($filters);
 		
 		if($result['ok'] == 1){
 			return array('success' => 'true');
@@ -361,8 +362,8 @@ class Pages extends AbstractCollection implements IPages
 		foreach ($result['data'] as $value) {
 			$masksArray[] = $value['id'];
 		}
-		
-		return $this->count(array(array('property' => 'maskId', 'operator' => '$nin', 'value' => $masksArray)));
+		$filters= Filter::Factory('NotIn')->setName('maskId')->setValue($masksArray);
+		return $this->count($filters);
 	}
 	
 	protected function _addReadableProperty ($obj)
@@ -390,12 +391,9 @@ class Pages extends AbstractCollection implements IPages
 
     public function propagateWorkspace ($parentId, $workspaceId, $siteId = null)
     {
-        $filters = array();
+        $filters = Filter::Factory();
         if ($siteId) {
-            $filters[] = array(
-                'property' => 'site',
-                'value' => $siteId
-            );
+            $filters= Filter::Factory('Value')->setName('site')->setValue($siteId);
         }
         $pageList = $this->readChild($parentId,$filters);
         foreach ($pageList as $page) {

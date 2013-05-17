@@ -280,10 +280,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
                         'taxonomy.' . $vocId . '.$' => 1
                 )
         );
-        $update = array(
-                'taxonomy.' . $vocId => $termId
-        );
-        return $this->_dataService->customUpdate($data, $update);
+
+        $filters = Filter::Factory('Value')->setName('taxonomy.' . $vocId)->setValue($termId);
+        return $this->_dataService->customUpdate($data, $filters);
     }
 
     /**

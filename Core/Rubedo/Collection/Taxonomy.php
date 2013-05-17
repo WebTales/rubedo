@@ -140,10 +140,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($name == 'Navigation') {
             return $this->_virtualNavigationVocabulary;
         }
-        $data = $this->_dataService->findOne(
-                array(
-                        'name' => $name
-                ));
+        $data = $this->_dataService->findOne(Filter::Factory('Value')->setName('name')->setValue($name));
         
         if ($data) {
             $data = $this->_addReadableProperty($data);
