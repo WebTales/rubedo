@@ -1000,15 +1000,18 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Initialize result array
         $result = array();
-        
+
+        // Retrieve data and ES index for type
         switch ($option) {
             case 'content':
                 $serviceType = 'ContentTypes';
                 $serviceData = 'Contents';
+                $contentType = self::$_content_index->getType($id);
                 break;
             case 'dam':
                 $serviceType = 'DamTypes';
                 $serviceData = 'Dam';
+                $contentType = self::$_dam_index->getType($id);
                 break;
             default:
                 throw new \Exception("option should be set to content or dam");
@@ -1018,7 +1021,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Retrieve data and ES index for type
         
         $type = \Rubedo\Services\Manager::getService($serviceType)->findById($id);
-        $contentType = self::$_content_index->getType($id);
         
         $itemCount = 0;
         $start = 0;
@@ -1039,7 +1041,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
                 
                 if ($option == 'dam') {
-                    $documents[] = $this->indexDam($item);
+                    $documents[] = $this->indexDam($item, $indexRefresh, $bulk);
                 }
                 
                 $itemCount ++;
