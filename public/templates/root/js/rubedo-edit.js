@@ -11,6 +11,8 @@ var asyncIncrementor= 0;
 var timeCache = new Array();
 var numberCache = new Array();
 var checkboxCache = new Array();
+var checkboxgroupCache = new Array();
+var radiogroupCache = new Array();
 var starEdit=false;
 var EditMode=true;
 var ratingCache=new Array();
@@ -141,6 +143,8 @@ jQuery('#btn-cancel').click(function() {
 	var dateCacheChanged = 0;
 	var timeCacheChanged = 0;
 	var checkboxCacheChanged = 0;
+	var checkboxgroupCacheChanged = 0;
+	var radiogroupCacheChanged = 0;
 	var numberCacheChanged = 0;
 	
 	/**
@@ -162,7 +166,18 @@ jQuery('#btn-cancel').click(function() {
 	for(var contentId in checkboxCache) {
 		checkboxCacheChanged++;
 	}
-	
+	/**
+	 *  Count modifications on checkbox groups
+	 */
+	for(var contentId in checkboxgroupCache) {
+		checkboxgroupCacheChanged++;
+	}
+	/**
+	 *  Count modifications on radio groups
+	 */
+	for(var contentId in radiogroupCache) {
+		radiogroupCacheChanged++;
+	}
 	/**
 	 * Count modifications on times
 	 */
@@ -177,7 +192,7 @@ jQuery('#btn-cancel').click(function() {
 		numberCacheChanged++;
 	}
 	
-	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0 || checkboxCacheChanged > 0) {
+	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0 || checkboxCacheChanged > 0 || checkboxgrooupCacheChanged > 0 || radiogroupCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -286,7 +301,20 @@ jQuery('#btn-save').click(function() {
 		modified = true;
 		save(contentId, checkboxCache[contentId])
 		}
-	
+	/**
+	 * Save checkbox groups
+	 */
+	for( var contentId in checkboxgroupCache) {
+		modified = true;
+		save(contentId, checkboxgroupCache[contentId])
+		}
+	/**
+	 * Save radio groups
+	 */
+	for( var contentId in radiogroupCache) {
+		modified = true;
+		save(contentId, radiogroupCache[contentId])
+		}
 	/**
 	 * save times
 	 */
@@ -482,11 +510,28 @@ jQuery(".checkbox-edit").click( function () {
 		var newValue=jQuery(this).find("input").is(":checked");
 		var checkboxId=jQuery(this).attr("id");
 		checkboxCache[checkboxId]=newValue;
-		console.log(newValue);
 	}
 	
 	});
+/*************************************************/
 
+/*************************************************
+ * 			jQuery for radiogroup editing
+ ************************************************/
+
+jQuery(".radiogroup-edit").click( function () {
+	if(!jQuery(this).find("input").is(":disabled")){
+		var radioGroupId=jQuery(this).attr("id");
+		var newValue={ };
+		jQuery(this).find("input").each(function(b,a){
+			if(jQuery(this).is(":checked")){
+				newValue[jQuery(this).attr("name")]=jQuery(this).attr("value");
+			}
+		});
+		radiogroupCache[radioGroupId]=newValue;
+	}
+	
+	});
 /************************************************/
 
 /************************************************
@@ -636,6 +681,8 @@ function undoAllChanges() {
 	timeCache = new Array();
 	numberCache = new Array();
 	checkboxCache=new Array();
+	checkboxgroupCache=new Array();
+	radiogroupCache=new Array();
 }
 
 function undo(editor) {
