@@ -524,7 +524,9 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
-      
+        if(!$parentId){
+            return array();
+        }      
         if (isset($sort)) {
             foreach ($sort as $value) {
                 $this->_dataService->addSort(
