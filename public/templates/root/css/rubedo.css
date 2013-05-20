@@ -169,3 +169,14 @@ padding-top: 5px;
 	padding-top: 0px;
 	padding-bottom: 0px;
 }
+
+/**
+ * Site map
+ */
+#siteMap {
+	margin-left:0;
+}
+
+#siteMap li {
+	list-style: none;
+}
