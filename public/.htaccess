@@ -9,6 +9,8 @@ RewriteEngine On
 #RewriteRule install$ - [F,L]
 #RewriteRule install/ - [F,L]
 
+
+
 ####################################################################
 #  Every request to dam.mp4/dam.ogg/dam.flv are dealt by Rubedo
 ####################################################################
@@ -30,6 +32,7 @@ RewriteRule ^/$ /index.php [L]
 ####################################################################
 #  Backoffice alias
 ####################################################################
+RewriteRule ^backoffice$ /backoffice/ [L,R=301]
 RewriteRule ^backoffice(/)?$ /index.php [L]
 RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [L]
 
