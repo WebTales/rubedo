@@ -853,15 +853,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
     }
     
     public function getReflexiveLinkedContents($contentId,$typeId,$fieldName){
-        $filterArray = array();
-        $filterArray[] = array(
-            "property" => "typeId",
-            "value" => $typeId
-        );
-        $filterArray[] = array(
-            "property" => 'fields.'.$fieldName,
-            "value" => $contentId
-        );
+        $filterArray = Filter::Factory();
+        
+        $filterArray->addFilter(Filter::Factory('Value')->setName("typeId")->setValue($typeId));
+        $filterArray->addFilter(Filter::Factory('Value')->setName('fields.'.$fieldName)->setValue($contentId));
+        
         return $this->getList($filterArray, null, null, null, true);
     }
   
