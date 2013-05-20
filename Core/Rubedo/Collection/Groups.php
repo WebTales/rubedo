@@ -347,7 +347,7 @@ class Groups extends AbstractCollection implements IGroups
 	public function clearUserFromGroups($userId){
 	    $options = array('multiple'=>true);
 	    $data = array('$unset'=>array('members.$'=>''));
-	    $updateCond = array('members'=>$userId);
+	    $updateCond = Filter::Factory('Value')->setName('members')->setValue($userId);
 	    $result = $this->_dataService->customUpdate($data, $updateCond,$options);
 	}
 	
@@ -359,7 +359,7 @@ class Groups extends AbstractCollection implements IGroups
 
 	    $options = array('multiple'=>true);
 	    $data = array('$push'=>array('members'=>$userId));
-	    $updateCond = array('_id'=>array('$in'=>$inArray));
+	    $updateCond = Filter::Factory('InUid')->setValue($inArray);
 	    $result = $this->_dataService->customUpdate($data, $updateCond,$options);
 	}
 	
