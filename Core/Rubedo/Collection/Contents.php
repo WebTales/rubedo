@@ -852,13 +852,15 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
     }
     
-    public function getReflexiveLinkedContents($contentId,$typeId,$fieldName){
+    public function getReflexiveLinkedContents($contentId,$typeId,$fieldName, $sort = null){
         $filterArray = Filter::Factory();
         
         $filterArray->addFilter(Filter::Factory('Value')->setName("typeId")->setValue($typeId));
         $filterArray->addFilter(Filter::Factory('Value')->setName('fields.'.$fieldName)->setValue($contentId));
         
-        return $this->getList($filterArray, null, null, null, true);
+        $sort = \Zend_Json::decode($sort);
+        
+        return $this->getList($filterArray, $sort, null, null, true);
     }
   
 	
