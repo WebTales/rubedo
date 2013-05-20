@@ -244,12 +244,12 @@ class Workspaces extends AbstractCollection implements IWorkspaces
      * @param WebTales\MongoFilters\IFilter $filters            
      * @return boolean
      */
-    protected function _hasAllWorkspacesFilter (
+    protected function _hasNotAllWorkspacesFilter (
             \WebTales\MongoFilters\IFilter $filters = null)
     {
         if ($filters instanceof WebTales\MongoFilters\CompositeFilter) {
             foreach ($filters as $filter) {
-                if ($this->_hasAllWorkspacesFilter($filter)) {
+                if ($this->_hasNotAllWorkspacesFilter($filter)) {
                     return true;
                 }
             }

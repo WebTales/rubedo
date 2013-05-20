@@ -30,12 +30,22 @@ abstract class AbstractException extends \Exception
 
     public function __construct ($message = null, $code = null, $previous = null) {
         $language = 'fr';
-        $message = $this->_translate($message, $language);
-        parent::__construct($message, $code, $previous);
-        
+        $extraParams=array();
+        $recievedArgs=func_get_args();
+        if (isset($recievedArgs[3])){
+        	$extraParams=array_slice($recievedArgs,3);
+        }
+        $message = $this->_translate($message, $code, $language, $extraParams);
+        parent::__construct($message, $code, $previous);        
     }
     
-    protected function _translate($message,$language='en'){
+    protected function _translate($message, $code, $language='en',$extraParams=array()){
+    	//convert message to proper language using $code and $langage, use $message directly if nothing more appropriate coud be found
+    	
+    	//apply params to message if there are any
+    	if ($extraParams.length>0){
+    		$message=sprintf($message,$extraParams);
+    	}
         return $message;
     }
 }
