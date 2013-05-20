@@ -224,7 +224,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
             'all'
         ));
         $filters["filter"]->addFilter($filter);
-        $filter["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
+        $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
         $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']) + $pageData['skip'], $pageData['limit']);
         $contentArray['page'] = $pageData;
         $contentArray['count'] = max(0, $contentArray['count'] - $pageData['skip']);
