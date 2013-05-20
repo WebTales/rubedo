@@ -73,6 +73,9 @@ class UrlCache extends AbstractCollection implements IUrlCache
 	 */
 	public function findByUrl ($url, $siteId)
     {
+        if(!$siteId){
+            return null;
+        }
         $filters = Filter::Factory('And');
         
         $filter = Filter::Factory('Value');

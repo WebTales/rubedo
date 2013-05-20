@@ -238,9 +238,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return Manager::getService('Url')->displayCanonicalUrl($contentId, $siteId);
     }
     
-    public static function getLinkedContents($contentId,$typeId,$fieldName)
+    public static function getLinkedContents($contentId,$typeId,$fieldName, $sort = null)
     {
-        return Manager::getService('Contents')->getReflexiveLinkedContents($contentId,$typeId,$fieldName);
+        return Manager::getService('Contents')->getReflexiveLinkedContents($contentId,$typeId,$fieldName, $sort);
     }
     
     public static function getTaxonomyTerm($id){

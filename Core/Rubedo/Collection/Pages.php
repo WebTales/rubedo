@@ -121,6 +121,9 @@ class Pages extends AbstractCollection implements IPages
 	}
 	
 	public function matchSegment($urlSegment,$parentId,$siteId){
+	    if(!$siteId){
+	        return null;
+	    }
 	    $filters = Filter::Factory('And');
 	    
 	    $filter = Filter::Factory('Value');
