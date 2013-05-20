@@ -192,7 +192,7 @@ jQuery('#btn-cancel').click(function() {
 		numberCacheChanged++;
 	}
 	
-	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0 || checkboxCacheChanged > 0 || checkboxgrooupCacheChanged > 0 || radiogroupCacheChanged > 0) {
+	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0 || checkboxCacheChanged > 0 || checkboxgroupCacheChanged > 0 || radiogroupCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
@@ -550,7 +550,6 @@ jQuery(".checkboxgroup-edit").click( function () {
 		});
 		
 		checkboxgroupCache[checkboxGroupId]=newValue;
-		console.log(checkboxgroupCache);
 	}
 	
 	});

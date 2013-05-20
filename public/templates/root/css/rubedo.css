@@ -180,3 +180,23 @@ padding-top: 5px;
 #siteMap li {
 	list-style: none;
 }
+
+/**
+ * Alert
+ */
+#alert {
+	margin-bottom: 0;
+}
+
+/**
+ * admin navbar
+ */
+#contentToolBar .navbar-inner {
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+}
+
+#contentToolBar .label {
+	margin-top: 11px;
+}
