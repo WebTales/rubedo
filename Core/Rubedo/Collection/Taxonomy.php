@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Taxonomy
@@ -57,6 +57,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
                                 '$in' => $readWorkspaceArray
                         )
                 );
+                $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
@@ -88,7 +89,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         
@@ -139,10 +140,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($name == 'Navigation') {
             return $this->_virtualNavigationVocabulary;
         }
-        $data = $this->_dataService->findOne(
-                array(
-                        'name' => $name
-                ));
+        $data = $this->_dataService->findOne(Filter::Factory('Value')->setName('name')->setValue($name));
         
         if ($data) {
             $data = $this->_addReadableProperty($data);
@@ -221,7 +219,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::count()
      */
-    public function count ($filters = null)
+    public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
         return parent::count($filters) + 2;
     }

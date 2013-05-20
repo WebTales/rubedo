@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IUsers, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IUsers, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Users
@@ -117,13 +117,9 @@ class Users extends AbstractCollection implements IUsers
                 $userIdList[] = $id;
             }
         }
+        $filters = Filter::Factory();
+        $filters->addFilter(Filter::Factory('InUid')->setValue($userIdList));
         
-        $filters = array();
-        $filters[] = array(
-            'property' => 'id',
-            'value' => $userIdList,
-            'operator' => '$in'
-        );
         return $this->getList($filters);
     }
 
@@ -216,7 +212,7 @@ class Users extends AbstractCollection implements IUsers
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         

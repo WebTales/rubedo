@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 require_once ('ContentListController.php');
 
@@ -141,12 +141,10 @@ class Blocks_GalleryController extends Blocks_ContentListController
     {
         
         if ($query != null) {
+            $filters = Filter::Factory();
             /* Add filters on TypeId and publication */
-            $filterArray[] = array(
-                'operator' => '$in',
-                'property' => 'typeId',
-                'value' => $query['DAMTypes']
-            );
+            $filters->addFilter(Filter::Factory('In')->setName('typeId')->setValue($query['DAMTypes']));
+            
             /* Add filter on taxonomy */
             foreach ($query['vocabularies'] as $key => $value) {
                 if (isset($value['rule'])) {
@@ -171,22 +169,22 @@ class Blocks_GalleryController extends Blocks_ContentListController
                     $taxOperator = '$in';
                 }
                 if (count($value['terms']) > 0) {
-                    $filterArray[] = array(
-                        'operator' => $taxOperator,
-                        'property' => 'taxonomy.' . $key,
-                        'value' => $value['terms']
-                    );
+                    $filters->addFilter(Filter::Factory('OperatorToValue')
+                                                ->setName('taxonomy.' . $key)
+                                                ->setValue($value['terms']
+                                                ->setOperator($taxOperator)
+                                                )
+                                        );
                 }
             }
-            
-            $filter = array(
-                    'property' => 'target',
-                    'operator' => '$in',
-                    'value' => array(
-                            $this->_workspace,
-                            'all'
-                    )
-            );
+            $filters->addFilter(
+                    Filter::Factory('In')
+                        ->setName('target')
+                        ->setValue(
+                            array(
+                                    $this->_workspace,
+                                    'all'
+                            )));
             
             /*
              * Add Sort
@@ -208,7 +206,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
             return array();
         }
         $returnArray = array(
-            "filter" => $filterArray,
+            "filter" => $filters,
             "sort" => isset($sort) ? $sort : null
         );
         return $returnArray;

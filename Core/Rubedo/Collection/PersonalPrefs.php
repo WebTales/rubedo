@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle PersonalPrefs
@@ -39,6 +39,10 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         $currentUserService = Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $this->_userId = $currentUser['id'];
+        
+        $userFilter = Filter::Factory('Value');;
+        $userFilter->setName('userId')->setValue($this->_userId);
+        $this->_dataService->addFilter($userFilter);
     }
 
     public function create (array $obj, $options = array())
@@ -49,11 +53,9 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         return parent::create($obj, $options);
     }
 
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
-        $this->_dataService->addFilter(array(
-            'userId' => $this->_userId
-        ));
+
         $returnArray = parent::getList($filters, $sort, $start, $limit);
         if ($returnArray['count'] == 1) {
             $iconSet = $returnArray['data'][0]['iconSet'];
@@ -65,9 +67,6 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 
     public function update (array $obj, $options = array())
     {
-        $this->_dataService->addFilter(array(
-            'userId' => $this->_userId
-        ));
         $returnArray = parent::update($obj, $options);
         if (isset($obj['iconSet'])) {
             Manager::getService('Session')->set('iconSet', $obj['iconSet']);
@@ -77,23 +76,21 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 
     public function destroy (array $obj, $options = array())
     {
-        $this->_dataService->addFilter(array(
-            'userId' => $this->_userId
-        ));
         return parent::destroy($obj, $options);
     }
 	
 	public function clearOrphanPrefs() {
+	    $this->_dataService->clearFilter();
 		$usersService = Manager::getService('Users');
 		
 		$result = $usersService->getList();
 		
-		//recovers the list of contentTypes id
 		foreach ($result['data'] as $value) {
 			$usersArray[] = $value['id'];
 		}
 
-		$result = $this->customDelete(array('userId' => array('$nin' => $usersArray)));
+		$ninFilter = Filter::Factory('Value')->setName('userId')->setValue($usersArray);
+		$result = $this->customDelete($ninFilter);
 		
 		if($result['ok'] == 1){
 			return array('success' => 'true');
@@ -103,15 +100,15 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
 	}
 	
 	public function countOrphanPrefs() {
+	    $this->_dataService->clearFilter();
 		$usersService = Manager::getService('Users');
 
 		$result = $usersService->getList();
 		
-		//recovers the list of contentTypes id
 		foreach ($result['data'] as $value) {
 			$usersArray[] = $value['id'];
 		}
-		
-		return $this->count(array(array('property' => 'userId', 'operator' => '$nin', 'value' => $usersArray)));
+		$ninFilter = Filter::Factory('Value')->setName('userId')->setValue($usersArray);
+		return $this->count($ninFilter);
 	}
 }

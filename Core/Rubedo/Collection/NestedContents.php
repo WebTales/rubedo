@@ -16,8 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\INestedContents;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\INestedContents, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle contents
@@ -60,7 +59,8 @@ class NestedContents implements INestedContents
      * @return array
      */
     public function getList($parentContentId) {
-        $cursor = $this->_dataService->customFind(array('_id' => $this->_dataService->getId($parentContentId)), array('nestedContents'));
+        $filter = Filter::Factory('Uid')->setValue($parentContentId);
+        $cursor = $this->_dataService->customFind($filter, array('nestedContents'));
         if ($cursor->count() == 0) {
             return array();
         }
@@ -113,8 +113,8 @@ class NestedContents implements INestedContents
         $obj['lastUpdateTime'] = $currentTime;
 
         $data = array('$push' => array('nestedContents' => $obj));
-        $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
-
+        $updateCond = Filter::Factory('Uid')->setValue($parentContentId);
+        
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
         if ($returnArray['success'] == true) {
             $returnArray['data'] = $obj;
@@ -157,8 +157,14 @@ class NestedContents implements INestedContents
         }
 
         $data = array('$set' => $updateArray);
-        $updateCond = array('_id' => $this->_dataService->getId($parentContentId), 'nestedContents' => array('$elemMatch' => array('id'=>$obj['id'],'version'=>$oldVersion)));
-
+        $nestedContentCriteria = Filter::Factory('ElemMatch')
+                                            ->addFilter(Filter::Factory('Value')->setName('version')->setValue($oldVersion))
+                                            ->addFilter(Filter::Factory('Value')->setName('id')->setValue($obj['id']));
+        
+        $updateCond = Filter::Factory()
+                        ->addFilter(Filter::Factory('Uid')->setValue($parentContentId))
+                        ->addFilter($nestedContentCriteria);
+        
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
 
         if ($returnArray['success'] == true) {
@@ -179,7 +185,7 @@ class NestedContents implements INestedContents
     public function destroy($parentContentId, array $obj, $options = array()) {
 
         $data = array('$pull' => array('nestedContents' => array('id' => $obj['id'])));
-        $updateCond = array('_id' => $this->_dataService->getId($parentContentId));
+        $updateCond = Filter::Factory('Uid')->setValue($parentContentId);
 
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
 

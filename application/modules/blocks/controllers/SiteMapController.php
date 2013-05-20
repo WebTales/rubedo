@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 require_once ('AbstractController.php');
 
@@ -43,8 +43,8 @@ class Blocks_SiteMapController extends Blocks_AbstractController
         $output['displayTitle'] = isset($params['displayTitle']) ? $params['displayTitle'] : false;
         $output['blockTitle'] = $params['blockTitle'];
         
-        $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
-        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],array($excludeFromMenuCondition));
+        $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(false);
+        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],$filters);
         
         $rootPage = Manager::getService('Pages')->findById($output['rootPage']);
         
@@ -62,7 +62,7 @@ class Blocks_SiteMapController extends Blocks_AbstractController
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
             
-            $levelTwoPages = Manager::getService('Pages')->readChild($page['id'],array($excludeFromMenuCondition));
+            $levelTwoPages = Manager::getService('Pages')->readChild($page['id'],$filters);
             if (count($levelTwoPages)) {
                 $this->_getPages($tempArray, $levelTwoPages);
             }
@@ -92,8 +92,8 @@ class Blocks_SiteMapController extends Blocks_AbstractController
             $tempSubArray['title'] = $subPage['title'];
             $tempSubArray['id'] = $subPage['id'];
             
-            $excludeFromMenuCondition = array('operator'=>'$ne','property'=>'excludeFromMenu','value'=>true);
-            $pageChilds = Manager::getService('Pages')->readChild($subPage['id'],array($excludeFromMenuCondition));
+            $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(false);
+            $pageChilds = Manager::getService('Pages')->readChild($subPage['id'],$filters);
             if (count($pageChilds)) {
                 $this->_getPages($tempSubArray, $pageChilds);
             }

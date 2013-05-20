@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Icons
@@ -38,6 +38,10 @@ class Icons extends AbstractCollection implements IIcons
 		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
 		$currentUser = $currentUserService->getCurrentUserSummary();
 		$this->_userId = $currentUser['id'];
+		
+		$userFilter = Filter::Factory('Value');
+		$userFilter->setName('userId')->setValue($this->_userId);
+		$this->_dataService->addFilter($userFilter);
 	}
 	
     public function create(array $obj, $options = array()) {
@@ -45,32 +49,22 @@ class Icons extends AbstractCollection implements IIcons
         return parent::create($obj, $options);
     }
 	
-	public function getList($filters = null, $sort = null, $start = null, $limit = null){
-		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::getList($filters, $sort, $start, $limit);
-	}
 	
-	public function update(array $obj, $options = array()){
-		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::update($obj,$options);
-	}
-	
-	public function destroy(array $obj, $options = array()){
-		$this->_dataService->addFilter(array('userId' => $this->_userId));
-		return parent::destroy($obj,$options);
-	}
 	
 	public function clearOrphanIcons() {
+	    $this->_dataService->clearFilter();
 		$usersService = Manager::getService('Users');
 		
 		$result = $usersService->getList();
 		
-		//recovers the list of contentTypes id
 		foreach ($result['data'] as $value) {
 			$usersArray[] = $value['id'];
 		}
 
-		$result = $this->customDelete(array('userId' => array('$nin' => $usersArray)));
+		$ninFilter = Filter::Factory('NotIn');
+		$ninFilter->setName('userId')->setValue($usersArray);
+		
+		$result = $this->customDelete($ninFilter);
 		
 		if($result['ok'] == 1){
 			return array('success' => 'true');
@@ -80,15 +74,18 @@ class Icons extends AbstractCollection implements IIcons
 	}
 	
 	public function countOrphanIcons() {
+	    $this->_dataService->clearFilter();
 		$usersService = Manager::getService('Users');
 
 		$result = $usersService->getList();
 		
-		//recovers the list of contentTypes id
 		foreach ($result['data'] as $value) {
 			$usersArray[] = $value['id'];
 		}
 		
-		return $this->count(array(array('property' => 'userId', 'operator' => '$nin', 'value' => $usersArray)));
+		$ninFilter = Filter::Factory('NotIn');
+		$ninFilter->setName('userId')->setValue($usersArray);
+		
+		return $this->count($ninFilter);
 	}
 }

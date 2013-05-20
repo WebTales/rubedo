@@ -68,11 +68,11 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if getList method call addFilter when a filter is given in parameter
 	 */
 	public function testGetListWithFilter(){
-		$this->_mockDataAccessService->expects($this->once())->method('read');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
 		
-		$filter = array(array("property" => "test", "value" => "test"));
 		
+		$filter = new \WebTales\MongoFilters\ValueFilter();
+		$filter->setName('test')->setValue('test');
+		$this->_mockDataAccessService->expects($this->once())->method('read')->with($filter);
 		$collection = new testCollection();
 		$collection->getList($filter);
 	}
@@ -94,12 +94,14 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if getList method call addFilter and addSort when a filter and a sort are given in parameters
 	 */
 	public function testGetListWithFilterAndSort(){
-		$this->_mockDataAccessService->expects($this->once())->method('read');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
-		$this->_mockDataAccessService->expects($this->once())->method('addSort');
 		
-		$filter = array(array("property" => "test", "value" => "test"));
+		
+		$filter = new \WebTales\MongoFilters\ValueFilter();
+		$filter->setName('test')->setValue('test');
 		$sort = array(array("property" => "test", "direction" => "test"));
+		
+		$this->_mockDataAccessService->expects($this->once())->method('read')->with($filter);
+		$this->_mockDataAccessService->expects($this->once())->method('addSort');
 		
 		$collection = new testCollection();
 		$collection->getList($filter, $sort);
@@ -117,31 +119,7 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 		$collection->getList(null, null, 0, 10);
 	}
 	
-	/**
-	 * Test if getList method call addFilter when an operator is given in parameter
-	 */
-	public function testGetListWithOperator(){
-		$this->_mockDataAccessService->expects($this->once())->method('read');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
-		
-		$filter = array(array('operator' => 'test', "property" => "test", "value" => "test"));
-		
-		$collection = new testCollection();
-		$collection->getList($filter);
-	}
 	
-	/**
-	 * Test if getList method call addFilter when an operator is given in parameter
-	 */
-	public function testGetListWithLikeOperator(){
-		$this->_mockDataAccessService->expects($this->once())->method('read');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
-		
-		$filter = array(array('operator' => 'like', "property" => "test", "value" => "test"));
-		
-		$collection = new testCollection();
-		$collection->getList($filter);
-	}
 	
 	/**
 	 * Test if findById method call the findById method only one time
@@ -172,7 +150,8 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	public function testNormalCustomFind(){
 		$this->_mockDataAccessService->expects($this->once())->method('customFind');
 		
-		$filter = array(array("property" => "test", "value" => "test"));
+		$filter = new \WebTales\MongoFilters\ValueFilter();
+		$filter->setName('test')->setValue('test');
 		$fieldRule = array(array("property" => "test", "value" => "test"));
 		
 		$collection = new testCollection();
@@ -234,45 +213,41 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	public function testNormalcustomDelete(){
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
 	
-		 $deleteCond=array();
+		$filter = new \WebTales\MongoFilters\ValueFilter();
+		$filter->setName('test')->setValue('test');
 		$collection = new testCollection();
-		$collection->customDelete($deleteCond);
+		$collection->customDelete($filter);
 	}
-		/**
-	 * Test if customUpdate method call the customUpdate method only one time
-	 */
-	public function testNormalcustomUpdate(){
-		$this->_mockDataAccessService->expects($this->once())->method('customUpdate');
-	
-		 $data=array('value'=>"test");
-		 $updateCond=array('condition'=>"test");
-		$collection = new testCollection();
-		$collection->customUpdate($data,$updateCond);
-	}
-	 /*
-	  *  Test if readChild method call the readChild method only one time
-	  */
-	public function testReadChildWithOperator(){
-		$this->_mockDataAccessService->expects($this->once())->method('readChild');
-		
-		$filter = array(array("property" => "test", "value" => "test", "operator" => "like"));
-		
-		$parentId = '123456798';
-		
-		$collection = new testCollection();
-		$collection->readChild($parentId, $filter);
 
-	}
+    /**
+     * Test if customUpdate method call the customUpdate method only one time
+     */
+    public function testNormalcustomUpdate ()
+    {
+        $this->_mockDataAccessService->expects($this->once())
+            ->method('customUpdate');
+        
+        $data = array(
+            'value' => "test"
+        );
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('test')->setValue('test');
+        $collection = new testCollection();
+        $collection->customUpdate($data, $filter);
+    }
+	
 	
 	/**
 	 * Test if readChild method call addFilter method when a filter is given in parameter
 	 */
 	public function testReadChildWithFilter(){
-		$this->_mockDataAccessService->expects($this->once())->method('readChild');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
+		
 		
 		$parentId = '123456798';
-		$filter = array(array("property" => "test", "value" => "test"));
+		$filter = new \WebTales\MongoFilters\ValueFilter();
+		$filter->setName('test')->setValue('test');
+		
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')->with($parentId,$filter);
 		
 		$collection = new testCollection();
 		$collection->readChild($parentId, $filter);
@@ -296,29 +271,32 @@ class AbstractCollectionTest extends PHPUnit_Framework_TestCase {
 	 * Test if readChild method call addFilter and addSort methods when a filter and a sort are given in parameters
 	 */
 	public function testReadChildWithFilterAndSort(){
-		$this->_mockDataAccessService->expects($this->once())->method('readChild');
-		$this->_mockDataAccessService->expects($this->once())->method('addFilter');
-		$this->_mockDataAccessService->expects($this->once())->method('addSort');
+		
 		
 		$parentId = '123456798';
-		$filter = array(array("property" => "test", "value" => "test"));
+		$filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+		$filter->setName('test')->setValue('test')->setOperator('test');
 		$sort = array(array("property" => "test", "direction" => "test"));
+		
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')->with($parentId,$filter);
+		$this->_mockDataAccessService->expects($this->once())->method('addSort');
 		
 		$collection = new testCollection();
 		$collection->readChild($parentId, $filter, $sort);
 	}
-	
-	/**
-	 * Test if getAncestors return array() when parentId is root 
-	 */
-	public function testgetAncestorsIfParentIdIsRoot(){
 
-	$item['parentId']='root';
-	$limit=5;
-		$collection = new testCollection();
-		$result=$collection->getAncestors($item, $limit);
-		$this->assertTrue(is_array($result));
-	}
+    /**
+     * Test if getAncestors return array() when parentId is root
+     */
+    public function testgetAncestorsIfParentIdIsRoot ()
+    {
+        $item['parentId'] = 'root';
+        $limit = 5;
+        $collection = new testCollection();
+        $result = $collection->getAncestors($item, $limit);
+        $this->assertTrue(is_array($result));
+    }
+    
 	/**
 	 * Test if getAncestors return array() when limit=0 
 	 */

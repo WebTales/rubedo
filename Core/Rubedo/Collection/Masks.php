@@ -16,8 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IMasks;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IMasks, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Users
@@ -75,9 +74,10 @@ class Masks extends AbstractCollection implements IMasks
             $sites = Manager::getService('Sites')->getList();
             $sitesArray = array();
             foreach ($sites['data'] as $site){
-                $sitesArray[]=$site['id'];
+                $sitesArray[]=(string)$site['id'];
             }            
-            $filter = array('site'=> array('$in'=>$sitesArray));
+            $filter = Filter::Factory('In');
+            $filter->setName('site')->setValue($sitesArray);
             $this->_dataService->addFilter($filter);
         }
     }

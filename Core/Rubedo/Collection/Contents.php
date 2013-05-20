@@ -15,6 +15,7 @@
 namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IContents;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle contents
@@ -132,69 +133,33 @@ class Contents extends WorkflowAbstractCollection implements IContents
             if (! in_array('all', $readWorkspaceArray)) {
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
-                $filter = array(
-                        'target' => array(
-                                '$in' => $readWorkspaceArray
-                        )
-                );
+                $filter = Filter::Factory('In')->setName('target')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
         
         if (self::$_isFrontEnd) {
             if (\Zend_Registry::isRegistered('draft')) {
-                $live = ! \Zend_Registry::get('draft');
+                $live = (\Zend_Registry::get('draft')==='false'||\Zend_Registry::get('draft')===false)?true:false;
             } else {
                 $live = true;
             }
-            $now = Manager::getService('CurrentTime')->getCurrentTime();
-            $startPublicationDateField = ($live ? 'live' : 'draft') .
+            $now = (string) Manager::getService('CurrentTime')->getCurrentTime(); //cast to string as date are stored as text in DB
+            $startPublicationDateField = ($live ? 'live' : 'workspace') .
                      '.startPublicationDate';
-            $endPublicationDateField = ($live ? 'live' : 'draft') .
+            $endPublicationDateField = ($live ? 'live' : 'workspace') .
                      '.endPublicationDate';
-            $dateFilter = array(
-                    '$and' => array(
-                            array(
-                                    '$or' => array(
-                                            array(
-                                                    $startPublicationDateField => array(
-                                                            '$lte' => "$now"
-                                                    )
-                                            ),
-                                            array(
-                                                    $startPublicationDateField => null
-                                            ),
-                                            array(
-                                                    $startPublicationDateField => ""
-                                            )
-                                    )
-                            ),
-                            array(
-                                    '$or' => array(
-                                            array(
-                                                    $endPublicationDateField => array(
-                                                            '$gte' => "$now"
-                                                    )
-                                            ),
-                                            array(
-                                                    $endPublicationDateField => null
-                                            ),
-                                            array(
-                                                    $endPublicationDateField => ""
-                                            )
-                                    )
-                            )
-                    )
-            );
-            $this->_dataService->addFilter($dateFilter);
+
+             $this->_dataService->addFilter(Filter::Factory('EmptyOrOperator')->setName($startPublicationDateField)->setOperator('$lte')->setValue($now));
+             $this->_dataService->addFilter(Filter::Factory('EmptyOrOperator')->setName($endPublicationDateField)->setOperator('$gte')->setValue($now));
         }
     }
 
     /**
      * Return the visible contents list
      *
-     * @param array $filters
-     *            array of filter
+     * @param \WebTales\MongoFilters\IFilter $filters
+     *            filters
      * @param array $sort
      *            array of sorting fields
      * @param integer $start
@@ -203,20 +168,20 @@ class Contents extends WorkflowAbstractCollection implements IContents
      *            max number of items in the list
      * @return array:
      */
-    public function getOnlineList ($filters = null, $sort = null, $start = null, 
+    public function getOnlineList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, 
             $limit = null)
     {
-        $filters[] = array(
-                'property' => 'online',
-                'value' => true
-        );
+        if(is_null($filters)){
+            $filters = Filter::Factory();
+        }
+        $filters->addFilter(Filter::Factory('Value')->setName('online')->setValue(true));
+        
         
         if (\Zend_Registry::isRegistered('draft')) {
-            $live = ! \Zend_Registry::get('draft');
+            $live = (\Zend_Registry::get('draft')==='false'||\Zend_Registry::get('draft')===false)?true:false;
         } else {
             $live = true;
         }
-        
         $returnArray = $this->getList($filters, $sort, $start, $limit, $live);
         
         return $returnArray;
@@ -315,10 +280,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
                         'taxonomy.' . $vocId . '.$' => 1
                 )
         );
-        $update = array(
-                'taxonomy.' . $vocId => $termId
-        );
-        return $this->_dataService->customUpdate($data, $update);
+
+        $filters = Filter::Factory('Value')->setName('taxonomy.' . $vocId)->setValue($termId);
+        return $this->_dataService->customUpdate($data, $filters);
     }
 
     /**
@@ -641,13 +605,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getByType ($typeId, $start = null, $limit = null)
     {
-        $filter = array(
-                array(
-                        'property' => 'typeId',
-                        'value' => $typeId
-                )
-        );
-        
+        $filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
         return $this->getList($filter,null,$start,$limit);
     }
 
@@ -661,13 +619,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         foreach ($result['data'] as $value) {
             $contentTypesArray[] = $value['id'];
         }
-        
-        $result = $this->customDelete(
-                array(
-                        'typeId' => array(
-                                '$nin' => $contentTypesArray
-                        )
-                ));
+        $filter = Filter::Factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
+        $result = $this->customDelete($filter);
         
         if ($result['ok'] == 1) {
             return array(
@@ -690,15 +643,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         foreach ($result['data'] as $value) {
             $contentTypesArray[] = $value['id'];
         }
-        
-        return $this->count(
-                array(
-                        array(
-                                'property' => 'typeId',
-                                'operator' => '$nin',
-                                'value' => $contentTypesArray
-                        )
-                ));
+        $filter = Filter::Factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
+        return $this->count($filter);
     }
 
     /**
@@ -789,17 +735,14 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getListByTypeId ($typeId)
     {
-        $filterArray[] = array(
-                "property" => "typeId",
-                "value" => $typeId
-        );
-        return $this->getList($filterArray);
+        $filter = Filter::Factory('Value')->setName('typeId')->setValue($typeId);
+        return $this->getList($filter);
     }
 
     public function isTypeUsed ($typeId)
     {
-        $filterArray["typeId"] = $typeId;
-        $result = $this->_dataService->findOne($filterArray);
+        $filter = Filter::Factory('Value')->setName('typeId')->setValue($typeId);
+        $result = $this->_dataService->findOne($filter);
         return ($result != null) ? array(
                 "used" => true
         ) : array(
@@ -837,18 +780,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
      * @return array Return the contents list
      */
     public function getOrderedList($filters = null, $sort = null, $start = null, $limit = null, $live = true) {
-        $filterKey = null;
+        $inUidFilter = $this->_getInUidFilter($filters);
         
-        foreach ($filters as $key => $filter) {
-            
-            if($filter["property"] == "id" && $filter["operator"] == "$"."in") {
-                $filterKey = $key;
-            }
-        }
-        
-        if($filterKey !== null) {
-            $orderFilter = $filters[$filterKey];
-            $order = $orderFilter['value'];
+        if($inUidFilter !== null) {
+            $order = $inUidFilter->getValue();
             $orderedContents = array();
             
             $unorderedResults = $this->getList($filters, $sort, $start, $limit, $live);
@@ -867,8 +802,31 @@ class Contents extends WorkflowAbstractCollection implements IContents
             
             return $orderedContents;
         } else {
-            return array("success" => false, "msg" => "Invalid filter");
+            throw new \Rubedo\Exceptions\User("Invalid filter");
         }
+    }
+    
+    /**
+     * Search filter for a InUidFilter in a Filter
+     * 
+     * Return null if not found
+     * 
+     * @param \WebTales\MongoFilters\IFilter $filter
+     * @return \WebTales\MongoFilters\InUidFilter|null
+     */
+    protected function _getInUidFilter(\WebTales\MongoFilters\IFilter $filter){
+        if($filter instanceof \WebTales\MongoFilters\InUidFilter){
+            return $filter;
+        }
+        if($filter instanceof \WebTales\MongoFilters\CompositeFilter){
+            foreach ($filter as $subFilter){
+                $subResult = $this->_getInUidFilter($subFilter);
+                if($subResult){
+                    return $subResult;
+                }
+            }
+        }
+        return null;
     }
     
     public function deleteByContentType($contentTypeId){
@@ -881,7 +839,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             throw new \Rubedo\Exceptions\User('ContentType not found');
         }
         
-        $deleteCond = array('typeId'=>$contentTypeId);
+        $deleteCond = Filter::Factory('Value')->setName('typeId')->setValue($contentTypeId);
         $result = $this->_dataService->customDelete($deleteCond, array());
         
         if(isset($result['ok']) && $result['ok']){

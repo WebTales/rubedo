@@ -15,8 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Interfaces\Collection\IAbstractCollection;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IAbstractCollection, Rubedo\Services\Manager;
 
 /**
  * Class implementing the API to MongoDB
@@ -97,52 +96,9 @@ abstract class AbstractCollection implements IAbstractCollection
      *            sort the list with mongo syntax
      * @return array
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
-        if (isset($filters)) {
-            foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) ||
-                         ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(
-                            array(
-                                    $value["property"] => $value["value"]
-                            ));
-                } elseif (in_array($value["operator"], 
-                        array(
-                                '$or',
-                                '$and'
-                        ))) {
-                    if (isset($value['value']) && ! empty($value['value'])) {
-                        $this->_dataService->addFilter(
-                                array(
-                                        $value["operator"] => $value["value"]
-                                ));
-                    }
-                } else 
-                    if ($value["operator"] == 'like') {
-                        $this->_dataService->addFilter(
-                                array(
-                                        $value["property"] => array(
-                                                '$regex' => $this->_dataService->getRegex(
-                                                        '/.*' . $value["value"] .
-                                                                 '.*/i')
-                                        )
-                                ));
-                    } elseif (isset($value["operator"])) {
-                        if ($value['value'] == array() || $value['value'] == "" ||
-                                 ! isset($value['value'])) {
-                            continue;
-                        }
-                        
-                        $this->_dataService->addFilter(
-                                array(
-                                        $value["property"] => array(
-                                                $value["operator"] => $value["value"]
-                                        )
-                                ));
-                    }
-            }
-        }
+
         if (isset($sort)) {
             foreach ($sort as $value) {
                 
@@ -159,7 +115,7 @@ abstract class AbstractCollection implements IAbstractCollection
         if (isset($limit)) {
             $this->_dataService->setNumberOfResults($limit);
         }
-        $dataValues = $this->_dataService->read();
+        $dataValues = $this->_dataService->read($filters);
         if($dataValues && is_array($dataValues)){
             foreach ($dataValues['data'] as &$obj) {
                 $obj = $this->_addReadableProperty($obj);
@@ -175,14 +131,11 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $filters            
      * @return array:
      */
-    public function getListWithAncestors ($filters = null)
+    public function getListWithAncestors (\WebTales\MongoFilters\IFilter $filters = null)
     {
         $returnArray = array();
         $listResult = $this->getList($filters);
         $list = $listResult['data'];
-        foreach ($list as &$obj) {
-            $obj = $this->_addReadableProperty($obj);
-        }
         foreach ($list as $item) {
             $returnArray = $this->_addParentToArray($returnArray, $item);
         }
@@ -212,7 +165,7 @@ abstract class AbstractCollection implements IAbstractCollection
             return $array;
         }
         
-        $parentItem = Manager::getService('Groups')->findById($item['parentId']);
+        $parentItem = $this->findById($item['parentId']);
         
         if ($parentItem) {
             $array[$parentItem['id']] = $parentItem;
@@ -269,11 +222,11 @@ abstract class AbstractCollection implements IAbstractCollection
      * @deprecated
      *
      *
-     * @param array $value
+     * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
      */
-    public function findOne ($value)
+    public function findOne (\WebTales\MongoFilters\IFilter $value)
     {
         $obj = $this->_dataService->findOne($value);
         if ($obj) {
@@ -287,11 +240,11 @@ abstract class AbstractCollection implements IAbstractCollection
      * @deprecated
      *
      *
-     * @param unknown $filter            
-     * @param unknown $fieldRule            
+     * @param \WebTales\MongoFilters\IFilter $filter            
+     * @param array $fieldRule            
      * @return MongoCursor
      */
-    public function customFind ($filter = array(), $fieldRule = array())
+    public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array())
     {
         return $this->_dataService->customFind($filter, $fieldRule);
     }
@@ -313,12 +266,12 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
-     * @param array $updateCond
+     * @param \WebTales\MongoFilters\IFilter $updateCond
      *            array of condition to determine what should be updated
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, 
+    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, 
             $options = array())
     {
         return $this->_dataService->customUpdate($data, $updateCond, $options);
@@ -533,37 +486,9 @@ abstract class AbstractCollection implements IAbstractCollection
      * (non-PHPdoc) @see
      * \Rubedo\Interfaces\Collection\IAbstractCollection::count()
      */
-    public function count ($filters = null)
+    public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
-        if (isset($filters)) {
-            foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) ||
-                         ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(
-                            array(
-                                    $value["property"] => $value["value"]
-                            ));
-                } else 
-                    if ($value["operator"] == 'like') {
-                        $this->_dataService->addFilter(
-                                array(
-                                        $value["property"] => array(
-                                                '$regex' => $this->_dataService->getRegex(
-                                                        '/.*' . $value["value"] .
-                                                                 '.*/i')
-                                        )
-                                ));
-                    } elseif (isset($value["operator"])) {
-                        $this->_dataService->addFilter(
-                                array(
-                                        $value["property"] => array(
-                                                $value["operator"] => $value["value"]
-                                        )
-                                ));
-                    }
-            }
-        }
-        return $this->_dataService->count();
+        return $this->_dataService->count($filters);
     }
 
     /**
@@ -581,7 +506,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param unknown $options            
      * @return Ambigous <boolean, multitype:>
      */
-    public function customDelete ($deleteCond, $options = array())
+    public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array())
     {
         return $this->_dataService->customDelete($deleteCond, $options);
     }
@@ -591,43 +516,15 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      * @param string $parentId
      *            id of the parent node
-     * @param array $filters
+     * @param \WebTales\MongoFilters\IFilter $filters
      *            array of data filters (mongo syntax)
      * @param array $sort
      *            array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild ($parentId, $filters = null, $sort = null)
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
-        if (isset($filters)) {
-            foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) ||
-                         ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(
-                            array(
-                                    $value["property"] => $value["value"]
-                            ));
-                } else 
-                    if ($value["operator"] == 'like') {
-                        $this->_dataService->addFilter(
-                                array(
-                                        $value["property"] => array(
-                                                '$regex' => new \MongoRegex(
-                                                        '/.*' . $value["value"] .
-                                                                 '.*/i')
-                                        )
-                                ));
-                    } elseif (isset($value["operator"])) {
-                        $this->_dataService->addFilter(
-                                array(
-                                        $value["property"] => array(
-                                                $value["operator"] => $value["value"]
-                                        )
-                                ));
-                    }
-            }
-        }
-        
+      
         if (isset($sort)) {
             foreach ($sort as $value) {
                 $this->_dataService->addSort(
@@ -642,7 +539,7 @@ abstract class AbstractCollection implements IAbstractCollection
             ));
         }
         
-        $result = $this->_dataService->readChild($parentId);
+        $result = $this->_dataService->readChild($parentId,$filters);
         if($result && is_array($result)){
             foreach ($result as &$obj) {
                 $obj = $this->_addReadableProperty($obj);
@@ -677,7 +574,7 @@ abstract class AbstractCollection implements IAbstractCollection
         return $returnArray;
     }
 
-    public function fetchAllChildren ($parentId, $filters = null, $sort = null, 
+    public function fetchAllChildren ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null, 
             $limit = 10)
     {
         $returnArray = array();
@@ -698,37 +595,9 @@ abstract class AbstractCollection implements IAbstractCollection
         return $returnArray;
     }
 
-    public function readTree ($filters=null)
+    public function readTree (\WebTales\MongoFilters\IFilter $filters = null)
     {
-        if (isset($filters)) {
-            foreach ($filters as $value) {
-                if ((! (isset($value["operator"]))) ||
-                ($value["operator"] == "eq")) {
-                    $this->_dataService->addFilter(
-                            array(
-                                    $value["property"] => $value["value"]
-                            ));
-                } else
-                if ($value["operator"] == 'like') {
-                    $this->_dataService->addFilter(
-                            array(
-                                    $value["property"] => array(
-                                            '$regex' => new \MongoRegex(
-                                                    '/.*' . $value["value"] .
-                                                    '.*/i')
-                                    )
-                            ));
-                } elseif (isset($value["operator"])) {
-                    $this->_dataService->addFilter(
-                            array(
-                                    $value["property"] => array(
-                                            $value["operator"] => $value["value"]
-                                    )
-                            ));
-                }
-            }
-        }
-        $tree = $this->_dataService->readTree();
+        $tree = $this->_dataService->readTree($filters);
         return $tree['children'];
     }
 
@@ -759,7 +628,6 @@ abstract class AbstractCollection implements IAbstractCollection
     public static final function disableUserFilter (
             $_isUserFilterDisabled = true)
     {
-        //error_log('disableUserFilter =>'.print_r(debug_backtrace(),true));
         $oldValue = self::$_isUserFilterDisabled;
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
         return $oldValue;

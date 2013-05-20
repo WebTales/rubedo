@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+Use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 require_once ('ContentListController.php');
 
@@ -69,11 +69,11 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $year = intval($year);
         $date = (string) $month . '-' . (string) $year;
         
-        $timestamp = mktime(0, 0, 0, $month, 1, $year);
+        $timestamp = (string) mktime(0, 0, 0, $month, 1, $year); //cast to string as date are stored as text in DB
         $nextMonth = new DateTime();
         $nextMonth->setTimestamp($timestamp);
         $nextMonth->add(new DateInterval('P1M'));
-        $nextMonthTimeStamp = $nextMonth->getTimestamp();
+        $nextMonthTimeStamp = (string) $nextMonth->getTimestamp(); //cast to string as date are stored as text in DB
         
         $queryId = $this->getParam('query-id', $blockConfig['query']);
         $data = array();
@@ -88,10 +88,13 @@ class Blocks_CalendarController extends Blocks_ContentListController
                 '$gte' => "$timestamp",
                 '$lt' => "$nextMonthTimeStamp"
             );
-            $queryFilter['filter'][] = array(
-                'property' => $usedDateField,
-                'value' => $condition
-            );
+            
+            $dateFilter = Filter::Factory('And')
+                          ->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)->setOperator('$gte')->setValue($timestamp))
+                          ->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)->setOperator('$lt')->setValue($nextMonthTimeStamp));
+            
+            $queryFilter['filter']->addFilter($dateFilter);
+            
             
             $queryId = $this->getParam('query-id', $blockConfig['query']);
             
@@ -118,6 +121,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
             		$contentArray["data"][] = $unorderedContentArray["data"][$value];
             	}
             } else {
+               
                 $contentArray = $this->getContentList($queryFilter, 
                         array(
                                 'limit' => 100,

@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+Use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 require_once ('AbstractController.php');
 
@@ -36,6 +36,9 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $output = $this->_getList();
         $blockConfig = $this->getRequest()->getParam('block-config');
         $output["blockConfig"]=$blockConfig;
+        if(!$output["blockConfig"]['columns']){
+            $output["blockConfig"]['columns'] = 1;
+        }
         
         if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
@@ -207,35 +210,29 @@ class Blocks_ContentListController extends Blocks_AbstractController
         );
         $this->_helper->json($data);
     }
-    
-    /*
-     * @ todo: PHPDoc
+        
+    /**
+     * Return a list of contents based on Filters and Pagination
+     * @param \Webtales\MongoFilters\IFilter $filters
+     * @param array $pageData
+     * @return array
      */
     protected function getContentList ($filters, $pageData)
     {
-        $filter = array(
-                'property' => 'target',
-                'operator' => '$in',
-                'value' => array(
-                        $this->_workspace,
-                        'all'
-                )
-        );
-        
-        $filters["filter"][] = $filter;
-        
-        $contentArray = Manager::getService('Contents')->getOnlineList($filters["filter"], 
-                isset($filters["sort"]) ? $filters["sort"] : array(), 
-                (($pageData['currentPage'] - 1) * $pageData['limit'])+$pageData['skip'], 
-                $pageData['limit']);
+        $filter = Filter::Factory('In')->setName('target')->setValue(array(
+            $this->_workspace,
+            'all'
+        ));
+        $filters["filter"]->addFilter($filter);
+        $filter["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
+        $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']) + $pageData['skip'], $pageData['limit']);
         $contentArray['page'] = $pageData;
-        $contentArray['count'] = max(0,$contentArray['count'] - $pageData['skip']);
+        $contentArray['count'] = max(0, $contentArray['count'] - $pageData['skip']);
         return $contentArray;
     }
 
     protected function setPaginationValues ($blockConfig)
     {
-        //Zend_Debug::dump($blockConfig);die();
         $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $defaultSkip = isset($blockConfig['resultsSkip']) ? $blockConfig['resultsSkip'] : 0;
         $pageData['skip'] = $this->getParam('skip', $defaultSkip);

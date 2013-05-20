@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle ContentTypes
@@ -47,7 +47,8 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		    }
 		    $readWorkspaceArray[] = null;
 		    $readWorkspaceArray[] = 'all';
-		    $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+// 		    $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+		    $filter = Filter::Factory('OperatorToValue')->setName('workspaces')->setOperator('$in')->setValue($readWorkspaceArray);
 		    $this->_dataService->addFilter($filter);
 		}
     }
@@ -263,13 +264,13 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 		$readWorkspaces = $currentUserService->getReadWorkspaces();
 		$readWorkspaces[] = NULL;
 
-		if(in_array("all", $readWorkspaces)){
-			$filter = array();
-		} else {
-			$filter = array(array('property' => 'workspaces', 'operator' => '$in', 'value' => $readWorkspaces));
+		$filters = Filter::Factory();
+		if(!in_array("all", $readWorkspaces)){
+		    $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaces);
+		    $filters->addFilter($filter);
 		}
-		$filter[] = array('property' => 'system', 'operator' => '$ne', 'value' => true);
-		$readableContentTypes = $this->getList($filter);
+		$filters->addFilter(Filter::Factory('Not')->setName('system')->setValue(true));
+		$readableContentTypes = $this->getList($filters);
 		
 		foreach ($readableContentTypes['data'] as $value) {
 			$contentTypesList[$value['type']] = array('type' => $value['type'], 'id' => $value['id']);

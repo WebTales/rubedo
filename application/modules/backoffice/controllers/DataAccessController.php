@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-use Rubedo\Services\Manager;
+use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Abstract Controller providing CRUD API and dealing with the data access
@@ -134,8 +134,10 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         } else {
             $limit = null;
         }
-
-        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit);
+        
+        $mongoFilters = $this->_buildFilter($filters);
+        
+        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
 
         $response = array();
         $response['total'] = $dataValues['count'];
@@ -146,6 +148,32 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $this->_returnJson($response);
     }
 
+    protected function _buildFilter($filters=null){
+        if(!$filters){
+            $filters = array();
+        }
+        $mongoFilters = Filter::Factory();
+
+        foreach($filters as $filter){
+            if(isset($filter['operator']) && $filter['operator']=='like'){
+                $mongoFilter = Filter::Factory('Regex')
+                ->setName($filter['property'])
+                ->setValue('/.*' . $filter["value"] .'.*/i');
+            }elseif(isset($filter['operator'])){
+                $mongoFilter = Filter::Factory('OperatorToValue')
+                ->setName($filter['property'])
+                ->setValue($filter['value'])
+                ->setOperator($filter['operator']);
+            }else{
+                $mongoFilter = Filter::Factory('Value')
+                ->setName($filter['property'])
+                ->setValue($filter['value']);
+            }
+            $mongoFilters->addFilter($mongoFilter);
+        }
+        return $mongoFilters;
+    }
+    
     /**
      * read child action
      *
@@ -168,7 +196,8 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
 
         $parentId = $this->getRequest()->getParam('node', 'root');
 
-        $dataValues = $this->_dataService->readChild($parentId, $filters, $sort);
+        $mongoFilters = $this->_buildFilter($filters);
+        $dataValues = $this->_dataService->readChild($parentId, $mongoFilters, $sort);
 
         $response = array();
         $response['children'] = array_values($dataValues);
@@ -224,8 +253,8 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         } else {
             $filters = null;
         }
-        
-        $dataValues = $this->_dataService->readTree($filters);
+        $mongoFilters = $this->_buildFilter($filters);
+        $dataValues = $this->_dataService->readTree($mongoFilters);
 
         $response = array();
         $response["expanded"] = true;

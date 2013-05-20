@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Mongo;
 
-use Rubedo\Interfaces\Mongo\IWorkflowDataAccess;
+use Rubedo\Interfaces\Mongo\IWorkflowDataAccess, \WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the API to MongoDB
@@ -77,22 +77,25 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     /**
      * Adapt filter for the workflow
      *
-     * @param $filter is the current filter
-     * @return array compatible with the data in mongoDb
+     * @param \WebTales\MongoFilters\IFilter $filter
      */
-    protected function _adaptFilter($filterArray) {
-
-        if (count($filterArray) > 0) {
-            $this->clearFilter();
-
-            foreach ($filterArray as $key => $value) {
-                if (in_array($key, $this->_metaDataFields) || substr($key,0,1)=='$') {
-                    $this->addFilter(array($key => $value));
-                    continue;
-                }
-                $newKey = $this->_currentWs . "." . $key;
-                $this->addFilter(array($newKey => $value));
+    protected function _adaptFilter(\WebTales\MongoFilters\IFilter $filters) {
+        
+        if($filters instanceof \WebTales\MongoFilters\ICompositeFilter){ //do recursive adaptation to composite filter
+            $filtersArray = $filters->getFilters();
+            foreach ($filtersArray as $filter){
+                $this->_adaptFilter($filter);
             }
+        }elseif($filters instanceof \WebTales\MongoFilters\ValueFilter){ // adapt simple filters
+            $key = $filters->getName();
+            $value = $filters->getValue();
+            
+            if (!in_array($key, $this->_metaDataFields) && strpos($key, $this->_currentWs)===false && substr($key,0,1)!='$') {
+                $newKey = $this->_currentWs . "." . $key;
+                $filters->setName($newKey);
+            
+            }
+            
         }
     }
 
@@ -200,7 +203,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             //copy the workspace into the live
             $obj['live'] = $obj['workspace'];
 
-            $updateCond = array('_id' => $this->getId($objectId));
+            $updateCond = Filter::Factory('Uid')->setValue($objectId);
 
             //update the content with the new values for the live array
             $returnArray = $this->customUpdate($obj, $updateCond);
@@ -227,10 +230,17 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return array
      */
-    public function read() {
+    public function read(\WebTales\MongoFilters\IFilter $filters = null) {
         //Adaptation of the conditions for the workflow
-        $filter = $this->getFilterArray();
-        $this->_adaptFilter($filter);
+        $localFilter = $this->getFilters();
+        
+        //add Read Filters
+        if($filters){
+            $this->_adaptFilter($filters);
+        }
+        
+        $this->_adaptFilter($localFilter);
+
         $sort = $this->getSortArray();
         $this->_adaptSort($sort);
         $includedFields = $this->getFieldList();
@@ -238,7 +248,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         $excludedFields = $this->getExcludeFieldList();
         $this->_adaptExcludeFields($excludedFields);
 
-        $content = parent::read();
+        $content = parent::read($filters);
 		$count = $content['count'];
 		$content = $content['data'];
 		
@@ -309,15 +319,16 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      * @return array
      */
     public function findById($contentId,$raw=true) {
-        return $this->findOne(array('_id' => $this->getId($contentId)),$raw);
+        $filter = Filter::Factory('Uid')->setValue($contentId);
+        return $this->findOne($filter,$raw);
     }
 	
-	public function findOne($value,$raw=true){
+	public function findOne(\WebTales\MongoFilters\IFilter $value=null,$raw=true){
 		if($raw){
 			return parent::findOne($value);
 		}
         //Adaptation of the conditions for the workflow
-        $filter = $this->getFilterArray();
+        $filter = $this->getFilters();
         $this->_adaptFilter($filter);
         $sort = $this->getSortArray();
         $this->_adaptSort($sort);

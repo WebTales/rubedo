@@ -16,8 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IDam;
-use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IDam, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Groups
@@ -47,11 +46,8 @@ class Dam extends AbstractCollection implements IDam
             if (! in_array('all', $readWorkspaceArray)) {
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
-                $filter = array(
-                        'target' => array(
-                                '$in' => $readWorkspaceArray
-                        )
-                );
+
+                $filter = Filter::Factory('OperatorToValue')->setName('target')->setOperator('$in')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
 	        }
 	        
@@ -162,21 +158,15 @@ class Dam extends AbstractCollection implements IDam
 
     public function getByType ($typeId)
     {
-        $filter = array(
-            array(
-                'property' => 'typeId',
-                'value' => $typeId
-            )
-        );
-        
+        $filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
         return $this->getList($filter);
 	}
 
 	
 	public function getListByDamTypeId($typeId)
 	{
-		$filterArray[]=array("property"=>"typeId","value"=>$typeId);
-		return $this->getList($filterArray);
+		$filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
+		return $this->getList($filter);
 	}
 	
 	/**

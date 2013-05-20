@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IUrlCache;
+use Rubedo\Interfaces\Collection\IUrlCache, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Users
@@ -53,9 +53,8 @@ class UrlCache extends AbstractCollection implements IUrlCache
      */
     public function findByPageId ($pageId)
     {
-        return $this->_dataService->findOne(array(
-            'pageId' => $pageId
-        ));
+        
+        return $this->_dataService->findOne(Filter::Factory('value')->setName('pageId')->setValue($pageId));
     }
     
 
@@ -74,9 +73,16 @@ class UrlCache extends AbstractCollection implements IUrlCache
 	 */
 	public function findByUrl ($url, $siteId)
     {
-        return $this->_dataService->findOne(array(
-            'url' => $url,
-            'siteId' => $siteId
-        ));
+        $filters = Filter::Factory('And');
+        
+        $filter = Filter::Factory('Value');
+        $filter->setName('url')->setValue($url);
+        $filters->addFilter($filter);
+        
+        $filter = Filter::Factory('Value');
+        $filter->setName('siteId')->setValue($siteId);
+        $filters->addFilter($filter);
+        
+        return $this->_dataService->findOne($filters);
     }
 }

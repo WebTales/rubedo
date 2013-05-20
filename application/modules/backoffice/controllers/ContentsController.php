@@ -61,11 +61,12 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
         
         $filters = Zend_Json::decode($this->getRequest()->getParam('filter', null));
+        $mongoFilters = $this->_buildFilter($filters);
         $sort = Zend_Json::decode($this->getRequest()->getParam('sort', null));
         $start = Zend_Json::decode($this->getRequest()->getParam('start', null));
         $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
 
-        $dataValues = $this->_dataService->getList($filters, $sort, $start, $limit, false);
+        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit, false);
 
         $response = array();
         $response['total'] = $dataValues['count'];
@@ -97,8 +98,8 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         }
 
         $parentId = $this->getRequest()->getParam('node', 'root');
-
-        $dataValues = $this->_dataService->readChild($parentId, $filters, $sort, false);
+        $mongoFilters = $this->_buildFilter($filters);
+        $dataValues = $this->_dataService->readChild($parentId, $mongoFilters, $sort, false);
 
         $response = array();
         $response['children'] = array_values($dataValues);
@@ -198,6 +199,8 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	    $tFilterArray = Zend_Json::decode($jsonTFilter);
 	    $globalFilterArray = array_merge($tFilterArray, $filterArray);
 	    
+	    
+	    
 	    // call standard method with merge array
 	    $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
 	    
@@ -206,7 +209,8 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	    $start = Zend_Json::decode($this->getRequest()->getParam('start', null));
 	    $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
 	    
-	    $this->_helper->json($this->_dataService->getOrderedList($filters, $sort, $start, $limit, false));
+	    $mongoFilters = $this->_buildFilter($filters);
+	    $this->_helper->json($this->_dataService->getOrderedList($mongoFilters, $sort, $start, $limit, false));
 	}
 	
 	public function clearOrphanContentsAction() {

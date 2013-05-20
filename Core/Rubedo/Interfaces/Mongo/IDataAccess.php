@@ -43,19 +43,20 @@ interface IDataAccess
     /**
      * Do a find request on the current collection
      *
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function read ();
+    public function read (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Do a findone request on the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::findOne()
-     * @param array $value
+     * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
      */
-    public function findOne ($value);
+    public function findOne (\WebTales\MongoFilters\IFilter $value);
 
     /**
      * Find an item given by its literral ID
@@ -106,56 +107,61 @@ interface IDataAccess
     /**
      * Do a find request on the current collection and return content as tree
      *
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function readTree ();
+    public function readTree (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Find child of a node tree
      * 
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @param $parentId id
      *            of the parent node
      * @return array children array
      */
-    public function readChild ($parentId);
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Do a count request based on current filter
-     * 
+     *
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return integer
      */
-    public function count ();
+    public function count (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Add a filter condition to the service
+     * 
+     * These filters are shared between all queries to the service
      *
      * Filter should be
      * array('field'=>'value')
      * or
      * array('field'=>array('operator'=>value))
      *
-     * @param array $filter
-     *            Native Mongo syntax filter array
+     * @param \WebTales\MongoFilters\IFilter $filter
      * @return bool
      */
-    public function addFilter (array $filter);
+    public function addFilter (\WebTales\MongoFilters\IFilter $filter);
 
     /**
      * Add a OR filter condition to the service
      *
      * Filter should be an array of array('field'=>'value')
      *
+     * @deprecated
      * @param array $filter
      *            Native Mongo syntax filter array
      */
     public function addOrFilter (array $condArray);
 
     /**
-     * Return the current array of conditions.
-     * 
-     * @return array
+     * Return the current MongoDB conditions.
+     *
+     * @return \WebTales\MongoFilters\IFilter
      */
-    public function getFilterArray ();
+    public function getFilters ();
 
     /**
      * Unset all filter condition to the service
@@ -177,6 +183,9 @@ interface IDataAccess
      */
     public static function setDefaultDb ($dbName);
     
+    /**
+     * Clear the current Filters for this instance of the service
+     */
     public function clearFilter ();
 
     /**
@@ -314,8 +323,8 @@ interface IDataAccess
      */
     public function dropIndexes();
     public function checkIndex($keys);
-    public function customDelete ($deleteCond, $options = array());
-    public function customFind ($filter = array(), $fieldRule = array());
+    public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array());
+    public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array());
     /**
      * Update an objet in the current collection
      *
@@ -324,12 +333,12 @@ interface IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
-     * @param array $updateCond
-     *            array of condition to determine what should be updated
+     * @param \WebTales\MongoFilters\IFilter $updateCond
+     *            condition to determine what should be updated
      * @param array $options
      * @return array
      */
-    public function customUpdate (array $data, array $updateCond, $options = array());
+    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array());
     public function getMongoDate ();
     public function getId ($idString = null);
     public function getRegex ($expr);

@@ -20,7 +20,8 @@ Installation
 * A full PHP 5.3+ stack (i.e. http://www.zend.com/products/server/)
 * Composer (http://getcomposer.org)
 * Phing (http://www.phing.info)
-* MongoDB (http://www.mongodb.org)
+* MongoDB (http://www.mongodb.org) >= 2.2
+* PHP MongoDB Driver >= 1.3.0
 * ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 0.19.8 at this moment (https://github.com/ruflin/Elastica/)
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 

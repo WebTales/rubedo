@@ -63,10 +63,16 @@ class FileAccess extends DataAccess implements IFileAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read ()
+    public function read (\WebTales\MongoFilters\IFilter $filters = null)
     {
         // get the UI parameters
-        $filter = $this->getFilterArray();
+        $LocalFilter = clone $this->getFilters();
+        
+        //add Read Filters
+        if($filters){
+            $LocalFilter->addFilter($filters);
+        }
+        
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
@@ -82,7 +88,7 @@ class FileAccess extends DataAccess implements IFileAccess
         }
         
         // get the cursor
-        $cursor = $this->_collection->find($filter, $fieldRule);
+        $cursor = $this->_collection->find($LocalFilter->toArray(), $fieldRule);
         $nbItems = $cursor->count();
         
         // apply sort, paging, filter
@@ -113,7 +119,7 @@ class FileAccess extends DataAccess implements IFileAccess
      *            search condition
      * @return array
      */
-    public function findOne ($value)
+    public function findOne (\WebTales\MongoFilters\IFilter $localFilter = null)
     {
         // get the UI parameters
         $includedFields = $this->getFieldList();
@@ -127,9 +133,12 @@ class FileAccess extends DataAccess implements IFileAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         
-        $value = array_merge($value, $this->getFilterArray());
+        $filters = clone $this->getFilters();
+        if($localFilter){
+             $filters->addFilter($localFilter);
+        }
         
-        $mongoFile = $this->_collection->findOne($value, $fieldRule);
+        $mongoFile = $this->_collection->findOne($filters->toArray(), $fieldRule);
         
         return $mongoFile;
     }
@@ -214,8 +223,8 @@ class FileAccess extends DataAccess implements IFileAccess
             '_id' => $mongoID
         );
         
-        if (is_array($this->_filterArray)) {
-            $updateCondition = array_merge($this->_filterArray, $updateCondition);
+        if (is_array($this->_filters)) {
+            $updateCondition = array_merge($this->_filters, $updateCondition);
         }
         
         $resultArray = $this->_collection->remove($updateCondition, $options);

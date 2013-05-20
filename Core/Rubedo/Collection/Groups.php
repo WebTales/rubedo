@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IGroups, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IGroups, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Groups
@@ -51,7 +51,7 @@ class Groups extends AbstractCollection implements IGroups
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if(!in_array('all',$readWorkspaceArray)){
-                $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+                $filter = Filter::Factory('In')->setName('workspace')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
@@ -147,12 +147,8 @@ class Groups extends AbstractCollection implements IGroups
     }
 
     public function getListByUserId ($userId)
-    {
-        $filters = array();
-        $filters[] = array(
-            'property' => "members",
-            'value' => $userId
-        );
+    {      
+        $filters = Filter::Factory('Value')->setName('members')->setValue($userId);
         $groupList = $this->getListWithAncestors($filters);
         
         return $groupList;
@@ -160,11 +156,9 @@ class Groups extends AbstractCollection implements IGroups
     
     public function getValidatingGroupsId(){
         //contentReviewer
-        $filters = array();
-        $filters[] = array(
-            'property' => "roles",
-            'value' => 'contentReviewer'
-        );
+        $filters = Filter::Factory();
+        $filters->addFilter(Filter::Factory('Value')->setName('roles')->setValue('contentReviewer'));
+        
         $groupList = $this->getList($filters);
         
         //fetchAllChildren
@@ -184,12 +178,9 @@ class Groups extends AbstractCollection implements IGroups
     public function getValidatingGroupsForWorkspace($workspace){
         $validatingGroups = Manager::getService('Groups')->getValidatingGroupsId();
 
-        $filters = array();
-        $filters[] = array(
-            'property' => "writeWorkspaces",
-            'value' => array('$in'=>array($workspace,'all'))
-        );
-        
+        $filters = Filter::Factory();
+        $filters->addFilter(Filter::Factory('In')->setName('writeWorkspaces')->setValue(array($workspace,'all')));
+                
         $groupList = $this->getList($filters);
         
         //fetchAllChildren
@@ -241,9 +232,8 @@ class Groups extends AbstractCollection implements IGroups
 
     public function findByName ($name)
     {
-        return $this->_dataService->findOne(array(
-            'name' => $name
-        ));
+        $filter = Filter::Factory('Value')->setValue($name)->setName('name');
+        return $this->_dataService->findOne($filter);
     }
 
     /**
@@ -304,8 +294,9 @@ class Groups extends AbstractCollection implements IGroups
 		foreach ($groupsArray['data'] as $value) {
 			$groupsIdArray[] = $value['id'];
 		}
-		
-		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $groupsIdArray)));
+		$filters = Filter::Factory();
+		$filters->addFilter(Filter::Factory('NotIn')->setName('parentId')->setValue($groupsIdArray));
+		$orphansArray = $this->getList($filters);
 
 		foreach ($orphansArray['data'] as $value) {
 			$orphansIdArray[] = $value['id'];
@@ -342,7 +333,9 @@ class Groups extends AbstractCollection implements IGroups
 			$groupsIdArray[] = $value['id'];
 		}
 		
-		$orphansArray = $this->getList(array(array('property' => 'parentId', 'operator' => '$nin', 'value' => $groupsIdArray)));
+		$filters = Filter::Factory();
+		$filters->addFilter(Filter::Factory('NotIn')->setName('parentId')->setValue($groupsIdArray));
+		$orphansArray = $this->getList($filters);
 
 		foreach ($orphansArray['data'] as $value) {
 			$orphansIdArray[] = $value['id'];

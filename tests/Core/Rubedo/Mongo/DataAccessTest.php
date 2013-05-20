@@ -131,7 +131,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $dataAccessObject->addFilter(array('criteria' => 'jack'));
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('criteria')->setValue('jack');
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
@@ -157,7 +159,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $dataAccessObject->addFilter(array('criteria' => array('$lte' => 1)));
+        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter->setName('criteria')->setValue(1)->setOperator('$lte');
+        
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
@@ -183,8 +188,11 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $dataAccessObject->addFilter(array('criteria' => array('$regex' => new \MongoRegex('/mam.*/i'))));
-
+        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter->setName('criteria')->setValue(new \MongoRegex('/mam.*/i'))->setOperator('$regex');
+        
+        $dataAccessObject->addFilter($filter);
+        
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
         $this->assertEquals($items, $readArray);
@@ -209,8 +217,14 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $dataAccessObject->addFilter(array('criteria' => 'jack'));
-        $dataAccessObject->addFilter(array('otherCriteria' => 1));
+        
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('criteria')->setValue('jack');
+        $dataAccessObject->addFilter($filter);
+        
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('otherCriteria')->setValue(1);
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
@@ -1192,7 +1206,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item3);
 
-        $dataAccessObject->addFilter(array('name' => $item3['name']));
+        
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('name')->setValue($item3['name']);
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->readChild($testId);
 
@@ -1223,8 +1240,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $testId = $item['id'];
 
         $expectedResult = array($item2);
-
-        $dataAccessObject->addFilter(array('version' => array('$gt' => 1)));
+        
+        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter->setName('version')->setValue(1)->setOperator('$gt');
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->readChild($testId);
 
@@ -1256,7 +1275,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item2);
 
-        $dataAccessObject->addFilter(array('name' => array('$regex' => new \MongoRegex('/Up.*/i'))));
+        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter->setName('name')->setValue(new \MongoRegex('/Up.*/i'))->setOperator('$regex');
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->readChild($testId);
 
@@ -1289,8 +1310,14 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item3);
 
-        $dataAccessObject->addFilter(array('version' => array('$lte' => 5)));
-        $dataAccessObject->addFilter(array('name' => array('$regex' => new \MongoRegex('/Cre.*/i'))));
+        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter->setName('version')->setValue(5)->setOperator('$lte');
+        $dataAccessObject->addFilter($filter);
+        
+        
+        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter->setName('name')->setValue(new \MongoRegex('/Cre.*/i'))->setOperator('$regex');
+        $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->readChild($testId);
 
@@ -1553,8 +1580,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = $item;
 
-        $value = array('name' => $item['name']);
-        $readArray = $dataAccessObject->findOne($value);
+        //$value = array('name' => $item['name']);
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('name')->setValue($item['name']);
+        $readArray = $dataAccessObject->findOne($filter);
 
         $this->assertEquals($expectedResult, $readArray);
     }
@@ -1579,8 +1608,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array('name' => $item['name'], 'id' => $item['id']);
 
-        $value = array('name' => $item['name']);
-        $readArray = $dataAccessObject->findOne($value);
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('name')->setValue($item['name']);
+        $readArray = $dataAccessObject->findOne($filter);
 
         $this->assertEquals($expectedResult, $readArray);
     }
@@ -1610,8 +1640,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 		
         $expectedResult = array('id' => $item['id'], 'name' => $item['name'], 'value' => 'test1');
 
-        $value = array('name' => $item['name']);
-        $readArray = $dataAccessObject->findOne($value);
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('name')->setValue($item['name']);
+        $readArray = $dataAccessObject->findOne($filter);
 
         $this->assertEquals($expectedResult, $readArray);
     }
@@ -1636,19 +1667,20 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array('name' => $item['name'], 'id' => $item['id']);
 
-        $value = array('name' => $item['name']);
-        $readArray = $dataAccessObject->findOne($value);
+        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter->setName('name')->setValue($item['name']);
+        $readArray = $dataAccessObject->findOne($filter);
 
         $this->assertEquals($expectedResult, $readArray);
     }
 
     /**
-     * Check if getFilterArray return an array
+     * Check if getFilters return an array
      */
     public function testGetEmptyFilterArray() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
-        $this->assertEquals('array', gettype($dataAccessObject->getFilterArray()));
+        $this->assertEquals('array', gettype($dataAccessObject->getFilters()->toArray()));
     }
 
     /**
@@ -1658,10 +1690,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filterExample = array('name' => 'value');
+        //$filterExample = array('name' => 'value');
+        $filterExample = new \WebTales\MongoFilters\ValueFilter();
+        $filterExample->setName('name')->setValue('value');
         $dataAccessObject->addFilter($filterExample);
 
-        $this->assertEquals($filterExample, $dataAccessObject->getFilterArray());
+        $this->assertEquals($filterExample->toArray(), $dataAccessObject->getFilters()->toArray());
 
     }
 
@@ -1672,52 +1706,25 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filterExample = array('name' => 'value');
-        $filterExample2 = array('name2' => 'value2');
-        $filters = array_merge($filterExample, $filterExample2);
+        $filters = new \WebTales\MongoFilters\AndFilter();
+        
+        $filterExample = new \WebTales\MongoFilters\ValueFilter();
+        $filterExample->setName('name')->setValue('value');
+        
+        $filterExample2 = new \WebTales\MongoFilters\ValueFilter();
+        $filterExample2->setName('name2')->setValue('value2');
+        
+        $filters->addFilter($filterExample);
+        $filters->addFilter($filterExample2);
+        
         $dataAccessObject->addFilter($filterExample);
         $dataAccessObject->addFilter($filterExample2);
 
-        $this->assertEquals($filters, $dataAccessObject->getFilterArray());
+        $this->assertEquals($filters->toArray(), $dataAccessObject->getFilters()->toArray());
 
     }
 
-    /**
-     * Test addOrFilter with one condition array
-     */
-    public function testAddOrFilter() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $orFilter = array('login' => 'test', 'email' => 'test@webtales.fr');
-
-        $dataAccessObject->addOrFilter($orFilter);
-        $readArray = $dataAccessObject->getFilterArray();
-
-        $result = $readArray['$or'];
-
-        $this->assertEquals($orFilter, $result);
-    }
-
-    /**
-     * Test addOrFilter with two condition array
-     */
-    public function testAddTwoOrFilter() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $orFilter1 = array('login' => 'test', 'email' => 'test@webtales.fr');
-        $orFilter2 = array('createDate' => '05/11/12', 'name' => 'rubedo');
-
-        $dataAccessObject->addOrFilter($orFilter1);
-        $dataAccessObject->addOrFilter($orFilter2);
-        $expectedResult = array_merge($orFilter1, $orFilter2);
-
-        $readArray = $dataAccessObject->getFilterArray();
-        $result = $readArray['$or'];
-
-        $this->assertEquals($expectedResult, $result);
-    }
+    
 
     /**
      * Simple clear Filter Test
@@ -1726,42 +1733,21 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filterExample = array('name' => 'value');
-        $filterExample2 = array('name2' => 'value2');
+        $filterExample = new \WebTales\MongoFilters\ValueFilter();
+        $filterExample->setName('name')->setValue('value');
+        
+        $filterExample2 = new \WebTales\MongoFilters\ValueFilter();
+        $filterExample2->setName('name2')->setValue('value2');
         $dataAccessObject->addFilter($filterExample);
         $dataAccessObject->addFilter($filterExample2);
 
         $dataAccessObject->clearFilter();
 
-        $this->assertEquals(array(), $dataAccessObject->getFilterArray());
+        $this->assertEquals(array(), $dataAccessObject->getFilters()->toArray());
 
     }
 
-    /**
-     * filter should not be empty
-     * @expectedException \Rubedo\Exceptions\Server
-     */
-    public function testAddFilterNotBeEmpty() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
 
-        $filterExample = array();
-        $dataAccessObject->addFilter($filterExample);
-
-    }
-
-    /**
-     * filter should not have more than one item
-     * @expectedException \Rubedo\Exceptions\Server
-     */
-    public function testAddFilterNotTwoArgs() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
-        $dataAccessObject->init('items', 'test_db');
-
-        $filterExample = array('toto', 'titi');
-        $dataAccessObject->addFilter($filterExample);
-
-    }
 
 
     /**

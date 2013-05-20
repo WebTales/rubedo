@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\ISites, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\ISites, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Sites
@@ -145,7 +145,7 @@ class Sites extends AbstractCollection implements ISites
 	        if(in_array('all',$readWorkspaceArray)){
 	            return;
 	        }
-	        $filter = array('workspace'=> array('$in'=>$readWorkspaceArray));
+	        $filter = Filter::Factory('In')->setName('workspace')->setValue($readWorkspaceArray);
 	        $this->_dataService->addFilter($filter);
 		}
     }
@@ -190,10 +190,11 @@ class Sites extends AbstractCollection implements ISites
         
         $site = $this->findByName($host);
         if ($site === null) {
-            $site = $this->_dataService->findOne(array(
-                'alias' => $host
-            ));
+            $filter = Filter::Factory('Value');
+            $filter->setName('alias')->setValue($host);
+            $site = $this->_dataService->findOne($filter);
         }
+        
         return $site;
     }
 	public function deleteById($id)

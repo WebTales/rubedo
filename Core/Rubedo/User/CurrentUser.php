@@ -139,7 +139,6 @@ class CurrentUser implements ICurrentUser
     /**
      * return the groups of the current user.
      *
-     * @todo to be implemented with real groups !
      * @return array
      */
     public function getGroups ()
@@ -278,13 +277,11 @@ class CurrentUser implements ICurrentUser
     /**
      * return main workspace of the current user
      *
-     * @todo implement real "main group" & "main workspace" base on order.
      * @return array
      */
     public function getMainWorkspace ()
     {
         if(!isset(self::$_mainWorkspace)){
-            // return Manager::getService('Workspaces')->findById('global');
             $mainGroup = $this->getMainGroup();
             if ($mainGroup == null) {
                 return Manager::getService('Workspaces')->findById('global');
