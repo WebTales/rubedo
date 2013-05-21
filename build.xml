@@ -71,6 +71,26 @@
 		<exec command="git pull" passthru="true" dir="${project.basedir}"/>
 	</target>
 	
+	<target name="clean-build" description="Cleanup build artifacts">
+		<delete dir="${project.basedir}/build"/>
+  		<delete dir="${project.basedir}/build/api"/>
+  		<delete dir="${project.basedir}/build/code-browser"/>
+  		<delete dir="${project.basedir}/build/coverage"/>
+  		<delete dir="${project.basedir}/build/logs"/>
+  		<delete dir="${project.basedir}/build/pdepend"/>
+  		<delete dir="${project.basedir}/build/phpdox"/>
+ 	</target>
+	
+	<target name="prepare-build" depends="clean-build" description="Prepare for build">
+		<mkdir dir="${project.basedir}/build"/>
+  		<mkdir dir="${project.basedir}/build/api"/>
+  		<mkdir dir="${project.basedir}/build/code-browser"/>
+  		<mkdir dir="${project.basedir}/build/coverage"/>
+  		<mkdir dir="${project.basedir}/build/logs"/>
+  		<mkdir dir="${project.basedir}/build/pdepend"/>
+  		<mkdir dir="${project.basedir}/build/phpdox"/>
+ 	</target>
+	
 	<target name="phpunit">
 		
 		<exec
@@ -81,7 +101,7 @@
 		
 	</target>
 	
-	<target name="build" depends="set-rights,composer.update-dev,composer.front.update-dev,phpunit">
+	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,phpunit">
 	</target>
 	
 </project>
