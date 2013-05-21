@@ -101,7 +101,83 @@
 		
 	</target>
 	
-	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,phpunit">
+	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,lint,phploc,pdepend,phpmd-cli,phpcs-ci,phpunit">
 	</target>
+	
+	<target name="lint" description="Perform syntax check of sourcecode files">
+  	<apply executable="php" failonerror="true">
+	   <arg value="-l" />
+	
+	   <fileset dir="${project.basedir}/application">
+	    <include name="**/*.php" />
+	   </fileset>
+	   
+	   <fileset dir="${project.basedir}/Core">
+	    <include name="**/*.php" />
+	   </fileset>
+	
+	
+	  </apply>
+	 </target>
+	
+	<target name="phploc" description="Measure project size using PHPLOC">
+	  <exec executable="phploc" passthru="true">
+	   <arg value="--log-csv" />
+	   <arg value="${project.basedir}/build/logs/phploc.csv" />
+	   <arg value="${project.basedir}/application" />
+	   <arg value="${project.basedir}/Core" />
+	  </exec>
+	 </target>
+	 
+	 <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+	  <exec executable="${project.basedir}/vendor/bin/pdepend" passthru="true">
+	   <arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml" />
+	   <arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg" />
+	   <arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg" />
+	   
+	   <arg path="${project.basedir}/application,${project.basedir}/Core" />
+	  </exec>
+	 </target>
+	 
+	 <target name="phpmd"
+         description="Perform project mess detection using PHPMD and print human readable output. ">
+		  <exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
+		   <arg path="${project.basedir}/application,${project.basedir}/Core" />
+		   <arg value="text" />
+		   <arg value="controversial,design,unusedcode" />
+
+		  </exec>
+	</target>
+
+	 
+	 <target name="phpmd-cli"
+         description="Perform project mess detection using PHPMD. ">
+		  <exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
+		   <arg path="${project.basedir}/application,${project.basedir}/Core" />
+		   <arg value="xml" />
+		   <arg value="controversial,design,unusedcode" />
+		   <arg value="--reportfile" />
+		   <arg value="${project.basedir}/build/logs/pmd.xml" />
+		  </exec>
+	</target>
+	
+	 <target name="phpcs"
+         description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+  <exec executable="${project.basedir}/vendor/bin/phpcs" passthru="true">
+   <arg value="--standard=PSR2" />
+   <arg path="${project.basedir}/Core" />
+   <arg path="${project.basedir}/application" />
+  </exec>
+ </target>
+	
+	<target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
+	  <exec executable="${project.basedir}/vendor/bin/phpcs" output="/dev/null">
+	   <arg value="--report=checkstyle" />
+	   <arg value="--report-file=${project.basedir}/build/logs/checkstyle.xml" />
+	   <arg value="--standard=PSR2" />
+	   <arg path="${project.basedir}/Core" />
+	   <arg path="${project.basedir}/application" />
+	  </exec>
+	 </target>
 	
 </project>
