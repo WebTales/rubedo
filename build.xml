@@ -82,6 +82,6 @@
 	</target>
 	
 	<target name="build" depends="main,phpunit">
-	</targer>
+	</target>
 	
 </project>
