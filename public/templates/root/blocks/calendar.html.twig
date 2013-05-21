@@ -6,7 +6,7 @@
 <div class='row-fluid'>
 {% endif %}
     {% if display.showCal %}
-    <div id='calendar-{{ prefix }}' class='{% if display.showList %}span3{% endif %}' style="min-width:270px;">
+    <div id='calendar-{{ prefix }}' class='{% if display.showList %}span3{% endif %} calendar-rubedo'>
         {% include 'root/blocks/calendar/table.html.twig' %}
     </div>
     {% endif %}

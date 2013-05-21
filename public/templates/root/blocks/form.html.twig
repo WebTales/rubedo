@@ -8,13 +8,13 @@
 <div class="row-fluid">
 <div class="span2 offset9">
 <div class="btn-group pull-right">
-<a class="btn btn-warning" href="?getNew=1"  style="margin:5px 5px 5px 5px;"><i class="icon-file icon-white"></i> Nouveau</a>
+<a class="btn btn-warning form-new-btn" href="?getNew=1"><i class="icon-file icon-white"></i> Nouveau</a>
 </div>
 </div>
 </div>
 {% endif %}
 {% if finished %}
-<div class="hero-unit" style="margin-top:40px;" >{%if uniqueAnswerText%}{{ uniqueAnswerText }}{%else%}{{ finished }}{% endif %}</div>
+<div class="hero-unit form-answer-text" >{%if uniqueAnswerText%}{{ uniqueAnswerText }}{%else%}{{ finished }}{% endif %}</div>
 {% else %}
 {% if nbFormPages!=1 %}
 {% if progression==0 %}
@@ -22,7 +22,7 @@
   <div class="bar" style="width:{{ progress }}%"></div>
 </div>
 {% else %}
-<div style="width:80%;"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
+<div class="form-step"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
 {% endif %}
 {% endif %}
 <form id="{{ form.id }}" method="post" action="{{ url({},true) }}" class="form-horizontal rubedo-form no-hero" >
@@ -35,9 +35,9 @@
 <a class="btn" href="?getPrevious=1">Précédent</a>
 	{% endif %}
 	{% if currentFormPage==nbFormPages-1 %}
-<input class="btn btn-info" style="float:right;" type="submit" value="Terminer"/>
+<input class="btn btn-info float-right" type="submit" value="Terminer"/>
 	{% else %}
-<input class="btn" style="float:right;" type="submit" value="Suivant"/>
+<input class="btn float-right" type="submit" value="Suivant"/>
 	{% endif %}
 	</div>
 </form>

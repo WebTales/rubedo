@@ -15,32 +15,32 @@
       src="https://maps.googleapis.com/maps/api/js?key={{ googleMapsKey }};sensor=true">
     </script>
 {% if(cValue["config"]["multivalued"]) and value is iterable%}
-	<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
+	<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="localiser-rubedo row-fluid mapPlaceholder"></div>
 {% else %}
-<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
+<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="localiser-rubedo row-fluid mapPlaceholder"></div>
 {% endif %}
 
 {% if isLoggedIn %}
 <div  class="hide list-editmode">
- <div id="{{ data.id }}_{{key}}-error-msg" class="alert alert-error" style="display:none;">
+ <div id="{{ data.id }}_{{key}}-error-msg" class="hidden-rubedo alert alert-error">
  <span class="msg"></span>
 	 <button type="button" class="close" data-dismiss="alert">&times;</button>
      </div>
 <div id="{{ data.id }}_{{key}}-edit" class="btn-group">
 <legend>Edition</legend>
 <div>
-<label class="control-label" style="display:block; clear:both;" for="inputAddress">Adresse</label>
-<input class="input-xxlarge address"  style="width:99%;"  type="text" placeholder="{{ value.address|cleanHtml }}" >
+<label class="show-rubedo clear-both control-label" for="inputAddress">Adresse</label>
+<input class="input-xxlarge address localiser-address"  type="text" placeholder="{{ value.address|cleanHtml }}" >
 </div>
 <div class="btn-group pull-left">
-<label class="control-label" style="display:block; clear:both;" for="inputLatitude">Latitude</label>
+<label class="show-rubedo clear-both control-label" for="inputLatitude">Latitude</label>
 <input class="input-xxlarge latitude"  type="text" placeholder="{{ value.lat|cleanHtml }}">
 </div>
 <div class="btn-group pull-right">
-<label class="control-label" style="display:block; clear:both;" for="inputLongitude" >Longitude</label>
+<label class="show-rubedo clear-both control-label" for="inputLongitude" >Longitude</label>
 <input class="input-xxlarge longitude" type="text" placeholder="{{ value.lon|cleanHtml }}">
 </div>
-<div class="btn-group pull-right" style="clear:both;">
+<div class="clear-both btn-group pull-right">
    <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>Rafraîchir</a>
    </div>
 </div>

@@ -1,13 +1,13 @@
 <div id="{{prefix}}-page{{currentPage}}" class="active-items" data-items="{{ pageSize }}">
 	{% for item in items %}
-	<div class="pull-left thumbnail" id="{{ data.id }}_{{ key }}" style="margin: 1em;">
+	<div class="pull-left thumbnail thumbnail-rubedo" id="{{ data.id }}_{{ key }}">
 	<a href="#" data-gallery="gallery" onclick="callModal('/dam?media-id={{item.image}}', '{{item.title}}')">
 		<img class="img-rounded " src="/dam?media-id={{item.image}}{%if image.width%}&amp;width={{ image.width }}{%endif%}{%if image.height%}&amp;height={{ image.height }}{%endif%}&amp;mode=crop" style="{% if image.width %}max-width:{{ image.width }}px;{% endif %}{% if image.height %}max-height:{{ image.height }}px;{% endif %}" alt="{{item.title}}" title="{{item.title}}">
 	</a>
-	<div style="margin-top:5px; font-weight:bold;">{{ item.title }}</div>
+	<div class="thumbnail-title">{{ item.title }}</div>
 	</div>
 	{% endfor %}
-<div class="pagination" style="display:block; clear:both; margin:auto;">
+<div class="pagination show-rubedo clear-both margin-auto">
   <ul>
   {% if previous ==true %}
 	<li><a href="{{url({'page':currentPage-1,"prefix":prefix},true)}}" onclick="changePage({{currentPage-1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'default')}}');return false;">&lsaquo;</a></li>

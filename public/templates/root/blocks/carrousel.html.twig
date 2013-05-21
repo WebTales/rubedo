@@ -16,7 +16,7 @@
 			<a href="{{ displaySingleUrl(slide.id,null,singlePage) }}">
 			{% if slide.image %}
 			<img src="/dam?media-id={{slide.image}}{% if imageWidth %}&amp;width={{ imageWidth }}{% endif %}{% if imageHeight %}&amp;height={{ imageHeight }}{% endif %}&amp;mode={{ mode }}" alt="{{slide.text}}"
-				title="#htmlcaption_{{prefix}}_{{slide.id}}" style="width:100%" />
+				title="#htmlcaption_{{prefix}}_{{slide.id}}" class="carrousel-img" />
 			{% endif %}
 			<div class="carousel-caption">
 				<h4>{{slide.title}}</h4>

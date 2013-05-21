@@ -41,25 +41,25 @@
 				</li>
 				{% else %}
 				<li>
-					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ current-1 }})"><<</a>
+					<a class="cursor-pointer" onClick="window['{{ prefix }}refresh']({{ current-1 }})"><<</a>
 				</li>
 				{% endif %}
 				{%if current<wrap+1 or limit<10%}
 				{% for i in range(0, limit) %}
 				<li {% if current==i %}class="disabled"{% endif %}>
-					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ i }})">{{ i+1 }}</a>
+					<a class="cursor-pointer" onClick="window['{{ prefix }}refresh']({{ i }})">{{ i+1 }}</a>
 				</li>
 				{% endfor %}
 				{%elseif limit>wrap and current+wrap<pagecount %}
 				{% for  i in current-(wrap)..current+wrap%}
 				<li {% if current == i%}class="active"{%endif%}>
-					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ i }})">{{i+1}}</a>
+					<a class="cursor-pointer" onClick="window['{{ prefix }}refresh']({{ i }})">{{i+1}}</a>
 				</li>
 				{%endfor%}
 				{%else%}
 				{% for  i in current-(limit-(lastWrap)-1)..current+lastWrap%}
 				<li {% if current == i%}class="active"{%endif%}>
-					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ i }})">{{i+1}}</a>
+					<a class="cursor-pointer" onClick="window['{{ prefix }}refresh']({{ i }})">{{i+1}}</a>
 				</li>
 				{%endfor%}
 				{%endif%}
@@ -69,7 +69,7 @@
 				</li>
 				{% else %}
 				<li>
-					<a style="cursor:pointer;" onClick="window['{{ prefix }}refresh']({{ current+1 }})">>></a>
+					<a class="cursor-pointer" onClick="window['{{ prefix }}refresh']({{ current+1 }})">>></a>
 				</li>
 				{% endif %}
 			</ul>

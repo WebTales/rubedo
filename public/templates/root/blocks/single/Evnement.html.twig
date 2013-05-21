@@ -43,31 +43,31 @@
 	      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW31tpi5nYZPNDt82czNoXBpAc8N_rULQ&amp;sensor=true">
 	    </script>
 		{% if(type["position"]["config"]["multivalued"]) and data.position is iterable%}
-			<div id="{{ data.id }}_position" data-values="{{ data.position|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
+			<div id="{{ data.id }}_position" data-values="{{ data.position|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="row-fluid mapPlaceholder event-pos"></div>
 		{% else %}
-		<div id="{{ data.id }}_position" data-values="{{ data.position|json_encode() }}" data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}"  style="height:400px; margin-bottom:10px;" class="row-fluid mapPlaceholder"></div>
+		<div id="{{ data.id }}_position" data-values="{{ data.position|json_encode() }}" data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="row-fluid mapPlaceholder event-pos"></div>
 		{% endif %}
 		{% if isLoggedIn %}
 		<div  class="hide list-editmode">
-		 <div id="{{ data.id }}_position-error-msg" class="alert alert-error" style="display:none;">
+		 <div id="{{ data.id }}_position-error-msg" class="alert alert-error hidden-rubedo">
 		 <span class="msg"></span>
 			 <button type="button" class="close" data-dismiss="alert">&times;</button>
 		     </div>
 		<div id="{{ data.id }}_position-edit" class="btn-group">
 		<legend>Edition</legend>
 		<div>
-		<label class="control-label" style="display:block; clear:both;" for="inputAddress">Address</label>
-		<input class="input-xxlarge address"  style="width:99%;"  type="text" placeholder="{{ value.address|cleanHtml }}" >
+		<label class="control-label show-rubedo clear-both" for="inputAddress">Address</label>
+		<input class="input-xxlarge address event-address"  type="text" placeholder="{{ value.address|cleanHtml }}" >
 		</div>
 		<div class="btn-group pull-left">
-		<label class="control-label" style="display:block; clear:both;" for="inputLatitude">Latitude</label>
+		<label class="control-label show-rubedo clear-both" for="inputLatitude">Latitude</label>
 		<input class="input-xxlarge latitude"  type="text" placeholder="{{ value.lat|cleanHtml }}">
 		</div>
 		<div class="btn-group pull-right">
-		<label class="control-label" style="display:block; clear:both;" for="inputLongitude" >Longitude</label>
+		<label class="control-label show-rubedo clear-both" for="inputLongitude" >Longitude</label>
 		<input class="input-xxlarge longitude" type="text" placeholder="{{ value.lon|cleanHtml }}">
 		</div>
-		<div class="btn-group pull-right" style="clear:both;">
+		<div class="btn-group pull-right clear-both">
 		   <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_position")'>Rafraichir</a>
 		   </div>
 		</div>
@@ -79,16 +79,16 @@
 {# 
 	Image field
 #}
-	<div style="clear:both;"></div>
+	<div class="clear-both"></div>
 		{% if data.image %}
  {% if(type["image"]["config"]["multivalued"])and data.image is iterable %}
   {% for item in data.image%}
-		<div class="pull-left editable-img" style="margin: 1em;" id="{{ data.id }}_image-{{ loop.index-1 }}">
+		<div class="pull-left editable-img thumbnail-rubedo" id="{{ data.id }}_image-{{ loop.index-1 }}">
 		        <img class="img-rounded" src="/dam?media-id={{item}}&amp;width=400" alt="{{data.text}}" title="{{data.text}}"  />
 		    </div>
 {% endfor %} 
 {% else %}
-		<div class="pull-left editable-img" style="margin: 1em;" id="{{ data.id }}_image">
+		<div class="pull-left editable-img thumbnail-rubedo" id="{{ data.id }}_image">
 		        <img class="img-rounded" src="/dam?media-id={{data.image}}&amp;width=400" alt="{{data.text}}" title="{{data.text}}"  />
 		    </div>
 {% endif %}
@@ -102,14 +102,14 @@
 		<div class="editable" id="{{ data.id }}_body#{{ loop.index-1 }}" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
 			{{ item|cleanHtml }}
 		</div>
-		<div style="clear:both;"></div>
+		<div class="clear-both"></div>
 	{% endfor %}
 {% else %}
 		<br/>
 		<div class="editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
 			{{ data.body|cleanHtml }}
 		</div>
-		<div style="clear:both;"></div>
+		<div class="clear-both"></div>
 {% endif %}
 {#
  End Content

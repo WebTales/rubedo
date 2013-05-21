@@ -7,7 +7,7 @@
 				 <p>{% for term in result.terms %}
                  {% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="btn-mini btn-success">{{term}}</span>
                  {% endfor %}</p>
-				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a style="cursor:pointer;" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a class="cursor-pointer" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
 			{% else %}
 			<tr>
@@ -15,6 +15,6 @@
 				{% if result.fields.summary %}
 				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}
-				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a style="cursor:pointer;" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{ result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a class="cursor-pointer" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{ result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
 			{% endif %}
