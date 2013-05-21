@@ -84,7 +84,7 @@
 		/>
 
 	</target>
-	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpunit-ci"></target>
+	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-ci"></target>
 	<target name="lint" description="Perform syntax check of sourcecode files">
 		<apply executable="php" failonerror="true">
 			<arg value="-l" />
