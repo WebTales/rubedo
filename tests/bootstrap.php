@@ -36,10 +36,13 @@ function testBootstrap(){
     
     $bootstrap = new Zend_Application(APPLICATION_ENV, $options);
     $bootstrap->bootstrap();
+
+    Zend_Loader_Autoloader::getInstance();
+    
     Rubedo\Collection\AbstractCollection::disableUserFilter();
     return $bootstrap;
 }
 
-
+testBootstrap();
 
 require_once (APPLICATION_PATH . '/../tests/application/AbstractControllerTest.php');
