@@ -85,7 +85,7 @@
 </div>
 {% endif %}
 <div class="row-fluid">
-	<div class="span3 well well-large">
+	<div class="span3 well well-large" id="inputSearchBlock">
 		<p>
 			<i class="icon-search"></i> {{"full_text_search"|trans}}
 		</p>
@@ -161,7 +161,7 @@
 		{% endfor %}
 		
 	</div>
-	<div class="span8">
+	<div class="span9">
 		{% if total == 0 %}
 		<div class="alert alert-error">
 			{{"no_result"|trans}}
