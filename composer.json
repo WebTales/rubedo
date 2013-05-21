@@ -29,6 +29,11 @@
 			"type": "vcs",
 			"url": "git://github.com/WebTales/MongoFilters.git"
 		}
-	]
+	],
+	"autoload": {
+        "psr-0": {
+            "Rubedo": "Core/Rubedo"
+        }
+    }
 }
 

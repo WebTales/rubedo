@@ -179,5 +179,14 @@
 	   <arg path="${project.basedir}/application" />
 	  </exec>
 	 </target>
+	 
+	 <target name="phpcpd" description="Find duplicate code using PHPCPD">
+  <exec executable="phpcpd">
+   <arg value="--log-pmd" />
+   <arg value="${project.basedir}/build/logs/pmd-cpd.xml" />
+   <arg path="${project.basedir}/application" />
+   <arg path="${project.basedir}/Core" />
+  </exec>
+ </target>
 	
 </project>
