@@ -103,6 +103,7 @@ class MailingList extends AbstractCollection implements IMailingList
 			$user = array(
 				"login" => $email,
 				"email" => $email,
+				"name"=>$email,
 				"workspace" => $mailingList["workspaces"],
 				"mailingListHash" => $hash,
 				"mailingLists" => array(
