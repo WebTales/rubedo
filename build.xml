@@ -118,7 +118,7 @@
 		<exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
 			<arg path="${project.basedir}/application,${project.basedir}/Core" />
 			<arg value="text" />
-			<arg value="controversial,design,unusedcode" />
+			<arg value="design,unusedcode" />
 
 		</exec>
 	</target>
@@ -127,7 +127,7 @@
 		<exec executable="${project.basedir}/vendor/bin/phpmd">
 			<arg path="${project.basedir}/application,${project.basedir}/Core" />
 			<arg value="xml" />
-			<arg value="controversial,design,unusedcode" />
+			<arg value="design,unusedcode" />
 			<arg value="--reportfile" />
 			<arg value="${project.basedir}/build/logs/pmd.xml" />
 		</exec>
