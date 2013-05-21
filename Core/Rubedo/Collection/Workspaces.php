@@ -94,7 +94,8 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $this->_addAll = !$this->_hasNotAllWorkspacesFilter($filters);
-
+        
+        
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
             $this->_virtualGlobalWorkspace
@@ -248,7 +249,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
             \WebTales\MongoFilters\IFilter $filters = null)
     {
         if ($filters instanceof WebTales\MongoFilters\CompositeFilter) {
-            foreach ($filters as $filter) {
+            foreach ($filters->getFilters() as $filter) {
                 if ($this->_hasNotAllWorkspacesFilter($filter)) {
                     return true;
                 }
