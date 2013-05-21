@@ -81,4 +81,7 @@
 		
 	</target>
 	
+	<target name="build" depends="main,phpunit">
+	</targer>
+	
 </project>
