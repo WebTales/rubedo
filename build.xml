@@ -55,7 +55,7 @@
 		<delete dir="${project.basedir}/build/coverage"/>
 		<delete dir="${project.basedir}/build/logs"/>
 		<delete dir="${project.basedir}/build/pdepend"/>
-		<delete dir="${project.basedir}/build/phpdox"/>
+		<delete dir="${project.basedir}/build/phpdoc"/>
 	</target>
 	<target name="prepare-build" depends="clean-build" description="Prepare for build">
 		<mkdir dir="${project.basedir}/build"/>
@@ -64,7 +64,7 @@
 		<mkdir dir="${project.basedir}/build/coverage"/>
 		<mkdir dir="${project.basedir}/build/logs"/>
 		<mkdir dir="${project.basedir}/build/pdepend"/>
-		<mkdir dir="${project.basedir}/build/phpdox"/>
+		<mkdir dir="${project.basedir}/build/phpdoc"/>
 	</target>
 	<target name="phpunit">
 
@@ -84,7 +84,7 @@
 		/>
 
 	</target>
-	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-ci"></target>
+	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-ci,phpdoc"></target>
 	<target name="lint" description="Perform syntax check of sourcecode files">
 		<apply executable="php" failonerror="true">
 			<arg value="-l" />
@@ -157,5 +157,11 @@
 			<arg path="${project.basedir}/Core" />
 		</exec>
 	</target>
+	
+	<target name="phpdoc" description="Build PHPdoc">
+		<exec executable="phpdoc">
+		</exec>
+	</target>
+	
 
 </project>
