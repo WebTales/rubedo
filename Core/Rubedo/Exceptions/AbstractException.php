@@ -43,7 +43,7 @@ abstract class AbstractException extends \Exception
     	//convert message to proper language using $code and $langage, use $message directly if nothing more appropriate coud be found
     	
     	//apply params to message if there are any
-    	if ($extraParams.length>0){
+    	if (count($extraParams)>0){
     		$message=sprintf($message,$extraParams);
     	}
         return $message;

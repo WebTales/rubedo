@@ -1,5 +1,5 @@
 /******************************
- * 		Global variables
+ * 		Global variables 
  *****************************/
 var contentId = "";
 var imageId = "";
@@ -18,11 +18,13 @@ var EditMode=true;
 var ratingCache=new Array();
 /*****************************/
 
+//Initialize cursor to default
 jQuery("body").css("cursor" , "default");
 
 jQuery('#contentToolBar').css('top', '0');
 jQuery('#contentToolBar').show();
 
+//Make CKEditor object
 CKEDITOR.on('instanceCreated', function(event) {
 	var editor = event.editor, element = editor.element;
 	editor.config.entities = false;
@@ -132,11 +134,17 @@ CKEDITOR.on('instanceCreated', function(event) {
 	//element.editor= editor.replace(targetId,{toolbar:  myTBConfig, extraPlugins:'rubedolink',resize_enabled:false, filebrowserImageBrowseUrl:"ext-finder?type=Image", filebrowserImageUploadUrl:"ext-finder?type=Image"}); 
 });
 
+/**
+ * JS for the "switch to edit mode" button in the administration toolbar
+ */
 jQuery('#btn-edit').click(function() {
 	swithToEditMode();
 	starEdit=true;
 });
 
+/**
+ * JS for "cancel modifications" button when you are in editing mode
+ */
 jQuery('#btn-cancel').click(function() {
 	var changed = checkIfDirty();
 	var cacheChanged = 0;
@@ -192,6 +200,9 @@ jQuery('#btn-cancel').click(function() {
 		numberCacheChanged++;
 	}
 	
+	/**
+	 * Open confirmation modal if there is some modifications
+	 */
 	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0 || checkboxCacheChanged > 0 || checkboxgroupCacheChanged > 0 || radiogroupCacheChanged > 0) {
 		jQuery('#confirm').modal();
 	} else {
@@ -200,11 +211,16 @@ jQuery('#btn-cancel').click(function() {
 	}
 });
 
+
+/**
+ * JS for the "cancel confirmation" button in the modal when you don't whant to discard your modifications
+ */
 jQuery('#cancel-confirm').click(function() {
 	//undoAllChanges();
-	swithToViewMode();
-	location.reload()
+	//swithToViewMode();
+	location.reload();
 });
+
 /**
  * Save button popover
  */
@@ -214,22 +230,27 @@ jQuery("#btn-save").mouseenter(function(){
 jQuery("#btn-save").mouseleave(function(){
 	jQuery("#btn-save").popover("hide");
 })
+
 /**
  * Ctrl+s
  * Save function
  */
 $(document).keydown(function(event) {
 	if(event.ctrlKey)
-		{
-		 if (event.which == 83 ) {
-			 if(EditMode==true)
-				 {
-		     event.preventDefault();
-		    jQuery('#btn-save').click();
-				 }
-		   }
-		}
-	});
+	{
+		if (event.which == 83 ) {
+			if(EditMode==true)
+			{
+				event.preventDefault();
+				jQuery('#btn-save').click();
+			}
+	    }
+	}
+});
+
+/**
+ * JS for "confirm modifications" button in the modal
+ */
 jQuery('#btn-save').click(function() {
 	var modified = false;
 	/**
@@ -598,6 +619,9 @@ jQuery('.block').mouseover(function() {
 	jQuery('#blockToolBar').show();
 });
 
+/**
+ * Allow to activate editing mode
+ */
 function swithToEditMode() {
 	jQuery('#alerts').html("");
 	jQuery('.editable').attr('contenteditable', 'true');
@@ -628,6 +652,9 @@ function swithToEditMode() {
 	 EditMode=true;
 }
 
+/**
+ * Allow to activate the standard mode
+ */
 function swithToViewMode() {
 	jQuery('.editable, .editable-img, .date, .time, .number').css('cursor', 'default');
 	for ( var i in CKEDITOR.instances) {
@@ -652,6 +679,9 @@ function swithToViewMode() {
 	EditMode=false;
 }
 
+/**
+ * Chack if CKEFields had been modified
+ */
 function checkIfDirty() {
 	var changed = false;
 	for ( var i in CKEDITOR.instances) {
@@ -662,6 +692,11 @@ function checkIfDirty() {
 	return changed;
 }
 
+/**
+ * Deprecated, now we reload the page
+ * 
+ * @deprecated
+ */
 function undoAllChanges() {
 	for ( var i in CKEDITOR.instances) {
 		if(CKEDITOR.instances[i].checkDirty()){
@@ -706,10 +741,21 @@ function undoAllChanges() {
 	radiogroupCache=new Array();
 }
 
+/**
+ * Deprecated too
+ * 
+ * @deprecated
+ */
 function undo(editor) {
 	editor.execCommand('undo');
 }
 
+/**
+ * Save modifications on fields
+ * 
+ * @param id contain the content id and the concerned field (id_fieldName)
+ * @param data contain the new value of the field
+ */
 function save(id, data) {
 	asyncIncrementor=asyncIncrementor+1;
 	jQuery.ajax({
@@ -743,6 +789,10 @@ function save(id, data) {
 		}
 	});
 }
+
+/**
+ * Wait until execution of queries and show notification
+ */
 function afterAllSavesAreDone(){
 	if(errors.length > 0) {
 		notify('failure', 'Une erreur est survenue, il est possible que vos modifications soient perdues');
@@ -753,6 +803,14 @@ function afterAllSavesAreDone(){
 	asyncIncrementor= 0;
 }
 
+/**
+ * Allow to shox notifications in the admin toolbar
+ * 
+ * @param notify_type 
+ * 			Must contain "failure" for an error notification
+ * 			Must contain "success" for a success notification
+ * @param msg contain the message to display in the notification
+ */
 function notify(notify_type, msg) {
 
 	var alerts = jQuery('#alerts');
@@ -769,6 +827,10 @@ function notify(notify_type, msg) {
 		alert.addClass('alert alert-error').fadeIn('fast');
 	}
 }
+
+/**
+ * Allow to create a new content in a content list
+ */
 function addContent(type,typeId,queryId){
 	var siteUrl = getDomainName();
 	/**
@@ -837,9 +899,17 @@ function addContent(type,typeId,queryId){
 		}
 	jQuery("#contentModal").modal("show");	
 }
+
+/**
+ * return the domain name
+ */
 function getDomainName() {
 	return window.location.href.substr(7).substr(0, window.location.href.substr(7).indexOf("/"));
 }
+
+/**
+ * Close the modal if you don't need it anymore
+ */
 function destroyModal(){
 	jQuery("#contentModal").modal("hide");	
 }
