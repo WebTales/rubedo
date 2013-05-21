@@ -1,60 +1,41 @@
 <project name="rubedo" default="main" basedir=".">
-	<target name="main" depends="set-rights,composer.install,composer.front.install">
-	</target>
-	
-	<target name="install-dev" depends="set-rights,composer.install-dev,composer.front.install-dev">
-	</target>
-	
-	<target name="update" depends="set-rights,composer.update,composer.front.update">
-	</target>
-	
-	<target name="update-dev" depends="git.pull,set-rights,composer.update-dev,composer.front.update-dev">
-	</target>
-	
+	<target name="main" depends="set-rights,composer.install,composer.front.install"></target>
+	<target name="install-dev" depends="set-rights,composer.install-dev,composer.front.install-dev"></target>
+	<target name="update" depends="set-rights,composer.update,composer.front.update"></target>
+	<target name="update-dev" depends="git.pull,set-rights,composer.update-dev,composer.front.update-dev"></target>
 	<target name="composer.install">
 		<exec command="composer install -o" passthru="true" dir="${project.basedir}"/>
 	</target>
-	
 	<target name="composer.front.install">
 		<exec command="composer install" passthru="true" dir="${project.basedir}/public"/>
 	</target>
-	
 	<target name="composer.update">
 		<exec command="composer update -o" passthru="true" dir="${project.basedir}"/>
 	</target>
-	
 	<target name="composer.front.update">
 		<exec command="composer update" passthru="true" dir="${project.basedir}/public"/>
 	</target>
-	
 	<target name="composer.install-dev">
 		<exec command="composer install -o --dev  --prefer-source" passthru="true" dir="${project.basedir}"/>
 	</target>
-	
 	<target name="composer.front.install-dev">
 		<exec command="composer install --dev  --prefer-source" passthru="true" dir="${project.basedir}/public"/>
 	</target>
-	
 	<target name="composer.update-dev">
 		<exec command="composer update -o --dev --prefer-source" passthru="true" dir="${project.basedir}"/>
 	</target>
-	
 	<target name="composer.front.update-dev">
 		<exec command="composer update --dev  --prefer-source" passthru="true" dir="${project.basedir}/public"/>
 	</target>
-	
 	<target name="prepare-cache" depends="">
 		<mkdir dir="${project.basedir}/cache"/>
-		
 		<mkdir dir="${project.basedir}/cache/twig"/>
 		<mkdir dir="${project.basedir}/cache/htmlpurifier"/>
 		<mkdir dir="${project.basedir}/cache/zend"/>
-		
 		<chmod file="${project.basedir}/cache" mode="777"/>
 		<chmod file="${project.basedir}/cache/twig" mode="777"/>
 		<chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
 		<chmod file="${project.basedir}/cache/zend" mode="777"/>
-		
 		<mkdir dir="${project.basedir}/public/captcha"/>
 		<chmod file="${project.basedir}/public/captcha" mode="777"/>
 	</target>
@@ -63,130 +44,118 @@
 		<mkdir dir="${project.basedir}/application/configs/local"/>
 		<chmod file="${project.basedir}/application/configs/local" mode="777"/>
 	</target>
-	<target name="set-rights" depends="prepare-cache,prepare-config">
-		
-	</target>
-	
+	<target name="set-rights" depends="prepare-cache,prepare-config"></target>
 	<target name="git.pull">
 		<exec command="git pull" passthru="true" dir="${project.basedir}"/>
 	</target>
-	
 	<target name="clean-build" description="Cleanup build artifacts">
 		<delete dir="${project.basedir}/build"/>
-  		<delete dir="${project.basedir}/build/api"/>
-  		<delete dir="${project.basedir}/build/code-browser"/>
-  		<delete dir="${project.basedir}/build/coverage"/>
-  		<delete dir="${project.basedir}/build/logs"/>
-  		<delete dir="${project.basedir}/build/pdepend"/>
-  		<delete dir="${project.basedir}/build/phpdox"/>
- 	</target>
-	
+		<delete dir="${project.basedir}/build/api"/>
+		<delete dir="${project.basedir}/build/code-browser"/>
+		<delete dir="${project.basedir}/build/coverage"/>
+		<delete dir="${project.basedir}/build/logs"/>
+		<delete dir="${project.basedir}/build/pdepend"/>
+		<delete dir="${project.basedir}/build/phpdox"/>
+	</target>
 	<target name="prepare-build" depends="clean-build" description="Prepare for build">
 		<mkdir dir="${project.basedir}/build"/>
-  		<mkdir dir="${project.basedir}/build/api"/>
-  		<mkdir dir="${project.basedir}/build/code-browser"/>
-  		<mkdir dir="${project.basedir}/build/coverage"/>
-  		<mkdir dir="${project.basedir}/build/logs"/>
-  		<mkdir dir="${project.basedir}/build/pdepend"/>
-  		<mkdir dir="${project.basedir}/build/phpdox"/>
- 	</target>
-	
+		<mkdir dir="${project.basedir}/build/api"/>
+		<mkdir dir="${project.basedir}/build/code-browser"/>
+		<mkdir dir="${project.basedir}/build/coverage"/>
+		<mkdir dir="${project.basedir}/build/logs"/>
+		<mkdir dir="${project.basedir}/build/pdepend"/>
+		<mkdir dir="${project.basedir}/build/phpdox"/>
+	</target>
 	<target name="phpunit">
-		
+
 		<exec
 		command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/tests/phpunit.xml"
 		dir="${project.basedir}/tests"
 		passthru="true"
 		/>
-		
+
 	</target>
-	
-	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,lint,phploc,pdepend,phpmd-cli,phpcs-ci,phpunit">
+	<target name="phpunit-ci">
+
+		<exec
+		command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/tests/phpunit-ci.xml"
+		dir="${project.basedir}/tests"
+		passthru="true"
+		/>
+
 	</target>
-	
+	<target name="build" depends="prepare-build,set-rights,composer.update-dev,composer.front.update-dev,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpunit-ci"></target>
 	<target name="lint" description="Perform syntax check of sourcecode files">
-  	<apply executable="php" failonerror="true">
-	   <arg value="-l" />
-	
-	   <fileset dir="${project.basedir}/application">
-	    <include name="**/*.php" />
-	   </fileset>
-	   
-	   <fileset dir="${project.basedir}/Core">
-	    <include name="**/*.php" />
-	   </fileset>
-	
-	
-	  </apply>
-	 </target>
-	
+		<apply executable="php" failonerror="true">
+			<arg value="-l" />
+			<fileset dir="${project.basedir}/application">
+				<include name="**/*.php" />
+			</fileset>
+			<fileset dir="${project.basedir}/Core">
+				<include name="**/*.php" />
+			</fileset>
+
+		</apply>
+	</target>
 	<target name="phploc" description="Measure project size using PHPLOC">
-	  <exec executable="phploc" passthru="true">
-	   <arg value="--log-csv" />
-	   <arg value="${project.basedir}/build/logs/phploc.csv" />
-	   <arg value="${project.basedir}/application" />
-	   <arg value="${project.basedir}/Core" />
-	  </exec>
-	 </target>
-	 
-	 <target name="pdepend" description="Calculate software metrics using PHP_Depend">
-	  <exec executable="${project.basedir}/vendor/bin/pdepend" passthru="true">
-	   <arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml" />
-	   <arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg" />
-	   <arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg" />
-	   
-	   <arg path="${project.basedir}/application,${project.basedir}/Core" />
-	  </exec>
-	 </target>
-	 
-	 <target name="phpmd"
-         description="Perform project mess detection using PHPMD and print human readable output. ">
-		  <exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
-		   <arg path="${project.basedir}/application,${project.basedir}/Core" />
-		   <arg value="text" />
-		   <arg value="controversial,design,unusedcode" />
-
-		  </exec>
+		<exec executable="phploc">
+			<arg value="--log-csv" />
+			<arg value="${project.basedir}/build/logs/phploc.csv" />
+			<arg value="${project.basedir}/application" />
+			<arg value="${project.basedir}/Core" />
+		</exec>
 	</target>
-
-	 
-	 <target name="phpmd-cli"
-         description="Perform project mess detection using PHPMD. ">
-		  <exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
-		   <arg path="${project.basedir}/application,${project.basedir}/Core" />
-		   <arg value="xml" />
-		   <arg value="controversial,design,unusedcode" />
-		   <arg value="--reportfile" />
-		   <arg value="${project.basedir}/build/logs/pmd.xml" />
-		  </exec>
+	<target name="pdepend" description="Calculate software metrics using PHP_Depend">
+		<exec executable="${project.basedir}/vendor/bin/pdepend">
+			<arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml" />
+			<arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg" />
+			<arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg" />
+			<arg path="${project.basedir}/application,${project.basedir}/Core" />
+		</exec>
 	</target>
-	
-	 <target name="phpcs"
-         description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-  <exec executable="${project.basedir}/vendor/bin/phpcs" passthru="true">
-   <arg value="--standard=PSR2" />
-   <arg path="${project.basedir}/Core" />
-   <arg path="${project.basedir}/application" />
-  </exec>
- </target>
-	
+	<target name="phpmd"
+	description="Perform project mess detection using PHPMD and print human readable output. ">
+		<exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
+			<arg path="${project.basedir}/application,${project.basedir}/Core" />
+			<arg value="text" />
+			<arg value="controversial,design,unusedcode" />
+
+		</exec>
+	</target>
+	<target name="phpmd-ci"
+	description="Perform project mess detection using PHPMD. ">
+		<exec executable="${project.basedir}/vendor/bin/phpmd">
+			<arg path="${project.basedir}/application,${project.basedir}/Core" />
+			<arg value="xml" />
+			<arg value="controversial,design,unusedcode" />
+			<arg value="--reportfile" />
+			<arg value="${project.basedir}/build/logs/pmd.xml" />
+		</exec>
+	</target>
+	<target name="phpcs"
+	description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+		<exec executable="${project.basedir}/vendor/bin/phpcs" passthru="true">
+			<arg value="--standard=PSR2" />
+			<arg path="${project.basedir}/Core" />
+			<arg path="${project.basedir}/application" />
+		</exec>
+	</target>
 	<target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-	  <exec executable="${project.basedir}/vendor/bin/phpcs" output="/dev/null">
-	   <arg value="--report=checkstyle" />
-	   <arg value="--report-file=${project.basedir}/build/logs/checkstyle.xml" />
-	   <arg value="--standard=PSR2" />
-	   <arg path="${project.basedir}/Core" />
-	   <arg path="${project.basedir}/application" />
-	  </exec>
-	 </target>
-	 
-	 <target name="phpcpd" description="Find duplicate code using PHPCPD">
-  <exec executable="phpcpd">
-   <arg value="--log-pmd" />
-   <arg value="${project.basedir}/build/logs/pmd-cpd.xml" />
-   <arg path="${project.basedir}/application" />
-   <arg path="${project.basedir}/Core" />
-  </exec>
- </target>
-	
+		<exec executable="${project.basedir}/vendor/bin/phpcs" output="/dev/null">
+			<arg value="--report=checkstyle" />
+			<arg value="--report-file=${project.basedir}/build/logs/checkstyle.xml" />
+			<arg value="--standard=PSR2" />
+			<arg path="${project.basedir}/Core" />
+			<arg path="${project.basedir}/application" />
+		</exec>
+	</target>
+	<target name="phpcpd" description="Find duplicate code using PHPCPD">
+		<exec executable="phpcpd">
+			<arg value="--log-pmd" />
+			<arg value="${project.basedir}/build/logs/pmd-cpd.xml" />
+			<arg path="${project.basedir}/application" />
+			<arg path="${project.basedir}/Core" />
+		</exec>
+	</target>
+
 </project>
