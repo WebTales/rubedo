@@ -171,9 +171,8 @@ class Blocks_GalleryController extends Blocks_ContentListController
                 if (count($value['terms']) > 0) {
                     $filters->addFilter(Filter::Factory('OperatorToValue')
                                                 ->setName('taxonomy.' . $key)
-                                                ->setValue($value['terms']
+                                                ->setValue($value['terms'])
                                                 ->setOperator($taxOperator)
-                                                )
                                         );
                 }
             }

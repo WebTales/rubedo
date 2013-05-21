@@ -62,7 +62,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
         //setting user language for loading proper extjs locale file
         $this->view->userLang='fr'; //default value
         $currentUser=Manager::getService('CurrentUser')->getCurrentUser();
-        if (isset($currentUser['language'])){
+        if ((isset($currentUser['language']))&&(!empty($currentUser['language']))){
         	$this->view->userLang=$currentUser['language'];
         }
         
