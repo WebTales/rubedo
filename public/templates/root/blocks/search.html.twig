@@ -173,8 +173,8 @@
 			{% if result.objectType == 'content' %}
 			<tr>
 				<td><h3><a href="{{ displaySingleUrl(result.id,null,singlePage) }}">{{ result.title }}</a></h3>
-				<div class="progress progress-success" style="width:50px; float: left;">
-					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
+				<div class="progress progress-success search-progress">
+					<div class="bar search-bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}">
 						{{ result.score }}%
 					</div>
 				</div> &nbsp;<span class="label">{{ result.type }}</span>
@@ -189,8 +189,8 @@
 			{% else %}
 			<tr>
 				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
-				<div class="progress progress-success" style="width:50px; float: left;">
-					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%;">
+				<div class="progress progress-success search-progress">
+					<div class="bar search-bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}">
 						{{ result.score }}%
 					</div>
 				</div> &nbsp;<span class="label">{{ result.type }}</span>

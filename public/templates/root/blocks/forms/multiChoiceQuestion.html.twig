@@ -2,7 +2,7 @@
 <label class="control-label">{{ field.itemConfig.label }}</label>{% if field.itemConfig.fieldConfig.mandatory %} *{% endif %}
 {% if field.itemConfig.tooltip !=""%}
   <a href="#" class="help" data-toggle="tooltip"  data-placement="right"  title="{{ field.itemConfig.tooltip }}" data-original-title="{{ field.itemConfig.tooltip }}">
-      <i class="icon-exclamation-sign" style="margin-left:10px;"></i></a>
+      <i class="icon-exclamation-sign icon-margin"></i></a>
       {% endif %}
        {% if field.id in errors|keys %}<span class="help-inline">{{ errors[field.id] }}</span>{% endif %}
 
@@ -11,7 +11,7 @@
    {% elseif field.itemConfig.fieldType=="radiogroup" %} 
    {% set type="radio" %}  
    {% endif %}
-   <div class="row" style="clear:both;">
+   <div class="row clear-both">
 {% set itemsCount=field.itemConfig.fieldConfig.items|length %}
 {% set itemsPerCol=(itemsCount /field.itemConfig.fieldConfig.columns)|number_format %}
 {% if itemsCount==field.itemConfig.fieldConfig.columns and 2<field.itemConfig.fieldConfig.columns %}
@@ -27,7 +27,7 @@
 <div class="span{{ spanClass }}">
 {% set index=0%}
 {% endif %}
-<div style="clear:both;">
+<div class="clear-both">
     <label class="{{ type }}">
     <input {% if item.inputValue in values[field.id] %} checked="true"{% endif %}class="{{ item.name }} {% if field.itemConfig.isMother %}mother{% endif %} {% if field.itemConfig.isChild %}child{% endif %}"  {% if field.itemConfig.isMother %}data-id="{{ field.id }}"{% endif %}{% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %} {% if field.itemConfig.value %}data-value="{{field.itemConfig.value}}"{% endif %} type="{{ type }}" name="{{ item.name }}[]" value="{{item.inputValue}}"> <p>{{item.boxLabel }}</p>
   </label>

@@ -1,14 +1,13 @@
 			<tr>
 				<td><h3><a href="{{ displaySingleUrl(result.id) }}">{{ result.text }}</a></h3>
-				<div class="pull-left" style="margin-right:1em;">{% if result.fields.image %} <img
+				<div class="pull-left thumbnail-rubedo">{% if result.fields.image %} <img
 				alt="" class="imageLeft"
-				src="/dam?media-id={{result.fields.image}}&amp;width=80&amp;height=80&amp;mode=boxed"
-				style="max-height: 80px; max-width: 80px;" /> {% endif %}</div>
+				src="/dam?media-id={{result.fields.image}}&amp;width=80&amp;height=80&amp;mode=boxed" /> {% endif %}</div>
 				{% if result.fields.summary %}
 				<p>{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}
 				 <p>{% for term in result.terms %}
                  {% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="btn-mini btn-success">{{term}}</span>
                  {% endfor %}</p>
-				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a style="cursor:pointer;" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a class="cursor-pointer" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>

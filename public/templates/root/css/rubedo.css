@@ -207,3 +207,189 @@ padding-top: 5px;
 #inputSearchBlock {
 	min-width: 230px;
 }
+
+/**
+ * Calendar
+ */
+.calendar-item, .map-item {
+	padding-left: 8em;
+}
+
+/**
+ * cursor
+ */
+.cursor-default {
+	cursor: default !important;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+/**
+ * clear
+ */
+.clear-both {
+	clear: both;
+}
+
+.clear-right {
+	clear: right;
+}
+
+/**
+ * image field
+ */
+.image-field {
+	max-width:200px; 
+	max-height: 200px;
+}
+
+/**
+ * localiser block
+ */
+.localiser-rubedo {
+	height:400px; 
+	margin-bottom:10px;
+}
+
+/**
+ * hide block
+ */
+.hidden-rubedo {
+	display: none;
+}
+
+/**
+ * show block
+ */
+.show-rubedo {
+	display: block;
+}
+
+/**
+ * localiser address input
+ */
+.localiser-address, .event-address {
+	width: 99%;
+}
+
+/**
+ * thumbnail in gallery
+ */
+.thumbnail-rubedo {
+	margin: 1em;
+}
+
+.thumbnail-title {
+	margin-top:5px; 
+	font-weight:bold;
+}
+
+/**
+ * auto margin
+ */
+.auto-margin {
+	margin: auto;
+}
+
+/**
+ * Short singles
+ */
+.actu-rubedo, .article-rubedo, .shortsingle-rubedo, .event-rubedo {
+	border-bottom: 1px solid #E3E3E8; 
+	margin-bottom: 10px; 
+	padding-bottom: 2px;
+}
+
+.actu-img-container, .article-img-container, .blog-img-container, .event-img-container {
+	margin-right:1em;
+	margin-bottom:1em;
+}
+
+.actu-img, .article-img, .blog-img, .event-img {
+	max-height: 80px; 
+	max-width: 80px;
+}
+
+/**
+ * add this position
+ */
+.addthi-pos {
+	left:50px;
+	top:50px;
+}
+
+/**
+ * Calendar
+ */
+.calendar-rubedo {
+	min-width: 270px;
+}
+
+/**
+ * Carrousel
+ */
+.carrousel-img, .flickr-img, .gallery-load, .search-bar {
+	width: 100%;
+}
+
+/**
+ * Content list
+ */
+.contentlist-btn {
+	margin-top: 10px;
+}
+
+/**
+ * Form
+ */
+.form-new-btn {
+	margin: 5px;
+}
+
+.form-answer-text {
+	margin-top: 40px;
+}
+
+.form-step {
+	width: 80%;
+}
+
+/**
+ * Float
+ */
+.float-right {
+	float: right;
+}
+
+/**
+ * Search
+ */
+.search-progress {
+	width:50px; 
+	float: left;
+}
+
+/**
+ * Evenements
+ */
+.event-pos {
+	height:400px; 
+	margin-bottom:10px;
+}
+
+/**
+ * Icon
+ */
+.icon-margin {
+	margin-left: 10px;
+}
+
+/**
+ * Marker
+ */
+.marker {
+	max-height: 250px;
+	overflow: auto;
+}

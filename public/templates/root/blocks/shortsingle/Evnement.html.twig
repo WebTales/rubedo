@@ -1,16 +1,18 @@
 
-<div class="block clearfix"
-	style="border-bottom: 1px solid #E3E3E8; margin-bottom: 10px; padding-bottom: 2px;">
+<div class="block clearfix event-rubedo">
 	
 	<header class="entry-header">
 		<h2 class="post-title-small">
 			<a href='{{ displaySingleUrl(content.id,null,singlePage) }}' title='Actu'>{{content.title}}</a>
 		</h2>
 	</header>
-	<div class="pull-left" style="margin-right:1em;margin-bottom:1em;">{% if content.image %} <a href="{{ displaySingleUrl(content.id,null,singlePage) }}"><img
-		alt="" class="imageLeft"
-		src="/dam?media-id={{content.image}}&amp;width=80&amp;height=80&amp;mode=boxed"
-		style="max-height: 80px; max-width: 80px;" /></a> {% endif %}</div>
+	<div class="pull-left event-img-container">
+	    {% if content.image %}
+	        <a href="{{ displaySingleUrl(content.id,null,singlePage) }}">
+	            <img alt="" class="imageLeft event-img" src="/dam?media-id={{content.image}}&amp;width=80&amp;height=80&amp;mode=boxed" />
+	        </a>
+	    {% endif %}
+	</div>
 	<div class="entry-content editable" id="{{ content.id }}_summary">
 		{{content.summary|cleanHtml}}</div>
 	<div class="entry-info">{% if content.date %} Le {{content.date|localizeddate('long', 'none', lang)}} {% endif %}</div>
