@@ -81,7 +81,7 @@
 		
 	</target>
 	
-	<target name="build" depends="main,phpunit">
+	<target name="build" depends="set-rights,composer.update-dev,composer.front.update-dev,phpunit">
 	</target>
 	
 </project>
