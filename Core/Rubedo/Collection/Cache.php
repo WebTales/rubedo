@@ -64,12 +64,15 @@ class Cache extends AbstractCollection implements ICache
 
     public function findByCacheId ($cacheId, $time = null)
     {
+        if(!$time){
+            $time = Manager::getService('CurrentTime')->getCurrentTime();
+        }
         $Filters = Filter::Factory('And');
         
         $Filter = Filter::Factory('Value')->setName('cacheId')->setValue($cacheId);
         $Filters->addFilter($Filter);
        
-        $Filter = Filter::Factory('OperatorToValue');
+        $Filter = Filter::Factory('EmptyOrOperator');
         $Filter->setName('expire')->setOperator('$gt')->setValue($time);
         $Filters->addFilter($Filter);
 
