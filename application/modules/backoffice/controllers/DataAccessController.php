@@ -164,6 +164,9 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
                 ->setName($filter['property'])
                 ->setValue($filter['value'])
                 ->setOperator($filter['operator']);
+            }elseif($filter['property']=='id'){
+                $mongoFilter = Filter::Factory('Uid')
+                ->setValue($filter['value']);
             }else{
                 $mongoFilter = Filter::Factory('Value')
                 ->setName($filter['property'])
