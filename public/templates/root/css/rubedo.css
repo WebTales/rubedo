@@ -200,3 +200,10 @@ padding-top: 5px;
 #contentToolBar .label {
 	margin-top: 11px;
 }
+
+/**
+ * Search page
+ */
+#inputSearchBlock {
+	min-width: 230px;
+}
