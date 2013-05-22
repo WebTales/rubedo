@@ -17,7 +17,7 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Interfaces\Elastic\IDataIndex;
+use Rubedo\Interfaces\Elastic\IDataIndex, Rubedo\Services\Manager;
 
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using
@@ -29,7 +29,21 @@ use Rubedo\Interfaces\Elastic\IDataIndex;
  */
 class DataIndex extends DataAbstract implements IDataIndex
 {
-
+    /**
+     * Contains content types already requested
+     */
+    protected $_contentTypeCache = array();
+    
+    /**
+     * Contains dam types already requested
+     */
+    protected $_damTypeCache = array();
+    
+    /**
+     * Contains the documents
+     */
+    protected $_documents;
+    
     /**
      * Get ES type structure
      *
@@ -40,6 +54,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function getContentTypeStructure ($id)
     {
         $returnArray = array();
+        
         $searchableFields = array(
             'lastUpdateTime',
             'text',
@@ -50,26 +65,26 @@ class DataIndex extends DataAbstract implements IDataIndex
             'target'
         );
         
-        // Get content type config by id
-        $contentTypeConfig = \Rubedo\Services\Manager::getService('ContentTypes')->findById($id);
+        if(!isset($this->_contentTypeCache[$id])) {
+            // Get content type config by id
+            $this->_contentTypeCache[$id] = Manager::getService('ContentTypes')->findById($id);
+        }
         
         // System contents are not indexed
-        if (isset($contentTypeConfig['system']) and $contentTypeConfig['system'] == TRUE) {
-            
+        if (isset($this->_contentTypeCache[$id]['system']) and $this->_contentTypeCache[$id]['system'] == TRUE) {
             return array();
-        } else {
-            
-            // Get indexable fields
-            $fields = $contentTypeConfig["fields"];
-            foreach ($fields as $field) {
-                if ($field['config']['searchable']) {
-                    $searchableFields[] = $field['config']['name'];
-                }
-            }
-            
-            $returnArray['searchableFields'] = $searchableFields;
-            return $returnArray;
         }
+                
+        // Get indexable fields
+        $fields = $this->_contentTypeCache[$id]["fields"];
+        foreach ($fields as $field) {
+            if ($field['config']['searchable']) {
+                $searchableFields[] = $field['config']['name'];
+            }
+        }
+        
+        $returnArray['searchableFields'] = $searchableFields;
+        return $returnArray;
     }
 
     /**
@@ -92,11 +107,13 @@ class DataIndex extends DataAbstract implements IDataIndex
             'target'
         );
         
-        // Get content type config by id
-        $damTypeConfig = \Rubedo\Services\Manager::getService('DamTypes')->findById($id);
+        if(!isset($this->_damTypeCache[$id])) {
+            // Get content type config by id
+            $this->_damTypeCache[$id] = Manager::getService('DamTypes')->findById($id);
+        }
         
         // Search summary field
-        $fields = $damTypeConfig["fields"];
+        $fields = $this->_damTypeCache[$id]["fields"];
         foreach ($fields as $field) {
             if ($field['config']['searchable']) {
                 $searchableFields[] = $field['config']['name'];
@@ -105,6 +122,60 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         $returnArray['searchableFields'] = $searchableFields;
         return $returnArray;
+    }
+    
+    /**
+     * Returns the indexable fields and their configuration
+     *
+     * @param array $fields contain the fields and their configuration
+     * @return array
+     */
+    public function getIndexMapping(array $fields) {
+        $indexMapping = array();
+    
+        foreach ($fields as $field) {
+    
+            // Only searchable fields get indexed
+            if ($field['config']['searchable']) {
+    
+                $name = $field['config']['fieldLabel'];
+                $store = "yes";
+    
+                switch ($field['cType']) {
+                    case 'datefield':
+                        $indexMapping[$name] = array(
+                        'type' => 'date',
+                        'format' => 'yyyy-MM-dd',
+                        'store' => $store
+                        );
+                        break;
+                    case 'document':
+                        $indexMapping[$name] = array(
+                        'type' => 'attachment',
+                        'store' => 'no'
+                            );
+                            break;
+                    case 'localiserField':
+                        $indexMapping["position_location"] = array(
+                        'type' => 'geo_point',
+                        'store' => 'yes'
+                            );
+                            $indexMapping["position_adress"] = array(
+                                'type' => 'string',
+                                'store' => 'yes'
+                            );
+                            break;
+                    default:
+                        $indexMapping[$name] = array(
+                        'type' => 'string',
+                        'store' => $store
+                        );
+                        break;
+                }
+            }
+        }
+    
+        return $indexMapping;
     }
 
     /**
@@ -128,136 +199,20 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $this->deleteContentType($id);
             } else {
                 // throw exception
-                throw new \Exception("$id type already exists");
+                throw new \Rubedo\Exceptions\Server("$id type already exists");
             }
         }
         
         // Get vocabularies for current content type
         $vocabularies = array();
         foreach ($data['vocabularies'] as $vocabularyId) {
-            $vocabulary = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);
+            $vocabulary = Manager::getService('Taxonomy')->findById($vocabularyId);
             $vocabularies[] = $vocabulary['name'];
         }
         
         // Create mapping
-        $indexMapping = array();
-        
-        // If there are any fields get them mapped
         if (isset($data["fields"]) && is_array($data["fields"])) {
-            
-            foreach ($data["fields"] as $key => $field) {
-                
-                // Only searchable fields get indexed
-                if ($field['config']['searchable']) {
-                    
-                    $name = $field['config']['fieldLabel'];
-                    $store = "yes";
-                    
-                    switch ($field['cType']) {
-                        case 'checkbox':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'combo':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'datefield':
-                            $indexMapping[$name] = array(
-                                'type' => 'date',
-                                'format' => 'yyyy-MM-dd',
-                                'store' => $store
-                            );
-                            break;
-                        case 'field':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'htmleditor':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'CKEField':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'numberfield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'radio':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'textareafield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'textfield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'timefield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'ratingField':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'slider':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'document':
-                            $indexMapping[$name] = array(
-                                'type' => 'attachment',
-                                'store' => 'no'
-                            );
-                            break;
-                        case 'localiserField':
-                            $indexMapping["position_location"] = array(
-                                'type' => 'geo_point',
-                                'store' => 'yes'
-                            );
-                            $indexMapping["position_adress"] = array(
-                                'type' => 'string',
-                                'store' => 'yes'
-                            );
-                            break;
-                        default:
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => '$store'
-                            );
-                            break;
-                    }
-                }
-            }
+            $indexMapping = $this->getIndexMapping($data["fields"]);
         }
         
         // Add systems metadata
@@ -359,126 +314,20 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $this->deleteDamType($id);
             } else {
                 // throw exception
-                throw new \Exception("$id type already exists");
+                throw new \Rubedo\Exceptions\Server("$id type already exists");
             }
         }
         
         // Get vocabularies for current dam type
         $vocabularies = array();
         foreach ($data['vocabularies'] as $vocabularyId) {
-            $vocabulary = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabularyId);
+            $vocabulary = Manager::getService('Taxonomy')->findById($vocabularyId);
             $vocabularies[] = $vocabulary['name'];
         }
         
         // Create mapping
-        $indexMapping = array();
-        
-        // If there are any fields get them mapped
-        if (is_array($data["fields"])) {
-            
-            foreach ($data["fields"] as $key => $field) {
-                
-                // Only searchable fields get indexed
-                if ($field['config']['searchable']) {
-                    
-                    $name = $field['config']['fieldLabel'];
-                    $store = "no";
-                    
-                    switch ($field['cType']) {
-                        case 'checkbox':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'combo':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'datefield':
-                            $indexMapping[$name] = array(
-                                'type' => 'date',
-                                'format' => 'yyyy-MM-dd',
-                                'store' => $store
-                            );
-                            break;
-                        case 'field':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'htmleditor':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'CKEField':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'numberfield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'radio':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'textareafield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'textfield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'timefield':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'ratingField':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'slider':
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => $store
-                            );
-                            break;
-                        case 'document':
-                            $indexMapping[$name] = array(
-                                'type' => 'attachment',
-                                'store' => 'no'
-                            );
-                            break;
-                        default:
-                            $indexMapping[$name] = array(
-                                'type' => 'string',
-                                'store' => '$store'
-                            );
-                            break;
-                    }
-                }
-            }
+        if (isset($data["fields"]) && is_array($data["fields"])) {
+            $indexMapping = $this->getIndexMapping($data["fields"]);
         }
         
         // Add systems metadata
@@ -626,7 +475,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      *            live if true, workspace if live
      * @return array
      */
-    public function indexContent ($data, $indexRefresh = TRUE, $bulk = FALSE)
+    public function indexContent ($data, $bulk = false)
     {
         
         $typeId = $data['typeId'];
@@ -689,25 +538,32 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Add taxonomy
         if (isset($data["taxonomy"])) {
-            $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+            
+            $taxonomyService = Manager::getService('Taxonomy');
+            $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+            
             foreach ($data["taxonomy"] as $vocabulary => $terms) {
                 if (! is_array($terms)) {
                     continue;
                 }
-                $collection = \Rubedo\Services\Manager::getService('Taxonomy');
-                $taxonomy = $collection->findById($vocabulary);
+                
+                $taxonomy = $taxonomyService->findById($vocabulary);
                 $termsArray = array();
                 
                 foreach ($terms as $term) {
-                    $term = $tt->findById($term);
+                    $term = $taxonomyTermsService->findById($term);
+                    
                     if (! $term) {
                         continue;
                     }
-                    $termsArray = $tt->getAncestors($term);
-                    $termsArray[] = $term;
-                    $tmp = array();
-                    foreach ($termsArray as $tempTerm) {
-                        $contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+                    
+                    if(!isset($termsArray[$term])) {
+                        $termsArray[$term] = $taxonomyTermsService->getAncestors($term);
+                        $termsArray[$term][] = $term;
+                    }
+                    
+                    foreach ($termsArray [$term] as $tempTerm) {
+                        $damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
             }
@@ -739,13 +595,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add content to content type index
         if (! $bulk) {
             $contentType->addDocument($currentDocument);
-        } else {
-            return $currentDocument;
-        }
-        
-        // Refresh index
-        if ($indexRefresh) {
             $contentType->getIndex()->refresh();
+        } else {
+            $this->_documents[] = $currentDocument;
         }
 
     }
@@ -757,7 +609,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      *            dam data
      * @return array
      */
-    public function indexDam ($data, $indexRefresh = TRUE, $bulk = FALSE)
+    public function indexDam ($data, $bulk = false)
     {
         $typeId = $data['typeId'];
         
@@ -800,23 +652,27 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Add taxonomy
         if (isset($data["taxonomy"])) {
-            $tt = \Rubedo\Services\Manager::getService('TaxonomyTerms');
+            $taxonomyTermsService = Manager::getService('TaxonomyTerms');
             foreach ($data["taxonomy"] as $vocabulary => $terms) {
                 if (! is_array($terms)) {
                     continue;
                 }
-                $taxonomy = \Rubedo\Services\Manager::getService('Taxonomy')->findById($vocabulary);
+                $taxonomy = Manager::getService('Taxonomy')->findById($vocabulary);
                 $termsArray = array();
                 
                 foreach ($terms as $term) {
-                    $term = $tt->findById($term);
+                    $term = $taxonomyTermsService->findById($term);
+                    
                     if (! $term) {
                         continue;
                     }
-                    $termsArray = $tt->getAncestors($term);
-                    $termsArray[] = $term;
-                    $tmp = array();
-                    foreach ($termsArray as $tempTerm) {
+                    
+                    if(!isset($termsArray[$term])) {
+                        $termsArray[$term] = $taxonomyTermsService->getAncestors($term);
+                        $termsArray[$term][] = $term;
+                    }
+                    
+                    foreach ($termsArray [$term] as $tempTerm) {
                         $damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
@@ -855,7 +711,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             $mime = explode(';', $data['Content-Type']);
             
             if (in_array($mime[0], $indexedFiles)) {
-                $mongoFile = \Rubedo\Services\Manager::getService('Files')->FindById($data['originalFileId']);
+                $mongoFile = Manager::getService('Files')->FindById($data['originalFileId']);
                 $currentDam->addFileContent('file', $mongoFile->getBytes());
             }
         }
@@ -864,15 +720,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         if (! $bulk) {
             $damType->addDocument($currentDam);
+            $damType->getIndex()->refresh();
         } else {
-            return $currentDam;
+            $this->_documents[] = $currentDam;
         }
         
-        // Refresh index
-        if ($indexRefresh) {
-            $damType->getIndex()->refresh();
-        }
-
     }
 
     /**
@@ -888,7 +740,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         // Bulk size
         $bulkSize = 500;
-        $indexRefresh = false;
         $bulk = true;
         
         // Initialize result array
@@ -906,12 +757,12 @@ class DataIndex extends DataAbstract implements IDataIndex
             self::$_dam_index->create(self::$_dam_index_param, true);
         }
         
-        $contentsService = \Rubedo\Services\Manager::getService('Contents');
+        $contentsService = Manager::getService('Contents');
         
         if ($option == 'all' or $option == 'content') {
             
             // Retreive all content types
-            $contentTypeList = \Rubedo\Services\Manager::getService('ContentTypes')->getList();
+            $contentTypeList = Manager::getService('ContentTypes')->getList();
             
             foreach ($contentTypeList["data"] as $contentType) {
                 
@@ -927,15 +778,15 @@ class DataIndex extends DataAbstract implements IDataIndex
                     // Index all contents from type
                     $itemList = $contentsService->getByType($contentType["id"]);
                     $bulkCount = 0;
-                    $documents = array();
+                    $this->_documents = array();
                     $itemCount = 0;
                     foreach ($itemList["data"] as $content) {
-                        $documents[] = $this->indexContent($content, $indexRefresh, $bulk);
+                        $this->indexContent($content, $bulk);
                         if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
-                            $ESType->addDocuments($documents);
+                            $ESType->addDocuments($this->_documents);
                             $ESType->getIndex()->refresh();
                             $bulkCount = 0;
-                            $documents = array();
+                            $this->_documents = array();
                         }
                         $itemCount ++;
                         $bulkCount ++;
@@ -948,7 +799,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         if ($option == 'all' or $option == 'dam') {
             
             // Retreive all dam types
-            $damTypeList = \Rubedo\Services\Manager::getService('DamTypes')->getList();
+            $damTypeList = Manager::getService('DamTypes')->getList();
             
             foreach ($damTypeList["data"] as $damType) {
                 
@@ -959,17 +810,17 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $ESType = self::$_dam_index->getType($damType["id"]);
                 
                 // Index all dams from type
-                $itemList = \Rubedo\Services\Manager::getService('Dam')->getByType($damType["id"]);
+                $itemList = Manager::getService('Dam')->getByType($damType["id"]);
                 $bulkCount = 0;
-                $documents = array();
+                $this->_documents = array();
                 $itemCount = 0;
                 foreach ($itemList["data"] as $dam) {
-                    $documents[] = $this->indexDam($dam, $indexRefresh, $bulk);
+                    $this->indexDam($dam, $bulk);
                     if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
-                        $ESType->addDocuments($documents);
+                        $ESType->addDocuments($this->_documents);
                         $ESType->getIndex()->refresh();
                         $bulkCount = 0;
-                        $documents = array();
+                        $this->_documents = array();
                     }
                     $itemCount ++;
                     $bulkCount ++;
@@ -995,7 +846,6 @@ class DataIndex extends DataAbstract implements IDataIndex
     {
         // bulk size
         $bulkSize = 500;
-        $indexRefresh = false;
         $bulk = true;
         
         // Initialize result array
@@ -1014,21 +864,21 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $contentType = self::$_dam_index->getType($id);
                 break;
             default:
-                throw new \Exception("option should be set to content or dam");
+                throw new \Rubedo\Exceptions\Server("option should be set to content or dam");
                 break;
         }
         
         // Retrieve data and ES index for type
         
-        $type = \Rubedo\Services\Manager::getService($serviceType)->findById($id);
+        $type = Manager::getService($serviceType)->findById($id);
         
         $itemCount = 0;
         $start = 0;
-        $documents = array();
+        $this->_documents = array();
         
         // Index all dam or contents from given type
         
-        $dataService = \Rubedo\Services\Manager::getService($serviceData);
+        $dataService = Manager::getService($serviceData);
     
         do {
             
@@ -1037,22 +887,22 @@ class DataIndex extends DataAbstract implements IDataIndex
             foreach ($itemList["data"] as $item) {
                 
                 if ($option == 'content') {
-                    $documents[] = $this->indexContent($item, $indexRefresh, $bulk);
+                    $this->indexContent($item, $bulk);
                 }
                 
                 if ($option == 'dam') {
-                    $documents[] = $this->indexDam($item, $indexRefresh, $bulk);
+                    $this->indexDam($item, $bulk);
                 }
                 
                 $itemCount ++;
                 
             }
             
-            if (!empty($documents)) {
+            if (!empty($this->_documents)) {
                
-                $contentType->addDocuments($documents);
+                $contentType->addDocuments($this->_documents);
                 $contentType->getIndex()->refresh();
-                empty($documents);
+                empty($this->_documents);
                 
             }
             
