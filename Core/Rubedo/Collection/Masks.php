@@ -106,7 +106,10 @@ class Masks extends AbstractCollection implements IMasks
 	public function deleteBySiteId($id)
 	{
 		$wasFiltered = AbstractCollection::disableUserFilter();
-		return $this->_dataService->customDelete(array('site' => $id));
+		
+		$filter = Filter::Factory('Value')->setName('site')->setValue($id);
+		
+		return $this->_dataService->customDelete($filter);
 		AbstractCollection::disableUserFilter($wasFiltered);
 	}
 }
