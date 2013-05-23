@@ -174,7 +174,7 @@
 			<tr>
 				<td><h3><a href="{{ displaySingleUrl(result.id,null,singlePage) }}">{{ result.title }}</a></h3>
 				<div class="progress progress-success search-progress">
-					<div class="bar search-bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">
 						{{ result.score }}%
 					</div>
 				</div> &nbsp;<span class="label">{{ result.type }}</span>
@@ -190,7 +190,7 @@
 			<tr>
 				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
 				<div class="progress progress-success search-progress">
-					<div class="bar search-bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">
 						{{ result.score }}%
 					</div>
 				</div> &nbsp;<span class="label">{{ result.type }}</span>
