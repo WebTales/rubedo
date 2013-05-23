@@ -788,12 +788,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     foreach ($itemList["data"] as $content) {
                         $this->indexContent($content, $bulk);
                         if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
-                            try {
-                                $ESType->addDocuments($this->_documents);
-                            } catch (Elastica_Exception_BulkResponse $e) {
-                                var_dump($e->getFailures());die();
-                            }
-                                
+                            $ESType->addDocuments($this->_documents);
                             $ESType->getIndex()->refresh();
                             $bulkCount = 0;
                             $this->_documents = array();
