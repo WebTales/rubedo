@@ -47,6 +47,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $facetsToHide = array();
         if (isset($params['block-config']['predefinedFacets'])) {
             $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
+            var_dump($predefParamsArray);die();
             foreach ($predefParamsArray as $key => $value) {
                 $params[$key] = $value;
                 $facetsToHide[] = $key;
@@ -60,9 +61,9 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $results = $query->search($params);
         
-        foreach ($results["activeFacets"] as $key => $facet) {
-            if ($facet["id"] == "navigation") {
-                unset ($results["activeFacets"][$key]);
+        foreach ($results["facets"] as $key => $facet) {
+            if($facet["id"] == "navigation") {
+                unset ($results["facets"][$key]);
             }
         }
         
