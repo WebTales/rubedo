@@ -60,6 +60,12 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $results = $query->search($params);
         
+        foreach ($results["activeFacets"] as $key => $facet) {
+            if ($facet["id"] == "navigation") {
+                unset ($results["activeFacets"][$key]);
+            }
+        }
+        
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
