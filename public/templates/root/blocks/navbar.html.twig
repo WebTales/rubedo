@@ -12,7 +12,7 @@
 			{% if displayRootPage %}
 			<a class="brand"
 				href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}"
-				title="Accueil" rel="home">Accueil</a>
+				title="{{ rootPage.title }}" rel="home">{{ rootPage.title }}</a>
             {% endif %}
 			<!-- Everything you want hidden at 940px or less, place within here -->
 			<div class="nav-collapse nav-collapse-{{ id }} collapse">

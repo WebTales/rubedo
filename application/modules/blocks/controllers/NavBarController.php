@@ -94,7 +94,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $this->currentPage = $output['currentPage'];
          
         
-        $output['rootPage'] = $this->rootPage;
+        $output['rootPage'] = Manager::getService('Pages')->findById($this->rootPage);
         $output['rootline'] = $this->rootline = $this->getRequest()->getParam('rootline', array());
         $output['useSearchEngine'] = $useSearchEngine;
         $output['searchPage'] = $searchPage;
@@ -106,7 +106,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         
         $this->pageService = Manager::getService('Pages');
         
-        $levelOnePages = $this->_getPagesByLevel($output['rootPage'],$startLevel);
+        $levelOnePages = $this->_getPagesByLevel($output['rootPage']['id'],$startLevel);
                 
         foreach ($levelOnePages as $page) {
             $tempArray = array();
