@@ -324,7 +324,14 @@ padding-top: 5px;
  * Calendar
  */
 .calendar-rubedo {
-	min-width: 270px;
+	width: 270px;
+	float: left;
+}
+
+.calendar-items-rubedo {
+	min-width: 400px;
+	width: auto; 
+	overflow: auto; 
 }
 
 /**

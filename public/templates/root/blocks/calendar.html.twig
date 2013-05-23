@@ -2,23 +2,21 @@
 {% block mainList %}
 {% set displayBoth =  display.showList and display.showCal %}
 
-{% if displayBoth %}
 <div class='row-fluid'>
-{% endif %}
-    {% if display.showCal %}
-    <div id='calendar-{{ prefix }}' class='{% if display.showList %}span3{% endif %} calendar-rubedo'>
-        {% include 'root/blocks/calendar/table.html.twig' %}
+    <div class="span12">
+        {% if display.showCal %}
+            <div id='calendar-{{ prefix }}' class='calendar-rubedo'>
+                {% include 'root/blocks/calendar/table.html.twig' %}
+            </div>
+        {% endif %}
+        
+        {% if display.showList %}
+            <div id='calendar-items-{{ prefix }}' class="calendar-items-rubedo">
+                {% include 'root/blocks/calendar/list.html.twig' %}
+            </div>
+        {% endif %}
     </div>
-    {% endif %}
-    
-    {% if display.showList %}
-    <div id='calendar-items-{{ prefix }}' class=" span9">
-        {% include 'root/blocks/calendar/list.html.twig' %}
-    </div>
-    {% endif %}
-{% if displayBoth %}
 </div>
-{% endif %}
 
 {% endblock %}
 
