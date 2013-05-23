@@ -508,11 +508,15 @@ class DataIndex extends DataAbstract implements IDataIndex
                                     $contentData['position_address'] = (string) $subvalue;
                                 }
                                 if ($key == 'location') {
-                                    list ($lon, $lat) = $subvalue['coordinates'];
-                                    $contentData['position_location'] = array(
-                                        (float) $lon,
-                                        (float) $lat
-                                    );
+                                    if(isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])){
+                                        $lon = $subvalue['coordinates'][0];
+                                        $lat = $subvalue['coordinates'][1];
+                                        
+                                        $contentData['position_location'] = array(
+                                            (float) $lon,
+                                            (float) $lat
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -557,12 +561,12 @@ class DataIndex extends DataAbstract implements IDataIndex
                         continue;
                     }
                     
-                    if(!isset($termsArray[$term])) {
-                        $termsArray[$term] = $taxonomyTermsService->getAncestors($term);
-                        $termsArray[$term][] = $term;
+                    if(!isset($termsArray[$term["id"]])) {
+                        $termsArray[$term["id"]] = $taxonomyTermsService->getAncestors($term);
+                        $termsArray[$term["id"]][] = $term;
                     }
                     
-                    foreach ($termsArray [$term] as $tempTerm) {
+                    foreach ($termsArray[$term["id"]] as $tempTerm) {
                         $damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
@@ -667,12 +671,13 @@ class DataIndex extends DataAbstract implements IDataIndex
                         continue;
                     }
                     
-                    if(!isset($termsArray[$term])) {
-                        $termsArray[$term] = $taxonomyTermsService->getAncestors($term);
-                        $termsArray[$term][] = $term;
+                    
+                    if(!isset($termsArray[$term["id"]])) {
+                        $termsArray[$term["id"]] = $taxonomyTermsService->getAncestors($term);
+                        $termsArray[$term["id"]][] = $term;
                     }
                     
-                    foreach ($termsArray [$term] as $tempTerm) {
+                    foreach ($termsArray[$term["id"]] as $tempTerm) {
                         $damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
@@ -715,7 +720,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $currentDam->addFileContent('file', $mongoFile->getBytes());
             }
         }
-       
+        
         // Add dam to dam type index
         
         if (! $bulk) {
@@ -814,7 +819,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $bulkCount = 0;
                 $this->_documents = array();
                 $itemCount = 0;
+                
                 foreach ($itemList["data"] as $dam) {
+                    
                     $this->indexDam($dam, $bulk);
                     if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
                         $ESType->addDocuments($this->_documents);
@@ -825,6 +832,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     $itemCount ++;
                     $bulkCount ++;
                 }
+                
                 $result[$damType["type"]] = $itemCount;
             }
         }
