@@ -16,7 +16,7 @@
                 {% if displayRootPage %}
 			    <li><a class="brand"
 				href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}"
-				title="Accueil" rel="home">Accueil</a></li>
+				title="{{ rootPage.title }}" rel="home">{{ rootPage.title }}</a></li>
             {% endif %}
             {% for page in pages %}
             	<li id="menu-item-{{page.id}}"
