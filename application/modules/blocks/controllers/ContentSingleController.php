@@ -59,7 +59,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
                             
                             foreach ($readTerm as $key => $value) {
-                                $termsArray[$key] = $value;
+                                $termsArray[$key][] = $value;
                             }
                         }
                     }
