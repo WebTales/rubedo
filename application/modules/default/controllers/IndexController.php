@@ -273,15 +273,6 @@ class IndexController extends Zend_Controller_Action
         $this->getResponse()->appendBody($content, 'default');
     }
 
-    public function versionAction ()
-    {
-        $versionArray = array(
-            'Zend_Framework' => Zend_Version::VERSION
-        );
-        
-        $this->_helper->json($versionArray);
-    }
-
     public function testMailAction ()
     {
         $to = $this->getParam('to', null);
