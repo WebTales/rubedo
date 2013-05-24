@@ -149,9 +149,11 @@
     							</p>
     	        				<ul>
     	        			{% endif %}
+    	        			{% if range.count > 0 %}
     						<li>
     							<a href="{{url({lastupdatetime : range.from})}}">{{ range.label }} ({{ range.count }})</a>
     						</li>
+    						{% endif %}
     					{% endif %}
     				{% endfor %}
 			    	</ul>

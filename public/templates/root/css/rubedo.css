@@ -400,3 +400,10 @@ padding-top: 5px;
 	max-height: 250px;
 	overflow: auto;
 }
+
+/**
+ * H2
+ */
+h2 {
+	font-size: 20px !important;
+}
