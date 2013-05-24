@@ -18,6 +18,7 @@
  */
 namespace Rubedo\Version;
 
+use Rubedo\Services\Manager;
 /**
  * Class to store and retrieve the version of Rubedo.
  *
@@ -29,7 +30,7 @@ final class Version
     /**
      * Zend Framework version identification - see compareVersion()
      */
-    const VERSION = '1.2.0dev';
+    const VERSION = '1.0.0dev';
 
     /**
      * Github Service Identifier for version information is retreived from
@@ -151,7 +152,10 @@ final class Version
     public static function getComponentsVersion ()
     {
         $componentsArray = array();
-        $componentsArray['phpComponents'] = array();
+        $componentsArray['phpComponents'] = array('MongoDriver'=> \MongoClient::VERSION);
+        
+        
+        
         if (is_file(APPLICATION_PATH . '/../composer.lock')) {
             $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.lock'));
             foreach ($phpComponentsArray['packages'] as $package) {
@@ -161,6 +165,8 @@ final class Version
                 $componentsArray['phpComponents'][$package['name']] = $package['version'];
             }
         }
+        
+        
         $componentsArray['frontComponents'] = array();
         if (is_file(APPLICATION_PATH . '/../public/composer.lock')) {
             $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../public/composer.lock'));
@@ -170,4 +176,15 @@ final class Version
         }
         return $componentsArray;
     }
+    
+    public static function getMongoServerVersion(){
+       return Manager::getService('MongoDataAccess')->getMongoServerVersion();
+    }
+    
+    public static function getESServerVersion(){
+        $esService = Manager::getService('ElasticDataIndex');
+        $esService->init();
+        return $esService->getVersion();
+    }
+    
 }

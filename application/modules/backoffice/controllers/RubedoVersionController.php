@@ -33,6 +33,8 @@ class Backoffice_RubedoVersionController extends Zend_Controller_Action
         $versionArray = array(
             'ZendFramework' => Zend_Version::VERSION,
             'RubedoVersion' => Rubedo\Version\Version::getVersion(),
+            'MongoDB'=> Rubedo\Version\Version::getMongoServerVersion(),
+            'ElasticSearch' => Rubedo\Version\Version::getESServerVersion(),
             'IsRubedoLatest' => Rubedo\Version\Version::isLatest(),
             'Components' => Rubedo\Version\Version::getComponentsVersion()
         );
