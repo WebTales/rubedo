@@ -342,6 +342,17 @@ class CurrentUser implements ICurrentUser
         CurrentUser::$_isInstallerUser = $_isInstallerUser;
     }
 
+    public function getLanguage(){
+        $lang = Manager::getService('Session')->get('lang', null);
+        
+        if($lang===null){
+           $user = $this->getCurrentUser();
+           if(isset($user) && isset($user['language'])){
+               $lang = $user['language'];
+           }
+        }
+        return $lang;
+    }
     
     
 }

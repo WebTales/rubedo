@@ -143,6 +143,18 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             }
         }
     }
+    
+    /**
+     * Load parameter from application.ini for swiftMail
+     */
+    protected function _initLocalisationFiles ()
+    {
+        $options = $this->getOption('localisationfiles');
+        if (isset($options)) {
+            
+            Rubedo\Internationalization\Translate::setLocalizationJsonArray($options);
+        }
+    }
 
     /**
      * Load router configuration with specific rules
