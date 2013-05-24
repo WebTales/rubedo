@@ -567,7 +567,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     }
                     
                     foreach ($termsArray[$term["id"]] as $tempTerm) {
-                        $damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+                        $contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
             }
