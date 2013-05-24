@@ -6,8 +6,10 @@
 	<div class="">
 		<h2 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h2>
 		<div class="alignright">
-			{% for term in data.terms %}
-			{% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="label label-warning">{{term}}</span>
+            {% for taxonomy in data.terms %}
+			    {% for term in taxonomy %}
+			        <span class="label label-warning">{{term}}</span>
+			    {% endfor %}
 			{% endfor %}
 		</div>
 		{% if data.date %}
