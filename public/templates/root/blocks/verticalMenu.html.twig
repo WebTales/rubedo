@@ -1,13 +1,11 @@
 {% extends "root/block.html.twig" %} {% block mainContent %}
         {% if useSearchEngine and searchPage %}
 				<!-- search component-->
-					<form class=""
-						action="{{ url({'pageId':searchPage},true) }}">
+					<form class="" action="{{ url({'pageId':searchPage},true) }}">
 						<div class="input-append">
-							<input type="text" class="input-medium search-query" name="query"
-								placeholder="{{"search"|trans}}">
-							 <button type="submit" class="btn btn-primary"><i class="icon-search"></i></button>
-						</div>
+                            <input class="span2" id="appendedInputButton search-query" type="text" name="query" placeholder="{{"search"|trans}}">
+                            <button class="btn btn-primary" type="submit"><i class="icon-search icon-white"></i></button>
+                        </div>
 					</form>
 
 				<!-- /search component-->
