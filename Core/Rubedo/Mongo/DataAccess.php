@@ -189,6 +189,21 @@ class DataAccess implements IDataAccess
     }
 
     /**
+     * Return the mongoDB server version
+     * 
+     * @return string
+     */
+    public function getMongoServerVersion(){
+        $this->init('version');
+        $dbInfo = $this->_dbName->command(array('buildinfo'=>true));
+        if(isset($dbInfo['version'])){
+            return $dbInfo['version'];
+        }
+        return null;
+    }
+    
+    
+    /**
      * Getter of Mongo adapter : should only connect once for each mongoDB
      * server
      *

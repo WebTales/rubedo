@@ -27,12 +27,16 @@
  */
 class Backoffice_RubedoVersionController extends Zend_Controller_Action
 {
-
+    /**
+     * Return a json which describe all components of the current Rubedo Instance
+     */
     public function indexAction ()
     {
         $versionArray = array(
             'ZendFramework' => Zend_Version::VERSION,
             'RubedoVersion' => Rubedo\Version\Version::getVersion(),
+            'MongoDB'=> Rubedo\Version\Version::getMongoServerVersion(),
+            'ElasticSearch' => Rubedo\Version\Version::getESServerVersion(),
             'IsRubedoLatest' => Rubedo\Version\Version::isLatest(),
             'Components' => Rubedo\Version\Version::getComponentsVersion()
         );
