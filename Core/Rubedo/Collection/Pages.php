@@ -154,9 +154,9 @@ class Pages extends AbstractCollection implements IPages
 	public function destroy(array $obj, $options = array()) {
 		if ($this->hasDefaultPageAsChild($obj['id'])){
 			throw new \Rubedo\Exceptions\User("Page is or is father of site default single page");
-		}
-	    $deleteCond = array('_id' => array('$in' => $this->_getChildToDelete($obj['id'])));
-	
+		}	    
+	    $deleteCond = Filter::Factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
+	       
 	    $resultArray = $this->_dataService->customDelete($deleteCond);
 	
 	    if ($resultArray['ok'] == 1) {
