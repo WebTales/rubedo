@@ -10,7 +10,7 @@
 		"twig/extensions": "v1.0.0-alpha",
 		"ruflin/Elastica": "v0.19.8.0",
 		"ezyang/htmlpurifier": "v4.5.0",
-		"bombayworks/zendframework1": "v1.12.1",
+		"bombayworks/zendframework1": "v1.12.3",
 		"alb/oembed": "1.0.0",
 		"swiftmailer/swiftmailer": "v4.3.0"
 	},
