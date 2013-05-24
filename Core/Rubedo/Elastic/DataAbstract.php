@@ -159,6 +159,10 @@ class DataAbstract
         self::$_content_index_param = $options;
     }
     
+    /**
+     * Return the ElasticSearch Server Version
+     * @return string
+     */
     public function getVersion(){
         $data = $this->_client->request('/', 'GET')->getData();
         if(isset($data['version']) && isset($data['version']['number'])){

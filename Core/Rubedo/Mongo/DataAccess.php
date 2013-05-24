@@ -188,6 +188,11 @@ class DataAccess implements IDataAccess
         $this->_collection = $this->_getCollection($collection, $dbName, $mongo);
     }
 
+    /**
+     * Return the mongoDB server version
+     * 
+     * @return string
+     */
     public function getMongoServerVersion(){
         $this->init('version');
         $dbInfo = $this->_dbName->command(array('buildinfo'=>true));
