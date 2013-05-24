@@ -95,22 +95,22 @@ padding-top: 5px;
 	clear:both;
 	margin-left:0px !important;
 }
-.rubedo-form-container{
+/*.rubedo-form-container{
 	border:2px solid #ddd;
 	padding:10px 20px 5px 20px;
 	border-radius:5px;
-}
+}*/
 
 .align-button {
 	text-align: center;
 }
 .no-hero{
-  padding: 60px;
-  margin-bottom: 30px;
-  background-color: #eeeeee;
-  -webkit-border-radius: 6px;
-     -moz-border-radius: 6px;
-          border-radius: 6px;
+	padding: 0px;
+	margin-bottom: 30px;
+	background-color: transparent;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
 }
 
 #btn-save {
@@ -467,4 +467,19 @@ h2 {
  */
 .block-rubedo {
 	margin: 5px 0;
+}
+
+/**
+ * Links
+ */
+a:hover, a:focus {
+	color: #005580 !important;
+	text-decoration: none !important;
+}
+
+/**
+ * form
+ */
+.form-new-button {
+	margin-bottom: 20px;
 }
