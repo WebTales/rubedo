@@ -33,6 +33,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
+        throw new Rubedo\Exceptions\Server('test','code666');
         $this->_auth = Manager::getService('Authentication');
       
         

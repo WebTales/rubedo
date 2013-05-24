@@ -86,6 +86,7 @@ class config
 		'Notification'				=>	'Rubedo\\Interfaces\\Mail\\INotification',
 		'MailingList'				=>	'Rubedo\\Interfaces\\Collection\\IMailingList',
 		'Localisation'				=>	'Rubedo\\Interfaces\\Collection\\ILocalisation',
+		'Translate'				    =>	'Rubedo\\Interfaces\\Internationalization\\ITranslate',
 	);
 
 	/**

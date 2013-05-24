@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Exceptions;
 
+Use Rubedo\Services\Manager;
 
 /**
  * Abstract exception : handle message translation
@@ -28,20 +29,19 @@ namespace Rubedo\Exceptions;
 abstract class AbstractException extends \Exception
 {
 
-    public function __construct ($message = null, $code = null, $previous = null) {
-        $language = 'fr';
+    public function __construct ($message = null, $code = null) {
         $extraParams=array();
         $recievedArgs=func_get_args();
         if (isset($recievedArgs[3])){
         	$extraParams=array_slice($recievedArgs,3);
         }
-        $message = $this->_translate($message, $code, $language, $extraParams);
-        parent::__construct($message, $code, $previous);        
+        $message = $this->_translate($message, $code, $extraParams);
+        parent::__construct($message);        
     }
     
-    protected function _translate($message, $code, $language='en',$extraParams=array()){
+    protected function _translate($message, $code,$extraParams=array()){
     	//convert message to proper language using $code and $langage, use $message directly if nothing more appropriate coud be found
-    	
+    	$message = Manager::getService('Translate')->translate($code,$message);
     	//apply params to message if there are any
     	if (count($extraParams)>0){
     		$message=sprintf($message,$extraParams);
