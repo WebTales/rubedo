@@ -95,22 +95,22 @@ padding-top: 5px;
 	clear:both;
 	margin-left:0px !important;
 }
-.rubedo-form-container{
+/*.rubedo-form-container{
 	border:2px solid #ddd;
 	padding:10px 20px 5px 20px;
 	border-radius:5px;
-}
+}*/
 
 .align-button {
 	text-align: center;
 }
 .no-hero{
-  padding: 60px;
-  margin-bottom: 30px;
-  background-color: #eeeeee;
-  -webkit-border-radius: 6px;
-     -moz-border-radius: 6px;
-          border-radius: 6px;
+	padding: 0px;
+	margin-bottom: 30px;
+	background-color: transparent;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
 }
 
 #btn-save {
@@ -154,15 +154,69 @@ padding-top: 5px;
   
 }
 
-[id^='calendar-'] table tbody tr td span {
+/**
+* Calendar rubedo
+*/
+.calendar-rubedo table tbody tr td span {
 	padding: 2px 4px;
 }
 
-[id^='calendar-'] table {
+.calendar-rubedo table {
 	margin-left: auto;
 	margin-right: auto;
 }
 
+.calendar-rubedo .table-striped {
+	border: 0;
+}
+
+.calendar-rubedo .table-bordered th, [id^='calendar-'] .table-bordered td{
+	border-left: 1px solid #bbb;
+}
+
+.calendar-rubedo .table-bordered th:first-child, [id^='calendar-'] .table-bordered td:first-child{
+	border-left: 0;
+}
+
+.calendar-rubedo table thead tr th a {
+	margin-bottom: 10px;
+}
+
+.calendar-rubedo table {
+	margin-bottom: 10px;
+}
+
+.calendar-items-rubedo ul li:first-child>a {
+	-webkit-border-top-right-radius: 0px !important;
+	border-top-right-radius: 0px !important;
+	-webkit-border-top-left-radius: 0px !important;
+	border-top-left-radius: 0px !important;
+	-moz-border-radius-topright: 0px !important;
+	-moz-border-radius-topleft: 0px !important;
+}
+
+.calendar-items-rubedo ul li:last-child>a {
+	-webkit-border-bottom-right-radius: 0px !important;
+	border-bottom-right-radius: 0px !important;
+	-webkit-border-bottom-left-radius: 0px !important;
+	border-bottom-left-radius: 0px !important;
+	-moz-border-radius-bottomright: 0px !important;
+	-moz-border-radius-bottomleft: 0px !important;
+}
+
+.calendar-items-rubedo ul li a {
+	border: 0 !important;
+	border-bottom: 1px solid #ddd !important;
+}
+
+/**
+* Content list
+*/
+.entry-content {
+	height: 60px;
+	overflow: hidden;
+}
+	
 .form-actions {
 	background: none;
 	border-top: 0px;
@@ -406,4 +460,26 @@ padding-top: 5px;
  */
 h2 {
 	font-size: 20px !important;
+}
+
+/**
+ * Rubedo block
+ */
+.block-rubedo {
+	margin: 5px 0;
+}
+
+/**
+ * Links
+ */
+a:hover, a:focus {
+	color: #005580 !important;
+	text-decoration: none !important;
+}
+
+/**
+ * form
+ */
+.form-new-button {
+	margin-bottom: 20px;
 }

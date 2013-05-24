@@ -4,43 +4,43 @@
 {% set progress= ((currentFormPage+1)*100)/nbFormPages %}
 
 <div id="form-container-{{ form.id }}" class="rubedo-form-container" data-currentPage="{{ currentFormPage }}">
-{% if displayNew==true %}
-<div class="row-fluid">
-<div class="span2 offset9">
-<div class="btn-group pull-right">
-<a class="btn btn-warning form-new-btn" href="?getNew=1"><i class="icon-file icon-white"></i> Nouveau</a>
-</div>
-</div>
-</div>
-{% endif %}
-{% if finished %}
-<div class="hero-unit form-answer-text" >{%if uniqueAnswerText%}{{ uniqueAnswerText }}{%else%}{{ finished }}{% endif %}</div>
-{% else %}
-{% if nbFormPages!=1 %}
-{% if progression==0 %}
-<div class="progress progress-info progress-striped">
-  <div class="bar" style="width:{{ progress }}%"></div>
-</div>
-{% else %}
-<div class="form-step"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
-{% endif %}
-{% endif %}
-<form id="{{ form.id }}" method="post" action="{{ url({},true) }}" class="form-horizontal rubedo-form no-hero" >
-	<input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
-	{% for field in formFields.elements %}
-	{%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
-	{% endfor %}
-<div class="row">
-	{% if currentFormPage !=0 %}
-<a class="btn" href="?getPrevious=1">Précédent</a>
-	{% endif %}
-	{% if currentFormPage==nbFormPages-1 %}
-<input class="btn btn-info float-right" type="submit" value="Terminer"/>
-	{% else %}
-<input class="btn float-right" type="submit" value="Suivant"/>
-	{% endif %}
-	</div>
-</form>
-{% endif %}
+    {% if displayNew==true %}
+                <a class="btn btn-warning pull-right form-new-button" href="?getNew=1"><i class="icon-file icon-white"></i> Nouveau</a>
+                <div class="clearfix"></div>
+    {% endif %}
+    
+    {% if finished %}
+        <div class="hero-unit form-answer-text" >{%if uniqueAnswerText%}{{ uniqueAnswerText }}{%else%}{{ finished }}{% endif %}</div>
+    {% else %}
+        {% if nbFormPages!=1 %}
+            {% if progression==0 %}
+                <div class="progress progress-info progress-striped">
+                    <div class="bar" style="width:{{ progress }}%"></div>
+                </div>
+            {% else %}
+                <div class="form-step"><h3>Etape {{ currentFormPage+1 }} sur {{ nbFormPages }}</h3></div>
+            {% endif %}
+        {% endif %}
+        
+        <form id="{{ form.id }}" method="post" action="{{ url({},true) }}" class="form-horizontal rubedo-form no-hero" >
+	        <input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
+	        
+	        {% for field in formFields.elements %}
+	            {%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
+	        {% endfor %}
+	        
+            <div class="row">
+	            {% if currentFormPage !=0 %}
+                    <a class="btn" href="?getPrevious=1">Précédent</a>
+	            {% endif %}
+	            
+	            {% if currentFormPage==nbFormPages-1 %}
+                    <input class="btn btn-info float-right" type="submit" value="Terminer"/>
+	            {% else %}
+                    <input class="btn float-right" type="submit" value="Suivant"/>
+	            {% endif %}
+	        </div>
+        </form>
+    {% endif %}
 </div>
 {% endblock %}
