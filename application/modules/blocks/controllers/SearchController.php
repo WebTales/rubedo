@@ -45,12 +45,13 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // apply predefined facets
         $facetsToHide = array();
-        if (isset($params['block-config']['predefinedFacets']) && is_array($params['block-config']['predefinedFacets'])) {
+        if (isset($params['block-config']['predefinedFacets'])) {
             $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
-            
+            if (is_array($predefParamsArray)){
             foreach ($predefParamsArray as $key => $value) {
                 $params[$key] = $value;
                 $facetsToHide[] = $key;
+            }
             }
             
         }
