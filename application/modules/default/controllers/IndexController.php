@@ -188,9 +188,8 @@ class IndexController extends Zend_Controller_Action
         if ($canEdit) {
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
+            $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
         }
-        
-       
         
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
         
@@ -252,6 +251,9 @@ class IndexController extends Zend_Controller_Action
             $twigVar['disqusKey']=$this->_site['disqusKey'];
         }
         
+        //Return current user
+        $currentUser = Manager::getService('CurrentUser')->getCurrentUser();
+        $twigVar['currentUser']=$currentUser;
         
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();

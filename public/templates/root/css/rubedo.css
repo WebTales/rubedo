@@ -255,6 +255,11 @@ padding-top: 5px;
 	margin-top: 11px;
 }
 
+#contentToolBar .btn-toolbar {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
 /**
  * Search page
  */

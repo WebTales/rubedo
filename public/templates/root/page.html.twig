@@ -96,11 +96,23 @@
     			<div class="container-fluid">
     				<a class="brand" href="/backoffice/">Administration</a>
     				<div id='viewmode'>
-    					<div class="btn-group pull-left">
-    						<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i>
-    							Editer la page
-    						</a>
-    					</div>
+    				    <div class="btn-toolbar">
+        					<div class="btn-group pull-left">
+        						<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i>
+        							Editer la page
+        						</a>
+        					</div>
+        					
+        					<div class="btn-group pull-left">	
+        						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="icon-user"></i> {{currentUser.name}} <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#" onclick="logout()"><i class="icon-off"></i> Déconnexion</a></li>
+                                </ul>
+        					</div>
+        				</div>
+    					
     					<span class="label label-success pull-right">Consultation</span>
     				</div>
     				<div id='editmode' class='hide'>
