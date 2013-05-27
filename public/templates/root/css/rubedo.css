@@ -30,7 +30,7 @@
 /**
  * Rubedo Modal
  */
-.modal.fade.in {
+#myModal .modal.fade.in {
 	top: 20px;
 }
 /**
