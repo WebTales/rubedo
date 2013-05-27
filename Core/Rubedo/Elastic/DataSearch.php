@@ -548,8 +548,14 @@ class DataSearch extends DataAbstract implements IDataSearch
                         
                         $temp['label'] = 'Date de modification';
                         if (array_key_exists('ranges', $temp) and count($temp['ranges']) > 1) {
-                            foreach ($temp['ranges'] as $key => $value) {                               
-                                $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
+                            foreach ($temp['ranges'] as $key => $value) { 
+                                $rangeCount =  $temp['ranges'][$key]['count'];   
+                                // unset facet when count = 0 or total results count
+                                if ($rangeCount>0 and $rangeCount<$result['total']) {                      
+                                    $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
+                                } else {
+                                    unset ($temp['ranges'][$key]);
+                                }
                             }                 
                         } else {
                             $renderFacet = false;
