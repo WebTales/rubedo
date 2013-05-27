@@ -38,8 +38,7 @@ function changePage(pageNumber, itemCount, itemsPerPage, maxPage, prefix,
 				jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber)
 				.show();
 		jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber)
-				.addClass('active-items');	
-		centerAll();
+				.addClass('active-items');
 		});
 
 		request
@@ -66,45 +65,7 @@ function callModal(src, title) {
 	jQuery('#myModal').imageCenter(src,title);
 	return false;
 }
-/**
- * Center gallery images and gallery pager
- * 
- */
-function centerAll()
-{
-	nbItems=parseInt(jQuery(".active-items").attr("data-items"));
-	if(nbItems==1)
-		{
-		nbItems++;
-		}
-	var galleryWidth=jQuery(".active-items").width();
-	if(jQuery(".active-items img").css("max-width")){
-		var width= jQuery(".active-items img").css("max-width").split("px");
-	} else {
-		var width = new Array("100");
-	}
-	var img=parseInt(width[0]);
-	var r=parseInt(galleryWidth)-(parseInt(img)*nbItems);
-	var m=(r/nbItems)-(10*nbItems);
-	if(m>20)
-		{
-	jQuery(".active-items .thumbnail").css({
-		"margin-right":m+"px"
-	});
-		}
-	var pagerWidth=jQuery(".active-items .pagination ul").width();
-	var pagerMargin=parseFloat((galleryWidth/2)-pagerWidth);
-		if(parseFloat(pagerMargin)<0){
-			pagerMargin=pagerMargin*(-1);
-		
-		}
-		jQuery(".active-items .pagination ul").css({
-			"margin-left":+pagerMargin+"px"
-				});
-	}
-$(document).ready(function(){
-centerAll();
-});
+
 /**
  * Require bootstrap modal
  * load wait img load and set calculate margin to center modal

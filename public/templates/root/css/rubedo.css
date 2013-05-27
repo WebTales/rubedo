@@ -333,11 +333,22 @@ padding-top: 5px;
  */
 .thumbnail-rubedo {
 	margin: 1em;
+	overflow: hidden;
+}
+
+.thumbnail {
+	border: none;
+	text-align: center;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
 }
 
 .thumbnail-title {
 	margin-top:5px; 
 	font-weight:bold;
+	text-align: center;
+	max-height: 20px;
 }
 
 /**

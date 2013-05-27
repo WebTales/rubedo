@@ -3,14 +3,16 @@
 {% block mainContent %}
 
 <div id="{{prefix}}" class="carousel slide">
-		<div class='progress-gallery span6 offset3 hide'>
-			<p>En chargement</p>
-			<div class="progress progress-striped active">
-				<div class="bar gallery-load"></div>
-			</div>
+	<div class='progress-gallery hide'>
+		<p>En chargement</p>
+		<div class="progress progress-striped active">
+			<div class="bar gallery-load"></div>
 		</div>
-		{% include 'root/blocks/gallery/items.html.twig' %}
-
+	</div>
+	
+	<div class="clearfix"></div>
+	
+    {% include 'root/blocks/gallery/items.html.twig' %}
 </div>
 
 {% endblock %}
