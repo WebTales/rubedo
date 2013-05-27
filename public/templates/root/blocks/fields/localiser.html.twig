@@ -12,7 +12,7 @@
 {%endif%}
 
 <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key={{ googleMapsKey }};sensor=true">
+      src="https://maps.googleapis.com/maps/api/js?{% if (googleMapsKey) %}key={{ googleMapsKey }}&{% endif %}sensor=true">
     </script>
 {% if(cValue["config"]["multivalued"]) and value is iterable%}
 	<div id="{{ data.id }}_{{key}}" data-values="{{ value|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="localiser-rubedo row-fluid mapPlaceholder"></div>
