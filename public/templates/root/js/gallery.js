@@ -61,48 +61,31 @@ function changePage(pageNumber, itemCount, itemsPerPage, maxPage, prefix,
 	return false;
 }
 
+/**
+ * Display the modal with the title and the picture given in arguments
+ * 
+ * @param src Url of the picture
+ * @param title Title of the picture
+ */
 function callModal(src, title) {
+	var bodyMaxHeight = (window.innerHeight*(100/100)) - 200;
+	var imgMaxHeight = bodyMaxHeight - 30;
+	
+	//Set title of the modal
 	jQuery('#myModal #myModalLabel').html(title);
-	jQuery("#myModal .modal-body").css("max-height", (window.innerHeight*(100/100))-200+"px");
+	
+	//Set URL of the img tag
 	jQuery('#myModal #fullScreenPicture').attr('src', src);
+	
+	//Set max height of the body and the image
+	jQuery("#myModal .modal-body").css("max-height", bodyMaxHeight+"px");
+	jQuery("#myModal .modal-body img").css("max-height", imgMaxHeight+"px");
+	
+	//Center image
+	jQuery("#myModal .modal-body").css("text-align", "center");
+	
+	//Display modal
 	jQuery("#myModal").modal();
-	//jQuery('#myModal').imageCenter(src,title);
+	
 	return false;
 }
-
-/**
- * Require bootstrap modal
- * load wait img load and set calculate margin to center modal
- */
-/*(function($)
-		{
-		    $.fn.imageCenter=function(src,title)
-		    {
-		      var self=this;
-		      var id=jQuery(self).attr("id");
-		      //set image src and modal header text
-		      jQuery(self).css({
-		    	  "max-height":window.innerHeight*(80/100)+"px",
-		      });
-		      jQuery("#"+id+" .modal-body").css({
-		    	  "overflow":"hidden"
-		      });
-		      //jQuery("#"+id+" .modal-body").height(jQuery(self).height()*(90/100));
-		      jQuery('#fullScreenPicture').attr('src', src);
-		  	  jQuery('#myModalLabel').html(title);
-		  	jQuery("#"+id+" .modal-footer").hide();
-		  	  //Modal center after loading image
-		      if(jQuery("#"+id+" .modal-body").find("img").length===1)
-		       	{
-		    	  jQuery("#"+id+" .modal-body img").load(function(){
-		    		  jQuery(self).css({
-				       		"margin-left":"-"+jQuery(self).width()/2+"px"
-				       	});
-		    		    jQuery("#"+id+" .modal-body img").css({
-					    	   "max-height":(parseFloat(jQuery(self).css("max-height"))*(90/100))+"px"
-					       });
-		       	  });
-		    	  }
-		        jQuery(self).modal();
-		    };
-		})(jQuery);*/
