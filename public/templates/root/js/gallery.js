@@ -62,7 +62,11 @@ function changePage(pageNumber, itemCount, itemsPerPage, maxPage, prefix,
 }
 
 function callModal(src, title) {
-	jQuery('#myModal').imageCenter(src,title);
+	jQuery('#myModal #myModalLabel').html(title);
+	jQuery("#myModal .modal-body").css("max-height", (window.innerHeight*(100/100))-200+"px");
+	jQuery('#myModal #fullScreenPicture').attr('src', src);
+	jQuery("#myModal").modal();
+	//jQuery('#myModal').imageCenter(src,title);
 	return false;
 }
 
@@ -70,15 +74,13 @@ function callModal(src, title) {
  * Require bootstrap modal
  * load wait img load and set calculate margin to center modal
  */
-(function($)
+/*(function($)
 		{
 		    $.fn.imageCenter=function(src,title)
 		    {
 		      var self=this;
 		      var id=jQuery(self).attr("id");
-		      /**
-		       * set image src and modal header text
-		       */
+		      //set image src and modal header text
 		      jQuery(self).css({
 		    	  "max-height":window.innerHeight*(80/100)+"px",
 		      });
@@ -89,9 +91,7 @@ function callModal(src, title) {
 		      jQuery('#fullScreenPicture').attr('src', src);
 		  	  jQuery('#myModalLabel').html(title);
 		  	jQuery("#"+id+" .modal-footer").hide();
-		  	  /**
-		  	   * Modal center after loading image
-		  	   */
+		  	  //Modal center after loading image
 		      if(jQuery("#"+id+" .modal-body").find("img").length===1)
 		       	{
 		    	  jQuery("#"+id+" .modal-body img").load(function(){
@@ -105,4 +105,4 @@ function callModal(src, title) {
 		    	  }
 		        jQuery(self).modal();
 		    };
-		})(jQuery);
+		})(jQuery);*/
