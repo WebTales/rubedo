@@ -9,8 +9,9 @@
 		"twitter/bootstrap": "v2.3.0",
 		"thomaspark/bootswatch" : "v2.3.0",
 		"webtales/rubedo-backoffice-ui": "dev-develop",
-		"longtailvideo/jwplayer":"6",
-		"webtales/rubedo-localization":"dev-master"
+		"longtailvideo/jwplayer": "6",
+		"webtales/rubedo-localization": "dev-master",
+		"jschr/bootstrap-modal": "2.1"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -100,6 +101,9 @@
 		},{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/rubedo-localization.git"
+		},{
+		    "type": "vcs",
+		    "url": "git://github.com/jschr/bootstrap-modal.git"
 		}
 	],
 	"minimum-stability": "stable",
