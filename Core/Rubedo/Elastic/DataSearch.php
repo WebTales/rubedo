@@ -560,6 +560,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                         } else {
                             $renderFacet = false;
                         }
+                        
+                        $temp["ranges"] = array_values($temp["ranges"]);
+                        
                         break;
                         
                     default:
