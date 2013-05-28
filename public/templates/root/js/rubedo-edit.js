@@ -694,15 +694,7 @@ function addContent(type,typeId,queryId){
 		/*
 		 * Set Css and Html for contentModal
 		 */
-		jQuery("#contentLabel").empty().html("Selectionnez le type de contenu à ajouter");
-		jQuery("#contentBody").empty();
-	    jQuery("#contentModal").css({
-	    	"width":"auto",
-	    	"height":"auto",
-	    	"margin-left":"-10%",
-	    	"margin-top":"auto"
-	    });
-		jQuery("#contentBody").append("<form name='modalfrom' id='modal-form'><select id='select-type-box'></select><div style='clear:both;'><button type='submit' id='btn-valid-form' class='btn pull-right'>Valider</button></div></form>")
+		jQuery("#select-type-box").empty();
 		jQuery.ajax({
 			"url" : "/backoffice/content-types/get-readable-content-types/",
 			"async" : false,
@@ -717,40 +709,38 @@ function addContent(type,typeId,queryId){
 		/**
 		 *Get type of content to add and call iframe
 		 */
+		jQuery('#btn-cancel-ctselect-form').click(function() {
+			jQuery("#contentTypeSelectModal").modal("hide");
+			jQuery('#btn-valid-form').unbind();
+			jQuery('#btn-cancel-ctselect-form').unbind();
+		});
+		
 		jQuery('#btn-valid-form').click(function() {
 			selectedTypeId = jQuery("#select-type-box").val();
-			
-		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
-			var iWidth=screen.availWidth*(90/100);
-			var iHeight=screen.availHeight*(90/100);
-			var availHeight=window.innerHeight*(90/100);
-			var iFrameHeight=availHeight*(90/100);
-			jQuery("#contentLabel").empty().html("Ajout de contenu");
-		    jQuery("#contentBody").empty().html("<iframe  style='width:99%; height:"+(iFrameHeight)+"px; border:none;' src='" + modalUrl + "'></iframe>");
-		    jQuery("#contentModal").css({
-		    	"width":iWidth+"px",
-		    	"height":iHeight+"px",
-		    	"margin-left":-(iWidth/2)+"px",
-		    	"margin-top":-((screen.availHeight-iHeight)/2)+"px"
-		    });
+			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
+			var availWidth=window.innerWidth*(90/100);
+			var properWidth=Math.min(1000,availWidth);
+		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentModal").attr("data-width",properWidth);
+		    jQuery("#contentModal").modal("show");
+		    jQuery("#contentModal").modal("loading");
+		    jQuery("#contentTypeSelectModal").modal("hide");
+		    jQuery('#btn-valid-form').unbind();
+		    jQuery('#btn-cancel-ctselect-form').unbind();
 		});
+		
+		jQuery("#contentTypeSelectModal").modal("show");
 		}else{
 			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
-			var iWidth=screen.availWidth*(90/100);
-			var iHeight=screen.availHeight*(90/100);
-			var availHeight=window.innerHeight*(90/100);
-			var iFrameHeight=availHeight*(90/100);
-			jQuery("#contentLabel").empty().html("Ajout de contenu");
-		    jQuery("#contentBody").empty().html("<iframe style='width:99%; height:"+(iFrameHeight)+"px; border:none;' src='" + modalUrl + "'></iframe>");
-		    jQuery("#contentModal").css({
-		    	"width":iWidth+"px",
-		    	"height":iHeight+"px",
-		    	"margin-left":-(iWidth/2)+"px",
-		    	"margin-top":-((screen.availHeight-iHeight)/2)+"px"
-		    });
-		   
+			var availWidth=window.innerWidth*(90/100);
+			var properWidth=Math.min(1000,availWidth);
+		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentModal").attr("data-width",properWidth);
+		    jQuery("#contentModal").modal("show");
+		    jQuery("#contentModal").modal("loading");
 		}
-	jQuery("#contentModal").modal("show");	
+	
+		
 }
 
 /**
@@ -764,5 +754,7 @@ function getDomainName() {
  * Close the modal if you don't need it anymore
  */
 function destroyModal(){
+	jQuery("#contentBody").empty();
 	jQuery("#contentModal").modal("hide");	
+	window.location.reload();
 }

@@ -31,6 +31,7 @@
 
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{{baseUrl}}/components/jschr/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet">
     
     {% for sheet in css %}
     <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
@@ -164,16 +165,26 @@
         </div>
     </div>
 	{% endblock %}
+	
 	{% block contentModal %}
-    <div id="contentModal" class="rubedo-modal modal hide fade" tabindex="-1" role="dialog"
-		aria-labelledby="contentLabel" aria-hidden="true">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal"
-				aria-hidden="true">×</button>
-			<h4 id="contentLabel"></h4>
-		</div>
-		<div class="modal-body rubedo-body">
+    <div id="contentModal" class="modal hide fade" tabindex="-1" data-width="1000">
+		<div class="modal-body">
 			<div id="contentBody">
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+	
+	{% block contentTypeSelectModal %}
+    <div id="contentTypeSelectModal" class="modal hide fade" tabindex="-1" data-width="400">
+		<div class="modal-body">
+			<h4>Sélectionnez le type de contenu à ajouter</h4>
+			<div id="contentTypeSelectBody">
+			<form name='modalfrom' id='modal-form'>
+			<select id='select-type-box'></select>
+				<button id='btn-cancel-ctselect-form' class='btn pull-right'>Annuler</button>
+				<button type='submit' id='btn-valid-form' class='btn pull-right'>Valider</button>
+			</form>
 			</div>
 		</div>
 	</div>
@@ -209,6 +220,8 @@
     	<!-- Placed at the end of the document so the pages load faster -->
     	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.10.0.min.js"></script>
     	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
+    	<script src="{{baseUrl}}/components/jschr/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
+    	<script src="{{baseUrl}}/components/jschr/bootstrap-modal/js/bootstrap-modal.js"></script>
     	
     	{% for file in js %}
     	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
