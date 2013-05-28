@@ -1,7 +1,7 @@
 {
 	"name": "webtales/rubedo-public",
 	"require": {
-		"jquery/jquery": "1.9.1",
+		"jquery/jquery": "1.10.0",
 		"jquery/jqueryui": "1.10.2",
 		"jquery/timepicker": "0.3.2",
 		"sencha/extjs": "4.1.1a",
@@ -19,9 +19,9 @@
 			"type": "package",
 			"package": {
 				"name": "jquery/jquery",
-				"version": "1.9.1",
+				"version": "1.10.0",
 				"dist": {
-					"url": "http://code.jquery.com/jquery-1.9.1.min.js",
+					"url": "http://code.jquery.com/jquery-1.10.0.min.js",
 					"type": "file"
 				}
 			}
