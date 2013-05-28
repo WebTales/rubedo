@@ -127,7 +127,7 @@ class Pages extends AbstractCollection implements IPages
 	    $filters = Filter::Factory('And');
 	    
 	    $filter = Filter::Factory('Value');
-	    $filter->setName('pageUrl')->setValue($urlSegment);
+	    $filter->setName('pageURL')->setValue($urlSegment);
 	    $filters->addFilter($filter);
 	    
 	    $filter = Filter::Factory('Value');
