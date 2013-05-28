@@ -473,3 +473,10 @@ a:hover, a:focus {
 .form-new-button {
 	margin-bottom: 20px;
 }
+
+/**
+ * Flickr gallery
+ */
+.flickr-rubedo {
+	text-align: center;
+}
