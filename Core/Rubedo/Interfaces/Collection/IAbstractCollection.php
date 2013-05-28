@@ -198,5 +198,12 @@ interface IAbstractCollection {
     public function drop ();
     public function dropIndexes();
     
+    /**
+     * Rename Author info in collection for a given AuthorId
+     *
+     * @param string $authorId
+     */
+    public function renameAuthor ($authorId);
+    
     
 }

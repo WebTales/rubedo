@@ -186,9 +186,9 @@ class Users extends AbstractCollection implements IUsers
      * 
      * @see \Rubedo\Collection\AbstractCollection::findById()
      */
-    public function findById ($contentId)
+    public function findById ($contentId, $forceReload = false)
     {
-        $result = parent::findById($contentId);
+        $result = parent::findById($contentId, $forceReload);
         if($result){
             $result = $this->_addGroupsInfos($result);
         }
@@ -243,6 +243,9 @@ class Users extends AbstractCollection implements IUsers
         if($result){
             $result['data'] = $this->_addGroupsInfos($result['data']);
         }
+        
+        $this->propagateUserUpdate($obj['id']);
+        
         return $result;
     }
     
@@ -287,6 +290,15 @@ class Users extends AbstractCollection implements IUsers
         }
         
         return array_values($members);
+    }
+
+    protected function propagateUserUpdate ($userId)
+    {
+        $servicesArray = \Rubedo\Interfaces\config::getCollectionServices();
+        $result = true;
+        foreach ($servicesArray as $service) {
+            $result = Manager::getService($service)->renameAuthor($userId) && $result;
+        }
     }
     
 }

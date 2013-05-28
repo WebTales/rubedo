@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Interfaces\Collection\IAbstractCollection, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IAbstractCollection, Rubedo\Services\Manager,WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the API to MongoDB
@@ -705,6 +705,50 @@ abstract class AbstractCollection implements IAbstractCollection
     	}
     	return $returnArray;
     }
-     
+
+    
+    /**
+     * Rename Author info in collection for a given AuthorId
+     * 
+     * @param string $authorId
+     */
+    public function renameAuthor ($authorId)
+    {
+        $userInfos = Manager::getService('Users')->findById($authorId, true);
+        $newUserSummary = array(
+            'id' => $userInfos['id'],
+            'login' => $userInfos['login'],
+            'fullName' => $userInfos['name']
+        );
+        $createCond = Filter::Factory('Value')->setName('createUser.id')->setValue($authorId);
+        $updateCond = Filter::Factory('Value')->setName('lastUpdateUser.id')->setValue($authorId);
+        $pendingCond = Filter::Factory('Value')->setName('lastPendingUser.id')->setValue($authorId);
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $service = new static();
+        $resultCreate = $service->customUpdate(array(
+            '$set' => array(
+                'createUser' => $newUserSummary
+            )
+        ), $createCond, array(
+            'multiple' => true
+        ));
+        
+        $service->customUpdate(array(
+            '$set' => array(
+                'lastUpdateUser' => $newUserSummary
+            )
+        ), $updateCond, array(
+            'multiple' => true
+        ));
+        $service->customUpdate(array(
+            '$set' => array(
+                'lastPendingUser' => $newUserSummary
+            )
+        ), $pendingCond, array(
+            'multiple' => true
+        ));
+        AbstractCollection::disableUserFilter($wasFiltered);
+    }
+    
 }
 	
