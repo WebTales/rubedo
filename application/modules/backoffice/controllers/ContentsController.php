@@ -228,7 +228,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
 	public function deleteByContentTypeIdAction(){
 	    $typeId = $this->getParam('type-id');
 	    if(!$typeId){
-	        throw new Rubedo\Exceptions\User('Un type de contenu est nécessaire en argument type-id');
+	        throw new Rubedo\Exceptions\User('This action needs a type-id as argument.','Exception3');
 	    }
 	    $deleteResult = $this->_dataService->deleteByContentType($typeId);
 	    

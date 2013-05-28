@@ -169,7 +169,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             $name = $fieldConfig['name'];
             $obj['fields'][$name] = $this->getParam($name);
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
-                throw new \Rubedo\Exceptions\User('required field missing :' . $name);
+                throw new \Rubedo\Exceptions\User('Required field missing: %1$s','Exception4',$name);
             }
         }
         
