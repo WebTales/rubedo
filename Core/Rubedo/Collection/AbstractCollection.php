@@ -707,6 +707,12 @@ abstract class AbstractCollection implements IAbstractCollection
     	return $returnArray;
     }
 
+    
+    /**
+     * Rename Author info in collection for a given AuthorId
+     * 
+     * @param string $authorId
+     */
     public function renameAuthor ($authorId)
     {
         $userInfos = Manager::getService('Users')->findById($authorId, true);
