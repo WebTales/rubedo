@@ -54,47 +54,56 @@ class XhrEditController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
-    	$contentId = $this->getParam("id", null);
-    	$data = $this->getParam("data", null);
     	
-    	$contentId = explode("_", $contentId);
-    	$id = $contentId[0];
-    	$field = $contentId[1];
+    	$data = Zend_Json::decode($this->getParam("data", null));
+    	$errors = array();
     	
-    	$field=explode("-",$field);
-    	$name=$field[0];
-    	if(count($field)>1){
-    		$index=$field[1];	
+    	foreach ($data as $contentId => $value) {
+        	$contentId = explode("_", $contentId);
+        	$id = $contentId[0];
+        	$field = $contentId[1];
+        	
+        	$field=explode("-",$field);
+        	$name=$field[0];
+        	if(count($field)>1){
+        		$index=$field[1];	
+        	}
+        	if($id === null || $data === null || $name === null){
+        		throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle valeur et le champ à mettre à jour en base de donnée");
+        	}
+        	//correcting value in case of false bool
+        	if ($data=='false'){
+        		$data=false;
+        	}
+        	$content = $this->_dataService->findById($id, true, false);
+        	if(!$content) {
+        		throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas: ".$id);
+        	}
+        	
+        	if ($content["status"] !== 'published') {
+        		$returnArray['success'] = false;
+        		$returnArray['msg'] = 'Content already have a draft version';
+        	}else{
+        	    
+        	    
+    	    	if(count($field)>1)
+    	    		$content['fields'][$name][$index] = $value["newValue"];
+    	    	else
+    	    		$content['fields'][$name] = $value["newValue"];
+    	    	
+    	    	
+    	    	$updateResult = $this->_dataService->update($content,array(),false);
+    	    	
+    	    	if(!$updateResult['success']){
+    	    		$errors[] = "Failed to update the content \"". $content["text"] ."\"";
+    	    	}
+        	}
     	}
-    	if($id === null || $data === null || $name === null){
-    		throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle valeur et le champ à mettre à jour en base de donnée");
-    	}
-    	//correcting value in case of false bool
-    	if ($data=='false'){
-    		$data=false;
-    	}
-    	$content = $this->_dataService->findById($id, true, false);
-    	if(!$content) {
-    		throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas");
-    	}
-    	if ($content["status"] !== 'published') {
-    		$returnArray['success'] = false;
-    		$returnArray['msg'] = 'Content already have a draft version';
-    	}else{
-	    	if(count($field)>1)
-	    		$content['fields'][$name][$index] = $data;
-	    	else
-	    		$content['fields'][$name] = $data;
-	    	
-	    	
-	    	$updateResult = $this->_dataService->update($content,array(),false);
-	    	
-	    	if($updateResult['success']){
-	    		return $this->_helper->json(array("success" => true));
-	    	} else {
-	    		return $this->_helper->json(array("success" => false, "msg" => "An error occured during the update of the content"));
-	    	}	
+    	
+    	if(count($errors) > 0){
+    	    return $this->_helper->json(array("success" => false, "msg" => $errors));
+    	} else {
+    	    return $this->_helper->json(array("success" => true));
     	}
     }
-   
 }

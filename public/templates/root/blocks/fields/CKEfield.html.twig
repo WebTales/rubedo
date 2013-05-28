@@ -1,12 +1,12 @@
 
 {%  if(cValue["config"]["multivalued"])and value is iterable %}
 	{% for item in value %}
-		<div class="clear-both entry-content editable "  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
+		<div class="clear-both editable "  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
 						{{item|cleanHtml}}
 						</div>
 	{% endfor %}
 {% else %}
-	<div class="clear-both entry-content editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
+	<div class="clear-both editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
 						{{value|cleanHtml}}
 						</div>
 {% endif %}
