@@ -58,19 +58,24 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     /**
      * Changes the array to keep the response usable by the BO
      *
-     * @param $obj is an array
+     * @param $obj is
+     *            an array
      * @return array
      */
-    protected function _outputObjectFilter($obj) {
-
+    protected function _outputObjectFilter ($obj)
+    {
         if (isset($obj[$this->_currentWs])) {
             foreach ($obj[$this->_currentWs] as $key => $value) {
+                
                 $obj[$key] = $value;
             }
             unset($obj['live']);
             unset($obj['workspace']);
         }
-
+        if (isset($obj['fields']['text'])) {
+            $obj['text'] = $obj['fields']['text'];
+        }
+        
         return $obj;
     }
 
