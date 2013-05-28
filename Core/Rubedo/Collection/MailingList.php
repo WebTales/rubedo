@@ -51,7 +51,7 @@ class MailingList extends AbstractCollection implements IMailingList
 		
 		//Test if the mailing list exist in database
 		if($mailingList === null){
-			throw new \Rubedo\Exceptions\User('Identifiant de newsletter invalide');
+			throw new \Rubedo\Exceptions\User('Invalid newsletter id', "Exception43");
 		}
 			
 		//Get the user
@@ -92,7 +92,7 @@ class MailingList extends AbstractCollection implements IMailingList
 				if($updateResult["success"]){
 					$response = array("success" => true, "msg" => "Inscription réussie");
 				} else {
-					throw new \Rubedo\Exceptions\User("Erreur lors de la mise à jour de l'utilisateur");
+					throw new \Rubedo\Exceptions\User("Failed to update user", "Exception44");
 				}
 			} else {
 			    $success = $doNotDuplicate?false:true;
@@ -122,7 +122,7 @@ class MailingList extends AbstractCollection implements IMailingList
 			if($createResult["success"]) {
 				$response = array("success" => true, "msg" => "Inscription réussie");
 			} else {
-				throw new \Rubedo\Exceptions\User("Erreur lors de la création de l'utilisateur");
+				throw new \Rubedo\Exceptions\User("Failed to create the user", "Exception45");
 			}
 		}
 		
@@ -147,7 +147,7 @@ class MailingList extends AbstractCollection implements IMailingList
     {
         $mailingList = $this->findById($mailingListId);
         if (! $mailingList) {
-            throw new \Rubedo\Exceptions\Server('Impossible de trouver la mailing liste');
+            throw new \Rubedo\Exceptions\Server('Unknown mailing list', "Exception46");
         }
         $mailService = Manager::getService('Mailer');
         $message = $mailService->getNewMessage();

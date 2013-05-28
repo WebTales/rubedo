@@ -40,11 +40,11 @@ class TinyController extends Zend_Controller_Action
     {
         $tinyKey = $this->getParam('tk');
         if (! $tinyKey) {
-            throw new \Rubedo\Exceptions\User('Aucune URL courte fournie');
+            throw new \Rubedo\Exceptions\User('No tiny URL given.', "Exception26");
         } else {
             $tinyUrlObj = $this->tinyUrlService->findById($tinyKey);
             if (! $tinyUrlObj) {
-                throw new \Rubedo\Exceptions\User('Clef d\'URL invalide');
+                throw new \Rubedo\Exceptions\User('Invalid URL key.', "Exception27");
             }
         }
         

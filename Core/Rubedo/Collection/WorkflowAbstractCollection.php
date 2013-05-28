@@ -82,7 +82,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      */
     public function create(array $obj, $options = array(), $live = false) {
     	if($live === true){
-    		throw new \Rubedo\Exceptions\Access('Can\'t create directly in live');
+    		throw new \Rubedo\Exceptions\Access('You can not create a content directly published', "Exception60");
 		}
 
 		$this->_dataService->setWorkspace();

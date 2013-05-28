@@ -251,7 +251,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         $templateDirIterator = new \DirectoryIterator($this->getTemplateDir());
         if(!isset($templateDirIterator)){
-            throw new \Rubedo\Exceptions\Server('cannnot instanciate iterator for template dir');
+            throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for template dir', "Exception67");
         }
         
         $themeInfosArray = array();

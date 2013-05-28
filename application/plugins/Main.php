@@ -52,7 +52,7 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
         }
         
         if (! $hasAccess) {
-            throw new \Rubedo\Exceptions\Access("can't access $ressourceName");
+            throw new \Rubedo\Exceptions\Access('Can\'t access %1$s', "Exception30", $ressourceName);
         }
         
         if($module !='backoffice' || $controller !='xhr-authentication' || $action !='is-session-expiring'){

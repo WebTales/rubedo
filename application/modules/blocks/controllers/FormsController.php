@@ -198,7 +198,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                 $this->formsSessionArray[$this->_formId]['currentPage'] = 0;
                 Manager::getService('Session')->set("forms", $this->formsSessionArray);
             } else {
-                throw new Rubedo\Exceptions\Server('Impossible de mettre à jour la réponse.');
+                throw new Rubedo\Exceptions\Server('Impossible to update the response.', "Exception17");
             }
             $this->_justFinished = true;
         }else{
@@ -372,7 +372,7 @@ class Blocks_FormsController extends Blocks_AbstractController
         }
         $result = Manager::getService('FormsResponses')->update($this->_formResponse);
         if (! $result['success']) {
-            throw new Rubedo\Exceptions\Server('Impossible de mettre à jour la réponse.');
+            throw new Rubedo\Exceptions\Server('Impossible to update the response.', "Exception17");
         } else {
             $this->_formResponse = $result['data'];
         }

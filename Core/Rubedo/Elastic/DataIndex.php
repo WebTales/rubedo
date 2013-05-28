@@ -199,7 +199,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $this->deleteContentType($id);
             } else {
                 // throw exception
-                throw new \Rubedo\Exceptions\Server("$id type already exists");
+                throw new \Rubedo\Exceptions\Server('%1$s type already exists', "Exception64", $id);
             }
         }
         
@@ -314,7 +314,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $this->deleteDamType($id);
             } else {
                 // throw exception
-                throw new \Rubedo\Exceptions\Server("$id type already exists");
+                throw new \Rubedo\Exceptions\Server('%1$s type already exists', "Exception64", $id);
             }
         }
         
@@ -882,7 +882,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $contentType = self::$_dam_index->getType($id);
                 break;
             default:
-                throw new \Rubedo\Exceptions\Server("option should be set to content or dam");
+                throw new \Rubedo\Exceptions\Server("Option argument should be set to content or dam", "Exception65");
                 break;
         }
         

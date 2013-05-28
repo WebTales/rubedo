@@ -538,7 +538,6 @@ function swithToEditMode() {
 	jQuery('#editmode').show();
 	jQuery("#list-editmode").show();
 	jQuery(".list-editmode").show();
-	
 	jQuery('.date').each(function() {
 		jQuery(this).html(jQuery(this).html() + "<div class=\"datepicker\"></div>");
 	});
@@ -557,6 +556,18 @@ function swithToEditMode() {
 	});
 	 starEdit=true;
 	 EditMode=true;
+	 jQuery(".complete-edition-btn").show();
+	 jQuery(".complete-edition-btn").click(function(){
+	 		var siteUrl = getDomainName();
+	 		var targetContentId=jQuery(this).attr("contentId");
+	 		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?editMode=true&contentId="+targetContentId;
+			var availWidth=window.innerWidth*(90/100);
+			var properWidth=Math.min(1000,availWidth);
+		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+		    jQuery("#contentModal").attr("data-width",properWidth);
+		    jQuery("#contentModal").modal("show");
+		    jQuery("#contentModal").modal("loading");
+	 });
 }
 
 /**
@@ -572,6 +583,8 @@ function swithToViewMode() {
 	jQuery('#editmode').hide();
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
+	jQuery(".complete-edition-btn").hide();
+	jQuery(".complete-edition-btn").unbind();
 	jQuery('.checkbox-edit').each(function() {
 		jQuery(this).find("input").attr("disabled","diabled");
 	});

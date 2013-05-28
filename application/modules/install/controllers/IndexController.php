@@ -81,9 +81,7 @@ class Install_IndexController extends Zend_Controller_Action
     public function indexAction ()
     {
         if (! $this->_isConfigWritable()) {
-            throw new Rubedo\Exceptions\User(
-                    'Local config file ' . $this->_localConfigFile .
-                             ' should be writable');
+            throw new Rubedo\Exceptions\User('Local config file %1$s should be writable', "Exception29", $this->_localConfigFile);
         }
         if (! isset($this->_localConfig['installed']) ||
                  $this->_localConfig['installed']['status'] != 'finished') {

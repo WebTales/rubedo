@@ -268,7 +268,7 @@ class Sites extends AbstractCollection implements ISites
         if (! self::isUserFilterDisabled()) {
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 	        if (! in_array($obj['workspace'], $writeWorkspaces)) {
-	            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+	            throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception35");
 	        }
 		}
 		

@@ -69,7 +69,7 @@ class XhrEditController extends Zend_Controller_Action
         		$index=$field[1];	
         	}
         	if($id === null || $data === null || $name === null){
-        		throw new \Rubedo\Exceptions\Server("Vous devez fournir l'identifiant du contenu concerné, la nouvelle valeur et le champ à mettre à jour en base de donnée");
+        		throw new \Rubedo\Exceptions\Server("You must provide the concerned content id, the new value and the field which had to be updated in database", "Exception27");
         	}
         	//correcting value in case of false bool
         	if ($data=='false'){
@@ -77,7 +77,7 @@ class XhrEditController extends Zend_Controller_Action
         	}
         	$content = $this->_dataService->findById($id, true, false);
         	if(!$content) {
-        		throw new \Rubedo\Exceptions\Server("L'identifiant de contenu n'éxiste pas: ".$id);
+        		throw new \Rubedo\Exceptions\Server('This content id does not exist: %1$s', "Exception28", $id);
         	}
         	
         	if ($content["status"] !== 'published') {

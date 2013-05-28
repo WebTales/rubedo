@@ -31,6 +31,11 @@
  * Rubedo Modal
  */
 
+.complete-edition-btn
+{
+	margin-left:8px; 
+	display:none;
+}
 /**
  * Gallery
  */
