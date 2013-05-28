@@ -380,6 +380,16 @@ class DataIndex extends DataAbstract implements IDataIndex
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
+        $indexMapping["startPublicationDate"] = array(
+            'type' => 'integer',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );
+        $indexMapping["endPublicationDate"] = array(
+            'type' => 'integer',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );
         
         // Add Taxonomies
         foreach ($vocabularies as $vocabularyName) {

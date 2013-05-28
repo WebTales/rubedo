@@ -136,13 +136,18 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Frontend filter on start and end publication date
         
-        if ((self::$_isFrontEnd)&&($option!="dam")) {
+        if ((self::$_isFrontEnd)) {
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             // filter on start
-            $beginFilter = new \Elastica_Filter_NumericRange('startPublicationDate', array(
+            $beginFilterValue = new \Elastica_Filter_NumericRange('startPublicationDate', array(
                 'to' => $now
             ));
+            $beginFilterNotExists = new \Elastica_Filter_Not(new \Elastica_Filter_Exists('startPublicationDate'));
+            $beginFilter = new \Elastica_Filter_Or();
+            $beginFilter->addFilter($beginFilterNotExists);
+            $beginFilter->addFilter($beginFilterValue);
+            
             
             // filter on end : not set or not ended
             $endFilter = new \Elastica_Filter_Or();
@@ -151,14 +156,17 @@ class DataSearch extends DataAbstract implements IDataSearch
             ));
             $endFilterWithoutValue = new \Elastica_Filter_Term();
             $endFilterWithoutValue->setTerm('endPublicationDate', 0);
+            $endFilterNotExists = new \Elastica_Filter_Not(new \Elastica_Filter_Exists('endPublicationDate'));
+            $endFilter->addFilter($endFilterNotExists);
             $endFilter->addFilter($endFilterWithoutValue);
             $endFilter->addFilter($endFilterWithValue);
+            
+            
             
             // build complete filter
             $frontEndFilter = new \Elastica_Filter_And();
             $frontEndFilter->addFilter($beginFilter);
             $frontEndFilter->addFilter($endFilter);
-            
             // push filter to global
             $globalFilter->addFilter($frontEndFilter);
         }
