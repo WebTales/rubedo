@@ -3,19 +3,12 @@
  *****************************/
 var contentId = "";
 var imageId = "";
-var cache = new Array();
-var dateCache = new Array();
 var object = null;
 var errors = new Array();
-var asyncIncrementor= 0;
-var timeCache = new Array();
-var numberCache = new Array();
-var checkboxCache = new Array();
-var checkboxgroupCache = new Array();
-var radiogroupCache = new Array();
 var starEdit=false;
 var EditMode=true;
-var ratingCache=new Array();
+
+var modifications = {};
 /*****************************/
 
 //Initialize cursor to default
@@ -130,8 +123,6 @@ CKEDITOR.on('instanceCreated', function(event) {
 		
 	}
 	
-	//var targetId = element.getInputId();
-	//element.editor= editor.replace(targetId,{toolbar:  myTBConfig, extraPlugins:'rubedolink',resize_enabled:false, filebrowserImageBrowseUrl:"ext-finder?type=Image", filebrowserImageUploadUrl:"ext-finder?type=Image"}); 
 });
 
 /**
@@ -147,104 +138,15 @@ jQuery('#btn-edit').click(function() {
  */
 jQuery('#btn-cancel').click(function() {
 	var changed = checkIfDirty();
-	var cacheChanged = 0;
-	var dateCacheChanged = 0;
-	var timeCacheChanged = 0;
-	var checkboxCacheChanged = 0;
-	var checkboxgroupCacheChanged = 0;
-	var radiogroupCacheChanged = 0;
-	var numberCacheChanged = 0;
-	
-	/**
-	 * Count modifications on images
-	 */
-	for(var i in cache){
-		cacheChanged++;
-	}
-	
-	/**
-	 *  Count modifications on dates
-	 */
-	for(var contentId in dateCache) {
-		dateCacheChanged++;
-	}
-	/**
-	 *  Count modifications on checkboxes
-	 */
-	for(var contentId in checkboxCache) {
-		checkboxCacheChanged++;
-	}
-	/**
-	 *  Count modifications on checkbox groups
-	 */
-	for(var contentId in checkboxgroupCache) {
-		checkboxgroupCacheChanged++;
-	}
-	/**
-	 *  Count modifications on radio groups
-	 */
-	for(var contentId in radiogroupCache) {
-		radiogroupCacheChanged++;
-	}
-	/**
-	 * Count modifications on times
-	 */
-	for(var contentId in timeCache) {
-		timeCacheChanged++;
-	}
-	
-	/**
-	 * Count modifications on numbers
-	 */
-	for(var contentId in numberCache) {
-		numberCacheChanged++;
-	}
 	
 	/**
 	 * Open confirmation modal if there is some modifications
 	 */
-	if (changed || cacheChanged > 0 || dateCacheChanged > 0 || timeCacheChanged > 0 || numberCacheChanged > 0 || checkboxCacheChanged > 0 || checkboxgroupCacheChanged > 0 || radiogroupCacheChanged > 0) {
+	if (changed || modifications.length > 0) {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
 		location.reload();
-	}
-});
-
-
-/**
- * JS for the "cancel confirmation" button in the modal when you don't whant to discard your modifications
- */
-jQuery('#cancel-confirm').click(function() {
-	//undoAllChanges();
-	//swithToViewMode();
-	location.reload();
-});
-
-/**
- * Save button popover
- */
-jQuery("#btn-save").mouseenter(function(){
-	jQuery("#btn-save").popover("show");
-});
-jQuery("#btn-save").mouseleave(function(){
-	jQuery("#btn-save").popover("hide");
-})
-
-/**
- * Ctrl+s
- * Save function
- */
-$(document).keydown(function(event) {
-	if(event.ctrlKey)
-	{
-		if (event.which == 83 ) {
-			if(EditMode==true)
-			{
-				event.preventDefault();
-				jQuery('#btn-save').click();
-			}
-	    }
 	}
 });
 
@@ -278,9 +180,15 @@ jQuery('#btn-save').click(function() {
 						//Remove dirty flag
 						CKEDITOR.instances[z].resetDirty();
 					}
-					save(CKEId[0],data);
+					//saveCKE(CKEId[0],data);
+					modifications[CKEId[0]] = {"newValue" : data};
 				}else{
-					save(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
+					//saveCKE(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
+					var id = CKEDITOR.instances[i].element.getId();
+					var newValue = CKEDITOR.instances[i].getData();
+					
+					modifications[id] = {"newValue" : newValue};
+					
 					//Remove dirty flag
 					CKEDITOR.instances[i].resetDirty();
 				}
@@ -289,86 +197,100 @@ jQuery('#btn-save').click(function() {
 			
 		}
 	}
+	
 	/**
-	 * Save rating fields
+	 * Save all modifications except CKEditor
 	 */
+	save(modifications);
+	
+	/*
 	for( var contentId in ratingCache) {
 		modified = true;
 		
 		save(contentId, ratingCache[contentId])
-		}
+	}
 	
-	
-	
-	/**
-	 * Save images
-	 */
 	for( var id in cache ) {
 		modified = true;
 		save(id, cache[id].newImage);
 	}
 	
-	/**
-	 * Save dates
-	 */
 	for( var contentId in dateCache) {
 		modified = true;
 		save(contentId, dateCache[contentId].newDate)
 		}
-	/**
-	 * Save checkboxes
-	 */
+	
 	for( var contentId in checkboxCache) {
 		modified = true;
 		save(contentId, checkboxCache[contentId])
 		}
-	/**
-	 * Save checkbox groups
-	 */
+	
 	for( var contentId in checkboxgroupCache) {
 		modified = true;
 		save(contentId, checkboxgroupCache[contentId])
 		}
-	/**
-	 * Save radio groups
-	 */
+	
 	for( var contentId in radiogroupCache) {
 		modified = true;
 		save(contentId, radiogroupCache[contentId])
 		}
-	/**
-	 * save times
-	 */
+	
 	for( var contentId in timeCache) {
 		modified = true;
 		save(contentId, timeCache[contentId].newTime);
 	}
 	
-	/**
-	 * save numbers
-	 */
+	
 	for( var contentId in numberCache) {
 		modified = true;
 			save(contentId, numberCache[contentId].newNumber);
-		
-		
 	}
 	
-	/**
-	 * save maps
-	 */
 	// for every maps
 	if(typeof(gMap) != "undefined"){
 		var maps = gMap.getAllInstances();
 	    maps.forEach(function(map) {
 	        save(map.id, map.getValues());
 	    }); 
-	}
+	}*/
 	
 	// switch to wiew mode
 	swithToViewMode();
 });
 
+/**
+ * Save button popover
+ */
+jQuery("#btn-save").mouseenter(function(){
+	jQuery("#btn-save").popover("show");
+});
+jQuery("#btn-save").mouseleave(function(){
+	jQuery("#btn-save").popover("hide");
+})
+
+/**
+ * Ctrl+s
+ * Save function
+ */
+$(document).keydown(function(event) {
+	if(event.ctrlKey)
+	{
+		if (event.which == 83 ) {
+			if(EditMode==true)
+			{
+				event.preventDefault();
+				jQuery('#btn-save').click();
+			}
+	    }
+	}
+});
+
+/**
+ * JS for the "cancel confirmation" button in the modal when you don't want to discard your modifications
+ */
+jQuery('#cancel-confirm').click(function() {
+	location.reload();
+});
 
 /***************************************************
  * 			jQuery for images editing
@@ -398,11 +320,13 @@ function saveImage(currentContentId, newImageId) {
 	contentId = currentContentId;
 	imageId = newImageId;
 
-	if(typeof(cache[object.id]) == "undefined"){
+	/*if(typeof(cache[object.id]) == "undefined"){
 		cache[object.id] = { "html" : jQuery(object).html(), "newImage" :imageId };
 	} else {
 		cache[object.id]["newImage"] = imageId;
-	}
+	}*/
+	
+	modifications[object.id] = {"newValue" : imageId};
 	
 	jQuery("#"+object.id+" > img").attr("src", "/dam?media-id="+imageId);
 	
@@ -425,14 +349,9 @@ jQuery(".date").click( function () {
 				// Divided by 1000 to correspond with php format
 				var serverDate = jQuery.datepicker.formatDate('@', jQuery("#"+currentDatePicker+" .datepicker").datepicker("getDate"))/1000;
 				
-				var html = jQuery("#"+currentDatePicker+" .datepicker").parent().html().split("<");
-				var cachedHtml = html[0];
+				var contentId = jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id");
 				
-				if(typeof(cache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")]) == "undefined"){
-					dateCache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")] = {"html" : cachedHtml, "newDate" : serverDate};
-				} else {
-					dateCache[jQuery("#"+currentDatePicker+" .datepicker").parent().attr("id")]["newDate"] = serverDate;
-				}
+				modifications[contentId] = {"newValue" : serverDate};
 				
 				jQuery(this).parent().html("Le " + date + " <div class=\"datepicker\"></div>");
 				
@@ -482,20 +401,12 @@ jQuery(".time").click( function () {
 				}
 
 				if(currentMinutes != olderMinutes) {
-					if(typeof(timeCache[currentTimePicker]) == "undefined"){
-						timeCache[currentTimePicker] = {time : jQuery("#"+currentTimePicker).attr("data-time"), newTime : currentTime};
-					} else {
-						timeCache[currentTimePicker]['newTime'] = currentTime;
-					}
+					modifications[currentTimePicker] = {"newValue" : currentTime};
 					
 					jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 				}
 			} else if(currentMinutes == olderMinutes && currentHoures == olderHoures && houresAreSet){
-				if(typeof(timeCache[currentTimePicker]) == "undefined"){
-					timeCache[currentTimePicker] = {time : jQuery("#"+currentTimePicker).attr("data-time"), newTime : currentTime};
-				} else {
-					timeCache[currentTimePicker]['newTime'] = currentTime;
-				}
+				modifications[currentTimePicker] = {"newValue" : currentTime};
 				
 				jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 			}
@@ -516,9 +427,9 @@ jQuery(".star-edit").click( function () {
 	var rateId = jQuery(this).parent().attr("id");
 	var newRate=jQuery(rate).attr("data-rate");
 		
-		ratingCache[rateId] = newRate;
+	modifications[rateId] = {"newValue" : newRate};
 	
-	});
+});
 
 /*************************************************/
 
@@ -530,10 +441,10 @@ jQuery(".checkbox-edit").click( function () {
 	if(!jQuery(this).find("input").is(":disabled")){
 		var newValue=jQuery(this).find("input").is(":checked");
 		var checkboxId=jQuery(this).attr("id");
-		checkboxCache[checkboxId]=newValue;
+		modifications[checkboxId] = {"newValue" : newValue};
 	}
 	
-	});
+});
 /*************************************************/
 
 /*************************************************
@@ -549,10 +460,10 @@ jQuery(".radiogroup-edit").click( function () {
 				newValue[jQuery(this).attr("name")]=jQuery(this).attr("value");
 			}
 		});
-		radiogroupCache[radioGroupId]=newValue;
+		modifications[radioGroupId] = { "type" : "radiogroup", "newValue" : newValue };
 	}
 	
-	});
+});
 /*************************************************/
 
 /*************************************************
@@ -570,10 +481,10 @@ jQuery(".checkboxgroup-edit").click( function () {
 			}
 		});
 		
-		checkboxgroupCache[checkboxGroupId]=newValue;
+		modifications[checkboxGroupId] = { "type" : "checkboxgroup", "newValue" : newValue };
 	}
 	
-	});
+});
 /************************************************/
 
 /************************************************
@@ -598,11 +509,7 @@ jQuery( document ).on( 'blur', '.numberSelector', function () {
 	var newNumber = jQuery(this).val();
 	
 	if(newNumber != jQuery(this).attr("value")){
-		if(typeof(numberCache[currentNumberDiv]) == "undefined"){
-			numberCache[currentNumberDiv] = {"number" : jQuery(this).attr("value"), "newNumber" : newNumber};
-		} else {
-			numberCache[currentNumberDiv]["newNumber"] = newNumber;
-		}
+		modifications[currentNumberDiv] = {"newValue" : newNumber};
 	}
 	
 	jQuery("#"+currentNumberDiv + " > .currentNumber").html(newNumber);
@@ -693,118 +600,64 @@ function checkIfDirty() {
 }
 
 /**
- * Deprecated, now we reload the page
- * 
- * @deprecated
- */
-function undoAllChanges() {
-	for ( var i in CKEDITOR.instances) {
-		if(CKEDITOR.instances[i].checkDirty()){
-			undo(CKEDITOR.instances[i]);
-		}
-	}
-	
-	/**
-	 * Undo modifications on images
-	 */
-	for(var i in cache) {
-		jQuery("#"+i+"").html(cache[i]['html']);
-	}
-	
-	/**
-	 * Undo modifications on dates
-	 */
-	for(var contentId in dateCache) {
-		jQuery("#"+contentId).html(dateCache[contentId]['html']);
-	}
-	
-	/**
-	 * Undo modifications on times
-	 */
-	for(var contentId in timeCache) {
-		jQuery("#"+contentId+" .currentTime").html(timeCache[contentId]['time']);
-	}
-	
-	/**
-	 * Undo modifications on numbers
-	 */
-	for(var contentId in numberCache) {
-		jQuery("#"+contentId+" .currentNumber").html(numberCache[contentId]['number']);
-	}
-	
-	cache = new Array();
-	dateCache = new Array();
-	timeCache = new Array();
-	numberCache = new Array();
-	checkboxCache=new Array();
-	checkboxgroupCache=new Array();
-	radiogroupCache=new Array();
-}
-
-/**
- * Deprecated too
- * 
- * @deprecated
- */
-function undo(editor) {
-	editor.execCommand('undo');
-}
-
-/**
  * Save modifications on fields
  * 
  * @param id contain the content id and the concerned field (id_fieldName)
  * @param data contain the new value of the field
  */
-function save(id, data) {
-	asyncIncrementor=asyncIncrementor+1;
+function save(data) {
+	var data = JSON.stringify(data);
+
 	jQuery.ajax({
 		type : 'POST',
 		url : "/xhr-edit",
+		dataType: "json",
 		data : {
-		'id' : id,
-		'data' : data
+			'data' : data
 		},
 		"error" : function(jqXHR, textStatus, errorThrown) {
 			var response = jqXHR.responseText;
 			var responseObject = jQuery.parseJSON(response);
 			var returnMsg = responseObject.msg;
-			if (returnMsg == "Content already have a draft version") {
-				returnMsg = 'Un brouillon empêche les modifications.';
+			
+			for(var msgIndex in returnMsg) {
+				errors.push(returnMsg[msgIndex]);
 			}
-			errors.push(returnMsg);
-			asyncIncrementor=asyncIncrementor-1;
-			if (asyncIncrementor==0){
-				afterAllSavesAreDone();
+			
+			if(errors.length > 0) {
+				notify("failure", "Erreur serveur avec message rubedo");
+			} else {
+				notify("failure", "Erreur serveur sans message rubedo");
 			}
 		},
 		"success":function(data){
-			asyncIncrementor=asyncIncrementor-1;
-			if (data.success===false){
-				errors.push(data.msg);
+			if (!data.success){
+				for(var msgIndex in data.msg) {
+					errors.push(data.msg[msgIndex]);
+				}
 			}
-			if (asyncIncrementor==0){
-				afterAllSavesAreDone();
+			
+			if(errors.length > 0) {
+				var message = "";
+				
+				for (var msgIndex in errors) {
+					message = message + errors[msgIndex];
+				}
+				
+				if(message = ""){
+					notify("failure", "Failed to update contents (no error specified).");
+				} else {
+					notify("failure", message);
+				}
+			} else {
+				notify("success", "La mise à jour à bien été effectuée.");
 			}
 		}
 	});
 }
 
 /**
- * Wait until execution of queries and show notification
- */
-function afterAllSavesAreDone(){
-	if(errors.length > 0) {
-		notify('failure', 'Une erreur est survenue, il est possible que vos modifications soient perdues');
-	} else {
-		notify('success', 'Les données ont été sauvegardées.');
-	}
-	errors = new Array();
-	asyncIncrementor= 0;
-}
-
-/**
- * Allow to shox notifications in the admin toolbar
+ * Allow to show notifications in the admin toolbar
  * 
  * @param notify_type 
  * 			Must contain "failure" for an error notification
