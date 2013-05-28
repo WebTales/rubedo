@@ -40,8 +40,12 @@ abstract class AbstractException extends \Exception
     }
     
     protected function _translate($message, $code,$extraParams=array()){
+        
     	//convert message to proper language using $code and $langage, use $message directly if nothing more appropriate coud be found
-    	$message = Manager::getService('Translate')->translate($code,$message);
+    	if($code){
+    	    $message = Manager::getService('Translate')->translate($code,$message);
+    	}
+        
     	//apply params to message if there are any
     	if (count($extraParams)>0){
     		$message=sprintf($message,$extraParams);
