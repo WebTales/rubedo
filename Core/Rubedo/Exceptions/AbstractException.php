@@ -32,8 +32,8 @@ abstract class AbstractException extends \Exception
     public function __construct ($message = null, $code = null) {
         $extraParams=array();
         $recievedArgs=func_get_args();
-        if (isset($recievedArgs[3])){
-        	$extraParams=array_slice($recievedArgs,3);
+        if (isset($recievedArgs[2])){
+        	$extraParams=array_slice($recievedArgs,2);
         }
         $message = $this->_translate($message, $code, $extraParams);
         parent::__construct($message);        
