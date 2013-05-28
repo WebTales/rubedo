@@ -91,12 +91,6 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     	$results = $query->search($params,$this->_option,false);
     	$results = $this->_clusterResults($results);
     	
-    	foreach ($results["facets"] as $key => $facet) {
-    	    if($facet["id"] == "navigation") {
-    	        unset ($results["facets"][$key]);
-    	    }
-    	}
-    	
     	$results['facetsToHide']=$facetsToHide;
     	 
     	$activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
