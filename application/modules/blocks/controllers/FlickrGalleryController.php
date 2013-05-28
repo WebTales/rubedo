@@ -106,7 +106,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             }elseif (isset($flParams['tags'])){
                 $photosArrayCount = $flickrService->tagSearch($flParams['tags'], array('per_page' => 1,'tag_mode'=>$flParams['tag_mode']));
             }else{
-                throw new \Rubedo\Exceptions\User('need a criteria to display Flickr Contents');
+                throw new \Rubedo\Exceptions\User('Need a criteria to display Flickr Contents.', "Exception16");
             }
 			$cache->save($photosArrayCount, $cacheKeyCount,array('flickr'));
         }

@@ -70,7 +70,7 @@ class Manager implements IServicesManager
     public static function setOptions($options)
     {
         if ('array' !== gettype($options)) {
-            throw new \Rubedo\Exceptions\Server('Services parameters should be an array');
+            throw new \Rubedo\Exceptions\Server('Services parameters should be an array', "Exception69");
         }
         self::$_servicesOptions = $options;
     }
@@ -97,7 +97,7 @@ class Manager implements IServicesManager
     public static function getService($serviceName)
     {
         if (gettype($serviceName) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('getService only accept string argument');
+            throw new \Rubedo\Exceptions\Server('getService only accept string argument', "Exception70");
         }
 
         if (isset(static::$_mockServicesArray[$serviceName])) {
@@ -129,13 +129,13 @@ class Manager implements IServicesManager
         if (isset($options[$serviceName]['class'])) {
             $className = $options[$serviceName]['class'];
         } else {
-            throw new \Rubedo\Exceptions\Server('Classe name for ' . $serviceName . ' service should be defined in config file');
+            throw new \Rubedo\Exceptions\Server('Classe name for %1$s service should be defined in config file', "Exception71", $serviceName);
         }
         if (!$interfaceName = config::getInterface($serviceName)) {
-            throw new \Rubedo\Exceptions\Server($serviceName . ' isn\'t declared in service interface config');
+            throw new \Rubedo\Exceptions\Server('%1$s isn\'t declared in service interface config', "Exception72", $serviceName);
         }
         if (!in_array($interfaceName, class_implements($className))) {
-            throw new \Rubedo\Exceptions\Server($className . ' don\'t implement ' . $interfaceName);
+            throw new \Rubedo\Exceptions\Server('%1$s don\'t implement %2$s', "Exception73", $className, $interfaceName);
         }
 
         return $className;

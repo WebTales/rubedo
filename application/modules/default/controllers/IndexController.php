@@ -135,7 +135,7 @@ class IndexController extends Zend_Controller_Action
                                                                                                            // install
                                                                                                            // tool
             }
-            throw new \Rubedo\Exceptions\NotFound('No Page found');
+            throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
@@ -143,7 +143,7 @@ class IndexController extends Zend_Controller_Action
         
         //ensure protocol is authorized for this site
         if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
-            throw new Rubedo\Exceptions\Server('Protocol is not set for current site');
+            throw new Rubedo\Exceptions\Server('Protocol is not set for current site', "Exception14");
         }
         
         if (! in_array($httpProtocol, $this->_site['protocol'])) {
@@ -279,7 +279,7 @@ class IndexController extends Zend_Controller_Action
     {
         $to = $this->getParam('to', null);
         if (is_null($to)) {
-            throw new \Rubedo\Exceptions\User('Please, give an email adresse');
+            throw new \Rubedo\Exceptions\User('Please, give an email adresse.', "Exception22");
         }
         $message = Manager::getService('Mailer')->getNewMessage();
         
@@ -305,7 +305,7 @@ class IndexController extends Zend_Controller_Action
         
         $send = Manager::getService('Mailer')->sendMessage($message);
         if ($send == 0) {
-            throw new \Rubedo\Exceptions\Server('No mail has been sent !');
+            throw new \Rubedo\Exceptions\Server('No mail has been sent !', "Exception23");
         }
     }
 
@@ -320,7 +320,7 @@ class IndexController extends Zend_Controller_Action
     {
         $this->_mask = Manager::getService('Masks')->findById($this->_pageInfo['maskId']); // maskId
         if (! $this->_mask) {
-            throw new \Rubedo\Exceptions\Server('no mask found');
+            throw new \Rubedo\Exceptions\Server('No mask found.', "Exception24");
         }
         
         $this->_currentContent = $this->getParam('content-id', null);
@@ -333,13 +333,13 @@ class IndexController extends Zend_Controller_Action
         $this->_blocksArray = array();
         foreach ($this->_mask['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
-                throw new \Rubedo\Exceptions\Server('no orderValue for block ' . $block['id']);
+                throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25",  $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
         foreach ($this->_pageInfo['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
-                throw new \Rubedo\Exceptions\Server('no orderValue for block ' . $block['id']);
+                throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25",  $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }

@@ -60,7 +60,7 @@ class Proxy implements IServicesProxy
     public function getCurrentOptions($name = null)
     {
         if (gettype($name) !== 'string' && $name !== null) {
-            throw new \Rubedo\Exceptions\Server('Manager->getCurrentOptions only accept string argument');
+            throw new \Rubedo\Exceptions\Server('Manager->getCurrentOptions only accept string argument', "Exception74");
         }
         if ($name == null) {
             return $this->_currentOptions;
@@ -142,7 +142,7 @@ class Proxy implements IServicesProxy
     public function __call($name, $arguments)
     {
         if (!method_exists($this->_object, $name)) {
-            throw new \Rubedo\Exceptions\Server('The method ' . $name . ' doesn\'t exist');
+            throw new \Rubedo\Exceptions\Server('The method %1$s does not exist', "Exception75", $name);
         }
 
         //list of concerns

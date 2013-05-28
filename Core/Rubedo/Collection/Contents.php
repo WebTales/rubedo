@@ -221,7 +221,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $origObj = $this->findById($obj['id'], $live, false);
         if (! self::isUserFilterDisabled()) {
             if (isset($origObj['readOnly']) && $origObj['readOnly']) {
-                throw new \Rubedo\Exceptions\Access('no rights to update this content');
+                throw new \Rubedo\Exceptions\Access('No rights to update this content', "Exception33");
             }
         }
         if (! is_array($obj['target'])) {
@@ -262,7 +262,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $origObj = $this->findById($obj['id'], false, false);
         if (! self::isUserFilterDisabled()) {
             if ($origObj['readOnly']) {
-                throw new \Rubedo\Exceptions\Access('no rights to destroy this content');
+                throw new \Rubedo\Exceptions\Access('No rights to destroy this content', "Exception34");
             }
         }
         $returnArray = parent::destroy($obj, $options);
@@ -320,19 +320,19 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
             
             if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception35");
             }
             
             $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
             if ((! in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces)) == 0) {
-                throw new \Rubedo\Exceptions\Access('You can not assign as target to this workspace');
+                throw new \Rubedo\Exceptions\Access('You can not assign as target to this workspace', "Exception36");
             }
         }
         
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
         if (! self::isUserFilterDisabled() && ! in_array($obj['writeWorkspace'], $contentType['workspaces']) && ! in_array('all', $contentType['workspaces'])) {
-            throw new \Rubedo\Exceptions\Access('You can not assign this content type to this workspace');
+            throw new \Rubedo\Exceptions\Access('You can not assign this content type to this workspace', "Exception37");
         }
         $contentTypeFields = $contentType['fields'];
         
@@ -663,7 +663,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             if (count(array_intersect(array(
                 $content['writeWorkspace']
             ), $readWorkspaces)) == 0 && $readWorkspaces[0] != "all") {
-                throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
+                throw new \Rubedo\Exceptions\Access("You don't have access to this workspace", "Exception38");
             }
         }
         
@@ -795,7 +795,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             
             return $orderedContents;
         } else {
-            throw new \Rubedo\Exceptions\User("Invalid filter");
+            throw new \Rubedo\Exceptions\User("Invalid filter", "Exception39");
         }
     }
 
@@ -826,12 +826,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function deleteByContentType ($contentTypeId)
     {
         if (! is_string($contentTypeId)) {
-            throw new \Rubedo\Exceptions\User('ContentTypeId should be a string');
+            throw new \Rubedo\Exceptions\User('ContentTypeId should be a string', "Exception40");
         }
         $contentTypeService = Manager::getService('ContentTypes');
         $contentType = $contentTypeService->findById($contentTypeId);
         if (! $contentType) {
-            throw new \Rubedo\Exceptions\User('ContentType not found');
+            throw new \Rubedo\Exceptions\User('ContentType not found', "Exception41");
         }
         
         $deleteCond = Filter::Factory('Value')->setName('typeId')->setValue($contentTypeId);

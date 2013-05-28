@@ -153,7 +153,7 @@ class Pages extends AbstractCollection implements IPages
 	 */
 	public function destroy(array $obj, $options = array()) {
 		if ($this->hasDefaultPageAsChild($obj['id'])){
-			throw new \Rubedo\Exceptions\User("Page is or is father of site default single page");
+			throw new \Rubedo\Exceptions\User("This page is the default single page or father of the default single page", "Exception47");
 		}	    
 	    $deleteCond = Filter::Factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
 	       
@@ -246,7 +246,7 @@ class Pages extends AbstractCollection implements IPages
         	$writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 		
 	        if (! in_array($obj['workspace'], $writeWorkspaces)) {
-	            throw new \Rubedo\Exceptions\Access('You can not assign page to this workspace');
+	            throw new \Rubedo\Exceptions\Access('You can not assign page to this workspace', "Exception48");
 	        }
 		}
         

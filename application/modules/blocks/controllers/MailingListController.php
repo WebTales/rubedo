@@ -39,7 +39,7 @@ class Blocks_MailingListController extends Zend_Controller_Action
 		//Default mailing list
 		$mailingListId = $this->getParam("mailing-list-id");
 		if(!$mailingListId){
-			throw new \Rubedo\Exceptions\User("Aucune newsletter associée à ce formulaire");
+			throw new \Rubedo\Exceptions\User("No newsletter associeted to this form.", "Exception18");
 		}
 		
 		//Declare email validator

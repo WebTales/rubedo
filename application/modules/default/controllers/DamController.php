@@ -39,15 +39,15 @@ class DamController extends Zend_Controller_Action
         $mediaId = $this->getRequest()->getParam('media-id');
         
         if (! $mediaId) {
-            throw new \Rubedo\Exceptions\User('no id given');
+            throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
         $media = Manager::getService('Dam')->findById($mediaId);
         if (! $media) {
-            throw new \Rubedo\Exceptions\NotFound('no media found');
+            throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
-            throw new \Rubedo\Exceptions\Server('unknown media type');
+            throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if (isset($mediaType['mainFileType']) && $mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
@@ -64,15 +64,15 @@ class DamController extends Zend_Controller_Action
     {
         $mediaId = $this->getParam('media-id', null);
         if (! $mediaId) {
-            throw new \Rubedo\Exceptions\User('no id given');
+            throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
         $media = Manager::getService('Dam')->findById($mediaId);
         if (! $media) {
-            throw new \Rubedo\Exceptions\NotFound('no media found');
+            throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
-            throw new \Rubedo\Exceptions\Server('unknown media type');
+            throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if ($mediaType['mainFileType'] == 'Image') {
             $this->_forward('get-thumbnail', 'image', 'default', array(

@@ -369,7 +369,7 @@ class Queries extends AbstractCollection implements IQueries
                 if($term == "currentPage"){
                     $currentPage = Manager::getService('PageContent')->getCurrentPage();
                     if(!$currentPage){
-                        throw new \Rubedo\Exceptions\Server('Pas de page courante définie.');
+                        throw new \Rubedo\Exceptions\Server('Current page is not defined.', "Exception49");
                     }
                     $term = $currentPage;
                 }
@@ -427,7 +427,7 @@ class Queries extends AbstractCollection implements IQueries
 
                 break;
             default:
-                Throw new \Rubedo\Exceptions\Server("rule \"$rule\" not implemented.");
+                Throw new \Rubedo\Exceptions\Server('Rule "%1$s" not implemented.', "Exception50", $rule);
                 break;
         }
         

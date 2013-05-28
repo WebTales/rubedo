@@ -190,12 +190,12 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {
             if ((isset($origObj['readOnly']))&&($origObj['readOnly'])) {
-                throw new \Rubedo\Exceptions\Access('no rights to update this content');
+                throw new \Rubedo\Exceptions\Access('no rights to update this content', "Exception33");
             }
         }
         
         if ($obj['id'] == 'navigation') {
-            throw new \Rubedo\Exceptions\Access('can\'t destroy navigation');
+            throw new \Rubedo\Exceptions\Access('You can not destroy navigation vocabulary', "Exception51");
         }
         $childrenToDelete = Manager::getService('TaxonomyTerms')->findByVocabulary(
                 $obj["id"]);
@@ -231,7 +231,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         if ($obj['name'] == 'Navigation') {
             throw new \Rubedo\Exceptions\Access(
-                    'can\'t create a navigation vocabulary');
+                    'You can not create a navigation vocabulary', "Exception52");
         }
         
         $obj = $this->_addDefaultWorkspace($obj);
@@ -259,17 +259,17 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {
             if ((isset($origObj['readOnly']))&&($origObj['readOnly'])) {
-                throw new \Rubedo\Exceptions\Access('no rights to update this content');
+                throw new \Rubedo\Exceptions\Access('no rights to update this content', "Exception33");
             }
         }
         
         if ($obj['id'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access(
-                    'can\'t update navigation vocabulary');
+                    'You can not update navigation vocabulary', "Exception53");
         }
         if ($obj['name'] == 'Navigation') {
             throw new \Rubedo\Exceptions\Access(
-                    'can\'t create a navigation vocabulary');
+                    'can\'t create a navigation vocabulary', "Exception52");
         }
         $obj = $this->_addDefaultWorkspace($obj);
         return parent::update($obj, $options);

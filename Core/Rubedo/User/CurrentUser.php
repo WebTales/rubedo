@@ -202,7 +202,7 @@ class CurrentUser implements ICurrentUser
             return $serviceUser->changePassword($newPass, $user['version'], 
                     $user['id']);
         } else {
-            throw new \Rubedo\Exceptions\User('Mot de passe initial erroné');
+            throw new \Rubedo\Exceptions\User('Bad initial password', "Exception77");
         }
     }
 

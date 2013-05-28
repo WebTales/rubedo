@@ -57,7 +57,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
     {
         $formId = $this->getParam('form-id');
         if (! $formId) {
-            throw new Rubedo\Exceptions\User('pas de formulaire en argument');
+            throw new Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
         $statsResponse = array();
         $statsResponse['validResults'] = Manager::getService('FormsResponses')->countValidResponsesByFormId($formId);
@@ -73,7 +73,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
     {
         $formId = $this->getParam('form-id');
         if (! $formId) {
-            throw new Rubedo\Exceptions\User('pas de formulaire en argument');
+            throw new Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
         
         $form = Manager::getService('Forms')->findById($formId);

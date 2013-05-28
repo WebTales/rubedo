@@ -30,12 +30,12 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
     {
         $pageId = $this->getRequest()->getParam('page-id');
         if (! $pageId) {
-            throw new \Rubedo\Exceptions\User('this action need a page-id');
+            throw new \Rubedo\Exceptions\User('This action needs a page-id as argument.', "Exception12");
         }
         $page = Manager::getService('Pages')->findById($pageId);
         if (! $page) {
             throw new \Rubedo\Exceptions\NotFound(
-                    'the page-id doesn\'t match a page');
+                    "The page-id doesn't match a page.", "Exception13");
         }
         $pageUrl = Manager::getService('Url')->getPageUrl($pageId);
         
@@ -46,7 +46,7 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
         if (! is_array($targetSite['protocol']) ||
                  count($targetSite['protocol']) == 0) {
             throw new Rubedo\Exceptions\Server(
-                    'Protocol is not set for current site');
+                    'Protocol is not set for current site.', "Exception14");
         }
         $protocol = in_array($httpProtocol, $targetSite['protocol']) ? $httpProtocol : array_pop(
                 $targetSite['protocol']);

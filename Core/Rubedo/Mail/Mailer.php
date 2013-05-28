@@ -42,7 +42,7 @@ class Mailer implements IMailer
         if (! isset($this->_transport)) {
             $options = \Zend_Registry::get('swiftMail');
             if (! isset($options['smtp'])) {
-                throw new \Rubedo\Exceptions\Server('no smtp in configuration');
+                throw new \Rubedo\Exceptions\Server('No smtp set in configuration', "Exception66");
             }
             $this->_transport = \Swift_SmtpTransport::newInstance($options['smtp']['server'], $options['smtp']['port'], $options['smtp']['ssl'] ? 'ssl' : null);
             if (isset($options['smtp']['username'])) {

@@ -72,7 +72,7 @@ class ImageController extends Zend_Controller_Action
                 'png',
                 'jpeg'
             ))) {
-                throw new \Rubedo\Exceptions\Access('Not authorized file extension');
+                throw new \Rubedo\Exceptions\Access('Not authorized file extension.', "Exception21");
             }
             
             $type = strtolower($extension);

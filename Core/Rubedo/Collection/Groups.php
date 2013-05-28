@@ -387,7 +387,7 @@ class Groups extends AbstractCollection implements IGroups
 	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 	    
 	        if (! in_array($obj['workspace'], $writeWorkspaces)) {
-	            throw new \Rubedo\Exceptions\Access('You can not assign group to this workspace');
+	            throw new \Rubedo\Exceptions\Access('You can not assign group to this workspace', "Exception42");
 	        }
 	    }
 	    return $obj;

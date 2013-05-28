@@ -40,7 +40,8 @@ class Blocks_TwigController extends Blocks_AbstractController
 		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath($templateName);
         if(!is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template)){
-               throw new Rubedo\Exceptions\Server('File '.Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template.' does not exists');
+            $templatePath = Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template;
+            throw new Rubedo\Exceptions\Server('File %1$s does not exists.', "Exception20", $templatePath);
         }
         $css = array();
         $js = array();
