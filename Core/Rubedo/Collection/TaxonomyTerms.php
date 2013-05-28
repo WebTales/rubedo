@@ -84,7 +84,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function create (array $obj, $options = array())
     {
         if ($obj['vocabularyId'] == 'navigation') {
-            throw new \Rubedo\Exceptions\Access('can\'t create navigation terms ');
+            throw new \Rubedo\Exceptions\Access('You can not create navigation terms', "Exception54");
         }
         return parent::create($obj, $options);
     }
@@ -375,7 +375,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function update (array $obj, $options = array())
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
-            throw new \Rubedo\Exceptions\Access('can\'t alter navigation terms ');
+            throw new \Rubedo\Exceptions\Access('You can not update navigation terms', "Exception55");
         }
         return parent::update($obj, $options);
     }
@@ -393,7 +393,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function destroy (array $obj, $options = array())
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
-            throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');
+            throw new \Rubedo\Exceptions\Access('You can not destroy navigation terms', "Exception56");
         }
         $childrenToDelete = $this->_getChildToDelete($obj['id']);
         
@@ -524,7 +524,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     public function deleteByVocabularyId ($id)
     {
         if ($id == 'navigation') {
-            throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ');
+            throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ', "Exception56");
         }
         $deleteCond = Filter::Factory('Value')->SetName('vocabularyId')->setValue($id);
         return $this->_dataService->customDelete($deleteCond);
@@ -537,7 +537,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function findByName ($name)
     {
-        throw new \Rubedo\Exceptions\Access('name is not unique');
+        throw new \Rubedo\Exceptions\Access('Terms names are not unique', "Exception57");
     }
 
     /**

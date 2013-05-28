@@ -206,7 +206,7 @@ class Acl implements IAcl
     {
         $templateDirIterator = new \DirectoryIterator($this->_rolesDirectory);
         if (! $templateDirIterator) {
-            throw new \Rubedo\Exceptions\Server('cannnot instanciate iterator for role dir');
+            throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for role dir', "Exception67");
         }
         
         $rolesInfosArray = array();

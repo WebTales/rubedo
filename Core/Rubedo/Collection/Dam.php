@@ -113,7 +113,7 @@ class Dam extends AbstractCollection implements IDam
         
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
-            throw new \Rubedo\Exceptions\Server('no file found');
+            throw new \Rubedo\Exceptions\Server('no file found', "Exception8");
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
 		
@@ -144,7 +144,7 @@ class Dam extends AbstractCollection implements IDam
         
         $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
         if (! $originalFilePointer instanceof \MongoGridFSFile) {
-            throw new \Rubedo\Exceptions\Server('no file found');
+            throw new \Rubedo\Exceptions\Server('no file found', "Exception8");
         }
         $obj['fileSize'] = $originalFilePointer->getSize();
         $returnArray = parent::create($obj, $options);
@@ -184,7 +184,7 @@ class Dam extends AbstractCollection implements IDam
         	$readWorkspaces = array_values(Manager::getService('CurrentUser')->getReadWorkspaces());
 			
 			if(!in_array($dam['writeWorkspace'], $readWorkspaces) && $readWorkspaces[0]!="all"){
-				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ');
+				throw new \Rubedo\Exceptions\Access('You don\'t have access to this workspace ', "Exception38");
 			}
         }
 		
@@ -245,18 +245,18 @@ class Dam extends AbstractCollection implements IDam
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
     
             if (! in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception36");
             }
     
             $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
             if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces))==0) {
-                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception36");
             }
             
             $damTypeId = $obj['typeId'];
             $damType = Manager::getService('DamTypes')->findById($damTypeId);
             if (! in_array($obj['writeWorkspace'], $damType['workspaces']) && ! in_array('all', $damType['workspaces'])) {
-                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace');
+                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception36");
             }
         }
         

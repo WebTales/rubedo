@@ -48,7 +48,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
     
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
         if(is_null($currentPage)){
-            throw new Rubedo\Exceptions\Access('Accès impossible à cette page');
+            throw new Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
         } else{
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }

@@ -74,15 +74,15 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         //Default mailing list
         $this->mailingListId = $this->getParam("mailing-list-id");
         if(!$this->mailingListId){
-            throw new \Rubedo\Exceptions\User("données fournies imcomplètes");
+            throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
         $this->damId = $this->getParam("dam-id");
         if(!$this->damId){
-            throw new \Rubedo\Exceptions\User("données fournies imcomplètes");
+            throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
         $this->siteId = $this->getParam("site-id");
         if(!$this->siteId){
-            throw new \Rubedo\Exceptions\User("données fournies imcomplètes");
+            throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
     
         //Declare email validator
