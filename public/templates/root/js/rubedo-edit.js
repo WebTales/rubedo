@@ -563,8 +563,12 @@ function swithToEditMode() {
 	 		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?edit-mode=true&content-id="+targetContentId;
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
-		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+			var availHeight=window.innerHeight*(90/100);
+			var properHeight=Math.max(400,availHeight);
+			var iframeHeight=properHeight-10;
+		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:"+iframeHeight+"px; border:none;' src='" + modalUrl + "'></iframe>");
 		    jQuery("#contentModal").attr("data-width",properWidth);
+		    jQuery("#contentModal").attr("data-height",properHeight);
 		    jQuery("#contentModal").modal("show");
 		    jQuery("#contentModal").modal("loading");
 	 });
@@ -733,8 +737,12 @@ function addContent(type,typeId,queryId){
 			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
-		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+			var availHeight=window.innerHeight*(90/100);
+			var properHeight=Math.max(400,availHeight);
+			var iframeHeight=properHeight-10;
+		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:"+iframeHeight+"px; border:none;' src='" + modalUrl + "'></iframe>");
 		    jQuery("#contentModal").attr("data-width",properWidth);
+		    jQuery("#contentModal").attr("data-height",properHeight);
 		    jQuery("#contentModal").modal("show");
 		    jQuery("#contentModal").modal("loading");
 		    jQuery("#contentTypeSelectModal").modal("hide");
@@ -747,8 +755,12 @@ function addContent(type,typeId,queryId){
 			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
-		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:80%; border:none;' src='" + modalUrl + "'></iframe>");
+			var availHeight=window.innerHeight*(90/100);
+			var properHeight=Math.max(400,availHeight);
+			var iframeHeight=properHeight-10;
+		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:"+iframeHeight+"px; border:none;' src='" + modalUrl + "'></iframe>");
 		    jQuery("#contentModal").attr("data-width",properWidth);
+		    jQuery("#contentModal").attr("data-height",properHeight);
 		    jQuery("#contentModal").modal("show");
 		    jQuery("#contentModal").modal("loading");
 		}
