@@ -39,6 +39,9 @@
 		<mkdir dir="${project.basedir}/public/captcha"/>
 		<chmod file="${project.basedir}/public/captcha" mode="777"/>
 	</target>
+	<target name="clean-cache" description="Cleanup cache Folder">
+		<delete dir="${project.basedir}/cache"/>
+	</target>
 	<target name="prepare-config" depends="">
 		<mkdir dir="${project.basedir}/application/configs"/>
 		<mkdir dir="${project.basedir}/application/configs/local"/>
