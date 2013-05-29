@@ -657,7 +657,7 @@ function save(data) {
 					message = message + errors[msgIndex];
 				}
 				
-				if(message = ""){
+				if(message == ""){
 					notify("failure", "Failed to update contents (no error specified).");
 				} else {
 					notify("failure", message);
