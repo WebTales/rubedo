@@ -365,15 +365,15 @@ class DataAccess implements IDataAccess
     protected function _deleteChild ($parent)
     {
         
-        // Get the childrens of the current parent
-        $childrensArray = $this->readChild($parent['id']);
+        // Get the children of the current parent
+        $childrenArray = $this->readChild($parent['id']);
         
-        // Delete all the childrens
-        if (! is_array($childrensArray)) {
-            throw new \Rubedo\Exceptions\Server('$childrensArray should be an array', "Exception69", '$childrensArray');
+        // Delete all the children
+        if (! is_array($childrenArray)) {
+            throw new \Rubedo\Exceptions\Server('$childrenArray should be an array', "Exception69", '$childrenArray');
         }
         
-        foreach ($childrensArray as $key => $value) {
+        foreach ($childrenArray as $key => $value) {
             self::_deleteChild($value);
         }
         
@@ -773,7 +773,7 @@ class DataAccess implements IDataAccess
     }
 
     /**
-     * Delete the childrens of the parent given in parameter
+     * Delete the children of the parent given in parameter
      *
      * @param $data contain
      *            the datas of the parent in database
@@ -784,15 +784,15 @@ class DataAccess implements IDataAccess
         $parentId = $data['id'];
         $error = false;
         
-        // Get the childrens of the current parent
-        $childrensArray = $this->readChild($parentId);
+        // Get the children of the current parent
+        $childrenArray = $this->readChild($parentId);
         
-        if (! is_array($childrensArray)) {
-            throw new \Rubedo\Exceptions\Server('$childrensArray should be an array', "Exception69", '$childrensArray');
+        if (! is_array($childrenArray)) {
+            throw new \Rubedo\Exceptions\Server('$childrenArray should be an array', "Exception69", '$childrenArray');
         }
         
-        // Delete all the childrens
-        foreach ($childrensArray as $key => $value) {
+        // Delete all the children
+        foreach ($childrenArray as $key => $value) {
             $result = $this->_deleteChild($value);
             if ($result['success'] == false) {
                 $error = true;
