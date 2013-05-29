@@ -47,6 +47,24 @@ class Blocks extends AbstractCollection implements IBlocks
         $result = $this->getList($filter);
         return $result;
     }
+    
+    /**
+     * Return an array of blocks ID as key for a given maskId
+     *
+     * @param array $maskId
+     * @return array
+     */
+    public function getIdListByMask ($maskId)
+    {
+        $arrayId = array();
+        $listBlocks = $this->getListByMask($maskId);
+        if ($listBlocks['count'] > 0) {
+            foreach ($listBlocks['data'] as $block) {
+                $arrayId[$block['id']] = true;
+            }
+        }
+        return $arrayId;
+    }
 
     /**
      * Find all blocks for a given page
@@ -60,6 +78,29 @@ class Blocks extends AbstractCollection implements IBlocks
         $filter = Filter::Factory('Value')->setName('pageId')->setValue($pageId);
         $result = $this->getList($filter);
         return $result;
+    }
+
+    /**
+     * Return an array of blocks ID as key for a given pageId
+     *
+     * @param array $pageId
+     * @return array
+     */
+    public function getIdListByPage ($pageId)
+    {
+        $arrayId = array();
+        $listBlocks = $this->getListByPage($pageId);
+        if ($listBlocks['count'] > 0) {
+            foreach ($listBlocks['data'] as $block) {
+                $arrayId[$block['id']] = true;
+            }
+        }
+        return $arrayId;
+    }
+
+    public function deletedByArrayOfId ($arrayId)
+    {
+        return $this->customDelete(Filter::Factory('InUid')->setValue($arrayId));
     }
 
     /**
@@ -85,12 +126,8 @@ class Blocks extends AbstractCollection implements IBlocks
      */
     protected function checksum ($data)
     {
-        if (! isset($data['blockData'])) {
-            return null;
-        }
-        $blockData = $data['blockData'];
-        unset($blockData['checksum']);
-        $serialized = serialize($blockData);
+        unset($data['checksum']);
+        $serialized = serialize($data);
         return crc32($serialized);
     }
 
@@ -101,7 +138,7 @@ class Blocks extends AbstractCollection implements IBlocks
      */
     public function create (array $obj, $options = array())
     {
-        $obj['checksum'] = $this->checksum($obj);
+        $obj['checksum'] = $this->checksum($obj['blockData']);
         parent::create($obj, $options);
     }
 
@@ -112,8 +149,46 @@ class Blocks extends AbstractCollection implements IBlocks
      */
     public function update (array $obj, $options = array())
     {
-        $obj['checksum'] = $this->checksum($obj);
+        $obj['checksum'] = $this->checksum($obj['blockData']);
         parent::update($obj, $options);
+    }
+
+    /**
+     * Insert or update a block based on given data of this block
+     *
+     * If created, this function sets its type and parent id (pageId or maskId)
+     *
+     * @see \Rubedo\Collection\AbstractCollection::upsertFromData()
+     * @param array $data            
+     * @param string $parentId            
+     * @param string $type            
+     * @return array
+     */
+    public function upsertFromData ($data, $parentId, $type = 'page')
+    {
+        if ($this->isModified($data)) {
+            $block = $this->findById($data['id']);
+            if ($block) {
+                $block['blockData'] = $data;
+                $result = $this->update($block);
+                $data = $result['data']['blockData'];
+            } else {
+                $block = array();
+                $block['type'] = $type;
+                switch ($type) {
+                    case 'page':
+                        $block['pageId'] = $parentId;
+                        break;
+                    case 'mask':
+                        $block['maskId'] = $parentId;
+                        break;
+                }
+                $block['blockData'] = $data;
+                $result = $this->create($block);
+                $data = $result['data']['blockData'];
+            }
+        }
+        return $data;
     }
 
     /**
@@ -127,6 +202,7 @@ class Blocks extends AbstractCollection implements IBlocks
     {
         $result = $data['blockData'];
         $result['checksum'] = $data["checksum"];
+        $result['id'] = $data['id'];
         return $result;
     }
 }

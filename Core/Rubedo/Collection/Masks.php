@@ -89,6 +89,7 @@ class Masks extends AbstractCollection implements IMasks
 	
 	protected function _addReadableProperty ($obj)
     {
+        $obj = $this->addBlocks($obj);
         if (! self::isUserFilterDisabled()) {
 			$aclServive = Manager::getService('Acl');
 			
@@ -111,5 +112,83 @@ class Masks extends AbstractCollection implements IMasks
 		
 		return $this->_dataService->customDelete($filter);
 		AbstractCollection::disableUserFilter($wasFiltered);
+	}
+
+    protected function _initContent ($obj)
+    {
+        if (isset($obj['id'])) {
+            $obj = $this->writeBlocks($obj);
+        }
+        return $obj;
+    }
+	
+	/**
+	 * Save the blocks of the given page
+	 *
+	 * Delete the no longer used blocks.
+	 *
+	 * @param array $obj
+	 * @return array
+	 */
+	protected function writeBlocks ($obj)
+	{
+	    $blocksService = Manager::getService('Blocks');
+	    $arrayOfBlocksId = $blocksService->getIdListByMask($obj['id']);
+	    $blocks = $obj['blocks'];
+	    foreach ($blocks as $block) {
+	        $blocksService->upsertFromData($block,$obj['id'],'mask');
+	        if(isset($arrayOfBlocksId[$block['id']])){
+	            unset($arrayOfBlocksId[$block['id']]);
+	        }
+	    }
+	    if(count($arrayOfBlocksId) > 0){
+	        $blocksService->deletedByArrayOfId(array_keys($arrayOfBlocksId));
+	    }
+	
+	    $obj['blocks']=array();
+	    return $obj;
+	}
+	
+	/**
+	 * Add blocks from blocks collection to the given page
+	 *
+	 * @param array $obj
+	 * @return array
+	 */
+	protected function addBlocks($obj){
+	    $blocksTemp = array();
+	    $blocksService = Manager::getService('Blocks');
+	    $blockList = $blocksService->getListByMask($obj['id']);
+	    foreach ($blockList['data'] as $block){
+	        $temp=$blocksService->getBlockData($block);
+	        $temp['canEdit']=1;
+	        $blocksTemp[] = $temp;
+	    }
+	    if(count($blocksTemp)>0){
+	        $obj['blocks'] = $blocksTemp;
+	    }
+	    return $obj;
+	}
+	
+	public function create (array $obj, $options = array())
+	{
+	    $obj = $this->_initContent($obj);
+	    $result = parent::create($obj, $options);
+	    $result['data'] = $this->addBlocks($result['data']);
+	    return $result;
+	}
+	
+	/**
+	 * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
+	 */
+	public function update (array $obj, $options = array())
+	{
+	    $obj = $this->_initContent($obj);
+	
+	    $returnValue = parent::update($obj, $options);
+		
+	    $returnValue['data'] = $this->addBlocks($returnValue['data']);
+	
+	    return $returnValue;
 	}
 }
