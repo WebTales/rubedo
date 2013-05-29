@@ -43,7 +43,7 @@ class FileController extends Zend_Controller_Action
             $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
             if (! $obj instanceof MongoGridFSFile) {
-                throw new \Rubedo\Exceptions\NotFound("No Image Found", 1);
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileId;
@@ -191,7 +191,7 @@ class FileController extends Zend_Controller_Action
             
             exit();
         } else {
-            throw new \Rubedo\Exceptions\User("No Id Given", 1);
+            throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }
     }
 

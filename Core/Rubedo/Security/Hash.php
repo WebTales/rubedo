@@ -45,7 +45,7 @@ class Hash implements IHash
      */
     public function hashString($string, $salt) {
         if (gettype($string) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$string should be a string', "Exception68");
+            throw new \Rubedo\Exceptions\Server('$string should be a string', "Exception40", '$string');
         }
 
         $hash = hash($this->_algo, $salt . $string);
@@ -63,7 +63,7 @@ class Hash implements IHash
      */
     public function derivatePassword($password, $salt) {
         if (gettype($password) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$password should be a string', "Exception76");
+            throw new \Rubedo\Exceptions\Server('$password should be a string', "Exception40", '$password');
         }
 
         for ($i = 0; $i < 10; $i++) {
@@ -85,7 +85,7 @@ class Hash implements IHash
      */
     public function checkPassword($hash, $password, $salt) {
         if (gettype($password) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$password should be a string', "Exception76");
+            throw new \Rubedo\Exceptions\Server('$password should be a string', "Exception40", '$password');
         }
 
         $password = $this->derivatePassword($password, $salt);
