@@ -3,33 +3,34 @@
 
 {% block mainContent %}
 
-<div class="block headline">
-    <h2 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h2>
-
-    {% if data.date %}
-        <div class="entry-info date" id="{{ data.id }}_date">
-            Le {{data.date|localizeddate('long', 'none', lang)}}
-        </div>
-    {% endif %}
-    <br/>
-    <div class="row-fluid">
-        {% if data.image %}
-            <div class="span3 editable-img" id="{{ data.id }}_image">
-                <img class="img-rounded" src="/dam?media-id={{data.image}}&amp;" alt="{{data.text}}" title="{{data.text}}"  />
+    <div class="block headline">
+        <h2 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h2>
+    
+        {% if data.date %}
+            {% include "/root/blocks/fields/date.html.twig" with { "key" : "date" } %}
+        {% endif %}
+        <div class="clear-both"></div>
+        <br/>
+        
+        <div class="row-fluid">
+            {% if data.image %}
+                <div class="span3">
+                    {% include "/root/blocks/fields/imageField.html.twig" with { "key" : "image" } %}
+                </div>
+            {% endif %}
+    
+            {% if data.image %}
+                <div class="span9">
+            {% else %}
+                <div class="span12">
+            {% endif %}
+                {% include "/root/blocks/fields/CKEfield.html.twig" with { "key" : "body" } %}
             </div>
-        {% endif %}
-
-        {% if data.image %}
-            <div class="span9 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
-        {% else %}
-            <div class="span12 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
-        {% endif %}
-            {{ data.body|cleanHtml }}
         </div>
     </div>
-</div>
-{% if activateDisqus and disqusKey %}
-{{ include('root/blocks/disqus/disqus.html.twig') }}
-{% endif %}
+    {% if activateDisqus and disqusKey %}
+        {{ include('root/blocks/disqus/disqus.html.twig') }}
+    {% endif %}
+    
 {% endblock %}
 

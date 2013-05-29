@@ -1,12 +1,14 @@
 
-{%  if(cValue["config"]["multivalued"]) and value is iterable%}
-	{% for item in data.date %}
-		<div class="entry-info date" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
-    Le {{item|localizeddate('long', 'none', lang)}}
-	</div>
+{% if(type[key]["config"]["multivalued"] == true and data[key] is iterable) %}
+	{% for item in data[key] %}
+    	<div class="entry-info date" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+            Le {{item|localizeddate('long', 'none', lang)}}
+    	</div>
 	{% endfor %}
-{% else %}
+{% elseif data.date is defined and data.date is not null%}
 	<div class="entry-info date" id="{{ data.id }}_{{ key }}">
-    Le {{data.date|localizeddate('long', 'none', lang)}}
+        Le {{data[key]|localizeddate('long', 'none', lang)}}
 	</div>
+{% else %}
+    <div class="alert alert-warning">Le format des données n'est pas compatible.</div>
 {% endif %}

@@ -8,7 +8,9 @@
 <title>Rubedo</title>
 
 
-<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/contentContributor/resources/css/bootstrap/bootstrap.css" id="maintheme">
+<link rel="stylesheet"
+	href="<?php echo $this->extJsPath;?>/resources/css/ext-all-gray.css"
+	id="ext_theme">
 <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/backoffice/resources/css/red_theme.css" id="maintheme">
 
 
@@ -128,7 +130,7 @@
     <script
 		src="<?php echo $this->extJsPath;?>/<?php echo $this->extJsScript;?>"></script>
 	<script
-		src="<?php echo $this->extJsPath;?>/locale/ext-lang-fr.js"
+		src="<?php echo $this->extJsPath;?>/locale/ext-lang-<?php echo $this->userLang;?>.js"
 		id="locale"></script>
 	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/boxselect/BoxSelect.js"></script>
 	<script src="<?php echo $this->baseUrl();?>/backoffice/resources/ratingField/Ext.ux.widget.Rating.js"
