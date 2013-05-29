@@ -107,10 +107,10 @@
         					<div class="btn-group">	
         						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         						    {% if currentUser.photo %}
-        						        <img src="/file?file-id={{ currentUser.photo }}" class="user-picture" style="height:20px;">
+        						        <img src="/file?file-id={{ currentUser.photo }}" class="user-picture" style="height:18px;">
         						    {% else %}
                                         <i class="icon-user"></i>
-                                    {% endif %} {{currentUser.name}} <span class="caret"></span>
+                                    {% endif %} <span>{{currentUser.name}}</span> <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a href="#" onclick="logout()"><i class="icon-off"></i> Déconnexion</a></li>
