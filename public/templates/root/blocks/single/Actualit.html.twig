@@ -28,9 +28,9 @@
                 {% endif %}
         
                 {% if data.image %}
-                    <div class="span9 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
+                    <div class="span9">
                 {% else %}
-                    <div class="span12 editable" id="{{ data.id }}_body" data-field-type="{{ type.body.cType }}" data-cke-config="{{ CKEFields.body }}">
+                    <div class="span12">
                 {% endif %}
                     {% include "/root/blocks/fields/CKEfield.html.twig" with { "key" : "body" } %}
                 </div>

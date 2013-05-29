@@ -59,8 +59,6 @@ CKEDITOR.on('instanceCreated', function(event) {
                ];
 				
 				// set file and media explorer path
-				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
-				editor.config.filebrowserImageUploadUrl = null;
 				editor.config.extraPlugins = 'rubedolink';
 			});
 		} else if (element.getAttribute("data-cke-config") == "Basic") {
@@ -72,10 +70,6 @@ CKEDITOR.on('instanceCreated', function(event) {
 	                { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
 	                { name: 'styles', items: [ 'Font', 'FontSize' ] }
                 ];
-				
-				// set file and media explorer path
-				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
-				editor.config.filebrowserImageUploadUrl = null;
 			});
 		} else {
 			editor.on('configLoaded', function() {
@@ -96,8 +90,6 @@ CKEDITOR.on('instanceCreated', function(event) {
 				];
 				
 				// set file and media explorer path
-				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
-				editor.config.filebrowserImageUploadUrl = null;
 				editor.config.extraPlugins = 'rubedolink';
 			});
 		}
@@ -116,12 +108,13 @@ CKEDITOR.on('instanceCreated', function(event) {
 	        ];
 			
 			// set file and media explorer path
-			editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
-			editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
 			editor.config.extraPlugins = 'rubedolink';
 		});
 		
 	}
+	
+	editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
+	editor.config.filebrowserImageUploadUrl = null;
 	
 });
 
@@ -146,7 +139,6 @@ jQuery('#btn-cancel').click(function() {
 		jQuery('#confirm').modal();
 	} else {
 		swithToViewMode();
-		location.reload();
 	}
 });
 
