@@ -45,7 +45,7 @@ class Backoffice_ContentContributorController extends Zend_Controller_Action
                      '/components/sencha/extjs';
         }
 		 //setting user language for loading proper extjs locale file
-        $this->view->userLang='fr'; //default value
+        $this->view->userLang='en'; //default value
         $currentUser=Manager::getService('CurrentUser')->getCurrentUser();
         if ((isset($currentUser['language']))&&(!empty($currentUser['language']))){
         	$this->view->userLang=$currentUser['language'];
