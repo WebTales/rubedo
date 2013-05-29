@@ -826,7 +826,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function deleteByContentType ($contentTypeId)
     {
         if (! is_string($contentTypeId)) {
-            throw new \Rubedo\Exceptions\User('ContentTypeId should be a string', "Exception40");
+            throw new \Rubedo\Exceptions\User('ContentTypeId should be a string', "Exception40", "ContentTypeId");
         }
         $contentTypeService = Manager::getService('ContentTypes');
         $contentType = $contentTypeService->findById($contentTypeId);
