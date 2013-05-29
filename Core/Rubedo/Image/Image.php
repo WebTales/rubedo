@@ -149,7 +149,7 @@ class Image implements IImage
             imagecopy($newImage, $tmpImage, 0, 0, $marginWidth, $marginHeight, $tmpWidth, $tmpHeight);
             imagedestroy($tmpImage);
         } else {
-            throw new \Rubedo\Exceptions\Server("unimplemented resize mode", 1);
+            throw new \Rubedo\Exceptions\Server("Unimplemented resize mode", "Exception81");
         }
         return $newImage;
     }

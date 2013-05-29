@@ -96,7 +96,7 @@ class Proxy implements IServicesProxy
         } elseif ($serviceObject instanceof $serviceClassName) {
             $this->setServiceObj($serviceObject);
         } else {
-            throw new \Rubedo\Exceptions\Server("Override Object not an instance of service Classe Name", 1);
+            throw new \Rubedo\Exceptions\Server("Override Object not an instance of service Classe Name", "Exception82");
         }
         $this->_serviceName = $serviceName;
 
