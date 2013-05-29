@@ -212,7 +212,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     }
 
     /**
-     * Delete all the childrens of the parent given in paremeter
+     * Delete all the children of the parent given in paremeter
      *
      * @return array
      */

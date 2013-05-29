@@ -60,7 +60,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				
 				// set file and media explorer path
 				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
-				editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.filebrowserImageUploadUrl = null;
 				editor.config.extraPlugins = 'rubedolink';
 			});
 		} else if (element.getAttribute("data-cke-config") == "Basic") {
@@ -75,7 +75,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				
 				// set file and media explorer path
 				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
-				editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.filebrowserImageUploadUrl = null;
 			});
 		} else {
 			editor.on('configLoaded', function() {
@@ -97,7 +97,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				
 				// set file and media explorer path
 				editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
-				editor.config.filebrowserImageUploadUrl = "/backoffice/ext-finder?type=Image";
+				editor.config.filebrowserImageUploadUrl = null;
 				editor.config.extraPlugins = 'rubedolink';
 			});
 		}
@@ -661,7 +661,7 @@ function save(data) {
 					message = message + errors[msgIndex];
 				}
 				
-				if(message = ""){
+				if(message == ""){
 					notify("failure", "Failed to update contents (no error specified).");
 				} else {
 					notify("failure", message);

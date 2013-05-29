@@ -109,7 +109,7 @@ class Backoffice_ImageController extends Zend_Controller_Action
             $this->_helper->json($result);
 
         } else {
-            throw new \Rubedo\Exceptions\User("No Id Given", 1);
+            throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
 
         }
     }
@@ -126,12 +126,12 @@ class Backoffice_ImageController extends Zend_Controller_Action
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
 			if(! $obj instanceof MongoGridFSFile){
-				throw new \Rubedo\Exceptions\NotFound("No Image Found", 1);
+				throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
 			}
 			$this->_helper->json($obj->file);
 
         } else {
-            throw new \Rubedo\Exceptions\User("No Id Given", 1);
+            throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
 
         }
 	}

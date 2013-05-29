@@ -50,7 +50,7 @@ class Blocks_videoController extends Blocks_AbstractController
             
             $mainFile = Manager::getService('Files')->findById($media['originalFileId']);
             if (! $mainFile instanceof MongoGridFSFile) {
-                throw new \Rubedo\Exceptions\NotFound("No Image Found", 1);
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             $meta = $mainFile->file;
             $filename = $meta['filename'];
