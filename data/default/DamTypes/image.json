@@ -4,6 +4,7 @@
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"workspaces": ["global"],
+	"defaultId": "51a60c1cc1c3da0407000007",
 	"fields": [
 		{
 			"cType": "Ext.form.field.Text" ,

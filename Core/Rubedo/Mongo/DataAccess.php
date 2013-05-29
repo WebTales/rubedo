@@ -589,7 +589,14 @@ class DataAccess implements IDataAccess
         $obj['lastUpdateTime'] = $currentTime;
         
         try {
-            $resultArray = $this->_collection->insert($obj, $options);
+            if(isset($options['upsert']) && $options['upsert'] instanceof \WebTales\MongoFilters\IFilter){
+                $filter = $options['upsert'];
+                $options['upsert'] = true;
+                $resultArray = $this->_collection->update($filter->toArray(),$obj, $options);
+            }else{
+                $resultArray = $this->_collection->insert($obj, $options);
+            }
+            
         } catch (\MongoCursorException $exception) {
             if (strpos($exception->getMessage(), 'duplicate key error')) {
                 throw new \Rubedo\Exceptions\User('Duplicate key error', "Exception76");
@@ -599,7 +606,12 @@ class DataAccess implements IDataAccess
         }
         
         if ($resultArray['ok'] == 1) {
-            $obj['id'] = (string) $obj['_id'];
+            if(isset($resultArray['updatedExisting'])){
+                $obj = $this->findOne($filter);
+            }else{
+                $obj['id'] = (string) $obj['_id'];
+            }
+            
             unset($obj['_id']);
             $returnArray = array(
                 'success' => true,

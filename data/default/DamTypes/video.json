@@ -22,5 +22,6 @@
 	"type": "Video" ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
+	"defaultId": "51a60c2fc1c3da710c000004",
 	"workspaces": ["global"]
 }

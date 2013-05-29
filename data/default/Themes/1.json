@@ -4,5 +4,7 @@
 	"wallpaper": "resources/wallpapers/rubedo.png",
 	"preview": "resources/previews/red.jpg",
 	"iconSet": "red",
-	"themeColor": "#D7251D"
+	"themeColor": "#D7251D",
+	"defaultId": "51a60cdec1c3dadc08000016",
+	"isDefault": true
 }

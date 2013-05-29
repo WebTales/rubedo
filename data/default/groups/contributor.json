@@ -13,5 +13,6 @@
 	"updateTime": null  ,
 	"version": 1 ,
 	"workspace": "global" ,
+	"defaultId": "51a60c74c1c3dadc08000015",
 	"writeWorkspaces": ["global"]
 }

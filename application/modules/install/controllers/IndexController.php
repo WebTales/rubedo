@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager;
+use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Installer Controller
@@ -621,9 +621,16 @@ class Install_IndexController extends Zend_Controller_Action
                 if ($file->getExtension() == 'json') {
                     $itemJson = file_get_contents($file->getPathname());
                     $item = Zend_Json::decode($itemJson);
-                    try{
-                        $result = Manager::getService($collection)->create($item);
-                    }catch (Rubedo\Exceptions\User $exception){
+                    try {
+                        if (! Manager::getService($collection)->findOne(
+                                Filter::Factory('Value')->setName('defaultId')
+                                    ->setValue($item['defaultId']))) {
+                            $result = Manager::getService($collection)->create(
+                                    $item);
+                        } else {
+                            $result['success'] = true;
+                        }
+                    } catch (Rubedo\Exceptions\User $exception) {
                         $result['success'] = true;
                     }
                     

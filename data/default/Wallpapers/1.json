@@ -1,5 +1,6 @@
 {
 	"name": "Rubedo",
 	"file": "resources/wallpapers/rubedo.png",
-	"version": 1
+	"version": 1,
+	"defaultId":"51a60d1ec1c3da1407000007"
 }

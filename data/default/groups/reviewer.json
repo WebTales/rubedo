@@ -12,5 +12,6 @@
 	"roles": ["contentReviewer" , "backoffice" , "damWriter"] ,
 	"version": 1 ,
 	"workspace": "global" ,
+	"defaultId": "51a60cbac1c3dad506000006",
 	"writeWorkspaces": ["global"]
 }

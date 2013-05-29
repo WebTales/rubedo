@@ -32,5 +32,6 @@
 	"readOnly": false,
 	"workflow": "Basique",
 	"CTType": "simpleText",
+	"defaultId": "51a60bedc1c3dadc08000014",
 	"system": true
 }

@@ -33,5 +33,6 @@
 	"readOnly": false,
 	"workflow": "Basique",
 	"CTType": "richText",
+	"defaultId": "51a60be8c1c3dadc08000013",
 	"system": true
 }
