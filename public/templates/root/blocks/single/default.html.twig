@@ -2,9 +2,8 @@
 
 {% block mainContent %} 
 	<div class="block headline">
-	
-	<h1 style="display:inline;" class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h1>
 	<button class='btn complete-edition-btn' contentId='{{ data.id }}'><i class="icon-pencil"></i></button>
+	<h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h1>
 	 {% for key, value in data %}
 	        {% if value is not null %}
       		{%for cKey,cValue in type %}

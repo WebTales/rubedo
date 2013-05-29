@@ -210,6 +210,8 @@ class Pages extends AbstractCollection implements IPages
         
         $this->propagateWorkspace ($obj['id'], $obj['workspace']);
         
+        $returnValue['data'] = $this->addBlocks($returnValue['data']);
+        
         return $returnValue;
     }
     
@@ -264,10 +266,40 @@ class Pages extends AbstractCollection implements IPages
         
         //filter URL
         $obj['pageURL'] = $this->_filterUrl($dataUrl);
+        if(isset($obj['id'])){
+            $obj = $this->writeBlocks($obj);
+        }
         
         return $obj;
     }
-	
+
+    /**
+     * Save the blocks of the given page
+     * 
+     * Delete the no longer used blocks.
+     * 
+     * @param array $obj
+     * @return array
+     */
+    protected function writeBlocks ($obj)
+    {
+        $blocksService = Manager::getService('Blocks');
+        $arrayOfBlocksId = $blocksService->getIdListByPage($obj['id']);
+        $blocks = $obj['blocks'];
+        foreach ($blocks as $block) {
+            $blocksService->upsertFromData($block,$obj['id'],'page');
+            if(isset($arrayOfBlocksId[$block['id']])){
+                unset($arrayOfBlocksId[$block['id']]);
+            }
+        }
+        if(count($arrayOfBlocksId) > 0){
+            $blocksService->deletedByArrayOfId(array_keys($arrayOfBlocksId));
+        }
+        
+        $obj['blocks']=array();
+        return $obj;
+    }
+    
     protected function _clearCacheForPage($obj){
         $pageId = $obj['id'];
         Manager::getService('UrlCache')->customDelete(Filter::Factory('Value')->setName('pageId')->setValue($pageId), array('w'=>false));
@@ -294,7 +326,9 @@ class Pages extends AbstractCollection implements IPages
     public function create (array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
-        return parent::create($obj, $options);
+        $result = parent::create($obj, $options);
+        $result['data'] = $this->addBlocks($result['data']);
+        return $result;
     }
 		
 	
@@ -371,6 +405,7 @@ class Pages extends AbstractCollection implements IPages
 	
 	protected function _addReadableProperty ($obj)
     {
+        $obj = $this->addBlocks($obj);
         if (! self::isUserFilterDisabled()) {
         	//Set the workspace for old items in database	
 	        if (! isset($obj['workspace'])) {
@@ -390,6 +425,24 @@ class Pages extends AbstractCollection implements IPages
         return $obj;
     }
 	
+    /**
+     * Add blocks from blocks collection to the given page
+     * 
+     * @param array $obj
+     * @return array
+     */
+    protected function addBlocks($obj){
+        $blocksTemp = array();
+        $blocksService = Manager::getService('Blocks');
+        $blockList = $blocksService->getListByPage($obj['id']);
+        foreach ($blockList['data'] as $block){
+            $blocksTemp[]=$blocksService->getBlockData($block);
+        }
+        if(count($blocksTemp)>0){
+            $obj['blocks'] = $blocksTemp;
+        }
+        return $obj;
+    }
 
 
     public function propagateWorkspace ($parentId, $workspaceId, $siteId = null)

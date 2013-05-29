@@ -57,6 +57,7 @@ class config
 		'UrlCache'					=>	'Rubedo\\Interfaces\\Collection\\IUrlCache',
 		'Masks'						=>	'Rubedo\\Interfaces\\Collection\\IMasks',
 		'ReusableElements'			=>	'Rubedo\\Interfaces\\Collection\\IReusableElements',
+		'Blocks'					=>	'Rubedo\\Interfaces\\Collection\\IBlocks',
 		'Contents'					=>	'Rubedo\\Interfaces\\Collection\\IContents',
 		'ContentTypes'				=>	'Rubedo\\Interfaces\\Collection\\IContentTypes',
 		'Delegations'				=>	'Rubedo\\Interfaces\\Collection\\IDelegations',

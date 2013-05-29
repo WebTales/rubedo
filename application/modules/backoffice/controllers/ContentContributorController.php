@@ -15,7 +15,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
+Use Rubedo\Services\Manager;
 /**
  * Controller for handling FO contributions
  *
@@ -43,6 +43,12 @@ class Backoffice_ContentContributorController extends Zend_Controller_Action
         } else {
             $this->view->extJsPath = $this->view->baseUrl() .
                      '/components/sencha/extjs';
+        }
+		 //setting user language for loading proper extjs locale file
+        $this->view->userLang='fr'; //default value
+        $currentUser=Manager::getService('CurrentUser')->getCurrentUser();
+        if ((isset($currentUser['language']))&&(!empty($currentUser['language']))){
+        	$this->view->userLang=$currentUser['language'];
         }
         
         if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {
