@@ -1326,7 +1326,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Try to delete a parent and all its childrens
+     * Try to delete a parent and all its children
      */
     public function testDeleteChild() {
         $dataAccessObject = new \Rubedo\Mongo\DataAccess();
