@@ -119,7 +119,9 @@ final class Version
                     return null;
                 }
                 $apiResponse = \Zend_Json::decode($result);
-                
+                if(isset($apiResponse['message'])){
+                    return null;
+                }
                 // Simplify the API response into a simple array of version numbers
                 $tags = array_map(function  ($tag)
                 {
