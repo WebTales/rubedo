@@ -159,7 +159,10 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
                 $mongoFilter = Filter::Factory('Regex')
                 ->setName($filter['property'])
                 ->setValue('/.*' . $filter["value"] .'.*/i');
-            }elseif(isset($filter['operator']) &&$filter['operator']!='eq'){
+            }elseif(isset($filter['operator']) && $filter['operator']=='$in' && $filter['property']=='id'){
+                $mongoFilter = Filter::Factory('InUid')
+                ->setValue($filter['value']);
+            }elseif(isset($filter['operator']) && $filter['operator']!='eq'){
                 $mongoFilter = Filter::Factory('OperatorToValue')
                 ->setName($filter['property'])
                 ->setValue($filter['value'])

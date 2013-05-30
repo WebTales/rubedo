@@ -774,7 +774,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function getOrderedList ($filters = null, $sort = null, $start = null, $limit = null, $live = true)
     {
         $inUidFilter = $this->_getInUidFilter($filters);
-        
         if ($inUidFilter !== null) {
             $order = $inUidFilter->getValue();
             $orderedContents = array();
@@ -813,7 +812,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             return $filter;
         }
         if ($filter instanceof \WebTales\MongoFilters\CompositeFilter) {
-            foreach ($filter as $subFilter) {
+            foreach ($filter->getFilters() as $subFilter) {
                 $subResult = $this->_getInUidFilter($subFilter);
                 if ($subResult) {
                     return $subResult;
