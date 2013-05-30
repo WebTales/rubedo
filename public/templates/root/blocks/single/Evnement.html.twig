@@ -3,58 +3,58 @@
 {% block mainContent %}
 
     <div class="block headline">
-    	<div>
-    		<h2 class="editable" id="{{ data.id }}_text"  data-field-type="title">{{ data.text }}</h2>
-    		<div class="alignright">
-    			{% for taxonomy in data.terms %}
-    			    {% for term in taxonomy %}
-    			        <span class="label label-warning">{{term}}</span>
-    			    {% endfor %}
-    			{% endfor %}
-            </div>
-            <div class="clearfix"></div>
-            <br>
-            
-    	    <div class="entry-info">
-    		    {% if data.date %}
-    		        {% if data.dateEnd%}	
-    		            <div class="entry-info">
-                            <span class="date" id="{{ data.id }}_date">Du {{data.date|localizeddate('long', 'none', lang)}}</span> au <span class="date" id="{{ data.id }}_date">{{data.dateEnd|localizeddate('long', 'none', lang)}}</span>
-                        </div>
-    		        {% else %}
-    		            {%  if(type["date"]["config"]["multivalued"]) and data.date is iterable%}
-    	                    {% for item in data.date %}
-        	                    <div class="entry-info date" id="{{ data.id }}_date-{{ loop.index-1 }}">
-            	                    A partir du {{item|localizeddate('long', 'none', lang)}}
-                                </div>
-        	                {% endfor %}
-                        {% else %}
-        	                <div class="entry-info date" id="{{ data.id }}_date">
-                                A partir du {{data.date|localizeddate('long', 'none', lang)}}
+        {% include "/root/blocks/edition/full-edition-button.html.twig" %}
+        
+		<h2 class="editable" id="{{ data.id }}_text"  data-field-type="title">{{ data.text }}</h2>
+		<div class="alignright">
+			{% for taxonomy in data.terms %}
+			    {% for term in taxonomy %}
+			        <span class="label label-warning">{{term}}</span>
+			    {% endfor %}
+			{% endfor %}
+        </div>
+        <div class="clearfix"></div>
+        <br>
+        
+	    <div class="entry-info">
+		    {% if data.date %}
+		        {% if data.dateEnd%}	
+		            <div class="entry-info">
+                        <span class="date" id="{{ data.id }}_date">Du {{data.date|localizeddate('long', 'none', lang)}}</span> au <span class="date" id="{{ data.id }}_date">{{data.dateEnd|localizeddate('long', 'none', lang)}}</span>
+                    </div>
+		        {% else %}
+		            {%  if(type["date"]["config"]["multivalued"]) and data.date is iterable%}
+	                    {% for item in data.date %}
+    	                    <div class="entry-info date" id="{{ data.id }}_date-{{ loop.index-1 }}">
+        	                    A partir du {{item|localizeddate('long', 'none', lang)}}
                             </div>
-                            
-                            <br>
-                        {% endif %}
-    			    {% endif %}
-    		    {% endif %}
-                
-    		    {% if data.position %}
-    	            {% include "/root/blocks/fields/localiser.html.twig" with { "key" : "position"} %}
-                {% endif %}
+    	                {% endfor %}
+                    {% else %}
+    	                <div class="entry-info date" id="{{ data.id }}_date">
+                            A partir du {{data.date|localizeddate('long', 'none', lang)}}
+                        </div>
+                        
+                        <br>
+                    {% endif %}
+			    {% endif %}
+		    {% endif %}
             
-    		</div>
-    	    <div class="clear-both"></div>
-    	    <div class="row">
-        	    <dic class="span4">
-            		{% if data.image %}
-            		    {% include "/root/blocks/fields/imageField.html.twig" with { "key": "image" } %}
-            		{% endif %}
-        		</dic>
-                
-                <dic class="span8">
-                    {% include "/root/blocks/fields/CKEfield.html.twig" with { "key" : "body" } %}
-                </dic>
-            </div>
+		    {% if data.position %}
+	            {% include "/root/blocks/fields/localiser.html.twig" with { "key" : "position"} %}
+            {% endif %}
+        
+		</div>
+	    <div class="clear-both"></div>
+	    <div class="row">
+    	    <dic class="span4">
+        		{% if data.image %}
+        		    {% include "/root/blocks/fields/imageField.html.twig" with { "key": "image" } %}
+        		{% endif %}
+    		</dic>
+            
+            <dic class="span8">
+                {% include "/root/blocks/fields/CKEfield.html.twig" with { "key" : "body" } %}
+            </dic>
         </div>
     </div>
     

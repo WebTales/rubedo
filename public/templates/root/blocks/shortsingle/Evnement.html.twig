@@ -17,7 +17,7 @@
 		{{content.summary|cleanHtml}}</div>
 	<div class="entry-info">{% if content.date %} Le {{content.date|localizeddate('long', 'none', lang)}} {% endif %}</div>
 	
+	{% include "/root/blocks/edition/full-edition-button.html.twig" with { "data" : content, "alignRight" : true } %}
 	<a class="pull-right" href="{{ displaySingleUrl(content.id,null,singlePage) }}">En savoir plus</a>
-
 </div>
 

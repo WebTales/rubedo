@@ -8,8 +8,9 @@
 		</h5>
 	</header>
 	<div class="entry-content editable" id="{{ content.id }}_summary">
-		{{content.summary|cleanHtml}}</div>
-	<button class='btn pull-right complete-edition-btn' contentId='{{ content.id }}' ><i class="icon-pencil"></i></button>
+		{{content.summary|cleanHtml}}
+	</div>
+	{% include "/root/blocks/edition/full-edition-button.html.twig" with { "data" : content, "alignRight" : true } %}
 	<a class="pull-right" href="{{ displaySingleUrl(content.id,null,singlePage) }}">En savoir plus</a>
 
 
