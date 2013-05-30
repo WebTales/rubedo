@@ -1,7 +1,7 @@
-{%  if(cValue["config"]["multivalued"]) and value is iterable%}
-	{% for item in value %}
-<a href="{{ displaySingleUrl(item) }}" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">{{ contentTitles[cValue["config"]["name"]][loop.index-1] }}</a>
+{%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
+	{% for item in data[key] %}
+        <a href="{{ displaySingleUrl(item) }}" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">{{ contentTitles[type[key]["config"]["name"]][loop.index-1] }}</a>
 	{% endfor %}
 {% else %}
-  <a href="{{ displaySingleUrl(value) }}" id="{{ data.id }}_{{ key }}">{{ contentTitles[cValue["config"]["name"]] }}</a>
+  <a href="{{ displaySingleUrl(data[key]) }}" id="{{ data.id }}_{{ key }}">{{ contentTitles[type[key]["config"]["name"]] }}</a>
 {% endif %}

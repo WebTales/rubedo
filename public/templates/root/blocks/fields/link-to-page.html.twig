@@ -1,9 +1,11 @@
- {% if(cValue["config"]["multivalued"])and value is iterable %} {% for item in value %}
-<div>
-	<a href="{{url({pageId: item},true)}}">{{getPageTitle(item)}}</a>
-</div>
-{% endfor %} {% else %}
-<div>
-	<a href="{{url({pageId: value},true)}}">{{getPageTitle(value)}}</a>
-</div>
+{% if(type[key]["config"]["multivalued"])and data[key] is iterable %}
+    {% for item in data[key] %}
+        <div>
+        	<a href="{{url({pageId: item},true)}}">{{getPageTitle(item)}}</a>
+        </div>
+    {% endfor %} 
+{% else %}
+    <div>
+    	<a href="{{url({pageId: data[key]},true)}}">{{getPageTitle(data[key])}}</a>
+    </div>
 {% endif %}

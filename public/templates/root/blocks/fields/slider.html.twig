@@ -1,9 +1,11 @@
- {% if(cValue["config"]["multivalued"])and value is iterable %} {% for item in value %}
-<div class="progress progress-info progress-striped clear-both">
-	<div class="bar" style="width:{{item}}%">{{item}}%</div>
-</div>
-{% endfor %} {% else %}
-<div class="progress progress-info progress-striped clear-both">
-	<div class="bar" style="width:{{value}}%">{{value}}%</div>
-</div>
+{% if(type[key]["config"]["multivalued"])and data[key] is iterable %}
+    {% for item in data[key] %}
+        <div class="progress progress-info progress-striped clear-both">
+        	<div class="bar" style="width:{{ item }}%">{{ item }}%</div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="progress progress-info progress-striped clear-both">
+    	<div class="bar" style="width:{{ data[key] }}%">{{ data[key] }}%</div>
+    </div>
 {% endif %}

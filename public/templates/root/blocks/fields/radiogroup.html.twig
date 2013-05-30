@@ -1,24 +1,25 @@
-{%  if(cValue["config"]["multivalued"]) and value is iterable%}
-<p>{{ cValue["config"]["fieldLabel"] }} </p>
-	{% for item in value %}
-	<div class="radiogroup-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
-	{% for radioButton in cValue["config"]["items"] %}
-		<label class="radio cursor-default">
-		  <input type="radio" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==item[radioButton.name]%}checked{% endif %}>
-		  {{ radioButton.boxLabel }}
-		</label>
-	{% endfor %}
-	</div>
-
+{%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
+    <p>{{ type[key]["config"]["fieldLabel"] }} </p>
+    
+	{% for item in data[key] %}
+    	<div class="radiogroup-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+        	{% for radioButton in type[key]["config"]["items"] %}
+        		<label class="radio cursor-default">
+        		  <input type="radio" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==item[radioButton.name]%}checked{% endif %}>
+        		  {{ radioButton.boxLabel }}
+        		</label>
+        	{% endfor %}
+    	</div>
 	{% endfor %}
 {% else %}
-<p>{{ cValue["config"]["fieldLabel"] }}</p> 
+    <p>{{ type[key]["config"]["fieldLabel"] }}</p>
+    
 	<div class="radiogroup-edit" id="{{ data.id }}_{{ key }}">
-	{% for radioButton in cValue["config"]["items"] %}
-		<label class="radio cursor-default">
-		  <input type="radio" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==value[radioButton.name]%}checked{% endif %}>
-		  {{ radioButton.boxLabel }}
-		</label>
-	{% endfor %}
+    	{% for radioButton in type[key]["config"]["items"] %}
+    		<label class="radio cursor-default">
+                <input type="radio" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==data[key][radioButton.name]%}checked{% endif %}>
+                {{ radioButton.boxLabel }}
+    		</label>
+    	{% endfor %}
 	</div>
 {% endif %}
