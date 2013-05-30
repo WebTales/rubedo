@@ -15,16 +15,55 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Update;
-
-
+use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 /**
  * Methods for install tool
- * 
- * @author jbourdin
  *
+ * @author jbourdin
+ *        
  */
-class Install extends Update
+class Install
 {
-}
 
-?>
+    public static function doInsertContents ()
+    {
+        $success = true;
+        $contentPath = APPLICATION_PATH . '/../data/default/';
+        $contentIterator = new \DirectoryIterator($contentPath);
+        foreach ($contentIterator as $directory) {
+            if ($directory->isDot() || ! $directory->isDir()) {
+                continue;
+            }
+            if (in_array($directory->getFilename(), array(
+                'groups',
+                'site'
+            ))) {
+                continue;
+            }
+            $collection = ucfirst($directory->getFilename());
+            $itemsJson = new \DirectoryIterator($contentPath . '/' . $directory->getFilename());
+            foreach ($itemsJson as $file) {
+                if ($file->isDot() || $file->isDir()) {
+                    continue;
+                }
+                if ($file->getExtension() == 'json') {
+                    $itemJson = file_get_contents($file->getPathname());
+                    $item = \Zend_Json::decode($itemJson);
+                    try {
+                        if (! Manager::getService($collection)->findOne(Filter::Factory('Value')->setName('defaultId')
+                            ->setValue($item['defaultId']))) {
+                            $result = Manager::getService($collection)->create($item);
+                        } else {
+                            $result['success'] = true;
+                        }
+                    } catch (\Rubedo\Exceptions\User $exception) {
+                        $result['success'] = true;
+                    }
+                    
+                    $success = $result['success'] && $success;
+                }
+            }
+        }
+        return $success;
+    }
+}

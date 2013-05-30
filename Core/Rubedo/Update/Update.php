@@ -24,7 +24,7 @@ use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Servic
  * @author jbourdin
  *        
  */
-class Update
+class Update extends Install
 {
 
     public static function doUpsertByTitleContents ()
@@ -84,11 +84,14 @@ class Update
         return $success;
     }
     
+    
+    
     public static function truncateWallpapers ()
     {
         Manager::getService('Wallpapers')->drop();
         Manager::getService('Themes')->drop();
-        \Rubedo\Update\Update::doUpsertByTitleContents();
+        static::doUpsertByTitleContents();
+        static::doInsertContents();
     
         $filter = Filter::Factory('Value')->setName('isDefault')->setValue(true);
         $theme = Manager::getService('Themes')->findOne($filter);
@@ -103,6 +106,8 @@ class Update
             ), Filter::Factory());
         }
     }
+    
+    
 }
 
 ?>
