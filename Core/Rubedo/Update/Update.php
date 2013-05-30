@@ -51,7 +51,7 @@ abstract class Update extends Install
     }
     
     public static function upgrade(){
-        die('not implemented');
+        throw new \Rubedo\Exceptions\Server('Upgrade method for class %1$s does not exists.', "Exception91", get_called_class());
     }
     
 }
