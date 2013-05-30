@@ -14,23 +14,16 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
+namespace Rubedo\Interfaces\Collection;
 
 /**
- * Installer Controller
+ * Interface of service handling Blocks
  *
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-class Install_UpdateController extends Zend_Controller_Action
-{
-
-    public function indexAction ()
-    {
-        $this->_helper->json(Rubedo\Update\Update::update());
-    }
+interface IRubedoVersion extends IAbstractCollection{
     
 }
-
