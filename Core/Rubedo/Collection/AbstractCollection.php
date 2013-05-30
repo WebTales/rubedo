@@ -724,6 +724,7 @@ abstract class AbstractCollection implements IAbstractCollection
         $updateCond = Filter::Factory('Value')->setName('lastUpdateUser.id')->setValue($authorId);
         $pendingCond = Filter::Factory('Value')->setName('lastPendingUser.id')->setValue($authorId);
         $versioningCond = Filter::Factory('Value')->setName('contentCreateUser.id')->setValue($authorId);
+        $publishCond = Filter::Factory('Value')->setName('publishUser.id')->setValue($authorId);
         
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = new static();
@@ -756,6 +757,14 @@ abstract class AbstractCollection implements IAbstractCollection
                 'contentCreateUser' => $newUserSummary
             )
         ), $versioningCond, array(
+            'multiple' => true
+        ));
+        
+        $service->customUpdate(array(
+            '$set' => array(
+                'publishUser' => $newUserSummary
+            )
+        ), $publishCond, array(
             'multiple' => true
         ));
         
