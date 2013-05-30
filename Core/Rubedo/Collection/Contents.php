@@ -367,7 +367,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 continue;
             }
             if (! in_array($key, $fieldsList)) {
-                $this->_inputDataErrors[$key] = 'unknown field';
+                unset($obj["fields"][$key]);
+                //$this->_inputDataErrors[$key] = 'unknown field';
             } else {
                 unset($missingField[$key]);
                 
