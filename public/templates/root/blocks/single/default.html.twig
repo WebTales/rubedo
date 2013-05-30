@@ -4,12 +4,15 @@
 	<div class="block headline">
 	<button class='btn complete-edition-btn' contentId='{{ data.id }}'><i class="icon-pencil"></i></button>
 	<h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h1>
-	 {% for key, value in data %}
-	        {% if value is not null and value != "" %}
+	
+    {% for key, value in data %}
+	    {% if value is not null %}
       		{%for cKey,cValue in type %}
       			{%if(key==cKey)%}
       					{%if cValue["cType"]=="ImagePickerField"%}
-      					   {% include 'root/blocks/fields/imageField.html.twig' %}
+      					    {% if value != "" %}
+      					        {% include 'root/blocks/fields/imageField.html.twig' %}
+      					    {% endif %}
       					{%elseif(cValue["cType"]=="CKEField")%}
       						{% include 'root/blocks/fields/CKEfield.html.twig' %}
       					{%elseif(cValue["cType"]=="ratingField")%}
@@ -23,9 +26,11 @@
 						{%elseif(cValue["cType"]=="treepicker")%}
 							{% include 'root/blocks/fields/link-to-page.html.twig' %}
 						{%elseif(cValue["cType"]=="localiserField")%}
-							{% include 'root/blocks/fields/localiser.html.twig' %}
+						    {% if value is defined and value.address != "" %}
+							    {% include 'root/blocks/fields/localiser.html.twig' %}
+							{% endif %}
       					{%elseif(cValue["cType"]=="datefield")%}
-							{% include 'root/blocks/fields/date.html.twig' %}
+							    {% include 'root/blocks/fields/date.html.twig' %}
 						{%elseif(cValue["cType"]=="timefield")%}
 							{% include 'root/blocks/fields/time.html.twig' %}
 						{%elseif(cValue["cType"]=="numberfield")%}
@@ -44,7 +49,7 @@
       					
       			{%endif%}
       		{%endfor%}
-      		{%endif%}
+      	{%endif%}
     {% endfor %}
 </div>
 {% if activateDisqus and disqusKey %}
