@@ -240,11 +240,30 @@ var gMap = function (options,id,title,text,field) {
 		this.address=newAddress;
 		this.latitude=newLat;
 		this.longitude=newLong;
+		
 		this.location={
 				address:this.address,
 				lat:this.latitude,
 				lon:this.longitude
 		}
+		
+		var lat = parseFloat(this.latitude);
+		var lon = parseFloat(this.longitude);
+		
+		var markerObject = { 	"address" : this.address,
+								"location" : { 
+										"type" : "Point" ,
+										"coordinates" : [ 
+							                 lon,
+							                 lat
+							             ]
+								} ,
+								"lat" : lat,
+								"lon" : lon
+							}
+		
+		modifications[id] = {"newValue" : markerObject};
+		
 		if(this.map.markers.length>1){
 			if(this.map.markerToEdit){
 				this.map.deleteMarker(this.map.markerToEdit.__gm_id);

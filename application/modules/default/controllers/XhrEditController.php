@@ -91,7 +91,6 @@ class XhrEditController extends Zend_Controller_Action
     	    	else
     	    		$content['fields'][$name] = $value["newValue"];
     	    	
-    	    	
     	    	$updateResult = $this->_dataService->update($content,array(),false);
     	    	
     	    	if(!$updateResult['success']){
