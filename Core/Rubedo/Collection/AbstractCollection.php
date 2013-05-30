@@ -723,6 +723,8 @@ abstract class AbstractCollection implements IAbstractCollection
         $createCond = Filter::Factory('Value')->setName('createUser.id')->setValue($authorId);
         $updateCond = Filter::Factory('Value')->setName('lastUpdateUser.id')->setValue($authorId);
         $pendingCond = Filter::Factory('Value')->setName('lastPendingUser.id')->setValue($authorId);
+        $versioningCond = Filter::Factory('Value')->setName('contentCreateUser.id')->setValue($authorId);
+        
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = new static();
         $resultCreate = $service->customUpdate(array(
@@ -740,6 +742,7 @@ abstract class AbstractCollection implements IAbstractCollection
         ), $updateCond, array(
             'multiple' => true
         ));
+        
         $service->customUpdate(array(
             '$set' => array(
                 'lastPendingUser' => $newUserSummary
@@ -747,6 +750,17 @@ abstract class AbstractCollection implements IAbstractCollection
         ), $pendingCond, array(
             'multiple' => true
         ));
+        
+        $service->customUpdate(array(
+            '$set' => array(
+                'contentCreateUser' => $newUserSummary
+            )
+        ), $versioningCond, array(
+            'multiple' => true
+        ));
+        
+        
+        
         AbstractCollection::disableUserFilter($wasFiltered);
     }
     
