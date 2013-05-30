@@ -63,7 +63,7 @@ margin-top:1px;
 /**
  * Rubedo Form
  */
-label{
+.rubedo-form label{
 	display:inline-block;
 }
 .rubedo-form .control-label {
