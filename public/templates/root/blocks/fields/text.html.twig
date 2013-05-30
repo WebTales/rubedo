@@ -1,6 +1,6 @@
 {%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
 	{% for item in data[key] %}
-		<div class="editable" id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item }}</div>
+		<div class="editable" id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item }}</div>
 	{% endfor %}
 {% else %}
 	<div class="editable" id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">{{ data[key] }}</div>
