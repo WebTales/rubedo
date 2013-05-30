@@ -66,4 +66,8 @@ class Install
         }
         return $success;
     }
+    
+    public static function setDbVersion($version){
+        Manager::getService('RubedoVersion')->setDbVersion($version);
+    }
 }

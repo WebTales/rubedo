@@ -7,30 +7,31 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Update;
 
 
 /**
- * Installer Controller
- *
+ * Methods for update tool
  *
  * @author jbourdin
- * @category Rubedo
- * @package Rubedo
+ *        
  */
-class Install_UpdateController extends Zend_Controller_Action
+class Update010100 extends Update
 {
 
-    public function indexAction ()
+    protected static $toVersion = '1.2.0';
+
+    public static function upgrade ()
     {
-        $this->_helper->json(Rubedo\Update\Update::update());
+        return true;
     }
-    
 }
 
+?>
