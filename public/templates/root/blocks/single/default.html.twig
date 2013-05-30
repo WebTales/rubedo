@@ -25,7 +25,9 @@
 						{%elseif(cValue["cType"]=="treepicker")%}
 							{% include 'root/blocks/fields/link-to-page.html.twig' %}
 						{%elseif(cValue["cType"]=="localiserField")%}
-							{% include 'root/blocks/fields/localiser.html.twig' %}
+						    {% if value.address != "" %}
+							    {% include 'root/blocks/fields/localiser.html.twig' %}
+							{% endif %}
       					{%elseif(cValue["cType"]=="datefield")%}
 							    {% include 'root/blocks/fields/date.html.twig' %}
 						{%elseif(cValue["cType"]=="timefield")%}
