@@ -48,7 +48,7 @@ abstract class AbstractException extends \Exception
         
     	//apply params to message if there are any
     	if (count($extraParams)>0){
-    		$message=sprintf($message,$extraParams);
+    	    $message = call_user_func_array('sprintf',array_merge(array($message),$extraParams));
     	}
         return $message;
     }

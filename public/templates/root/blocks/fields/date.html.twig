@@ -1,5 +1,5 @@
 
-{% if(type[key]["config"]["multivalued"] == true and data[key] is iterable) %}
+{% if type[key]["config"]["multivalued"] and data[key] is iterable %}
 	{% for item in data[key] %}
     	<div class="entry-info date" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
             Le {{item|localizeddate('long', 'none', lang)}}

@@ -1,5 +1,5 @@
 
-{%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
+{%  if type[key]["config"]["multivalued"] and data[key] is iterable %}
 	{% for item in data[key]%}
 		<div class="clear-both editable" id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
 		    {{item|cleanHtml}}

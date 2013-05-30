@@ -172,10 +172,8 @@ jQuery('#btn-save').click(function() {
 						//Remove dirty flag
 						CKEDITOR.instances[z].resetDirty();
 					}
-					//saveCKE(CKEId[0],data);
 					modifications[CKEId[0]] = {"newValue" : data};
 				}else{
-					//saveCKE(CKEDITOR.instances[i].element.getId(), CKEDITOR.instances[i].getData());
 					var id = CKEDITOR.instances[i].element.getId();
 					var newValue = CKEDITOR.instances[i].getData();
 					
@@ -184,9 +182,6 @@ jQuery('#btn-save').click(function() {
 					//Remove dirty flag
 					CKEDITOR.instances[i].resetDirty();
 				}
-			
-			//Remove dirty flag
-			
 		}
 	}
 	
@@ -195,58 +190,6 @@ jQuery('#btn-save').click(function() {
 	 */
 	save(modifications);
 	
-	/*
-	for( var contentId in ratingCache) {
-		modified = true;
-		
-		save(contentId, ratingCache[contentId])
-	}
-	
-	for( var id in cache ) {
-		modified = true;
-		save(id, cache[id].newImage);
-	}
-	
-	for( var contentId in dateCache) {
-		modified = true;
-		save(contentId, dateCache[contentId].newDate)
-		}
-	
-	for( var contentId in checkboxCache) {
-		modified = true;
-		save(contentId, checkboxCache[contentId])
-		}
-	
-	for( var contentId in checkboxgroupCache) {
-		modified = true;
-		save(contentId, checkboxgroupCache[contentId])
-		}
-	
-	for( var contentId in radiogroupCache) {
-		modified = true;
-		save(contentId, radiogroupCache[contentId])
-		}
-	
-	for( var contentId in timeCache) {
-		modified = true;
-		save(contentId, timeCache[contentId].newTime);
-	}
-	
-	
-	for( var contentId in numberCache) {
-		modified = true;
-			save(contentId, numberCache[contentId].newNumber);
-	}
-	
-	// for every maps
-	if(typeof(gMap) != "undefined"){
-		var maps = gMap.getAllInstances();
-	    maps.forEach(function(map) {
-	        save(map.id, map.getValues());
-	    }); 
-	}*/
-	
-	// switch to wiew mode
 	swithToViewMode();
 });
 
@@ -311,12 +254,6 @@ jQuery(".editable-img").click(function() {
 function saveImage(currentContentId, newImageId) {
 	contentId = currentContentId;
 	imageId = newImageId;
-
-	/*if(typeof(cache[object.id]) == "undefined"){
-		cache[object.id] = { "html" : jQuery(object).html(), "newImage" :imageId };
-	} else {
-		cache[object.id]["newImage"] = imageId;
-	}*/
 	
 	modifications[object.id] = {"newValue" : imageId};
 	
@@ -626,6 +563,7 @@ function save(data) {
 		},
 		"error" : function(jqXHR, textStatus, errorThrown) {
 			var response = jqXHR.responseText;
+			
 			var responseObject = jQuery.parseJSON(response);
 			var returnMsg = responseObject.msg;
 			

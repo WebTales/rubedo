@@ -1,12 +1,12 @@
 
-{%  if(cValue["config"]["multivalued"]) and value is iterable%}
-	{% for item in value %}
-<div class="time" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
-    <span class="currentTime">{{ item }}</span>
-</div>
+{%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
+	{% for item in data[key] %}
+        <div class="time" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+            <span class="currentTime">{{ item }}</span>
+        </div>
 	{% endfor %}
 {% else %}
-<div class="time" id="{{ data.id }}_{{ key }}">
-    <span class="currentTime">{{ data[key] }}</span>
-</div>
+    <div class="time" id="{{ data.id }}_{{ key }}">
+        <span class="currentTime">{{ data[key] }}</span>
+    </div>
 {% endif %}
