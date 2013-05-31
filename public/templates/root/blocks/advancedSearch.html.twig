@@ -11,20 +11,18 @@
             </div>
         </div>
         
-        {% for contentType, contentTypeMeta in taxonomies %}
-            {% for taxonomy, taxonomyMeta in contentTypeMeta.taxonomies %}
-                <div class="control-group">
-                    <label class="control-label" for="input{{ taxonomy }}">{{ taxonomy }}</label>
-                    <div class="controls">
-                        <select name="{{ taxonomyMeta.id }}[]" id="input{{ taxonomy }}">
-                            <option></option>
-                            {% for termId, term in taxonomyMeta.terms  %}
-                                <option value="{{ termId }}">{{ term }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+        {% for taxonomy, taxonomyMeta in taxonomies %}
+            <div class="control-group">
+                <label class="control-label" for="input{{ taxonomy }}">{{ taxonomy }}</label>
+                <div class="controls">
+                    <select name="{{ taxonomyMeta.id }}[]" id="input{{ taxonomy }}">
+                        <option></option>
+                        {% for termId, term in taxonomyMeta.terms  %}
+                            <option value="{{ termId }}">{{ term }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-            {% endfor %}
+            </div>
         {% endfor %}
         
         <div class="control-group">
