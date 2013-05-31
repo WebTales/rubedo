@@ -48,10 +48,7 @@ class Blocks_AdvancedSearchController extends Blocks_AbstractController
         foreach ($contentTypes as $contentTypeId) {
             $contentType = Manager::getService("ContentTypes")->findById($contentTypeId);
             
-            $taxonomies[$contentType["type"]] = array(
-                "id" => $contentTypeId,
-                "taxonomies" => $taxonomyService->findByContentTypeId($contentTypeId),
-            );
+            $taxonomies = array_merge($taxonomies,$taxonomyService->findByContentTypeId($contentTypeId));
         }
         
         $output["taxonomies"] = $taxonomies;

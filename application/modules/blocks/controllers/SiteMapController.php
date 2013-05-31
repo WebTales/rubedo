@@ -43,10 +43,12 @@ class Blocks_SiteMapController extends Blocks_AbstractController
         $output['displayTitle'] = isset($params['displayTitle']) ? $params['displayTitle'] : false;
         $output['blockTitle'] = $params['blockTitle'];
         
-        $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(false);
+        $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(true);
         $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],$filters);
         
         $rootPage = Manager::getService('Pages')->findById($output['rootPage']);
+        
+        $output['pages'] = array();
         
         $output['pages'][] = array(
             "url"      => $this->_helper->url->url(array('pageId' => $rootPage['id']), null, true),
@@ -59,6 +61,7 @@ class Blocks_SiteMapController extends Blocks_AbstractController
             $tempArray['url'] = $this->_helper->url->url(array(
                 'pageId' => $page['id']
             ), null, true);
+            
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
             
@@ -69,6 +72,7 @@ class Blocks_SiteMapController extends Blocks_AbstractController
         
             $output['pages'][0]["pages"][] = $tempArray;
         }
+        
         if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {

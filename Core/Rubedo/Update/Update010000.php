@@ -27,9 +27,14 @@ use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 class Update010000 extends Update
 {
 
-    protected static $toVersion='1.1.0';
-    
-    public static function doUpsertByTitleContents ()
+    protected static $toVersion = '1.1.0';
+
+    /**
+     * Add Default Id for default contents without this data
+     *
+     * @return boolean
+     */
+    public static function doUpdateTitleContents ()
     {
         $success = true;
         $contentPath = APPLICATION_PATH . '/../data/default/';
@@ -85,16 +90,31 @@ class Update010000 extends Update
         
         return $success;
     }
-    
-    
-    
+
     public static function upgrade ()
     {
+        // reset wallpapers and theme collections
         Manager::getService('Wallpapers')->drop();
         Manager::getService('Themes')->drop();
-        static::doUpsertByTitleContents();
+        
+        // update default contents with their default Id
+        static::doUpdateTitleContents();
+        
+        // reimport wallpapers and theme
         static::doInsertContents();
-    
+        
+        // reset user prefs with theme
+        static::resetUserTheme();
+        
+        return true;
+    }
+
+    /**
+     * Set default theme for all Users
+     * @return boolean
+     */
+    public static function resetUserTheme ()
+    {
         $filter = Filter::Factory('Value')->setName('isDefault')->setValue(true);
         $theme = Manager::getService('Themes')->findOne($filter);
         if ($theme) {
@@ -104,12 +124,9 @@ class Update010000 extends Update
             $prefData['themeColor'] = $theme['themeColor'];
             $prefData['wallpaper'] = $theme['wallpaper'];
             Manager::getService('PersonalPrefs')->customUpdate(array(
-            '$set' => $prefData
+                '$set' => $prefData
             ), Filter::Factory());
         }
         return true;
     }
-    
 }
-
-?>

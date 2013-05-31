@@ -88,18 +88,9 @@ class ImageController extends Zend_Controller_Action
                 $imageService = new Rubedo\Image\Image();
                 $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, $size);
                 
-                switch ($this->getParam('attachment', null)) {
-                    case 'download':
-                        $forceDownload = true;
-                        break;
-                    default:
-                        $forceDownload = false;
-                        break;
-                }
                 
-                if ($forceDownload) {
-                    $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
-                }
+                
+                
                 switch ($type) {
                     case 'jpeg':
                         imagejpeg($newImage, $tmpImagePath,90);
@@ -114,8 +105,20 @@ class ImageController extends Zend_Controller_Action
 
                 imagedestroy($newImage);
             }
+            switch ($this->getParam('attachment', null)) {
+                case 'download':
+                    $forceDownload = true;
+                    break;
+                default:
+                    $forceDownload = false;
+                    break;
+            }
+            
             $this->getResponse()->clearBody();
             $this->getResponse()->clearHeaders();
+            if ($forceDownload) {
+                $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            }
             $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
             $this->getResponse()->setHeader('Pragma', 'Public');
             $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600, true);
