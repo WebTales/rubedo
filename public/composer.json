@@ -5,10 +5,10 @@
 		"jquery/jqueryui": "1.10.2",
 		"jquery/timepicker": "0.3.2",
 		"sencha/extjs": "4.1.1a",
-		"webtales/ckeditor": "dev-develop",
+		"webtales/ckeditor": "1.2.0rc1",
 		"twitter/bootstrap": "v2.3.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "dev-develop",
+		"webtales/rubedo-backoffice-ui": "1.2.0rc1",
 		"longtailvideo/jwplayer": "6",
 		"webtales/rubedo-localization": "dev-master",
 		"jschr/bootstrap-modal": "2.1"
