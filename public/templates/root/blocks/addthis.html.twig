@@ -1,13 +1,13 @@
 {% extends "root/block.html.twig" %}
-{% block mainContent %}
 
-{%if like==true %}
+{% block mainContent %}
+    {%if like==true %}
 		{%if type=="Horizontal"%}
 			<div class="addthis_toolbox addthis_default_style ">
-			<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
-			<a class="addthis_button_tweet"></a>
-			<a class="addthis_button_pinterest_pinit"></a>
-			<a class="addthis_counter addthis_pill_style"></a>
+    			<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    			<a class="addthis_button_tweet"></a>
+    			<a class="addthis_button_pinterest_pinit"></a>
+    			<a class="addthis_counter addthis_pill_style"></a>
 			</div>
 		{%elseif type=="Vertical"%}
 			<div class="addthis_toolbox addthis_floating_style addthis_counter_style addthis-pos">
@@ -17,18 +17,18 @@
 			<a class="addthis_counter"></a>
 			</div>
 		{%endif%}
-{%else%}
-	{%if type=="Horizontal"%}
-	<div class="addthis_toolbox addthis_default_style {%if small==false%}addthis_32x32_style{%endif%}">
-	{%else%}
-	<div class="addthis_toolbox addthis_floating_style addthis_{%if small==true%}16x16{%else%}32x32{%endif%}_style addthis-pos">
-	{%endif%}
-	<a class="addthis_button_preferred_1"></a>
-	<a class="addthis_button_preferred_2"></a>
-	<a class="addthis_button_preferred_3"></a>
-	<a class="addthis_button_preferred_4"></a>
-	<a class="addthis_button_compact"></a>
-	{%if type==Horizontal%}<a class="addthis_counter addthis_bubble_style"></a>{%endif%}
-	</div>
-{%endif%}
-	{% endblock %}
+    {%else%}
+    	{%if type=="Horizontal"%}
+    	    <div class="addthis_toolbox addthis_default_style {%if small==false%}addthis_32x32_style{%endif%}">
+    	{%else%}
+    	    <div class="addthis_toolbox addthis_floating_style addthis_{%if small==true%}16x16{%else%}32x32{%endif%}_style addthis-pos">
+    	{%endif%}
+        	<a class="addthis_button_preferred_1"></a>
+        	<a class="addthis_button_preferred_2"></a>
+        	<a class="addthis_button_preferred_3"></a>
+        	<a class="addthis_button_preferred_4"></a>
+        	<a class="addthis_button_compact"></a>
+        	{%if type==Horizontal%}<a class="addthis_counter addthis_bubble_style"></a>{%endif%}
+    	</div>
+    {%endif%}
+{% endblock %}

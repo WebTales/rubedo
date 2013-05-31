@@ -1,35 +1,35 @@
-{% extends "root/block.html.twig" %} {% block mainContent %}
-<!-- carousel -->
-{%set carouselid="carousel-"~random() %}
-<div id="{{carouselid}}" class="carousel slide" style="{% if imageWidth %}max-width:{{ imageWidth }}px;{% endif %}{% if imageHeight %}max-height:{{ imageHeight }}px;{% endif %}">
+{% extends "root/block.html.twig" %}
 
-	<ol class="carousel-indicators">
-		{% for slide in items %}
-		<li data-target="#{{ carouselid }}" data-slide-to="{{ loop.index0 }}"
-			
-			 {% if loop.first %} class="active"  {% endif %}></li> {% endfor %}
-	</ol>
-
-	<div class="carousel-inner">
-		{% for slide in items %}
-		<div class="item {%if loop.first %}active{%endif%}" >
-			<a href="{{ displaySingleUrl(slide.id,null,singlePage) }}">
-			{% if slide.image %}
-			<img src="/dam?media-id={{slide.image}}{% if imageWidth %}&amp;width={{ imageWidth }}{% endif %}{% if imageHeight %}&amp;height={{ imageHeight }}{% endif %}&amp;mode={{ mode }}" alt="{{slide.text}}"
-				title="#htmlcaption_{{prefix}}_{{slide.id}}" class="carrousel-img" />
-			{% endif %}
-			<div class="carousel-caption">
-				<h4>{{slide.title}}</h4>
-				<p class="visible-desktop">{{slide.summary}}</p>
-			</div>
-			</a>
-		</div>
-		{% endfor %}
-	</div>
-	<!-- Carousel nav -->
-	<a class="carousel-control left" href="#{{ carouselid }}" data-slide="prev">&lsaquo;</a>
-	<a class="carousel-control right" href="#{{ carouselid }}" data-slide="next">&rsaquo;</a>
-
-
-</div>
+{% block mainContent %}
+    <!-- carousel -->
+    {%set carouselid="carousel-"~random() %}
+    
+    <div id="{{carouselid}}" class="carousel slide" style="{% if imageWidth %}max-width:{{ imageWidth }}px;{% endif %}{% if imageHeight %}max-height:{{ imageHeight }}px;{% endif %}">
+    
+    	<ol class="carousel-indicators">
+    		{% for slide in items %}
+    		    <li data-target="#{{ carouselid }}" data-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %}></li>
+    		{% endfor %}
+    	</ol>
+    
+    	<div class="carousel-inner">
+    		{% for slide in items %}
+        		<div class="item {%if loop.first %}active{%endif%}" >
+        			<a href="{{ displaySingleUrl(slide.id,null,singlePage) }}">
+            			{% if slide.image %}
+            			    <img src="/dam?media-id={{slide.image}}{% if imageWidth %}&amp;width={{ imageWidth }}{% endif %}{% if imageHeight %}&amp;height={{ imageHeight }}{% endif %}&amp;mode={{ mode }}" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" class="carrousel-img" />
+            			{% endif %}
+            			<div class="carousel-caption">
+            				<h4>{{slide.title}}</h4>
+            				<p class="visible-desktop">{{slide.summary}}</p>
+            			</div>
+        			</a>
+        		</div>
+    		{% endfor %}
+    	</div>
+    	<!-- Carousel nav -->
+    	<a class="carousel-control left" href="#{{ carouselid }}" data-slide="prev">&lsaquo;</a>
+    	<a class="carousel-control right" href="#{{ carouselid }}" data-slide="next">&rsaquo;</a>
+    
+    </div>
 {% endblock %}
