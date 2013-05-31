@@ -177,18 +177,18 @@ class Masks extends AbstractCollection implements IMasks
 	    $result['data'] = $this->addBlocks($result['data']);
 	    return $result;
 	}
-	
-	/**
-	 * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
-	 */
-	public function update (array $obj, $options = array())
-	{
-	    $obj = $this->_initContent($obj);
-	
-	    $returnValue = parent::update($obj, $options);
-		
-	    $returnValue['data'] = $this->addBlocks($returnValue['data']);
-	
-	    return $returnValue;
-	}
+
+    /**
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
+     */
+    public function update (array $obj, $options = array())
+    {
+        $obj = $this->_initContent($obj);
+        
+        $returnValue = parent::update($obj, $options);
+        if ($returnValue['success']) {
+            $returnValue['data'] = $this->addBlocks($returnValue['data']);
+        }
+        return $returnValue;
+    }
 }

@@ -209,8 +209,10 @@ class Pages extends AbstractCollection implements IPages
         $this->_clearCacheForPage($obj);
         
         $this->propagateWorkspace ($obj['id'], $obj['workspace']);
+        if($returnValue['success']){
+            $returnValue['data'] = $this->addBlocks($returnValue['data']);
+        }
         
-        $returnValue['data'] = $this->addBlocks($returnValue['data']);
         
         return $returnValue;
     }
