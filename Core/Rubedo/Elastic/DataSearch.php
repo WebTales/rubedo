@@ -283,6 +283,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Apply filter if needed
         if ($setFilter) {
             $elasticaQuery->setFilter($globalFilter);
+            //$elasticaQuery->setFields(array());
         }
         
         // Define the type facet.
@@ -481,7 +482,8 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $data['readOnly'] = true;
             }   
-
+            //do not return attached file if exists : can't be declared not stored as any other fields
+            unset($data['file']);
             $result['data'][] = $data;
         }
         

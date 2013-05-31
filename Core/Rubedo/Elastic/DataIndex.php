@@ -368,22 +368,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         );
         $indexMapping["file"] = array(
             'type' => 'attachment',
-            'fields' => array(
-                'file' => array(
-                    'index' => 'no'
-                ),
-                'date' => array(
-                    'store' => 'yes'
-                ),
-                'title' => array(
-                    'store' => 'yes',
-                    'index' => 'not_analyzed'
-                )
-            ),
-            'author' => array(
-                'store' => 'yes',
-                'index' => 'not_analyzed'
-            )
         );
         $indexMapping["target"] = array(
             'type' => 'string',
