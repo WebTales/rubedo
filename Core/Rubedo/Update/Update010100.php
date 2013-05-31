@@ -17,6 +17,7 @@
 namespace Rubedo\Update;
 Use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Methods for update tool
@@ -39,6 +40,23 @@ class Update010100 extends Update
         
         static::updateAllItems('Pages');
         static::updateAllItems('Masks');
+        static::cleanBlocks();
+        return true;
+    }
+
+    public static function cleanBlocks ()
+    {
+        $service = Manager::getService('Blocks');
+        $updateCond = Filter::Factory('OperatorToValue')->setName('blockData.bType')
+            ->setOperator('$exists')
+            ->setValue(true);
+        $data = array(
+            '$unset' => array('blockData.champsConfig'=>1)
+        );
+        $options = array(
+            'multiple' => true
+        );
+        $service->customUpdate($data, $updateCond,$options);
         return true;
     }
     
