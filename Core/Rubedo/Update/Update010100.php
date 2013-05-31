@@ -29,6 +29,11 @@ class Update010100 extends Update
 
     protected static $toVersion = '1.2.0';
 
+    /**
+     * do the upgrade 
+     * 
+     * @return boolean
+     */
     public static function upgrade ()
     {
         
@@ -37,6 +42,12 @@ class Update010100 extends Update
         return true;
     }
     
+    /**
+     * force an update action on each item ofa collection
+     * 
+     * @param string $collection
+     * @return boolean
+     */
     public static function updateAllItems($collection){
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = Manager::getService($collection);
@@ -51,5 +62,3 @@ class Update010100 extends Update
         return true;
     }
 }
-
-?>
