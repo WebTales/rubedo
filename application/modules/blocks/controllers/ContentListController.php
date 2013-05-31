@@ -141,7 +141,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 } else {
                     $contentTypeArray[(string) $dataType['id']] = Manager::getService(
                             'FrontOfficeTemplates')->getFileThemePath(
-                            "/blocks/shortsingle/Default.html.twig");
+                            "/blocks/shortsingle/default.html.twig");
                 }
             }
             foreach ($contentArray['data'] as $vignette) {

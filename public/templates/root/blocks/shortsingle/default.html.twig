@@ -1,0 +1,26 @@
+<div class="block clearfix shortsingle-rubedo">
+	
+	<header class="entry-header">
+		<h2 class="post-title-small">
+			<a href='{{ displaySingleUrl(content.id,null,singlePage) }}' title='{{content.title}}'>{{content.title}}</a>
+		</h2>
+	</header>
+	
+	{% if content.image %}
+	    <div class="pull-left shortsingle-img-container">
+    	    {% include "/root/blocks/fields/imageField.html.twig" with { "data": content, "key": "image", "width": "80", "height": "80", "mode": "boxed" } %}
+	    </div>
+    {% endif %}
+	
+	<div class="entry-content">
+	    {% include "/root/blocks/fields/CKEfield.html.twig" with {"data": content, "key": "summary"} %}
+	</div>
+	
+	<div class="clear-both">
+	    {% if content.date %}
+	        <div class="pull-left">{% include "/root/blocks/fields/date.html.twig" with {"data": content, "key": "date"} %}</div>
+	    {% endif %}
+    	{% include "/root/blocks/edition/full-edition-button.html.twig" with { "data" : content, "alignRight" : true } %}
+    	<a class="pull-right" href="{{ displaySingleUrl(content.id,null,singlePage) }}">En savoir plus</a>
+	</div>
+</div>

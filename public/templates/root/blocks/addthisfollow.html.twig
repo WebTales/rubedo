@@ -1,12 +1,14 @@
 {% extends "root/block.html.twig" %}
+
 {% block mainContent %}
-{%if type=='Horizontal'%}
-<div class="addthis_toolbox {%if small==false%}addthis_32x32_style{%endif%} addthis_default_style">
-{%elseif type=='Vertical'%}
-<div class="addthis_toolbox {%if small==false%}addthis_32x32_style{%endif%} addthis_vertical_style">
-{%endif%}
-{%for network in networks%}
- <a class="addthis_button_{{network.network}}_follow" addthis:userid="{{network.userId}}"></a>
-{%endfor%}
-</div>
-	{% endblock %}
+    {%if type=='Horizontal'%}
+        <div class="addthis_toolbox {%if small==false%}addthis_32x32_style{%endif%} addthis_default_style">
+    {%elseif type=='Vertical'%}
+        <div class="addthis_toolbox {%if small==false%}addthis_32x32_style{%endif%} addthis_vertical_style">
+    {%endif%}
+    
+        {%for network in networks%}
+             <a class="addthis_button_{{network.network}}_follow" addthis:userid="{{network.userId}}"></a>
+        {%endfor%}
+    </div>
+{% endblock %}

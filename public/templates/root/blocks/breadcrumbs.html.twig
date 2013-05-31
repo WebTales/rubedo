@@ -1,15 +1,14 @@
 {% extends "root/block.html.twig" %} 
 
 {% block mainContent %} 	  	
-{% if displayBlock %}
-<ul class="breadcrumb">
-
-		{% for page in rootline %} 
-		<li>
-		<a href="{{url({'pageId':page.id},true)}}"> {{ page.text }}
-		</a> <span class="divider">/</span></li>
-		 {% endfor %}
-        <li class="active">{{ title }}</li>
-</ul>
-{% endif %}
+    {% if displayBlock %}
+        <ul class="breadcrumb">
+    		{% for page in rootline %} 
+        		<li>
+        		    <a href="{{url({'pageId':page.id},true)}}"> {{ page.text }} </a> <span class="divider">/</span>
+        		</li>
+    		{% endfor %}
+            <li class="active">{{ title }}</li>
+        </ul>
+    {% endif %}
 {% endblock %}

@@ -344,20 +344,15 @@ padding-top: 5px;
 /**
  * Short singles
  */
-.actu-rubedo, .article-rubedo, .shortsingle-rubedo, .event-rubedo {
+.shortsingle-rubedo {
 	border-bottom: 1px solid #E3E3E8; 
 	margin-bottom: 10px; 
 	padding-bottom: 2px;
 }
 
-.actu-img-container, .article-img-container, .blog-img-container, .event-img-container {
+.shortsingle-img-container {
 	margin-right:1em;
 	margin-bottom:1em;
-}
-
-.actu-img, .article-img, .blog-img, .event-img {
-	max-height: 80px; 
-	max-width: 80px;
 }
 
 /**
