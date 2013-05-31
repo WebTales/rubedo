@@ -53,10 +53,12 @@ class Blocks_DamListController extends Blocks_AbstractController
         $facetsToHide = array();
         if (isset($params['block-config']['facets'])) {
             $predefParamsArray = \Zend_Json::decode($params['block-config']['facets']);
+			if (is_array($predefParamsArray)){
             foreach ($predefParamsArray as $key => $value) {
                 $params[$key] = $value;
                 $facetsToHide[] = $key;
             }
+			}
         }
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         $query = Manager::getService('ElasticDataSearch');

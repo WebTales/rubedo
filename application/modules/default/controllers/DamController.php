@@ -80,7 +80,8 @@ class DamController extends Zend_Controller_Action
             ));
         } else {
             $this->_forward('get-thumbnail', 'file', 'default', array(
-                'file-id' => $media['originalFileId']
+                'file-id' => $media['originalFileId'],
+                'file-type' => $mediaType['mainFileType']
             ));
         }
     }

@@ -197,16 +197,46 @@ class FileController extends Zend_Controller_Action
 
     public function getThumbnailAction ()
     {
-        $this->_forward('index', 'image', 'default', 
-                array(
-                        'size' => 'thumbnail',
-                        'file-id' => null,
-                        'filepath' => realpath(
+    	$iconPath = realpath(
                                 APPLICATION_PATH .
                                          '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' .
                                          Manager::getService('Session')->get(
                                                 'iconSet', 'red') .
-                                         '/128x128/attach_document.png')
+                                         '/128x128/attach_document.png');
+		switch($this->getParam('file-type')){
+			case 'Audio':
+				$iconPath = realpath(
+                                APPLICATION_PATH .
+                                         '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' .
+                                         Manager::getService('Session')->get(
+                                                'iconSet', 'red') .
+                                         '/128x128/speaker.png');
+				break;
+			case 'Video':
+				$iconPath = realpath(
+                                APPLICATION_PATH .
+                                         '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' .
+                                         Manager::getService('Session')->get(
+                                                'iconSet', 'red') .
+                                         '/128x128/video.png');
+				break;
+			case 'Animation':
+				$iconPath = realpath(
+                                APPLICATION_PATH .
+                                         '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' .
+                                         Manager::getService('Session')->get(
+                                                'iconSet', 'red') .
+                                         '/128x128/palette.png');
+				break;
+			default:
+				break;
+		}
+										 
+        $this->_forward('index', 'image', 'default', 
+                array(
+                        'size' => 'thumbnail',
+                        'file-id' => null,
+                        'filepath' => $iconPath
                 ));
     }
 }

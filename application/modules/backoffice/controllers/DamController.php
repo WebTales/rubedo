@@ -96,7 +96,8 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             ));
         } else {
             $this->_forward('get-thumbnail', 'file', 'default', array(
-                'file-id' => $media['originalFileId']
+                'file-id' => $media['originalFileId'],
+                'file-type' => $mediaType['mainFileType']
             ));
         }
     }
