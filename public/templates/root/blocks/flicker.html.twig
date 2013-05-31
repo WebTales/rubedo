@@ -3,8 +3,15 @@
 {% block mainContent %}
 {% if not doNotShow %}
 <br><br>
-<div id="{{prefix}}" class="carousel slide">
-	<div class='progress-gallery hide'>
+<div id="{{prefix}}" class="carousel slide flickr-gallery" 
+data-count="{{allFlickrCount}}"
+data-pagesize="{{pageSize}}"
+data-maxpage="{{ maxPage }}"
+data-url="{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'default')}}"
+data-user="{{ user }}"
+data-tags="{{ tags }}"
+data-tagmode="{{ tagMode }}">
+	<div class='progress-gallery'>
 		<p>En chargement</p>
 		<div class="progress progress-striped active">
 			<div class="bar flickr-img" style="width: 100%;"></div>
@@ -15,4 +22,5 @@
 	{% include 'root/blocks/flickr/items.html.twig' %}
 </div>
 {% endif %}
+
 {% endblock %}

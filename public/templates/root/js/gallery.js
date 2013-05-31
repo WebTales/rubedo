@@ -1,6 +1,7 @@
 function changePage(pageNumber, itemCount, itemsPerPage, maxPage, prefix,
-		width, height, query, url, user, tags, tagMode) {
-	if (jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber).length == 0) {
+		width, height, query, url, user, tags, tagMode, forceReload) {
+	
+	if (jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber).length == 0 || forceReload) {
 		if (jQuery('body').attr('data-is-draft')) {
 			var isDraft = true;
 		} else {
@@ -33,23 +34,19 @@ function changePage(pageNumber, itemCount, itemsPerPage, maxPage, prefix,
 			jQuery('#' + prefix + ' > .progress-gallery').addClass('hide');
 			var newHtml = data.html;
 			jQuery('#' + prefix).append(newHtml);
-				jQuery('#' + prefix + ' > .active-items').removeClass(
-				'active-items');
-				jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber)
-				.show();
-		jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber)
-				.addClass('active-items');
+			jQuery('#' + prefix + ' > .active-items').removeClass('active-items');
+			jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber).show();
+			jQuery('#' + prefix + ' > #' + prefix + '-page' + pageNumber).addClass('active-items');
 		});
 
-		request
-				.fail(function(jqXHR, textStatus) {
+		request.fail(function(jqXHR, textStatus) {
 					jQuery('#' + prefix + ' > .progress-gallery').addClass(
 							'hide');
 					var errorHtml = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>Erreur !</h4>Impossible de charger les images</div>';
 					jQuery('#' + prefix).prepend(errorHtml);
 					jQuery('#' + prefix + ' > .active-items').show();
-					console.log(jqXHR);
-				});
+					console.log(textStatus);
+		});
 	} else {
 		jQuery('#' + prefix + ' > .active-items').hide();
 		jQuery('#' + prefix + ' > .active-items').removeClass('active-items');
@@ -89,3 +86,24 @@ function callModal(src, title) {
 	
 	return false;
 }
+
+jQuery(window).load(function() {
+
+	jQuery(".flickr-gallery").each(function() {
+		var prefix = this.id;
+		var allFlickrCount = jQuery(this).attr("data-count");
+		var pageSize = jQuery(this).attr("data-pagesize");
+		var maxPage = jQuery(this).attr("data-maxpage");
+		var url = jQuery(this).attr("data-url");
+		var user = jQuery(this).attr("data-user");
+		var tags = jQuery(this).attr("data-tags");
+		var tagMode = jQuery(this).attr("data-tagmode");
+		
+		if(user != "") {
+			changePage(1, allFlickrCount, pageSize, maxPage, prefix, null, null, null, url, user, null, null, true);
+		} else {
+			changePage(1, allFlickrCount, pageSize, maxPage, prefix, null, null, null, url, null, tags, tagMode, true);
+		}
+	});
+	
+});

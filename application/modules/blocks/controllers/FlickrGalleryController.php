@@ -32,7 +32,93 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $output = $this->_getList();
+        //$output = $this->_getList();
+        $flParams = array();
+        $flParams['page'] = $this->getParam('page', 1);
+        $prefix = $this->getParam('prefix', $this->getParam('prefix'));
+        $output = $this->getAllParams();
+        
+        $blockConfig = $this->getRequest()->getParam('block-config',array());
+         
+        if(isset($blockConfig['itemsPerPage'])){
+            $flParams['perPage'] = $blockConfig['itemsPerPage'];
+        }else{
+            $flParams['perPage'] = 12;
+        }
+        if(isset($blockConfig['user']) && !empty($blockConfig['user'])){
+            $flParams['user'] = $blockConfig['user'];
+        }
+        if(isset($blockConfig['tags']) && !empty($blockConfig['tags'])){
+            $flParams['tags'] = $blockConfig['tags'];
+        }
+        if(isset($blockConfig['tagmode']) && !empty($blockConfig['tagmode'])){
+            $flParams['tag_mode'] = ($blockConfig['tagmode']=='ALL')?'all':'or';
+        }
+            
+        if(!isset($flParams['user']) && !isset($flParams['tags'])){
+            $output['doNotShow']=true;
+            return $output;
+        }
+        
+        $cache = Rubedo\Services\Cache::getCache('flicker');
+        $cacheKey = 'flickr_items_'.md5(serialize($flParams));
+        $cacheKeyCount = 'flickr_items_'.md5('count-'.serialize($flParams));
+        $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
+        
+        if (! ($photosArrayCount = $cache->load($cacheKeyCount))) {
+            if (isset($flParams['user'])) {
+                $photosArrayCount = $flickrService->userSearch($flParams['user'], array('per_page' => 1));
+            }elseif (isset($flParams['tags'])){
+                $photosArrayCount = $flickrService->tagSearch($flParams['tags'], array('per_page' => 1,'tag_mode'=>$flParams['tag_mode']));
+            }else{
+                throw new \Rubedo\Exceptions\User('Need a criteria to display Flickr Contents.', "Exception16");
+            }
+            $cache->save($photosArrayCount, $cacheKeyCount,array('flickr'));
+        }
+        	
+        // Get the number of pictures in database
+        $allFlickrCount = $photosArrayCount->totalResultsAvailable;
+        // Define the maximum number of pages
+        $maxPage = (int) ($allFlickrCount / $flParams['perPage']);
+        if ($allFlickrCount % $flParams['perPage'] > 0) {
+            $maxPage ++;
+        }
+        
+        // Set the page to 1 if the user enter a bad page value in the URL
+        if ($flParams['page'] < 1 || $flParams['page'] > $maxPage) {
+            $flParams['page'] = 1;
+        }
+         
+        // Defines if the arrows of the carousel are displayed or none
+        $next = true;
+        $previous = true;
+         
+        if ($flParams['page'] == $maxPage) {
+            $next = false;
+        }
+         
+        if ($flParams['page'] <= 1) {
+            $previous = false;
+        }
+        
+        if(isset($flParams['user'])){
+            $output['user'] = $flParams['user'];
+        }
+        if(isset($flParams['tags'])){
+            $output['tags'] = \Zend_Json::encode($flParams['tags']);
+        }
+        if(isset($flParams['tag_mode'])){
+            $output['tagMode'] = $flParams['tag_mode'];
+        }
+        $output['pageSize'] = $flParams['perPage'];
+        $output['maxPage'] = $maxPage;
+        $output['allFlickrCount'] = $allFlickrCount;
+        $output['page'] = $flParams['page'];
+        $output['prefix'] = $prefix;
+        $output['previous'] = $previous;
+        $output['next'] = $next;
+        
+        /********************************************************/
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/flicker.html.twig");
 		
