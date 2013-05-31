@@ -26,13 +26,26 @@ abstract class Update extends Install
 {
     protected static $toVersion;
     
-    public static function run(){
+    /**
+     * run the upgrade process and update database version
+     * @return boolean
+     */
+    final public static function run(){
+        ignore_user_abort(true);
+        set_time_limit(0);
+        
         if(static::upgrade()){
             static::setDbVersion(static::$toVersion);
         }
         return true;
     }
     
+    /**
+     * analyse the current version and run each needed upgrade
+     * 
+     * @throws \Rubedo\Exceptions\Server
+     * @return string reached db version
+     */
     public static function update(){
         $rubedoDbVersionService = Manager::getService('RubedoVersion');
         while(! $rubedoDbVersionService->isDbUpToDate()) {
@@ -50,6 +63,11 @@ abstract class Update extends Install
         return $rubedoDbVersionService->getDbVersion();
     }
     
+    /**
+     * lauch the actual run
+     * 
+     * Should be implemented in each update class
+     */
     public static function upgrade(){
         throw new \Rubedo\Exceptions\Server('Upgrade method for class %1$s does not exists.', "Exception91", get_called_class());
     }
