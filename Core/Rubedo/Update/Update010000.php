@@ -29,7 +29,13 @@ class Update010000 extends Update
 
     protected static $toVersion='1.1.0';
     
-    public static function doUpsertByTitleContents ()
+    
+    /**
+     * Add Default Id for default contents without this data
+     *  
+     * @return boolean
+     */
+    public static function doUpdateTitleContents ()
     {
         $success = true;
         $contentPath = APPLICATION_PATH . '/../data/default/';
@@ -92,7 +98,7 @@ class Update010000 extends Update
     {
         Manager::getService('Wallpapers')->drop();
         Manager::getService('Themes')->drop();
-        static::doUpsertByTitleContents();
+        static::doUpdateTitleContents();
         static::doInsertContents();
     
         $filter = Filter::Factory('Value')->setName('isDefault')->setValue(true);
