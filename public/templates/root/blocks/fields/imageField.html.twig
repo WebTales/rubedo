@@ -1,11 +1,11 @@
 {% if type[key]["config"]["multivalued"] and data[key] is iterable %}
     {% for item in data[key] %}
-        <div class="pull-left thumbnail editable-img thumbnail-rubedo" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
-            <img class="image-field img-rounded imageLeft" src="/dam?media-id={{ item }}{% if width %}&width={{ width }}{% endif %}{% if height %}&height={{ height }}{% endif %}" alt="{{data.text}}" title="{{data.text}}" />
+        <div class="{% if thumbnail %}thumbnail{% endif %} editable-img" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+            <img class="image-field {% if imageRounded %}image-rounded{% endif %} imageLeft" src="/dam?media-id={{ item }}{% if width %}&width={{ width }}{% endif %}{% if height %}&height={{ height }}{% endif %}{% if mode %}&mode={{ mode }}{% endif %}" alt="{{data.text}}" title="{{data.text}}" />
         </div>
     {% endfor %} 
 {% else %}
-    <div class="{% if alignLeft %}pull-left{% endif %} thumbnail editable-img thumbnail-rubedo" id="{{ data.id }}_{{ key }}">
-        <img class="img-field img-rounded imageLeft" src="/dam?media-id={{ data[key] }}{% if width %}&width={{ width }}{% endif %}{% if height %}&height={{ height }}{% endif %}" alt="{{data.text}}" title="{{data.text}}" />
+    <div class="{% if thumbnail %}thumbnail{% endif %} editable-img" id="{{ data.id }}_{{ key }}">
+        <img class="img-field {% if imageRounded %}image-rounded{% endif %} imageLeft" src="/dam?media-id={{ data[key] }}{% if width %}&width={{ width }}{% endif %}{% if height %}&height={{ height }}{% endif %}{% if mode %}&mode={{ mode }}{% endif %}" alt="{{data.text}}" title="{{data.text}}" />
     </div>
 {% endif %}
