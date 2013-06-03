@@ -144,8 +144,8 @@ var gMap = function (options,id,title,text,field) {
 	    	      			self.map.setCenter(new google.maps.LatLng(results[0].geometry.location.jb,results[0].geometry.location.kb));
 	    	      			
 	    	      			if(self.options.length==1){
-			      			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.jb);
-			    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.kb);
+			      			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.lat());
+			    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.lng());
 			    			jQuery("#"+self.id+"-edit .address").val(results[0].formatted_address);
 			    			}
 	  
@@ -162,8 +162,8 @@ var gMap = function (options,id,title,text,field) {
 		    		    if (status == google.maps.GeocoderStatus.OK) {
 		    		     if (results[1]) {
 		    		 		if(self.options.length==1){
-		    		 			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.jb);
-				    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.kb);
+		    		 			jQuery("#"+self.id+"-edit .latitude").val(results[0].geometry.location.lat());
+				    			jQuery("#"+self.id+"-edit .longitude").val(results[0].geometry.location.lng());
 				    			jQuery("#"+self.id+"-edit .address").val(results[0].formatted_address);
 				    			}
 		    		     }
@@ -237,8 +237,8 @@ var gMap = function (options,id,title,text,field) {
 		var geocoder=geocoder=new google.maps.Geocoder();
 		geocoder.geocode( { 'address': newAddress}, function(results, status) {
 	    	      		if (status == google.maps.GeocoderStatus.OK) {
-	    	      			var newLat=results[0].geometry.location.jb;
-							var newLong=results[0].geometry.location.kb;
+	    	      			var newLat=results[0].geometry.location.lat();
+							var newLong=results[0].geometry.location.lng();
 							me.map=gMap.findInstance(id);
 							var self=me;
 							me.address=newAddress;
