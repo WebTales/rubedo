@@ -50,17 +50,17 @@ Ext.define('Connector.view.Viewport', {
                     width: 400,
                     bodyPadding: 10,
                     icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/lock.png',
-                    title: 'Connexion',
+                    title: 'Log in',
                     items: [
                         {
                             xtype: 'textfield',
                             anchor: '90%',
                             style: 'float: left;',
                             name: 'login',
-                            fieldLabel: 'Compte utilisateur ',
+                            fieldLabel: 'Login ',
                             labelWidth: 120,
                             allowBlank: false,
-                            blankText: 'Ce champ est obligatoire',
+                            blankText: 'This field is required',
                             listeners: {
                             	render: function(field,e){
                             		field.focus();
@@ -74,7 +74,7 @@ Ext.define('Connector.view.Viewport', {
                             icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/info.png',
                             text: '',
                             tabIndex:998,
-                            tooltip: 'Votre login utilisateur'
+                            tooltip: 'User login'
                         },
                         {
                             xtype: 'textfield',
@@ -83,10 +83,10 @@ Ext.define('Connector.view.Viewport', {
                             style: 'float: left;',
                             inputType: 'password',
                             name: 'password',
-                            fieldLabel: 'Mot de passe ',
+                            fieldLabel: 'Password ',
                             labelWidth: 120,
                             allowBlank: false,
-                            blankText: 'Ce champ est obligatoire',
+                            blankText: 'This field is required',
                             listeners: {
                             	specialkey: function(field,e){
                             		if (e.getKey() == e.ENTER) {
@@ -102,7 +102,7 @@ Ext.define('Connector.view.Viewport', {
                             icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/info.png',
                             text: '',
                             tabIndex:1000,
-                            tooltip: 'Votre mot de passe'
+                            tooltip: 'User password'
                         },
                         
                         {
@@ -122,13 +122,13 @@ Ext.define('Connector.view.Viewport', {
                                         failure: function(form, action) {
                                             switch (action.failureType) {
                                                 case Ext.form.action.Action.CLIENT_INVALID:
-                                                Ext.Msg.alert('Erreur', 'Formulaire invalide');
+                                                Ext.Msg.alert('Error', 'Invalid fields');
                                                 break;
                                                 case Ext.form.action.Action.CONNECT_FAILURE:
-                                                Ext.Msg.alert('Erreur', 'Erreur Ajax');
+                                                Ext.Msg.alert('Error', 'Ajax error');
                                                 break;
                                                 case Ext.form.action.Action.SERVER_INVALID:
-                                                Ext.Msg.alert('Erreur', 'Compte utilisateur ou mot de passe erroné');
+                                                Ext.Msg.alert('Error', 'Wrong login or password');
                                             }
                                         }
                                     }); 
@@ -136,8 +136,8 @@ Ext.define('Connector.view.Viewport', {
                             }},
                             anchor: '100%',
                             scale: 'large',
-                            text: 'Se connecter',
-                            tooltip: 'Envoyer les données et se connecter'
+                            text: 'OK',
+                            tooltip: 'Authenticate and connect to Back Office'
                         }
                     ]
                 }
