@@ -500,7 +500,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 switch ($id) {
                     case 'navigation':
                         
-                        $temp['label'] = 'Navigation';
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Navigation", 'Navigation');
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $taxonomyTermsService->getTerm($value['term'], 'navigation');
@@ -513,7 +513,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     
                     case 'damType':
                         
-                        $temp['label'] = 'Type de document';
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.DAMType", 'DAM type');
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $this->_getDamType($value['term']);
@@ -528,7 +528,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     
                     case 'type':
                         
-                        $temp['label'] = 'Type de contenu';
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ContentType", 'Content type');
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 
@@ -542,7 +542,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     
                     case 'author':
                         
-                        $temp['label'] = 'Auteur';
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author');
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
                             $collection = Manager::getService('Users');
                             foreach ($temp['terms'] as $key => $value) {
@@ -556,7 +556,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     
                     case 'date':
                         
-                        $temp['label'] = 'Date de modification';
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ModificationDate", 'Modification date');
                         if (array_key_exists('ranges', $temp) and count($temp['ranges']) > 1) {
                             foreach ($temp['ranges'] as $key => $value) { 
                                 $rangeCount =  $temp['ranges'][$key]['count'];   
