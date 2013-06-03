@@ -365,10 +365,10 @@ class DataSearch extends DataAbstract implements IDataSearch
             )
         );
         $timeLabel = array();
-        $timeLabel[$lastday] = 'Moins de 24H';
-        $timeLabel[$lastweek] = 'Moins d\'une semaine';
-        $timeLabel[$lastmonth] = 'Moins d\'un mois';
-        $timeLabel[$lastyear] = 'Moins d\'un an';
+        $timeLabel[$lastday] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Day", 'Past 24H');
+        $timeLabel[$lastweek] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Week", 'Past week');
+        $timeLabel[$lastmonth] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Month", 'Past month');
+        $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
         
         $elasticaFacetDate->setRanges($ranges);
         if ($setFilter)
@@ -513,7 +513,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     
                     case 'damType':
                         
-                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.DAMType", 'DAM type');
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.MediaType", 'Media type');
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $this->_getDamType($value['term']);
@@ -605,7 +605,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $termItem = $this->_getDamType($termId);
                     $temp = array(
                         'id' => $vocabularyId,
-                        'label' => 'Types de documents',
+                        'label' => Manager::getService('Translate')->translate("Search.Facets.Label.MediaType", 'Media type'),
                         'terms' => array(
                             array(
                                 'term' => $termId,
@@ -619,7 +619,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $termItem = $this->_getContentType($termId);
                     $temp = array(
                         'id' => $vocabularyId,
-                        'label' => 'Types de Contenus',
+                        'label' => Manager::getService('Translate')->translate("Search.Facets.Label.ContentType", 'Content type'),
                         'terms' => array(
                             array(
                                 'term' => $termId,
@@ -633,7 +633,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $termItem = Manager::getService('Users')->findById($termId);
                     $temp = array(
                         'id' => $vocabularyId,
-                        'label' => 'Auteur',
+                        'label' => Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author'),
                         'terms' => array(
                             array(
                                 'term' => $termId,

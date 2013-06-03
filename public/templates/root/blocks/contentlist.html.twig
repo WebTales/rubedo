@@ -13,6 +13,13 @@
 <div class="clearfix"></div>
 
 {%endif%}
+
+{% if blockConfig.columns is defined %}
+    {% set columnNb = blockConfig.columns %}
+{% else %}
+    {% set columnNb = 1 %}
+{% endif %}
+
 {%endif%}
     
     <div id='list-{{ prefix }}'>
