@@ -14,6 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+Use Rubedo\Services\Manager;
 
 /**
  * Authentication Default Controller
@@ -35,7 +36,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
      * Init the authentication service
      */
     public function init() {
-        $this->_auth = Rubedo\Services\Manager::getService('Authentication');
+        $this->_auth = Manager::getService('Authentication');
     }
 
     /**
@@ -51,6 +52,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
 
                 if ($loginResult) {
                     $response['success'] = true;
+                    Manager::getService("CurrentUser")->loadUserLanguage();
                 } else {
                     $response['success'] = false;
                     $response['message'] = 'Wrong crendentials';
@@ -83,7 +85,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
      * check if a user is connected and return its login if true (json array)
      */
     public function isLoggedInAction() {
-        $currentUserService = Rubedo\Services\Manager::getService('CurrentUser');
+        $currentUserService = Manager::getService('CurrentUser');
 
         if (!$currentUserService->isAuthenticated()) {
             $response['loggedIn'] = false;

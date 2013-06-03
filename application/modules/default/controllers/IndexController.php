@@ -151,7 +151,8 @@ class IndexController extends Zend_Controller_Action
         }
         
         // context
-        $lang = $this->_session->get('lang', 'fr');
+        //$lang = $this->_session->get('lang', 'fr');
+        $lang = Manager::getService('CurrentUser')->getLanguage();
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         if (! $isLoggedIn || !Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $isPreview = false;
