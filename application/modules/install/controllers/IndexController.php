@@ -273,25 +273,39 @@ class Install_IndexController extends Zend_Controller_Action
         }
         
         $dbForm = Install_Model_DomainAliasForm::getForm();
+       
+        if (! isset($this->_localConfig['site']['override'])) {
+            $this->_localConfig['site']['override'] = array();
+        }
+        
+        $key = $this->getParam('delete-domain');
+        if($key){
+            unset ($this->_localConfig['site']['override'][$key]);
+            $this->_saveLocalConfig();
+        }
         
         if ($this->getRequest()->isPost() &&
                  $dbForm->isValid($this->getAllParams())) {
             $params = $dbForm->getValues();
-            $this->_localConfig['site']['override'][$params["domain"]] = $params["localDomain"];
+            $overrideArray = array_values($this->_localConfig['site']['override']);
+            if(in_array($params["localDomain"],$overrideArray)){
+                $this->view->hasError = true;
+                $this->view->errorMsgs = "A domain can't be used to override twice.";
+            }else{
+                $this->_localConfig['site']['override'][$params["domain"]] = $params["localDomain"];
+                $this->_saveLocalConfig();
+            }
+            
         }
-        
-        $connectionValid = true;
-        
+                
         $this->view->isReady = true;
-        if (! isset($this->_localConfig['site']['override'])) {
-            $this->_localConfig['site']['override'] = array();
-        }
+        
         
         $this->view->overrideList = $this->_localConfig['site']['override'];
         
         $this->view->form = $dbForm;
         
-        $this->_saveLocalConfig();
+        
     }
 
     public function setPhpSettingsAction ()

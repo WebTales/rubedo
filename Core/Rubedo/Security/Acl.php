@@ -204,6 +204,11 @@ class Acl implements IAcl
      */
     public function getAvailaibleRoles ()
     {
+    	$userLang='en'; //default value
+        $currentUserLanguage=Manager::getService('CurrentUser')->getLanguage();
+        if (!empty($currentUserLanguage)){
+        	$userLang=$currentUserLanguage;
+        }
         $templateDirIterator = new \DirectoryIterator($this->_rolesDirectory);
         if (! $templateDirIterator) {
             throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for role dir', "Exception67");
@@ -218,7 +223,7 @@ class Acl implements IAcl
             if ($file->getExtension() == 'json') {
                 $roleJson = file_get_contents($file->getPathname());
                 $roleInfos = \Zend_Json::decode($roleJson);
-                $roleLabel = $roleInfos['label']['fr'];
+                $roleLabel = $roleInfos['label'][$userLang];
                 $roleInfos['label'] = $roleLabel;
                 unset($roleInfos['rights']);
                 $rolesInfosArray[] = $roleInfos;
