@@ -68,7 +68,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     protected $_virtualCurrentPageTerm = array(
         "parentId" => 'root',
-        "text" => "Page Courante",
         "id" => "currentPage",
         "expandable" => false,
         "vocabularyId" => 'navigation',
@@ -232,7 +231,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $siteArray = Manager::getService('Sites')->getList();
         $childrenArray = array();
         if($withCurrentPage){
-            $childrenArray[]=$this->_virtualCurrentPageTerm;
+            $tab = $this->_virtualCurrentPageTerm;
+            $tab["text"] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.CurrentPage", 'Current page');
+            $childrenArray[] = $tab;
         }
         foreach ($siteArray['data'] as $site) {
             $childrenArray[] = $this->_siteToTerm($site);
@@ -334,7 +335,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     {
         $mainRoot = array();
         $mainRoot["parentId"] = 'root';
-        $mainRoot['text'] = 'Tous les sites';
+        $mainRoot['text'] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.AllSites", 'All sites');
         $mainRoot['id'] = 'all';
         $mainRoot['canAssign'] = true;
         $mainRoot['isNotPage'] = true;
