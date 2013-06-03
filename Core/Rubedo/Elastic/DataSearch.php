@@ -513,7 +513,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     
                     case 'damType':
                         
-                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.DAMType", 'DAM type');
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.MediaType", 'Media type');
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $this->_getDamType($value['term']);
