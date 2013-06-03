@@ -231,54 +231,67 @@ var gMap = function (options,id,title,text,field) {
 	}
 	gMap.mapRefresh=function(id,marker){
 		//Add input values
+		var me=this;
 		if(marker==null){
 		var newAddress=jQuery("#"+id+"-edit .address").val();
-		var newLat=jQuery("#"+id+"-edit .latitude").val();
-		var newLong=jQuery("#"+id+"-edit .longitude").val();
-		this.map=gMap.findInstance(id);
-		var self=this;
-		this.address=newAddress;
-		this.latitude=newLat;
-		this.longitude=newLong;
-		
-		this.location={
-				address:this.address,
-				lat:this.latitude,
-				lon:this.longitude
-		}
-		
-		var lat = parseFloat(this.latitude);
-		var lon = parseFloat(this.longitude);
-		
-		var markerObject = { 	"address" : this.address,
-								"location" : { 
-										"type" : "Point" ,
-										"coordinates" : [ 
-							                 lon,
-							                 lat
-							             ]
-								} ,
-								"lat" : lat,
-								"lon" : lon
+		var geocoder=geocoder=new google.maps.Geocoder();
+		geocoder.geocode( { 'address': newAddress}, function(results, status) {
+	    	      		if (status == google.maps.GeocoderStatus.OK) {
+	    	      			var newLat=results[0].geometry.location.jb;
+							var newLong=results[0].geometry.location.kb;
+							me.map=gMap.findInstance(id);
+							var self=me;
+							me.address=newAddress;
+							me.latitude=newLat;
+							me.longitude=newLong;
+							
+							me.location={
+									address:me.address,
+									lat:me.latitude,
+									lon:me.longitude
 							}
+							
+							var lat = parseFloat(me.latitude);
+							var lon = parseFloat(me.longitude);
+							
+							var markerObject = { 	"address" : me.address,
+													"location" : { 
+															"type" : "Point" ,
+															"coordinates" : [ 
+												                 lon,
+												                 lat
+												             ]
+													} ,
+													"lat" : lat,
+													"lon" : lon
+												}
+							
+							modifications[id] = {"newValue" : markerObject};
+							
+							if(me.map.markers.length>1){
+								if(me.map.markerToEdit){
+									me.map.deleteMarker(me.map.markerToEdit.__gm_id);
+									me.map.addMarker(me.location,me.map.title,me.map.text);
+									me.map.markerToEdit=null;
+								}else{
+									jQuery("#"+id+"-error-msg").show();
+									jQuery("#"+id+"-error-msg .msg").html("Please select a marker by right click.");
+								}
+								
+							}
+							else{
+								me.map.addMarker(me.location,me.map.title,me.map.text);
+							}
+	    	      			
+	    	      			
+	    	      			
+	    	      			
+	  
+	    	      		}else {
+		    		    	  console.log("geocodage failed :" +status);
+		    		    }
+	    });
 		
-		modifications[id] = {"newValue" : markerObject};
-		
-		if(this.map.markers.length>1){
-			if(this.map.markerToEdit){
-				this.map.deleteMarker(this.map.markerToEdit.__gm_id);
-				this.map.addMarker(this.location,this.map.title,this.map.text);
-				this.map.markerToEdit=null;
-			}else{
-				jQuery("#"+id+"-error-msg").show();
-				jQuery("#"+id+"-error-msg .msg").html("Please select a marker by right click.");
-			}
-			
-		}
-		else{
-			this.map.addMarker(this.location,this.map.title,this.map.text);
-		}
 		
 		}
-
 	};
