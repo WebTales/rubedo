@@ -52,7 +52,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
 
                 if ($loginResult) {
                     $response['success'] = true;
-                    Manager::getService("CurrentUser")->loadUserLanguage();
+                    //Manager::getService("CurrentUser")->loadUserLanguage();
                 } else {
                     $response['success'] = false;
                     $response['message'] = 'Wrong crendentials';
