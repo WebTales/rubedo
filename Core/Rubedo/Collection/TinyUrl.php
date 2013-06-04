@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Interfaces\Collection\ITinyUrl;
+use Rubedo\Interfaces\Collection\ITinyUrl, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle TinyUrl
@@ -87,13 +87,15 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
      */
     public function findByParameters ($action, $controller, $module, $params)
     {
-        $cond = array();
-        $cond['action'] = $action;
-        $cond['controller'] = $controller;
-        $cond['module'] = $module;
+        $cond = Filter::Factory();
+        $cond->addFilter(Filter::Factory('Value')->setName('action')->setValue($action));
+        $cond->addFilter(Filter::Factory('Value')->setName('controller')->setValue($controller));
+        $cond->addFilter(Filter::Factory('Value')->setName('module')->setValue($module));
+        
         foreach ($params as $key => $value) {
-            $cond['params.' . $key] = $value;
+            $cond->addFilter(Filter::Factory('Value')->setName('params.' . $key)->setValue($value));
         }
+        
         return $this->_dataService->findOne($cond);
     }
 
