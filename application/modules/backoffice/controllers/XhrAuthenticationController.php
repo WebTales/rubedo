@@ -47,8 +47,6 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
         
         $loginResult = $this->_dataService->authenticate($login, $password);
         
-        //Manager::getService("CurrentUser")->loadUserLanguage();
-        
         if ($loginResult) {
             $response['success'] = true;
             return $this->_helper->json($response);
