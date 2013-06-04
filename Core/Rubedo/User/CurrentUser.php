@@ -345,7 +345,7 @@ class CurrentUser implements ICurrentUser
     public function getLanguage(){
        $user = $this->getCurrentUser();
        
-       if(isset($user) && isset($user['language'])){
+       if(isset($user) && isset($user['language']) && !empty($user['language'])){
            $lang = $user['language'];
        }else{
            $lang = 'en';
