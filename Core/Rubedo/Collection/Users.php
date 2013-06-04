@@ -264,9 +264,8 @@ class Users extends AbstractCollection implements IUsers
 	 * @see \Rubedo\Interfaces\Collection\IUsers::findByEmail()
 	 */
 	public function findByEmail($email) {
-		$result = $this->_dataService->findOne ( array (
-				'email' => $email 
-		) );
+	    $filter = Filter::Factory('Value')->setName('email')->setValue($email);
+		$result = $this->_dataService->findOne ( $filter );
 		if($result){
 			$result = $this->_addGroupsInfos($result);
 		}

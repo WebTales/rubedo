@@ -188,7 +188,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $displayType = $this->getParam('displayType', false);
         $columnsNb = $this->getParam('columnsNb', '1');
         
-        $twigVars["columnsNb"] = $columnsNb;
+        $twigVars["columnNb"] = $columnsNb;
         
         if ($displayType) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
