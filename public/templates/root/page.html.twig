@@ -95,12 +95,12 @@
     	<div class="navbar hide navbar-inverse" id="contentToolBar">
     		<div class="navbar-inner">
     			<div class="container-fluid">
-    				<a class="brand" href="/backoffice/" target="_blank">Administration</a>
+    				<a class="brand" href="/backoffice/" target="_blank">{{ "FO.Administration.Toolbar.Title.Administration" | botrans }}</a>
     				<div id='viewmode'>
     				    <div class="btn-toolbar pull-left">
         					<div class="btn-group">
         						<a class="btn" href="#" id="btn-edit"> <i class="icon-edit"></i>
-        							Editer la page
+        							{{ "FO.Administration.Toolbar.Button.EditPage" | botrans }}
         						</a>
         					</div>
         					
@@ -113,24 +113,24 @@
                                     {% endif %} <span>{{currentUser.name}}</span> <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#" onclick="logout()"><i class="icon-off"></i> Déconnexion</a></li>
+                                    <li><a href="#" onclick="logout()"><i class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | botrans }}</a></li>
                                 </ul>
         					</div>
         				</div>
     					
-    					<span class="label label-success pull-right">Consultation</span>
+    					<span class="label label-success pull-right">{{ "FO.Administration.Toolbar.Status.Consultation" | botrans }}</span>
     				</div>
     				<div id='editmode' class='hide'>
     
     					<a class="btn btn-danger pull-left" href="#" id="btn-cancel"> <i
-    						class="icon-remove"></i> Annuler
+    						class="icon-remove"></i> {{ "FO.Administration.Toolbar.Button.Cancel" | botrans }}
     					</a>
-    					 <a class="btn btn-success pull-left" href="#" id="btn-save" data-toggle="tooltip" data-placement="bottom" data-content="Appuyez sur ctr+s pour sauvegarder" title="" data-original-title="">
-    					  <i class="icon-ok"></i> Sauvegarder les modifications	
+    					 <a class="btn btn-success pull-left" href="#" id="btn-save" data-toggle="tooltip" data-placement="bottom" data-content="{{ "FO.Administration.Toolbar.Button.SaveChanges.Tooltip" | botrans }}" title="" data-original-title="">
+    					  <i class="icon-ok"></i> {{ "FO.Administration.Toolbar.Button.SaveChanges" | botrans }}
     					</a>
     					<span class="label label-warning pull-right">Edition</span>
     				</div>
-    				<div class="span8 offset4" id="alerts"></div>
+    				<div class="span8 offset4" id="alerts">{{ "FO.Administration.Toolbar.Status.Edition" | botrans }}</div>
     			</div>
     		</div>
     	</div>
