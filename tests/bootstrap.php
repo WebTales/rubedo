@@ -44,5 +44,6 @@ function testBootstrap(){
 }
 
 testBootstrap();
+Rubedo\Exceptions\AbstractException::setDoNotTranslate(true);
 
 require_once (APPLICATION_PATH . '/../tests/application/AbstractControllerTest.php');
