@@ -14,7 +14,7 @@
 
 {%endif%}
 
-{% if blockConfig.columns is defined %}
+{% if blockConfig.columns is defined and blockConfig.columns != "" %}
     {% set columnNb = blockConfig.columns %}
 {% else %}
     {% set columnNb = 1 %}
