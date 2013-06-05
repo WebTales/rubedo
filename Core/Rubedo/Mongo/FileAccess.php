@@ -52,7 +52,7 @@ class FileAccess extends DataAccess implements IFileAccess
         $mongo = self::$_defaultMongo;
         $dbName = self::$_defaultDb;
         
-        $this->_adapter = new \Mongo($mongo);
+        $this->_adapter = new \MongoClient($mongo);
         $this->_dbName = $this->_adapter->$dbName;
         $this->_collection = $this->_dbName->getGridFS();
     }
