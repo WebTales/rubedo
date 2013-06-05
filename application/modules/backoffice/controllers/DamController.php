@@ -225,8 +225,62 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         $this->getResponse()->setBody($returnValue);
     }
-
-    protected function _uploadFile ($name, $fileType)
+    
+    public function massUploadAction ()
+    {
+	    $encodedActiveFacets=$this->getParam('activeFacets');
+	    $activeFacets=Zend_Json::decode($encodedActiveFacets);
+	    $typeId=$activeFacets['damType'];
+	    if (! $typeId) {
+	    	throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
+	    }
+	    $damType = Manager::getService('DamTypes')->findById($typeId);
+	    if (! $damType) {
+	    	throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
+	    }
+	    $obj=array();
+	    $obj['typeId'] = $damType['id'];
+	    $obj['mainFileType'] = $damType['mainFileType'];
+	    $obj['fields']=array();
+	    $obj['taxonomy']=array();
+	    $workspace = $this->getParam('writeWorkspace');
+	    if(!is_null($workspace) && $workspace != ""){
+	    	$obj['writeWorkspace'] = $workspace;
+	    	$obj['fields']['writeWorkspace'] = $workspace;
+	    }
+	    $uploadResult = $this->_uploadFile('file', $damType['mainFileType'],true);
+	    if($uploadResult['success']){
+	    	$obj['title'] = $uploadResult['data']['text'];
+        	$obj['fields']['title'] = $uploadResult['data']['text'];
+	    	$obj['originalFileId'] = $uploadResult['data']['id'];
+	    } else {
+	    	return $this->_returnJson($uploadResult);
+	    }
+	    $obj['Content-Type'] = $this->_mimeType;
+	    if (! $obj['originalFileId']) {
+	    	$this->getResponse()->setHttpResponseCode(500);
+	    	return $this->_returnJson(array(
+	    			'success' => false,
+	    			'msg' => 'no main file uploaded'
+	    	));
+	    }
+	    $returnArray = $this->_dataService->create($obj);
+	    if (! $returnArray['success']) {
+	    	$this->getResponse()->setHttpResponseCode(500);
+	    }
+	    // disable layout and set content type
+	    $this->getHelper('Layout')->disableLayout();
+	    $this->getHelper('ViewRenderer')->setNoRender();
+	    
+	    $returnValue = Zend_Json::encode($returnArray);
+	    if ($this->_prettyJson) {
+	    	$returnValue = Zend_Json::prettyPrint($returnValue);
+	    }
+	    $this->getResponse()->setBody($returnValue);
+	    
+    }
+    
+    protected function _uploadFile ($name, $fileType,$returnFullResult=false)
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
@@ -256,7 +310,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             'mainFileType' => $fileType
         );
         $result = $fileService->create($fileObj);
-        if (! $result['success']) {
+        if ((! $result['success'])||($returnFullResult)) {
             return $result;
         }
         return $result['data']['id'];
