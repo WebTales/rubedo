@@ -1,41 +1,39 @@
 {% extends "root/block.html.twig" %}
 
 {% block mainContent %}
-{% if isLoggedIn %}
-{%if query.type=="manual" or query.type=="simple"%}
-<div id="list-editmode" class="hide">
-	<div class="btn-group pull-left">
-	<a class="btn contentlist-btn" href="#" id="btn-add-content" onclick="addContent('{{query.type}}','{{data[0].typeId}}','{{query.id}}')"> <i class="icon-plus-sign"></i>
-	Ajouter un contenu
-	</a>
-	</div>
-</div>
-<div class="clearfix"></div>
 
-{%endif%}
-
-{% if blockConfig.columns is defined and blockConfig.columns != "" %}
-    {% set columnNb = blockConfig.columns %}
-{% else %}
-    {% set columnNb = 1 %}
-{% endif %}
-
-{%endif%}
+    {% if isLoggedIn %}
+        {%if query.type=="manual" or query.type=="simple"%}
+            <div id="list-editmode" class="hide">
+            	<div class="btn-group pull-left">
+                	<a class="btn contentlist-btn" href="#" id="btn-add-content" onclick="addContent('{{query.type}}','{{data[0].typeId}}','{{query.id}}')"> <i class="icon-plus-sign"></i>
+                	    Ajouter un contenu
+                	</a>
+            	</div>
+            </div>
+            
+            <div class="clearfix"></div>
+        {%endif%}
+    {%endif%}
     
+    {% if blockConfig.columns is defined and blockConfig.columns != "" %}
+        {% set columnNb = blockConfig.columns %}
+    {% else %}
+        {% set columnNb = 1 %}
+    {% endif %}
+        
     <div id='list-{{ prefix }}'>
-    {% block mainList %}
-    
-	{% include '/root/blocks/contentList/list.html.twig' %}
-    
-	{% endblock %}
+        {% block mainList %}
+    	    {% include '/root/blocks/contentList/list.html.twig' %}
+    	{% endblock %}
     </div>
-    
+        
     {% if blockConfig.showPager %}
-    <div id='list-pager-{{ prefix }}'>
-	{% block pager %}
-	{% include '/root/blocks/contentList/pager.html.twig' %}
-	{% endblock %}
-	</div>
+        <div id='list-pager-{{ prefix }}'>
+        	{% block pager %}
+        	    {% include '/root/blocks/contentList/pager.html.twig' %}
+        	{% endblock %}
+    	</div>
 	{% endif %}
 	
 
