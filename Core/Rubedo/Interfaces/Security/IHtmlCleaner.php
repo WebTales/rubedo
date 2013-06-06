@@ -15,6 +15,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 namespace Rubedo\Interfaces\Security;
 
 /**
@@ -25,14 +26,14 @@ namespace Rubedo\Interfaces\Security;
  * @category Rubedo
  * @package Rubedo
  */
-interface IHtmlCleaner
-{
-
-    /**
+interface IHtmlCleaner {
+	
+	 /**
      * Clean a raw content to become a valid HTML content without threats
-     *
-     * @param string $html            
+     * 
+     * @param string $html
      * @return string
      */
-    public function clean ($html);
+	public function clean($html);
+
 }

@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-
 use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
@@ -29,14 +28,14 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
 {
 
     protected $_indexes = array(
-        array(
-            'keys' => array(
-                'name' => 1
-            ),
-            'options' => array(
-                'unique' => true
+            array(
+                    'keys' => array(
+                            'name' => 1
+                    ),
+                    'options' => array(
+                            'unique' => true
+                    )
             )
-        )
     );
 
     /**
@@ -54,9 +53,9 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
                 $filter = array(
-                    'workspaces' => array(
-                        '$in' => $readWorkspaceArray
-                    )
+                        'workspaces' => array(
+                                '$in' => $readWorkspaceArray
+                        )
                 );
                 $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
@@ -70,19 +69,15 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
      * @var array
      */
     protected $_virtualNavigationVocabulary = array(
-        'id' => 'navigation',
-        'name' => 'Navigation',
-        'multiSelect' => true,
-        'readOnly' => true,
-        'inputAsTree' => true,
-        'createUser' => array(
-            'fullName' => 'Rubedo'
-        ),
-        'createTime' => 1363374000,
-        'lastUpdateUser' => array(
-            'fullName' => 'Rubedo'
-        ),
-        'lastUpdateTime' => 1363374000
+            'id' => 'navigation',
+            'name' => 'Navigation',
+            'multiSelect' => true,
+            'readOnly' => true,
+    		'inputAsTree'=> true,
+            'createUser'=>array('fullName'=>'Rubedo'),
+            'createTime'=>1363374000,
+            'lastUpdateUser'=>array('fullName'=>'Rubedo'),
+            'lastUpdateTime'=>1363374000
     );
 
     public function __construct ()
@@ -98,9 +93,10 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         
-        $list['data'] = array_merge(array(
-            $this->_virtualNavigationVocabulary
-        ), $list['data']);
+        $list['data'] = array_merge(
+                array(
+                        $this->_virtualNavigationVocabulary
+                ), $list['data']);
         $list['count'] = $list['count'] + 1;
         
         return $list;
@@ -108,8 +104,8 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
 
     /**
      * add readOnly information on object
-     *
-     * @param array $obj            
+     * 
+     * @param array $obj
      * @return array boolean
      */
     protected function _addReadableProperty ($obj)
@@ -118,12 +114,14 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
             // Set the workspace for old items in database
             if (! isset($obj['workspaces']) || $obj['workspaces'] == "") {
                 $obj['workspaces'] = array(
-                    'global'
+                        'global'
                 );
             }
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
             
-            if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 || ! Manager::getService('Acl')->hasAccess("write.ui.taxonomy")) {
+            if (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 ||
+                     ! Manager::getService('Acl')->hasAccess(
+                            "write.ui.taxonomy")) {
                 $obj['readOnly'] = true;
             }
         }
@@ -142,24 +140,21 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($name == 'Navigation') {
             return $this->_virtualNavigationVocabulary;
         }
-        $data = $this->_dataService->findOne(Filter::Factory('Value')->setName('name')
-            ->setValue($name));
+        $data = $this->_dataService->findOne(Filter::Factory('Value')->setName('name')->setValue($name));
         
         if ($data) {
             $data = $this->_addReadableProperty($data);
         }
         return $data;
     }
-
+    
     /**
      * Allow to find taxonomies associated to the content type id
-     *
-     * @param string $contentTypeId
-     *            Id of the content type
+     * 
+     * @param string $contentTypeId Id of the content type
      * @return array Array of results
      */
-    public function findByContentTypeID ($contentTypeId)
-    {
+    public function findByContentTypeID($contentTypeId) {
         $taxonomies = array();
         $contentTypeService = Manager::getService("ContentTypes");
         
@@ -175,10 +170,10 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
                 $taxonomyTerms[$term["id"]] = $term["text"];
             }
             
-            if ($taxonomy["name"] != "Navigation") {
+            if($taxonomy["name"] != "Navigation") {
                 $taxonomies[$taxonomy["name"]] = array(
                     "id" => $taxonomyId,
-                    "terms" => $taxonomyTerms
+                    "terms" => $taxonomyTerms,
                 );
             }
         }
@@ -188,14 +183,13 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
 
     /**
      * (non-PHPdoc)
-     * 
      * @see \Rubedo\Collection\AbstractCollection::destroy()
      */
     public function destroy (array $obj, $options = array())
     {
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {
-            if ((isset($origObj['readOnly'])) && ($origObj['readOnly'])) {
+            if ((isset($origObj['readOnly']))&&($origObj['readOnly'])) {
                 throw new \Rubedo\Exceptions\Access('no rights to update this content', "Exception33");
             }
         }
@@ -203,19 +197,21 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['id'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access('You can not destroy navigation vocabulary', "Exception51");
         }
-        $childrenToDelete = Manager::getService('TaxonomyTerms')->findByVocabulary($obj["id"]);
-        $deletedTerms = array();
+        $childrenToDelete = Manager::getService('TaxonomyTerms')->findByVocabulary(
+                $obj["id"]);
+        $deletedTerms=array();
         foreach ($childrenToDelete["data"] as $child) {
-            $deletedTerms[] = Manager::getService('TaxonomyTerms')->destroy($child);
+            $deletedTerms[] = Manager::getService('TaxonomyTerms')->destroy(
+                    $child);
         }
         if (! in_array(array(
-            "success" => false
+                "success" => false
         ), $deletedTerms)) {
             return parent::destroy($obj, $options);
         } else {
             return array(
-                "success" => false,
-                "msg" => "Error during children removal"
+                    "success" => false,
+                    "msg" => "Error during children removal"
             );
         }
     }
@@ -234,7 +230,8 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     public function create (array $obj, $options = array())
     {
         if ($obj['name'] == 'Navigation') {
-            throw new \Rubedo\Exceptions\Access('You can not create a navigation vocabulary', "Exception52");
+            throw new \Rubedo\Exceptions\Access(
+                    'You can not create a navigation vocabulary', "Exception52");
         }
         
         $obj = $this->_addDefaultWorkspace($obj);
@@ -261,16 +258,18 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         $origObj = $this->findById($obj['id']);
         if (! self::isUserFilterDisabled()) {
-            if ((isset($origObj['readOnly'])) && ($origObj['readOnly'])) {
+            if ((isset($origObj['readOnly']))&&($origObj['readOnly'])) {
                 throw new \Rubedo\Exceptions\Access('no rights to update this content', "Exception33");
             }
         }
         
         if ($obj['id'] == 'navigation') {
-            throw new \Rubedo\Exceptions\Access('You can not update navigation vocabulary', "Exception53");
+            throw new \Rubedo\Exceptions\Access(
+                    'You can not update navigation vocabulary', "Exception53");
         }
         if ($obj['name'] == 'Navigation') {
-            throw new \Rubedo\Exceptions\Access('can\'t create a navigation vocabulary', "Exception52");
+            throw new \Rubedo\Exceptions\Access(
+                    'can\'t create a navigation vocabulary', "Exception52");
         }
         $obj = $this->_addDefaultWorkspace($obj);
         return parent::update($obj, $options);
@@ -278,10 +277,11 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
 
     protected function _addDefaultWorkspace ($obj)
     {
-        if (! isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
+        if (! isset($obj['workspaces']) || $obj['workspaces'] == '' ||
+                 $obj['workspaces'] == array()) {
             $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
             $obj['workspaces'] = array(
-                $mainWorkspace['id']
+                    $mainWorkspace['id']
             );
         }
         return $obj;

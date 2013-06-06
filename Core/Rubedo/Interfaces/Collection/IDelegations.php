@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IDelegations extends IAbstractCollection
-{
+interface IDelegations extends IAbstractCollection{
+	
 }

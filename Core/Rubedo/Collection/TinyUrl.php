@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-
 use Rubedo\Interfaces\Collection\ITinyUrl, WebTales\MongoFilters\Filter;
 
 /**
@@ -29,16 +28,9 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
 {
 
     protected $_indexes = array(
-        array(
-            'keys' => array(
-                'expire' => 1
-            ),
-            'options' => array(
-                'expireAfterSeconds' => 172800
-            )
-        )
+            array('keys'=>array('expire'=>1),'options'=>array('expireAfterSeconds'=> 172800)),
     );
-
+    
     public function __construct ()
     {
         $this->_collectionName = 'TinyUrl';
@@ -73,7 +65,7 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
         if ($expire || ! $tinyUrlObj) {
             $obj = array();
             $obj['url'] = $url;
-            if ($expire) {
+            if($expire){
                 $obj['expire'] = new \MongoDate();
             }
             $result = $this->create($obj);
@@ -86,26 +78,22 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
 
     /**
      * find a tinyUrl object base on MVC context
-     *
-     * @param string $action            
-     * @param string $controller            
-     * @param string $module            
-     * @param array $params            
+     * 
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param array $params
      * @return array
      */
     public function findByParameters ($action, $controller, $module, $params)
     {
         $cond = Filter::Factory();
-        $cond->addFilter(Filter::Factory('Value')->setName('action')
-            ->setValue($action));
-        $cond->addFilter(Filter::Factory('Value')->setName('controller')
-            ->setValue($controller));
-        $cond->addFilter(Filter::Factory('Value')->setName('module')
-            ->setValue($module));
+        $cond->addFilter(Filter::Factory('Value')->setName('action')->setValue($action));
+        $cond->addFilter(Filter::Factory('Value')->setName('controller')->setValue($controller));
+        $cond->addFilter(Filter::Factory('Value')->setName('module')->setValue($module));
         
         foreach ($params as $key => $value) {
-            $cond->addFilter(Filter::Factory('Value')->setName('params.' . $key)
-                ->setValue($value));
+            $cond->addFilter(Filter::Factory('Value')->setName('params.' . $key)->setValue($value));
         }
         
         return $this->_dataService->findOne($cond);
@@ -114,22 +102,24 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
     /**
      * create a tinyUrl object base on MVC context
      *
-     * @param string $action            
-     * @param string $controller            
-     * @param string $module            
-     * @param array $params            
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param array $params
      * @return string
      */
-    public function createFromParameters ($action, $controller, $module, $params = array(), $expire = true)
+    public function createFromParameters ($action, $controller, $module, 
+            $params = array(), $expire = true)
     {
-        $tinyUrlObj = $this->findByParameters($action, $controller, $module, $params);
+        $tinyUrlObj = $this->findByParameters($action, $controller, $module, 
+                $params);
         if ($expire || ! $tinyUrlObj) {
             $obj = array();
             $obj['params'] = $params;
             $obj['controller'] = $controller;
             $obj['action'] = $action;
             $obj['module'] = $module;
-            if ($expire) {
+            if($expire){
                 $obj['expire'] = new \MongoDate();
             }
             $result = $this->create($obj);
@@ -138,22 +128,19 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
         $generatedKey = $tinyUrlObj['id'];
         return $generatedKey;
     }
-
+    
     /**
      * Create an access link to download a document
-     *
-     * @param string $damId            
+     * 
+     * @param string $damId
      * @return string
      */
-    public function creamDamAccessLinkKey ($damId)
-    {
+    public function creamDamAccessLinkKey($damId){
         $action = 'index';
-        $controller = "dam";
-        $module = "default";
-        $params = array(
-            'media-id' => $damId,
-            'attachment' => "download"
-        );
-        return $this->createFromParameters($action, $controller, $module, $params, true);
+        $controller ="dam";
+        $module ="default";
+        $params = array('media-id'=>$damId,'attachment'=>"download");
+        return $this->createFromParameters ($action, $controller, $module, 
+            $params, true);
     }
 }

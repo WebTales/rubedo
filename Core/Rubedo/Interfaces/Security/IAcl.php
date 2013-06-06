@@ -30,25 +30,22 @@ interface IAcl
     /**
      * Check if the current user has access to a given resource for a given access mode
      *
-     * @param string $resource
-     *            resource name
+     * @param string $resource resource name
      * @return boolean
      */
-    public function hasAccess ($resource);
+    public function hasAccess($resource);
+	
+	/**
+	 * For a given list of ressource, build an array of authorized ressources
+	 * @param array $ressourceArray array of ressources
+	 * @return array the array of boolean with ressource as key name
+	 */
+	public function accessList(array $ressourceArray);
+	
+	/**
+	 * List availaible roles for groups configuration
+	 * @return array
+	 */
+	public function getAvailaibleRoles();
 
-    /**
-     * For a given list of ressource, build an array of authorized ressources
-     * 
-     * @param array $ressourceArray
-     *            array of ressources
-     * @return array the array of boolean with ressource as key name
-     */
-    public function accessList (array $ressourceArray);
-
-    /**
-     * List availaible roles for groups configuration
-     * 
-     * @return array
-     */
-    public function getAvailaibleRoles ();
 }

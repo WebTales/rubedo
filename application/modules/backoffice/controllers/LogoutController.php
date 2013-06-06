@@ -29,8 +29,7 @@ class Backoffice_LogoutController extends Zend_Controller_Action
     /**
      * Variable for Authentication service
      *
-     * @param
-     *            Rubedo\Interfaces\User\IAuthentication
+     * @param Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
 

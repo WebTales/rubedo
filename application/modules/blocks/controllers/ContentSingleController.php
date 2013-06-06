@@ -27,7 +27,7 @@ require_once ('AbstractController.php');
  */
 class Blocks_ContentSingleController extends Blocks_AbstractController
 {
-
+	
     /**
      * Default Action, return the Ext/Js HTML loader
      */
@@ -37,7 +37,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $this->_typeReader = Manager::getService('ContentTypes');
         
         $blockConfig = $this->getRequest()->getParam('block-config');
-        $output["blockConfig"] = $blockConfig;
+        $output["blockConfig"]=$blockConfig;
         
         $mongoId = $this->getRequest()->getParam('content-id');
         if (isset($output["blockConfig"]["contentId"])) {
@@ -52,7 +52,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             if (isset($content['taxonomy'])) {
                 if (is_array($content['taxonomy'])) {
                     foreach ($content['taxonomy'] as $key => $terms) {
-                        if ($key == 'navigation') {
+                        if($key == 'navigation'){
                             continue;
                         }
                         foreach ($terms as $term) {
@@ -70,124 +70,121 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
-            $multiValuedArray = array();
+            $multiValuedArray=array();
             $CKEConfigArray = array();
             $contentTitlesArray = array();
             $output = $this->getAllParams();
             foreach ($type["fields"] as $value) {
-                
+            	
                 $cTypeArray[$value['config']['name']] = $value;
-                if ($value["cType"] == "DCEField") {
-                    if (is_array($data[$value['config']['name']])) {
-                        $contentTitlesArray[$value['config']['name']] = array();
-                        foreach ($data[$value['config']['name']] as $intermedValue) {
-                            $intermedContent = $this->_dataReader->findById($intermedValue, true, false);
-                            $contentTitlesArray[$value['config']['name']][] = $intermedContent['text'];
+                if($value["cType"] == "DCEField"){
+                	if (is_array($data[$value['config']['name']])){
+                		$contentTitlesArray[$value['config']['name']]=array();
+                		foreach($data[$value['config']['name']] as $intermedValue){
+                			$intermedContent =$this->_dataReader->findById($intermedValue, true, false);
+                			$contentTitlesArray[$value['config']['name']][]=$intermedContent['text'];
+                		}
+                	} else {
+	                	$intermedContent =$this->_dataReader->findById($data[$value['config']['name']], true, false);
+	                	$contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
+                	}
+                } else if($value["cType"] == "CKEField"){
+                    $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
+                } else if ($value["cType"] == "externalMediaField"){
+                    $mediaConfig = $data[$value["config"]["name"]];
+                    
+                    if(isset($mediaConfig['url'])) {
+                    
+                        $oembedParams['url'] = $mediaConfig['url'];
+                    
+                        $cache = Rubedo\Services\Cache::getCache('oembed');
+                    
+                        $options = array();
+                        	
+                        if(isset($mediaConfig['maxWidth']) && is_integer($mediaConfig['minHeight'])){
+                            $oembedParams['maxWidth'] = $mediaConfig['maxWidth'];
+                            $options['maxWidth'] = $mediaConfig['maxWidth'];
+                        } else {
+                            $oembedParams['maxWidth'] = 0;
                         }
-                    } else {
-                        $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
-                        $contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
-                    }
-                } else 
-                    if ($value["cType"] == "CKEField") {
-                        $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
-                    } else 
-                        if ($value["cType"] == "externalMediaField") {
-                            $mediaConfig = $data[$value["config"]["name"]];
-                            
-                            if (isset($mediaConfig['url'])) {
-                                
-                                $oembedParams['url'] = $mediaConfig['url'];
-                                
-                                $cache = Rubedo\Services\Cache::getCache('oembed');
-                                
-                                $options = array();
-                                
-                                if (isset($mediaConfig['maxWidth']) && is_integer($mediaConfig['minHeight'])) {
-                                    $oembedParams['maxWidth'] = $mediaConfig['maxWidth'];
-                                    $options['maxWidth'] = $mediaConfig['maxWidth'];
+                        	
+                        if(isset($mediaConfig['maxHeight']) && is_integer($mediaConfig['maxHeight'])){
+                            $oembedParams['maxHeight'] = $mediaConfig['maxHeight'];
+                            $options['maxHeight'] = $mediaConfig['maxHeight'];
+                        } else {
+                            $oembedParams['maxHeight'] = 0;
+                        }
+                    
+                        $cacheKey = 'oembed_item_'.md5(serialize($oembedParams));
+                        	
+                        if (!($item = $cache->load($cacheKey))) {
+                            $response = OEmbed\Simple::request($oembedParams['url'], $options);
+
+                            $item['width'] = $oembedParams['maxWidth'];
+                            $item['height'] = $oembedParams['maxHeight'];
+                            if($response){
+                                if (!stristr($oembedParams['url'],'www.flickr.com')) {
+                                    $item['html'] = $response->getHtml();
                                 } else {
-                                    $oembedParams['maxWidth'] = 0;
-                                }
-                                
-                                if (isset($mediaConfig['maxHeight']) && is_integer($mediaConfig['maxHeight'])) {
-                                    $oembedParams['maxHeight'] = $mediaConfig['maxHeight'];
-                                    $options['maxHeight'] = $mediaConfig['maxHeight'];
-                                } else {
-                                    $oembedParams['maxHeight'] = 0;
-                                }
-                                
-                                $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
-                                
-                                if (! ($item = $cache->load($cacheKey))) {
-                                    $response = OEmbed\Simple::request($oembedParams['url'], $options);
-                                    
-                                    $item['width'] = $oembedParams['maxWidth'];
-                                    $item['height'] = $oembedParams['maxHeight'];
-                                    if ($response) {
-                                        if (! stristr($oembedParams['url'], 'www.flickr.com')) {
-                                            $item['html'] = $response->getHtml();
-                                        } else {
-                                            $raw = $response->getRaw();
-                                            if ($oembedParams['maxWidth'] > 0) {
-                                                $width_ratio = $raw->width / $oembedParams['maxWidth'];
-                                            } else {
-                                                $width_ratio = 1;
-                                            }
-                                            if ($oembedParams['maxHeight'] > 0) {
-                                                $height_ratio = $raw->height / $oembedParams['maxHeight'];
-                                            } else {
-                                                $height_ratio = 1;
-                                            }
-                                            
-                                            $size = "";
-                                            if ($width_ratio > $height_ratio) {
-                                                $size = "width='" . $oembedParams['maxWidth'] . "'";
-                                            }
-                                            if ($width_ratio < $height_ratio) {
-                                                $size = "height='" . $oembedParams['maxHeight'] . "'";
-                                            }
-                                            $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
-                                        }
-                                        
-                                        $cache->save($item, $cacheKey, array(
-                                            'oembed'
-                                        ));
+                                    $raw= $response->getRaw();
+                                    if ($oembedParams['maxWidth'] > 0) {
+                                        $width_ratio = $raw->width / $oembedParams['maxWidth'];
                                     } else {
-                                        $item["html"] = "<div class=\"alert alert-error\">Le média éxterne n'a pas pu être chargé</div>";
+                                        $width_ratio = 1;
                                     }
+                                    if ($oembedParams['maxHeight'] > 0) {
+                                        $height_ratio = $raw->height / $oembedParams['maxHeight'];
+                                    } else {
+                                        $height_ratio = 1;
+                                    }
+                                    	
+                                    $size="";
+                                    if ($width_ratio>$height_ratio) {
+                                        $size = "width='".$oembedParams['maxWidth']."'";
+                                    }
+                                    if ($width_ratio<$height_ratio) {
+                                        $size = "height='".$oembedParams['maxHeight']."'";
+                                    }
+                                    $item['html'] = "<img src='".$raw->url."' ".$size."' title='".$raw->title."'>";
                                 }
-                                
-                                $output['item'] = $item;
+                        
+                                $cache->save($item, $cacheKey,array('oembed'));
+                            } else {
+                                $item["html"] = "<div class=\"alert alert-error\">Le média éxterne n'a pas pu être chargé</div>";
                             }
+                            	
                         }
+                    
+                        $output['item'] = $item;
+                    }
+                }
             }
             
             $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
             $templateName .= ".html.twig";
             $output["data"] = $data;
-            $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
+            $output['activateDisqus']=isset($type['activateDisqus']) ? $type['activateDisqus'] : false ;
             $output["type"] = $cTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
             $output["contentTitles"] = $contentTitlesArray;
             
-            $js = array(
-                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
+            $js = array('/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
                 '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
                 '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
-                '/components/jquery/timepicker/jquery.ui.timepicker.js'
+                '/components/jquery/timepicker/jquery.ui.timepicker.js',
             );
             
-            if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
-                $template = $frontOfficeTemplatesService->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+            if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
+            	$template = $frontOfficeTemplatesService->getFileThemePath(
+            			"blocks/" . $blockConfig['displayType'] . ".html.twig");
             } else {
-                $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/" . $templateName);
-                
-                if (! is_file($frontOfficeTemplatesService->getTemplateDir() . '/' . $template)) {
-                    $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/default.html.twig");
-                }
+	            $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/" . $templateName);
+	            
+	            if (! is_file($frontOfficeTemplatesService->getTemplateDir() . '/' . $template)) {
+	            	$template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/default.html.twig");
+	            }
             }
         } else {
             $output = array();
@@ -195,9 +192,8 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $js = array();
         }
         
-        $css = array(
-            "/components/jquery/timepicker/jquery.ui.timepicker.css",
-            "/components/jquery/jqueryui/themes/base/jquery-ui.css"
+        $css = array(   "/components/jquery/timepicker/jquery.ui.timepicker.css",
+                        "/components/jquery/jqueryui/themes/base/jquery-ui.css",
         );
         
         $this->_sendResponse($output, $template, $css, $js);

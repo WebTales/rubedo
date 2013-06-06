@@ -32,7 +32,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // get search parameters
         $params = $this->getRequest()->getParams();
-        
+
         $params['pagesize'] = $this->getParam('pagesize', 10);
         $params['pager'] = $this->getParam('pager', 0);
         
@@ -47,12 +47,13 @@ class Blocks_SearchController extends Blocks_AbstractController
         $facetsToHide = array();
         if (isset($params['block-config']['predefinedFacets'])) {
             $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
-            if (is_array($predefParamsArray)) {
-                foreach ($predefParamsArray as $key => $value) {
-                    $params[$key] = $value;
-                    $facetsToHide[] = $key;
-                }
+            if (is_array($predefParamsArray)){
+            foreach ($predefParamsArray as $key => $value) {
+                $params[$key] = $value;
+                $facetsToHide[] = $key;
             }
+            }
+            
         }
         
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);

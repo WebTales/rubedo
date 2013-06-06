@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IDamTypes extends IAbstractCollection
-{
+interface IDamTypes extends IAbstractCollection{
+	
 }

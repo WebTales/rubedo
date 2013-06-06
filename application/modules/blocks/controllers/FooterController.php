@@ -14,11 +14,12 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractController.php');
-
 /**
+ *
  *
  * @author jbourdin
  * @category Rubedo
@@ -30,16 +31,16 @@ class Blocks_FooterController extends Blocks_AbstractController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction ()
-    {
+    public function indexAction() {
         $output = $this->getAllParams();
         $output["items"] = null;
-        
-        // $template = manager::getService('template')->findTemplateFileFor('carrousel');
+
+		//$template =  manager::getService('template')->findTemplateFileFor('carrousel');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/footer.html.twig");
-        
+
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
+
 }

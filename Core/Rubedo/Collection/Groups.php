@@ -48,7 +48,8 @@ class Groups extends AbstractCollection implements IGroups
                 'members' => 1
             )
         )
-    );
+    )
+    ;
 
     public function __construct ()
     {
@@ -58,7 +59,7 @@ class Groups extends AbstractCollection implements IGroups
 
     /**
      * Only access to groups with read access
-     *
+     * 
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init ()

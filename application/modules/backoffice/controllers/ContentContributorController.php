@@ -16,7 +16,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
-
 /**
  * Controller for handling FO contributions
  *
@@ -39,15 +38,17 @@ class Backoffice_ContentContributorController extends Zend_Controller_Action
         $extjsOptions = Zend_Registry::get('extjs');
         
         if (isset($extjsOptions['network']) && $extjsOptions['network'] == 'cdn') {
-            $this->view->extJsPath = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
+            $this->view->extJsPath = 'http://cdn.sencha.com/ext-' .
+                     $extjsOptions['version'] . '-gpl';
         } else {
-            $this->view->extJsPath = $this->view->baseUrl() . '/components/sencha/extjs';
+            $this->view->extJsPath = $this->view->baseUrl() .
+                     '/components/sencha/extjs';
         }
-        // setting user language for loading proper extjs locale file
-        $this->view->userLang = 'en'; // default value
-        $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
-        if (! empty($currentUserLanguage)) {
-            $this->view->userLang = $currentUserLanguage;
+		 //setting user language for loading proper extjs locale file
+        $this->view->userLang='en'; //default value
+        $currentUserLanguage=Manager::getService('CurrentUser')->getLanguage();
+        if (!empty($currentUserLanguage)){
+        	$this->view->userLang=$currentUserLanguage;
         }
         
         if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {

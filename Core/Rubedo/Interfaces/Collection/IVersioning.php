@@ -24,8 +24,8 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IVersioning extends IAbstractCollection
-{
-
-    public function addVersion ($obj);
+interface IVersioning extends IAbstractCollection{
+	
+	public function addVersion($obj);
+	
 }

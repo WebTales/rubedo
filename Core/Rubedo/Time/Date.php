@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Time;
-
 use Rubedo\Services\Manager, Rubedo\Interfaces\Time\IDate, DateTime, DateInterval, IntlDateFormatter;
 
 /**
@@ -35,7 +34,7 @@ class Date implements IDate
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Interfaces\Time\IDate::convertToTimeStamp()
      */
     public function convertToTimeStamp ($dateString)
@@ -43,24 +42,22 @@ class Date implements IDate
         $date = new DateTime($dateString);
         return $date->getTimestamp();
     }
-
-    public function convertToYmd ($dateString)
+    public function convertToYmd($dateString)
     {
-        $date = new DateTime();
-        $date->setTimestamp($dateString);
-        return $date->format('Y-m-d');
+    	$date=new DateTime();
+    	$date->setTimestamp($dateString);
+    	return $date->format('Y-m-d');
     }
-
-    public function convertToHis ($dateString)
+    public function convertToHis($dateString)
     {
-        $date = new DateTime($dateString);
-        $date = date("H:i:s");
-        return $date;
+    	$date = new DateTime($dateString);
+    	$date=date("H:i:s");
+    	return $date;
     }
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Interfaces\Time\IDate::getMonthArray()
      */
     public function getMonthArray ($timestamp = null)
@@ -77,7 +74,8 @@ class Date implements IDate
         // define the first day to display based on the first day of the month
         // and it position in the week
         $firstDayOfMonthTimeStamp = mktime(0, 0, 0, $month, 1, $year);
-        $firstDayOfMonthInWeek = date($dayOfWeekFormat, $firstDayOfMonthTimeStamp);
+        $firstDayOfMonthInWeek = date($dayOfWeekFormat, 
+                $firstDayOfMonthTimeStamp);
         $firstDay = new DateTime();
         $firstDay->setTimestamp($firstDayOfMonthTimeStamp);
         if ($this->_sundayIsFirst()) {
@@ -91,7 +89,8 @@ class Date implements IDate
         // define the last day to display based on the last day of the month and
         // it position in the week
         $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
-        $lastDayOfMonthTimeStamp = mktime(0, 0, 0, $month, $days_in_month, $year);
+        $lastDayOfMonthTimeStamp = mktime(0, 0, 0, $month, $days_in_month, 
+                $year);
         $lastDayOfMonthInWeek = date($dayOfWeekFormat, $lastDayOfMonthTimeStamp);
         $lastDay = new DateTime();
         $lastDay->setTimestamp($lastDayOfMonthTimeStamp);
@@ -111,8 +110,9 @@ class Date implements IDate
         $currentWeek = 1;
         $previous = 0;
         // iterate day by day up to the last day of the month
-        while ((($iterateTimestamp = $dayIterator->getTimestamp()) <= $finalTimestamp) && ($max < 45)) {
-            $max ++;
+        while ((($iterateTimestamp = $dayIterator->getTimestamp()) <=
+                 $finalTimestamp) && ($max < 45)) {
+                    $max ++;
             $number = date('d', $iterateTimestamp);
             $dayOfWeek = date($dayOfWeekFormat, $iterateTimestamp);
             $inMonth = (date('m', $iterateTimestamp) == $month);
@@ -120,39 +120,38 @@ class Date implements IDate
                 $currentWeek ++;
             }
             $returnArray[$currentWeek][$dayOfWeek] = array(
-                'value' => $number,
-                'inMonth' => $inMonth
+                    'value' => $number,
+                    'inMonth' => $inMonth
             );
             $previous = $dayOfWeek;
             $dayIterator->add($aDay);
         }
         return $returnArray;
     }
-
-    protected function _sundayIsFirst ()
-    {
-        if (! isset(self::$_startOnSunday)) {
+    
+    protected function _sundayIsFirst(){
+        if(!isset(self::$_startOnSunday)){
             $lastSunday = $this->convertToTimeStamp('last sunday');
-            $number = $this->getLocalised('e', $lastSunday);
+            $number = $this->getLocalised('e',$lastSunday);
             self::$_startOnSunday = $number == '1';
         }
-        return self::$_startOnSunday;
+        return self::$_startOnSunday;        
     }
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Interfaces\Time\IDate::getShortDayList()
      */
     public function getShortDayList ()
     {
         $daysOfWeek = array(
-            1 => 'Monday',
-            2 => 'Tuesday',
-            3 => 'Wednesday',
-            4 => 'Thursday',
-            5 => 'Friday',
-            6 => 'Saturday'
+                1 => 'Monday',
+                2 => 'Tuesday',
+                3 => 'Wednesday',
+                4 => 'Thursday',
+                5 => 'Friday',
+                6 => 'Saturday'
         );
         if ($this->_sundayIsFirst()) {
             $daysOfWeek[0] = 'Sunday';
@@ -161,7 +160,8 @@ class Date implements IDate
         }
         foreach ($daysOfWeek as $key => $day) {
             $dayDateTime = new DateTime("last $day");
-            $nameArray[$key] = $this->getLocalised('EEEEE', $dayDateTime->getTimestamp());
+            $nameArray[$key] = $this->getLocalised('EEEEE', 
+                    $dayDateTime->getTimestamp());
         }
         ksort($nameArray);
         return $nameArray;
@@ -169,7 +169,7 @@ class Date implements IDate
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Interfaces\Time\IDate::getLocalised()
      */
     public function getLocalised ($format = null, $timestamp = null)
@@ -178,7 +178,8 @@ class Date implements IDate
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
         
-        $formatter = new IntlDateFormatter($this->_getLang(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        $formatter = new IntlDateFormatter($this->_getLang(), 
+                IntlDateFormatter::FULL, IntlDateFormatter::NONE);
         if ($format) {
             $formatter->setPattern($format);
         }
@@ -186,7 +187,7 @@ class Date implements IDate
         $date->setTimestamp($timestamp);
         return $formatter->format($date);
     }
-
+    
     /**
      * (non-PHPdoc)
      *
@@ -197,8 +198,9 @@ class Date implements IDate
         if (! $timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        
-        $formatter = new IntlDateFormatter($this->_getLang(), IntlDateFormatter::FULL, IntlDateFormatter::SHORT);
+    
+        $formatter = new IntlDateFormatter($this->_getLang(),
+            IntlDateFormatter::FULL, IntlDateFormatter::SHORT);
         $date = new \DateTime();
         $date->setTimestamp($timestamp);
         return $formatter->format($date);

@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+Use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 require_once ('ContentListController.php');
 
@@ -34,7 +34,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $output = $this->_getList();
         $blockConfig = $this->getRequest()->getParam('block-config');
         
-        if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
@@ -69,11 +69,11 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $year = intval($year);
         $date = (string) $month . '-' . (string) $year;
         
-        $timestamp = (string) mktime(0, 0, 0, $month, 1, $year); // cast to string as date are stored as text in DB
+        $timestamp = (string) mktime(0, 0, 0, $month, 1, $year); //cast to string as date are stored as text in DB
         $nextMonth = new DateTime();
         $nextMonth->setTimestamp($timestamp);
         $nextMonth->add(new DateInterval('P1M'));
-        $nextMonthTimeStamp = (string) $nextMonth->getTimestamp(); // cast to string as date are stored as text in DB
+        $nextMonthTimeStamp = (string) $nextMonth->getTimestamp(); //cast to string as date are stored as text in DB
         
         $queryId = $this->getParam('query-id', $blockConfig['query']);
         $data = array();
@@ -89,50 +89,45 @@ class Blocks_CalendarController extends Blocks_ContentListController
                 '$lt' => "$nextMonthTimeStamp"
             );
             
-            $dateFilter = Filter::Factory('And')->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)
-                ->setOperator('$gte')
-                ->setValue($timestamp))
-                ->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)
-                ->setOperator('$lt')
-                ->setValue($nextMonthTimeStamp));
+            $dateFilter = Filter::Factory('And')
+                          ->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)->setOperator('$gte')->setValue($timestamp))
+                          ->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)->setOperator('$lt')->setValue($nextMonthTimeStamp));
             
             $queryFilter['filter']->addFilter($dateFilter);
+            
             
             $queryId = $this->getParam('query-id', $blockConfig['query']);
             
             $query = $this->_queryReader->getQueryById($queryId);
             
-            if ($queryType === "manual" && $query != false && isset($query['query']) && is_array($query['query'])) {
-                $contentOrder = $query['query'];
-                $keyOrder = array();
-                $contentArray = array();
-                $contentArray['data'] = array();
-                
-                // getList
-                $unorderedContentArray = $this->getContentList($queryFilter, array(
-                    'limit' => 100,
-                    'currentPage' => 1,
-                    'skip' => 0
-                ));
-                
-                foreach ($contentOrder as $value) {
-                    foreach ($unorderedContentArray['data'] as $subKey => $subValue) {
-                        if ($value === $subValue['id']) {
-                            $keyOrder[] = $subKey;
-                        }
-                    }
-                }
-                
-                foreach ($keyOrder as $key => $value) {
-                    $contentArray["data"][] = $unorderedContentArray["data"][$value];
-                }
+            if($queryType === "manual" && $query != false && isset($query['query']) && is_array($query['query'])) {
+            	$contentOrder = $query['query'];
+            	$keyOrder = array();
+            	$contentArray = array();
+            	$contentArray['data'] = array();
+            
+            	// getList
+				$unorderedContentArray = $this->getContentList($queryFilter, array('limit' => 100, 'currentPage' => 1,'skip' => 0));
+
+				foreach ($contentOrder as $value){
+            		foreach ($unorderedContentArray['data'] as $subKey => $subValue){
+            			if ($value === $subValue['id']){
+            				$keyOrder[] = $subKey;
+            			}
+            		}
+            	}
+            	 
+            	foreach ($keyOrder as $key => $value) {
+            		$contentArray["data"][] = $unorderedContentArray["data"][$value];
+            	}
             } else {
-                
-                $contentArray = $this->getContentList($queryFilter, array(
-                    'limit' => 100,
-                    'currentPage' => 1,
-                    'skip' => 0
-                ));
+               
+                $contentArray = $this->getContentList($queryFilter, 
+                        array(
+                                'limit' => 100,
+                                'currentPage' => 1,
+                                'skip' => 0
+                        ));
             }
             
             foreach ($contentArray['data'] as $vignette) {

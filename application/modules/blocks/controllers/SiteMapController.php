@@ -26,7 +26,7 @@ require_once ('AbstractController.php');
  */
 class Blocks_SiteMapController extends Blocks_AbstractController
 {
-
+    
     protected $_defaultTemplate = 'sitemap';
 
     /**
@@ -44,18 +44,16 @@ class Blocks_SiteMapController extends Blocks_AbstractController
         $output['blockTitle'] = $params['blockTitle'];
         
         $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(true);
-        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'], $filters);
+        $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'],$filters);
         
         $rootPage = Manager::getService('Pages')->findById($output['rootPage']);
         
         $output['pages'] = array();
         
         $output['pages'][] = array(
-            "url" => $this->_helper->url->url(array(
-                'pageId' => $rootPage['id']
-            ), null, true),
-            "title" => $rootPage["title"],
-            "id" => $rootPage["id"]
+            "url"      => $this->_helper->url->url(array('pageId' => $rootPage['id']), null, true),
+            "title"    => $rootPage["title"],
+            "id"       => $rootPage["id"],
         );
         
         foreach ($levelOnePages as $page) {
@@ -67,30 +65,27 @@ class Blocks_SiteMapController extends Blocks_AbstractController
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
             
-            $levelTwoPages = Manager::getService('Pages')->readChild($page['id'], $filters);
+            $levelTwoPages = Manager::getService('Pages')->readChild($page['id'],$filters);
             if (count($levelTwoPages)) {
                 $this->_getPages($tempArray, $levelTwoPages);
             }
-            
+        
             $output['pages'][0]["pages"][] = $tempArray;
         }
         
-        if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/".$this->_defaultTemplate.".html.twig");
         }
         
         $css = array();
-        $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/tree.js")
-        );
+        $js = array('/templates/'.Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/tree.js"));
         
         $this->_sendResponse($output, $template, $css, $js);
     }
-
-    protected function _getPages (&$page, $childs)
-    {
+    
+    protected function _getPages(&$page, $childs) {
         $page['pages'] = array();
         
         foreach ($childs as $subPage) {
@@ -102,7 +97,7 @@ class Blocks_SiteMapController extends Blocks_AbstractController
             $tempSubArray['id'] = $subPage['id'];
             
             $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(false);
-            $pageChilds = Manager::getService('Pages')->readChild($subPage['id'], $filters);
+            $pageChilds = Manager::getService('Pages')->readChild($subPage['id'],$filters);
             if (count($pageChilds)) {
                 $this->_getPages($tempSubArray, $pageChilds);
             }

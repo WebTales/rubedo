@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\User;
-
 use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager, Rubedo\Collection\AbstractCollection;
 
 /**
@@ -53,19 +52,15 @@ class CurrentUser implements ICurrentUser
      * @var array
      */
     protected static $_groups = null;
-
+    
     protected static $_readWorkspaces = null;
-
+    
     protected static $_mainWorkspace = null;
-
+    
     protected static $_writeWorkspaces = null;
-
-    protected static $_rubedoUser = array(
-        'fullName' => 'Rubedo',
-        'id' => 'rubedo',
-        'login' => 'rubedo'
-    );
-
+    
+    protected static $_rubedoUser = array('fullName'=>'Rubedo','id'=>'rubedo','login'=>'rubedo');
+    
     protected static $_isInstallerUser = false;
 
     /**
@@ -102,14 +97,14 @@ class CurrentUser implements ICurrentUser
      */
     public function getCurrentUserSummary ()
     {
-        if (self::$_isInstallerUser) {
+        if(self::$_isInstallerUser){
             return self::$_rubedoUser;
         }
         $userInfos = $this->getCurrentUser();
         return array(
-            'id' => $userInfos['id'],
-            'login' => $userInfos['login'],
-            'fullName' => $userInfos['name']
+                'id' => $userInfos['id'],
+                'login' => $userInfos['login'],
+                'fullName' => $userInfos['name']
         );
     }
 
@@ -152,20 +147,21 @@ class CurrentUser implements ICurrentUser
             $user = $this->getCurrentUser();
             if (is_null($user)) {
                 return array(
-                    Manager::getService('Groups')->getPublicGroup()
+                        Manager::getService('Groups')->getPublicGroup()
                 );
             }
             if (isset($user['id'])) {
-                $groupsArray = Manager::getService('Groups')->getListByUserId($user['id']);
+                $groupsArray = Manager::getService('Groups')->getListByUserId(
+                        $user['id']);
             } else {
                 $groupsArray = array(
-                    'data' => array()
+                        'data' => array()
                 );
             }
             
             if (count($groupsArray['data']) == 0) {
                 return array(
-                    Manager::getService('Groups')->getPublicGroup()
+                        Manager::getService('Groups')->getPublicGroup()
                 );
             }
             self::$_groups = $groupsArray['data'];
@@ -203,7 +199,8 @@ class CurrentUser implements ICurrentUser
         $serviceAuth = Manager::getService('Authentication');
         if ($serviceAuth->forceReAuth($user['login'], $oldPass)) {
             $serviceUser = Manager::getService('Users');
-            return $serviceUser->changePassword($newPass, $user['version'], $user['id']);
+            return $serviceUser->changePassword($newPass, $user['version'], 
+                    $user['id']);
         } else {
             throw new \Rubedo\Exceptions\User('Bad initial password', "Exception77");
         }
@@ -222,7 +219,8 @@ class CurrentUser implements ICurrentUser
         $user = $sessionService->get('user');
         
         $token = $hashService->generateRandomString(20);
-        $user['token'] = $hashService->derivatePassword($token, $hashService->generateRandomString(10));
+        $user['token'] = $hashService->derivatePassword($token, 
+                $hashService->generateRandomString(10));
         $sessionService->set('user', $user);
         
         return $user['token'];
@@ -253,19 +251,27 @@ class CurrentUser implements ICurrentUser
      */
     public function getReadWorkspaces ()
     {
-        if (! isset(self::$_readWorkspaces)) {
+        if(!isset(self::$_readWorkspaces)){
             $wasFiltered = AbstractCollection::disableUserFilter();
             $groupArray = $this->getGroups();
             $workspaceArray = array();
             
             foreach ($groupArray as $group) {
-                $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id'])));
-                $workspaceArray = array_merge($workspaceArray, array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']))));
+                $workspaceArray = array_unique(
+                        array_merge($workspaceArray,
+                                Manager::getService('Groups')->getReadWorkspaces(
+                                        $group['id'])));
+                $workspaceArray = array_merge($workspaceArray,
+                        array_unique(
+                                array_merge($workspaceArray,
+                                        Manager::getService('Groups')->getWriteWorkspaces(
+                                                $group['id']))));
             }
             self::$_readWorkspaces = array_unique($workspaceArray);
             AbstractCollection::disableUserFilter($wasFiltered);
         }
         return self::$_readWorkspaces;
+        
     }
 
     /**
@@ -275,7 +281,7 @@ class CurrentUser implements ICurrentUser
      */
     public function getMainWorkspace ()
     {
-        if (! isset(self::$_mainWorkspace)) {
+        if(!isset(self::$_mainWorkspace)){
             $mainGroup = $this->getMainGroup();
             if ($mainGroup == null) {
                 return Manager::getService('Workspaces')->findById('global');
@@ -283,14 +289,15 @@ class CurrentUser implements ICurrentUser
             self::$_mainWorkspace = Manager::getService('Groups')->getMainWorkspace($mainGroup);
         }
         return self::$_mainWorkspace;
+        
+        
     }
-
-    public function getMainWorkspaceId ()
-    {
+    
+    public function getMainWorkspaceId(){
         $workspace = $this->getMainWorkspace();
-        if ($workspace) {
+        if($workspace){
             return $workspace['id'];
-        } else {
+        }else{
             return 'global';
         }
     }
@@ -302,12 +309,15 @@ class CurrentUser implements ICurrentUser
      */
     public function getWriteWorkspaces ()
     {
-        if (! isset(self::$_writeWorkspaces)) {
+        if(!isset(self::$_writeWorkspaces)){
             $groupArray = $this->getGroups();
             $workspaceArray = array();
             
             foreach ($groupArray as $group) {
-                $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id'])));
+                $workspaceArray = array_unique(
+                        array_merge($workspaceArray,
+                                Manager::getService('Groups')->getWriteWorkspaces(
+                                        $group['id'])));
             }
             if (in_array('all', $workspaceArray)) {
                 $workspaceArray = array();
@@ -320,27 +330,28 @@ class CurrentUser implements ICurrentUser
             self::$_writeWorkspaces = $workspaceArray;
         }
         return self::$_writeWorkspaces;
+        
     }
+    
 
-    /**
-     *
-     * @param boolean $_isInstallerUser            
+	/**
+     * @param boolean $_isInstallerUser
      */
     public static function setIsInstallerUser ($_isInstallerUser)
     {
         CurrentUser::$_isInstallerUser = $_isInstallerUser;
     }
 
-    public function getLanguage ()
-    {
-        $user = $this->getCurrentUser();
-        
-        if (isset($user) && isset($user['language']) && ! empty($user['language'])) {
-            $lang = $user['language'];
-        } else {
-            $lang = 'en';
-        }
+    public function getLanguage(){
+       $user = $this->getCurrentUser();
+       
+       if(isset($user) && isset($user['language']) && !empty($user['language'])){
+           $lang = $user['language'];
+       }else{
+           $lang = 'en';
+       }
         
         return $lang;
     }
+    
 }

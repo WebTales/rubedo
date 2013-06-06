@@ -24,68 +24,58 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface ITaxonomyTerms extends IAbstractCollection
-{
+interface ITaxonomyTerms extends IAbstractCollection{
 
-    /**
-     * Allow to delete terms by their vocabulary
+	    /**
+     *  Allow to delete terms by their vocabulary
      *
-     * @param string $id
-     *            id of the vocabulary
-     *            
-     * @return array
+	 * @param string $id id of the vocabulary
+	 *
+     * @return array 
      */
-    public function deleteByVocabularyId ($id);
+	public function deleteByVocabularyId($id);
 
-    /**
+	/**
      * Delete objects in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::destroy
-     * @param array $obj
-     *            data object
-     * @param bool $options
-     *            should we wait for a server response
+     * @param array $obj data object
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array());
+    public function destroy(array $obj, $options = array());
+	
+	/**
+	 * Allow to find a term by its id
+	 * 
+	 * @param string $id id of the term
+	 * @return array Contain the term
+	 */
+	public function getTerm($id);
+	
+	/**
+	 * Clear orphan terms in the collection
+	 * 
+	 * @return array Result of the request
+	 */
+	public function clearOrphanTerms();
+	
+	/**
+	 * Allow to find terms by their vocabulary
+	 * 
+	 * @param string $vocabularyId Contain the id of the vocabulary
+	 * @return array Contain the terms associated to the vocabulary given in parameter
+	 */
+	public function findByVocabulary($vocabularyId);
+	/**
+	 * Allow to find term by vocabularyId and name
+	 *
+	 * @param string $vocabularyId Contain the id of the vocabulary
+	 * @param string $name Contain the name of the term
+	 * @return array Contain the terms associated to the vocabulary given in parameter
+	 */
+	public function findByVocabularyIdAndName($vocabularyId,$name);
 
-    /**
-     * Allow to find a term by its id
-     *
-     * @param string $id
-     *            id of the term
-     * @return array Contain the term
-     */
-    public function getTerm ($id);
-
-    /**
-     * Clear orphan terms in the collection
-     *
-     * @return array Result of the request
-     */
-    public function clearOrphanTerms ();
-
-    /**
-     * Allow to find terms by their vocabulary
-     *
-     * @param string $vocabularyId
-     *            Contain the id of the vocabulary
-     * @return array Contain the terms associated to the vocabulary given in parameter
-     */
-    public function findByVocabulary ($vocabularyId);
-
-    /**
-     * Allow to find term by vocabularyId and name
-     *
-     * @param string $vocabularyId
-     *            Contain the id of the vocabulary
-     * @param string $name
-     *            Contain the name of the term
-     * @return array Contain the terms associated to the vocabulary given in parameter
-     */
-    public function findByVocabularyIdAndName ($vocabularyId, $name);
-
-    public function countOrphanTerms ();
-
-    public function getNavigationTree ($withCurrentPage = false);
+	public function countOrphanTerms ();
+	public function getNavigationTree ($withCurrentPage = false);
 }

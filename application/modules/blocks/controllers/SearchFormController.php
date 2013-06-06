@@ -33,23 +33,25 @@ class Blocks_SearchFormController extends Blocks_AbstractController
     public function indexAction ()
     {
         // get block config
-        $blockConfig = $this->getParam('block-config', array());
-        
+		$blockConfig = $this->getParam('block-config', array());
+		
         if (isset($blockConfig['searchPage'])) {
             $searchPage = $blockConfig['searchPage'];
         } else {
             $searchPage = null;
-        }
+        }		
         
+        
+		
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/searchForm.html.twig");
         
         $css = array();
         $js = array();
         
         $output = $this->getAllParams();
-        $output['searchPage'] = $searchPage;
-        $output['placeholder'] = isset($blockConfig['placeholder']) ? $blockConfig['placeholder'] : null;
-        
+		$output['searchPage'] = $searchPage;
+		$output['placeholder']=isset($blockConfig['placeholder'])?$blockConfig['placeholder']:null;
+		
         $this->_sendResponse($output, $template, $css, $js);
     }
 }

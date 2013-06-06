@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IForms extends IAbstractCollection
-{
+interface IForms extends IAbstractCollection{
+	
 }

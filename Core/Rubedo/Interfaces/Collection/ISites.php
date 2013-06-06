@@ -29,7 +29,7 @@ interface ISites extends IAbstractCollection
 
     /**
      * Return the host name of a site, given the ID or Site Array
-     *
+     * 
      * @param string|array $site
      *            site Array or Site ID
      * @return string hostName
@@ -38,11 +38,10 @@ interface ISites extends IAbstractCollection
 
     /**
      * Return site matching host part of the URL
-     *
+     * 
      * @param string $host            
      * @return array site data
      */
     public function findByHost ($host);
-
-    public function deleteById ($id);
+    public function deleteById($id);
 }

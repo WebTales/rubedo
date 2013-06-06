@@ -29,122 +29,106 @@ use Rubedo\Interfaces\User\IAuthentication;
  */
 class Authentication implements IAuthentication
 {
-
-    /**
-     * embed zend_auth
-     *
-     * @param
-     *            Zend_Auth
-     */
-    protected static $_zendAuth;
-
-    protected static $_authLifetime = 60;
-
-    /**
-     * Return the Zend_Auth object and instanciate it if it's necessary
-     *
-     * @return Zend_Auth object
-     */
-    protected function _getZendAuth ()
-    {
-        if (! isset(static::$_zendAuth)) {
-            static::$_zendAuth = \Zend_Auth::getInstance();
-        }
-        
-        return static::$_zendAuth;
+	/**
+	 * embed zend_auth
+	 * 
+	 * @param Zend_Auth
+	 */
+	static protected $_zendAuth;
+	
+	static protected $_authLifetime=60;
+	
+	/**
+	 * Return the Zend_Auth object and instanciate it if it's necessary
+	 * 
+	 * @return Zend_Auth object
+	 */
+	protected function _getZendAuth(){
+		if(!isset(static::$_zendAuth)){
+			static::$_zendAuth = \Zend_Auth::getInstance();
+		}
+		
+		return static::$_zendAuth;
+	}
+	
+	/**
+	 * Authenticate the user and set the session
+	 * 
+	 * @param $login It's the login of the user
+	 * @param $password It's the password of the user
+	 * 
+	 * @return bool
+	 */
+    public function authenticate($login, $password){
+    	$authAdapter = new \Rubedo\User\AuthAdapter($login,$password);
+		$result = $this->_getZendAuth()->authenticate($authAdapter);
+		if(!$result->isValid()){
+		    Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()) );
+		}
+    	return $result->isValid();
     }
-
-    /**
-     * Authenticate the user and set the session
-     *
-     * @param $login It's
-     *            the login of the user
-     * @param $password It's
-     *            the password of the user
-     *            
-     * @return bool
-     */
-    public function authenticate ($login, $password)
-    {
-        $authAdapter = new \Rubedo\User\AuthAdapter($login, $password);
-        $result = $this->_getZendAuth()->authenticate($authAdapter);
-        if (! $result->isValid()) {
-            Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
-        }
-        return $result->isValid();
+	
+	/**
+	 * Return the identity of the current user in session
+	 * 
+	 * @return array
+	 */
+	public function getIdentity(){
+    	return $this->_getZendAuth()->getIdentity();
     }
-
-    /**
-     * Return the identity of the current user in session
-     *
-     * @return array
-     */
-    public function getIdentity ()
-    {
-        return $this->_getZendAuth()->getIdentity();
+	
+	/**
+	 * Return true if there is a user connected
+	 * 
+	 * @return bool
+	 */
+	public function hasIdentity(){
+    	return $this->_getZendAuth()->hasIdentity();
     }
-
-    /**
-     * Return true if there is a user connected
-     *
-     * @return bool
-     */
-    public function hasIdentity ()
-    {
-        return $this->_getZendAuth()->hasIdentity();
+	
+	/**
+	 * Unset the session of the current user
+	 * 
+	 * @return bool
+	 */
+	public function clearIdentity(){
+    	return $this->_getZendAuth()->clearIdentity();
     }
-
-    /**
-     * Unset the session of the current user
-     *
-     * @return bool
-     */
-    public function clearIdentity ()
-    {
-        return $this->_getZendAuth()->clearIdentity();
+	
+	/**
+	 * Ask a reauthentification without changing the session
+	 * 
+	 * @param $login It's the login of the user
+	 * @param $password It's the password of the user
+	 * 
+	 * @return bool
+	 */
+	public function forceReAuth($login, $password){
+    	$authAdapter = new \Rubedo\User\AuthAdapter($login,$password);
+		$result = $authAdapter->authenticate($authAdapter);
+    	return $result->isValid();
     }
-
-    /**
-     * Ask a reauthentification without changing the session
-     *
-     * @param $login It's
-     *            the login of the user
-     * @param $password It's
-     *            the password of the user
-     *            
-     * @return bool
-     */
-    public function forceReAuth ($login, $password)
-    {
-        $authAdapter = new \Rubedo\User\AuthAdapter($login, $password);
-        $result = $authAdapter->authenticate($authAdapter);
-        return $result->isValid();
-    }
-
+    
     /**
      * (non-PHPdoc)
-     * 
      * @see \Rubedo\Interfaces\User\IAuthentication::resetExpirationTime()
      */
-    public function resetExpirationTime ()
-    {
+    public function resetExpirationTime(){
+        
         $namespace = new \Zend_Session_Namespace('Zend_Auth');
         $namespace->setExpirationSeconds(self::$_authLifetime);
     }
-
+    
     /**
      * (non-PHPdoc)
-     * 
      * @see \Rubedo\Interfaces\User\IAuthentication::getExpirationTime()
      */
-    public function getExpirationTime ()
-    {
+    public function getExpirationTime(){
         $namespace = new \Zend_Session_Namespace('Zend_Auth');
-        return (isset($_SESSION['__ZF']['Zend_Auth']['ENT'])) ? ($_SESSION['__ZF']['Zend_Auth']['ENT'] - time()) : 0;
+        return (isset($_SESSION['__ZF']['Zend_Auth']['ENT']))?($_SESSION['__ZF']['Zend_Auth']['ENT'] - time()):0;
     }
-
-    /**
-     *
+    
+	/**
      * @return the $_authLifetime
      */
     public static function getAuthLifetime ()
@@ -152,12 +136,13 @@ class Authentication implements IAuthentication
         return Authentication::$_authLifetime;
     }
 
-    /**
-     *
-     * @param number $_authLifetime            
+	/**
+     * @param number $_authLifetime
      */
     public static function setAuthLifetime ($_authLifetime)
     {
         Authentication::$_authLifetime = $_authLifetime;
     }
+
+    
 }

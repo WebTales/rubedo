@@ -111,7 +111,6 @@ class Update010000 extends Update
 
     /**
      * Set default theme for all Users
-     * 
      * @return boolean
      */
     public static function resetUserTheme ()

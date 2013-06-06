@@ -27,10 +27,11 @@ use Rubedo\Interfaces\Collection\IThemes;
  */
 class Themes extends AbstractCollection implements IThemes
 {
+	
 
-    public function __construct ()
-    {
-        $this->_collectionName = 'Themes';
-        parent::__construct();
-    }
+	public function __construct(){
+		$this->_collectionName = 'Themes';
+		parent::__construct();
+	}
+	
 }

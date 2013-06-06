@@ -18,25 +18,23 @@ namespace Rubedo\Domains;
 
 /**
  * Validator for "String" Domain
- *
+ * 
  * Should be a String
- *
+ * 
  * @author jbourdin
- *        
+ *
  */
 class DString implements IDomains
 {
-
     /**
      * Check if a value is valid for the current domain
-     *
-     * @param mixed $value            
+     * 
+     * @param mixed $value
      * @return boolean
      * @see Rubedo\Domains\IDomains::isValid()
      */
-    public static function isValid ($value)
-    {
-        if (! is_string($value)) {
+    public static function isValid($value){
+        if(!is_string($value)){
             return false;
         }
         return true;

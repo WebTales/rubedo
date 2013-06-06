@@ -29,20 +29,18 @@ interface IUrlCache extends IAbstractCollection
 
     /**
      * Return cached URL for a given PageId
-     *
+     * 
      * @param string $pageId
      *            page ID
      * @return array
      */
     public function findByPageId ($pageId);
-
+    
     /**
-     *
-     * @param string $url            
-     * @param string $siteid            
+     * @param string $url
+     * @param string $siteid
      * @return array
      */
     public function findByUrl ($url, $siteid);
-
-    public function verifyIndexes ();
+    public function verifyIndexes();
 }

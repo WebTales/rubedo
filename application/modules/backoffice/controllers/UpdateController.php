@@ -41,7 +41,7 @@ class Backoffice_UpdateController extends Zend_Controller_Action
     {
         $result = array(
             'success' => true,
-            'version' => Rubedo\Update\Update::update()
+            'version'=> Rubedo\Update\Update::update()
         );
         $this->_helper->json($result);
     }

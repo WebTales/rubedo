@@ -14,8 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-require_once ('DataAccessController.php');
 
+require_once('DataAccessController.php');
+ 
 /**
  * Controller providing CRUD API for the Workspaces JSON
  *
@@ -25,21 +26,20 @@ require_once ('DataAccessController.php');
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class Backoffice_WorkspacesController extends Backoffice_DataAccessController
 {
-
-    public function init ()
-    {
-        parent::init();
-        
-        // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Workspaces');
-    }
-    
-    /*
-     * (non-PHPdoc) @see Backoffice_DataAccessController::indexAction()
+    public function init(){
+		parent::init();
+		
+		// init the data access service
+		$this -> _dataService = Rubedo\Services\Manager::getService('Workspaces');
+	}
+	
+	
+	/* (non-PHPdoc)
+     * @see Backoffice_DataAccessController::indexAction()
      */
     public function indexAction ()
     {
@@ -68,10 +68,11 @@ class Backoffice_WorkspacesController extends Backoffice_DataAccessController
             $limit = null;
         }
         
+        
         $mongoFilters = $this->_buildFilter($filters);
         
-        $notAll = $this->getParam('notAll', false);
-        if ($notAll) {
+        $notAll = $this->getParam('notAll',false);
+        if($notAll){
             $mongoFilters->addFilter(new \Rubedo\Mongo\NotAllWorkspacesFilter());
         }
         
@@ -84,5 +85,10 @@ class Backoffice_WorkspacesController extends Backoffice_DataAccessController
         $response['message'] = 'OK';
         
         $this->_returnJson($response);
+        
     }
+
+	
+	
+
 }

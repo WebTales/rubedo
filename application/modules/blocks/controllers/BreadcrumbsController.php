@@ -17,8 +17,8 @@
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractController.php');
-
 /**
+ *
  *
  * @author jbourdin
  * @category Rubedo
@@ -30,15 +30,15 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction ()
-    {
+    public function indexAction() {
         $output = $this->getAllParams();
         
-        $blockConfig = $this->getParam('block-config', array());
-        $output['displayBlock'] = false;
-        if (($site = $this->getParam('site', false)) && isset($site['homePage'])) {
+		$blockConfig = $this->getParam('block-config', array());
+		$output['displayBlock'] = false;
+        if (($site = $this->getParam('site',false)) && isset($site['homePage'])) {
             $rootPage = $site['homePage'];
         }
+        
         
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
@@ -51,31 +51,35 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         $rootline = array_reverse($rootline);
         $rootlineArray = array();
         
-        foreach ($rootline as $pageId) {
-            if ($pageId == $rootPage) {
+        foreach ($rootline as $pageId){
+            if($pageId == $rootPage){
                 $output['displayBlock'] = true;
             }
-            if ($pageId == $currentPage && ! $this->getParam('content-id')) {
+            if($pageId == $currentPage && !$this->getParam('content-id')){
                 continue;
             }
             $rootlineArray[] = Manager::getService('Pages')->findById($pageId);
-            if ($pageId == $rootPage) {
+            if($pageId == $rootPage){
                 break;
             }
+            
         }
         $rootlineArray = array_reverse($rootlineArray);
         
+        
+        
         $output['rootPage'] = $rootPage;
         $output['rootline'] = $rootlineArray;
-        
-        if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+		
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/breadcrumbs.html.twig");
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/breadcrumbs.html.twig");
         }
-        
+
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
+
 }

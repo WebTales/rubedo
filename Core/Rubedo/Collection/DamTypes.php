@@ -41,7 +41,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 
     /**
      * Only access to content with read access
-     *
+     * 
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init ()
@@ -75,7 +75,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array())
@@ -93,7 +93,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Collection\AbstractCollection::update()
      */
     public function update (array $obj, $options = array())
@@ -111,7 +111,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Collection\AbstractCollection::destroy()
      */
     public function destroy (array $obj, $options = array())

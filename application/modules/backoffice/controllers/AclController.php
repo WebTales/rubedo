@@ -14,6 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 use Rubedo\Services\Manager;
 
 /**
@@ -25,11 +26,10 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class Backoffice_AclController extends Zend_Controller_Action
 {
-
     /**
      * should json be prettified
      *
@@ -40,17 +40,14 @@ class Backoffice_AclController extends Zend_Controller_Action
     /**
      * Set the response body with Json content
      * Option : json is made human readable
-     * 
-     * @param mixed $data
-     *            data to be json encoded
+     * @param mixed $data data to be json encoded
      */
-    protected function _returnJson ($data)
-    {
+    protected function _returnJson($data) {
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
-        
+
         $returnValue = Zend_Json::encode($data);
         if ($this->_prettyJson) {
             $returnValue = Zend_Json::prettyPrint($returnValue);
@@ -58,18 +55,18 @@ class Backoffice_AclController extends Zend_Controller_Action
         $this->getResponse()->setBody($returnValue);
     }
 
-    function indexAction ()
-    {
+    function indexAction() {
         $AclArray = array();
         $dataJson = $this->getRequest()->getParam('data');
         if (isset($dataJson)) {
             $dataArray = Zend_Json::decode($dataJson);
             if (is_array($dataArray)) {
-                $aclService = Manager::getService('Acl');
-                $AclArray = $aclService->accessList(array_keys($dataArray));
+            	$aclService = Manager::getService('Acl');
+				$AclArray = $aclService->accessList(array_keys($dataArray));
             }
         }
-        
+
         return $this->_returnJson($AclArray);
     }
+
 }

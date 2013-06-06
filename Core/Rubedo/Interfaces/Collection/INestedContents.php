@@ -30,58 +30,47 @@ interface INestedContents
     /**
      * Do a find request on nested contents of a given content
      *
-     * @param string $parentContentId
-     *            parent id of nested contents
+     * @param string $parentContentId parent id of nested contents
      * @return array
      */
-    public function getList ($parentContentId);
+    public function getList($parentContentId);
 
     /**
      * Create an objet in the current collection
      *
-     * @param string $parentContentId
-     *            parent id of nested contents
-     * @param array $obj
-     *            data object
-     * @param bool $options
-     *            should we wait for a server response
+     * @param string $parentContentId parent id of nested contents
+     * @param array $obj data object
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function create ($parentContentId, array $obj, $options = array());
+    public function create($parentContentId, array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
      *
-     * @param string $parentContentId
-     *            parent id of nested contents
-     * @param array $obj
-     *            data object
-     * @param bool $options
-     *            should we wait for a server response
+     * @param string $parentContentId parent id of nested contents
+     * @param array $obj data object
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function update ($parentContentId, array $obj, $options = array());
+    public function update($parentContentId, array $obj, $options = array());
 
     /**
      * Delete objets in the current collection
      *
-     * @param string $parentContentId
-     *            parent id of nested contents
-     * @param array $obj
-     *            data object
-     * @param bool $options
-     *            should we wait for a server response
+     * @param string $parentContentId parent id of nested contents
+     * @param array $obj data object
+     * @param bool $options should we wait for a server response
      * @return array
      */
-    public function destroy ($parentContentId, array $obj, $options = array());
+    public function destroy($parentContentId, array $obj, $options = array());
+	
+	/**
+	 * Find a nested content by its id and its parentId
+	 * 
+	 * @param string $parentContentId id of the parent content
+	 * @param string $subContentId id of the content we are looking for
+	 */
+    public function findById($parentContentId, $subContentId);
 
-    /**
-     * Find a nested content by its id and its parentId
-     *
-     * @param string $parentContentId
-     *            id of the parent content
-     * @param string $subContentId
-     *            id of the content we are looking for
-     */
-    public function findById ($parentContentId, $subContentId);
 }

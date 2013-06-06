@@ -26,26 +26,21 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface ICache extends IAbstractCollection
 {
-
     /**
      * Update object or insert if not present base on the CacheId field
-     *
-     * @param array $obj
-     *            inserted data
-     * @param string $cacheId
-     *            string parameter of the cache entry
+     *  
+     * @param array $obj inserted data
+     * @param string $cacheId string parameter of the cache entry
      * @return bool
      */
     public function upsertByCacheId ($obj, $cacheId);
-
+    
     /**
      * Remove expired cache items
      *
      * @return boolean
      */
     public function deleteExpired ();
-
-    public function deleteByCacheId ($id);
-
+    public function deleteByCacheId($id);
     public function findByCacheId ($cacheId, $time = null);
 }

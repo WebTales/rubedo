@@ -20,37 +20,36 @@ Use Rubedo\Services\Manager;
 
 /**
  * Twig extension to handle label translation based on user language.
- *
+ * 
  * @author jbourdin
- *        
+ *
  */
 class BackOfficeTranslate extends \Twig_Extension
 {
-
     /**
      * current language
-     *
+     * 
      * @var string
      */
-    protected $lang;
+	protected $lang;
 
-    /**
-     * init class fetching current User Language
-     */
-    public function __construct ()
+	/**
+	 * init class fetching current User Language
+	 */
+    public function __construct()
     {
         $this->lang = Manager::getService('CurrentUser')->getLanguage();
     }
-
+	
     /**
      * Returns a list of filters to add to the existing list.
      *
      * @return array An array of filters
      */
-    public function getFilters ()
+    public function getFilters()
     {
         return array(
-            'botrans' => new \Twig_Filter_Method($this, 'translate')
+            'botrans' => new \Twig_Filter_Method($this,'translate'),
         );
     }
 
@@ -59,20 +58,19 @@ class BackOfficeTranslate extends \Twig_Extension
      *
      * @return string The extension name
      */
-    public function getName ()
+    public function getName()
     {
         return 'BackOfficeTranslate';
     }
-
-    /**
-     * Delegates translation to translate service
-     *
-     * @param
-     *            text to translate
-     * @return translated text
-     */
-    public function translate ($text)
+	
+	/**
+	 * Delegates translation to translate service
+	 * 
+	 * @param text to translate
+	 * @return translated text
+	 */
+	public function translate($text)
     {
-        return Manager::getService('Translate')->getTranslation($text, $this->lang);
+    	return Manager::getService('Translate')->getTranslation ($text, $this->lang);
     }
 }

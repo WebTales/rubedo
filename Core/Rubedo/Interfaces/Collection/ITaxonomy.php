@@ -24,15 +24,12 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface ITaxonomy extends IAbstractCollection
-{
-
-    /**
-     * Allow to find taxonomies associated to the content type id
-     *
-     * @param string $contentTypeId
-     *            Id of the content type
-     * @return array Array of results
-     */
-    public function findByContentTypeID ($contentTypeId);
+interface ITaxonomy extends IAbstractCollection{
+	/**
+	 * Allow to find taxonomies associated to the content type id
+	 *
+	 * @param string $contentTypeId Id of the content type
+	 * @return array Array of results
+	 */
+	public function findByContentTypeID($contentTypeId);
 }

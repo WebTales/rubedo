@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IFieldTypes extends IAbstractCollection
-{
+interface IFieldTypes extends IAbstractCollection{
+	
 }

@@ -27,46 +27,41 @@ namespace Rubedo\Interfaces\Templates;
 Interface IFrontOfficeTemplates
 {
 
-    /**
+/**
      * render a twig template given an array of data
-     * 
-     * @param string $template
-     *            template name
-     * @param array $vars
-     *            array of data to be rendered
+     * @param string $template template name
+     * @param array $vars array of data to be rendered
      * @return string HTML produced by twig
      */
-    public function render ($template, array $vars);
+    public function render($template, array $vars);
 
     /**
      * return the template directory
-     *
+     * 
      * @return string
      */
-    public function getTemplateDir ();
+    public function getTemplateDir();
 
     /**
      * Return the actual path of a twig subpart in the current theme
-     *
-     * Check if it exist in current theme, return default path if not
      * 
+     * Check if it exist in current theme, return default path if not
      * @return string
      */
-    public function getFileThemePath ($path);
+    public function getFileThemePath($path);
 
     /**
      * Get the current theme name
-     *
+     * 
      * @return string
      */
-    public function getCurrentTheme ();
+    public function getCurrentTheme();
 
     /**
      * Set the current theme name
-     * 
-     * @param string $theme            
+     * @param string $theme
      */
-    public function setCurrentTheme ($theme);
-
+    public function setCurrentTheme($theme);
+    
     public function getAvailableThemes ();
 }

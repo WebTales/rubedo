@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Update;
-
 Use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
@@ -32,8 +31,8 @@ class Update010200 extends Update
     protected static $toVersion = '1.2.1';
 
     /**
-     * do the upgrade
-     *
+     * do the upgrade 
+     * 
      * @return boolean
      */
     public static function upgrade ()

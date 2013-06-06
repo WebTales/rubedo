@@ -24,8 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IMasks extends IAbstractCollection
-{
-
-    public function deleteBySiteId ($id);
+interface IMasks extends IAbstractCollection{
+	public function deleteBySiteId($id);
 }

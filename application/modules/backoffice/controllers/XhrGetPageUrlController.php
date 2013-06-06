@@ -34,7 +34,8 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
         }
         $page = Manager::getService('Pages')->findById($pageId);
         if (! $page) {
-            throw new \Rubedo\Exceptions\NotFound("The page-id doesn't match a page.", "Exception13");
+            throw new \Rubedo\Exceptions\NotFound(
+                    "The page-id doesn't match a page.", "Exception13");
         }
         $pageUrl = Manager::getService('Url')->getPageUrl($pageId);
         
@@ -42,16 +43,21 @@ class Backoffice_XhrGetPageUrlController extends Zend_Controller_Action
         $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
         
         $targetSite = Manager::getService('Sites')->findById($page['site']);
-        if (! is_array($targetSite['protocol']) || count($targetSite['protocol']) == 0) {
-            throw new Rubedo\Exceptions\Server('Protocol is not set for current site.', "Exception14");
+        if (! is_array($targetSite['protocol']) ||
+                 count($targetSite['protocol']) == 0) {
+            throw new Rubedo\Exceptions\Server(
+                    'Protocol is not set for current site.', "Exception14");
         }
-        $protocol = in_array($httpProtocol, $targetSite['protocol']) ? $httpProtocol : array_pop($targetSite['protocol']);
+        $protocol = in_array($httpProtocol, $targetSite['protocol']) ? $httpProtocol : array_pop(
+                $targetSite['protocol']);
         $protocol = strtolower($protocol);
         
-        $url = $protocol . '://' . Manager::getService('Sites')->getHost($page['site']) . '/' . ltrim($pageUrl, '/');
+        $url = $protocol . '://' .
+                 Manager::getService('Sites')->getHost($page['site']) . '/' .
+                 ltrim($pageUrl,'/');
         
         $returnArray = array(
-            'url' => $url
+                'url' => $url
         );
         
         $this->_helper->json($returnArray);

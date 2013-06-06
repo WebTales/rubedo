@@ -29,6 +29,7 @@ class Blocks_AdvancedSearchController extends Blocks_AbstractController
 
     public function indexAction ()
     {
+        
         $taxonomyService = Manager::getService("Taxonomy");
         
         // get search parameters
@@ -37,7 +38,7 @@ class Blocks_AdvancedSearchController extends Blocks_AbstractController
         $params = $this->getRequest()->getParams();
         $output = $params;
         
-        // get Taxonomies associated to the content type
+        //get Taxonomies associated to the content type
         $blockConfig = $params["block-config"];
         $contentTypes = $blockConfig['contentTypes'];
         
@@ -47,7 +48,7 @@ class Blocks_AdvancedSearchController extends Blocks_AbstractController
         foreach ($contentTypes as $contentTypeId) {
             $contentType = Manager::getService("ContentTypes")->findById($contentTypeId);
             
-            $taxonomies = array_merge($taxonomies, $taxonomyService->findByContentTypeId($contentTypeId));
+            $taxonomies = array_merge($taxonomies,$taxonomyService->findByContentTypeId($contentTypeId));
         }
         
         $output["taxonomies"] = $taxonomies;

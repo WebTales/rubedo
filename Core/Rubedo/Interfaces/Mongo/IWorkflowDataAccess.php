@@ -24,21 +24,21 @@ namespace Rubedo\Interfaces\Mongo;
  * @category Rubedo
  * @package Rubedo
  */
-interface IWorkflowDataAccess extends IDataAccess
-{
-
-    /**
-     * Set the current workspace to workspace
-     */
-    public function setWorkspace ();
-
-    /**
-     * Set the current workspace to live
-     */
-    public function setLive ();
-
-    /**
-     * Publish a content
-     */
-    public function publish ($objectId);
+interface IWorkflowDataAccess extends IDataAccess{
+	
+	/**
+	 * Set the current workspace to workspace
+	 */
+	public function setWorkspace();
+	
+	/**
+	 * Set the current workspace to live
+	 */
+	public function setLive();
+	 
+	/**
+	 * Publish a content
+	 */
+	public function publish($objectId);
+	
 }

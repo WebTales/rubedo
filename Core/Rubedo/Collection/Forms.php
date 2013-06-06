@@ -27,10 +27,11 @@ use Rubedo\Interfaces\Collection\IForms;
  */
 class Forms extends AbstractCollection implements IForms
 {
+	
 
-    public function __construct ()
-    {
-        $this->_collectionName = 'Forms';
-        parent::__construct();
-    }
+	public function __construct(){
+		$this->_collectionName = 'Forms';
+		parent::__construct();
+	}
+	
 }

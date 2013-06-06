@@ -76,9 +76,8 @@ class Translate implements ITranslate
 
     /**
      * translate a label given by its code and its default value
-     * 
-     * @param string $code            
-     * @param string $defaultLabel            
+     * @param string $code
+     * @param string $defaultLabel
      * @return string
      */
     public function translate ($code, $defaultLabel = "")

@@ -34,7 +34,7 @@ class DataAbstract
      * @var string
      */
     protected static $_defaultHost;
-
+	
     /**
      * Default transport value
      *
@@ -43,6 +43,7 @@ class DataAbstract
      * @var string
      */
     protected static $_defaultTransport;
+
 
     /**
      * Default port value
@@ -59,7 +60,7 @@ class DataAbstract
      * @var \Elastica_Client
      */
     protected $_client;
-
+	
     /**
      * Configuration options
      *
@@ -77,16 +78,12 @@ class DataAbstract
     /**
      * Object which represent the default ES index param
      * @TODO : get param from config
-     * 
      * @var \Elastica_Index
      */
-    protected static $_content_index_param = array(
-        'index' => array(
-            'number_of_shards' => 1,
-            'number_of_replicas' => 0
-        )
-    );
-
+    protected static $_content_index_param = array('index' => array(
+        'number_of_shards' => 1, 
+        'number_of_replicas' => 0 ));
+    		
     /**
      * Object which represent the dam ES index
      *
@@ -97,66 +94,55 @@ class DataAbstract
     /**
      * Object which represent the default dam ES index param
      * @TODO : get param from config
-     * 
      * @var \Elastica_Index
      */
-    protected static $_dam_index_param = array(
-        'index' => array(
-            'number_of_shards' => 1,
-            'number_of_replicas' => 0
-        )
-    );
-
+    protected static $_dam_index_param = array('index' => array(
+        'number_of_shards' => 1, 
+        'number_of_replicas' => 0 ));
+	
     /**
      * Initialize a search service handler to index or query Elastic Search
      *
-     * @see \Rubedo\Interfaces\IDataIndex::init()
-     * @param string $host
-     *            http host name
-     * @param string $port
-     *            http port
+	 * @see \Rubedo\Interfaces\IDataIndex::init()
+     * @param string $host http host name
+     * @param string $port http port 
      */
-    public function init ($host = null, $port = null)
+    public function init($host = null, $port= null)
     {
         if (is_null($host)) {
             $host = self::$_options['host'];
         }
-        
+
         if (is_null($port)) {
             $port = self::$_options['port'];
         }
-        
-        $this->_client = new \Elastica_Client(array(
-            'port' => $port,
-            'host' => $host
-        ));
-        
-        self::$_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
-        
-        // Create content index if not exists
-        if (! self::$_content_index->exists()) {
-            self::$_content_index->create(self::$_content_index_param, true);
-        }
-        self::$_dam_index = $this->_client->getIndex(self::$_options['damIndex']);
-        
-        // Create dam index if not exists
-        if (! self::$_dam_index->exists()) {
-            self::$_dam_index->create(self::$_dam_index_param, true);
-        }
+
+        $this->_client = new \Elastica_Client(array('port'=>$port,'host'=>$host));
+		
+		self::$_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
+		
+		// Create content index if not exists
+		if (!self::$_content_index->exists()) {
+			self::$_content_index->create(self::$_content_index_param,true);
+		}
+		self::$_dam_index = $this->_client->getIndex(self::$_options['damIndex']);
+		
+		// Create dam index if not exists
+		if (!self::$_dam_index->exists()) {
+			self::$_dam_index->create(self::$_dam_index_param,true);
+		}
     }
 
-    /**
+	 /**
      * Set the options for ES connection
      *
-     * @param array $options            
+     * @param array $options
      */
-    public static function setOptions (array $options)
-    {
+    public static function setOptions(array $options) {
         self::$_options = $options;
     }
-
+    
     /**
-     *
      * @return the $_options
      */
     public static function getOptions ()
@@ -164,27 +150,25 @@ class DataAbstract
         return self::$_options;
     }
 
-    /**
-     * Set the options for the content-index
+	/**
+     * Set the options for the content-index 
      *
-     * @param string $host            
+     * @param string $host
      */
-    public static function setContentIndexOption (array $options)
-    {
+    public static function setContentIndexOption(array $options) {
         self::$_content_index_param = $options;
     }
-
+    
     /**
      * Return the ElasticSearch Server Version
-     * 
      * @return string
      */
-    public function getVersion ()
-    {
+    public function getVersion(){
         $data = $this->_client->request('/', 'GET')->getData();
-        if (isset($data['version']) && isset($data['version']['number'])) {
+        if(isset($data['version']) && isset($data['version']['number'])){
             return $data['version']['number'];
         }
         return null;
     }
+
 }

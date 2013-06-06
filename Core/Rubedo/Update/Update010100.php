@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Update;
-
 Use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
@@ -32,12 +31,13 @@ class Update010100 extends Update
     protected static $toVersion = '1.2.0';
 
     /**
-     * do the upgrade
-     *
+     * do the upgrade 
+     * 
      * @return boolean
      */
     public static function upgrade ()
     {
+        
         static::updateAllItems('Pages');
         static::updateAllItems('Masks');
         static::cleanBlocks();
@@ -51,34 +51,31 @@ class Update010100 extends Update
             ->setOperator('$exists')
             ->setValue(true);
         $data = array(
-            '$unset' => array(
-                'blockData.champsConfig' => 1
-            )
+            '$unset' => array('blockData.champsConfig'=>1)
         );
         $options = array(
             'multiple' => true
         );
-        $service->customUpdate($data, $updateCond, $options);
+        $service->customUpdate($data, $updateCond,$options);
         return true;
     }
-
+    
     /**
      * force an update action on each item ofa collection
-     *
-     * @param string $collection            
+     * 
+     * @param string $collection
      * @return boolean
      */
-    public static function updateAllItems ($collection)
-    {
+    public static function updateAllItems($collection){
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = Manager::getService($collection);
         $list = $service->getList();
-        if ($list['count'] > 0) {
-            foreach ($list['data'] as $item) {
+        if($list['count']>0){
+            foreach ($list['data'] as $item){
                 $result = $service->update($item);
             }
-        }
-        
+        }      
+          
         AbstractCollection::disableUserFilter($wasFiltered);
         return true;
     }

@@ -16,14 +16,16 @@
  */
 namespace Rubedo\Exceptions;
 
+
 /**
  * Exception occuring when something went wrong with user input
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class User extends AbstractException
 {
+
 }

@@ -51,7 +51,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
      */
     protected $_mimeType = "";
 
-    public function init ()
+    public function init()
     {
         parent::init();
         
@@ -62,7 +62,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     /*
      * (non-PHPdoc) @see Backoffice_DataAccessController::indexAction()
      */
-    public function indexAction ()
+    public function indexAction()
     {
         // merge filter and tFilter
         $jsonFilter = $this->getParam('filter', Zend_Json::encode(array()));
@@ -76,7 +76,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         parent::indexAction();
     }
 
-    public function getThumbnailAction ()
+    public function getThumbnailAction()
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
@@ -102,7 +102,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
     }
 
-    public function getOriginalFileAction ()
+    public function getOriginalFileAction()
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
@@ -127,7 +127,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
     }
 
-    public function createAction ()
+    public function createAction()
     {
         $typeId = $this->getParam('typeId');
         if (! $typeId) {
@@ -228,7 +228,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     /*
      * Method used by Back Office mass uploader for each file
      */
-    public function massUploadAction ()
+    public function massUploadAction()
     {
         $typeId = $this->getParam('typeId');
         if (! $typeId) {
@@ -290,7 +290,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         $this->getResponse()->setBody($returnValue);
     }
 
-    protected function _uploadFile ($name, $fileType, $returnFullResult = false)
+    protected function _uploadFile($name, $fileType, $returnFullResult = false)
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -25,7 +24,7 @@
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class Backoffice_XhrGetMongoIdController extends Zend_Controller_Action
 {
@@ -33,12 +32,11 @@ class Backoffice_XhrGetMongoIdController extends Zend_Controller_Action
     /**
      * return a new string of a generated mongoId
      */
-    public function indexAction ()
-    {
-        $MongoId = new MongoId();
-        $MongoId = (string) $MongoId;
-        $this->_helper->json(array(
-            'mongoID' => $MongoId
-        ));
+    public function indexAction() {
+       $MongoId = new MongoId();
+       $MongoId = (string) $MongoId;
+       $this->_helper->json(array('mongoID'=> $MongoId));
     }
+
+    
 }

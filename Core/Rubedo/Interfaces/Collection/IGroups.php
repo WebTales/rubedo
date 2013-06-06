@@ -37,7 +37,7 @@ interface IGroups extends IAbstractCollection
 
     /**
      * return main workspace
-     *
+     * 
      * @param string $groupId            
      * @return array
      */
@@ -45,27 +45,18 @@ interface IGroups extends IAbstractCollection
 
     /**
      * return "can write" workspaces
-     *
+     * 
      * @param string $groupId            
      * @return array
      */
     public function getWriteWorkspaces ($groupId);
-
     public function getListByUserId ($userId);
-
-    public function getValidatingGroupsId ();
-
+    public function getValidatingGroupsId();
     public function getPublicGroup ();
-
-    public function getValidatingGroupsForWorkspace ($workspace);
-
-    public function clearOrphanGroups ();
-
-    public function countOrphanGroups ();
-
-    public function clearUserFromGroups ($userId);
-
-    public function addUserToGroupList ($userId, $groupIdList);
-
+    public function getValidatingGroupsForWorkspace($workspace);
+    public function clearOrphanGroups();
+    public function countOrphanGroups();
+    public function clearUserFromGroups($userId);
+    public function addUserToGroupList($userId,$groupIdList);
     public function propagateWorkspace ($parentId, $workspaceId);
 }

@@ -100,13 +100,13 @@ class Backoffice_FileController extends Zend_Controller_Action
         $mimeType = $finfo->file($fileInfo['tmp_name']);
         
         $fileService = Manager::getService('Files');
-        
+
         $obj = array(
             'serverFilename' => $fileInfo['tmp_name'],
             'text' => $fileInfo['name'],
             'filename' => $fileInfo['name'],
             'Content-Type' => $mimeType,
-            'mainFileType' => $this->getParam('mainFileType', null)
+            'mainFileType' => $this->getParam('mainFileType',null)
         );
         $result = $fileService->create($obj);
         // disable layout and set content type
@@ -148,6 +148,8 @@ class Backoffice_FileController extends Zend_Controller_Action
         $this->_forward('index', 'file', 'default');
     }
 
+    
+    
     public function getMetaAction ()
     {
         $fileId = $this->getRequest()->getParam('file-id');

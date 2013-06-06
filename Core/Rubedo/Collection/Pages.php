@@ -224,7 +224,7 @@ class Pages extends AbstractCollection implements IPages
         // find site for $page ID
         $page = $service->findById($pageId);
         
-        if ($page) {
+        if($page) {
             // find site
             $sitedId = $page['site'];
             $site = $sitesService->findById($sitedId);

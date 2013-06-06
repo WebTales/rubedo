@@ -31,7 +31,8 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
         parent::init();
         
         // init the data access service
-        $this->_dataService = Manager::getService('Authentication');
+        $this->_dataService = Manager::getService(
+                'Authentication');
     }
 
     /**
@@ -74,8 +75,8 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
         $time = Manager::getService('Authentication')->getExpirationTime();
         $status = $hasIdentity && ($time > 0);
         $this->_helper->json(array(
-            'time' => $time,
-            'status' => $status
+                'time' => $time,
+                'status' => $status
         ));
     }
 }

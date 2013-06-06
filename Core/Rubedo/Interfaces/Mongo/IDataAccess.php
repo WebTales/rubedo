@@ -43,7 +43,7 @@ interface IDataAccess
     /**
      * Do a find request on the current collection
      *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
     public function read (\WebTales\MongoFilters\IFilter $filters = null);
@@ -60,7 +60,7 @@ interface IDataAccess
 
     /**
      * Find an item given by its literral ID
-     *
+     * 
      * @param string $contentId            
      * @return array
      */
@@ -68,7 +68,7 @@ interface IDataAccess
 
     /**
      * Find an item given by its name (find only one if many)
-     *
+     * 
      * @param string $name            
      * @return array
      */
@@ -107,32 +107,32 @@ interface IDataAccess
     /**
      * Do a find request on the current collection and return content as tree
      *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
     public function readTree (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Find child of a node tree
-     *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * 
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @param $parentId id
      *            of the parent node
      * @return array children array
      */
-    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null);
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Do a count request based on current filter
      *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return integer
      */
     public function count (\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Add a filter condition to the service
-     *
+     * 
      * These filters are shared between all queries to the service
      *
      * Filter should be
@@ -140,7 +140,7 @@ interface IDataAccess
      * or
      * array('field'=>array('operator'=>value))
      *
-     * @param \WebTales\MongoFilters\IFilter $filter            
+     * @param \WebTales\MongoFilters\IFilter $filter
      * @return bool
      */
     public function addFilter (\WebTales\MongoFilters\IFilter $filter);
@@ -151,7 +151,6 @@ interface IDataAccess
      * Filter should be an array of array('field'=>'value')
      *
      * @deprecated
-     *
      * @param array $filter
      *            Native Mongo syntax filter array
      */
@@ -172,19 +171,18 @@ interface IDataAccess
     /**
      * Set the main MongoDB connection string
      *
-     * @param string $mongo            
+     * @param string $mongo
      * @throws \Exception
      */
     public static function setDefaultMongo ($mongo);
-
     /**
      * Set the main Database name
      *
-     * @param string $dbName            
+     * @param string $dbName
      * @throws \Exception
      */
     public static function setDefaultDb ($dbName);
-
+    
     /**
      * Clear the current Filters for this instance of the service
      */
@@ -206,7 +204,7 @@ interface IDataAccess
 
     /**
      * Return the current array of conditions.
-     *
+     * 
      * @return array
      */
     public function getSortArray ();
@@ -246,14 +244,14 @@ interface IDataAccess
 
     /**
      * Return the current number of the first result displayed
-     *
+     * 
      * @return integer
      */
     public function getFirstResult ();
 
     /**
      * Return the current number of results displayed
-     *
+     * 
      * @return integer
      */
     public function getNumberOfResults ();
@@ -267,7 +265,7 @@ interface IDataAccess
 
     /**
      * Give the fields into the fieldList array
-     *
+     * 
      * @return array
      */
     public function getFieldList ();
@@ -307,31 +305,26 @@ interface IDataAccess
      * Clear the excludeFieldList array
      */
     public function clearExcludeFieldList ();
-
+    
     /**
      * Add index to collection
      *
-     * @param string|arrau $keys            
-     * @param array $options            
+     * @param string|arrau $keys
+     * @param array $options
      * @return boolean
      */
     public function ensureIndex ($keys, $options = array());
-
+    
     /**
      * check if the index is set
      *
-     * @param
-     *            array
+     * @param array
      * @return boolean
      */
-    public function dropIndexes ();
-
-    public function checkIndex ($keys);
-
+    public function dropIndexes();
+    public function checkIndex($keys);
     public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array());
-
     public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array());
-
     /**
      * Update an objet in the current collection
      *
@@ -342,14 +335,11 @@ interface IDataAccess
      *            data to update
      * @param \WebTales\MongoFilters\IFilter $updateCond
      *            condition to determine what should be updated
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function customUpdate (array $data,\WebTales\MongoFilters\IFilter $updateCond, $options = array());
-
+    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array());
     public function getMongoDate ();
-
     public function getId ($idString = null);
-
     public function getRegex ($expr);
 }

@@ -56,10 +56,10 @@ class Backoffice_CacheController extends Zend_Controller_Action
     public function clearAction ()
     {
         $countArray = array();
-        $countArray['Cached items'] = Cache::getCache()->clean();
+        $countArray['Cached items']=Cache::getCache()->clean();
         if (Manager::getService('UrlCache')->count() > 0) {
             $countArray['Cached Url'] = Manager::getService('UrlCache')->drop();
-        } else {
+        }else{
             $countArray['Cached Url'] = true;
         }
         $this->_helper->json($countArray);

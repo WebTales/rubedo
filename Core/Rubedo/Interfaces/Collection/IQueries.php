@@ -30,12 +30,12 @@ interface IQueries extends IAbstractCollection
     /**
      * Return an array of filter and sort params for the query given by its ID
      *
-     * result is formatted
+     * result is formatted 
      * array(
      * "filter" => $filterArray,
      * "sort" => $sort
      * )
-     *
+     * 
      * @param string $id            
      * @return array | false
      */
@@ -50,16 +50,15 @@ interface IQueries extends IAbstractCollection
      * "sort" => $sort
      * )
      *
-     * @param array $query            
+     * @param array $query
      * @return array | false
      */
     public function getFilterArrayByQuery ($query);
-
     /**
      * Return a query
      *
-     * @param string $id            
-     * @return boolean multitype:
+     * @param string $id
+     * @return boolean|multitype:
      */
-    public function getQueryById ($id = null);
+    public function getQueryById($id = null);
 }

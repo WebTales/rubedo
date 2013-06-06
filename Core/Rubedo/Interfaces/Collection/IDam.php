@@ -24,10 +24,7 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IDam extends IAbstractCollection
-{
-
-    public function getByType ($typeId);
-
-    public function getListByDamTypeId ($typeId);
+interface IDam extends IAbstractCollection{
+	public function getByType ($typeId);
+	public function getListByDamTypeId($typeId);
 }

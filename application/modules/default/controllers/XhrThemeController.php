@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -23,35 +22,32 @@
  * @category Rubedo
  * @package Rubedo
  */
-class XhrThemeController extends Zend_Controller_Action
-{
-
+class XhrThemeController extends Zend_Controller_Action {
     /**
      * variable for the Session service
-     *
-     * @param
-     *            Rubedo\Interfaces\User\ISession
+	 * 
+	 * @param 	Rubedo\Interfaces\User\ISession
      */
     protected $_session;
-
-    /**
-     * Init the session service
-     */
-    public function init ()
-    {
+	
+	/**
+	 * Init the session service
+	 */
+    public function init() {
         $this->_session = Rubedo\Services\Manager::getService('Session');
     }
+	
+	/**
+	 * Allow to define the current theme
+	 */
+    public function defineThemeAction() {
 
-    /**
-     * Allow to define the current theme
-     */
-    public function defineThemeAction ()
-    {
         $theme = $this->getRequest()->getParam('theme', "default");
         $this->_session->set('themeCSS', $theme);
-        
+
         $response['success'] = $this->_session->get('themeCSS');
-        
+		
         return $this->_helper->json($response);
     }
+
 }

@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Mongo;
 
-use Rubedo\Interfaces\Mongo\IDataAccess, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Mongo\IDataAccess, \WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the API to MongoDB
@@ -152,11 +152,9 @@ class DataAccess implements IDataAccess
     /**
      * init the filter with a global "and" filter
      */
-    public function __construct ()
-    {
+    public function __construct(){
         $this->_filters = Filter::Factory();
     }
-
     /**
      * Initialize a data service handler to read or write in a MongoDb
      * Collection
@@ -192,21 +190,19 @@ class DataAccess implements IDataAccess
 
     /**
      * Return the mongoDB server version
-     *
+     * 
      * @return string
      */
-    public function getMongoServerVersion ()
-    {
+    public function getMongoServerVersion(){
         $this->init('version');
-        $dbInfo = $this->_dbName->command(array(
-            'buildinfo' => true
-        ));
-        if (isset($dbInfo['version'])) {
+        $dbInfo = $this->_dbName->command(array('buildinfo'=>true));
+        if(isset($dbInfo['version'])){
             return $dbInfo['version'];
         }
         return null;
     }
-
+    
+    
     /**
      * Getter of Mongo adapter : should only connect once for each mongoDB
      * server
@@ -305,8 +301,8 @@ class DataAccess implements IDataAccess
         // get the UI parameters
         $localFilter = clone $this->getFilters();
         
-        // add Read Filters
-        if ($filters) {
+        //add Read Filters
+        if($filters){
             $localFilter->addFilter($filters);
         }
         
@@ -335,7 +331,7 @@ class DataAccess implements IDataAccess
         
         // switch from cursor to actual array
         if ($cursor->count() > 0) {
-            $data = iterator_to_array($cursor);
+                $data = iterator_to_array($cursor);
         } else {
             $data = array();
         }
@@ -391,7 +387,7 @@ class DataAccess implements IDataAccess
      * Do a find request on the current collection and return content as tree
      *
      * @see \Rubedo\Interfaces\IDataAccess::readTree()
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
     public function readTree (\WebTales\MongoFilters\IFilter $filters = null)
@@ -399,10 +395,7 @@ class DataAccess implements IDataAccess
         $read = $this->read($filters);
         
         $dataStore = $read['data'];
-        $dataStore[] = array(
-            'parentId' => 'none',
-            'id' => 'root'
-        );
+        $dataStore[]=array('parentId'=>'none','id'=>'root');
         
         $this->_lostChildren = array();
         $rootAlreadyFound = false;
@@ -457,14 +450,14 @@ class DataAccess implements IDataAccess
      *
      * @param $parentId id
      *            of the parent node
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array children array
      */
-    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null)
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null)
     {
         // get the UI parameters
         $localFilter = clone $this->getFilters();
-        if ($filters) {
+        if($filters){
             $localFilter->addFilter($filters);
         }
         
@@ -486,7 +479,7 @@ class DataAccess implements IDataAccess
         
         // get the cursor
         $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
-        
+                
         // apply sort, paging, filter
         $cursor->sort($sort);
         
@@ -517,7 +510,7 @@ class DataAccess implements IDataAccess
      *            search condition
      * @return array
      */
-    public function findOne (\WebTales\MongoFilters\IFilter $localFilter = null)
+    public function findOne (\WebTales\MongoFilters\IFilter $localFilter=null)
     {
         // get the UI parameters
         $includedFields = $this->getFieldList();
@@ -531,10 +524,10 @@ class DataAccess implements IDataAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         $filters = clone $this->getFilters();
-        if ($localFilter) {
-            $filters->addFilter($localFilter);
+        if($localFilter){
+             $filters->addFilter($localFilter);
         }
-        
+       
         $data = $this->_collection->findOne($filters->toArray(), $fieldRule);
         if ($data == null) {
             return null;
@@ -597,13 +590,14 @@ class DataAccess implements IDataAccess
         $obj['lastUpdateTime'] = $currentTime;
         
         try {
-            if (isset($options['upsert']) && $options['upsert'] instanceof \WebTales\MongoFilters\IFilter) {
+            if(isset($options['upsert']) && $options['upsert'] instanceof \WebTales\MongoFilters\IFilter){
                 $filter = $options['upsert'];
                 $options['upsert'] = true;
-                $resultArray = $this->_collection->update($filter->toArray(), $obj, $options);
-            } else {
+                $resultArray = $this->_collection->update($filter->toArray(),$obj, $options);
+            }else{
                 $resultArray = $this->_collection->insert($obj, $options);
             }
+            
         } catch (\MongoCursorException $exception) {
             if (strpos($exception->getMessage(), 'duplicate key error')) {
                 throw new \Rubedo\Exceptions\User('Duplicate key error', "Exception76");
@@ -613,9 +607,9 @@ class DataAccess implements IDataAccess
         }
         
         if ($resultArray['ok'] == 1) {
-            if (isset($resultArray['updatedExisting'])) {
+            if(isset($resultArray['updatedExisting'])){
                 $obj = $this->findOne($filter);
-            } else {
+            }else{
                 $obj['id'] = (string) $obj['_id'];
             }
             
@@ -753,6 +747,8 @@ class DataAccess implements IDataAccess
             'version' => $version
         );
         
+        
+        
         $updateConditionId = Filter::Factory('Uid');
         $updateConditionId->setValue($mongoID);
         
@@ -839,7 +835,6 @@ class DataAccess implements IDataAccess
      *
      *
      *
-     *
      */
     public function drop ()
     {
@@ -852,7 +847,7 @@ class DataAccess implements IDataAccess
     public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
         $localFilter = clone $this->getFilters();
-        if ($filters) {
+        if($filters){
             $localFilter->addFilter($filters);
         }
         
@@ -1191,7 +1186,7 @@ class DataAccess implements IDataAccess
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data,\WebTales\MongoFilters\IFilter $updateCond, $options = array())
+    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array())
     {
         try {
             $resultArray = $this->_collection->update($updateCond->toArray(), $data, $options);
@@ -1218,7 +1213,7 @@ class DataAccess implements IDataAccess
 
     public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array())
     {
-        $filterArray = is_null($filter) ? array() : $filter->toArray();
+        $filterArray = is_null($filter)?array():$filter->toArray();
         // get the cursor
         $cursor = $this->_collection->find($filterArray, $fieldRule);
         return $cursor;
@@ -1241,9 +1236,8 @@ class DataAccess implements IDataAccess
         $result = $this->_collection->ensureIndex($keys, $options);
         return $result;
     }
-
-    public function dropIndexes ()
-    {
+    
+    public function dropIndexes(){
         $result = $this->_collection->deleteIndexes();
         return $result;
     }

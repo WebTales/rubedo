@@ -24,10 +24,8 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IPersonalPrefs extends IAbstractCollection
-{
-
-    public function clearOrphanPrefs ();
-
-    public function countOrphanPrefs ();
+interface IPersonalPrefs extends IAbstractCollection{
+	public function clearOrphanPrefs();
+	public function countOrphanPrefs();
+		
 }

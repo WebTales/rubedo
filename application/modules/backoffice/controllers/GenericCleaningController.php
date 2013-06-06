@@ -14,8 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-require_once ('DataAccessController.php');
 
+require_once('DataAccessController.php');
+ 
 /**
  * Controller providing CRUD API for the icons JSON
  *
@@ -25,67 +26,57 @@ require_once ('DataAccessController.php');
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class Backoffice_GenericCleaningController extends Backoffice_DataAccessController
 {
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphans','count-orphans',);
+	
+    public function init(){
+		parent::init();
+	}
+	
+	public function clearOrphansAction() {
+		$iconsService = Rubedo\Services\Manager::getService('Icons');
+		$personalPrefsService = Rubedo\Services\Manager::getService('PersonalPrefs');
+		$taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
+		$pagesService = Rubedo\Services\Manager::getService('Pages');
+		$contentsService = Rubedo\Services\Manager::getService('Contents');
+		$groupsService = Rubedo\Services\Manager::getService('Groups');
+		
+		$results = array();
+		
+		$results['icons'] = $iconsService->clearOrphanIcons();
+		$results['personal prefs'] = $personalPrefsService->clearOrphanPrefs();
+		$results['taxonomy terms'] = $taxonomyTermsService->clearOrphanTerms();
+		$results['pages'] = $pagesService->clearOrphanPages();
+		$results['contents'] = $contentsService->clearOrphanContents();
+		$results['groups'] = $groupsService->clearOrphanGroups();
+		
+		$this->_returnJson($results);
+	}
+	
+	public function countOrphansAction() {
+		$iconsService = Rubedo\Services\Manager::getService('Icons');
+		$personalPrefsService = Rubedo\Services\Manager::getService('PersonalPrefs');
+		$taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
+		$pagesService = Rubedo\Services\Manager::getService('Pages');
+		$contentsService = Rubedo\Services\Manager::getService('Contents');
+		$groupsService = Rubedo\Services\Manager::getService('Groups');
+		
+		$results = array();
+		
+		$results['icons'] = $iconsService->countOrphanIcons();
+		$results['personal prefs'] = $personalPrefsService->countOrphanPrefs();
+		$results['taxonomy terms'] = $taxonomyTermsService->countOrphanTerms();
+		$results['pages'] = $pagesService->countOrphanPages();
+		$results['contents'] = $contentsService->countOrphanContents();
+		$results['groups'] = $groupsService->countOrphanGroups();
+		
+		$this->_returnJson($results);
+	}
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphans',
-        'count-orphans'
-    );
-
-    public function init ()
-    {
-        parent::init();
-    }
-
-    public function clearOrphansAction ()
-    {
-        $iconsService = Rubedo\Services\Manager::getService('Icons');
-        $personalPrefsService = Rubedo\Services\Manager::getService('PersonalPrefs');
-        $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-        $pagesService = Rubedo\Services\Manager::getService('Pages');
-        $contentsService = Rubedo\Services\Manager::getService('Contents');
-        $groupsService = Rubedo\Services\Manager::getService('Groups');
-        
-        $results = array();
-        
-        $results['icons'] = $iconsService->clearOrphanIcons();
-        $results['personal prefs'] = $personalPrefsService->clearOrphanPrefs();
-        $results['taxonomy terms'] = $taxonomyTermsService->clearOrphanTerms();
-        $results['pages'] = $pagesService->clearOrphanPages();
-        $results['contents'] = $contentsService->clearOrphanContents();
-        $results['groups'] = $groupsService->clearOrphanGroups();
-        
-        $this->_returnJson($results);
-    }
-
-    public function countOrphansAction ()
-    {
-        $iconsService = Rubedo\Services\Manager::getService('Icons');
-        $personalPrefsService = Rubedo\Services\Manager::getService('PersonalPrefs');
-        $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-        $pagesService = Rubedo\Services\Manager::getService('Pages');
-        $contentsService = Rubedo\Services\Manager::getService('Contents');
-        $groupsService = Rubedo\Services\Manager::getService('Groups');
-        
-        $results = array();
-        
-        $results['icons'] = $iconsService->countOrphanIcons();
-        $results['personal prefs'] = $personalPrefsService->countOrphanPrefs();
-        $results['taxonomy terms'] = $taxonomyTermsService->countOrphanTerms();
-        $results['pages'] = $pagesService->countOrphanPages();
-        $results['contents'] = $contentsService->countOrphanContents();
-        $results['groups'] = $groupsService->countOrphanGroups();
-        
-        $this->_returnJson($results);
-    }
 }

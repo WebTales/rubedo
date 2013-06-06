@@ -24,34 +24,33 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IContentTypes extends IAbstractCollection
-{
-
+interface IContentTypes extends IAbstractCollection{
+    
     /**
      * Return the list of ID of contentTypes the current user can read.
-     *
+     * 
      * @return array
      */
-    public function getReadableContentTypes ();
-
-    /**
-     * Return the list of ID of contentTypes which implements a location field
-     *
-     * @return array
-     */
-    public function getGeolocatedContentTypes ();
-
-    /**
-     * Push the content type to Elastic Search
-     *
-     * @param array $obj            
-     */
-    public function indexContentType ($obj);
-
-    /**
-     * Remove the content type from Indexed Search
-     *
-     * @param array $obj            
-     */
-    public function unIndexContentType ($obj);
+	public function getReadableContentTypes();
+	
+	/**
+	 * Return the list of ID of contentTypes which implements a location field
+	 * 
+	 * @return array
+	 */
+	public function getGeolocatedContentTypes();
+	
+	/**
+	 * Push the content type to Elastic Search
+	 *
+	 * @param array $obj
+	 */
+	public function indexContentType ($obj);
+	
+	/**
+	 * Remove the content type from Indexed Search
+	 *
+	 * @param array $obj
+	 */
+	public function unIndexContentType ($obj);
 }

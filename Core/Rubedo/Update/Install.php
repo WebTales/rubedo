@@ -15,9 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Update;
-
 use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
-
 /**
  * Methods for install tool
  *
@@ -68,9 +66,8 @@ class Install
         }
         return $success;
     }
-
-    public static function setDbVersion ($version)
-    {
+    
+    public static function setDbVersion($version){
         Manager::getService('RubedoVersion')->setDbVersion($version);
     }
 }

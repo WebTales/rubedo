@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+Use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
 
 require_once ('AbstractController.php');
 
@@ -35,22 +35,23 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output = $this->getAllParams();
         
         $blockConfig = $this->getParam('block-config', array());
-        if (isset($blockConfig['menuLevel'])) {
+        if(isset($blockConfig['menuLevel'])){
             $startLevel = $blockConfig['menuLevel'];
-        } else {
+        }else{
             $startLevel = 1;
         }
         
-        if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
-        } else {
-            if (isset($blockConfig['style']) && $blockConfig['style'] == 'Vertical') {
-                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/verticalMenu.html.twig");
-            } else {
-                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
-            }
-        }
         
+        if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
+        	$template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+	        if(isset($blockConfig['style']) && $blockConfig['style']=='Vertical'){
+	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/verticalMenu.html.twig");
+	        }else{
+	            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/navbar.html.twig");
+	        }
+        }
+
         if (isset($blockConfig['rootPage'])) {
             $this->rootPage = $blockConfig['rootPage'];
         } else {
@@ -91,21 +92,22 @@ class Blocks_NavBarController extends Blocks_AbstractController
         
         $output['currentPage'] = $this->getRequest()->getParam('currentPage');
         $this->currentPage = $output['currentPage'];
+         
         
         $output['rootPage'] = Manager::getService('Pages')->findById($this->rootPage);
         $output['rootline'] = $this->rootline = $this->getRequest()->getParam('rootline', array());
         $output['useSearchEngine'] = $useSearchEngine;
         $output['searchPage'] = $searchPage;
         $output['pages'] = array();
-        $output['logo'] = isset($blockConfig['logo']) ? $blockConfig['logo'] : null;
+        $output['logo']= isset($blockConfig['logo'])?$blockConfig['logo']:null;
         $output['displayRootPage'] = $displayRootPage;
         
         $this->excludeFromMenuCondition = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(true);
         
         $this->pageService = Manager::getService('Pages');
         
-        $levelOnePages = $this->_getPagesByLevel($output['rootPage']['id'], $startLevel);
-        
+        $levelOnePages = $this->_getPagesByLevel($output['rootPage']['id'],$startLevel);
+                
         foreach ($levelOnePages as $page) {
             $tempArray = array();
             $tempArray['url'] = $this->_helper->url->url(array(
@@ -113,7 +115,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
             ), null, true);
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
-            $levelTwoPages = $this->pageService->readChild($page['id'], $this->excludeFromMenuCondition);
+            $levelTwoPages = $this->pageService->readChild($page['id'],$this->excludeFromMenuCondition);
             if (count($levelTwoPages)) {
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {
@@ -129,23 +131,23 @@ class Blocks_NavBarController extends Blocks_AbstractController
             
             $output['pages'][] = $tempArray;
         }
-        
+                
         $twigVar["data"] = $output;
+        
         
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
-
-    protected function _getPagesByLevel ($rootPage, $targetLevel, $currentLevel = 1)
-    {
-        $pages = $this->pageService->readChild($rootPage, $this->excludeFromMenuCondition);
-        if ($currentLevel === $targetLevel) {
+    
+    protected function _getPagesByLevel($rootPage,$targetLevel,$currentLevel=1){
+        $pages = $this->pageService->readChild($rootPage,$this->excludeFromMenuCondition);
+        if($currentLevel===$targetLevel){
             return $pages;
         }
-        foreach ($pages as $page) {
-            if (in_array($page['id'], $this->rootline)) {
-                return $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1);
+        foreach ($pages as $page){
+            if(in_array($page['id'],$this->rootline)){
+                return $this->_getPagesByLevel($page['id'], $targetLevel,$currentLevel+1);
             }
         }
         return array();

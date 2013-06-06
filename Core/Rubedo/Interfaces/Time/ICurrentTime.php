@@ -15,6 +15,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 namespace Rubedo\Interfaces\Time;
 
 /**
@@ -28,13 +29,12 @@ namespace Rubedo\Interfaces\Time;
  */
 interface ICurrentTime
 {
-
-    /**
-     * Return the current time
-     *
-     * @return string current timestamp format datetime (number of second since unix dawn of time)
-     */
-    public function getCurrentTime ();
-
+	/**
+	 * Return the current time
+	 * 
+	 * @return string current timestamp format datetime (number of second since unix dawn of time)
+	 */
+    public function getCurrentTime();
+	
     public function setSimulatedTime ($time);
 }

@@ -16,14 +16,16 @@
  */
 namespace Rubedo\Exceptions;
 
+
 /**
  * Exception occuring when an access right isn't granted
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class Access extends AbstractException
 {
+
 }

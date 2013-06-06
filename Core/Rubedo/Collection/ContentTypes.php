@@ -42,7 +42,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 
     /**
      * Only access to content with read access
-     *
+     * 
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init ()
@@ -268,7 +268,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Interfaces\Collection\IContentTypes::getReadableContentTypes()
      */
     public function getReadableContentTypes ()
@@ -302,7 +302,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
 
     /**
      * (non-PHPdoc)
-     *
+     * 
      * @see \Rubedo\Interfaces\Collection\IContentTypes::getGeolocatedContentTypes()
      */
     public function getGeolocatedContentTypes ()

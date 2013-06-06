@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-
 use Rubedo\Interfaces\Collection\IBlocks;
 use WebTales\MongoFilters\Filter;
 
@@ -48,11 +47,11 @@ class Blocks extends AbstractCollection implements IBlocks
         $result = $this->getList($filter);
         return $result;
     }
-
+    
     /**
      * Return an array of blocks ID as key for a given maskId
      *
-     * @param array $maskId            
+     * @param array $maskId
      * @return array
      */
     public function getIdListByMask ($maskId)
@@ -84,7 +83,7 @@ class Blocks extends AbstractCollection implements IBlocks
     /**
      * Return an array of blocks ID as key for a given pageId
      *
-     * @param array $pageId            
+     * @param array $pageId
      * @return array
      */
     public function getIdListByPage ($pageId)

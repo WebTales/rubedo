@@ -25,34 +25,31 @@ Use Rubedo\Services\Manager;
  */
 class XhrAuthenticationController extends Zend_Controller_Action
 {
-
     /**
      * Variable for Authentication service
      *
-     * @param
-     *            Rubedo\Interfaces\User\IAuthentication
+     * @param 	Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
 
     /**
      * Init the authentication service
      */
-    public function init ()
-    {
+    public function init() {
         $this->_auth = Manager::getService('Authentication');
     }
 
     /**
      * Log in the user and set a json response with a boolean and a message
+     *
      */
-    public function loginAction ()
-    {
+    public function loginAction() {
         $login = $this->getRequest()->getParam('login');
         $password = $this->getRequest()->getParam('password');
         if ($this->getRequest()->isPost()) {
-            if (! empty($login) && ! empty($password)) {
+            if (!empty($login) && !empty($password)) {
                 $loginResult = $this->_auth->authenticate($login, $password);
-                
+
                 if ($loginResult) {
                     $response['success'] = true;
                 } else {
@@ -66,36 +63,38 @@ class XhrAuthenticationController extends Zend_Controller_Action
         } else {
             $response['succes'] = false;
             $response['message'] = 'The login and the password should be sent in a POST request !';
+
         }
         return $this->_helper->json($response);
     }
 
     /**
      * Log out the user and set a json response with a boolean
+     *
      */
-    public function logoutAction ()
-    {
+    public function logoutAction() {
         $logout = $this->_auth->clearIdentity();
-        
+
         $response['success'] = true;
         return $this->_helper->json($response);
+
     }
 
     /**
      * check if a user is connected and return its login if true (json array)
      */
-    public function isLoggedInAction ()
-    {
+    public function isLoggedInAction() {
         $currentUserService = Manager::getService('CurrentUser');
-        
-        if (! $currentUserService->isAuthenticated()) {
+
+        if (!$currentUserService->isAuthenticated()) {
             $response['loggedIn'] = false;
         } else {
             $response['loggedIn'] = true;
             $user = $currentUserService->getCurrentUserSummary();
             $response['username'] = $user['login'];
         }
-        
+
         return $this->_helper->json($response);
     }
+
 }

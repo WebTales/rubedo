@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -26,6 +25,9 @@
 class Install_Bootstrap extends Zend_Application_Module_Bootstrap
 
 {
+
+
+
 }
 
 

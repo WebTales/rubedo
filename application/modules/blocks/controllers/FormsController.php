@@ -24,6 +24,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
+
 class Blocks_FormsController extends Blocks_AbstractController
 {
 
@@ -95,7 +96,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                         case "=":
                             $conditionArray = $this->_checkCondition($condition);
                             if (in_array(false, $conditionArray))                             // si condition
-                                                                  // pas remplie
+                                                                // pas remplie
                             {
                                 unset($this->_errors[$field["id"]]);
                                 unset($this->_formResponse["data"][$field["id"]]);
@@ -146,15 +147,16 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output["nbFormPages"] = count($this->_form["formPages"]);
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
         $output["displayNew"] = $this->_form["uniqueAnswer"] == "true" ? false : true;
-        if ($this->_formResponse["status"] == "finished") {
-            if ($this->_justFinished || $output["displayNew"]) {
+        if ($this->_formResponse["status"] == "finished"){
+            if($this->_justFinished || $output["displayNew"]){
                 $output["finished"] = $this->_form["endMessage"];
-            } else {
+            }else{
                 $output["finished"] = $this->_form["uniqueAnswerText"];
             }
+            
         }
-        
-        // affichage de la page
+            
+            // affichage de la page
         $output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
         $output["progression"] = $this->_blockConfig["progression"];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
@@ -187,7 +189,7 @@ class Blocks_FormsController extends Blocks_AbstractController
      */
     protected function _finish ()
     {
-        if ($this->_formResponse["status"] != 'finished') {
+        if($this->_formResponse["status"] != 'finished'){
             $this->_formResponse["status"] = "finished";
             $result = Manager::getService('FormsResponses')->update($this->_formResponse);
             if ($result['success']) {
@@ -199,9 +201,10 @@ class Blocks_FormsController extends Blocks_AbstractController
                 throw new Rubedo\Exceptions\Server('Impossible to update the response.', "Exception17");
             }
             $this->_justFinished = true;
-        } else {
+        }else{
             $this->_justFinished = false;
         }
+        
         
         // Ferme le formulaire et renvois a une page de remerciement
     }
@@ -224,21 +227,22 @@ class Blocks_FormsController extends Blocks_AbstractController
          * Check validation rules
          */
         $fieldType = $this->_getFieldType($field["id"]);
-        // if response is not empty
+        //if response is not empty
         if (! empty($response)) {
-            // check numberfield if value is numeric
+        		//check numberfield if value is numeric
             if ($fieldType == "numberfield") {
-                
+
                 $is_valid = is_numeric($response) == true ? true : false;
                 if ($is_valid == false)
                     $this->_errors[$field["id"]] = "Ce champ ne doit contenir que des caractères numériques";
-                else {
-                    // if decimal is not allowed, check if response is decimal
-                    if (! isset($field["itemConfig"]["fieldConfig"]["allowDecimals"]) || $field["itemConfig"]["fieldConfig"]["allowDecimals"] != "on") {
-                        $is_valid = preg_match("/\\d\\.|,\\d/", $response) == 1 ? false : true;
-                    }
-                    if ($is_valid == false)
-                        $this->_errors[$field["id"]] = "Les décimales ne sont pas autorisées";
+                else{
+                	//if decimal is not allowed, check if response is decimal
+                	if(!isset($field["itemConfig"]["fieldConfig"]["allowDecimals"])|| $field["itemConfig"]["fieldConfig"]["allowDecimals"]!="on")
+                	{
+                		$is_valid=preg_match ( "/\\d\\.|,\\d/" ,$response)==1?false:true;
+                	}
+                	if ($is_valid == false)
+                		$this->_errors[$field["id"]] = "Les décimales ne sont pas autorisées";
                 }
             }
             /*
@@ -269,7 +273,7 @@ class Blocks_FormsController extends Blocks_AbstractController
             /*
              * Check Other params
              */
-            // MinLength and maxLength for textfields and textarea
+            //MinLength and maxLength for textfields and textarea
             if ($is_valid) {
                 if (isset($validationRules["minLength"]) && ! empty($validationRules["minLength"])) {
                     if (strlen($response) < $validationRules["minLength"]) {
@@ -285,7 +289,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                 }
             }
             if ($is_valid) {
-                // Min value and max value for other fields
+            	//Min value and max value for other fields
                 if (isset($validationRules["minValue"])) {
                     switch ($field["itemConfig"]["fieldType"]) {
                         case "numberfield":
@@ -333,7 +337,7 @@ class Blocks_FormsController extends Blocks_AbstractController
             }
         }
         if ($is_valid) {
-            // if field is valid add to the response datas
+        	//if field is valid add to the response datas
             $this->_validatedFields[$field['id']] = $response;
             if (! isset($this->_formResponse['data'])) {
                 $this->_formResponse['data'] = array();
@@ -355,22 +359,23 @@ class Blocks_FormsController extends Blocks_AbstractController
 
     protected function _updateResponse ()
     {
-        if ($this->_formResponse["status"] != 'finished' || $this->getParam("getNew") == 1) {
+        if($this->_formResponse["status"] != 'finished' || $this->getParam("getNew") == 1){
             
-            // mise à jour du status de la réponse
-            $this->_formResponse["status"] = "pending";
-            $currentPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
-            // $this->_formResponse["lastAnsweredPage"]=$this->formsSessionArray[$this->_formId]['currentFormPage'];
-            if (intval($this->formsSessionArray[$this->_formId]['currentFormPage']) > $this->_lastAnsweredPage && $this->_lastAnsweredPage > 0) {
-                $this->_formResponse["lastAnsweredPage"][] = $this->_lastAnsweredPage;
-                $this->_formResponse["lastAnsweredPage"] = array_unique($this->_formResponse["lastAnsweredPage"]);
-            }
-            $result = Manager::getService('FormsResponses')->update($this->_formResponse);
-            if (! $result['success']) {
-                throw new Rubedo\Exceptions\Server('Impossible to update the response.', "Exception17");
-            } else {
-                $this->_formResponse = $result['data'];
-            }
+        
+        // mise à jour du status de la réponse
+        $this->_formResponse["status"] = "pending";
+        $currentPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
+        // $this->_formResponse["lastAnsweredPage"]=$this->formsSessionArray[$this->_formId]['currentFormPage'];
+        if (intval($this->formsSessionArray[$this->_formId]['currentFormPage']) > $this->_lastAnsweredPage && $this->_lastAnsweredPage > 0) {
+            $this->_formResponse["lastAnsweredPage"][] = $this->_lastAnsweredPage;
+            $this->_formResponse["lastAnsweredPage"] = array_unique($this->_formResponse["lastAnsweredPage"]);
+        }
+        $result = Manager::getService('FormsResponses')->update($this->_formResponse);
+        if (! $result['success']) {
+            throw new Rubedo\Exceptions\Server('Impossible to update the response.', "Exception17");
+        } else {
+            $this->_formResponse = $result['data'];
+        }
         }
     }
 
@@ -379,30 +384,30 @@ class Blocks_FormsController extends Blocks_AbstractController
         if ($this->formsSessionArray[$this->_formId]['currentFormPage'] >= count($this->_form["formPages"])) {
             $this->_finish();
             /*
-             * $this->formsSessionArray[$this->_formId]['currentFormPage']=0; Manager::getService('Session')->set("forms",$this->formsSessionArray);
+             * $this->formsSessionArray[$this->_formId]['currentFormPage']=0;
+             * Manager::getService('Session')->set("forms",$this->formsSessionArray);
              */
         }
         /*
          * Verifications des conditions
          */
         
-        // recovery of the page to be processed
-        $idToCheck = $this->formsSessionArray[$this->_formId]['currentFormPage'];
-        if (isset($this->_form["formPages"][$idToCheck])) {
+        //recovery of the page to be processed
+        $idToCheck =$this->formsSessionArray[$this->_formId]['currentFormPage'];
+        if(isset($this->_form["formPages"][$idToCheck])){
             $pageToCheck = $this->_form["formPages"][$idToCheck];
-        } else {
-            $pageToCheck = array(
-                'elements' => array()
-            );
+        }else{
+            $pageToCheck = array('elements'=>array());
         }
         
+        
         $checkFields = true;
-        // if page have conditionals
+        //if page have conditionals
         if (! empty($pageToCheck["itemConfig"]["conditionals"])) {
             // for each conditional check if condition and check if the condition is fulfilled
             foreach ($pageToCheck["itemConfig"]["conditionals"] as $condition) {
-                
-                $conditionsArray = array();
+            	
+                $conditionsArray = array(); 
                 switch ($condition["operator"]) {
                     case "=":
                         $conditionsArray = $this->_checkCondition($condition);
@@ -427,13 +432,13 @@ class Blocks_FormsController extends Blocks_AbstractController
                 }
             }
         }
-        // if page condition is fulfilled
+        //if page condition is fulfilled
         if ($checkFields) {
-            // checks each field on the page and see if it has conditions
+        	//checks each field on the page and see if it has conditions
             foreach ($pageToCheck["elements"] as $key => $field) {
                 
                 if (! empty($field["itemConfig"]["conditionals"])) {
-                    // for each field we see if it is a condition of another field
+                	//for each field we see if it is a condition of another field
                     foreach ($field["itemConfig"]["conditionals"] as $condition) {
                         foreach ($pageToCheck["elements"] as $id => $item) {
                             if ($condition["field"] == $item["id"]) {
@@ -445,7 +450,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                             case "=":
                                 $pageToCheck["elements"][$key]["itemConfig"]["isChild"] = true;
                                 $pageToCheck["elements"][$key]["itemConfig"]["target"] = $condition["field"];
-                                // check type of required value for condition
+                                //check type of required value for condition
                                 if (is_array($condition["value"])) {
                                     if (is_array($condition["value"]["value"])) {
                                         $dataValues = "";
@@ -456,12 +461,13 @@ class Blocks_FormsController extends Blocks_AbstractController
                                         
                                         $dataValues = implode(';', $dataValuesArray);
                                         $pageToCheck["elements"][$key]["itemConfig"]["value"] = $dataValues;
-                                    } elseif (is_string($condition["value"]["value"])) {
-                                        
+                                    }
+                                     elseif (is_string($condition["value"]["value"])) {
+                                     	
                                         $pageToCheck["elements"][$key]["itemConfig"]["value"] = $condition["value"]["value"];
                                     }
                                 } elseif (is_string($condition["value"])) {
-                                    
+                                	
                                     $type = $this->_getFieldType($condition["field"]);
                                     
                                     if ($type == "datefield") {
@@ -478,7 +484,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                                     $conditionsArray[] = false;
                                 }
                                 
-                                if (! in_array(true, $conditionsArray)) {
+                                if (!in_array(true, $conditionsArray)) {
                                     $pageToCheck["elements"][$key]["itemConfig"]["hidden"] = true;
                                 }
                                 break;
@@ -500,44 +506,44 @@ class Blocks_FormsController extends Blocks_AbstractController
     // End function
     protected function _checkCondition ($condition)
     {
-        // check if condition is fulfilled
+    	//check if condition is fulfilled
         $returnArray = array();
         
         if (! isset($this->_formResponse['data'][$condition["field"]]) || empty($this->_formResponse['data'][$condition["field"]])) {
             $returnArray[] = false;
         } else {
-            // check type of required value for condition and check if condition is fulfilled
+        	//check type of required value for condition and check if condition is fulfilled
             if (is_array($condition["value"])) {
                 if (is_array($condition["value"]["value"])) {
                     foreach ($condition["value"]["value"] as $value) {
                         if (is_array($this->_formResponse['data'][$condition["field"]])) {
                             foreach ($this->_formResponse['data'][$condition["field"]] as $response) {
-                                
+                            	
                                 $returnArray[] = in_array($response, $condition["value"]["value"]);
                             }
                         } elseif (is_string($this->_formResponse['data'][$condition["field"]])) {
-                            
+                        	
                             $returnArray[] = in_array($value, $this->_formResponse['data'][$condition["field"]]);
                         }
                     }
                 } elseif (is_string($condition["value"]["value"])) {
                     if (is_array($this->_formResponse['data'][$condition["field"]])) {
-                        
+                    	
                         $returnArray[] = in_array($condition["value"]["value"], $this->_formResponse['data'][$condition["field"]]);
                     } elseif (is_string($this->_formResponse['data'][$condition["field"]])) {
-                        
+               
                         $returnArray[] = $condition["value"]["value"] == $this->_formResponse['data'][$condition["field"]] ? true : false;
                     }
                 }
-                // check type of required value for condition and check if condition is fulfilled
+                //check type of required value for condition and check if condition is fulfilled
             } elseif (is_string($condition["value"])) {
                 if (is_array($this->_formResponse['data'][$condition["field"]])) {
-                    
+
                     $returnArray[] = in_array($condition["value"], $this->_formResponse['data'][$condition["field"]]);
                 } elseif (is_string($this->_formResponse['data'][$condition["field"]])) {
                     
                     $returnArray[] = in_array($value, $this->_formResponse['data'][$condition["field"]]);
-                    
+
                     $type = $this->_getFieldType($condition["field"]);
                     switch ($type) {
                         case "textfield":
@@ -562,7 +568,7 @@ class Blocks_FormsController extends Blocks_AbstractController
 
     protected function _getFieldType ($fieldId)
     {
-        // return field type
+    	//return field type
         $toReturn = "";
         foreach ($this->_form["formPages"] as $pages) {
             foreach ($pages["elements"] as $field) {

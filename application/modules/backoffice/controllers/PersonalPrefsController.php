@@ -14,6 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 require_once ('DataAccessController.php');
 
 /**
@@ -25,44 +26,34 @@ require_once ('DataAccessController.php');
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
 {
-
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-prefs',
-        'count-orphan-prefs'
-    );
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'clear-orphan-prefs','count-orphan-prefs',);
 
     /**
      * Initialise the controller
      */
-    public function init ()
-    {
+    public function init() {
         parent::init();
-        
+
         $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
     }
+    
+    public function clearOrphanPrefsAction() {
+		$result = $this->_dataService->clearOrphanPrefs();
+		
+		$this->_returnJson($result);
+	}
+	
+	public function countOrphanPrefsAction() {
+		$result = $this->_dataService->countOrphanPrefs();
+		
+		$this->_returnJson($result);
+	}
 
-    public function clearOrphanPrefsAction ()
-    {
-        $result = $this->_dataService->clearOrphanPrefs();
-        
-        $this->_returnJson($result);
-    }
-
-    public function countOrphanPrefsAction ()
-    {
-        $result = $this->_dataService->countOrphanPrefs();
-        
-        $this->_returnJson($result);
-    }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -25,84 +24,78 @@
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class Backoffice_NestedContentsController extends Zend_Controller_Action
 {
-
-    /**
-     * Parent content Id
-     *
-     * @var string
-     */
-    protected $_parentId;
-
+	/**
+	 * Parent content Id
+	 * 
+	 * @var string
+	 */
+	protected $_parentId;
+	
     /**
      * should json be prettified
      *
      * @var bool
      */
     protected $_prettyJson = true;
-
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index'
-    );
-
+	
+	/**
+	 * Array with the read only actions
+	 */
+	protected $_readOnlyAction = array('index');
+	
     /**
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
      *
      * @see Zend_Controller_Action::init()
      */
-    public function init ()
-    {
-        // init the data access service
+    public function init() {		
+		// init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('NestedContents');
-        
-        $this->_parentId = $this->getRequest()->getParam('parentId');
-        
-        if (! isset($this->_parentId)) {
+		
+		$this->_parentId = $this->getRequest()->getParam('parentId');
+
+        if (!isset($this->_parentId)) {
             $response = array();
             $response['success'] = false;
             $response['message'] = 'no parentId Given';
-            $this->getResponse()->setHttpResponseCode(500);
+			$this->getResponse()->setHttpResponseCode(500);
             $this->_returnJson($response);
         }
-        
-        $sessionService = \Rubedo\Services\Manager::getService('Session');
-        
+		
+		$sessionService = \Rubedo\Services\Manager::getService('Session');
+		
         // refuse write action not send by POST
-        if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
+        if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
             throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
         } else {
-            if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-                $user = $sessionService->get('user');
-                $token = $this->getRequest()->getParam('token');
-                
-                if ($token !== $user['token']) {
-                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-                }
-            }
+        	if(!in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)){
+        		$user = $sessionService->get('user');
+        		$token = $this->getRequest()->getParam('token');
+				
+				if($token !== $user['token']){
+					throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
+				}
+        	}
         }
+
     }
 
     /**
      * Set the response body with Json content
      * Option : json is made human readable
-     * 
-     * @param mixed $data
-     *            data to be json encoded
+     * @param mixed $data data to be json encoded
      */
-    protected function _returnJson ($data)
-    {
+    protected function _returnJson($data) {
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
-        
+
         $returnValue = Zend_Json::encode($data);
         if ($this->_prettyJson) {
             $returnValue = Zend_Json::prettyPrint($returnValue);
@@ -115,13 +108,14 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
      *
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
+     *
      */
-    public function indexAction ()
-    {
-        if (! isset($this->_parentId)) {
-            return;
-        }
-        
+    public function indexAction() {
+    	
+    	if (!isset($this->_parentId)){
+    		return;
+    	}
+		
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
             $filters = Zend_Json::decode($filterJson);
@@ -134,48 +128,44 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
         } else {
             $sort = null;
         }
-        
+
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->getList($this->_parentId, $mongoFilters, $sort);
-        
+
         $response = array();
         $response['total'] = count($dataValues);
         $response['data'] = $dataValues;
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         $this->_returnJson($response);
     }
 
     /**
      * The destroy action of the CRUD API
      */
-    public function deleteAction ()
-    {
-        if (! isset($this->_parentId)) {
-            return;
-        }
-        
+    public function deleteAction() {
+    	
+		if (!isset($this->_parentId)){
+    		return;
+    	}
+		
         $data = $this->getRequest()->getParam('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
-                
-                $returnArray = $this->_dataService->destroy($this->_parentId, $data, true);
+
+                $returnArray = $this->_dataService->destroy($this->_parentId,$data, true);
+
             } else {
-                $returnArray = array(
-                    'success' => false,
-                    "msg" => 'Not an array'
-                );
+                $returnArray = array('success' => false, "msg" => 'Not an array');
             }
+
         } else {
-            $returnArray = array(
-                'success' => false,
-                "msg" => 'Invalid Data'
-            );
+            $returnArray = array('success' => false, "msg" => 'Invalid Data');
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
@@ -184,31 +174,26 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
     /**
      * The create action of the CRUD API
      */
-    public function createAction ()
-    {
-        if (! isset($this->_parentId)) {
-            return;
-        }
-        
+    public function createAction() {
+    		
+    	if (!isset($this->_parentId)){
+    		return;
+    	}
+		
         $data = $this->getRequest()->getParam('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
-                $returnArray = $this->_dataService->create($this->_parentId, $insertData, true);
+                $returnArray = $this->_dataService->create($this->_parentId,$insertData, true);
+
             } else {
-                $returnArray = array(
-                    'success' => false,
-                    "msg" => 'Not an array'
-                );
+                $returnArray = array('success' => false, "msg" => 'Not an array');
             }
         } else {
-            $returnArray = array(
-                'success' => false,
-                "msg" => 'No Data'
-            );
+            $returnArray = array('success' => false, "msg" => 'No Data');
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
@@ -217,34 +202,30 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
     /**
      * The update action of the CRUD API
      */
-    public function updateAction ()
-    {
-        if (! isset($this->_parentId)) {
-            return;
-        }
-        
+    public function updateAction() {
+			
+		if (!isset($this->_parentId)){
+    		return;
+    	}
+		
         $data = $this->getRequest()->getParam('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $updateData = Zend_Json::decode($data);
             if (is_array($updateData)) {
-                
-                $returnArray = $this->_dataService->update($this->_parentId, $updateData, true);
+
+                $returnArray = $this->_dataService->update($this->_parentId,$updateData, true);
+
             } else {
-                $returnArray = array(
-                    'success' => false,
-                    "msg" => 'Not an array'
-                );
+                $returnArray = array('success' => false, "msg" => 'Not an array');
             }
         } else {
-            $returnArray = array(
-                'success' => false,
-                "msg" => 'No Data'
-            );
+            $returnArray = array('success' => false, "msg" => 'No Data');
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
     }
+
 }

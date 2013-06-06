@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IUrlCache, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IUrlCache, \WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Users
@@ -27,78 +27,53 @@ use Rubedo\Interfaces\Collection\IUrlCache, WebTales\MongoFilters\Filter;
  */
 class UrlCache extends AbstractCollection implements IUrlCache
 {
-
     protected $_indexes = array(
-        array(
-            'keys' => array(
-                'siteId' => 1,
-                "url" => 1
-            ),
-            'options' => array(
-                'unique' => true
-            )
-        ),
-        array(
-            'keys' => array(
-                'siteId' => 1,
-                "pageId" => 1
-            ),
-            'options' => array(
-                'unique' => true
-            )
-        )
-    )
-    ;
-
+        array('keys'=>array('siteId'=>1,"url"=>1),'options'=>array('unique'=>true)),
+        array('keys'=>array('siteId'=>1,"pageId"=>1),'options'=>array('unique'=>true)),
+    
+    );
+    
     /**
      * Set the collection name
      */
     public function __construct ()
     {
         $this->_collectionName = 'UrlCache';
-        parent::__construct();
-    }
-
-    public function verifyIndexes ()
-    {
-        $this->_dataService->ensureIndex(array(
-            'url' => 1,
-            'siteId' => 1
-        ), array(
-            'unique' => true
-        ));
-        $this->_dataService->ensureIndex(array(
-            'date' => 1
-        ), array(
-            'expireAfterSeconds' => 600
-        ));
+        parent::__construct();        
     }
     
-    /*
-     * (non-PHPdoc) @see \Rubedo\Interfaces\Collection\IUrlCache::findByPageId()
+    public function verifyIndexes(){
+        $this->_dataService->ensureIndex(array('url'=>1,'siteId'=>1),array('unique'=>true));
+        $this->_dataService->ensureIndex(array('date'=>1),array('expireAfterSeconds'=>600));
+    }
+
+  
+    /* (non-PHPdoc)
+     * @see \Rubedo\Interfaces\Collection\IUrlCache::findByPageId()
      */
     public function findByPageId ($pageId)
     {
-        return $this->_dataService->findOne(Filter::Factory('value')->setName('pageId')
-            ->setValue($pageId));
+        
+        return $this->_dataService->findOne(Filter::Factory('value')->setName('pageId')->setValue($pageId));
     }
     
-    /*
-     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
+
+    /* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array('w'=>false))
     {
         $obj['date'] = $this->_dataService->getMongoDate();
         
-        parent::create($obj, $options);
+        parent::create($obj,$options);       
     }
-    
-    /*
-     * (non-PHPdoc) @see \Rubedo\Interfaces\Collection\IUrlCache::findByUrl()
-     */
-    public function findByUrl ($url, $siteId)
+
+	/* (non-PHPdoc)
+	 * @see \Rubedo\Interfaces\Collection\IUrlCache::findByUrl()
+	 */
+	public function findByUrl ($url, $siteId)
     {
-        if (! $siteId) {
+        if(!$siteId){
             return null;
         }
         $filters = Filter::Factory('And');

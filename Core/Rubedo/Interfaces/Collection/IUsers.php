@@ -24,32 +24,26 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IUsers extends IAbstractCollection
-{
-
-    /**
-     * Change the password of the user given by its id
-     * Check version conflict
-     *
-     * @param string $$password
-     *            new password
-     * @param int $version
-     *            version number
-     * @param string $userId
-     *            id of the user to be changed
-     */
-    public function changePassword ($password, $version, $userId);
-
-    /**
-     * Return the user associeted to the id
-     *
-     * @param string $email            
-     *
-     * @return array
-     */
-    public function findByEmail ($email);
-
-    public function findValidatingUsersByWorkspace ($workspace);
-
-    public function getAdminUsers ();
+interface IUsers extends IAbstractCollection{
+	
+	/**
+	 * Change the password of the user given by its id
+	 * Check version conflict
+	 * 
+	 * @param string $$password new password
+	 * @param int $version version number
+	 * @param string $userId id of the user to be changed
+	 */
+	public function changePassword($password,$version,$userId);
+	
+	/**
+	 * Return the user associeted to the id
+	 * 
+	 * @param string $email
+	 * 
+	 * @return array
+	 */
+	public function findByEmail($email);
+	public function findValidatingUsersByWorkspace ($workspace);
+	public function getAdminUsers ();
 }

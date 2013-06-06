@@ -26,56 +26,58 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
 {
 
     protected $_workspace;
-
+    
     public function init ()
     {
         $templateService = Manager::getService('FrontOfficeTemplates');
         Rubedo\Collection\Contents::setIsFrontEnd(true);
         
-        // handle preview for ajax request, only if user is a backoffice user
+        //handle preview for ajax request, only if user is a backoffice user
         if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $isDraft = $this->getParam('is-draft', false);
             if (! is_null($isDraft)) {
                 Zend_Registry::set('draft', $isDraft);
             }
         }
-        
-        // get current page property
+    
+        //get current page property
         $this->currentPage = $this->getParam('current-page');
         
+      
+       
+    
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
-        if (is_null($currentPage)) {
+        if(is_null($currentPage)){
             throw new Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
-        } else {
+        } else{
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
         
-        if (! $templateService->themeHadBeenSet()) {
+        if(!$templateService->themeHadBeenSet()){
             $currentSite = Manager::getService('Sites')->findById($currentPage['site']);
             $theme = $currentSite['theme'];
             $templateService->setCurrentTheme($theme);
         }
         
-        // set current workspace
+        //set current workspace
         $this->_workspace = $currentPage['workspace'];
+    
     }
+    
 
     abstract public function indexAction ();
 
+
     /**
      * handle the response weither it is a direct call or a partial call
-     *
+     * 
      * if direct HTTP request, it render templates
      * if it is a sub call from Rubedo, return the data for global rendering
-     *
-     * @param array $output
-     *            data to be rendered
-     * @param string $template
-     *            twig template to be used
-     * @param array $css
-     *            array of CSS that should be included
-     * @param array $js
-     *            array of JS that should be included
+     * 
+     * @param array $output data to be rendered
+     * @param string $template twig template to be used
+     * @param array $css array of CSS that should be included
+     * @param array $js array of JS that should be included
      */
     protected function _sendResponse (array $output, $template, array $css = null, array $js = null)
     {

@@ -15,6 +15,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 namespace Rubedo\Interfaces\Services;
 
 /**
@@ -28,60 +29,49 @@ namespace Rubedo\Interfaces\Services;
  */
 interface IServicesProxy
 {
-
     /**
      * protected constructor : create manager object and nested service object
      *
-     * @param string $serviceClassName
-     *            Name of nested class
-     * @param string $serviceName
-     *            Name of the service
-     * @param object $serviceObject
-     *            Override the service object
+     * @param string $serviceClassName Name of nested class
+     * @param string $serviceName Name of the service
+	 * @param object $serviceObject Override the service object
      */
-    public function __construct ($serviceClassName, $serviceName, $serviceObject = null);
+    public function __construct($serviceClassName, $serviceName, $serviceObject = null);
 
     /**
-     * Getter of the current service parameters or the specified parameter
+     * Getter of the current service  parameters or the specified parameter
      *
-     * @param string $name
-     *            optionnal parameter name
+     * @param string $name optionnal parameter name
      * @return mixed value or array of valuefor asked parameter
      */
-    public function getCurrentOptions ($name = null);
+    public function getCurrentOptions($name = null);
 
     /**
      * Getter of the current service name
-     * 
      * @return string
      */
-    public function getServiceName ();
+    public function getServiceName();
 
     /**
      *
-     *
      * Call : magic method invoke when calling a none existing manager method, proxy to the service object
      *
-     * @param string $name
-     *            service method name
-     * @param array $arguments
-     *            service method array of arguments
+     * @param string $name service method name
+     * @param array $arguments service method array of arguments
      */
-    public function __call ($name, $arguments);
-
+    public function __call($name, $arguments);
     /**
      * Dependancy setter : set the nested object and inform the nested object
      * of the manager instance
      *
-     * @param object $obj            
+     * @param object $obj
      */
-    public function setServiceObj ($obj);
-
+    public function setServiceObj($obj);
     /**
      * Dependancy getter : get the nested object and inform the nested object
      * of the manager instance
      *
      * @return object $obj
      */
-    public function getServiceObj ();
+    public function getServiceObj();
 }

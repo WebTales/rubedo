@@ -24,29 +24,28 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IMailingList extends IAbstractCollection
-{
-
-    /**
-     * Add a user into a specified mailing list
-     *
-     * @param string $mailingListId            
-     * @param string $email            
-     * @param boolean $doNotDuplicate            
-     *
-     * @return array
-     */
-    public function subscribe ($mailingListId, $email, $doNotDuplicate = true);
-
-    /**
-     * Remove a user from a specified mailing list
-     *
-     * @param string $mailingListId            
-     * @param string $email            
-     *
-     * @return array
-     */
-    public function unSubscribe ($mailingListId, $email);
-
-    public function getNewMessage ($mailingListId);
+interface IMailingList extends IAbstractCollection{
+	
+	/**
+	 * Add a user into a specified mailing list
+	 *
+	 * @param string $mailingListId
+	 * @param string $email
+	 * @param boolean $doNotDuplicate
+	 *
+	 * @return array
+	 */
+	public function subscribe($mailingListId, $email, $doNotDuplicate=true);
+	
+	/**
+	 * Remove a user from a specified mailing list
+	 *
+	 * @param string $mailingListId
+	 * @param string $email
+	 *
+	 * @return array
+	 */
+	public function unSubscribe($mailingListId, $email);
+	public function getNewMessage ($mailingListId);
+	
 }

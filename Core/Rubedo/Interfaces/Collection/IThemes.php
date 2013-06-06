@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IThemes extends IAbstractCollection
-{
+interface IThemes extends IAbstractCollection{
+	
 }

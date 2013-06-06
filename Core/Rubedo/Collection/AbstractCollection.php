@@ -220,7 +220,6 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      *
      *
-     *
      * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
@@ -237,7 +236,6 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      *
      * @deprecated
-     *
      *
      *
      *
@@ -265,7 +263,6 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      *
      *
-     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
@@ -274,7 +271,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array())
+    public function customUpdate (array $data,\WebTales\MongoFilters\IFilter $updateCond, $options = array())
     {
         return $this->_dataService->customUpdate($data, $updateCond, $options);
     }
@@ -487,7 +484,6 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      *
      *
-     *
      * @param unknown $deleteCond            
      * @param unknown $options            
      * @return Ambigous <boolean, multitype:>
@@ -508,7 +504,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *            array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
         if (! $parentId) {
             return array();
@@ -560,7 +556,7 @@ abstract class AbstractCollection implements IAbstractCollection
         return $returnArray;
     }
 
-    public function fetchAllChildren ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
+    public function fetchAllChildren ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
     {
         $returnArray = array();
         $children = $this->readChild($parentId, $filters, $sort); // Read child
@@ -662,7 +658,7 @@ abstract class AbstractCollection implements IAbstractCollection
 
     /**
      * Return differences between two arrays with recursivity
-     *
+     * 
      * @param Array $array1            
      * @param Array $array2            
      * @return Array

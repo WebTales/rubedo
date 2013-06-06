@@ -127,12 +127,12 @@ class Notification implements INotification
     protected function _notifyPending ($obj)
     {
         $userIdArray = Manager::getService('Users')->findValidatingUsersByWorkspace($obj['writeWorkspace']);
-        if (count($userIdArray) === 0) {
+        if(count($userIdArray)===0){
             return;
         }
         $template = 'pending-body.html.twig';
         $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Soumission pour validation d\'un contenu "' . $obj['text'] . '"';
-        return $this->_sendNotification($userIdArray, $obj, $template, $subject, true);
+        return $this->_sendNotification($userIdArray, $obj, $template, $subject,true);
     }
 
     protected function _sendNotification ($userIdArray, $obj, $template, $subject, $hideTo = false)

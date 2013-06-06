@@ -26,29 +26,21 @@ use Rubedo\Interfaces\Security\IHtmlCleaner;
  * @category Rubedo
  * @package Rubedo
  */
-class HtmlCleaner implements IHtmlCleaner
-{
-
+class HtmlCleaner implements IHtmlCleaner {
+    
     /**
      * Clean a raw content to become a valid HTML content without threats
-     *
-     * @param string $html            
+     * 
+     * @param string $html
      * @return string
      */
-    public function clean ($html)
-    {
-        $allowedTags = array(
-            'p',
-            'div',
-            'img',
-            'h2',
-            'h3',
-            'h4',
-            'h5',
-            'h6'
-        );
-        $allowedTagString = '<' . implode('><', $allowedTags) . '>';
-        $html = strip_tags($html, $allowedTagString);
+    public function clean($html){
+        
+        $allowedTags = array('p','div','img','h2','h3','h4','h5','h6');
+        $allowedTagString = '<'.implode('><',$allowedTags).'>';
+        $html = strip_tags($html,$allowedTagString);
         return $html;
     }
+
+    
 }

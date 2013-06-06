@@ -51,17 +51,15 @@ class DamController extends Zend_Controller_Action
         }
         if (isset($mediaType['mainFileType']) && $mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
-                'file-id' => $media['originalFileId'],
-                'attachment' => $this->getParam('attachment', null)
+                'file-id' => $media['originalFileId'],'attachment'=>$this->getParam('attachment', null)
             ));
         } else {
             $this->_forward('index', 'file', 'default', array(
-                'file-id' => $media['originalFileId'],
-                'attachment' => $this->getParam('attachment', null)
+                'file-id' => $media['originalFileId'],'attachment'=>$this->getParam('attachment', null)
             ));
         }
     }
-
+    
     public function getThumbnailAction ()
     {
         $mediaId = $this->getParam('media-id', null);

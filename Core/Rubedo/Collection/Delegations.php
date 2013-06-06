@@ -27,10 +27,11 @@ use Rubedo\Interfaces\Collection\IDelegations;
  */
 class Delegations extends AbstractCollection implements IDelegations
 {
+	
 
-    public function __construct ()
-    {
-        $this->_collectionName = 'Delegations';
-        parent::__construct();
-    }
+	public function __construct(){
+		$this->_collectionName = 'Delegations';
+		parent::__construct();
+	}
+	
 }
