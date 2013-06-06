@@ -239,7 +239,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                 	//if decimal is not allowed, check if response is decimal
                 	if(!isset($field["itemConfig"]["fieldConfig"]["allowDecimals"])|| $field["itemConfig"]["fieldConfig"]["allowDecimals"]!="on")
                 	{
-                		$is_valid=preg_match ( "/\d\.|,\d/" ,$response)==1?false:true;
+                		$is_valid=preg_match ( "/\\d\\.|,\\d/" ,$response)==1?false:true;
                 	}
                 	if ($is_valid == false)
                 		$this->_errors[$field["id"]] = "Les décimales ne sont pas autorisées";
