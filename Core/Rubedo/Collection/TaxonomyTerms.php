@@ -167,7 +167,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::readChild()
      */
-    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
         $navigation = false;
         

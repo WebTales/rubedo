@@ -19,6 +19,7 @@
 namespace Rubedo\Version;
 
 use Rubedo\Services\Manager;
+
 /**
  * Class to store and retrieve the version of Rubedo.
  *
@@ -69,7 +70,7 @@ final class Version
 
     /**
      * Return the version of the current instance of Rubedo
-     * 
+     *
      * @return string
      */
     public static function getVersion ()
@@ -119,7 +120,7 @@ final class Version
                     return null;
                 }
                 $apiResponse = \Zend_Json::decode($result);
-                if(isset($apiResponse['message'])){
+                if (isset($apiResponse['message'])) {
                     return null;
                 }
                 // Simplify the API response into a simple array of version numbers
@@ -154,9 +155,9 @@ final class Version
     public static function getComponentsVersion ()
     {
         $componentsArray = array();
-        $componentsArray['phpComponents'] = array('MongoDriver'=> \MongoClient::VERSION);
-        
-        
+        $componentsArray['phpComponents'] = array(
+            'MongoDriver' => \MongoClient::VERSION
+        );
         
         if (is_file(APPLICATION_PATH . '/../composer.lock')) {
             $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.lock'));
@@ -168,7 +169,6 @@ final class Version
             }
         }
         
-        
         $componentsArray['frontComponents'] = array();
         if (is_file(APPLICATION_PATH . '/../public/composer.lock')) {
             $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../public/composer.lock'));
@@ -178,15 +178,16 @@ final class Version
         }
         return $componentsArray;
     }
-    
-    public static function getMongoServerVersion(){
-       return Manager::getService('MongoDataAccess')->getMongoServerVersion();
+
+    public static function getMongoServerVersion ()
+    {
+        return Manager::getService('MongoDataAccess')->getMongoServerVersion();
     }
-    
-    public static function getESServerVersion(){
+
+    public static function getESServerVersion ()
+    {
         $esService = Manager::getService('ElasticDataIndex');
         $esService->init();
         return $esService->getVersion();
     }
-    
 }
