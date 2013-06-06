@@ -45,13 +45,13 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         'get-original-file',
         'get-thumbnail'
     );
-    
+
     /**
      * Contain the MIME type
      */
     protected $_mimeType = "";
 
-    public function init ()
+    public function init()
     {
         parent::init();
         
@@ -62,7 +62,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     /*
      * (non-PHPdoc) @see Backoffice_DataAccessController::indexAction()
      */
-    public function indexAction ()
+    public function indexAction()
     {
         // merge filter and tFilter
         $jsonFilter = $this->getParam('filter', Zend_Json::encode(array()));
@@ -76,7 +76,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         parent::indexAction();
     }
 
-    public function getThumbnailAction ()
+    public function getThumbnailAction()
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
@@ -102,7 +102,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
     }
 
-    public function getOriginalFileAction ()
+    public function getOriginalFileAction()
     {
         $mediaId = $this->getParam('id', null);
         if (! $mediaId) {
@@ -127,7 +127,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
     }
 
-    public function createAction ()
+    public function createAction()
     {
         $typeId = $this->getParam('typeId');
         if (! $typeId) {
@@ -147,18 +147,18 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
         $obj['taxonomy'] = Zend_Json::decode($this->getParam('taxonomy', Zend_Json::encode(array())));
-		
-		$workspace = $this->getParam('writeWorkspace');
-		if(!is_null($workspace) && $workspace != ""){
-			$obj['writeWorkspace'] = $workspace;
-			$obj['fields']['writeWorkspace'] = $workspace;
-		}
-		
-		$targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
-		if(is_array($targets) && count($targets) > 0){
-			$obj['target'] = $targets;
-			$obj['fields']['target'] = $targets;
-		}
+        
+        $workspace = $this->getParam('writeWorkspace');
+        if (! is_null($workspace) && $workspace != "") {
+            $obj['writeWorkspace'] = $workspace;
+            $obj['fields']['writeWorkspace'] = $workspace;
+        }
+        
+        $targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
+        if (is_array($targets) && count($targets) > 0) {
+            $obj['target'] = $targets;
+            $obj['fields']['target'] = $targets;
+        }
         
         $fields = $damType['fields'];
         
@@ -170,7 +170,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             $name = $fieldConfig['name'];
             $obj['fields'][$name] = $this->getParam($name);
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
-                throw new \Rubedo\Exceptions\User('Required field missing: %1$s','Exception4',$name);
+                throw new \Rubedo\Exceptions\User('Required field missing: %1$s', 'Exception4', $name);
             }
         }
         
@@ -181,24 +181,24 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             $fieldConfig = $field['config'];
             $name = $fieldConfig['name'];
             
-			$uploadResult = $this->_uploadFile($name, $damType['mainFileType']);
-			if(!is_array($uploadResult)){
-				$obj['fields'][$name] = $uploadResult;
-			} else {
-				return $this->_returnJson($uploadResult);
-			}
-			
+            $uploadResult = $this->_uploadFile($name, $damType['mainFileType']);
+            if (! is_array($uploadResult)) {
+                $obj['fields'][$name] = $uploadResult;
+            } else {
+                return $this->_returnJson($uploadResult);
+            }
+            
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
-                throw new \Rubedo\Exceptions\User('Required field missing: %1$s','Exception4',$name);
+                throw new \Rubedo\Exceptions\User('Required field missing: %1$s', 'Exception4', $name);
             }
         }
         
-		$uploadResult = $this->_uploadFile('originalFileId', $damType['mainFileType']);
-		if(!is_array($uploadResult)){
-        	$obj['originalFileId'] = $uploadResult;
-		} else {
-			return $this->_returnJson($uploadResult);
-		}
+        $uploadResult = $this->_uploadFile('originalFileId', $damType['mainFileType']);
+        if (! is_array($uploadResult)) {
+            $obj['originalFileId'] = $uploadResult;
+        } else {
+            return $this->_returnJson($uploadResult);
+        }
         
         $obj['Content-Type'] = $this->_mimeType;
         
@@ -209,7 +209,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
                 'msg' => 'no main file uploaded'
             ));
         }
-
+        
         $returnArray = $this->_dataService->create($obj);
         
         if (! $returnArray['success']) {
@@ -225,72 +225,72 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         $this->getResponse()->setBody($returnValue);
     }
-    
-    public function massUploadAction ()
+    /*
+     * Method used by Back Office mass uploader for each file
+     */
+    public function massUploadAction()
     {
-	    
-	    $typeId=$this->getParam('typeId');
-	    if (! $typeId) {
-	    	throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
-	    }
-	    $damType = Manager::getService('DamTypes')->findById($typeId);
-	    if (! $damType) {
-	    	throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
-	    }
-	    $obj=array();
-	    $obj['typeId'] = $damType['id'];
-	    $obj['mainFileType'] = $damType['mainFileType'];
-	    $obj['fields']=array();
-	    $obj['taxonomy']=array();
-	    $encodedActiveFacets=$this->getParam('activeFacets');
-	    $activeFacets=Zend_Json::decode($encodedActiveFacets);
-	    $applyTaxoFacets=$this->getParam('applyTaxoFacets', false);
-	    if (($applyTaxoFacets)&&($applyTaxoFacets!="false")){
-	    	$obj['taxonomy']=$activeFacets;
-	    }
-	    $workspace = $this->getParam('writeWorkspace');
-	    if(!is_null($workspace) && $workspace != ""){
-	    	$obj['writeWorkspace'] = $workspace;
-	    	$obj['fields']['writeWorkspace'] = $workspace;
-	    }
-	    $targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
-	    if(is_array($targets) && count($targets) > 0){
-	    	$obj['target'] = $targets;
-	    	$obj['fields']['target'] = $targets;
-	    }
-	    $uploadResult = $this->_uploadFile('file', $damType['mainFileType'],true);
-	    if($uploadResult['success']){
-	    	$obj['title'] = $uploadResult['data']['text'];
-        	$obj['fields']['title'] = $uploadResult['data']['text'];
-	    	$obj['originalFileId'] = $uploadResult['data']['id'];
-	    } else {
-	    	return $this->_returnJson($uploadResult);
-	    }
-	    $obj['Content-Type'] = $this->_mimeType;
-	    if (! $obj['originalFileId']) {
-	    	$this->getResponse()->setHttpResponseCode(500);
-	    	return $this->_returnJson(array(
-	    			'success' => false,
-	    			'msg' => 'no main file uploaded'
-	    	));
-	    }
-	    $returnArray = $this->_dataService->create($obj);
-	    if (! $returnArray['success']) {
-	    	$this->getResponse()->setHttpResponseCode(500);
-	    }
-	    // disable layout and set content type
-	    $this->getHelper('Layout')->disableLayout();
-	    $this->getHelper('ViewRenderer')->setNoRender();
-	    
-	    $returnValue = Zend_Json::encode($returnArray);
-	    if ($this->_prettyJson) {
-	    	$returnValue = Zend_Json::prettyPrint($returnValue);
-	    }
-	    $this->getResponse()->setBody($returnValue);
-	    
+        $typeId = $this->getParam('typeId');
+        if (! $typeId) {
+            throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
+        }
+        $damType = Manager::getService('DamTypes')->findById($typeId);
+        if (! $damType) {
+            throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
+        }
+        $obj = array();
+        $obj['typeId'] = $damType['id'];
+        $obj['mainFileType'] = $damType['mainFileType'];
+        $obj['fields'] = array();
+        $obj['taxonomy'] = array();
+        $encodedActiveFacets = $this->getParam('activeFacets');
+        $activeFacets = Zend_Json::decode($encodedActiveFacets);
+        $applyTaxoFacets = $this->getParam('applyTaxoFacets', false);
+        if (($applyTaxoFacets) && ($applyTaxoFacets != "false")) {
+            $obj['taxonomy'] = $activeFacets;
+        }
+        $workspace = $this->getParam('writeWorkspace');
+        if (! is_null($workspace) && $workspace != "") {
+            $obj['writeWorkspace'] = $workspace;
+            $obj['fields']['writeWorkspace'] = $workspace;
+        }
+        $targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
+        if (is_array($targets) && count($targets) > 0) {
+            $obj['target'] = $targets;
+            $obj['fields']['target'] = $targets;
+        }
+        $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true);
+        if ($uploadResult['success']) {
+            $obj['title'] = $uploadResult['data']['text'];
+            $obj['fields']['title'] = $uploadResult['data']['text'];
+            $obj['originalFileId'] = $uploadResult['data']['id'];
+        } else {
+            return $this->_returnJson($uploadResult);
+        }
+        $obj['Content-Type'] = $this->_mimeType;
+        if (! $obj['originalFileId']) {
+            $this->getResponse()->setHttpResponseCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                'msg' => 'no main file uploaded'
+            ));
+        }
+        $returnArray = $this->_dataService->create($obj);
+        if (! $returnArray['success']) {
+            $this->getResponse()->setHttpResponseCode(500);
+        }
+        // disable layout and set content type
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        
+        $returnValue = Zend_Json::encode($returnArray);
+        if ($this->_prettyJson) {
+            $returnValue = Zend_Json::prettyPrint($returnValue);
+        }
+        $this->getResponse()->setBody($returnValue);
     }
-    
-    protected function _uploadFile ($name, $fileType,$returnFullResult=false)
+
+    protected function _uploadFile($name, $fileType, $returnFullResult = false)
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
@@ -320,7 +320,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             'mainFileType' => $fileType
         );
         $result = $fileService->create($fileObj);
-        if ((! $result['success'])||($returnFullResult)) {
+        if ((! $result['success']) || ($returnFullResult)) {
             return $result;
         }
         return $result['data']['id'];
