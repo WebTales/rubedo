@@ -29,28 +29,24 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
 
     protected $_defaultTemplate = 'protected-resource';
     
-    
-
-    /* (non-PHPdoc)
-     * @see Blocks_AbstractController::init()
+    /*
+     * (non-PHPdoc) @see Blocks_AbstractController::init()
      */
     public function init ()
     {
         // TODO Auto-generated method stub
-        
     }
 
-	public function indexAction ()
+    public function indexAction ()
     {
-       
         $blockConfig = $this->getParam('block-config', array());
         $output = $this->getAllParams();
         
-        if(isset($blockConfig['introduction'])){
-            $output['introduction']= $blockConfig['introduction'];
+        if (isset($blockConfig['introduction'])) {
+            $output['introduction'] = $blockConfig['introduction'];
         }
         
-        $output['mailingListId']= $blockConfig['mailingListId'];
+        $output['mailingListId'] = $blockConfig['mailingListId'];
         $output['damId'] = $blockConfig['documentId'];
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
@@ -61,75 +57,86 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         
         $css = array();
         $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/access-resource.js"));
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/access-resource.js")
+        );
         $this->_sendResponse($output, $template, $css, $js);
     }
-    
+
     /**
      * Allow to add an email into a mailing list
      *
      * @return json
      */
-    public function xhrSubmitEmailAction(){
-        //Default mailing list
+    public function xhrSubmitEmailAction ()
+    {
+        // Default mailing list
         $this->mailingListId = $this->getParam("mailing-list-id");
-        if(!$this->mailingListId){
+        if (! $this->mailingListId) {
             throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
         $this->damId = $this->getParam("dam-id");
-        if(!$this->damId){
+        if (! $this->damId) {
             throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
         $this->siteId = $this->getParam("site-id");
-        if(!$this->siteId){
+        if (! $this->siteId) {
             throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
-    
-        //Declare email validator
+        
+        // Declare email validator
         $emailValidator = new Zend_Validate_EmailAddress();
-    
-        //MailingList service
+        
+        // MailingList service
         $mailingListService = \Rubedo\Services\Manager::getService("MailingList");
-    
-        //Get email
+        
+        // Get email
         $this->email = $this->getParam("email");
-    
-        //Validate email
-        if($emailValidator->isValid($this->email)) {
-            //Register user
-            $subcribeResult = $mailingListService->subscribe($this->mailingListId, $this->email,false);
-            	
-            if($subcribeResult['success']){
+        
+        // Validate email
+        if ($emailValidator->isValid($this->email)) {
+            // Register user
+            $subcribeResult = $mailingListService->subscribe($this->mailingListId, $this->email, false);
+            
+            if ($subcribeResult['success']) {
                 $resultArray = $this->_sendDamMail();
-                
             }
             
             $this->_helper->json($resultArray);
         } else {
-            $this->_helper->json(array("success" => false, "msg" => "Adresse e-mail invalide"));
+            $this->_helper->json(array(
+                "success" => false,
+                "msg" => "Adresse e-mail invalide"
+            ));
         }
     }
-    
-    protected function _sendDamMail(){
+
+    protected function _sendDamMail ()
+    {
         $tk = Manager::getService('TinyUrl')->creamDamAccessLinkKey($this->damId);
         $site = Manager::getService('Sites')->findById($this->siteId);
-        $protocol = in_array('HTTP',$site['protocol'])?'http':'https';
-
-        $fileUrl = $protocol.'://'.Manager::getService('Sites')->getHost($this->siteId).'?tk='.$tk;
+        $protocol = in_array('HTTP', $site['protocol']) ? 'http' : 'https';
         
-//         $resultArray = array('success'=>true,'msg'=>'Un courriel contenant le lien de téléchargement vous a été envoyé.');
-        if(!Zend_Registry::getInstance()->isRegistered('swiftMail')){
-            $resultArray = array('success'=>true,'msg'=>'<a href="'.$fileUrl.'">Cliquez pour votre téléchargement</a>');
-        }else{
+        $fileUrl = $protocol . '://' . Manager::getService('Sites')->getHost($this->siteId) . '?tk=' . $tk;
+        
+        // $resultArray = array('success'=>true,'msg'=>'Un courriel contenant le lien de téléchargement vous a été envoyé.');
+        if (! Zend_Registry::getInstance()->isRegistered('swiftMail')) {
+            $resultArray = array(
+                'success' => true,
+                'msg' => '<a href="' . $fileUrl . '">Cliquez pour votre téléchargement</a>'
+            );
+        } else {
             $resultArray = $this->_sendEmail($fileUrl);
         }
         
         return $resultArray;
     }
-    
-    protected function _sendEmail($url){
-        $twigVar = array('downloadUrl'=>$url);
-        $twigVar['signature']='Le site '.Manager::getService('Sites')->getHost($this->siteId);
+
+    protected function _sendEmail ($url)
+    {
+        $twigVar = array(
+            'downloadUrl' => $url
+        );
+        $twigVar['signature'] = 'Le site ' . Manager::getService('Sites')->getHost($this->siteId);
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/protected-resource/mail-body.html.twig");
         $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
         
@@ -138,25 +145,29 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         
         $mailService = Manager::getService('Mailer');
         
-        $message = Manager::getService('MailingList')->getNewMessage($this->mailingListId);  
+        $message = Manager::getService('MailingList')->getNewMessage($this->mailingListId);
         
-        $message->setTo(array($this->email));        
-        $message->setSubject('['.Manager::getService('Sites')->getHost($this->siteId).'] Téléchargement du votre fichier');
+        $message->setTo(array(
+            $this->email
+        ));
+        $message->setSubject('[' . Manager::getService('Sites')->getHost($this->siteId) . '] Téléchargement du votre fichier');
         
-        
-               
         $message->setBody($plainMailBody);
         $message->addPart($mailBody, 'text/html');
         
         $result = $mailService->sendMessage($message);
-        if($result ===1){
-            $resultArray = array('success'=>true,'msg'=>'Un courriel contenant le lien de téléchargement vous a été adressé.');
-        }else{
-            $resultArray = array('success'=>false,'msg'=>'Impossible d\'envoyer un courriel');
+        if ($result === 1) {
+            $resultArray = array(
+                'success' => true,
+                'msg' => 'Un courriel contenant le lien de téléchargement vous a été adressé.'
+            );
+        } else {
+            $resultArray = array(
+                'success' => false,
+                'msg' => 'Impossible d\'envoyer un courriel'
+            );
         }
         
         return $resultArray;
-        
     }
-    
 }

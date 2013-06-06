@@ -33,14 +33,14 @@ class Blocks_AuthenticationController extends Blocks_AbstractController
     public function indexAction ()
     {
         $output = $this->getAllParams();
-        if(in_array('HTTPS', $output['site']['protocol'])){
-            $output['enforceHTTPS']=true;
-        }else{
-            $output['enforceHTTPS']=false;
+        if (in_array('HTTPS', $output['site']['protocol'])) {
+            $output['enforceHTTPS'] = true;
+        } else {
+            $output['enforceHTTPS'] = false;
         }
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/authentication.html.twig");
-		$currentUser = Manager::getService('CurrentUser')->getCurrentUser();
-		$output['currentUser']=$currentUser;
+        $currentUser = Manager::getService('CurrentUser')->getCurrentUser();
+        $output['currentUser'] = $currentUser;
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);

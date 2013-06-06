@@ -26,61 +26,74 @@ use Rubedo\Interfaces\Collection\IFormsResponses, WebTales\MongoFilters\Filter;
  * @category Rubedo
  * @package Rubedo
  */
-class FormsResponses extends AbstractCollection implements IFormsResponses {
-	public function __construct() {
-		$this->_collectionName = 'FormsResponses';
-		parent::__construct ();
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
-	 */
-	public function getValidResponsesByFormId($formId, $start = null, $limit = null) {
-	    $filters = Filter::Factory();
-	    $filters->addFilter(Filter::Factory('Value')->setName('status')->setValue('finished'));
-	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
-	   	
-		$sort = array();
-		$sort[] = array (
-				'property' => 'lastUpdateTime',
-				'direction' => 'ASC' 
-		);
-		
-		return $this->getList ( $filters, $sort, $start, $limit );
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
-	 */
-	public function getResponsesByFormId($formId, $start = null, $limit = null) {
-	    $filters = Filter::Factory();
-	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
+class FormsResponses extends AbstractCollection implements IFormsResponses
+{
 
-	    	    
-	
-	    $sort = array();
-	    $sort[] = array (
-	        'property' => 'lastUpdateTime',
-	        'direction' => 'ASC'
-	    );
-	
-	    return $this->getList ( $filters, $sort, $start, $limit );
-	}
-	
-	public function countValidResponsesByFormId($formId) {
-	    $filters = Filter::Factory();
-	    $filters->addFilter(Filter::Factory('Value')->setName('status')->setValue('finished'));
-	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
-		return $this->count ( $filters );
-	}
-	public function countInvalidResponsesByFormId($formId) {
-	    $filters = Filter::Factory();
-	    $filters->addFilter(Filter::Factory('Not')->setName('status')->setValue('finished'));
-	    $filters->addFilter(Filter::Factory('Value')->setName('formId')->setValue($formId));
-		return $this->count ( $filters );
-	}
+    public function __construct ()
+    {
+        $this->_collectionName = 'FormsResponses';
+        parent::__construct();
+    }
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
+     */
+    public function getValidResponsesByFormId ($formId, $start = null, $limit = null)
+    {
+        $filters = Filter::Factory();
+        $filters->addFilter(Filter::Factory('Value')->setName('status')
+            ->setValue('finished'));
+        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+            ->setValue($formId));
+        
+        $sort = array();
+        $sort[] = array(
+            'property' => 'lastUpdateTime',
+            'direction' => 'ASC'
+        );
+        
+        return $this->getList($filters, $sort, $start, $limit);
+    }
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
+     */
+    public function getResponsesByFormId ($formId, $start = null, $limit = null)
+    {
+        $filters = Filter::Factory();
+        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+            ->setValue($formId));
+        
+        $sort = array();
+        $sort[] = array(
+            'property' => 'lastUpdateTime',
+            'direction' => 'ASC'
+        );
+        
+        return $this->getList($filters, $sort, $start, $limit);
+    }
+
+    public function countValidResponsesByFormId ($formId)
+    {
+        $filters = Filter::Factory();
+        $filters->addFilter(Filter::Factory('Value')->setName('status')
+            ->setValue('finished'));
+        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+            ->setValue($formId));
+        return $this->count($filters);
+    }
+
+    public function countInvalidResponsesByFormId ($formId)
+    {
+        $filters = Filter::Factory();
+        $filters->addFilter(Filter::Factory('Not')->setName('status')
+            ->setValue('finished'));
+        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+            ->setValue($formId));
+        return $this->count($filters);
+    }
 }

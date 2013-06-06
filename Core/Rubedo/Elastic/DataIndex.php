@@ -29,21 +29,22 @@ use Rubedo\Interfaces\Elastic\IDataIndex, Rubedo\Services\Manager;
  */
 class DataIndex extends DataAbstract implements IDataIndex
 {
+
     /**
      * Contains content types already requested
      */
     protected $_contentTypeCache = array();
-    
+
     /**
      * Contains dam types already requested
      */
     protected $_damTypeCache = array();
-    
+
     /**
      * Contains the documents
      */
     protected $_documents;
-    
+
     /**
      * Get ES type structure
      *
@@ -65,7 +66,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'target'
         );
         
-        if(!isset($this->_contentTypeCache[$id])) {
+        if (! isset($this->_contentTypeCache[$id])) {
             // Get content type config by id
             $this->_contentTypeCache[$id] = Manager::getService('ContentTypes')->findById($id);
         }
@@ -74,7 +75,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         if (isset($this->_contentTypeCache[$id]['system']) and $this->_contentTypeCache[$id]['system'] == TRUE) {
             return array();
         }
-                
+        
         // Get indexable fields
         $fields = $this->_contentTypeCache[$id]["fields"];
         foreach ($fields as $field) {
@@ -107,7 +108,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'target'
         );
         
-        if(!isset($this->_damTypeCache[$id])) {
+        if (! isset($this->_damTypeCache[$id])) {
             // Get content type config by id
             $this->_damTypeCache[$id] = Manager::getService('DamTypes')->findById($id);
         }
@@ -123,58 +124,60 @@ class DataIndex extends DataAbstract implements IDataIndex
         $returnArray['searchableFields'] = $searchableFields;
         return $returnArray;
     }
-    
+
     /**
      * Returns the indexable fields and their configuration
      *
-     * @param array $fields contain the fields and their configuration
+     * @param array $fields
+     *            contain the fields and their configuration
      * @return array
      */
-    public function getIndexMapping(array $fields) {
+    public function getIndexMapping (array $fields)
+    {
         $indexMapping = array();
-    
+        
         foreach ($fields as $field) {
-    
+            
             // Only searchable fields get indexed
             if ($field['config']['searchable']) {
-    
+                
                 $name = $field['config']['fieldLabel'];
                 $store = "yes";
-    
+                
                 switch ($field['cType']) {
                     case 'datefield':
                         $indexMapping[$name] = array(
-                        'type' => 'date',
-                        'format' => 'yyyy-MM-dd',
-                        'store' => $store
+                            'type' => 'date',
+                            'format' => 'yyyy-MM-dd',
+                            'store' => $store
                         );
                         break;
                     case 'document':
                         $indexMapping[$name] = array(
-                        'type' => 'attachment',
-                        'store' => 'no'
-                            );
-                            break;
+                            'type' => 'attachment',
+                            'store' => 'no'
+                        );
+                        break;
                     case 'localiserField':
                         $indexMapping["position_location"] = array(
-                        'type' => 'geo_point',
-                        'store' => 'yes'
-                            );
-                            $indexMapping["position_adress"] = array(
-                                'type' => 'string',
-                                'store' => 'yes'
-                            );
-                            break;
+                            'type' => 'geo_point',
+                            'store' => 'yes'
+                        );
+                        $indexMapping["position_adress"] = array(
+                            'type' => 'string',
+                            'store' => 'yes'
+                        );
+                        break;
                     default:
                         $indexMapping[$name] = array(
-                        'type' => 'string',
-                        'store' => $store
+                            'type' => 'string',
+                            'store' => $store
                         );
                         break;
                 }
             }
         }
-    
+        
         return $indexMapping;
     }
 
@@ -367,7 +370,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'store' => 'yes'
         );
         $indexMapping["file"] = array(
-            'type' => 'attachment',
+            'type' => 'attachment'
         );
         $indexMapping["target"] = array(
             'type' => 'string',
@@ -486,7 +489,6 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexContent ($data, $bulk = false)
     {
-        
         $typeId = $data['typeId'];
         
         // Load ES type
@@ -517,7 +519,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                                     $contentData['position_address'] = (string) $subvalue;
                                 }
                                 if ($key == 'location') {
-                                    if(isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])){
+                                    if (isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])) {
                                         $lon = $subvalue['coordinates'][0];
                                         $lat = $subvalue['coordinates'][1];
                                         
@@ -570,7 +572,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                         continue;
                     }
                     
-                    if(!isset($termsArray[$term["id"]])) {
+                    if (! isset($termsArray[$term["id"]])) {
                         $termsArray[$term["id"]] = $taxonomyTermsService->getAncestors($term);
                         $termsArray[$term["id"]][] = $term;
                     }
@@ -612,7 +614,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         } else {
             $this->_documents[] = $currentDocument;
         }
-
     }
 
     /**
@@ -680,8 +681,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                         continue;
                     }
                     
-                    
-                    if(!isset($termsArray[$term["id"]])) {
+                    if (! isset($termsArray[$term["id"]])) {
                         $termsArray[$term["id"]] = $taxonomyTermsService->getAncestors($term);
                         $termsArray[$term["id"]][] = $term;
                     }
@@ -738,7 +738,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         } else {
             $this->_documents[] = $currentDam;
         }
-        
     }
 
     /**
@@ -751,7 +750,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexAll ($option = 'all')
     {
-
+        
         // Bulk size
         $bulkSize = 500;
         $bulk = true;
@@ -867,7 +866,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Initialize result array
         $result = array();
-
+        
         // Retrieve data and ES index for type
         switch ($option) {
             case 'content':
@@ -896,10 +895,10 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Index all dam or contents from given type
         
         $dataService = Manager::getService($serviceData);
-    
+        
         do {
             
-            $itemList = $dataService->getByType($id,$start,$bulkSize); 
+            $itemList = $dataService->getByType($id, $start, $bulkSize);
             
             foreach ($itemList["data"] as $item) {
                 
@@ -912,21 +911,17 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
                 
                 $itemCount ++;
-                
             }
             
-            if (!empty($this->_documents)) {
-               
+            if (! empty($this->_documents)) {
+                
                 $contentType->addDocuments($this->_documents);
                 $contentType->getIndex()->refresh();
                 empty($this->_documents);
-                
             }
             
-            $start=$start+$bulkSize+1;
-
+            $start = $start + $bulkSize + 1;
         } while (count($itemList['data']) == $bulkSize);
-
         
         $result[$type['type']] = $itemCount;
         

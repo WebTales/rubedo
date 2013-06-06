@@ -14,9 +14,8 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+require_once ('DataAccessController.php');
 
-require_once('DataAccessController.php'); 
- 
 /**
  * Controller providing CRUD API for the taxonomy JSON
  *
@@ -26,17 +25,16 @@ require_once('DataAccessController.php');
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class Backoffice_TaxonomyController extends Backoffice_DataAccessController
 {
-	
-	public function init(){
-		parent::init();
-		
-		$this -> _dataService = Rubedo\Services\Manager::getService('Taxonomy');
-		$this -> _dataTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-	}
-	
 
+    public function init ()
+    {
+        parent::init();
+        
+        $this->_dataService = Rubedo\Services\Manager::getService('Taxonomy');
+        $this->_dataTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
+    }
 }

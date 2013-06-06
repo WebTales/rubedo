@@ -14,8 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
-use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Abstract Controller providing CRUD API and dealing with the data access
@@ -26,7 +25,7 @@ use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 abstract class Backoffice_DataAccessController extends Zend_Controller_Action
 {
@@ -52,49 +51,58 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      */
     protected $_prettyJson = true;
 
-	/**
-	 * Array with the read only actions
-	 */
-	protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree','model');
-	
+    /**
+     * Array with the read only actions
+     */
+    protected $_readOnlyAction = array(
+        'index',
+        'find-one',
+        'read-child',
+        'tree',
+        'model'
+    );
+
     /**
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
      *
      * @see Zend_Controller_Action::init()
      */
-    public function init() {
+    public function init ()
+    {
         parent::init();
-		
-		$sessionService = Manager::getService('Session');
-		
+        
+        $sessionService = Manager::getService('Session');
+        
         // refuse write action not send by POST
-        if (!$this->getRequest()->isPost() && !in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
+        if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
             throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
         } else {
-        	if(!in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)){
-        		$user = $sessionService->get('user');
-        		$token = $this->getRequest()->getParam('token');
-				
-				if($token !== $user['token']){
-					throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-				}
-        	}
+            if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
+                $user = $sessionService->get('user');
+                $token = $this->getRequest()->getParam('token');
+                
+                if ($token !== $user['token']) {
+                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
+                }
+            }
         }
-
     }
 
     /**
      * Set the response body with Json content
      * Option : json is made human readable
-     * @param mixed $data data to be json encoded
+     * 
+     * @param mixed $data
+     *            data to be json encoded
      */
-    protected function _returnJson($data) {
+    protected function _returnJson ($data)
+    {
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
-
+        
         $returnValue = Zend_Json::encode($data);
         if ($this->_prettyJson) {
             $returnValue = Zend_Json::prettyPrint($returnValue);
@@ -107,9 +115,9 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
-     *
      */
-    public function indexAction() {
+    public function indexAction ()
+    {
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
             $filters = Zend_Json::decode($filterJson);
@@ -138,55 +146,49 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $mongoFilters = $this->_buildFilter($filters);
         
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
-
+        
         $response = array();
         $response['total'] = $dataValues['count'];
         $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-
+        
         $this->_returnJson($response);
     }
 
-    protected function _buildFilter($filters=null){
-        if(!$filters){
+    protected function _buildFilter ($filters = null)
+    {
+        if (! $filters) {
             $filters = array();
         }
         $mongoFilters = Filter::Factory();
-
-        foreach($filters as $filter){
-            if(isset($filter['operator']) && $filter['operator']=='like'){
-                $mongoFilter = Filter::Factory('Regex')
-                ->setName($filter['property'])
-                ->setValue('/.*' . $filter["value"] .'.*/i');
-            }elseif(isset($filter['operator']) && $filter['operator']=='$in' && $filter['property']=='id'){
-                $mongoFilter = Filter::Factory('InUid')
-                ->setValue($filter['value']);
-            }elseif(isset($filter['operator']) && $filter['operator']!='eq'){
-                $mongoFilter = Filter::Factory('OperatorToValue')
-                ->setName($filter['property'])
-                ->setValue($filter['value'])
-                ->setOperator($filter['operator']);
-            }elseif($filter['property']=='id'){
-                $mongoFilter = Filter::Factory('Uid')
-                ->setValue($filter['value']);
-            }else{
-                $mongoFilter = Filter::Factory('Value')
-                ->setName($filter['property'])
-                ->setValue($filter['value']);
+        
+        foreach ($filters as $filter) {
+            if (isset($filter['operator']) && $filter['operator'] == 'like') {
+                $mongoFilter = Filter::Factory('Regex')->setName($filter['property'])->setValue('/.*' . $filter["value"] . '.*/i');
+            } elseif (isset($filter['operator']) && $filter['operator'] == '$in' && $filter['property'] == 'id') {
+                $mongoFilter = Filter::Factory('InUid')->setValue($filter['value']);
+            } elseif (isset($filter['operator']) && $filter['operator'] != 'eq') {
+                $mongoFilter = Filter::Factory('OperatorToValue')->setName($filter['property'])
+                    ->setValue($filter['value'])
+                    ->setOperator($filter['operator']);
+            } elseif ($filter['property'] == 'id') {
+                $mongoFilter = Filter::Factory('Uid')->setValue($filter['value']);
+            } else {
+                $mongoFilter = Filter::Factory('Value')->setName($filter['property'])->setValue($filter['value']);
             }
             $mongoFilters->addFilter($mongoFilter);
         }
         return $mongoFilters;
     }
-    
+
     /**
      * read child action
      *
      * Return the children of a node
-     *
      */
-    public function readChildAction() {
+    public function readChildAction ()
+    {
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
             $filters = Zend_Json::decode($filterJson);
@@ -199,18 +201,18 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         } else {
             $sort = null;
         }
-
+        
         $parentId = $this->getRequest()->getParam('node', 'root');
-
+        
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->readChild($parentId, $mongoFilters, $sort);
-
+        
         $response = array();
         $response['children'] = array_values($dataValues);
         $response['total'] = count($response['children']);
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-
+        
         $this->_returnJson($response);
     }
 
@@ -219,28 +221,35 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * @return array
      */
-    public function deleteChildAction() {
+    public function deleteChildAction ()
+    {
         $data = $this->getRequest()->getParam('data');
-        $result = array('success' => true);
-
-        if (!is_null($data)) {
+        $result = array(
+            'success' => true
+        );
+        
+        if (! is_null($data)) {
             $data = Zend_Json::decode($data);
-
+            
             if (is_array($data)) {
-
+                
                 $returnArray = $this->_dataService->deleteChild($data);
-
             } else {
-                $returnArray = array('success' => false, "msg" => 'Not an array');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'Not an array'
+                );
             }
-
         } else {
-            $returnArray = array('success' => false, "msg" => 'Invalid Data');
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'Invalid Data'
+            );
         }
-        if (!$returnArray['success']) {
+        if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-
+        
         $this->_returnJson($returnArray);
     }
 
@@ -252,7 +261,8 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * @todo remove the temp hack when database starter is ready
      */
-    public function treeAction() {
+    public function treeAction ()
+    {
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
             $filters = Zend_Json::decode($filterJson);
@@ -261,36 +271,41 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         }
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->readTree($mongoFilters);
-
+        
         $response = array();
         $response["expanded"] = true;
         $response['children'] = $dataValues;
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-
+        
         $this->_returnJson($response);
     }
 
     /**
      * The destroy action of the CRUD API
      */
-    public function deleteAction() {
+    public function deleteAction ()
+    {
         $data = $this->getRequest()->getParam('data');
-
-        if (!is_null($data)) {
+        
+        if (! is_null($data)) {
             $data = Zend_Json::decode($data);
             if (is_array($data)) {
-
+                
                 $returnArray = $this->_dataService->destroy($data);
-
             } else {
-                $returnArray = array('success' => false, "msg" => 'Not an array');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'Not an array'
+                );
             }
-
         } else {
-            $returnArray = array('success' => false, "msg" => 'Invalid Data');
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'Invalid Data'
+            );
         }
-        if (!$returnArray['success']) {
+        if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
@@ -299,21 +314,27 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * The create action of the CRUD API
      */
-    public function createAction() {
+    public function createAction ()
+    {
         $data = $this->getRequest()->getParam('data');
-
-        if (!is_null($data)) {
+        
+        if (! is_null($data)) {
             $insertData = Zend_Json::decode($data);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($insertData);
-
             } else {
-                $returnArray = array('success' => false, "msg" => 'Not an array');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'Not an array'
+                );
             }
         } else {
-            $returnArray = array('success' => false, "msg" => 'No Data');
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'No Data'
+            );
         }
-        if (!$returnArray['success']) {
+        if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
@@ -322,23 +343,28 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * The update action of the CRUD API
      */
-    public function updateAction() {
-
+    public function updateAction ()
+    {
         $data = $this->getRequest()->getParam('data');
-
-        if (!is_null($data)) {
+        
+        if (! is_null($data)) {
             $updateData = Zend_Json::decode($data);
             if (is_array($updateData)) {
-
+                
                 $returnArray = $this->_dataService->update($updateData);
-
             } else {
-                $returnArray = array('success' => false, "msg" => 'Not an array');
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'Not an array'
+                );
             }
         } else {
-            $returnArray = array('success' => false, "msg" => 'No Data');
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'No Data'
+            );
         }
-        if (!$returnArray['success']) {
+        if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
         $this->_returnJson($returnArray);
@@ -349,33 +375,41 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * @return Json_object
      */
-    public function findOneAction() {
+    public function findOneAction ()
+    {
         $contentId = $this->getRequest()->getParam('id');
-
-        if (!is_null($contentId)) {
-
+        
+        if (! is_null($contentId)) {
+            
             $return = $this->_dataService->findById($contentId);
-
+            
             if (empty($return['id'])) {
-
-                $returnArray = array('success' => false, "msg" => 'Object not found');
-
+                
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'Object not found'
+                );
             } else {
-
-                $returnArray = array('succes' => true, 'data' => $return);
+                
+                $returnArray = array(
+                    'succes' => true,
+                    'data' => $return
+                );
             }
-
         } else {
-
-            $returnArray = array('success' => false, "msg" => 'Missing param');
+            
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'Missing param'
+            );
         }
-
+        
         $this->_returnJson($returnArray);
     }
-    
-    public function modelAction(){
+
+    public function modelAction ()
+    {
         $model = $this->_dataService->getModel();
         $this->_returnJson($model);
     }
-
 }

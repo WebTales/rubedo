@@ -274,7 +274,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function unsetTerms ($vocId, $termId)
     {
-        if(!$termId) {
+        if (! $termId) {
             throw new \Rubedo\Exceptions\Server("You can not unset a term without its id", "Exception92");
         }
         
@@ -373,7 +373,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
             if (! in_array($key, $fieldsList)) {
                 unset($obj["fields"][$key]);
-                //$this->_inputDataErrors[$key] = 'unknown field';
+                // $this->_inputDataErrors[$key] = 'unknown field';
             } else {
                 unset($missingField[$key]);
                 
@@ -477,22 +477,22 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 $max = isset($config["maxValue"]) ? $config["maxValue"] : null;
                 $min = isset($config["minValue"]) ? $config["minValue"] : null;
                 
-                if(!is_null($max)) {
-                    if($value > $max) {
-                        if(isset($fieldName)){
+                if (! is_null($max)) {
+                    if ($value > $max) {
+                        if (isset($fieldName)) {
                             $this->_inputDataErrors[$fieldName] = "The value of this field is higher than its maximum value";
                         } else {
-                            $this->_inputDataErrors[] = "The value of this field (". $value .") is higher than its maximum value (". $max .")";
+                            $this->_inputDataErrors[] = "The value of this field (" . $value . ") is higher than its maximum value (" . $max . ")";
                         }
                     }
                 }
                 
-                if(!is_null($min)) {
-                    if($value < $min) {
-                        if(isset($fieldName)){
+                if (! is_null($min)) {
+                    if ($value < $min) {
+                        if (isset($fieldName)) {
                             $this->_inputDataErrors[$fieldName] = "The value of this field is lower than its minimum value";
                         } else {
-                            $this->_inputDataErrors[] = "The value of this field (". $value .") is lower than its minimum value (". $min .")";
+                            $this->_inputDataErrors[] = "The value of this field (" . $value . ") is lower than its minimum value (" . $min . ")";
                         }
                     }
                 }
@@ -867,22 +867,17 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $this->getList($filterArray, $sort, null, null, true);
     }
     
-    
-	/* (non-PHPdoc)
-     * @see \Rubedo\Collection\WorkflowAbstractCollection::publish()
+    /*
+     * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::publish()
      */
     public function publish ($objectId)
     {
         $result = parent::publish($objectId);
         
-        //get the live content to send it to indexer service
-        $content = $this->findById($objectId,true,false);
+        // get the live content to send it to indexer service
+        $content = $this->findById($objectId, true, false);
         $this->_indexContent($content);
         
         return $result;
-        
     }
-
-    
-    
 }

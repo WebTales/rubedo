@@ -26,6 +26,7 @@ use Rubedo\Interfaces\Mail\IMailer;
  */
 class Mailer implements IMailer
 {
+
     /**
      * (non-PHPdoc) @see \Rubedo\Interfaces\Mail\IMailer::getNewMessage()
      */
@@ -33,7 +34,7 @@ class Mailer implements IMailer
     {
         return \Swift_Message::newInstance();
     }
-    
+
     /**
      * (non-PHPdoc) @see \Rubedo\Interfaces\Mail\IMailer::sendMessage()
      */

@@ -14,7 +14,6 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
 require_once ('DataAccessController.php');
 
 /**
@@ -26,35 +25,49 @@ require_once ('DataAccessController.php');
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 {
+
     /**
      * Array with the read only actions
      */
-    protected $_readOnlyAction = array('index', 'find-one', 'read-child', 'tree', 'model', 'get-readable-content-types', 'is-used', 'is-changeable');
+    protected $_readOnlyAction = array(
+        'index',
+        'find-one',
+        'read-child',
+        'tree',
+        'model',
+        'get-readable-content-types',
+        'is-used',
+        'is-changeable'
+    );
 
-    public function init() {
+    public function init ()
+    {
         parent::init();
-
+        
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('ContentTypes');
     }
 
-    public function getReadableContentTypesAction() {
+    public function getReadableContentTypesAction ()
+    {
         return $this->_returnJson($this->_dataService->getReadableContentTypes());
     }
 
-    public function isUsedAction() {
+    public function isUsedAction ()
+    {
         $id = $this->getRequest()->getParam('id');
-		$wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
+        $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
         $result = Rubedo\Services\Manager::getService('Contents')->isTypeUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
         $this->_returnJson($result);
     }
 
-    public function isChangeableAction() {
+    public function isChangeableAction ()
+    {
         $data = $this->getRequest()->getParams();
         $newType = Zend_Json::decode($data['fields']);
         $id = $data['id'];
@@ -64,19 +77,19 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
         $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
         $isUsedResult = Rubedo\Services\Manager::getService('Contents')->isTypeUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
-        if (!$isUsedResult['used']){
-        	$resultArray = array("modify" => "ok");
+        if (! $isUsedResult['used']) {
+            $resultArray = array(
+                "modify" => "ok"
+            );
+        } else {
+            
+            $result = $this->_dataService->isChangeableContentType($originalType, $newType);
+            $resultArray = ($result == true) ? array(
+                "modify" => "possible"
+            ) : array(
+                "modify" => "no"
+            );
         }
-        else {
-        	
-        	$result=$this->_dataService->isChangeableContentType($originalType,$newType);
-        	$resultArray=($result==true)?array("modify" => "possible"):array("modify" => "no");
-        }	
         $this->_returnJson($resultArray);
-    
     }
-    
- 
-    
-
 }

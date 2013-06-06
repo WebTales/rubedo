@@ -27,42 +27,46 @@ Interface IUrl
     /**
      * Return page id based on request URL
      *
-     * @param string $url requested URL
+     * @param string $url
+     *            requested URL
      * @return string int
      */
-    public function getPageId ($url,$host);
+    public function getPageId ($url, $host);
 
     /**
      * Generates an url given the name of a route.
      *
      * @access public
-     * @param array $urlOptions Options passed to the assemble method of the
+     * @param array $urlOptions
+     *            Options passed to the assemble method of the
      *            Route object.
-     * @param mixed $name The name of a Route to use. If null it will use the
+     * @param mixed $name
+     *            The name of a Route to use. If null it will use the
      *            current Route
-     * @param bool $reset Whether or not to reset the route defaults with those
+     * @param bool $reset
+     *            Whether or not to reset the route defaults with those
      *            provided
      * @return string Url for the link href attribute.
      */
     public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true);
-    
-    
+
     /**
      * Return the path part of the URL of a page given by its ID
-     * 
-     * @param string $pageId
-     * @return string 
+     *
+     * @param string $pageId            
+     * @return string
      */
     public function getPageUrl ($pageId);
-    
+
     /**
      * Return the path part of the URL matching parameters given in $data array
-     * 
-     * @param array $data
-     * @param bool $encode
+     *
+     * @param array $data            
+     * @param bool $encode            
      * @return string
      */
     public function getUrl ($data, $encode = false);
+
     /**
      * Return the url of the single content page of the site if the single page
      * exist
@@ -71,10 +75,11 @@ Interface IUrl
      *            Id of the content to display
      * @param string $siteId
      *            Id of the site
-     *
+     *            
      * @return string Url
      */
     public function displaySingleUrl ($contentId, $siteId = null, $defaultPage = null);
+
     /**
      * Return the url of the single content page of the site if the single page
      * exist
@@ -83,7 +88,7 @@ Interface IUrl
      *            Id of the content to display
      * @param string $siteId
      *            Id of the site
-     *
+     *            
      * @return string Url
      */
     public function displayCanonicalUrl ($contentId, $siteId = null);

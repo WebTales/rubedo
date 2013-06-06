@@ -14,9 +14,8 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+require_once ('ElasticSearchController.php');
 
-require_once('ElasticSearchController.php');
- 
 /**
  * Controller providing Elastic Search querying in contents
  *
@@ -25,11 +24,10 @@ require_once('ElasticSearchController.php');
  * @author dfanchon
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
- 
-class Backoffice_ElasticSearchGeoController extends Backoffice_ElasticSearchController {
-	 
-	protected $_option = 'geo';
-	
+class Backoffice_ElasticSearchGeoController extends Backoffice_ElasticSearchController
+{
+
+    protected $_option = 'geo';
 }

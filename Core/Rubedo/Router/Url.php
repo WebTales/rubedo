@@ -195,7 +195,6 @@ class Url implements IUrl
                 continue;
             }
             
-            
             if ($prefix) {
                 $key = $prefix . '[' . $key . ']';
             }
@@ -262,11 +261,11 @@ class Url implements IUrl
         }
         
         if (\Zend_Registry::getInstance()->offsetExists('draft')) {
-            $ws = \Zend_Registry::get('draft')?'draft':'live';
+            $ws = \Zend_Registry::get('draft') ? 'draft' : 'live';
         } else {
             $ws = 'live';
         }
-        $content = Manager::getService('Contents')->findById($contentId,$ws==='live',false);
+        $content = Manager::getService('Contents')->findById($contentId, $ws === 'live', false);
         if (isset($content[$ws]['taxonomy']['navigation'])) {
             foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
                 $page = Manager::getService('Pages')->findById($pageId);
@@ -283,9 +282,9 @@ class Url implements IUrl
             } else {
                 $pageId = Manager::getService('PageContent')->getCurrentPage();
                 $page = Manager::getService('Pages')->findById($pageId);
-                if(isset($page['maskId'])){
+                if (isset($page['maskId'])) {
                     $mask = Manager::getService('Masks')->findById($page['maskId']);
-                    if(!isset($mask['mainColumnId']) || empty($mask['mainColumnId'])){
+                    if (! isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
                         $pageId = $this->_getDefaultSingleBySiteID($siteId);
                     }
                 }
@@ -331,11 +330,11 @@ class Url implements IUrl
         }
         
         if (\Zend_Registry::getInstance()->offsetExists('draft')) {
-            $ws = \Zend_Registry::get('draft')?'draft':'live';
+            $ws = \Zend_Registry::get('draft') ? 'draft' : 'live';
         } else {
             $ws = 'live';
         }
-        $content = Manager::getService('Contents')->findById($contentId,$ws==='live',false);
+        $content = Manager::getService('Contents')->findById($contentId, $ws === 'live', false);
         
         if (isset($content[$ws]['taxonomy']['navigation'])) {
             foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
@@ -367,18 +366,18 @@ class Url implements IUrl
             return '#';
         }
     }
-    
-    protected function _getDefaultSingleBySiteID($siteId){
+
+    protected function _getDefaultSingleBySiteID ($siteId)
+    {
         $site = Manager::getService('Sites')->findById($siteId);
-        if(isset($site['defaultSingle'])){
-            if(Manager::getService('Pages')->findById($site['defaultSingle'])){
+        if (isset($site['defaultSingle'])) {
+            if (Manager::getService('Pages')->findById($site['defaultSingle'])) {
                 return $site['defaultSingle'];
-            }else{
+            } else {
                 return null;
             }
-            
-        }else{
-           return null;
+        } else {
+            return null;
         }
     }
 }

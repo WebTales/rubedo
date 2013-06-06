@@ -219,7 +219,7 @@ class Dam extends AbstractCollection implements IDam
 
     /**
      * Defines if each objects are readable
-     * 
+     *
      * @param array $obj
      *            Contain the current object
      * @return array

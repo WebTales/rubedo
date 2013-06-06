@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IRubedoVersion extends IAbstractCollection{
-    
+interface IRubedoVersion extends IAbstractCollection
+{
 }

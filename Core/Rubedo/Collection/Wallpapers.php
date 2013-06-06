@@ -27,11 +27,10 @@ use Rubedo\Interfaces\Collection\IWallpapers;
  */
 class Wallpapers extends AbstractCollection implements IWallpapers
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'Wallpapers';
-		parent::__construct();
-	}
-	
+    public function __construct ()
+    {
+        $this->_collectionName = 'Wallpapers';
+        parent::__construct();
+    }
 }

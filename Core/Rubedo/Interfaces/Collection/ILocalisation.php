@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface ILocalisation extends IAbstractCollection{
-	
+interface ILocalisation extends IAbstractCollection
+{
 }

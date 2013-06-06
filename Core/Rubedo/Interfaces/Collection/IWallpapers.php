@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IWallpapers extends IAbstractCollection{
-	
+interface IWallpapers extends IAbstractCollection
+{
 }

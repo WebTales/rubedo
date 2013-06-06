@@ -63,7 +63,6 @@ class RubedoVersion extends AbstractCollection implements IRubedoVersion
     {
         $rubedoVersion = Version::getVersion();
         $dbVersion = $this->getDbVersion();
-        return (version_compare($dbVersion,$rubedoVersion) >= 0);
+        return (version_compare($dbVersion, $rubedoVersion) >= 0);
     }
-    
 }

@@ -34,36 +34,31 @@ class Backoffice_IndexController extends Zend_Controller_Action
     public function indexAction ()
     {
         $this->_auth = Manager::getService('Authentication');
-      
         
         if (! $this->_auth->getIdentity()) {
-        	$backofficeUrl =$this->_helper->url('index', 'login', 'backoffice');
-        	if($this->getParam('content')){
-        		$backofficeUrl .='?content='.$this->getParam('content');
-        	}
+            $backofficeUrl = $this->_helper->url('index', 'login', 'backoffice');
+            if ($this->getParam('content')) {
+                $backofficeUrl .= '?content=' . $this->getParam('content');
+            }
             $this->_helper->redirector->gotoUrl($backofficeUrl);
         }
         
         if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
-            $this->_helper->redirector->gotoUrl(
-                    $this->_helper->url('confirm-logout', 'logout', 
-                            'backoffice'));
+            $this->_helper->redirector->gotoUrl($this->_helper->url('confirm-logout', 'logout', 'backoffice'));
         }
         
         $extjsOptions = Zend_Registry::get('extjs');
         
         if (isset($extjsOptions['network']) && $extjsOptions['network'] == 'cdn') {
-            $this->view->extJsPath = 'http://cdn.sencha.com/ext-' .
-                     $extjsOptions['version'] . '-gpl';
+            $this->view->extJsPath = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
         } else {
-            $this->view->extJsPath = $this->view->baseUrl() .
-                     '/components/sencha/extjs';
+            $this->view->extJsPath = $this->view->baseUrl() . '/components/sencha/extjs';
         }
-        //setting user language for loading proper extjs locale file
-        $this->view->userLang='en'; //default value
-        $currentUserLanguage=Manager::getService('CurrentUser')->getLanguage();
-        if (!empty($currentUserLanguage)){
-        	$this->view->userLang=$currentUserLanguage;
+        // setting user language for loading proper extjs locale file
+        $this->view->userLang = 'en'; // default value
+        $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
+        if (! empty($currentUserLanguage)) {
+            $this->view->userLang = $currentUserLanguage;
         }
         
         if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {

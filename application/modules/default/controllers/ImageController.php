@@ -82,27 +82,23 @@ class ImageController extends Zend_Controller_Action
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileId . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
-            
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
                 
                 $imageService = new Rubedo\Image\Image();
                 $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, $size);
                 
-                
-                
-                
                 switch ($type) {
                     case 'jpeg':
-                        imagejpeg($newImage, $tmpImagePath,90);
+                        imagejpeg($newImage, $tmpImagePath, 90);
                         break;
                     case 'gif':
                         imagegif($newImage, $tmpImagePath);
                         break;
                     case 'png':
-                        imagepng($newImage,$tmpImagePath,9,PNG_ALL_FILTERS);
+                        imagepng($newImage, $tmpImagePath, 9, PNG_ALL_FILTERS);
                         break;
                 }
-
+                
                 imagedestroy($newImage);
             }
             switch ($this->getParam('attachment', null)) {

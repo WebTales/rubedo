@@ -68,8 +68,8 @@ class FileAccess extends DataAccess implements IFileAccess
         // get the UI parameters
         $LocalFilter = clone $this->getFilters();
         
-        //add Read Filters
-        if($filters){
+        // add Read Filters
+        if ($filters) {
             $LocalFilter->addFilter($filters);
         }
         
@@ -134,8 +134,8 @@ class FileAccess extends DataAccess implements IFileAccess
         }
         
         $filters = clone $this->getFilters();
-        if($localFilter){
-             $filters->addFilter($localFilter);
+        if ($localFilter) {
+            $filters->addFilter($localFilter);
         }
         
         $mongoFile = $this->_collection->findOne($filters->toArray(), $fieldRule);

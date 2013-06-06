@@ -37,7 +37,9 @@ class Blocks_GalleryController extends Blocks_ContentListController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery.html.twig");
         
         $css = array();
-        $js = array('/templates/'.Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js"));
+        $js = array(
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js")
+        );
         
         $this->_sendResponse($output, $template, $css, $js);
     }
@@ -55,7 +57,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
 
     /**
      * return a list of items based on the query
-     * 
+     *
      * @return array
      */
     protected function _getList ()
@@ -63,11 +65,11 @@ class Blocks_GalleryController extends Blocks_ContentListController
         $currentPage = $this->getRequest()->getParam('page', 1);
         
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $limit = (int)$this->getParam('itemsPerPage', 5);
+            $limit = (int) $this->getParam('itemsPerPage', 5);
             $prefix = $this->getParam('prefix');
-            $imgWidth = $this->getParam('width',null);
-            $imgHeight = $this->getParam('height',null);
-            $query = Zend_Json::decode($this->getParam("query",Zend_Json::encode(null)));
+            $imgWidth = $this->getParam('width', null);
+            $imgHeight = $this->getParam('height', null);
+            $query = Zend_Json::decode($this->getParam("query", Zend_Json::encode(null)));
             $filter = $this->setFilters($query);
         } else {
             $isDraft = Zend_Registry::get('draft');
@@ -121,7 +123,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         
         // Values sent to the view
         $output = $this->getAllParams();
-        $output['prefix']=$prefix;
+        $output['prefix'] = $prefix;
         $output['items'] = $data;
         $output['allDamCount'] = $allDamCount;
         $output['maxPage'] = $maxPage;
@@ -129,21 +131,21 @@ class Blocks_GalleryController extends Blocks_ContentListController
         $output['next'] = $next;
         $output['count'] = $mediaArray['count'];
         $output['pageSize'] = $limit;
-        $output["image"]["width"] = isset($imgWidth)?$imgWidth:null;
-        $output["image"]["height"] = isset($imgHeight)?$imgHeight:null;
+        $output["image"]["width"] = isset($imgWidth) ? $imgWidth : null;
+        $output["image"]["height"] = isset($imgHeight) ? $imgHeight : null;
         $output['currentPage'] = $currentPage;
         $output['jsonQuery'] = Zend_Json::encode($query);
-                
+        
         return $output;
     }
 
     protected function setFilters ($query)
     {
-        
         if ($query != null) {
             $filters = Filter::Factory();
             /* Add filters on TypeId and publication */
-            $filters->addFilter(Filter::Factory('In')->setName('typeId')->setValue($query['DAMTypes']));
+            $filters->addFilter(Filter::Factory('In')->setName('typeId')
+                ->setValue($query['DAMTypes']));
             
             /* Add filter on taxonomy */
             foreach ($query['vocabularies'] as $key => $value) {
@@ -169,21 +171,16 @@ class Blocks_GalleryController extends Blocks_ContentListController
                     $taxOperator = '$in';
                 }
                 if (count($value['terms']) > 0) {
-                    $filters->addFilter(Filter::Factory('OperatorToValue')
-                                                ->setName('taxonomy.' . $key)
-                                                ->setValue($value['terms'])
-                                                ->setOperator($taxOperator)
-                                        );
+                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName('taxonomy.' . $key)
+                        ->setValue($value['terms'])
+                        ->setOperator($taxOperator));
                 }
             }
-            $filters->addFilter(
-                    Filter::Factory('In')
-                        ->setName('target')
-                        ->setValue(
-                            array(
-                                    $this->_workspace,
-                                    'all'
-                            )));
+            $filters->addFilter(Filter::Factory('In')->setName('target')
+                ->setValue(array(
+                $this->_workspace,
+                'all'
+            )));
             
             /*
              * Add Sort

@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Services;
 
-use Rubedo\Interfaces\Services\IServicesManager,Rubedo\Interfaces\config;
+use Rubedo\Interfaces\Services\IServicesManager, Rubedo\Interfaces\config;
 
 /**
  * Service Manager Interface
@@ -46,7 +46,7 @@ class Manager implements IServicesManager
     /**
      * Reset the mockObject array for isolation purpose
      */
-    public static function resetMocks()
+    public static function resetMocks ()
     {
         self::$_mockServicesArray = array();
     }
@@ -54,10 +54,12 @@ class Manager implements IServicesManager
     /**
      * Set a mock service for testing purpose
      *
-     * @param string $serviceName Name of the service overridden
-     * @param object $obj mock object substituted to the service
+     * @param string $serviceName
+     *            Name of the service overridden
+     * @param object $obj
+     *            mock object substituted to the service
      */
-    public static function setMockService($serviceName, $obj)
+    public static function setMockService ($serviceName, $obj)
     {
         self::$_mockServicesArray[$serviceName] = $obj;
     }
@@ -65,9 +67,9 @@ class Manager implements IServicesManager
     /**
      * Setter of services parameters, to init them from bootstrap
      *
-     * @param array $options
+     * @param array $options            
      */
-    public static function setOptions($options)
+    public static function setOptions ($options)
     {
         if ('array' !== gettype($options)) {
             throw new \Rubedo\Exceptions\Server('Services parameters should be an array', "Exception69", "Services parameters");
@@ -80,7 +82,7 @@ class Manager implements IServicesManager
      *
      * @return array array of all the services
      */
-    public static function getOptions()
+    public static function getOptions ()
     {
         return self::$_servicesOptions;
     }
@@ -91,54 +93,53 @@ class Manager implements IServicesManager
      *
      * Return an instance of the manager containing the actual service object
      *
-     * @param string $serviceName name of the service
+     * @param string $serviceName
+     *            name of the service
      * @return static instance of the manager
      */
-    public static function getService($serviceName)
+    public static function getService ($serviceName)
     {
         if (gettype($serviceName) !== 'string') {
             throw new \Rubedo\Exceptions\Server('getService only accept string argument', "Exception70");
         }
-
+        
         if (isset(static::$_mockServicesArray[$serviceName])) {
             return static::$_mockServicesArray[$serviceName];
         }
-
+        
         $serviceClassName = self::resolveName($serviceName);
         
-        if(count(config::getConcerns($serviceName))){
+        if (count(config::getConcerns($serviceName))) {
             return new Proxy($serviceClassName, $serviceName);
-        }else{
-            return new $serviceClassName;
+        } else {
+            return new $serviceClassName();
         }
-
-        
     }
 
     /**
      * Resolve the service name to the service class name for dependancy
      * injection
      *
-     * @param string $serviceName name of the service
+     * @param string $serviceName
+     *            name of the service
      * @return string class to instanciate
      */
-    protected static function resolveName($serviceName)
+    protected static function resolveName ($serviceName)
     {
         $options = self::$_servicesOptions;
-
+        
         if (isset($options[$serviceName]['class'])) {
             $className = $options[$serviceName]['class'];
         } else {
             throw new \Rubedo\Exceptions\Server('Classe name for %1$s service should be defined in config file', "Exception71", $serviceName);
         }
-        if (!$interfaceName = config::getInterface($serviceName)) {
+        if (! $interfaceName = config::getInterface($serviceName)) {
             throw new \Rubedo\Exceptions\Server('%1$s isn\'t declared in service interface config', "Exception72", $serviceName);
         }
-        if (!in_array($interfaceName, class_implements($className))) {
+        if (! in_array($interfaceName, class_implements($className))) {
             throw new \Rubedo\Exceptions\Server('%1$s don\'t implement %2$s', "Exception73", $className, $interfaceName);
         }
-
+        
         return $className;
     }
-
 }

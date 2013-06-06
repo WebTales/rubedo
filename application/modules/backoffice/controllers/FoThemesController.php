@@ -14,7 +14,6 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
 use Rubedo\Services\Manager;
 
 /**
@@ -25,31 +24,32 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class Backoffice_FoThemesController extends Zend_Controller_Action
 {
-
-
 
     /**
      * should json be prettified
      *
      * @var bool
      */
-    protected $_prettyJson = true;	
+    protected $_prettyJson = true;
 
     /**
      * Set the response body with Json content
      * Option : json is made human readable
-     * @param mixed $data data to be json encoded
+     * 
+     * @param mixed $data
+     *            data to be json encoded
      */
-    protected function _returnJson($data) {
+    protected function _returnJson ($data)
+    {
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
-
+        
         $returnValue = Zend_Json::encode($data);
         if ($this->_prettyJson) {
             $returnValue = Zend_Json::prettyPrint($returnValue);
@@ -62,23 +62,29 @@ class Backoffice_FoThemesController extends Zend_Controller_Action
      *
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
-     *
      */
-    public function indexAction() {
+    public function indexAction ()
+    {
         $dataValues = array();
-        $dataValues[]=array('text'=>'default','label'=>'Default');
-        $dataValues[]=array('text'=>'cnews','label'=>'Ville');
-
+        $dataValues[] = array(
+            'text' => 'default',
+            'label' => 'Default'
+        );
+        $dataValues[] = array(
+            'text' => 'cnews',
+            'label' => 'Ville'
+        );
+        
         $response = Manager::getService('FrontOfficeTemplates')->getAvailableThemes();
-
+        
         $this->_returnJson($response);
     }
-    
+
     /**
-     * 
      */
-    public function getThemeInfosAction(){
-        $themeName = $this->getParam('theme','default');
+    public function getThemeInfosAction ()
+    {
+        $themeName = $this->getParam('theme', 'default');
         $response = Manager::getService('FrontOfficeTemplates')->getThemeInfos($themeName);
         $this->_returnJson($response);
     }
