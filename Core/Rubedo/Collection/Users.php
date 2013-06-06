@@ -49,7 +49,7 @@ class Users extends AbstractCollection implements IUsers
 
     /**
      * Only access to content with read access
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init ()
@@ -167,7 +167,7 @@ class Users extends AbstractCollection implements IUsers
         if (! isset($obj['groups']) || $obj['groups'] == "") {
             $groups = array();
         } else {
-            $group = $obj['groups'];
+            $groups = $obj['groups'];
         }
         
         $obj['groups'] = null;
