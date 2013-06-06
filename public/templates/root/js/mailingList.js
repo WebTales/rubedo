@@ -27,7 +27,7 @@ function addEmail(email, mailingListId) {
 	request.fail(function(jqXHR, textStatus, errorThrown) {
 		try {
 			var responseText = jQuery.parseJSON(jqXHR.responseText);
-		} catch {
+		} catch(err) {
 			var responseText = jqXHR.responseText;
 		}
 		jQuery("#mailinglist-message").html("<strong>"+responseText['msg']+"</strong>");
