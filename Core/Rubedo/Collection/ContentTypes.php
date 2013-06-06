@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IContentTypes, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle ContentTypes
@@ -27,30 +27,41 @@ use Rubedo\Interfaces\Collection\IContentTypes,Rubedo\Services\Manager, \WebTale
  */
 class ContentTypes extends AbstractCollection implements IContentTypes
 {
-    
+
     protected $_indexes = array(
-        array('keys'=>array('type'=>1),'options'=>array('unique'=>true)),
-        //array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
-    );
-    
+        array(
+            'keys' => array(
+                'type' => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
+        )
+    // array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
+        );
+
     /**
      * Only access to content with read access
+     * 
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
-    protected function _init(){
+    protected function _init ()
+    {
         parent::_init();
-		
-		if (! self::isUserFilterDisabled()) {
-		    $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-		    if(in_array('all',$readWorkspaceArray)){
-		        return;
-		    }
-		    $readWorkspaceArray[] = null;
-		    $readWorkspaceArray[] = 'all';
-// 		    $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
-		    $filter = Filter::Factory('OperatorToValue')->setName('workspaces')->setOperator('$in')->setValue($readWorkspaceArray);
-		    $this->_dataService->addFilter($filter);
-		}
+        
+        if (! self::isUserFilterDisabled()) {
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if (in_array('all', $readWorkspaceArray)) {
+                return;
+            }
+            $readWorkspaceArray[] = null;
+            $readWorkspaceArray[] = 'all';
+            // $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
+            $filter = Filter::Factory('OperatorToValue')->setName('workspaces')
+                ->setOperator('$in')
+                ->setValue($readWorkspaceArray);
+            $this->_dataService->addFilter($filter);
+        }
     }
 
     protected $_model = array(
@@ -77,8 +88,8 @@ class ContentTypes extends AbstractCollection implements IContentTypes
                 'domain' => 'array',
                 'required' => false,
                 'items' => array(
-                	'domain' => 'array',
-                	'required' => false,
+                    'domain' => 'array',
+                    'required' => false,
                     'cType' => array(
                         'domain' => 'string',
                         'required' => true
@@ -140,11 +151,13 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array(), $live = true)
-    {    
-        if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
-	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $obj['workspaces'] = array($mainWorkspace['id']);
-	    }
+    {
+        if (! isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
+            $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+            $obj['workspaces'] = array(
+                $mainWorkspace['id']
+            );
+        }
         $returnArray = parent::create($obj, $options, $live);
         
         if ($returnArray["success"]) {
@@ -158,9 +171,11 @@ class ContentTypes extends AbstractCollection implements IContentTypes
      */
     public function update (array $obj, $options = array(), $live = true)
     {
-        if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
+        if (! isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
             $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-            $obj['workspaces'] = array($mainWorkspace['id']);
+            $obj['workspaces'] = array(
+                $mainWorkspace['id']
+            );
         }
         $returnArray = parent::update($obj, $options, $live);
         
@@ -196,7 +211,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContentType($obj['id'], $obj, TRUE);
         
-        $ElasticDataIndexService->indexByType('content',$obj['id']);
+        $ElasticDataIndexService->indexByType('content', $obj['id']);
         
         AbstractCollection::disableUserFilter($wasFiltered);
     }
@@ -230,85 +245,86 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         ));
     }
 
-
-
     protected function _addReadableProperty ($obj)
     {
         if (! self::isUserFilterDisabled()) {
-        	//Set the workspace for old items in database	
-	        if (! isset($obj['workspaces']) || $obj['workspaces']=="") {
-	            $obj['workspaces'] = array(
-	                'global'
-	            );
-	        }
-	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-
-	        if (!Manager::getService('Acl')->hasAccess("write.ui.contentTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces))==0 && !in_array("all", $writeWorkspaces))) {
-	            $obj['readOnly'] = true;
-	        }else{
-	            $obj['readOnly'] = false;
-	        }
-		}
+            // Set the workspace for old items in database
+            if (! isset($obj['workspaces']) || $obj['workspaces'] == "") {
+                $obj['workspaces'] = array(
+                    'global'
+                );
+            }
+            $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+            
+            if (! Manager::getService('Acl')->hasAccess("write.ui.contentTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 && ! in_array("all", $writeWorkspaces))) {
+                $obj['readOnly'] = true;
+            } else {
+                $obj['readOnly'] = false;
+            }
+        }
         
         return $obj;
     }
-	
+
     /**
      * (non-PHPdoc)
+     * 
      * @see \Rubedo\Interfaces\Collection\IContentTypes::getReadableContentTypes()
      */
-	public function getReadableContentTypes() {
-		$currentUserService = Manager::getService('CurrentUser');
-		$contentTypesList = array();
-		
-		$readWorkspaces = $currentUserService->getReadWorkspaces();
-		$readWorkspaces[] = NULL;
+    public function getReadableContentTypes ()
+    {
+        $currentUserService = Manager::getService('CurrentUser');
+        $contentTypesList = array();
+        
+        $readWorkspaces = $currentUserService->getReadWorkspaces();
+        $readWorkspaces[] = NULL;
+        
+        $filters = Filter::Factory();
+        if (! in_array("all", $readWorkspaces)) {
+            $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaces);
+            $filters->addFilter($filter);
+        }
+        $filters->addFilter(Filter::Factory('Not')->setName('system')
+            ->setValue(true));
+        $readableContentTypes = $this->getList($filters);
+        
+        foreach ($readableContentTypes['data'] as $value) {
+            $contentTypesList[$value['type']] = array(
+                'type' => $value['type'],
+                'id' => $value['id']
+            );
+        }
+        ksort($contentTypesList);
+        $contentTypesList = array_values($contentTypesList);
+        
+        return $contentTypesList;
+    }
 
-		$filters = Filter::Factory();
-		if(!in_array("all", $readWorkspaces)){
-		    $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaces);
-		    $filters->addFilter($filter);
-		}
-		$filters->addFilter(Filter::Factory('Not')->setName('system')->setValue(true));
-		$readableContentTypes = $this->getList($filters);
-		
-		foreach ($readableContentTypes['data'] as $value) {
-			$contentTypesList[$value['type']] = array('type' => $value['type'], 'id' => $value['id']);
-		}
-		ksort($contentTypesList);
-		$contentTypesList = array_values($contentTypesList);
-		
-		return $contentTypesList;
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see \Rubedo\Interfaces\Collection\IContentTypes::getGeolocatedContentTypes()
-	 */
-	public function getGeolocatedContentTypes() {
-		
-		$contentTypesList = $this->getList();
-		$geolocatedContentTypes = array();
-
-		foreach ($contentTypesList['data'] as $contentType) {
-
-			$fields=$contentType["fields"];
-			foreach($fields as $field) {
-				if ($field['config']['name']=='position') {
-					$geolocatedContentTypes[] = $contentType['id'];
-				}
-			}			
-		}
-		return $geolocatedContentTypes;
-	}
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\IContentTypes::getGeolocatedContentTypes()
+     */
+    public function getGeolocatedContentTypes ()
+    {
+        $contentTypesList = $this->getList();
+        $geolocatedContentTypes = array();
+        
+        foreach ($contentTypesList['data'] as $contentType) {
+            
+            $fields = $contentType["fields"];
+            foreach ($fields as $field) {
+                if ($field['config']['name'] == 'position') {
+                    $geolocatedContentTypes[] = $contentType['id'];
+                }
+            }
+        }
+        return $geolocatedContentTypes;
+    }
 
     public function isChangeableContentType ($originalType, $newType)
     {
         $result = true;
-        $newFieldsArray = array();
-        $deletedFieldsArray = array();
-        $oldFieldsArray = array();
-        $modifiedFieldsArray = array();
         $authorizedCtype = array(
             "text" => array(
                 "textfield",

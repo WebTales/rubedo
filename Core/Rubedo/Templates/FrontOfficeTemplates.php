@@ -98,6 +98,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addExtension(new \Twig_Extension_Debug());
         
         $this->_twig->addExtension(new Translate($lang));
+        $this->_twig->addExtension(new BackOfficeTranslate());
         
         // $this->_twig->addExtension(new \Twig_Extension_Highlight());
         

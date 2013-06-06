@@ -96,7 +96,7 @@ class Translate implements ITranslate
         return $translatedValue;
     }
 
-    protected function getTranslation ($code, $language)
+    public function getTranslation ($code, $language)
     {
         $this->loadLanguage($language);
         if (isset(self::$translationArray[$language][$code])) {

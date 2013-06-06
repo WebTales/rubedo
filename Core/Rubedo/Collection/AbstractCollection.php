@@ -15,7 +15,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Interfaces\Collection\IAbstractCollection, Rubedo\Services\Manager,WebTales\MongoFilters\Filter;
+
+use Rubedo\Interfaces\Collection\IAbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the API to MongoDB
@@ -98,15 +99,12 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
-
         if (isset($sort)) {
             foreach ($sort as $value) {
                 
-                $this->_dataService->addSort(
-                        array(
-                                $value["property"] => strtolower(
-                                        $value["direction"])
-                        ));
+                $this->_dataService->addSort(array(
+                    $value["property"] => strtolower($value["direction"])
+                ));
             }
         }
         if (isset($start)) {
@@ -116,10 +114,10 @@ abstract class AbstractCollection implements IAbstractCollection
             $this->_dataService->setNumberOfResults($limit);
         }
         $dataValues = $this->_dataService->read($filters);
-        if($dataValues && is_array($dataValues)){
+        if ($dataValues && is_array($dataValues)) {
             foreach ($dataValues['data'] as &$obj) {
                 $obj = $this->_addReadableProperty($obj);
-            }  
+            }
         }
         
         return $dataValues;
@@ -190,8 +188,7 @@ abstract class AbstractCollection implements IAbstractCollection
         if (! isset(self::$_fetchedObjects[$className])) {
             self::$_fetchedObjects[$className] = array();
         }
-        if ($forceReload ||
-                 ! isset(self::$_fetchedObjects[$className][$contentId])) {
+        if ($forceReload || ! isset(self::$_fetchedObjects[$className][$contentId])) {
             $obj = $this->_dataService->findById($contentId);
             if ($obj) {
                 $obj = $this->_addReadableProperty($obj);
@@ -222,6 +219,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @deprecated
      *
      *
+     *
      * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
@@ -238,6 +236,7 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      * @param \WebTales\MongoFilters\IFilter $filter            
@@ -263,6 +262,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      *
      *
+     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
@@ -271,8 +271,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, 
-            $options = array())
+    public function customUpdate (array $data,\WebTales\MongoFilters\IFilter $updateCond, $options = array())
     {
         return $this->_dataService->customUpdate($data, $updateCond, $options);
     }
@@ -293,11 +292,11 @@ abstract class AbstractCollection implements IAbstractCollection
         unset($obj['readOnly']);
         return $this->_dataService->create($obj, $options);
     }
-    
+
     /**
      * Return validated data from input data based on collection rules
      *
-     * @param array $obj
+     * @param array $obj            
      * @return array:
      */
     protected function _filterInputData (array $obj, array $model = null)
@@ -305,13 +304,13 @@ abstract class AbstractCollection implements IAbstractCollection
         if ($model == null) {
             $model = $this->_model;
         }
-    
+        
         foreach ($model as $key => $value) {
             // If the configuration is not specified for the current field
             if (isset($value['domain']) && isset($value['required'])) {
                 if (isset($obj[$key])) {
                     switch ($value['domain']) {
-    
+                        
                         /**
                          * Case with a list domain
                          *
@@ -319,39 +318,27 @@ abstract class AbstractCollection implements IAbstractCollection
                          * with the model
                          */
                         case 'list':
-                            if (isset($value['items']) &&
-                            isset($value['items']['domain']) &&
-                            isset($value['items']['required'])) {
-                                if ($this->_isValid($obj[$key],
-                                        $value['domain'])) {
+                            if (isset($value['items']) && isset($value['items']['domain']) && isset($value['items']['required'])) {
+                                if ($this->_isValid($obj[$key], $value['domain'])) {
                                     if (count($obj[$key]) > 0) {
                                         foreach ($obj[$key] as $subKey => $subValue) {
-                                            if ($value['items']['domain'] !=
-                                            "list" &&
-                                            $value['items']['domain'] != "array") {
-                                                if (!is_array($subValue) && !$this->_isValid($subValue, $value['items']['domain'])) {
-                                                    $this->_errors[$key][$subKey] = '"'.$subValue.'" doesn\'t correspond with the domain "'.$value['domain'] . '"';
+                                            if ($value['items']['domain'] != "list" && $value['items']['domain'] != "array") {
+                                                if (! is_array($subValue) && ! $this->_isValid($subValue, $value['items']['domain'])) {
+                                                    $this->_errors[$key][$subKey] = '"' . $subValue . '" doesn\'t correspond with the domain "' . $value['domain'] . '"';
                                                 }
                                             } else {
                                                 if ($value['items']['domain'] == "list") {
-                                                    if (isset(
-                                                            $value['items']['items']['domain']) &&
-                                                            isset(
-                                                                    $value['items']['items']['required'])) {
-                                                        $this->_filterInputData(
-                                                                array(
-                                                                        'key' => $subValue
-                                                                ),
-                                                                array(
-                                                                        'key' => $value['items']['items']
-                                                                ));
+                                                    if (isset($value['items']['items']['domain']) && isset($value['items']['items']['required'])) {
+                                                        $this->_filterInputData(array(
+                                                            'key' => $subValue
+                                                        ), array(
+                                                            'key' => $value['items']['items']
+                                                        ));
                                                     } else {
-                                                        $this->_filterInputData($subValue,
-                                                                $value['items']['items']);
+                                                        $this->_filterInputData($subValue, $value['items']['items']);
                                                     }
                                                 } else {
-                                                    $this->_filterInputData($subValue,
-                                                            $value['items']['items']);
+                                                    $this->_filterInputData($subValue, $value['items']['items']);
                                                 }
                                             }
                                         }
@@ -363,20 +350,19 @@ abstract class AbstractCollection implements IAbstractCollection
                                         }
                                     }
                                 } else {
-                                    $this->_errors[$key] = 'doesn\'t correspond with the domain "' .
-                                            $value['domain'] . '"';
+                                    $this->_errors[$key] = 'doesn\'t correspond with the domain "' . $value['domain'] . '"';
                                 }
                             } else {
                                 continue;
                             }
                             break;
-    
-                            /**
-                             * Case with an array domain
-                             *
-                             * Recall _filterInputData function with the object
-                             * array and it's model
-                             */
+                        
+                        /**
+                         * Case with an array domain
+                         *
+                         * Recall _filterInputData function with the object
+                         * array and it's model
+                         */
                         case 'array':
                             if (isset($value['items']) && count($value['items']) > 0) {
                                 if ($this->_isValid($obj[$key], $value['domain'])) {
@@ -390,30 +376,27 @@ abstract class AbstractCollection implements IAbstractCollection
                                         }
                                     }
                                 } else {
-                                    $this->_errors[$key] = 'doesn\'t correspond with the domain "' .
-                                            $value['domain'] . '"';
+                                    $this->_errors[$key] = 'doesn\'t correspond with the domain "' . $value['domain'] . '"';
                                 }
                             } else {
                                 continue;
                             }
                             break;
-    
-                            /**
-                             * Case with a simple domain
-                             *
-                             * Just check if the current object value correspond
-                             * with the model
-                             */
+                        
+                        /**
+                         * Case with a simple domain
+                         *
+                         * Just check if the current object value correspond
+                         * with the model
+                         */
                         default:
-                            if (!is_array($obj[$key]) && !$this->_isValid($obj[$key], $value['domain'])) {
+                            if (! is_array($obj[$key]) && ! $this->_isValid($obj[$key], $value['domain'])) {
                                 $this->_errors[$key] = '"' . $obj[$key] . '" doesn\'t correspond with the domain "' . $value['domain'] . '"';
                             }
                             break;
                     }
                 } else {
-                    if ((isset($value['items']) && isset($value['items']['required']) &&
-                            $value['items']['required'] == true) ||
-                            (isset($value['required']) && $value['required'] == true)) {
+                    if ((isset($value['items']) && isset($value['items']['required']) && $value['items']['required'] == true) || (isset($value['required']) && $value['required'] == true)) {
                         $this->_errors[$key] = 'this field is required';
                     } else {
                         continue;
@@ -421,7 +404,7 @@ abstract class AbstractCollection implements IAbstractCollection
                 }
             }
         }
-    
+        
         return $obj;
     }
 
@@ -482,8 +465,7 @@ abstract class AbstractCollection implements IAbstractCollection
     }
     
     /*
-     * (non-PHPdoc) @see
-     * \Rubedo\Interfaces\Collection\IAbstractCollection::count()
+     * (non-PHPdoc) @see \Rubedo\Interfaces\Collection\IAbstractCollection::count()
      */
     public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
@@ -493,6 +475,7 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      *
@@ -521,27 +504,25 @@ abstract class AbstractCollection implements IAbstractCollection
      *            array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
-        if(!$parentId){
+        if (! $parentId) {
             return array();
-        }      
+        }
         if (isset($sort)) {
             foreach ($sort as $value) {
-                $this->_dataService->addSort(
-                        array(
-                                $value["property"] => strtolower(
-                                        $value["direction"])
-                        ));
+                $this->_dataService->addSort(array(
+                    $value["property"] => strtolower($value["direction"])
+                ));
             }
         } else {
             $this->_dataService->addSort(array(
-                    "orderValue" => 1
+                "orderValue" => 1
             ));
         }
         
-        $result = $this->_dataService->readChild($parentId,$filters);
-        if($result && is_array($result)){
+        $result = $this->_dataService->readChild($parentId, $filters);
+        if ($result && is_array($result)) {
             foreach ($result as &$obj) {
                 $obj = $this->_addReadableProperty($obj);
             }
@@ -575,8 +556,7 @@ abstract class AbstractCollection implements IAbstractCollection
         return $returnArray;
     }
 
-    public function fetchAllChildren ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null, 
-            $limit = 10)
+    public function fetchAllChildren ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
     {
         $returnArray = array();
         $children = $this->readChild($parentId, $filters, $sort); // Read child
@@ -587,10 +567,8 @@ abstract class AbstractCollection implements IAbstractCollection
                                         // they can have children (leaf===false)
                                         // do another read child.
             $returnArray[] = $value;
-            if ((!isset($value['leaf']) || $value['leaf'] === false) && $limit > 0) {
-                $returnArray = array_merge($returnArray, 
-                        $this->readChild($value['id'], $filters, $sort, 
-                                $limit - 1));
+            if ((! isset($value['leaf']) || $value['leaf'] === false) && $limit > 0) {
+                $returnArray = array_merge($returnArray, $this->readChild($value['id'], $filters, $sort, $limit - 1));
             }
         }
         return $returnArray;
@@ -626,8 +604,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param boolean $_isUserFilterDisabled            
      * @return boolean previous value of the param
      */
-    public static final function disableUserFilter (
-            $_isUserFilterDisabled = true)
+    public static final function disableUserFilter ($_isUserFilterDisabled = true)
     {
         $oldValue = self::$_isUserFilterDisabled;
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
@@ -657,14 +634,13 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         $result = true;
         foreach ($this->_indexes as $index) {
-            $result = $result && $this->_dataService->ensureIndex(
-                    $index['keys'], 
-                    isset($index['options']) ? $index['options'] : array());
+            $result = $result && $this->_dataService->ensureIndex($index['keys'], isset($index['options']) ? $index['options'] : array());
         }
         return $result;
     }
-    
-    public function dropIndexes(){
+
+    public function dropIndexes ()
+    {
         $result = $this->_dataService->dropIndexes();
         return $result;
     }
@@ -679,38 +655,41 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         return $obj;
     }
-    
+
     /**
      * Return differences between two arrays with recursivity
-     * @param Array $array1
-     * @param Array $array2
+     * 
+     * @param Array $array1            
+     * @param Array $array2            
      * @return Array
      */
-    protected function _arrayDiffRecursive($array1, $array2) {
-    	$returnArray = array();
-    
-    	foreach ($array1 as $key => $value) {
-    		if (array_key_exists($key, $array2)) {
-    			if (is_array($value)) {
-    				$diff = $this->_arrayDiffRecursive($value, $array2[$key]);
-    				if (count($diff)) { $returnArray[$key] = $array1[$key]; }
-    			} else {
-    				if ($value != $array2[$key]) {
-    					$returnArray[$key] = $array1[$key];
-    				}
-    			}
-    		} else {
-    			$returnArray[$key] = $array1[$key];
-    		}
-    	}
-    	return $returnArray;
+    protected function _arrayDiffRecursive ($array1, $array2)
+    {
+        $returnArray = array();
+        
+        foreach ($array1 as $key => $value) {
+            if (array_key_exists($key, $array2)) {
+                if (is_array($value)) {
+                    $diff = $this->_arrayDiffRecursive($value, $array2[$key]);
+                    if (count($diff)) {
+                        $returnArray[$key] = $array1[$key];
+                    }
+                } else {
+                    if ($value != $array2[$key]) {
+                        $returnArray[$key] = $array1[$key];
+                    }
+                }
+            } else {
+                $returnArray[$key] = $array1[$key];
+            }
+        }
+        return $returnArray;
     }
 
-    
     /**
      * Rename Author info in collection for a given AuthorId
-     * 
-     * @param string $authorId
+     *
+     * @param string $authorId            
      */
     public function renameAuthor ($authorId)
     {
@@ -728,7 +707,7 @@ abstract class AbstractCollection implements IAbstractCollection
         
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = new static();
-        $resultCreate = $service->customUpdate(array(
+        $service->customUpdate(array(
             '$set' => array(
                 'createUser' => $newUserSummary
             )
@@ -768,10 +747,7 @@ abstract class AbstractCollection implements IAbstractCollection
             'multiple' => true
         ));
         
-        
-        
         AbstractCollection::disableUserFilter($wasFiltered);
     }
-    
 }
 	

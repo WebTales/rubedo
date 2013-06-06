@@ -343,16 +343,15 @@ class CurrentUser implements ICurrentUser
     }
 
     public function getLanguage(){
-        $lang = Manager::getService('Session')->get('lang', null);
+       $user = $this->getCurrentUser();
+       
+       if(isset($user) && isset($user['language']) && !empty($user['language'])){
+           $lang = $user['language'];
+       }else{
+           $lang = 'en';
+       }
         
-        if($lang===null){
-           $user = $this->getCurrentUser();
-           if(isset($user) && isset($user['language'])){
-               $lang = $user['language'];
-           }
-        }
         return $lang;
     }
-    
     
 }

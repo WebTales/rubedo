@@ -4,7 +4,8 @@ function addEmail(email, mailingListId) {
 		type : "POST",
 		data : {
 			'mailing-list-id' : mailingListId,
-			'email' : email
+			'email' : email,
+			'current-page':jQuery('body').attr('data-current-page')
 		},
 		dataType : "json"
 	});
@@ -12,19 +13,26 @@ function addEmail(email, mailingListId) {
 	request.done(function(data) {
 		if(data['success']) {
 			jQuery("#mailinglist-message").html("<strong>"+data['msg']+"</strong>");
-			jQuery(".mailinglist-modal").css("display", "block");
-			jQuery(".mailinglist-modal").css("background", "green");
+			jQuery("#mailingListAlert").removeClass("hidden");
+			jQuery("#mailingListAlert").removeClass("alert-danger");
+			jQuery("#mailingListAlert").addClass("alert-success");
 		} else {
 			jQuery("#mailinglist-message").html("<strong>"+data['msg']+"</strong>");
-			jQuery(".mailinglist-modal").css("display", "block");
-			jQuery(".mailinglist-modal").css("background", "red");
+			jQuery("#mailingListAlert").removeClass("hidden");
+			jQuery("#mailingListAlert").removeClass("alert-success");
+			jQuery("#mailingListAlert").addClass("alert-danger");
 		}
 	});
 
 	request.fail(function(jqXHR, textStatus, errorThrown) {
-		var responseText = jQuery.parseJSON(jqXHR.responseText);
+		try {
+			var responseText = jQuery.parseJSON(jqXHR.responseText);
+		} catch(err) {
+			var responseText = jqXHR.responseText;
+		}
 		jQuery("#mailinglist-message").html("<strong>"+responseText['msg']+"</strong>");
-		jQuery(".mailinglist-modal").css("display", "block");
-		jQuery(".mailinglist-modal").css("background", "red");
+		jQuery("#mailingListAlert").removeClass("hidden");
+		jQuery("#mailingListAlert").removeClass("alert-success");
+		jQuery("#mailingListAlert").addClass("alert-danger");
 	});
 }

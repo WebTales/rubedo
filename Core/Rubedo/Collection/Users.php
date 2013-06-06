@@ -27,53 +27,71 @@ use Rubedo\Interfaces\Collection\IUsers, Rubedo\Services\Manager, WebTales\Mongo
  */
 class Users extends AbstractCollection implements IUsers
 {
+
     protected $_indexes = array(
-        array('keys'=>array('login'=>1),'options'=>array('unique'=>true)),
-        array('keys'=>array('email'=>1),'options'=>array('unique'=>true)),
+        array(
+            'keys' => array(
+                'login' => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
+        ),
+        array(
+            'keys' => array(
+                'email' => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
+        )
     );
 
     /**
      * Only access to content with read access
+     * 
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
-    protected function _init(){
+    protected function _init ()
+    {
         parent::_init();
-
+        
         $this->_dataService->addToExcludeFieldList(array(
-                'password'
+            'password'
         ));
-    
+        
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-            if(!in_array('all',$readWorkspaceArray)){
+            if (! in_array('all', $readWorkspaceArray)) {
                 $filter = Filter::Factory();
                 
-                $filter->addFilter(Filter::Factory('In')->setName('workspace')->setValue($readWorkspaceArray));
+                $filter->addFilter(Filter::Factory('In')->setName('workspace')
+                    ->setValue($readWorkspaceArray));
                 
                 $this->_dataService->addFilter($filter);
             }
         }
     }
-    
+
     protected function _addReadableProperty ($obj)
-	{
-	    if (! self::isUserFilterDisabled()) {
-	        //Set the workspace for old items in database
-	        if (! isset($obj['workspace'])) {
-	            $obj['workspace'] = 'global';
-	        }
-	        	
-	        $aclServive = Manager::getService('Acl');
-	        $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-	        	
-	        if (!$aclServive->hasAccess("write.ui.users") || !in_array($obj['workspace'], $writeWorkspaces)) {
-	            $obj['readOnly'] = true;
-	        }
-	    }
-	
-	    return $obj;
-	}
-    
+    {
+        if (! self::isUserFilterDisabled()) {
+            // Set the workspace for old items in database
+            if (! isset($obj['workspace'])) {
+                $obj['workspace'] = 'global';
+            }
+            
+            $aclServive = Manager::getService('Acl');
+            $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
+            
+            if (! $aclServive->hasAccess("write.ui.users") || ! in_array($obj['workspace'], $writeWorkspaces)) {
+                $obj['readOnly'] = true;
+            }
+        }
+        
+        return $obj;
+    }
+
     /**
      * Change the password of the user given by its id
      * Check version conflict
@@ -146,17 +164,19 @@ class Users extends AbstractCollection implements IUsers
      */
     public function create (array $obj, $options = array())
     {
-		if(!isset($obj['groups']) || $obj['groups']==""){
-			$groups= array();
-		} else {
-			$group = $obj['groups'];
-		}		
-		
+        if (! isset($obj['groups']) || $obj['groups'] == "") {
+            $groups = array();
+        } else {
+            $group = $obj['groups'];
+        }
+        
         $obj['groups'] = null;
         
         // Define default workspace for a user if it's not set
-        if(!isset($obj['workspace']) || $obj['workspace']==""){
-            $obj['workspace'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
+        if (! isset($obj['workspace']) || $obj['workspace'] == "") {
+            $obj['workspace'] = array(
+                Manager::getService('CurrentUser')->getMainWorkspaceId()
+            );
         }
         
         $returnValue = parent::create($obj, $options);
@@ -176,20 +196,20 @@ class Users extends AbstractCollection implements IUsers
         
         $personalPrefsService = Manager::getService('PersonalPrefs');
         
-		$personalPrefsService->create($personalPrefsObj);
-		
+        $personalPrefsService->create($personalPrefsObj);
+        
         return $returnValue;
     }
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::findById()
      */
     public function findById ($contentId, $forceReload = false)
     {
         $result = parent::findById($contentId, $forceReload);
-        if($result){
+        if ($result) {
             $result = $this->_addGroupsInfos($result);
         }
         return $result;
@@ -231,8 +251,10 @@ class Users extends AbstractCollection implements IUsers
     public function update (array $obj, $options = array())
     {
         // Define default workspace for a user if it's not set
-        if(!isset($obj['workspace']) || $obj['workspace']==""){
-            $obj['workspace'] = array(Manager::getService('CurrentUser')->getMainWorkspaceId());
+        if (! isset($obj['workspace']) || $obj['workspace'] == "") {
+            $obj['workspace'] = array(
+                Manager::getService('CurrentUser')->getMainWorkspaceId()
+            );
         }
         
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
@@ -240,7 +262,7 @@ class Users extends AbstractCollection implements IUsers
         Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
         $obj['groups'] = null;
         $result = parent::update($obj, $options);
-        if($result){
+        if ($result) {
             $result['data'] = $this->_addGroupsInfos($result['data']);
         }
         
@@ -257,22 +279,22 @@ class Users extends AbstractCollection implements IUsers
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
         return parent::destroy($obj, $options);
     }
-	
-	/**
-	 * (non-PHPdoc)
-	 * 
-	 * @see \Rubedo\Interfaces\Collection\IUsers::findByEmail()
-	 */
-	public function findByEmail($email) {
-		$result = $this->_dataService->findOne ( array (
-				'email' => $email 
-		) );
-		if($result){
-			$result = $this->_addGroupsInfos($result);
-		}
-		
-		return $result;
-	}
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Rubedo\Interfaces\Collection\IUsers::findByEmail()
+     */
+    public function findByEmail ($email)
+    {
+        $filter = Filter::Factory('Value')->setName('email')->setValue($email);
+        $result = $this->_dataService->findOne($filter);
+        if ($result) {
+            $result = $this->_addGroupsInfos($result);
+        }
+        
+        return $result;
+    }
 
     public function findValidatingUsersByWorkspace ($workspace)
     {
@@ -300,5 +322,4 @@ class Users extends AbstractCollection implements IUsers
             $result = Manager::getService($service)->renameAuthor($userId) && $result;
         }
     }
-    
 }
