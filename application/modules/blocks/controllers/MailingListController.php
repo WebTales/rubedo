@@ -15,7 +15,10 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
- 
+Use \Rubedo\Services\Manager;
+
+require_once ('AbstractController.php');
+
 /**
  * Controller providing CRUD API for the MailingList JSON
  *
@@ -27,9 +30,25 @@
  * @package Rubedo
  *
  */
-class Blocks_MailingListController extends Zend_Controller_Action
+class Blocks_MailingListController extends Blocks_AbstractController
 {
-	
+    protected $_defaultTemplate = 'mailinglist';
+    
+    public function indexAction ()
+    {
+        $blockConfig = $this->getRequest()->getParam('block-config');
+    
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
+        
+        $output = $this->getAllParams();
+        $output['blockConfig'] = $blockConfig;
+        
+        $css = array();
+        $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/mailingList.js"));
+        
+        $this->_sendResponse($output, $template, $css, $js);
+    }
+    
 	/**
 	 * Allow to add an email into a mailing list
 	 * 
