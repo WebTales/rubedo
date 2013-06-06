@@ -42,7 +42,7 @@ interface IAbstractCollection
 
     /**
      * Find an item given by its literral ID
-     * 
+     *
      * @param string $contentId            
      * @return array
      */
@@ -50,7 +50,7 @@ interface IAbstractCollection
 
     /**
      * Find an item given by its name (find only one if many)
-     * 
+     *
      * @param string $name            
      * @return array
      */
@@ -91,7 +91,7 @@ interface IAbstractCollection
 
     /**
      * Find child of a node tree
-     * 
+     *
      * @param string $parentId
      *            id of the parent node
      * @param \WebTales\MongoFilters\IFilter $filters
@@ -139,6 +139,7 @@ interface IAbstractCollection
      *
      *
      *
+     *
      * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
@@ -148,6 +149,7 @@ interface IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      *
@@ -172,6 +174,7 @@ interface IAbstractCollection
      *
      *
      *
+     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
@@ -180,11 +183,12 @@ interface IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function customUpdate (array $data,IFilter $updateCond, $options = array());
+    public function customUpdate (array $data, IFilter $updateCond, $options = array());
 
     /**
      *
      * @deprecated
+     *
      *
      *
      *
@@ -218,7 +222,7 @@ interface IAbstractCollection
      */
     public function getAncestors ($item, $limit = 10);
 
-    public function fetchAllChildren ($parentId,IFilter $filters = null, $sort = null, $limit = 10);
+    public function fetchAllChildren ($parentId, IFilter $filters = null, $sort = null, $limit = 10);
 
     public function readTree (IFilter $filters = null);
 

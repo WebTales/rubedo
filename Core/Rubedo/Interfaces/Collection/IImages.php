@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IImages extends IAbstractFileCollection{
-	
+interface IImages extends IAbstractFileCollection
+{
 }
