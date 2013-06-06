@@ -63,7 +63,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
 
     /**
      * Virtual term for navigation taxonomy : alias for the current Page when doing queries
-     * 
+     *
      * @var array
      */
     protected $_virtualCurrentPageTerm = array(
@@ -74,8 +74,6 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         "canAssign" => 'true',
         "readOnly" => true
     );
-    
-
     
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
@@ -122,7 +120,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     {
         $navigation = false;
         
-        if($filters){
+        if ($filters) {
             $navigation = $this->_lookForNavigation($filters);
         }
         
@@ -146,40 +144,39 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             return parent::getList($filters, $sort, $start, $limit);
         }
     }
-    
-    protected function _lookForNavigation(\WebTales\MongoFilters\IFilter $filters){
+
+    protected function _lookForNavigation (\WebTales\MongoFilters\IFilter $filters)
+    {
         $result = false;
-        if($filters instanceof \WebTales\MongoFilters\ICompositeFilter){ //do recursive adaptation to composite filter
+        if ($filters instanceof \WebTales\MongoFilters\ICompositeFilter) { // do recursive adaptation to composite filter
             $filtersArray = $filters->getFilters();
-            foreach ($filtersArray as $filter){
-               $result = $this->_lookForNavigation($filter) || $result;
+            foreach ($filtersArray as $filter) {
+                $result = $this->_lookForNavigation($filter) || $result;
             }
-        }elseif($filters instanceof \WebTales\MongoFilters\ValueFilter){ // adapt simple filters
+        } elseif ($filters instanceof \WebTales\MongoFilters\ValueFilter) { // adapt simple filters
             $key = $filters->getName();
             $value = $filters->getValue();
-            if($key == 'vocabularyId' && $value == 'navigation'){
+            if ($key == 'vocabularyId' && $value == 'navigation') {
                 unset($filters);
-                $result = true;                
+                $result = true;
             }
         }
         return $result;
     }
     
-    
-
-	/*
+    /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::readChild()
      */
     public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
         $navigation = false;
         
-        if($filters){
+        if ($filters) {
             $navigation = $this->_lookForNavigation($filters);
         }
         
         $parentItem = $this->findById($parentId);
-        if($parentItem['vocabularyId']=='navigation'){
+        if ($parentItem['vocabularyId'] == 'navigation') {
             $navigation = true;
         }
         if ($navigation) {
@@ -199,19 +196,20 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                 return array_values($returnArray);
             } else {
                 $rootPage = Manager::getService('Pages')->findById($parentId);
-                if(!$filters instanceof \WebTales\MongoFilters\IFilter){
+                if (! $filters instanceof \WebTales\MongoFilters\IFilter) {
                     $filters = Filter::Factory();
                 }
                 if ($rootPage) {
-                    $filters->addFilter(Filter::Factory('Value')->setName('site')->setValue($rootPage["site"]));
+                    $filters->addFilter(Filter::Factory('Value')->setName('site')
+                        ->setValue($rootPage["site"]));
                 } else {
                     $parentId = 'root';
-                    $filters->addFilter(Filter::Factory('Value')->setName('site')->setValue($parentId));
+                    $filters->addFilter(Filter::Factory('Value')->setName('site')
+                        ->setValue($parentId));
                 }
                 
                 $returnArray = array();
                 $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
-               
                 
                 foreach ($childrenArray as $page) {
                     $returnArray[] = $this->_pageToTerm($page);
@@ -230,7 +228,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $mainRoot = $this->_getMainRoot();
         $siteArray = Manager::getService('Sites')->getList();
         $childrenArray = array();
-        if($withCurrentPage){
+        if ($withCurrentPage) {
             $tab = $this->_virtualCurrentPageTerm;
             $tab["text"] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.CurrentPage", 'Current page');
             $childrenArray[] = $tab;
@@ -253,9 +251,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             'property' => 'orderValue',
             'direction' => 'ASC'
         );
-
+        
         $filters = Filter::Factory('Value')->setName('site')->setValue($array['id']);
-
+        
         $children = Manager::getService('Pages')->readChild('root', $filters, $sort);
         if (count($children) > 0) {
             $array['expandable'] = true;
@@ -301,7 +299,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $term['text'] = $workspace['text'];
         $term['id'] = $workspace['id'];
         $term['vocabularyId'] = 'wokspaces';
-        $term['isNotPage']=true;
+        $term['isNotPage'] = true;
         if (! self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
@@ -443,7 +441,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         // read children list
         $terms = $this->readChild($id);
         
-        if($terms === null) {
+        if ($terms === null) {
             throw new \Rubedo\Exceptions\Server("Term id not found in database", "Exception93");
         }
         
@@ -451,7 +449,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         if (is_array($terms)) {
             $returnArray = array();
             
-            foreach ($terms as $key => $value) {
+            foreach ($terms as $value) {
                 $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
             }
         }
@@ -490,7 +488,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             
             $vocabulary = Manager::getService('Taxonomy')->findById($term["vocabularyId"]);
             
-            self::$_termsArray[$id] = array($vocabulary["name"] => $term['text']);
+            self::$_termsArray[$id] = array(
+                $vocabulary["name"] => $term['text']
+            );
         }
         return self::$_termsArray[$id];
     }
@@ -508,19 +508,22 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $filters = Filter::Factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
         return $this->getList($filters);
     }
-    
+
     /**
-	 * Allow to find term by vocabularyId and name
-	 *
-	 * @param string $vocabularyId Contain the id of the vocabulary
-	 * @param string $name Contain the name of the term
-	 * @return array Contain the terms associated to the vocabulary given in parameter
-	 */
-    public function findByVocabularyIdAndName ($vocabularyId,$name)
+     * Allow to find term by vocabularyId and name
+     *
+     * @param string $vocabularyId
+     *            Contain the id of the vocabulary
+     * @param string $name
+     *            Contain the name of the term
+     * @return array Contain the terms associated to the vocabulary given in parameter
+     */
+    public function findByVocabularyIdAndName ($vocabularyId, $name)
     {
-        $filters = Filter::Factory()
-                        ->addFilter(Filter::Factory('Value')->SetName('vocabularyId')->setValue($vocabularyId))
-                        ->addFilter(Filter::Factory('Value')->SetName('text')->setValue($name));
+        $filters = Filter::Factory()->addFilter(Filter::Factory('Value')->SetName('vocabularyId')
+            ->setValue($vocabularyId))
+            ->addFilter(Filter::Factory('Value')->SetName('text')
+            ->setValue($name));
         return $this->_dataService->findOne($filters);
     }
 
@@ -597,9 +600,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $termsIdArray[] = $value['id'];
         }
         
-        $Filters = Filter::Factory('Or')
-                            ->addFilter(Filter::Factory('NotIn')->setName('parentId')->setValue($termsIdArray))
-                            ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')->setValue($taxonomyIdArray));
+        $Filters = Filter::Factory('Or')->addFilter(Filter::Factory('NotIn')->setName('parentId')
+            ->setValue($termsIdArray))
+            ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')
+            ->setValue($taxonomyIdArray));
         
         $orphansArray = $this->_dataService->customFind($Filters);
         
@@ -648,9 +652,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $termsIdArray[] = $value['id'];
         }
         
-        $Filters = Filter::Factory('Or')
-                    ->addFilter(Filter::Factory('NotIn')->setName('parentId')->setValue($termsIdArray))
-                    ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')->setValue($taxonomyIdArray));
+        $Filters = Filter::Factory('Or')->addFilter(Filter::Factory('NotIn')->setName('parentId')
+            ->setValue($termsIdArray))
+            ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')
+            ->setValue($taxonomyIdArray));
         $orphansArray = $this->_dataService->customFind($Filters);
         
         if ($orphansArray->count() > 0) {
