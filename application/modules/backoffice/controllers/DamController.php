@@ -228,9 +228,8 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     
     public function massUploadAction ()
     {
-	    $encodedActiveFacets=$this->getParam('activeFacets');
-	    $activeFacets=Zend_Json::decode($encodedActiveFacets);
-	    $typeId=$activeFacets['damType'];
+	    
+	    $typeId=$this->getParam('typeId');
 	    if (! $typeId) {
 	    	throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
 	    }
@@ -243,10 +242,21 @@ class Backoffice_DamController extends Backoffice_DataAccessController
 	    $obj['mainFileType'] = $damType['mainFileType'];
 	    $obj['fields']=array();
 	    $obj['taxonomy']=array();
+	    $encodedActiveFacets=$this->getParam('activeFacets');
+	    $activeFacets=Zend_Json::decode($encodedActiveFacets);
+	    $applyTaxoFacets=$this->getParam('applyTaxoFacets', false);
+	    if (($applyTaxoFacets)&&($applyTaxoFacets!="false")){
+	    	$obj['taxonomy']=$activeFacets;
+	    }
 	    $workspace = $this->getParam('writeWorkspace');
 	    if(!is_null($workspace) && $workspace != ""){
 	    	$obj['writeWorkspace'] = $workspace;
 	    	$obj['fields']['writeWorkspace'] = $workspace;
+	    }
+	    $targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
+	    if(is_array($targets) && count($targets) > 0){
+	    	$obj['target'] = $targets;
+	    	$obj['fields']['target'] = $targets;
 	    }
 	    $uploadResult = $this->_uploadFile('file', $damType['mainFileType'],true);
 	    if($uploadResult['success']){
