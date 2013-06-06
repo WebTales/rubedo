@@ -64,12 +64,14 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 	 * test if Destroy function works fine  when customDelete function return "n">0 
 	 */
 	public function testDestroyWhenGreaterThanZero(){
-	    $this->markTestSkipped();
 		$customReturn["ok"]=1;
 		$customReturn['n']=5;
 	
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete')
 						->will($this->returnValue($customReturn));
+		
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')
+	                    ->will($this->returnValue(array()));
 		
 		$obj["id"]="id";
 		$obj['vocabularyId'] = "test";
@@ -82,13 +84,15 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 	 * test if Destroy function works fine  when customDelete function fail
 	 */
 	public function testDestroyWhencustomDeleteFail(){
-	    $this->markTestSkipped();
 		$customReturn["ok"]=0;
 		$customReturn['n']=0;
 		$customReturn["err"]="error test";
 	
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete')
 						->will($this->returnValue($customReturn));
+		
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')
+		                ->will($this->returnValue(array()));
 		
 		$obj["id"]="id";
 		$obj['vocabularyId'] = "test";
