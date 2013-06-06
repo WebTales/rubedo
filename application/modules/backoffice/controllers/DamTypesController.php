@@ -14,9 +14,8 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+require_once ('DataAccessController.php');
 
-require_once('DataAccessController.php');
- 
 /**
  * Controller providing CRUD API for the Groups JSON
  *
@@ -26,21 +25,28 @@ require_once('DataAccessController.php');
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class Backoffice_DamTypesController extends Backoffice_DataAccessController
 {
-    public function init(){
-		parent::init();
-		
-		// init the data access service
-		$this -> _dataService = Rubedo\Services\Manager::getService('DamTypes');
-	}
-	public function isUsedAction()
-	{
-		$id= $this->getRequest()->getParam('id');
-		$listResult=Rubedo\Services\Manager::getService('Dam')->getListByDamTypeId($id);
-	 	$resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
-		$this->_returnJson($resultArray);
-	}
+
+    public function init ()
+    {
+        parent::init();
+        
+        // init the data access service
+        $this->_dataService = Rubedo\Services\Manager::getService('DamTypes');
+    }
+
+    public function isUsedAction ()
+    {
+        $id = $this->getRequest()->getParam('id');
+        $listResult = Rubedo\Services\Manager::getService('Dam')->getListByDamTypeId($id);
+        $resultArray = (is_array($listResult) && $listResult['count'] > 0) ? array(
+            "used" => true
+        ) : array(
+            "used" => false
+        );
+        $this->_returnJson($resultArray);
+    }
 }

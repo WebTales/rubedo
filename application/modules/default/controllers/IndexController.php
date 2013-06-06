@@ -101,12 +101,11 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * Main Action : render the Front Office view
-     *
      */
     public function indexAction ()
     {
-        if($this->getParam('tk',null)){
-            $this->_forward('index','tiny');
+        if ($this->getParam('tk', null)) {
+            $this->_forward('index', 'tiny');
             return;
         }
         
@@ -140,8 +139,7 @@ class IndexController extends Zend_Controller_Action
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
-        
-        //ensure protocol is authorized for this site
+        // ensure protocol is authorized for this site
         if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
             throw new Rubedo\Exceptions\Server('Protocol is not set for current site', "Exception14");
         }
@@ -153,7 +151,7 @@ class IndexController extends Zend_Controller_Action
         // context
         $lang = $this->_session->get('lang', 'fr');
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
-        if (! $isLoggedIn || !Manager::getService('Acl')->hasAccess('ui.backoffice')) {
+        if (! $isLoggedIn || ! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $isPreview = false;
         } else {
             $isPreview = $this->getRequest()->getParam('preview', false);
@@ -208,8 +206,8 @@ class IndexController extends Zend_Controller_Action
                 $this->_servicePage->setDescription($singleContent['fields']['summary']);
             }
         }
-        $twigVar['currentPage']=$this->_pageId;
-        $twigVar['currentWorkspace']=$this->_pageInfo['workspace'];
+        $twigVar['currentPage'] = $this->_pageId;
+        $twigVar['currentWorkspace'] = $this->_pageInfo['workspace'];
         $twigVar['isDraft'] = Zend_Registry::get('draft');
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
@@ -239,21 +237,21 @@ class IndexController extends Zend_Controller_Action
             $twigVar['keywords'] = implode(',', $keywords);
         }
         
-        if(isset($this->_site['googleAnalyticsKey'])){
-            $twigVar['googleAnalyticsKey']=$this->_site['googleAnalyticsKey'];
+        if (isset($this->_site['googleAnalyticsKey'])) {
+            $twigVar['googleAnalyticsKey'] = $this->_site['googleAnalyticsKey'];
         }
         
-        if(isset($this->_site['googleMapsKey'])){
-            $twigVar['googleMapsKey']=$this->_site['googleMapsKey'];
+        if (isset($this->_site['googleMapsKey'])) {
+            $twigVar['googleMapsKey'] = $this->_site['googleMapsKey'];
         }
         
-        if(isset($this->_site['disqusKey'])){
-            $twigVar['disqusKey']=$this->_site['disqusKey'];
+        if (isset($this->_site['disqusKey'])) {
+            $twigVar['disqusKey'] = $this->_site['disqusKey'];
         }
         
-        //Return current user
+        // Return current user
         $currentUser = Manager::getService('CurrentUser')->getCurrentUser();
-        $twigVar['currentUser']=$currentUser;
+        $twigVar['currentUser'] = $currentUser;
         
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
@@ -333,13 +331,13 @@ class IndexController extends Zend_Controller_Action
         $this->_blocksArray = array();
         foreach ($this->_mask['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
-                throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25",  $block['id']);
+                throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25", $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
         foreach ($this->_pageInfo['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
-                throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25",  $block['id']);
+                throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25", $block['id']);
             }
             $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
         }
@@ -532,10 +530,10 @@ class IndexController extends Zend_Controller_Action
             case 'contentList':
                 $controller = 'content-list';
                 break;
-             case 'Formulaire':
-             case 'form':
-                	$controller = 'forms';
-                	break;
+            case 'Formulaire':
+            case 'form':
+                $controller = 'forms';
+                break;
             case 'calendar':
                 $controller = 'calendar';
                 break;
@@ -554,12 +552,12 @@ class IndexController extends Zend_Controller_Action
                 $controller = 'geo-search';
                 
                 break;
-               
-                case 'damList':
-                	$params['constrainToSite'] = $block['configBloc']['constrainToSite'];
-                	$controller = 'dam-list';
+            
+            case 'damList':
+                $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
+                $controller = 'dam-list';
                 
-                	break;
+                break;
             case 'Fil d\'Ariane':
             case 'breadcrumb':
                 $params['currentPage'] = $this->_pageId;
@@ -632,16 +630,16 @@ class IndexController extends Zend_Controller_Action
                 break;
             case 'Contact':
             case 'contact':
-                    $controller = "contact";
-                    break;
+                $controller = "contact";
+                break;
             case 'AdvancedContact':
             case 'advancedContact':
                 $controller = "advanced-contact";
                 break;
             case 'siteMap':
             case 'sitemap':
-                    $controller = "site-map";
-                    break;
+                $controller = "site-map";
+                break;
             case 'protectedResource':
                 $controller = "protected-resource";
                 break;
@@ -654,7 +652,7 @@ class IndexController extends Zend_Controller_Action
             case "mailingList":
                 $controller = "mailing-list";
                 break;
-                
+            
             case 'Controleur Zend':
             case 'zendController':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
@@ -700,7 +698,7 @@ class IndexController extends Zend_Controller_Action
                     'template' => 'root/zend.html.twig'
                 );
                 break;
-                
+            
             default:
                 $data = array();
                 $template = 'root/block.html';

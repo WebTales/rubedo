@@ -39,8 +39,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 $connectionString .= ':' . $options['mongo']['password'] . '@';
             }
             $connectionString .= $options['mongo']['server'];
-            if(isset($options['mongo']['port'])){
-                $connectionString .= ':'.$options['mongo']['port'];
+            if (isset($options['mongo']['port'])) {
+                $connectionString .= ':' . $options['mongo']['port'];
             }
             Rubedo\Mongo\DataAccess::setDefaultMongo($connectionString);
             
@@ -61,7 +61,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $indexContentOptions = Zend_Json::decode($indexContentOptionsJson);
         Rubedo\Elastic\DataAbstract::setContentIndexOption($indexContentOptions);
     }
-    
+
     /**
      * Init the authenticated session lifeTime
      */
@@ -92,8 +92,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         
         Rubedo\Interfaces\config::initInterfaces();
         /*
-         * define('LOG_LEVEL', $serviceOptions['logLevel']);
-         * define('ENABLE_CACHE', $serviceOptions['enableCache']);
+         * define('LOG_LEVEL', $serviceOptions['logLevel']); define('ENABLE_CACHE', $serviceOptions['enableCache']);
          */
     }
 
@@ -143,7 +142,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             }
         }
     }
-    
+
     /**
      * Load parameter from application.ini for swiftMail
      */
@@ -169,8 +168,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
          */
         $router = $front->getRouter();
         
-        $route = new Zend_Controller_Router_Route_Regex('dam\..*', array('controller' => 'dam', 'action' => 'index', 'module' => 'default'));
-		$router->addRoute('dam', $route);
+        $route = new Zend_Controller_Router_Route_Regex('dam\..*', array(
+            'controller' => 'dam',
+            'action' => 'index',
+            'module' => 'default'
+        ));
+        $router->addRoute('dam', $route);
         
         // default front office route
         $route = new Rubedo\Router\Route();
@@ -188,7 +191,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $frontController = $this->getResource('FrontController');
         
         $response = new Zend_Controller_Response_Http();
-        if(APPLICATION_ENV != 'testing'){
+        if (APPLICATION_ENV != 'testing') {
             $response->setHeader('Content-Type', 'text/html; charset=UTF-8', true);
         }
         $frontController->setResponse($response);

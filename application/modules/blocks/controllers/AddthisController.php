@@ -34,12 +34,14 @@ class Blocks_AddthisController extends Blocks_AbstractController
     {
         $blockConfig = $this->getParam('block-config', array());
         $output = $this->getAllParams();
-		$output['type']=$blockConfig["disposition"];
-		$output['small']=$blockConfig['small']==1?false:true;
-		$output['like']=isset($blockConfig['like'])?$blockConfig['like']:false;
+        $output['type'] = $blockConfig["disposition"];
+        $output['small'] = $blockConfig['small'] == 1 ? false : true;
+        $output['like'] = isset($blockConfig['like']) ? $blockConfig['like'] : false;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/addthis.html.twig");
         $css = array();
-        $js = array('//s7.addthis.com/js/300/addthis_widget.js');
+        $js = array(
+            '//s7.addthis.com/js/300/addthis_widget.js'
+        );
         $this->_sendResponse($output, $template, $css, $js);
     }
 }

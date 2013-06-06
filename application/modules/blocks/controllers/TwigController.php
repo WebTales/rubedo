@@ -17,8 +17,8 @@
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractController.php');
+
 /**
- *
  *
  * @author jbourdin
  * @category Rubedo
@@ -30,22 +30,22 @@ class Blocks_TwigController extends Blocks_AbstractController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction() {
+    public function indexAction ()
+    {
         $session = Manager::getService('Session');
         $lang = $session->get('lang', 'fr');
-
+        
         $output = $this->getAllParams();
-		
-		$templateName = $this->getRequest()->getParam('template','block.html');
-		
+        
+        $templateName = $this->getRequest()->getParam('template', 'block.html');
+        
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath($templateName);
-        if(!is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template)){
-            $templatePath = Manager::getService('FrontOfficeTemplates')->getTemplateDir().'/'.$template;
+        if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
+            $templatePath = Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template;
             throw new Rubedo\Exceptions\Server('File %1$s does not exists.', "Exception20", $templatePath);
         }
         $css = array();
         $js = array();
         $this->_sendResponse($output, $template, $css, $js);
     }
-
 }
