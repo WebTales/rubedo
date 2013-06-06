@@ -7,20 +7,30 @@
 {% endif %}
 
 <div class="row-fluid">
+    
 	{% if blockConfig.activateSearch %}
 	<div class="span3 well well-large" id="facetBox">
 	</div>
 	<div class="span9">
-		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+	   
+	   <div id="{{prefix}}holderpanel">
+          <input id="{{prefix}}target" type="text" placeholder="Adresse">
+        </div>
+        <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+		
 	</div>
 	{% else %}
 	<div class="span12">
+	   
+    	<div id="{{prefix}}holderpanel">
+          <input id="{{prefix}}target" type="text" placeholder="Adresse">
+        </div>
 		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
 	</div>
 	{% endif %}
 </div>
 <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key={{ googleMapsKey }}&sensor=true">
+      src="https://maps.googleapis.com/maps/api/js?key={{ googleMapsKey }}&libraries=places&sensor=true">
     </script>
     <script type="text/javascript"
       src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js">
@@ -43,6 +53,18 @@
       var map = new google.maps.Map(document.getElementById("{{prefix}}map_canvas"),
             mapOptions);
       var geocoder = new google.maps.Geocoder();
+      var input = /** @type {HTMLInputElement} */(document.getElementById('{{prefix}}target'));
+      var searchBox = new google.maps.places.SearchBox(input);
+      google.maps.event.addListener(searchBox, 'places_changed', function() {
+  	    var places = searchBox.getPlaces();
+  	    map.setCenter(places[0].geometry.location);
+  	    map.setZoom({% if blockConfig.zoomOnAddress %}{{ blockConfig.zoomOnAddress }}{% else %}14{% endif %});
+
+  	  });
+      google.maps.event.addListener(map, 'bounds_changed', function() {
+  	    var bounds = map.getBounds();
+  	    searchBox.setBounds(bounds);
+  	  });
       var usedMarkers=[ ];
       var markerCluster = new MarkerClusterer(map, usedMarkers,{batchSize:20000,averageCenter:false,gridSize:60,batchSizeIE:20000});
       markerCluster.setCalculator(function (a,b){
@@ -288,8 +310,23 @@
 </script>
 
 <style type="text/css">
+#{{prefix}}holderpanel {
+        width: 360px;
+	    margin-left:auto;
+	    margin-right:auto;
+	    position:relative;
+	    padding-top:10px;
+	    z-index:9999999;
+      }
+#{{prefix}}target {
+        width: 360px;
+}
 #{{prefix}}map_canvas img {
     max-width: none;
+}
+#{{prefix}}map_canvas{
+    position: relative;
+	margin-top:-50px;
 }	  
 </style>
 {% endblock %}
