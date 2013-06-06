@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Icons
@@ -27,65 +27,76 @@ use Rubedo\Interfaces\Collection\IIcons, Rubedo\Services\Manager, \WebTales\Mong
  */
 class Icons extends AbstractCollection implements IIcons
 {
+
     protected $_indexes = array(
-        array('keys'=>array('userId'=>1)),
+        array(
+            'keys' => array(
+                'userId' => 1
+            )
+        )
     );
 
-	public function __construct(){
-		$this->_collectionName = 'Icons';
-		parent::__construct();
-		
-		$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-		$currentUser = $currentUserService->getCurrentUserSummary();
-		$this->_userId = $currentUser['id'];
-		
-		$userFilter = Filter::Factory('Value');
-		$userFilter->setName('userId')->setValue($this->_userId);
-		$this->_dataService->addFilter($userFilter);
-	}
-	
-    public function create(array $obj, $options = array()) {
-    	$obj['userId']= $this->_userId;
+    public function __construct ()
+    {
+        $this->_collectionName = 'Icons';
+        parent::__construct();
+        
+        $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+        $currentUser = $currentUserService->getCurrentUserSummary();
+        $this->_userId = $currentUser['id'];
+        
+        $userFilter = Filter::Factory('Value');
+        $userFilter->setName('userId')->setValue($this->_userId);
+        $this->_dataService->addFilter($userFilter);
+    }
+
+    public function create (array $obj, $options = array())
+    {
+        $obj['userId'] = $this->_userId;
         return parent::create($obj, $options);
     }
-	
-	
-	
-	public function clearOrphanIcons() {
-	    $this->_dataService->clearFilter();
-		$usersService = Manager::getService('Users');
-		
-		$result = $usersService->getList();
-		
-		foreach ($result['data'] as $value) {
-			$usersArray[] = $value['id'];
-		}
 
-		$ninFilter = Filter::Factory('NotIn');
-		$ninFilter->setName('userId')->setValue($usersArray);
-		
-		$result = $this->customDelete($ninFilter);
-		
-		if($result['ok'] == 1){
-			return array('success' => 'true');
-		} else {
-			return array('success' => 'false');
-		}
-	}
-	
-	public function countOrphanIcons() {
-	    $this->_dataService->clearFilter();
-		$usersService = Manager::getService('Users');
+    public function clearOrphanIcons ()
+    {
+        $this->_dataService->clearFilter();
+        $usersService = Manager::getService('Users');
+        
+        $result = $usersService->getList();
+        
+        foreach ($result['data'] as $value) {
+            $usersArray[] = $value['id'];
+        }
+        
+        $ninFilter = Filter::Factory('NotIn');
+        $ninFilter->setName('userId')->setValue($usersArray);
+        
+        $result = $this->customDelete($ninFilter);
+        
+        if ($result['ok'] == 1) {
+            return array(
+                'success' => 'true'
+            );
+        } else {
+            return array(
+                'success' => 'false'
+            );
+        }
+    }
 
-		$result = $usersService->getList();
-		
-		foreach ($result['data'] as $value) {
-			$usersArray[] = $value['id'];
-		}
-		
-		$ninFilter = Filter::Factory('NotIn');
-		$ninFilter->setName('userId')->setValue($usersArray);
-		
-		return $this->count($ninFilter);
-	}
+    public function countOrphanIcons ()
+    {
+        $this->_dataService->clearFilter();
+        $usersService = Manager::getService('Users');
+        
+        $result = $usersService->getList();
+        
+        foreach ($result['data'] as $value) {
+            $usersArray[] = $value['id'];
+        }
+        
+        $ninFilter = Filter::Factory('NotIn');
+        $ninFilter->setName('userId')->setValue($usersArray);
+        
+        return $this->count($ninFilter);
+    }
 }

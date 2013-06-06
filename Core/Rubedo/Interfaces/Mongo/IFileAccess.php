@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Mongo;
  * @category Rubedo
  * @package Rubedo
  */
-interface IFileAccess extends IDataAccess{
-
+interface IFileAccess extends IDataAccess
+{
 }

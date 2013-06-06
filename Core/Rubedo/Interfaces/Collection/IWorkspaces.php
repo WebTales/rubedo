@@ -24,8 +24,10 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IWorkspaces extends IAbstractCollection{
+interface IWorkspaces extends IAbstractCollection
+{
 
-	public function getWholeList ($filters = null, $sort = null, $start = null, $limit = null);
-	public function getAdminWorkspaceId();
+    public function getWholeList ($filters = null, $sort = null, $start = null, $limit = null);
+
+    public function getAdminWorkspaceId ();
 }

@@ -17,6 +17,7 @@
 namespace Rubedo\Content;
 
 use Rubedo\Interfaces\Content\IPage;
+
 /**
  * Page service
  *
@@ -25,8 +26,9 @@ use Rubedo\Interfaces\Content\IPage;
  * @category Rubedo
  * @package Rubedo
  */
-class Page implements  IPage
+class Page implements IPage
 {
+
     /**
      * CSS to be included in the page
      *
@@ -48,19 +50,19 @@ class Page implements  IPage
      */
     protected static $_title = '';
 
-    protected static $_description ='';
-    
+    protected static $_description = '';
+
     protected static $_keywords = array();
-    
+
     protected static $_currentPage = null;
-    
+
     /**
      * Author of the page
-     * 
+     *
      * @var string
      */
     protected static $_author = 'Rubedo By Webtales';
-    
+
     /**
      * Current Site
      *
@@ -70,10 +72,13 @@ class Page implements  IPage
 
     /**
      * append a css file to the file list
-     * @param string $cssFile URL of the CSS added
+     * 
+     * @param string $cssFile
+     *            URL of the CSS added
      */
-    public function appendCss($cssFile) {
-        if (!in_array($cssFile, self::$_css)) {
+    public function appendCss ($cssFile)
+    {
+        if (! in_array($cssFile, self::$_css)) {
             self::$_css[] = $cssFile;
         }
     }
@@ -81,24 +86,30 @@ class Page implements  IPage
     /**
      * clear the included css files list
      */
-    public function clearCss() {
+    public function clearCss ()
+    {
         self::$_css = array();
     }
 
     /**
      * Return the list of css files
+     * 
      * @return array list of URL
      */
-    public function getCss() {
+    public function getCss ()
+    {
         return self::$_css;
     }
 
     /**
      * append a js file to the file list
-     * @param string $jsFile URL of the js added
+     * 
+     * @param string $jsFile
+     *            URL of the js added
      */
-    public function appendJs($jsFile) {
-        if (!in_array($jsFile, self::$_js)) {
+    public function appendJs ($jsFile)
+    {
+        if (! in_array($jsFile, self::$_js)) {
             self::$_js[] = $jsFile;
         }
     }
@@ -106,24 +117,29 @@ class Page implements  IPage
     /**
      * clear the included js files list
      */
-    public function clearJs() {
+    public function clearJs ()
+    {
         self::$_js = array();
     }
 
     /**
      * Return the list of js files
+     * 
      * @return array list of URL
      */
-    public function getJs() {
+    public function getJs ()
+    {
         return self::$_js;
     }
 
     /**
      * set the page title
      *
-     * @param string $pageTitle page title
+     * @param string $pageTitle
+     *            page title
      */
-    public function setPageTitle($pageTitle) {
+    public function setPageTitle ($pageTitle)
+    {
         self::$_title = $pageTitle;
     }
 
@@ -132,7 +148,8 @@ class Page implements  IPage
      *
      * @return string page title
      */
-    public function getPageTitle() {
+    public function getPageTitle ()
+    {
         return self::$_title;
     }
 
@@ -141,20 +158,24 @@ class Page implements  IPage
      *
      * @return string current site
      */
-    public function getCurrentSite() {
+    public function getCurrentSite ()
+    {
         return self::$_currentSite;
     }
 
     /**
      * set the current site
      *
-     * @param string $siteId current site
+     * @param string $siteId
+     *            current site
      */
-    public function setCurrentSite($siteId) {
+    public function setCurrentSite ($siteId)
+    {
         self::$_currentSite = $siteId;
     }
-    
-	/**
+
+    /**
+     *
      * @return the $_description
      */
     public function getDescription ()
@@ -162,7 +183,8 @@ class Page implements  IPage
         return Page::$_description;
     }
 
-	/**
+    /**
+     *
      * @return the $_keywords
      */
     public function getKeywords ()
@@ -170,23 +192,26 @@ class Page implements  IPage
         return Page::$_keywords;
     }
 
-	/**
-     * @param string $_description
+    /**
+     *
+     * @param string $_description            
      */
     public function setDescription ($_description)
     {
         Page::$_description = $_description;
     }
 
-	/**
-     * @param multitype: $_keywords
+    /**
+     *
+     * @param multitype: $_keywords            
      */
     public function setKeywords ($_keywords)
     {
         Page::$_keywords = $_keywords;
     }
-    
-	/**
+
+    /**
+     *
      * @return the $_currentPage
      */
     public static function getCurrentPage ()
@@ -194,15 +219,17 @@ class Page implements  IPage
         return Page::$_currentPage;
     }
 
-	/**
-     * @param field_type $_currentPage
+    /**
+     *
+     * @param field_type $_currentPage            
      */
     public static function setCurrentPage ($_currentPage)
     {
         Page::$_currentPage = $_currentPage;
     }
-    
-	/**
+
+    /**
+     *
      * @return the $_author
      */
     public static function getAuthor ()
@@ -210,20 +237,12 @@ class Page implements  IPage
         return Page::$_author;
     }
 
-	/**
-     * @param string $_author
+    /**
+     *
+     * @param string $_author            
      */
     public static function setAuthor ($_author)
     {
         Page::$_author = $_author;
     }
-
-    
-    
-
-
-    
-    
-    
-
 }

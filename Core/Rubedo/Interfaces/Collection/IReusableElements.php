@@ -24,6 +24,6 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IReusableElements extends IAbstractCollection{
-	
+interface IReusableElements extends IAbstractCollection
+{
 }

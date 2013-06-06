@@ -27,11 +27,10 @@ use Rubedo\Interfaces\Collection\ILocalisation;
  */
 class Localisation extends AbstractCollection implements ILocalisation
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'Localisation';
-		parent::__construct();
-	}
-	
+    public function __construct ()
+    {
+        $this->_collectionName = 'Localisation';
+        parent::__construct();
+    }
 }

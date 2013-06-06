@@ -17,7 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\ICache;
-use Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle cached contents
@@ -30,13 +30,20 @@ class Cache extends AbstractCollection implements ICache
 {
 
     protected $_indexes = array(
-        array('keys'=>array('cacheId'=>1),'options'=>array('unique'=>true)),
+        array(
+            'keys' => array(
+                'cacheId' => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
+        )
     );
-    
+
     protected $_model = array(
         'data' => array(
             'domain' => 'string',
-            'required' => true,
+            'required' => true
         ),
         'cacheId' => array(
             'domain' => 'string',
@@ -64,18 +71,20 @@ class Cache extends AbstractCollection implements ICache
 
     public function findByCacheId ($cacheId, $time = null)
     {
-        if(!$time){
+        if (! $time) {
             $time = Manager::getService('CurrentTime')->getCurrentTime();
         }
         $Filters = Filter::Factory('And');
         
         $Filter = Filter::Factory('Value')->setName('cacheId')->setValue($cacheId);
         $Filters->addFilter($Filter);
-       
+        
         $Filter = Filter::Factory('EmptyOrOperator');
-        $Filter->setName('expire')->setOperator('$gt')->setValue($time);
+        $Filter->setName('expire')
+            ->setOperator('$gt')
+            ->setValue($time);
         $Filters->addFilter($Filter);
-
+        
         return $this->_dataService->findOne($Filters);
     }
 
@@ -95,7 +104,7 @@ class Cache extends AbstractCollection implements ICache
         $options['upsert'] = true;
         
         $updateCond = Filter::Factory('Value');
-		$updateCond->setName('cacheId')->setValue($cacheId);
+        $updateCond->setName('cacheId')->setValue($cacheId);
         
         $result = $this->_dataService->customUpdate($obj, $updateCond, $options);
         if ($result['success']) {
@@ -115,7 +124,9 @@ class Cache extends AbstractCollection implements ICache
         $options = array();
         
         $updateCond = Filter::Factory('OperatorToValue');
-        $updateCond->setName('expire')->setOperator('$lt')->setValue(Manager::getService('CurrentTime')->getCurrentTime());
+        $updateCond->setName('expire')
+            ->setOperator('$lt')
+            ->setValue(Manager::getService('CurrentTime')->getCurrentTime());
         
         $result = $this->_dataService->customDelete($updateCond, $options);
         if ($result['ok']) {
@@ -124,19 +135,17 @@ class Cache extends AbstractCollection implements ICache
             return false;
         }
     }
-	public function deleteByCacheId($id){
 
-		 $updateCond = Filter::Factory('Value');
-		 $updateCond->setName('cacheId')->setValue($id);
+    public function deleteByCacheId ($id)
+    {
+        $updateCond = Filter::Factory('Value');
+        $updateCond->setName('cacheId')->setValue($id);
         $options = array();
-		$result = $this->_dataService->customDelete($updateCond, $options);
+        $result = $this->_dataService->customDelete($updateCond, $options);
         if ($result['success']) {
             return true;
         } else {
             return false;
         }
-	}
-	
-	
-    
+    }
 }

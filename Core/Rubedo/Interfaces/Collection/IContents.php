@@ -24,26 +24,35 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IContents extends IAbstractCollection{
-	public function unsetTerms ($vocId, $termId);
-	public function getByType ($typeId);
-	public function clearOrphanContents ();
-	public function countOrphanContents ();
-	public function getListByTypeId ($typeId);
-	public function isTypeUsed ($typeId);
-	public static function getIsFrontEnd ();
-	public static function setIsFrontEnd ($_isFrontEnd);
-	/**
-	 * Return a list of ordered objects
-	 *
-	 * @param array $filters
-	 * @param array $sort
-	 * @param string $start
-	 * @param string $limit
-	 * @param bool $live
-	 *
-	 * @return array Return the contents list
-	 */
-	public function getOrderedList($filters = null, $sort = null, $start = null, $limit = null, $live = true);
-	
+interface IContents extends IAbstractCollection
+{
+
+    public function unsetTerms ($vocId, $termId);
+
+    public function getByType ($typeId);
+
+    public function clearOrphanContents ();
+
+    public function countOrphanContents ();
+
+    public function getListByTypeId ($typeId);
+
+    public function isTypeUsed ($typeId);
+
+    public static function getIsFrontEnd ();
+
+    public static function setIsFrontEnd ($_isFrontEnd);
+
+    /**
+     * Return a list of ordered objects
+     *
+     * @param array $filters            
+     * @param array $sort            
+     * @param string $start            
+     * @param string $limit            
+     * @param bool $live            
+     *
+     * @return array Return the contents list
+     */
+    public function getOrderedList ($filters = null, $sort = null, $start = null, $limit = null, $live = true);
 }

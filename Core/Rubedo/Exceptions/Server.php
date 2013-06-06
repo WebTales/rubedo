@@ -16,16 +16,14 @@
  */
 namespace Rubedo\Exceptions;
 
-
 /**
  * Exception occuring when something went wrong on server side
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class Server extends AbstractException
 {
-
 }

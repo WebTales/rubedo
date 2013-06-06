@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Services;
 
-use Rubedo\Interfaces\Services\IServicesProxy,Rubedo\Interfaces\config;
+use Rubedo\Interfaces\Services\IServicesProxy, Rubedo\Interfaces\config;
 
 /**
  * Service Proxy
@@ -54,10 +54,11 @@ class Proxy implements IServicesProxy
     /**
      * Getter of the current service parameters or the specified parameter
      *
-     * @param string $name optionnal parameter name
+     * @param string $name
+     *            optionnal parameter name
      * @return mixed value or array of valuefor asked parameter
      */
-    public function getCurrentOptions($name = null)
+    public function getCurrentOptions ($name = null)
     {
         if (gettype($name) !== 'string' && $name !== null) {
             throw new \Rubedo\Exceptions\Server('Manager->getCurrentOptions only accept string argument', "Exception74");
@@ -65,7 +66,7 @@ class Proxy implements IServicesProxy
         if ($name == null) {
             return $this->_currentOptions;
         }
-
+        
         if (isset($this->_currentOptions[$name])) {
             return $this->_currentOptions[$name];
         }
@@ -77,7 +78,7 @@ class Proxy implements IServicesProxy
      *
      * @return string
      */
-    public function getServiceName()
+    public function getServiceName ()
     {
         return $this->_serviceName;
     }
@@ -85,11 +86,14 @@ class Proxy implements IServicesProxy
     /**
      * protected constructor : create manager object and nested service object
      *
-     * @param string $serviceClassName Name of nested class
-     * @param string $serviceName Name of the service
-     * @param object $serviceObject Override the service object
+     * @param string $serviceClassName
+     *            Name of nested class
+     * @param string $serviceName
+     *            Name of the service
+     * @param object $serviceObject
+     *            Override the service object
      */
-    public function __construct($serviceClassName, $serviceName, $serviceObject = null)
+    public function __construct ($serviceClassName, $serviceName, $serviceObject = null)
     {
         if ($serviceObject === null) {
             $this->setServiceObj(new $serviceClassName());
@@ -99,9 +103,9 @@ class Proxy implements IServicesProxy
             throw new \Rubedo\Exceptions\Server("Override Object not an instance of service Classe Name", "Exception82");
         }
         $this->_serviceName = $serviceName;
-
+        
         $options = Manager::getOptions();
-
+        
         if (isset($options[$serviceName])) {
             $this->_currentOptions = $options[$serviceName];
         } else {
@@ -113,9 +117,9 @@ class Proxy implements IServicesProxy
      * Dependancy setter : set the nested object and inform the nested object
      * of the manager instance
      *
-     * @param object $obj
+     * @param object $obj            
      */
-    public function setServiceObj($obj)
+    public function setServiceObj ($obj)
     {
         $this->_object = $obj;
         $this->_object->_service = $this;
@@ -127,7 +131,7 @@ class Proxy implements IServicesProxy
      *
      * @return object $obj
      */
-    public function getServiceObj()
+    public function getServiceObj ()
     {
         return $this->_object;
     }
@@ -136,27 +140,31 @@ class Proxy implements IServicesProxy
      * Call : magic method invoke when calling a none existing manager method,
      * proxy to the service object
      *
-     * @param string $name service method name
-     * @param array $arguments service method array of arguments
+     * @param string $name
+     *            service method name
+     * @param array $arguments
+     *            service method array of arguments
      */
-    public function __call($name, $arguments)
+    public function __call ($name, $arguments)
     {
-        if (!method_exists($this->_object, $name)) {
+        if (! method_exists($this->_object, $name)) {
             throw new \Rubedo\Exceptions\Server('The method %1$s does not exist', "Exception75", $name);
         }
-
-        //list of concerns
+        
+        // list of concerns
         $concernsArray = config::getConcerns($this->_serviceName);
-
+        
         if (empty($concernsArray)) {
-            $retour = call_user_func_array(array($this->_object, $name), $arguments);
+            $retour = call_user_func_array(array(
+                $this->_object,
+                $name
+            ), $arguments);
         } else {
             $concernName = array_shift($concernsArray);
             $concern = new $concernName($concernsArray, $this->_currentOptions);
             $retour = $concern->Process($this->_object, $name, $arguments);
         }
-
+        
         return $retour;
     }
-
 }

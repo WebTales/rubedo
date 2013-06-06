@@ -24,24 +24,33 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IPages extends IAbstractCollection{
-	
-	
-/**
- * find a page by name and siteID
- * 
- * @param string $name Name of the page
- * @param string $siteId Site Id
- * 
- * @return array
- * 
- */
-		public function findByNameAndSite($name,$siteId);
-		public function matchSegment($urlSegment,$parentId,$siteId);
-		public function getListByMaskId($maskId);
-		public function isMaskUsed($maskId);
-		public function deleteBySiteId($id);
-		public function clearOrphanPages();
-		public function countOrphanPages();
-		public function propagateWorkspace ($parentId, $workspaceId, $siteId = null);
+interface IPages extends IAbstractCollection
+{
+
+    /**
+     * find a page by name and siteID
+     *
+     * @param string $name
+     *            Name of the page
+     * @param string $siteId
+     *            Site Id
+     *            
+     * @return array
+     *
+     */
+    public function findByNameAndSite ($name, $siteId);
+
+    public function matchSegment ($urlSegment, $parentId, $siteId);
+
+    public function getListByMaskId ($maskId);
+
+    public function isMaskUsed ($maskId);
+
+    public function deleteBySiteId ($id);
+
+    public function clearOrphanPages ();
+
+    public function countOrphanPages ();
+
+    public function propagateWorkspace ($parentId, $workspaceId, $siteId = null);
 }

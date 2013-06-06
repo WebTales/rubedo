@@ -24,64 +24,66 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IBlocks extends IAbstractCollection{
-    
+interface IBlocks extends IAbstractCollection
+{
+
     /**
      * Find all blocks for a given page
-     * 
-     * @param string $pageId
+     *
+     * @param string $pageId            
      * @return array
      */
-    public function getListByPage($pageId);
-    
+    public function getListByPage ($pageId);
+
     /**
      * Return an array of blocks ID as key for a given pageId
      *
-     * @param array $pageId
+     * @param array $pageId            
      * @return array
      */
     public function getIdListByPage ($pageId);
-    
+
     /**
      * Find all blocks for a given mask
      *
-     * @param string $maskId
+     * @param string $maskId            
      * @return array
      */
-    public function getListByMask($maskId);
-    
+    public function getListByMask ($maskId);
+
     /**
      * Return an array of blocks ID as key for a given maskId
-     * 
-     * @param array $maskId
+     *
+     * @param array $maskId            
      * @return array
      */
     public function getIdListByMask ($maskId);
-    
+
     /**
      * check if a block data has been modified based on a checksum
-     * @param array $data
+     * 
+     * @param array $data            
      * @return boolean
      */
-    public function isModified($data);
-    
+    public function isModified ($data);
+
     /**
      * extract data part of a block object
-     * @param array $data
+     * 
+     * @param array $data            
      * @return array
      */
-    public function getBlockData($data);
-    
+    public function getBlockData ($data);
+
     /**
      * Insert or update a block based on given data of this block
-     * 
+     *
      * If created, this function sets its type and parent id (pageId or maskId)
-     * 
-     * @param array $data
-     * @param string $parentId
-     * @param string $type
+     *
+     * @param array $data            
+     * @param string $parentId            
+     * @param string $type            
      * @return array
      */
     public function upsertFromData ($data, $parentId, $type = 'page');
-	
 }

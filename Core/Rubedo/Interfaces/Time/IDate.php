@@ -38,22 +38,23 @@ interface IDate
      *         dawn of time)
      */
     public function convertToTimeStamp ($dateString);
-    
+
     /**
-     * Format to Y-m-d date string or timestamp 
-     * 
-     * @param string $dateString
+     * Format to Y-m-d date string or timestamp
+     *
+     * @param string $dateString            
      * @return formatted date
      */
-    public function convertToYmd($dateString);
+    public function convertToYmd ($dateString);
+
     /**
      * Format to H:i:s date string or timestamp
      *
-     * @param string $dateString
+     * @param string $dateString            
      * @return formatted date
      */
-    
-    public function convertToHis($dateString);
+    public function convertToHis ($dateString);
+
     /**
      * Return an array of a month (current or including given timestamp)
      *
@@ -87,15 +88,15 @@ interface IDate
      * get a localized date with format and timestamp arguments
      *
      * @param string $format            
-     * @param string $timestamp
-     * @return string            
+     * @param string $timestamp            
+     * @return string
      */
     public function getLocalised ($format = null, $timestamp = null);
-    
+
     /**
      * Get a date time in local format
-     * 
-     * @param string $timestamp
+     *
+     * @param string $timestamp            
      * @return string
      */
     public function getDefaultDatetime ($timestamp = null);

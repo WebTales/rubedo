@@ -16,16 +16,14 @@
  */
 namespace Rubedo\Exceptions;
 
-
 /**
  * Exception occuring when an item isn't found
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *
+ *         
  */
 class NotFound extends AbstractException
 {
-
 }

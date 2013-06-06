@@ -13,6 +13,7 @@
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Router;
+
 Use Rubedo\Services\Manager;
 
 /**
@@ -23,8 +24,7 @@ Use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Route extends \Zend_Controller_Router_Route_Abstract implements 
-        \Zend_Controller_Router_Route_Interface
+class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Controller_Router_Route_Interface
 {
 
     /**
@@ -74,7 +74,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements
         
         if ($reset === true) {
             $params = array(
-                    'pageId' => isset($this->_values["pageId"])?$this->_values["pageId"]:null
+                'pageId' => isset($this->_values["pageId"]) ? $this->_values["pageId"] : null
             );
         } else {
             $params = \Zend_Controller_Front::getInstance()->getRequest()->getParams();
@@ -87,7 +87,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements
                 }
                 if (! is_array($value)) {
                     $value = array(
-                            $value
+                        $value
                     );
                 }
                 $data[$key] = array_unique(array_merge($params[$key], $value));
@@ -97,12 +97,14 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements
             foreach ($data as $key => $value) {
                 if (! isset($params[$key])) {
                     $params[$key] = array();
-                }elseif(!is_array($params[$key])){
-                    $params[$key] = array($params[$key]);
+                } elseif (! is_array($params[$key])) {
+                    $params[$key] = array(
+                        $params[$key]
+                    );
                 }
                 if (! is_array($value)) {
                     $value = array(
-                            $value
+                        $value
                     );
                 }
                 $data[$key] = array_diff($params[$key], $value);
@@ -138,8 +140,7 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements
     public function match ($path)
     {
         try {
-            $pageId = Manager::getService('Url')->getPageId(
-                    $path->getRequestUri(), $path->getHttpHost());
+            $pageId = Manager::getService('Url')->getPageId($path->getRequestUri(), $path->getHttpHost());
         } catch (\Rubedo\Exceptions\Server $exception) {
             $pageId = null;
         }
@@ -147,9 +148,9 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements
             return false;
         } else {
             $this->_values = array(
-                    'controller' => 'index',
-                    'action' => 'index',
-                    'pageId' => $pageId
+                'controller' => 'index',
+                'action' => 'index',
+                'pageId' => $pageId
             );
             return $this->_values;
         }

@@ -24,30 +24,34 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface IFormsResponses extends IAbstractCollection{
-    
+interface IFormsResponses extends IAbstractCollection
+{
+
     /**
      * Get list of finished results for a given form
-     * 
-     * @param string $formId
+     *
+     * @param string $formId            
      */
-    public function getValidResponsesByFormId($formId);
+    public function getValidResponsesByFormId ($formId);
+
     /**
      * Get count of finished results for a given form
      *
-     * @param string $formId
+     * @param string $formId            
      */
-    public function countValidResponsesByFormId($formId);
+    public function countValidResponsesByFormId ($formId);
+
     /**
      * Get count of unfinished results for a given form
      *
-     * @param string $formId
+     * @param string $formId            
      */
-    public function countInvalidResponsesByFormId($formId);
+    public function countInvalidResponsesByFormId ($formId);
+
     /**
      * (non-PHPdoc)
      *
      * @see \Rubedo\Interfaces\Collection\IFormsResponses::getValidResponsesByFormId()
      */
-    public function getResponsesByFormId($formId, $start = null, $limit = null);
+    public function getResponsesByFormId ($formId, $start = null, $limit = null);
 }

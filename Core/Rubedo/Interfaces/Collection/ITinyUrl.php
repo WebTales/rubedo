@@ -54,8 +54,7 @@ interface ITinyUrl extends IAbstractCollection
      * @param array $params            
      * @return string
      */
-    public function createFromParameters ($action, $controller, $module, 
-            $params = array(), $expire = true);
+    public function createFromParameters ($action, $controller, $module, $params = array(), $expire = true);
 
     /**
      * find a tinyUrl object base on MVC context
@@ -67,12 +66,12 @@ interface ITinyUrl extends IAbstractCollection
      * @return array
      */
     public function findByParameters ($action, $controller, $module, $params);
-    
+
     /**
      * Create an access link to download a document
      *
-     * @param string $damId
+     * @param string $damId            
      * @return string
      */
-    public function creamDamAccessLinkKey($damId);
+    public function creamDamAccessLinkKey ($damId);
 }

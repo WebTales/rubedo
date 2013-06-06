@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Time;
+
 use Rubedo\Interfaces\Time\ICurrentTime;
 
 /**
