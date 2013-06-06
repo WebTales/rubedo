@@ -287,7 +287,7 @@ class Pages extends AbstractCollection implements IPages
     {
         $blocksService = Manager::getService('Blocks');
         $arrayOfBlocksId = $blocksService->getIdListByPage($obj['id']);
-        $blocks = $obj['blocks'];
+        $blocks = isset($obj['blocks'])?$obj['blocks']:array();
         foreach ($blocks as $block) {
             $blocksService->upsertFromData($block,$obj['id'],'page');
             if(isset($arrayOfBlocksId[$block['id']])){
