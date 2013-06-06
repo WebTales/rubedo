@@ -27,11 +27,10 @@ use Rubedo\Interfaces\Collection\IFieldTypes;
  */
 class FieldTypes extends AbstractCollection implements IFieldTypes
 {
-	
 
-	public function __construct(){
-		$this->_collectionName = 'FieldTypes';
-		parent::__construct();
-	}
-	
+    public function __construct ()
+    {
+        $this->_collectionName = 'FieldTypes';
+        parent::__construct();
+    }
 }

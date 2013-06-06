@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IWorkspaces,Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IWorkspaces, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 use WebTales;
 
 /**
@@ -28,37 +28,45 @@ use WebTales;
  */
 class Workspaces extends AbstractCollection implements IWorkspaces
 {
+
     protected $_indexes = array(
-        array('keys'=>array('text'=>1),'options'=>array('unique'=>true)),
+        array(
+            'keys' => array(
+                'text' => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
+        )
     );
-    
-   protected $_addAll=false;
-    
-    protected function _init(){
+
+    protected $_addAll = false;
+
+    protected function _init ()
+    {
         parent::_init();
         
-		if (! self::isUserFilterDisabled()) {	
-	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-	        if(in_array('all',$readWorkspaceArray)){
-	            $this->_addAll = true;	             
-	            return;
-	        }
-	        $mongoIdArray = array();
-	        foreach ($readWorkspaceArray as $workspaceId){
-	            if($workspaceId == 'global'){
-	                continue;
-	            }
-	            $mongoIdArray[]=$workspaceId;
-	        }
-	        $filter = Filter::Factory('InUid')->setValue($mongoIdArray);
-	        
-	        $this->_dataService->addFilter($filter);
-		}else{
-		    $this->_addAll = true;
-		}
+        if (! self::isUserFilterDisabled()) {
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if (in_array('all', $readWorkspaceArray)) {
+                $this->_addAll = true;
+                return;
+            }
+            $mongoIdArray = array();
+            foreach ($readWorkspaceArray as $workspaceId) {
+                if ($workspaceId == 'global') {
+                    continue;
+                }
+                $mongoIdArray[] = $workspaceId;
+            }
+            $filter = Filter::Factory('InUid')->setValue($mongoIdArray);
+            
+            $this->_dataService->addFilter($filter);
+        } else {
+            $this->_addAll = true;
+        }
     }
-    
-    
+
     /**
      * a virtual workspace which is the main & public one
      *
@@ -69,16 +77,16 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         'text' => 'Global',
         'readOnly' => true
     );
-    
+
     /**
      * a virtual workspace whichis an alias for "all" workspaces
      *
      * @var array
      */
     protected $_virtualAllWorkspaces = array(
-            'id' => 'all',
-            'text' => 'Tous les espaces',
-            'readOnly' => true,
+        'id' => 'all',
+        'text' => 'Tous les espaces',
+        'readOnly' => true
     );
 
     public function __construct ()
@@ -89,42 +97,36 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
-     * 
      */
     public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
-        $this->_addAll = !$this->_hasNotAllWorkspacesFilter($filters);
-        
+        $this->_addAll = ! $this->_hasNotAllWorkspacesFilter($filters);
         
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
             $this->_virtualGlobalWorkspace
         ), $list['data']);
         
-        if($this->_addAll){
+        if ($this->_addAll) {
             $list['data'] = array_merge(array(
-                    $this->_virtualAllWorkspaces
+                $this->_virtualAllWorkspaces
             ), $list['data']);
             $list['count'] = $list['count'] + 1;
         }
         
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         
+        if (! self::isUserFilterDisabled()) {
+            foreach ($list['data'] as &$workspace) {
+                if (in_array($workspace['id'], $writeWorkspaces)) {
+                    $workspace['canContribute'] = true;
+                } else {
+                    $workspace['canContribute'] = false;
+                }
+            }
+        }
         
-        
-		if (! self::isUserFilterDisabled()) {	
-	        foreach ($list['data'] as &$workspace){
-	            if(in_array($workspace['id'],$writeWorkspaces)){
-	                $workspace['canContribute']=true;
-	            }else{
-	                $workspace['canContribute']=false;
-	            }
-	        }
-		}
-		
         $list['count'] = $list['count'] + 1;
-        
-        
         
         return $list;
     }
@@ -136,13 +138,14 @@ class Workspaces extends AbstractCollection implements IWorkspaces
     {
         $list = parent::getList($filters, $sort, $start, $limit);
         $list['data'] = array_merge(array(
-            $this->_virtualGlobalWorkspace,$this->_virtualAllWorkspaces
+            $this->_virtualGlobalWorkspace,
+            $this->_virtualAllWorkspaces
         ), $list['data']);
         
         foreach ($list['data'] as &$workspace) {
             $workspace['canContribute'] = true;
         }
-		
+        
         $list['count'] = $list['count'] + 2;
         return $list;
     }
@@ -177,7 +180,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::count()
      */
     public function count (\WebTales\MongoFilters\IFilter $filters = null)
@@ -211,30 +214,31 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         unset($obj['canContribute']);
         return parent::update($obj, $options);
     }
-    
+
     /**
      * Add a readOnly field to contents based on user rights
      *
-     * @param array $obj
+     * @param array $obj            
      * @return array
      */
     protected function _addReadableProperty ($obj)
     {
         if (! self::isUserFilterDisabled()) {
-    
-            if (!Manager::getService('Acl')->hasAccess("write.ui.workspaces")) {
+            
+            if (! Manager::getService('Acl')->hasAccess("write.ui.workspaces")) {
                 $obj['readOnly'] = true;
             }
         }
-    
+        
         return $obj;
     }
-    
-    public function getAdminWorkspaceId(){
+
+    public function getAdminWorkspaceId ()
+    {
         $adminWorkspace = Manager::getService('Workspaces')->findByName('admin');
-        if($adminWorkspace){
+        if ($adminWorkspace) {
             return $adminWorkspace['id'];
-        }else{
+        } else {
             return null;
         }
     }
@@ -245,8 +249,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
      * @param WebTales\MongoFilters\IFilter $filters            
      * @return boolean
      */
-    protected function _hasNotAllWorkspacesFilter (
-            \WebTales\MongoFilters\IFilter $filters = null)
+    protected function _hasNotAllWorkspacesFilter (WebTales\MongoFilters\IFilter $filters = null)
     {
         if ($filters instanceof WebTales\MongoFilters\CompositeFilter) {
             foreach ($filters->getFilters() as $filter) {
@@ -263,5 +266,4 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         
         return false;
     }
-    
 }

@@ -28,6 +28,7 @@ use Rubedo\Interfaces\Collection\INestedContents, Rubedo\Services\Manager, WebTa
  */
 class NestedContents implements INestedContents
 {
+
     /**
      * name of the collection
      *
@@ -45,7 +46,8 @@ class NestedContents implements INestedContents
     /**
      * Set collection Name to Contents and init a mongo service with this collection
      */
-    public function __construct() {
+    public function __construct ()
+    {
         // init the data access service
         $this->_collectionName = 'Contents';
         $this->_dataService = Manager::getService('MongoDataAccess');
@@ -55,17 +57,21 @@ class NestedContents implements INestedContents
     /**
      * Do a find request on nested contents of a given content
      *
-     * @param string $parentContentId parent id of nested contents
+     * @param string $parentContentId
+     *            parent id of nested contents
      * @return array
      */
-    public function getList($parentContentId) {
+    public function getList ($parentContentId)
+    {
         $filter = Filter::Factory('Uid')->setValue($parentContentId);
-        $cursor = $this->_dataService->customFind($filter, array('nestedContents'));
+        $cursor = $this->_dataService->customFind($filter, array(
+            'nestedContents'
+        ));
         if ($cursor->count() == 0) {
             return array();
         }
         $content = $cursor->getNext();
-        if (!isset($content['nestedContents'])) {
+        if (! isset($content['nestedContents'])) {
             return array();
         }
         return array_values($content['nestedContents']);
@@ -74,11 +80,19 @@ class NestedContents implements INestedContents
     /**
      * Find a nested content by its id and its parentId
      *
-     * @param string $parentContentId id of the parent content
-     * @param string $subContentId id of the content we are looking for
+     * @param string $parentContentId
+     *            id of the parent content
+     * @param string $subContentId
+     *            id of the content we are looking for
      */
-    public function findById($parentContentId, $subContentId) {
-        $cursor = $this->_dataService->customFind(array('_id' => $this->_dataService->getId($parentContentId), 'nestedContents.id' => $subContentId), array('nestedContents.$'));
+    public function findById ($parentContentId, $subContentId)
+    {
+        $cursor = $this->_dataService->customFind(array(
+            '_id' => $this->_dataService->getId($parentContentId),
+            'nestedContents.id' => $subContentId
+        ), array(
+            'nestedContents.$'
+        ));
         if ($cursor->count() == 0) {
             return null;
         }
@@ -89,107 +103,134 @@ class NestedContents implements INestedContents
     /**
      * Create an objet in the current collection
      *
-     * @param string $parentContentId parent id of nested contents
-     * @param array $obj data object
-     * @param bool $options should we wait for a server response
+     * @param string $parentContentId
+     *            parent id of nested contents
+     * @param array $obj
+     *            data object
+     * @param bool $options
+     *            should we wait for a server response
      * @return array
      */
-    public function create($parentContentId, array $obj, $options = array()) {
+    public function create ($parentContentId, array $obj, $options = array())
+    {
         $objId = $this->_dataService->getId();
-        $obj['id'] = (string)$objId;
-
+        $obj['id'] = (string) $objId;
+        
         unset($obj['parentContentId']);
-		$obj['version'] = 1;
-
+        $obj['version'] = 1;
+        
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
         $obj['createUser'] = $currentUser;
-
+        
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
-
+        
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
-
-        $data = array('$push' => array('nestedContents' => $obj));
+        
+        $data = array(
+            '$push' => array(
+                'nestedContents' => $obj
+            )
+        );
         $updateCond = Filter::Factory('Uid')->setValue($parentContentId);
         
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
         if ($returnArray['success'] == true) {
             $returnArray['data'] = $obj;
         }
-
+        
         return $returnArray;
     }
 
     /**
      * Update an objet in the current collection
      *
-     * @param string $parentContentId parent id of nested contents
-     * @param array $obj data object
-     * @param bool $options should we wait for a server response
+     * @param string $parentContentId
+     *            parent id of nested contents
+     * @param array $obj
+     *            data object
+     * @param bool $options
+     *            should we wait for a server response
      * @return array
      */
-    public function update($parentContentId, array $obj, $options = array()) {
+    public function update ($parentContentId, array $obj, $options = array())
+    {
         unset($obj['parentContentId']);
-
-		$oldVersion = $obj['version'];
-		
-		$obj['version']++;
-
+        
+        $oldVersion = $obj['version'];
+        
+        $obj['version'] ++;
+        
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
-
+        
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
-
+        
         $obj['lastUpdateTime'] = $currentTime;
-
+        
         $updateArray = array();
-
+        
         foreach ($obj as $key => $value) {
-            if (in_array($key, array('createUser', 'createTime'))) {
+            if (in_array($key, array(
+                'createUser',
+                'createTime'
+            ))) {
                 continue;
             }
             $updateArray['nestedContents.$.' . $key] = $value;
         }
-
-        $data = array('$set' => $updateArray);
-        $nestedContentCriteria = Filter::Factory('ElemMatch')
-                                            ->addFilter(Filter::Factory('Value')->setName('version')->setValue($oldVersion))
-                                            ->addFilter(Filter::Factory('Value')->setName('id')->setValue($obj['id']));
         
-        $updateCond = Filter::Factory()
-                        ->addFilter(Filter::Factory('Uid')->setValue($parentContentId))
-                        ->addFilter($nestedContentCriteria);
+        $data = array(
+            '$set' => $updateArray
+        );
+        $nestedContentCriteria = Filter::Factory('ElemMatch')->addFilter(Filter::Factory('Value')->setName('version')
+            ->setValue($oldVersion))
+            ->addFilter(Filter::Factory('Value')->setName('id')
+            ->setValue($obj['id']));
+        
+        $updateCond = Filter::Factory()->addFilter(Filter::Factory('Uid')->setValue($parentContentId))
+            ->addFilter($nestedContentCriteria);
         
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
-
+        
         if ($returnArray['success'] == true) {
             unset($returnArray['data']);
         }
-
+        
         return $returnArray;
     }
 
     /**
      * Delete objets in the current collection
      *
-     * @param string $parentContentId parent id of nested contents
-     * @param array $obj data object
-     * @param bool $options should we wait for a server response
+     * @param string $parentContentId
+     *            parent id of nested contents
+     * @param array $obj
+     *            data object
+     * @param bool $options
+     *            should we wait for a server response
      * @return array
      */
-    public function destroy($parentContentId, array $obj, $options = array()) {
-
-        $data = array('$pull' => array('nestedContents' => array('id' => $obj['id'])));
+    public function destroy ($parentContentId, array $obj, $options = array())
+    {
+        $data = array(
+            '$pull' => array(
+                'nestedContents' => array(
+                    'id' => $obj['id']
+                )
+            )
+        );
         $updateCond = Filter::Factory('Uid')->setValue($parentContentId);
-
+        
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
-
-        return array('success' => $returnArray['success']);
+        
+        return array(
+            'success' => $returnArray['success']
+        );
     }
-
 }

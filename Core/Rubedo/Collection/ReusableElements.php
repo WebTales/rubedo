@@ -27,14 +27,27 @@ use Rubedo\Interfaces\Collection\IReusableElements;
  */
 class ReusableElements extends AbstractCollection implements IReusableElements
 {
+
     protected $_indexes = array(
-        array('keys'=>array('site'=>1)),
-        array('keys'=>array('name'=>1,'site'=>1),'options'=>array('unique'=>true)),
+        array(
+            'keys' => array(
+                'site' => 1
+            )
+        ),
+        array(
+            'keys' => array(
+                'name' => 1,
+                'site' => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
+        )
     );
 
-	public function __construct(){
-		$this->_collectionName = 'ReusableElements';
-		parent::__construct();
-	}
-	
+    public function __construct ()
+    {
+        $this->_collectionName = 'ReusableElements';
+        parent::__construct();
+    }
 }

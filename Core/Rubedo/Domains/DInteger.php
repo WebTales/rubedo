@@ -18,23 +18,25 @@ namespace Rubedo\Domains;
 
 /**
  * Validator for "integer" Domain
- * 
- * Should be an integer
- * 
- * @author jbourdin
  *
+ * Should be an integer
+ *
+ * @author jbourdin
+ *        
  */
 class DInteger implements IDomains
 {
+
     /**
      * Check if a value is valid for the current domain
-     * 
-     * @param mixed $value
+     *
+     * @param mixed $value            
      * @return boolean
      * @see Rubedo\Domains\IDomains::isValid()
      */
-    public static function isValid($value){
-        if(!is_int($value)){
+    public static function isValid ($value)
+    {
+        if (! is_int($value)) {
             return false;
         }
         return true;

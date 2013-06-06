@@ -31,14 +31,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     /**
      * twig environnelent object
-     * 
+     *
      * @var \Twig_Environment
      */
     protected $_twig;
 
     /**
      * Twig options array
-     * 
+     *
      * @var array
      */
     protected $_options = array();
@@ -56,10 +56,10 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * @var string
      */
     protected static $_currentTheme = null;
-    
+
     /**
      * had main theme been set ?
-     * 
+     *
      * @var boolean
      */
     protected static $_themeHasBeenSet = false;
@@ -74,7 +74,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     /**
      * initialise Twig Context
-     * 
+     *
      * @param string $lang
      *            current language
      */
@@ -120,7 +120,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     /**
      * render a twig template given an array of data
-     * 
+     *
      * @param string $template
      *            template name
      * @param array $vars
@@ -160,7 +160,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * Return the actual path of a twig subpart in the current theme
      *
      * Check if it exist in current theme, return default path if not
-     * 
+     *
      * @return string
      */
     public function getFileThemePath ($path)
@@ -192,7 +192,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     /**
      * Set the current theme name
-     * 
+     *
      * @param string $theme            
      */
     public function setCurrentTheme ($theme)
@@ -200,11 +200,11 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         self::$_currentTheme = $theme;
         self::$_themeHasBeenSet = true;
     }
-    
-    public function themeHadBeenSet(){
+
+    public function themeHadBeenSet ()
+    {
         return self::$_themeHasBeenSet;
     }
-    
 
     /**
      * Call the Html Cleaner Service
@@ -214,60 +214,60 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return Manager::getService('HtmlCleaner')->clean($html);
     }
 
-    public static function url (array $urlOptions = array(), $reset = false, $encode = true,$route = null)
+    public static function url (array $urlOptions = array(), $reset = false, $encode = true, $route = null)
     {
         return Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
     }
 
-    public static function displaySingleUrl ($contentId, $siteId = null, $defaultUrl=null)
+    public static function displaySingleUrl ($contentId, $siteId = null, $defaultUrl = null)
     {
         return Manager::getService('Url')->displaySingleUrl($contentId, $siteId, $defaultUrl);
     }
-    
+
     public static function getPageTitle ($contentId)
     {
         $page = Manager::getService('Pages')->findByID($contentId);
-        if($page){
+        if ($page) {
             return $page['title'];
-        }else{
+        } else {
             return null;
         }
     }
-    
+
     public static function displayCanonicalUrl ($contentId, $siteId = null)
     {
         return Manager::getService('Url')->displayCanonicalUrl($contentId, $siteId);
     }
-    
-    public static function getLinkedContents($contentId,$typeId,$fieldName, $sort = null)
+
+    public static function getLinkedContents ($contentId, $typeId, $fieldName, $sort = null)
     {
-        return Manager::getService('Contents')->getReflexiveLinkedContents($contentId,$typeId,$fieldName, $sort);
+        return Manager::getService('Contents')->getReflexiveLinkedContents($contentId, $typeId, $fieldName, $sort);
     }
-    
-    public static function getTaxonomyTerm($id){
+
+    public static function getTaxonomyTerm ($id)
+    {
         return Manager::getService('TaxonomyTerms')->findById($id);
     }
 
     public function getAvailableThemes ()
     {
         $templateDirIterator = new \DirectoryIterator($this->getTemplateDir());
-        if(!isset($templateDirIterator)){
+        if (! isset($templateDirIterator)) {
             throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for template dir', "Exception67");
         }
         
         $themeInfosArray = array();
         
-        foreach ($templateDirIterator as $directory){
-            if($directory->isDot() || !$directory->isDir()){
+        foreach ($templateDirIterator as $directory) {
+            if ($directory->isDot() || ! $directory->isDir()) {
                 continue;
             }
-            $jsonFilePath = $directory->getPathname().'/theme.json';
-            if(is_file($jsonFilePath)){
+            $jsonFilePath = $directory->getPathname() . '/theme.json';
+            if (is_file($jsonFilePath)) {
                 $themeJson = file_get_contents($jsonFilePath);
                 $themeInfos = \Zend_Json::decode($themeJson);
-                $themeInfosArray[]=$themeInfos;
+                $themeInfosArray[] = $themeInfos;
             }
-            
         }
         
         $response = array();
@@ -278,22 +278,21 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         
         return $response;
     }
-    
-    public function getThemeInfos($name){
-        $jsonFilePath = $this->getTemplateDir().'/'.$name.'/theme.json';
-        if(is_file($jsonFilePath)){
+
+    public function getThemeInfos ($name)
+    {
+        $jsonFilePath = $this->getTemplateDir() . '/' . $name . '/theme.json';
+        if (is_file($jsonFilePath)) {
             $themeJson = file_get_contents($jsonFilePath);
             $themeInfos = \Zend_Json::decode($themeJson);
             return $themeInfos;
-        }else{
+        } else {
             return null;
         }
-        
     }
-    
-    public function getCurrentThemeInfos(){
+
+    public function getCurrentThemeInfos ()
+    {
         return $this->getThemeInfos($this->getCurrentTheme());
     }
-    
-    
 }

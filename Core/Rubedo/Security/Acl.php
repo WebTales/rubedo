@@ -35,7 +35,7 @@ class Acl implements IAcl
      * @var string
      */
     protected $_rolesDirectory;
-    
+
     protected static $_hasAccessRults = array();
 
     public function __construct ()
@@ -82,14 +82,14 @@ class Acl implements IAcl
 
     /**
      * add role of the group to the current role Array
-     * 
-     * @param array $roleArray
-     * @param array $group
+     *
+     * @param array $roleArray            
+     * @param array $group            
      * @return array
      */
-    protected function _addGroupToRoleArray (array $roleArray, array $group=null)
+    protected function _addGroupToRoleArray (array $roleArray, array $group = null)
     {
-        if(is_null($group)){
+        if (is_null($group)) {
             return $roleArray;
         }
         
@@ -102,22 +102,22 @@ class Acl implements IAcl
 
     /**
      * Check if a given role has access to the ressource
-     * 
-     * @param string $resource
-     * @param string $role
+     *
+     * @param string $resource            
+     * @param string $role            
      * @return boolean
      */
     protected function _roleHasAccess ($resource, $role)
     {
-         // @todo temporary disabling workflow components
-         if (strpos($resource, 'workflows') !== false) {
-             return false;
-         }
-         
-         // @todo temporary disabling  nested contents
-         if (strpos($resource, 'dependantTypes') !== false) {
-             return false;
-         }
+        // @todo temporary disabling workflow components
+        if (strpos($resource, 'workflows') !== false) {
+            return false;
+        }
+        
+        // @todo temporary disabling nested contents
+        if (strpos($resource, 'dependantTypes') !== false) {
+            return false;
+        }
         
         if (is_null($role)) {
             return false;
@@ -134,7 +134,6 @@ class Acl implements IAcl
         
         return false;
     }
-
 
     /**
      * Return the role configuration from its name
@@ -161,15 +160,15 @@ class Acl implements IAcl
      * @param string $name            
      * @return array
      */
-    protected function _getRightsByRoleName ($name,$max=5)
+    protected function _getRightsByRoleName ($name, $max = 5)
     {
         $rightsArray = array();
         $roleInfos = $this->_getRoleByName($name);
         if ($roleInfos) {
             $rightsArray = $roleInfos['rights'];
-            if(isset($roleInfos['includes']) && $max > 0){
-                foreach ($roleInfos['includes'] as $include){
-                    $rightsArray = array_merge($rightsArray,$this->_getRightsByRoleName($include,$max - 1));
+            if (isset($roleInfos['includes']) && $max > 0) {
+                foreach ($roleInfos['includes'] as $include) {
+                    $rightsArray = array_merge($rightsArray, $this->_getRightsByRoleName($include, $max - 1));
                 }
             }
         }
@@ -204,10 +203,10 @@ class Acl implements IAcl
      */
     public function getAvailaibleRoles ()
     {
-    	$userLang='en'; //default value
-        $currentUserLanguage=Manager::getService('CurrentUser')->getLanguage();
-        if (!empty($currentUserLanguage)){
-        	$userLang=$currentUserLanguage;
+        $userLang = 'en'; // default value
+        $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
+        if (! empty($currentUserLanguage)) {
+            $userLang = $currentUserLanguage;
         }
         $templateDirIterator = new \DirectoryIterator($this->_rolesDirectory);
         if (! $templateDirIterator) {
