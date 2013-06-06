@@ -140,6 +140,7 @@ interface IAbstractCollection
      *
      *
      *
+     *
      * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
@@ -149,6 +150,7 @@ interface IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      *
@@ -175,6 +177,7 @@ interface IAbstractCollection
      *
      *
      *
+     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
@@ -188,6 +191,7 @@ interface IAbstractCollection
     /**
      *
      * @deprecated
+     *
      *
      *
      *

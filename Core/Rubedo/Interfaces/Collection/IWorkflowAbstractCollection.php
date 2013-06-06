@@ -53,7 +53,7 @@ interface IWorkflowAbstractCollection extends IAbstractCollection
 
     /**
      * Find an item given by its literral ID
-     * 
+     *
      * @param string $contentId            
      * @return array
      */
@@ -66,7 +66,7 @@ interface IWorkflowAbstractCollection extends IAbstractCollection
 
     /**
      * Find child of a node tree
-     * 
+     *
      * @param string $parentId
      *            id of the parent node
      * @param array $filters
@@ -75,7 +75,7 @@ interface IWorkflowAbstractCollection extends IAbstractCollection
      *            array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $live = true);
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $live = true);
 
     public function publish ($objectId);
 }

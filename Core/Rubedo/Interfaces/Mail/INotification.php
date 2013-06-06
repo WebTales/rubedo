@@ -23,14 +23,19 @@ namespace Rubedo\Interfaces\Mail;
  */
 Interface INotification
 {
+
     /**
      * return a message object
      */
-     public function getNewMessage();
-     public static function getSendNotification ();
-     public static function setSendNotification ($sendNotification);
-     public function getOptions ($name, $defaultValue = null);
-     public static function setOptions ($name, $value);
-     public function notify ($obj, $notificationType);
+    public function getNewMessage ();
 
+    public static function getSendNotification ();
+
+    public static function setSendNotification ($sendNotification);
+
+    public function getOptions ($name, $defaultValue = null);
+
+    public static function setOptions ($name, $value);
+
+    public function notify ($obj, $notificationType);
 }

@@ -40,7 +40,7 @@ interface IAbstractFileCollection
 
     /**
      * Find an item given by its literral ID
-     * 
+     *
      * @param string $contentId            
      * @return array
      */
@@ -48,7 +48,7 @@ interface IAbstractFileCollection
 
     /**
      * Find an item given by its name (find only one if many)
-     * 
+     *
      * @param string $name            
      * @return array
      */

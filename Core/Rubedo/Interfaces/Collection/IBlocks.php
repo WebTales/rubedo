@@ -61,7 +61,7 @@ interface IBlocks extends IAbstractCollection
 
     /**
      * check if a block data has been modified based on a checksum
-     * 
+     *
      * @param array $data            
      * @return boolean
      */
@@ -69,7 +69,7 @@ interface IBlocks extends IAbstractCollection
 
     /**
      * extract data part of a block object
-     * 
+     *
      * @param array $data            
      * @return array
      */

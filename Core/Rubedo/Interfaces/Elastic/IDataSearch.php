@@ -30,29 +30,39 @@ interface IDataSearch
     /**
      * Initialize a search service handler to index or search data
      *
-     * @param string $host http host name
-     * @param string $port http port 
+     * @param string $host
+     *            http host name
+     * @param string $port
+     *            http port
      */
-    public function init ($host = null, $port= null);
+    public function init ($host = null, $port = null);
 
     /**
      * Create ES type for new content type
-     *     
-	 * @param string $terms terms to search
-	 * @param string $type optional content type filter
-	 * @param string $lang optional lang filter
-	 * @param string $author optional author filter
-	 * @param string $date optional date filter
-	 * @param string $pager optional pager, default set to 10
-	 * @param string $orderBy optional  orderBy, default sort on score
-	 * @param string $pageSize optional page size, "all" for everything
+     *
+     * @param string $terms
+     *            terms to search
+     * @param string $type
+     *            optional content type filter
+     * @param string $lang
+     *            optional lang filter
+     * @param string $author
+     *            optional author filter
+     * @param string $date
+     *            optional date filter
+     * @param string $pager
+     *            optional pager, default set to 10
+     * @param string $orderBy
+     *            optional orderBy, default sort on score
+     * @param string $pageSize
+     *            optional page size, "all" for everything
      * @return Elastica_ResultSet
      */
-    public function search (array $params, $option = 'all',$withSummary = true);
+    public function search (array $params, $option = 'all', $withSummary = true);
+
     /**
      *
-     * @param field_type $_isFrontEnd
+     * @param field_type $_isFrontEnd            
      */
     public static function setIsFrontEnd ($_isFrontEnd);
-		
 }
