@@ -33,12 +33,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     {       
         $params = $this->getRequest()->getParams();
         $results = array();
-        $results['currentSite'] = isset($siteId)?$siteId:null;
-        if(isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']==true){
-            $results['constrainToSite'] = true;
-        }
         $results['blockConfig']=$params['block-config'];
-        $results['facetsToHide']=$facetsToHide;
 		$results['displayTitle']=$this->getParam('displayTitle');
 		$results['blockTitle']=$this->getParam('blockTitle');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");

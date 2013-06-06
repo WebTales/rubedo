@@ -58,7 +58,7 @@
       google.maps.event.addListener(searchBox, 'places_changed', function() {
   	    var places = searchBox.getPlaces();
   	    map.setCenter(places[0].geometry.location);
-  	    map.setZoom({% if blockConfig.zoomOnAddress %}{{ blockConfig.zoomOnAdress }}{% else %}14{% endif %});
+  	    map.setZoom({% if blockConfig.zoomOnAddress %}{{ blockConfig.zoomOnAddress }}{% else %}14{% endif %});
 
   	  });
       google.maps.event.addListener(map, 'bounds_changed', function() {
