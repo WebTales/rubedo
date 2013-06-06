@@ -30,7 +30,7 @@ final class Version
     /**
      * Zend Framework version identification - see compareVersion()
      */
-    const VERSION = '1.2.0RC2';
+    const VERSION = '1.2.1dev';
 
     /**
      * Github Service Identifier for version information is retreived from
