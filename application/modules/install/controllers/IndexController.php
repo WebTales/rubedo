@@ -48,7 +48,7 @@ class Install_IndexController extends Zend_Controller_Action
         
         $this->_localConfigDir = realpath(APPLICATION_PATH . '/configs/local/');
         $this->_localConfigFile = $this->_localConfigDir . '/config.json';
-        $this->view->moduleDir = realpath(__DIR__.'/..');
+        $this->view->moduleDir = realpath(__DIR__ . '/..');
         $this->view->localConfigFile = $this->_localConfigFile;
         $this->_loadLocalConfig();
         $this->_applicationOptions = $this->getFrontController()
@@ -83,8 +83,7 @@ class Install_IndexController extends Zend_Controller_Action
         if (! $this->_isConfigWritable()) {
             throw new Rubedo\Exceptions\User('Local config file %1$s should be writable', "Exception29", $this->_localConfigFile);
         }
-        if (! isset($this->_localConfig['installed']) ||
-                 $this->_localConfig['installed']['status'] != 'finished') {
+        if (! isset($this->_localConfig['installed']) || $this->_localConfig['installed']['status'] != 'finished') {
             if (! isset($this->_localConfig['installed']['action'])) {
                 $this->_localConfig['installed']['action'] = 'start-wizard';
             }
@@ -92,7 +91,7 @@ class Install_IndexController extends Zend_Controller_Action
             $this->redirect($this->_helper->url($action));
         }
     }
-    
+
     public function dropIndexesAction ()
     {
         Manager::getService('UrlCache')->drop();
@@ -100,7 +99,7 @@ class Install_IndexController extends Zend_Controller_Action
         $servicesArray = Rubedo\Interfaces\config::getCollectionServices();
         $result = array();
         foreach ($servicesArray as $service) {
-           $result[] =  Manager::getService($service)->dropIndexes();
+            $result[] = Manager::getService($service)->dropIndexes();
         }
         $this->_helper->json($result);
     }
@@ -108,8 +107,8 @@ class Install_IndexController extends Zend_Controller_Action
     public function startWizardAction ()
     {
         $this->_localConfig['installed'] = array(
-                'status' => 'begin',
-                'action' => 'start-wizard'
+            'status' => 'begin',
+            'action' => 'start-wizard'
         );
         $this->view->displayMode = "start-wizard";
         $this->_saveLocalConfig();
@@ -141,8 +140,7 @@ class Install_IndexController extends Zend_Controller_Action
         $mongoAccess = new DataAccess();
         
         try {
-            if ($this->getRequest()->isPost() &&
-                     $dbForm->isValid($this->getAllParams())) {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
                 $mongo = $this->_buildConnectionString($params);
                 $dbName = $params['db'];
@@ -179,23 +177,19 @@ class Install_IndexController extends Zend_Controller_Action
             $this->_localConfig['installed']['action'] = 'set-elastic-search';
         }
         
-        $esOptions = isset(
-                $this->_applicationOptions["searchstream"]["elastic"]) ? $this->_applicationOptions["searchstream"]["elastic"] : array();
+        $esOptions = isset($this->_applicationOptions["searchstream"]["elastic"]) ? $this->_applicationOptions["searchstream"]["elastic"] : array();
         
         $dbForm = Install_Model_EsConfigForm::getForm($esOptions);
         
         try {
-            if ($this->getRequest()->isPost() &&
-                     $dbForm->isValid($this->getAllParams())) {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
                 Rubedo\Elastic\DataAbstract::setOptions($params);
-                $query = \Rubedo\Services\Manager::getService(
-                        'ElasticDataIndex');
+                $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init();
             } else {
                 $params = $esOptions;
-                $query = \Rubedo\Services\Manager::getService(
-                        'ElasticDataIndex');
+                $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init();
             }
             $connectionValid = true;
@@ -224,25 +218,22 @@ class Install_IndexController extends Zend_Controller_Action
         }
         
         $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array(
-                'server' => null,
-                'port' => null,
-                'ssl' => null
+            'server' => null,
+            'port' => null,
+            'ssl' => null
         );
         
         $dbForm = Install_Model_MailConfigForm::getForm($mailerOptions);
         
         try {
-            if ($this->getRequest()->isPost() &&
-                     $dbForm->isValid($this->getAllParams())) {
+            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
             } else {
                 $params = $mailerOptions;
             }
-            $transport = \Swift_SmtpTransport::newInstance($params['server'], 
-                    $params['port'], $params['ssl'] ? 'ssl' : null);
+            $transport = \Swift_SmtpTransport::newInstance($params['server'], $params['port'], $params['ssl'] ? 'ssl' : null);
             if (isset($params['username'])) {
-                $transport->setUsername($params['username'])->setPassword(
-                        $params['password']);
+                $transport->setUsername($params['username'])->setPassword($params['password']);
             }
             $transport->setTimeout(3);
             $transport->start();
@@ -273,39 +264,34 @@ class Install_IndexController extends Zend_Controller_Action
         }
         
         $dbForm = Install_Model_DomainAliasForm::getForm();
-       
+        
         if (! isset($this->_localConfig['site']['override'])) {
             $this->_localConfig['site']['override'] = array();
         }
         
         $key = $this->getParam('delete-domain');
-        if($key){
-            unset ($this->_localConfig['site']['override'][$key]);
+        if ($key) {
+            unset($this->_localConfig['site']['override'][$key]);
             $this->_saveLocalConfig();
         }
         
-        if ($this->getRequest()->isPost() &&
-                 $dbForm->isValid($this->getAllParams())) {
+        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
             $params = $dbForm->getValues();
             $overrideArray = array_values($this->_localConfig['site']['override']);
-            if(in_array($params["localDomain"],$overrideArray)){
+            if (in_array($params["localDomain"], $overrideArray)) {
                 $this->view->hasError = true;
                 $this->view->errorMsgs = "A domain can't be used to override twice.";
-            }else{
+            } else {
                 $this->_localConfig['site']['override'][$params["domain"]] = $params["localDomain"];
                 $this->_saveLocalConfig();
             }
-            
         }
-                
-        $this->view->isReady = true;
         
+        $this->view->isReady = true;
         
         $this->view->overrideList = $this->_localConfig['site']['override'];
         
         $this->view->form = $dbForm;
-        
-        
     }
 
     public function setPhpSettingsAction ()
@@ -317,8 +303,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
         
         $phpOptions = isset($this->_applicationOptions["phpSettings"]) ? $this->_applicationOptions["phpSettings"] : array();
-        if (isset(
-                $this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"])) {
+        if (isset($this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"])) {
             $phpOptions["displayExceptions"] = $this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"];
         }
         
@@ -334,8 +319,7 @@ class Install_IndexController extends Zend_Controller_Action
         
         $dbForm = Install_Model_PhpSettingsForm::getForm($phpOptions);
         
-        if ($this->getRequest()->isPost() &&
-                 $dbForm->isValid($this->getAllParams())) {
+        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
             $params = $dbForm->getValues();
             $this->_localConfig["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
             $this->_localConfig["backoffice"]["extjs"]["debug"] = $params["extDebug"];
@@ -373,22 +357,20 @@ class Install_IndexController extends Zend_Controller_Action
             if (! $this->view->isIndexed) {
                 $this->view->shouldIndex = true;
             }
-        }else{
+        } else {
             $this->view->shouldIndex = $this->_shouldIndex();
         }
         
-        
-        
         if ($this->getParam('initContents', false)) {
             $this->view->isContentsInitialized = $this->_doInsertContents();
-        }else{
+        } else {
             $this->view->shouldInitialize = $this->_shouldInitialize();
         }
-                
+        
         if ($this->getParam('doInsertGroups', false)) {
             $this->view->groupCreated = $this->_docreateDefaultsGroup();
         }
-        if ($this->_isDefaultGroupsExists() && !$this->view->shouldIndex  && !$this->view->shouldInitialize) {
+        if ($this->_isDefaultGroupsExists() && ! $this->view->shouldIndex && ! $this->view->shouldInitialize) {
             $this->view->isReady = true;
         }
         
@@ -405,16 +387,14 @@ class Install_IndexController extends Zend_Controller_Action
         
         $form = Install_Model_AdminConfigForm::getForm();
         
-        if ($this->getRequest()->isPost() &&
-                 $form->isValid($this->getAllParams())) {
+        if ($this->getRequest()->isPost() && $form->isValid($this->getAllParams())) {
             $params = $form->getValues();
             $hashService = \Rubedo\Services\Manager::getService('Hash');
             
             unset($params["confirmPassword"]);
             
             $params['salt'] = $hashService->generateRandomString();
-            $params['password'] = $hashService->derivatePassword(
-                    $params['password'], $params['salt']);
+            $params['password'] = $hashService->derivatePassword($params['password'], $params['salt']);
             $adminGroup = Manager::getService('Groups')->findByName('admin');
             $params['defaultGroup'] = $adminGroup['id'];
             $wasFiltered = AbstractCollection::disableUserFilter();
@@ -491,16 +471,13 @@ class Install_IndexController extends Zend_Controller_Action
     protected function _loadLocalConfig ()
     {
         if (is_file($this->_localConfigFile)) {
-            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, 
-                    array(
-                            'allowModifications' => true
-                    ));
+            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, array(
+                'allowModifications' => true
+            ));
         } elseif (is_file(APPLICATION_PATH . '/configs/local.ini')) {
-            $localConfig = new Zend_Config_Ini(
-                    APPLICATION_PATH . '/configs/local.ini', null, 
-                    array(
-                            'allowModifications' => true
-                    ));
+            $localConfig = new Zend_Config_Ini(APPLICATION_PATH . '/configs/local.ini', null, array(
+                'allowModifications' => true
+            ));
         } else {
             $localConfig = new Zend_Config(array(), true);
         }
@@ -515,14 +492,11 @@ class Install_IndexController extends Zend_Controller_Action
         $result = true;
         foreach ($servicesArray as $service) {
             if (! Manager::getService($service)->checkIndexes()) {
-                $result = $result &&
-                         Manager::getService($service)->ensureIndexes();
+                $result = $result && Manager::getService($service)->ensureIndexes();
             }
         }
         if ($result) {
-            $this->_localConfig['installed']['index'] = $this->_applicationOptions["datastream"]["mongo"]["server"] .
-                     '/' .
-                     $this->_applicationOptions["datastream"]["mongo"]['db'];
+            $this->_localConfig['installed']['index'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
             return true;
         } else {
             $this->view->hasError = true;
@@ -530,29 +504,20 @@ class Install_IndexController extends Zend_Controller_Action
             return false;
         }
     }
-    
-    
-    
 
     protected function _shouldIndex ()
     {
-        if (isset($this->_applicationOptions['installed']['index']) &&
-                 $this->_applicationOptions['installed']['index'] ==
-                 $this->_applicationOptions["datastream"]["mongo"]["server"] .
-                 '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
+        if (isset($this->_applicationOptions['installed']['index']) && $this->_applicationOptions['installed']['index'] == $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
             return false;
         } else {
             return true;
         }
     }
-    
+
     protected function _shouldInitialize ()
     {
-        if (isset($this->_applicationOptions['installed']['contents']) &&
-        $this->_applicationOptions['installed']['contents'] ==
-        $this->_applicationOptions["datastream"]["mongo"]["server"] .
-        '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
-        return false;
+        if (isset($this->_applicationOptions['installed']['contents']) && $this->_applicationOptions['installed']['contents'] == $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
+            return false;
         } else {
             return true;
         }
@@ -565,10 +530,10 @@ class Install_IndexController extends Zend_Controller_Action
         }
         try {
             Manager::getService('Workspaces')->create(array(
-                    'text'=>'admin'
+                'text' => 'admin'
             ));
         } catch (Rubedo\Exceptions\User $exception) {
-            //dont stop if already exists
+            // dont stop if already exists
         }
         $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
         
@@ -618,16 +583,14 @@ class Install_IndexController extends Zend_Controller_Action
             if ($directory->isDot() || ! $directory->isDir()) {
                 continue;
             }
-            if (in_array($directory->getFilename(), 
-                    array(
-                            'groups',
-                            'site'
-                    ))) {
+            if (in_array($directory->getFilename(), array(
+                'groups',
+                'site'
+            ))) {
                 continue;
             }
             $collection = ucfirst($directory->getFilename());
-            $itemsJson = new DirectoryIterator(
-                    $contentPath . '/' . $directory->getFilename());
+            $itemsJson = new DirectoryIterator($contentPath . '/' . $directory->getFilename());
             foreach ($itemsJson as $file) {
                 if ($file->isDot() || $file->isDir()) {
                     continue;
@@ -636,11 +599,9 @@ class Install_IndexController extends Zend_Controller_Action
                     $itemJson = file_get_contents($file->getPathname());
                     $item = Zend_Json::decode($itemJson);
                     try {
-                        if (! Manager::getService($collection)->findOne(
-                                Filter::Factory('Value')->setName('defaultId')
-                                    ->setValue($item['defaultId']))) {
-                            $result = Manager::getService($collection)->create(
-                                    $item);
+                        if (! Manager::getService($collection)->findOne(Filter::Factory('Value')->setName('defaultId')
+                            ->setValue($item['defaultId']))) {
+                            $result = Manager::getService($collection)->create($item);
                         } else {
                             $result['success'] = true;
                         }
@@ -657,9 +618,7 @@ class Install_IndexController extends Zend_Controller_Action
             $this->view->hasError = true;
             $this->view->errorMsgs = 'failed to initialize contents';
         } else {
-            $this->_localConfig['installed']['contents'] = $this->_applicationOptions["datastream"]["mongo"]["server"] .
-            '/' .
-            $this->_applicationOptions["datastream"]["mongo"]['db'];
+            $this->_localConfig['installed']['contents'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
             $this->view->isContentInitialized = true;
         }
         
