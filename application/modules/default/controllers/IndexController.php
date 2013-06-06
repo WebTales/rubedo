@@ -651,7 +651,10 @@ class IndexController extends Zend_Controller_Action
             case 'advancedSearchForm':
                 $controller = "advanced-search";
                 break;
-            
+            case "mailingList":
+                $controller = "mailing-list";
+                break;
+                
             case 'Controleur Zend':
             case 'zendController':
                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
