@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IQueries, Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IQueries, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Queries
@@ -106,23 +106,23 @@ class Queries extends AbstractCollection implements IQueries
             )
         )
     );
-    
+
     /**
      * Add a readOnly field to contents based on user rights
      *
-     * @param array $obj
+     * @param array $obj            
      * @return array
      */
     protected function _addReadableProperty ($obj)
     {
-    	if (! self::isUserFilterDisabled()) {
-    
-    		if (!Manager::getService('Acl')->hasAccess("write.ui.queries")) {
-    			$obj['readOnly'] = true;
-    		}
-    	}
-    
-    	return $obj;
+        if (! self::isUserFilterDisabled()) {
+            
+            if (! Manager::getService('Acl')->hasAccess("write.ui.queries")) {
+                $obj['readOnly'] = true;
+            }
+        }
+        
+        return $obj;
     }
 
     public function __construct ()
@@ -130,27 +130,28 @@ class Queries extends AbstractCollection implements IQueries
         $this->_collectionName = 'Queries';
         parent::__construct();
     }
-	
+
     /**
      * Return a query
-     * 
-     * @param string $id
-     * @return boolean|multitype:
+     *
+     * @param string $id            
+     * @return boolean multitype:
      */
-    public function getQueryById($id = null) {
-    	if ($id === null) {
-    		return false;
-    	}
-    	
-    	$query = $this->findById($id);
-    	
-    	if($query) {
-    		return $query;
-    	} else {
-    		return false;
-    	}
+    public function getQueryById ($id = null)
+    {
+        if ($id === null) {
+            return false;
+        }
+        
+        $query = $this->findById($id);
+        
+        if ($query) {
+            return $query;
+        } else {
+            return false;
+        }
     }
-    
+
     /**
      * Return an array of filter and sort params for the query given by its ID
      *
@@ -207,15 +208,15 @@ class Queries extends AbstractCollection implements IQueries
 
     /**
      * Return an array of filters and sorting based on a query object of manual type
-     * 
-     * @param array $query
-     * @return array  unknown
+     *
+     * @param array $query            
+     * @return array unknown
      */
     protected function _getFilterArrayForManual ($query)
-    {                
-        $filters = Filter::Factory()
-                    ->addFilter(Filter::Factory('InUid')->setValue($query['query']))
-                    ->addFilter(Filter::Factory('Value')->setName('status')->setValue('published'));
+    {
+        $filters = Filter::Factory()->addFilter(Filter::Factory('InUid')->setValue($query['query']))
+            ->addFilter(Filter::Factory('Value')->setName('status')
+            ->setValue('published'));
         
         $sort[] = array(
             'property' => 'id',
@@ -230,27 +231,25 @@ class Queries extends AbstractCollection implements IQueries
     /**
      * Return an array of filters and sorting based on a query object
      *
-     * @param array $query
-     * @return array  unknown
+     * @param array $query            
+     * @return array unknown
      */
     protected function _getFilterArrayForQuery ($query)
     {
-        if(\Zend_Registry::isRegistered('draft')){
-            if(\Zend_Registry::get('draft') !== 'false' || \Zend_Registry::get('draft') !== false){
+        if (\Zend_Registry::isRegistered('draft')) {
+            if (\Zend_Registry::get('draft') !== 'false' || \Zend_Registry::get('draft') !== false) {
                 $this->_workspace = 'live';
-            }else{
+            } else {
                 $this->_workspace = 'draft';
             }
-        }else{
+        } else {
             $this->_workspace = 'live';
         }
         $this->_dateService = Manager::getService('Date');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
         
         $sort = array();
-        $filterArray = array();
         $filters = Filter::Factory();
-        
         
         $operatorsArray = array(
             '$lt' => '<',
@@ -262,14 +261,16 @@ class Queries extends AbstractCollection implements IQueries
         );
         
         /* Add filters on TypeId and publication */
-        $filters->addFilter(Filter::Factory('In')->setName('typeId')->setValue($query['contentTypes']));
+        $filters->addFilter(Filter::Factory('In')->setName('typeId')
+            ->setValue($query['contentTypes']));
         
-        $filters->addFilter(Filter::Factory('Value')->setName('status')->setValue('published'));
+        $filters->addFilter(Filter::Factory('Value')->setName('status')
+            ->setValue('published'));
         
         // add computed filter for vocabularies rules
         if (is_array($query['vocabularies'])) {
-            if(!isset($query['vocabulariesRule'])){
-                $query['vocabulariesRule']='ET';
+            if (! isset($query['vocabulariesRule'])) {
+                $query['vocabulariesRule'] = 'ET';
             }
             $filters->addFilter($this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']));
         }
@@ -337,7 +338,6 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
     {
-        
         if ($vocabulariesRule == 'OU') {
             $filters = Filter::Factory('Or');
         } else {
@@ -364,11 +364,11 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getVocabularyCondition ($key, $value)
     {
-        if($key == 'navigation'){
-            foreach ($value['terms'] as &$term){
-                if($term == "currentPage"){
+        if ($key == 'navigation') {
+            foreach ($value['terms'] as &$term) {
+                if ($term == "currentPage") {
                     $currentPage = Manager::getService('PageContent')->getCurrentPage();
-                    if(!$currentPage){
+                    if (! $currentPage) {
                         throw new \Rubedo\Exceptions\Server('Current page is not defined.', "Exception49");
                     }
                     $term = $currentPage;
@@ -385,7 +385,7 @@ class Queries extends AbstractCollection implements IQueries
                 // verify all branches => at least one of each branch
                 $filters = Filter::Factory('And');
                 
-                //Definie each sub conditions
+                // Definie each sub conditions
                 foreach ($value['terms'] as $child) {
                     $terms = $this->_taxonomyReader->fetchAllChildren($child);
                     $termsArray = array(
@@ -395,15 +395,15 @@ class Queries extends AbstractCollection implements IQueries
                         $termsArray[] = $taxonomyTerms["id"];
                     }
                     // some of a branch
-                    $filters->addFilter(Filter::Factory('In')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($termsArray));
+                    $filters->addFilter(Filter::Factory('In')->setName($this->_workspace . '.taxonomy.' . $key)
+                        ->setValue($termsArray));
                 }
-
+                
                 break;
             case 'all': // include all terms
-                $filters = Filter::Factory('OperatorToValue')
-                            ->setName($this->_workspace . '.taxonomy.' . $key)
-                            ->setOperator('$all')
-                            ->setValue($value['terms']);
+                $filters = Filter::Factory('OperatorToValue')->setName($this->_workspace . '.taxonomy.' . $key)
+                    ->setOperator('$all')
+                    ->setValue($value['terms']);
                 break;
             case 'someRec': // just add children and do 'some' condition
                 foreach ($value['terms'] as $child) {
@@ -424,7 +424,7 @@ class Queries extends AbstractCollection implements IQueries
                 }
             case 'not': // include all terms
                 $filters = Filter::Factory('NotIn')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
-
+                
                 break;
             default:
                 Throw new \Rubedo\Exceptions\Server('Rule "%1$s" not implemented.', "Exception50", $rule);
