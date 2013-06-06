@@ -135,12 +135,6 @@ interface IAbstractCollection
     /**
      * Do a findone request
      *
-     * @deprecated
-     *
-     *
-     *
-     *
-     *
      * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
@@ -148,12 +142,7 @@ interface IAbstractCollection
     public function findOne (IFilter $value);
 
     /**
-     *
-     * @deprecated
-     *
-     *
-     *
-     *
+     * Do a custom find
      *
      * @param \WebTales\MongoFilters\IFilter $filter            
      * @param array $fieldRule            
@@ -166,43 +155,20 @@ interface IAbstractCollection
      *
      * Shouldn't be used if doing a simple update action
      *
-     * @deprecated
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
      *            data to update
      * @param \WebTales\MongoFilters\IFilter $updateCond
-     *            condition to determine what should be updated
+     *            array of condition to determine what should be updated
      * @param array $options            
      * @return array
      */
     public function customUpdate (array $data, IFilter $updateCond, $options = array());
 
     /**
+     * Do a delete on multiple items with a specific filter
      *
-     * @deprecated
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * @param \WebTales\MongoFilters\IFilter $deleteCond            
+     * @param unknown $deleteCond            
      * @param unknown $options            
      * @return Ambigous <boolean, multitype:>
      */

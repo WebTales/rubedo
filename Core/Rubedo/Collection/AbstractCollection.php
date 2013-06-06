@@ -216,11 +216,6 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Do a findone request
      *
-     * @deprecated
-     *
-     *
-     *
-     *
      * @param \WebTales\MongoFilters\IFilter $value
      *            search condition
      * @return array
@@ -235,11 +230,7 @@ abstract class AbstractCollection implements IAbstractCollection
     }
 
     /**
-     *
-     * @deprecated
-     *
-     *
-     *
+     * Do a custom find
      *
      * @param \WebTales\MongoFilters\IFilter $filter            
      * @param array $fieldRule            
@@ -254,17 +245,6 @@ abstract class AbstractCollection implements IAbstractCollection
      * Update an objet in the current collection
      *
      * Shouldn't be used if doing a simple update action
-     *
-     * @deprecated
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
      *
      * @see \Rubedo\Interfaces\IDataAccess::customUpdate
      * @param array $data
@@ -476,17 +456,7 @@ abstract class AbstractCollection implements IAbstractCollection
     }
 
     /**
-     *
-     * @deprecated
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
+     * Do a delete on multiple items with a specific filter
      *
      * @param unknown $deleteCond            
      * @param unknown $options            

@@ -831,15 +831,6 @@ class DataAccess implements IDataAccess
 
     /**
      * Drop The current Collection
-     *
-     * @deprecated
-     *
-     *
-     *
-     *
-     *
-     *
-     *
      */
     public function drop ()
     {
