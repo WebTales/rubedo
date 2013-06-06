@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IDamTypes,Rubedo\Services\Manager, \WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IDamTypes, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Groups
@@ -27,92 +27,113 @@ use Rubedo\Interfaces\Collection\IDamTypes,Rubedo\Services\Manager, \WebTales\Mo
  */
 class DamTypes extends AbstractCollection implements IDamTypes
 {
+
     protected $_indexes = array(
-        array('keys'=>array('type'=>1),'options'=>array('unique'=>true)),
+        array(
+            'keys' => array(
+                'type' => 1
+            ),
+            'options' => array(
+                'unique' => true
+            )
+        )
     );
-    
-    
+
     /**
      * Only access to content with read access
+     * 
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
-    protected function _init(){
+    protected function _init ()
+    {
         parent::_init();
-		
-		if (! self::isUserFilterDisabled()) {
-	        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
-	        if(in_array('all',$readWorkspaceArray)){
-	            return;
-	        }
-	        $readWorkspaceArray[] = null;
-	        $readWorkspaceArray[] = 'all';
-	        $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
-	        $filter = Filter::Factory('OperatorToValue')->setName('workspaces')->setOperator('$in')->setValue($readWorkspaceArray);
-	        $this->_dataService->addFilter($filter);
-		}
+        
+        if (! self::isUserFilterDisabled()) {
+            $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+            if (in_array('all', $readWorkspaceArray)) {
+                return;
+            }
+            $readWorkspaceArray[] = null;
+            $readWorkspaceArray[] = 'all';
+            $filter = array(
+                'workspaces' => array(
+                    '$in' => $readWorkspaceArray
+                )
+            );
+            $filter = Filter::Factory('OperatorToValue')->setName('workspaces')
+                ->setOperator('$in')
+                ->setValue($readWorkspaceArray);
+            $this->_dataService->addFilter($filter);
+        }
     }
 
-	public function __construct(){
-		$this->_collectionName = 'DamTypes';
-		parent::__construct();
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see \Rubedo\Collection\AbstractCollection::create()
-	 */
-	public function create (array $obj, $options = array())
+    public function __construct ()
     {
-    	$obj = $this->_addDefaultWorkspace($obj);
-		
-		$returnArray = parent::create($obj, $options);
-		
-		if ($returnArray["success"]) {
-		    $this->_indexDamType($returnArray['data']);
-		}
-		
-		return $returnArray;
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see \Rubedo\Collection\AbstractCollection::update()
-	 */
-	public function update (array $obj, $options = array())
+        $this->_collectionName = 'DamTypes';
+        parent::__construct();
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Collection\AbstractCollection::create()
+     */
+    public function create (array $obj, $options = array())
     {
-    	$obj = $this->_addDefaultWorkspace($obj);
-		
-		$returnArray = parent::update($obj, $options);
-		
-		if ($returnArray["success"]) {
-		    $this->_indexDamType($returnArray['data']);
-		}
-		
-		return $returnArray;
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see \Rubedo\Collection\AbstractCollection::destroy()
-	 */
-	public function destroy (array $obj, $options = array())
-	{
-	    $returnArray = parent::destroy($obj, $options);
-	    if ($returnArray["success"]) {
-	        $this->_unIndexDamType($obj);
-	    }
-	    return $returnArray;
-	}
-	
-	protected function _addDefaultWorkspace($obj){
-		
-		if(!isset($obj['workspaces']) || $obj['workspaces']=='' || $obj['workspaces']==array()){
-	        $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
-	        $obj['workspaces'] = array($mainWorkspace['id']);
-	    }
-				
-		return $obj;
-	}
+        $obj = $this->_addDefaultWorkspace($obj);
+        
+        $returnArray = parent::create($obj, $options);
+        
+        if ($returnArray["success"]) {
+            $this->_indexDamType($returnArray['data']);
+        }
+        
+        return $returnArray;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Collection\AbstractCollection::update()
+     */
+    public function update (array $obj, $options = array())
+    {
+        $obj = $this->_addDefaultWorkspace($obj);
+        
+        $returnArray = parent::update($obj, $options);
+        
+        if ($returnArray["success"]) {
+            $this->_indexDamType($returnArray['data']);
+        }
+        
+        return $returnArray;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Collection\AbstractCollection::destroy()
+     */
+    public function destroy (array $obj, $options = array())
+    {
+        $returnArray = parent::destroy($obj, $options);
+        if ($returnArray["success"]) {
+            $this->_unIndexDamType($obj);
+        }
+        return $returnArray;
+    }
+
+    protected function _addDefaultWorkspace ($obj)
+    {
+        if (! isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
+            $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
+            $obj['workspaces'] = array(
+                $mainWorkspace['id']
+            );
+        }
+        
+        return $obj;
+    }
 
     protected function _addReadableProperty ($obj)
     {
@@ -124,7 +145,6 @@ class DamTypes extends AbstractCollection implements IDamTypes
             );
         }
         
-        $aclServive = Manager::getService('Acl');
         $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         
         if (! Manager::getService('Acl')->hasAccess("write.ui.damTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 && ! in_array("all", $writeWorkspaces))) {
@@ -134,40 +154,38 @@ class DamTypes extends AbstractCollection implements IDamTypes
         }
         return $obj;
     }
-	
-    
+
     /**
      * Push the dam type to Elastic Search
      *
-     * @param array $obj
+     * @param array $obj            
      */
     protected function _indexDamType ($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-    
+        
         $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexDamType($obj['id'], $obj, TRUE);
         
-        $ElasticDataIndexService->indexByType('dam',$obj['id']);
-    
+        $ElasticDataIndexService->indexByType('dam', $obj['id']);
+        
         AbstractCollection::disableUserFilter($wasFiltered);
     }
-    
+
     /**
      * Remove the content type from Indexed Search
      *
-     * @param array $obj
+     * @param array $obj            
      */
     protected function _unIndexDamType ($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-    
+        
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteDamType($obj['id'], TRUE);
-    
+        
         AbstractCollection::disableUserFilter($wasFiltered);
     }
-	
 }

@@ -79,7 +79,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
         $form = Manager::getService('Forms')->findById($formId);
         
         $displayQnb = $this->getParam('display-qnb', false);
-        $fileTitle = $this->_filterName($form['title']);
+        $fileTitle = Manager::getService('Pages')->filterUrl($form['title']); // $this->_filterName($form['title']);
         
         $fileName = $fileTitle . '_' . $formId . '_' . date('Ymd') . '.csv';
         $filePath = sys_get_temp_dir() . '/' . $fileName;
@@ -144,28 +144,27 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
         foreach ($list['data'] as $response) {
             $csvLine = array(
                 Manager::getService('Date')->getDefaultDatetime($response['lastUpdateTime']),
-                $response['status']=='finished'?'oui':'non'
+                $response['status'] == 'finished' ? 'oui' : 'non'
             );
             foreach ($fieldsArray as $element) {
                 switch ($element['type']) {
                     case 'open':
-                        $csvLine[] = isset($response['data'][$element['value']])?$response['data'][$element['value']]:null;
+                        $csvLine[] = isset($response['data'][$element['value']]) ? $response['data'][$element['value']] : null;
                         break;
                     case 'simple':
-                        if(isset($response['data'][$element['value']]) && is_array($response['data'][$element['value']])){
+                        if (isset($response['data'][$element['value']]) && is_array($response['data'][$element['value']])) {
                             $result = array_pop($response['data'][$element['value']]);
                             $csvLine[] = $definiedAnswersArray[$result];
-                        }else{
+                        } else {
                             $csvLine[] = null;
                         }
-                        
                         
                         break;
                     case 'qcm':
                         foreach ($element['value']['items'] as $item) {
-                            if (isset($response['data'][$element['value']['id']])){
+                            if (isset($response['data'][$element['value']['id']])) {
                                 $csvLine[] = in_array($item, $response['data'][$element['value']['id']]);
-                            }else{
+                            } else {
                                 $csvLine[] = null;
                             }
                         }
@@ -191,85 +190,5 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
         $content = file_get_contents($filePath);
         echo utf8_decode($content);
         die();
-    }
-
-    protected function _filterName ($url)
-    {
-        mb_regex_encoding('UTF-8');
-        
-        $normalizeChars = array(
-            'Á' => 'A',
-            'À' => 'A',
-            'Â' => 'A',
-            'Ã' => 'A',
-            'Å' => 'A',
-            'Ä' => 'A',
-            'Æ' => 'AE',
-            'Ç' => 'C',
-            'É' => 'E',
-            'È' => 'E',
-            'Ê' => 'E',
-            'Ë' => 'E',
-            'Í' => 'I',
-            'Ì' => 'I',
-            'Î' => 'I',
-            'Ï' => 'I',
-            'Ð' => 'Eth',
-            'Ñ' => 'N',
-            'Ó' => 'O',
-            'Ò' => 'O',
-            'Ô' => 'O',
-            'Õ' => 'O',
-            'Ö' => 'O',
-            'Ø' => 'O',
-            'Ú' => 'U',
-            'Ù' => 'U',
-            'Û' => 'U',
-            'Ü' => 'U',
-            'Ý' => 'Y',
-            
-            'á' => 'a',
-            'à' => 'a',
-            'â' => 'a',
-            'ã' => 'a',
-            'å' => 'a',
-            'ä' => 'a',
-            'æ' => 'ae',
-            'ç' => 'c',
-            'é' => 'e',
-            'è' => 'e',
-            'ê' => 'e',
-            'ë' => 'e',
-            'í' => 'i',
-            'ì' => 'i',
-            'î' => 'i',
-            'ï' => 'i',
-            'ð' => 'eth',
-            'ñ' => 'n',
-            'ó' => 'o',
-            'ò' => 'o',
-            'ô' => 'o',
-            'õ' => 'o',
-            'ö' => 'o',
-            'ø' => 'o',
-            'ú' => 'u',
-            'ù' => 'u',
-            'û' => 'u',
-            'ü' => 'u',
-            'ý' => 'y',
-            
-            'ß' => 'sz',
-            'þ' => 'thorn',
-            'ÿ' => 'y',
-            ' ' => '-',
-            '\'' => '-'
-        );
-        
-        $url = strtr(trim($url), $normalizeChars);
-        $url = mb_strtolower($url, 'UTF-8');
-        $url = mb_ereg_replace("[^A-Za-z0-9\\.\\-]", "", $url);
-        $url = trim($url, '-');
-        
-        return $url;
     }
 }
