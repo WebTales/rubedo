@@ -274,6 +274,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function unsetTerms ($vocId, $termId)
     {
+        if(!$termId) {
+            throw new \Rubedo\Exceptions\Server("You can not unset a term without its id", "Exception92");
+        }
+        
         $data = array(
             '$unset' => array(
                 'taxonomy.' . $vocId . '.$' => 1
@@ -281,6 +285,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         );
         
         $filters = Filter::Factory('Value')->setName('taxonomy.' . $vocId)->setValue($termId);
+        
         return $this->_dataService->customUpdate($data, $filters);
     }
 

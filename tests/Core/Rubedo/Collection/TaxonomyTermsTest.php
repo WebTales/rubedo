@@ -44,12 +44,15 @@ class TaxonomyTermsTest extends PHPUnit_Framework_TestCase {
 	 * test if Destroy function works fine
 	 */
 	public function testDestroy(){
-	    $this->markTestSkipped();
 		$customReturn["ok"]=1;
 		$customReturn['n']=0;
 	
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete')
 						->will($this->returnValue($customReturn));
+		
+		$this->_mockDataAccessService->expects($this->once())->method('readChild')
+		                ->will($this->returnValue(array()));
+		
 		$obj["id"]="id";
 		$obj['vocabularyId'] = "test";
 		$taxonomyTermsService=new TaxonomyTerms();

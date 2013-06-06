@@ -223,14 +223,20 @@ class Pages extends AbstractCollection implements IPages
         
         // find site for $page ID
         $page = $service->findById($pageId);
-        // find site
-        $sitedId = $page['site'];
-        $site = $sitesService->findById($sitedId);
-        $defaultPage = $site['defaultSingle'];
-        // find children
-        $children = $service->_getChildToDelete($pageId);
-        // do site default page match a child ?
-        $response = in_array($defaultPage, $children);
+        
+        if($page) {
+            // find site
+            $sitedId = $page['site'];
+            $site = $sitesService->findById($sitedId);
+            $defaultPage = $site['defaultSingle'];
+            // find children
+            $children = $service->_getChildToDelete($pageId);
+            // do site default page match a child ?
+            $response = in_array($defaultPage, $children);
+        } else {
+            $response = false;
+        }
+        
         return ($response);
     }
 

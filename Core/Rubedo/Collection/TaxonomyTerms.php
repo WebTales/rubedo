@@ -396,10 +396,11 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
             throw new \Rubedo\Exceptions\Access('You can not destroy navigation terms', "Exception56");
         }
+        
         $childrenToDelete = $this->_getChildToDelete($obj['id']);
         
         foreach ($childrenToDelete as $child) {
-            $updateContent = Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
+            Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
         }
         
         $deleteCond = Filter::Factory('InUid')->setValue($childrenToDelete);
@@ -442,8 +443,14 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         // read children list
         $terms = $this->readChild($id);
         
+        if($terms === null) {
+            throw new \Rubedo\Exceptions\Server("Term id not found in database", "Exception93");
+        }
+        
         // for each child, get sublist of children
         if (is_array($terms)) {
+            $returnArray = array();
+            
             foreach ($terms as $key => $value) {
                 $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
             }

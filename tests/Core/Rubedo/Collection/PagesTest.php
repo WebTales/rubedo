@@ -57,7 +57,6 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNormalDestroy()
 	{
-	    $this->markTestSkipped();
 		$this->_mockDataAccessService->expects($this->once())->method('customDelete');
 		$this->_mockDataAccessService->expects($this->once())->method('readChild')->will($this->returnValue(array()));
 		$this->_mockUrlCacheService->expects($this->once())->method('customDelete');
