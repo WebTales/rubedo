@@ -6,7 +6,7 @@
 		"ext-gd": "*",
 		"ext-mongo": ">=1.3.0",
 		"twig/twig": "1.13.*",
-		"webtales/mongo-filters": "1.0.0",
+		"webtales/mongo-filters": "dev-master",
 		"twig/extensions": "1.0.*",
 		"ruflin/Elastica": "0.19.*",
 		"ezyang/htmlpurifier": "4.5.*",
