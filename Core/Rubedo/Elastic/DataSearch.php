@@ -489,7 +489,6 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Add label to Facets, hide facets with 1 result,
         $elasticaFacets = $elasticaResultSet->getFacets();
-        
         $result['facets'] = array();
         
         foreach ($elasticaFacets as $id => $facet) {
@@ -501,7 +500,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     case 'navigation':
                         
                         $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Navigation", 'Navigation');
-                        if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
+                        if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $taxonomyTermsService->getTerm($value['term'], 'navigation');
                                 $temp['terms'][$key]['label'] = $termItem["Navigation"];
@@ -557,7 +556,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     case 'date':
                         
                         $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ModificationDate", 'Modification date');
-                        if (array_key_exists('ranges', $temp) and count($temp['ranges']) > 1) {
+                        if (array_key_exists('ranges', $temp) and count($temp['ranges']) > 0) {
                             foreach ($temp['ranges'] as $key => $value) { 
                                 $rangeCount =  $temp['ranges'][$key]['count'];   
                                 // unset facet when count = 0 or total results count
@@ -579,7 +578,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                         
                         $vocabularyItem = Manager::getService('Taxonomy')->findById($id);
                         $temp['label'] = $vocabularyItem['name'];
-                        if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
+                        if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $taxonomyTermsService->findById($value['term']);
                                 $temp['terms'][$key]['label'] = $termItem['text'];
