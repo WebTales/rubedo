@@ -38,9 +38,8 @@ class Image implements IImage
         $imgHeight = $imgInfos[1];
         $mime = $imgInfos['mime'];
         list ($mainType, $type) = explode('/', $mime);
-        
+        unset($mainType);
         $gdCreateClassName = 'imagecreatefrom' . $type;
-        $gdReturnClassName = 'image' . $type;
         $image = $gdCreateClassName($fileName);
         
         $ratio = $imgWidth / $imgHeight;

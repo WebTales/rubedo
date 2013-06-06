@@ -112,7 +112,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if (! array_key_exists('query', $params))
             $params['query'] = $defaultVars['query'];
             
-        // Build global filter
+            // Build global filter
         
         $setFilter = false;
         $globalFilter = new \Elastica_Filter_And();
@@ -148,7 +148,6 @@ class DataSearch extends DataAbstract implements IDataSearch
             $beginFilter->addFilter($beginFilterNotExists);
             $beginFilter->addFilter($beginFilterValue);
             
-            
             // filter on end : not set or not ended
             $endFilter = new \Elastica_Filter_Or();
             $endFilterWithValue = new \Elastica_Filter_NumericRange('endPublicationDate', array(
@@ -160,8 +159,6 @@ class DataSearch extends DataAbstract implements IDataSearch
             $endFilter->addFilter($endFilterNotExists);
             $endFilter->addFilter($endFilterWithoutValue);
             $endFilter->addFilter($endFilterWithValue);
-            
-            
             
             // build complete filter
             $frontEndFilter = new \Elastica_Filter_And();
@@ -224,11 +221,13 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         
         // filter on date
-        if (array_key_exists('lastupdatetime',$params)) {         
-            $dateFilter = new \Elastica_Filter_Range('lastUpdateTime',array('from' => $params['lastupdatetime']));
+        if (array_key_exists('lastupdatetime', $params)) {
+            $dateFilter = new \Elastica_Filter_Range('lastUpdateTime', array(
+                'from' => $params['lastupdatetime']
+            ));
             $globalFilter->addFilter($dateFilter);
             $filters['lastupdatetime'] = $params['lastupdatetime'];
-            $setFilter = true;                      
+            $setFilter = true;
         }
         
         // filter on geolocalisation if inflat, suplat, inflon and suplon are set
@@ -260,7 +259,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 }
                 
                 foreach ($params[$vocabulary] as $term) {
-                    if(empty($term)){
+                    if (empty($term)) {
                         continue;
                     }
                     $taxonomyFilter = new \Elastica_Filter_Term();
@@ -283,7 +282,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Apply filter if needed
         if ($setFilter) {
             $elasticaQuery->setFilter($globalFilter);
-            //$elasticaQuery->setFields(array());
+            // $elasticaQuery->setFields(array());
         }
         
         // Define the type facet.
@@ -301,7 +300,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($setFilter)
             $elasticaFacetType->setFilter($globalFilter);
             
-        // Add type facet to the search query object.
+            // Add type facet to the search query object.
         $elasticaQuery->addFacet($elasticaFacetType);
         
         // Define the dam type facet.
@@ -319,7 +318,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($setFilter)
             $elasticaFacetDamType->setFilter($globalFilter);
             
-        // Add dam type facet to the search query object.
+            // Add dam type facet to the search query object.
         $elasticaQuery->addFacet($elasticaFacetDamType);
         
         // Define the author facet.
@@ -337,7 +336,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($setFilter)
             $elasticaFacetAuthor->setFilter($globalFilter);
             
-        // Add that facet to the search query object.
+            // Add that facet to the search query object.
         $elasticaQuery->addFacet($elasticaFacetAuthor);
         
         // Define the date facet.
@@ -345,7 +344,6 @@ class DataSearch extends DataAbstract implements IDataSearch
         $elasticaFacetDate->setField('lastUpdateTime');
         $d = Manager::getService('CurrentTime')->getCurrentTime();
         
-        $today = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d));
         $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d));
         $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d));
         $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d));
@@ -374,7 +372,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($setFilter)
             $elasticaFacetDate->setFilter($globalFilter);
             
-        // Add that facet to the search query object.
+            // Add that facet to the search query object.
         $elasticaQuery->addFacet($elasticaFacetDate);
         
         // Define taxonomy facets
@@ -440,20 +438,20 @@ class DataSearch extends DataAbstract implements IDataSearch
         foreach ($resultsList as $resultItem) {
             
             $data = $resultItem->getData();
-        
+            
             $data['id'] = $resultItem->getId();
             $data['typeId'] = $resultItem->getType();
             $score = $resultItem->getScore();
             if (! is_float($score))
-               $score = 1;
+                $score = 1;
             $data['score'] = round($score * 100);
             
             $data['title'] = $data['text'];
             
-            if ($withSummary and !isset( $data['summary'])) {
+            if ($withSummary and ! isset($data['summary'])) {
                 $data['summary'] = $data['text'];
             }
-
+            
             switch ($data['objectType']) {
                 case 'content':
                     $contentType = $this->_getContentType($data['contentType']);
@@ -481,8 +479,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $data['readOnly'] = false;
             } else {
                 $data['readOnly'] = true;
-            }   
-            //do not return attached file if exists : can't be declared not stored as any other fields
+            }
+            // do not return attached file if exists : can't be declared not stored as any other fields
             unset($data['file']);
             $result['data'][] = $data;
         }
@@ -557,15 +555,15 @@ class DataSearch extends DataAbstract implements IDataSearch
                         
                         $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ModificationDate", 'Modification date');
                         if (array_key_exists('ranges', $temp) and count($temp['ranges']) > 0) {
-                            foreach ($temp['ranges'] as $key => $value) { 
-                                $rangeCount =  $temp['ranges'][$key]['count'];   
+                            foreach ($temp['ranges'] as $key => $value) {
+                                $rangeCount = $temp['ranges'][$key]['count'];
                                 // unset facet when count = 0 or total results count
-                                if ($rangeCount>0 and $rangeCount<$result['total']) {                      
+                                if ($rangeCount > 0 and $rangeCount < $result['total']) {
                                     $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
                                 } else {
-                                    unset ($temp['ranges'][$key]);
+                                    unset($temp['ranges'][$key]);
                                 }
-                            }                 
+                            }
                         } else {
                             $renderFacet = false;
                         }
@@ -573,7 +571,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                         $temp["ranges"] = array_values($temp["ranges"]);
                         
                         break;
-                        
+                    
                     default:
                         
                         $vocabularyItem = Manager::getService('Taxonomy')->findById($id);
@@ -641,20 +639,20 @@ class DataSearch extends DataAbstract implements IDataSearch
                         )
                     );
                     break;
-
-                case 'lastupdatetime':             
+                
+                case 'lastupdatetime':
                     $temp = array(
-                            'id' => 'lastupdatetime',
-                            'label' => 'Date',
-                            'terms' => array(
-                                    array(
-                                            'term' => $termId,
-                                            'label' => $timeLabel[$termId]
-                                    )
+                        'id' => 'lastupdatetime',
+                        'label' => 'Date',
+                        'terms' => array(
+                            array(
+                                'term' => $termId,
+                                'label' => $timeLabel[$termId]
                             )
-                            );
-                            break;  
-                                   
+                        )
+                    );
+                    break;
+                
                 case 'query':
                     $temp = array(
                         'id' => $vocabularyId,
