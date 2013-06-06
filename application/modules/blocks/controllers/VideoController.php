@@ -32,21 +32,21 @@ class Blocks_videoController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array()); 
+        $blockConfig = $this->getParam('block-config', array());
         $site = $this->getParam('site');
         $output = $this->getAllParams();
         $output['videoAutoPlay'] = isset($blockConfig['videoAutoPlay']) ? $blockConfig['videoAutoPlay'] : false;
         $output['videoPreload'] = isset($blockConfig['videoPreload']) ? $blockConfig['videoPreload'] : false;
-		$output['videoControls'] = isset($blockConfig['videoControls']) ? $blockConfig['videoControls'] : false;
-		$output['videoLoop'] = isset($blockConfig['videoLoop']) ? $blockConfig['videoLoop'] : false;
+        $output['videoControls'] = isset($blockConfig['videoControls']) ? $blockConfig['videoControls'] : false;
+        $output['videoLoop'] = isset($blockConfig['videoLoop']) ? $blockConfig['videoLoop'] : false;
         $output['videoFile'] = isset($blockConfig['videoFile']) ? $blockConfig['videoFile'] : null;
-        $output['videoWidth'] = isset($blockConfig['videoWidth']) ? $blockConfig['videoWidth'].'px' : '100%';
-        $output['videoHeight'] = isset($blockConfig['videoHeight']) ? $blockConfig['videoHeight'].'px' : null;
+        $output['videoWidth'] = isset($blockConfig['videoWidth']) ? $blockConfig['videoWidth'] . 'px' : '100%';
+        $output['videoHeight'] = isset($blockConfig['videoHeight']) ? $blockConfig['videoHeight'] . 'px' : null;
         $output['videoPoster'] = isset($blockConfig['videoPoster']) ? $blockConfig['videoPoster'] : null;
-        $output['alternativeMediaArray']= array();
-        if($output['videoFile']){
+        $output['alternativeMediaArray'] = array();
+        if ($output['videoFile']) {
             $media = Manager::getService('Dam')->findById($output['videoFile']);
-            $output['contentType']=$media['Content-Type'];
+            $output['contentType'] = $media['Content-Type'];
             
             $mainFile = Manager::getService('Files')->findById($media['originalFileId']);
             if (! $mainFile instanceof MongoGridFSFile) {
@@ -55,15 +55,18 @@ class Blocks_videoController extends Blocks_AbstractController
             $meta = $mainFile->file;
             $filename = $meta['filename'];
             
-            $output['extension'] = pathinfo($filename,PATHINFO_EXTENSION);
+            $output['extension'] = pathinfo($filename, PATHINFO_EXTENSION);
             
-            $output['alt']= isset($media['fields']['alt'])?$media['fields']['alt']:'';
+            $output['alt'] = isset($media['fields']['alt']) ? $media['fields']['alt'] : '';
         }
-
+        
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/video.html.twig");
         
         $css = array();
-        $js = array('/components/longtailvideo/jwplayer/jwplayer.js','/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js"));
+        $js = array(
+            '/components/longtailvideo/jwplayer/jwplayer.js',
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js")
+        );
         $this->_sendResponse($output, $template, $css, $js);
     }
 }

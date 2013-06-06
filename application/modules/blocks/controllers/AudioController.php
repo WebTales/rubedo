@@ -32,18 +32,18 @@ class Blocks_AudioController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array()); 
+        $blockConfig = $this->getParam('block-config', array());
         $site = $this->getParam('site');
         $output = $this->getAllParams();
         $output['audioAutoPlay'] = isset($blockConfig['audioAutoPlay']) ? $blockConfig['audioAutoPlay'] : false;
         $output['audioPreload'] = isset($blockConfig['audioPreload']) ? $blockConfig['audioPreload'] : false;
-		$output['audioControls'] = isset($blockConfig['audioControls']) ? $blockConfig['audioControls'] : true;
-		$output['audioLoop'] = isset($blockConfig['audioLoop']) ? $blockConfig['audioLoop'] : false;
+        $output['audioControls'] = isset($blockConfig['audioControls']) ? $blockConfig['audioControls'] : true;
+        $output['audioLoop'] = isset($blockConfig['audioLoop']) ? $blockConfig['audioLoop'] : false;
         $output['audioFile'] = isset($blockConfig['audioFile']) ? $blockConfig['audioFile'] : null;
-        $output['alternativeMediaArray']= array();
-        if($output['audioFile']){
+        $output['alternativeMediaArray'] = array();
+        if ($output['audioFile']) {
             $media = Manager::getService('Dam')->findById($output['audioFile']);
-            $output['contentType']=$media['Content-Type'];
+            $output['contentType'] = $media['Content-Type'];
             
             $mainFile = Manager::getService('Files')->findById($media['originalFileId']);
             if (! $mainFile instanceof MongoGridFSFile) {
@@ -52,15 +52,18 @@ class Blocks_AudioController extends Blocks_AbstractController
             $meta = $mainFile->file;
             $filename = $meta['filename'];
             
-            $output['extension'] = pathinfo($filename,PATHINFO_EXTENSION);
+            $output['extension'] = pathinfo($filename, PATHINFO_EXTENSION);
             
-            $output['alt']= isset($media['fields']['alt'])?$media['fields']['alt']:'';
+            $output['alt'] = isset($media['fields']['alt']) ? $media['fields']['alt'] : '';
         }
-
+        
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/audio.html.twig");
         
         $css = array();
-        $js = array('/components/longtailvideo/jwplayer/jwplayer.js','/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js"));
+        $js = array(
+            '/components/longtailvideo/jwplayer/jwplayer.js',
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js")
+        );
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
