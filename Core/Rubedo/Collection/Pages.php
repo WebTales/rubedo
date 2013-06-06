@@ -54,8 +54,7 @@ class Pages extends AbstractCollection implements IPages
                 'unique' => true
             )
         )
-    )
-    ;
+    );
 
     protected $_model = array(
         'text' => array(
@@ -122,7 +121,7 @@ class Pages extends AbstractCollection implements IPages
 
     /**
      * Only access to content with read access
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init ()
@@ -272,7 +271,7 @@ class Pages extends AbstractCollection implements IPages
         if ($obj['inheritWorkspace']) {
             unset($obj['workspace']);
             $ancestorsLine = array_reverse($this->getAncestors($obj));
-            foreach ($ancestorsLine as $key => $ancestor) {
+            foreach ($ancestorsLine as $ancestor) {
                 if (isset($ancestor['inheritWorkspace']) && $ancestor['inheritWorkspace'] == false) {
                     $obj['workspace'] = $ancestor['workspace'];
                     break;
@@ -305,7 +304,7 @@ class Pages extends AbstractCollection implements IPages
         }
         
         // filter URL
-        $obj['pageURL'] = $this->_filterUrl($dataUrl);
+        $obj['pageURL'] = $this->filterUrl($dataUrl);
         if (isset($obj['id'])) {
             $obj = $this->writeBlocks($obj);
         }
@@ -383,7 +382,7 @@ class Pages extends AbstractCollection implements IPages
         return $result;
     }
 
-    protected function _filterUrl ($url)
+    public function filterUrl ($url)
     {
         mb_regex_encoding('UTF-8');
         
@@ -596,7 +595,7 @@ class Pages extends AbstractCollection implements IPages
         
         // for each child, get sublist of children
         if (is_array($terms)) {
-            foreach ($terms as $key => $value) {
+            foreach ($terms as $value) {
                 $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
             }
         }
