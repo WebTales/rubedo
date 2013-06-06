@@ -393,6 +393,7 @@ class DataAccess implements IDataAccess
     public function readTree (\WebTales\MongoFilters\IFilter $filters = null)
     {
         $read = $this->read($filters);
+        
         $dataStore = $read['data'];
         $dataStore[]=array('parentId'=>'none','id'=>'root');
         
