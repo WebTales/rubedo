@@ -180,7 +180,14 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         return $indexMapping;
     }
-
+    
+    /**
+     * Return all the vocabularies contained in the id list
+     * 
+     * @param array $data
+     *         contain vocabularies id of the current object
+     * @return array
+     */
     protected function _getVocabularies($data) {
         $vocabularies = array();
         foreach ($data['vocabularies'] as $vocabularyId) {
