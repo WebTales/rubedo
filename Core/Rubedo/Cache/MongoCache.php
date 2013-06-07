@@ -152,7 +152,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
      *            Array of tags
      * @return boolean true if no problem
      */
-    public function clean ($mode = \Zend_Cache::CLEANING_MODE_ALL)
+    public function clean ($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         switch ($mode) {
             case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
