@@ -121,9 +121,35 @@ class Backoffice_FileController extends Zend_Controller_Action
     }
     public function updateAction ()
     {
-        $params=$this->getRequest()->getParams();
-        Zend_Debug::dump($params);
-        die("reached");
+        $adapter = new Zend_File_Transfer_Adapter_Http();
+        
+        if (! $adapter->receive('image')) {
+            throw new \Rubedo\Exceptions\Server(implode("\n", $adapter->getMessages()));
+        }
+        
+        $filesArray = $adapter->getFileInfo();
+        
+        $fileInfos = $filesArray['image'];
+        
+        $mimeType = mime_content_type($fileInfos['tmp_name']);
+        
+        $fileService = Manager::getService('Files');
+        $originalId=$this->getRequest()->getParam("originalId");
+        $removeOldResult = $fileService->destroy(array(
+            'id' => $originalId,
+            'version' => 1
+        ));
+        $fileObj = array(
+            'serverFilename' => $fileInfos['tmp_name'],
+            'text' => $fileInfos['name'],
+            'filename' => $fileInfos['name'],
+            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
+            'mainFileType' => 'Image',
+            '_id' => new MongoId($originalId)
+        );
+        $updateResult=$fileService->create($fileObj);
+        $this->_helper->redirector->gotoUrl('/backoffice/resources/afterPixlr.html');
+        //just a test prototype, work in progress on this action
     }
 
     public function deleteAction ()
