@@ -110,7 +110,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             }
         } elseif ($filters instanceof \WebTales\MongoFilters\ValueFilter) { // adapt simple filters
             $key = $filters->getName();
-            $value = $filters->getValue();
+            //$value = $filters->getValue();
             
             if (! in_array($key, $this->_metaDataFields) && strpos($key, $this->_currentWs) === false && substr($key, 0, 1) != '$') {
                 $newKey = $this->_currentWs . "." . $key;

@@ -88,7 +88,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             );
             Rubedo\Services\Manager::setOptions($defaultArray);
         }
-        $serviceOptions = Rubedo\Services\Manager::getOptions();
+        //$serviceOptions = Rubedo\Services\Manager::getOptions();
         
         Rubedo\Interfaces\config::initInterfaces();
         /*

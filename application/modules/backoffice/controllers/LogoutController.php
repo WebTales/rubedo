@@ -48,7 +48,7 @@ class Backoffice_LogoutController extends Zend_Controller_Action
     public function indexAction ()
     {
         if ($this->_auth->getIdentity()) {
-            $result = $this->_auth->clearIdentity();
+            $this->_auth->clearIdentity();
             
             $response['success'] = true;
         }

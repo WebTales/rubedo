@@ -40,8 +40,6 @@ class Backoffice_UsersController extends Backoffice_DataAccessController
 
     public function changePasswordAction ()
     {
-        $hashService = \Rubedo\Services\Manager::getService('Hash');
-        
         $password = $this->getRequest()->getParam('password');
         $id = $this->getRequest()->getParam('id');
         $version = $this->getRequest()->getParam('version');

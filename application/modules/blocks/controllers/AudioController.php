@@ -33,7 +33,6 @@ class Blocks_AudioController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array());
-        $site = $this->getParam('site');
         $output = $this->getAllParams();
         $output['audioAutoPlay'] = isset($blockConfig['audioAutoPlay']) ? $blockConfig['audioAutoPlay'] : false;
         $output['audioPreload'] = isset($blockConfig['audioPreload']) ? $blockConfig['audioPreload'] : false;

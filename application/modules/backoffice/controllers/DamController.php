@@ -302,8 +302,6 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         
         $fileInfos = $filesArray[$name];
         
-        $finfo = new finfo(FILEINFO_MIME);
-        
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         
         if ($name == 'originalFileId') {

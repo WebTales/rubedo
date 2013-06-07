@@ -171,7 +171,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 // add contents to CT and terms to vocabularies
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
-                $csvColumns = fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
+                fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
                 $lineCounter = 0;
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
                     // add taxo terms if not already in correspondent vocabulary
@@ -262,7 +262,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                         "readOnly" => false
                     );
                     try {
-                        $newContent = $contentsService->create($contentParams, array(), false, false);
+                        $contentsService->create($contentParams, array(), false, false);
                         $lineCounter ++;
                     } catch (Exception $e) {}
                 }

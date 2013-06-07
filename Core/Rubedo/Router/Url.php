@@ -50,8 +50,7 @@ class Url implements IUrl
     public function getPageId ($url, $host)
     {
         if (false !== strpos($url, '?')) {
-            
-            list ($url, $querystring) = explode('?', $url);
+            list ($url) = explode('?', $url);
         }
         
         $site = Manager::getService('Sites')->findByHost($host);

@@ -62,7 +62,7 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
      */
     public function logoutAction ()
     {
-        $logout = $this->_dataService->clearIdentity();
+        $this->_dataService->clearIdentity();
         
         $response['success'] = true;
         return $this->_helper->json($response);

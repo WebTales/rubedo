@@ -41,7 +41,6 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         }
         
         $session = Manager::getService('Session');
-        $lang = $session->get('lang', 'fr');
         
         $currentPage = $this->getRequest()->getParam('currentPage');
         

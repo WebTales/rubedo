@@ -87,7 +87,6 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
         
         $fieldsArray = array();
         
-        $responsePages = array();
         $headerArray = array(
             'Date',
             'Terminé'

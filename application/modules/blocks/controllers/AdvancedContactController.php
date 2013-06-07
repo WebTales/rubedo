@@ -39,16 +39,10 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
             
             $errors = array();
             
-            $objectPath = "Blocks_Model_" . $formName;
-            
             $formPath = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/forms/" . $formName . ".html.twig");
             
             if (file_exists($formPath)) {
                 $form = Manager::getService('FrontOfficeTemplates')->render($formPath, array());
-                
-                /*
-                 * if(isset($blockConfig['captcha'])){ $form = new $objectPath(null, $blockConfig['captcha']); } else { $form = new $objectPath(); }
-                 */
                 
                 // Check if the form was send
                 if ($this->getParam("post")) {
@@ -61,7 +55,6 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
                     // Create a mailer object
                     $mailerService = Manager::getService('Mailer');
                     $mailerObject = $mailerService->getNewMessage();
-                    $stringRecipients = "";
                     
                     // Get recipients from block config
                     $recipients = $blockConfig['contacts'];

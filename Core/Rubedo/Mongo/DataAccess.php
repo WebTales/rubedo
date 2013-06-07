@@ -377,7 +377,7 @@ class DataAccess implements IDataAccess
             throw new \Rubedo\Exceptions\Server('$childrenArray should be an array', "Exception69", '$childrenArray');
         }
         
-        foreach ($childrenArray as $key => $value) {
+        foreach ($childrenArray as $value) {
             self::_deleteChild($value);
         }
         
@@ -665,7 +665,6 @@ class DataAccess implements IDataAccess
         
         $mongoID = $this->getId($id);
         
-        $updateArray = array();
         foreach ($obj as $key => $value) {
             if (in_array($key, array(
                 'createUser',
@@ -809,7 +808,7 @@ class DataAccess implements IDataAccess
         }
         
         // Delete all the children
-        foreach ($childrenArray as $key => $value) {
+        foreach ($childrenArray as $value) {
             $result = $this->_deleteChild($value);
             if ($result['success'] == false) {
                 $error = true;
@@ -933,7 +932,7 @@ class DataAccess implements IDataAccess
                 throw new \Rubedo\Exceptions\Server("Invalid sort array", "Exception83");
             }
             if (is_array($value)) {
-                foreach ($value as $operator => $subvalue) {
+                foreach ($value as $subvalue) {
                     if (! in_array(gettype($subvalue), array(
                         'string',
                         'float',

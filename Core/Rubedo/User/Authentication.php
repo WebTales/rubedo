@@ -139,7 +139,6 @@ class Authentication implements IAuthentication
      */
     public function getExpirationTime ()
     {
-        $namespace = new \Zend_Session_Namespace('Zend_Auth');
         return (isset($_SESSION['__ZF']['Zend_Auth']['ENT'])) ? ($_SESSION['__ZF']['Zend_Auth']['ENT'] - time()) : 0;
     }
 

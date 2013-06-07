@@ -46,7 +46,6 @@ class HtmlPurifier extends HtmlCleaner
             return parent::clean($html);
         }
         if (! isset(self::$_purifier)) {
-            $htmlPurifierBootstrap = new \HTMLPurifier_Bootstrap();
             $config = \HTMLPurifier_Config::createDefault();
             $config->set('Core.Encoding', 'UTF-8');
             $config->set('Cache.SerializerPath', APPLICATION_PATH . "/../cache/htmlpurifier");

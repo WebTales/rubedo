@@ -98,7 +98,7 @@ class FileAccess extends DataAccess implements IFileAccess
         
         $data = array();
         // switch from cursor to actual array
-        foreach ($cursor as $key => $value) {
+        foreach ($cursor as $value) {
             $data[] = $value;
         }
         
@@ -258,6 +258,7 @@ class FileAccess extends DataAccess implements IFileAccess
     {
         list ($type) = explode(';', $contentType);
         list ($subtype, $applicationType) = explode('/', $type);
+        unset($subtype);
         if ($applicationType == 'x-php') {
             return false;
         }
