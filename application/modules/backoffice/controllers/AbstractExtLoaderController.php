@@ -28,6 +28,9 @@ Use \Rubedo\Services\Manager;
 
 abstract class Backoffice_AbstractExtLoaderController extends Zend_Controller_Action
 {
+    /**
+     * Load ext apps for the backoffice and the front office
+     */
     protected function loadExtApps() {
         $extjsOptions = Zend_Registry::get('extjs');
         

@@ -16,6 +16,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
+require_once ('AbstractExtLoaderController.php');
+
 /**
  * Controller handling media finder for contribution
  *
@@ -23,7 +25,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_LinkFinderController extends Zend_Controller_Action
+class Backoffice_LinkFinderController extends Backoffice_AbstractExtLoaderController
 {
 
     /**
@@ -39,21 +41,7 @@ class Backoffice_LinkFinderController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl("/backoffice/login");
         }
         
-        $extjsOptions = Zend_Registry::get('extjs');
-        
-        if (isset($extjsOptions['network']) && $extjsOptions['network'] == 'cdn') {
-            $this->view->extJsPath = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
-        } else {
-            $this->view->extJsPath = $this->view->baseUrl() . '/components/sencha/extjs';
-        }
-        
-        if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {
-            $this->view->extJsScript = 'ext-all-debug.js';
-        } else {
-            $this->view->extJsScript = 'ext-all.js';
-        }
-        
-        $this->getHelper('Layout')->disableLayout();
+        $this->loadExtApps();
     }
 }
 
