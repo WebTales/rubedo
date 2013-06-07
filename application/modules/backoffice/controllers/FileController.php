@@ -119,6 +119,12 @@ class Backoffice_FileController extends Zend_Controller_Action
         
         $this->getResponse()->setBody($returnValue);
     }
+    public function updateAction ()
+    {
+        $params=$this->getRequest()->getParams();
+        Zend_Debug::dump($params);
+        die("reached");
+    }
 
     public function deleteAction ()
     {
