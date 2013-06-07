@@ -16,6 +16,8 @@
  */
 Use Rubedo\Services\Manager;
 
+require_once ('AbstractExtLoaderController.php');
+
 /**
  * Back Office Default Controller
  *
@@ -25,7 +27,7 @@ Use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_IndexController extends Zend_Controller_Action
+class Backoffice_IndexController extends Backoffice_AbstractExtLoaderController
 {
 
     /**
@@ -47,27 +49,7 @@ class Backoffice_IndexController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl($this->_helper->url('confirm-logout', 'logout', 'backoffice'));
         }
         
-        $extjsOptions = Zend_Registry::get('extjs');
-        
-        if (isset($extjsOptions['network']) && $extjsOptions['network'] == 'cdn') {
-            $this->view->extJsPath = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
-        } else {
-            $this->view->extJsPath = $this->view->baseUrl() . '/components/sencha/extjs';
-        }
-        // setting user language for loading proper extjs locale file
-        $this->view->userLang = 'en'; // default value
-        $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
-        if (! empty($currentUserLanguage)) {
-            $this->view->userLang = $currentUserLanguage;
-        }
-        
-        if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {
-            $this->view->extJsScript = 'ext-all-debug.js';
-        } else {
-            $this->view->extJsScript = 'ext-all.js';
-        }
-        
-        $this->getHelper('Layout')->disableLayout();
+        $this->loadExtApps();
     }
 }
 
