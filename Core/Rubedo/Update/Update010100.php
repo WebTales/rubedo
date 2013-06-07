@@ -75,7 +75,7 @@ class Update010100 extends Update
         $list = $service->getList();
         if ($list['count'] > 0) {
             foreach ($list['data'] as $item) {
-                $result = $service->update($item);
+                $service->update($item);
             }
         }
         

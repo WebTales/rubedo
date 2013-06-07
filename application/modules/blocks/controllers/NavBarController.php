@@ -77,8 +77,6 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $site = $this->getParam('site');
         $output['homePage'] = isset($site['homePage']) ? $site['homePage'] : null;
         
-        $session = Manager::getService('Session');
-        
         $output['currentPage'] = $this->getRequest()->getParam('currentPage');
         $this->currentPage = $output['currentPage'];
         

@@ -31,9 +31,7 @@ class Blocks_TwigController extends Blocks_AbstractController
      * Default Action, return the Ext/Js HTML loader
      */
     public function indexAction ()
-    {
-        $session = Manager::getService('Session');
-        
+    {        
         $output = $this->getAllParams();
         
         $templateName = $this->getRequest()->getParam('template', 'block.html');

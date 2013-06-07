@@ -58,7 +58,6 @@ class FileController extends Zend_Controller_Action
             
             $meta = $obj->file;
             $filename = $meta['filename'];
-            $nameSegment = explode('.', $filename);
             
             if (class_exists('finfo')) {
                 $finfo = new finfo(FILEINFO_MIME);

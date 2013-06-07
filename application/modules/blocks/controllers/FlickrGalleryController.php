@@ -61,7 +61,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
         }
         
         $cache = Rubedo\Services\Cache::getCache('flicker');
-        $cacheKey = 'flickr_items_' . md5(serialize($flParams));
+        //$cacheKey = 'flickr_items_' . md5(serialize($flParams));
         $cacheKeyCount = 'flickr_items_' . md5('count-' . serialize($flParams));
         $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
         

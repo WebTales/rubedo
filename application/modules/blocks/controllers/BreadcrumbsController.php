@@ -40,8 +40,6 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
             $rootPage = $site['homePage'];
         }
         
-        $session = Manager::getService('Session');
-        
         $currentPage = $this->getRequest()->getParam('currentPage');
         
         $output['currentPage'] = Manager::getService('Pages')->findById($currentPage);
