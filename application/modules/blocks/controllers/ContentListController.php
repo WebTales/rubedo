@@ -87,7 +87,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                     }
                 }
                 
-                foreach ($keyOrder as $key => $value) {
+                foreach ($keyOrder as $value) {
                     $contentArray["data"][] = $unorderedContentArray["data"][$value];
                 }
                 

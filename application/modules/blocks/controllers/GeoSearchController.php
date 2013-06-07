@@ -63,7 +63,6 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
             }
             if (! in_array($siteId, $params['navigation'])) {
                 $params['navigation'][] = $siteId;
-                $serverParams['navigation'][] = $siteId;
             }
         }
         // apply predefined facets

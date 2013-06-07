@@ -82,7 +82,7 @@ class Dam extends AbstractCollection implements IDam
     public function destroy (array $obj, $options = array())
     {
         $obj = $this->_dataService->findById($obj['id']);
-        Manager::getService('Files')->destroy(array(
+            Manager::getService('Files')->destroy(array(
             'id' => $obj['originalFileId']
         ));
         

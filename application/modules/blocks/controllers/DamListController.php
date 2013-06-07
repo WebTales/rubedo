@@ -41,7 +41,6 @@ class Blocks_DamListController extends Blocks_AbstractController
             $site = $this->getRequest()->getParam('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;
-            $serverParams['navigation'][] = $siteId;
         }
         if (isset($params['block-config']['sort']) && ($params['block-config']['sort'] == "desc")) {
             $params['orderbyDirection'] = 'desc';

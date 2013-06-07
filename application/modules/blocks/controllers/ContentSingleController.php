@@ -70,7 +70,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
-            $multiValuedArray = array();
             $CKEConfigArray = array();
             $contentTitlesArray = array();
             $output = $this->getAllParams();

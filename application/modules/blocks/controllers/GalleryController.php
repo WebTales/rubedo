@@ -72,7 +72,6 @@ class Blocks_GalleryController extends Blocks_ContentListController
             $query = Zend_Json::decode($this->getParam("query", Zend_Json::encode(null)));
             $filter = $this->setFilters($query);
         } else {
-            $isDraft = Zend_Registry::get('draft');
             // Get queryId, blockConfig and Datalist
             $blockConfig = $this->getRequest()->getParam('block-config');
             $limit = (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;

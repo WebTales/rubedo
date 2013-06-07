@@ -54,7 +54,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $blockConfig = $this->getRequest()->getParam('block-config');
         
         $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->getParam('date-field', 'date');
-        $endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->getParam('endDateField', 'date_end');
+        //$endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->getParam('endDateField', 'date_end');
         $usedDateField = 'fields.' . $dateField;
         
         $date = $this->getParam('cal-date');
@@ -83,11 +83,6 @@ class Blocks_CalendarController extends Blocks_ContentListController
             $queryFilter = Manager::getService('Queries')->getFilterArrayById($queryId);
             
             $queryType = $queryFilter["queryType"];
-            
-            $condition = array(
-                '$gte' => "$timestamp",
-                '$lt' => "$nextMonthTimeStamp"
-            );
             
             $dateFilter = Filter::Factory('And')->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)
                 ->setOperator('$gte')
@@ -123,7 +118,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
                     }
                 }
                 
-                foreach ($keyOrder as $key => $value) {
+                foreach ($keyOrder as $value) {
                     $contentArray["data"][] = $unorderedContentArray["data"][$value];
                 }
             } else {

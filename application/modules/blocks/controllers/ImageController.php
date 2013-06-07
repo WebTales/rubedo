@@ -34,7 +34,6 @@ class Blocks_ImageController extends Blocks_AbstractController
     {
         $blockConfig = $this->getParam('block-config', array());
         
-        $site = $this->getParam('site');
         $output = $this->getAllParams();
         $output['mode'] = isset($blockConfig['mode']) ? $blockConfig['mode'] : 'morph';
         $output['imageLink'] = isset($blockConfig['imageLink']) ? $blockConfig['imageLink'] : null;

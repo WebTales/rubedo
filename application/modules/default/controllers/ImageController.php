@@ -58,7 +58,7 @@ class ImageController extends Zend_Controller_Action
             }
             
             $filePath = sys_get_temp_dir() . '/' . $fileId;
-            $isWritten = $obj->write($filePath);
+            $obj->write($filePath);
             $meta = $obj->file;
             $filename = $meta['filename'];
         }
@@ -77,7 +77,7 @@ class ImageController extends Zend_Controller_Action
             
             $type = strtolower($extension);
             $type = ($type == 'jpg') ? 'jpeg' : $type;
-            $gdReturnClassName = 'image' . $type;
+            //$gdReturnClassName = 'image' . $type;
             
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileId . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             $now = Manager::getService('CurrentTime')->getCurrentTime();

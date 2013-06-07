@@ -33,7 +33,6 @@ class Blocks_TwigController extends Blocks_AbstractController
     public function indexAction ()
     {
         $session = Manager::getService('Session');
-        $lang = $session->get('lang', 'fr');
         
         $output = $this->getAllParams();
         

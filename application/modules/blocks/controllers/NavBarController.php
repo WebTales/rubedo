@@ -77,17 +77,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $site = $this->getParam('site');
         $output['homePage'] = isset($site['homePage']) ? $site['homePage'] : null;
         
-        $responsive = true;
-        
-        // responsive : true or false
-        
-        $position = "static-top";
-        
-        // position : none, fixed-top, fixed-bottom, static-top
-        $brand = "Rubedo";
-        
         $session = Manager::getService('Session');
-        $lang = $session->get('lang', 'fr');
         
         $output['currentPage'] = $this->getRequest()->getParam('currentPage');
         $this->currentPage = $output['currentPage'];
@@ -129,8 +119,6 @@ class Blocks_NavBarController extends Blocks_AbstractController
             
             $output['pages'][] = $tempArray;
         }
-        
-        $twigVar["data"] = $output;
         
         $css = array();
         $js = array();

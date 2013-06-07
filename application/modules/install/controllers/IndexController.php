@@ -39,7 +39,7 @@ class Install_IndexController extends Zend_Controller_Action
     {
         Rubedo\User\CurrentUser::setIsInstallerUser(true);
         
-        $wasFiltered = AbstractCollection::disableUserFilter();
+        AbstractCollection::disableUserFilter();
         $this->_helper->_layout->setLayout('install-layout');
         
         $this->_navigation = Install_Model_NavObject::getNav();
@@ -335,8 +335,6 @@ class Install_IndexController extends Zend_Controller_Action
             $this->_localConfig["phpSettings"] = $params;
         }
         
-        $connectionValid = true;
-        
         $this->view->isReady = true;
         
         $this->view->form = $dbForm;
@@ -451,7 +449,6 @@ class Install_IndexController extends Zend_Controller_Action
 
     protected function _isConfigWritable ()
     {
-        $isWritable = false;
         if (is_file($this->_localConfigFile)) {
             return is_writable($this->_localConfigFile);
         } else {

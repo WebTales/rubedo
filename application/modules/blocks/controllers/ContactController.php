@@ -50,7 +50,6 @@ class Blocks_ContactController extends Blocks_AbstractController
                     // Create a mailer object
                     $mailerService = Manager::getService('Mailer');
                     $mailerObject = $mailerService->getNewMessage();
-                    $stringRecipients = "";
                     
                     // Get recipients from block config
                     $recipients = $blockConfig['contacts'];

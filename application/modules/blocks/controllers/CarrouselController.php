@@ -33,7 +33,6 @@ class Blocks_CarrouselController extends Blocks_ContentListController
     public function indexAction ()
     {
         $this->_dataReader = Manager::getService('Contents');
-        $isDraft = Zend_Registry::get('draft');
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getRequest()->getParam('block-config');
         
@@ -61,7 +60,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
                     }
                 }
                 
-                foreach ($keyOrder as $key => $value) {
+                foreach ($keyOrder as $value) {
                     $contentArray["data"][] = $unorderedContentArray["data"][$value];
                 }
                 

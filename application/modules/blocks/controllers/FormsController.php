@@ -359,7 +359,6 @@ class Blocks_FormsController extends Blocks_AbstractController
             
             // mise à jour du status de la réponse
             $this->_formResponse["status"] = "pending";
-            $currentPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
             // $this->_formResponse["lastAnsweredPage"]=$this->formsSessionArray[$this->_formId]['currentFormPage'];
             if (intval($this->formsSessionArray[$this->_formId]['currentFormPage']) > $this->_lastAnsweredPage && $this->_lastAnsweredPage > 0) {
                 $this->_formResponse["lastAnsweredPage"][] = $this->_lastAnsweredPage;

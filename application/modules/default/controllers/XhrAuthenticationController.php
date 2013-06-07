@@ -75,7 +75,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
      */
     public function logoutAction ()
     {
-        $logout = $this->_auth->clearIdentity();
+        $this->_auth->clearIdentity();
         
         $response['success'] = true;
         return $this->_helper->json($response);

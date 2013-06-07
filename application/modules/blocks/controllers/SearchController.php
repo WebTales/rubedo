@@ -40,7 +40,6 @@ class Blocks_SearchController extends Blocks_AbstractController
             $site = $this->getRequest()->getParam('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;
-            $serverParams['navigation'][] = $siteId;
         }
         
         // apply predefined facets

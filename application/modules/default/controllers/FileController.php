@@ -50,7 +50,7 @@ class FileController extends Zend_Controller_Action
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
-                $isWritten = $obj->write($tmpImagePath);
+                $obj->write($tmpImagePath);
             }
             
             $filelength = filesize($tmpImagePath);
@@ -59,7 +59,7 @@ class FileController extends Zend_Controller_Action
             $meta = $obj->file;
             $filename = $meta['filename'];
             $nameSegment = explode('.', $filename);
-            $extension = array_pop($nameSegment);
+            
             if (class_exists('finfo')) {
                 $finfo = new finfo(FILEINFO_MIME);
                 $mimeType = $finfo->file($tmpImagePath);
