@@ -22,7 +22,7 @@
     
     
     {% if contentId %}
-    <link rel="canonical" href="{{ displayCanonicalUrl(contentId) }}"/>
+    <link rel="canonical" href="{{ displayUrl(contentId, "canonical") }}"/>
     {% endif %}
     
     {% endblock %} 

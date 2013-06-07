@@ -1,5 +1,5 @@
 {% filter escape('js') %}
-<a href="{{ displaySingleUrl(content.id,null,singlePage) }}">
+<a href="{{ displayUrl(content.id,"default",null,singlePage) }}">
 
 	<div class="pull-left">
 		{% if content.image %} <img alt="" class="img-rounded"

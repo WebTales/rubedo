@@ -45,7 +45,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 				 
 		
 		$urlService = new Rubedo\Router\Url();
-		$urlService->displaySingleUrl('toto');
+		$urlService->displayUrl('toto');
 		
 		
 	}
@@ -60,7 +60,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 				 
 		
 		$urlService = new Rubedo\Router\Url();
-		$urlService->displaySingleUrl('toto','siteId');
+		$urlService->displayUrl('toto', "default", 'siteId');
 		
 		
 	}
@@ -90,6 +90,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
                  ->method('getHost');
 				 
 		$urlService = new Rubedo\Router\Url();
-		$urlService->displaySingleUrl('Content','siteId');
+		$urlService->displayUrl('Content', "default", 'siteId');
 	}	
 }

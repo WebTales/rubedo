@@ -181,6 +181,16 @@ class DataIndex extends DataAbstract implements IDataIndex
         return $indexMapping;
     }
 
+    protected function _getVocabularies($data) {
+        $vocabularies = array();
+        foreach ($data['vocabularies'] as $vocabularyId) {
+            $vocabulary = Manager::getService('Taxonomy')->findById($vocabularyId);
+            $vocabularies[] = $vocabulary['name'];
+        }
+        
+        return $vocabularies;
+    }
+    
     /**
      * Index ES type for new or updated content type
      *
@@ -206,12 +216,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
         }
         
-        // Get vocabularies for current content type
-        $vocabularies = array();
-        foreach ($data['vocabularies'] as $vocabularyId) {
-            $vocabulary = Manager::getService('Taxonomy')->findById($vocabularyId);
-            $vocabularies[] = $vocabulary['name'];
-        }
+        $vocabularies = $this->_getVocabularies($data);
         
         // Create mapping
         if (isset($data["fields"]) && is_array($data["fields"])) {
@@ -321,12 +326,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
         }
         
-        // Get vocabularies for current dam type
-        $vocabularies = array();
-        foreach ($data['vocabularies'] as $vocabularyId) {
-            $vocabulary = Manager::getService('Taxonomy')->findById($vocabularyId);
-            $vocabularies[] = $vocabulary['name'];
-        }
+        $vocabularies = $this->_getVocabularies($data);
         
         // Create mapping
         if (isset($data["fields"]) && is_array($data["fields"])) {

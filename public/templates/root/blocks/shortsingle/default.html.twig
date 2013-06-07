@@ -2,7 +2,7 @@
 	
 	<header class="entry-header">
 		<h2 class="post-title-small">
-			<a href='{{ displaySingleUrl(content.id,null,singlePage) }}' title='{{content.title}}'>{{content.title}}</a>
+			<a href='{{ displayUrl(content.id,"default",null,singlePage) }}' title='{{content.title}}'>{{content.title}}</a>
 		</h2>
 	</header>
 	
@@ -21,6 +21,6 @@
 	        <div class="pull-left">{% include "/root/blocks/fields/date.html.twig" with {"data": content, "key": "date"} %}</div>
 	    {% endif %}
     	{% include "/root/blocks/edition/full-edition-button.html.twig" with { "data" : content, "alignRight" : true } %}
-    	<a class="pull-right" href="{{ displaySingleUrl(content.id,null,singlePage) }}">En savoir plus</a>
+    	<a class="pull-right" href="{{ displayUrl(content.id,"default",null,singlePage) }}">En savoir plus</a>
 	</div>
 </div>
