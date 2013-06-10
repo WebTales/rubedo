@@ -145,17 +145,6 @@ interface IDataAccess
      */
     public function addFilter (\WebTales\MongoFilters\IFilter $filter);
 
-    /**
-     * Add a OR filter condition to the service
-     *
-     * Filter should be an array of array('field'=>'value')
-     *
-     * @deprecated
-     *
-     * @param array $filter
-     *            Native Mongo syntax filter array
-     */
-    public function addOrFilter (array $condArray);
 
     /**
      * Return the current MongoDB conditions.

@@ -867,24 +867,6 @@ class DataAccess implements IDataAccess
     }
 
     /**
-     * Add a OR filter condition to the service
-     *
-     * Filter should be an array of array('field'=>'value')
-     *
-     * @param array $filter
-     *            Native Mongo syntax filter array
-     */
-    public function addOrFilter (array $condArray)
-    {
-        throw new \Exception('method obsolete');
-        if (! isset($this->_filters['$or'])) {
-            $this->_filters['$or'] = array();
-        }
-        
-        $this->_filters['$or'] = array_merge($this->_filters['$or'], $condArray);
-    }
-
-    /**
      * Unset all filter condition to the service
      */
     public function clearFilter ()
