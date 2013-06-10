@@ -148,6 +148,18 @@ class Backoffice_FileController extends Zend_Controller_Action
             '_id' => new MongoId($originalId)
         );
         $updateResult=$fileService->create($fileObj);
+        
+        //trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
+        $directoryIterator = new DirectoryIterator(sys_get_temp_dir());
+        foreach ($directoryIterator as $file){
+            if($file->isDot()){
+                continue;
+            }
+            if(strpos($originalId.'_',$file->getFilename())===0){
+                unlink($file->getPathname());
+            }
+        }
+        
         $this->_helper->redirector->gotoUrl('/backoffice/resources/afterPixlr.html');
         //just a test prototype, work in progress on this action
     }
