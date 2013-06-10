@@ -5,7 +5,7 @@ return array(
         'display_errors' => '1'
     ),
     'bootstrap' => array(
-        'path' => '/Users/jbourdin/Projects/rubedo/application/Bootstrap.php',
+        'path' => APPLICATION_PATH.'/Bootstrap.php',
         'class' => 'Bootstrap'
     ),
     'appnamespace' => 'Application',
@@ -14,10 +14,10 @@ return array(
             'plugins' => array(
                 'main' => 'Application_Plugin_Main'
             ),
-            'moduledirectory' => '/Users/jbourdin/Projects/rubedo/application/modules',
+            'moduledirectory' => APPLICATION_PATH.'/modules',
             'defaultmodule' => 'default',
             'actionHelperPaths' => array(
-                'Controller_Helper' => '/Users/jbourdin/Projects/rubedo/application/modules/default/controllers/helpers'
+                'Controller_Helper' => APPLICATION_PATH.'/modules/default/controllers/helpers'
             ),
             'params' => array(
                 'displayExceptions' => '1'
@@ -27,7 +27,7 @@ return array(
             0 => ''
         ),
         'layout' => array(
-            'layoutPath' => '/Users/jbourdin/Projects/rubedo/application/modules/default/views/layouts/'
+            'layoutPath' => APPLICATION_PATH.'/modules/default/views/layouts/'
         ),
         'session' => array(
             'use_only_cookies' => '1',
