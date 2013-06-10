@@ -261,8 +261,9 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true);
         if ($uploadResult['success']) {
-            $obj['title'] = $uploadResult['data']['text'];
-            $obj['fields']['title'] = $uploadResult['data']['text'];
+            $properName=explode(".", $uploadResult['data']['text']);
+            $obj['title'] = $properName[0];
+            $obj['fields']['title'] = $properName[0];
             $obj['originalFileId'] = $uploadResult['data']['id'];
         } else {
             return $this->_returnJson($uploadResult);
