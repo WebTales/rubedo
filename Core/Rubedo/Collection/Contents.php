@@ -206,10 +206,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
             );
         }
         
-        if ($returnArray["success"] and $live) {
-            $this->_indexContent($returnArray['data']);
-        }
-        
         return $returnArray;
     }
     
