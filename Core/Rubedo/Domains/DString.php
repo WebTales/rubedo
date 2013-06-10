@@ -24,21 +24,7 @@ namespace Rubedo\Domains;
  * @author jbourdin
  *        
  */
-class DString implements IDomains
+class DString extends AbstractString
 {
 
-    /**
-     * Check if a value is valid for the current domain
-     *
-     * @param mixed $value            
-     * @return boolean
-     * @see Rubedo\Domains\IDomains::isValid()
-     */
-    public static function isValid ($value)
-    {
-        if (! is_string($value)) {
-            return false;
-        }
-        return true;
-    }
 }

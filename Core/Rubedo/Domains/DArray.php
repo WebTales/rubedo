@@ -24,21 +24,7 @@ namespace Rubedo\Domains;
  * @author jbourdin
  *        
  */
-class DArray implements IDomains
+class DArray extends AbstractArray
 {
 
-    /**
-     * Check if a value is valid for the current domain
-     *
-     * @param mixed $value            
-     * @return boolean
-     * @see Rubedo\Domains\IDomains::isValid()
-     */
-    public static function isValid ($value)
-    {
-        if (! is_array($value)) {
-            return false;
-        }
-        return true;
-    }
 }

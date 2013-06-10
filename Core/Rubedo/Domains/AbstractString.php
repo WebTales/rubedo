@@ -14,17 +14,32 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 namespace Rubedo\Domains;
 
 /**
- * Validator for "list" Domain
+ * Abstract validator for "Array" and "List" Domains
  *
- * Should be an array
+ * Should be an array or a list
  *
- * @author jbourdin
+ * @author mgoncalves
  *        
  */
-class DList extends AbstractArray
+abstract class AbstractString implements IDomains
 {
 
+    /**
+     * Check if a value is valid for the current domain
+     *
+     * @param mixed $value            
+     * @return boolean
+     * @see Rubedo\Domains\IDomains::isValid()
+     */
+    public static function isValid ($value)
+    {
+        if (! is_array($value)) {
+            return false;
+        }
+        return true;
+    }
 }
