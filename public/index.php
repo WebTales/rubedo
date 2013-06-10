@@ -39,9 +39,12 @@ if (! defined('INCLUDE_PATH_CONFIGURED')) {
 
 require_once 'autoload.php';
 
-$optionsObject = new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', APPLICATION_ENV, array(
+$optionsObject = new Zend_Config(require APPLICATION_PATH . '/configs/application.config.php', array(
     'allowModifications' => true
 ));
+
+
+
 
 if (is_file(APPLICATION_PATH . '/configs/local/config.json')) {
     $localOptionsObject = new Zend_Config_Json(
