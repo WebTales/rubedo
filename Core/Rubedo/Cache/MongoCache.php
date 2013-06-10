@@ -80,7 +80,7 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
      */
     public function test ($id)
     {
-        $obj = $this->_dataService->findByCacheId($id, $time);
+        $obj = $this->_dataService->findByCacheId($id);
         
         if ($obj) {
             if (isset($obj['lastUpdateTime'])) {
