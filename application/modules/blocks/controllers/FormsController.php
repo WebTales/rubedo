@@ -346,6 +346,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     {
         foreach ($pageId["elements"] as $field) {
             foreach ($this->_formResponse["data"] as $key => $fieldOnDb) {
+                unset($fieldOnDb);
                 if ($field["id"] == $key) {
                     unset($this->_formResponse["data"][$key]);
                 }

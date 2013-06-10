@@ -37,9 +37,9 @@ class Route extends \Zend_Controller_Router_Route_Abstract implements \Zend_Cont
     /**
      * Instantiates route based on passed Zend_Config structure
      */
-    //public static function getInstance (\Zend_Config $config)
     public static function getInstance (\Zend_Config $config)
     {
+        unset($config);//not used, just an interface requirement
         $frontController = \Zend_Controller_Front::getInstance();
         
         $defs = array();

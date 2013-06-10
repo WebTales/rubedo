@@ -666,6 +666,7 @@ class DataAccess implements IDataAccess
         $mongoID = $this->getId($id);
         
         foreach ($obj as $key => $value) {
+            unset($value);
             if (in_array($key, array(
                 'createUser',
                 'createTime'
