@@ -16,9 +16,6 @@
  */
 namespace Rubedo\Update;
 
-Use Rubedo\Collection\AbstractCollection;
-use Rubedo\Services\Manager;
-use WebTales\MongoFilters\Filter;
 
 /**
  * Methods for update tool
