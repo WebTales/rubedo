@@ -31,6 +31,8 @@ use Rubedo\Interfaces\Services\IServicesManager, Rubedo\Interfaces\config;
 class Manager implements IServicesManager
 {
 
+    protected static $_serviceLocator;
+
     /**
      * array of current service parameters
      *
@@ -46,7 +48,7 @@ class Manager implements IServicesManager
     /**
      * Reset the mockObject array for isolation purpose
      */
-    public static function resetMocks ()
+    public static function resetMocks()
     {
         self::$_mockServicesArray = array();
     }
@@ -59,7 +61,7 @@ class Manager implements IServicesManager
      * @param object $obj
      *            mock object substituted to the service
      */
-    public static function setMockService ($serviceName, $obj)
+    public static function setMockService($serviceName, $obj)
     {
         self::$_mockServicesArray[$serviceName] = $obj;
     }
@@ -69,10 +71,10 @@ class Manager implements IServicesManager
      *
      * @param array $options            
      */
-    public static function setOptions ($options)
+    public static function setOptions($options)
     {
         if ('array' !== gettype($options)) {
-            throw new \Rubedo\Exceptions\Server('Services parameters should be an array', "Exception69", "Services parameters");
+            throw new \Rubedo\Exceptions\Server('Services parameters should be an array');
         }
         self::$_servicesOptions = $options;
     }
@@ -82,7 +84,7 @@ class Manager implements IServicesManager
      *
      * @return array array of all the services
      */
-    public static function getOptions ()
+    public static function getOptions()
     {
         return self::$_servicesOptions;
     }
@@ -97,10 +99,12 @@ class Manager implements IServicesManager
      *            name of the service
      * @return static instance of the manager
      */
-    public static function getService ($serviceName)
+    public static function getService($serviceName)
     {
+        return self::getServiceLocator()->get($serviceName);
+        
         if (gettype($serviceName) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('getService only accept string argument', "Exception70");
+            throw new \Rubedo\Exceptions\Server('getService only accept string argument');
         }
         
         if (isset(static::$_mockServicesArray[$serviceName])) {
@@ -124,22 +128,40 @@ class Manager implements IServicesManager
      *            name of the service
      * @return string class to instanciate
      */
-    protected static function resolveName ($serviceName)
+    protected static function resolveName($serviceName)
     {
         $options = self::$_servicesOptions;
         
         if (isset($options[$serviceName]['class'])) {
             $className = $options[$serviceName]['class'];
         } else {
-            throw new \Rubedo\Exceptions\Server('Classe name for %1$s service should be defined in config file', "Exception71", $serviceName);
+            throw new \Rubedo\Exceptions\Server('Classe name for ' . $serviceName . ' service should be defined in config file');
         }
         if (! $interfaceName = config::getInterface($serviceName)) {
-            throw new \Rubedo\Exceptions\Server('%1$s isn\'t declared in service interface config', "Exception72", $serviceName);
+            throw new \Rubedo\Exceptions\Server($serviceName . ' isn\'t declared in service interface config');
         }
         if (! in_array($interfaceName, class_implements($className))) {
-            throw new \Rubedo\Exceptions\Server('%1$s don\'t implement %2$s', "Exception73", $className, $interfaceName);
+            throw new \Rubedo\Exceptions\Server($className . ' don\'t implement ' . $interfaceName);
         }
         
         return $className;
+    }
+
+    /**
+     *
+     * @return the $_serviceLocator
+     */
+    public static function getServiceLocator()
+    {
+        return Manager::$_serviceLocator;
+    }
+
+    /**
+     *
+     * @param field_type $_serviceLocator            
+     */
+    public static function setServiceLocator($_serviceLocator)
+    {
+        Manager::$_serviceLocator = $_serviceLocator;
     }
 }
