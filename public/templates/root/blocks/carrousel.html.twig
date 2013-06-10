@@ -15,7 +15,7 @@
     	<div class="carousel-inner">
     		{% for slide in items %}
         		<div class="item {%if loop.first %}active{%endif%}" >
-        			<a href="{{ displaySingleUrl(slide.id,null,singlePage) }}">
+        			<a href="{{ displayUrl(slide.id,"default",null,singlePage) }}">
             			{% if slide.image %}
             			    <img src="/dam?media-id={{slide.image}}{% if imageWidth %}&amp;width={{ imageWidth }}{% endif %}{% if imageHeight %}&amp;height={{ imageHeight }}{% endif %}&amp;mode={{ mode }}" alt="{{slide.text}}" title="#htmlcaption_{{prefix}}_{{slide.id}}" class="carrousel-img" />
             			{% endif %}

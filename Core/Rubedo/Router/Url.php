@@ -244,12 +244,14 @@ class Url implements IUrl
      *
      * @param string $contentId
      *            Id of the content to display
+     * @param string $type
+     *            Type of the URL : "default" or "cononical"
      * @param string $siteId
      *            Id of the site
      *            
      * @return string Url
      */
-    public function displaySingleUrl ($contentId, $siteId = null, $defaultPage = null)
+    public function displayUrl ($contentId, $type = "default", $siteId = null, $defaultPage = null)
     {
         $pageValid = false;
         if ($siteId === null) {
@@ -265,6 +267,7 @@ class Url implements IUrl
             $ws = 'live';
         }
         $content = Manager::getService('Contents')->findById($contentId, $ws === 'live', false);
+        
         if (isset($content[$ws]['taxonomy']['navigation'])) {
             foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
                 $page = Manager::getService('Pages')->findById($pageId);
@@ -276,77 +279,24 @@ class Url implements IUrl
         }
         
         if (! $pageValid) {
-            if ($defaultPage) {
-                $pageId = $defaultPage;
-            } else {
-                $pageId = Manager::getService('PageContent')->getCurrentPage();
-                $page = Manager::getService('Pages')->findById($pageId);
-                if (isset($page['maskId'])) {
-                    $mask = Manager::getService('Masks')->findById($page['maskId']);
-                    if (! isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
-                        $pageId = $this->_getDefaultSingleBySiteID($siteId);
+            if($type == "default") {
+                if ($defaultPage) {
+                    $pageId = $defaultPage;
+                } else {
+                    $pageId = Manager::getService('PageContent')->getCurrentPage();
+                    $page = Manager::getService('Pages')->findById($pageId);
+                    if (isset($page['maskId'])) {
+                        $mask = Manager::getService('Masks')->findById($page['maskId']);
+                        if (! isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
+                            $pageId = $this->_getDefaultSingleBySiteID($siteId);
+                        }
                     }
                 }
-            }
-        }
-        
-        if ($pageId) {
-            $data = array(
-                'pageId' => $pageId,
-                'content-id' => $contentId
-            );
-            $pageUrl = $this->url($data, 'rewrite', true);
-            if ($doNotAddSite) {
-                return $pageUrl;
+            } elseif ($type == "canonical") {
+                $pageId = $this->_getDefaultSingleBySiteID($siteId);
             } else {
-                
-                return 'http://' . Manager::getService('Sites')->getHost($siteId) . $pageUrl;
+                throw new \Rubedo\Exceptions\Server("You must specify a good type of URL : default or canonical", "Exception94");
             }
-        } else {
-            return '#';
-        }
-    }
-
-    /**
-     * Return the url of the single content page of the site if the single page
-     * exist
-     *
-     * @param string $contentId
-     *            Id of the content to display
-     * @param string $siteId
-     *            Id of the site
-     *            
-     * @return string Url
-     */
-    public function displayCanonicalUrl ($contentId, $siteId = null)
-    {
-        $pageValid = false;
-        if ($siteId === null) {
-            $doNotAddSite = true;
-            $siteId = Manager::getService('PageContent')->getCurrentSite();
-        } else {
-            $doNotAddSite = false;
-        }
-        
-        if (\Zend_Registry::getInstance()->offsetExists('draft')) {
-            $ws = \Zend_Registry::get('draft') ? 'draft' : 'live';
-        } else {
-            $ws = 'live';
-        }
-        $content = Manager::getService('Contents')->findById($contentId, $ws === 'live', false);
-        
-        if (isset($content[$ws]['taxonomy']['navigation'])) {
-            foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
-                $page = Manager::getService('Pages')->findById($pageId);
-                if ($page && $page['site'] == $siteId) {
-                    $pageValid = true;
-                    break;
-                }
-            }
-        }
-        
-        if (! $pageValid) {
-            $pageId = $this->_getDefaultSingleBySiteID($siteId);
         }
         
         if ($pageId) {
@@ -354,7 +304,15 @@ class Url implements IUrl
                 'pageId' => $pageId,
                 'content-id' => $contentId
             );
-            $pageUrl = $this->url($data, null, true);
+            
+            if($type == "default") {
+                $pageUrl = $this->url($data, 'rewrite', true);
+            } elseif ($type == "canonical") {
+                $pageUrl = $this->url($data, null, true);
+            } else {
+                throw new \Rubedo\Exceptions\Server("You must specify a good type of URL : default or canonical", "Exception94");
+            }
+            
             if ($doNotAddSite) {
                 return $pageUrl;
             } else {

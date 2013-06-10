@@ -111,8 +111,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         )));
         
         $this->_twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
-        $this->_twig->addFunction('displaySingleUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displaySingleUrl'));
-        $this->_twig->addFunction('displayCanonicalUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayCanonicalUrl'));
+        $this->_twig->addFunction('displayUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayUrl'));
         $this->_twig->addFunction('getPageTitle', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getPageTitle'));
         $this->_twig->addFunction('getLinkedContents', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getLinkedContents'));
         $this->_twig->addFunction('getTaxonomyTerm', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getTaxonomyTerm'));
@@ -219,9 +218,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
     }
 
-    public static function displaySingleUrl ($contentId, $siteId = null, $defaultUrl = null)
+    public static function displayUrl ($contentId, $type = "default", $siteId = null, $defaultUrl = null)
     {
-        return Manager::getService('Url')->displaySingleUrl($contentId, $siteId, $defaultUrl);
+        return Manager::getService('Url')->displayUrl($contentId, $type, $siteId, $defaultUrl);
     }
 
     public static function getPageTitle ($contentId)
@@ -232,11 +231,6 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         } else {
             return null;
         }
-    }
-
-    public static function displayCanonicalUrl ($contentId, $siteId = null)
-    {
-        return Manager::getService('Url')->displayCanonicalUrl($contentId, $siteId);
     }
 
     public static function getLinkedContents ($contentId, $typeId, $fieldName, $sort = null)

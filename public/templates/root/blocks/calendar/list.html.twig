@@ -1,7 +1,7 @@
 <ul id="calendar-items-{{ caldate }}" class="nav nav-tabs nav-stacked active">
 	{% for content in data %}
 	<li>
-	<a href="{{ displaySingleUrl(content.id,null,singlePage) }}">
+	<a href="{{ displayUrl(content.id,"default",null,singlePage) }}">
 	    
 	    <div class="pull-left">
 	        {% if content.image %}
