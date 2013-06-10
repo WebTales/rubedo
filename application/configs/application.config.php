@@ -196,6 +196,9 @@ return array(
         'RubedoVersion' => array(
             'class' => 'Rubedo\\Collection\\RubedoVersion'
         ),
+        'Directories' => array(
+            'class' => 'Rubedo\\Collection\\Directories'
+        ),
         'Translate' => array(
             'class' => 'Rubedo\\Internationalization\\Translate'
         )
