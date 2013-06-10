@@ -167,6 +167,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $newArray = array();
             
             foreach ($fieldsArray as $key => $value) {
+                unset($value);
                 if (in_array($key, $this->_metaDataFields)) {
                     $newArray[] = $key;
                 } else {
@@ -194,6 +195,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $newArray = array();
             
             foreach ($fieldsArray as $key => $value) {
+                unset($value);
                 if (in_array($key, $this->_metaDataFields)) {
                     $newArray[] = $key;
                 } else {
