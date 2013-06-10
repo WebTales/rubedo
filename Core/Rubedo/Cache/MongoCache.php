@@ -14,7 +14,8 @@
  */
 namespace Rubedo\Cache;
 
-Use Rubedo\Services\Manager;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Zend Cache Backend in MongoDb
@@ -79,7 +80,17 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
      */
     public function test ($id)
     {
-        throw new \Rubedo\Exceptions\Server('Not yet implemented.', "Exception31");
+        $obj = $this->_dataService->findByCacheId($id, $time);
+        
+        if ($obj) {
+            if (isset($obj['lastUpdateTime'])) {
+                return $obj['lastUpdateTime'];
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -106,6 +117,13 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
         $obj['data'] = $data;
         $obj['cacheId'] = $id;
         $obj['tags'] = $tags;
+        
+        $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+        $currentTime = $currentTimeService->getCurrentTime();
+        
+        $obj['createTime'] = $currentTime;
+        $obj['lastUpdateTime'] = $currentTime;
+        
         if ($specificLifetime) {
             $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
         } elseif ($this->getOption('lifetime')) {
@@ -154,11 +172,22 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
      */
     public function clean ($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
+        
+        
         switch ($mode) {
             case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
+                $filters = Filter::Factory('OperatorToValue')->setName('tags')->setOperator('$all')->setValue($tags);
+                return $this->_dataService->customDelete($filters);
+                break;
             case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+                $inFilters = Filter::Factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
+                $filters = Filter::Factory('CompositeNot')->addFilter($inFilters);
+                
+                return $this->_dataService->customDelete($filters);
+                break;
             case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                throw new \Rubedo\Exceptions\Server('Not yet implemented.', "Exception31");
+                $filters = Filter::Factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
+                return $this->_dataService->customDelete($filters);
                 break;
             case \Zend_Cache::CLEANING_MODE_OLD:
                 return $this->_dataService->deleteExpired();
