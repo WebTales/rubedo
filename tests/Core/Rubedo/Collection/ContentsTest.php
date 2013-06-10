@@ -350,4 +350,16 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($result['success']);
 	}
 	
+	/**
+	 * Check if rights are disabled
+	 */
+	public function testAnyFunctionWithoutRights() {
+	    \Rubedo\Collection\AbstractCollection::disableUserFilter(false);
+	    
+	    $contents = new \Rubedo\Collection\Contents();
+	    $contents->getList();
+	    
+	    $this->assertFalse(\Rubedo\Collection\AbstractCollection::isUserFilterDisabled());
+	}
+	
 }
