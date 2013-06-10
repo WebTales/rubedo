@@ -362,4 +362,58 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 	    $this->assertFalse(\Rubedo\Collection\AbstractCollection::isUserFilterDisabled());
 	}
 	
+	/**
+	 * Check if we are in front end mode
+	 */
+	public function testAnyFunctionInFrontEndMode() {
+	    $contents = new \Rubedo\Collection\Contents();
+	    $contents->setIsFrontEnd(true);
+	    
+	    $contents->getList();
+	    
+	    $this->assertTrue($contents->getIsFrontEnd());
+	}
+	
+	/**
+	 * Check if we are in front end mode with draft status on contents
+	 */
+	public function testAnyFunctionInFrontEndModeAndDraftStatus() {
+	    $contents = new \Rubedo\Collection\Contents();
+	    $contents->setIsFrontEnd(true);
+	    \Zend_Registry::set('draft', true);
+	     
+	    $contents->getList();
+	     
+	    $this->assertTrue($contents->getIsFrontEnd());
+	    $this->assertTrue($contents->getIsFrontEnd(\Zend_Registry::get('draft')));
+	    
+	    \Zend_Registry::getInstance()->offsetUnset("draft");
+	}
+	
+	/**
+	 * Test getOnlineList function
+	 */
+	public function testGetOnlineList() {
+	    $this->_mockWorkflowDataAccessService->expects($this->once())->method('read')->will($this->returnValue(array('data' => array("test"), "count" => 1)));
+	    
+	    $contents = new \Rubedo\Collection\Contents();
+	    $result = $contents->getOnlineList();
+	    
+	    $this->assertTrue(is_array($result["data"]));
+	}
+	
+	/**
+	 * Test getOnlineList function with draft status
+	 */
+	public function testGetOnlineListWithDraftStatus() {
+	    $this->_mockWorkflowDataAccessService->expects($this->once())->method('read')->will($this->returnValue(array('data' => array("test"), "count" => 1)));
+	    \Zend_Registry::set('draft', true);
+	    
+	    $contents = new \Rubedo\Collection\Contents();
+	    $result = $contents->getOnlineList();
+	     
+	    $this->assertTrue(is_array($result["data"]));
+	    \Zend_Registry::getInstance()->offsetUnset("draft");
+	}
+	
 }
