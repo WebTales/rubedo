@@ -7,9 +7,12 @@
     "rights":[
         "write.ui.dam$",
         "read.ui.dam$",
+        "read.ui.directories$",
+        "write.ui.directories$",
         "execute.controller.dam-types.index.backoffice",
         "execute.controller.dam.@dot*.backoffice",
-        "execute.controller.file.put.backoffice"
+        "execute.controller.file.put.backoffice",
+        "execute.controller.directories.@dot*.backoffice"
     ],
     "includes":[
         "damReader"
