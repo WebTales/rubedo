@@ -82,7 +82,15 @@ class Directories extends AbstractCollection implements IDirectories
             'required' => true
         )
     );
-
+    
+    protected $_virtualNotFiledDirectory = array(
+        "parentId" => 'root',
+        "id" => "notFiled",
+        "expandable" => false,
+        "readOnly" => false,
+        "orderValue"=>1
+        
+        );
     /**
      * Only access to content with read access
      *
@@ -109,7 +117,34 @@ class Directories extends AbstractCollection implements IDirectories
         parent::__construct();
     }
 
-
+    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    {
+        if (! $parentId) {
+            return array();
+        }
+        if (isset($sort)) {
+            foreach ($sort as $value) {
+                $this->_dataService->addSort(array(
+                    $value["property"] => strtolower($value["direction"])
+                ));
+            }
+        } else {
+            $this->_dataService->addSort(array(
+                "orderValue" => 1
+            ));
+        }
+    
+        $result = $this->_dataService->readChild($parentId, $filters);
+        if ($result && is_array($result)) {
+            foreach ($result as &$obj) {
+                $obj = $this->_addReadableProperty($obj);
+            }
+        }
+        if ($parentId=="root"){
+            $result[]=$this->_virtualNotFiledDirectory;
+        }
+        return $result;
+    }
 
     /**
      * Delete objects in the current collection
@@ -145,7 +180,6 @@ class Directories extends AbstractCollection implements IDirectories
             );
         }
         
-        $this->_clearCacheForPage($obj);
         return $returnArray;
     }
 
@@ -158,13 +192,8 @@ class Directories extends AbstractCollection implements IDirectories
         $obj = $this->_initContent($obj);
         
         $returnValue = parent::update($obj, $options);
-        
-        $this->_clearCacheForPage($obj);
-        
+                
         $this->propagateWorkspace($obj['id'], $obj['workspace']);
-        if ($returnValue['success']) {
-            $returnValue['data'] = $this->addBlocks($returnValue['data']);
-        }
         
         return $returnValue;
     }
@@ -187,11 +216,15 @@ class Directories extends AbstractCollection implements IDirectories
         if ($obj['inheritWorkspace']) {
             unset($obj['workspace']);
             $ancestorsLine = array_reverse($this->getAncestors($obj));
+            if ($obj['parentId']=="root"){
+                $obj['workspace']="global";
+            } else {
             foreach ($ancestorsLine as $ancestor) {
                 if (isset($ancestor['inheritWorkspace']) && $ancestor['inheritWorkspace'] == false) {
                     $obj['workspace'] = $ancestor['workspace'];
                     break;
                 }
+            }
             }
            
         }
@@ -224,7 +257,6 @@ class Directories extends AbstractCollection implements IDirectories
     {
         $obj = $this->_initContent($obj);
         $result = parent::create($obj, $options);
-        $result['data'] = $this->addBlocks($result['data']);
         return $result;
     }
 
