@@ -215,16 +215,22 @@ class Directories extends AbstractCollection implements IDirectories
         // resolve inheritance if not forced
         if ($obj['inheritWorkspace']) {
             unset($obj['workspace']);
-            $ancestorsLine = array_reverse($this->getAncestors($obj));
+            
             if ($obj['parentId']=="root"){
                 $obj['workspace']="global";
             } else {
-            foreach ($ancestorsLine as $ancestor) {
-                if (isset($ancestor['inheritWorkspace']) && $ancestor['inheritWorkspace'] == false) {
-                    $obj['workspace'] = $ancestor['workspace'];
-                    break;
+                $ancestorsLine = array_reverse($this->getAncestors($obj));
+                $notFound=true;
+                foreach ($ancestorsLine as $ancestor) {
+                    if (isset($ancestor['inheritWorkspace']) && $ancestor['inheritWorkspace'] == false) {
+                        $obj['workspace'] = $ancestor['workspace'];
+                        $notFound=false;
+                        break;
+                    }
                 }
-            }
+                if ($notFound){
+                    $obj['workspace']="global";
+                }
             }
            
         }
