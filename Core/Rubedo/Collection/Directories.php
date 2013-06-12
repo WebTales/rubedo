@@ -82,15 +82,16 @@ class Directories extends AbstractCollection implements IDirectories
             'required' => true
         )
     );
-    
+
     protected $_virtualNotFiledDirectory = array(
         "parentId" => 'root',
         "id" => "notFiled",
         "expandable" => false,
         "readOnly" => false,
-        "orderValue"=>1
-        
-        );
+        "orderValue" => 1,
+        "workspace" => 'global'
+    );
+    
     /**
      * Only access to content with read access
      *
@@ -383,7 +384,7 @@ class Directories extends AbstractCollection implements IDirectories
     public function classify($arrayId, $directoryId)
     {
         if(!is_string($directoryId)){
-            throw new Rubedo\Exceptions\User("%1$s only accept string parameter","Exception88", 'classify');
+            throw new \Rubedo\Exceptions\User('%1$s only accept string parameter',"Exception88", 'classify');
         }
         $data = array(
             '$set' => array(
@@ -391,9 +392,55 @@ class Directories extends AbstractCollection implements IDirectories
             )
         );
         $updateCond = Filter::Factory('InUid')->setValue($arrayId);
+        
+        $damService = Manager::getService('Dam');
+        $directoryFrom = null;
+        $damList = $damService->getList($updateCond);
+        if(count($damList['data'])>0){
+            foreach($damList['data'] as $damItem){
+                if(isset($damItem['directory'])){
+                    if(is_null($directoryFrom)){
+                        $directoryFrom = $damItem['directory'];
+                    }
+                    if($damItem['directory'] != $directoryFrom){
+                        throw new \Rubedo\Exceptions\Access('only one source folder allowed');
+                    }
+                }
+            }
+        }
+
+        $directoryFrom = $this->findById($directoryFrom);
+        
+        $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        \Zend_Debug::dump($directoryFrom['workspace']);
+        if(!in_array($directoryFrom['workspace'],$writeWorkspaceArray)){
+            throw new \Rubedo\Exceptions\Access("can't move media from this directory due to insufficient rights");
+        }
+
+        $directoryTo= $this->findById($directoryId);
+
+        if(!in_array($directoryTo['workspace'],$writeWorkspaceArray)){
+            throw new \Rubedo\Exceptions\Access("can't move media to this directory due to insufficient rights");
+        }
         $options = array(
             'multiple' => true
         );
-        return Manager::getService('Dam')->customUpdate($data, $updateCond, $options);
+        return $damService->customUpdate($data, $updateCond, $options);
     }
+    
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::findById()
+     */
+    public function findById($contentId, $forceReload = false)
+    {
+        if($contentId == "notFiled"){
+            return $this->_virtualNotFiledDirectory;
+        }else{
+            return parent::findById($contentId,$forceReload);
+        }
+        
+    }
+
+    
+    
 }
