@@ -372,4 +372,28 @@ class Directories extends AbstractCollection implements IDirectories
         
         return $returnArray;
     }
+
+    /**
+     * Set the directory for dam items given by an array of ID
+     * 
+     * @param unknown $arrayId
+     * @param unknown $directoryId
+     * @throws Rubedo\Exceptions\User
+     */
+    public function classify($arrayId, $directoryId)
+    {
+        if(!is_string($directoryId)){
+            throw new Rubedo\Exceptions\User("%1$s only accept string parameter","Exception88", 'classify');
+        }
+        $data = array(
+            '$set' => array(
+                'directory' => $directoryId
+            )
+        );
+        $updateCond = Filter::Factory('InUid')->setValue($arrayId);
+        $options = array(
+            'multiple' => true
+        );
+        return $this->customUpdate($data, $updateCond, $options);
+    }
 }
