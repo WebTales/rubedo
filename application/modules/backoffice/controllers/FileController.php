@@ -155,7 +155,7 @@ class Backoffice_FileController extends Zend_Controller_Action
             if($file->isDot()){
                 continue;
             }
-            if(strpos($file->getFilename(),$originalId.'_')===0){
+            if(strpos($file->getFilename(),$originalId)===0){
                 unlink($file->getPathname());
             }
         }
