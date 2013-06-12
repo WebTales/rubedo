@@ -69,6 +69,13 @@ class Backoffice_DirectoriesController extends Backoffice_DataAccessController
         
         $this->_returnJson($result);
     }
-
+    public function classifyAction ()
+    {
+        $encodedArray = $this->getRequest()->getParam("mediaArray","[ ]");
+        $decodedArray=Zend_Json::decode($encodedArray);
+        $directoryId=$this->getRequest()->getParam("directoryId");
+        $result = $this->_dataService->classify($decodedArray,$directoryId);
+        $this->_returnJson($result);
+    }
    
 }

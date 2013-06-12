@@ -394,6 +394,6 @@ class Directories extends AbstractCollection implements IDirectories
         $options = array(
             'multiple' => true
         );
-        return $this->customUpdate($data, $updateCond, $options);
+        return Manager::getService('Dam')->customUpdate($data, $updateCond, $options);
     }
 }
