@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Update;
 
+use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
 
 /**
  * Methods for update tool
@@ -35,6 +37,29 @@ class Update010200 extends Update
      */
     public static function upgrade ()
     {
+        static::notFiledDam();
+        return true;
+    }
+
+    /**
+     * Set not filed dam items in the directory 'not filed'
+     * 
+     * @return boolean
+     */
+    public static function notFiledDam()
+    {
+        $data = array(
+            '$set' => array(
+                'directory' => 'notFiled'
+            )
+        );
+        $updateCond = Filter::Factory('OperatorToValue')->setName('directory')
+            ->setOperator('$exists')
+            ->setValue(false);
+        $options = array(
+            'multiple' => true
+        );
+        Manager::getService('Dam')->customUpdate($data, $updateCond, $options);
         return true;
     }
 }
