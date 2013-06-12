@@ -91,7 +91,8 @@ class config
         'MailingList' => 'Rubedo\\Interfaces\\Collection\\IMailingList',
         'Localisation' => 'Rubedo\\Interfaces\\Collection\\ILocalisation',
         'RubedoVersion' => 'Rubedo\\Interfaces\\Collection\\IRubedoVersion',
-        'Translate' => 'Rubedo\\Interfaces\\Internationalization\\ITranslate'
+        'Translate' => 'Rubedo\\Interfaces\\Internationalization\\ITranslate',
+        'Directories' => 'Rubedo\\Interfaces\\Collection\\IDirectories'
     );
 
     /**

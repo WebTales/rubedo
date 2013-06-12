@@ -134,10 +134,12 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
+        $damDirectory = $this->getParam('directory','notFiled');
         if (! $damType) {
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
         $obj['typeId'] = $damType['id'];
+        $obj['directory'] = $damDirectory;
         $obj['mainFileType'] = $damType['mainFileType'];
         
         $title = $this->getParam('title');
@@ -239,6 +241,8 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
         $obj = array();
+        $damDirectory = $this->getParam('directory','notFiled');
+        $obj['directory'] = $damDirectory;
         $obj['typeId'] = $damType['id'];
         $obj['mainFileType'] = $damType['mainFileType'];
         $obj['fields'] = array();
