@@ -34,6 +34,12 @@ class DataSearch extends DataAbstract implements IDataSearch
      * @var boolean
      */
     protected static $_isFrontEnd;
+    
+    protected $_globalFilterList = array();
+    protected $_filters;
+    protected $_setFilter;
+    protected $_params;
+    protected $_facetOperators;
 
     protected function _getContentType ($contentTypeId)
     {
@@ -57,6 +63,60 @@ class DataSearch extends DataAbstract implements IDataSearch
         return $this->damTypesArray[$damTypeId];
     }
 
+    protected function _addFilter ($name, $field)
+    {
+        // get mode for this facet
+        $operator = $this->_facetOperators[$name] ? $this->_facetOperators[$name] : 'and';
+        $filterEmpty = true;
+        switch ($operator) {
+            case 'or':
+                $filter = new \Elastica_Filter_Terms();
+                $filter->setTerms($field, $this->_params[$name]);
+                $filterEmpty = false;
+                break;
+            case 'and':
+            default:
+                $filter = new \Elastica_Filter_And();      
+                foreach($this->_params[$name] as $type) {
+                    $termFilter = new \Elastica_Filter_Term();
+                    $termFilter->setTerm($field, $type);
+                    $filter->addFilter($termFilter);
+                    $filterEmpty = false;
+                }    
+                break;
+
+        }
+        if (!$filterEmpty) {
+            $this->_globalFilterList[$name]=$filter;
+            $this->_filters[$name] = $this->_params[$name];
+            $this->_setFilter = true;
+        }
+  
+    }
+
+    protected function _getFacetFilter($name)
+    {
+        // get mode for this facet
+        $operator = $this->_facetOperators[$name] ? $this->_facetOperators[$name] : 'and';
+        if (!empty($this->_globalFilterList)) {
+            $facetFilter = new \Elastica_Filter_And();
+            $result = false;
+            foreach ($this->_globalFilterList as $key=>$filter) {
+                if ($key!=$name or $operator=='and') {
+                    $facetFilter->addFilter($filter);
+                    $result = true;
+                }
+            }
+            if ($result) {
+                return $facetFilter;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    
     /**
      * ES search
      *
@@ -69,7 +129,22 @@ class DataSearch extends DataAbstract implements IDataSearch
     {
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
-        $filters = array();
+        $this->_params = $params;
+        
+        if ((self::$_isFrontEnd)) {
+            $facetOverrides = (\Zend_Json::decode($this->_params['block-config']['facetOverrides']));
+    
+            $displayedFacets = $this->_params['block-config']['displayedFacets'];
+            
+            $this->_facetOperators = array();
+            foreach ($facetOverrides as $facet) {
+                if (in_array($facet['id'],$displayedFacets)) {
+                    if ($facet['id']=='contentType') $facet['id'] = 'type';
+                    $this->_facetOperators[$facet['id']]=strtolower($facet['facetOperator']);
+                }
+            }
+        }
+        
         $result = array();
         $result['data'] = array();
         
@@ -92,30 +167,32 @@ class DataSearch extends DataAbstract implements IDataSearch
         );
         
         // set default options
-        if (! array_key_exists('lang', $params)) {
+        if (! array_key_exists('lang', $this->_params)) {
             $session = Manager::getService('Session');
-            $params['lang'] = $session->get('lang', 'fr');
+            $this->_params['lang'] = $session->get('lang', 'fr');
         }
         
-        if (! array_key_exists('pager', $params))
-            $params['pager'] = $defaultVars['pager'];
+        if (! array_key_exists('pager', $this->_params))
+            $this->_params['pager'] = $defaultVars['pager'];
         
-        if (! array_key_exists('orderby', $params))
-            $params['orderby'] = $defaultVars['orderby'];
+        if (! array_key_exists('orderby', $this->_params))
+            $this->_params['orderby'] = $defaultVars['orderby'];
         
-        if (! array_key_exists('orderbyDirection', $params))
-            $params['orderbyDirection'] = $defaultVars['orderbyDirection'];
+        if (! array_key_exists('orderbyDirection', $this->_params))
+            $this->_params['orderbyDirection'] = $defaultVars['orderbyDirection'];
         
-        if (! array_key_exists('pagesize', $params))
-            $params['pagesize'] = $defaultVars['pagesize'];
+        if (! array_key_exists('pagesize', $this->_params))
+            $this->_params['pagesize'] = $defaultVars['pagesize'];
         
-        if (! array_key_exists('query', $params))
-            $params['query'] = $defaultVars['query'];
+        if (! array_key_exists('query', $this->_params))
+            $this->_params['query'] = $defaultVars['query'];
             
             // Build global filter
         
-        $setFilter = false;
+        $this->_setFilter = false;
+       
         $globalFilter = new \Elastica_Filter_And();
+        
         
         // Filter on read Workspaces
         
@@ -130,8 +207,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $workspacesFilter->addFilter($workspaceFilter);
             }
             
-            $globalFilter->addFilter($workspacesFilter);
-            $setFilter = true;
+            $globalFilterList['target']=$workspacesFilter;
+            $this->_setFilter = true;
         }
         
         // Frontend filter on start and end publication date
@@ -164,27 +241,20 @@ class DataSearch extends DataAbstract implements IDataSearch
             $frontEndFilter = new \Elastica_Filter_And();
             $frontEndFilter->addFilter($beginFilter);
             $frontEndFilter->addFilter($endFilter);
+            
             // push filter to global
-            $globalFilter->addFilter($frontEndFilter);
+            $globalFilterList['frontend']=$frontEndFilter;
+            $this->_setFilter = true;
         }
-        
-        // filter on lang TOTO add lang filter
-        /*
-         * if ($lang != '') { $langFilter = new \Elastica_Filter_Term(); $langFilter->setTerm('lang', $lang); $globalFilter->addFilter($langFilter); $setFilter = true; }
-         */
-        
+               
         // filter on query
-        if ($params['query'] != '') {
-            $filters['query'] = $params['query'];
+        if ($this->_params['query'] != '') {
+            $this->_filters['query'] = $this->_params['query'];
         }
         
         // filter on content type
-        if (array_key_exists('type', $params)) {
-            $typeFilter = new \Elastica_Filter_Term();
-            $typeFilter->setTerm('contentType', $params['type']);
-            $globalFilter->addFilter($typeFilter);
-            $filters['type'] = $params['type'];
-            $setFilter = true;
+        if (array_key_exists('type', $this->_params)) {
+            $this->_addFilter('type', 'contentType');           
         }
         
         // add filter for geo search on content types with 'position' field
@@ -197,212 +267,242 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $geoTypeFilter->setTerm('contentType', $contentTypeId);
                     $geoFilter->addFilter($geoTypeFilter);
                 }
-                $globalFilter->addFilter($geoFilter);
-                $setFilter = true;
+                // push filter to global
+                //$globalFilter->addFilter($geoFilter);
+                $this->_globalFilterList['geoTypes']=$geoFilter;
+                $this->_setFilter = true;
             }
         }
         
         // filter on dam type
-        if (array_key_exists('damType', $params)) {
-            $typeFilter = new \Elastica_Filter_Term();
-            $typeFilter->setTerm('damType', $params['damType']);
-            $globalFilter->addFilter($typeFilter);
-            $filters['damType'] = $params['damType'];
-            $setFilter = true;
+        if (array_key_exists('damType', $this->_params)) {
+            $this->_addFilter ('damType', 'damType', 'and');
         }
         
         // filter on author
-        if (array_key_exists('author', $params)) {
-            $authorFilter = new \Elastica_Filter_Term();
-            $authorFilter->setTerm('author', $params['author']);
-            $globalFilter->addFilter($authorFilter);
-            $filters['author'] = $params['author'];
-            $setFilter = true;
+        if (array_key_exists('author', $this->_params)) {
+            $this->_addFilter ('author', 'author', 'and');
         }
         
         // filter on date
-        if (array_key_exists('lastupdatetime', $params)) {
-            $dateFilter = new \Elastica_Filter_Range('lastUpdateTime', array(
-                'from' => $params['lastupdatetime']
+        if (array_key_exists('lastupdatetime', $this->_params)) {
+            $filter = new \Elastica_Filter_Range('lastUpdateTime', array(
+                'from' => $this->_params['lastupdatetime']
             ));
-            $globalFilter->addFilter($dateFilter);
-            $filters['lastupdatetime'] = $params['lastupdatetime'];
-            $setFilter = true;
+            $this->_globalFilterList['lastupdatetime']=$filter;
+            $this->_filters['lastupdatetime'] = $this->_params['lastupdatetime'];
+            $this->_setFilter = true;
+            
         }
         
         // filter on geolocalisation if inflat, suplat, inflon and suplon are set
-        if (isset($params['inflat']) && isset($params['suplat']) && isset($params['inflon']) && isset($params['suplon'])) {
+        if (isset($this->_params['inflat']) && isset($this->_params['suplat']) && isset($this->_params['inflon']) && isset($this->_params['suplon'])) {
             $topleft = array(
-                $params['inflon'],
-                $params['suplat']
+                $this->_params['inflon'],
+                $this->_params['suplat']
             );
             $bottomright = array(
-                $params['suplon'],
-                $params['inflat']
+                $this->_params['suplon'],
+                $this->_params['inflat']
             );
-            $geoFilter = new \Elastica_Filter_GeoBoundingBox('position_location', array(
+            $filter = new \Elastica_Filter_GeoBoundingBox('position_location', array(
                 $topleft,
                 $bottomright
             ));
-            $globalFilter->addFilter($geoFilter);
-            $setFilter = true;
+            $this->_globalFilterList['geo']=$filter;
+            $this->_setFilter = true;
+
         }
         
         // filter on taxonomy
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy['id'];
-            if (array_key_exists($vocabulary, $params)) {
-                if (! is_array($params[$vocabulary])) {
-                    $params[$vocabulary] = array(
-                        $params[$vocabulary]
-                    );
-                }
+            if (array_key_exists($vocabulary, $this->_params)) {
                 
-                foreach ($params[$vocabulary] as $term) {
-                    if (empty($term)) {
-                        continue;
-                    }
-                    $taxonomyFilter = new \Elastica_Filter_Term();
-                    $taxonomyFilter->setTerm('taxonomy.' . $vocabulary, $term);
-                    $globalFilter->addFilter($taxonomyFilter);
-                    $filters[$vocabulary][] = $term;
-                    $setFilter = true;
+                foreach ($this->_params[$vocabulary] as $term) {
+
+                    $this->_addFilter ($vocabulary, 'taxonomy.' . $vocabulary, 'and');
+   
                 }
             }
         }
         
         // Set query on terms
         
-        $elasticaQueryString = new \Elastica_Query_QueryString($params['query'] . "*");
+        $elasticaQueryString = new \Elastica_Query_QueryString($this->_params['query'] . "*");
         
         $elasticaQuery = new \Elastica_Query();
         
         $elasticaQuery->setQuery($elasticaQueryString);
         
-        // Apply filter if needed
-        if ($setFilter) {
+        // Apply filter to query
+        if (!empty($this->_globalFilterList)) {
+            foreach ($this->_globalFilterList as $filter) {
+                $globalFilter->addFilter($filter);
+            }
             $elasticaQuery->setFilter($globalFilter);
-            // $elasticaQuery->setFields(array());
         }
         
-        // Define the type facet.
-        $elasticaFacetType = new \Elastica_Facet_Terms('type');
-        $elasticaFacetType->setField('contentType');
+        // Define the type facet
         
-        // Exclude active Facets for this vocabulary
-        if (isset($filters['type'])) {
-            $elasticaFacetType->setExclude(array(
-                $filters['type']
-            ));
-        }
-        $elasticaFacetType->setSize(10);
-        $elasticaFacetType->setOrder('reverse_count');
-        if ($setFilter)
-            $elasticaFacetType->setFilter($globalFilter);
+        if (!self::$_isFrontEnd or in_array('contentType',$displayedFacets)) {
+            $elasticaFacetType = new \Elastica_Facet_Terms('type');
+            $elasticaFacetType->setField('contentType');
             
-            // Add type facet to the search query object.
-        $elasticaQuery->addFacet($elasticaFacetType);
-        
-        // Define the dam type facet.
-        $elasticaFacetDamType = new \Elastica_Facet_Terms('damType');
-        $elasticaFacetDamType->setField('damType');
-        
-        // Exclude active Facets for this vocabulary
-        if (isset($filters['damType'])) {
-            $elasticaFacetDamType->setExclude(array(
-                $filters['damType']
-            ));
-        }
-        $elasticaFacetDamType->setSize(10);
-        $elasticaFacetDamType->setOrder('reverse_count');
-        if ($setFilter)
-            $elasticaFacetDamType->setFilter($globalFilter);
+            // Exclude active Facets for this vocabulary
+            if (isset($this->_filters['type'])) {
+                $elasticaFacetType->setExclude(array(
+                    $this->_filters['type']
+                ));
+            }
+            $elasticaFacetType->setSize(10);
+            $elasticaFacetType->setOrder('reverse_count');
+    
+            // Apply filters from other facets
+            $facetFilter = $this->_getFacetFilter('type');
+            if (!is_null($facetFilter)) {
+                $elasticaFacetType->setFilter($facetFilter);
+            }
             
+            // Add type facet to the search query object
+            $elasticaQuery->addFacet($elasticaFacetType);
+        }
+        
+        // Define the dam type facet
+        
+        if (!self::$_isFrontEnd or in_array('damType',$displayedFacets)) {
+
+            $elasticaFacetDamType = new \Elastica_Facet_Terms('damType');
+            $elasticaFacetDamType->setField('damType');
+            
+            // Exclude active Facets for this vocabulary
+            if (isset($this->_filters['damType'])) {
+                $elasticaFacetDamType->setExclude(array(
+                    $this->_filters['damType']
+                ));
+            }
+            $elasticaFacetDamType->setSize(10);
+            $elasticaFacetDamType->setOrder('reverse_count');
+    
+            // Apply filters from other facets
+            $facetFilter = $this->_getFacetFilter('damType');
+
+            if (!is_null($facetFilter)) {
+                $elasticaFacetDamType->setFilter($facetFilter);
+            }
+                
             // Add dam type facet to the search query object.
-        $elasticaQuery->addFacet($elasticaFacetDamType);
-        
-        // Define the author facet.
-        $elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
-        $elasticaFacetAuthor->setField('author');
-        
-        // Exclude active Facets for this vocabulary
-        if (isset($filters['author'])) {
-            $elasticaFacetAuthor->setExclude(array(
-                $filters['author']
-            ));
+            $elasticaQuery->addFacet($elasticaFacetDamType);
         }
-        $elasticaFacetAuthor->setSize(5);
-        $elasticaFacetAuthor->setOrder('reverse_count');
-        if ($setFilter)
-            $elasticaFacetAuthor->setFilter($globalFilter);
+        
+        // Define the author facet
+        
+        if (!self::$_isFrontEnd or in_array('author',$displayedFacets)) {
             
+            $elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
+            $elasticaFacetAuthor->setField('author');
+            
+            // Exclude active Facets for this vocabulary
+            if (isset($this->_filters['author'])) {
+                $elasticaFacetAuthor->setExclude(array(
+                    $this->_filters['author']
+                ));
+            }
+            $elasticaFacetAuthor->setSize(5);
+            $elasticaFacetAuthor->setOrder('reverse_count');
+    
+            // Apply filters from other facets
+            $facetFilter = $this->_getFacetFilter('author');
+            if (!is_null($facetFilter)) {
+                $elasticaFacetAuthor->setFilter($facetFilter);
+            }        
+                
             // Add that facet to the search query object.
-        $elasticaQuery->addFacet($elasticaFacetAuthor);
+            $elasticaQuery->addFacet($elasticaFacetAuthor);
+        }
         
         // Define the date facet.
-        $elasticaFacetDate = new \Elastica_Facet_Range('date');
-        $elasticaFacetDate->setField('lastUpdateTime');
-        $d = Manager::getService('CurrentTime')->getCurrentTime();
         
-        $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d));
-        $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d));
-        $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d));
-        $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1);
-        $ranges = array(
-            array(
-                'from' => $lastday
-            ),
-            array(
-                'from' => $lastweek
-            ),
-            array(
-                'from' => $lastmonth
-            ),
-            array(
-                'from' => $lastyear
-            )
-        );
-        $timeLabel = array();
-        $timeLabel[$lastday] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Day", 'Past 24H');
-        $timeLabel[$lastweek] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Week", 'Past week');
-        $timeLabel[$lastmonth] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Month", 'Past month');
-        $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
+        if (!self::$_isFrontEnd or in_array('date',$displayedFacets)) {
         
-        $elasticaFacetDate->setRanges($ranges);
-        if ($setFilter)
-            $elasticaFacetDate->setFilter($globalFilter);
+            $elasticaFacetDate = new \Elastica_Facet_Range('date');
+            $elasticaFacetDate->setField('lastUpdateTime');
+            $d = Manager::getService('CurrentTime')->getCurrentTime();
+            
+            $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d));
+            $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d));
+            $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d));
+            $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1);
+            $ranges = array(
+                array(
+                    'from' => $lastday
+                ),
+                array(
+                    'from' => $lastweek
+                ),
+                array(
+                    'from' => $lastmonth
+                ),
+                array(
+                    'from' => $lastyear
+                )
+            );
+            $timeLabel = array();
+            $timeLabel[$lastday] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Day", 'Past 24H');
+            $timeLabel[$lastweek] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Week", 'Past week');
+            $timeLabel[$lastmonth] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Month", 'Past month');
+            $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
+            
+            $elasticaFacetDate->setRanges($ranges);
+    
+            // Apply filters from other facets
+            $facetFilter = $this->_getFacetFilter('date');
+            if (!is_null($facetFilter)) {
+                $elasticaFacetDate->setFilter($facetFilter);
+            }
             
             // Add that facet to the search query object.
-        $elasticaQuery->addFacet($elasticaFacetDate);
+            $elasticaQuery->addFacet($elasticaFacetDate);
+        }
         
         // Define taxonomy facets
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy['id'];
-            $elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
-            $elasticaFacetTaxonomy->setField('taxonomy.' . $taxonomy['id']);
-            // Exclude active Facets for this vocabulary
-            if (isset($filters[$vocabulary])) {
-                $elasticaFacetTaxonomy->setExclude($filters[$vocabulary]);
-            }
-            $elasticaFacetTaxonomy->setSize(20);
-            $elasticaFacetTaxonomy->setOrder('count');
-            if ($setFilter)
-                $elasticaFacetTaxonomy->setFilter($globalFilter);
+            
+            if (!self::$_isFrontEnd or in_array($vocabulary,$displayedFacets)) {
+            
+                $elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
+                $elasticaFacetTaxonomy->setField('taxonomy.' . $taxonomy['id']);
+                
+                // Exclude active Facets for this vocabulary
+                if (isset($this->_filters[$vocabulary])) {
+                    $elasticaFacetTaxonomy->setExclude($this->_filters[$vocabulary]);
+                }
+                $elasticaFacetTaxonomy->setSize(20);
+                $elasticaFacetTaxonomy->setOrder('count');
+    
+                // Apply filters from other facets
+                $facetFilter = $this->_getFacetFilter($vocabulary);
+                if (!is_null($facetFilter)) {
+                    $elasticaFacetTaxonomy->setFilter($facetFilter);
+                }            
+                
                 // Add that facet to the search query object.
-            $elasticaQuery->addFacet($elasticaFacetTaxonomy);
+                $elasticaQuery->addFacet($elasticaFacetTaxonomy);
+            }
         }
         
         // Add pagination
-        if (is_numeric($params['pagesize'])) {
-            $elasticaQuery->setSize($params['pagesize'])->setFrom($params['pager'] * $params['pagesize']);
+        if (is_numeric($this->_params['pagesize'])) {
+            $elasticaQuery->setSize($this->_params['pagesize'])->setFrom($this->_params['pager'] * $this->_params['pagesize']);
         }
         
         // add sort
-        if ($params['orderby'] == 'text') {
-            $params['orderby'] = 'text_not_analyzed';
+        if ($this->_params['orderby'] == 'text') {
+            $this->_params['orderby'] = 'text_not_analyzed';
         }
         $elasticaQuery->setSort(array(
-            $params['orderby'] => strtolower($params['orderbyDirection'])
+            $this->_params['orderby'] => strtolower($this->_params['orderbyDirection'])
         ));
         
         // run query
@@ -428,7 +528,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Update data
         $resultsList = $elasticaResultSet->getResults();
         $result['total'] = $elasticaResultSet->getTotalHits();
-        $result['query'] = $params['query'];
+        $result['query'] = $this->_params['query'];
         $userWriteWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         $userCanWriteContents = Manager::getService('Acl')->hasAccess("write.ui.contents");
         $userCanWriteDam = Manager::getService('Acl')->hasAccess("write.ui.dam");
@@ -485,7 +585,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $result['data'][] = $data;
         }
         
-        // Add label to Facets, hide facets with 1 result,
+        // Add label to Facets, hide empty facets,
         $elasticaFacets = $elasticaResultSet->getFacets();
         $result['facets'] = array();
         
@@ -595,49 +695,54 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Add label to filters
         
         $result['activeFacets'] = array();
-        foreach ($filters as $vocabularyId => $termId) {
+        if (is_array($this->_filters)) {
+        foreach ($this->_filters as $vocabularyId => $termId) {
             switch ($vocabularyId) {
                 
                 case 'damType':
-                    $termItem = $this->_getDamType($termId);
                     $temp = array(
-                        'id' => $vocabularyId,
-                        'label' => Manager::getService('Translate')->translate("Search.Facets.Label.MediaType", 'Media type'),
-                        'terms' => array(
-                            array(
-                                'term' => $termId,
-                                'label' => $termItem['type']
-                            )
-                        )
+                            'id' => $vocabularyId,
+                            'label' => Manager::getService('Translate')->translate("Search.Facets.Label.MediaType", 'Media type'),
                     );
+                    foreach ($termId as $term) {
+                        $termItem = $this->_getDamType($term);
+                        $temp['terms'][] = array(
+                                'term' => $term,
+                                'label' => $termItem['type']
+                        );
+                    }
+                                        
                     break;
                 
                 case 'type':
-                    $termItem = $this->_getContentType($termId);
                     $temp = array(
-                        'id' => $vocabularyId,
-                        'label' => Manager::getService('Translate')->translate("Search.Facets.Label.ContentType", 'Content type'),
-                        'terms' => array(
-                            array(
-                                'term' => $termId,
-                                'label' => $termItem['type']
-                            )
-                        )
+                            'id' => $vocabularyId,
+                            'label' => Manager::getService('Translate')->translate("Search.Facets.Label.ContentType", 'Content type'),
                     );
+                    foreach ($termId as $term) {
+                        $termItem = $this->_getContentType($term);
+                        $temp['terms'][] = array(
+                                'term' => $term,
+                                'label' => $termItem['type']
+                        );
+                    }
+                 
                     break;
                 
                 case 'author':
-                    $termItem = Manager::getService('Users')->findById($termId);
                     $temp = array(
-                        'id' => $vocabularyId,
-                        'label' => Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author'),
-                        'terms' => array(
-                            array(
-                                'term' => $termId,
-                                'label' => $termItem['name']
-                            )
-                        )
+                            'id' => $vocabularyId,
+                            'label' => Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author'),
                     );
+                    foreach ($termId as $term) {
+                        $termItem = Manager::getService('Users')->findById($term);
+                        $temp['terms'][] = array(
+                                'term' => $term,
+                                'label' => $termItem['name']
+                        );
+                    }                    
+                    
+
                     break;
                 
                 case 'lastupdatetime':
@@ -712,6 +817,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             }
             
             $result['activeFacets'][] = $temp;
+        }
         }
         
         return ($result);
