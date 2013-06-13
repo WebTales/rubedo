@@ -254,6 +254,9 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 	 * The field body must contain only alpha character
 	 */
 	public function testUpdateWithGoodConfigurationForAlphaVType(){
+	    $this->_mockCurrentUserService = $this->getMock('Rubedo\\User\\CurrentUser');
+	    Rubedo\Services\Manager::setMockService('CurrentUser', $this->_mockCurrentUserService);
+	    
 		$this->_mockContentTypesService->expects($this->once())->method('findById')->will($this->returnValue(array('fields' => array(
 			array 	(	'cType' => 'text',
 						'config' => array 	(	'name' => 'text',
@@ -269,7 +272,9 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						'config' => array 	(	'name' => 'body',
 												'allowBlank' => true,
 												'multivalued' => false,
-												'vtype' => 'alpha'))))));
+												'vtype' => 'alpha'))
+		    ), "workspaces" => array("test", "test2")
+		)));
 		
 		$obj = array(	"id" => "test",
 						"typeId" => "50c0c8669a199d930f000001",
@@ -277,15 +282,67 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 											'summary' => 'test',
 											'body' => 'Paragraphe'),
 						"text" => "test",
-						"target" => array("test"),
-						"writeWorkspace" => "test");
+						"target" => "test",
+						"writeWorkspace" => "test2",
+		);
 		
 		$this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
 		
+		$this->_mockCurrentUserService->expects($this->any())->method("getWriteWorkspaces")->will($this->returnValue(array("test2")));
+		$this->_mockCurrentUserService->expects($this->any())->method("getReadWorkspaces")->will($this->returnValue(array("test2", "test")));
+		
 		$contents = new \Rubedo\Collection\Contents();
+		\Rubedo\Collection\AbstractCollection::disableUserFilter(false);
 		$result = $contents->update($obj);
+		\Rubedo\Collection\AbstractCollection::disableUserFilter(true);
 		
 		$this->assertTrue($result['success']);
+	}
+	
+	/**
+	 * Test the read only flag
+	 * 
+	 * @expectedException \Rubedo\Exceptions\Access
+	 */
+	public function testUpdateInReadOnly(){
+	    \Rubedo\Collection\AbstractCollection::disableUserFilter(false);
+	    
+	    $this->_mockContentTypesService->expects($this->once())->method('findById')->will($this->returnValue(array('fields' => array(
+	        array 	(	'cType' => 'text',
+	            'config' => array 	(	'name' => 'text',
+	                'allowBlank' => false,
+	                'multivalued' => false,
+	            )),
+	        array 	(	'cType' => 'summary',
+	            'config' => array 	(	'name' => 'summary',
+	                'allowBlank' => true,
+	                'multivalued' => false,
+	            )),
+	        array 	(	'cType' => 'body',
+	            'config' => array 	(	'name' => 'body',
+	                'allowBlank' => true,
+	                'multivalued' => false,
+	                'vtype' => 'alpha'))))));
+	
+	    $obj = array(	"id" => "test",
+	        "typeId" => "50c0c8669a199d930f000001",
+	        "fields" => array(	'text' => 'test',
+	            'summary' => 'test',
+	            'body' => 'Paragraphe'),
+	        "text" => "test",
+	        "target" => array("test"),
+	        "writeWorkspace" => "test");
+	
+	    $this->_mockWorkflowDataAccessService->expects($this->any())->method('findById')->will($this->returnValue(array("readOnly" => true, "status" => "test", "typeId" => "test")));
+	
+	    $this->_mockWorkflowDataAccessService->expects($this->any())->method('update')->will($this->returnValue(array('success' => true,'data'=>array('status'=>'test', "id" => "id"))));
+	
+	    $contents = new \Rubedo\Collection\Contents();
+	    $result = $contents->update($obj);
+	
+	    $this->assertTrue($result['success']);
+	    
+	    \Rubedo\Collection\AbstractCollection::disableUserFilter(true);
 	}
 
 	/**
@@ -345,9 +402,34 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 						"text" => "test");
 						
 		$contents = new \Rubedo\Collection\Contents();
+		\Rubedo\Collection\AbstractCollection::disableUserFilter(false);
 		$result = $contents->destroy($obj);
+		\Rubedo\Collection\AbstractCollection::disableUserFilter(true);
 		
 		$this->assertTrue($result['success']);
+	}
+	
+	/**
+	 * Test destroy on a read only content
+	 * 
+	 * @expectedException \Rubedo\Exceptions\Access
+	 */
+	public function testDestroyInReadOnly() {
+	    $this->_mockWorkflowDataAccessService->expects($this->any())->method('findById')->will($this->returnValue(array("readOnly" => true, "typeId" => "test")));
+	
+	    $obj = array(	"id" => "test",
+	        "typeId" => "50c0c8669a199d930f000001",
+	        "fields" => array(	'text' => 'test',
+	            'summary' => 'test',
+	            'body' => 'http://test.fr'),
+	        "text" => "test");
+	
+	    $contents = new \Rubedo\Collection\Contents();
+	    \Rubedo\Collection\AbstractCollection::disableUserFilter(false);
+	    $result = $contents->destroy($obj);
+	    \Rubedo\Collection\AbstractCollection::disableUserFilter(true);
+	
+	    $this->assertTrue($result['success']);
 	}
 	
 	/**
@@ -414,6 +496,28 @@ class ContentsTest extends PHPUnit_Framework_TestCase {
 	     
 	    $this->assertTrue(is_array($result["data"]));
 	    \Zend_Registry::getInstance()->offsetUnset("draft");
+	}
+	
+	/**
+	 * Try to unset a term
+	 */
+	public function testUnsetTerms() {
+	    $this->_mockWorkflowDataAccessService->expects($this->once())->method('customUpdate')->will($this->returnValue(array('success' => true)));
+	    
+	    $contents = new \Rubedo\Collection\Contents();
+	    $result = $contents->unsetTerms("test", "test");
+	    
+	    $this->assertTrue($result["success"]);
+	}
+	
+	/**
+	 * Try to unset a term without a term id
+	 * 
+	 * @expectedException \Rubedo\Exceptions\Server
+	 */
+	public function testUnsetTermsWithoutTermId() {
+	    $contents = new \Rubedo\Collection\Contents();
+	    $result = $contents->unsetTerms("test", null);
 	}
 	
 }
