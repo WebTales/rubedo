@@ -74,12 +74,12 @@ class Cache extends AbstractCollection implements ICache
         if (! $time) {
             $time = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        $Filters = Filter::Factory('And');
+        $Filters = Filter::factory('And');
         
-        $Filter = Filter::Factory('Value')->setName('cacheId')->setValue($cacheId);
+        $Filter = Filter::factory('Value')->setName('cacheId')->setValue($cacheId);
         $Filters->addFilter($Filter);
         
-        $Filter = Filter::Factory('EmptyOrOperator');
+        $Filter = Filter::factory('EmptyOrOperator');
         $Filter->setName('expire')
             ->setOperator('$gt')
             ->setValue($time);
@@ -103,7 +103,7 @@ class Cache extends AbstractCollection implements ICache
         $options = array();
         $options['upsert'] = true;
         
-        $updateCond = Filter::Factory('Value');
+        $updateCond = Filter::factory('Value');
         $updateCond->setName('cacheId')->setValue($cacheId);
         
         $result = $this->_dataService->customUpdate($obj, $updateCond, $options);
@@ -123,7 +123,7 @@ class Cache extends AbstractCollection implements ICache
     {
         $options = array();
         
-        $updateCond = Filter::Factory('OperatorToValue');
+        $updateCond = Filter::factory('OperatorToValue');
         $updateCond->setName('expire')
             ->setOperator('$lt')
             ->setValue(Manager::getService('CurrentTime')->getCurrentTime());
@@ -138,7 +138,7 @@ class Cache extends AbstractCollection implements ICache
 
     public function deleteByCacheId ($id)
     {
-        $updateCond = Filter::Factory('Value');
+        $updateCond = Filter::factory('Value');
         $updateCond->setName('cacheId')->setValue($id);
         $options = array();
         $result = $this->_dataService->customDelete($updateCond, $options);

@@ -214,8 +214,8 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getFilterArrayForManual ($query)
     {
-        $filters = Filter::Factory()->addFilter(Filter::Factory('InUid')->setValue($query['query']))
-            ->addFilter(Filter::Factory('Value')->setName('status')
+        $filters = Filter::factory()->addFilter(Filter::factory('InUid')->setValue($query['query']))
+            ->addFilter(Filter::factory('Value')->setName('status')
             ->setValue('published'));
         
         $sort[] = array(
@@ -249,7 +249,7 @@ class Queries extends AbstractCollection implements IQueries
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
         
         $sort = array();
-        $filters = Filter::Factory();
+        $filters = Filter::factory();
         
         $operatorsArray = array(
             '$lt' => '<',
@@ -261,10 +261,10 @@ class Queries extends AbstractCollection implements IQueries
         );
         
         /* Add filters on TypeId and publication */
-        $filters->addFilter(Filter::Factory('In')->setName('typeId')
+        $filters->addFilter(Filter::factory('In')->setName('typeId')
             ->setValue($query['contentTypes']));
         
-        $filters->addFilter(Filter::Factory('Value')->setName('status')
+        $filters->addFilter(Filter::factory('Value')->setName('status')
             ->setValue('published'));
         
         // add computed filter for vocabularies rules
@@ -284,23 +284,23 @@ class Queries extends AbstractCollection implements IQueries
                 $nextDate = (array) $nextDate;
                 if ($ruleOperator === 'eq') {
                     
-                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
                         ->setOperator('$gt')
                         ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
                     
-                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
                         ->setOperator('$lt')
                         ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
                 } elseif ($ruleOperator === '$gt') {
-                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
                         ->setOperator($ruleOperator)
                         ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
                 } elseif ($ruleOperator === '$lte') {
-                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
                         ->setOperator('$lte')
                         ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
                 } else {
-                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName($property)
+                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
                         ->setOperator($ruleOperator)
                         ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
                 }
@@ -339,9 +339,9 @@ class Queries extends AbstractCollection implements IQueries
     protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
     {
         if ($vocabulariesRule == 'OU') {
-            $filters = Filter::Factory('Or');
+            $filters = Filter::factory('Or');
         } else {
-            $filters = Filter::Factory('And');
+            $filters = Filter::factory('And');
         }
         
         foreach ($vocabularies as $key => $value) {
@@ -383,7 +383,7 @@ class Queries extends AbstractCollection implements IQueries
         switch ($rule) {
             case 'allRec':
                 // verify all branches => at least one of each branch
-                $filters = Filter::Factory('And');
+                $filters = Filter::factory('And');
                 
                 // Definie each sub conditions
                 foreach ($value['terms'] as $child) {
@@ -395,13 +395,13 @@ class Queries extends AbstractCollection implements IQueries
                         $termsArray[] = $taxonomyTerms["id"];
                     }
                     // some of a branch
-                    $filters->addFilter(Filter::Factory('In')->setName($this->_workspace . '.taxonomy.' . $key)
+                    $filters->addFilter(Filter::factory('In')->setName($this->_workspace . '.taxonomy.' . $key)
                         ->setValue($termsArray));
                 }
                 
                 break;
             case 'all': // include all terms
-                $filters = Filter::Factory('OperatorToValue')->setName($this->_workspace . '.taxonomy.' . $key)
+                $filters = Filter::factory('OperatorToValue')->setName($this->_workspace . '.taxonomy.' . $key)
                     ->setOperator('$all')
                     ->setValue($value['terms']);
                 break;
@@ -413,7 +413,7 @@ class Queries extends AbstractCollection implements IQueries
                     }
                 }
             case 'some': // simplest one: at least on of the termes
-                $filters = Filter::Factory('In')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
+                $filters = Filter::factory('In')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
                 break;
             case 'notRec':
                 foreach ($value['terms'] as $child) {
@@ -423,7 +423,7 @@ class Queries extends AbstractCollection implements IQueries
                     }
                 }
             case 'not': // include all terms
-                $filters = Filter::Factory('NotIn')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
+                $filters = Filter::factory('NotIn')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
                 
                 break;
             default:

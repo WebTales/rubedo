@@ -62,7 +62,7 @@ class IconsTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNormalGetList(){
 		$this->_mockCurrentUser->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue(array('id' => '123456789')));
-		$filters = Filter::Factory('Value')->setName('userId')->setValue('123456789');
+		$filters = Filter::factory('Value')->setName('userId')->setValue('123456789');
 		$this->_mockDataAccessService->expects($this->once())->method('addFilter')->with($this->equalTo($filters));
 		$this->_mockDataAccessService->expects($this->once())->method('read');
 		
@@ -75,7 +75,7 @@ class IconsTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNormalUpdate(){
 		$this->_mockCurrentUser->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue(array('id' => '123456789')));
-		$filters = Filter::Factory('Value')->setName('userId')->setValue('123456789');
+		$filters = Filter::factory('Value')->setName('userId')->setValue('123456789');
 		$this->_mockDataAccessService->expects($this->once())->method('addFilter')->with($this->equalTo($filters));
 		$this->_mockDataAccessService->expects($this->once())->method('update');
 		
@@ -90,7 +90,7 @@ class IconsTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNormalDestroy(){
 		$this->_mockCurrentUser->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue(array('id' => '123456789')));
-		$filters = Filter::Factory('Value')->setName('userId')->setValue('123456789');
+		$filters = Filter::factory('Value')->setName('userId')->setValue('123456789');
 		$this->_mockDataAccessService->expects($this->once())->method('addFilter')->with($this->equalTo($filters));
 		$this->_mockDataAccessService->expects($this->once())->method('destroy');
 		

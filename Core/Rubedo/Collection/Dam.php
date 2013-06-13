@@ -65,7 +65,7 @@ class Dam extends AbstractCollection implements IDam
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
                 
-                $filter = Filter::Factory('OperatorToValue')->setName('target')
+                $filter = Filter::factory('OperatorToValue')->setName('target')
                     ->setOperator('$in')
                     ->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
@@ -175,13 +175,13 @@ class Dam extends AbstractCollection implements IDam
 
     public function getByType ($typeId)
     {
-        $filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
+        $filter = Filter::factory('Value')->setName('typeId')->SetValue($typeId);
         return $this->getList($filter);
     }
 
     public function getListByDamTypeId ($typeId)
     {
-        $filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
+        $filter = Filter::factory('Value')->setName('typeId')->SetValue($typeId);
         return $this->getList($filter);
     }
 

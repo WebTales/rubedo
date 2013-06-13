@@ -68,7 +68,7 @@ class Groups extends AbstractCollection implements IGroups
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if (! in_array('all', $readWorkspaceArray)) {
-                $filter = Filter::Factory('In')->setName('workspace')->setValue($readWorkspaceArray);
+                $filter = Filter::factory('In')->setName('workspace')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
@@ -164,7 +164,7 @@ class Groups extends AbstractCollection implements IGroups
 
     public function getListByUserId ($userId)
     {
-        $filters = Filter::Factory('Value')->setName('members')->setValue($userId);
+        $filters = Filter::factory('Value')->setName('members')->setValue($userId);
         $groupList = $this->getListWithAncestors($filters);
         
         return $groupList;
@@ -173,8 +173,8 @@ class Groups extends AbstractCollection implements IGroups
     public function getValidatingGroupsId ()
     {
         // contentReviewer
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('Value')->setName('roles')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('roles')
             ->setValue('contentReviewer'));
         
         $groupList = $this->getList($filters);
@@ -197,8 +197,8 @@ class Groups extends AbstractCollection implements IGroups
     {
         $validatingGroups = Manager::getService('Groups')->getValidatingGroupsId();
         
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('In')->setName('writeWorkspaces')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('In')->setName('writeWorkspaces')
             ->setValue(array(
             $workspace,
             'all'
@@ -253,7 +253,7 @@ class Groups extends AbstractCollection implements IGroups
 
     public function findByName ($name)
     {
-        $filter = Filter::Factory('Value')->setValue($name)->setName('name');
+        $filter = Filter::factory('Value')->setValue($name)->setName('name');
         return $this->_dataService->findOne($filter);
     }
 
@@ -317,8 +317,8 @@ class Groups extends AbstractCollection implements IGroups
         foreach ($groupsArray['data'] as $value) {
             $groupsIdArray[] = $value['id'];
         }
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('NotIn')->setName('parentId')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('NotIn')->setName('parentId')
             ->setValue($groupsIdArray));
         $orphansArray = $this->getList($filters);
         
@@ -368,8 +368,8 @@ class Groups extends AbstractCollection implements IGroups
             $groupsIdArray[] = $value['id'];
         }
         
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('NotIn')->setName('parentId')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('NotIn')->setName('parentId')
             ->setValue($groupsIdArray));
         $orphansArray = $this->getList($filters);
         
@@ -390,7 +390,7 @@ class Groups extends AbstractCollection implements IGroups
                 'members.$' => ''
             )
         );
-        $updateCond = Filter::Factory('Value')->setName('members')->setValue($userId);
+        $updateCond = Filter::factory('Value')->setName('members')->setValue($userId);
         $this->_dataService->customUpdate($data, $updateCond, $options);
     }
 
@@ -409,7 +409,7 @@ class Groups extends AbstractCollection implements IGroups
                 'members' => $userId
             )
         );
-        $updateCond = Filter::Factory('InUid')->setValue($inArray);
+        $updateCond = Filter::factory('InUid')->setValue($inArray);
         $this->_dataService->customUpdate($data, $updateCond, $options);
     }
 

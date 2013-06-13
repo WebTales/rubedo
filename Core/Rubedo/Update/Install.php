@@ -53,7 +53,7 @@ class Install
                     $itemJson = file_get_contents($file->getPathname());
                     $item = \Zend_Json::decode($itemJson);
                     try {
-                        if (! Manager::getService($collection)->findOne(Filter::Factory('Value')->setName('defaultId')
+                        if (! Manager::getService($collection)->findOne(Filter::factory('Value')->setName('defaultId')
                             ->setValue($item['defaultId']))) {
                             $result = Manager::getService($collection)->create($item);
                         } else {

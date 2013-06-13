@@ -141,9 +141,9 @@ class Blocks_GalleryController extends Blocks_ContentListController
     protected function setFilters ($query)
     {
         if ($query != null) {
-            $filters = Filter::Factory();
+            $filters = Filter::factory();
             /* Add filters on TypeId and publication */
-            $filters->addFilter(Filter::Factory('In')->setName('typeId')
+            $filters->addFilter(Filter::factory('In')->setName('typeId')
                 ->setValue($query['DAMTypes']));
             
             /* Add filter on taxonomy */
@@ -170,12 +170,12 @@ class Blocks_GalleryController extends Blocks_ContentListController
                     $taxOperator = '$in';
                 }
                 if (count($value['terms']) > 0) {
-                    $filters->addFilter(Filter::Factory('OperatorToValue')->setName('taxonomy.' . $key)
+                    $filters->addFilter(Filter::factory('OperatorToValue')->setName('taxonomy.' . $key)
                         ->setValue($value['terms'])
                         ->setOperator($taxOperator));
                 }
             }
-            $filters->addFilter(Filter::Factory('In')->setName('target')
+            $filters->addFilter(Filter::factory('In')->setName('target')
                 ->setValue(array(
                 $this->_workspace,
                 'all'

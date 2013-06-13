@@ -133,7 +133,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             if (! in_array('all', $readWorkspaceArray)) {
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
-                $filter = Filter::Factory('In')->setName('target')->setValue($readWorkspaceArray);
+                $filter = Filter::factory('In')->setName('target')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
@@ -148,10 +148,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $startPublicationDateField = ($live ? 'live' : 'workspace') . '.startPublicationDate';
             $endPublicationDateField = ($live ? 'live' : 'workspace') . '.endPublicationDate';
             
-            $this->_dataService->addFilter(Filter::Factory('EmptyOrOperator')->setName($startPublicationDateField)
+            $this->_dataService->addFilter(Filter::factory('EmptyOrOperator')->setName($startPublicationDateField)
                 ->setOperator('$lte')
                 ->setValue($now));
-            $this->_dataService->addFilter(Filter::Factory('EmptyOrOperator')->setName($endPublicationDateField)
+            $this->_dataService->addFilter(Filter::factory('EmptyOrOperator')->setName($endPublicationDateField)
                 ->setOperator('$gte')
                 ->setValue($now));
         }
@@ -173,9 +173,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function getOnlineList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         if (is_null($filters)) {
-            $filters = Filter::Factory();
+            $filters = Filter::factory();
         }
-        $filters->addFilter(Filter::Factory('Value')->setName('online')
+        $filters->addFilter(Filter::factory('Value')->setName('online')
             ->setValue(true));
         
         if (\Zend_Registry::isRegistered('draft')) {
@@ -280,7 +280,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             )
         );
         
-        $filters = Filter::Factory('Value')->setName('taxonomy.' . $vocId)->setValue($termId);
+        $filters = Filter::factory('Value')->setName('taxonomy.' . $vocId)->setValue($termId);
         
         return $this->_dataService->customUpdate($data, $filters);
     }
@@ -606,7 +606,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getByType ($typeId, $start = null, $limit = null)
     {
-        $filter = Filter::Factory('Value')->setName('typeId')->SetValue($typeId);
+        $filter = Filter::factory('Value')->setName('typeId')->SetValue($typeId);
         return $this->getList($filter, null, $start, $limit);
     }
 
@@ -620,7 +620,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         foreach ($result['data'] as $value) {
             $contentTypesArray[] = $value['id'];
         }
-        $filter = Filter::Factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
+        $filter = Filter::factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
         $result = $this->customDelete($filter);
         
         if ($result['ok'] == 1) {
@@ -644,7 +644,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         foreach ($result['data'] as $value) {
             $contentTypesArray[] = $value['id'];
         }
-        $filter = Filter::Factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
+        $filter = Filter::factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
         return $this->count($filter);
     }
 
@@ -729,13 +729,13 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getListByTypeId ($typeId)
     {
-        $filter = Filter::Factory('Value')->setName('typeId')->setValue($typeId);
+        $filter = Filter::factory('Value')->setName('typeId')->setValue($typeId);
         return $this->getList($filter);
     }
 
     public function isTypeUsed ($typeId)
     {
-        $filter = Filter::Factory('Value')->setName('typeId')->setValue($typeId);
+        $filter = Filter::factory('Value')->setName('typeId')->setValue($typeId);
         $result = $this->_dataService->findOne($filter);
         return ($result != null) ? array(
             "used" => true
@@ -835,7 +835,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             throw new \Rubedo\Exceptions\User('ContentType not found', "Exception41");
         }
         
-        $deleteCond = Filter::Factory('Value')->setName('typeId')->setValue($contentTypeId);
+        $deleteCond = Filter::factory('Value')->setName('typeId')->setValue($contentTypeId);
         $result = $this->_dataService->customDelete($deleteCond, array());
         
         if (isset($result['ok']) && $result['ok']) {
@@ -851,11 +851,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getReflexiveLinkedContents ($contentId, $typeId, $fieldName, $sort = null)
     {
-        $filterArray = Filter::Factory();
+        $filterArray = Filter::factory();
         
-        $filterArray->addFilter(Filter::Factory('Value')->setName("typeId")
+        $filterArray->addFilter(Filter::factory('Value')->setName("typeId")
             ->setValue($typeId));
-        $filterArray->addFilter(Filter::Factory('Value')->setName('fields.' . $fieldName)
+        $filterArray->addFilter(Filter::factory('Value')->setName('fields.' . $fieldName)
             ->setValue($contentId));
         
         $sort = \Zend_Json::decode($sort);

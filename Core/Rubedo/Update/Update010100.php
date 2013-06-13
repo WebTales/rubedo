@@ -47,7 +47,7 @@ class Update010100 extends Update
     public static function cleanBlocks ()
     {
         $service = Manager::getService('Blocks');
-        $updateCond = Filter::Factory('OperatorToValue')->setName('blockData.bType')
+        $updateCond = Filter::factory('OperatorToValue')->setName('blockData.bType')
             ->setOperator('$exists')
             ->setValue(true);
         $data = array(
