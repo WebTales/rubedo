@@ -31,8 +31,10 @@ use Rubedo\Services\Manager;
 class ImageController extends Zend_Controller_Action
 {
 
-    function indexAction ()
+    function indexAction()
     {
+        $now = Manager::getService('CurrentTime')->getCurrentTime();
+        
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
         
@@ -58,7 +60,9 @@ class ImageController extends Zend_Controller_Action
             }
             
             $filePath = sys_get_temp_dir() . '/' . $fileId;
-            $obj->write($filePath);
+            if (! is_file($filePath) || $now - filemtime($filePath) > 7 * 24 * 3600) {
+                $obj->write($filePath);
+            }
             $meta = $obj->file;
             $filename = $meta['filename'];
         }
@@ -77,10 +81,9 @@ class ImageController extends Zend_Controller_Action
             
             $type = strtolower($extension);
             $type = ($type == 'jpg') ? 'jpeg' : $type;
-            //$gdReturnClassName = 'image' . $type;
-            
-            $tmpImagePath = sys_get_temp_dir() . '/' . $fileId . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
-            $now = Manager::getService('CurrentTime')->getCurrentTime();
+            // $gdReturnClassName = 'image' . $type;
+            $fileSegment = isset($fileId) ? $fileId : str_replace('/', '_', $filePath);
+            $tmpImagePath = sys_get_temp_dir() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
                 
@@ -121,13 +124,13 @@ class ImageController extends Zend_Controller_Action
             $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")), true);
             $this->getResponse()->sendHeaders();
             readfile($tmpImagePath);
-            exit();
+            //exit();
         } else {
             throw new \Rubedo\Exceptions\User("No Image Given", "Exception80");
         }
     }
 
-    public function getThumbnailAction ()
+    public function getThumbnailAction()
     {
         $this->_forward('index', 'image', 'default', array(
             'size' => 'thumbnail'

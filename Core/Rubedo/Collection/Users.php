@@ -63,9 +63,9 @@ class Users extends AbstractCollection implements IUsers
         if (! self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if (! in_array('all', $readWorkspaceArray)) {
-                $filter = Filter::Factory();
+                $filter = Filter::factory();
                 
-                $filter->addFilter(Filter::Factory('In')->setName('workspace')
+                $filter->addFilter(Filter::factory('In')->setName('workspace')
                     ->setValue($readWorkspaceArray));
                 
                 $this->_dataService->addFilter($filter);
@@ -138,8 +138,8 @@ class Users extends AbstractCollection implements IUsers
                 $userIdList[] = $id;
             }
         }
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('InUid')->setValue($userIdList));
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('InUid')->setValue($userIdList));
         
         return $this->getList($filters);
     }
@@ -287,7 +287,7 @@ class Users extends AbstractCollection implements IUsers
      */
     public function findByEmail ($email)
     {
-        $filter = Filter::Factory('Value')->setName('email')->setValue($email);
+        $filter = Filter::factory('Value')->setName('email')->setValue($email);
         $result = $this->_dataService->findOne($filter);
         if ($result) {
             $result = $this->_addGroupsInfos($result);

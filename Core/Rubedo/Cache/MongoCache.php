@@ -176,17 +176,17 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
         
         switch ($mode) {
             case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-                $filters = Filter::Factory('OperatorToValue')->setName('tags')->setOperator('$all')->setValue($tags);
+                $filters = Filter::factory('OperatorToValue')->setName('tags')->setOperator('$all')->setValue($tags);
                 return $this->_dataService->customDelete($filters);
                 break;
             case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
-                $inFilters = Filter::Factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
-                $filters = Filter::Factory('CompositeNot')->addFilter($inFilters);
+                $inFilters = Filter::factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
+                $filters = Filter::factory('CompositeNot')->addFilter($inFilters);
                 
                 return $this->_dataService->customDelete($filters);
                 break;
             case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                $filters = Filter::Factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
+                $filters = Filter::factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
                 return $this->_dataService->customDelete($filters);
                 break;
             case \Zend_Cache::CLEANING_MODE_OLD:

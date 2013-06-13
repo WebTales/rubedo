@@ -6,6 +6,7 @@
     },
     "rights":[
         "read.ui.dam$",
+        "read.ui.directories$",
         "execute.controller.dam-types.index.backoffice",
         "execute.controller.dam.index.backoffice",
         "execute.controller.dam.get-thumbnail.backoffice",
@@ -13,6 +14,9 @@
         "execute.controller.elastic-search-dam.index.backoffice",
         "execute.controller.image.get.backoffice",
         "execute.controller.image.get-thumbnail.default",
-        "execute.controller.file.get-thumbnail.default"
+        "execute.controller.file.get-thumbnail.default",
+        "execute.controller.directories.read-child.backoffice",
+        "execute.controller.directories.tree.backoffice",
+        "execute.controller.directories.find-one.backoffice"
     ]
 }

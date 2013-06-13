@@ -80,12 +80,12 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
             )
         );
         
-        $loginCond = Filter::Factory('Or');
+        $loginCond = Filter::factory('Or');
         
-        $loginFilter = Filter::Factory('Value')->setName('login')->setValue($this->_login);
+        $loginFilter = Filter::factory('Value')->setName('login')->setValue($this->_login);
         $loginCond->addFilter($loginFilter);
         
-        $emailFilter = Filter::Factory('Value')->setName('email')->setValue($this->_login);
+        $emailFilter = Filter::factory('Value')->setName('email')->setValue($this->_login);
         $loginCond->addFilter($emailFilter);
         
         $dataService->addFilter($loginCond);

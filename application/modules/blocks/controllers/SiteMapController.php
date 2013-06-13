@@ -43,7 +43,7 @@ class Blocks_SiteMapController extends Blocks_AbstractController
         $output['displayTitle'] = isset($params['displayTitle']) ? $params['displayTitle'] : false;
         $output['blockTitle'] = $params['blockTitle'];
         
-        $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(true);
+        $filters = Filter::factory('Not')->setName('excludeFromMenu')->setValue(true);
         $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'], $filters);
         
         $rootPage = Manager::getService('Pages')->findById($output['rootPage']);
@@ -101,7 +101,7 @@ class Blocks_SiteMapController extends Blocks_AbstractController
             $tempSubArray['title'] = $subPage['title'];
             $tempSubArray['id'] = $subPage['id'];
             
-            $filters = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(false);
+            $filters = Filter::factory('Not')->setName('excludeFromMenu')->setValue(false);
             $pageChilds = Manager::getService('Pages')->readChild($subPage['id'], $filters);
             if (count($pageChilds)) {
                 $this->_getPages($tempSubArray, $pageChilds);

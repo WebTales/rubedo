@@ -48,7 +48,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         $currentUser = $currentUserService->getCurrentUserSummary();
         $this->_userId = $currentUser['id'];
         
-        $userFilter = Filter::Factory('Value');
+        $userFilter = Filter::factory('Value');
         ;
         $userFilter->setName('userId')->setValue($this->_userId);
         $this->_dataService->addFilter($userFilter);
@@ -98,7 +98,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
             $usersArray[] = $value['id'];
         }
         
-        $ninFilter = Filter::Factory('Value')->setName('userId')->setValue($usersArray);
+        $ninFilter = Filter::factory('Value')->setName('userId')->setValue($usersArray);
         $result = $this->customDelete($ninFilter);
         
         if ($result['ok'] == 1) {
@@ -122,7 +122,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         foreach ($result['data'] as $value) {
             $usersArray[] = $value['id'];
         }
-        $ninFilter = Filter::Factory('Value')->setName('userId')->setValue($usersArray);
+        $ninFilter = Filter::factory('Value')->setName('userId')->setValue($usersArray);
         return $this->count($ninFilter);
     }
 }

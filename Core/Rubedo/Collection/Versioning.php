@@ -58,7 +58,7 @@ class Versioning extends AbstractCollection implements IVersioning
             'publishVersion' => 'desc'
         );
         
-        $filter = Filter::Factory('Value');
+        $filter = Filter::factory('Value');
         $filter->setName('contentId')->setValue($contentId);
         
         $this->_dataService->addSort($sort);

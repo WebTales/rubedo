@@ -112,7 +112,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         $theBigString = $theBigString . Zend_Json::encode($model);
         $theBigString = $theBigString . "SEntityS";
         
-        $oldMaskFilters = Filter::Factory('value')->setName('site')->setValue($modelId);
+        $oldMaskFilters = Filter::factory('value')->setName('site')->setValue($modelId);
         $oldMasksArray = $masksService->getList($oldMaskFilters);
         
         foreach ($oldMasksArray['data'] as $key => $value) {

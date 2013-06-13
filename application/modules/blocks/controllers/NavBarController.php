@@ -88,7 +88,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         $output['logo'] = isset($blockConfig['logo']) ? $blockConfig['logo'] : null;
         $output['displayRootPage'] = $displayRootPage;
         
-        $this->excludeFromMenuCondition = Filter::Factory('Not')->setName('excludeFromMenu')->setValue(true);
+        $this->excludeFromMenuCondition = Filter::factory('Not')->setName('excludeFromMenu')->setValue(true);
         
         $this->pageService = Manager::getService('Pages');
         
