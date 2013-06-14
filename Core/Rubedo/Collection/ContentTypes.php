@@ -57,7 +57,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
             $readWorkspaceArray[] = null;
             $readWorkspaceArray[] = 'all';
             // $filter = array('workspaces'=> array('$in'=>$readWorkspaceArray));
-            $filter = Filter::Factory('OperatorToValue')->setName('workspaces')
+            $filter = Filter::factory('OperatorToValue')->setName('workspaces')
                 ->setOperator('$in')
                 ->setValue($readWorkspaceArray);
             $this->_dataService->addFilter($filter);
@@ -279,12 +279,12 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         $readWorkspaces = $currentUserService->getReadWorkspaces();
         $readWorkspaces[] = NULL;
         
-        $filters = Filter::Factory();
+        $filters = Filter::factory();
         if (! in_array("all", $readWorkspaces)) {
-            $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaces);
+            $filter = Filter::factory('In')->setName('workspaces')->setValue($readWorkspaces);
             $filters->addFilter($filter);
         }
-        $filters->addFilter(Filter::Factory('Not')->setName('system')
+        $filters->addFilter(Filter::factory('Not')->setName('system')
             ->setValue(true));
         $readableContentTypes = $this->getList($filters);
         

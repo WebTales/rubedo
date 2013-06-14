@@ -53,7 +53,7 @@ class Update010200 extends Update
                 'directory' => 'notFiled'
             )
         );
-        $updateCond = Filter::Factory('OperatorToValue')->setName('directory')
+        $updateCond = Filter::factory('OperatorToValue')->setName('directory')
             ->setOperator('$exists')
             ->setValue(false);
         $options = array(

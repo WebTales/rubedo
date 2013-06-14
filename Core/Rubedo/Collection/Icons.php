@@ -45,7 +45,7 @@ class Icons extends AbstractCollection implements IIcons
         $currentUser = $currentUserService->getCurrentUserSummary();
         $this->_userId = $currentUser['id'];
         
-        $userFilter = Filter::Factory('Value');
+        $userFilter = Filter::factory('Value');
         $userFilter->setName('userId')->setValue($this->_userId);
         $this->_dataService->addFilter($userFilter);
     }
@@ -67,7 +67,7 @@ class Icons extends AbstractCollection implements IIcons
             $usersArray[] = $value['id'];
         }
         
-        $ninFilter = Filter::Factory('NotIn');
+        $ninFilter = Filter::factory('NotIn');
         $ninFilter->setName('userId')->setValue($usersArray);
         
         $result = $this->customDelete($ninFilter);
@@ -94,7 +94,7 @@ class Icons extends AbstractCollection implements IIcons
             $usersArray[] = $value['id'];
         }
         
-        $ninFilter = Filter::Factory('NotIn');
+        $ninFilter = Filter::factory('NotIn');
         $ninFilter->setName('userId')->setValue($usersArray);
         
         return $this->count($ninFilter);

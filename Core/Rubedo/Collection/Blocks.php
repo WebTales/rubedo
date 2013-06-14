@@ -44,7 +44,7 @@ class Blocks extends AbstractCollection implements IBlocks
      */
     public function getListByMask ($maskId)
     {
-        $filter = Filter::Factory('Value')->setName('maskId')->setValue($maskId);
+        $filter = Filter::factory('Value')->setName('maskId')->setValue($maskId);
         $result = $this->getList($filter);
         return $result;
     }
@@ -76,7 +76,7 @@ class Blocks extends AbstractCollection implements IBlocks
      */
     public function getListByPage ($pageId)
     {
-        $filter = Filter::Factory('Value')->setName('pageId')->setValue($pageId);
+        $filter = Filter::factory('Value')->setName('pageId')->setValue($pageId);
         $result = $this->getList($filter);
         return $result;
     }
@@ -101,7 +101,7 @@ class Blocks extends AbstractCollection implements IBlocks
 
     public function deletedByArrayOfId ($arrayId)
     {
-        return $this->customDelete(Filter::Factory('InUid')->setValue($arrayId));
+        return $this->customDelete(Filter::factory('InUid')->setValue($arrayId));
     }
 
     /**

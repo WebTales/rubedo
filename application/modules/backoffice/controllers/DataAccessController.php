@@ -161,21 +161,21 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         if (! $filters) {
             $filters = array();
         }
-        $mongoFilters = Filter::Factory();
+        $mongoFilters = Filter::factory();
         
         foreach ($filters as $filter) {
             if (isset($filter['operator']) && $filter['operator'] == 'like') {
-                $mongoFilter = Filter::Factory('Regex')->setName($filter['property'])->setValue('/.*' . $filter["value"] . '.*/i');
+                $mongoFilter = Filter::factory('Regex')->setName($filter['property'])->setValue('/.*' . $filter["value"] . '.*/i');
             } elseif (isset($filter['operator']) && $filter['operator'] == '$in' && $filter['property'] == 'id') {
-                $mongoFilter = Filter::Factory('InUid')->setValue($filter['value']);
+                $mongoFilter = Filter::factory('InUid')->setValue($filter['value']);
             } elseif (isset($filter['operator']) && $filter['operator'] != 'eq') {
-                $mongoFilter = Filter::Factory('OperatorToValue')->setName($filter['property'])
+                $mongoFilter = Filter::factory('OperatorToValue')->setName($filter['property'])
                     ->setValue($filter['value'])
                     ->setOperator($filter['operator']);
             } elseif ($filter['property'] == 'id') {
-                $mongoFilter = Filter::Factory('Uid')->setValue($filter['value']);
+                $mongoFilter = Filter::factory('Uid')->setValue($filter['value']);
             } else {
-                $mongoFilter = Filter::Factory('Value')->setName($filter['property'])->setValue($filter['value']);
+                $mongoFilter = Filter::factory('Value')->setName($filter['property'])->setValue($filter['value']);
             }
             $mongoFilters->addFilter($mongoFilter);
         }

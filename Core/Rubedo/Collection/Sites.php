@@ -158,7 +158,7 @@ class Sites extends AbstractCollection implements ISites
             if (in_array('all', $readWorkspaceArray)) {
                 return;
             }
-            $filter = Filter::Factory('In')->setName('workspace')->setValue($readWorkspaceArray);
+            $filter = Filter::factory('In')->setName('workspace')->setValue($readWorkspaceArray);
             $this->_dataService->addFilter($filter);
         }
     }
@@ -203,7 +203,7 @@ class Sites extends AbstractCollection implements ISites
         
         $site = $this->findByName($host);
         if ($site === null) {
-            $filter = Filter::Factory('Value');
+            $filter = Filter::factory('Value');
             $filter->setName('alias')->setValue($host);
             $site = $this->_dataService->findOne($filter);
         }

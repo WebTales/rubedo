@@ -58,7 +58,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
                         '$in' => $readWorkspaceArray
                     )
                 );
-                $filter = Filter::Factory('In')->setName('workspaces')->setValue($readWorkspaceArray);
+                $filter = Filter::factory('In')->setName('workspaces')->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
@@ -142,7 +142,7 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($name == 'Navigation') {
             return $this->_virtualNavigationVocabulary;
         }
-        $data = $this->_dataService->findOne(Filter::Factory('Value')->setName('name')
+        $data = $this->_dataService->findOne(Filter::factory('Value')->setName('name')
             ->setValue($name));
         
         if ($data) {

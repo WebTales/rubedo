@@ -84,10 +84,10 @@ class Blocks_CalendarController extends Blocks_ContentListController
             
             $queryType = $queryFilter["queryType"];
             
-            $dateFilter = Filter::Factory('And')->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)
+            $dateFilter = Filter::factory('And')->addFilter(Filter::factory('OperatorTovalue')->setName($usedDateField)
                 ->setOperator('$gte')
                 ->setValue($timestamp))
-                ->addFilter(Filter::Factory('OperatorTovalue')->setName($usedDateField)
+                ->addFilter(Filter::factory('OperatorTovalue')->setName($usedDateField)
                 ->setOperator('$lt')
                 ->setValue($nextMonthTimeStamp));
             

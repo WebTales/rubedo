@@ -106,7 +106,7 @@ class Directories extends AbstractCollection implements IDirectories
             if (in_array('all', $readWorkspaceArray)) {
                 return;
             }
-            $filter = Filter::Factory('In');
+            $filter = Filter::factory('In');
             $filter->setName('workspace')->setValue($readWorkspaceArray);
             $this->_dataService->addFilter($filter);
         }
@@ -159,7 +159,7 @@ class Directories extends AbstractCollection implements IDirectories
      */
     public function destroy (array $obj, $options = array())
     {
-        $deleteCond = Filter::Factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
+        $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
         
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
@@ -256,7 +256,7 @@ class Directories extends AbstractCollection implements IDirectories
 
     public function getListByFilePlanId ($filePlanId)
     {
-        $filters = Filter::Factory('Value')->setName('filePlan')->setValue($filePlanId);
+        $filters = Filter::factory('Value')->setName('filePlan')->setValue($filePlanId);
         return $this->getList($filters);
     }
 
@@ -271,7 +271,7 @@ class Directories extends AbstractCollection implements IDirectories
     public function deleteByFilePlanId($id)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-        $filters = Filter::Factory('Value')->setName('filePlan')->setValue($id);
+        $filters = Filter::factory('Value')->setName('filePlan')->setValue($id);
         $result = $this->_dataService->customDelete($filters);
         
         AbstractCollection::disableUserFilter($wasFiltered);
@@ -283,7 +283,7 @@ class Directories extends AbstractCollection implements IDirectories
     {
         
         $filePlansArray = array("default");
-        $filters = Filter::Factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
+        $filters = Filter::factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
         $result = $this->customDelete($filters);
         if ($result['ok'] == 1) {
             return array(
@@ -299,7 +299,7 @@ class Directories extends AbstractCollection implements IDirectories
     public function countOrphanDirectories ()
     {
         $filePlansArray = array("default");
-        $filters = Filter::Factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
+        $filters = Filter::factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
         return $this->count($filters);
     }
 
@@ -328,9 +328,9 @@ class Directories extends AbstractCollection implements IDirectories
 
     public function propagateWorkspace ($parentId, $workspaceId, $filePlanId = null)
     {
-        $filters = Filter::Factory();
+        $filters = Filter::factory();
         if ($filePlanId) {
-            $filters = Filter::Factory('Value')->setName('filePlan')->setValue($filePlanId);
+            $filters = Filter::factory('Value')->setName('filePlan')->setValue($filePlanId);
         }
         $pageList = $this->readChild($parentId, $filters);
         foreach ($pageList as $page) {
@@ -391,7 +391,7 @@ class Directories extends AbstractCollection implements IDirectories
                 'directory' => $directoryId
             )
         );
-        $updateCond = Filter::Factory('InUid')->setValue($arrayId);
+        $updateCond = Filter::factory('InUid')->setValue($arrayId);
         
         $damService = Manager::getService('Dam');
         $directoryFrom = null;

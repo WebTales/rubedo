@@ -42,10 +42,10 @@ class FormsResponses extends AbstractCollection implements IFormsResponses
      */
     public function getValidResponsesByFormId ($formId, $start = null, $limit = null)
     {
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('Value')->setName('status')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('status')
             ->setValue('finished'));
-        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+        $filters->addFilter(Filter::factory('Value')->setName('formId')
             ->setValue($formId));
         
         $sort = array();
@@ -64,8 +64,8 @@ class FormsResponses extends AbstractCollection implements IFormsResponses
      */
     public function getResponsesByFormId ($formId, $start = null, $limit = null)
     {
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('formId')
             ->setValue($formId));
         
         $sort = array();
@@ -79,20 +79,20 @@ class FormsResponses extends AbstractCollection implements IFormsResponses
 
     public function countValidResponsesByFormId ($formId)
     {
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('Value')->setName('status')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('status')
             ->setValue('finished'));
-        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+        $filters->addFilter(Filter::factory('Value')->setName('formId')
             ->setValue($formId));
         return $this->count($filters);
     }
 
     public function countInvalidResponsesByFormId ($formId)
     {
-        $filters = Filter::Factory();
-        $filters->addFilter(Filter::Factory('Not')->setName('status')
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Not')->setName('status')
             ->setValue('finished'));
-        $filters->addFilter(Filter::Factory('Value')->setName('formId')
+        $filters->addFilter(Filter::factory('Value')->setName('formId')
             ->setValue($formId));
         return $this->count($filters);
     }

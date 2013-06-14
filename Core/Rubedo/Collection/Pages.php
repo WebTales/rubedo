@@ -133,7 +133,7 @@ class Pages extends AbstractCollection implements IPages
             if (in_array('all', $readWorkspaceArray)) {
                 return;
             }
-            $filter = Filter::Factory('In');
+            $filter = Filter::factory('In');
             $filter->setName('workspace')->setValue($readWorkspaceArray);
             $this->_dataService->addFilter($filter);
         }
@@ -150,17 +150,17 @@ class Pages extends AbstractCollection implements IPages
         if (! $siteId) {
             return null;
         }
-        $filters = Filter::Factory('And');
+        $filters = Filter::factory('And');
         
-        $filter = Filter::Factory('Value');
+        $filter = Filter::factory('Value');
         $filter->setName('pageURL')->setValue($urlSegment);
         $filters->addFilter($filter);
         
-        $filter = Filter::Factory('Value');
+        $filter = Filter::factory('Value');
         $filter->setName('parentId')->setValue($parentId);
         $filters->addFilter($filter);
         
-        $filter = Filter::Factory('Value');
+        $filter = Filter::factory('Value');
         $filter->setName('site')->setValue($siteId);
         $filters->addFilter($filter);
         
@@ -182,7 +182,7 @@ class Pages extends AbstractCollection implements IPages
         if ($this->hasDefaultPageAsChild($obj['id'])) {
             throw new \Rubedo\Exceptions\User("This page is the default single page or father of the default single page", "Exception47");
         }
-        $deleteCond = Filter::Factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
+        $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
         
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
@@ -348,7 +348,7 @@ class Pages extends AbstractCollection implements IPages
     protected function _clearCacheForPage ($obj)
     {
         $pageId = $obj['id'];
-        Manager::getService('UrlCache')->customDelete(Filter::Factory('Value')->setName('pageId')
+        Manager::getService('UrlCache')->customDelete(Filter::factory('Value')->setName('pageId')
             ->setValue($pageId), array(
             'w' => false
         ));
@@ -356,22 +356,22 @@ class Pages extends AbstractCollection implements IPages
 
     public function findByNameAndSite ($name, $siteId)
     {
-        $filters = Filter::Factory()->addFilter(Filter::Factory('Value')->setName('site')
+        $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('site')
             ->setValue($siteId))
-            ->addFilter(Filter::Factory('Value')->setName('text')
+            ->addFilter(Filter::factory('Value')->setName('text')
             ->setValue($name));
         return $this->_dataService->findOne($filters);
     }
 
     public function getListByMaskId ($maskId)
     {
-        $filters = Filter::Factory('Value')->setName('maskId')->setValue($maskId);
+        $filters = Filter::factory('Value')->setName('maskId')->setValue($maskId);
         return $this->getList($filters);
     }
 
     public function isMaskUsed ($maskId)
     {
-        $filters = Filter::Factory('Value')->setName('maskId')->setValue($maskId);
+        $filters = Filter::factory('Value')->setName('maskId')->setValue($maskId);
         $result = $this->_dataService->findOne($filters);
         return ($result != null) ? array(
             "used" => true
@@ -471,7 +471,7 @@ class Pages extends AbstractCollection implements IPages
     public function deleteBySiteId ($id)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-        $filters = Filter::Factory('Value')->setName('site')->setValue($id);
+        $filters = Filter::factory('Value')->setName('site')->setValue($id);
         $result = $this->_dataService->customDelete($filters);
         
         AbstractCollection::disableUserFilter($wasFiltered);
@@ -490,7 +490,7 @@ class Pages extends AbstractCollection implements IPages
             $masksArray[] = $value['id'];
         }
         
-        $filters = Filter::Factory('NotIn')->setName('maskId')->setValue($masksArray);
+        $filters = Filter::factory('NotIn')->setName('maskId')->setValue($masksArray);
         
         $result = $this->customDelete($filters);
         
@@ -515,7 +515,7 @@ class Pages extends AbstractCollection implements IPages
         foreach ($result['data'] as $value) {
             $masksArray[] = $value['id'];
         }
-        $filters = Filter::Factory('NotIn')->setName('maskId')->setValue($masksArray);
+        $filters = Filter::factory('NotIn')->setName('maskId')->setValue($masksArray);
         return $this->count($filters);
     }
 
@@ -563,9 +563,9 @@ class Pages extends AbstractCollection implements IPages
 
     public function propagateWorkspace ($parentId, $workspaceId, $siteId = null)
     {
-        $filters = Filter::Factory();
+        $filters = Filter::factory();
         if ($siteId) {
-            $filters = Filter::Factory('Value')->setName('site')->setValue($siteId);
+            $filters = Filter::factory('Value')->setName('site')->setValue($siteId);
         }
         $pageList = $this->readChild($parentId, $filters);
         foreach ($pageList as $page) {

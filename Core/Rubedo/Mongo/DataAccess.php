@@ -154,7 +154,7 @@ class DataAccess implements IDataAccess
      */
     public function __construct ()
     {
-        $this->_filters = Filter::Factory();
+        $this->_filters = Filter::factory();
     }
 
     /**
@@ -480,7 +480,7 @@ class DataAccess implements IDataAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         
-        $parentFilter = Filter::Factory('Value');
+        $parentFilter = Filter::factory('Value');
         $parentFilter->setName('parentId')->setValue($parentId);
         $localFilter->addFilter($parentFilter);
         
@@ -553,7 +553,7 @@ class DataAccess implements IDataAccess
      */
     public function findById ($contentId)
     {
-        $filter = Filter::Factory('Uid');
+        $filter = Filter::factory('Uid');
         $filter->setValue($contentId);
         return $this->findOne($filter);
     }
@@ -566,7 +566,7 @@ class DataAccess implements IDataAccess
      */
     public function findByName ($name)
     {
-        $filter = Filter::Factory('Value');
+        $filter = Filter::factory('Value');
         $filter->setValue($name)->setName('text');
         return $this->findOne($filter);
     }
@@ -675,10 +675,10 @@ class DataAccess implements IDataAccess
             }
         }
         
-        $updateConditionId = Filter::Factory('Uid');
+        $updateConditionId = Filter::factory('Uid');
         $updateConditionId->setValue($mongoID);
         
-        $updateConditionVersion = Filter::Factory('Value');
+        $updateConditionVersion = Filter::factory('Value');
         $updateConditionVersion->setValue($oldVersion)->setName('version');
         
         $updateCondition = clone $this->getFilters();
@@ -753,10 +753,10 @@ class DataAccess implements IDataAccess
             'version' => $version
         );
         
-        $updateConditionId = Filter::Factory('Uid');
+        $updateConditionId = Filter::factory('Uid');
         $updateConditionId->setValue($mongoID);
         
-        $updateConditionVersion = Filter::Factory('Value');
+        $updateConditionVersion = Filter::factory('Value');
         $updateConditionVersion->setValue($version)->setName('version');
         
         $updateCondition = clone $this->getFilters();

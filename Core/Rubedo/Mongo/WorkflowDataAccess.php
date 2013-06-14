@@ -242,7 +242,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             // copy the workspace into the live
             $obj['live'] = $obj['workspace'];
             
-            $updateCond = Filter::Factory('Uid')->setValue($objectId);
+            $updateCond = Filter::factory('Uid')->setValue($objectId);
             
             // update the content with the new values for the live array
             $returnArray = $this->customUpdate($obj, $updateCond);
@@ -376,7 +376,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      */
     public function findById ($contentId, $raw = true)
     {
-        $filter = Filter::Factory('Uid')->setValue($contentId);
+        $filter = Filter::factory('Uid')->setValue($contentId);
         return $this->findOne($filter, $raw);
     }
 
