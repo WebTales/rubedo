@@ -101,7 +101,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     protected function _getFacetFilter($name)
     {
         // get mode for this facet
-        $operator = $this->_facetOperators[$name] ? $this->_facetOperators[$name] : 'and';
+        $operator = isset($this->_facetOperators[$name]) ? $this->_facetOperators[$name] : 'and';
         if (!empty($this->_globalFilterList)) {
             $facetFilter = new \Elastica_Filter_And();
             $result = false;
@@ -136,6 +136,8 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $this->_params = $params;
 
+        
+
         // front-end search
         if ((self::$_isFrontEnd)) {
 
@@ -148,7 +150,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         		$this->_facetOperators = array();
         		
         		// check if facetOverrides exists      		
-        		if (isset($this->_params['block-config']['facetOverrides'])) {
+        		if (is_array($this->_params['block-config']['facetOverrides'])) {
 		            
         			$facetOverrides = (\Zend_Json::decode($this->_params['block-config']['facetOverrides']));
        
@@ -170,6 +172,8 @@ class DataSearch extends DataAbstract implements IDataSearch
 	        				$this->_facetOperators[$facetId]= isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
 	        			}
 	        		}
+	        		
+	        		
 	        	}
         	}
         }
