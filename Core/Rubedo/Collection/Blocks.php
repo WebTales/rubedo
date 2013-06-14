@@ -42,10 +42,15 @@ class Blocks extends AbstractCollection implements IBlocks
      * @param string $maskId            
      * @return array
      */
-    public function getListByMask ($maskId)
+    public function getListByMask($maskId)
     {
         $filter = Filter::factory('Value')->setName('maskId')->setValue($maskId);
-        $result = $this->getList($filter,array(array('property'=>"blockData.orderValue","direction"=>'ASC')));
+        $result = $this->getList($filter, array(
+            array(
+                'property' => "blockData.orderValue",
+                "direction" => 'ASC'
+            )
+        ));
         return $result;
     }
 
@@ -74,10 +79,15 @@ class Blocks extends AbstractCollection implements IBlocks
      * @param string $pageId            
      * @return array
      */
-    public function getListByPage ($pageId)
+    public function getListByPage($pageId)
     {
         $filter = Filter::factory('Value')->setName('pageId')->setValue($pageId);
-        $result = $this->getList($filter,array(array('property'=>"blockData.orderValue","direction"=>'ASC')));
+        $result = $this->getList($filter, array(
+            array(
+                'property' => "blockData.orderValue",
+                "direction" => 'ASC'
+            )
+        ));
         return $result;
     }
 
