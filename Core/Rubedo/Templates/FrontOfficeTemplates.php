@@ -115,6 +115,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('getPageTitle', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getPageTitle'));
         $this->_twig->addFunction('getLinkedContents', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getLinkedContents'));
         $this->_twig->addFunction('getTaxonomyTerm', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getTaxonomyTerm'));
+        $this->_twig->addFunction('getDam', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getDam'));
+        $this->_twig->addFunction('getContent', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getContent'));
     }
 
     /**
@@ -288,5 +290,29 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getCurrentThemeInfos ()
     {
         return $this->getThemeInfos($this->getCurrentTheme());
+    }
+    
+    /**
+     * Find a dam by its id
+     *
+     * @param string $damtId
+     *             Contain the id of the requested dam
+     */
+    public static function getDam($damId) {
+        $damService = Manager::getService("Dam");
+        
+        return $damService->findById($damId);
+    }
+    
+    /**
+     * Find a content by its id
+     * 
+     * @param string $contentId
+     *             Contain the id of the requested content
+     */
+    public static function getContent($contentId) {
+        $contentService = Manager::getService("Contents");
+    
+        return $contentService->findById($contenId);
     }
 }
