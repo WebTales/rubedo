@@ -81,8 +81,7 @@ class ImageController extends Zend_Controller_Action
             
             $type = strtolower($extension);
             $type = ($type == 'jpg') ? 'jpeg' : $type;
-            // $gdReturnClassName = 'image' . $type;
-            $fileSegment = isset($fileId) ? $fileId : str_replace('/', '_', $filePath);
+            $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)).'_'.basename($filePath);//str_replace('/', '_', $filePath);
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
