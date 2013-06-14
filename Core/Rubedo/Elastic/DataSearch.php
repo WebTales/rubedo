@@ -65,6 +65,10 @@ class DataSearch extends DataAbstract implements IDataSearch
 
     protected function _addFilter ($name, $field)
     {
+    	// transform param to array if single value
+    	if (!is_array($this->_params[$name])) {
+    		$this->_params[$name] = array($this->_params[$name]);
+    	}
         // get mode for this facet
         $operator = $this->_facetOperators[$name] ? $this->_facetOperators[$name] : 'and';
         $filterEmpty = true;
@@ -130,19 +134,30 @@ class DataSearch extends DataAbstract implements IDataSearch
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
         $this->_params = $params;
-        
+
+        // front-end search
         if ((self::$_isFrontEnd)) {
-            $facetOverrides = (\Zend_Json::decode($this->_params['block-config']['facetOverrides']));
-    
-            $displayedFacets = $this->_params['block-config']['displayedFacets'];
+
+        	// get list of displayed Facets
+        	$displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
+        	
+        	// check if facetOverrides exists 
+        	
+        	if (isset($this->_params['block-config']['facetOverrides'])) {
+	            $facetOverrides = (\Zend_Json::decode($this->_params['block-config']['facetOverrides']));
             
-            $this->_facetOperators = array();
-            foreach ($facetOverrides as $facet) {
-                if (in_array($facet['id'],$displayedFacets)) {
-                    if ($facet['id']=='contentType') $facet['id'] = 'type';
-                    $this->_facetOperators[$facet['id']]=strtolower($facet['facetOperator']);
-                }
-            }
+	            $this->_facetOperators = array();
+	            foreach ($facetOverrides as $facet) {
+	                if (in_array($facet['id'],$displayedFacets)) {
+	                    if ($facet['id']=='contentType') $facet['id'] = 'type';
+	                    $this->_facetOperators[$facet['id']]=strtolower($facet['facetOperator']);
+	                }
+	            }
+        	} else {
+        		
+        		// TODO : get facet operators from taxonomies
+        		
+        	}
         }
         
         $result = array();
@@ -318,7 +333,10 @@ class DataSearch extends DataAbstract implements IDataSearch
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy['id'];
             if (array_key_exists($vocabulary, $this->_params)) {
-                
+            	// transform param to array if single value
+            	if (!is_array($this->_params[$vocabulary])) {
+            		$this->_params[$vocabulary] = array($this->_params[$vocabulary]);
+            	}                
                 foreach ($this->_params[$vocabulary] as $term) {
 
                     $this->_addFilter ($vocabulary, 'taxonomy.' . $vocabulary, 'and');
