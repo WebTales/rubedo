@@ -385,7 +385,8 @@ class Pages extends AbstractCollection implements IPages
         $obj = $this->_initContent($obj);
         $result = parent::create($obj, $options);
         $result['data'] = $this->addBlocks($result['data']);
-        return $result;
+        $newResult = $this->update($result['data']);
+        return $newResult;
     }
 
     public function filterUrl ($url)
