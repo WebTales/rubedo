@@ -131,6 +131,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      */
     public function search (array $params, $option = 'all', $withSummary = true)
     {
+    	$taxonomyService = Manager::getService('Taxonomy');
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
         $this->_params = $params;
@@ -141,22 +142,37 @@ class DataSearch extends DataAbstract implements IDataSearch
         	// get list of displayed Facets
         	$displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
         	
-        	// check if facetOverrides exists 
-        	
-        	if (isset($this->_params['block-config']['facetOverrides'])) {
-	            $facetOverrides = (\Zend_Json::decode($this->_params['block-config']['facetOverrides']));
-            
-	            $this->_facetOperators = array();
-	            foreach ($facetOverrides as $facet) {
-	                if (in_array($facet['id'],$displayedFacets)) {
-	                    if ($facet['id']=='contentType') $facet['id'] = 'type';
-	                    $this->_facetOperators[$facet['id']]=strtolower($facet['facetOperator']);
-	                }
-	            }
-        	} else {
+        	// if there is any facet to display
+
+        	if (!empty($displayedFacets)) {
         		
-        		// TODO : get facet operators from taxonomies
+        		$this->_facetOperators = array();
         		
+        		// check if facetOverrides exists
+        		
+        		if (isset($this->_params['block-config']['facetOverrides'])) {
+		            
+        			$facetOverrides = (\Zend_Json::decode($this->_params['block-config']['facetOverrides']));
+	            		            
+		            foreach ($facetOverrides as $facet) {
+		                if (in_array($facet['id'],$displayedFacets)) {
+		                    if ($facet['id']=='contentType') $facet['id'] = 'type';
+		                    $this->_facetOperators[$facet['id']]=strtolower($facet['facetOperator']);
+		                }
+		            }
+		            
+	        	} else {
+	        		
+	        		// otherwise get facet operators from taxonomies
+
+	        		foreach ($displayedFacets as $facetId) {
+
+	        			$taxonomy = $taxonomyService->findById($facetId);
+	        			if ($taxonomy) {
+	        				$this->_facetOperators[$facetId]= isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
+	        			}
+	        		}
+	        	}
         	}
         }
         
