@@ -175,7 +175,7 @@
         		window.activeFacets={ };
         		for(var m= 0; m < recievedFacets.length; m++)
     			{
-    			     if ((recievedFacets[m].id=="type")||(recievedFacets[m].id=="damtype")||(recievedFacets[m].id=="author")||(recievedFacets[m].id=="date")){
+    			     if ((recievedFacets[m].id=="author")||(recievedFacets[m].id=="date")){
     			    	 window.activeFacets[recievedFacets[m].id]=recievedFacets[m].terms[0].term;
         			 } else {
             			 var intermed=[ ];
@@ -219,7 +219,8 @@
       }
       window.updateFacets=updateFacets;
       function updateFacets(id,term,add){
-          if ((id=="type")||(id=="damtype")||(id=="author")||(id=="date")||(id=="query")){ 
+          if ((id=="author")||(id=="date")||(id=="query")){
+              
 	          if (add){
 	        	  window.activeFacets[id]=term;
 	          } else {
@@ -232,7 +233,7 @@
 						  window.activeFacets[id].push(term);
 					  }
                   } else {
-                	  window.activeFacets[id]=[term];
+                	  window.activeFacets[id]=new Array(term);
                   }
 	        	  
 	          } else {
@@ -240,7 +241,7 @@
 				  	delete window.activeFacets[id];
 		          } else {
 			        var myInterIndex=window.activeFacets[id].indexOf(term);
-			        window.activeFacets[id]=window.activeFacets[id].splice(myInterIndex,1);
+			        window.activeFacets[id].splice(myInterIndex,1);
 			      }
 	          }
           }
