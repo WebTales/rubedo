@@ -89,6 +89,9 @@
       var activateSearch = {% if blockConfig.activateSearch %}true{% else %}false{% endif %};
       var showCenterMarker = {% if blockConfig.showCenterMarker %}true{% else %}false{% endif %};
       var predefinedFacets = {% if blockConfig.predefinedFacets%}"{{blockConfig.predefinedFacets| e('js')}}"{% else %}"{ }"{% endif %} ;
+      var displayedFacets = {% if blockConfig.displayedFacets%}"{{blockConfig.displayedFacets|json_encode()| e('js')}}"{% else %}"[ ]"{% endif %} ;
+      displayedFacets=JSON.parse(displayedFacets);
+      var facetOverrides = {% if blockConfig.facetOverrides%}"{{blockConfig.facetOverrides| e('js')}}"{% else %}"[ ]"{% endif %} ;
       var pagesize = {{blockConfig.pageSize}};
 	  if (useLocation&&navigator.geolocation) {
 		  navigator.geolocation.getCurrentPosition(function(position) {
@@ -144,6 +147,8 @@
     				'pagesize':pagesize,
     				'constrainToSite':{% if blockConfig.constrainToSite%}true{% else %}false{% endif %} ,
     				'predefinedFacets':predefinedFacets,
+    				'displayedFacets':displayedFacets,
+    				'facetOverrides':facetOverrides,
     				'inflat': bounds.getSouthWest().lat(),
     				'suplat': bounds.getNorthEast().lat(),	
     				'inflon': bounds.getSouthWest().lng(),
@@ -170,7 +175,7 @@
         		window.activeFacets={ };
         		for(var m= 0; m < recievedFacets.length; m++)
     			{
-    			     if ((recievedFacets[m].id=="type")||(recievedFacets[m].id=="damtype")||(recievedFacets[m].id=="author")||(recievedFacets[m].id=="date")){
+    			     if ((recievedFacets[m].id=="author")||(recievedFacets[m].id=="date")){
     			    	 window.activeFacets[recievedFacets[m].id]=recievedFacets[m].terms[0].term;
         			 } else {
             			 var intermed=[ ];
@@ -214,7 +219,8 @@
       }
       window.updateFacets=updateFacets;
       function updateFacets(id,term,add){
-          if ((id=="type")||(id=="damtype")||(id=="author")||(id=="date")||(id=="query")){ 
+          if ((id=="author")||(id=="date")||(id=="query")){
+              
 	          if (add){
 	        	  window.activeFacets[id]=term;
 	          } else {
@@ -227,7 +233,7 @@
 						  window.activeFacets[id].push(term);
 					  }
                   } else {
-                	  window.activeFacets[id]=[term];
+                	  window.activeFacets[id]=new Array(term);
                   }
 	        	  
 	          } else {
@@ -235,7 +241,7 @@
 				  	delete window.activeFacets[id];
 		          } else {
 			        var myInterIndex=window.activeFacets[id].indexOf(term);
-			        window.activeFacets[id]=window.activeFacets[id].splice(myInterIndex,1);
+			        window.activeFacets[id].splice(myInterIndex,1);
 			      }
 	          }
           }
