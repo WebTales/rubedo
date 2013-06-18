@@ -47,7 +47,9 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         
         // get params
         $params = $this->getRequest()->getParams();
-        
+        $params['block-config']=array();
+        $params['block-config']['displayedFacets']=$params['displayedFacets'];
+        $params['block-config']['facetOverrides']=$params['facetOverrides'];
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
             $this->_option = $params['option'];
