@@ -333,13 +333,13 @@ class IndexController extends Zend_Controller_Action
             if (! isset($block['orderValue'])) {
                 throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25", $block['id']);
             }
-            $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
+            $this->_blocksArray[$block['parentCol']][] = $block;
         }
         foreach ($this->_pageInfo['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
                 throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25", $block['id']);
             }
-            $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
+            $this->_blocksArray[$block['parentCol']][] = $block;
         }
         if ($this->_mainCol) {
             unset($this->_blocksArray[$this->_mainCol]);
