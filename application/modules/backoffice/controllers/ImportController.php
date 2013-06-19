@@ -34,7 +34,35 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
      * Array with the read only actions
      */
     protected $_readOnlyAction = array();
-
+    
+    /**
+     * Check if the given string is encoded in UTF-8 and encode it if it is not the case
+     * 
+     * @param string $string
+     * @return string UTF-8 string
+     */
+    protected function checkEncoding($string) {
+        $encoding = mb_detect_encoding($string, null, true);
+        
+        if($encoding != "UTF-8" && $encoding != "ASCII") {
+            switch ($encoding) {
+                case false :
+                case "ISO-8859-1" :
+                    $string = utf8_encode($string);
+                    
+                    if(mb_detect_encoding($string, null, true) != "UTF-8" && mb_detect_encoding($string, null, true) != "ASCII") {
+                        throw new \Rubedo\Exceptions\Server("Failed to encode in UTF-8, current encoding is ".mb_detect_encoding($string, null, true));
+                    }
+                    
+                    break;
+                default :
+                    throw new \Rubedo\Exceptions\Server("The csv file must be encoded in UTF-8 or in ISO-8859-1 or in ASCII and the current encoding is ".$encoding);
+            }
+        }
+        
+        return $string;
+    }
+    
     public function analyseAction ()
     {
         $separator = $this->getParam('separator', ";");
@@ -51,12 +79,27 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $returnArray['success'] = false;
                 $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             } else {
+                //Load csv
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
+                
+                //Get first line
                 $csvColumns = fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
+                
+                //check the encoding of the line
+                $stringCsvColumns = implode(";", $csvColumns);
+                $stringCsvColumns = $this->checkEncoding($stringCsvColumns);
+                
+                $csvColumns = explode(";", $stringCsvColumns);
+                
+                //Get the number of lines
                 $lineCounter = 0;
                 while (fgets($recievedFile) !== false)
                     $lineCounter ++;
+                
+                //Close csv
                 fclose($recievedFile);
+                
+                //Build response
                 $returnArray['detectedFields'] = array();
                 $returnArray['detectedFieldsCount'] = count($csvColumns);
                 $returnArray['detectedContentsCount'] = $lineCounter;
@@ -70,12 +113,18 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $returnArray['message'] = "OK";
             }
         }
+        
+        //Disable view
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
+        
+        //Encode the response in json
         $returnValue = Zend_Json::encode($returnArray);
         if ($this->_prettyJson) {
             $returnValue = Zend_Json::prettyPrint($returnValue);
         }
+        
+        //Return the repsonse
         $this->getResponse()->setBody($returnValue);
     }
 
@@ -89,6 +138,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         $taxonomyService = Rubedo\Services\Manager::getService('Taxonomy');
         $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
         $contentsService = Rubedo\Services\Manager::getService('Contents');
+        $brokenLines = array();
         
         if (! $adapter->receive("csvFile")) {
             $returnArray['success'] = false;
@@ -171,9 +221,23 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 // add contents to CT and terms to vocabularies
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
-                fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
+                //fgetcsv($recievedFile, 1000000, $separator, '"', '\\'); -> useless
                 $lineCounter = 0;
+                $csvLine = 0;
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
+                    $csvLine ++;
+                    
+                    //check the encoding of the line
+                    try {
+                        $stringCsvColumns = implode(";", $currentLine);
+                        $stringCsvColumns = $this->checkEncoding($stringCsvColumns);
+                        
+                        $currentLine = explode(";", $stringCsvColumns);
+                    } catch (\Rubedo\Exceptions $error) {
+                        $brokenLines[$csvLine] = $error;
+                        continue;
+                    }
+                    
                     // add taxo terms if not already in correspondent vocabulary
                     // create content fields
                     $contentParamsFields = array(
@@ -275,6 +339,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $returnArray['importedContentsCount'] = $lineCounter;
                 $returnArray['success'] = true;
                 $returnArray['message'] = "OK";
+                $returnArray['errors'] = $brokenLines;
             }
         }
         
