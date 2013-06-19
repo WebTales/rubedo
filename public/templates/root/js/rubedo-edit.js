@@ -488,7 +488,7 @@ function swithToEditMode() {
 	 jQuery(".complete-edition-btn").show();
 	 jQuery(".complete-edition-btn").click(function(){
 	 		var siteUrl = getDomainName();
-	 		var targetContentId=jQuery(this).attr("contentId");
+	 		var targetContentId=jQuery(this).attr("data-content-id");
 	 		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?edit-mode=true&content-id="+targetContentId;
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
