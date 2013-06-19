@@ -46,8 +46,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         
         if($encoding != "UTF-8" && $encoding != "ASCII") {
             switch ($encoding) {
-                case false :
-                case "ISO-8859-1" :
+                case false:
+                case "ISO-8859-1":
                     $string = utf8_encode($string);
                     
                     if(mb_detect_encoding($string, null, true) != "UTF-8" && mb_detect_encoding($string, null, true) != "ASCII") {
@@ -55,7 +55,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     }
                     
                     break;
-                default :
+                default:
                     throw new \Rubedo\Exceptions\Server("The csv file must be encoded in UTF-8 or in ISO-8859-1 or in ASCII and the current encoding is ".$encoding);
             }
         }
@@ -93,8 +93,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 //Get the number of lines
                 $lineCounter = 0;
-                while (fgets($recievedFile) !== false)
+                while (fgets($recievedFile) !== false) {
                     $lineCounter ++;
+                }
                 
                 //Close csv
                 fclose($recievedFile);
@@ -179,7 +180,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 foreach ($importAsField as $key => $value) {
                     if ($value['protoId'] == 'text') {
                         $textFieldIndex = $value['csvIndex'];
-                    } else 
+                    } else {
                         if ($value['protoId'] == 'summary') {
                             $summaryFieldIndex = $value['csvIndex'];
                         } else {
@@ -203,6 +204,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                             );
                             $CTfields[] = $newFieldForCT;
                         }
+                    }
                 }
                 
                 // create CT
@@ -257,11 +259,12 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                     if (count($splitedLatLon) == 2) {
                                         $lat = $splitedLatLon[0];
                                         $lon = $splitedLatLon[1];
-                                    } else 
+                                    } else {
                                         if (count($splitedLatLon) == 4) {
                                             $lat = (float) ($splitedLatLon[0] . '.' . $splitedLatLon[1]);
                                             $lon = (float) ($splitedLatLon[2] . '.' . $splitedLatLon[3]);
                                         }
+                                    }
                                     if (($lat) && ($lon)) {
                                         $contentParamsFields['position'] = array(
                                             "address" => "",
