@@ -223,7 +223,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 // add contents to CT and terms to vocabularies
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
-                //fgetcsv($recievedFile, 1000000, $separator, '"', '\\'); -> useless
+                //Read the first line to start at the second line
+                fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
                 $lineCounter = 0;
                 $csvLine = 0;
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
