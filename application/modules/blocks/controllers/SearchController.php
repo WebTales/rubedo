@@ -33,6 +33,21 @@ class Blocks_SearchController extends Blocks_AbstractController
         // get search parameters
         $params = $this->getRequest()->getParams();
         
+        //remove empty facets from criteria
+        foreach($params as $key => &$value){
+            
+            if(is_array($value)){
+                foreach ($value as $subkey => $subvalue){
+                    if(empty($subvalue)){
+                        unset($value[$subkey]);
+                    }
+                }
+                if(count($value)==0){
+                    unset($params[$key]);
+                }
+            }
+        }
+        
         $params['pagesize'] = $this->getParam('pagesize', 10);
         $params['pager'] = $this->getParam('pager', 0);
         
