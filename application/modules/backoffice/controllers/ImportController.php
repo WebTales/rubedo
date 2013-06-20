@@ -36,34 +36,26 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     protected $_readOnlyAction = array();
     
     /**
-     * Check if the given string is encoded in UTF-8 and encode it if it is not the case
+     * Return the encoding of the string
      * 
-     * @param string $string Contains the string which will be encoded
-     * @return string UTF-8 string
+     * @param string $string
+     * @return string encoding
      */
     protected function checkEncoding($string) {
-        //Get current encoding
         $encoding = mb_detect_encoding($string, null, true);
         
-        //Encode string in UTF-8
-        if($encoding == false || ($encoding != "UTF-8" && $encoding != "ASCII")) {
-            //If we don't know the encoding of the string, we let the function detecting it
-            if($encoding != false) {
-                $string = mb_convert_encoding($string, "UTF-8", $encoding);
-            } else {
-                $string = mb_convert_encoding($string, "UTF-8");
-            }
-            
-            //Get the new encoding to check if it's the good one
-            $newEncoding = mb_detect_encoding($string, null, true);
-            
-            //If the string is not in UTF-8, we throw an exception
-            if($newEncoding != "UTF-8" && $newEncoding != "ASCII") {
-                throw new \Rubedo\Exceptions\Server("Failed to encode in UTF-8, current encoding is ".mb_detect_encoding($string, null, true));
-            }
-        }
-        
-        return $string;
+        return $encoding;
+    }
+    
+    /**
+     * Return the given string encoded in UTF-8
+     * 
+     * @param string $string The string wich will be encoded
+     * @param string $encoding The current encoding of the string
+     * @return string Encoded string in UTF-8
+     */
+    protected function forceUtf8(&$string, $encoding) {
+        $string = mb_convert_encoding($string, "UTF-8", $encoding);
     }
     
     public function analyseAction ()
@@ -88,11 +80,16 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 //Get first line
                 $csvColumns = fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
                 
-                //check the encoding of the line
-                $stringCsvColumns = implode(";", $csvColumns);
-                $stringCsvColumns = $this->checkEncoding($stringCsvColumns);
+                //get the encoding of the line
+                $stringCsvColumns = implode(";", $currentLine);
+                $encoding = $this->checkEncoding($stringCsvColumns);
                 
-                $csvColumns = explode(";", $stringCsvColumns);
+                //Encode fields
+                if($encoding != false) {
+                    foreach ($currentLine as &$value) {
+                        $this->forceUtf8($string, $encoding);
+                    }
+                }
                 
                 //Get the number of lines
                 $lineCounter = 0;
@@ -232,15 +229,15 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
                     $csvLine ++;
                     
-                    //check the encoding of the line
-                    try {
-                        $stringCsvColumns = implode(";", $currentLine);
-                        $stringCsvColumns = $this->checkEncoding($stringCsvColumns);
-                        
-                        $currentLine = explode(";", $stringCsvColumns);
-                    } catch (\Rubedo\Exceptions $error) {
-                        $brokenLines[$csvLine] = $error;
-                        continue;
+                    //get the encoding of the line
+                    $stringCsvColumns = implode(";", $currentLine);
+                    $encoding = $this->checkEncoding($stringCsvColumns);
+                    
+                    //Encode fields
+                    if($encoding != false) {
+                        foreach ($currentLine as &$value) {
+                            $this->forceUtf8($string, $encoding);
+                        }
                     }
                     
                     // add taxo terms if not already in correspondent vocabulary
