@@ -81,12 +81,12 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $csvColumns = fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
                 
                 //get the encoding of the line
-                $stringCsvColumns = implode(";", $currentLine);
+                $stringCsvColumns = implode(";", $csvColumns);
                 $encoding = $this->checkEncoding($stringCsvColumns);
                 
                 //Encode fields
                 if($encoding != false) {
-                    foreach ($currentLine as &$value) {
+                    foreach ($csvColumns as &$value) {
                         $this->forceUtf8($string, $encoding);
                     }
                 }
