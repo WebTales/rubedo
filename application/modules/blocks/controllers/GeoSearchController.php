@@ -48,8 +48,9 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         // get params
         $params = $this->getRequest()->getParams();
         $params['block-config']=array();
-        $params['block-config']['displayedFacets']=$params['displayedFacets'];
-        $params['block-config']['facetOverrides']=$params['facetOverrides'];
+        $params['block-config']['displayedFacets']=isset($params['displayedFacets']) ? $params['displayedFacets'] : array();
+        $params['block-config']['facetOverrides']=isset($params['facetOverrides']) ? $params['facetOverrides'] : \Zend_Json::encode(array());
+        
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
             $this->_option = $params['option'];

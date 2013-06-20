@@ -71,6 +71,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     	}
         // get mode for this facet
         $operator = isset($this->_facetOperators[$name]) ? $this->_facetOperators[$name] : 'and';
+
         $filterEmpty = true;
         switch ($operator) {
             case 'or':
@@ -143,17 +144,18 @@ class DataSearch extends DataAbstract implements IDataSearch
 
         	// get list of displayed Facets
         	$displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
-        	
+
         	// if there is any facet to display
         	if (!empty($displayedFacets)) {
         		
         		$this->_facetOperators = array();
         		
-        		// check if facetOverrides exists      		
-        		if (is_array($this->_params['block-config']['facetOverrides'])) {
+        		// check if facetOverrides exists      	
+        		
+        		$facetOverrides = isset($this->_params['block-config']['facetOverrides']) ? (\Zend_Json::decode($this->_params['block-config']['facetOverrides'])) : array();
+        		
+       			if (!empty($facetOverrides)) {
 		            
-        			$facetOverrides = (\Zend_Json::decode($this->_params['block-config']['facetOverrides']));
-       
 		            foreach ($facetOverrides as $facet) {
 		                if (in_array($facet['id'],$displayedFacets)) {
 		                    if ($facet['id']=='contentType') $facet['id'] = 'type';
