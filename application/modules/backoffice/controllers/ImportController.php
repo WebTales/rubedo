@@ -38,25 +38,28 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     /**
      * Check if the given string is encoded in UTF-8 and encode it if it is not the case
      * 
-     * @param string $string
+     * @param string $string Contains the string which will be encoded
      * @return string UTF-8 string
      */
     protected function checkEncoding($string) {
+        //Get current encoding
         $encoding = mb_detect_encoding($string, null, true);
         
-        if($encoding != "UTF-8" && $encoding != "ASCII") {
-            switch ($encoding) {
-                case false:
-                case "ISO-8859-1":
-                    $string = utf8_encode($string);
-                    
-                    if(mb_detect_encoding($string, null, true) != "UTF-8" && mb_detect_encoding($string, null, true) != "ASCII") {
-                        throw new \Rubedo\Exceptions\Server("Failed to encode in UTF-8, current encoding is ".mb_detect_encoding($string, null, true));
-                    }
-                    
-                    break;
-                default:
-                    throw new \Rubedo\Exceptions\Server("The csv file must be encoded in UTF-8 or in ISO-8859-1 or in ASCII and the current encoding is ".$encoding);
+        //Encode string in UTF-8
+        if($encoding == false || ($encoding != "UTF-8" && $encoding != "ASCII")) {
+            //If we don't know the encoding of the string, we let the function detecting it
+            if($encoding != false) {
+                $string = mb_convert_encoding($string, "UTF-8", $encoding);
+            } else {
+                $string = mb_convert_encoding($string, "UTF-8");
+            }
+            
+            //Get the new encoding to check if it's the good one
+            $newEncoding = mb_detect_encoding($string, null, true);
+            
+            //If the string is not in UTF-8, we throw an exception
+            if($newEncoding != "UTF-8" && $newEncoding != "ASCII") {
+                throw new \Rubedo\Exceptions\Server("Failed to encode in UTF-8, current encoding is ".mb_detect_encoding($string, null, true));
             }
         }
         
