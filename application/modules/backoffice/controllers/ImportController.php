@@ -54,8 +54,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
      * @param string $encoding The current encoding of the string
      * @return string Encoded string in UTF-8
      */
-    protected function forceUtf8(&$string, $encoding) {
-        $string = mb_convert_encoding($string, "UTF-8", $encoding);
+    protected function forceUtf8($string, $encoding) {
+        return mb_convert_encoding($string, "UTF-8", $encoding);
     }
     
     public function analyseAction ()
@@ -86,8 +86,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 //Encode fields
                 if($encoding != false) {
-                    foreach ($csvColumns as &$value) {
-                        $this->forceUtf8($string, $encoding);
+                    foreach ($csvColumns as $key => $string) {
+                        $utf8String = $this->forceUtf8($string, $encoding);
+                        $csvColumns[$key] = $utf8String;
                     }
                 }
                 
@@ -226,18 +227,17 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 //Read the first line to start at the second line
                 fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
                 $lineCounter = 0;
-                $csvLine = 0;
+                
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
-                    $csvLine ++;
-                    
                     //get the encoding of the line
                     $stringCsvColumns = implode(";", $currentLine);
                     $encoding = $this->checkEncoding($stringCsvColumns);
                     
                     //Encode fields
                     if($encoding != false) {
-                        foreach ($currentLine as &$value) {
-                            $this->forceUtf8($string, $encoding);
+                        foreach ($currentLine as $key => $string) {
+                            $utf8String = $this->forceUtf8($string, $encoding);
+                            $currentLine[$key] = $utf8String;
                         }
                     }
                     
