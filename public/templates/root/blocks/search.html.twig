@@ -1,6 +1,6 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
-
+{% set displayMode = 'other' %}
 <br />
 <div class="navbar">
 	<div class="navbar-inner">
@@ -122,9 +122,15 @@
     	        <ul>
     				{% for term in facet.terms %}
     				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+    				{% if displayMode == 'checkbox' %}
+    				<label class="checkbox">
+      					<input type="checkbox"> {{ term.label }} ({{ term.count }})
+    				</label>
+    				{% else %}
     				<li>
     					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
+    				{% endif %}
     				{% endif %}
     				{% endfor %}
 			    </ul>

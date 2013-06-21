@@ -40,6 +40,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     protected $_setFilter;
     protected $_params;
     protected $_facetOperators;
+    protected $_displayMode;
 
     protected function _getContentType ($contentTypeId)
     {
@@ -107,6 +108,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $facetFilter = new \Elastica_Filter_And();
             $result = false;
             foreach ($this->_globalFilterList as $key=>$filter) {
+            	// fix 
                 if ($key!=$name or $operator=='and') {
                     $facetFilter->addFilter($filter);
                     $result = true;
@@ -130,14 +132,14 @@ class DataSearch extends DataAbstract implements IDataSearch
      *            s array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search (array $params, $option = 'all', $withSummary = true)
+    public function search (array $params, $option = 'all', $withSummary = true, $displayMode='other')
     {
     	$taxonomyService = Manager::getService('Taxonomy');
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
         $this->_params = $params;
 
-        
+        $this->_displayMode = $displayMode;
 
         // front-end search
         if ((self::$_isFrontEnd)) {
@@ -388,7 +390,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetType->setField('contentType');
             
             // Exclude active Facets for this vocabulary
-            if (isset($this->_filters['type'])) {
+            if ($this->_displayMode!='checkbox' and isset($this->_filters['type'])) {
                 $elasticaFacetType->setExclude(array(
                     $this->_filters['type']
                 ));
