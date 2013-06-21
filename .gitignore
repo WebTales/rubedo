@@ -15,3 +15,4 @@ library/HTMLPurifier
 /composer.lock
 public/templates/fps-tower-theme
 public/templates/citroen
+Thumbs.db

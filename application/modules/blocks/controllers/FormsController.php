@@ -145,6 +145,43 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output["form"]["id"] = $this->_formId;
         $output["nbFormPages"] = count($this->_form["formPages"]);
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+        foreach ($output['formFields']["elements"] as $key => &$value){
+            if ($value["itemConfig"]["fType"]=="predefinedPrefsQuestion"){
+                $source1Value=$this->_formResponse['data'][$value["itemConfig"]["source1Id"]];
+                $source2Value=$this->_formResponse['data'][$value["itemConfig"]["source2Id"]];
+                $source2Value=(float) $source2Value;
+                $expPlan=Zend_Json::decode($value["itemConfig"]["experiencePlan"]);
+                $expPlanLength=count($expPlan)-1;
+                $resultingOptions=array();
+                $numberOfQuestions=$value["itemConfig"]["numberOfQuestions"];
+                $numberOfOptions=$value["itemConfig"]["numberOfOptions"];
+                $usedRows=array();
+                for ($i = 1; $i <= $numberOfQuestions; $i++) {
+                    $myRow=rand(0, $expPlanLength);
+                    while (in_array($myRow, $usedRows)) {
+                        $myRow=rand(0, $expPlanLength);
+                    }
+                    array_push($usedRows, $myRow);
+                    $extractedRow=$expPlan[$myRow];
+                    $currentOption=array();
+                    
+                    for ($j = 1; $j <= $numberOfOptions; $j++) {
+                        $val1=DateTime::createFromFormat("G:i", $source1Value);
+                        $augmentor=date_interval_create_from_date_string($extractedRow["option".$j."source1"]." hours");
+                        $val1=$val1->add($augmentor);
+                        $val1=$val1->format("G:i");
+                        $val2=$source2Value*$extractedRow["option".$j."source2"];
+                        $fullValue=$val1." et ".$val2." euros";
+                        array_push($currentOption, array($val1,$val2,$fullValue));
+                    }
+                    array_push($resultingOptions, $currentOption);
+                }                
+                $value["itemConfig"]["resultingOptions"]=$resultingOptions;
+                
+                
+            //GRUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIK
+            }
+        }
         $output["displayNew"] = $this->_form["uniqueAnswer"] == "true" ? false : true;
         if ($this->_formResponse["status"] == "finished") {
             if ($this->_justFinished || $output["displayNew"]) {

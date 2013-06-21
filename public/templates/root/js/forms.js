@@ -86,3 +86,11 @@ function checkField(){
 			
 	});
 }
+
+jQuery(".lineExlusiveRadio").click( function () {
+	if ((jQuery(this).is(":checked"))){
+		jQuery(this).parent().parent().find("input").prop("checked",false);
+		jQuery(this).prop("checked",true);
+	}
+	
+});
