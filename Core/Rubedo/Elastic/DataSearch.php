@@ -40,6 +40,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     protected $_setFilter;
     protected $_params;
     protected $_facetOperators;
+    protected $_displayedFacets;
     protected $_displayMode;
 
     protected function _getContentType ($contentTypeId)
@@ -123,6 +124,15 @@ class DataSearch extends DataAbstract implements IDataSearch
             return null;
         }
     }
+
+    protected function _isFacetDisplayed($name)
+    {
+    	if (!self::$_isFrontEnd or $this->_displayedFacets==array("all") or in_array($name,$this->_displayedFacets)) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
     
     /**
      * ES search
@@ -145,10 +155,10 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ((self::$_isFrontEnd)) {
 
         	// get list of displayed Facets
-        	$displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
-
-        	// if there is any facet to display
-        	if (!empty($displayedFacets)) {
+        	$this->_displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
+       	
+        	// if there is any facet to display, get overrides
+        	if (!empty($this->_displayedFacets)) {
         		
         		$this->_facetOperators = array();
         		
@@ -159,7 +169,7 @@ class DataSearch extends DataAbstract implements IDataSearch
        			if (!empty($facetOverrides)) {
 		            
 		            foreach ($facetOverrides as $facet) {
-		                if (in_array($facet['id'],$displayedFacets)) {
+		                if (in_array($facet['id'],$this->_displayedFacets)) {
 		                    if ($facet['id']=='contentType') $facet['id'] = 'type';
 		                    $this->_facetOperators[$facet['id']]=strtolower($facet['facetOperator']);
 		                }
@@ -167,17 +177,28 @@ class DataSearch extends DataAbstract implements IDataSearch
 		            
 	        	} else {
 	        		
-	        		// otherwise get facet operators from taxonomies
+	        		// if all facets are displayed
+	        		 
+	        		if ($this->_displayedFacets==array("all")) {
+	        			
+	        			// get facets operators from all taxonomies
+	        			$taxonomyList = $taxonomyService->getList();
 
-	        		foreach ($displayedFacets as $facetId) {
-
-	        			$taxonomy = $taxonomyService->findById($facetId);
-	        			if ($taxonomy) {
-	        				$this->_facetOperators[$facetId]= isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
-	        			}
-	        		}
-	        		
-	        		
+	        			foreach ($taxonomyList['data'] as $taxonomy) {
+	        				$this->_facetOperators[$taxonomy['id']]= isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
+	        			} 	
+        			
+	        		} else {
+	        			
+	        			// otherwise get facets operators from displayed facets only
+	        			foreach ($this->_displayedFacets as $facetId) {
+	
+		        			$taxonomy = $taxonomyService->findById($facetId);
+		        			if ($taxonomy) {
+		        				$this->_facetOperators[$facetId]= isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
+		        			}
+	        			}   
+	        		}       				
 	        	}
         	}
         }
@@ -385,7 +406,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Define the type facet
         
-        if (!self::$_isFrontEnd or in_array('contentType',$displayedFacets)) {
+        if ($this->_isFacetDisplayed('contentType')) {
             $elasticaFacetType = new \Elastica_Facet_Terms('type');
             $elasticaFacetType->setField('contentType');
             
@@ -410,7 +431,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Define the dam type facet
         
-        if (!self::$_isFrontEnd or in_array('damType',$displayedFacets)) {
+        if ($this->_isFacetDisplayed('damType')) {
 
             $elasticaFacetDamType = new \Elastica_Facet_Terms('damType');
             $elasticaFacetDamType->setField('damType');
@@ -437,7 +458,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Define the author facet
         
-        if (!self::$_isFrontEnd or in_array('author',$displayedFacets)) {
+        if ($this->_isFacetDisplayed('author')) {
             
             $elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
             $elasticaFacetAuthor->setField('author');
@@ -463,7 +484,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Define the date facet.
         
-        if (!self::$_isFrontEnd or in_array('date',$displayedFacets)) {
+        if ($this->_isFacetDisplayed('date')) {
         
             $elasticaFacetDate = new \Elastica_Facet_Range('date');
             $elasticaFacetDate->setField('lastUpdateTime');
@@ -509,7 +530,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy['id'];
             
-            if (!self::$_isFrontEnd or in_array($vocabulary,$displayedFacets)) {
+            if ($this->_isFacetDisplayed($vocabulary)) {
             
                 $elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
                 $elasticaFacetTaxonomy->setField('taxonomy.' . $taxonomy['id']);
