@@ -38,6 +38,8 @@ class Update010200 extends Update
     public static function upgrade ()
     {
         static::notFiledDam();
+        static::blocksUpdate();
+        static::taxonomiesUpdate(); 
         return true;
     }
 
@@ -60,6 +62,76 @@ class Update010200 extends Update
             'multiple' => true
         );
         Manager::getService('Dam')->customUpdate($data, $updateCond, $options);
+        return true;
+    }
+    
+    /**
+     * add new facets options to search blocks
+     * @return boolean
+     */
+    public static function blocksUpdate ()
+    {
+        // geoSearchResults
+        $data = array(
+                '$set' => array(
+                        'blockData.configBloc.displayedFacets' => array(
+                                'all'
+                        ),
+                        'blockData.configBloc.showPlacesSearch' => true
+            )
+        );
+        $updateCond = Filter::factory();
+        $updateCond->addFilter(
+            Filter::factory('OperatorToValue')
+                ->setName('blockData.configBloc.displayedFacets')
+                ->setOperator('$exists')
+                ->setValue(false)
+        );
+        $updateCond->addFilter(
+                Filter::factory('Value')->setName('blockData.bType')
+                    ->setValue('geoSearchResults'));
+        $options = array(
+                'multiple' => true
+        );
+        Manager::getService('Blocks')->customUpdate($data, $updateCond, $options);
+        
+        //searchResults
+        $data = array(
+            '$set' => array(
+                'blockData.configBloc.displayedFacets' => array('all')
+            )
+        );
+        $updateCond = Filter::factory();
+        $updateCond->addFilter(Filter::factory('OperatorToValue')->setName('blockData.configBloc.displayedFacets')
+            ->setOperator('$exists')
+            ->setValue(false));
+        $updateCond->addFilter(Filter::factory('Value')->setName('blockData.bType')
+            ->setValue('searchResults'));
+        $options = array(
+            'multiple' => true
+        );
+        Manager::getService('Blocks')->customUpdate($data, $updateCond, $options);
+        return true;
+    }
+    
+    /**
+     * add facets operator to taxonomies
+     * @return boolean
+     */
+    public static function taxonomiesUpdate()
+    {
+        $data = array(
+            '$set' => array(
+                'facetOperator' => 'AND'
+            )
+        );
+        $updateCond = Filter::factory('OperatorToValue')->setName('facetOperator')
+        ->setOperator('$exists')
+        ->setValue(false);
+        $options = array(
+            'multiple' => true
+        );
+        Manager::getService('Taxonomy')->customUpdate($data, $updateCond, $options);
         return true;
     }
 }
