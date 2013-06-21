@@ -142,7 +142,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      *            s array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search (array $params, $option = 'all', $withSummary = true, $displayMode='other')
+    public function search (array $params, $option = 'all', $withSummary = true, $displayMode='standard')
     {
     	$taxonomyService = Manager::getService('Taxonomy');
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
@@ -437,7 +437,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetDamType->setField('damType');
             
             // Exclude active Facets for this vocabulary
-            if (isset($this->_filters['damType'])) {
+            if ($this->_displayMode!='checkbox' and isset($this->_filters['damType'])) {
                 $elasticaFacetDamType->setExclude(array(
                     $this->_filters['damType']
                 ));
@@ -464,7 +464,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetAuthor->setField('author');
             
             // Exclude active Facets for this vocabulary
-            if (isset($this->_filters['author'])) {
+            if ($this->_displayMode!='checkbox' and isset($this->_filters['author'])) {
                 $elasticaFacetAuthor->setExclude(array(
                     $this->_filters['author']
                 ));
@@ -536,7 +536,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $elasticaFacetTaxonomy->setField('taxonomy.' . $taxonomy['id']);
                 
                 // Exclude active Facets for this vocabulary
-                if (isset($this->_filters[$vocabulary])) {
+                if ($this->_displayMode!='checkbox' and isset($this->_filters[$vocabulary])) {
                     $elasticaFacetTaxonomy->setExclude($this->_filters[$vocabulary]);
                 }
                 $elasticaFacetTaxonomy->setSize(20);

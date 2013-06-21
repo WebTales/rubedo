@@ -104,7 +104,9 @@ class Blocks_SearchController extends Blocks_AbstractController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
         $css = array();
-        $js = array();
+        $js = array(
+        		'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js")
+		);
         
         $this->_sendResponse($results, $template, $css, $js);
     }
