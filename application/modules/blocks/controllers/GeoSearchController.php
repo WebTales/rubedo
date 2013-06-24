@@ -32,7 +32,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     public function indexAction ()
     {
         $params = $this->getRequest()->getParams();
-        $results = array();
+        $results = $params;
         $results['blockConfig'] = $params['block-config'];
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
