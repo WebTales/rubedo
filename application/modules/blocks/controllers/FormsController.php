@@ -145,6 +145,8 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output["form"]["id"] = $this->_formId;
         $output["nbFormPages"] = count($this->_form["formPages"]);
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+        /*Zend_Debug::dump($this->_formResponse['data']);
+        die("test");*/
         foreach ($output['formFields']["elements"] as $key => &$value){
             if ($value["itemConfig"]["fType"]=="predefinedPrefsQuestion"){
                 $source1Value=$this->_formResponse['data'][$value["itemConfig"]["source1Id"]];
@@ -179,7 +181,7 @@ class Blocks_FormsController extends Blocks_AbstractController
                 $value["itemConfig"]["resultingOptions"]=$resultingOptions;
                 
                 
-            //GRUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIK
+            //specific implement of special field
             }
         }
         $output["displayNew"] = $this->_form["uniqueAnswer"] == "true" ? false : true;
