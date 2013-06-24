@@ -113,6 +113,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
     public function analyseAction ()
     {
         $separator = $this->getParam('separator', ";");
+        $userEncoding = $this->getParam('encoding');
         $adapter = new Zend_File_Transfer_Adapter_Http();
         $returnArray = array();
         
@@ -135,6 +136,11 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 //get the encoding of the line
                 $stringCsvColumns = implode(";", $csvColumns);
                 $encoding = $this->getEncoding($stringCsvColumns);
+                
+                //Overwrite default encoding if it is specified
+                if(isset($userEncoding)) {
+                    $encoding["defaultEncoding"] = $userEncoding;
+                }
                 
                 //Encode fields
                 if(isset($encoding["defaultEncoding"])) {
@@ -188,6 +194,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         Zend_Registry::set('Expects_Json', true);
         set_time_limit(5000);
         $separator = $this->getParam('separator', ";");
+        $userEncoding = $this->getParam('encoding');
         $adapter = new Zend_File_Transfer_Adapter_Http();
         $returnArray = array();
         $taxonomyService = Rubedo\Services\Manager::getService('Taxonomy');
@@ -285,6 +292,11 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     //get the encoding of the line
                     $stringCsvColumns = implode(";", $currentLine);
                     $encoding = $this->getEncoding($stringCsvColumns);
+                    
+                    //Overwrite default encoding if it is specified
+                    if(isset($userEncoding)) {
+                        $encoding["defaultEncoding"] = $userEncoding;
+                    }
                     
                     //Encode fields
                     if(isset($encoding["defaultEncoding"])) {
