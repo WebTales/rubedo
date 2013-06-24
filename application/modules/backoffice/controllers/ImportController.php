@@ -57,7 +57,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         
         // Throw an exception if neither encoding match with the string
         if(!isset($result["charsetList"])) {
-            throw new \Rubedo\Exceptions\Server("The server cannot find the charset of the current file.");
+            throw new \Rubedo\Exceptions\Server("The server cannot find the charset of the current file.", "Exception95");
         }
         
         // Define the main encodings
@@ -197,7 +197,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         $userEncoding = $this->getParam('encoding');
         
         if(!isset($userEncoding)) {
-            throw new \Rubedo\Exceptions\Server("Missing parameter : encoding");
+            throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
         }
         
         $adapter = new Zend_File_Transfer_Adapter_Http();
