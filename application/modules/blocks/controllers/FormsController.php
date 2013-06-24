@@ -74,6 +74,7 @@ class Blocks_FormsController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
+    	$output = $this->getAllParams();
         // recupération de paramètre éventuels de la page en cours
         $currentFormPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
         
