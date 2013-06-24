@@ -34,25 +34,77 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
      * Array with the read only actions
      */
     protected $_readOnlyAction = array();
-    
+
     /**
      * Return the encoding of the string
      * 
      * @param string $string
-     * @return string encoding
+     * @return array 
+     *             List of possible encodings of the string
      */
-    protected function checkEncoding($string) {
-        $encoding = mb_detect_encoding($string, null, true);
+    protected function getEncoding($string) {
+        $result = array();
         
-        return $encoding;
+        // Get the list of possible encodings
+        foreach (mb_list_encodings() as $value) {
+            if(in_array($value, array('auto','pass'))){
+                continue;
+            }
+            if (mb_check_encoding($string, $value)) {
+                $result["charsetList"][] = $value;
+            }
+        }
+        
+        // Throw an exception if neither encoding match with the string
+        if(!isset($result["charsetList"])) {
+            throw new \Rubedo\Exceptions\Server("The server cannot find the charset of the current file.");
+        }
+        
+        // Define the main encodings
+        $mainEncodings = array(
+            "UTF-8",
+            "ISO-8859-15",
+            "ISO-8859-1",
+            "Windows-1252"
+        );
+        
+        // If one of the main encodings is in the list of possible encodings, we send the first value
+        foreach ($mainEncodings as $encoding) {
+            if(in_array($encoding, $result["charsetList"])) {
+                $result["defaultEncoding"] = $encoding;
+                break;
+            }
+        }
+        
+        return $result;
+    }    
+    
+    /**
+     * Return the encoding of the string
+     *
+     * @param string $string 
+     * @param string $encoding
+     *             Contain the expected encoding of the string
+     *             for example :   UTF-8
+     *                             ISO-8859-15
+     *                             ISO-8859-1
+     * @return boolean
+     *             true if the encoding match with the string
+     */
+    protected function checkEncoding ($string, $encoding)
+    {
+        return mb_check_encoding($string, $encoding);
     }
     
     /**
      * Return the given string encoded in UTF-8
      * 
-     * @param string $string The string wich will be encoded
-     * @param string $encoding The current encoding of the string
-     * @return string Encoded string in UTF-8
+     * @param string $string
+     *             The string wich will be encoded
+     * @param string $encoding
+     *             The current encoding of the string
+     * @return string
+     *             Encoded string in UTF-8
      */
     protected function forceUtf8($string, $encoding) {
         return mb_convert_encoding($string, "UTF-8", $encoding);
@@ -82,12 +134,12 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 //get the encoding of the line
                 $stringCsvColumns = implode(";", $csvColumns);
-                $encoding = $this->checkEncoding($stringCsvColumns);
+                $encoding = $this->getEncoding($stringCsvColumns);
                 
                 //Encode fields
-                if($encoding != false) {
+                if(isset($encoding["defaultEncoding"])) {
                     foreach ($csvColumns as $key => $string) {
-                        $utf8String = $this->forceUtf8($string, $encoding);
+                        $utf8String = $this->forceUtf8($string, $encoding["defaultEncoding"]);
                         $csvColumns[$key] = $utf8String;
                     }
                 }
@@ -102,6 +154,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 fclose($recievedFile);
                 
                 //Build response
+                $returnArray['encoding'] = $encoding;
                 $returnArray['detectedFields'] = array();
                 $returnArray['detectedFieldsCount'] = count($csvColumns);
                 $returnArray['detectedContentsCount'] = $lineCounter;
@@ -231,13 +284,13 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
                     //get the encoding of the line
                     $stringCsvColumns = implode(";", $currentLine);
-                    $encoding = $this->checkEncoding($stringCsvColumns);
+                    $encoding = $this->getEncoding($stringCsvColumns);
                     
                     //Encode fields
-                    if($encoding != false) {
-                        foreach ($currentLine as $key => $string) {
-                            $utf8String = $this->forceUtf8($string, $encoding);
-                            $currentLine[$key] = $utf8String;
+                    if(isset($encoding["defaultEncoding"])) {
+                        foreach ($csvColumns as $key => $string) {
+                            $utf8String = $this->forceUtf8($string, $encoding["defaultEncoding"]);
+                            $csvColumns[$key] = $utf8String;
                         }
                     }
                     
@@ -289,6 +342,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     }
                     // create content taxo
                     $contentParamsTaxonomy = array();
+                    $contentParamsTaxonomy['navigation']=$configs["ContentsNavTaxo"];
                     foreach ($importAsTaxo as $key => $value) {
                         $theTaxoId = $newTaxos[$key]['data']['id'];
                         $contentParamsTaxonomy[$theTaxoId] = array();

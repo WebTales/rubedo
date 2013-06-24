@@ -41,7 +41,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     protected $_params;
     protected $_facetOperators;
     protected $_displayedFacets;
-    protected $_displayMode;
+    protected $_facetDisplayMode;
 
     protected function _getContentType ($contentTypeId)
     {
@@ -109,7 +109,6 @@ class DataSearch extends DataAbstract implements IDataSearch
             $facetFilter = new \Elastica_Filter_And();
             $result = false;
             foreach ($this->_globalFilterList as $key=>$filter) {
-            	// fix 
                 if ($key!=$name or $operator=='and') {
                     $facetFilter->addFilter($filter);
                     $result = true;
@@ -142,14 +141,14 @@ class DataSearch extends DataAbstract implements IDataSearch
      *            s array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search (array $params, $option = 'all', $withSummary = true, $displayMode='standard')
+    public function search (array $params, $option = 'all', $withSummary = true, $facetDisplayMode='standard')
     {
     	$taxonomyService = Manager::getService('Taxonomy');
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
         $this->_params = $params;
 
-        $this->_displayMode = $displayMode;
+        $this->_facetDisplayMode = $facetDisplayMode;
 
         // front-end search
         if ((self::$_isFrontEnd)) {
@@ -165,11 +164,11 @@ class DataSearch extends DataAbstract implements IDataSearch
         		// check if facetOverrides exists      	
         		
         		$facetOverrides = isset($this->_params['block-config']['facetOverrides']) ? (\Zend_Json::decode($this->_params['block-config']['facetOverrides'])) : array();
-        		
+
        			if (!empty($facetOverrides)) {
 		            
 		            foreach ($facetOverrides as $facet) {
-		                if (in_array($facet['id'],$this->_displayedFacets)) {
+		                if ($this->_displayedFacets==array("all") or in_array($facet['id'],$this->_displayedFacets)) {
 		                    if ($facet['id']=='contentType') $facet['id'] = 'type';
 		                    $this->_facetOperators[$facet['id']]=strtolower($facet['facetOperator']);
 		                }
@@ -411,7 +410,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetType->setField('contentType');
             
             // Exclude active Facets for this vocabulary
-            if ($this->_displayMode!='checkbox' and isset($this->_filters['type'])) {
+            if ($this->_facetDisplayMode!='checkbox' and isset($this->_filters['type'])) {
                 $elasticaFacetType->setExclude(array(
                     $this->_filters['type']
                 ));
@@ -437,7 +436,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetDamType->setField('damType');
             
             // Exclude active Facets for this vocabulary
-            if ($this->_displayMode!='checkbox' and isset($this->_filters['damType'])) {
+            if ($this->_facetDisplayMode!='checkbox' and isset($this->_filters['damType'])) {
                 $elasticaFacetDamType->setExclude(array(
                     $this->_filters['damType']
                 ));
@@ -464,7 +463,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetAuthor->setField('author');
             
             // Exclude active Facets for this vocabulary
-            if ($this->_displayMode!='checkbox' and isset($this->_filters['author'])) {
+            if ($this->_facetDisplayMode!='checkbox' and isset($this->_filters['author'])) {
                 $elasticaFacetAuthor->setExclude(array(
                     $this->_filters['author']
                 ));
@@ -536,7 +535,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $elasticaFacetTaxonomy->setField('taxonomy.' . $taxonomy['id']);
                 
                 // Exclude active Facets for this vocabulary
-                if ($this->_displayMode!='checkbox' and isset($this->_filters[$vocabulary])) {
+                if ($this->_facetDisplayMode!='checkbox' and isset($this->_filters[$vocabulary])) {
                     $elasticaFacetTaxonomy->setExclude($this->_filters[$vocabulary]);
                 }
                 $elasticaFacetTaxonomy->setSize(20);
