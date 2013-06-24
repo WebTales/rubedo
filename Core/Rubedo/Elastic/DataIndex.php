@@ -927,7 +927,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 empty($this->_documents);
             }
             
-            $start = $start + $bulkSize + 1;
+            $start = $start + $bulkSize;
         } while (count($itemList['data']) == $bulkSize);
         
         $result[$type['type']] = $itemCount;
