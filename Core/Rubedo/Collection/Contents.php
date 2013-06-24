@@ -191,13 +191,13 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::create()
      */
-    public function create (array $obj, $options = array(), $live = false)
+    public function create (array $obj, $options = array(), $live = false,$ignoreIndex = false)
     {
         $obj = $this->_setDefaultWorkspace($obj);
         $this->_filterInputData($obj);
         
         if ($this->_isValidInput) {
-            $returnArray = parent::create($obj, $options, $live);
+            $returnArray = parent::create($obj, $options, $live, $ignoreIndex);
         } else {
             $returnArray = array(
                 'success' => false,
@@ -866,14 +866,16 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::publish()
      */
-    public function publish ($objectId)
+    public function publish ($objectId,$ignoreIndex = false)
     {
-        $result = parent::publish($objectId);
+        $result = parent::publish($objectId,$ignoreIndex);
         
-        // get the live content to send it to indexer service
-        $content = $this->findById($objectId, true, false);
-        $this->_indexContent($content);
-        
+        if(!$ignoreIndex){
+	        // get the live content to send it to indexer service
+	        $content = $this->findById($objectId, true, false);
+	        
+	        $this->_indexContent($content);
+        }
         return $result;
     }
 }
