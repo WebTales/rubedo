@@ -34,12 +34,12 @@ class Blocks_SearchController extends Blocks_AbstractController
         $params = $this->getRequest()->getParams();
         
         //remove empty facets from criteria
-        foreach($params as $key => &$value){
+        foreach($params as $key => $value){
             
             if(is_array($value)){
                 foreach ($value as $subkey => $subvalue){
                     if(empty($subvalue)){
-                        unset($value[$subkey]);
+                        unset($params[$key][$subkey]);
                     }
                 }
                 if(count($value)==0){
@@ -73,7 +73,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
-        
+                
         $results = $query->search($params);
         
         $results['currentSite'] = isset($siteId) ? $siteId : null;
