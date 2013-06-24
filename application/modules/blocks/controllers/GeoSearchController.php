@@ -162,10 +162,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                             if ($key == 'navigation') {
                                 continue;
                             }
-                            foreach ($terms as $term) {
-                                $intermedTerm = Manager::getService('TaxonomyTerms')->findById($term);
-                                if (! empty($intermedTerm)) {
-                                    $termsArray[] = $intermedTerm['text'];
+                            if(is_array($terms)) {
+                                foreach ($terms as $term) {
+                                    $intermedTerm = Manager::getService('TaxonomyTerms')->findById($term);
+                                    if (! empty($intermedTerm)) {
+                                        $termsArray[] = $intermedTerm['text'];
+                                    }
                                 }
                             }
                         }
