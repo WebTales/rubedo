@@ -300,9 +300,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     
                     //Encode fields
                     if(isset($encoding["defaultEncoding"])) {
-                        foreach ($csvColumns as $key => $string) {
+                        foreach ($currentLine as $key => $string) {
                             $utf8String = $this->forceUtf8($string, $encoding["defaultEncoding"]);
-                            $csvColumns[$key] = $utf8String;
+                            $currentLine[$key] = $utf8String;
                         }
                     }
                     
@@ -354,7 +354,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     }
                     // create content taxo
                     $contentParamsTaxonomy = array();
-                    $contentParamsTaxonomy['navigation']=$configs["ContentsNavTaxo"];
+                    $contentParamsTaxonomy['navigation']=isset($configs["ContentsNavTaxo"])?$configs["ContentsNavTaxo"]:null;
                     foreach ($importAsTaxo as $key => $value) {
                         $theTaxoId = $newTaxos[$key]['data']['id'];
                         $contentParamsTaxonomy[$theTaxoId] = array();
@@ -396,7 +396,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                         "readOnly" => false
                     );
                     try {
-                        $contentsService->create($contentParams, array(), false, false);
+                        $contentsService->create($contentParams, array(), false, true);
                         $lineCounter ++;
                     } catch (Exception $e) {}
                 }
