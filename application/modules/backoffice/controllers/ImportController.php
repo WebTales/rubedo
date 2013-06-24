@@ -289,6 +289,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     }
                     // create content taxo
                     $contentParamsTaxonomy = array();
+                    $contentParamsTaxonomy['navigation']=$configs["ContentsNavTaxo"];
                     foreach ($importAsTaxo as $key => $value) {
                         $theTaxoId = $newTaxos[$key]['data']['id'];
                         $contentParamsTaxonomy[$theTaxoId] = array();
