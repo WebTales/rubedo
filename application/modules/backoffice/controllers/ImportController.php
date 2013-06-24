@@ -195,6 +195,11 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         set_time_limit(5000);
         $separator = $this->getParam('separator', ";");
         $userEncoding = $this->getParam('encoding');
+        
+        if(!isset($userEncoding)) {
+            throw new \Rubedo\Exceptions\Server("Missing parameter : encoding");
+        }
+        
         $adapter = new Zend_File_Transfer_Adapter_Http();
         $returnArray = array();
         $taxonomyService = Rubedo\Services\Manager::getService('Taxonomy');
@@ -291,19 +296,11 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
                     //get the encoding of the line
                     $stringCsvColumns = implode(";", $currentLine);
-                    $encoding = $this->getEncoding($stringCsvColumns);
-                    
-                    //Overwrite default encoding if it is specified
-                    if(isset($userEncoding)) {
-                        $encoding["defaultEncoding"] = $userEncoding;
-                    }
                     
                     //Encode fields
-                    if(isset($encoding["defaultEncoding"])) {
-                        foreach ($currentLine as $key => $string) {
-                            $utf8String = $this->forceUtf8($string, $encoding["defaultEncoding"]);
-                            $currentLine[$key] = $utf8String;
-                        }
+                    foreach ($currentLine as $key => $string) {
+                        $utf8String = $this->forceUtf8($string, $userEncoding);
+                        $currentLine[$key] = $utf8String;
                     }
                     
                     // add taxo terms if not already in correspondent vocabulary
