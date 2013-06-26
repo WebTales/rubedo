@@ -17,8 +17,6 @@
  */
 namespace Rubedo\Update;
 
-use WebTales\MongoFilters\Filter;
-use Rubedo\Services\Manager;
 
 /**
  * Methods for update tool
@@ -26,8 +24,8 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  *        
  */
-class Update010200 extends Update {
-	protected static $toVersion = '1.3.0';
+class Update010201 extends Update {
+	protected static $toVersion = '1.2.2';
 	
 	/**
 	 * do the upgrade

@@ -112,7 +112,8 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                                 )
                             );
                             break;
-                        } else {
+                        
+                        }else {
                             $headerArray[] = ($displayQnb ? $element['itemConfig']["qNb"] . ' - ' : '') . $element['itemConfig']["label"];
                             $fieldsArray[] = array(
                                 'type' => 'simple',
@@ -130,6 +131,22 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                             'value' => $element['id']
                         );
                         break;
+                    case 'predefinedPrefsQuestion' :
+                            for ($i = 1; $i <= $element['itemConfig']['numberOfQuestions']; $i++) {
+                                $headerArray[]=$element['itemConfig']["qNb"]." - question ".$i." - ligne du plan d'expérience";
+                                $fieldsArray[] = array(
+                                    'type' => 'open',
+                                    'value' => $element['id']."question".$i."expPlanRow"
+                                );
+                                for ($j = 1; $j <= $element['itemConfig']['numberOfChoices']; $j++) {
+                                    $headerArray[]=$element['itemConfig']["qNb"]." - question ".$i." - choix ".$j;
+                                    $fieldsArray[] = array(
+                                        'type' => 'open',
+                                        'value' => $element['id']."question".$i."choice".$j
+                                    );
+                                }
+                            }
+                         break;
                     default:
                         break;
                 }

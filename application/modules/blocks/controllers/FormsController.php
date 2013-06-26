@@ -81,10 +81,19 @@ class Blocks_FormsController extends Blocks_AbstractController
         // traitement et vérification
         
         if ($this->getRequest()->isPost()) {
+            /*Saving predefinedPrefsQuestion answers directly*/
+            foreach ($output as $key => $value){
+                if ((strpos($key,"question"))&&((strpos($key,"choice"))||(strpos($key,"expPlanRow")))){
+                    if (! isset($this->_formResponse['data'])) {
+                        $this->_formResponse['data'] = array();
+                    }
+                    $this->_formResponse['data'][$key] = $value;
+                }
+            }
             /* Verification des champs envoyés */
             $this->_lastAnsweredPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
             foreach ($this->_form["formPages"][$currentFormPage]["elements"] as $field) {
-                if ($field['itemConfig']['fType'] == 'richText') {
+                if (($field['itemConfig']['fType'] == 'richText')||($field['itemConfig']['fType'] == 'predefinedPrefsQuestion')) {
                     continue;
                 }
                 $this->_validInput($field, $this->getParam($field['id']));
@@ -146,11 +155,12 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output["form"]["id"] = $this->_formId;
         $output["nbFormPages"] = count($this->_form["formPages"]);
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
-        /*Zend_Debug::dump($this->_formResponse['data']);
-        die("test");*/
-        //begin specific implement of special field
+      
+        //begin specific implement of predefinedPrefsQuestion
+        
         foreach ($output['formFields']["elements"] as $key => &$value){
             if ($value["itemConfig"]["fType"]=="predefinedPrefsQuestion"){
+                
                 $source1Value=$this->_formResponse['data'][$value["itemConfig"]["source1Id"]];
                 $source2Value=$this->_formResponse['data'][$value["itemConfig"]["source2Id"]];
                 $source2Value=(float) $source2Value;
@@ -161,9 +171,13 @@ class Blocks_FormsController extends Blocks_AbstractController
                 $numberOfOptions=$value["itemConfig"]["numberOfOptions"];
                 $usedRows=array();
                 for ($i = 1; $i <= $numberOfQuestions; $i++) {
-                    $myRow=rand(0, $expPlanLength);
-                    while (in_array($myRow, $usedRows)) {
+                    if ((isset($this->_formResponse['data'][$value['id']."question".$i."expPlanRow"]))&&($this->_formResponse['data'][$value['id']."question".$i."expPlanRow"]!="")){
+                        $myRow=$this->_formResponse['data'][$value['id']."question".$i."expPlanRow"];
+                    }else{
                         $myRow=rand(0, $expPlanLength);
+                        while (in_array($myRow, $usedRows)) {
+                            $myRow=rand(0, $expPlanLength);
+                        }
                     }
                     array_push($usedRows, $myRow);
                     $extractedRow=$expPlan[$myRow];
@@ -175,12 +189,14 @@ class Blocks_FormsController extends Blocks_AbstractController
                         $val1=$val1->add($augmentor);
                         $val1=$val1->format("G:i");
                         $val2=$source2Value*$extractedRow["option".$j."source2"];
-                        $fullValue=$val1." et ".$val2." euros";
+                        $fullValue=$j;
                         array_push($currentOption, array($val1,$val2,$fullValue));
                     }
                     array_push($resultingOptions, $currentOption);
                 }                
                 $value["itemConfig"]["resultingOptions"]=$resultingOptions;
+                $value["itemConfig"]["usedRows"]=$usedRows;
+               
                 
                 
             
