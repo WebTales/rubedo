@@ -25,7 +25,7 @@ namespace Rubedo\Update;
  *        
  */
 class Update010200 extends Update {
-	protected static $toVersion = '1.2.1';
+	protected static $toVersion = '1.2.2';
 	
 	/**
 	 * do the upgrade
