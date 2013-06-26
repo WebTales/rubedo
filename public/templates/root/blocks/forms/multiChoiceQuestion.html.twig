@@ -20,9 +20,13 @@
 {% set spanClass=(12// field.itemConfig.fieldConfig.columns)-1%}
 {% endif %}
 {% set index=0 %}
+{% set corrector=0%}
+{% if itemsPerCol*field.itemConfig.fieldConfig.columns<itemsCount %}
+{% set corrector=1%}
+{% endif %}
 <div class="span{{ spanClass }}">
 {% for item in field.itemConfig.fieldConfig.items %}
-{% if index==itemsPerCol%}
+{% if index==itemsPerCol+corrector%}
 </div>
 <div class="span{{ spanClass }}">
 {% set index=0%}
