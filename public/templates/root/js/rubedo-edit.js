@@ -54,7 +54,7 @@ CKEDITOR.on('instanceCreated', function(event) {
                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
                    { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
                    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
-                   { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink'] },
+                   { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
                    { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
                ];
 				
@@ -103,7 +103,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
 	            { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
 	            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
-	            { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink'] },
+	            { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
 	            { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
 	        ];
 			
@@ -658,26 +658,28 @@ function addContent(type,typeId,queryId){
 		 */
 		jQuery('#btn-cancel-ctselect-form').click(function() {
 			jQuery("#contentTypeSelectModal").modal("hide");
-			jQuery('#btn-valid-form').unbind();
+			jQuery('#btn-validate-ctselect').unbind();
 			jQuery('#btn-cancel-ctselect-form').unbind();
 		});
 		
-		jQuery('#btn-valid-form').click(function() {
+		jQuery('#btn-validate-ctselect').click(function() {
 			selectedTypeId = jQuery("#select-type-box").val();
+		    jQuery('#btn-valid-form').unbind();
+		    jQuery('#btn-cancel-ctselect-form').unbind();
+		    jQuery("#contentTypeSelectModal").modal("hide");
 			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
 			var availHeight=window.innerHeight*(90/100);
 			var properHeight=Math.max(400,availHeight);
 			var iframeHeight=properHeight-10;
-		    jQuery("#contentBody").empty().html("<iframe style='width:100%;  height:"+iframeHeight+"px; border:none;' src='" + modalUrl + "'></iframe>");
+			jQuery("#contentBody").empty();
+		    jQuery("#contentBody").html("<iframe style='width:100%;  height:"+iframeHeight+"px; border:none;' src='" + modalUrl + "'></iframe>");
 		    jQuery("#contentModal").attr("data-width",properWidth);
 		    jQuery("#contentModal").attr("data-height",properHeight);
 		    jQuery("#contentModal").modal("show");
 		    jQuery("#contentModal").modal("loading");
-		    jQuery("#contentTypeSelectModal").modal("hide");
-		    jQuery('#btn-valid-form').unbind();
-		    jQuery('#btn-cancel-ctselect-form').unbind();
+		    
 		});
 		
 		jQuery("#contentTypeSelectModal").modal("show");
@@ -708,8 +710,10 @@ function getDomainName() {
 /**
  * Close the modal if you don't need it anymore
  */
-function destroyModal(){
-	jQuery("#contentBody").empty();
-	jQuery("#contentModal").modal("hide");	
-	window.location.reload();
+function destroyModal(who){
+	if (who=="add-content-window"){
+		jQuery("#contentBody").empty();
+		jQuery("#contentModal").modal("hide");	
+		window.location.reload();
+	}
 }

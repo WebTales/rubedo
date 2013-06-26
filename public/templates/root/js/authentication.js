@@ -18,6 +18,8 @@ function loggin()
 			}
 		   }
 		});
+		
+		return false;
 }
 function logout()
 {	 
