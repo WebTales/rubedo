@@ -74,16 +74,26 @@ class Blocks_FormsController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
+    	$output = $this->getAllParams();
         // recupération de paramètre éventuels de la page en cours
         $currentFormPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
         
         // traitement et vérification
         
         if ($this->getRequest()->isPost()) {
+            /*Saving predefinedPrefsQuestion answers directly*/
+            foreach ($output as $key => $value){
+                if ((strpos($key,"question"))&&((strpos($key,"choice"))||(strpos($key,"expPlanRow")))){
+                    if (! isset($this->_formResponse['data'])) {
+                        $this->_formResponse['data'] = array();
+                    }
+                    $this->_formResponse['data'][$key] = $value;
+                }
+            }
             /* Verification des champs envoyés */
             $this->_lastAnsweredPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
             foreach ($this->_form["formPages"][$currentFormPage]["elements"] as $field) {
-                if ($field['itemConfig']['fType'] == 'richText') {
+                if (($field['itemConfig']['fType'] == 'richText')||($field['itemConfig']['fType'] == 'predefinedPrefsQuestion')) {
                     continue;
                 }
                 $this->_validInput($field, $this->getParam($field['id']));
@@ -145,6 +155,54 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output["form"]["id"] = $this->_formId;
         $output["nbFormPages"] = count($this->_form["formPages"]);
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
+      
+        //begin specific implement of predefinedPrefsQuestion
+        
+        foreach ($output['formFields']["elements"] as $key => &$value){
+            if ($value["itemConfig"]["fType"]=="predefinedPrefsQuestion"){
+                
+                $source1Value=$this->_formResponse['data'][$value["itemConfig"]["source1Id"]];
+                $source2Value=$this->_formResponse['data'][$value["itemConfig"]["source2Id"]];
+                $source2Value=(float) $source2Value;
+                $expPlan=Zend_Json::decode($value["itemConfig"]["experiencePlan"]);
+                $expPlanLength=count($expPlan)-1;
+                $resultingOptions=array();
+                $numberOfQuestions=$value["itemConfig"]["numberOfQuestions"];
+                $numberOfOptions=$value["itemConfig"]["numberOfOptions"];
+                $usedRows=array();
+                for ($i = 1; $i <= $numberOfQuestions; $i++) {
+                    if ((isset($this->_formResponse['data'][$value['id']."question".$i."expPlanRow"]))&&($this->_formResponse['data'][$value['id']."question".$i."expPlanRow"]!="")){
+                        $myRow=$this->_formResponse['data'][$value['id']."question".$i."expPlanRow"];
+                    }else{
+                        $myRow=rand(0, $expPlanLength);
+                        while (in_array($myRow, $usedRows)) {
+                            $myRow=rand(0, $expPlanLength);
+                        }
+                    }
+                    array_push($usedRows, $myRow);
+                    $extractedRow=$expPlan[$myRow];
+                    $currentOption=array();
+                    
+                    for ($j = 1; $j <= $numberOfOptions; $j++) {
+                        $val1=DateTime::createFromFormat("G:i", $source1Value);
+                        $augmentor=date_interval_create_from_date_string($extractedRow["option".$j."source1"]." hours");
+                        $val1=$val1->add($augmentor);
+                        $val1=$val1->format("G:i");
+                        $val2=$source2Value*$extractedRow["option".$j."source2"];
+                        $fullValue=$j;
+                        array_push($currentOption, array($val1,$val2,$fullValue));
+                    }
+                    array_push($resultingOptions, $currentOption);
+                }                
+                $value["itemConfig"]["resultingOptions"]=$resultingOptions;
+                $value["itemConfig"]["usedRows"]=$usedRows;
+               
+                
+                
+            
+            }
+        }
+        // end specific implement of special field
         $output["displayNew"] = $this->_form["uniqueAnswer"] == "true" ? false : true;
         if ($this->_formResponse["status"] == "finished") {
             if ($this->_justFinished || $output["displayNew"]) {

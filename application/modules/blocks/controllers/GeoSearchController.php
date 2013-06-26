@@ -32,7 +32,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     public function indexAction ()
     {
         $params = $this->getRequest()->getParams();
-        $results = array();
+        $results = $params;
         $results['blockConfig'] = $params['block-config'];
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
@@ -47,6 +47,9 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         
         // get params
         $params = $this->getRequest()->getParams();
+        $params['block-config']=array();
+        $params['block-config']['displayedFacets']=isset($params['displayedFacets']) ? $params['displayedFacets'] : array();
+        $params['block-config']['facetOverrides']=isset($params['facetOverrides']) ? $params['facetOverrides'] : \Zend_Json::encode(array());
         
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
@@ -159,10 +162,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                             if ($key == 'navigation') {
                                 continue;
                             }
-                            foreach ($terms as $term) {
-                                $intermedTerm = Manager::getService('TaxonomyTerms')->findById($term);
-                                if (! empty($intermedTerm)) {
-                                    $termsArray[] = $intermedTerm['text'];
+                            if(is_array($terms)) {
+                                foreach ($terms as $term) {
+                                    $intermedTerm = Manager::getService('TaxonomyTerms')->findById($term);
+                                    if (! empty($intermedTerm)) {
+                                        $termsArray[] = $intermedTerm['text'];
+                                    }
                                 }
                             }
                         }

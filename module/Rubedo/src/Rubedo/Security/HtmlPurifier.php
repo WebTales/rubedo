@@ -55,6 +55,7 @@ class HtmlPurifier extends HtmlCleaner
                 "_parent",
                 "_top"
             ));
+            $config->set('HTML.Attr.Name.UseCDATA',true);
             self::$_purifier = new \HTMLPurifier($config);
         }
         $html = self::$_purifier->purify($html);

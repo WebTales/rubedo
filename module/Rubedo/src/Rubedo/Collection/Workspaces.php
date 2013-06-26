@@ -59,7 +59,7 @@ class Workspaces extends AbstractCollection implements IWorkspaces
                 }
                 $mongoIdArray[] = $workspaceId;
             }
-            $filter = Filter::Factory('InUid')->setValue($mongoIdArray);
+            $filter = Filter::factory('InUid')->setValue($mongoIdArray);
             
             $this->_dataService->addFilter($filter);
         } else {

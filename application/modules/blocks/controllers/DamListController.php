@@ -37,7 +37,7 @@ class Blocks_DamListController extends Blocks_AbstractController
         $params['orderbyDirection'] = 'asc';
         $params['orderby'] = 'text';
         $params['pagesize'] = 25;
-        if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
+        if (isset($params['block-config']['constrainToSite']) && ($params['block-config']['constrainToSite'] === true  || $params['block-config']['constrainToSite']==='true')) {
             $site = $this->getRequest()->getParam('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;

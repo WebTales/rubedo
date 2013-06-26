@@ -23,6 +23,7 @@ namespace Rubedo\Interfaces\Collection;
  * @author aDobre
  * @category Rubedo
  * @package Rubedo
+ * @todo fill phpdoc
  */
 interface IDirectories extends IAbstractCollection
 {
@@ -37,4 +38,13 @@ interface IDirectories extends IAbstractCollection
     public function countOrphanDirectories ();
 
     public function propagateWorkspace ($parentId, $workspaceId, $filePlanId = null);
+    
+    /**
+     * Set the directory for dam items given by an array of ID
+     *
+     * @param unknown $arrayId
+     * @param unknown $directoryId
+     * @throws Rubedo\Exceptions\User
+     */
+    public function classify($arrayId, $directoryId);
 }

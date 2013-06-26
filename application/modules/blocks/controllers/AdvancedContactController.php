@@ -40,8 +40,9 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
             $errors = array();
             
             $formPath = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/forms/" . $formName . ".html.twig");
+            $realPath = realpath(APPLICATION_PATH . "/../public/templates/" . Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/forms/" . $formName . ".html.twig"));
             
-            if (file_exists($formPath)) {
+            if (file_exists($realPath)) {
                 $form = Manager::getService('FrontOfficeTemplates')->render($formPath, array());
                 
                 // Check if the form was send

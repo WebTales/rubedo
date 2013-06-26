@@ -197,14 +197,14 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             } else {
                 $rootPage = Manager::getService('Pages')->findById($parentId);
                 if (! $filters instanceof \WebTales\MongoFilters\IFilter) {
-                    $filters = Filter::Factory();
+                    $filters = Filter::factory();
                 }
                 if ($rootPage) {
-                    $filters->addFilter(Filter::Factory('Value')->setName('site')
+                    $filters->addFilter(Filter::factory('Value')->setName('site')
                         ->setValue($rootPage["site"]));
                 } else {
                     $parentId = 'root';
-                    $filters->addFilter(Filter::Factory('Value')->setName('site')
+                    $filters->addFilter(Filter::factory('Value')->setName('site')
                         ->setValue($parentId));
                 }
                 
@@ -252,7 +252,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             'direction' => 'ASC'
         );
         
-        $filters = Filter::Factory('Value')->setName('site')->setValue($array['id']);
+        $filters = Filter::factory('Value')->setName('site')->setValue($array['id']);
         
         $children = Manager::getService('Pages')->readChild('root', $filters, $sort);
         if (count($children) > 0) {
@@ -395,13 +395,17 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             throw new \Rubedo\Exceptions\Access('You can not destroy navigation terms', "Exception56");
         }
         
+        if(!isset($obj["id"])) {
+            throw new \Rubedo\Exceptions\Server("The object must have an id");
+        }
+        
         $childrenToDelete = $this->_getChildToDelete($obj['id']);
         
         foreach ($childrenToDelete as $child) {
             Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
         }
         
-        $deleteCond = Filter::Factory('InUid')->setValue($childrenToDelete);
+        $deleteCond = Filter::factory('InUid')->setValue(array_merge($childrenToDelete,array($obj['id'])));
         
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
@@ -413,7 +417,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => 'La suppression a échoué'
+                    "msg" => "Aucun élément n'a été supprimé"
                 );
             }
         } else {
@@ -505,7 +509,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function findByVocabulary ($vocabularyId)
     {
-        $filters = Filter::Factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
+        $filters = Filter::factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
         return $this->getList($filters);
     }
 
@@ -520,9 +524,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function findByVocabularyIdAndName ($vocabularyId, $name)
     {
-        $filters = Filter::Factory()->addFilter(Filter::Factory('Value')->SetName('vocabularyId')
+        $filters = Filter::factory()->addFilter(Filter::factory('Value')->SetName('vocabularyId')
             ->setValue($vocabularyId))
-            ->addFilter(Filter::Factory('Value')->SetName('text')
+            ->addFilter(Filter::factory('Value')->SetName('text')
             ->setValue($name));
         return $this->_dataService->findOne($filters);
     }
@@ -537,7 +541,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         if ($id == 'navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ', "Exception56");
         }
-        $deleteCond = Filter::Factory('Value')->SetName('vocabularyId')->setValue($id);
+        $deleteCond = Filter::factory('Value')->SetName('vocabularyId')->setValue($id);
         return $this->_dataService->customDelete($deleteCond);
     }
 
@@ -600,9 +604,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $termsIdArray[] = $value['id'];
         }
         
-        $Filters = Filter::Factory('Or')->addFilter(Filter::Factory('NotIn')->setName('parentId')
+        $Filters = Filter::factory('Or')->addFilter(Filter::factory('NotIn')->setName('parentId')
             ->setValue($termsIdArray))
-            ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')
+            ->addFilter(Filter::factory('NotIn')->setName('vocabularyId')
             ->setValue($taxonomyIdArray));
         
         $orphansArray = $this->_dataService->customFind($Filters);
@@ -652,9 +656,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $termsIdArray[] = $value['id'];
         }
         
-        $Filters = Filter::Factory('Or')->addFilter(Filter::Factory('NotIn')->setName('parentId')
+        $Filters = Filter::factory('Or')->addFilter(Filter::factory('NotIn')->setName('parentId')
             ->setValue($termsIdArray))
-            ->addFilter(Filter::Factory('NotIn')->setName('vocabularyId')
+            ->addFilter(Filter::factory('NotIn')->setName('vocabularyId')
             ->setValue($taxonomyIdArray));
         $orphansArray = $this->_dataService->customFind($Filters);
         
@@ -674,7 +678,7 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
             $deleteArray[] = $this->_dataService->getId($stringId);
         }
         
-        $Filters = Filter::Factory('InUid')->setValue($deleteArray);
+        $Filters = Filter::factory('InUid')->setValue($deleteArray);
         return $this->_dataService->customDelete($Filters);
     }
 }

@@ -82,15 +82,16 @@ class Directories extends AbstractCollection implements IDirectories
             'required' => true
         )
     );
-    
+
     protected $_virtualNotFiledDirectory = array(
         "parentId" => 'root',
         "id" => "notFiled",
         "expandable" => false,
         "readOnly" => false,
-        "orderValue"=>1
-        
-        );
+        "orderValue" => 1,
+        "workspace" => 'global'
+    );
+    
     /**
      * Only access to content with read access
      *
@@ -105,7 +106,7 @@ class Directories extends AbstractCollection implements IDirectories
             if (in_array('all', $readWorkspaceArray)) {
                 return;
             }
-            $filter = Filter::Factory('In');
+            $filter = Filter::factory('In');
             $filter->setName('workspace')->setValue($readWorkspaceArray);
             $this->_dataService->addFilter($filter);
         }
@@ -158,7 +159,7 @@ class Directories extends AbstractCollection implements IDirectories
      */
     public function destroy (array $obj, $options = array())
     {
-        $deleteCond = Filter::Factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
+        $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
         
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
@@ -255,7 +256,7 @@ class Directories extends AbstractCollection implements IDirectories
 
     public function getListByFilePlanId ($filePlanId)
     {
-        $filters = Filter::Factory('Value')->setName('filePlan')->setValue($filePlanId);
+        $filters = Filter::factory('Value')->setName('filePlan')->setValue($filePlanId);
         return $this->getList($filters);
     }
 
@@ -270,7 +271,7 @@ class Directories extends AbstractCollection implements IDirectories
     public function deleteByFilePlanId($id)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-        $filters = Filter::Factory('Value')->setName('filePlan')->setValue($id);
+        $filters = Filter::factory('Value')->setName('filePlan')->setValue($id);
         $result = $this->_dataService->customDelete($filters);
         
         AbstractCollection::disableUserFilter($wasFiltered);
@@ -282,7 +283,7 @@ class Directories extends AbstractCollection implements IDirectories
     {
         
         $filePlansArray = array("default");
-        $filters = Filter::Factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
+        $filters = Filter::factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
         $result = $this->customDelete($filters);
         if ($result['ok'] == 1) {
             return array(
@@ -298,7 +299,7 @@ class Directories extends AbstractCollection implements IDirectories
     public function countOrphanDirectories ()
     {
         $filePlansArray = array("default");
-        $filters = Filter::Factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
+        $filters = Filter::factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
         return $this->count($filters);
     }
 
@@ -327,9 +328,9 @@ class Directories extends AbstractCollection implements IDirectories
 
     public function propagateWorkspace ($parentId, $workspaceId, $filePlanId = null)
     {
-        $filters = Filter::Factory();
+        $filters = Filter::factory();
         if ($filePlanId) {
-            $filters = Filter::Factory('Value')->setName('filePlan')->setValue($filePlanId);
+            $filters = Filter::factory('Value')->setName('filePlan')->setValue($filePlanId);
         }
         $pageList = $this->readChild($parentId, $filters);
         foreach ($pageList as $page) {
@@ -372,4 +373,74 @@ class Directories extends AbstractCollection implements IDirectories
         
         return $returnArray;
     }
+
+    /**
+     * Set the directory for dam items given by an array of ID
+     * 
+     * @param unknown $arrayId
+     * @param unknown $directoryId
+     * @throws Rubedo\Exceptions\User
+     */
+    public function classify($arrayId, $directoryId)
+    {
+        if(!is_string($directoryId)){
+            throw new \Rubedo\Exceptions\User('%1$s only accept string parameter',"Exception88", 'classify');
+        }
+        $data = array(
+            '$set' => array(
+                'directory' => $directoryId
+            )
+        );
+        $updateCond = Filter::factory('InUid')->setValue($arrayId);
+        
+        $damService = Manager::getService('Dam');
+        $directoryFrom = null;
+        $damList = $damService->getList($updateCond);
+        if(count($damList['data'])>0){
+            foreach($damList['data'] as $damItem){
+                if(isset($damItem['directory'])){
+                    if(is_null($directoryFrom)){
+                        $directoryFrom = $damItem['directory'];
+                    }
+                    if($damItem['directory'] != $directoryFrom){
+                        throw new \Rubedo\Exceptions\Access('only one source folder allowed');
+                    }
+                }
+            }
+        }
+
+        $directoryFrom = $this->findById($directoryFrom);
+        
+        $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        \Zend_Debug::dump($directoryFrom['workspace']);
+        if(!in_array($directoryFrom['workspace'],$writeWorkspaceArray)){
+            throw new \Rubedo\Exceptions\Access("can't move media from this directory due to insufficient rights");
+        }
+
+        $directoryTo= $this->findById($directoryId);
+
+        if(!in_array($directoryTo['workspace'],$writeWorkspaceArray)){
+            throw new \Rubedo\Exceptions\Access("can't move media to this directory due to insufficient rights");
+        }
+        $options = array(
+            'multiple' => true
+        );
+        return $damService->customUpdate($data, $updateCond, $options);
+    }
+    
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractCollection::findById()
+     */
+    public function findById($contentId, $forceReload = false)
+    {
+        if($contentId == "notFiled"){
+            return $this->_virtualNotFiledDirectory;
+        }else{
+            return parent::findById($contentId,$forceReload);
+        }
+        
+    }
+
+    
+    
 }

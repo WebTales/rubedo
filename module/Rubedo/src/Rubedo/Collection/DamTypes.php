@@ -60,7 +60,7 @@ class DamTypes extends AbstractCollection implements IDamTypes
                     '$in' => $readWorkspaceArray
                 )
             );
-            $filter = Filter::Factory('OperatorToValue')->setName('workspaces')
+            $filter = Filter::factory('OperatorToValue')->setName('workspaces')
                 ->setOperator('$in')
                 ->setValue($readWorkspaceArray);
             $this->_dataService->addFilter($filter);

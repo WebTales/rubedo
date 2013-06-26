@@ -1,6 +1,6 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
-
+{% set displayMode = 'standard' %}
 <br />
 <div class="navbar">
 	<div class="navbar-inner">
@@ -58,31 +58,34 @@
 		</ul>
 	</div>
 </div>
+
 {% if activeFacets|length > 0 %}
+{% set activeFacetsList = [] %}
+{% if displayMode != 'checkbox' %}
 <div class="navbar">
 	<div class="navbar-inner">
 		<p class="brand">Critères de recherche :&nbsp;&nbsp;
+{% endif %}
 		{% for facet in activeFacets %}
-		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
-                {% for term in facet.terms %}
-	                <a {% if facet.id not in facetsToHide %}href="{{url({(facet.id): null})}}"{% endif %}>
-					<span class="badge badge-info"> {% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
-				    </a>
-		        {% endfor %}
-            {% else %}
+
                 {% for term in facet.terms %}
                     {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+                    {% set activeFacetsList = activeFacetsList|merge([term.term]) %}
+                    {% if displayMode != 'checkbox' %}
 		            <a {% if facet.id not in facetsToHide %}href="{{url({(facet.id): term.term},'sub')}}"{% endif %} >
 				        <span class="badge badge-info">{% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
 			        </a>
 			        {% endif %}
+			        {% endif %}
 		        {% endfor %}
-            {% endif %}
+
 		        
 		{% endfor %}
+{% if displayMode != 'checkbox' %}
 		</p>
 	</div>
 </div>
+{% endif %}
 {% endif %}
 <div class="row-fluid">
 	<div class="span3 well well-large" id="inputSearchBlock">
@@ -114,7 +117,7 @@
     				<i class="icon-tags"></i> {{facet.label|trans}}
     			</p>			
     			{% endif %}	
-    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
+    	        {% if facet.id == 'date' %}
     	          <ul>
     				{% for term in facet.terms %}
     				
@@ -128,9 +131,15 @@
     	        <ul>
     				{% for term in facet.terms %}
     				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+    				{% if displayMode == 'checkbox' %}
+    				<label class="checkbox">
+      					<input type="checkbox" data-target="{{url({(facet.id) : [term.term]},'add')}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+    				</label>
+    				{% else %}
     				<li>
     					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
+    				{% endif %}
     				{% endif %}
     				{% endfor %}
 			    </ul>

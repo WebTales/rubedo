@@ -4,7 +4,11 @@
     {% if isLoggedIn %}
         <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="icon-user"></i>&nbsp;{{currentUser.name}}
+                {% if currentUser.photo %}
+			        <img src="/file?file-id={{ currentUser.photo }}" class="user-picture" style="height:18px;">
+			    {% else %}
+                    <i class="icon-user"></i>
+                {% endif %} {{currentUser.name}}
                 <span class="caret"></span>
             </a>
             
@@ -20,22 +24,24 @@
                 <h3>Se connecter</h3>
             </div>
             
-          	<div class="modal-body">
-          	    <span class="form-inline">
-          	        <label for="login">Login</label>
-         	 	    <input type="text" id="login" class="input-medium" placeholder="Login ou email">
-         	 	    
-         	 	    <label for="password">Mot de passe</label>
-        		    <input type="password" id="password" class="input-medium" placeholder="Mot de passe">
-        		</span>
-         	 </div>
-         	 
-         	 <div id="error-msg" class="alert alert-error hidden-rubedo"></div>
-         	 
-         	 <div class="modal-footer">
-                 <a href="#"  data-dismiss="modal" class="btn">Annuler</a>
-                 <a href="#" onclick="loggin()" class="btn btn-primary">Connexion</a>
-             </div>
+            <form style="margin: 0;">
+              	<div class="modal-body">
+              	    <span class="form-inline">
+              	        <label for="login">Login</label>
+             	 	    <input type="text" id="login" class="input-medium" placeholder="Login ou email">
+             	 	    
+             	 	    <label for="password">Mot de passe</label>
+            		    <input type="password" id="password" class="input-medium" placeholder="Mot de passe">
+            		</span>
+             	 </div>
+             	 
+             	 <div id="error-msg" class="alert alert-error hidden-rubedo"></div>
+             	 
+             	 <div class="modal-footer">
+                     <a href="#"  data-dismiss="modal" class="btn">Annuler</a>
+                     <input type="submit" onclick="loggin();return false;" class="btn btn-primary" value="Connexion">
+                 </div>
+             </form>
         </div>
     {%endif%}
     

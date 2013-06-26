@@ -38,7 +38,7 @@ class RubedoVersion extends AbstractCollection implements IRubedoVersion
 
     public function getDbVersion ()
     {
-        $versionRecord = $this->findOne(Filter::Factory());
+        $versionRecord = $this->findOne(Filter::factory());
         if (! $versionRecord) {
             return '1.0.0';
         }
@@ -47,7 +47,7 @@ class RubedoVersion extends AbstractCollection implements IRubedoVersion
 
     public function setDbVersion ($version)
     {
-        $versionRecord = $this->findOne(Filter::Factory());
+        $versionRecord = $this->findOne(Filter::factory());
         if (! $versionRecord) {
             $versionRecord = array(
                 'rubedoVersion' => $version

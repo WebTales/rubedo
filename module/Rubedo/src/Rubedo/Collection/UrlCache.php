@@ -79,7 +79,7 @@ class UrlCache extends AbstractCollection implements IUrlCache
      */
     public function findByPageId ($pageId)
     {
-        return $this->_dataService->findOne(Filter::Factory('value')->setName('pageId')
+        return $this->_dataService->findOne(Filter::factory('value')->setName('pageId')
             ->setValue($pageId));
     }
     
@@ -101,13 +101,13 @@ class UrlCache extends AbstractCollection implements IUrlCache
         if (! $siteId) {
             return null;
         }
-        $filters = Filter::Factory('And');
+        $filters = Filter::factory('And');
         
-        $filter = Filter::Factory('Value');
+        $filter = Filter::factory('Value');
         $filter->setName('url')->setValue($url);
         $filters->addFilter($filter);
         
-        $filter = Filter::Factory('Value');
+        $filter = Filter::factory('Value');
         $filter->setName('siteId')->setValue($siteId);
         $filters->addFilter($filter);
         

@@ -112,10 +112,17 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         $theBigString = $theBigString . Zend_Json::encode($model);
         $theBigString = $theBigString . "SEntityS";
         
-        $oldMaskFilters = Filter::Factory('value')->setName('site')->setValue($modelId);
+        $oldMaskFilters = Filter::factory('value')->setName('site')->setValue($modelId);
         $oldMasksArray = $masksService->getList($oldMaskFilters);
         
         foreach ($oldMasksArray['data'] as $key => $value) {
+            if (isset($value['blocks'])&&is_array($value['blocks'])){
+            foreach($value['blocks'] as $subkey => $someBlock){
+                    unset($oldMasksArray['data'][$key]['blocks'][$subkey]['id']);
+                    unset($oldMasksArray['data'][$key]['blocks'][$subkey]['_id']);
+                    $oldMasksArray['data'][$key]['blocks'][$subkey]['id']=(string) new MongoId();
+                }
+            }
             $oldIdArray[] = $value['id'];
             $theBigString = $theBigString . Zend_Json::encode($oldMasksArray['data'][$key]);
             $theBigString = $theBigString . "SMaskS";
@@ -123,6 +130,13 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         $theBigString .= "SEntityS";
         $oldPagesArray = $pagesService->getList($oldMaskFilters);
         foreach ($oldPagesArray['data'] as $key => $value) {
+            if (isset($value['blocks'])&&is_array($value['blocks'])){
+                foreach($value['blocks'] as $subkey => $someBlock){
+                    unset($oldPagesArray['data'][$key]['blocks'][$subkey]['id']);
+                    unset($oldPagesArray['data'][$key]['blocks'][$subkey]['_id']);
+                    $oldPagesArray['data'][$key]['blocks'][$subkey]['id']=(string)new MongoId();
+                }
+            }
             $oldIdArray[] = $value['id'];
             $theBigString = $theBigString . Zend_Json::encode($oldPagesArray['data'][$key]);
             $theBigString = $theBigString . "SPageS";

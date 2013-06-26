@@ -190,7 +190,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
      */
     protected function getContentList ($filters, $pageData)
     {
-        $filter = Filter::Factory('In')->setName('target')->setValue(array(
+        $filter = Filter::factory('In')->setName('target')->setValue(array(
             $this->_workspace,
             'all'
         ));

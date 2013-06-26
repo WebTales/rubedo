@@ -333,13 +333,13 @@ class IndexController extends Zend_Controller_Action
             if (! isset($block['orderValue'])) {
                 throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25", $block['id']);
             }
-            $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
+            $this->_blocksArray[$block['parentCol']][] = $block;
         }
         foreach ($this->_pageInfo['blocks'] as $block) {
             if (! isset($block['orderValue'])) {
                 throw new \Rubedo\Exceptions\Server('Missing orderValue for block %1$s', "Exception25", $block['id']);
             }
-            $this->_blocksArray[$block['parentCol']][$block['orderValue']] = $block;
+            $this->_blocksArray[$block['parentCol']][] = $block;
         }
         if ($this->_mainCol) {
             unset($this->_blocksArray[$this->_mainCol]);
@@ -489,7 +489,7 @@ class IndexController extends Zend_Controller_Action
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
-        $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
+        $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc'.$block['id'];
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
         $params['elementTag'] = isset($block['elementTag']) ? $block['elementTag'] : null;
@@ -660,7 +660,7 @@ class IndexController extends Zend_Controller_Action
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : $block['id'];
+                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc'.$block['id'];
                 $route->setPrefix($prefix);
                 
                 $allParams = $this->getAllParams();

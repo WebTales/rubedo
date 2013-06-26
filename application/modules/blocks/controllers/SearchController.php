@@ -33,6 +33,21 @@ class Blocks_SearchController extends Blocks_AbstractController
         // get search parameters
         $params = $this->getRequest()->getParams();
         
+        //remove empty facets from criteria
+        foreach($params as $key => $value){
+            
+            if(is_array($value)){
+                foreach ($value as $subkey => $subvalue){
+                    if(empty($subvalue)){
+                        unset($params[$key][$subkey]);
+                    }
+                }
+                if(count($value)==0){
+                    unset($params[$key]);
+                }
+            }
+        }
+        
         $params['pagesize'] = $this->getParam('pagesize', 10);
         $params['pager'] = $this->getParam('pager', 0);
         
@@ -58,7 +73,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
-        
+                
         $results = $query->search($params);
         
         $results['currentSite'] = isset($siteId) ? $siteId : null;
@@ -89,7 +104,9 @@ class Blocks_SearchController extends Blocks_AbstractController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
         $css = array();
-        $js = array();
+        $js = array(
+        		'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js")
+		);
         
         $this->_sendResponse($results, $template, $css, $js);
     }

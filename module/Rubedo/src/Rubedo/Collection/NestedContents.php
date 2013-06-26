@@ -63,7 +63,7 @@ class NestedContents implements INestedContents
      */
     public function getList ($parentContentId)
     {
-        $filter = Filter::Factory('Uid')->setValue($parentContentId);
+        $filter = Filter::factory('Uid')->setValue($parentContentId);
         $cursor = $this->_dataService->customFind($filter, array(
             'nestedContents'
         ));
@@ -135,7 +135,7 @@ class NestedContents implements INestedContents
                 'nestedContents' => $obj
             )
         );
-        $updateCond = Filter::Factory('Uid')->setValue($parentContentId);
+        $updateCond = Filter::factory('Uid')->setValue($parentContentId);
         
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
         if ($returnArray['success'] == true) {
@@ -188,12 +188,12 @@ class NestedContents implements INestedContents
         $data = array(
             '$set' => $updateArray
         );
-        $nestedContentCriteria = Filter::Factory('ElemMatch')->addFilter(Filter::Factory('Value')->setName('version')
+        $nestedContentCriteria = Filter::factory('ElemMatch')->addFilter(Filter::factory('Value')->setName('version')
             ->setValue($oldVersion))
-            ->addFilter(Filter::Factory('Value')->setName('id')
+            ->addFilter(Filter::factory('Value')->setName('id')
             ->setValue($obj['id']));
         
-        $updateCond = Filter::Factory()->addFilter(Filter::Factory('Uid')->setValue($parentContentId))
+        $updateCond = Filter::factory()->addFilter(Filter::factory('Uid')->setValue($parentContentId))
             ->addFilter($nestedContentCriteria);
         
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
@@ -225,7 +225,7 @@ class NestedContents implements INestedContents
                 )
             )
         );
-        $updateCond = Filter::Factory('Uid')->setValue($parentContentId);
+        $updateCond = Filter::factory('Uid')->setValue($parentContentId);
         
         $returnArray = $this->_dataService->customUpdate($data, $updateCond);
         

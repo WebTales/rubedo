@@ -86,7 +86,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      *            should we wait for a server response
      * @return array
      */
-    public function create (array $obj, $options = array(), $live = false)
+    public function create (array $obj, $options = array(), $live = false,$ignoreIndex = false)
     {
         if ($live === true) {
             throw new \Rubedo\Exceptions\Access('You can not create a content directly published', "Exception60");
@@ -98,7 +98,7 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
         
         if ($returnArray['success']) {
             if ($returnArray['data']['status'] === 'published') {
-                $result = $this->publish($returnArray['data']['id']);
+                $result = $this->publish($returnArray['data']['id'],$ignoreIndex);
                 
                 if (! $result['success']) {
                     $returnArray['success'] = false;
@@ -176,8 +176,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
         return $returnArray;
     }
 
-    public function publish ($objectId)
+    public function publish ($objectId,$ignoreIndex = false)
     {
+    	unset($ignoreIndex);
         return $this->_dataService->publish($objectId);
     }
 

@@ -35,9 +35,85 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
      */
     protected $_readOnlyAction = array();
 
+    /**
+     * Return the encoding of the string
+     * 
+     * @param string $string
+     * @return array 
+     *             List of possible encodings of the string
+     */
+    protected function getEncoding($string) {
+        $result = array();
+        
+        // Get the list of possible encodings
+        foreach (mb_list_encodings() as $value) {
+            if(in_array($value, array('auto','pass'))){
+                continue;
+            }
+            if (mb_check_encoding($string, $value)) {
+                $result["charsetList"][] = $value;
+            }
+        }
+        
+        // Throw an exception if neither encoding match with the string
+        if(!isset($result["charsetList"])) {
+            throw new \Rubedo\Exceptions\Server("The server cannot find the charset of the current file.", "Exception95");
+        }
+        
+        // Define the main encodings
+        $mainEncodings = array(
+            "UTF-8",
+            "ISO-8859-15",
+            "ISO-8859-1",
+            "Windows-1252"
+        );
+        
+        // If one of the main encodings is in the list of possible encodings, we send the first value
+        foreach ($mainEncodings as $encoding) {
+            if(in_array($encoding, $result["charsetList"])) {
+                $result["defaultEncoding"] = $encoding;
+                break;
+            }
+        }
+        
+        return $result;
+    }    
+    
+    /**
+     * Return the encoding of the string
+     *
+     * @param string $string 
+     * @param string $encoding
+     *             Contain the expected encoding of the string
+     *             for example :   UTF-8
+     *                             ISO-8859-15
+     *                             ISO-8859-1
+     * @return boolean
+     *             true if the encoding match with the string
+     */
+    protected function checkEncoding ($string, $encoding)
+    {
+        return mb_check_encoding($string, $encoding);
+    }
+    
+    /**
+     * Return the given string encoded in UTF-8
+     * 
+     * @param string $string
+     *             The string wich will be encoded
+     * @param string $encoding
+     *             The current encoding of the string
+     * @return string
+     *             Encoded string in UTF-8
+     */
+    protected function forceUtf8($string, $encoding) {
+        return mb_convert_encoding($string, "UTF-8", $encoding);
+    }
+    
     public function analyseAction ()
     {
         $separator = $this->getParam('separator', ";");
+        $userEncoding = $this->getParam('encoding');
         $adapter = new Zend_File_Transfer_Adapter_Http();
         $returnArray = array();
         
@@ -51,12 +127,40 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $returnArray['success'] = false;
                 $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             } else {
+                //Load csv
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
+                
+                //Get first line
                 $csvColumns = fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
+                
+                //get the encoding of the line
+                $stringCsvColumns = implode(";", $csvColumns);
+                $encoding = $this->getEncoding($stringCsvColumns);
+                
+                //Overwrite default encoding if it is specified
+                if(isset($userEncoding)) {
+                    $encoding["defaultEncoding"] = $userEncoding;
+                }
+                
+                //Encode fields
+                if(isset($encoding["defaultEncoding"])) {
+                    foreach ($csvColumns as $key => $string) {
+                        $utf8String = $this->forceUtf8($string, $encoding["defaultEncoding"]);
+                        $csvColumns[$key] = $utf8String;
+                    }
+                }
+                
+                //Get the number of lines
                 $lineCounter = 0;
-                while (fgets($recievedFile) !== false)
+                while (fgets($recievedFile) !== false) {
                     $lineCounter ++;
+                }
+                
+                //Close csv
                 fclose($recievedFile);
+                
+                //Build response
+                $returnArray['encoding'] = $encoding;
                 $returnArray['detectedFields'] = array();
                 $returnArray['detectedFieldsCount'] = count($csvColumns);
                 $returnArray['detectedContentsCount'] = $lineCounter;
@@ -70,12 +174,18 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $returnArray['message'] = "OK";
             }
         }
+        
+        //Disable view
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
+        
+        //Encode the response in json
         $returnValue = Zend_Json::encode($returnArray);
         if ($this->_prettyJson) {
             $returnValue = Zend_Json::prettyPrint($returnValue);
         }
+        
+        //Return the repsonse
         $this->getResponse()->setBody($returnValue);
     }
 
@@ -84,11 +194,18 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         Zend_Registry::set('Expects_Json', true);
         set_time_limit(5000);
         $separator = $this->getParam('separator', ";");
+        $userEncoding = $this->getParam('encoding');
+        
+        if(!isset($userEncoding)) {
+            throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
+        }
+        
         $adapter = new Zend_File_Transfer_Adapter_Http();
         $returnArray = array();
         $taxonomyService = Rubedo\Services\Manager::getService('Taxonomy');
         $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
         $contentsService = Rubedo\Services\Manager::getService('Contents');
+        $brokenLines = array();
         
         if (! $adapter->receive("csvFile")) {
             $returnArray['success'] = false;
@@ -129,7 +246,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 foreach ($importAsField as $key => $value) {
                     if ($value['protoId'] == 'text') {
                         $textFieldIndex = $value['csvIndex'];
-                    } else 
+                    } else {
                         if ($value['protoId'] == 'summary') {
                             $summaryFieldIndex = $value['csvIndex'];
                         } else {
@@ -153,6 +270,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                             );
                             $CTfields[] = $newFieldForCT;
                         }
+                    }
                 }
                 
                 // create CT
@@ -171,9 +289,20 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 // add contents to CT and terms to vocabularies
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
+                //Read the first line to start at the second line
                 fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
                 $lineCounter = 0;
+                
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
+                    //get the encoding of the line
+                    $stringCsvColumns = implode(";", $currentLine);
+                    
+                    //Encode fields
+                    foreach ($currentLine as $key => $string) {
+                        $utf8String = $this->forceUtf8($string, $userEncoding);
+                        $currentLine[$key] = $utf8String;
+                    }
+                    
                     // add taxo terms if not already in correspondent vocabulary
                     // create content fields
                     $contentParamsFields = array(
@@ -193,11 +322,12 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                     if (count($splitedLatLon) == 2) {
                                         $lat = $splitedLatLon[0];
                                         $lon = $splitedLatLon[1];
-                                    } else 
+                                    } else {
                                         if (count($splitedLatLon) == 4) {
                                             $lat = (float) ($splitedLatLon[0] . '.' . $splitedLatLon[1]);
                                             $lon = (float) ($splitedLatLon[2] . '.' . $splitedLatLon[3]);
                                         }
+                                    }
                                     if (($lat) && ($lon)) {
                                         $contentParamsFields['position'] = array(
                                             "address" => "",
@@ -221,6 +351,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     }
                     // create content taxo
                     $contentParamsTaxonomy = array();
+                    $contentParamsTaxonomy['navigation']=isset($configs["ContentsNavTaxo"])?$configs["ContentsNavTaxo"]:null;
                     foreach ($importAsTaxo as $key => $value) {
                         $theTaxoId = $newTaxos[$key]['data']['id'];
                         $contentParamsTaxonomy[$theTaxoId] = array();
@@ -262,7 +393,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                         "readOnly" => false
                     );
                     try {
-                        $contentsService->create($contentParams, array(), false, false);
+                        $contentsService->create($contentParams, array(), false, true);
                         $lineCounter ++;
                     } catch (Exception $e) {}
                 }
@@ -275,6 +406,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $returnArray['importedContentsCount'] = $lineCounter;
                 $returnArray['success'] = true;
                 $returnArray['message'] = "OK";
+                $returnArray['errors'] = $brokenLines;
             }
         }
         

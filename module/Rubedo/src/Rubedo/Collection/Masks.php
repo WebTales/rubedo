@@ -91,7 +91,7 @@ class Masks extends AbstractCollection implements IMasks
             foreach ($sites['data'] as $site) {
                 $sitesArray[] = (string) $site['id'];
             }
-            $filter = Filter::Factory('In');
+            $filter = Filter::factory('In');
             $filter->setName('site')->setValue($sitesArray);
             $this->_dataService->addFilter($filter);
         }
@@ -123,7 +123,7 @@ class Masks extends AbstractCollection implements IMasks
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         
-        $filter = Filter::Factory('Value')->setName('site')->setValue($id);
+        $filter = Filter::factory('Value')->setName('site')->setValue($id);
         
         return $this->_dataService->customDelete($filter);
         AbstractCollection::disableUserFilter($wasFiltered);
@@ -191,7 +191,8 @@ class Masks extends AbstractCollection implements IMasks
         $obj = $this->_initContent($obj);
         $result = parent::create($obj, $options);
         $result['data'] = $this->addBlocks($result['data']);
-        return $result;
+        $newResult = $this->update($result['data']);
+        return $newResult;
     }
 
     /**

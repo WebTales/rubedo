@@ -73,7 +73,7 @@ class Update010000 extends Update
                                 $property = 'text';
                                 break;
                         }
-                        $filter = Filter::Factory('Value')->setName($property)->setValue($item[$property]);
+                        $filter = Filter::factory('Value')->setName($property)->setValue($item[$property]);
                         $result = Manager::getService($collection)->customUpdate(array(
                             '$set' => array(
                                 'defaultId' => $item['defaultId']
@@ -116,7 +116,7 @@ class Update010000 extends Update
      */
     public static function resetUserTheme ()
     {
-        $filter = Filter::Factory('Value')->setName('isDefault')->setValue(true);
+        $filter = Filter::factory('Value')->setName('isDefault')->setValue(true);
         $theme = Manager::getService('Themes')->findOne($filter);
         if ($theme) {
             $prefData = array();
@@ -126,7 +126,7 @@ class Update010000 extends Update
             $prefData['wallpaper'] = $theme['wallpaper'];
             Manager::getService('PersonalPrefs')->customUpdate(array(
                 '$set' => $prefData
-            ), Filter::Factory());
+            ), Filter::factory());
         }
         return true;
     }
