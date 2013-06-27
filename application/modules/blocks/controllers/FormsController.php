@@ -188,7 +188,8 @@ class Blocks_FormsController extends Blocks_AbstractController
                     
                     for ($j = 1; $j <= $numberOfOptions; $j++) {
                         $val1=DateTime::createFromFormat("G:i", $source1Value);
-                        $augmentor=date_interval_create_from_date_string($extractedRow["option".$j."source1"]." hours");
+                        $numbersOfSeconds = floor($extractedRow["option".$j."source1"] * 3600);
+                        $augmentor=date_interval_create_from_date_string($numbersOfSeconds." seconds");
                         $val1=$val1->add($augmentor);
                         $val1=$val1->format("G:i");
                         $val2=$source2Value*$extractedRow["option".$j."source2"];
