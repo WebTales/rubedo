@@ -268,8 +268,8 @@ class Url implements IUrl
         }
         $content = Manager::getService('Contents')->findById($contentId, $ws === 'live', false);
         
-        if (isset($content[$ws]['taxonomy']['navigation'])) {
-            foreach ($content[$ws]['taxonomy']['navigation'] as $pageId) {
+        if (isset($content['taxonomy']['navigation'])) {
+            foreach ($content['taxonomy']['navigation'] as $pageId) {
                 $page = Manager::getService('Pages')->findById($pageId);
                 if ($page && $page['site'] == $siteId) {
                     $pageValid = true;
