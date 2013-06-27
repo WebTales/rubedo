@@ -155,7 +155,10 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output["form"]["id"] = $this->_formId;
         $output["nbFormPages"] = count($this->_form["formPages"]);
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
-      
+        //replace regex in labels   
+        foreach ($output['formFields']["elements"] as $key => &$value){
+           $value["itemConfig"]["label"]=preg_replace_callback('/#Q([0-9]*)#/', array($this,'replaceWithAnswers'), $value["itemConfig"]["label"]);
+        }   
         //begin specific implement of predefinedPrefsQuestion
         
         foreach ($output['formFields']["elements"] as $key => &$value){
@@ -223,6 +226,17 @@ class Blocks_FormsController extends Blocks_AbstractController
         $this->_sendResponse($output, $template, $css, $js);
     }
 
+    protected function replaceWithAnswers(array $matches){
+        $qNb='Q'.$matches[1];
+        foreach($this->_form["formPages"] as $page){
+            foreach ($page["elements"] as $field){
+                if ($field["itemConfig"]["qNb"]==$qNb){
+                    return($this->_formResponse['data'][$field['id']]);
+                }
+            }
+        }
+    }
+    
     protected function _new ()
     {
         $this->formsSessionArray[$this->_formId] = array(
@@ -402,6 +416,9 @@ class Blocks_FormsController extends Blocks_AbstractController
 
     protected function _clearPageInDb ($pageId)
     {
+        if(!is_array($pageId["elements"])){
+            return;
+        }
         foreach ($pageId["elements"] as $field) {
             foreach ($this->_formResponse["data"] as $key => $fieldOnDb) {
                 unset($fieldOnDb);
