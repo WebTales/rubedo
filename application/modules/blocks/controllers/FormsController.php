@@ -157,7 +157,7 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
         //replace regex in labels   
         foreach ($output['formFields']["elements"] as $key => &$value){
-           $value["itemConfig"]["label"]=preg_replace_callback('/#Q([0-9]*)#/', array($this,'replaceWithAnswers'), $value["itemConfig"]["label"]);
+           $value["itemConfig"]["label"]=preg_replace_callback('/#(.*)#/', array($this,'replaceWithAnswers'), $value["itemConfig"]["label"]);
         }   
         //begin specific implement of predefinedPrefsQuestion
         
@@ -227,7 +227,7 @@ class Blocks_FormsController extends Blocks_AbstractController
     }
 
     protected function replaceWithAnswers(array $matches){
-        $qNb='Q'.$matches[1];
+        $qNb=$matches[1];
         foreach($this->_form["formPages"] as $page){
             foreach ($page["elements"] as $field){
                 if ($field["itemConfig"]["qNb"]==$qNb){
