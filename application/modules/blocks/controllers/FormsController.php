@@ -313,6 +313,14 @@ class Blocks_FormsController extends Blocks_AbstractController
                         $this->_errors[$field["id"]] = "Les décimales ne sont pas autorisées";
                 }
             }
+            if ($fieldType == "timefield") {
+            
+                $is_valid = preg_match('/([0-1][0-9]|2[0-3]):[0-5][0-9]/', $response) ? true : false;
+                if ($is_valid == false){
+                    $this->_errors[$field["id"]] = "Ce champ doit contenir une heure valide au format 00:00";
+                }
+                
+            }
             /*
              * check validation rules
              */
