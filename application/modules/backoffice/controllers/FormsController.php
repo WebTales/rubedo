@@ -135,7 +135,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                             for ($i = 1; $i <= $element['itemConfig']['numberOfQuestions']; $i++) {
                                 $headerArray[]=$element['itemConfig']["qNb"]." - question ".$i." - ligne du plan d'expérience";
                                 $fieldsArray[] = array(
-                                    'type' => 'open',
+                                    'type' => 'add1',
                                     'value' => $element['id']."question".$i."expPlanRow"
                                 );
                                 for ($j = 1; $j <= $element['itemConfig']['numberOfChoices']; $j++) {
@@ -166,6 +166,9 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                 switch ($element['type']) {
                     case 'open':
                         $csvLine[] = isset($response['data'][$element['value']]) ? $response['data'][$element['value']] : null;
+                        break;
+                    case 'add1':
+                        $csvLine[] = isset($response['data'][$element['value']]) ? $response['data'][$element['value']]+1 : null;
                         break;
                     case 'simple':
                         if (isset($response['data'][$element['value']]) && is_array($response['data'][$element['value']])) {
