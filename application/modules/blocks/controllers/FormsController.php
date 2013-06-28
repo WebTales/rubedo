@@ -236,8 +236,9 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
         $output["progression"] = $this->_blockConfig["progression"];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
-        $css = array();
+        $css = array('/components/jquery/jqueryui/themes/base/minified/jquery-ui.min.css',);
         $js = array(
+        	'/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js")
         );
         $this->_sendResponse($output, $template, $css, $js);
