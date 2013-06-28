@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
 require_once ('DataAccessController.php');
 
 /**
@@ -104,6 +105,8 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         }
         $masksService = Rubedo\Services\Manager::getService('Masks');
         $pagesService = Rubedo\Services\Manager::getService('Pages');
+        $queriesService = Rubedo\Services\Manager::getService('Queries');
+        $contentsService = Rubedo\Services\Manager::getService('Contents');
         $oldIdArray = array();
         $theBigString = "";
         
@@ -142,6 +145,45 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $theBigString = $theBigString . "SPageS";
         }
         $newIdArray = array();
+        
+        //duplicate simple or manual queries and system contents
+        
+        $systemContentTypesFilter = Filter::Factory('Value')->setName('system')->setValue(true);
+        $systemContentTypesLIst = Manager::getService('ContentTypes')->getList($systemContentTypesFilter);
+        
+        $systemTypesArray = array();
+        foreach ($systemContentTypesLIst['data'] as $contentTypes){
+            $systemTypesArray[]=$contentTypes['id'];
+        }
+        
+        $systemContentFilter = Filter::Factory('In')->setName('typeID')->setValue($systemTypesArray);
+        $systemContentList = $contentsService->getList($systemContentFilter);
+        
+        $queriesFilter=Filter::Factory('In')->setName('type')->setValue(array("simple","manual"));
+        $queriesList=$queriesService->getList($queriesFilter);
+        foreach ($queriesList['data'] as $someQuery){
+            if(strpos($theBigString, $someQuery['id'])){
+                $MongoId = new MongoId();
+                $MongoIdString = (string) $MongoId;
+                $theBigString = str_replace($someQuery['id'], $MongoIdString, $theBigString);
+                $someQuery['_id'] = $MongoId;
+                unset($someQuery['id']);
+                unset($someQuery['version']);
+                $queriesService->create($someQuery);
+            }
+        }
+        foreach ($systemContentList['data'] as $systemContent){
+            if(strpos($theBigString, $systemContent['id'])){
+                $MongoId = new MongoId();
+                $MongoIdString = (string) $MongoId;
+                $theBigString = str_replace($systemContent['id'], $MongoIdString, $theBigString);
+                $systemContent['_id'] = $MongoId;
+                unset($systemContent['id']);
+                unset($systemContent['version']);
+                $contentsService->create($systemContent);
+            }
+        }
+        
         
         foreach ($oldIdArray as $value) {
             $MongoId = new MongoId();
