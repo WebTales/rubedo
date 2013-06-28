@@ -5,7 +5,15 @@
       <i class="icon-exclamation-sign icon-margin"></i></a>
       {% endif %}
     <div class="controls">
-      <input type="date" placeholder="YYYY/mm/dd" class="{{field.id}} {% if field.itemConfig.isMother %}mother{% endif %} {% if field.itemConfig.isChild %}child{% endif %}"  {% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %}{% if field.itemConfig.value %}data-value="{{field.itemConfig.value}}"{% endif %} id="{{ field.id }}" name="{{ field.id }}" value="{{ values[field.id] }}">
+      <input type="date" placeholder="YYYY-mm-dd" 
+      					class="dateField {{field.id}} {% if field.itemConfig.isMother %}mother{% endif %} {% if field.itemConfig.isChild %}child{% endif %}"
+      					 {% if field.itemConfig.target %}data-target="{{field.itemConfig.target}}"{% endif %}
+      					 {% if field.itemConfig.value %}data-value="{{field.itemConfig.value}}"{% endif %} 
+      					 id="{{ field.id }}" 
+      					 name="{{ field.id }}" 
+      					 value="{{ values[field.id] }}"
+      					 >
+      					 
        {% if field.id in errors|keys %}<span class="help-inline">{{ errors[field.id] }}</span>{% endif %}
       
     </div>

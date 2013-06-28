@@ -1,5 +1,14 @@
 jQuery(".mother").each(addcheck);
 
+
+jQuery(".dateField").each(switchToDateField);
+
+function switchToDateField(){
+	if(jQuery(this).prop('type')=='text'){
+		jQuery(this).datepicker({ dateFormat: "yy-mm-dd"});
+	}	
+}
+
 function addcheck() {
 	jQuery(this).attr('onchange',"checkField()");
 }

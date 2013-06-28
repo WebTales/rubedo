@@ -236,8 +236,11 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output['currentFormPage'] = $this->formsSessionArray[$this->_formId]['currentFormPage'];
         $output["progression"] = $this->_blockConfig["progression"];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/form.html.twig");
-        $css = array();
+        $css = array('/components/jquery/jqueryui/themes/base/minified/jquery-ui.min.css',);
         $js = array(
+        	'/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+        	'/components/jquery/jqueryui/ui/minified/i18n/jquery.ui.datepicker-fr.min.js',
+        		
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js")
         );
         $this->_sendResponse($output, $template, $css, $js);
@@ -251,7 +254,10 @@ class Blocks_FormsController extends Blocks_AbstractController
                     if($field["itemConfig"]['fieldType']=="datefield"){
                         $rawValue=$this->_formResponse['data'][$field['id']];
                         $refinedValue=DateTime::createFromFormat("Y-m-d", $rawValue);
-                        $refinedValue=$refinedValue->format("d/m/Y");
+                        if ($refinedValue){
+                            $refinedValue=$refinedValue->format("d/m/Y");
+                        }
+                        
                         return($refinedValue);
                     }
                     return($this->_formResponse['data'][$field['id']]);
@@ -343,6 +349,14 @@ class Blocks_FormsController extends Blocks_AbstractController
                     $this->_errors[$field["id"]] = "Ce champ doit contenir une heure valide au format 00:00";
                 }
                 
+            }
+            if ($fieldType == "datefield") {
+            
+                $is_valid = DateTime::createFromFormat("Y-m-d", $response) ? true : false;
+                if ($is_valid == false){
+                    $this->_errors[$field["id"]] = "Ce champ doit contenir une date valide au format YYYY-mm-dd";
+                }
+            
             }
             /*
              * check validation rules
