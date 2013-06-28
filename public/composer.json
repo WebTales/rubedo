@@ -2,7 +2,7 @@
 	"name": "webtales/rubedo-public",
 	"require": {
 		"jquery/jquery": "1.10.0",
-		"jquery/jqueryui": "1.10.2",
+		"jquery/jqueryui": "1.10.3",
 		"jquery/timepicker": "0.3.2",
 		"sencha/extjs": "4.1.1a",
 		"webtales/ckeditor": "1.2.0",
@@ -30,9 +30,9 @@
 			"type": "package",
 			"package": {
 				"name": "jquery/jqueryui",
-				"version": "1.10.2",
+				"version": "1.10.3",
 				"dist": {
-					"url": "http://jqueryui.com/resources/download/jquery-ui-1.10.2.zip",
+					"url": "http://jqueryui.com/resources/download/jquery-ui-1.10.3.zip",
 					"type": "zip"
 				}
 			}

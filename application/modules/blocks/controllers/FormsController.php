@@ -239,6 +239,8 @@ class Blocks_FormsController extends Blocks_AbstractController
         $css = array('/components/jquery/jqueryui/themes/base/minified/jquery-ui.min.css',);
         $js = array(
         	'/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+        	'/components/jquery/jqueryui/ui/minified/i18n/jquery.ui.datepicker-fr.min.js',
+        		
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/forms.js")
         );
         $this->_sendResponse($output, $template, $css, $js);

@@ -1,10 +1,9 @@
 jQuery(".mother").each(addcheck);
 
-jQuery.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );
+
 jQuery(".dateField").each(switchToDateField);
 
 function switchToDateField(){
-	console.log(jQuery(this).prop('type'));
 	if(jQuery(this).prop('type')=='text'){
 		jQuery(this).datepicker({ dateFormat: "yy-mm-dd"});
 	}	
