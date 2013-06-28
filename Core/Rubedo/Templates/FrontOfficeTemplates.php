@@ -117,6 +117,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('getTaxonomyTerm', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getTaxonomyTerm'));
         $this->_twig->addFunction('getDam', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getDam'));
         $this->_twig->addFunction('getContent', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getContent'));
+        $this->_twig->addFunction('isInRootline', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::isInRootline'));
     }
 
     /**
@@ -314,5 +315,16 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $contentService = Manager::getService("Contents");
     
         return $contentService->findById($contentId);
+    }
+    
+    /**
+     * Return true if the given page is in the current rootline
+     * 
+     * @param string $pageId
+     *         id of the page
+     * @return boolean
+     */
+    public static function isInRootline($pageId) {
+        return Manager::getService("Pages")->isInRootline($pageId);
     }
 }
