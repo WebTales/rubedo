@@ -251,7 +251,10 @@ class Blocks_FormsController extends Blocks_AbstractController
                     if($field["itemConfig"]['fieldType']=="datefield"){
                         $rawValue=$this->_formResponse['data'][$field['id']];
                         $refinedValue=DateTime::createFromFormat("Y-m-d", $rawValue);
-                        $refinedValue=$refinedValue->format("d/m/Y");
+                        if ($refinedValue){
+                            $refinedValue=$refinedValue->format("d/m/Y");
+                        }
+                        
                         return($refinedValue);
                     }
                     return($this->_formResponse['data'][$field['id']]);
@@ -343,6 +346,14 @@ class Blocks_FormsController extends Blocks_AbstractController
                     $this->_errors[$field["id"]] = "Ce champ doit contenir une heure valide au format 00:00";
                 }
                 
+            }
+            if ($fieldType == "datefield") {
+            
+                $is_valid = DateTime::createFromFormat("Y-m-d", $response) ? true : false;
+                if ($is_valid == false){
+                    $this->_errors[$field["id"]] = "Ce champ doit contenir une date valide au format YYYY-mm-dd";
+                }
+            
             }
             /*
              * check validation rules
