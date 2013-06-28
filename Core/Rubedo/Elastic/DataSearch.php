@@ -43,6 +43,13 @@ class DataSearch extends DataAbstract implements IDataSearch
     protected $_displayedFacets;
     protected $_facetDisplayMode;
 
+    /**
+     * Cached getter for content type
+     *
+     * @param string $contentTypeId
+     *            content type id
+     * @return array
+     */
     protected function _getContentType ($contentTypeId)
     {
         if (! isset($this->contentTypesService)) {
@@ -54,6 +61,13 @@ class DataSearch extends DataAbstract implements IDataSearch
         return $this->contentTypesArray[$contentTypeId];
     }
 
+    /**
+     * Cached getter for dam type
+     *
+     * @param string $damTypeId
+     *            dam type id
+     * @return array
+     */
     protected function _getDamType ($damTypeId)
     {
         if (! isset($this->damTypesService)) {
@@ -65,6 +79,14 @@ class DataSearch extends DataAbstract implements IDataSearch
         return $this->damTypesArray[$damTypeId];
     }
 
+    /**
+     * Add filter to Query
+     *
+     * @param string $name
+     *            filter name
+     *        string $field
+     *        	  field to apply filter
+     */
     protected function _addFilter ($name, $field)
     {
     	// transform param to array if single value
@@ -101,6 +123,13 @@ class DataSearch extends DataAbstract implements IDataSearch
   
     }
 
+    /**
+     * Build Elastica facet filter from name
+     *
+     * @param string $name
+     *            filter name
+     * @return Elastica_Filter or null
+     */
     protected function _getFacetFilter($name)
     {
         // get mode for this facet
@@ -124,6 +153,13 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
     }
 
+    /**
+     * Is displayed Facet ?
+     *
+     * @param string $name
+     *            facet name
+     * @return boolean
+     */
     protected function _isFacetDisplayed($name)
     {
     	if (!self::$_isFrontEnd or $this->_displayedFacets==array("all") or in_array($name,$this->_displayedFacets)) {
@@ -333,12 +369,12 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // filter on dam type
         if (array_key_exists('damType', $this->_params)) {
-            $this->_addFilter ('damType', 'damType', 'and');
+            $this->_addFilter ('damType', 'damType');
         }
         
         // filter on author
         if (array_key_exists('author', $this->_params)) {
-            $this->_addFilter ('author', 'author', 'and');
+            $this->_addFilter ('author', 'author');
         }
         
         // filter on date
@@ -381,7 +417,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             	}                
                 foreach ($this->_params[$vocabulary] as $term) {
 
-                    $this->_addFilter ($vocabulary, 'taxonomy.' . $vocabulary, 'and');
+                    $this->_addFilter ($vocabulary, 'taxonomy.' . $vocabulary);
    
                 }
             }
