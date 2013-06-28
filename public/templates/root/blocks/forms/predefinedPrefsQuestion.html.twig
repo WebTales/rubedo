@@ -8,7 +8,7 @@
     {%  for question in field.itemConfig.resultingOptions %}
     {% set optionsLooper=loop.index %}
     <input type="hidden"  name="{{ field.id }}question{{optionsLooper}}expPlanRow"  value="{{ field.itemConfig.usedRows[optionsLooper-1] }}">
-    <label class="control-label" for="{{ field.id }}">{{ field.itemConfig.label }}</label>{% if field.itemConfig.fieldConfig.mandatory %} *{% endif %}
+    <label class="control-label" for="{{ field.id }}">{{ field.itemConfig.label }} {% if field.itemConfig.mandatory %} *{% endif %}</label>  {% if field.id in errors|keys %}<span class="help-inline">{{ errors[field.id] }}</span>{% endif %}
         <div class="clearfix"></div>
       <table class="table" style="width:{{ 200+field.itemConfig.numberOfChoices*70 }}px;">
       <thead>

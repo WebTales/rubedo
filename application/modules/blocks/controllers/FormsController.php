@@ -93,7 +93,23 @@ class Blocks_FormsController extends Blocks_AbstractController
             /* Verification des champs envoyés */
             $this->_lastAnsweredPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];
             foreach ($this->_form["formPages"][$currentFormPage]["elements"] as $field) {
-                if (($field['itemConfig']['fType'] == 'richText')||($field['itemConfig']['fType'] == 'predefinedPrefsQuestion')) {
+                if ($field['itemConfig']['fType'] == 'richText') {
+                    continue;
+                }
+                if ($field['itemConfig']['fType'] == 'predefinedPrefsQuestion'){
+                    $isSpecialValid=true;
+                    if ($field['itemConfig']['mandatory']){
+                        for ($i = 1; $i <= $field['itemConfig']['numberOfQuestions']; $i++) {
+                            for ($j = 1; $j <= $field['itemConfig']['numberOfChoices']; $j++) {
+                                if(empty($this->_formResponse['data'][$field['id']."question".$i."choice".$j])){
+                                    $isSpecialValid=false;
+                                }
+                            }
+                        }
+                    }
+                    if (!$isSpecialValid){
+                        $this->_errors[$field["id"]] = "Ce champ est obligatoire";
+                    }
                     continue;
                 }
                 $this->_validInput($field, $this->getParam($field['id']));
