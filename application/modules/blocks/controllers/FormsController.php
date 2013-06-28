@@ -248,6 +248,12 @@ class Blocks_FormsController extends Blocks_AbstractController
         foreach($this->_form["formPages"] as $page){
             foreach ($page["elements"] as $field){
                 if ($field["itemConfig"]["qNb"]==$qNb){
+                    if($field["itemConfig"]['fieldType']=="datefield"){
+                        $rawValue=$this->_formResponse['data'][$field['id']];
+                        $refinedValue=DateTime::createFromFormat("Y-m-d", $rawValue);
+                        $refinedValue=$refinedValue->format("d/m/Y");
+                        return($refinedValue);
+                    }
                     return($this->_formResponse['data'][$field['id']]);
                 }
             }
