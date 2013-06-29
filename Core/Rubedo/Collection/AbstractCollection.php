@@ -80,6 +80,9 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
+        if ($this->_collectionName == "") {
+          $this->_collectionName="AbstractCollection";
+        }
         $this->_dataService->init($this->_collectionName);
     }
 
