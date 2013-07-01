@@ -227,11 +227,13 @@ class DataSearch extends DataAbstract implements IDataSearch
 	        			
 	        			// otherwise get facets operators from displayed facets only
 	        			foreach ($this->_displayedFacets as $facetId) {
-	
-		        			$taxonomy = $taxonomyService->findById($facetId);
-		        			if ($taxonomy) {
-		        				$this->_facetOperators[$facetId]= isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
-		        			}
+	                        if(preg_match('/[\dabcdef]{24}/', $facetId)==1 || $facetId=='navigation'){
+	                            $taxonomy = $taxonomyService->findById($facetId);
+	                            if ($taxonomy) {
+	                                $this->_facetOperators[$facetId]= isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
+	                            }  
+	                        }
+		        			
 	        			}   
 	        		}       				
 	        	}
