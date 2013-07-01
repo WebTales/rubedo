@@ -9,5 +9,5 @@
 				 <p>{% for term in result.terms %}
                  {% if not loop.first %}&nbsp;&nbsp;{% endif %}<span class="btn-mini btn-success">{{term}}</span>
                  {% endfor %}</p>
-				<span class="label">{{ result.type }}</span> {{"published_by"|trans}} <a class="cursor-pointer" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{result.lastUpdateUser.fullName }}</a> {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				<span class="label">{{ result.type }}</span> {{"Contents.PublishedBy"|fotrans}} <a class="cursor-pointer" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{result.lastUpdateUser.fullName }}</a> {{"Contents.On"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
