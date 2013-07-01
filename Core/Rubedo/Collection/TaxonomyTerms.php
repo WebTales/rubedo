@@ -474,18 +474,22 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     {
         if (! isset(self::$_termsArray[$id])) {
             if ($vocabularyId == null || $vocabularyId != 'navigation') {
-                $term = parent::findById($id);
-            } else {
-                $term = Manager::getService('Sites')->findById($id);
-                if (! $term) {
-                    $term = Manager::getService('Pages')->findById($id);
-                    if ($term) {
-                        $term = $this->_pageToTerm($term);
-                    }
-                } else {
-                    $term = $this->_siteToTerm($term);
-                }
-            }
+				$term = parent::findById ( $id );
+			} else {
+				if ($id == "all") {
+					$term = $this->_getMainRoot ();
+				} else {
+					$term = Manager::getService ( 'Sites' )->findById ( $id );
+					if (! $term) {
+						$term = Manager::getService ( 'Pages' )->findById ( $id );
+						if ($term) {
+							$term = $this->_pageToTerm ( $term );
+						}
+					} else {
+						$term = $this->_siteToTerm ( $term );
+					}
+				}
+			}
             if (! isset($term['text'])) {
                 return null;
             }
