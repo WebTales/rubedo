@@ -150,9 +150,16 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
         $result = false;
         if ($filters instanceof \WebTales\MongoFilters\ICompositeFilter) { // do recursive adaptation to composite filter
             $filtersArray = $filters->getFilters();
-            foreach ($filtersArray as $filter) {
+            foreach ($filtersArray as $key => $filter) {
                 $result = $this->_lookForNavigation($filter) || $result;
+                if($this->_lookForNavigation($filter)){
+                    $result = true;
+                    if($filter instanceof \WebTales\MongoFilters\ValueFilter){
+                        unset($filtersArray[$key]);
+                    }
+                }
             }
+            $filters->setFilters($filtersArray);
         } elseif ($filters instanceof \WebTales\MongoFilters\ValueFilter) { // adapt simple filters
             $key = $filters->getName();
             $value = $filters->getValue();
@@ -169,16 +176,20 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
      */
     public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
+        
         $navigation = false;
         
         if ($filters) {
             $navigation = $this->_lookForNavigation($filters);
         }
         
-        $parentItem = $this->findById($parentId);
-        if ($parentItem['vocabularyId'] == 'navigation') {
-            $navigation = true;
+        if(preg_match('/[\dabcdef]{24}/', $parentId)==1){
+            $parentItem = $this->findById($parentId);
+            if ($parentItem['vocabularyId'] == 'navigation') {
+                $navigation = true;
+            }
         }
+        
         if ($navigation) {
             if ($parentId == 'root') {
                 $returnArray = array();
@@ -203,9 +214,10 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
                     $filters->addFilter(Filter::factory('Value')->setName('site')
                         ->setValue($rootPage["site"]));
                 } else {
-                    $parentId = 'root';
+                    
                     $filters->addFilter(Filter::factory('Value')->setName('site')
                         ->setValue($parentId));
+                    $parentId = 'root';
                 }
                 
                 $returnArray = array();
