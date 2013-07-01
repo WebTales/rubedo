@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IGroups, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\ILanguages, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Languages
