@@ -611,6 +611,11 @@ class Install_IndexController extends Zend_Controller_Action
             }
         }
         
+        if($success){
+        	Rubedo\Update\Update::update();
+        }
+        
+        
         if (! $success) {
             $this->view->hasError = true;
             $this->view->errorMsgs = 'failed to initialize contents';

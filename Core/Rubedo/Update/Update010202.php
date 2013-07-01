@@ -17,6 +17,8 @@
  */
 namespace Rubedo\Update;
 
+use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
 
 /**
  * Methods for update tool
@@ -33,9 +35,30 @@ class Update010202 extends Update {
 	 * @return boolean
 	 */
 	public static function upgrade() {
-       
+       static::importLanguages();
         return true;
     }
 
+    
+    public static function importLanguages(){
+    	$tsvFile = APPLICATION_PATH.'/../data/ISO-639-2_utf-8.txt';
+    	$file = fopen($tsvFile, 'r');
+    	$service = Manager::getService('Languages');
+    	while($line = fgetcsv($file,null,'|')){
+    		if(empty($line[2])){
+    			continue;
+    		}
+    		$lang = array();
+    		$lang['iso2']=$line[2];
+    		$lang['locale']=$line[2];
+    		$lang['iso3']=$line[0];
+    		$lang['label']=$line[3];
+    		$lang['labelFr']=$line[4];
+    	
+    		$upsertFilter = Filter::factory('Value')->setName('locale')->setValue($lang['locale']);
+    		$service->create($lang,array('upsert'=>$upsertFilter));
+    	}
+    	return true;
+    }
  
 }
