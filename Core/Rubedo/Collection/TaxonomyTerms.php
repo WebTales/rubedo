@@ -558,22 +558,22 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     /**
      * Allow to find a term by its id
      *
-     * @param string $id
+     * @param string $contentId
      *            id of the term
      * @param string $vocabularyId
      *            id of the vocabulary
      * @return array the term
      */
-    public function findById ($id)
+    public function findById ($contentId)
     {
     	if($contentId === null){
     		return null;
     	}
-        $term = parent::findById($id);
+        $term = parent::findById($contentId);
         if (! $term) {
-            $term = Manager::getService('Sites')->findById($id);
+            $term = Manager::getService('Sites')->findById($contentId);
             if (! $term) {
-                $term = Manager::getService('Pages')->findById($id);
+                $term = Manager::getService('Pages')->findById($contentId);
                 if ($term) {
                     $term = $this->_pageToTerm($term);
                 }
