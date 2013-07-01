@@ -34,7 +34,12 @@ class FrontOfficeTranslate extends \Twig_Extension
      */
     protected $lang;
     
-    protected $defaultLang;
+    /**
+     * Default langage
+     *
+     * @var string
+     */
+    protected $defaultLang = "en";
 
     /**
      * init class fetching current User Language
