@@ -208,6 +208,9 @@ class Users extends AbstractCollection implements IUsers
      */
     public function findById ($contentId, $forceReload = false)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         $result = parent::findById($contentId, $forceReload);
         if ($result) {
             $result = $this->_addGroupsInfos($result);

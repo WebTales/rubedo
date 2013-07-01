@@ -246,6 +246,9 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
      */
     public function findById ($contentId)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         if ($contentId == 'navigation') {
             return $this->_virtualNavigationVocabulary;
         } else {
