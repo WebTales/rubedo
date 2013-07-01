@@ -86,6 +86,9 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      */
     public function findById ($contentId)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         return $this->_dataService->findById($contentId);
     }
 

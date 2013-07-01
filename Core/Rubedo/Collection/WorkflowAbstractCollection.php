@@ -124,6 +124,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      */
     public function findById ($contentId, $live = true, $raw = true)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         if ($live === true) {
             $this->_dataService->setLive();
         } else {
