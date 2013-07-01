@@ -1,9 +1,9 @@
 <div class="span3 well well-large" id="facetBox">
 		<p>
-			<i class="icon-search"></i> {{"full_text_search"|trans}}
+			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
 		</p>
 			<form name="searchForm" class="form-search" action="javascript:window.updateFacets('query',document.searchForm.elements['query'].value,true)">
-				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"search"|trans}}">
+				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
 			</form>
 		
 		{% for facet in facets %}
@@ -12,19 +12,19 @@
 
     			{% if facet.id == 'type' %}
     			<p>
-    				<i class="icon-file"></i> {{"content_type"|trans}}
+    				<i class="icon-file"></i> {{"Search.Facets.Label.ContentType"|fotrans}}
     			</p>	
     			{% elseif facet.id == 'damType' %}
     			<p>
-    				<i class="icon-file"></i> {{"dam_type"|trans}}
+    				<i class="icon-file"></i> {{"Search.Facets.Label.MediaType"|fotrans}}
     			</p>	
     			{% elseif facet.id == 'author' %}
     			<p>
-    				<i class="icon-user"></i> {{"author"|trans}}
+    				<i class="icon-user"></i> {{"Search.Facets.Label.Author"|fotrans}}
     			</p>		
     			{% elseif facet.id == 'date' %}
     			<p>
-    				<i class="icon-calendar"></i> {{"date"|trans}}
+    				<i class="icon-calendar"></i> {{"Search.Facets.Label.Date"|fotrans}}
     			</p>	
     			{% else %}
     			<p>

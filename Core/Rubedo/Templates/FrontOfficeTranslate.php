@@ -33,6 +33,8 @@ class FrontOfficeTranslate extends \Twig_Extension
      * @var string
      */
     protected $lang;
+    
+    protected $defaultLang;
 
     /**
      * init class fetching current User Language
@@ -73,6 +75,12 @@ class FrontOfficeTranslate extends \Twig_Extension
      */
     public function translate ($text)
     {
-        return Manager::getService('Translate')->getTranslation($text, $this->lang);
+        $label = Manager::getService('Translate')->getTranslation($text, $this->lang);
+        
+        if($label != "") {
+            return $label;
+        } else {
+            return Manager::getService('Translate')->getTranslation($text, $this->defaultLang);
+        }
     }
 }
