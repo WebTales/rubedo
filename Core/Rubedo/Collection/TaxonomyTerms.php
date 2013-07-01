@@ -569,6 +569,9 @@ class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
     	if($contentId === null){
     		return null;
     	}
+    	if($contentId =="all"){
+    		return $this->_getMainRoot();
+    	}
         $term = parent::findById($contentId);
         if (! $term) {
             $term = Manager::getService('Sites')->findById($contentId);
