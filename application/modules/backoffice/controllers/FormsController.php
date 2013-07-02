@@ -100,7 +100,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                         if ($element['itemConfig']['fieldType'] == 'checkboxgroup') {
                             $tempSubField = array();
                             foreach ($element['itemConfig']['fieldConfig']['items'] as $item) {
-                                $headerArray[] = ($displayQnb ? $element['itemConfig']["qNb"] . ' - ' : '') . $element['itemConfig']["label"] . ' - ' . $item['boxLabel'];
+                                $headerArray[] = $element['itemConfig']["qNb"];
                                 $tempSubField[] = $item['inputValue'];
                                 $definiedAnswersArray[$item['inputValue']] = $item['boxLabel'];
                             }
@@ -114,7 +114,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                             break;
                         
                         }else {
-                            $headerArray[] = ($displayQnb ? $element['itemConfig']["qNb"] . ' - ' : '') . $element['itemConfig']["label"];
+                            $headerArray[] = $element['itemConfig']["qNb"];
                             $fieldsArray[] = array(
                                 'type' => 'simple',
                                 'value' => $element['id']
@@ -125,7 +125,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                             break;
                         }
                     case 'openQuestion':
-                        $headerArray[] = ($displayQnb ? $element['itemConfig']["qNb"] . ' - ' : '') . $element['itemConfig']["label"];
+                        $headerArray[] = $element['itemConfig']["qNb"];
                         $fieldsArray[] = array(
                             'type' => 'open',
                             'value' => $element['id']
