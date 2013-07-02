@@ -100,7 +100,7 @@ class Backoffice_FormsController extends Backoffice_DataAccessController
                         if ($element['itemConfig']['fieldType'] == 'checkboxgroup') {
                             $tempSubField = array();
                             foreach ($element['itemConfig']['fieldConfig']['items'] as $item) {
-                                $headerArray[] = $element['itemConfig']["qNb"];
+                                $headerArray[] = $element['itemConfig']["qNb"]. ' - ' . $item['boxLabel'];
                                 $tempSubField[] = $item['inputValue'];
                                 $definiedAnswersArray[$item['inputValue']] = $item['boxLabel'];
                             }
