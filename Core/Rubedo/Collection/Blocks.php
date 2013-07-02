@@ -178,7 +178,7 @@ class Blocks extends AbstractCollection implements IBlocks
     public function upsertFromData ($data, $parentId, $type = 'page')
     {
         if ($this->isModified($data)) {
-        	if(strpos($data["id"],'unBloc')===0){
+        	if(strpos($data["id"],'unBloc')===0 || strpos($data["id"],'ext-gen')===0){
         		$data['id'] = new \MongoId();
         	}
             $block = $this->findById($data['id']);
