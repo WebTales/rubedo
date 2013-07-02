@@ -195,7 +195,7 @@
 				<p>{{ result.summary|cleanHtml }}</p>
 				{% endif %}
 				<br />
-				{{"Contents.PublishedBy"|fotrans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"Contents.On"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				{{"Contents.PublishedBy"|fotrans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"Contents.The"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
 			{% else %}
 			<tr>
@@ -211,7 +211,7 @@
 				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.summary|cleanHtml }}</p>
 				{% endif %}
 				<br />
-				{{"Contents.PublishedBy"|fotrans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"Contents.On"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
+				{{"Contents.PublishedBy"|fotrans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"Contents.The"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
 			{% endif %}
 			{% endfor %}
@@ -222,7 +222,7 @@
 		{%set lastWrap=(pagecount-1)-current%}
 			<ul>
 			<li class="disabled">
-					<a href="#">Page {{ current+1 }} {{"Contents.On"|fotrans}} {{ pagecount }}</a>
+					<a href="#">{{"Search.Label.Page"|fotrans}} {{ current+1 }} {{"Contents.Of"|fotrans}} {{ pagecount }}</a>
 				</li>
 				{% if current==0 %}
 				<li class="disabled">
