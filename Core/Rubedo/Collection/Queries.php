@@ -227,7 +227,66 @@ class Queries extends AbstractCollection implements IQueries
             "sort" => $sort
         );
     }
-
+    
+    /**
+     * Add the filter to the query in function of the field type (date, time, number...)
+     * 
+     * @param string $fieldType
+     *     datetime, numberfield ...
+     * @param string $property
+     *     The name of the field
+     * @param array $value
+     *     Config of the field (operator and value)
+     * @param string $ruleOperator
+     *     Contain the mongo operator of the filter ($lt, $gt, $eq...)
+     */
+    protected function setFilters($fieldType, $property, $value, $ruleOperator) {
+        //Create filter object
+        $filters = Filter::factory();
+        
+        //Create the filter in terms of the field type
+        switch ($fieldType) {
+            case "datetime":
+                if (isset($value['rule']) && isset($value['value'])) {
+                    $nextDate = new \DateTime($value['value']);
+                    $nextDate->add(new \DateInterval('PT23H59M59S'));
+                    $nextDate = (array) $nextDate;
+                    if ($ruleOperator === 'eq') {
+        
+                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                            ->setOperator('$gt')
+                            ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+        
+                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                            ->setOperator('$lt')
+                            ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                    } elseif ($ruleOperator === '$gt') {
+                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                            ->setOperator($ruleOperator)
+                            ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                    } elseif ($ruleOperator === '$lte') {
+                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                            ->setOperator('$lte')
+                            ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                    } else {
+                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                            ->setOperator($ruleOperator)
+                            ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                    }
+                }
+                break;
+            case "numberfield":
+            case "timefield":
+                $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                    ->setOperator($ruleOperator)
+                    ->setValue($value['value']));
+                break;
+            default:
+                throw new \Rubedo\Exceptions\Server('not implemented ' . $fieldType);
+                break;
+        }
+    }
+    
     /**
      * Return an array of filters and sorting based on a query object
      *
@@ -277,34 +336,44 @@ class Queries extends AbstractCollection implements IQueries
         
         /* Add filter on FieldRule */
         foreach ($query['fieldRules'] as $property => $value) {
-            if (isset($value['rule']) && isset($value['value'])) {
-                $ruleOperator = array_search($value['rule'], $operatorsArray);
-                $nextDate = new \DateTime($value['value']);
-                $nextDate->add(new \DateInterval('PT23H59M59S'));
-                $nextDate = (array) $nextDate;
-                if ($ruleOperator === 'eq') {
+            //Contain the type of the field (date, time, text ...)
+            $fieldType = "";
+            
+            //Set the type of the field for system fields
+            if($property === "createTime" || $property === "lastUpdateTime") {
+                $fieldType = "datetime";
+            } else {
+                //Determine the type of the field in terms of the content types
+                foreach ($query['contentTypes'] as $contentTypeId) {
+                    //Get content type object
+                    $contentType = Manager::getService("ContentTypes")->findById($contentTypeId);
                     
-                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                        ->setOperator('$gt')
-                        ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
-                    
-                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                        ->setOperator('$lt')
-                        ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                } elseif ($ruleOperator === '$gt') {
-                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                        ->setOperator($ruleOperator)
-                        ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                } elseif ($ruleOperator === '$lte') {
-                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                        ->setOperator('$lte')
-                        ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                } else {
-                    $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                        ->setOperator($ruleOperator)
-                        ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                    //Check if the field is in the content type
+                    foreach ($contentType["fields"] as $fieldConfig) {
+                        if ($fieldConfig["config"]["name"] == $property) {
+                            if($fieldType == "") {
+                                //Define field type
+                                $fieldType = $fieldConfig["cType"];
+                            } elseif ($fieldType != $fieldConfig["cType"]) {
+                                //We throw an exception if the field type is not the same in all content types
+                                throw new \Rubedo\Exceptions\Server("The cType of the field must be the same in all the selected content types", "Exception98");
+                            }
+                        }
+                    }
                 }
             }
+            
+            //Throw an exception if the field type is not set
+            if($fieldType === "") {
+                throw new \Rubedo\Exceptions\Server("The server is unable to determine the cType of the field", "Exception99");
+            }
+            
+            //Get the  operator in the array
+            $ruleOperator = array_search($value['rule'], $operatorsArray);
+            
+            //Set the filter of the query
+            $this->setFilters($fieldType, $property, $value, $ruleOperator);
+            
             /*
              * Add Sort
              */
