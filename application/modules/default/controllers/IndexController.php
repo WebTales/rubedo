@@ -151,7 +151,8 @@ class IndexController extends Zend_Controller_Action
         // context
         $lang = $this->_session->get('lang', 'fr');
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
-        if (! $isLoggedIn || ! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
+        $hasAccessToBO = Manager::getService('Acl')->hasAccess('ui.backoffice');
+        if (! $isLoggedIn || ! $hasAccessToBO) {
             $isPreview = false;
         } else {
             $isPreview = $this->getRequest()->getParam('preview', false);
@@ -256,6 +257,7 @@ class IndexController extends Zend_Controller_Action
         $twigVar['css'] = $this->_servicePage->getCss();
         $twigVar['js'] = $this->_servicePage->getJs();
         $twigVar['isLoggedIn'] = $isLoggedIn;
+        $twigVar['hasAccessToBO'] = $hasAccessToBO;
         $twigVar['canEdit'] = $canEdit;
         
         $twigVar['pageProperties'] = isset($this->_mask['pageProperties']) ? $this->_mask['pageProperties'] : null;

@@ -113,7 +113,7 @@
                                     {% endif %} <span>{{currentUser.name}}</span> <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/backoffice" target="_blank"><i class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | botrans }}</a></li>
+                                    {% if hasAccessToBO %}<li><a href="/backoffice" target="_blank"><i class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | botrans }}</a></li>{% endif %}
                                     <li><a href="#" onclick="logout()"><i class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | botrans }}</a></li>
                                 </ul>
         					</div>
