@@ -377,7 +377,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     }
                     // create content
                     $contentParams = array(
-                        "online" => "true",
+                        "online" => true,
                         "text" => $currentLine[$textFieldIndex],
                         "typeId" => $contentType['data']['id'],
                         "fields" => $contentParamsFields,
