@@ -173,7 +173,11 @@ class Blocks_FormsController extends Blocks_AbstractController
         $output['formFields'] = $this->_form["formPages"][$this->formsSessionArray[$this->_formId]['currentFormPage']];
         //replace regex in labels   
         foreach ($output['formFields']["elements"] as $key => &$value){
-           $value["itemConfig"]["label"]=preg_replace_callback('/#([^#]*)#/', array($this,'replaceWithAnswers'), $value["itemConfig"]["label"]);
+            if ($value['itemConfig']['fType'] == 'richText') {
+                $value["itemConfig"]["html"]=preg_replace_callback('/#([^#]*)#/', array($this,'replaceWithAnswers'), $value["itemConfig"]["html"]);
+            } else {
+                $value["itemConfig"]["label"]=preg_replace_callback('/#([^#]*)#/', array($this,'replaceWithAnswers'), $value["itemConfig"]["label"]);
+            }
         }   
         //begin specific implement of predefinedPrefsQuestion
         
