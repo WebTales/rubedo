@@ -177,15 +177,15 @@ class DataSearch extends DataAbstract implements IDataSearch
      *            s array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
      * @return Elastica_ResultSet
      */
-    public function search (array $params, $option = 'all', $withSummary = true, $facetDisplayMode='standard')
+    public function search (array $params, $option = 'all', $withSummary = true)
     {
     	$taxonomyService = Manager::getService('Taxonomy');
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
         $this->_params = $params;
 
-        $this->_facetDisplayMode = $facetDisplayMode;
-
+        $this->_facetDisplayMode = $this->_params['block-config']['displayMode'];
+        
         // front-end search
         if ((self::$_isFrontEnd)) {
 
@@ -552,7 +552,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
             
             $elasticaFacetDate->setRanges($ranges);
-    
+
             // Apply filters from other facets
             $facetFilter = $this->_getFacetFilter('date');
             if (!is_null($facetFilter)) {
@@ -755,8 +755,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                         if (array_key_exists('ranges', $temp) and count($temp['ranges']) > 0) {
                             foreach ($temp['ranges'] as $key => $value) {
                                 $rangeCount = $temp['ranges'][$key]['count'];
-                                // unset facet when count = 0 or total results count
-                                if ($rangeCount > 0 and $rangeCount < $result['total']) {
+                                // unset facet when count = 0 or total results count when display mode is not set to checkbox
+                                if ($facetDisplayMode=='checkbox'or ($rangeCount > 0 and $rangeCount < $result['total'])) {
                                     $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
                                 } else {
                                     unset($temp['ranges'][$key]);

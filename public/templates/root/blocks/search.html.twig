@@ -1,6 +1,5 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
-{% set displayMode = 'standard' %}
 <br />
 <div class="navbar">
 	<div class="navbar-inner">
@@ -133,7 +132,7 @@
     				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
     				{% if displayMode == 'checkbox' %}
     				<label class="checkbox">
-      					<input type="checkbox" data-target="{{url({(facet.id) : [term.term]},'add')}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+      					<input type="checkbox" class="facetBox" data-target="{{url({(facet.id) : [term.term]},'add')}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
     				</label>
     				{% else %}
     				<li>
@@ -158,11 +157,15 @@
     							</p>
     	        				<ul>
     	        			{% endif %}
-
+                            {% if displayMode == 'checkbox' %}
+            				<label class="checkbox">
+              					<input type="checkbox" class="facetBox" data-target="{{url({lastupdatetime : range.from})}}" data-target-off="{{url({lastupdatetime : range.from},'sub')}}" {% if range.from in activeFacetsList %}checked{% endif %}> {{ range.label }} ({{ range.count }})
+            				</label>                            
+                            {% else %}
     						<li>
     							<a href="{{url({lastupdatetime : range.from})}}">{{ range.label }} ({{ range.count }})</a>
     						</li>
-
+                            {% endif %}
 
     				{% endfor %}
 			    	</ul>

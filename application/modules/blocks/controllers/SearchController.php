@@ -32,7 +32,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // get search parameters
         $params = $this->getRequest()->getParams();
-        
+
         //remove empty facets from criteria
         foreach($params as $key => $value){
             
@@ -87,6 +87,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         } else {
             $pagecount = 1;
         }
+        $results['displayMode'] = $params['block-config']['displayMode'];
         $results['facetsToHide'] = $facetsToHide;
         $results['current'] = $params['pager'];
         $results['pagecount'] = $pagecount;
