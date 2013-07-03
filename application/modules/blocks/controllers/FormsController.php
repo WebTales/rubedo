@@ -259,6 +259,32 @@ class Blocks_FormsController extends Blocks_AbstractController
                         }
                         
                         return($refinedValue);
+                    } else if($field["itemConfig"]['fieldType']=="radiogroup"){
+                        foreach($field["itemConfig"]['fieldConfig']['items'] as $item){
+                            if ($item['inputValue']==$this->_formResponse['data'][$field['id']][0]){
+                                return($item['boxLabel']);
+                            }
+                        }
+                    } else if($field["itemConfig"]['fieldType']=="checkboxgroup"){
+                        if (count($this->_formResponse['data'][$field['id']])<=1){
+                            foreach($field["itemConfig"]['fieldConfig']['items'] as $item){
+                                if ($item['inputValue']==$this->_formResponse['data'][$field['id']][0]){
+                                    return($item['boxLabel']);
+                                }
+                            }
+                        } else {
+                            $multiResult="";
+                            foreach($field["itemConfig"]['fieldConfig']['items'] as $item){
+                                if (in_array($item['inputValue'], $this->_formResponse['data'][$field['id']])){
+                                    if ($multiResult==""){
+                                        $multiResult=$multiResult.$item['boxLabel'];
+                                    } else {
+                                        $multiResult=$multiResult." et ".$item['boxLabel'];
+                                    }
+                                }
+                            }
+                            return($multiResult);
+                        }
                     }
                     return($this->_formResponse['data'][$field['id']]);
                 }
