@@ -1,8 +1,8 @@
 {
 	"name": "webtales/rubedo-public",
 	"require": {
-		"jquery/jquery": "1.10.0",
-		"jquery/jqueryui": "1.10.2",
+		"jquery/jquery": "1.10.1",
+		"jquery/jqueryui": "1.10.3",
 		"jquery/timepicker": "0.3.2",
 		"sencha/extjs": "4.1.1a",
 		"webtales/ckeditor": "1.2.0",
@@ -11,7 +11,8 @@
 		"webtales/rubedo-backoffice-ui": "dev-develop",
 		"longtailvideo/jwplayer": "6",
 		"webtales/rubedo-localization": "dev-master",
-		"jschr/bootstrap-modal": "2.1"
+		"jschr/bootstrap-modal": "2.1",
+		"WebTales/bsie": "dev-master"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -19,9 +20,9 @@
 			"type": "package",
 			"package": {
 				"name": "jquery/jquery",
-				"version": "1.10.0",
+				"version": "1.10.1",
 				"dist": {
-					"url": "http://code.jquery.com/jquery-1.10.0.min.js",
+					"url": "http://code.jquery.com/jquery-1.10.1.min.js",
 					"type": "file"
 				}
 			}
@@ -30,9 +31,9 @@
 			"type": "package",
 			"package": {
 				"name": "jquery/jqueryui",
-				"version": "1.10.2",
+				"version": "1.10.3",
 				"dist": {
-					"url": "http://jqueryui.com/resources/download/jquery-ui-1.10.2.zip",
+					"url": "http://jqueryui.com/resources/download/jquery-ui-1.10.3.zip",
 					"type": "zip"
 				}
 			}
@@ -104,6 +105,9 @@
 		},{
 		    "type": "vcs",
 		    "url": "git://github.com/jschr/bootstrap-modal.git"
+		},{
+		    "type": "vcs",
+		    "url": "git://github.com/WebTales/bsie.git"
 		}
 	],
 	"minimum-stability": "stable",

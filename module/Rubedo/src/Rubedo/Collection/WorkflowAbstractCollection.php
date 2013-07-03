@@ -32,6 +32,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
 
     protected function _init ()
     {
+    	if (empty($this->_collectionName)) {
+    		throw new Rubedo\Exceptions\Server('Collection name is not set', "Exception97");
+    	}
         // init the data access service
         $this->_dataService = Manager::getService('MongoWorkflowDataAccess');
         $this->_dataService->init($this->_collectionName);
@@ -124,6 +127,9 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
      */
     public function findById ($contentId, $live = true, $raw = true)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         if ($live === true) {
             $this->_dataService->setLive();
         } else {

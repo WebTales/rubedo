@@ -19,6 +19,7 @@
         "execute.controller.elastic-search.index.backoffice",
         "execute.controller.mailing-lists.index.backoffice",
         "execute.controller.taxonomy-terms.navigation-tree.backoffice",
-        "execute.controller.rubedo-version.index.backoffice"
+        "execute.controller.rubedo-version.index.backoffice",
+        "execute.controller.languages.get-bo-languages.backoffice"
     ]
 }

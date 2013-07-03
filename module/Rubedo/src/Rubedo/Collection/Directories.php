@@ -433,6 +433,9 @@ class Directories extends AbstractCollection implements IDirectories
      */
     public function findById($contentId, $forceReload = false)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         if($contentId == "notFiled"){
             return $this->_virtualNotFiledDirectory;
         }else{

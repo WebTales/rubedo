@@ -78,6 +78,9 @@ abstract class AbstractCollection implements IAbstractCollection
 
     protected function _init ()
     {
+    	if (empty($this->_collectionName)) {
+    		throw new Rubedo\Exceptions\Server('Collection name is not set', "Exception97");
+    	}
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
         $this->_dataService->init($this->_collectionName);
@@ -183,6 +186,9 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function findById ($contentId, $forceReload = false)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         $contentId = (string) $contentId;
         $className = (string) get_class($this);
         if (! isset(self::$_fetchedObjects[$className])) {

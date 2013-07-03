@@ -87,6 +87,9 @@ class NestedContents implements INestedContents
      */
     public function findById ($parentContentId, $subContentId)
     {
+    	if($parentContentId === null){
+    		return null;
+    	}
         $cursor = $this->_dataService->customFind(array(
             '_id' => $this->_dataService->getId($parentContentId),
             'nestedContents.id' => $subContentId

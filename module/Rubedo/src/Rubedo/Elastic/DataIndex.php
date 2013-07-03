@@ -573,6 +573,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $termsArray = array();
                 
                 foreach ($terms as $term) {
+                	if($term == 'all'){
+                		continue;
+                	}
                     $term = $taxonomyTermsService->findById($term);
                     
                     if (! $term) {
@@ -682,6 +685,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $termsArray = array();
                 
                 foreach ($terms as $term) {
+                	if($term == 'all'){
+                		continue;
+                	}
                     $term = $taxonomyTermsService->findById($term);
                     
                     if (! $term) {

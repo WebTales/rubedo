@@ -113,6 +113,7 @@
                                     {% endif %} <span>{{currentUser.name}}</span> <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
+                                    {% if hasAccessToBO %}<li><a href="/backoffice" target="_blank"><i class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | botrans }}</a></li>{% endif %}
                                     <li><a href="#" onclick="logout()"><i class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | botrans }}</a></li>
                                 </ul>
         					</div>
@@ -221,7 +222,7 @@
     	<!-- Le javascript
     		================================================== -->
     	<!-- Placed at the end of the document so the pages load faster -->
-    	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.10.0.min.js"></script>
+    	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.10.1.min.js"></script>
     	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
     	<script src="{{baseUrl}}/components/jschr/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
     	<script src="{{baseUrl}}/components/jschr/bootstrap-modal/js/bootstrap-modal.js"></script>

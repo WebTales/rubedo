@@ -155,6 +155,9 @@ class Workspaces extends AbstractCollection implements IWorkspaces
      */
     public function findById ($contentId)
     {
+    	if($contentId === null){
+    		return null;
+    	}
         if ($contentId == 'global') {
             return $this->_virtualGlobalWorkspace;
         } elseif ($contentId == 'all') {

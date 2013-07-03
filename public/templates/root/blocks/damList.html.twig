@@ -5,7 +5,7 @@
 	<div class="span12">
 		{% if total == 0 %}
 		<div class="alert alert-error">
-			{{"no_result"|trans}}
+			{{"Search.Label.NoResults"|fotrans}}
 		</div>
 		{% else %}
 
@@ -19,7 +19,7 @@
 		    </a>
 		    <div class="media-body">
       			<h4 class="media-heading">{{ result.title }}</h4>
-      			<p><span class="label">{{ result.type }}</span>&nbsp;[{{ result.fileSize }}]&nbsp;{{"published_by"|trans}} {{ result.authorName }} {{"on"|trans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}.</p>
+      			<p><span class="label">{{ result.type }}</span>&nbsp;[{{ result.fileSize }}]&nbsp;{{"Contents.PublishedBy"|fotrans}} {{ result.authorName }} {{"Contents.On"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}.</p>
       		</div>
 				
 				
@@ -33,7 +33,7 @@
 		{%set lastWrap=(pagecount-1)-current%}
 			<ul>
 			<li class="disabled">
-					<a href="#">Page {{ current+1 }} {{"on"|trans}} {{ pagecount }}</a>
+					<a href="#">Page {{ current+1 }} {{"Contents.On"|fotrans}} {{ pagecount }}</a>
 				</li>
 				{% if current==0 %}
 				<li class="disabled">

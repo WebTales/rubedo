@@ -609,4 +609,40 @@ class Pages extends AbstractCollection implements IPages
         
         return $returnArray;
     }
+    
+    /**
+     * Return true if the given page is in the current rootline
+     *
+     * @param string $pageId
+     *         id of the page
+     * @return boolean
+     */
+    public function isInRootline($pageId) {
+        //Get current page id
+        $currentPage = Manager::getService('PageContent')->getCurrentPage();
+        
+        // If the current page is the given page we return true
+        if($pageId == $currentPage){
+            return true;
+        }
+        
+        // Get the current page obj
+        $currentPageObj = $this->findById($currentPage);
+        $rootlineArray = array();
+        
+        //Get rootline of the current page
+        $rootline = $this->getAncestors($currentPageObj);
+        
+        //Make the rootline pages id array
+        foreach ($rootline as $ancestor) {
+            $rootlineArray[] = $ancestor['id'];
+        }
+        
+        //If the given page is in the rootline we return true
+        if(in_array($pageId, $rootlineArray)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
