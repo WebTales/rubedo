@@ -240,38 +240,62 @@ class Queries extends AbstractCollection implements IQueries
      * @param string $ruleOperator
      *     Contain the mongo operator of the filter ($lt, $gt, $eq...)
      */
-    protected function setFilters($fieldType, $property, $value, $ruleOperator) {
-        //Create filter object
-        $filters = Filter::factory();
+    protected function setFilters($fieldType, $property, $value, $ruleOperator, $filters) {
         
         //Create the filter in terms of the field type
         switch ($fieldType) {
-            case "datetime":
+            case "datefield":
                 if (isset($value['rule']) && isset($value['value'])) {
                     $nextDate = new \DateTime($value['value']);
                     $nextDate->add(new \DateInterval('PT23H59M59S'));
                     $nextDate = (array) $nextDate;
-                    if ($ruleOperator === 'eq') {
-        
-                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                            ->setOperator('$gt')
-                            ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
-        
-                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                            ->setOperator('$lt')
-                            ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                    } elseif ($ruleOperator === '$gt') {
-                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                            ->setOperator($ruleOperator)
-                            ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                    } elseif ($ruleOperator === '$lte') {
-                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                            ->setOperator('$lte')
-                            ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                    
+                    if($property === "createTime" || $property === "lastUpdateTime") {
+                        if ($ruleOperator === 'eq') {
+            
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$gt')
+                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+            
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lt')
+                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$gt') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$lte') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lte')
+                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } else {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                        }
                     } else {
-                        $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                            ->setOperator($ruleOperator)
-                            ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                        if ($ruleOperator === 'eq') {
+                        
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$gt')
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
+                        
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lt')
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$gt') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$lte') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lte')
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } else {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
+                        }
                     }
                 }
                 break;
@@ -339,9 +363,14 @@ class Queries extends AbstractCollection implements IQueries
             //Contain the type of the field (date, time, text ...)
             $fieldType = "";
             
+            //Get the field name because $property looks like "fields.fieldName"
+            $propertyPath = explode(".", $property);
+            $propertyCount = count($propertyPath) - 1;
+            $field = $propertyPath[$propertyCount];
+            
             //Set the type of the field for system fields
             if($property === "createTime" || $property === "lastUpdateTime") {
-                $fieldType = "datetime";
+                $fieldType = "datefield";
             } else {
                 //Determine the type of the field in terms of the content types
                 foreach ($query['contentTypes'] as $contentTypeId) {
@@ -350,7 +379,7 @@ class Queries extends AbstractCollection implements IQueries
                     
                     //Check if the field is in the content type
                     foreach ($contentType["fields"] as $fieldConfig) {
-                        if ($fieldConfig["config"]["name"] == $property) {
+                        if ($fieldConfig["config"]["name"] == $field) {
                             if($fieldType == "") {
                                 //Define field type
                                 $fieldType = $fieldConfig["cType"];
@@ -372,7 +401,7 @@ class Queries extends AbstractCollection implements IQueries
             $ruleOperator = array_search($value['rule'], $operatorsArray);
             
             //Set the filter of the query
-            $this->setFilters($fieldType, $property, $value, $ruleOperator);
+            $this->setFilters($fieldType, $property, $value, $ruleOperator, $filters);
             
             /*
              * Add Sort
