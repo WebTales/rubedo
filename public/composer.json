@@ -11,7 +11,8 @@
 		"webtales/rubedo-backoffice-ui": "dev-develop",
 		"longtailvideo/jwplayer": "6",
 		"webtales/rubedo-localization": "dev-master",
-		"jschr/bootstrap-modal": "2.1"
+		"jschr/bootstrap-modal": "2.1",
+		"WebTales/bsie": "dev-master"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -104,6 +105,9 @@
 		},{
 		    "type": "vcs",
 		    "url": "git://github.com/jschr/bootstrap-modal.git"
+		},{
+		    "type": "vcs",
+		    "url": "git://github.com/WebTales/bsie.git"
 		}
 	],
 	"minimum-stability": "stable",
