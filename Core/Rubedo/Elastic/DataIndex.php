@@ -424,6 +424,73 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
     }
 
+    
+    /**
+     * Index ES type for new or updated user
+     *
+     * @see \Rubedo\Interfaces\IDataIndex:indexUserType()
+     * @param string $id
+     *            user id
+     * @param array $data
+     *            new user
+     * @return array
+     */
+    public function indexUserType ($id, $data, $overwrite = FALSE)
+    {
+    
+        // Unicity type id check
+        $mapping = self::$_user_index->getMapping();
+        if (array_key_exists($id, $mapping[self::$_options['userIndex']])) {
+            if ($overwrite) {
+                // delete existing content type
+                $this->deleteUserType($id);
+            } else {
+                // throw exception
+                throw new \Rubedo\Exceptions\Server('%1$s user type already exists', "Exception64", $id);
+            }
+        }
+    
+        $vocabularies = $this->_getVocabularies($data);
+    
+        // Create mapping
+        if (isset($data["fields"]) && is_array($data["fields"])) {
+            $indexMapping = $this->getIndexMapping($data["fields"]);
+        }
+    
+        // Add systems metadata
+        $indexMapping["lastUpdateTime"] = array(
+                'type' => 'date',
+                'store' => 'yes'
+        );
+        $indexMapping["name"] = array(
+                'type' => 'string',
+                'store' => 'yes'
+        );
+        $indexMapping["organisation"] = array(
+                'type' => 'string',
+                'store' => 'yes'
+        );
+        $indexMapping["photo"] = array(
+                'type' => 'string',
+                'index' => 'not_analyzed',
+                'store' => 'yes'
+        );
+       
+        // If there is no searchable field, the new type is not created
+        if (! empty($indexMapping)) {
+            // Create new type
+            $type = new \Elastica_Type(self::$_user_index, $id);
+    
+            // Set mapping
+            $type->setMapping($indexMapping);
+    
+            // Return indexed field list
+            return array_flip(array_keys($indexMapping));
+        } else {
+            return array();
+        }
+    }
+    
     /**
      * Delete ES type for existing content type
      *
