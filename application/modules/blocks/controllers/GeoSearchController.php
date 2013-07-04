@@ -84,6 +84,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $results = $query->search($params, $this->_option, false);
         $results = $this->_clusterResults($results);
         
+        $results['displayMode'] = isset($params['block-config']['displayMode']) ? $params['block-config']['displayMode'] : 'standard';
+        
         $results['facetsToHide'] = $facetsToHide;
         
         $activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/activeFacets.html.twig");

@@ -5,6 +5,7 @@
 	</div>
 </div>
 {% if activeFacets|length > 0 %}
+{% if displayMode != 'checkbox' %}
 <div class="navbar">
 	<div class="navbar-inner">
 		<p class="brand">Critères de recherche :&nbsp;&nbsp;
@@ -29,5 +30,6 @@
 		</p>
 	</div>
 </div>
+{% endif %}
 {% endif %}
 </div>
