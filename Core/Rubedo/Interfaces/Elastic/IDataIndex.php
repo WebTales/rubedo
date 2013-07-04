@@ -82,6 +82,19 @@ interface IDataIndex
     public function indexDamType ($id, $data, $overwrite = false);
 
     /**
+     * Index ES type for new or updated user type
+     *
+     * @param string $id
+     *            user type id
+     * @param array $data
+     *            new user data
+     * @param boolean $overwrite
+     *            overwrite user type if it exists
+     * @return array
+     */
+    public function indexUserType ($id, $data, $overwrite = false);
+    
+    /**
      * Delete ES type for content type
      *
      * @param string $id
