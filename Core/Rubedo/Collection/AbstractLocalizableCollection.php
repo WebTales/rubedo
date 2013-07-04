@@ -198,6 +198,9 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     protected function localizeOutput($obj)
     {
+        if($obj === null){
+            return $obj;
+        }
         if (static::$workingLocale === null) {
             if (! isset($obj['nativeLanguage'])) {
                 return $obj;
@@ -209,7 +212,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         }
         
         if (! isset($obj['i18n'])) {
-            throw new Rubedo\Exceptions\Server('No i18n field');
+            throw new \Rubedo\Exceptions\Server('No i18n field');
         }
         
         if (! isset($obj['i18n'][$locale])) {
