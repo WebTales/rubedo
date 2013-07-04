@@ -94,8 +94,7 @@ class config {
 			'Translate' => 'Rubedo\\Interfaces\\Internationalization\\ITranslate',
 			'Directories' => 'Rubedo\\Interfaces\\Collection\\IDirectories',
 			'Languages' => 'Rubedo\\Interfaces\\Collection\\ILanguages' 
-	)
-	;
+	);
 	
 	/**
 	 * Return all collection services

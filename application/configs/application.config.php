@@ -1,5 +1,4 @@
 <?php
-
 return array (
 		'phpSettings' => array (
 				'display_startup_errors' => '1',
@@ -222,6 +221,6 @@ return array (
 				0 => 'public/components/webtales/rubedo-localization/languagekey/Exceptions/generalExceptions.json',
 				1 => 'public/components/webtales/rubedo-localization/languagekey/Generic/genericTranslations.json',
 				2 => 'public/components/webtales/rubedo-localization/languagekey/BackOffice/FrontEndEdition/frontEndLabels.json',
-		        3 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Search/search.json'
-		)
+				3 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Search/search.json' 
+		) 
 );
