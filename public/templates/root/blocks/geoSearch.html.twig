@@ -90,6 +90,7 @@
       var showCenterMarker = {% if blockConfig.showCenterMarker %}true{% else %}false{% endif %};
       var predefinedFacets = {% if blockConfig.predefinedFacets%}"{{blockConfig.predefinedFacets| e('js')}}"{% else %}"{ }"{% endif %} ;
       var displayedFacets = {% if blockConfig.displayedFacets%}"{{blockConfig.displayedFacets|json_encode()| e('js')}}"{% else %}"[ ]"{% endif %} ;
+      var displayMode = {% if blockConfig.displayMode %}"{{blockConfig.displayMode}}"{% else %}"standard"{% endif %} ;
       displayedFacets=JSON.parse(displayedFacets);
       var facetOverrides = {% if blockConfig.facetOverrides%}"{{blockConfig.facetOverrides| e('js')}}"{% else %}"[ ]"{% endif %} ;
       var pagesize = {{blockConfig.pageSize}};
@@ -152,7 +153,8 @@
     				'inflat': bounds.getSouthWest().lat(),
     				'suplat': bounds.getNorthEast().lat(),	
     				'inflon': bounds.getSouthWest().lng(),
-    				'suplon': bounds.getNorthEast().lng()
+    				'suplon': bounds.getNorthEast().lng(),
+    				'displayMode':displayMode
     			}
           var currentFacets=window.activeFacets;
           for (var attrname in currentFacets) { params[attrname] = currentFacets[attrname]; }
