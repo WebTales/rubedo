@@ -179,7 +179,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::readTree()
      * @todo add parse for localization
      */
@@ -198,7 +198,10 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     protected function localizeOutput($obj)
     {
-        if($obj === null){
+        if ($obj === null) {
+            return $obj;
+        }
+        if (! isset($obj['i18n'])) {
             return $obj;
         }
         if (static::$workingLocale === null) {
@@ -209,10 +212,6 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             }
         } else {
             $locale = static::$workingLocale;
-        }
-        
-        if (! isset($obj['i18n'])) {
-            throw new \Rubedo\Exceptions\Server('No i18n field');
         }
         
         if (! isset($obj['i18n'][$locale])) {
@@ -286,7 +285,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     public function addlocalization($obj)
     {
         if (isset($obj['nativeLanguage'])) {
-            return false;
+            return $obj;
         }
         $nativeContent = $obj;
         
@@ -313,11 +312,11 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         $items = $service->getList();
         
         foreach ($items['data'] as $item) {
+            
             $item = $service->addlocalization($item);
             $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
-            // $service->update($item);
+            $service->update($item);
         }
-        
         parent::disableUserFilter($wasFiltered);
     }
 
