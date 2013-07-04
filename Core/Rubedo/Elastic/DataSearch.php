@@ -738,7 +738,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     case 'author':
                         
                         $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author');
-                        if (array_key_exists('terms', $temp) and count($temp['terms']) > 1) {
+                        if ($this->_facetDisplayMode=='checkbox'or (array_key_exists('terms', $temp) and count($temp['terms']) > 1)) {
                             $collection = Manager::getService('Users');
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $collection->findById($value['term']);
@@ -756,7 +756,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                             foreach ($temp['ranges'] as $key => $value) {
                                 $rangeCount = $temp['ranges'][$key]['count'];
                                 // unset facet when count = 0 or total results count when display mode is not set to checkbox
-                                if ($facetDisplayMode=='checkbox'or ($rangeCount > 0 and $rangeCount < $result['total'])) {
+                                if ($this->_facetDisplayMode=='checkbox'or ($rangeCount > 0 and $rangeCount < $result['total'])) {
                                     $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
                                 } else {
                                     unset($temp['ranges'][$key]);
