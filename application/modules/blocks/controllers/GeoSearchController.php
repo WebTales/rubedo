@@ -32,6 +32,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     public function indexAction ()
     {
         $params = $this->getRequest()->getParams();
+
         $results = $params;
         $results['blockConfig'] = $params['block-config'];
         $results['displayTitle'] = $this->getParam('displayTitle');
@@ -47,10 +48,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         
         // get params
         $params = $this->getRequest()->getParams();
+
         $params['block-config']=array();
         $params['block-config']['displayedFacets']=isset($params['displayedFacets']) ? $params['displayedFacets'] : array();
         $params['block-config']['facetOverrides']=isset($params['facetOverrides']) ? $params['facetOverrides'] : \Zend_Json::encode(array());
-        
+        $params['block-config']['displayMode']=isset($params['displayMode']) ? $params['displayMode'] : 'standard';
+
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
             $this->_option = $params['option'];
@@ -83,6 +86,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $query->init();
         $results = $query->search($params, $this->_option, false);
         $results = $this->_clusterResults($results);
+        
+        $results['displayMode'] =  $params['block-config']['displayMode'];
         
         $results['facetsToHide'] = $facetsToHide;
         

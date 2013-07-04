@@ -1,3 +1,17 @@
+{% set activeFacetsList = [] %}
+		{% for facet in activeFacets %}
+
+                {% for term in facet.terms %}
+                    {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+                    {% set activeFacetsList = activeFacetsList|merge([term.term]) %}
+                    
+			        {% endif %}
+		        {% endfor %}
+
+		        
+		{% endfor %}
+
+
 <div class="span3 well well-large" id="facetBox">
 		<p>
 			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
@@ -34,20 +48,30 @@
     	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
     	          <ul>
     				{% for term in facet.terms %}
-    				
+    				    {% if displayMode == 'checkbox' %}
+            				<label class="checkbox">
+              					<input type="checkbox" class="facetCheckbox"  data-facet-id="{{ facet.id }}" data-facet-term="{{ term.term }}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+            				</label>
+    				{% else %}
     				<li>
     					<a class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',true)" >{{ term.label }} ({{ term.count }})</a>
     				</li>
-    				
+    				{% endif %}
     				{% endfor %}
 			    </ul>
     	        {% else %}
     	        <ul>
     				{% for term in facet.terms %}
     				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
-    				<li>
-    					<a class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',true)" >{{ term.label }} ({{ term.count }})</a>
-    				</li>
+    				    {% if displayMode == 'checkbox' %}
+            				<label class="checkbox">
+              					<input type="checkbox" class="facetCheckbox" data-facet-id="{{ facet.id }}" data-facet-term="{{ term.term }}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+            				</label>    				    
+    				    {% else %}
+            				<li>
+            					<a class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',true)" >{{ term.label }} ({{ term.count }})</a>
+            				</li>
+    				    {% endif %}
     				{% endif %}
     				{% endfor %}
 			    </ul>

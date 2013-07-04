@@ -184,7 +184,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $this->_params = $params;
 
-        $this->_facetDisplayMode = $this->_params['block-config']['displayMode'];
+        $this->_facetDisplayMode = isset($this->_params['block-config']['displayMode']) ? $this->_params['block-config']['displayMode'] : 'standard';
         
         // front-end search
         if ((self::$_isFrontEnd)) {

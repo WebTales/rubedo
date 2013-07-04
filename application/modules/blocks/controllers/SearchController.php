@@ -87,7 +87,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         } else {
             $pagecount = 1;
         }
-        $results['displayMode'] = $params['block-config']['displayMode'];
+        $results['displayMode'] = isset($params['block-config']['displayMode']) ? $params['block-config']['displayMode'] : 'standard';
         $results['facetsToHide'] = $facetsToHide;
         $results['current'] = $params['pager'];
         $results['pagecount'] = $pagecount;
