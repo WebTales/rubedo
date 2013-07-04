@@ -33,17 +33,27 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     /**
      * Contain common fields
      */
-    protected $metaDataFields = array(
+    protected static $globalNonLocalizableFields = array(
         '_id',
         'id',
+        'idLabel',
         'createTime',
         'createUser',
         'lastUpdateTime',
         'lastUpdateUser',
+        'lastPendingTime',
+        'lastPendingUser',
         'version',
+        'online',
         'text',
-        'i18n'
+        'nativeLanguage',
+        'i18n',
+        'workspace',
+        'orderValue',
+        'parentId'
     );
+    
+    protected static $nonLocalizableFields = array();
 
     /**
      * Current service locale
@@ -274,6 +284,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     protected function localizeInput($obj)
     {
+        
+        
         foreach ($obj as $key => $field) {
             if (! in_array($key, $this->metaDataFields)) {
                 unset($obj[$key]);
@@ -372,6 +384,13 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     public static function setWorkingLocale($workingLocale)
     {
         AbstractLocalizableCollection::$workingLocale = $workingLocale;
+    }
+    
+    protected function getMetaDataFields(){
+        if(!isset($this->metaDataFields)){
+            $this->metaDataFields = array_merge(self::$globalNonLocalizableFields,static::$nonLocalizableFields);
+        }
+        return $this->metaDataFields;
     }
 }
 	
