@@ -212,6 +212,13 @@
     			usedMarkers=[ ];
     			usedMarkers=newUsed;
     			markerCluster.repaint();
+    			jQuery('.facetCheckbox').click(function(){
+        			if(jQuery(this).prop("checked")){
+        				window.updateFacets(jQuery(this).attr("data-facet-id"),jQuery(this).attr("data-facet-term"),true);
+            		} else {
+            			window.updateFacets(jQuery(this).attr("data-facet-id"),jQuery(this).attr("data-facet-term"),false);
+                	}
+        			})
     			//console.log("data fetch done");
     		});
 

@@ -1,3 +1,17 @@
+{% set activeFacetsList = [] %}
+		{% for facet in activeFacets %}
+
+                {% for term in facet.terms %}
+                    {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+                    {% set activeFacetsList = activeFacetsList|merge([term.term]) %}
+                    
+			        {% endif %}
+		        {% endfor %}
+
+		        
+		{% endfor %}
+
+
 <div class="span3 well well-large" id="facetBox">
 		<p>
 			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
@@ -36,7 +50,7 @@
     				{% for term in facet.terms %}
     				    {% if displayMode == 'checkbox' %}
             				<label class="checkbox">
-              					<input type="checkbox" class="facetBox" data-target="{{url({(facet.id) : [term.term]},'add')}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+              					<input type="checkbox" class="facetCheckbox"  data-facet-id="{{ facet.id }}" data-facet-term="{{ term.term }}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
             				</label>
     				{% else %}
     				<li>
@@ -51,7 +65,7 @@
     				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
     				    {% if displayMode == 'checkbox' %}
             				<label class="checkbox">
-              					<input type="checkbox" class="facetBox" data-target="{{url({(facet.id) : [term.term]},'add')}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+              					<input type="checkbox" class="facetCheckbox" data-facet-id="{{ facet.id }}" data-facet-term="{{ term.term }}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
             				</label>    				    
     				    {% else %}
             				<li>
