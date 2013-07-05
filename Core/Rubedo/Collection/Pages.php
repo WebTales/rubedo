@@ -167,7 +167,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
         }else{
             $site = Manager::getService('Sites')->findById($siteId);
             $locales = array();
-            if($site and isset($site['languages'])){
+            if($site and isset($site['languages']) and is_array($site['languages'])){
                 $locales = $site['languages'];
             }
         }
