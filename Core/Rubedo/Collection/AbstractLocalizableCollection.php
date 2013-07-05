@@ -287,7 +287,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     {
         $metadataFields = $this->getMetaDataFields();
         //force label to contain only native title in DB
-        if($key == static::$labelField && isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])){
+        if(isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])){
             $obj[static::$labelField] = $obj['i18n'][$obj['nativeLanguage']][static::$labelField];
         }
         
@@ -301,12 +301,13 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         
         //prevent non localizable data to be store in localization document
         if(isset($obj['i18n'])){
-            foreach ($obj['i18n'] as $localization){
+            foreach ($obj['i18n'] as $locale => $localization){
                 foreach ($localization as $key => $value){
                     if (in_array($key, $metadataFields) && $key !== static::$labelField) {
                         unset($localization[$key]);
                     }
                 }
+                $localization['locale'] = $locale;
             }
         }
         
@@ -321,7 +322,9 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         $nativeContent = $obj;
         
         foreach ($this->getMetaDataFields() as $metaField) {
-            unset($nativeContent[$metaField]);
+            if ($metaField !== static::$labelField) {
+                unset($nativeContent[$metaField]);
+            }
             $nativeContent['locale'] = static::$defaultLocale;
         }
         foreach ($obj as $key => $field) {
@@ -336,19 +339,36 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         return $obj;
     }
 
-    public static function addLocalizationForCollection()
+    public function addLocalizationForCollection()
     {
         $wasFiltered = parent::disableUserFilter();
         $service = new static();
-        $items = $service->getList();
         
-        foreach ($items['data'] as $item) {
-            
-            $item = $service->addlocalization($item);
-            $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
-            $service->update($item);
+        $items = $service->getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
+            ->setOperator('$exists')
+            ->setValue(false)
+        );
+        if ($items['count'] > 0) {
+            foreach ($items['data'] as $item) {
+                if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
+                    $item = $service->addlocalization($item);
+                    $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
+                    $service->update($item);
+                }
+            }
         }
+        
         parent::disableUserFilter($wasFiltered);
+    }
+    
+    public static function localizeAllCollection(){
+        $services = \Rubedo\Interfaces\config::getCollectionServices();
+        foreach ($services as $serviceName){
+           $service = Manager::getService($serviceName);
+           if($service instanceof AbstractLocalizableCollection){
+               $service->addLocalizationForCollection();
+           }
+        }
     }
 
     /**
