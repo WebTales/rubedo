@@ -108,6 +108,7 @@ class Languages extends AbstractCollection implements ILanguages
         return self::$activeLanguages[$locale];
     }
     
+    //todo : set this to "isDefault" when ready
     public function getDefaultLanguage(){
         if (! isset(self::$defaultLanguage)) {
             $filter = Filter::factory('Value')->setValue(true)->setName('active');

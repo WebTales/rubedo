@@ -29,6 +29,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 {
 
     protected static $defaultLocale = 'en';
+    
+    protected static $labelField = 'text';
 
     /**
      * Contain common fields
@@ -283,13 +285,31 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     protected function localizeInput($obj)
     {
+        $metadataFields = $this->getMetaDataFields();
+        //force label to contain only native title in DB
+        if($key == static::$labelField && isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])){
+            $obj[static::$labelField] = $obj['i18n'][$obj['nativeLanguage']][static::$labelField];
+        }
         
-        
+        //prevent localizable data to be stored in root level
         foreach ($obj as $key => $field) {
-            if (! in_array($key, $this->getMetaDataFields())) {
+            if (! in_array($key, $metadataFields) && $key !== static::$labelField) {
                 unset($obj[$key]);
             }
+            
         }
+        
+        //prevent non localizable data to be store in localization document
+        if(isset($obj['i18n'])){
+            foreach ($obj['i18n'] as $localization){
+                foreach ($localization as $key => $value){
+                    if (in_array($key, $metadataFields) && $key !== static::$labelField) {
+                        unset($localization[$key]);
+                    }
+                }
+            }
+        }
+        
         return $obj;
     }
 
