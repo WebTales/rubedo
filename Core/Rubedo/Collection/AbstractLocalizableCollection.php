@@ -45,7 +45,6 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         'lastPendingUser',
         'version',
         'online',
-        'text',
         'nativeLanguage',
         'i18n',
         'workspace',
@@ -223,8 +222,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         } else {
             $locale = static::$workingLocale;
         }
-        
-        if (! isset($obj['i18n'][$locale])) {
+        if (! isset($obj['nativeLanguage']) || ! isset($obj['i18n'][$locale])) {
             if (! isset($obj['nativeLanguage'])) {
                 throw new Rubedo\Exceptions\Server('No defined native language for this item');
             }
