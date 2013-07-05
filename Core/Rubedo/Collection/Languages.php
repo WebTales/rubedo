@@ -102,7 +102,7 @@ class Languages extends AbstractCollection implements ILanguages
             $filters->addFilter(Filter::factory('Value')->setValue($locale)
                 ->setName('locale'));
             
-            $result = $this->_dataService->findOne($filter);
+            $result = $this->_dataService->findOne($filters);
             self::$activeLanguages[$locale] = ! is_null($result);
         }
         return self::$activeLanguages[$locale];
