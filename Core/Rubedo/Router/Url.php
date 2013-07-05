@@ -270,6 +270,9 @@ class Url implements IUrl
         
         if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "") {
             foreach ($content['taxonomy']['navigation'] as $pageId) {
+                if($pageId == 'all'){
+                    continue;
+                }
                 $page = Manager::getService('Pages')->findById($pageId);
                 if ($page && $page['site'] == $siteId) {
                     $pageValid = true;
