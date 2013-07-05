@@ -397,6 +397,10 @@ class Queries extends AbstractCollection implements IQueries
                 throw new \Rubedo\Exceptions\Server("The server is unable to determine the cType of the field", "Exception99");
             }
             
+            if(!isset($value["rule"])) {
+                $value["rule"] = null;
+            }
+            
             //Get the  operator in the array
             $ruleOperator = array_search($value['rule'], $operatorsArray);
             
@@ -473,6 +477,11 @@ class Queries extends AbstractCollection implements IQueries
                 }
             }
         }
+        
+        if(!isset($value["rule"])) {
+            $value["rule"] = null;
+        }
+        
         if (is_array($value['rule'])) {
             $rule = array_pop($value['rule']);
         } else {
