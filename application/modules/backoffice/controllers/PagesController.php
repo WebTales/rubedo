@@ -168,5 +168,6 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
     
     public function addLocalizationAction(){
         \Rubedo\Collection\Pages::addLocalizationForCollection();
+        $this->_helper->json(array('success'=>true));
     }
 }

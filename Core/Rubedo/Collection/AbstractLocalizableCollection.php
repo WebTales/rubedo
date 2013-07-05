@@ -49,7 +49,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         'i18n',
         'workspace',
         'orderValue',
-        'parentId'
+        'parentId',
+        'text'
     );
     
     protected static $nonLocalizableFields = array();
@@ -285,7 +286,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         
         
         foreach ($obj as $key => $field) {
-            if (! in_array($key, $this->metaDataFields)) {
+            if (! in_array($key, $this->getMetaDataFields())) {
                 unset($obj[$key]);
             }
         }
@@ -299,12 +300,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         }
         $nativeContent = $obj;
         
-        foreach ($this->metaDataFields as $metaField) {
+        foreach ($this->getMetaDataFields() as $metaField) {
             unset($nativeContent[$metaField]);
             $nativeContent['locale'] = static::$defaultLocale;
         }
         foreach ($obj as $key => $field) {
-            if (! in_array($key, $this->metaDataFields)) {
+            if (! in_array($key, $this->getMetaDataFields())) {
                 unset($obj[$key]);
             }
         }
