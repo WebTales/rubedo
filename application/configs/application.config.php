@@ -203,6 +203,9 @@ return array(
         'Translate' => array(
             'class' => 'Rubedo\\Internationalization\\Translate'
         ),
+        'CurrentLocalization' => array(
+            'class' => 'Rubedo\\Internationalization\\Current'
+        ),
         'Languages' => array(
             'class' => 'Rubedo\\Collection\\Languages'
         )

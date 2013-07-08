@@ -93,6 +93,7 @@ class config
         'Localisation' => 'Rubedo\\Interfaces\\Collection\\ILocalisation',
         'RubedoVersion' => 'Rubedo\\Interfaces\\Collection\\IRubedoVersion',
         'Translate' => 'Rubedo\\Interfaces\\Internationalization\\ITranslate',
+        'CurrentLocalization' => 'Rubedo\\Interfaces\\Internationalization\\ICurrent',        
         'Directories' => 'Rubedo\\Interfaces\\Collection\\IDirectories',
         'Languages' => 'Rubedo\\Interfaces\\Collection\\ILanguages'
     );
