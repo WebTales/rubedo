@@ -90,7 +90,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             $this->_options = $this->_service->getCurrentOptions();
         }
         
-        $lang = Manager::getService('Session')->get('lang', 'fr');
+        $lang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         
         $loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
         $this->_twig = new \Twig_Environment($loader, $this->_options);

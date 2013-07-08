@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Controller\Action, Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  * Front Office Defautl Controller
@@ -112,10 +113,12 @@ class IndexController extends Zend_Controller_Action
         $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
         $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
         
+        
+        
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
         $this->_servicePage = Manager::getService('PageContent');
-        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
+        
         $this->_session = Manager::getService('Session');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
@@ -149,7 +152,7 @@ class IndexController extends Zend_Controller_Action
         }
         
         // context
-        $lang = $this->_session->get('lang', 'fr');
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id']);
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $hasAccessToBO = Manager::getService('Acl')->hasAccess('ui.backoffice');
         if (! $isLoggedIn || ! $hasAccessToBO) {
@@ -174,6 +177,9 @@ class IndexController extends Zend_Controller_Action
         } else {
             Zend_Registry::set('draft', false);
         }
+        
+        //template service
+        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);

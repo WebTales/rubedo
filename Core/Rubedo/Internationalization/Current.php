@@ -14,7 +14,9 @@
  */
 namespace Rubedo\Internationalization;
 
-Use Rubedo\Services\Manager, Rubedo\Interfaces\Internationalization\ICurrent;
+use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Internationalization\ICurrent;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  * Determine current localization
@@ -26,12 +28,14 @@ Use Rubedo\Services\Manager, Rubedo\Interfaces\Internationalization\ICurrent;
  */
 class Current implements ICurrent
 {
-    public function resolveLocalization($siteId,$browserArray = array()){
-        AbstractLocalizableCollection::setWorkingLocale('en');
+    public function resolveLocalization($siteId=null,$browserArray = array()){
+        $locale = 'fr';
+        AbstractLocalizableCollection::setWorkingLocale($locale);
+        return $locale;
     }
     
     public function getCurrentLocalization(){
-        AbstractLocalizableCollection::getWorkingLocale();
+        return AbstractLocalizableCollection::getWorkingLocale();
     }
     
 }
