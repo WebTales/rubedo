@@ -239,6 +239,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $jsonMask = realpath(APPLICATION_PATH . "/../data/default/site/mask.json");
             $maskObj = (Zend_Json::decode(file_get_contents($jsonMask), true));
             $maskObj['site'] = $site['data']['id'];
+            $maskObj['nativeLanguage']=$site['data']['nativeLanguage'];
             
             // Home mask
             $homeMask = $maskObj;
@@ -303,6 +304,13 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
                 $homePageObj = (Zend_Json::decode(file_get_contents($jsonHomePage), true));
                 $homePageObj['site'] = $site['data']['id'];
                 $homePageObj['maskId'] = $homeMaskCreation['data']['id'];
+                $homePageObj['nativeLanguage']=$site['data']['nativeLanguage'];
+                $homePageObj['i18n']=array($site['data']['nativeLanguage']=>array(
+                    "text"=>$homePageObj['text'],
+                    "title"=>$homePageObj['title'],
+                    "description"=>$homePageObj['description']
+                
+                ));
                 $homePage = Rubedo\Services\Manager::getService('Pages')->create($homePageObj);
                 
                 /* Create Single Page */
@@ -310,6 +318,13 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
                 $singlePageObj = (Zend_Json::decode(file_get_contents($jsonSinglePage), true));
                 $singlePageObj['site'] = $site['data']['id'];
                 $singlePageObj['maskId'] = $detailMaskCreation['data']['id'];
+                $singlePageObj['nativeLanguage']=$site['data']['nativeLanguage'];
+                $singlePageObj['i18n']=array($site['data']['nativeLanguage']=>array(
+                    "text"=>$singlePageObj['text'],
+                    "title"=>$singlePageObj['title'],
+                    "description"=>$singlePageObj['description']
+                
+                ));
                 $singlePageObj['blocks'][0]['id'] = (string) new MongoId();
                 $singlePageObj['blocks'][0]['parentCol'] = $detailSecondColumnId;
                 $page = Rubedo\Services\Manager::getService('Pages')->create($singlePageObj);
@@ -317,6 +332,13 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
                 /* Create Search Page */
                 $jsonSearchPage = realpath(APPLICATION_PATH . "/../data/default/site/searchPage.json");
                 $searchPageObj = (Zend_Json::decode(file_get_contents($jsonSearchPage), true));
+                $searchPageObj['nativeLanguage']=$site['data']['nativeLanguage'];
+                $searchPageObj['i18n']=array($site['data']['nativeLanguage']=>array(
+                    "text"=>$searchPageObj['text'],
+                    "title"=>$searchPageObj['title'],
+                    "description"=>$searchPageObj['description']
+                    
+                ));
                 $searchPageObj['site'] = $site['data']['id'];
                 $searchPageObj['maskId'] = $searchMaskCreation['data']['id'];
                 $searchPageObj['blocks'][0]['id'] = (string) new MongoId();
