@@ -1,0 +1,22 @@
+{% extends "root/block.html.twig" %} 
+{% block mainContent %}
+<div class="btn-group">
+	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> 
+	{% if currentLanguage.flagCode %}<i class=""><img src="/assets/flags/16/{{ currentLanguage.flagCode }}.png"/></i>{% endif %} {{ currentLanguage.label }} <span class="caret"></span>
+	</a>
+
+	<ul class="dropdown-menu">
+		{% for language in languages %}
+		{% if language.locale != currentLanguage.locale %}
+		<li><a href="#" onclick="chooseLanguage('{{ language.locale }}');">
+		{% if language.flagCode %}<i class=""><img src="/assets/flags/16/{{ language.flagCode }}.png"/></i>{% endif %} {{ language.label }}</a></li> 
+				{% endif %}
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% endblock %}
+
+
+

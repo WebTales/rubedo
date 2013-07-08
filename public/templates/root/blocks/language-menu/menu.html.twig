@@ -1,0 +1,19 @@
+{% extends "root/block.html.twig" %} 
+{% block mainContent %}
+<div class="btn-group">
+    {% for language in languages %}
+		
+		<a href="#" class="btn {% if language.locale == currentLanguage.locale %}btn-primary disabled{% endif %}" 
+		              {% if language.locale != currentLanguage.locale %}onclick="chooseLanguage('{{ language.locale }}');"{% endif %}>
+		              {% if language.flagCode %}<i class=""><img src="/assets/flags/16/{{ language.flagCode }}.png"/></i>{% endif %} {{ language.label }}</a>
+		
+				
+		{% endfor %}
+
+</div>
+
+
+{% endblock %}
+
+
+

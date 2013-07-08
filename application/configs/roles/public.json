@@ -32,6 +32,7 @@
         "execute.controller.form.xhr-get-form.zimmer",
         "execute.controller.form.xhr-submit-form.zimmer",
         "execute.controller.flickr-gallery.xhr-get-images.blocks",
-        "execute.controller.dam-list.index.blocks"
+        "execute.controller.dam-list.index.blocks",
+        "execute.controller.xhr-language.define-language.default"
  	]
 }
