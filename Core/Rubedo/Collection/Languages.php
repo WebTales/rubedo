@@ -130,4 +130,17 @@ class Languages extends AbstractCollection implements ILanguages
     {
         throw new Rubedo\Exceptions\User('Languages can\'t be deleted', "Exception100");
     }
+    
+    /**
+     * Add a readOnly field to contents based on user rights
+     *
+     * @param array $obj
+     * @return array
+     */
+    protected function _addReadableProperty ($obj)
+    {
+        list($label) = explode(';',$obj['label']);
+        $obj['label'] = $label;
+        return $obj;
+    }
 }
