@@ -66,7 +66,7 @@ class Blocks_LanguageMenuController extends Blocks_AbstractController
                 ->setValue($site['languages']));
             $filters->addFilter(Filter::factory('Value')->setName('active')
                 ->setValue(true));
-            $languageResult = Manager::getService('Languages')->getList($filters);
+            $languageResult = Manager::getService('Languages')->getList($filters,array(array('property'=>'label','order'=>'ASC')));
             $output['languages'] = $languageResult['data'];
         }
         

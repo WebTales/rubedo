@@ -68,7 +68,11 @@ class Languages extends AbstractCollection implements ILanguages
     public function findByLocale($name)
     {
         $filter = Filter::factory('Value')->setValue($name)->setName('locale');
-        return $this->_dataService->findOne($filter);
+        $result = $this->_dataService->findOne($filter);
+        if($result){
+            $result = $this->_addReadableProperty($result);
+        }
+        return $result;
     }
 
     /**
@@ -80,7 +84,10 @@ class Languages extends AbstractCollection implements ILanguages
     public function findByIso($iso)
     {
         $filter = Filter::factory('Value')->setValue($iso)->setName('iso2');
-        return $this->_dataService->findOne($filter);
+        if($result){
+            $result = $this->_dataService->findOne($filter);
+        }
+        return $result;
     }
 
     public function isActivated()
