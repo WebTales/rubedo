@@ -24,9 +24,8 @@ namespace Rubedo\Interfaces\Internationalization;
  */
 interface ICurrent
 {
-    
-    public function resolveLocalization($siteId,$browserArray = array());
+
+    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array());
 
     public function getCurrentLocalization();
-        
 }

@@ -28,14 +28,65 @@ use Rubedo\Collection\AbstractLocalizableCollection;
  */
 class Current implements ICurrent
 {
-    public function resolveLocalization($siteId=null,$browserArray = array()){
-        $locale = 'fr';
+
+    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array())
+    {
+        $locale = null;
+        
+        if ($siteId) {
+            $site = Manager::getService('Sites')->findById($siteId);
+            if (! isset($site['languages']) || ! is_array($site['languages'])) {
+                $site['languages'] = array();
+            }
+        }
+        
+        if ($site) {
+            $sessionService = Manager::getService('Session');
+            $currentLocaleInSession = $sessionService->get('currentLocale', array());
+            
+            //temp : do not stroe in session
+            unset($currentLocaleInSession[$siteId]);
+            
+            if ($forceLocal && in_array($forceLocal, $site['languages'])) {
+                $locale = $forceLocal;
+            } elseif (isset($currentLocaleInSession[$siteId]) && in_array($currentLocaleInSession[$siteId], $site['languages'])) {
+                $locale = $currentLocaleInSession[$siteId];
+            } else {
+                if (isset($site['useBrowserLanguage']) && $site['useBrowserLanguage']==true) {
+                    $locale = $this->findBestMatchForBrowser($site['languages'],$browserArray);
+                    if(!$locale){
+                        $locale = $site['defaultLanguage'];
+                    }
+                } else {
+                    $locale = $site['defaultLanguage'];
+                }
+                if (! isset($locale)) {
+                    $locale = 'en';
+                }
+            }
+            $currentLocaleInSession[$siteId] = $locale;
+            $sessionService->set('currentLocale', $currentLocaleInSession);
+        } else {
+            $locale = 'en';
+        }
+        
         AbstractLocalizableCollection::setWorkingLocale($locale);
+        
         return $locale;
     }
     
-    public function getCurrentLocalization(){
+    
+    protected function findBestMatchForBrowser($languages,$browserArray){
+        foreach ($browserArray as $locale){
+            if(in_array($locale, $languages)){
+                return $locale;
+            }
+        }
+        return null;
+    }
+
+    public function getCurrentLocalization()
+    {
         return AbstractLocalizableCollection::getWorkingLocale();
     }
-    
 }

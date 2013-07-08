@@ -151,8 +151,11 @@ class IndexController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
+        $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
+        $browserLanguages = array_keys($zend_locale->getBrowser());
+                
         // context
-        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id']);
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'],null,$browserLanguages);
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $hasAccessToBO = Manager::getService('Acl')->hasAccess('ui.backoffice');
         if (! $isLoggedIn || ! $hasAccessToBO) {
