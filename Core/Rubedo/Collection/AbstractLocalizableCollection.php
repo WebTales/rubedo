@@ -29,7 +29,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 {
 
     protected static $defaultLocale = 'en';
-    
+
     protected static $labelField = 'text';
 
     /**
@@ -54,7 +54,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         'parentId',
         'text'
     );
-    
+
     protected static $nonLocalizableFields = array();
 
     /**
@@ -286,23 +286,22 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     protected function localizeInput($obj)
     {
         $metadataFields = $this->getMetaDataFields();
-        //force label to contain only native title in DB
-        if(isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])){
+        // force label to contain only native title in DB
+        if (isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])) {
             $obj[static::$labelField] = $obj['i18n'][$obj['nativeLanguage']][static::$labelField];
         }
         
-        //prevent localizable data to be stored in root level
+        // prevent localizable data to be stored in root level
         foreach ($obj as $key => $field) {
             if (! in_array($key, $metadataFields) && $key !== static::$labelField) {
                 unset($obj[$key]);
             }
-            
         }
         
-        //prevent non localizable data to be store in localization document
-        if(isset($obj['i18n'])){
-            foreach ($obj['i18n'] as $locale => $localization){
-                foreach ($localization as $key => $value){
+        // prevent non localizable data to be store in localization document
+        if (isset($obj['i18n'])) {
+            foreach ($obj['i18n'] as $locale => $localization) {
+                foreach ($localization as $key => $value) {
                     if (in_array($key, $metadataFields) && $key !== static::$labelField) {
                         unset($obj['i18n'][$locale][$key]);
                     }
@@ -314,6 +313,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         return $obj;
     }
 
+    /**
+     * Set localization information on a not yet localized item
+     *
+     * @param array $obj            
+     * @return array
+     */
     public function addlocalization($obj)
     {
         if (isset($obj['nativeLanguage'])) {
@@ -339,6 +344,9 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         return $obj;
     }
 
+    /**
+     * Localize not yet localized items of the current collection
+     */
     public function addLocalizationForCollection()
     {
         $wasFiltered = parent::disableUserFilter();
@@ -346,8 +354,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         
         $items = $service->getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
             ->setOperator('$exists')
-            ->setValue(false)
-        );
+            ->setValue(false));
         if ($items['count'] > 0) {
             foreach ($items['data'] as $item) {
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
@@ -360,16 +367,20 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         
         parent::disableUserFilter($wasFiltered);
     }
-    
-    public static function localizeAllCollection(){
+
+    /**
+     * Ensure that every localizable collection is fully localized
+     */
+    public static function localizeAllCollection()
+    {
         self::setDefaultLocale(Manager::getService('Languages')->getDefaultLanguage());
         
         $services = \Rubedo\Interfaces\config::getCollectionServices();
-        foreach ($services as $serviceName){
-           $service = Manager::getService($serviceName);
-           if($service instanceof AbstractLocalizableCollection){
-               $service->addLocalizationForCollection();
-           }
+        foreach ($services as $serviceName) {
+            $service = Manager::getService($serviceName);
+            if ($service instanceof AbstractLocalizableCollection) {
+                $service->addLocalizationForCollection();
+            }
         }
     }
 
@@ -426,10 +437,16 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     {
         AbstractLocalizableCollection::$workingLocale = $workingLocale;
     }
-    
-    protected function getMetaDataFields(){
-        if(!isset($this->metaDataFields)){
-            $this->metaDataFields = array_merge(self::$globalNonLocalizableFields,static::$nonLocalizableFields);
+
+    /**
+     * Return non localizable fields for the current collection
+     *
+     * @return array
+     */
+    protected function getMetaDataFields()
+    {
+        if (! isset($this->metaDataFields)) {
+            $this->metaDataFields = array_merge(self::$globalNonLocalizableFields, static::$nonLocalizableFields);
         }
         return $this->metaDataFields;
     }
