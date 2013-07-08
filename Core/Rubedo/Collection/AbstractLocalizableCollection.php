@@ -244,8 +244,11 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             $locale = $obj['nativeLanguage'];
         }
         
-        $obj = $this->merge($obj, $obj['i18n'][$obj['nativeLanguage']]);
-        $obj['locale'] = $obj['i18n'][$obj['nativeLanguage']];
+        if(isset($obj['i18n'][$obj['nativeLanguage']])){
+            $obj = $this->merge($obj, $obj['i18n'][$obj['nativeLanguage']]);
+            $obj['locale'] = $obj['i18n'][$obj['nativeLanguage']];
+        }
+       
         
         if ($locale != $obj['nativeLanguage']) {
             if (isset($obj['i18n'][$locale])) {
