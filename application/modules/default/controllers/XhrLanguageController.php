@@ -16,6 +16,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
+use Rubedo\Services\Manager;
+
 /**
  * Language Switcher Controller
  *
