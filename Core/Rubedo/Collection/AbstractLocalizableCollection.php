@@ -237,7 +237,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         }
         
         $obj = $this->merge($obj, $obj['i18n'][$locale]);
-        
+        $obj['locale'] = $locale;
         if (! static::$includeI18n) {
             unset($obj['i18n']);
         }
@@ -304,10 +304,10 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             foreach ($obj['i18n'] as $locale => $localization){
                 foreach ($localization as $key => $value){
                     if (in_array($key, $metadataFields) && $key !== static::$labelField) {
-                        unset($localization[$key]);
+                        unset($obj['i18n'][$locale][$key]);
                     }
                 }
-                $localization['locale'] = $locale;
+                $obj['i18n'][$locale]['locale'] = $locale;
             }
         }
         
@@ -362,6 +362,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     }
     
     public static function localizeAllCollection(){
+        self::setDefaultLocale(Manager::getService('Languages')->getDefaultLanguage());
+        
         $services = \Rubedo\Interfaces\config::getCollectionServices();
         foreach ($services as $serviceName){
            $service = Manager::getService($serviceName);
