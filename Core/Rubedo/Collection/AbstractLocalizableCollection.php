@@ -360,7 +360,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         $wasFiltered = parent::disableUserFilter();
         $service = new static();
         
-        $items = $service->getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
+        $items = parent::getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
             ->setOperator('$exists')
             ->setValue(false));
         if ($items['count'] > 0) {
