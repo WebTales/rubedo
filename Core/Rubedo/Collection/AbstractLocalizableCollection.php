@@ -31,6 +31,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     protected static $defaultLocale = 'en';
 
     protected static $labelField = 'text';
+    
+    protected static $localizationStrategy = "all";
 
     /**
      * Contain common fields
@@ -212,11 +214,13 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      *
+     * Update item with localized content as fields.
+     *
      * @param array $obj
      *            collection item
      * @return array collection item localized
      */
-    protected function localizeOutput($obj)
+    protected function localizeOutput($obj, $alternativeFallBack = null)
     {
         if ($obj === null) {
             return $obj;
@@ -240,12 +244,19 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             $locale = $obj['nativeLanguage'];
         }
         
-        if (! isset($obj['i18n'][$locale])) {
-            throw new \Rubedo\Exceptions\Server('No localized data are available for this item');
+        $obj = $this->merge($obj, $obj['i18n'][nativeLanguage]);
+        $obj['locale'] = $obj['i18n'][nativeLanguage];
+        
+        if ($locale != $obj['nativeLanguage']) {
+            if (isset($obj['i18n'][$locale])) {
+                $obj = $this->merge($obj, $obj['i18n'][$locale]);
+                $obj['locale'] = $locale;
+            } elseif (isset($alternativeFallBack)) {
+                $obj = $this->merge($obj, $obj['i18n'][$alternativeFallBack]);
+                $obj['locale'] = $locale;
+            }
         }
         
-        $obj = $this->merge($obj, $obj['i18n'][$locale]);
-        $obj['locale'] = $locale;
         if (! static::$includeI18n) {
             unset($obj['i18n']);
         }
