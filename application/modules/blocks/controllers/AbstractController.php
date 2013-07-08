@@ -29,6 +29,8 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
 
     public function init ()
     {
+        
+        
         $templateService = Manager::getService('FrontOfficeTemplates');
         Rubedo\Collection\Contents::setIsFrontEnd(true);
         
@@ -44,10 +46,19 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         $this->currentPage = $this->getParam('current-page');
         
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
+        
+        
         if (is_null($currentPage)) {
             throw new Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
         } else {
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
+        }
+        
+        if($this->getRequest()->isXmlHttpRequest()){
+            //init browser languages
+            $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
+            $browserLanguages = array_keys($zend_locale->getBrowser());
+            Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'],null,$browserLanguages);
         }
         
         if (! $templateService->themeHadBeenSet()) {

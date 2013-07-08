@@ -88,6 +88,13 @@ class Current implements ICurrent
         return $locale;
     }
 
+    /**
+     * find first match of site language for given user preferences through browser
+     * 
+     * @param array $languages
+     * @param array $browserArray
+     * @return string|NULL
+     */
     protected function findBestMatchForBrowser($languages, $browserArray)
     {
         foreach ($browserArray as $locale) {
