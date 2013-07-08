@@ -176,7 +176,9 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
                 '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
                 '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
-                '/components/jquery/timepicker/jquery.ui.timepicker.js'
+                '/components/jquery/timepicker/jquery.ui.timepicker.js',
+                '/components/longtailvideo/jwplayer/jwplayer.js',
+                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/video.js")
             );
             
             if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {

@@ -283,5 +283,27 @@ class Dam extends AbstractCollection implements IDam
         
         return parent::_filterInputData($obj, $model);
     }
+    
+    /**
+     * Get the media type
+     *
+     * @param string $mediaId
+     * @return The media type (video, image, document etc)
+     */
+    public function getMediaType($mediaId) {
+        if (! $mediaId instanceof \MongoId) {
+            if (! is_string($mediaId) || preg_match('/[\dabcdef]{24}/', $mediaId) !== 1) {
+                throw new \Rubedo\Exceptions\User('Invalid MongoId :' . $mediaId);
+            }
+       }
+        $media = $this->findById($mediaId);
+        $damTypeId = $media["typeId"];
+        
+        $damType = Manager::getService("DamTypes")->findById($damTypeId);
+        
+        $mediaType = $damType["type"];
+        
+        return $mediaType;
+    }
 }
 

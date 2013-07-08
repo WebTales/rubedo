@@ -6,6 +6,10 @@ function loadVideo() {
 	var dataFile = jQuery(this).attr('data-videoFile');
 	var config = new Object();
 	config.file = dataFile;
+	
+	console.log(dataFile);
+	
+	
 	if (jQuery(this).attr('data-image')) {
 		config.image = jQuery(this).attr('data-image');
 	}
@@ -28,7 +32,6 @@ function loadVideo() {
 	}
 	config.analytics = {'enabled':false,'cookies': false};
 	jwplayer(id).setup(config);
-	//jQuery(this).replaceWith('<video src="'+config.file+'" width="'+config.width+'" type="'+jQuery(this).attr('data-contentType')+'" poster="'+config.image+'" controls/>');
 }
 
 function loadAudio() {
@@ -36,14 +39,20 @@ function loadAudio() {
 	var dataFile = jQuery(this).attr('data-audioFile');
 	var config = new Object();
 	config.file = dataFile;
-	config.width = '100%';
 	config.primary = 'flash';
 	config.height = '40';
+	
+	
+	console.log(dataFile);
+	
 
 	if (jQuery(this).attr('data-controls')) {
 		config.controls = jQuery(this).attr('data-controls');
 	} else {
 		config.controls = false;
+	}
+	if (jQuery(this).attr('data-width')) {
+		config.width = jQuery(this).attr('data-width');
 	}
 	if (jQuery(this).attr('data-repeat')) {
 		config.repeat = jQuery(this).attr('data-repeat');

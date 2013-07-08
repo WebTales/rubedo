@@ -11,7 +11,7 @@
       			{%if(key==cKey)%}
       					{%if cValue["cType"]=="ImagePickerField"%}
       					    {% if value != "" %}
-      					        {% include 'root/blocks/fields/imageField.html.twig' %}
+      					        {% include 'root/blocks/fields/mediaField.html.twig' %}
       					    {% endif %}
       					{%elseif(cValue["cType"]=="CKEField")%}
       						{% include 'root/blocks/fields/CKEfield.html.twig' %}
