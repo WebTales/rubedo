@@ -25,9 +25,13 @@ use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager, WebTales\Mo
  * @category Rubedo
  * @package Rubedo
  */
-class Taxonomy extends AbstractCollection implements ITaxonomy
+class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
 {
 
+    protected static $nonLocalizableFields = array("mandatory","workspaces","facetOperator","readOnly","order","expandable","inputAsTree","multiSelect");
+    
+    protected static $labelField = 'name';
+    
     protected $_indexes = array(
         array(
             'keys' => array(
