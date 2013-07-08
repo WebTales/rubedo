@@ -13,8 +13,8 @@
             </a>
             
             <ul class="dropdown-menu">
-                {% if hasAccessToBO %}<li><a href="/backoffice" target="_blank"><i class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | botrans }}</a></li>{% endif %}
-                <li><a href="#" onclick="logout()"><i class="icon-off"></i> Déconnexion</a></li>
+                {% if hasAccessToBO %}<li><a href="/backoffice" target="_blank"><i class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | fotrans }}</a></li>{% endif %}
+                <li><a href="#" onclick="logout()"><i class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | fotrans }}</a></li>
             </ul>
         </div>
     {%else%}
