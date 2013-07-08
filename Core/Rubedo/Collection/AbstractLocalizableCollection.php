@@ -235,13 +235,13 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         }
         if (! isset($obj['nativeLanguage']) || ! isset($obj['i18n'][$locale])) {
             if (! isset($obj['nativeLanguage'])) {
-                throw new Rubedo\Exceptions\Server('No defined native language for this item');
+                throw new \Rubedo\Exceptions\Server('No defined native language for this item');
             }
             $locale = $obj['nativeLanguage'];
         }
         
         if (! isset($obj['i18n'][$locale])) {
-            throw new Rubedo\Exceptions\Server('No localized data are available for this item');
+            throw new \Rubedo\Exceptions\Server('No localized data are available for this item');
         }
         
         $obj = $this->merge($obj, $obj['i18n'][$locale]);

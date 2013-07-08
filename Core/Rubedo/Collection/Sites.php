@@ -25,9 +25,11 @@ use Rubedo\Interfaces\Collection\ISites, Rubedo\Services\Manager, WebTales\Mongo
  * @category Rubedo
  * @package Rubedo
  */
-class Sites extends AbstractCollection implements ISites
+class Sites extends AbstractLocalizableCollection implements ISites
 {
-
+    protected static $nonLocalizableFields = array("text","alias","defaultLanguage","languages","activeMessagery","SMTPServer","SMTPPort","SMTPLogin","SMTPPassword","defaultEmail","accessibilityLevel","opquastLogin","opquastPassword","protocol","filter","theme","homePage","workspace","readOnly","defaultSingle","googleMapsKey","googleAnalyticsKey","disqusKey","builtOnEmptySite","builtOnModelSiteId","locStrategy","useBrowserLanguage");
+    
+    
     protected $_indexes = array(
         array(
             'keys' => array(
