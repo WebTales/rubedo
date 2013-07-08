@@ -53,6 +53,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         } else {
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
+        $this->siteId = $currentPage['site'];
         
         if($this->getRequest()->isXmlHttpRequest()){
             //init browser languages

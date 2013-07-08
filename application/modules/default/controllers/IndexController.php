@@ -157,6 +157,10 @@ class IndexController extends Zend_Controller_Action
                 
         // context
         $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'],null,$browserLanguages);
+        
+        //reload page in localization context
+        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $hasAccessToBO = Manager::getService('Acl')->hasAccess('ui.backoffice');
         if (! $isLoggedIn || ! $hasAccessToBO) {
@@ -663,6 +667,10 @@ class IndexController extends Zend_Controller_Action
                 break;
             case "mailingList":
                 $controller = "mailing-list";
+                break;
+                
+            case "languageMenu":
+                $controller = "language-menu";
                 break;
             
             case 'Controleur Zend':

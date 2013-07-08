@@ -84,6 +84,7 @@ class Current implements ICurrent
         
         // set the collection with locale as working language
         AbstractLocalizableCollection::setWorkingLocale($locale);
+        AbstractLocalizableCollection::setIncludeI18n(false);
         
         return $locale;
     }
