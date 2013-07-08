@@ -17,6 +17,7 @@
 namespace Rubedo\Time;
 
 use Rubedo\Services\Manager, Rubedo\Interfaces\Time\IDate, DateTime, DateInterval, IntlDateFormatter;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  * Current Time Service
@@ -212,7 +213,7 @@ class Date implements IDate
     protected function _getLang ()
     {
         if (! isset(self::$_lang)) {
-            self::$_lang = Manager::getService('Session')->get('lang', 'en');
+            self::$_lang = AbstractLocalizableCollection::getWorkingLocale();
         }
         return self::$_lang;
     }

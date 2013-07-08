@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Templates;
 
-Use Rubedo\Services\Manager;
+use Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  * Twig extension to handle label translation based on user language.
@@ -46,7 +47,7 @@ class FrontOfficeTranslate extends \Twig_Extension
      */
     public function __construct ()
     {
-        $this->lang = Manager::getService('Session')->get("lang", "fr");
+        $this->lang = AbstractLocalizableCollection::getWorkingLocale();
     }
 
     /**

@@ -44,7 +44,6 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
         'model',
         'get-content-list',
         'holds-site-default',
-        'add-localization'
     );
 
     public function init ()
@@ -164,10 +163,5 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
             );
         }
         $this->_returnJson($returnArray);
-    }
-    
-    public function addLocalizationAction(){
-        \Rubedo\Collection\Pages::addLocalizationForCollection();
-        $this->_helper->json(array('success'=>true));
     }
 }

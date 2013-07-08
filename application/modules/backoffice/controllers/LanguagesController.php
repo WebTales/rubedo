@@ -30,79 +30,95 @@ use WebTales\MongoFilters\Filter;
  * @package Rubedo
  *         
  */
-class Backoffice_LanguagesController extends Backoffice_DataAccessController {
-	
-	/**
-	 * Array with the read only actions
-	 */
-	protected $_readOnlyAction = array (
-			'index',
-			'find-one',
-			'read-child',
-			'tree',
-			'get-bo-languages',
-			'model',
-			'import-languages' 
-	);
-	public function init() {
-		parent::init ();
-		
-		// init the data access service
-		$this->_dataService = Rubedo\Services\Manager::getService ( 'Languages' );
-	}
-	public function getBoLanguagesAction() {
-		$directoryIterator = new DirectoryIterator ( APPLICATION_PATH . '/../public/components/webtales/rubedo-localization' );
-		$boLangDirArray = array ();
-		foreach ( $directoryIterator as $item ) {
-			if (! $item->isDir () || $item->isDot () || $item->getFilename () == '.git') {
-				continue;
-			}
-			$boLangDirArray [] = $item->getFilename ();
-		}
-		
-		$boLangFilter = Filter::factory ( 'In' )->setName ( 'locale' )->setValue ( $boLangDirArray );
-		
-		if (Manager::getService ( 'CurrentUser' )->getLanguage () == 'fr') {
-			$labelField = 'labelFr';
-		} else {
-			$labelField = 'label';
-		}
-		
-		$result = Manager::getService ( 'Languages' )->getList ( $boLangFilter, array (
-				array (
-						'property' => $labelField,
-						'direction' => 'ASC' 
-				) 
-		) );
-		$languagesArray = array ();
-		foreach ( $result ['data'] as $languages ) {
-			$languagesArray [] = array (
-					'key' => $languages ['locale'],
-					'label' => $languages [$labelField] 
-			);
-		}
-		$this->_returnJson ( array (
-				'data' => $languagesArray,
-				'success' => true 
-		) );
-	}
-	public function importLanguagesAction() {
-		$tsvFile = APPLICATION_PATH . '/../data/ISO-639-2_utf-8.txt';
-		$file = fopen ( $tsvFile, 'r' );
-		$service = Manager::getService ( 'Languages' );
-		while ( $line = fgetcsv ( $file, null, '|' ) ) {
-			if (empty ( $line [2] )) {
-				continue;
-			}
-			$lang = array ();
-			$lang ['iso2'] = $line [2];
-			$lang ['locale'] = $line [2];
-			$lang ['iso3'] = $line [0];
-			$lang ['label'] = $line [3];
-			$lang ['labelFr'] = $line [4];
-			
-			$service->create ( $lang );
-		}
-    	$this->_forward('index');
+class Backoffice_LanguagesController extends Backoffice_DataAccessController
+{
+
+    /**
+     * Array with the read only actions
+     */
+    protected $_readOnlyAction = array(
+        'index',
+        'find-one',
+        'read-child',
+        'tree',
+        'get-bo-languages',
+        'model',
+        'import-languages',
+        'add-localization'
+    );
+
+    public function init()
+    {
+        parent::init();
+        
+        // init the data access service
+        $this->_dataService = Rubedo\Services\Manager::getService('Languages');
+    }
+
+    public function getBoLanguagesAction()
+    {
+        $directoryIterator = new DirectoryIterator(APPLICATION_PATH . '/../public/components/webtales/rubedo-localization');
+        $boLangDirArray = array();
+        foreach ($directoryIterator as $item) {
+            if (! $item->isDir() || $item->isDot() || $item->getFilename() == '.git') {
+                continue;
+            }
+            $boLangDirArray[] = $item->getFilename();
+        }
+        
+        $boLangFilter = Filter::factory('In')->setName('locale')->setValue($boLangDirArray);
+        
+        if (Manager::getService('CurrentUser')->getLanguage() == 'fr') {
+            $labelField = 'labelFr';
+        } else {
+            $labelField = 'label';
+        }
+        
+        $result = Manager::getService('Languages')->getList($boLangFilter, array(
+            array(
+                'property' => $labelField,
+                'direction' => 'ASC'
+            )
+        ));
+        $languagesArray = array();
+        foreach ($result['data'] as $languages) {
+            $languagesArray[] = array(
+                'key' => $languages['locale'],
+                'label' => $languages[$labelField]
+            );
+        }
+        $this->_returnJson(array(
+            'data' => $languagesArray,
+            'success' => true
+        ));
+    }
+
+    public function importLanguagesAction()
+    {
+        $tsvFile = APPLICATION_PATH . '/../data/ISO-639-2_utf-8.txt';
+        $file = fopen($tsvFile, 'r');
+        $service = Manager::getService('Languages');
+        while ($line = fgetcsv($file, null, '|')) {
+            if (empty($line[2])) {
+                continue;
+            }
+            $lang = array();
+            $lang['iso2'] = $line[2];
+            $lang['locale'] = $line[2];
+            $lang['iso3'] = $line[0];
+            $lang['label'] = $line[3];
+            $lang['labelFr'] = $line[4];
+            
+            $service->create($lang);
+        }
+        $this->_forward('index');
+    }
+
+    public function addLocalizationAction()
+    {
+        \Rubedo\Collection\Pages::localizeAllCollection();
+        $this->_helper->json(array(
+            'success' => true
+        ));
     }
 }

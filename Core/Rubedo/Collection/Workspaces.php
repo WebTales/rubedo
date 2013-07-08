@@ -26,8 +26,13 @@ use WebTales;
  * @category Rubedo
  * @package Rubedo
  */
-class Workspaces extends AbstractCollection implements IWorkspaces
+class Workspaces extends AbstractLocalizableCollection implements IWorkspaces
 {
+    /**
+     * Contain common fields
+     */
+    protected static $nonLocalizableFields = array('canContribute');
+    
 
     protected $_indexes = array(
         array(
@@ -211,9 +216,9 @@ class Workspaces extends AbstractCollection implements IWorkspaces
         if ($obj['id'] == 'global') {
             throw new \Rubedo\Exceptions\Access('You can not update global workspace', "Exception63");
         }
-        if ($obj['name'] == 'Global') {
-            throw new \Rubedo\Exceptions\Access('can\'t create a global workspace', "Exception62");
-        }
+//         if ($obj['name'] == 'Global') {
+//             throw new \Rubedo\Exceptions\Access('can\'t create a global workspace', "Exception62");
+//         }
         unset($obj['canContribute']);
         return parent::update($obj, $options);
     }
