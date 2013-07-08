@@ -44,41 +44,54 @@ class Current implements ICurrent
             $sessionService = Manager::getService('Session');
             $currentLocaleInSession = $sessionService->get('currentLocale', array());
             
-            //temp : do not stroe in session
-            unset($currentLocaleInSession[$siteId]);
+            $user = Manager::getService('CurrentUser')->getCurrentUser();
             
+                        
             if ($forceLocal && in_array($forceLocal, $site['languages'])) {
+                // if locale is forced through URL
                 $locale = $forceLocal;
             } elseif (isset($currentLocaleInSession[$siteId]) && in_array($currentLocaleInSession[$siteId], $site['languages'])) {
+                // if locale is already set in session
                 $locale = $currentLocaleInSession[$siteId];
+            } elseif ($user && isset($user['preferedLanguage']) && isset($user['preferedLanguage'][$siteId])) {
+                // if prefered locale is known for current user
+                $locale = $user['preferedLanguage'][$siteId];
             } else {
-                if (isset($site['useBrowserLanguage']) && $site['useBrowserLanguage']==true) {
-                    $locale = $this->findBestMatchForBrowser($site['languages'],$browserArray);
-                    if(!$locale){
+                // default strategy
+                if (isset($site['useBrowserLanguage']) && $site['useBrowserLanguage'] == true) {
+                    // use browser settings
+                    $locale = $this->findBestMatchForBrowser($site['languages'], $browserArray);
+                    if (! $locale) {
+                        // fallback to default
                         $locale = $site['defaultLanguage'];
                     }
                 } else {
+                    // use default
                     $locale = $site['defaultLanguage'];
                 }
                 if (! isset($locale)) {
+                    // if nothing works, use english
                     $locale = 'en';
                 }
             }
+            
+            // store locale in session
             $currentLocaleInSession[$siteId] = $locale;
             $sessionService->set('currentLocale', $currentLocaleInSession);
         } else {
             $locale = 'en';
         }
         
+        // set the collection with locale as working language
         AbstractLocalizableCollection::setWorkingLocale($locale);
         
         return $locale;
     }
-    
-    
-    protected function findBestMatchForBrowser($languages,$browserArray){
-        foreach ($browserArray as $locale){
-            if(in_array($locale, $languages)){
+
+    protected function findBestMatchForBrowser($languages, $browserArray)
+    {
+        foreach ($browserArray as $locale) {
+            if (in_array($locale, $languages)) {
                 return $locale;
             }
         }

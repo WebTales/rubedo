@@ -151,6 +151,7 @@ class IndexController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
+        //init browser languages
         $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
         $browserLanguages = array_keys($zend_locale->getBrowser());
                 
