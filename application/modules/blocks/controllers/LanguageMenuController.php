@@ -52,7 +52,7 @@ class Blocks_LanguageMenuController extends Blocks_AbstractController
         }     
         
         $css = array();
-        $js = array();
+        $js = array('/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/language.js"));
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
