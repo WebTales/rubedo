@@ -44,7 +44,8 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
         'get-bo-languages',
         'model',
         'import-languages',
-        'add-localization'
+        'add-localization',
+        'get-flags-list'
     );
 
     public function init()
@@ -120,5 +121,23 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
         $this->_helper->json(array(
             'success' => true
         ));
+    }
+    
+    public function getFlagsListAction(){
+        $directoryIterator = new DirectoryIterator(APPLICATION_PATH . '/../public/assets/flags/16');
+        $flagsArray = array();
+        foreach ($directoryIterator as $item) {
+            if ( $item->isDir() || $item->isDot()) {
+                continue;
+            }
+            
+            $matches = array();
+            if(preg_match('#(.*)\.png#', $item->getFilename(),$matches)){
+                $flagsArray[] = array('code'=>$matches[1]);
+            }           
+        }
+        $result = array('data'=>$flagsArray);
+        
+        $this->_returnJson($result);
     }
 }
