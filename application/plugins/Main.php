@@ -58,5 +58,14 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
         if($module !='backoffice' || $controller !='xhr-authentication' || $action !='is-session-expiring'){
             Manager::getService('Authentication')->resetExpirationTime();
         }
+        
+
+        // ensure that a default language is set and content migration is done
+        $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
+        
+        if($module !='install' && !isset($defaultLocale)){
+            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
+            $redirector->gotoSimple('define-languages', 'index','install');
+        }
     }
 }

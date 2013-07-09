@@ -118,7 +118,7 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
 
     public function addLocalizationAction()
     {
-        \Rubedo\Collection\Pages::localizeAllCollection();
+        \Rubedo\Collection\AbstractLocalizableCollection::localizeAllCollection();
         $this->_helper->json(array(
             'success' => true
         ));

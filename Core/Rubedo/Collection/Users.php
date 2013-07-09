@@ -179,6 +179,8 @@ class Users extends AbstractCollection implements IUsers
             );
         }
         
+        $obj['workingLanguage'] = Manager::getService('Languages')->getDefaultLanguage();
+        
         $returnValue = parent::create($obj, $options);
         $createUser = $returnValue['data'];
         

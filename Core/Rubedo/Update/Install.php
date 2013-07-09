@@ -162,7 +162,7 @@ class Install
         
         
         //ensure that localizable collections are now localized
-        \Rubedo\Collection\Pages::localizeAllCollection();
+        \Rubedo\Collection\AbstractLocalizableCollection::localizeAllCollection();
         
         return true;
     }
