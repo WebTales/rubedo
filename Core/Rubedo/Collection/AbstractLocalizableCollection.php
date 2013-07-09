@@ -81,12 +81,16 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     {
         parent::_init();
         
+        $this->initLocaleFilter();
+    }
+    
+    protected function initLocaleFilter(){
         if (static::$isLocaleFiltered) {
             switch (static::$localizationStrategy) {
                 case 'onlyOne':
                     $this->_dataService->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
-                        ->setOperator('$exists')
-                        ->setValue(true));
+                    ->setOperator('$exists')
+                    ->setValue(true));
                     break;
                 case 'fallback':
                     $fallbackLocale = isset(static::$fallbackLocale) ? static::$fallbackLocale : static::$defaultLocale;
@@ -104,7 +108,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                             ->setOperator('$exists')
                             ->setValue(true));
                     }
-                    
+    
                     break;
                 default:
                     break;

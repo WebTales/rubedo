@@ -126,6 +126,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
     );
     
     protected static $localizableFiledForCType = array();
+    
+    protected static $isLocaleFiltered = true;
 
     public function __construct ()
     {
@@ -171,6 +173,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 ->setOperator('$gte')
                 ->setValue($now));
         }
+        $this->initLocaleFilter();
     }
 
     /**
@@ -912,6 +915,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
             if (! in_array($key, $metadataFields) && $key !== static::$labelField && $key !=='fields') {
                 unset($obj[$key]);
             }
+            foreach ($obj['fields'] as $field => $value){
+                if(in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
+                    unset($obj['fields'][$field]);
+                }
+            }
         }
         
         // prevent non localizable data to be store in localization document
@@ -920,6 +928,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 foreach ($localization as $key => $value) {
                     if (in_array($key, $metadataFields) && $key !== static::$labelField && $key !=='fields') {
                         unset($obj['i18n'][$locale][$key]);
+                    }
+                    foreach ($obj['i18n'][$locale]['fields'] as $field => $value){
+                        if(in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
+                            unset($obj['i18n'][$locale]['fields'][$field]);
+                        }
                     }
                 }
                 $obj['i18n'][$locale]['locale'] = $locale;
@@ -930,63 +943,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         return $obj;
         
-    }
-    
-    /**
-     *
-     *
-     *
-     * Update item with localized content as fields.
-     *
-     * @param array $obj
-     *            collection item
-     * @return array collection item localized
-     */
-    protected function localizeOutput($obj, $alternativeFallBack = null)
-    {
-        if ($obj === null) {
-            return $obj;
-        }
-        if (! isset($obj['i18n'])) {
-            return $obj;
-        }
-        if (static::$workingLocale === null) {
-            if (! isset($obj['nativeLanguage'])) {
-                return $obj;
-            } else {
-                $locale = $obj['nativeLanguage'];
-            }
-        } else {
-            $locale = static::$workingLocale;
-        }
-    
-        if ($alternativeFallBack === null && static::$isLocaleFiltered && static::$localizationStrategy == 'fallback') {
-            $alternativeFallBack = static::$fallbackLocale;
-        }
-        // \Zend_Debug::dump(static::$fallbackLocale);//die();
-    
-        if (! isset($obj['nativeLanguage'])) {
-            throw new \Rubedo\Exceptions\Server('No defined native language for this item');
-        }
-    
-        $obj = $this->merge($obj, $obj['i18n'][$obj['nativeLanguage']]);
-        $obj['locale'] = $obj['nativeLanguage'];
-    
-        if ($locale != $obj['nativeLanguage']) {
-            if (isset($obj['i18n'][$locale])) {
-                $obj = $this->merge($obj, $obj['i18n'][$locale]);
-                $obj['locale'] = $locale;
-            } elseif (isset($alternativeFallBack) && isset($obj['i18n'][$alternativeFallBack])) {
-                $obj = $this->merge($obj, $obj['i18n'][$alternativeFallBack]);
-                $obj['locale'] = $locale;
-            }
-        }
-    
-        if (! static::$includeI18n) {
-            unset($obj['i18n']);
-        }
-    
-        return $obj;
     }
 
     /**
@@ -1044,6 +1000,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return self::$localizableFiledForCType[$cTypeId];
     }
 
+    
     
     
 }
