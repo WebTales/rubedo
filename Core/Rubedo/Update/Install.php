@@ -75,6 +75,9 @@ class Install
         Manager::getService('RubedoVersion')->setDbVersion($version);
     }
     
+    /**
+     * Import in languages collection all languages form iso-639
+     */
     public static function importLanguages(){
         $tsvFile = APPLICATION_PATH.'/../data/ISO-639-2_utf-8.txt';
         $file = fopen($tsvFile, 'r');
@@ -96,6 +99,12 @@ class Install
         return true;
     }
     
+    /**
+     * Set a language as default language
+     * 
+     * @param string $locale
+     * @return boolean
+     */
     public static function setDefaultRubedoLanguage($locale){
         $service = Manager::getService('Languages');
         
@@ -137,6 +146,22 @@ class Install
         );
         Manager::getService('Sites')->customUpdate($data, $updateCond, $options);
         
+        //set default working language for BO for users
+        $data = array(
+            '$set' => array(
+                'workingLanguage'=> $locale,
+            )
+        );
+        $updateCond = Filter::factory('OperatorToValue')->setName('workingLanguage')
+        ->setOperator('$exists')
+        ->setValue(false);
+        $options = array(
+            'multiple' => true
+        );
+        Manager::getService('Users')->customUpdate($data, $updateCond, $options);
+        
+        
+        //ensure that localizable collections are now localized
         \Rubedo\Collection\Pages::localizeAllCollection();
         
         return true;

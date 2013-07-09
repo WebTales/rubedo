@@ -94,6 +94,7 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
         ));
     }
 
+    
     public function importLanguagesAction()
     {
         $tsvFile = APPLICATION_PATH . '/../data/ISO-639-2_utf-8.txt';
