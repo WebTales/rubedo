@@ -7,8 +7,6 @@ function loadVideo() {
 	var config = new Object();
 	config.file = dataFile;
 	
-	console.log(dataFile);
-	
 	
 	if (jQuery(this).attr('data-image')) {
 		config.image = jQuery(this).attr('data-image');
@@ -32,6 +30,7 @@ function loadVideo() {
 	}
 	config.analytics = {'enabled':false,'cookies': false};
 	jwplayer(id).setup(config);
+	//jQuery(this).replaceWith('<video src="'+config.file+'" width="'+config.width+'" type="'+jQuery(this).attr('data-contentType')+'" poster="'+config.image+'" controls/>');
 }
 
 function loadAudio() {
@@ -42,10 +41,6 @@ function loadAudio() {
 	config.primary = 'flash';
 	config.height = '40';
 	
-	
-	console.log(dataFile);
-	
-
 	if (jQuery(this).attr('data-controls')) {
 		config.controls = jQuery(this).attr('data-controls');
 	} else {
