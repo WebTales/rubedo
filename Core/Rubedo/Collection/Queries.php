@@ -124,6 +124,399 @@ class Queries extends AbstractCollection implements IQueries
         
         return $obj;
     }
+    
+    /**
+     * Rebuild query object to be compatible with MongoDB
+     *
+     * @param array $obj
+     *     Query object
+     * @return array
+     */
+    protected function boToDbQuery($obj) {
+        if(isset($obj["query"]["fieldRules"])) {
+            foreach ($obj["query"]["fieldRules"] as $key => $value) {
+                //Don't update if the condition was already treated
+                if(!is_string($key) || isset($value["field"])) {
+                    continue;
+                }
+        
+                //Create new object
+                $newField = array("field" => $key);
+                $value = array_merge($value, $newField);
+        
+                //Insert new object and delete older
+                $obj["query"]["fieldRules"][] = $value;
+                unset($obj["query"]["fieldRules"][$key]);
+            }
+        }
+        
+        return $obj;
+    }
+    
+    /**
+     * Rebuild query object to be compatible with the back office
+     *
+     * @param array $obj
+     *     Query object
+     * @return array
+     */
+    protected function dbToBoQuery($obj) {
+        if(isset($obj["query"]["fieldRules"])) {
+            foreach ($obj["query"]["fieldRules"] as $key => $value) {
+                //Don't update if the condition was already treated
+                if(is_string($key) || !isset($value["field"])) {
+                    continue;
+                }
+        
+                //Get new values
+                $newKey = $value["field"];
+                unset($value["field"]);
+        
+                //Insert new object and delete older
+                $obj["query"]["fieldRules"][$newKey] = $value;
+                unset($obj["query"]["fieldRules"][$key]);
+            }
+        }
+        
+        return $obj;
+    }
+    
+    /**
+     * Return an array of filters and sorting based on a query object of manual type
+     *
+     * @param array $query
+     * @return array unknown
+     */
+    protected function _getFilterArrayForManual ($query)
+    {
+        $filters = Filter::factory()->addFilter(Filter::factory('InUid')->setValue($query['query']))
+        ->addFilter(Filter::factory('Value')->setName('status')
+            ->setValue('published'));
+    
+        $sort[] = array(
+            'property' => 'id',
+            'direction' => 'DESC'
+        );
+        return array(
+            "filter" => $filters,
+            "sort" => $sort
+        );
+    }
+    
+    /**
+     * Add the filter to the query in function of the field type (date, time, number...)
+     *
+     * @param string $fieldType
+     *     datetime, numberfield ...
+     * @param string $property
+     *     The name of the field
+     * @param array $value
+     *     Config of the field (operator and value)
+     * @param string $ruleOperator
+     *     Contain the mongo operator of the filter ($lt, $gt, $eq...)
+     */
+    protected function setFilters($fieldType, $property, $value, $ruleOperator, $filters) {
+    
+        //Create the filter in terms of the field type
+        switch ($fieldType) {
+            case "datefield":
+                if (isset($value['rule']) && isset($value['value'])) {
+                    $nextDate = new \DateTime($value['value']);
+                    $nextDate->add(new \DateInterval('PT23H59M59S'));
+                    $nextDate = (array) $nextDate;
+    
+                    if($property === "createTime" || $property === "lastUpdateTime") {
+                        if ($ruleOperator === 'eq') {
+    
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$gt')
+                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+    
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lt')
+                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$gt') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$lte') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lte')
+                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } else {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                        }
+                    } else {
+                        if ($ruleOperator === 'eq') {
+    
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$gt')
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
+    
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lt')
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$gt') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } elseif ($ruleOperator === '$lte') {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator('$lte')
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                        } else {
+                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                                ->setOperator($ruleOperator)
+                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
+                        }
+                    }
+                }
+                break;
+            case "numberfield":
+            case "timefield":
+                $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
+                ->setOperator($ruleOperator)
+                ->setValue($value['value']));
+                break;
+            default:
+                throw new \Rubedo\Exceptions\Server('not implemented ' . $fieldType);
+                break;
+        }
+    }
+    
+    /**
+     * Return an array of filters and sorting based on a query object
+     *
+     * @param array $query
+     * @return array unknown
+     */
+    protected function _getFilterArrayForQuery ($query)
+    {
+        if (\Zend_Registry::isRegistered('draft')) {
+            if (\Zend_Registry::get('draft') !== 'false' || \Zend_Registry::get('draft') !== false) {
+                $this->_workspace = 'live';
+            } else {
+                $this->_workspace = 'draft';
+            }
+        } else {
+            $this->_workspace = 'live';
+        }
+        $this->_dateService = Manager::getService('Date');
+        $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
+    
+        $sort = array();
+        $filters = Filter::factory();
+    
+        $operatorsArray = array(
+            '$lt' => '<',
+            '$lte' => '<=',
+            '$gt' => '>',
+            '$gte' => '>=',
+            '$ne' => '!=',
+            'eq' => '='
+        );
+    
+        /* Add filters on TypeId and publication */
+        $filters->addFilter(Filter::factory('In')->setName('typeId')
+            ->setValue($query['contentTypes']));
+    
+        $filters->addFilter(Filter::factory('Value')->setName('status')
+            ->setValue('published'));
+    
+        // add computed filter for vocabularies rules
+        if (is_array($query['vocabularies'])) {
+            if (! isset($query['vocabulariesRule'])) {
+                $query['vocabulariesRule'] = 'ET';
+            }
+            $filters->addFilter($this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']));
+        }
+    
+        /* Add filter on FieldRule */
+        foreach ($query['fieldRules'] as $property => $value) {
+            //Contain the type of the field (date, time, text ...)
+            $fieldType = "";
+    
+            //Get the field name because $property looks like "fields.fieldName"
+            $propertyPath = explode(".", $property);
+            $propertyCount = count($propertyPath) - 1;
+            $field = $propertyPath[$propertyCount];
+            
+            //Set the type of the field for system fields
+            if($property === "createTime" || $property === "lastUpdateTime") {
+                $fieldType = "datefield";
+            } else {
+                //Determine the type of the field in terms of the content types
+                foreach ($query['contentTypes'] as $contentTypeId) {
+                    //Get content type object
+                    $contentType = Manager::getService("ContentTypes")->findById($contentTypeId);
+    
+                    //Check if the field is in the content type
+                    foreach ($contentType["fields"] as $fieldConfig) {
+                        if ($fieldConfig["config"]["name"] == $field) {
+                            if($fieldType == "") {
+                                //Define field type
+                                $fieldType = $fieldConfig["cType"];
+                            } elseif ($fieldType != $fieldConfig["cType"]) {
+                                //We throw an exception if the field type is not the same in all content types
+                                throw new \Rubedo\Exceptions\Server("The cType of the field must be the same in all the selected content types", "Exception98");
+                            }
+                        }
+                    }
+                }
+            }
+    
+            //Throw an exception if the field type is not set
+            if($fieldType === "") {
+                throw new \Rubedo\Exceptions\Server("The server is unable to determine the cType of the field", "Exception99");
+            }
+    
+            if(!isset($value["rule"])) {
+                $value["rule"] = null;
+            }
+    
+            //Get the  operator in the array
+            $ruleOperator = array_search($value['rule'], $operatorsArray);
+    
+            //Set the filter of the query
+            if (!isset($value['sort'])) {
+                $this->setFilters($fieldType, $property, $value, $ruleOperator, $filters);
+            }
+    
+            /*
+             * Add Sort
+            */
+            if (isset($value['sort'])) {
+                $sort[] = array(
+                    'property' => $property,
+                    'direction' => $value['sort']
+                );
+            } else {
+                $sort[] = array(
+                    'property' => 'id',
+                    'direction' => 'DESC'
+                );
+            }
+        }
+    
+        return array(
+            "filter" => $filters,
+            "sort" => $sort
+        );
+    }
+    
+    /**
+     * Build the taxonomy filter
+     *
+     * @param array $vocabularies
+     *            array of rules by vocabulary
+     * @param string $vocabulariesRule
+     *            OU | ET rule to assemble all filters
+     * @return \WebTales\MongoFilters\IFilter
+     */
+    protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
+    {
+        if ($vocabulariesRule == 'OU') {
+            $filters = Filter::factory('Or');
+        } else {
+            $filters = Filter::factory('And');
+        }
+    
+        foreach ($vocabularies as $key => $value) {
+            if (count($value['terms']) > 0) {
+                $filters->addFilter($this->_getVocabularyCondition($key, $value));
+            }
+        }
+    
+        return $filters;
+    }
+    
+    /**
+     * Build filter for a given vocabulary
+     *
+     * @param string $key
+     *            vocabulary name
+     * @param array $value
+     *            vocabulary parameters (rule and terms)
+     * @return \WebTales\MongoFilters\IFilter
+     */
+    protected function _getVocabularyCondition ($key, $value)
+    {
+        if ($key == 'navigation') {
+            foreach ($value['terms'] as &$term) {
+                if ($term == "currentPage") {
+                    $currentPage = Manager::getService('PageContent')->getCurrentPage();
+                    if (! $currentPage) {
+                        throw new \Rubedo\Exceptions\Server('Current page is not defined.', "Exception49");
+                    }
+                    $term = $currentPage;
+                }
+            }
+        }
+    
+        if(!isset($value["rule"])) {
+            $value["rule"] = null;
+        }
+    
+        if (is_array($value['rule'])) {
+            $rule = array_pop($value['rule']);
+        } else {
+            $rule = $value['rule'];
+        }
+        switch ($rule) {
+            case 'allRec':
+                // verify all branches => at least one of each branch
+                $filters = Filter::factory('And');
+    
+                // Definie each sub conditions
+                foreach ($value['terms'] as $child) {
+                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                    $termsArray = array(
+                        $child
+                    );
+                    foreach ($terms as $taxonomyTerms) {
+                        $termsArray[] = $taxonomyTerms["id"];
+                    }
+                    // some of a branch
+                    $filters->addFilter(Filter::factory('In')->setName($this->_workspace . '.taxonomy.' . $key)
+                        ->setValue($termsArray));
+                }
+    
+                break;
+            case 'all': // include all terms
+                $filters = Filter::factory('OperatorToValue')->setName($this->_workspace . '.taxonomy.' . $key)
+                ->setOperator('$all')
+                ->setValue($value['terms']);
+                break;
+            case 'someRec': // just add children and do 'some' condition
+                foreach ($value['terms'] as $child) {
+                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                    foreach ($terms as $taxonomyTerms) {
+                        $value['terms'][] = $taxonomyTerms["id"];
+                    }
+                }
+            case 'some': // simplest one: at least on of the termes
+                $filters = Filter::factory('In')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
+                break;
+            case 'notRec':
+                foreach ($value['terms'] as $child) {
+                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
+                    foreach ($terms as $taxonomyTerms) {
+                        $value['terms'][] = $taxonomyTerms["id"];
+                    }
+                }
+            case 'not': // include all terms
+                $filters = Filter::factory('NotIn')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
+    
+                break;
+            default:
+                Throw new \Rubedo\Exceptions\Server('Rule "%1$s" not implemented.', "Exception50", $rule);
+                break;
+        }
+    
+        return $filters;
+    }
 
     public function __construct ()
     {
@@ -144,6 +537,9 @@ class Queries extends AbstractCollection implements IQueries
         }
         
         $query = $this->findById($id);
+        
+        //Edit the query to be compatible with the BO
+        $query = $this->dbToBoQuery($query);
         
         if ($query) {
             return $query;
@@ -169,7 +565,12 @@ class Queries extends AbstractCollection implements IQueries
         if ($id === null) {
             return false;
         }
+        
         $query = $this->findById($id);
+        
+        //Edit the query to be compatible with the BO
+        $query = $this->dbToBoQuery($query);
+        
         if ($query) {
             return $this->getFilterArrayByQuery($query);
         } else {
@@ -195,6 +596,9 @@ class Queries extends AbstractCollection implements IQueries
             return false;
         }
         
+        //Edit the query to be compatible with the BO
+        $query = $this->dbToBoQuery($query);
+        
         $queryType = $query['type'];
         
         if (isset($query['query']) && $query['type'] != 'manual') {
@@ -205,339 +609,81 @@ class Queries extends AbstractCollection implements IQueries
         $returnArray["queryType"] = $queryType;
         return $returnArray;
     }
-
+    
     /**
-     * Return an array of filters and sorting based on a query object of manual type
+     * Update a query
      *
-     * @param array $query            
-     * @return array unknown
+     * @param array $obj
+     *            query object
+     * @param array $options            
+     * @return array
      */
-    protected function _getFilterArrayForManual ($query)
-    {
-        $filters = Filter::factory()->addFilter(Filter::factory('InUid')->setValue($query['query']))
-            ->addFilter(Filter::factory('Value')->setName('status')
-            ->setValue('published'));
+    public function update (array $obj, $options = array()) {
+        //Rebuild query object to be compatible with MongoDB
+        $obj = $this->boToDbQuery($obj);
         
-        $sort[] = array(
-            'property' => 'id',
-            'direction' => 'DESC'
-        );
-        return array(
-            "filter" => $filters,
-            "sort" => $sort
-        );
+        //Update the query with the new values
+        return parent::update($obj, $options);
     }
     
     /**
-     * Add the filter to the query in function of the field type (date, time, number...)
-     * 
-     * @param string $fieldType
-     *     datetime, numberfield ...
-     * @param string $property
-     *     The name of the field
-     * @param array $value
-     *     Config of the field (operator and value)
-     * @param string $ruleOperator
-     *     Contain the mongo operator of the filter ($lt, $gt, $eq...)
+     * Find an item given by its literral ID
+     *
+     * @param string $contentId            
+     * @param boolean $forceReload
+     *            should we ensure reading up-to-date content
+     * @return array
      */
-    protected function setFilters($fieldType, $property, $value, $ruleOperator, $filters) {
+    public function findById ($contentId, $forceReload = false) {
+        $result = parent::findById($contentId, $forceReload);
         
-        //Create the filter in terms of the field type
-        switch ($fieldType) {
-            case "datefield":
-                if (isset($value['rule']) && isset($value['value'])) {
-                    $nextDate = new \DateTime($value['value']);
-                    $nextDate->add(new \DateInterval('PT23H59M59S'));
-                    $nextDate = (array) $nextDate;
-                    
-                    if($property === "createTime" || $property === "lastUpdateTime") {
-                        if ($ruleOperator === 'eq') {
-            
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$gt')
-                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
-            
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lt')
-                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                        } elseif ($ruleOperator === '$gt') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                        } elseif ($ruleOperator === '$lte') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lte')
-                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
-                        } else {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
-                        }
-                    } else {
-                        if ($ruleOperator === 'eq') {
-                        
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$gt')
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
-                        
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lt')
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
-                        } elseif ($ruleOperator === '$gt') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
-                        } elseif ($ruleOperator === '$lte') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lte')
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
-                        } else {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
-                        }
-                    }
-                }
-                break;
-            case "numberfield":
-            case "timefield":
-                $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                    ->setOperator($ruleOperator)
-                    ->setValue($value['value']));
-                break;
-            default:
-                throw new \Rubedo\Exceptions\Server('not implemented ' . $fieldType);
-                break;
-        }
+        //Edit the query to be compatible with the BO
+        $result = $this->dbToBoQuery($result);
+        
+        return $result;
     }
     
     /**
-     * Return an array of filters and sorting based on a query object
+     * Find an item given by its name (find only one if many)
      *
-     * @param array $query            
-     * @return array unknown
+     * @param string $name
+     * @return array
      */
-    protected function _getFilterArrayForQuery ($query)
-    {
-        if (\Zend_Registry::isRegistered('draft')) {
-            if (\Zend_Registry::get('draft') !== 'false' || \Zend_Registry::get('draft') !== false) {
-                $this->_workspace = 'live';
-            } else {
-                $this->_workspace = 'draft';
-            }
-        } else {
-            $this->_workspace = 'live';
-        }
-        $this->_dateService = Manager::getService('Date');
-        $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
+    public function findByName ($name) {
+        $query = parent::findByName($name);
         
-        $sort = array();
-        $filters = Filter::factory();
-        
-        $operatorsArray = array(
-            '$lt' => '<',
-            '$lte' => '<=',
-            '$gt' => '>',
-            '$gte' => '>=',
-            '$ne' => '!=',
-            'eq' => '='
-        );
-        
-        /* Add filters on TypeId and publication */
-        $filters->addFilter(Filter::factory('In')->setName('typeId')
-            ->setValue($query['contentTypes']));
-        
-        $filters->addFilter(Filter::factory('Value')->setName('status')
-            ->setValue('published'));
-        
-        // add computed filter for vocabularies rules
-        if (is_array($query['vocabularies'])) {
-            if (! isset($query['vocabulariesRule'])) {
-                $query['vocabulariesRule'] = 'ET';
-            }
-            $filters->addFilter($this->_getVocabulariesFilters($query['vocabularies'], $query['vocabulariesRule']));
-        }
-        
-        /* Add filter on FieldRule */
-        foreach ($query['fieldRules'] as $property => $value) {
-            //Contain the type of the field (date, time, text ...)
-            $fieldType = "";
-            
-            //Get the field name because $property looks like "fields.fieldName"
-            $propertyPath = explode(".", $property);
-            $propertyCount = count($propertyPath) - 1;
-            $field = $propertyPath[$propertyCount];
-            
-            //Set the type of the field for system fields
-            if($property === "createTime" || $property === "lastUpdateTime") {
-                $fieldType = "datefield";
-            } else {
-                //Determine the type of the field in terms of the content types
-                foreach ($query['contentTypes'] as $contentTypeId) {
-                    //Get content type object
-                    $contentType = Manager::getService("ContentTypes")->findById($contentTypeId);
-                    
-                    //Check if the field is in the content type
-                    foreach ($contentType["fields"] as $fieldConfig) {
-                        if ($fieldConfig["config"]["name"] == $field) {
-                            if($fieldType == "") {
-                                //Define field type
-                                $fieldType = $fieldConfig["cType"];
-                            } elseif ($fieldType != $fieldConfig["cType"]) {
-                                //We throw an exception if the field type is not the same in all content types
-                                throw new \Rubedo\Exceptions\Server("The cType of the field must be the same in all the selected content types", "Exception98");
-                            }
-                        }
-                    }
-                }
-            }
-            
-            //Throw an exception if the field type is not set
-            if($fieldType === "") {
-                throw new \Rubedo\Exceptions\Server("The server is unable to determine the cType of the field", "Exception99");
-            }
-            
-            if(!isset($value["rule"])) {
-                $value["rule"] = null;
-            }
-            
-            //Get the  operator in the array
-            $ruleOperator = array_search($value['rule'], $operatorsArray);
-            
-            //Set the filter of the query
-            $this->setFilters($fieldType, $property, $value, $ruleOperator, $filters);
-            
-            /*
-             * Add Sort
-             */
-            if (isset($value['sort'])) {
-                $sort[] = array(
-                    'property' => $property,
-                    'direction' => $value['sort']
-                );
-            } else {
-                $sort[] = array(
-                    'property' => 'id',
-                    'direction' => 'DESC'
-                );
-            }
-        }
-        
-        return array(
-            "filter" => $filters,
-            "sort" => $sort
-        );
+        return $this->dbToBoQuery($query);
     }
-
+    
     /**
-     * Build the taxonomy filter
+     * Do a findone request
      *
-     * @param array $vocabularies
-     *            array of rules by vocabulary
-     * @param string $vocabulariesRule
-     *            OU | ET rule to assemble all filters
-     * @return \WebTales\MongoFilters\IFilter
+     * @param \WebTales\MongoFilters\IFilter $value
+     *            search condition
+     * @return array
      */
-    protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
-    {
-        if ($vocabulariesRule == 'OU') {
-            $filters = Filter::factory('Or');
-        } else {
-            $filters = Filter::factory('And');
-        }
+    public function findOne (\WebTales\MongoFilters\IFilter $value) {
+        $query = parent::findOne($value);
         
-        foreach ($vocabularies as $key => $value) {
-            if (count($value['terms']) > 0) {
-                $filters->addFilter($this->_getVocabularyCondition($key, $value));
-            }
-        }
-        
-        return $filters;
+        return $this->dbToBoQuery($query);
     }
-
+    
     /**
-     * Build filter for a given vocabulary
+     * Do a find request on the current collection
      *
-     * @param string $key
-     *            vocabulary name
-     * @param array $value
-     *            vocabulary parameters (rule and terms)
-     * @return \WebTales\MongoFilters\IFilter
+     * @param array $filters
+     *            filter the list with mongo syntax
+     * @param array $sort
+     *            sort the list with mongo syntax
+     * @return array
      */
-    protected function _getVocabularyCondition ($key, $value)
-    {
-        if ($key == 'navigation') {
-            foreach ($value['terms'] as &$term) {
-                if ($term == "currentPage") {
-                    $currentPage = Manager::getService('PageContent')->getCurrentPage();
-                    if (! $currentPage) {
-                        throw new \Rubedo\Exceptions\Server('Current page is not defined.', "Exception49");
-                    }
-                    $term = $currentPage;
-                }
-            }
+    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null) {
+        $list = parent::getList($filters, $sort, $start, $limit);
+        
+        foreach ($list["data"] as $key => $value) {
+            $list["data"][$key] = $this->dbToBoQuery($value);
         }
         
-        if(!isset($value["rule"])) {
-            $value["rule"] = null;
-        }
-        
-        if (is_array($value['rule'])) {
-            $rule = array_pop($value['rule']);
-        } else {
-            $rule = $value['rule'];
-        }
-        switch ($rule) {
-            case 'allRec':
-                // verify all branches => at least one of each branch
-                $filters = Filter::factory('And');
-                
-                // Definie each sub conditions
-                foreach ($value['terms'] as $child) {
-                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
-                    $termsArray = array(
-                        $child
-                    );
-                    foreach ($terms as $taxonomyTerms) {
-                        $termsArray[] = $taxonomyTerms["id"];
-                    }
-                    // some of a branch
-                    $filters->addFilter(Filter::factory('In')->setName($this->_workspace . '.taxonomy.' . $key)
-                        ->setValue($termsArray));
-                }
-                
-                break;
-            case 'all': // include all terms
-                $filters = Filter::factory('OperatorToValue')->setName($this->_workspace . '.taxonomy.' . $key)
-                    ->setOperator('$all')
-                    ->setValue($value['terms']);
-                break;
-            case 'someRec': // just add children and do 'some' condition
-                foreach ($value['terms'] as $child) {
-                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
-                    foreach ($terms as $taxonomyTerms) {
-                        $value['terms'][] = $taxonomyTerms["id"];
-                    }
-                }
-            case 'some': // simplest one: at least on of the termes
-                $filters = Filter::factory('In')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
-                break;
-            case 'notRec':
-                foreach ($value['terms'] as $child) {
-                    $terms = $this->_taxonomyReader->fetchAllChildren($child);
-                    foreach ($terms as $taxonomyTerms) {
-                        $value['terms'][] = $taxonomyTerms["id"];
-                    }
-                }
-            case 'not': // include all terms
-                $filters = Filter::factory('NotIn')->setName($this->_workspace . '.taxonomy.' . $key)->setValue($value['terms']);
-                
-                break;
-            default:
-                Throw new \Rubedo\Exceptions\Server('Rule "%1$s" not implemented.', "Exception50", $rule);
-                break;
-        }
-        
-        return $filters;
+        return $list;
     }
 }
