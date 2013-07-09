@@ -330,15 +330,19 @@ class Pages extends AbstractLocalizableCollection implements IPages
             $obj['text'] = $obj['title'];
         }
         
-        // set pageUrl
-        if (empty($obj['pageURL'])) {
-            $dataUrl = $obj['title'];
-        } else {
-            $dataUrl = $obj['pageURL'];
+        //ensure validity of pageUrl Fields for each locale
+        foreach($obj['i18n'] as $locale => $value){
+            // set pageUrl
+            if (empty($value['pageURL'])) {
+                $dataUrl = $value['title'];
+            } else {
+                $dataUrl = $value['pageURL'];
+            }
+            
+            // filter URL
+            $obj['i18n'][$locale]['pageURL'] = $this->filterUrl($dataUrl);
         }
-        
-        // filter URL
-        $obj['pageURL'] = $this->filterUrl($dataUrl);
+       
         if (isset($obj['id'])) {
             $obj = $this->writeBlocks($obj);
         }

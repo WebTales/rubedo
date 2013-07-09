@@ -370,7 +370,7 @@ class IndexController extends Zend_Controller_Action
         
         $this->_servicePage->setPageTitle($this->_pageInfo['title']);
         $this->_servicePage->setDescription($this->_pageInfo['description']);
-        $this->_servicePage->setKeywords($this->_pageInfo['keywords']);
+        $this->_servicePage->setKeywords(isset($this->_pageInfo['keywords'])?$this->_pageInfo['keywords']:array());
         
         $rootline = Manager::getService('Pages')->getAncestors($this->_pageInfo);
         $this->_rootlineArray = array();

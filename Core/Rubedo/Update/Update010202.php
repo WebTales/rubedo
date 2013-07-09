@@ -36,9 +36,31 @@ class Update010202 extends Update {
 	 */
 	public static function upgrade() {
        static::importLanguages();
+       static ::siteStrategy();
         return true;
     }
 
+    /**
+     * Set not filed dam items in the directory 'not filed'
+     *
+     * @return boolean
+     */
+    public static function siteStrategy()
+    {
+        $data = array(
+            '$set' => array(
+                'locStrategy' => 'onlyOne'
+            )
+        );
+        $updateCond = Filter::factory('OperatorToValue')->setName('locStrategy')
+        ->setOperator('$exists')
+        ->setValue(false);
+        $options = array(
+            'multiple' => true
+        );
+        Manager::getService('Sites')->customUpdate($data, $updateCond, $options);
+        return true;
+    }
     
     public static function importLanguages(){
     	$tsvFile = APPLICATION_PATH.'/../data/ISO-639-2_utf-8.txt';
