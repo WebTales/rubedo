@@ -999,8 +999,30 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         return self::$localizableFiledForCType[$cTypeId];
     }
-
     
+    
+	/**
+     * Custom array_merge
+     *
+     * Do a recursive array merge except that numeric array are overriden
+     *
+     * @param array $array1            
+     * @param array $array2            
+     * @return array
+     */
+    protected function merge($array1, $array2)
+    {
+        foreach ($array2 as $key => $value) {
+            if (isset($array1[$key]) && is_array($value) && ! $this->isNumericArray($value)) {
+                $array1[$key] = $this->merge($array1[$key], $array2[$key]);
+            } elseif(isset($array1[$key]) && is_array($value) && $key == 'fields') {
+                $array1[$key] = $this->merge($array1[$key], $array2[$key]);
+            }else {
+                $array1[$key] = $value;
+            }
+        }
+        return $array1;
+    }   
     
     
 }
