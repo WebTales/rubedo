@@ -118,10 +118,9 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
     public function addLocalizationAction()
     {
         \Rubedo\Collection\Pages::localizeAllCollection();
-        die();
-//         $this->_helper->json(array(
-//             'success' => true
-//         ));
+        $this->_helper->json(array(
+            'success' => true
+        ));
     }
     
     public function getFlagsListAction(){
