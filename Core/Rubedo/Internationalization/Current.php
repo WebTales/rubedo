@@ -78,6 +78,11 @@ class Current implements ICurrent
             // store locale in session
             $currentLocaleInSession[$siteId] = $locale;
             $sessionService->set('currentLocale', $currentLocaleInSession);
+            
+            AbstractLocalizableCollection::setLocalizationStrategy($site['locStrategy']);
+            if($site['locStrategy']=='fallback'){
+                AbstractLocalizableCollection::setFallbackLocale($site['defaultLanguage']);
+            }
         } else {
             $locale = 'en';
         }

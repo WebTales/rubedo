@@ -133,6 +133,8 @@ class Pages extends AbstractLocalizableCollection implements IPages
         'blocks',
         'parentId'
     );
+    
+    protected static $isLocaleFiltered = true;
 
     /**
      * Only access to content with read access

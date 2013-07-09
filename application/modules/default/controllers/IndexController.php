@@ -160,6 +160,7 @@ class IndexController extends Zend_Controller_Action
         
         //reload page in localization context
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $hasAccessToBO = Manager::getService('Acl')->hasAccess('ui.backoffice');
@@ -246,7 +247,7 @@ class IndexController extends Zend_Controller_Action
         
         $keywords = $this->_servicePage->getKeywords();
         if (count($keywords) === 0) {
-            $keywords = is_array($this->_site['keywords']) ? $this->_site['keywords'] : array();
+            $keywords = (isset($this->_site['keywords'])&&is_array($this->_site['keywords'])) ? $this->_site['keywords'] : array();
         }
         if (is_array($keywords)) {
             $twigVar['keywords'] = implode(',', $keywords);
