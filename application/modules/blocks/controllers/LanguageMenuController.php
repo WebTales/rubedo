@@ -39,6 +39,8 @@ class Blocks_LanguageMenuController extends Blocks_AbstractController
     {
         $output = $this->getAllParams();
         
+
+        
         if (isset($output['block-config']['displayAs'])) {
             switch ($output['block-config']['displayAs']) {
                 case "menu":
@@ -66,14 +68,16 @@ class Blocks_LanguageMenuController extends Blocks_AbstractController
                 ->setValue($site['languages']));
             $filters->addFilter(Filter::factory('Value')->setName('active')
                 ->setValue(true));
-            $languageResult = Manager::getService('Languages')->getList($filters,array(array('property'=>'label','order'=>'ASC')));
+            $languageResult = Manager::getService('Languages')->getList($filters,array(array('property'=>'label','direction'=>'ASC')));
             $output['languages'] = $languageResult['data'];
+            $output['showCurrentLanguage'] = $output['block-config']['showCurrentLanguage'];
         }
         
         $css = array();
         $js = array(
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/language.js")
         );
+                
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
