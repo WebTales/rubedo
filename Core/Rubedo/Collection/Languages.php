@@ -32,9 +32,6 @@ class Languages extends AbstractCollection implements ILanguages
         array(
             'keys' => array(
                 'iso2' => 1
-            ),
-            'options' => array(
-                'unique' => true
             )
         ),
         array(
@@ -50,7 +47,7 @@ class Languages extends AbstractCollection implements ILanguages
     protected static $activated = null;
 
     protected static $activeLanguages = array();
-    
+
     protected static $defaultLanguage = null;
 
     public function __construct()
@@ -69,7 +66,7 @@ class Languages extends AbstractCollection implements ILanguages
     {
         $filter = Filter::factory('Value')->setValue($name)->setName('locale');
         $result = $this->_dataService->findOne($filter);
-        if($result){
+        if ($result) {
             $result = $this->_addReadableProperty($result);
         }
         return $result;
@@ -84,7 +81,7 @@ class Languages extends AbstractCollection implements ILanguages
     public function findByIso($iso)
     {
         $filter = Filter::factory('Value')->setValue($iso)->setName('iso2');
-        if($result){
+        if ($result) {
             $result = $this->_dataService->findOne($filter);
         }
         return $result;
@@ -115,19 +112,17 @@ class Languages extends AbstractCollection implements ILanguages
         return self::$activeLanguages[$locale];
     }
     
-    //todo : set this to "isDefault" when ready
-    public function getDefaultLanguage(){
+    // todo : set this to "isDefault" when ready
+    public function getDefaultLanguage()
+    {
         if (! isset(self::$defaultLanguage)) {
             $filter = Filter::factory('Value')->setValue(true)->setName('isDefault');
             $result = $this->_dataService->findOne($filter);
             self::$defaultLanguage = $result;
         }
-        if(isset(self::$defaultLanguage)){
+        if (isset(self::$defaultLanguage)) {
             return self::$defaultLanguage['locale'];
-        }else{
-            return 'en';
         }
-        
     }
     
     /*
@@ -137,16 +132,16 @@ class Languages extends AbstractCollection implements ILanguages
     {
         throw new Rubedo\Exceptions\User('Languages can\'t be deleted', "Exception100");
     }
-    
+
     /**
      * Add a readOnly field to contents based on user rights
      *
-     * @param array $obj
+     * @param array $obj            
      * @return array
      */
-    protected function _addReadableProperty ($obj)
+    protected function _addReadableProperty($obj)
     {
-        list($label) = explode(';',$obj['label']);
+        list ($label) = explode(';', $obj['label']);
         $obj['label'] = $label;
         return $obj;
     }

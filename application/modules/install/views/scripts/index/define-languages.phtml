@@ -1,0 +1,13 @@
+<h1>Default language Configuration</h1>
+<p>A rubedo installation should have at least one active language which will be called the default language.</p>
+<p>If you are upgrading from an older version without languages support, all your records will be flagged with this language.</p>
+<br />
+<div id="alerts">
+    <?php if($this->hasError){?>
+    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
+    <?php }?>
+    <?php if($this->isReady){?>
+    <div class="alert alert-success">Default language is set.</div>
+    <?php }?>
+</div>
+<?php echo $this->form->render();?>

@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Update\Install;
 
 /**
  * Installer Controller
@@ -209,6 +210,77 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
+    /**
+     * loadLanguages and define default and Active Languages
+     */
+    public function defineLanguagesAction()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'define-languages';
+        }
+        
+        $params = array();
+        $ok = false;
+        
+        $languageService = Manager::getService('Languages');
+        
+        $defaultLocale = $languageService->getDefaultLanguage();
+        if ($defaultLocale) {
+            $ok = true;
+        }
+        
+        $languageListResult = $languageService->getList(null, array(
+            array(
+                'property' => 'label',
+                'direction' => 'asc'
+            )
+        ));
+        if ($languageListResult['count'] == 0) {
+            Install::importLanguages();
+            $languageListResult = $languageService->getList(null, array(
+                array(
+                    'property' => 'label',
+                    'direction' => 'asc'
+                )
+            ));
+        }
+        $languageList = $languageListResult["data"];
+        $languageSelectList = array();
+        $languageSelectList[]="";
+        
+        foreach ($languageList as $value) {
+            list ($label) = explode(';', $value['label']);
+            $languageSelectList[$value['locale']] = isset($value['ownLabel']) && ! empty($value['ownLabel']) ? $value['ownLabel'] : $label;
+        }
+        
+        $params['languages'] = $languageSelectList;
+        $params['defaultLanguage'] = isset($defaultLocale) ? $defaultLocale : 'en';
+        
+        $dbForm = Install_Model_LanguagesConfigForm::getForm($params);
+        
+        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+            $values = $dbForm->getValues();
+            $update = install::setDefaultRubedoLanguage($values['defaultLanguage']);
+            if ($update) {
+                $ok = true;
+            }
+        }
+        
+        if ($ok) {
+            $this->view->isReady = true;
+        } else {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'A default language should be activated';
+        }
+        
+        $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+    
+    
     public function setMailerAction ()
     {
         $this->view->displayMode = 'regular';
@@ -613,6 +685,7 @@ class Install_IndexController extends Zend_Controller_Action
         
         if($success){
         	Rubedo\Update\Update::update();
+        	\Rubedo\Collection\Pages::localizeAllCollection();
         }
         
         
