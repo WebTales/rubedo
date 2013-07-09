@@ -103,7 +103,7 @@ class IndexController extends Zend_Controller_Action
     /**
      * Main Action : render the Front Office view
      */
-    public function indexAction ()
+    public function indexAction()
     {
         if ($this->getParam('tk', null)) {
             $this->_forward('index', 'tiny');
@@ -112,8 +112,6 @@ class IndexController extends Zend_Controller_Action
         
         $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
         $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
-        
-        
         
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
@@ -151,14 +149,14 @@ class IndexController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
-        //init browser languages
+        // init browser languages
         $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
         $browserLanguages = array_keys($zend_locale->getBrowser());
-                
-        // context
-        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'],null,$browserLanguages);
         
-        //reload page in localization context
+        // context
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages);
+        
+        // reload page in localization context
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
@@ -187,7 +185,7 @@ class IndexController extends Zend_Controller_Action
             Zend_Registry::set('draft', false);
         }
         
-        //template service
+        // template service
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         
         // build contents tree
@@ -247,7 +245,7 @@ class IndexController extends Zend_Controller_Action
         
         $keywords = $this->_servicePage->getKeywords();
         if (count($keywords) === 0) {
-            $keywords = (isset($this->_site['keywords'])&&is_array($this->_site['keywords'])) ? $this->_site['keywords'] : array();
+            $keywords = (isset($this->_site['keywords']) && is_array($this->_site['keywords'])) ? $this->_site['keywords'] : array();
         }
         if (is_array($keywords)) {
             $twigVar['keywords'] = implode(',', $keywords);
@@ -290,7 +288,7 @@ class IndexController extends Zend_Controller_Action
         $this->getResponse()->appendBody($content, 'default');
     }
 
-    public function testMailAction ()
+    public function testMailAction()
     {
         $to = $this->getParam('to', null);
         if (is_null($to)) {
@@ -331,7 +329,7 @@ class IndexController extends Zend_Controller_Action
      *            requested URL
      * @return array
      */
-    protected function _getPageInfo ($pageId)
+    protected function _getPageInfo($pageId)
     {
         $this->_mask = Manager::getService('Masks')->findById($this->_pageInfo['maskId']); // maskId
         if (! $this->_mask) {
@@ -386,7 +384,7 @@ class IndexController extends Zend_Controller_Action
         return $this->_pageInfo;
     }
 
-    protected function _getSingleBlock ()
+    protected function _getSingleBlock()
     {
         $block = array();
         $block['configBloc'] = array();
@@ -401,7 +399,7 @@ class IndexController extends Zend_Controller_Action
         return $block;
     }
 
-    protected function _getMainColumn ()
+    protected function _getMainColumn()
     {
         return isset($this->_mask['mainColumnId']) ? $this->_mask['mainColumnId'] : null;
     }
@@ -412,7 +410,7 @@ class IndexController extends Zend_Controller_Action
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos (array $columns = null, $noSpan = false)
+    protected function _getColumnsInfos(array $columns = null, $noSpan = false)
     {
         if ($columns === null) {
             return null;
@@ -447,7 +445,7 @@ class IndexController extends Zend_Controller_Action
      * @param array $blocks            
      * @return array
      */
-    protected function _getBlocksInfos (array $blocks)
+    protected function _getBlocksInfos(array $blocks)
     {
         $returnArray = array();
         foreach ($blocks as $block) {
@@ -462,7 +460,7 @@ class IndexController extends Zend_Controller_Action
      * @param array $rows            
      * @return array
      */
-    protected function _getRowsInfos (array $rows = null)
+    protected function _getRowsInfos(array $rows = null)
     {
         if ($rows === null) {
             return null;
@@ -500,13 +498,13 @@ class IndexController extends Zend_Controller_Action
      *            bloc options (type, filter params...)
      * @return array block data to be rendered
      */
-    protected function _getBlockData ($block)
+    protected function _getBlockData($block)
     {
         $params = array();
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
-        $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc'.$block['id'];
+        $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
         $params['elementTag'] = isset($block['elementTag']) ? $block['elementTag'] : null;
@@ -669,7 +667,7 @@ class IndexController extends Zend_Controller_Action
             case "mailingList":
                 $controller = "mailing-list";
                 break;
-                
+            
             case "languageMenu":
                 $controller = "language-menu";
                 break;
@@ -681,7 +679,7 @@ class IndexController extends Zend_Controller_Action
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc'.$block['id'];
+                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
                 $route->setPrefix($prefix);
                 
                 $allParams = $this->getAllParams();
@@ -739,7 +737,7 @@ class IndexController extends Zend_Controller_Action
         );
     }
 
-    protected function _buildResponsiveClass ($responsiveArray)
+    protected function _buildResponsiveClass($responsiveArray)
     {
         foreach ($responsiveArray as $key => $value) {
             if (false == $value) {
