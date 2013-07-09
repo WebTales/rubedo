@@ -140,7 +140,8 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         if ($obj) {
             $obj = $this->_addReadableProperty($obj);
         }
-        return $obj;
+        return $this->localizeOutput($obj);
+       // return $obj;
     }
     
     /*
