@@ -27,7 +27,7 @@ use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection, Rubedo\Services\Ma
  * @category Rubedo
  * @package Rubedo
  */
-abstract class WorkflowAbstractCollection extends AbstractCollection implements IWorkflowAbstractCollection
+abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection implements IWorkflowAbstractCollection
 {
 
     protected function _init ()
