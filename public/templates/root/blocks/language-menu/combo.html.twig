@@ -8,7 +8,7 @@
 	<ul class="dropdown-menu">
 		{% for language in languages %}
 		{% if showCurrentLanguage or language.locale != currentLanguage.locale %}
-		<li><a href="#" onclick="chooseLanguage('{{ language.locale }}');">
+		<li><a href="#" onclick="chooseLanguage('{{ language.locale }}');return false;">
 		{% if language.flagCode %}<i class=""><img src="/assets/flags/16/{{ language.flagCode }}.png"/></i>{% endif %} {% if language.ownLabel %}{{ language.ownLabel }}{% else %}{{ language.label }}{% endif %}</a></li> 
 				{% endif %}
 		{% endfor %}
