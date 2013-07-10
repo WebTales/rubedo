@@ -31,7 +31,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
@@ -202,12 +202,12 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $this->_sendResponse($output, $template, $css, $js);
     }
 
-    public function getContentsAction ()
+    public function getContentsAction()
     {
         $this->_dataReader = Manager::getService('Contents');
         $returnArray = array();
         $data = $this->getRequest()->getParams();
-        if (isset($data['block']['contentId'])) {
+        if (isset($data['block']['contentId']) && ! empty($data['block']['contentId'])) {
             $content = $this->_dataReader->findById($data['block']['contentId']);
             $returnArray[] = array(
                 'text' => $content['text'],
