@@ -361,7 +361,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         $tempFields = array();
         $tempFields['text'] = $obj['text'];
-        $tempFields['summary'] = $obj['fields']['summary'];
+        $tempFields['summary'] = $obj['i18n'][$obj['nativeLanguage']]['fields']['summary'];
         
         foreach ($contentTypeFields as $value) {
             $fieldsArray[$value['config']['name']] = $value;
