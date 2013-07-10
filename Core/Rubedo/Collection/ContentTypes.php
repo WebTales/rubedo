@@ -397,7 +397,7 @@ class ContentTypes extends AbstractCollection implements IContentTypes
             }
         }
         
-        if(in_array($contentType['CTType'],array('richText','simpleText'))){
+        if(isset($contentType['CTType']) && in_array($contentType['CTType'],array('richText','simpleText'))){
             $localizableFieldArray[] = 'body';
         }
         
