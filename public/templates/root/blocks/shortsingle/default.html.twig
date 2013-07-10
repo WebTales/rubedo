@@ -21,6 +21,6 @@
 	        <div class="pull-left">{% include "/root/blocks/fields/date.html.twig" with {"data": content, "key": "date"} %}</div>
 	    {% endif %}
     	{% include "/root/blocks/edition/full-edition-button.html.twig" with { "data" : content, "alignRight" : true } %}
-    	<a class="pull-right" href="{{ displayUrl(content.id,"default",null,singlePage) }}">En savoir plus</a>
+    	<a class="pull-right" href="{{ displayUrl(content.id,"default",null,singlePage) }}">{{ "Block.ContentList.Label.ReadMore" | fotrans }}</a>
 	</div>
 </div>
