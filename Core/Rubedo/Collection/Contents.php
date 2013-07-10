@@ -1025,4 +1025,31 @@ class Contents extends WorkflowAbstractCollection implements IContents
     }   
     
     
+    /**
+     * Localize not yet localized items of the current collection
+     */
+    public function addLocalizationForCollection()
+    {
+        $wasFiltered = parent::disableUserFilter();
+        $this->_dataService->clearFilter();
+        $this->_dataService->setWorkspace();
+        $items = AbstractCollection::getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
+            ->setOperator('$exists')
+            ->setValue(false));
+        if ($items['count'] > 0) {
+            foreach ($items['data'] as $item) {
+                if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
+                    $item = $this->addlocalization($item);
+                    //$this->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
+                    $this->update($item,array(),false);
+                    if($item['status']=='published'){
+                        $this->publish($item['id']);
+                    }
+                }
+            }
+        }
+    
+        parent::disableUserFilter($wasFiltered);
+    }
+    
 }
