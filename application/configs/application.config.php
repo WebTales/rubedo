@@ -225,6 +225,11 @@ return array(
         1 => 'public/components/webtales/rubedo-localization/languagekey/Generic/genericTranslations.json',
         2 => 'public/components/webtales/rubedo-localization/languagekey/BackOffice/FrontEndEdition/frontEndLabels.json',
         3 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Search/search.json',
-        4 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ContentList/list.json'
+        4 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ContentList/list.json',
+        5 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Authentication/auth.json',
+        6 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Contact/contact.json',
+        7 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Form/form.json',
+        8 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Gallery/gallery.json',
+        9 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/GeoSearch/geo.json'
     )
 );

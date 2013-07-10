@@ -18,12 +18,12 @@ introduction %}
 		<input type="hidden" name="dam-id"
 			id="damId-{{prefix}}" value="{{damId}}" /> 
 		<label
-			class="control-label" for="email-{{prefix}}">Email</label>
+			class="control-label" for="email-{{prefix}}">{{ "Label.Email" | fotrans }}</label>
 		<div class="input-append">
 			<input type="text" class="input-medium" name="email" id="email-{{prefix}}"
-				placeholder="Email" />
+				placeholder="{{ "Label.Email" | fotrans }}" />
 
-			<button class="btn" onClick="submitEmail('{{prefix}}');return false;">Envoyer</button>
+			<button class="btn" onClick="submitEmail('{{prefix}}');return false;">{{ "Label.Send" | fotrans }}</button>
 		</div>
 	</form>
 	<div id="message-{{prefix}}"></div>

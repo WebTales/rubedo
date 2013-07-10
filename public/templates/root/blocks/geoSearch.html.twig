@@ -14,7 +14,7 @@
 	<div class="span9">
 	   {% if blockConfig.showPlacesSearch %}
 	   <div id="{{prefix}}holderpanel">
-          <input id="{{prefix}}target" type="text" placeholder="Adresse">
+          <input id="{{prefix}}target" type="text" placeholder="{{ "Blocks.GeoSearch.Label.Address" | fotrans }}">
         </div>
         {% endif %}
         <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
@@ -24,7 +24,7 @@
 	<div class="span12">
 	   {% if blockConfig.showPlacesSearch %}
     	<div id="{{prefix}}holderpanel">
-          <input id="{{prefix}}target" type="text" placeholder="Adresse">
+          <input id="{{prefix}}target" type="text" placeholder="{{ "Blocks.GeoSearch.Label.Address" | fotrans }}">
         </div>
         {% endif %}
 		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>

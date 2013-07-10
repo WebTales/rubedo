@@ -5,9 +5,9 @@
     <form class="form-horizontal" action="{{url({'pageId': searchPage})}}" method="get">
     
         <div class="control-group">
-            <label class="control-label" for="inputMotCle">Mot clé</label>
+            <label class="control-label" for="inputMotCle">{{ "Blocks.Search.Label.KeyWords" | fotrans }}</label>
             <div class="controls">
-                <input id="inputMotCle" type="text" placeholder="{% if placeholder %}{{placeholder}}{% else %}Rechercher{% endif %}" name="query">
+                <input id="inputMotCle" type="text" placeholder="{% if placeholder %}{{placeholder}}{% else %}{{ "Search.Label.Search" | fotrans }}{% endif %}" name="query">
             </div>
         </div>
         
@@ -26,12 +26,11 @@
         {% endfor %}
         
         <div class="control-group">
-            <label class="control-label"><a href="{{url({'pageId': searchPage})}}">Voir tous les résultats</a></label>
+            <label class="control-label"><a href="{{url({'pageId': searchPage})}}">{{ "Blocks.Search.Label.SeeAllResults" | fotrans }}</a></label>
             <div class="controls">
-                <button type="submit" class="btn btn-primary">Rechercher</button>
+                <button type="submit" class="btn btn-primary">{{ "Search.Label.Search" | fotrans }}</button>
             </div>
         </div>
-    	
     </form>
 
 {% endblock %}

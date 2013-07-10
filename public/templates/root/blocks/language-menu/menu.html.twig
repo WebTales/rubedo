@@ -4,7 +4,7 @@
     {% for language in languages %}
 		{% if showCurrentLanguage or language.locale != currentLanguage.locale %}
 		<a href="#" class="btn {% if language.locale == currentLanguage.locale %}btn-primary disabled{% endif %}" 
-		              {% if language.locale != currentLanguage.locale %}onclick="chooseLanguage('{{ language.locale }}');"{% endif %}>
+		              {% if language.locale != currentLanguage.locale %}onclick="chooseLanguage('{{ language.locale }}');return false;"{% endif %}>
 		              {% if language.flagCode %}<i class=""><img src="/assets/flags/16/{{ language.flagCode }}.png"/></i>{% endif %} {% if language.ownLabel %}{{ language.ownLabel }}{% else %}{{ language.label }}{% endif %}</a>
 		
         {% endif %}
