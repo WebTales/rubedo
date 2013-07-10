@@ -930,7 +930,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                         unset($obj['i18n'][$locale][$key]);
                     }
                     foreach ($obj['i18n'][$locale]['fields'] as $field => $value){
-                        if(in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
+                        if(!in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
                             unset($obj['i18n'][$locale]['fields'][$field]);
                         }
                     }
