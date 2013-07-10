@@ -377,6 +377,12 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         return $result;
     }
     
+    /**
+     * Return localizable fields for content type
+     * 
+     * @param string $cTypeId
+     * @return array
+     */
     public function getLocalizableFieldForCType($cTypeId){
         $contentType = $this->findById($cTypeId);
         $fieldsDef = $contentType['fields'];
@@ -389,6 +395,10 @@ class ContentTypes extends AbstractCollection implements IContentTypes
             if(isset($fieldDef['config']['localizable']) && $fieldDef['config']['localizable']==true){
                 $localizableFieldArray[]=$fieldDef['config']['name'];
             }
+        }
+        
+        if(in_array($contentType['CTType'],array('richText','simpleText'))){
+            $localizableFieldArray[] = 'body';
         }
         
         return $localizableFieldArray;
