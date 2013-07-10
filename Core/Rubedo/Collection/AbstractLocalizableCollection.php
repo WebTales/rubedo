@@ -429,7 +429,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($items['count'] > 0) {
             foreach ($items['data'] as $item) {
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
-                    $item = $service->addlocalization($item);
+                    $item = $this->addlocalization($item);
                     // $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
                     $this->update($item);
                 }
