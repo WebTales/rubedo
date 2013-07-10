@@ -69,15 +69,9 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
         
         $boLangFilter = Filter::factory('In')->setName('locale')->setValue($boLangDirArray);
         
-        if (Manager::getService('CurrentUser')->getLanguage() == 'fr') {
-            $labelField = 'labelFr';
-        } else {
-            $labelField = 'label';
-        }
-        
         $result = Manager::getService('Languages')->getList($boLangFilter, array(
             array(
-                'property' => $labelField,
+                'property' => 'label',
                 'direction' => 'ASC'
             )
         ));
@@ -85,7 +79,7 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
         foreach ($result['data'] as $languages) {
             $languagesArray[] = array(
                 'key' => $languages['locale'],
-                'label' => $languages[$labelField]
+                'label' => isset($languages['ownLabel'])?$languages['ownLabel']:$languages['label']
             );
         }
         $this->_returnJson(array(
