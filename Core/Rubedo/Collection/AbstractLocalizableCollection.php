@@ -422,8 +422,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     public function addLocalizationForCollection()
     {
         $wasFiltered = parent::disableUserFilter();
-        $service = new static();
-        
+        $this->_dataService->clearFilter();
         $items = parent::getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
             ->setOperator('$exists')
             ->setValue(false));
@@ -431,8 +430,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             foreach ($items['data'] as $item) {
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
                     $item = $service->addlocalization($item);
-                    $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
-                    $service->update($item);
+                    // $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
+                    $this->update($item);
                 }
             }
         }
