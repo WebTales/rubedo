@@ -34,11 +34,12 @@ class Blocks_RichTextController extends Blocks_AbstractController
     {
         $blockConfig = $this->getParam('block-config', array());
         
-        $content = Manager::getService('Contents')->findById($blockConfig["contentId"]);
-        
+        Zend_Debug::dump($blockConfig["contentId"]);
+        $content = Manager::getService('Contents')->findById($blockConfig["contentId"],true,false);
+        //Zend_Debug::dump($content);die();
         $output = $this->getAllParams();
         $output['contentId'] = $blockConfig["contentId"];
-        $output['text'] = $content["workspace"]["fields"]["body"];
+        $output['text'] = $content["fields"]["body"];
         $output['editorConfig'] = isset($blockConfig['editorConfig']) ? $blockConfig['editorConfig'] : null;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/richtext.html.twig");
         
