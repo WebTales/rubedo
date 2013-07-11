@@ -230,6 +230,8 @@ return array(
         6 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Contact/contact.json',
         7 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Form/form.json',
         8 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Gallery/gallery.json',
-        9 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/GeoSearch/geo.json'
+        9 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/GeoSearch/geo.json',
+        10 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Fields/Localizer/loc.json',
+        11 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ProtectedRessource/ressource.json'
     )
 );

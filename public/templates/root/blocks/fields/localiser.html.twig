@@ -3,7 +3,7 @@
         <div id="list-editmode" class="hide">
         	<div class="btn-group pull-left">
         	    <a class="btn" href="#" id="btn-add-content" onclick="createContentWindow('{{query.type}}','{{data[0].typeId}}','{{query.id}}')">
-        	        <i class="icon-plus-sign"></i> Ajouter un contenu
+        	        <i class="icon-plus-sign"></i> {{ "Fields.Localizer.Label.AddAContent" | fotrans }}
         	    </a>
         	</div>
         </div>
@@ -27,25 +27,25 @@
         </div>
     
         <div id="{{ data.id }}_{{key}}-edit" class="btn-group">
-            <legend>Edition</legend>
+            <legend>{{ "Fields.Localizer.Label.Edition" | fotrans }}</legend>
             
             <div>
-                <label class="show-rubedo clear-both control-label" for="inputAddress">Adresse</label>
+                <label class="show-rubedo clear-both control-label" for="inputAddress">{{ "Blocks.GeoSearch.Label.Address" | fotrans }}</label>
                 <input class="input-xxlarge address localiser-address"  type="text" placeholder="{{ data[key].address|cleanHtml }}" >
             </div>
     
             <div class="btn-group pull-left">
-                <label class="show-rubedo clear-both control-label" for="inputLatitude">Latitude</label>
+                <label class="show-rubedo clear-both control-label" for="inputLatitude">{{ "Fields.Localizer.Label.Latitude" | fotrans }}</label>
                 <input class="input-xxlarge latitude"  type="text" placeholder="{{ data[key].lat|cleanHtml }}">
             </div>
     
             <div class="btn-group pull-right">
-                <label class="show-rubedo clear-both control-label" for="inputLongitude" >Longitude</label>
+                <label class="show-rubedo clear-both control-label" for="inputLongitude" >{{ "Fields.Localizer.Label.Longitude" | fotrans }}</label>
                 <input class="input-xxlarge longitude" type="text" placeholder="{{ data[key].lon|cleanHtml }}">
             </div>
             
             <div class="clear-both btn-group pull-right">
-               <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>Rafraîchir</a>
+               <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>{{ "Label.Refresh" | fotrans }}</a>
             </div>
         </div>
     </div>
