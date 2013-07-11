@@ -118,11 +118,13 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             "text" => "test",
             "nativeLanguage" => "en",
             "i18n" => array(
-                "fiels" => array(
-                    'text' => 'test',
-                    'summary' => 'content summary',
-                    'description' => 'test',
-                    'body' => '<p>Paragraphe</p>'
+                "en" => array(
+                    "fields" => array(
+                        'text' => 'test',
+                        'summary' => 'content summary',
+                        'description' => 'test',
+                        'body' => '<p>Paragraphe</p>'
+                    )
                 )
             ),
             "target" => array(
@@ -186,11 +188,13 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             "text" => "",
             "nativeLanguage" => "en",
             "i18n" => array(
-                "fiels" => array(
-                    'text' => '',
-                    'summary' => 'content summary',
-                    'description' => 'test',
-                    'body' => '<p>Paragraphe</p>'
+                "en" => array(
+                    "fields" => array(
+                        'text' => '',
+                        'summary' => 'content summary',
+                        'description' => 'test',
+                        'body' => '<p>Paragraphe</p>'
+                    )
                 )
             ),
             "target" => array(
@@ -262,11 +266,13 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             "text" => "test",
             "nativeLanguage" => "en",
             "i18n" => array(
-                "fiels" => array(
-                    'text' => 'test',
-                    'summary' => 'content summary',
-                    'description' => 'test',
-                    'body' => ''
+                "en" => array(
+                    "fields" => array(
+                        'text' => 'test',
+                        'summary' => 'content summary',
+                        'description' => 'test',
+                        'body' => ''
+                    )
                 )
             ),
             "target" => array(
@@ -341,11 +347,13 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             "text" => "test",
             "nativeLanguage" => "en",
             "i18n" => array(
-                "fields" => array(
-                    'text' => 'test',
-                    'summary' => 'summary of test',
-                    'description' => 'test',
-                    'body' => '<p>Paragraphe</p>'
+                "en" => array(
+                    "fields" => array(
+                        'text' => 'test',
+                        'summary' => 'summary of test',
+                        'description' => 'test',
+                        'body' => '<p>Paragraphe</p>'
+                    )
                 )
             ),
             "target" => array(
@@ -409,11 +417,13 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             "text" => "test",
             "nativeLanguage" => "en",
             "i18n" => array(
-                "fields" => array(
-                    'text' => 'test',
-                    'summary' => 'summary of test',
-                    'description' => 'test',
-                    'body' => '<p>Paragraphe</p>'
+                "en" => array(
+                    "fields" => array(
+                        'text' => 'test',
+                        'summary' => 'summary of test',
+                        'description' => 'test',
+                        'body' => '<p>Paragraphe</p>'
+                    )
                 )
             ),
             "target" => array(
@@ -474,6 +484,10 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             )
         )));
         
+        $this->_mockContentTypesService->expects($this->once())
+            ->method('getLocalizableFieldForCType')
+            ->will($this->returnValue(array()));
+        
         $obj = array(
             "id" => "test",
             "typeId" => "50c0c8669a199d930f000001",
@@ -485,10 +499,12 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             "text" => "test",
             "nativeLanguage" => "en",
             "i18n" => array(
-                "fields" => array(
-                    'text' => 'test',
-                    'summary' => 'test',
-                    'body' => 'Paragraphe'
+                "en" => array(
+                    "fields" => array(
+                        'text' => 'test',
+                        'summary' => 'test',
+                        'body' => 'Paragraphe'
+                    )
                 )
             ),
             "target" => "test",
@@ -659,10 +675,12 @@ class ContentsTest extends PHPUnit_Framework_TestCase
             "text" => "test",
             "nativeLanguage" => "en",
             "i18n" => array(
-                "fields" => array(
-                    'text' => 'test',
-                    'summary' => 'test',
-                    'body' => 'http://test.fr'
+                "en" => array(
+                    "fields" => array(
+                        'text' => 'test',
+                        'summary' => 'test',
+                        'body' => 'http://test.fr'
+                    )
                 )
             ),
             "target" => array(
