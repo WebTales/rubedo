@@ -131,6 +131,9 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         return $resultArray;
     }
 
+    /**
+     * @todo change from address !
+     */
     protected function _sendEmail ($url)
     {
         $twigVar = array(
@@ -154,6 +157,8 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         
         $message->setBody($plainMailBody);
         $message->addPart($mailBody, 'text/html');
+        
+        $message->setFrom("test@rubedo.fr");
         
         $result = $mailService->sendMessage($message);
         if ($result === 1) {
