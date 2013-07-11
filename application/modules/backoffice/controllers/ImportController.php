@@ -371,6 +371,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                 }
                                 if (isset($theTerm['id'])) {
                                     $contentParamsTaxonomy[$theTaxoId][] = $theTerm['id'];
+                                } else if (isset($theTerm['data']['id'])){
+                                    $contentParamsTaxonomy[$theTaxoId][] = $theTerm['data']['id'];
                                 }
                             }
                         }
