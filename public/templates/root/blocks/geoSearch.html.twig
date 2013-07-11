@@ -327,37 +327,44 @@
      
       window.onload = initialize;
 
-      var mapCanvasWidth = document.getElementById("{{prefix}}map_canvas").clientWidth;
-      var fieldContainer = document.getElementById("{{prefix}}holderpanel");
-      var field = document.getElementById("{{prefix}}target");
-      
-      if(mapCanvasWidth < 430) {
-          var width = mapCanvasWidth - 35;
+      function placeField() {
+          var mapCanvasWidth = document.getElementById("{{prefix}}map_canvas").clientWidth;
+          var fieldContainer = document.getElementById("{{prefix}}holderpanel");
+          var field = document.getElementById("{{prefix}}target");
           
-          fieldContainer.style.width = width+"px";
-          fieldContainer.style.marginLeft = "35px";
-
-          field.style.width = (width*0.7)+"px";
-
-          var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 35;
-
-          if(fieldMargin > 0) {
-      	      field.style.marginLeft = fieldMargin+"px";
+          if(mapCanvasWidth < 430) {
+              var width = mapCanvasWidth - 35;
+              
+              fieldContainer.style.width = width+"px";
+              fieldContainer.style.marginLeft = "35px";
+    
+              field.style.width = (width*0.7)+"px";
+    
+              var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 35;
+    
+              if(fieldMargin > 0) {
+          	      field.style.marginLeft = fieldMargin+"px";
+              }
+          } else {
+        	  var width = mapCanvasWidth - 75;
+        	  
+        	  fieldContainer.style.width = width+"px";
+        	  fieldContainer.style.marginLeft = "75px";
+    
+        	  field.style.width = (width*0.7)+"px";
+    
+        	  var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 75;
+    
+        	  if(fieldMargin > 0) {
+        	      field.style.marginLeft = fieldMargin+"px";
+        	  }
           }
-      } else {
-    	  var width = mapCanvasWidth - 75;
-    	  
-    	  fieldContainer.style.width = width+"px";
-    	  fieldContainer.style.marginLeft = "75px";
-
-    	  field.style.width = (width*0.7)+"px";
-
-    	  var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 75;
-
-    	  if(fieldMargin > 0) {
-    	      field.style.marginLeft = fieldMargin+"px";
-    	  }
       }
+
+      placeField();
+      window.onresize = function() {
+    	  placeField();
+      };
 </script>
 
 <style type="text/css">
@@ -365,7 +372,7 @@
 #{{prefix}}holderpanel {
     position: relative;
     bottom: -45px;
-    z-index: 99999999;
+    z-index: 1;
 }
 #{{prefix}}map_canvas{
     bottom: 30px;
