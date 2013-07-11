@@ -326,24 +326,49 @@
       }
      
       window.onload = initialize;
+
+      var mapCanvasWidth = document.getElementById("{{prefix}}map_canvas").clientWidth;
+      var fieldContainer = document.getElementById("{{prefix}}holderpanel");
+      var field = document.getElementById("{{prefix}}target");
+      
+      if(mapCanvasWidth < 430) {
+          var width = mapCanvasWidth - 35;
+          
+          fieldContainer.style.width = width+"px";
+          fieldContainer.style.marginLeft = "35px";
+
+          field.style.width = (width*0.7)+"px";
+
+          var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 35;
+
+          if(fieldMargin > 0) {
+      	      field.style.marginLeft = fieldMargin+"px";
+          }
+      } else {
+    	  var width = mapCanvasWidth - 75;
+    	  
+    	  fieldContainer.style.width = width+"px";
+    	  fieldContainer.style.marginLeft = "75px";
+
+    	  field.style.width = (width*0.7)+"px";
+
+    	  var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 75;
+
+    	  if(fieldMargin > 0) {
+    	      field.style.marginLeft = fieldMargin+"px";
+    	  }
+      }
 </script>
 
 <style type="text/css">
 {% if blockConfig.showPlacesSearch %}
 #{{prefix}}holderpanel {
-        width: 360px;
-	    margin-left:auto;
-	    margin-right:auto;
-	    position:relative;
-	    padding-top:10px;
-	    z-index:9999999;
-      }
-#{{prefix}}target {
-        width: 360px;
+    position: relative;
+    bottom: -45px;
+    z-index: 99999999;
 }
 #{{prefix}}map_canvas{
-    position: relative;
-	margin-top:-50px;
+    bottom: 30px;
 }{% endif %}
 #{{prefix}}map_canvas img {
     max-width: none;
