@@ -257,10 +257,11 @@ class CurrentUser implements ICurrentUser
             $wasFiltered = AbstractCollection::disableUserFilter();
             $groupArray = $this->getGroups();
             $workspaceArray = array();
-            
             foreach ($groupArray as $group) {
-                $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id'])));
-                $workspaceArray = array_merge($workspaceArray, array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']))));
+                if (isset($group['id'])) {
+                    $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getReadWorkspaces($group['id'])));
+                    $workspaceArray = array_merge($workspaceArray, array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id']))));
+                }
             }
             self::$_readWorkspaces = array_unique($workspaceArray);
             AbstractCollection::disableUserFilter($wasFiltered);
