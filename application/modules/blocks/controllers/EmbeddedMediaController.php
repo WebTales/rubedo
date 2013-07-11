@@ -60,6 +60,27 @@ class Blocks_EmbeddedMediaController extends Blocks_AbstractController
             $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
             
             if (! ($item = $cache->load($cacheKey))) {
+                //If the URL come from flickr, we check the URL
+                if (stristr($oembedParams['url'], 'www.flickr.com')) {
+                    $decomposedUrl = explode("/", $oembedParams['url']);
+                    
+                    $end = false;
+                    
+                    //We search the photo identifiant and we remove all parameters after it
+                    foreach ($decomposedUrl as $key => $value) {
+                        if(is_numeric($value) && strlen($value) === 10) {
+                            $end = true;
+                            continue;
+                        }
+                        
+                        if($end) {
+                            unset($decomposedUrl[$key]);
+                        }
+                    }
+                    
+                    $oembedParams['url'] = implode("/", $decomposedUrl);
+                }
+                
                 $response = OEmbed\Simple::request($oembedParams['url'], $options);
                 
                 $item['width'] = $oembedParams['maxWidth'];
