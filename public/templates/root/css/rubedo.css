@@ -202,7 +202,7 @@ padding-top: 5px;
 }
 
 .post-title-small {
-	max-height: 40px;
+	max-height: 46px;
 	overflow: hidden;
 }
 
@@ -469,6 +469,7 @@ padding-top: 5px;
  */
 h2 {
 	font-size: 20px !important;
+	line-height: 22px !important;
 }
 
 /**
