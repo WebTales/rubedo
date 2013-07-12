@@ -35,7 +35,7 @@ class Blocks_EmbeddedMediaController extends Blocks_AbstractController
     {
         $blockConfig = $this->getRequest()->getParam('block-config', array());
         
-        if (isset($blockConfig['url'])) {
+        if (isset($blockConfig['url']) && $blockConfig["url"] != "") {
             
             $oembedParams['url'] = $blockConfig['url'];
             
