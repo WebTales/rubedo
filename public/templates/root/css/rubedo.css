@@ -382,6 +382,21 @@ padding-top: 5px;
 	overflow: auto; 
 }
 
+@media screen and (max-width: 400px) {
+	.calendar-items-rubedo {
+		min-width: 0;
+		overflow: visible;
+	}
+	
+	.calendar-items-rubedo img {
+		display: none;
+	}
+	
+	.calendar-item {
+		padding-left: 0;
+	}
+}
+
 /**
  * Carrousel
  */
