@@ -10,5 +10,5 @@
         {{data[key]|localizeddate('long', 'none', language.locale)}}
 	</div>
 {% else %}
-    <div class="alert alert-warning">Le format des données n'est pas compatible.</div>
+    <div class="alert alert-warning">{{ "Fields.Date.Label.BadFormat" | fotrans }}</div>
 {% endif %}
