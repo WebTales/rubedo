@@ -46,7 +46,7 @@ class Languages extends AbstractCollection implements ILanguages
 
     protected static $activated = null;
 
-    protected static $activeLanguages = array();
+    public static $activeLanguages = array();
 
     protected static $defaultLanguage = null;
 
@@ -123,6 +123,17 @@ class Languages extends AbstractCollection implements ILanguages
         if (isset(self::$defaultLanguage)) {
             return self::$defaultLanguage['locale'];
         }
+    }
+    
+    public function getActiveLanguages($siteId = null)
+    {
+    	
+    	$filters = Filter::factory();
+    	$filters->addFilter(Filter::factory('Value')->setName('active')
+    			->setValue(true));
+    	$result = Manager::getService('Languages')->getList($filters,array(array('property'=>'label','direction'=>'ASC')));
+    	return $result['data'];
+
     }
     
     /*

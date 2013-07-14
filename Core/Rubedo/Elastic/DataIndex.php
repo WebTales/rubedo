@@ -57,13 +57,13 @@ class DataIndex extends DataAbstract implements IDataIndex
         $returnArray = array();
         
         $searchableFields = array(
-            'lastUpdateTime',
-            'text',
-            'text_not_analysed',
-            'summary',
-            'type',
-            'author',
-            'target'
+            array('name'=>'lastUpdateTime','localizable'=>false),
+            array('name'=>'text','localizable'=>true),
+            array('name'=>'text_not_analysed','localizable'=>true),
+            array('name'=>'summary','localizable'=>true),
+            array('name'=>'type','localizable'=>false),
+            array('name'=>'author','localizable'=>false),
+            array('name'=>'target','localizable'=>false)
         );
         
         if (! isset($this->_contentTypeCache[$id])) {
@@ -80,7 +80,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $fields = $this->_contentTypeCache[$id]["fields"];
         foreach ($fields as $field) {
             if ($field['config']['searchable']) {
-                $searchableFields[] = $field['config']['name'];
+                $searchableFields[] = $field['config'];
             }
         }
         
@@ -169,10 +169,34 @@ class DataIndex extends DataAbstract implements IDataIndex
                         );
                         break;
                     default:
-                        $indexMapping[$name] = array(
-                            'type' => 'string',
-                            'store' => $store
-                        );
+                    	
+                    	// get active languages
+                    	$languages = Manager::getService("Languages");
+                    	$activeLanguages = $languages->getActiveLanguages();
+                    	
+                    	// get active analysers
+                    	$activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
+
+                    	// create on field per language with proper analyser with all_locale collector
+						foreach($activeLanguages as $lang) {
+							$locale = $lang['locale'];
+							$fieldName = $name.'_'.$locale;
+							$_all = 'all_'.$locale;
+							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
+								$analyser = $locale.'_analyzer';
+							} else {
+								$analyser = 'default';
+							}
+							$indexMapping[$fieldName] = array(
+									"type" => "multi_field",
+									"path" => "just_name",
+									"fields" => array(
+											$fieldName => array("type" => "string", "analyzer" => $analyser, 'store' => $store),
+											$_all => array("type" => "string", "analyzer" => $analyser, 'store' => $store)
+									)
+							);
+						}
+
                         break;
                 }
             }
@@ -579,39 +603,67 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add fields to index
         $contentData = array();
         
-        if (isset($data['fields'])) {
-            foreach ($data['fields'] as $field => $var) {
-                
-                // only index searchable fields
-                if (in_array($field, $typeStructure['searchableFields'])) {
-                    if (is_array($var)) {
-                        foreach ($var as $key => $subvalue) {
-                            if ($field != 'position') {
-                                $contentData[$field][$key] = (string) $subvalue;
-                            } else {
-                                if ($key == 'address') {
-                                    $contentData['position_address'] = (string) $subvalue;
-                                }
-                                if ($key == 'location') {
-                                    if (isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])) {
-                                        $lon = $subvalue['coordinates'][0];
-                                        $lat = $subvalue['coordinates'][1];
-                                        
-                                        $contentData['position_location'] = array(
-                                            (float) $lon,
-                                            (float) $lat
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        $contentData[$field] = (string) $var;
-                    }
-                }
-            }
-        }
+        // For every searchable field
+        foreach ($typeStructure['searchableFields'] as $fieldConfig) {
+        	
+        	// Get field name
+        	$name = $fieldConfig['name'];
+        	
+        	// Get non localizable fields from fields 
+        	if (!$fieldConfig['localizable']) {
+        		if (isset($data['fields'][$name])) {
+ 					
+        			$value  = $data['fields'][$name];
+	        		if (is_array($value)) {
+	        			foreach ($value as $key => $subvalue) {
+	        				if ($name != 'position') {
+	        					$contentData[$name][$key] = (string) $subvalue;
+	        				} else {
+	        					if ($key == 'address') {
+	        						$contentData['position_address'] = (string) $subvalue;
+	        					}
+	        					if ($key == 'location') {
+	        						if (isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])) {
+	        							$lon = $subvalue['coordinates'][0];
+	        							$lat = $subvalue['coordinates'][1];
+	        			
+	        							$contentData['position_location'] = array(
+	        									(float) $lon,
+	        									(float) $lat
+	        							);
+	        						}
+	        					}
+	        				}
+	        			}	        			
+	        		} else  {
+	        			$contentData[$name] = (string) $value;
+	        		}
+        		}
+        		
+        	} else {
+        		
+        	// Get localizable fields from i18n
+        	
+        		if (isset($data['i18n'])) {
+        			foreach ($data['i18n'] as $locale) {
+        				if (isset($locale['fields'][$name])) {
+        					$value  = $locale['fields'][$name];
+        					$indexFieldName = $name.'_'.$locale['locale'];
+        					if (is_array($value)) {
+        						foreach ($value as $key => $subvalue) {
+									$contentData[$indexFieldName][$key] = (string) $subvalue;
+        						}
+        					} else  {
+        						$contentData[$indexFieldName] = (string) $value;
+        					}       					
+        				}
+        			}
+        		}
+        		
+        	}
         
+        }
+    
         // Add default meta's
         $contentData['objectType'] = 'content';
         $contentData['contentType'] = $typeId;
