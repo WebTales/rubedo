@@ -2,13 +2,13 @@
 {% if type[key]["config"]["multivalued"] and data[key] is iterable %}
 	{% for item in data[key] %}
     	<div class="entry-info date" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
-            Le {{item|localizeddate('long', 'none', lang)}}
+            {{item|localizeddate('long', 'none', language.locale)}}
     	</div>
 	{% endfor %}
-{% elseif data.date is defined and data.date is not null%}
+{% elseif data[key] is defined and data[key] is not null%}
 	<div class="entry-info date" id="{{ data.id }}_{{ key }}">
-        Le {{data[key]|localizeddate('long', 'none', lang)}}
+        {{data[key]|localizeddate('long', 'none', language.locale)}}
 	</div>
 {% else %}
-    <div class="alert alert-warning">Le format des données n'est pas compatible.</div>
+    <div class="alert alert-warning">{{ "Fields.Date.Label.BadFormat" | fotrans }}</div>
 {% endif %}
