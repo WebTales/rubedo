@@ -120,7 +120,7 @@ class DataAbstract
             $port = self::$_options['port'];
         }
         
-        $this->_client = new \Elastica_Client(array(
+        $this->_client = new \Elastica\Client(array(
             'port' => $port,
             'host' => $host
         ));

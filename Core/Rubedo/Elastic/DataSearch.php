@@ -107,15 +107,15 @@ class DataSearch extends DataAbstract implements IDataSearch
         $filterEmpty = true;
         switch ($operator) {
             case 'or':
-                $filter = new \Elastica_Filter_Terms();
+                $filter = new \Elastica\Filter\Terms();
                 $filter->setTerms($field, $this->_params[$name]);
                 $filterEmpty = false;
                 break;
             case 'and':
             default:
-                $filter = new \Elastica_Filter_And();
+                $filter = new \Elastica\Filter\BoolAnd();
                 foreach ($this->_params[$name] as $type) {
-                    $termFilter = new \Elastica_Filter_Term();
+                    $termFilter = new \Elastica\Filter\Term();
                     $termFilter->setTerm($field, $type);
                     $filter->addFilter($termFilter);
                     $filterEmpty = false;
@@ -134,14 +134,14 @@ class DataSearch extends DataAbstract implements IDataSearch
      *
      * @param string $name
      *            filter name
-     * @return Elastica_Filter or null
+     * @return Elastica\Filter or null
      */
     protected function _getFacetFilter ($name)
     {
         // get mode for this facet
         $operator = isset($this->_facetOperators[$name]) ? $this->_facetOperators[$name] : 'and';
         if (! empty($this->_globalFilterList)) {
-            $facetFilter = new \Elastica_Filter_And();
+            $facetFilter = new \Elastica\Filter\BoolAnd();
             $result = false;
             foreach ($this->_globalFilterList as $key => $filter) {
                 if ($key != $name or $operator == 'and') {
@@ -183,7 +183,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      * @see \Rubedo\Interfaces\IDataSearch::search()
      * @param
      *            s array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
-     * @return Elastica_ResultSet
+     * @return Elastica\ResultSet
      */
     public function search (array $params, $option = 'all', $withSummary = true)
     {
@@ -197,8 +197,14 @@ class DataSearch extends DataAbstract implements IDataSearch
         // front-end search
         if ((self::$_isFrontEnd)) {
             
-            // get list of displayed Facets
-            $this->_displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
+            // get current user language             
+            $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+            
+            // get site localization strategy
+            $localizationStrategy = $taxonomyService->getLocalizationStrategy();
+            
+            // get locale fall back
+            $fallBackLocale = $taxonomyService->getFallbackLocale();
             
             // if there is any facet to display, get overrides
             if (! empty($this->_displayedFacets)) {
@@ -248,6 +254,13 @@ class DataSearch extends DataAbstract implements IDataSearch
                     }
                 }
             }
+        } else {
+            // for BO 
+            $localizationStrategy = "OnlyOne";
+            // Needed to be fixed, not working
+            $currentLocale = $taxonomyService->getWorkingLocale();
+            if (!isset($currentLocale)) $currentLocale = "fr";
+
         }
         
         $result = array();
@@ -296,7 +309,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $this->_setFilter = false;
         
-        $globalFilter = new \Elastica_Filter_And();
+        $globalFilter = new \Elastica\Filter\BoolAnd();
         
         // Filter on read Workspaces
         
@@ -304,9 +317,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if (! in_array('all', $readWorkspaceArray) && ! empty($readWorkspaceArray)) {
             
-            $workspacesFilter = new \Elastica_Filter_Or();
+            $workspacesFilter = new \Elastica\Filter\BoolOr();
             foreach ($readWorkspaceArray as $wsTerm) {
-                $workspaceFilter = new \Elastica_Filter_Term();
+                $workspaceFilter = new \Elastica\Filter\Term();
                 $workspaceFilter->setTerm('target', $wsTerm);
                 $workspacesFilter->addFilter($workspaceFilter);
             }
@@ -321,28 +334,28 @@ class DataSearch extends DataAbstract implements IDataSearch
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             // filter on start
-            $beginFilterValue = new \Elastica_Filter_NumericRange('startPublicationDate', array(
+            $beginFilterValue = new \Elastica\Filter\NumericRange('startPublicationDate', array(
                 'to' => $now
             ));
-            $beginFilterNotExists = new \Elastica_Filter_Not(new \Elastica_Filter_Exists('startPublicationDate'));
-            $beginFilter = new \Elastica_Filter_Or();
+            $beginFilterNotExists = new \Elastica\Filter\BoolNot(new \Elastica\Filter\Exists('startPublicationDate'));
+            $beginFilter = new \Elastica\Filter\BoolOr();
             $beginFilter->addFilter($beginFilterNotExists);
             $beginFilter->addFilter($beginFilterValue);
             
             // filter on end : not set or not ended
-            $endFilter = new \Elastica_Filter_Or();
-            $endFilterWithValue = new \Elastica_Filter_NumericRange('endPublicationDate', array(
+            $endFilter = new \Elastica\Filter\BoolOr();
+            $endFilterWithValue = new \Elastica\Filter\NumericRange('endPublicationDate', array(
                 'from' => $now
             ));
-            $endFilterWithoutValue = new \Elastica_Filter_Term();
+            $endFilterWithoutValue = new \Elastica\Filter\Term();
             $endFilterWithoutValue->setTerm('endPublicationDate', 0);
-            $endFilterNotExists = new \Elastica_Filter_Not(new \Elastica_Filter_Exists('endPublicationDate'));
+            $endFilterNotExists = new \Elastica\Filter\BoolNot(new \Elastica\Filter\Exists('endPublicationDate'));
             $endFilter->addFilter($endFilterNotExists);
             $endFilter->addFilter($endFilterWithoutValue);
             $endFilter->addFilter($endFilterWithValue);
             
             // build complete filter
-            $frontEndFilter = new \Elastica_Filter_And();
+            $frontEndFilter = new \Elastica\Filter\BoolAnd();
             $frontEndFilter->addFilter($beginFilter);
             $frontEndFilter->addFilter($endFilter);
             
@@ -365,9 +378,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($option == 'geo') {
             $contentTypeList = Manager::getService('ContentTypes')->getGeolocatedContentTypes();
             if (! empty($contentTypeList)) {
-                $geoFilter = new \Elastica_Filter_Or();
+                $geoFilter = new \Elastica\Filter\BoolOr();
                 foreach ($contentTypeList as $contentTypeId) {
-                    $geoTypeFilter = new \Elastica_Filter_Term();
+                    $geoTypeFilter = new \Elastica\Filter\Term();
                     $geoTypeFilter->setTerm('contentType', $contentTypeId);
                     $geoFilter->addFilter($geoTypeFilter);
                 }
@@ -390,7 +403,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // filter on date
         if (array_key_exists('lastupdatetime', $this->_params)) {
-            $filter = new \Elastica_Filter_Range('lastUpdateTime', array(
+            $filter = new \Elastica\Filter_Range('lastUpdateTime', array(
                 'from' => $this->_params['lastupdatetime']
             ));
             $this->_globalFilterList['lastupdatetime'] = $filter;
@@ -408,7 +421,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $this->_params['suplon'],
                 $this->_params['inflat']
             );
-            $filter = new \Elastica_Filter_GeoBoundingBox('position_location', array(
+            $filter = new \Elastica\Filter_GeoBoundingBox('position_location', array(
                 $topleft,
                 $bottomright
             ));
@@ -432,15 +445,23 @@ class DataSearch extends DataAbstract implements IDataSearch
                 }
             }
         }
+              
+        // Setting fields from localization strategy
+        $elasticaQuery = new \Elastica\Query();
+        $elasticaQueryString = new \Elastica\Query\QueryString();
+        switch ($localizationStrategy) {
+            case 'OnlyOne' :
+                $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
+                break;
+            case 'fallback':
+            default:
+                $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
+                break;              
+        }
         
-        // Set query on terms
-        
-        $elasticaQueryString = new \Elastica_Query_QueryString($this->_params['query'] . "*");
-        
-        $elasticaQuery = new \Elastica_Query();
-        
+        $elasticaQueryString->setQuery($this->_params['query'] . "*");
         $elasticaQuery->setQuery($elasticaQueryString);
-        
+                
         // Apply filter to query
         if (! empty($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {
@@ -452,7 +473,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Define the type facet
         
         if ($this->_isFacetDisplayed('contentType')) {
-            $elasticaFacetType = new \Elastica_Facet_Terms('type');
+            $elasticaFacetType = new \Elastica\Facet\Terms('type');
             $elasticaFacetType->setField('contentType');
             
             // Exclude active Facets for this vocabulary
@@ -478,7 +499,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if ($this->_isFacetDisplayed('damType')) {
             
-            $elasticaFacetDamType = new \Elastica_Facet_Terms('damType');
+            $elasticaFacetDamType = new \Elastica\Facet\Terms('damType');
             $elasticaFacetDamType->setField('damType');
             
             // Exclude active Facets for this vocabulary
@@ -505,7 +526,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if ($this->_isFacetDisplayed('author')) {
             
-            $elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
+            $elasticaFacetAuthor = new \Elastica\Facet\Terms('author');
             $elasticaFacetAuthor->setField('author');
             
             // Exclude active Facets for this vocabulary
@@ -531,7 +552,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if ($this->_isFacetDisplayed('date')) {
             
-            $elasticaFacetDate = new \Elastica_Facet_Range('date');
+            $elasticaFacetDate = new \Elastica\Facet\Range('date');
             $elasticaFacetDate->setField('lastUpdateTime');
             $d = Manager::getService('CurrentTime')->getCurrentTime();
             
@@ -577,7 +598,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             
             if ($this->_isFacetDisplayed($vocabulary)) {
                 
-                $elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
+                $elasticaFacetTaxonomy = new \Elastica\Facet\Terms($vocabulary);
                 $elasticaFacetTaxonomy->setField('taxonomy.' . $taxonomy['id']);
                 
                 // Exclude active Facets for this vocabulary
@@ -600,7 +621,8 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Add pagination
         if (is_numeric($this->_params['pagesize'])) {
-            $elasticaQuery->setSize($this->_params['pagesize'])->setFrom($this->_params['pager'] * $this->_params['pagesize']);
+            $elasticaQuery->setSize($this->_params['pagesize']);
+            $elasticaQuery->setFrom($this->_params['pager'] * $this->_params['pagesize']);
         }
         
         // add sort
@@ -621,7 +643,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'all':
                 $client = self::$_content_index->getClient();
-                $search = new \Elastica_Search($client);
+                $search = new \Elastica\Search($client);
                 $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_content_index);
                 $elasticaResultSet = $search->search($elasticaQuery);
@@ -652,11 +674,17 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $score = 1;
             $data['score'] = round($score * 100);
             
-            $data['title'] = $data['text'];
-            
-            if ($withSummary and ! isset($data['summary'])) {
-                $data['summary'] = $data['text'];
-            }
+            if ($data['objectType']=='content') {
+                $data['title'] = $data["text_".$currentLocale];
+                if ($withSummary) {
+                    $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
+                }
+            } else {
+                $data['title'] = $data["text"];
+                if ($withSummary) {
+                    $data['summary'] = (isset($data["summary"])) ? $data["summary"] : $data["text"];
+                }
+            }           
             
             switch ($data['objectType']) {
                 case 'content':

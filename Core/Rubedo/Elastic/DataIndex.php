@@ -136,12 +136,33 @@ class DataIndex extends DataAbstract implements IDataIndex
     {
         $indexMapping = array();
         
+        // ad text and summary system fields
+        
+        $fields[] = array(
+            "cType" => "system",
+            "config" => array (
+                "name" => "text",
+                "fieldLabel" => "text",
+                "searchable" => true
+            )
+        );
+
+        $fields[] = array(
+                "cType" => "system",
+                "config" => array (
+                        "name" => "summary",
+                        "fieldLabel" => "summary",
+                        "searchable" => true
+                )
+        );
+        
         foreach ($fields as $field) {
             
             // Only searchable fields get indexed
             if ($field['config']['searchable']) {
                 
                 $name = $field['config']['fieldLabel'];
+                //$name = $field['config']['name'];
                 $store = "yes";
                 
                 switch ($field['cType']) {
@@ -221,6 +242,18 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         return $vocabularies;
     }
+
+    /**
+     * Create multifield mapping for any field
+     *
+     * @param string $name field name
+     *      
+     * @return array
+     */
+    protected function _createMultiFieldMapping($name) {
+
+
+    }
     
     /**
      * Index ES type for new or updated content type
@@ -259,20 +292,23 @@ class DataIndex extends DataAbstract implements IDataIndex
             'type' => 'date',
             'store' => 'yes'
         );
+        /*
         $indexMapping["text"] = array(
             'type' => 'string',
             'store' => 'yes'
         );
+        
         $indexMapping["text_not_analyzed"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
-        $indexMapping["objectType"] = array(
+        $indexMapping["summary"] = array(
             'type' => 'string',
             'store' => 'yes'
-        );
-        $indexMapping["summary"] = array(
+        );        
+        */
+        $indexMapping["objectType"] = array(
             'type' => 'string',
             'store' => 'yes'
         );
@@ -319,7 +355,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Create new ES type if not empty
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_content_index, $id);
+            $type = new \Elastica\Type(self::$_content_index, $id);
             
             // Set mapping
             $type->setMapping($indexMapping);
@@ -436,7 +472,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // If there is no searchable field, the new type is not created
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_dam_index, $id);
+            $type = new \Elastica\Type(self::$_dam_index, $id);
             
             // Set mapping
             $type->setMapping($indexMapping);
@@ -503,7 +539,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // If there is no searchable field, the new type is not created
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_user_index, $id);
+            $type = new \Elastica\Type(self::$_user_index, $id);
     
             // Set mapping
             $type->setMapping($indexMapping);
@@ -525,7 +561,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContentType ($id)
     {
-        $type = new \Elastica_Type(self::$_content_index, $id);
+        $type = new \Elastica\Type(self::$_content_index, $id);
         $type->delete();
     }
 
@@ -541,7 +577,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContent ($typeId, $id)
     {
-        $type = new \Elastica_Type(self::$_content_index, $typeId);
+        $type = new \Elastica\Type(self::$_content_index, $typeId);
         $type->deleteById($id);
     }
 
@@ -555,7 +591,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDamType ($id)
     {
-        $type = new \Elastica_Type(self::$_dam_index, $id);
+        $type = new \Elastica\Type(self::$_dam_index, $id);
         $type->delete();
     }
 
@@ -571,7 +607,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDam ($typeId, $id)
     {
-        $type = new \Elastica_Type(self::$_dam_index, $typeId);
+        $type = new \Elastica\Type(self::$_dam_index, $typeId);
         $type->deleteById($id);
     }
 
@@ -643,11 +679,12 @@ class DataIndex extends DataAbstract implements IDataIndex
         	} else {
         		
         	// Get localizable fields from i18n
-        	
         		if (isset($data['i18n'])) {
-        			foreach ($data['i18n'] as $locale) {
+        			foreach ($data['i18n'] as $key => $locale) {
         				if (isset($locale['fields'][$name])) {
         					$value  = $locale['fields'][$name];
+        					// Temp fix because local is not set in i18n at the first content creation
+        					if (!isset($locale['locale'])) $locale['locale'] = $key ;
         					$indexFieldName = $name.'_'.$locale['locale'];
         					if (is_array($value)) {
         						foreach ($value as $key => $subvalue) {
@@ -663,6 +700,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         	}
         
         }
+
     
         // Add default meta's
         $contentData['objectType'] = 'content';
@@ -670,7 +708,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $contentData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : null;
         $contentData['startPublicationDate'] = isset($data['startPublicationDate']) ? intval($data['startPublicationDate']) : null;
         $contentData['endPublicationDate'] = isset($data['endPublicationDate']) ? intval($data['endPublicationDate']) : null;
-        $contentData['text'] = (string) $data['text'];
+        //$contentData['text'] = (string) $data['text'];
         $contentData['text_not_analyzed'] = (string) $data['text'];
         $contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
         $contentData['status'] = (isset($data['status'])) ? (string) $data['status'] : 'unknown';
@@ -730,7 +768,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
         
         // Add document
-        $currentDocument = new \Elastica_Document($data['id'], $contentData);
+        $currentDocument = new \Elastica\Document($data['id'], $contentData);
         
         if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
             $currentDocument->addFile('file', $contentData['attachment']);
@@ -834,7 +872,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
         
         // Add document
-        $currentDam = new \Elastica_Document($data['id'], $damData);
+        $currentDam = new \Elastica\Document($data['id'], $damData);
         
         if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
             
