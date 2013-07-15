@@ -9,7 +9,7 @@
 				"maxLength": 6000,
 				"minLength": 0,
 				"allowBlank": false,
-				"localizable": false,
+				"localizable": true,
 				"searchable": true,
 				"multivalued": false,
 				"tooltip": "",
