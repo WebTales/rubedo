@@ -190,6 +190,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         $this->_filterInputData($obj);
         
         unset($obj['readOnly']);
+        
+        $obj = $this->localizeInput($obj);
         $result = $this->_dataService->create($obj, $options);
         if ($result['success']) {
             $result['data'] = $this->localizeOutput($result['data']);
