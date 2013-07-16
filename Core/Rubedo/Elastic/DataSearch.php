@@ -256,7 +256,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             }
         } else {
             // for BO 
-            $localizationStrategy = "OnlyOne";
+            $localizationStrategy = "backOffice";
             // Needed to be fixed, not working
             $currentLocale = $taxonomyService->getWorkingLocale();
             if (!isset($currentLocale)) $currentLocale = "fr";
@@ -450,18 +450,22 @@ class DataSearch extends DataAbstract implements IDataSearch
         $elasticaQuery = new \Elastica\Query();
         $elasticaQueryString = new \Elastica\Query\QueryString();
         switch ($localizationStrategy) {
-            case 'OnlyOne' :
+            case 'backOffice' :
                 $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
+                break;
+            case 'OnlyOne' :
+                $elasticaQueryString->setFields(array("all_".$currentLocale));
                 break;
             case 'fallback':
             default:
                 $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
                 break;              
         }
-        
+        //$elasticaQueryString->setAnalyzer("french");
         $elasticaQueryString->setQuery($this->_params['query'] . "*");
+        
         $elasticaQuery->setQuery($elasticaQueryString);
-                
+       
         // Apply filter to query
         if (! empty($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {

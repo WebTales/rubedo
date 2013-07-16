@@ -205,6 +205,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 							$_all = 'all_'.$locale;
 							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
 								$analyser = $locale.'_analyzer';
+								//if ($locale="fr") $analyser = "french";
 							} else {
 								$analyser = 'default';
 							}
@@ -766,7 +767,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         if (empty($contentData['target'])) {
             $contentData['target'][] = 'global';
         }
-        
+
         // Add document
         $currentDocument = new \Elastica\Document($data['id'], $contentData);
         
