@@ -59,10 +59,8 @@ class DataIndex extends DataAbstract implements IDataIndex
         $searchableFields = array(
             array('name'=>'lastUpdateTime','localizable'=>false),
             array('name'=>'text','localizable'=>true),
-            array('name'=>'text_not_analysed','localizable'=>true),
             array('name'=>'summary','localizable'=>true),
             array('name'=>'type','localizable'=>false),
-            array('name'=>'author','localizable'=>false),
             array('name'=>'target','localizable'=>false)
         );
         
@@ -132,28 +130,45 @@ class DataIndex extends DataAbstract implements IDataIndex
      *            contain the fields and their configuration
      * @return array
      */
-    public function getIndexMapping (array $fields)
+    public function getIndexMapping (array $fields, $objectType)
     {
         $indexMapping = array();
         
-        // ad text and summary system fields
+        // ad text, summary, nativeText, nativeSummary system fields
         
-        $fields[] = array(
-            "cType" => "system",
-            "config" => array (
-                "name" => "text",
-                "fieldLabel" => "text",
-                "searchable" => true
-            )
-        );
-
-        $fields[] = array(
+        $fields = array(
+            array(
+                "cType" => "system",
+                "config" => array (
+                    "name" => "text",
+                    "fieldLabel" => "text",
+                    "searchable" => true
+                )
+            ),
+            array (
                 "cType" => "system",
                 "config" => array (
                         "name" => "summary",
                         "fieldLabel" => "summary",
                         "searchable" => true
                 )
+            ),
+            array(
+                    "cType" => "system",
+                    "config" => array (
+                            "name" => "nativeText",
+                            "fieldLabel" => "nativeText",
+                            "searchable" => true
+                    )
+            ),
+            array(
+                    "cType" => "system",
+                    "config" => array (
+                            "name" => "nativeSummary",
+                            "fieldLabel" => "nativeSummary",
+                            "searchable" => true
+                    )
+            )
         );
         
         foreach ($fields as $field) {
@@ -199,13 +214,14 @@ class DataIndex extends DataAbstract implements IDataIndex
                     	$activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
 
                     	// create on field per language with proper analyser with all_locale collector
+                    	// on for contents type for the moment
+                    	if ($objectType!="dam") {
 						foreach($activeLanguages as $lang) {
 							$locale = $lang['locale'];
 							$fieldName = $name.'_'.$locale;
 							$_all = 'all_'.$locale;
 							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
 								$analyser = $locale.'_analyzer';
-								//if ($locale="fr") $analyser = "french";
 							} else {
 								$analyser = 'default';
 							}
@@ -218,6 +234,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 									)
 							);
 						}
+                    	}
 
                         break;
                 }
@@ -285,7 +302,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Create mapping
         if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
+            $indexMapping = $this->getIndexMapping($data["fields"],"content");
         }
         
         // Add systems metadata
@@ -293,22 +310,22 @@ class DataIndex extends DataAbstract implements IDataIndex
             'type' => 'date',
             'store' => 'yes'
         );
-        /*
-        $indexMapping["text"] = array(
+        $indexMapping["nativeText"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
-        );
-        
+        );       
         $indexMapping["text_not_analyzed"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
-        $indexMapping["summary"] = array(
+        $indexMapping["nativeSummary"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
         );        
-        */
+        
         $indexMapping["objectType"] = array(
             'type' => 'string',
             'store' => 'yes'
@@ -398,7 +415,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Create mapping
         if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
+            $indexMapping = $this->getIndexMapping($data["fields"],"dam");
         }
         
         // Add systems metadata
@@ -515,7 +532,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     
         // Create mapping
         if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
+            $indexMapping = $this->getIndexMapping($data["fields"],"user");
         }
     
         // Add systems metadata
@@ -706,11 +723,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add default meta's
         $contentData['objectType'] = 'content';
         $contentData['contentType'] = $typeId;
+        $contentData['nativeText']=$data['fields']['text'];
+        $contentData['nativeSummary']=$data['fields']['summary'];
         $contentData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : null;
         $contentData['startPublicationDate'] = isset($data['startPublicationDate']) ? intval($data['startPublicationDate']) : null;
         $contentData['endPublicationDate'] = isset($data['endPublicationDate']) ? intval($data['endPublicationDate']) : null;
-        //$contentData['text'] = (string) $data['text'];
-        $contentData['text_not_analyzed'] = (string) $data['text'];
         $contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
         $contentData['status'] = (isset($data['status'])) ? (string) $data['status'] : 'unknown';
         $contentData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';

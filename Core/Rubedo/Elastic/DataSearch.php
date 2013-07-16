@@ -255,11 +255,10 @@ class DataSearch extends DataAbstract implements IDataSearch
                 }
             }
         } else {
-            // for BO 
+            // for BO, the strategy is to search into the working langage with fallback on all other langages (_all)
             $localizationStrategy = "backOffice";
-            // Needed to be fixed, not working
-            $currentLocale = $taxonomyService->getWorkingLocale();
-            if (!isset($currentLocale)) $currentLocale = "fr";
+            $currentUser= Manager::getService('CurrentUser')->getCurrentUser();
+            $currentLocale = $currentUser["workingLanguage"];
 
         }
         
@@ -280,7 +279,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             'date' => '',
             'pager' => 0,
             'orderby' => '_score',
-            'orderbyDirection' => 'asc',
+            'orderbyDirection' => 'desc',
             'pagesize' => 25
         );
         
@@ -458,11 +457,19 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'fallback':
             default:
-                $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
+                if ($currentLocale!=$fallBackLocale) {
+                    $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
+                } else {
+                    $elasticaQueryString->setFields(array("all_".$currentLocale));
+                }
                 break;              
         }
         //$elasticaQueryString->setAnalyzer("french");
-        $elasticaQueryString->setQuery($this->_params['query'] . "*");
+        if ($this->_params['query']!="") {
+            $elasticaQueryString->setQuery($this->_params['query']);
+        } else {
+            $elasticaQueryString->setQuery("*");
+        }
         
         $elasticaQuery->setQuery($elasticaQueryString);
        
@@ -679,10 +686,18 @@ class DataSearch extends DataAbstract implements IDataSearch
             $data['score'] = round($score * 100);
             
             if ($data['objectType']=='content') {
-                $data['title'] = $data["text_".$currentLocale];
-                if ($withSummary) {
-                    $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
+                if (isset($data["text_".$currentLocale])) {
+                    $data['title'] = $data["text_".$currentLocale];
+                    if ($withSummary) {
+                        $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
+                    }
+                } else {
+                    $data['title'] = $data['nativeText'];
+                    if ($withSummary) {
+                        $data['summary'] = $data['nativeSummary'];
+                    }
                 }
+
             } else {
                 $data['title'] = $data["text"];
                 if ($withSummary) {
