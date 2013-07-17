@@ -63,6 +63,8 @@ class XhrEditController extends Zend_Controller_Action
             $id = $contentId[0];
             $field = $contentId[1];
             
+            $locale = isset($value["locale"]) ? $value["locale"] : null;
+            
             $field = explode("-", $field);
             $name = $field[0];
             if (count($field) > 1) {
@@ -85,10 +87,15 @@ class XhrEditController extends Zend_Controller_Action
                 $returnArray['msg'] = 'Content already have a draft version';
             } else {
                 
-                if (count($field) > 1)
-                    $content['fields'][$name][$index] = $value["newValue"];
-                else
-                    $content['fields'][$name] = $value["newValue"];
+                if($locale !== null) {
+                    if (count($field) > 1) {
+                        $content["i18n"][$locale]['fields'][$name][$index] = $value["newValue"];
+                    } else {
+                        $content["i18n"][$locale]['fields'][$name] = $value["newValue"];
+                    }
+                } else {
+                    $errors[] = "You must provide the current language of the content to update it (".$content['id'].")";
+                }
                 
                 $updateResult = $this->_dataService->update($content, array(), false);
                 

@@ -172,12 +172,16 @@ jQuery('#btn-save').click(function() {
 						//Remove dirty flag
 						CKEDITOR.instances[z].resetDirty();
 					}
-					modifications[CKEId[0]] = {"newValue" : data};
+					
+					var locale = jQuery("#"+id).attr("data-locale");
+					
+					modifications[CKEId[0]] = {"newValue" : data, "locale" : locale};
 				}else{
 					var id = CKEDITOR.instances[i].element.getId();
 					var newValue = CKEDITOR.instances[i].getData();
+					var locale = jQuery("#"+id).attr("data-locale");
 					
-					modifications[id] = {"newValue" : newValue};
+					modifications[id] = {"newValue" : newValue, "locale" : locale};
 					
 					//Remove dirty flag
 					CKEDITOR.instances[i].resetDirty();
@@ -553,7 +557,7 @@ function checkIfDirty() {
  */
 function save(data) {
 	var data = JSON.stringify(data);
-
+	
 	jQuery.ajax({
 		type : 'POST',
 		url : "/xhr-edit",
