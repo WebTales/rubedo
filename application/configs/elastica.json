@@ -143,6 +143,11 @@
 		        "tr_stop_filter": {
 		            "type": "stop",
 		            "stopwords": ["_turkish_"]
+		        },
+		        "autocomplete": {
+		            "type" : "edgeNGram",
+                    "min_gram" : "3",
+                    "max_gram" : "15"
 		        }
 		    },
 		    "analyzer": {
@@ -299,11 +304,15 @@
 		            "filter": ["icu_folding", "icu_normalizer", "tr_stop_filter"],
 		            "char_filter": ["html_strip"]
 		        },
+		        "autocomplete": {
+		            "type": "custom",
+ 					"tokenizer": "whitespace",
+                    "filter": ["icu_folding", "icu_normalizer", "autocomplete"],
+		            "char_filter": ["html_strip"]           
+		        },
 		        "default": {
 		            "type": "custom",
-		            "tokenizer": "icu_tokenizer",
-		            "filter": ["icu_folding", "icu_normalizer"],
-		            "char_filter": ["html_strip"]
+		            "tokenizer": "icu_tokenizer"
 		        }
 		    }
 		}

@@ -106,9 +106,29 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $css = array();
         $js = array(
-        		'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js")
+        	'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js"),
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/autocomplete.js")
 		);
         
         $this->_sendResponse($results, $template, $css, $js);
+    }
+    
+    public function xhrGetSuggestsAction ()
+    {
+
+        $query = $this->getParam('query');
+        $field = "all_fr";
+        
+        // get current user language
+        $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        
+        $elasticaQuery = Manager::getService('ElasticDataSearch');
+        $elasticaQuery->init();
+        $suggestTerms = $elasticaQuery->suggest($query, $field);
+    
+        $data = array(
+                'terms' => array_unique($suggestTerms)
+        );
+        $this->_helper->json($data);
     }
 }

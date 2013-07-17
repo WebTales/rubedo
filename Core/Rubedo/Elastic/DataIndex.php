@@ -152,22 +152,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                         "fieldLabel" => "summary",
                         "searchable" => true
                 )
-            ),
-            array(
-                    "cType" => "system",
-                    "config" => array (
-                            "name" => "nativeText",
-                            "fieldLabel" => "nativeText",
-                            "searchable" => true
-                    )
-            ),
-            array(
-                    "cType" => "system",
-                    "config" => array (
-                            "name" => "nativeSummary",
-                            "fieldLabel" => "nativeSummary",
-                            "searchable" => true
-                    )
             )
         );
         
@@ -206,35 +190,37 @@ class DataIndex extends DataAbstract implements IDataIndex
                         break;
                     default:
                     	
-                    	// get active languages
-                    	$languages = Manager::getService("Languages");
-                    	$activeLanguages = $languages->getActiveLanguages();
-                    	
-                    	// get active analysers
-                    	$activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
-
-                    	// create on field per language with proper analyser with all_locale collector
-                    	// on for contents type for the moment
-                    	if ($objectType!="dam") {
-						foreach($activeLanguages as $lang) {
-							$locale = $lang['locale'];
-							$fieldName = $name.'_'.$locale;
-							$_all = 'all_'.$locale;
-							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
-								$analyser = $locale.'_analyzer';
-							} else {
-								$analyser = 'default';
-							}
-							$indexMapping[$fieldName] = array(
-									"type" => "multi_field",
-									"path" => "just_name",
-									"fields" => array(
-											$fieldName => array("type" => "string", "analyzer" => $analyser, 'store' => $store),
-											$_all => array("type" => "string", "analyzer" => $analyser, 'store' => $store)
-									)
-							);
-						}
-                    	}
+                        //if (isset($field['config']['localizable']) and $field['config']['localisable']==true) {
+                        	// get active languages
+                        	$languages = Manager::getService("Languages");
+                        	$activeLanguages = $languages->getActiveLanguages();
+                        	
+                        	// get active analysers
+                        	$activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
+    
+                        	// create on field per language with proper analyser with all_locale collector
+                        	// on for contents type for the moment
+                        	if ($objectType!="dam") {
+        						foreach($activeLanguages as $lang) {
+        							$locale = $lang['locale'];
+        							$fieldName = $name.'_'.$locale;
+        							$_all = 'all_'.$locale;
+        							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
+        								$lg_analyser = $locale.'_analyzer';						
+        							} else {
+        								$lg_analyser = 'default';
+        							}
+        							$indexMapping[$fieldName] = array(
+        									"type" => "multi_field",
+        									"path" => "just_name",
+        									"fields" => array(
+        											$fieldName => array("type" => "string", "analyzer" => "autocomplete", 'store' => $store),
+        											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store)
+        									)
+        							);
+        						}
+                        	}
+                    	//} 
 
                         break;
                 }
@@ -260,19 +246,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         return $vocabularies;
     }
-
-    /**
-     * Create multifield mapping for any field
-     *
-     * @param string $name field name
-     *      
-     * @return array
-     */
-    protected function _createMultiFieldMapping($name) {
-
-
-    }
-    
+   
     /**
      * Index ES type for new or updated content type
      *
@@ -324,8 +298,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
-        );        
-        
+        );               
         $indexMapping["objectType"] = array(
             'type' => 'string',
             'store' => 'yes'
