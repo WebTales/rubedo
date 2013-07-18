@@ -115,19 +115,35 @@ class Blocks_SearchController extends Blocks_AbstractController
     
     public function xhrGetSuggestsAction ()
     {
-
-        $query = $this->getParam('query');
-        $field = "all_fr";
+        $params = $this->getRequest()->getParams();
         
-        // get current user language
-        $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        $params["field"] = "all_fr";
+        
+       if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
+            $site = $this->getRequest()->getParam('site');
+            $siteId = $site['id'];
+            $params['navigation'][] = $siteId;
+        }
+        
+        // apply predefined facets
+        if (isset($params['block-config']['predefinedFacets'])) {
+            $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
+            if (is_array($predefParamsArray)) {
+                foreach ($predefParamsArray as $key => $value) {
+                    $params[$key] = $value;
+                }
+            }
+        }
+        
+        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
-        $suggestTerms = $elasticaQuery->suggest($query, $field);
+
+        $suggestTerms = $elasticaQuery->search($params,'suggest');
     
         $data = array(
-                'terms' => array_unique($suggestTerms)
+                'terms' => $suggestTerms
         );
         $this->_helper->json($data);
     }

@@ -45,7 +45,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
     protected $_facetOperators;
 
-    protected $_displayedFacets;
+    protected $_displayedFacets = array();
 
     protected $_facetDisplayMode;
 
@@ -464,9 +464,13 @@ class DataSearch extends DataAbstract implements IDataSearch
                 }
                 break;              
         }
-        //$elasticaQueryString->setAnalyzer("french");
+
         if ($this->_params['query']!="") {
-            $elasticaQueryString->setQuery($this->_params['query']);
+            if ($option!='suggest') {
+                $elasticaQueryString->setQuery($this->_params['query']);
+            } else {
+                $elasticaQueryString->setQuery($this->_params['query']."*");
+            }
         } else {
             $elasticaQueryString->setQuery("*");
         }
@@ -662,6 +666,28 @@ class DataSearch extends DataAbstract implements IDataSearch
             case 'geo':
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
                 break;
+            case 'suggest':
+                $suggestTerms = array();
+                $elasticaQuery->setHighlight(array(
+                        "pre_tags" => array("<term>"),
+                        "post_tags" => array("</term>"),
+                        "fields" => array(
+                                $params['field'] => array(
+                                        "fragment_offset" => 0,
+                                        "fragment_size" => 18,
+                                        "number_of_fragments" => 1
+                                )
+                        )
+                ));
+                
+                $elasticaResultSet = self::$_content_index->search($elasticaQuery);
+                foreach ($elasticaResultSet as $result) {
+                    $highlights = $result->getHighlights();
+                    $suggestTerms[] = preg_replace("/(.*)<term>([^<]*)<\/term>(.*)/", "\\2", $highlights[$params['field']][0]);
+                }
+                return (array_unique($suggestTerms));
+                break;
+                
         }
         
         // Update data
@@ -974,63 +1000,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         return ($result);
     }
-
-    public function suggest ($query, $field)
-    {
-        $suggestTerms = array();
-        
-        if (isset($query) && $query != "") {
-            // front-end search
-            if ((self::$_isFrontEnd)) {
-            
-                // get current user language
-                $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
-            
-                // get site localization strategy
-                $localizationStrategy = $taxonomyService->getLocalizationStrategy();
-            
-                // get locale fall back
-                $fallBackLocale = $taxonomyService->getFallbackLocale();
-    
-            } else {
-                // for BO, the strategy is to search into the working langage with fallback on all other langages (_all)
-                $localizationStrategy = "backOffice";
-                $currentUser= Manager::getService('CurrentUser')->getCurrentUser();
-                $currentLocale = $currentUser["workingLanguage"];
-            
-            }
-            
-            $elasticaQuery  = new \Elastica\Query();
-
-            $queryString = new \Elastica\Query\QueryString();
-            $queryString->setQuery($query.'*');
-            $queryString->setDefaultField($field);
-      
-            $elasticaQuery = new \Elastica\Query($queryString);
-            $elasticaQuery->setHighlight(array(
-                "pre_tags" => array("<term>"),
-                "post_tags" => array("</term>"),
-                "fields" => array(
-
-                        $field => array(
-                            "fragment_offset" => 0,
-                            "fragment_size" => 18,
-                            "number_of_fragments" => 1
-                        )
-                )
-            ));
-            
-            $elasticaResultSet = self::$_content_index->search($elasticaQuery);
-            
-            foreach ($elasticaResultSet as $result) {
-                $highlights = $result->getHighlights();
-                $suggestTerms[] = preg_replace("/(.*)<term>([^<]*)<\/term>(.*)/", "\\2", $highlights[$field][0]);
-            }     
-        }       
-        
-        return (array_unique($suggestTerms));
-    }
-    
+   
     /**
      *
      * @param field_type $_isFrontEnd            
