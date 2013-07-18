@@ -34,6 +34,7 @@
         "execute.controller.flickr-gallery.xhr-get-images.blocks",
         "execute.controller.dam-list.index.blocks",
         "execute.controller.xhr-language.define-language.default",
-        "execute.controller.languages.get-flags-list.backoffice"
+        "execute.controller.languages.get-flags-list.backoffice",
+        "execute.controller.search.xhr-get-suggests.blocks"
  	]
 }

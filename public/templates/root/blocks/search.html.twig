@@ -92,7 +92,7 @@
 			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
 		</p>
 			<form class="form-search" action="{{url({},true)}}">
-				<input type="text" class="input-medium search-query typeahead" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
+				<input type="text" class="input-medium search-query typeahead" autocomplete="off" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
 			</form>
 		
 		{% for facet in facets %}

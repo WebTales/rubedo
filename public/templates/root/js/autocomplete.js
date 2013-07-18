@@ -13,7 +13,9 @@ $(function(){
 			request.done(function(data) {
 				return process(data.terms);
 			});
-
-	    }
+			
+	    },
+	    items:10,
+	    minLength:3
 	})
 });

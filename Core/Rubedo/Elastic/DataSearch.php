@@ -1024,7 +1024,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             
             foreach ($elasticaResultSet as $result) {
                 $highlights = $result->getHighlights();
-                $suggestTerms[] = preg_replace("/(.*)<term>([^<]*)<\/term>(.*)/", "\\2", $highlights['text_fr'][0]);
+                $suggestTerms[] = preg_replace("/(.*)<term>([^<]*)<\/term>(.*)/", "\\2", $highlights[$field][0]);
             }     
         }       
         
