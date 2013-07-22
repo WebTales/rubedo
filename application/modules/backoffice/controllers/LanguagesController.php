@@ -79,7 +79,7 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
         foreach ($result['data'] as $languages) {
             $languagesArray[] = array(
                 'key' => $languages['locale'],
-                'label' => isset($languages['ownLabel'])?$languages['ownLabel']:$languages['label']
+                'label' => isset($languages['ownLabel'])&&($languages['ownLabel']!="")?$languages['ownLabel']:$languages['label']
             );
         }
         $this->_returnJson(array(
