@@ -681,9 +681,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                 ));
                 
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
+                
                 foreach ($elasticaResultSet as $result) {
                     $highlights = $result->getHighlights();
-                    $suggestTerms[] = preg_replace("/(.*)<term>([^<]*)<\/term>(.*)/", "\\2", $highlights[$params['field']][0]);
+                    if (isset($highlights[$params['field']][0])) {
+                        $suggestTerms[] = preg_replace("/(.*)<term>([^<]*)<\/term>(.*)/", "\\2", $highlights[$params['field']][0]);
+                    } 
                 }
                 return (array_unique($suggestTerms));
                 break;

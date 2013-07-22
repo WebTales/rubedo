@@ -75,7 +75,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $query->init();
                 
         $results = $query->search($params);
-        
+        $results['searchParams']=\Zend_Json::encode($params);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
@@ -115,26 +115,14 @@ class Blocks_SearchController extends Blocks_AbstractController
     
     public function xhrGetSuggestsAction ()
     {
-        $params = $this->getRequest()->getParams();
+        // get search parameters
+
+        $params = \Zend_Json::decode($this->getRequest()->getParam('searchParams'));
         
+        $params['query'] = $this->getRequest()->getParam('query');
+       
         $params["field"] = "all_fr";
-        
-       if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
-            $site = $this->getRequest()->getParam('site');
-            $siteId = $site['id'];
-            $params['navigation'][] = $siteId;
-        }
-        
-        // apply predefined facets
-        if (isset($params['block-config']['predefinedFacets'])) {
-            $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
-            if (is_array($predefParamsArray)) {
-                foreach ($predefParamsArray as $key => $value) {
-                    $params[$key] = $value;
-                }
-            }
-        }
-        
+               
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
         $elasticaQuery = Manager::getService('ElasticDataSearch');

@@ -6,7 +6,8 @@ $(function(){
 				type : "POST",
 				data : {
 					'query' : query,
-					'current-page':jQuery('body').attr('data-current-page') 
+					'current-page':jQuery('body').attr('data-current-page'),
+					'searchParams':jQuery('#searchpage').attr('data-searchparams')
 				},
 				dataType : "json"
 			});
