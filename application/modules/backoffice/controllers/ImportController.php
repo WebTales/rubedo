@@ -195,6 +195,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         set_time_limit(5000);
         $separator = $this->getParam('separator', ";");
         $userEncoding = $this->getParam('encoding');
+        $workingLanguage= $this->getParam('workingLanguage', 'en');
         
         if(!isset($userEncoding)) {
             throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
@@ -227,13 +228,22 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $CTvocabularies = array();
                 $CTvocabularies[] = "navigation";
                 foreach ($importAsTaxo as $key => $value) {
+                    $newTaxoi18n = array();
+                    $newTaxoi18n[$workingLanguage]=array(
+                        "name" => $value['newName'],
+                        "description" => "",
+                        "helpText" => "",
+                        "locale"=>$workingLanguage
+                    );
                     $newTaxoParams = array(
                         "name" => $value['newName'],
                         "description" => "",
                         "helpText" => "",
                         "expandable" => false,
                         "multiSelect" => true,
-                        "mandatory" => $value['mandatory']
+                        "mandatory" => $value['mandatory'],
+                        "nativeLanguage"=>$workingLanguage,
+                        "i18n"=>$newTaxoi18n
                     );
                     $newTaxo = $taxonomyService->create($newTaxoParams);
                     $newTaxos[] = $newTaxo;
@@ -259,7 +269,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                     "name" => $value['newName'],
                                     "fieldLabel" => $value['label'],
                                     "allowBlank" => ! $value['mandatory'],
-                                    "localizable" => false,
+                                    "localizable" => $value['localizable'],
                                     "searchable" => $value['searchable'],
                                     "multivalued" => false,
                                     "tooltip" => "",
@@ -360,12 +370,19 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                             if (! empty($detectedTermText)) {
                                 $theTerm = $taxonomyTermsService->findByVocabularyIdAndName($theTaxoId, $detectedTermText);
                                 if ($theTerm == null) {
+                                    $termI18n=array();
+                                    $termI18n[$workingLanguage]=array(
+                                        "text" => $detectedTermText,
+                                        "locale"=>$workingLanguage
+                                    );
                                     $termParams = array(
                                         "text" => $detectedTermText,
                                         "vocabularyId" => $theTaxoId,
                                         "parentId" => "root",
                                         "leaf" => true,
-                                        "expandable" => false
+                                        "expandable" => false,
+                                        "nativeLanguage"=>$workingLanguage,
+                                        "i18n"=>$termI18n
                                     );
                                     $theTerm = $taxonomyTermsService->create($termParams);
                                 }
@@ -378,6 +395,11 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                         }
                     }
                     // create content
+                    $contenti18n=array();
+                    $contenti18n[$workingLanguage]=array(
+                        "fields"=>$contentParamsFields,
+                        "locale"=>$workingLanguage
+                    );
                     $contentParams = array(
                         "online" => true,
                         "text" => $currentLine[$textFieldIndex],
@@ -392,7 +414,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                         "pageId" => "",
                         "maskId" => "",
                         "blockId" => "",
-                        "readOnly" => false
+                        "readOnly" => false,
+                        "nativeLanguage"=>$workingLanguage,
+                        "i18n"=>$contenti18n
                     );
                     try {
                         $contentsService->create($contentParams, array(), false, true);
