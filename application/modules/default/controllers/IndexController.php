@@ -667,6 +667,9 @@ class IndexController extends Zend_Controller_Action
             case "mailingList":
                 $controller = "mailing-list";
                 break;
+            case "twitter":
+                $controller = "twitter";
+                break;
             
             case "languageMenu":
                 $controller = "language-menu";
