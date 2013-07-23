@@ -42,7 +42,7 @@ class Blocks_TwitterController extends Blocks_AbstractController
         }
         
         $output = $blockConfig;
-        //var_dump($output);die();
+        
         $css = array();
         $js = array();
         
