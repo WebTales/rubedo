@@ -171,7 +171,7 @@ class FileController extends Zend_Controller_Action
                 readfile($tmpImagePath);
             }
             
-            //exit();
+            exit();
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }
