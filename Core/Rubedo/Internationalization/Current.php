@@ -29,7 +29,7 @@ use Rubedo\Collection\AbstractLocalizableCollection;
 class Current implements ICurrent
 {
 
-    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array())
+    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array(),$cookieValue = null)
     {
         $locale = null;
         
@@ -43,7 +43,7 @@ class Current implements ICurrent
         if ($site) {
             $sessionService = Manager::getService('Session');
             $currentLocaleInSession = $sessionService->get('currentLocale', array());
-            
+                       
             $user = Manager::getService('CurrentUser')->getCurrentUser();
             
                         
@@ -56,7 +56,10 @@ class Current implements ICurrent
             } elseif ($user && isset($user['preferedLanguage']) && isset($user['preferedLanguage'][$siteId])) {
                 // if prefered locale is known for current user
                 $locale = $user['preferedLanguage'][$siteId];
-            } else {
+            } elseif (!$user && isset($cookieValue)) {
+                // fetch current locale from cookie
+                $locale = $cookieValue;
+            }else {
                 // default strategy
                 if (isset($site['useBrowserLanguage']) && $site['useBrowserLanguage'] == true) {
                     // use browser settings
@@ -74,6 +77,7 @@ class Current implements ICurrent
                     $locale = 'en';
                 }
             }
+                      
             
             // store locale in session
             $currentLocaleInSession[$siteId] = $locale;

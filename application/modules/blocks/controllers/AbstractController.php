@@ -59,7 +59,9 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
             //init browser languages
             $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
             $browserLanguages = array_keys($zend_locale->getBrowser());
-            Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'],null,$browserLanguages);
+            
+            $cookieValue = $this->getRequest()->getCookie('locale');
+            Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'],null,$browserLanguages,$cookieValue);
         }
         
         if (! $templateService->themeHadBeenSet()) {
