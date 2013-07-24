@@ -362,7 +362,7 @@ class IndexController extends Zend_Controller_Action
         }
         
         $this->_pageInfo['rows'] = $this->_mask['rows'];
-        
+                
         if (! isset($this->_site['theme'])) {
             $this->_site['theme'] = 'default';
         }
@@ -417,10 +417,12 @@ class IndexController extends Zend_Controller_Action
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
+            $column = $this->localizeTitle($column);
             if ($noSpan) {
                 $returnArray[$key]['span'] = null;
             }
             $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
+            $returnArray[$key]['eTitle'] = isset($column['eTitle']) ? $column['eTitle'] : null;
             $returnArray[$key]['elementTag'] = isset($column['elementTag']) ? $column['elementTag'] : null;
             $returnArray[$key]['elementStyle'] = isset($column['elementStyle']) ? $column['elementStyle'] : null;
             $returnArray[$key]['renderSpan'] = isset($column['renderSpan']) ? $column['renderSpan'] : true;
@@ -437,6 +439,33 @@ class IndexController extends Zend_Controller_Action
             }
         }
         return $returnArray;
+    }
+
+    /**
+     * Change title to localized title for row, column or block
+     * 
+     * @param array $item
+     * @return array
+     */
+    protected function localizeTitle(array $item)
+    {
+        if (isset($item['i18n'])) {
+            if (isset($item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()])) {
+                if (isset($item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()]['eTitle'])) {
+                    $item['eTitle'] = $item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()]['eTitle'];
+                } else {
+                    $item['title'] = $item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()]['title'];
+                }
+            } elseif (isset($item['i18n'][$this->_site['defaultLanguage']])) {
+                if (isset($item['i18n'][$this->_site['defaultLanguage']]['eTitle'])) {
+                    $item['eTitle'] = $item['i18n'][$this->_site['defaultLanguage']]['eTitle'];
+                } else {
+                    $item['title'] = $item['i18n'][$this->_site['defaultLanguage']]['title'];
+                }
+            }
+            unset($item['i18n']);
+        }
+        return $item;
     }
 
     /**
@@ -467,6 +496,8 @@ class IndexController extends Zend_Controller_Action
         }
         $returnArray = $rows;
         foreach ($rows as $key => $row) {
+            $row = $this->localizeTitle($row);
+            $returnArray[$key]['eTitle'] = isset($row['eTitle']) ? $row['eTitle'] : null;
             $returnArray[$key]['displayTitle'] = isset($row['displayTitle']) ? $row['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('row.html.twig');
             $returnArray[$key]['classHtml'] = isset($row['classHTML']) ? $row['classHTML'] : null;
@@ -500,6 +531,7 @@ class IndexController extends Zend_Controller_Action
      */
     protected function _getBlockData($block)
     {
+        $block = $this->localizeTitle($block);
         $params = array();
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
