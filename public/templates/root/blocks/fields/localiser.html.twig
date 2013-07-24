@@ -11,7 +11,7 @@
     {%endif%}
 {%endif%}
 
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?{% if (googleMapsKey) %}key={{ googleMapsKey }}&{% endif %}sensor=true"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?{% if (googleMapsKey) %}key={{ googleMapsKey }}&{% endif %}sensor=true&language={{ locale }}"></script>
 
 {% if type[key]["config"]["multivalued"] and data[key] is iterable %}
 	<div id="{{ data.id }}_{{key}}" data-values="{{ data[key]|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="localiser-rubedo row-fluid mapPlaceholder"></div>
