@@ -29,7 +29,7 @@ use Rubedo\Collection\AbstractLocalizableCollection;
 class Current implements ICurrent
 {
 
-    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array())
+    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array(),$cookieValue = null)
     {
         $locale = null;
         
@@ -43,20 +43,20 @@ class Current implements ICurrent
         if ($site) {
             $sessionService = Manager::getService('Session');
             $currentLocaleInSession = $sessionService->get('currentLocale', array());
-            
+                       
             $user = Manager::getService('CurrentUser')->getCurrentUser();
             
                         
             if ($forceLocal && in_array($forceLocal, $site['languages'])) {
                 // if locale is forced through URL
                 $locale = $forceLocal;
-            } elseif (isset($currentLocaleInSession[$siteId]) && in_array($currentLocaleInSession[$siteId], $site['languages'])) {
-                // if locale is already set in session
-                $locale = $currentLocaleInSession[$siteId];
             } elseif ($user && isset($user['preferedLanguage']) && isset($user['preferedLanguage'][$siteId])) {
                 // if prefered locale is known for current user
                 $locale = $user['preferedLanguage'][$siteId];
-            } else {
+            } elseif (!$user && isset($cookieValue)) {
+                // fetch current locale from cookie
+                $locale = $cookieValue;
+            }else {
                 // default strategy
                 if (isset($site['useBrowserLanguage']) && $site['useBrowserLanguage'] == true) {
                     // use browser settings
@@ -75,13 +75,14 @@ class Current implements ICurrent
                 }
             }
             
-            // store locale in session
-            $currentLocaleInSession[$siteId] = $locale;
-            $sessionService->set('currentLocale', $currentLocaleInSession);
-            
             AbstractLocalizableCollection::setLocalizationStrategy($site['locStrategy']);
             if($site['locStrategy']=='fallback'){
                 AbstractLocalizableCollection::setFallbackLocale($site['defaultLanguage']);
+            }
+            
+            if($user){
+                $user['preferedLanguage'][$siteId] = $locale;
+                Manager::getService('Users')->update($user);
             }
         } else {
             $locale = 'en';

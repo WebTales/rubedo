@@ -49,6 +49,10 @@ class XhrLanguageController extends Zend_Controller_Action
         $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
         $browserLanguages = array_keys($zend_locale->getBrowser());
         $locale = Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'], $forceLocale, $browserLanguages);
+        $domain = $this->getRequest()->getHeader('host');
+        if($domain){
+            $languageCookie = setcookie('locale', $locale, strtotime('+1 year'), '/', $domain);
+        }
         
         $response['success'] = $locale;
         

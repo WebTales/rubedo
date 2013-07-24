@@ -154,7 +154,12 @@ class IndexController extends Zend_Controller_Action
         $browserLanguages = array_keys($zend_locale->getBrowser());
         
         // context
-        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages);
+        $cookieValue = $this->getRequest()->getCookie('locale');
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages,$cookieValue);
+        $domain = $this->getRequest()->getHeader('host');
+        if($domain){
+            $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
+        }
         
         // reload page in localization context
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
