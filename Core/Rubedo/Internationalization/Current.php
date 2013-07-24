@@ -50,9 +50,6 @@ class Current implements ICurrent
             if ($forceLocal && in_array($forceLocal, $site['languages'])) {
                 // if locale is forced through URL
                 $locale = $forceLocal;
-            } elseif (isset($currentLocaleInSession[$siteId]) && in_array($currentLocaleInSession[$siteId], $site['languages'])) {
-                // if locale is already set in session
-                $locale = $currentLocaleInSession[$siteId];
             } elseif ($user && isset($user['preferedLanguage']) && isset($user['preferedLanguage'][$siteId])) {
                 // if prefered locale is known for current user
                 $locale = $user['preferedLanguage'][$siteId];
@@ -77,15 +74,15 @@ class Current implements ICurrent
                     $locale = 'en';
                 }
             }
-                      
-            
-            // store locale in session
-            $currentLocaleInSession[$siteId] = $locale;
-            $sessionService->set('currentLocale', $currentLocaleInSession);
             
             AbstractLocalizableCollection::setLocalizationStrategy($site['locStrategy']);
             if($site['locStrategy']=='fallback'){
                 AbstractLocalizableCollection::setFallbackLocale($site['defaultLanguage']);
+            }
+            
+            if($user){
+                $user['preferedLanguage'][$siteId] = $locale;
+                Manager::getService('Users')->update($user);
             }
         } else {
             $locale = 'en';
