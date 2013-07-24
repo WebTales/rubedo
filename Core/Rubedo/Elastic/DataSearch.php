@@ -445,68 +445,49 @@ class DataSearch extends DataAbstract implements IDataSearch
             }
         }
               
-        // Setting fields from localization strategy
+        
         $elasticaQuery = new \Elastica\Query();
         
         $elasticaQueryString = new \Elastica\Query\QueryString();
-        if ($option!='suggest') {
+        
+        // Setting fields from localization strategy
         switch ($localizationStrategy) {
             case 'backOffice' :
                 $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
                 break;
             case 'onlyOne' :
-                $elasticaQueryString->setFields(array("all_".$currentLocale));
+                if ($option!='suggest') {
+                    $elasticaQueryString->setDefaultField("all_".$currentLocale);
+                } else {
+                    $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
+                }
                 break;
             case 'fallback':
             default:
                 if ($currentLocale!=$fallBackLocale) {
-                    $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
+                    if ($option!='suggest') {
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
+                    } else {
+                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1"));
+                    }
                 } else {
-                    $elasticaQueryString->setFields(array("all_".$currentLocale));
+                    if ($option!='suggest') {
+                        $elasticaQueryString->setFields(array("all_".$currentLocale));
+                    } else {
+                        $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
+                    }
                 }
                 break;              
         }
-        }
 
+        // add user query
         if ($this->_params['query']!="") {
-            if ($option!='suggest') {
-                $elasticaQueryString->setQuery($this->_params['query']);   
-                $elasticaQuery->setQuery($elasticaQueryString);
-            } else {
-                switch ($localizationStrategy) {
-                    case 'onlyOne' :
-                        $term = new \Elastica\Query\Term();
-                        $term->setTerm($params['field'], $this->_params['query']);
-                        $elasticaQuery->setQuery($term);
-                        break;
-                    case 'fallback':
-                    default:
-
-                        if ($currentLocale!=$fallBackLocale && false) {
-
-                            $autocompleteFilter = new \Elastica\Filter\BoolOr();
-                            $term = new \Elastica\Filter\Term(); 
-                            $term->setTerm('autocomplete_'.$currentLocale, $this->_params['query']);
-                            $autocompleteFilter->addFilter($term);
-                            $term = new \Elastica\Filter\Term();
-                            $term->setTerm('autocomplete_'.$fallBackLocale, $this->_params['query']);
-                            $autocompleteFilter->addFilter($term);
-                            $this->_globalFilterList['autocomplete'] = $autocompleteFilter;
-                            $elasticaQueryString->setQuery("*");
-                            $elasticaQuery->setQuery($elasticaQueryString);
-                        } else {
-                            $term = new \Elastica\Query\Term();
-                            $term->setTerm($params['field'], $this->_params['query']);
-                            $elasticaQuery->setQuery($term);
-                        }                        
-                }
-
-            }
+            $elasticaQueryString->setQuery($this->_params['query']);   
         } else {
-            $elasticaQueryString->setQuery("*");
-            $elasticaQuery->setQuery($elasticaQueryString);
+            $elasticaQueryString->setQuery('*');
         }
-               
+        $elasticaQuery->setQuery($elasticaQueryString);
+                
         // Apply filter to query
         if (! empty($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {
@@ -706,18 +687,26 @@ class DataSearch extends DataAbstract implements IDataSearch
                                     "fragment_offset" => 0,
                                     "fragment_size" => 18,
                                     "number_of_fragments" => 1
+                            ),
+                            'autocomplete_'.$fallBackLocale=> array(
+                                    "fragment_offset" => 0,
+                                    "fragment_size" => 18,
+                                    "number_of_fragments" => 1
                             )
                         )
                 ));
 
     
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
-                
+         
                 foreach ($elasticaResultSet as $result) {
                     $highlights = $result->getHighlights();
                     if (isset($highlights['autocomplete_'.$currentLocale][0])) {
                         $suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_'.$currentLocale][0]);
                     } 
+                    if (isset($highlights['autocomplete_'.$fallBackLocale][0])) {
+                        $suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_'.$fallBackLocale][0]);
+                    }
                 }
                 return (array_unique($suggestTerms));
                 break;
