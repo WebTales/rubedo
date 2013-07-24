@@ -1,0 +1,32 @@
+{% extends "root/block.html.twig" %}
+
+{% block mainContent %}
+    <a  class="twitter-timeline"
+        href="https://twitter.com/{{ account }}"
+        data-widget-id="{{ widgetId }}"
+        {% if mode == "tweets" %}data-screen-name="{{ account }}"{% else %}data-favorites-screen-name="{{ account }}"{% endif %}
+        {% if tweetLimit and tweetLimit != "" %}data-tweet-limit="{{ tweetLimit }}"{% endif %}
+        {% if theme == "dark" %}data-theme="dark"{% endif %}
+        {% if width and width != "" %}width="{{ width }}"{% endif %}
+        {% if height and height != "" %}height="{{ height }}"{% endif %}
+        {% if options and options is iterable %}
+            {% set string = "" %}
+            {% for option in options %}
+                {% if option == "noFooter" %}
+                    {% set option = "nofooter" %}
+                {% elseif option == "noHeader" %}
+                    {% set option = "noheader" %}
+                {% elseif option == "noBorder" %}
+                    {% set option = "noborders" %}
+                {% elseif option == "noScrollbar" %}
+                    {% set option = "noscrollbar" %}
+                {% elseif option == "transparentBackground" %}
+                    {% set option = "transparent" %}
+                {% endif %}
+                
+                {% set string = string ~ option ~ " "  %}
+            {% endfor %}
+            data-chrome = "{{ string }}"
+        {% endif %}>Tweets de @{{ account }}</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+{% endblock %}

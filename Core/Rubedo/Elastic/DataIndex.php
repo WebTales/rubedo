@@ -698,8 +698,14 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add default meta's
         $contentData['objectType'] = 'content';
         $contentData['contentType'] = $typeId;
-        $contentData['nativeText']=$data['fields']['text'];
-        $contentData['nativeSummary']=$data['fields']['summary'];
+        if(isset($data['fields'])){
+            $contentData['nativeText']=$data['fields']['text'];
+            $contentData['nativeSummary']=$data['fields']['summary'];
+        }else{
+            $contentData['nativeText']='';
+            $contentData['nativeSummary']='';
+        }
+        
         $contentData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : null;
         $contentData['startPublicationDate'] = isset($data['startPublicationDate']) ? intval($data['startPublicationDate']) : null;
         $contentData['endPublicationDate'] = isset($data['endPublicationDate']) ? intval($data['endPublicationDate']) : null;

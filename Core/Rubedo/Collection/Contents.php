@@ -331,6 +331,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /**
      * Return validated data from input data based on content type
      *
+     * @todo : implement match against content type
      * @param array $obj            
      * @return array:
      */
@@ -368,61 +369,61 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         
         
-        foreach ($contentTypeFields as $value) {
-            $fieldsArray[$value['config']['name']] = $value;
-            if (! isset($value['config']['allowBlank']) || ! $value['config']['allowBlank']) {
-                $result = false;
-                if ($value['config']['name'] == "text" || $value['config']['name'] == "summary") {
-                    $field = $value['config']['name'];
-                    $result = $this->_controlAllowBlank($tempFields[$field], false);
-                }
-                if ($result == false) {
-                    $missingField[$value['config']['name']] = $value['config']['name'];
-                }
-            }
-        }
+//         foreach ($contentTypeFields as $value) {
+//             $fieldsArray[$value['config']['name']] = $value;
+//             if (! isset($value['config']['allowBlank']) || ! $value['config']['allowBlank']) {
+//                 $result = false;
+//                 if ($value['config']['name'] == "text" || $value['config']['name'] == "summary") {
+//                     $field = $value['config']['name'];
+//                     $result = $this->_controlAllowBlank($tempFields[$field], false);
+//                 }
+//                 if ($result == false) {
+//                     $missingField[$value['config']['name']] = $value['config']['name'];
+//                 }
+//             }
+//         }
         
-        $fieldsList = array_keys($fieldsArray);
+//         $fieldsList = array_keys($fieldsArray);
         
-        foreach ($obj['fields'] as $key => $value) {
-            if (in_array($key, array(
-                'text',
-                'summary'
-            ))) {
-                continue;
-            }
-            if (! in_array($key, $fieldsList)) {
-                unset($obj["fields"][$key]);
-                // $this->_inputDataErrors[$key] = 'unknown field';
-            } else {
-                unset($missingField[$key]);
+//         foreach ($obj['fields'] as $key => $value) {
+//             if (in_array($key, array(
+//                 'text',
+//                 'summary'
+//             ))) {
+//                 continue;
+//             }
+//             if (! in_array($key, $fieldsList)) {
+//                 unset($obj["fields"][$key]);
+//                 // $this->_inputDataErrors[$key] = 'unknown field';
+//             } else {
+//                 unset($missingField[$key]);
                 
-                if (isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true) {
-                    $tempFields[$key] = array();
-                    if (! is_array($value)) {
-                        $value = array(
-                            $value
-                        );
-                    }
-                    foreach ($value as $valueItem) {
-                        $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
-                        $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
-                    }
-                } else {
-                    $this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
+//                 if (isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true) {
+//                     $tempFields[$key] = array();
+//                     if (! is_array($value)) {
+//                         $value = array(
+//                             $value
+//                         );
+//                     }
+//                     foreach ($value as $valueItem) {
+//                         $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
+//                         $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
+//                     }
+//                 } else {
+//                     $this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
                     
-                    $tempFields[$key] = $this->_filterFieldValue($value, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
-                }
-            }
-        }
+//                     $tempFields[$key] = $this->_filterFieldValue($value, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
+//                 }
+//             }
+//         }
         
-        $obj['fields'] = $tempFields;
+//         $obj['fields'] = $tempFields;
         
-        if (count($missingField) > 0) {
-            foreach ($missingField as $value) {
-                $this->_inputDataErrors[$value] = 'missing field';
-            }
-        }
+//         if (count($missingField) > 0) {
+//             foreach ($missingField as $value) {
+//                 $this->_inputDataErrors[$value] = 'missing field';
+//             }
+//         }
         
         if (count($this->_inputDataErrors) === 0) {
             $this->_isValidInput = true;
@@ -1047,8 +1048,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
             foreach ($items['data'] as $item) {
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
                     $item = $this->addlocalization($item);
+                    
                     //$this->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
                     $this->update($item,array(),false);
+ 
                     if($item['status']=='published'){
                         $this->publish($item['id']);
                     }
