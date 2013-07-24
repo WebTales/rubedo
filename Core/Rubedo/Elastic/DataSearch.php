@@ -420,7 +420,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $this->_params['suplon'],
                 $this->_params['inflat']
             );
-            $filter = new \Elastica\Filter_GeoBoundingBox('position_location', array(
+            $filter = new \Elastica\Filter\GeoBoundingBox('position_location', array(
                 $topleft,
                 $bottomright
             ));
@@ -447,7 +447,9 @@ class DataSearch extends DataAbstract implements IDataSearch
               
         // Setting fields from localization strategy
         $elasticaQuery = new \Elastica\Query();
+        
         $elasticaQueryString = new \Elastica\Query\QueryString();
+        if ($option!='suggest') {
         switch ($localizationStrategy) {
             case 'backOffice' :
                 $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
@@ -464,19 +466,47 @@ class DataSearch extends DataAbstract implements IDataSearch
                 }
                 break;              
         }
+        }
 
         if ($this->_params['query']!="") {
             if ($option!='suggest') {
-                $elasticaQueryString->setQuery($this->_params['query']);
+                $elasticaQueryString->setQuery($this->_params['query']);   
+                $elasticaQuery->setQuery($elasticaQueryString);
             } else {
-                $elasticaQueryString->setQuery($this->_params['query']."*");
+                switch ($localizationStrategy) {
+                    case 'onlyOne' :
+                        $term = new \Elastica\Query\Term();
+                        $term->setTerm($params['field'], $this->_params['query']);
+                        $elasticaQuery->setQuery($term);
+                        break;
+                    case 'fallback':
+                    default:
+
+                        if ($currentLocale!=$fallBackLocale && false) {
+
+                            $autocompleteFilter = new \Elastica\Filter\BoolOr();
+                            $term = new \Elastica\Filter\Term(); 
+                            $term->setTerm('autocomplete_'.$currentLocale, $this->_params['query']);
+                            $autocompleteFilter->addFilter($term);
+                            $term = new \Elastica\Filter\Term();
+                            $term->setTerm('autocomplete_'.$fallBackLocale, $this->_params['query']);
+                            $autocompleteFilter->addFilter($term);
+                            $this->_globalFilterList['autocomplete'] = $autocompleteFilter;
+                            $elasticaQueryString->setQuery("*");
+                            $elasticaQuery->setQuery($elasticaQueryString);
+                        } else {
+                            $term = new \Elastica\Query\Term();
+                            $term->setTerm($params['field'], $this->_params['query']);
+                            $elasticaQuery->setQuery($term);
+                        }                        
+                }
+
             }
         } else {
             $elasticaQueryString->setQuery("*");
+            $elasticaQuery->setQuery($elasticaQueryString);
         }
-        
-        $elasticaQuery->setQuery($elasticaQueryString);
-       
+               
         // Apply filter to query
         if (! empty($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {
@@ -672,20 +702,21 @@ class DataSearch extends DataAbstract implements IDataSearch
                         "pre_tags" => array("<term>"),
                         "post_tags" => array("</term>"),
                         "fields" => array(
-                                $params['field'] => array(
-                                        "fragment_offset" => 0,
-                                        "fragment_size" => 18,
-                                        "number_of_fragments" => 1
-                                )
+                            'autocomplete_'.$currentLocale=> array(
+                                    "fragment_offset" => 0,
+                                    "fragment_size" => 18,
+                                    "number_of_fragments" => 1
+                            )
                         )
                 ));
-                
+
+    
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
                 
                 foreach ($elasticaResultSet as $result) {
                     $highlights = $result->getHighlights();
-                    if (isset($highlights[$params['field']][0])) {
-                        $suggestTerms[] = preg_replace("/(.*)<term>([^<]*)<\/term>(.*)/", "\\2", $highlights[$params['field']][0]);
+                    if (isset($highlights['autocomplete_'.$currentLocale][0])) {
+                        $suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_'.$currentLocale][0]);
                     } 
                 }
                 return (array_unique($suggestTerms));

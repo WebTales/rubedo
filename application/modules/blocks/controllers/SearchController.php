@@ -119,9 +119,14 @@ class Blocks_SearchController extends Blocks_AbstractController
 
         $params = \Zend_Json::decode($this->getRequest()->getParam('searchParams'));
         
+        // get current language
+        $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        
+        // set query
         $params['query'] = $this->getRequest()->getParam('query');
        
-        $params["field"] = "all_fr";
+        // set field for autocomplete
+        $params['field'] = 'autocomplete_'.$currentLocale;
                
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
