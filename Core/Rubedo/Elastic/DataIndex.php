@@ -205,6 +205,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         							$locale = $lang['locale'];
         							$fieldName = $name.'_'.$locale;
         							$_all = 'all_'.$locale;
+                                    $_autocomplete = 'autocomplete_'.$locale;
         							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
         								$lg_analyser = $locale.'_analyzer';						
         							} else {
@@ -214,8 +215,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         									"type" => "multi_field",
         									"path" => "just_name",
         									"fields" => array(
-        											$fieldName => array("type" => "string", "analyzer" => "autocomplete", 'store' => $store),
-        											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store)
+        											$fieldName => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+        											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+        									        $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store, "include_in_all" => false)
         									)
         							);
         						}

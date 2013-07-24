@@ -308,7 +308,7 @@
 		            "type": "custom",
  					"tokenizer": "whitespace",
                     "filter": ["icu_folding", "icu_normalizer", "autocomplete"],
-		            "char_filter": ["html_strip"]           
+		            "char_filter": ["html_strip"]
 		        },
 		        "default": {
 		            "type": "custom",

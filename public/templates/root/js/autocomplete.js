@@ -16,6 +16,9 @@ $(function(){
 			});
 			
 	    },
+	    matcher: function() {
+	    	return true;
+	    },
 	    items:10,
 	    minLength:3
 	})
