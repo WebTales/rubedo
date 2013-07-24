@@ -181,7 +181,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                 
                 $twigVars = array();
                 $twigVars['result'] = $entity;
-                $twigVars['lang'] = $sessionService->get('lang', 'fr');
+                $twigVars['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
                 $twigVars['result']['terms'] = $termsArray;
                 
                 $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);

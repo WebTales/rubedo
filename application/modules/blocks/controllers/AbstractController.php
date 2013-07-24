@@ -94,7 +94,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         $output['classHtml'] = $this->getRequest()->getParam('classHtml', '');
         $output['idHtml'] = $this->getRequest()->getParam('idHtml', '');
         
-        $output['lang'] = Manager::getService('Session')->get('lang', 'fr');
+        $output['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_servicePage = Manager::getService('PageContent');
         
