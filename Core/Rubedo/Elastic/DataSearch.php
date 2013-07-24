@@ -192,10 +192,18 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $this->_params = $params;
         
+        
         $this->_facetDisplayMode = isset($this->_params['block-config']['displayMode']) ? $this->_params['block-config']['displayMode'] : 'standard';
         
         // front-end search
         if ((self::$_isFrontEnd)) {
+            
+            // get list of displayed Facets, only for non suggest requests
+            if ($option != 'suggest') {
+                $this->_displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
+            } else {
+                $this->_displayedFacets = array();
+            }
             
             // get current user language             
             $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
@@ -402,7 +410,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // filter on date
         if (array_key_exists('lastupdatetime', $this->_params)) {
-            $filter = new \Elastica\Filter_Range('lastUpdateTime', array(
+            $filter = new \Elastica\Filter\Range('lastUpdateTime', array(
                 'from' => $this->_params['lastupdatetime']
             ));
             $this->_globalFilterList['lastupdatetime'] = $filter;
