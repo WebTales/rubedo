@@ -690,7 +690,12 @@ class DataIndex extends DataAbstract implements IDataIndex
 	        				}
 	        			}	        			
 	        		} else  {
-	        			$contentData[$name] = (string) $value;
+	        		    if(!empty($value)){
+	        		        $contentData[$name] = (string) $value;
+	        		    }else{
+	        		        $contentData[$name] = null;
+	        		    }
+	        			
 	        		}
         		}
         		
