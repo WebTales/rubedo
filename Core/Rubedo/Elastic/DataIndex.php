@@ -217,7 +217,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         									"fields" => array(
         											$fieldName => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
         											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
-        									        $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store, "include_in_all" => false)
+        									        $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
         									)
         							);
         						}
@@ -231,7 +231,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         						"fields" => array(
         							$name => array("type" => "string", 'store' => $store),
         							$_all => array("type" => "string", 'store' => $store),
-        						    $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store, "include_in_all" => false)
+        						    $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
         						)
         					);
                     	} 
