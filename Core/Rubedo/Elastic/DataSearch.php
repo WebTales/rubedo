@@ -129,6 +129,14 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
     }
 
+    protected function setLocaleFilter(array $values)
+    {
+        $filter = new \Elastica\Filter\Terms();
+        $filter->setTerms('availableLanguages', $values);
+        $this->_globalFilterList['availableLanguages'] = $filter;
+        $this->_setFilter = true;
+    }
+
     /**
      * Build Elastica facet filter from name
      *
@@ -464,6 +472,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
                 break;
             case 'onlyOne' :
+                $this->setLocaleFilter(array($currentLocale));
                 if ($option!='suggest') {
                 	$elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
                 } else {
@@ -472,6 +481,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'fallback':
             default:
+                $this->setLocaleFilter(array($currentLocale,$fallBackLocale));
                 if ($currentLocale!=$fallBackLocale) {
                     if ($option!='suggest') {
                         $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","all_nonlocalized^0.1"));
