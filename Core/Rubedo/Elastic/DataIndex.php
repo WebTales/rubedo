@@ -352,6 +352,11 @@ class DataIndex extends DataAbstract implements IDataIndex
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
+        $indexMapping["availableLanguages"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'no'
+        );
         
         // Add Taxonomies
         foreach ($vocabularies as $vocabularyName) {
@@ -473,6 +478,11 @@ class DataIndex extends DataAbstract implements IDataIndex
             'type' => 'integer',
             'index' => 'not_analyzed',
             'store' => 'yes'
+        );
+        $indexMapping["availableLanguages"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'no'
         );
         
         // Add Taxonomies
@@ -705,7 +715,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         		
         	// Get localizable fields from i18n
         		if (isset($data['i18n'])) {
+        		    $availableLanguages = array();
         			foreach ($data['i18n'] as $key => $locale) {
+        			    $availableLanguages[] = $key;
         				if (isset($locale['fields'][$name])) {
         					$value  = $locale['fields'][$name];
         					// Temp fix because local is not set in i18n at the first content creation
@@ -720,6 +732,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         					}       					
         				}
         			}
+        			$contentData['availableLanguages'] = $availableLanguages;
         		}
         		
         	}
