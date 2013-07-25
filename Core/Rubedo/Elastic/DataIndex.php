@@ -158,8 +158,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             // Only searchable fields get indexed
             if ($field['config']['searchable']) {
                 
-                $name = $field['config']['fieldLabel'];
-                //$name = $field['config']['name'];
+                //$name = $field['config']['fieldLabel'];
+                $name = $field['config']['name'];
                 $store = "yes";
                 
                 switch ($field['cType']) {
@@ -188,7 +188,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                         break;
                     default:
                     	
-                        //if (isset($field['config']['localizable']) and $field['config']['localisable']==true) {
+                        if (isset($field['config']['localizable']) and $field['config']['localizable']==true) {
                         	// get active languages
                         	$languages = Manager::getService("Languages");
                         	$activeLanguages = $languages->getActiveLanguages();
@@ -220,7 +220,17 @@ class DataIndex extends DataAbstract implements IDataIndex
         							);
         						}
                         	}
-                    	//} 
+                    	} else {
+                    		$_autocomplete = 'autocomplete_all';
+                    		$indexMapping[$name] = array(
+        						"type" => "multi_field",
+        						"path" => "just_name",
+        						"fields" => array(
+        							$name => array("type" => "string", 'store' => $store),
+        						    $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store, "include_in_all" => false)
+        						)
+        					);
+                    	} 
 
                         break;
                 }

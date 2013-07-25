@@ -474,13 +474,13 @@ class DataSearch extends DataAbstract implements IDataSearch
             default:
                 if ($currentLocale!=$fallBackLocale) {
                     if ($option!='suggest') {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","autocomplete_all^0.1"));
                     } else {
                         $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1"));
                     }
                 } else {
                     if ($option!='suggest') {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale));
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"autocomplete_all^0.1"));
                     } else {
                         $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
                     }
