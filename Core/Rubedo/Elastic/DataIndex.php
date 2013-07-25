@@ -322,6 +322,11 @@ class DataIndex extends DataAbstract implements IDataIndex
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
+        $indexMapping["authorName"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );
         $indexMapping["contentType"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
@@ -432,6 +437,11 @@ class DataIndex extends DataAbstract implements IDataIndex
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
+        $indexMapping["authorName"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );
         $indexMapping["damType"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
@@ -480,7 +490,9 @@ class DataIndex extends DataAbstract implements IDataIndex
             $type = new \Elastica\Type(self::$_dam_index, $id);
             
             // Set mapping
-            $type->setMapping($indexMapping);
+            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
+            $indexMappingObject->disableSource();
+            $type->setMapping($indexMappingObject);
             
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
@@ -547,7 +559,9 @@ class DataIndex extends DataAbstract implements IDataIndex
             $type = new \Elastica\Type(self::$_user_index, $id);
     
             // Set mapping
-            $type->setMapping($indexMapping);
+            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
+            $indexMappingObject->disableSource();
+            $type->setMapping($indexMappingObject);
     
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
@@ -722,7 +736,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         $contentData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : null;
         $contentData['startPublicationDate'] = isset($data['startPublicationDate']) ? intval($data['startPublicationDate']) : null;
         $contentData['endPublicationDate'] = isset($data['endPublicationDate']) ? intval($data['endPublicationDate']) : null;
-        $contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+        
+        //in ES 0.9, date are in microseconds
+        $contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0;
         $contentData['status'] = (isset($data['status'])) ? (string) $data['status'] : 'unknown';
         $contentData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
         $contentData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
@@ -839,7 +855,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         $damData['text_not_analyzed'] = (string) $data['title'];
         $fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
         $damData['fileSize'] = $fileSize;
-        $damData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+        
+        //in ES 0.9, date are in microseconds
+        $damData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0;
         $damData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
         $damData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
         

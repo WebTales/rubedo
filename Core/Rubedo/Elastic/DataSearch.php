@@ -590,10 +590,11 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetDate->setField('lastUpdateTime');
             $d = Manager::getService('CurrentTime')->getCurrentTime();
             
-            $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d));
-            $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d));
-            $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d));
-            $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1);
+            //in ES 0.9, date are in microseconds
+            $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d))*1000;
+            $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d))*1000;
+            $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d))*1000;
+            $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1)*1000;
             $ranges = array(
                 array(
                     'from' => $lastday
@@ -666,6 +667,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         $elasticaQuery->setSort(array(
             $this->_params['orderby'] => strtolower($this->_params['orderbyDirection'])
         ));
+        
+        $returnedFieldsArray = array("*");
+        $elasticaQuery->setFields($returnedFieldsArray);
         
         // run query
         switch ($option) {
@@ -791,6 +795,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                     break;
             }
             
+            //ensure that date is formated as timestamp while handled as date type for ES
+            $data['lastUpdateTime'] = strtotime($data['lastUpdateTime']);
+            
             // Set read only
             
             if (in_array($data['writeWorkspace'], $writeWorkspaceArray)) {
@@ -798,8 +805,6 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $data['readOnly'] = true;
             }
-            // do not return attached file if exists : can't be declared not stored as any other fields
-            unset($data['file']);
             $result['data'][] = $data;
         }
         
