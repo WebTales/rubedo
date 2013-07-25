@@ -223,12 +223,14 @@ class DataIndex extends DataAbstract implements IDataIndex
         						}
                         	}
                     	} else {
-                    		$_autocomplete = 'autocomplete_all';
+                    		$_autocomplete = 'autocomplete_nonlocalized';
+                    		$_all = 'all_nonlocalized';
                     		$indexMapping[$name] = array(
         						"type" => "multi_field",
         						"path" => "just_name",
         						"fields" => array(
         							$name => array("type" => "string", 'store' => $store),
+        							$_all => array("type" => "string", 'store' => $store),
         						    $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store, "include_in_all" => false)
         						)
         					);

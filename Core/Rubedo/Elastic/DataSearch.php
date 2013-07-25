@@ -465,24 +465,24 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'onlyOne' :
                 if ($option!='suggest') {
-                    $elasticaQueryString->setDefaultField("all_".$currentLocale,"autocomplete_all^0.1");
+                	$elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
                 } else {
-                    $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
+                    $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
                 }
                 break;
             case 'fallback':
             default:
                 if ($currentLocale!=$fallBackLocale) {
                     if ($option!='suggest') {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","autocomplete_all^0.1"));
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","all_nonlocalized^0.1"));
                     } else {
-                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1"));
+                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1","autocomplete_nonlocalized"));
                     }
                 } else {
                     if ($option!='suggest') {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale,"autocomplete_all^0.1"));
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
                     } else {
-                        $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
+                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
                     }
                 }
                 break;              
@@ -705,7 +705,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                                     "fragment_size" => 18,
                                     "number_of_fragments" => 1
                             ),
-                        	'autocomple_all'=> array(
+                        	'autocomplete_nonlocalized'=> array(
                                     "fragment_offset" => 0,
                                     "fragment_size" => 18,
                                     "number_of_fragments" => 1
@@ -723,6 +723,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                     } 
                     if (isset($highlights['autocomplete_'.$fallBackLocale][0])) {
                         $suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_'.$fallBackLocale][0]);
+                    }
+                    if (isset($highlights['autocomplete_nonlocalized'][0])) {
+                    	$suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_nonlocalized'][0]);
                     }
                 }
                 return (array_unique($suggestTerms));
