@@ -25,9 +25,11 @@ use Rubedo\Interfaces\Collection\IContentTypes, Rubedo\Services\Manager, WebTale
  * @category Rubedo
  * @package Rubedo
  */
-class ContentTypes extends AbstractCollection implements IContentTypes
+class ContentTypes extends AbstractLocalizableCollection implements IContentTypes
 {
-
+    protected static $nonLocalizableFields = array("fields","vocabularies","dependant","activateDisqus","dependantTypes","readOnly","workspaces","workflow","system","CTType");
+    protected static $labelField = 'type';
+    
     protected $_indexes = array(
         array(
             'keys' => array(
