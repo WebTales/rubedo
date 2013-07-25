@@ -5,8 +5,9 @@ $(function(){
 				url : '/blocks/geosearch/xhr-get-suggests',
 				type : "POST",
 				data : {
-					'query': query,
-					'searchParams': jQuery('#searchpage').attr('data-searchparams')
+					'query' : query,
+					'current-page':jQuery('body').attr('data-current-page'),
+					'searchParams':jQuery('#searchpage').attr('data-searchparams')
 				},
 				dataType : "json"
 			});
