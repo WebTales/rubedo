@@ -136,22 +136,20 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // ad text, summary, nativeText, nativeSummary system fields
         
-        $fields = array(
-            array(
-                "cType" => "system",
-                "config" => array (
-                    "name" => "text",
-                    "fieldLabel" => "text",
-                    "searchable" => true
-                )
-            ),
-            array (
-                "cType" => "system",
-                "config" => array (
-                        "name" => "summary",
-                        "fieldLabel" => "summary",
-                        "searchable" => true
-                )
+        $fields[] = array(
+        	"cType" => "system",
+            "config" => array (
+            	"name" => "text",
+            	"fieldLabel" => "text",
+            	"searchable" => true
+            )
+        );
+        $fields[] = array(
+        	"cType" => "system",
+            "config" => array (
+                "name" => "summary",
+                "fieldLabel" => "summary",
+                "searchable" => true
             )
         );
         
@@ -183,7 +181,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                             'type' => 'geo_point',
                             'store' => 'yes'
                         );
-                        $indexMapping["position_adress"] = array(
+                        $indexMapping["position_address"] = array(
                             'type' => 'string',
                             'store' => 'yes'
                         );
