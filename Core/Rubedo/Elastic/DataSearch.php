@@ -465,7 +465,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'onlyOne' :
                 if ($option!='suggest') {
-                    $elasticaQueryString->setDefaultField("all_".$currentLocale);
+                    $elasticaQueryString->setDefaultField("all_".$currentLocale,"autocomplete_all^0.1");
                 } else {
                     $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
                 }
@@ -697,6 +697,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                                     "number_of_fragments" => 1
                             ),
                             'autocomplete_'.$fallBackLocale=> array(
+                                    "fragment_offset" => 0,
+                                    "fragment_size" => 18,
+                                    "number_of_fragments" => 1
+                            ),
+                        	'autocomple_all'=> array(
                                     "fragment_offset" => 0,
                                     "fragment_size" => 18,
                                     "number_of_fragments" => 1

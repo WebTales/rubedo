@@ -141,7 +141,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             "config" => array (
             	"name" => "text",
             	"fieldLabel" => "text",
-            	"searchable" => true
+            	"searchable" => true,
+            	"localizable" => true
             )
         );
         $fields[] = array(
@@ -149,7 +150,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             "config" => array (
                 "name" => "summary",
                 "fieldLabel" => "summary",
-                "searchable" => true
+                "searchable" => true,
+            	"localizable" => true
             )
         );
         
@@ -640,6 +642,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add fields to index
         $contentData = array();
         
+
         // For every searchable field
         foreach ($typeStructure['searchableFields'] as $fieldConfig) {
         	
