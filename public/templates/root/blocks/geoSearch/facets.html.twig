@@ -11,13 +11,13 @@
 		        
 		{% endfor %}
 
-
+<div id="searchpage" data-searchparams="{{ searchParams }}">
 <div class="span3 well well-large" id="facetBox">
 		<p>
 			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
 		</p>
 			<form name="searchForm" class="form-search" action="javascript:window.updateFacets('query',document.searchForm.elements['query'].value,true)">
-				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
+				<input type="text" class="input-medium search-query {% if autoComplete %}typeahead{%  endif %}" autocomplete="off" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
 			</form>
 		
 		{% for facet in facets %}
@@ -83,4 +83,5 @@
 		
 		{% endfor %}
 		
+</div>
 </div>

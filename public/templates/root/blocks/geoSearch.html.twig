@@ -154,7 +154,8 @@
     				'suplat': bounds.getNorthEast().lat(),	
     				'inflon': bounds.getSouthWest().lng(),
     				'suplon': bounds.getNorthEast().lng(),
-    				'displayMode':displayMode
+    				'displayMode':displayMode,
+    				'autoComplete':{% if blockConfig.autoComplete%}true{% else %}false{% endif %} ,
     			}
           var currentFacets=window.activeFacets;
           for (var attrname in currentFacets) { params[attrname] = currentFacets[attrname]; }
