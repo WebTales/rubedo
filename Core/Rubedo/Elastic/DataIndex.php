@@ -136,22 +136,22 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // ad text, summary, nativeText, nativeSummary system fields
         
-        $fields = array(
-            array(
-                "cType" => "system",
-                "config" => array (
-                    "name" => "text",
-                    "fieldLabel" => "text",
-                    "searchable" => true
-                )
-            ),
-            array (
-                "cType" => "system",
-                "config" => array (
-                        "name" => "summary",
-                        "fieldLabel" => "summary",
-                        "searchable" => true
-                )
+        $fields[] = array(
+        	"cType" => "system",
+            "config" => array (
+            	"name" => "text",
+            	"fieldLabel" => "text",
+            	"searchable" => true,
+            	"localizable" => true
+            )
+        );
+        $fields[] = array(
+        	"cType" => "system",
+            "config" => array (
+                "name" => "summary",
+                "fieldLabel" => "summary",
+                "searchable" => true,
+            	"localizable" => true
             )
         );
         
@@ -160,8 +160,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             // Only searchable fields get indexed
             if ($field['config']['searchable']) {
                 
-                $name = $field['config']['fieldLabel'];
-                //$name = $field['config']['name'];
+                //$name = $field['config']['fieldLabel'];
+                $name = $field['config']['name'];
                 $store = "yes";
                 
                 switch ($field['cType']) {
@@ -183,14 +183,14 @@ class DataIndex extends DataAbstract implements IDataIndex
                             'type' => 'geo_point',
                             'store' => 'yes'
                         );
-                        $indexMapping["position_adress"] = array(
+                        $indexMapping["position_address"] = array(
                             'type' => 'string',
                             'store' => 'yes'
                         );
                         break;
                     default:
                     	
-                        //if (isset($field['config']['localizable']) and $field['config']['localisable']==true) {
+                        if (isset($field['config']['localizable']) and $field['config']['localizable']==true) {
                         	// get active languages
                         	$languages = Manager::getService("Languages");
                         	$activeLanguages = $languages->getActiveLanguages();
@@ -222,7 +222,17 @@ class DataIndex extends DataAbstract implements IDataIndex
         							);
         						}
                         	}
-                    	//} 
+                    	} else {
+                    		$_autocomplete = 'autocomplete_all';
+                    		$indexMapping[$name] = array(
+        						"type" => "multi_field",
+        						"path" => "just_name",
+        						"fields" => array(
+        							$name => array("type" => "string", 'store' => $store),
+        						    $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store, "include_in_all" => false)
+        						)
+        					);
+                    	} 
 
                         break;
                 }
@@ -646,6 +656,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add fields to index
         $contentData = array();
         
+
         // For every searchable field
         foreach ($typeStructure['searchableFields'] as $fieldConfig) {
         	

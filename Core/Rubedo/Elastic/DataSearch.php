@@ -465,7 +465,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'onlyOne' :
                 if ($option!='suggest') {
-                    $elasticaQueryString->setDefaultField("all_".$currentLocale);
+                    $elasticaQueryString->setDefaultField("all_".$currentLocale,"autocomplete_all^0.1");
                 } else {
                     $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
                 }
@@ -474,13 +474,13 @@ class DataSearch extends DataAbstract implements IDataSearch
             default:
                 if ($currentLocale!=$fallBackLocale) {
                     if ($option!='suggest') {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1"));
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","autocomplete_all^0.1"));
                     } else {
                         $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1"));
                     }
                 } else {
                     if ($option!='suggest') {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale));
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"autocomplete_all^0.1"));
                     } else {
                         $elasticaQueryString->setDefaultField("autocomplete_".$currentLocale);
                     }
@@ -701,6 +701,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                                     "number_of_fragments" => 1
                             ),
                             'autocomplete_'.$fallBackLocale=> array(
+                                    "fragment_offset" => 0,
+                                    "fragment_size" => 18,
+                                    "number_of_fragments" => 1
+                            ),
+                        	'autocomple_all'=> array(
                                     "fragment_offset" => 0,
                                     "fragment_size" => 18,
                                     "number_of_fragments" => 1
