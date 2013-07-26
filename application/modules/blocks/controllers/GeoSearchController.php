@@ -39,9 +39,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $results['blockTitle'] = $this->getParam('blockTitle');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         $css = array();
-        $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/geoAutoComplete.js")
-        );
+        $js=array();
         $this->_sendResponse($results, $template, $css, $js);
     }
 

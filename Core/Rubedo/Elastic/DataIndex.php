@@ -199,29 +199,26 @@ class DataIndex extends DataAbstract implements IDataIndex
                         	$activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
     
                         	// create on field per language with proper analyser with all_locale collector
-                        	// on for contents type for the moment
-                        	if ($objectType!="dam") {
-        						foreach($activeLanguages as $lang) {
-        							$locale = $lang['locale'];
-        							$fieldName = $name.'_'.$locale;
-        							$_all = 'all_'.$locale;
-                                    $_autocomplete = 'autocomplete_'.$locale;
-        							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
-        								$lg_analyser = $locale.'_analyzer';						
-        							} else {
-        								$lg_analyser = 'default';
-        							}
-        							$indexMapping[$fieldName] = array(
-        									"type" => "multi_field",
-        									"path" => "just_name",
-        									"fields" => array(
-        											$fieldName => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
-        											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
-        									        $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
-        									)
-        							);
-        						}
-                        	}
+    						foreach($activeLanguages as $lang) {
+    							$locale = $lang['locale'];
+    							$fieldName = $name.'_'.$locale;
+    							$_all = 'all_'.$locale;
+                                $_autocomplete = 'autocomplete_'.$locale;
+    							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
+    								$lg_analyser = $locale.'_analyzer';						
+    							} else {
+    								$lg_analyser = 'default';
+    							}
+    							$indexMapping[$fieldName] = array(
+    									"type" => "multi_field",
+    									"path" => "just_name",
+    									"fields" => array(
+    											$fieldName => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+    											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+    									        $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
+    									)
+    							);
+    						}
                     	} else {
                     		$_autocomplete = 'autocomplete_nonlocalized';
                     		$_all = 'all_nonlocalized';

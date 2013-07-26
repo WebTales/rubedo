@@ -169,6 +169,16 @@ class DataAbstract
     }
 
     /**
+     * Set the options for the content-dam
+     *
+     * @param string $host
+     */
+    public static function setDamIndexOption (array $options)
+    {
+        self::$_dam_index_param = $options;
+    }
+    
+    /**
      * Return the ElasticSearch Server Version
      * 
      * @return string
