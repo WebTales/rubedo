@@ -308,7 +308,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                 $obj['locale'] = $locale;
             } elseif (isset($alternativeFallBack) && isset($obj['i18n'][$alternativeFallBack])) {
                 $obj = $this->merge($obj, $obj['i18n'][$alternativeFallBack]);
-                $obj['locale'] = $locale;
+                $obj['locale'] = $alternativeFallBack;
             }
         }
         
