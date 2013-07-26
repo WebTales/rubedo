@@ -275,6 +275,7 @@ function saveImage(currentContentId, newImageId) {
 
 jQuery(".date").click( function () {
 	var currentDatePicker = jQuery(this).parent().context.id;
+	var locale = jQuery("#"+currentDatePicker).attr("data-locale");
 	jQuery("#"+currentDatePicker+" .datepicker").datepicker({
 			regional: jQuery("body").attr("data-language"),
 			dateFormat : "d MM yy",
@@ -302,6 +303,7 @@ jQuery(".date").click( function () {
 
 jQuery(".time").click( function () {
 	var currentTimePicker = jQuery(this).parent().context.id;
+	var locale = jQUery("#"+currentTimePicker).attr("data-locale");
 	var currentTime = "";
 	var olderTime= "";
 	var houresAreSet = false;
@@ -334,12 +336,12 @@ jQuery(".time").click( function () {
 				}
 
 				if(currentMinutes != olderMinutes) {
-					modifications[currentTimePicker] = {"newValue" : currentTime};
+					modifications[currentTimePicker] = {"newValue" : currentTime, "locale" : locale};
 					
 					jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 				}
 			} else if(currentMinutes == olderMinutes && currentHoures == olderHoures && houresAreSet){
-				modifications[currentTimePicker] = {"newValue" : currentTime};
+				modifications[currentTimePicker] = {"newValue" : currentTime, "locale" : locale};
 				
 				jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 			}
@@ -374,7 +376,8 @@ jQuery(".checkbox-edit").click( function () {
 	if(!jQuery(this).find("input").is(":disabled")){
 		var newValue=jQuery(this).find("input").is(":checked");
 		var checkboxId=jQuery(this).attr("id");
-		modifications[checkboxId] = {"newValue" : newValue};
+		var locale=jQuery(this).attr("data-locale");
+		modifications[checkboxId] = {"newValue" : newValue, "locale" : locale};
 	}
 	
 });
@@ -406,6 +409,7 @@ jQuery(".radiogroup-edit").click( function () {
 jQuery(".checkboxgroup-edit").click( function () {
 	if(!jQuery(this).find("input").is(":disabled")){
 		var checkboxGroupId=jQuery(this).attr("id");
+		var locale=jQuery(this).attr("data-locale");
 		var newValue={ };
 		newValue[jQuery(this).find("input").attr("name")]=new Array();
 		jQuery(this).find("input").each(function(b,a){
@@ -414,7 +418,7 @@ jQuery(".checkboxgroup-edit").click( function () {
 			}
 		});
 		
-		modifications[checkboxGroupId] = { "type" : "checkboxgroup", "newValue" : newValue };
+		modifications[checkboxGroupId] = { "type" : "checkboxgroup", "newValue" : newValue, "locale" : locale };
 	}
 	
 });

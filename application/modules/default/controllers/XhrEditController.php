@@ -62,11 +62,13 @@ class XhrEditController extends Zend_Controller_Action
             $contentId = explode("_", $contentId);
             $id = $contentId[0];
             $field = $contentId[1];
+            $localizable = false;
             
             $locale = isset($value["locale"]) ? $value["locale"] : null;
             
             $field = explode("-", $field);
             $name = $field[0];
+            
             if (count($field) > 1) {
                 $index = $field[1];
             }
@@ -77,7 +79,20 @@ class XhrEditController extends Zend_Controller_Action
             if ($data == 'false') {
                 $data = false;
             }
+            
             $content = $this->_dataService->findById($id, true, false);
+            $contentType = Manager::getService("ContentTypes")->findById($content['typeId']);
+            
+            foreach ($contentType["fields"] as $fieldObj) {
+                if($fieldObj["config"]["name"] === $name) {
+                    $localizable = isset($fieldObj["config"]["localizable"]) ? $fieldObj["config"]["localizable"] : false;
+                }
+            }
+            
+            if($name == "text" || $name == "summary") {
+                $localizable = true;
+            }
+            
             if (! $content) {
                 throw new \Rubedo\Exceptions\Server('This content id does not exist: %1$s', "Exception28", $id);
             }
@@ -86,15 +101,23 @@ class XhrEditController extends Zend_Controller_Action
                 $returnArray['success'] = false;
                 $returnArray['msg'] = 'Content already have a draft version';
             } else {
-                
-                if($locale !== null) {
-                    if (count($field) > 1) {
-                        $content["i18n"][$locale]['fields'][$name][$index] = $value["newValue"];
+                if($localizable) {
+                    
+                    if($locale !== null) {
+                        if (count($field) > 1) {
+                            $content["i18n"][$locale]['fields'][$name][$index] = $value["newValue"];
+                        } else {
+                            $content["i18n"][$locale]['fields'][$name] = $value["newValue"];
+                        }
                     } else {
-                        $content["i18n"][$locale]['fields'][$name] = $value["newValue"];
+                        $errors[] = "You must provide the current language of the content to update it (".$content['id'].")";
                     }
                 } else {
-                    $errors[] = "You must provide the current language of the content to update it (".$content['id'].")";
+                    if (count($field) > 1) {
+                        $content['fields'][$name][$index] = $value["newValue"];
+                    } else {
+                        $content['fields'][$name] = $value["newValue"];
+                    }
                 }
                 
                 $updateResult = $this->_dataService->update($content, array(), false);

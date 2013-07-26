@@ -914,6 +914,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         // force label to contain only native title in DB
         if (isset($obj['i18n'][$obj['nativeLanguage']]['fields']['text'])) {
             $obj['fields']['text'] = $obj['i18n'][$obj['nativeLanguage']]['fields']['text'];
+            $obj['text'] =  $obj['fields']['text'];
         }
         
         // prevent localizable data to be stored in root level
