@@ -282,8 +282,9 @@
       }
 	  
       function handleContent(contentPosition, title,entityId,idArray,count){
+    	  contentPosition=contentPosition.split(",");
     	   if (contentPosition[0]&&contentPosition[1]){
-    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,idArray,count);     
+    		  createContentMarker(new google.maps.LatLng(contentPosition[0],contentPosition[1]), title,entityId,idArray,count);     
           }
       }
       var activeInfoWindows=[ ];
