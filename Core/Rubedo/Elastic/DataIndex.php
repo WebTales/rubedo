@@ -98,8 +98,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $returnArray = array();
         $searchableFields = array(
             array('name'=>'lastUpdateTime','localizable'=>false),
-            array('name'=>'text','localizable'=>true),
-            array('name'=>'text_not_analysed','localizable'=>true),
+            array('name'=>'title','localizable'=>true),
             array('name'=>'type','localizable'=>false),
             array('name'=>'author','localizable'=>false),
             array('name'=>'fileSize','localizable'=>false),
@@ -882,7 +881,11 @@ class DataIndex extends DataAbstract implements IDataIndex
                             $value  = $locale['fields'][$name];
                             // Temp fix because local is not set in i18n at the first dam creation
                             if (!isset($locale['locale'])) $locale['locale'] = $key ;
-                            $indexFieldName = $name.'_'.$locale['locale'];
+                            if ($name!='title') {
+                                $indexFieldName = $name.'_'.$locale['locale'];
+                            } else {
+                                $indexFieldName = 'text'.'_'.$locale['locale'];
+                            }
                             if (is_array($value)) {
                                 foreach ($value as $key => $subvalue) {
                                     $damData[$indexFieldName][$key] = (string) $subvalue;
@@ -952,7 +955,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $damData['target'][] = (string) $target;
             }
         }
-        
+
         // Add document
         $currentDam = new \Elastica\Document($data['id'], $damData);
         
