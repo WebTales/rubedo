@@ -597,33 +597,7 @@ class Install_IndexController extends Zend_Controller_Action
         if ($this->_isDefaultGroupsExists()) {
             return;
         }
-        try {
-            Manager::getService('Workspaces')->create(array(
-                'text' => 'admin'
-            ));
-        } catch (Rubedo\Exceptions\User $exception) {
-            // dont stop if already exists
-        }
-        $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
-        
-        $success = true;
-        $groupsJsonPath = APPLICATION_PATH . '/../data/default/groups';
-        $groupsJson = new DirectoryIterator($groupsJsonPath);
-        foreach ($groupsJson as $file) {
-            if ($file->isDot() || $file->isDir()) {
-                continue;
-            }
-            if ($file->getExtension() == 'json') {
-                $itemJson = file_get_contents($file->getPathname());
-                $item = Zend_Json::decode($itemJson);
-                if ($item['name'] == 'admin') {
-                    $item['workspace'] = $adminWorkspaceId;
-                    $item['inheritWorkspace'] = false;
-                }
-                $result = Manager::getService('Groups')->create($item);
-                $success = $result['success'] && $success;
-            }
-        }
+        $success = Rubedo\Update\Install::doCreateDefaultsGroups();
         if (! $success) {
             $this->view->hasError = true;
             $this->view->errorMsgs = 'failed to create default groups';
@@ -643,51 +617,14 @@ class Install_IndexController extends Zend_Controller_Action
         return $result;
     }
 
-    protected function _doInsertContents ()
+    protected function _doInsertContents()
     {
-        $success = true;
-        $contentPath = APPLICATION_PATH . '/../data/default/';
-        $contentIterator = new DirectoryIterator($contentPath);
-        foreach ($contentIterator as $directory) {
-            if ($directory->isDot() || ! $directory->isDir()) {
-                continue;
-            }
-            if (in_array($directory->getFilename(), array(
-                'groups',
-                'site'
-            ))) {
-                continue;
-            }
-            $collection = ucfirst($directory->getFilename());
-            $itemsJson = new DirectoryIterator($contentPath . '/' . $directory->getFilename());
-            foreach ($itemsJson as $file) {
-                if ($file->isDot() || $file->isDir()) {
-                    continue;
-                }
-                if ($file->getExtension() == 'json') {
-                    $itemJson = file_get_contents($file->getPathname());
-                    $item = Zend_Json::decode($itemJson);
-                    try {
-                        if (! Manager::getService($collection)->findOne(Filter::factory('Value')->setName('defaultId')
-                            ->setValue($item['defaultId']))) {
-                            $result = Manager::getService($collection)->create($item);
-                        } else {
-                            $result['success'] = true;
-                        }
-                    } catch (Rubedo\Exceptions\User $exception) {
-                        $result['success'] = true;
-                    }
-                    
-                    $success = $result['success'] && $success;
-                }
-            }
-        }
+        $success = Rubedo\Update\Install::doInsertContents();
         
-        if($success){
-        	Rubedo\Update\Update::update();
-        	\Rubedo\Collection\Pages::localizeAllCollection();
+        if ($success) {
+            Rubedo\Update\Update::update();
+            \Rubedo\Collection\Pages::localizeAllCollection();
         }
-        
         
         if (! $success) {
             $this->view->hasError = true;

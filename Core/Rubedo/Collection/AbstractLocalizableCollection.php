@@ -361,9 +361,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     {
         $metadataFields = $this->getMetaDataFields();
         // force label to contain only native title in DB
-        if (isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])) {
-            $obj[static::$labelField] = $obj['i18n'][$obj['nativeLanguage']][static::$labelField];
+        if (isset($obj['i18n'])) {
+            if (isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])) {
+                $obj[static::$labelField] = $obj['i18n'][$obj['nativeLanguage']][static::$labelField];
+            }
         }
+        
         
         // prevent localizable data to be stored in root level
         foreach ($obj as $key => $field) {

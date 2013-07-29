@@ -6,7 +6,12 @@
 			"cType": "datefield" ,
 			"config": {
 				"name": "date" ,
-				"fieldLabel": "Date" ,
+				"fieldLabel": "###Event.date###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Event.date###"
+				    }
+				},		
 				"allowBlank": true ,
 				"localizable": false ,
 				"searchable": false ,
@@ -20,7 +25,12 @@
 			"cType": "CKEField" ,
 			"config": {
 				"name": "body" ,
-				"fieldLabel": "Corps" ,
+				"fieldLabel": "###Event.body###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Event.body###"
+				    }
+				},
 				"maxLength": 600000 ,
 				"minLength": 0 ,
 				"allowBlank": true ,
@@ -39,7 +49,12 @@
 			"cType": "ImagePickerField" ,
 			"config": {
 				"name": "image" ,
-				"fieldLabel": "Image" ,
+				"fieldLabel": "###Event.image###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Event.image###"
+				    }
+				},
 				"localizable": false ,
 				"searchable": false ,
 				"multivalued": false ,
@@ -55,7 +70,12 @@
 			"cType": "localiserField" ,
 			"config": {
 				"name": "position" ,
-				"fieldLabel": "Localisation" ,
+				"fieldLabel": "###Event.position###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Event.position###"
+				    }
+				},
 				"allowBlank": true ,
 				"localizable": false ,
 				"searchable": false ,
@@ -69,7 +89,7 @@
 	] ,
 	"defaultId": "51a60bbdc1c3da9a0a000009",
 	"system": false ,
-	"type": "Evénement" ,
+	"type": "###Event.type###" ,
 	"updateTime": null  ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,

@@ -233,6 +233,7 @@ return array(
         9 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/GeoSearch/geo.json',
         10 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Fields/Localizer/loc.json',
         11 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ProtectedRessource/ressource.json',
-        12 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Fields/Date/date.json'
+        12 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Fields/Date/date.json',
+        13 => 'public/components/webtales/rubedo-localization/languagekey/Install/defaultContents.json',
     )
 );
