@@ -352,7 +352,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $indexMapping["availableLanguages"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
-            'store' => 'no'
+            'store' => 'yes'
         );
         
         // Add Taxonomies
@@ -479,7 +479,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $indexMapping["availableLanguages"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
-            'store' => 'no'
+            'store' => 'yes'
         );
         
         // Add Taxonomies
