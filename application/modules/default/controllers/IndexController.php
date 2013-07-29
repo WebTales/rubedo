@@ -698,6 +698,9 @@ class IndexController extends Zend_Controller_Action
             case 'resource':
                 $controller = "resource";
                 break;
+            case 'imageMap':
+                $controller = "image-map";
+                break;
             case 'advancedSearchForm':
                 $controller = "advanced-search";
                 break;
