@@ -764,6 +764,10 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $score = 1;
             $data['score'] = round($score * 100);
             
+            if (!is_array($data['availableLanguages'])) {
+                $data['availableLanguages'] = array($data['availableLanguages']);
+            }
+            
             if ($data['objectType']=='content') {
                 if (isset($data["text_".$currentLocale])) {
                     $data['title'] = $data["text_".$currentLocale];
