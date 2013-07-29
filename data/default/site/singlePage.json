@@ -3,42 +3,11 @@
     {
       "bType": "contentDetail",
       "mType": "block",
-      "champsConfig": {
-        "simple": [
-          {
-            "categorie": "Contenu",
-            "champs": [
-              {
-                "type": "Rubedo.view.DCEField",
-                "config": {
-                  "fieldLabel": "Contenu à  afficher",
-                  "name": "contentId",
-                  "chooseOnly": true
-                }
-              }
-            ]
-          }
-        ],
-        "avance": [
-          {
-            "categorie": "Affichage",
-            "champs": [
-              {
-                "type": "Ext.form.field.Text",
-                "config": {
-                  "fieldLabel": "Template alternatif",
-                  "name": "displayType"
-                }
-              }
-            ]
-          }
-        ]
-      },
       "configBloc": {
         "contentId": ""
       },
       "orderValue": 1,
-      "title": "Détail de contenu",
+      "title": "###NewSite.single.singleBlocTitle###",
       "elementStyle": "",
       "elementTag": "div",
       "renderDiv": true,
@@ -61,9 +30,9 @@
   "inheritWorkspace": true,
   "keywords": "",
   "orderValue": 300,
-  "pageURL": "detail",
+  "pageURL": "###NewSite.single.url###",
   "parentId": "root",
-  "text": "Détail",
-  "title": "Détail",
+  "text": "###NewSite.single.title###",
+  "title": "###NewSite.single.title###",
   "workspace": "global"
 }

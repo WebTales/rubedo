@@ -230,6 +230,11 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
 
     protected function createFromEmpty ($insertData)
     {
+        $this->translateService = Manager::getService('Translate');
+        
+        $this->locale = $insertData['defaultLanguage'];
+        $insertData['nativeLanguage'] = $this->locale;
+        
         if (is_array($insertData)) {
             $site = $this->_dataService->create($insertData);
         }
@@ -239,7 +244,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $jsonMask = realpath(APPLICATION_PATH . "/../data/default/site/mask.json");
             $maskObj = (Zend_Json::decode(file_get_contents($jsonMask), true));
             $maskObj['site'] = $site['data']['id'];
-            $maskObj['nativeLanguage']=$site['data']['nativeLanguage'];
+            $maskObj['nativeLanguage']=$this->locale;
             
             // Home mask
             $homeMask = $maskObj;
@@ -257,7 +262,8 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $homeMask['blocks'][0]['id'] = (string) new MongoId();
             $homeMask['blocks'][0]['parentCol'] = $homeFirstColumnId;
             
-            $homeMask['text'] = "Masque de la page d'accueil";
+            $homeMask['text'] = $this->translateService->getTranslation('NewSite.homepage.title',$this->locale);
+            $homeMask['i18n'][$this->locale]['text'] = $homeMask['text'];
             $homeMaskCreation = Rubedo\Services\Manager::getService('Masks')->create($homeMask);
             
             // Detail mask
@@ -276,7 +282,8 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $detailMask['blocks'][0]['id'] = (string) new MongoId();
             $detailMask['blocks'][0]['parentCol'] = $detailFirstColumnId;
             
-            $detailMask['text'] = "Masque de la page détail";
+            $detailMask['text'] = $this->translateService->getTranslation('NewSite.single.title',$this->locale);
+            $detailMask['i18n'][$this->locale]['text'] = $detailMask['text'];
             $detailMaskCreation = Rubedo\Services\Manager::getService('Masks')->create($detailMask);
             
             // Search mask
@@ -295,13 +302,18 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $searchMask['blocks'][0]['id'] = (string) new MongoId();
             $searchMask['blocks'][0]['parentCol'] = $searchFirstColumnId;
             
-            $searchMask['text'] = "Masque de la page de recherche";
+            $searchMask['i18n'][$this->locale]['text'] = $searchMask['text'] = $this->translateService->getTranslation('NewSite.search.title',$this->locale);
             $searchMaskCreation = Rubedo\Services\Manager::getService('Masks')->create($searchMask);
             
             if ($homeMaskCreation['success'] && $detailMaskCreation['success'] && $searchMaskCreation['success']) {
                 /* Create Home Page */
                 $jsonHomePage = realpath(APPLICATION_PATH . "/../data/default/site/homePage.json");
-                $homePageObj = (Zend_Json::decode(file_get_contents($jsonHomePage), true));
+                $itemJson = file_get_contents($jsonHomePage);
+                $itemJson = preg_replace_callback('/###(.*)###/U', array(
+                    $this,
+                    'replaceWithTranslation'
+                ), $itemJson);
+                $homePageObj = (Zend_Json::decode($itemJson, true));
                 $homePageObj['site'] = $site['data']['id'];
                 $homePageObj['maskId'] = $homeMaskCreation['data']['id'];
                 $homePageObj['nativeLanguage']=$site['data']['nativeLanguage'];
@@ -315,7 +327,12 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
                 
                 /* Create Single Page */
                 $jsonSinglePage = realpath(APPLICATION_PATH . "/../data/default/site/singlePage.json");
-                $singlePageObj = (Zend_Json::decode(file_get_contents($jsonSinglePage), true));
+                $itemJson = file_get_contents($jsonSinglePage);
+                $itemJson = preg_replace_callback('/###(.*)###/U', array(
+                    $this,
+                    'replaceWithTranslation'
+                ), $itemJson);
+                $singlePageObj = (Zend_Json::decode($itemJson, true));
                 $singlePageObj['site'] = $site['data']['id'];
                 $singlePageObj['maskId'] = $detailMaskCreation['data']['id'];
                 $singlePageObj['nativeLanguage']=$site['data']['nativeLanguage'];
@@ -331,7 +348,12 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
                 
                 /* Create Search Page */
                 $jsonSearchPage = realpath(APPLICATION_PATH . "/../data/default/site/searchPage.json");
-                $searchPageObj = (Zend_Json::decode(file_get_contents($jsonSearchPage), true));
+                $itemJson = file_get_contents($jsonSearchPage);
+                $itemJson = preg_replace_callback('/###(.*)###/U', array(
+                    $this,
+                    'replaceWithTranslation'
+                ), $itemJson);
+                $searchPageObj = (Zend_Json::decode($itemJson, true));
                 $searchPageObj['nativeLanguage']=$site['data']['nativeLanguage'];
                 $searchPageObj['i18n']=array($site['data']['nativeLanguage']=>array(
                     "text"=>$searchPageObj['text'],
@@ -353,6 +375,24 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
                         "searchPage" => $searchPage['data']['id']
                     );
                     $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($updateMask);
+                    
+                    $updateMask = $searchMaskCreation['data'];
+                    $updateMask["blocks"][0]['configBloc'] = array(
+                        "useSearchEngine" => true,
+                        "rootPage" => $homePage['data']['id'],
+                        "searchPage" => $searchPage['data']['id']
+                    );
+                    $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($updateMask);
+                    
+                    $updateMask = $detailMaskCreation['data'];
+                    $updateMask["blocks"][0]['configBloc'] = array(
+                        "useSearchEngine" => true,
+                        "rootPage" => $homePage['data']['id'],
+                        "searchPage" => $searchPage['data']['id']
+                    );
+                    $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($updateMask);
+                    
+                    
                     if ($updateMaskReturn['success'] === true) {
                         $updateData = $site['data'];
                         $updateData['homePage'] = $homePage['data']['id'];
@@ -404,5 +444,17 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             }
         }
         return ($returnArray);
+    }
+    
+    protected function replaceWithTranslation($matches){
+       
+        if($matches[1]=='Locale'){
+            return $this->locale;
+        }
+        $result = $this->translateService->getTranslation($matches[1],$this->locale);
+        if(empty($result)){
+            throw new \Rubedo\Exceptions\Server('can\'t translate :'.$matches[1]);
+        }
+        return $result;
     }
 }

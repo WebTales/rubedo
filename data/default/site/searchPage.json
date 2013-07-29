@@ -3,36 +3,13 @@
     {
       "bType": "searchResults",
       "mType": "block",
-      "champsConfig": {
-        "simple": [
-          {
-            "categorie": "Filtrage",
-            "champs": [
-              {
-                "type": "Ext.form.field.Checkbox",
-                "config": {
-                  "fieldLabel": "Restreindre au site",
-                  "name": "constrainToSite"
-                }
-              },
-              {
-                "type": "Rubedo.view.ESQfield",
-                "config": {
-                  "fieldLabel": "Facettes prédéfinies",
-                  "name": "predefinedFacets"
-                }
-              }
-            ]
-          }
-        ],
-        "avance": []
-      },
       "configBloc": {
         "constrainToSite": false,
-        "predefinedFacets": ""
+        "predefinedFacets": "",
+        "displayedFacets":["all"]
       },
       "orderValue": 1,
-      "title": "Page de recherche",
+      "title": "###NewSite.search.searchBlocTitle###",
       "elementStyle": "",
       "elementTag": "div",
       "renderDiv": true,
@@ -55,9 +32,9 @@
   "inheritWorkspace": true,
   "keywords": "",
   "orderValue": 200,
-  "pageURL": "recherche",
+  "pageURL": "###NewSite.search.url###",
   "parentId": "root",
-  "text": "Recherche",
-  "title": "Recherche",
+  "text": "###NewSite.search.title###",
+  "title": "###NewSite.search.title###",
   "workspace": "global"
 }
