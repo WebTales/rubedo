@@ -50,7 +50,9 @@ class Blocks_ImageMapController extends Blocks_AbstractController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/imageMap.html.twig");
         
         $css = array();
-        $js = array();
+        $js = array("/components/stowball/jQuery-rwdImageMaps/jquery.rwdImageMaps.min.js",
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/imagemap.js")
+        );
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
