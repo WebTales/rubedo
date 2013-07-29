@@ -70,12 +70,10 @@ class Install
                 if ($file->getExtension() == 'json') {
                     $itemJson = file_get_contents($file->getPathname());
                     
-                    if ($isLocalizable) {
-                        $itemJson = preg_replace_callback('/###(.*)###/U', array(
-                            'Rubedo\\Update\\Install',
-                            'replaceWithTranslation'
+                    $itemJson = preg_replace_callback('/###(.*)###/U', array(
+                        'Rubedo\\Update\\Install',
+                        'replaceWithTranslation'
                         ), $itemJson);
-                    }
                     
                     $item = \Zend_Json::decode($itemJson);
                     
