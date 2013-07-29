@@ -97,13 +97,13 @@ class DataIndex extends DataAbstract implements IDataIndex
     {
         $returnArray = array();
         $searchableFields = array(
-            'lastUpdateTime',
-            'text',
-            'text_not_analysed',
-            'type',
-            'author',
-            'fileSize',
-            'target'
+            array('name'=>'lastUpdateTime','localizable'=>false),
+            array('name'=>'text','localizable'=>true),
+            array('name'=>'text_not_analysed','localizable'=>true),
+            array('name'=>'type','localizable'=>false),
+            array('name'=>'author','localizable'=>false),
+            array('name'=>'fileSize','localizable'=>false),
+            array('name'=>'target','localizable'=>false)
         );
         
         if (! isset($this->_damTypeCache[$id])) {
@@ -115,7 +115,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $fields = $this->_damTypeCache[$id]["fields"];
         foreach ($fields as $field) {
             if ($field['config']['searchable']) {
-                $searchableFields[] = $field['config']['name'];
+                $searchableFields[] = $field['config'];
             }
         }
         
@@ -845,23 +845,60 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Add fields to index
         $damData = array();
+
+        // For every searchable field
+        foreach ($typeStructure['searchableFields'] as $fieldConfig) {
+             
+            // Get field name
+            $name = $fieldConfig['name'];
+             
+            // Get non localizable fields from fields
+            if (!$fieldConfig['localizable']) {
+                if (isset($data['fields'][$name])) {
         
-        if (array_key_exists('fields', $data) && is_array($data['fields'])) {
-            foreach ($data['fields'] as $field => $var) {
-                
-                // only index searchable fields
-                if (in_array($field, $typeStructure['searchableFields'])) {
-                    if (is_array($var)) {
-                        foreach ($var as $key => $subvalue) {
-                            $damData[$field][] = (string) $subvalue;
+                    $value  = $data['fields'][$name];
+                    if (is_array($value)) {
+                        foreach ($value as $key => $subvalue) {
+                            $damData[$name][$key] = (string) $subvalue;
                         }
-                    } else {
-                        $damData[$field] = (string) $var;
+                    } else  {
+                        if(!empty($value)){
+                            $damData[$name] = (string) $value;
+                        }else{
+                            $damData[$name] = null;
+                        }
+        
                     }
                 }
-            }
-        }
         
+            } else {
+        
+                // Get localizable fields from i18n
+                if (isset($data['i18n'])) {
+                    $availableLanguages = array();
+                    foreach ($data['i18n'] as $key => $locale) {
+                        $availableLanguages[] = $key;
+                        if (isset($locale['fields'][$name])) {
+                            $value  = $locale['fields'][$name];
+                            // Temp fix because local is not set in i18n at the first dam creation
+                            if (!isset($locale['locale'])) $locale['locale'] = $key ;
+                            $indexFieldName = $name.'_'.$locale['locale'];
+                            if (is_array($value)) {
+                                foreach ($value as $key => $subvalue) {
+                                    $damData[$indexFieldName][$key] = (string) $subvalue;
+                                }
+                            } else  {
+                                $damData[$indexFieldName] = (string) $value;
+                            }
+                        }
+                    }
+                    $damData['availableLanguages'] = $availableLanguages;
+                }
+        
+            }
+        
+        }
+                
         // Add default meta's
         $damData['damType'] = $typeId;
         $damData['objectType'] = 'dam';
