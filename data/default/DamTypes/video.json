@@ -4,14 +4,20 @@
 			"cType": "Ext.form.field.TextArea" ,
 			"config": {
 				"name": "alt" ,
-				"fieldLabel": "Alternative Textuelle" ,
+				"fieldLabel": "###Video.alt###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Video.alt###",
+				        "tooltip": "###Video.alt.tooltip###"
+				    }
+				},
 				"maxLength": 60000 ,
 				"minLength": 0 ,
 				"allowBlank": true ,
 				"localizable": true ,
 				"searchable": true ,
 				"multivalued": false ,
-				"tooltip": "Texte proposé en substitution" ,
+				"tooltip": "###Video.alt.tooltip###",
 				"vtype": null  ,
 				"labelSeparator": " "
 			} ,
@@ -19,7 +25,7 @@
 		}
 	] ,
 	"mainFileType": "Video" ,
-	"type": "Video" ,
+	"type": "###Video.type###" ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"defaultId": "51a60c2fc1c3da710c000004",

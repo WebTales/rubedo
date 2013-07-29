@@ -89,6 +89,9 @@ class Translate implements ITranslate
         }
         
         $translatedValue = $this->getTranslation($code, $language);
+        if ($translatedValue == null) {
+            $translatedValue = $this->getTranslation($code, "en");
+        }
         
         if ($translatedValue == null) {
             $translatedValue = $defaultLabel;
