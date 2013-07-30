@@ -768,25 +768,17 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $data['availableLanguages'] = array($data['availableLanguages']);
             }
             
-            if ($data['objectType']=='content') {
-                if (isset($data["text_".$currentLocale])) {
-                    $data['title'] = $data["text_".$currentLocale];
-                    if ($withSummary) {
-                        $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
-                    }
-                } else {
-                    $data['title'] = $data['nativeText'];
-                    if ($withSummary) {
-                        $data['summary'] = $data['nativeSummary'];
-                    }
-                }
-
-            } else {
-                $data['title'] = $data["text"];
+            if (isset($data["text_".$currentLocale])) {
+                $data['title'] = $data["text_".$currentLocale];
                 if ($withSummary) {
-                    $data['summary'] = (isset($data["summary"])) ? $data["summary"] : $data["text"];
+                    $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
                 }
-            }           
+            } else {
+                $data['title'] = $data['text'];
+                if ($withSummary) {
+                    $data['summary'] = $data['summary'];
+                }
+            }         
             
             switch ($data['objectType']) {
                 case 'content':
