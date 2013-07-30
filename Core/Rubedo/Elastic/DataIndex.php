@@ -133,7 +133,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     {
         $indexMapping = array();
         
-        // ad text, summary, nativeText, nativeSummary system fields
+        // ad text, summary system fields
         
         $fields[] = array(
         	"cType" => "system",
@@ -294,7 +294,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'type' => 'date',
             'store' => 'yes'
         );
-        $indexMapping["nativeText"] = array(
+        $indexMapping["text"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
@@ -304,7 +304,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
-        $indexMapping["nativeSummary"] = array(
+        $indexMapping["summary"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
@@ -418,6 +418,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         );
         $indexMapping["text"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
         );
         $indexMapping["text_not_analyzed"] = array(
@@ -431,6 +432,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         );
         $indexMapping["summary"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
         );
         $indexMapping["author"] = array(
@@ -740,11 +742,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         $contentData['objectType'] = 'content';
         $contentData['contentType'] = $typeId;
         if(isset($data['fields'])){
-            $contentData['nativeText']=$data['fields']['text'];
-            $contentData['nativeSummary']=$data['fields']['summary'];
+            $contentData['text']=$data['fields']['text'];
+            $contentData['summary']=$data['fields']['summary'];
         }else{
-            $contentData['nativeText']='';
-            $contentData['nativeSummary']='';
+            $contentData['text']='';
+            $contentData['summary']='';
         }
         
         $contentData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : null;
@@ -905,8 +907,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add default meta's
         $damData['damType'] = $typeId;
         $damData['objectType'] = 'dam';
+        $damData['text']=$data['fields']['title'];
+
         $damData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : array();
-        $damData['text'] = (string) $data['title'];
         $damData['text_not_analyzed'] = (string) $data['title'];
         $fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
         $damData['fileSize'] = $fileSize;

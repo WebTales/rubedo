@@ -38,6 +38,9 @@ class Blocks_ImageMapController extends Blocks_AbstractController
         $output['image'] =$blockConfig['image'];
         $output['map'] =Zend_Json::decode($blockConfig['map']);
         foreach ($output['map'] as &$mapElement) {
+          if ($mapElement['type']=="polygon"){
+              $mapElement['type']="poly";
+          }
           if ($mapElement['type']=="rect"){
             $mapElement['params']['x1']=$mapElement['params']['x']+$mapElement['params']['width'];
             $mapElement['params']['y1']=$mapElement['params']['y']+$mapElement['params']['height'];
@@ -50,7 +53,9 @@ class Blocks_ImageMapController extends Blocks_AbstractController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/imageMap.html.twig");
         
         $css = array();
-        $js = array();
+        $js = array("/components/stowball/jQuery-rwdImageMaps/jquery.rwdImageMaps.min.js",
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/imagemap.js")
+        );
         $this->_sendResponse($output, $template, $css, $js);
     }
 }
