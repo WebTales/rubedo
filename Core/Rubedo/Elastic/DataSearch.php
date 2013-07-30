@@ -775,9 +775,6 @@ class DataSearch extends DataAbstract implements IDataSearch
                 }
             } else {
                 $data['title'] = $data['text'];
-                if ($withSummary) {
-                    $data['summary'] = $data['summary'];
-                }
             }         
             
             switch ($data['objectType']) {
