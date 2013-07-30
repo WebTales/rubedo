@@ -600,11 +600,16 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetDate->setField('lastUpdateTime');
             $d = Manager::getService('CurrentTime')->getCurrentTime();
             
-            //in ES 0.9, date are in microseconds
+            // In ES 0.9, date are in microseconds
             $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d))*1000;
+            // Cast to string for 32bits systems
+            $lastday = (string) $lastday;
             $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d))*1000;
+            $lastweek = (string) $lastweek;
             $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d))*1000;
+            $lastmonth = (string) $lastmonth;
             $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1)*1000;
+            $lastyear = (string) $lastyear;
             $ranges = array(
                 array(
                     'from' => $lastday
@@ -620,11 +625,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                 )
             );
             $timeLabel = array();
+            
             $timeLabel[$lastday] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Day", 'Past 24H');
             $timeLabel[$lastweek] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Week", 'Past week');
             $timeLabel[$lastmonth] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Month", 'Past month');
             $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
-            
+
             $elasticaFacetDate->setRanges($ranges);
             
             // Apply filters from other facets
@@ -885,7 +891,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                                 $rangeCount = $temp['ranges'][$key]['count'];
                                 // unset facet when count = 0 or total results count when display mode is not set to checkbox
                                 if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount < $result['total'])) {
-                                    $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
+                                    $temp['ranges'][$key]['label'] = $timeLabel[(string) $temp['ranges'][$key]['from']];
                                 } else {
                                     unset($temp['ranges'][$key]);
                                 }
@@ -977,10 +983,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                             'terms' => array(
                                 array(
                                     'term' => $termId,
-                                    'label' => $timeLabel[$termId]
+                                    'label' => $timeLabel[(string) $termId]
                                 )
-                            )
+                            )  
                         );
+
                         break;
                     
                     case 'query':
