@@ -912,7 +912,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $taxonomyTermsService->findById($value['term']);
-                                $temp['terms'][$key]['label'] = $termItem['text'];
+                                if($termItem){
+                                    $temp['terms'][$key]['label'] = $termItem['text'];
+                                }else{
+                                    unset($temp['terms'][$key]);
+                                }
+                                
                             }
                         } else {
                             $renderFacet = false;
