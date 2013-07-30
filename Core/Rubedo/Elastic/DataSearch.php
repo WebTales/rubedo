@@ -469,6 +469,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Setting fields from localization strategy
         switch ($localizationStrategy) {
             case 'backOffice' :
+                $this->setLocaleFilter(Manager::getService('Languages')->getActiveLocales());
                 $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
                 break;
             case 'onlyOne' :
