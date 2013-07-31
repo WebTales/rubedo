@@ -338,7 +338,7 @@ class CurrentUser implements ICurrentUser
         if (isset($user) && isset($user['language']) && ! empty($user['language'])) {
             $lang = $user['language'];
         } else {
-            $lang = 'en';
+            $lang = null;
         }
         
         return $lang;

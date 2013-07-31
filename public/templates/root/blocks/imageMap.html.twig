@@ -1,0 +1,12 @@
+{% extends "root/block.html.twig" %}
+
+{% block mainContent %}
+<img src="{{ baseUrl }}/dam?media-id={{ image }}" usemap="#{{ prefix }}map">
+
+<map name="{{ prefix }}map">
+{% for mapElement in map %}
+    <area shape="{{ mapElement.type }}" coords="{{ mapElement.coords }}" href="{{ mapElement.href }}" alt="{{ mapElement.alt }}" title="{{ mapElement.title }}">
+{% endfor %}
+  
+</map>
+{% endblock %}

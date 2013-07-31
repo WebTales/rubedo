@@ -15,6 +15,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Collection\AbstractCollection;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  * Abstract Controller providing CRUD API and dealing with the data access
@@ -68,9 +70,21 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * @see Zend_Controller_Action::init()
      */
-    public function init ()
+    public function init()
     {
         parent::init();
+        
+        
+        //initialize localized collections
+        $serviceLanguages = Manager::getService('Languages');
+        if ($serviceLanguages->isActivated()) {
+            $workingLanguage = $this->getParam('workingLanguage');
+            if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
+                AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
+            } else {
+                AbstractLocalizableCollection::setWorkingLocale($serviceLanguages->getDefaultLanguage());
+            }
+        }
         
         $sessionService = Manager::getService('Session');
         
@@ -92,11 +106,11 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * Set the response body with Json content
      * Option : json is made human readable
-     * 
+     *
      * @param mixed $data
      *            data to be json encoded
      */
-    protected function _returnJson ($data)
+    protected function _returnJson($data)
     {
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
@@ -116,7 +130,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
@@ -156,7 +170,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $this->_returnJson($response);
     }
 
-    protected function _buildFilter ($filters = null)
+    protected function _buildFilter($filters = null)
     {
         if (! $filters) {
             $filters = array();
@@ -187,7 +201,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * Return the children of a node
      */
-    public function readChildAction ()
+    public function readChildAction()
     {
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
@@ -221,7 +235,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * @return array
      */
-    public function deleteChildAction ()
+    public function deleteChildAction()
     {
         $data = $this->getRequest()->getParam('data');
         
@@ -258,7 +272,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * @todo remove the temp hack when database starter is ready
      */
-    public function treeAction ()
+    public function treeAction()
     {
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
@@ -281,7 +295,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * The destroy action of the CRUD API
      */
-    public function deleteAction ()
+    public function deleteAction()
     {
         $data = $this->getRequest()->getParam('data');
         
@@ -311,7 +325,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * The create action of the CRUD API
      */
-    public function createAction ()
+    public function createAction()
     {
         $data = $this->getRequest()->getParam('data');
         
@@ -340,7 +354,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
     /**
      * The update action of the CRUD API
      */
-    public function updateAction ()
+    public function updateAction()
     {
         $data = $this->getRequest()->getParam('data');
         
@@ -372,7 +386,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      *
      * @return Json_object
      */
-    public function findOneAction ()
+    public function findOneAction()
     {
         $contentId = $this->getRequest()->getParam('id');
         
@@ -404,7 +418,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $this->_returnJson($returnArray);
     }
 
-    public function modelAction ()
+    public function modelAction()
     {
         $model = $this->_dataService->getModel();
         $this->_returnJson($model);

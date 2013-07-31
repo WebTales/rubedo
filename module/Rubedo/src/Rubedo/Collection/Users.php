@@ -178,6 +178,9 @@ class Users extends AbstractCollection implements IUsers
                 Manager::getService('CurrentUser')->getMainWorkspaceId()
             );
         }
+         
+        $obj['workingLanguage'] = Manager::getService('Languages')->getDefaultLanguage();
+        $obj['language'] = Manager::getService('Languages')->getDefaultLanguage();
         
         $returnValue = parent::create($obj, $options);
         $createUser = $returnValue['data'];

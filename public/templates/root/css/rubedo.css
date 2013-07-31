@@ -202,7 +202,7 @@ padding-top: 5px;
 }
 
 .post-title-small {
-	max-height: 40px;
+	max-height: 46px;
 	overflow: hidden;
 }
 
@@ -382,6 +382,21 @@ padding-top: 5px;
 	overflow: auto; 
 }
 
+@media screen and (max-width: 400px) {
+	.calendar-items-rubedo {
+		min-width: 0;
+		overflow: visible;
+	}
+	
+	.calendar-items-rubedo img {
+		display: none;
+	}
+	
+	.calendar-item {
+		padding-left: 0;
+	}
+}
+
 /**
  * Carrousel
  */
@@ -454,6 +469,8 @@ padding-top: 5px;
  */
 h2 {
 	font-size: 20px !important;
+	line-height: 22px !important;
+	height: 46px;
 }
 
 /**
@@ -468,13 +485,6 @@ h2 {
  */
 a:hover, a:focus {
 	text-decoration: none !important;
-}
-
-/**
- * form
- */
-.form-new-button {
-	margin-bottom: 20px;
 }
 
 /**

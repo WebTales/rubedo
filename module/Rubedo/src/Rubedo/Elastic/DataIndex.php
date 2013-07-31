@@ -57,13 +57,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         $returnArray = array();
         
         $searchableFields = array(
-            'lastUpdateTime',
-            'text',
-            'text_not_analysed',
-            'summary',
-            'type',
-            'author',
-            'target'
+            array('name'=>'lastUpdateTime','localizable'=>false),
+            array('name'=>'text','localizable'=>true),
+            array('name'=>'summary','localizable'=>true),
+            array('name'=>'type','localizable'=>false),
+            array('name'=>'target','localizable'=>false)
         );
         
         if (! isset($this->_contentTypeCache[$id])) {
@@ -80,7 +78,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $fields = $this->_contentTypeCache[$id]["fields"];
         foreach ($fields as $field) {
             if ($field['config']['searchable']) {
-                $searchableFields[] = $field['config']['name'];
+                $searchableFields[] = $field['config'];
             }
         }
         
@@ -99,13 +97,12 @@ class DataIndex extends DataAbstract implements IDataIndex
     {
         $returnArray = array();
         $searchableFields = array(
-            'lastUpdateTime',
-            'text',
-            'text_not_analysed',
-            'type',
-            'author',
-            'fileSize',
-            'target'
+            array('name'=>'lastUpdateTime','localizable'=>false),
+            array('name'=>'title','localizable'=>true),
+            array('name'=>'type','localizable'=>false),
+            array('name'=>'author','localizable'=>false),
+            array('name'=>'fileSize','localizable'=>false),
+            array('name'=>'target','localizable'=>false)
         );
         
         if (! isset($this->_damTypeCache[$id])) {
@@ -117,7 +114,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $fields = $this->_damTypeCache[$id]["fields"];
         foreach ($fields as $field) {
             if ($field['config']['searchable']) {
-                $searchableFields[] = $field['config']['name'];
+                $searchableFields[] = $field['config'];
             }
         }
         
@@ -132,16 +129,38 @@ class DataIndex extends DataAbstract implements IDataIndex
      *            contain the fields and their configuration
      * @return array
      */
-    public function getIndexMapping (array $fields)
+    public function getIndexMapping (array $fields, $objectType)
     {
         $indexMapping = array();
+        
+        // ad text, summary system fields
+        
+        $fields[] = array(
+        	"cType" => "system",
+            "config" => array (
+            	"name" => "text",
+            	"fieldLabel" => "text",
+            	"searchable" => true,
+            	"localizable" => true
+            )
+        );
+        $fields[] = array(
+        	"cType" => "system",
+            "config" => array (
+                "name" => "summary",
+                "fieldLabel" => "summary",
+                "searchable" => true,
+            	"localizable" => true
+            )
+        );
         
         foreach ($fields as $field) {
             
             // Only searchable fields get indexed
             if ($field['config']['searchable']) {
                 
-                $name = $field['config']['fieldLabel'];
+                //$name = $field['config']['fieldLabel'];
+                $name = $field['config']['name'];
                 $store = "yes";
                 
                 switch ($field['cType']) {
@@ -163,16 +182,56 @@ class DataIndex extends DataAbstract implements IDataIndex
                             'type' => 'geo_point',
                             'store' => 'yes'
                         );
-                        $indexMapping["position_adress"] = array(
+                        $indexMapping["position_address"] = array(
                             'type' => 'string',
                             'store' => 'yes'
                         );
                         break;
                     default:
-                        $indexMapping[$name] = array(
-                            'type' => 'string',
-                            'store' => $store
-                        );
+                    	
+                        if (isset($field['config']['localizable']) and $field['config']['localizable']==true) {
+                        	// get active languages
+                        	$languages = Manager::getService("Languages");
+                        	$activeLanguages = $languages->getActiveLanguages();
+                        	
+                        	// get active analysers
+                        	$activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
+    
+                        	// create on field per language with proper analyser with all_locale collector
+    						foreach($activeLanguages as $lang) {
+    							$locale = $lang['locale'];
+    							$fieldName = $name.'_'.$locale;
+    							$_all = 'all_'.$locale;
+                                $_autocomplete = 'autocomplete_'.$locale;
+    							if (in_array($locale.'_analyzer',$activeAnalysers))	{					
+    								$lg_analyser = $locale.'_analyzer';						
+    							} else {
+    								$lg_analyser = 'default';
+    							}
+    							$indexMapping[$fieldName] = array(
+    									"type" => "multi_field",
+    									"path" => "just_name",
+    									"fields" => array(
+    											$fieldName => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+    											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+    									        $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
+    									)
+    							);
+    						}
+                    	} else {
+                    		$_autocomplete = 'autocomplete_nonlocalized';
+                    		$_all = 'all_nonlocalized';
+                    		$indexMapping[$name] = array(
+        						"type" => "multi_field",
+        						"path" => "just_name",
+        						"fields" => array(
+        							$name => array("type" => "string", 'store' => $store),
+        							$_all => array("type" => "string", 'store' => $store),
+        						    $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
+        						)
+        					);
+                    	} 
+
                         break;
                 }
             }
@@ -197,7 +256,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         return $vocabularies;
     }
-    
+   
     /**
      * Index ES type for new or updated content type
      *
@@ -227,7 +286,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Create mapping
         if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
+            $indexMapping = $this->getIndexMapping($data["fields"],"content");
         }
         
         // Add systems metadata
@@ -237,22 +296,29 @@ class DataIndex extends DataAbstract implements IDataIndex
         );
         $indexMapping["text"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
-        );
+        );       
         $indexMapping["text_not_analyzed"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
+        $indexMapping["summary"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );               
         $indexMapping["objectType"] = array(
             'type' => 'string',
             'store' => 'yes'
         );
-        $indexMapping["summary"] = array(
+        $indexMapping["author"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
         );
-        $indexMapping["author"] = array(
+        $indexMapping["authorName"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
@@ -282,6 +348,11 @@ class DataIndex extends DataAbstract implements IDataIndex
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
+        $indexMapping["availableLanguages"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );
         
         // Add Taxonomies
         foreach ($vocabularies as $vocabularyName) {
@@ -295,7 +366,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Create new ES type if not empty
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_content_index, $id);
+            $type = new \Elastica\Type(self::$_content_index, $id);
             
             // Set mapping
             $type->setMapping($indexMapping);
@@ -337,7 +408,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Create mapping
         if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
+            $indexMapping = $this->getIndexMapping($data["fields"],"dam");
         }
         
         // Add systems metadata
@@ -347,6 +418,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         );
         $indexMapping["text"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
         );
         $indexMapping["text_not_analyzed"] = array(
@@ -360,9 +432,15 @@ class DataIndex extends DataAbstract implements IDataIndex
         );
         $indexMapping["summary"] = array(
             'type' => 'string',
+            'index' => 'not_analyzed',
             'store' => 'yes'
         );
         $indexMapping["author"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );
+        $indexMapping["authorName"] = array(
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes'
@@ -399,6 +477,11 @@ class DataIndex extends DataAbstract implements IDataIndex
             'index' => 'not_analyzed',
             'store' => 'yes'
         );
+        $indexMapping["availableLanguages"] = array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes'
+        );
         
         // Add Taxonomies
         foreach ($vocabularies as $vocabularyName) {
@@ -412,10 +495,12 @@ class DataIndex extends DataAbstract implements IDataIndex
         // If there is no searchable field, the new type is not created
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_dam_index, $id);
+            $type = new \Elastica\Type(self::$_dam_index, $id);
             
             // Set mapping
-            $type->setMapping($indexMapping);
+            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
+            $indexMappingObject->disableSource();
+            $type->setMapping($indexMappingObject);
             
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
@@ -424,6 +509,75 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
     }
 
+    
+    /**
+     * Index ES type for new or updated user
+     *
+     * @see \Rubedo\Interfaces\IDataIndex:indexUserType()
+     * @param string $id
+     *            user id
+     * @param array $data
+     *            new user
+     * @return array
+     */
+    public function indexUserType ($id, $data, $overwrite = FALSE)
+    {
+    
+        // Unicity type id check
+        $mapping = self::$_user_index->getMapping();
+        if (array_key_exists($id, $mapping[self::$_options['userIndex']])) {
+            if ($overwrite) {
+                // delete existing content type
+                $this->deleteUserType($id);
+            } else {
+                // throw exception
+                throw new \Rubedo\Exceptions\Server('%1$s user type already exists', "Exception64", $id);
+            }
+        }
+    
+        $vocabularies = $this->_getVocabularies($data);
+    
+        // Create mapping
+        if (isset($data["fields"]) && is_array($data["fields"])) {
+            $indexMapping = $this->getIndexMapping($data["fields"],"user");
+        }
+    
+        // Add systems metadata
+        $indexMapping["lastUpdateTime"] = array(
+                'type' => 'date',
+                'store' => 'yes'
+        );
+        $indexMapping["name"] = array(
+                'type' => 'string',
+                'store' => 'yes'
+        );
+        $indexMapping["organisation"] = array(
+                'type' => 'string',
+                'store' => 'yes'
+        );
+        $indexMapping["photo"] = array(
+                'type' => 'string',
+                'index' => 'not_analyzed',
+                'store' => 'yes'
+        );
+       
+        // If there is no searchable field, the new type is not created
+        if (! empty($indexMapping)) {
+            // Create new type
+            $type = new \Elastica\Type(self::$_user_index, $id);
+    
+            // Set mapping
+            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
+            $indexMappingObject->disableSource();
+            $type->setMapping($indexMappingObject);
+    
+            // Return indexed field list
+            return array_flip(array_keys($indexMapping));
+        } else {
+            return array();
+        }
+    }
+    
     /**
      * Delete ES type for existing content type
      *
@@ -434,7 +588,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContentType ($id)
     {
-        $type = new \Elastica_Type(self::$_content_index, $id);
+        $type = new \Elastica\Type(self::$_content_index, $id);
         $type->delete();
     }
 
@@ -450,7 +604,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContent ($typeId, $id)
     {
-        $type = new \Elastica_Type(self::$_content_index, $typeId);
+        $type = new \Elastica\Type(self::$_content_index, $typeId);
         $type->deleteById($id);
     }
 
@@ -464,7 +618,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDamType ($id)
     {
-        $type = new \Elastica_Type(self::$_dam_index, $id);
+        $type = new \Elastica\Type(self::$_dam_index, $id);
         $type->delete();
     }
 
@@ -480,7 +634,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDam ($typeId, $id)
     {
-        $type = new \Elastica_Type(self::$_dam_index, $typeId);
+        $type = new \Elastica\Type(self::$_dam_index, $typeId);
         $type->deleteById($id);
     }
 
@@ -512,48 +666,95 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add fields to index
         $contentData = array();
         
-        if (isset($data['fields'])) {
-            foreach ($data['fields'] as $field => $var) {
-                
-                // only index searchable fields
-                if (in_array($field, $typeStructure['searchableFields'])) {
-                    if (is_array($var)) {
-                        foreach ($var as $key => $subvalue) {
-                            if ($field != 'position') {
-                                $contentData[$field][$key] = (string) $subvalue;
-                            } else {
-                                if ($key == 'address') {
-                                    $contentData['position_address'] = (string) $subvalue;
-                                }
-                                if ($key == 'location') {
-                                    if (isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])) {
-                                        $lon = $subvalue['coordinates'][0];
-                                        $lat = $subvalue['coordinates'][1];
-                                        
-                                        $contentData['position_location'] = array(
-                                            (float) $lon,
-                                            (float) $lat
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        $contentData[$field] = (string) $var;
-                    }
-                }
-            }
-        }
+
+        // For every searchable field
+        foreach ($typeStructure['searchableFields'] as $fieldConfig) {
+        	
+        	// Get field name
+        	$name = $fieldConfig['name'];
+        	
+        	// Get non localizable fields from fields 
+        	if (!$fieldConfig['localizable']) {
+        		if (isset($data['fields'][$name])) {
+ 					
+        			$value  = $data['fields'][$name];
+	        		if (is_array($value)) {
+	        			foreach ($value as $key => $subvalue) {
+	        				if ($name != 'position') {
+	        					$contentData[$name][$key] = (string) $subvalue;
+	        				} else {
+	        					if ($key == 'address') {
+	        						$contentData['position_address'] = (string) $subvalue;
+	        					}
+	        					if ($key == 'location') {
+	        						if (isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])) {
+	        							$lon = $subvalue['coordinates'][0];
+	        							$lat = $subvalue['coordinates'][1];
+	        			
+	        							$contentData['position_location'] = array(
+	        									(float) $lon,
+	        									(float) $lat
+	        							);
+	        						}
+	        					}
+	        				}
+	        			}	        			
+	        		} else  {
+	        		    if(!empty($value)){
+	        		        $contentData[$name] = (string) $value;
+	        		    }else{
+	        		        $contentData[$name] = null;
+	        		    }
+	        			
+	        		}
+        		}
+        		
+        	} else {
+        		
+        	// Get localizable fields from i18n
+        		if (isset($data['i18n'])) {
+        		    $availableLanguages = array();
+        			foreach ($data['i18n'] as $key => $locale) {
+        			    $availableLanguages[] = $key;
+        				if (isset($locale['fields'][$name])) {
+        					$value  = $locale['fields'][$name];
+        					// Temp fix because local is not set in i18n at the first content creation
+        					if (!isset($locale['locale'])) $locale['locale'] = $key ;
+        					$indexFieldName = $name.'_'.$locale['locale'];
+        					if (is_array($value)) {
+        						foreach ($value as $key => $subvalue) {
+									$contentData[$indexFieldName][$key] = (string) $subvalue;
+        						}
+        					} else  {
+        						$contentData[$indexFieldName] = (string) $value;
+        					}       					
+        				}
+        			}
+        			$contentData['availableLanguages'] = $availableLanguages;
+        		}
+        		
+        	}
         
+        }
+
+    
         // Add default meta's
         $contentData['objectType'] = 'content';
         $contentData['contentType'] = $typeId;
+        if(isset($data['fields'])){
+            $contentData['text']=$data['fields']['text'];
+            $contentData['summary']=$data['fields']['summary'];
+        }else{
+            $contentData['text']='';
+            $contentData['summary']='';
+        }
+        
         $contentData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : null;
         $contentData['startPublicationDate'] = isset($data['startPublicationDate']) ? intval($data['startPublicationDate']) : null;
         $contentData['endPublicationDate'] = isset($data['endPublicationDate']) ? intval($data['endPublicationDate']) : null;
-        $contentData['text'] = (string) $data['text'];
-        $contentData['text_not_analyzed'] = (string) $data['text'];
-        $contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+        
+        //in ES 0.9, date are in microseconds
+        $contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0;
         $contentData['status'] = (isset($data['status'])) ? (string) $data['status'] : 'unknown';
         $contentData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
         $contentData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
@@ -609,9 +810,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         if (empty($contentData['target'])) {
             $contentData['target'][] = 'global';
         }
-        
+
         // Add document
-        $currentDocument = new \Elastica_Document($data['id'], $contentData);
+        $currentDocument = new \Elastica\Document($data['id'], $contentData);
         
         if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
             $currentDocument->addFile('file', $contentData['attachment']);
@@ -645,32 +846,76 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Add fields to index
         $damData = array();
+
+        // For every searchable field
+        foreach ($typeStructure['searchableFields'] as $fieldConfig) {
+             
+            // Get field name
+            $name = $fieldConfig['name'];
+             
+            // Get non localizable fields from fields
+            if (!$fieldConfig['localizable']) {
+                if (isset($data['fields'][$name])) {
         
-        if (array_key_exists('fields', $data) && is_array($data['fields'])) {
-            foreach ($data['fields'] as $field => $var) {
-                
-                // only index searchable fields
-                if (in_array($field, $typeStructure['searchableFields'])) {
-                    if (is_array($var)) {
-                        foreach ($var as $key => $subvalue) {
-                            $damData[$field][] = (string) $subvalue;
+                    $value  = $data['fields'][$name];
+                    if (is_array($value)) {
+                        foreach ($value as $key => $subvalue) {
+                            $damData[$name][$key] = (string) $subvalue;
                         }
-                    } else {
-                        $damData[$field] = (string) $var;
+                    } else  {
+                        if(!empty($value)){
+                            $damData[$name] = (string) $value;
+                        }else{
+                            $damData[$name] = null;
+                        }
+        
                     }
                 }
-            }
-        }
         
+            } else {
+        
+                // Get localizable fields from i18n
+                if (isset($data['i18n'])) {
+                    $availableLanguages = array();
+                    foreach ($data['i18n'] as $key => $locale) {
+                        $availableLanguages[] = $key;
+                        if (isset($locale['fields'][$name])) {
+                            $value  = $locale['fields'][$name];
+                            // Temp fix because local is not set in i18n at the first dam creation
+                            if (!isset($locale['locale'])) $locale['locale'] = $key ;
+                            if ($name!='title') {
+                                $indexFieldName = $name.'_'.$locale['locale'];
+                            } else {
+                                $indexFieldName = 'text'.'_'.$locale['locale'];
+                            }
+                            if (is_array($value)) {
+                                foreach ($value as $key => $subvalue) {
+                                    $damData[$indexFieldName][$key] = (string) $subvalue;
+                                }
+                            } else  {
+                                $damData[$indexFieldName] = (string) $value;
+                            }
+                        }
+                    }
+                    $damData['availableLanguages'] = $availableLanguages;
+                }
+        
+            }
+        
+        }
+                
         // Add default meta's
         $damData['damType'] = $typeId;
         $damData['objectType'] = 'dam';
+        $damData['text']=$data['fields']['title'];
+
         $damData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : array();
-        $damData['text'] = (string) $data['title'];
         $damData['text_not_analyzed'] = (string) $data['title'];
         $fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
         $damData['fileSize'] = $fileSize;
-        $damData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
+        
+        //in ES 0.9, date are in microseconds
+        $damData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0;
         $damData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
         $damData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
         
@@ -713,9 +958,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $damData['target'][] = (string) $target;
             }
         }
-        
+
         // Add document
-        $currentDam = new \Elastica_Document($data['id'], $damData);
+        $currentDam = new \Elastica\Document($data['id'], $damData);
         
         if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
             

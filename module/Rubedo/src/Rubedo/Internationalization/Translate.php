@@ -89,6 +89,9 @@ class Translate implements ITranslate
         }
         
         $translatedValue = $this->getTranslation($code, $language);
+        if ($translatedValue == null) {
+            $translatedValue = $this->getTranslation($code, "en");
+        }
         
         if ($translatedValue == null) {
             $translatedValue = $defaultLabel;
@@ -96,12 +99,41 @@ class Translate implements ITranslate
         
         return $translatedValue;
     }
+    
+    /**
+     * translate a label given by its code and its default value
+     *
+     * @param string $code
+     * @param string $defaultLabel
+     * @return string
+     */
+    public function translateInWorkingLanguage ($code, $defaultLabel = "")
+    {
+        $language = Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
+        if ($language === null) {
+            $language = self::$defaultLanguage;
+        }
+    
+        $translatedValue = $this->getTranslation($code, $language);
+        if ($translatedValue == null) {
+            $translatedValue = $this->getTranslation($code, "en");
+        }
+    
+        if ($translatedValue == null) {
+            $translatedValue = $defaultLabel;
+        }
+    
+        return $translatedValue;
+    }
 
-    public function getTranslation ($code, $language)
+    public function getTranslation($code, $language)
     {
         $this->loadLanguage($language);
+        $this->loadLanguage('en');
         if (isset(self::$translationArray[$language][$code])) {
             return self::$translationArray[$language][$code];
+        } elseif (isset(self::$translationArray['en'][$code])) {
+            return self::$translationArray['en'][$code];
         } else {
             return false;
         }

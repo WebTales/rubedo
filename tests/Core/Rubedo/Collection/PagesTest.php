@@ -71,6 +71,8 @@ class PagesTest extends PHPUnit_Framework_TestCase {
 		$obj['id'] = 'test';
 		$obj['site'] = 'test';
 		$obj['title'] = 'test';
+		$obj['i18n']= array('en'=>array('title'=>$obj['title']));
+		$obj['nativeLanguage']='en';
 		$PageService=new Pages();
 		$PageService->update($obj);
 	}

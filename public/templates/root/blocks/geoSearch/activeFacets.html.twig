@@ -5,9 +5,10 @@
 	</div>
 </div>
 {% if activeFacets|length > 0 %}
+{% if displayMode != 'checkbox' %}
 <div class="navbar">
 	<div class="navbar-inner">
-		<p class="brand">Critères de recherche :&nbsp;&nbsp;
+		<p class="brand">{{ "Blocks.Search.Label.SearchCriteria" | fotrans }} :&nbsp;&nbsp;
 		{% for facet in activeFacets %}
 		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
                 {% for term in facet.terms %}
@@ -29,5 +30,6 @@
 		</p>
 	</div>
 </div>
+{% endif %}
 {% endif %}
 </div>

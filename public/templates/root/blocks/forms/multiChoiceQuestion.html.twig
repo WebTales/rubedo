@@ -11,7 +11,7 @@
    {% elseif field.itemConfig.fieldType=="radiogroup" %} 
    {% set type="radio" %}  
    {% endif %}
-   <div class="row clear-both">
+   <div class="row-fluid clear-both">
 {% set itemsCount=field.itemConfig.fieldConfig.items|length %}
 {% set itemsPerCol=(itemsCount /field.itemConfig.fieldConfig.columns)|number_format %}
 {% if itemsCount==field.itemConfig.fieldConfig.columns and 2<field.itemConfig.fieldConfig.columns %}

@@ -27,7 +27,7 @@ use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection, Rubedo\Services\Ma
  * @category Rubedo
  * @package Rubedo
  */
-abstract class WorkflowAbstractCollection extends AbstractCollection implements IWorkflowAbstractCollection
+abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection implements IWorkflowAbstractCollection
 {
 
     protected function _init ()
@@ -140,7 +140,8 @@ abstract class WorkflowAbstractCollection extends AbstractCollection implements 
         if ($obj) {
             $obj = $this->_addReadableProperty($obj);
         }
-        return $obj;
+        return $this->localizeOutput($obj);
+       // return $obj;
     }
     
     /*

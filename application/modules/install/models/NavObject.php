@@ -50,6 +50,14 @@ class Install_Model_NavObject
         $container->addPage($page);
         
         $page = new Zend_Navigation_Page_Mvc(array(
+            'label' => 'Languages',
+            'action' => 'define-languages',
+            'controller' => 'index',
+            'module' => 'install'
+        ));
+        $container->addPage($page);
+        
+        $page = new Zend_Navigation_Page_Mvc(array(
             'label' => 'Contents',
             'action' => 'set-db-contents',
             'controller' => 'index',

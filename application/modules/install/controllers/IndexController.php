@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Update\Install;
 
 /**
  * Installer Controller
@@ -209,6 +210,77 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
+    /**
+     * loadLanguages and define default and Active Languages
+     */
+    public function defineLanguagesAction()
+    {
+        $this->view->displayMode = 'regular';
+        if ($this->_localConfig['installed']['status'] != 'finished') {
+            $this->view->displayMode = "wizard";
+            $this->_localConfig['installed']['action'] = 'define-languages';
+        }
+        
+        $params = array();
+        $ok = false;
+        
+        $languageService = Manager::getService('Languages');
+        
+        $defaultLocale = $languageService->getDefaultLanguage();
+        if ($defaultLocale) {
+            $ok = true;
+        }
+        
+        $languageListResult = $languageService->getList(null, array(
+            array(
+                'property' => 'label',
+                'direction' => 'asc'
+            )
+        ));
+        if ($languageListResult['count'] == 0) {
+            Install::importLanguages();
+            $languageListResult = $languageService->getList(null, array(
+                array(
+                    'property' => 'label',
+                    'direction' => 'asc'
+                )
+            ));
+        }
+        $languageList = $languageListResult["data"];
+        $languageSelectList = array();
+        $languageSelectList[]="";
+        
+        foreach ($languageList as $value) {
+            list ($label) = explode(';', $value['label']);
+            $languageSelectList[$value['locale']] = isset($value['ownLabel']) && ! empty($value['ownLabel']) ? $value['ownLabel'] : $label;
+        }
+        
+        $params['languages'] = $languageSelectList;
+        $params['defaultLanguage'] = isset($defaultLocale) ? $defaultLocale : 'en';
+        
+        $dbForm = Install_Model_LanguagesConfigForm::getForm($params);
+        
+        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
+            $values = $dbForm->getValues();
+            $update = install::setDefaultRubedoLanguage($values['defaultLanguage']);
+            if ($update) {
+                $ok = true;
+            }
+        }
+        
+        if ($ok) {
+            $this->view->isReady = true;
+        } else {
+            $this->view->hasError = true;
+            $this->view->errorMsgs = 'A default language should be activated';
+        }
+        
+        $this->view->form = $dbForm;
+        
+        $this->_saveLocalConfig();
+    }
+    
+    
     public function setMailerAction ()
     {
         $this->view->displayMode = 'regular';
@@ -525,33 +597,7 @@ class Install_IndexController extends Zend_Controller_Action
         if ($this->_isDefaultGroupsExists()) {
             return;
         }
-        try {
-            Manager::getService('Workspaces')->create(array(
-                'text' => 'admin'
-            ));
-        } catch (Rubedo\Exceptions\User $exception) {
-            // dont stop if already exists
-        }
-        $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
-        
-        $success = true;
-        $groupsJsonPath = APPLICATION_PATH . '/../data/default/groups';
-        $groupsJson = new DirectoryIterator($groupsJsonPath);
-        foreach ($groupsJson as $file) {
-            if ($file->isDot() || $file->isDir()) {
-                continue;
-            }
-            if ($file->getExtension() == 'json') {
-                $itemJson = file_get_contents($file->getPathname());
-                $item = Zend_Json::decode($itemJson);
-                if ($item['name'] == 'admin') {
-                    $item['workspace'] = $adminWorkspaceId;
-                    $item['inheritWorkspace'] = false;
-                }
-                $result = Manager::getService('Groups')->create($item);
-                $success = $result['success'] && $success;
-            }
-        }
+        $success = Rubedo\Update\Install::doCreateDefaultsGroups();
         if (! $success) {
             $this->view->hasError = true;
             $this->view->errorMsgs = 'failed to create default groups';
@@ -571,50 +617,14 @@ class Install_IndexController extends Zend_Controller_Action
         return $result;
     }
 
-    protected function _doInsertContents ()
+    protected function _doInsertContents()
     {
-        $success = true;
-        $contentPath = APPLICATION_PATH . '/../data/default/';
-        $contentIterator = new DirectoryIterator($contentPath);
-        foreach ($contentIterator as $directory) {
-            if ($directory->isDot() || ! $directory->isDir()) {
-                continue;
-            }
-            if (in_array($directory->getFilename(), array(
-                'groups',
-                'site'
-            ))) {
-                continue;
-            }
-            $collection = ucfirst($directory->getFilename());
-            $itemsJson = new DirectoryIterator($contentPath . '/' . $directory->getFilename());
-            foreach ($itemsJson as $file) {
-                if ($file->isDot() || $file->isDir()) {
-                    continue;
-                }
-                if ($file->getExtension() == 'json') {
-                    $itemJson = file_get_contents($file->getPathname());
-                    $item = Zend_Json::decode($itemJson);
-                    try {
-                        if (! Manager::getService($collection)->findOne(Filter::factory('Value')->setName('defaultId')
-                            ->setValue($item['defaultId']))) {
-                            $result = Manager::getService($collection)->create($item);
-                        } else {
-                            $result['success'] = true;
-                        }
-                    } catch (Rubedo\Exceptions\User $exception) {
-                        $result['success'] = true;
-                    }
-                    
-                    $success = $result['success'] && $success;
-                }
-            }
-        }
+        $success = Rubedo\Update\Install::doInsertContents();
         
-        if($success){
-        	Rubedo\Update\Update::update();
+        if ($success) {
+            Rubedo\Update\Update::update();
+            \Rubedo\Collection\Pages::localizeAllCollection();
         }
-        
         
         if (! $success) {
             $this->view->hasError = true;

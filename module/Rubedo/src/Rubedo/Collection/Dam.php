@@ -25,9 +25,12 @@ use Rubedo\Interfaces\Collection\IDam, Rubedo\Services\Manager, WebTales\MongoFi
  * @category Rubedo
  * @package Rubedo
  */
-class Dam extends AbstractCollection implements IDam
+class Dam extends AbstractLocalizableCollection implements IDam
 {
-
+    protected static $nonLocalizableFields = array("Content-Type","typeId","taxonomy","fileSize","mainFileType","target","writeWorkspace","directory","readOnly","originalFileId");
+    protected static $labelField = 'title';
+    protected static $isLocaleFiltered = true;
+    
     protected $_indexes = array(
         array(
             'keys' => array(

@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 require_once ('DataAccessController.php');
-Use Rubedo\Controller\Action;
+use Rubedo\Controller\Action;
 
 /**
  * Controller providing CRUD API for the Pages JSON
@@ -43,13 +43,12 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
         'count-orphan-pages',
         'model',
         'get-content-list',
-        'holds-site-default'
+        'holds-site-default',
     );
 
     public function init ()
     {
         parent::init();
-        
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('Pages');
     }

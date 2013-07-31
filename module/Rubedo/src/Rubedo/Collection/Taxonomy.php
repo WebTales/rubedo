@@ -25,9 +25,13 @@ use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager, WebTales\Mo
  * @category Rubedo
  * @package Rubedo
  */
-class Taxonomy extends AbstractCollection implements ITaxonomy
+class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
 {
 
+    protected static $nonLocalizableFields = array("mandatory","workspaces","facetOperator","readOnly","order","expandable","inputAsTree","multiSelect");
+    
+    protected static $labelField = 'name';
+    
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -272,7 +276,10 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['id'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access('You can not update navigation vocabulary', "Exception53");
         }
-        if ($obj['name'] == 'Navigation') {
+        
+        $locale = isset($obj['locale'])?$obj['locale']:self::getDefaultLocale();
+        
+        if ($obj['i18n'][$locale]['name'] == 'Navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t create a navigation vocabulary', "Exception52");
         }
         $obj = $this->_addDefaultWorkspace($obj);

@@ -110,6 +110,24 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected $_inputDataErrors = array();
 
     protected static $_userFilter;
+    
+    protected static $nonLocalizableFields = array(
+        'online',
+        'typeId',
+        'status',
+        'startPublicationDate',
+        'endPublicationDate',
+        'target',
+        'writeWorkspace',
+        'pageId',
+        'maskId',
+        'blockId',
+        'taxonomy'
+    );
+    
+    protected static $localizableFiledForCType = array();
+    
+    protected static $isLocaleFiltered = true;
 
     public function __construct ()
     {
@@ -155,6 +173,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 ->setOperator('$gte')
                 ->setValue($now));
         }
+        $this->initLocaleFilter();
     }
 
     /**
@@ -312,6 +331,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /**
      * Return validated data from input data based on content type
      *
+     * @todo : implement match against content type
      * @param array $obj            
      * @return array:
      */
@@ -342,63 +362,68 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         $tempFields = array();
         $tempFields['text'] = $obj['text'];
-        $tempFields['summary'] = $obj['fields']['summary'];
-        
-        foreach ($contentTypeFields as $value) {
-            $fieldsArray[$value['config']['name']] = $value;
-            if (! isset($value['config']['allowBlank']) || ! $value['config']['allowBlank']) {
-                $result = false;
-                if ($value['config']['name'] == "text" || $value['config']['name'] == "summary") {
-                    $field = $value['config']['name'];
-                    $result = $this->_controlAllowBlank($tempFields[$field], false);
-                }
-                if ($result == false) {
-                    $missingField[$value['config']['name']] = $value['config']['name'];
-                }
-            }
+        if(isset($obj['i18n'][$obj['nativeLanguage']]['fields']['summary'])){
+            $tempFields['summary'] = $obj['i18n'][$obj['nativeLanguage']]['fields']['summary'];
+        }else{
+            $tempFields['summary'] = "";
         }
         
-        $fieldsList = array_keys($fieldsArray);
         
-        foreach ($obj['fields'] as $key => $value) {
-            if (in_array($key, array(
-                'text',
-                'summary'
-            ))) {
-                continue;
-            }
-            if (! in_array($key, $fieldsList)) {
-                unset($obj["fields"][$key]);
-                // $this->_inputDataErrors[$key] = 'unknown field';
-            } else {
-                unset($missingField[$key]);
+//         foreach ($contentTypeFields as $value) {
+//             $fieldsArray[$value['config']['name']] = $value;
+//             if (! isset($value['config']['allowBlank']) || ! $value['config']['allowBlank']) {
+//                 $result = false;
+//                 if ($value['config']['name'] == "text" || $value['config']['name'] == "summary") {
+//                     $field = $value['config']['name'];
+//                     $result = $this->_controlAllowBlank($tempFields[$field], false);
+//                 }
+//                 if ($result == false) {
+//                     $missingField[$value['config']['name']] = $value['config']['name'];
+//                 }
+//             }
+//         }
+        
+//         $fieldsList = array_keys($fieldsArray);
+        
+//         foreach ($obj['fields'] as $key => $value) {
+//             if (in_array($key, array(
+//                 'text',
+//                 'summary'
+//             ))) {
+//                 continue;
+//             }
+//             if (! in_array($key, $fieldsList)) {
+//                 unset($obj["fields"][$key]);
+//                 // $this->_inputDataErrors[$key] = 'unknown field';
+//             } else {
+//                 unset($missingField[$key]);
                 
-                if (isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true) {
-                    $tempFields[$key] = array();
-                    if (! is_array($value)) {
-                        $value = array(
-                            $value
-                        );
-                    }
-                    foreach ($value as $valueItem) {
-                        $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
-                        $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
-                    }
-                } else {
-                    $this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
+//                 if (isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true) {
+//                     $tempFields[$key] = array();
+//                     if (! is_array($value)) {
+//                         $value = array(
+//                             $value
+//                         );
+//                     }
+//                     foreach ($value as $valueItem) {
+//                         $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
+//                         $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
+//                     }
+//                 } else {
+//                     $this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
                     
-                    $tempFields[$key] = $this->_filterFieldValue($value, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
-                }
-            }
-        }
+//                     $tempFields[$key] = $this->_filterFieldValue($value, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
+//                 }
+//             }
+//         }
         
-        $obj['fields'] = $tempFields;
+//         $obj['fields'] = $tempFields;
         
-        if (count($missingField) > 0) {
-            foreach ($missingField as $value) {
-                $this->_inputDataErrors[$value] = 'missing field';
-            }
-        }
+//         if (count($missingField) > 0) {
+//             foreach ($missingField as $value) {
+//                 $this->_inputDataErrors[$value] = 'missing field';
+//             }
+//         }
         
         if (count($this->_inputDataErrors) === 0) {
             $this->_isValidInput = true;
@@ -878,4 +903,164 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         return $result;
     }
+    
+    
+	/* (non-PHPdoc)
+     * @see \Rubedo\Collection\AbstractLocalizableCollection::localizeInput()
+     */
+    protected function localizeInput($obj)
+    {
+        $metadataFields = $this->getMetaDataFields();
+        // force label to contain only native title in DB
+        if (isset($obj['i18n'][$obj['nativeLanguage']]['fields']['text'])) {
+            $obj['fields']['text'] = $obj['i18n'][$obj['nativeLanguage']]['fields']['text'];
+            $obj['text'] =  $obj['fields']['text'];
+        }
+        
+        // prevent localizable data to be stored in root level
+        foreach ($obj as $key => $field) {
+            if (! in_array($key, $metadataFields) && $key !== static::$labelField && $key !=='fields') {
+                unset($obj[$key]);
+            }
+            foreach ($obj['fields'] as $field => $value){
+                if(in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
+                    unset($obj['fields'][$field]);
+                }
+            }
+        }
+        
+        // prevent non localizable data to be store in localization document
+        if (isset($obj['i18n'])) {
+            foreach ($obj['i18n'] as $locale => $localization) {
+                foreach ($localization as $key => $value) {
+                    if (in_array($key, $metadataFields) && $key !== static::$labelField && $key !=='fields') {
+                        unset($obj['i18n'][$locale][$key]);
+                    }
+                    foreach ($obj['i18n'][$locale]['fields'] as $field => $value){
+                        if(!in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
+                            unset($obj['i18n'][$locale]['fields'][$field]);
+                        }
+                    }
+                }
+                $obj['i18n'][$locale]['locale'] = $locale;
+            }
+        }
+        
+        
+        
+        return $obj;
+        
+    }
+
+    /**
+     * Set localization information on a not yet localized item
+     *
+     * @param array $obj
+     * @return array
+     */
+    public function addlocalization($obj)
+    {
+        if (isset($obj['nativeLanguage'])) {
+            return $obj;
+        }
+        
+        if(!isset($obj['fields'])){
+            $obj['fields'] = array();
+        }
+        
+        $nativeContent = $obj;
+    
+        
+        
+        foreach ($this->getMetaDataFields() as $metaField) {
+            if ($metaField !== 'text' && $metaField !== 'fields') {
+                unset($nativeContent[$metaField]);
+            }
+            foreach ($nativeContent['fields'] as $field => $value){
+                if(!in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
+                    unset($nativeContent['fields'][$field]);
+                }
+            }
+            $nativeContent['locale'] = static::$defaultLocale;
+        }
+        foreach ($obj as $key => $field) {
+            if (! in_array($key, $this->getMetaDataFields()) && $key != 'fields') {
+                unset($obj[$key]);
+            }
+        }
+        foreach ($obj['fields'] as $field => $value){
+            if(in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))){
+                unset($obj['fields'][$field]);
+            }
+        }
+        $obj['nativeLanguage'] = static::$defaultLocale;
+        $obj['i18n'] = array(
+            static::$defaultLocale => $nativeContent
+        );
+        return $obj;
+    }
+
+    protected function getLocalizableFieldForCType($cTypeId){
+        if(!isset(self::$localizableFiledForCType[$cTypeId])){
+            self::$localizableFiledForCType[$cTypeId] = manager::getService('ContentTypes')->getLocalizableFieldForCType($cTypeId);
+        }
+        return self::$localizableFiledForCType[$cTypeId];
+    }
+
+    /**
+     * Custom array_merge
+     *
+     * Do a recursive array merge except that numeric array are overriden
+     *
+     * @param array $array1            
+     * @param array $array2            
+     * @return array
+     */
+    protected function merge($array1, $array2)
+    {
+        if (is_array($array2)) {
+            foreach ($array2 as $key => $value) {
+                if (isset($array1[$key]) && is_array($value) && ! $this->isNumericArray($value)) {
+                    $array1[$key] = $this->merge($array1[$key], $array2[$key]);
+                } elseif (isset($array1[$key]) && is_array($value) && $key == 'fields') {
+                    $array1[$key] = $this->merge($array1[$key], $array2[$key]);
+                } else {
+                    $array1[$key] = $value;
+                }
+            }
+        }
+        
+        return $array1;
+    }   
+    
+    
+    /**
+     * Localize not yet localized items of the current collection
+     */
+    public function addLocalizationForCollection()
+    {
+        $wasFiltered = parent::disableUserFilter();
+        $this->_dataService->clearFilter();
+        $this->_dataService->setWorkspace();
+        $items = AbstractCollection::getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
+            ->setOperator('$exists')
+            ->setValue(false));
+        if ($items['count'] > 0) {
+            foreach ($items['data'] as $item) {
+                if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
+                    $item = $this->addlocalization($item);
+                    
+                    //$this->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
+                    $this->update($item,array(),false);
+ 
+                    if($item['status']=='published'){
+                        $this->publish($item['id']);
+                    }
+                }
+            }
+        }
+    
+        parent::disableUserFilter($wasFiltered);
+    }
+    
 }

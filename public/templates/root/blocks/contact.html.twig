@@ -2,25 +2,27 @@
 
 {% block mainContent %}
 
-<div class="container">
-	{% if errors is defined %}
-		<div class="alert alert-error">
-			<button type="button" class="close" data-dismiss="alert">×</button>
-			<ul>
-				{% for error in errors %}
-					<li>{{ error }}</li>
-				{% endfor %}
-			</ul>
-		</div>
-	{% endif %}
-	
-	{% if sendResult %}
-		<div class="alert alert-success">
-		  <button type="button" class="close" data-dismiss="alert">×</button>
-		  Votre e-mail a été envoyé avec succés !
-		</div>
-	{% endif %}
-	{{ contactForm | raw }}
+<div class="row-fluid">
+    <div class="span12">
+    	{% if errors is defined %}
+    		<div class="alert alert-error">
+    			<button type="button" class="close" data-dismiss="alert">×</button>
+    			<ul>
+    				{% for error in errors %}
+    					<li>{{ error }}</li>
+    				{% endfor %}
+    			</ul>
+    		</div>
+    	{% endif %}
+    	
+    	{% if sendResult %}
+    		<div class="alert alert-success">
+    		  <button type="button" class="close" data-dismiss="alert">×</button>
+    		  {{ "Blocks.Contact.Label.YourEmailWasSuccessfullySent" | fotrans }}
+    		</div>
+    	{% endif %}
+    	{{ contactForm | raw }}
+	</div>
 </div>
 
 {% endblock %}

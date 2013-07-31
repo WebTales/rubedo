@@ -25,9 +25,12 @@ use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager, WebTal
  * @category Rubedo
  * @package Rubedo
  */
-class TaxonomyTerms extends AbstractCollection implements ITaxonomyTerms
+class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTerms
 {
-
+    protected static $nonLocalizableFields = array("vocabularyId","orderValue","readOnly","leaf","expandable","isNotPage","parentId");
+    
+    protected static $isLocaleFiltered = true;
+    
     protected $_indexes = array(
         array(
             'keys' => array(

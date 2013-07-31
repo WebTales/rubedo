@@ -6,7 +6,12 @@
 			"cType": "datefield" ,
 			"config": {
 				"name": "date" ,
-				"fieldLabel": "Date" ,
+				"fieldLabel": "###Article.date###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Article.date###"
+				    }
+				},
 				"allowBlank": true ,
 				"localizable": false ,
 				"searchable": false ,
@@ -20,7 +25,12 @@
 			"cType": "CKEField" ,
 			"config": {
 				"name": "body" ,
-				"fieldLabel": "Corps" ,
+				"fieldLabel": "###Article.body###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Article.body###"
+				    }
+				},
 				"maxLength": 600000 ,
 				"minLength": 0 ,
 				"allowBlank": true ,
@@ -39,7 +49,12 @@
 			"cType": "ImagePickerField" ,
 			"config": {
 				"name": "image" ,
-				"fieldLabel": "Image" ,
+				"fieldLabel": "###Article.image###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###Article.image###"
+				    }
+				},				
 				"localizable": false ,
 				"searchable": false ,
 				"multivalued": false ,
@@ -55,7 +70,7 @@
 	] ,
 	"defaultId": "51a60bb0c1c3dac60700000e",
 	"system": false ,
-	"type": "Article" ,
+	"type": "###Article.type###" ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"workflow": "Basique" ,

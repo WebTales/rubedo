@@ -41,6 +41,11 @@
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     {% endblock %} 
     
+    <!--[if lte IE 6]>
+        <link rel="stylesheet" type="text/css" href="{{baseUrl}}/components/webtales/bsie/bootstrap/css/bootstrap-ie6.css">
+        <link rel="stylesheet" type="text/css" href="{{baseUrl}}/components/webtales/bsie/bootstrap/css/ie.css">
+    <![endif]-->    
+    
     {% block pageIcons %}
     
     {% if favicon %}
@@ -233,6 +238,10 @@
     	
     	
 	{% endblock %}
+	
+	<!--[if lte IE 6]>
+        <script type="text/javascript" src="{{baseUrl}}/components/webtales/bsie/js/bootstrap-ie.js"></script>
+    <![endif]-->
 	
 </body>
 </html>
