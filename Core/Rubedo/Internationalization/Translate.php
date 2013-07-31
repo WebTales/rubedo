@@ -126,12 +126,15 @@ class Translate implements ITranslate
         return $translatedValue;
     }
 
-    public function getTranslation($code, $language)
+    public function getTranslation($code, $language,$fallBack = null)
     {
         $this->loadLanguage($language);
+        $this->loadLanguage($fallBack);
         $this->loadLanguage('en');
         if (isset(self::$translationArray[$language][$code])) {
             return self::$translationArray[$language][$code];
+        } elseif (isset($fallBack) && isset(self::$translationArray[$fallBack][$code])) {
+            return self::$translationArray[$fallBack][$code];
         } elseif (isset(self::$translationArray['en'][$code])) {
             return self::$translationArray['en'][$code];
         } else {
