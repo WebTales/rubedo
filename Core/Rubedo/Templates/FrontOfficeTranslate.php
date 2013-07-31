@@ -47,6 +47,7 @@ class FrontOfficeTranslate extends \Twig_Extension
     public function __construct ()
     {
         $this->lang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        $this->fallbackLang = \Rubedo\Collection\AbstractLocalizableCollection::getFallbackLocale();
     }
 
     /**
@@ -80,12 +81,17 @@ class FrontOfficeTranslate extends \Twig_Extension
      */
     public function translate ($text)
     {
-        $label = Manager::getService('Translate')->getTranslation($text, $this->lang);
-        
-        if($label != "") {
-            return $label;
-        } else {
-            return Manager::getService('Translate')->getTranslation($text, $this->defaultLang);
+        $label = Manager::getService('Translate')->getTranslation($text, 
+                $this->lang);
+        if (empty($label)) {
+            $label = Manager::getService('Translate')->getTranslation($text, 
+                    $this->fallbackLang);
         }
+        if (empty($label)) {
+            $label = Manager::getService('Translate')->getTranslation($text, 
+                    $this->defaultLang);
+        }
+        
+        return $label;
     }
 }
