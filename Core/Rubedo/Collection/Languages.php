@@ -45,6 +45,8 @@ class Languages extends AbstractCollection implements ILanguages
     );
 
     protected static $activated = null;
+    
+    protected static $activeLocalesArray = null;
 
     protected static $activeLanguages = array();
 
@@ -125,6 +127,12 @@ class Languages extends AbstractCollection implements ILanguages
         }
     }
     
+    /**
+     * Return the list of active languages
+     * 
+     * @param string $siteId
+     * @return array
+     */
     public function getActiveLanguages($siteId = null)
     {
     	
@@ -134,6 +142,22 @@ class Languages extends AbstractCollection implements ILanguages
     	$result = Manager::getService('Languages')->getList($filters,array(array('property'=>'label','direction'=>'ASC')));
     	return $result['data'];
 
+    }
+    
+    /**
+     * Return the list of active locales
+     * 
+     * @return array
+     */
+    public function getActiveLocales()
+    {
+        if (! isset(self::$activeLocalesArray)) {
+            self::$activeLocalesArray = array();
+            foreach ($this->getActiveLanguages() as $item) {
+                self::$activeLocalesArray[] = $item['locale'];
+            }
+        }
+        return self::$activeLocalesArray;
     }
     
     /*
