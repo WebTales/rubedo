@@ -229,11 +229,11 @@
 				</li>
 				{% if current==0 %}
 				<li class="disabled">
-					<a href="#"><<</a>
+					<a href="#">&lt;&lt;</a>
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': current-1})}}"><<</a>
+					<a href="{{url({'pager': current-1})}}">&lt;&lt;</a>
 				</li>
 				{% endif %}
 				{%if current<wrap+1 or limit<10%}
@@ -257,11 +257,11 @@
 				{%endif%}
 				{% if current==pagecount-1%}
 				<li class="disabled">
-					<a href="#">>></a>
+					<a href="#">&gt;&gt;</a>
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': current+1})}}">>></a>
+					<a href="{{url({'pager': current+1})}}">&gt;&gt;</a>
 				</li>
 				{% endif %}
 			</ul>

@@ -29,6 +29,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
 {
     protected static $nonLocalizableFields = array("vocabularyId","orderValue","readOnly","leaf","expandable","isNotPage","parentId");
     
+    protected static $isLocaleFiltered = true;
     
     protected $_indexes = array(
         array(

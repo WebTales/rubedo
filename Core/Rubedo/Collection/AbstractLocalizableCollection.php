@@ -111,6 +111,15 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     
                     break;
                 default:
+                    $localeArray = Manager::getService('Languages')->getActiveLocales();
+                    $orFilter = Filter::factory('Or');
+                    foreach($localeArray as $locale){
+                        $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . $locale)
+                            ->setOperator('$exists')
+                            ->setValue(true));
+                    }
+                    
+                    $this->_dataService->addFilter($orFilter);
                     break;
             }
         }

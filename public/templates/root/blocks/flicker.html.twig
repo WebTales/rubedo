@@ -4,12 +4,12 @@
 {% if not doNotShow %}
 <br><br>
 <div id="{{prefix}}" class="carousel slide flickr-gallery" 
-data-count="{{allFlickrCount}}"
-data-pagesize="{{pageSize}}"
-data-maxpage="{{ maxPage }}"
-data-url="{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'default')}}"
-data-user="{{ user }}"
-data-tags="{{ tags }}"
+data-count="{{allFlickrCount}}" 
+data-pagesize="{{pageSize}}" 
+data-maxpage="{{ maxPage }}" 
+data-url="{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'default')}}" 
+data-user="{{ user }}" 
+data-tags="{{ tags }}" 
 data-tagmode="{{ tagMode }}">
 	<div class='progress-gallery'>
 		<p>{{ "Blocks.Gallery.Label.Loading" | fotrans }}</p>

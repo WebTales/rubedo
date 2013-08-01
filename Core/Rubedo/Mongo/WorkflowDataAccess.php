@@ -103,6 +103,15 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      */
     protected function _adaptFilter (\WebTales\MongoFilters\IFilter $filters)
     {
+        switch($this->_currentWs){
+            case 'live':
+                $otherWorkspace = 'workspace';
+                break;
+            default:
+                $otherWorkspace = 'live';
+                break;
+        }
+        
         if ($filters instanceof \WebTales\MongoFilters\ICompositeFilter) { // do recursive adaptation to composite filter
             $filtersArray = $filters->getFilters();
             foreach ($filtersArray as $filter) {
@@ -112,8 +121,14 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $key = $filters->getName();
             //$value = $filters->getValue();
             
+            
             if (! in_array($key, $this->_metaDataFields) && strpos($key, $this->_currentWs) === false && substr($key, 0, 1) != '$') {
-                $newKey = $this->_currentWs . "." . $key;
+                if(strpos($key, $otherWorkspace)!==false){
+                    $newKey = str_replace($otherWorkspace, $this->_currentWs, $key);
+                }else{
+                    $newKey = $this->_currentWs . "." . $key;
+                }
+                
                 $filters->setName($newKey);
             }
         }

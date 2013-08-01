@@ -601,7 +601,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetDate->setField('lastUpdateTime');
             $d = Manager::getService('CurrentTime')->getCurrentTime();
             
-            //in ES 0.9, date are in microseconds
+            // In ES 0.9, date are in microseconds
             $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d))*1000;
             // Cast to string for 32bits systems
             $lastday = (string) $lastday;      
@@ -626,11 +626,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                 )
             );
             $timeLabel = array();
+            
             $timeLabel[$lastday] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Day", 'Past 24H');
             $timeLabel[$lastweek] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Week", 'Past week');
             $timeLabel[$lastmonth] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Month", 'Past month');
             $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
-            
+
             $elasticaFacetDate->setRanges($ranges);
             
             // Apply filters from other facets
@@ -991,8 +992,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                                     'term' => $termId,
                                     'label' => $timeLabel[(string) $termId]
                                 )
-                            )
+                            )  
                         );
+
                         break;
                     
                     case 'query':
