@@ -229,11 +229,14 @@ class Users extends AbstractCollection implements IUsers
      */
     protected function _addGroupsInfos ($obj)
     {
-        $groupList = Manager::getService('Groups')->getListByUserId($obj['id']);
-        $obj['groups'] = array();
-        foreach ($groupList['data'] as $group) {
-            $obj['groups'][] = $group['id'];
+        if($obj['id']){
+            $groupList = Manager::getService('Groups')->getListByUserId($obj['id']);
+            $obj['groups'] = array();
+            foreach ($groupList['data'] as $group) {
+                $obj['groups'][] = $group['id'];
+            }
         }
+        
         
         return $obj;
     }
@@ -268,7 +271,7 @@ class Users extends AbstractCollection implements IUsers
         Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
         $obj['groups'] = null;
         $result = parent::update($obj, $options);
-        if ($result) {
+        if ($result['success']) {
             $result['data'] = $this->_addGroupsInfos($result['data']);
         }
         
