@@ -48,6 +48,8 @@ class Languages extends AbstractCollection implements ILanguages
 
     protected static $activeLanguages = array();
 
+    protected static $activeLocalesArray = null;
+    
     protected static $defaultLanguage = null;
 
     public function __construct()
