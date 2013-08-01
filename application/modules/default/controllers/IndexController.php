@@ -206,6 +206,17 @@ class IndexController extends Zend_Controller_Action
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
+            
+            $js = array(
+                '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+                '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-'. Manager::getService('CurrentUser')->getLanguage() .'.js',
+                '/components/jquery/timepicker/jquery.ui.timepicker.js'
+            );
+            if (is_array($js)) {
+                foreach ($js as $value) {
+                    $this->_servicePage->appendJs($value);
+                }
+            }
         }
         
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
@@ -277,6 +288,7 @@ class IndexController extends Zend_Controller_Action
         $twigVar['isLoggedIn'] = $isLoggedIn;
         $twigVar['hasAccessToBO'] = $hasAccessToBO;
         $twigVar['canEdit'] = $canEdit;
+        $twigVar['boLocale'] = Manager::getService('CurrentUser')->getLanguage();
         
         $twigVar['pageProperties'] = isset($this->_mask['pageProperties']) ? $this->_mask['pageProperties'] : null;
         

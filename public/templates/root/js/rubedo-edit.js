@@ -22,7 +22,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	var editor = event.editor, element = editor.element;
 	editor.config.entities = false;
 	editor.config.entities_latin = false;
-	editor.config.language = jQuery("body").attr("data-language");
+	editor.config.language = jQuery("body").attr("data-bolanguage");
 	
 	// Customize CKEditor
 	if (element.getAttribute("data-field-type") =="title" || element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="textfield" || element.getAttribute("data-field-type") =="textareafield") {
