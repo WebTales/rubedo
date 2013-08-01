@@ -726,8 +726,13 @@ class DataSearch extends DataAbstract implements IDataSearch
                             )
                         )
                 ));
-    
-                $elasticaResultSet = self::$_content_index->search($elasticaQuery);
+                
+                $client = self::$_content_index->getClient();
+                $search = new \Elastica\Search($client);
+                $search->addIndex(self::$_dam_index);
+                $search->addIndex(self::$_content_index);
+                
+                $elasticaResultSet = $search->search($elasticaQuery);
 
                 foreach ($elasticaResultSet as $result) {
                     $highlights = $result->getHighlights();
@@ -741,7 +746,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     	$suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_nonlocalized'][0]);
                     }
                 }
-                return (array_unique($suggestTerms));
+                return (array_values(array_unique($suggestTerms)));
                 break;
                 
         }
