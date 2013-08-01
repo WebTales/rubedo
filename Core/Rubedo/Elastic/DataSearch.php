@@ -413,7 +413,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // filter on author
         if (array_key_exists('author', $this->_params)) {
-            $this->_addFilter('author', 'author');
+            $this->_addFilter('author', 'createUser.id');
         }
         
         // filter on date
@@ -572,7 +572,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($this->_isFacetDisplayed('author')) {
             
             $elasticaFacetAuthor = new \Elastica\Facet\Terms('author');
-            $elasticaFacetAuthor->setField('author');
+            $elasticaFacetAuthor->setField('createUser.id');
             
             // Exclude active Facets for this vocabulary
             if ($this->_facetDisplayMode != 'checkbox' and isset($this->_filters['author'])) {
@@ -604,7 +604,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             // In ES 0.9, date are in microseconds
             $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d))*1000;
             // Cast to string for 32bits systems
-            $lastday = (string) $lastday;
+            $lastday = (string) $lastday;      
             $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d))*1000;
             $lastweek = (string) $lastweek;
             $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d))*1000;
@@ -678,9 +678,6 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         
         // add sort
-        if ($this->_params['orderby'] == 'text') {
-            $this->_params['orderby'] = 'text_not_analyzed';
-        }
         $elasticaQuery->setSort(array(
             $this->_params['orderby'] => strtolower($this->_params['orderbyDirection'])
         ));
@@ -729,7 +726,6 @@ class DataSearch extends DataAbstract implements IDataSearch
                             )
                         )
                 ));
-
     
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
          
@@ -763,29 +759,30 @@ class DataSearch extends DataAbstract implements IDataSearch
         foreach ($resultsList as $resultItem) {
             
             $data = $resultItem->getData();
-            
+          
             $data['id'] = $resultItem->getId();
             $data['typeId'] = $resultItem->getType();
             $score = $resultItem->getScore();
             if (! is_float($score))
                 $score = 1;
             $data['score'] = round($score * 100);
-            
+            $data['authorName'] = $data['createUser.fullName'];
+            $data['author'] = $data['createUser.id'];
+
             if (isset($data['availableLanguages']) && !is_array($data['availableLanguages'])) {
                 $data['availableLanguages'] = array($data['availableLanguages']);
             }
-            
-            if (isset($data["text_".$currentLocale])) {
-                $data['title'] = $data["text_".$currentLocale];
-                if ($withSummary) {
-                    $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
-                }
-            } else {
-                $data['title'] = $data['text'];
-            }         
-            
+
             switch ($data['objectType']) {
                 case 'content':
+                    if (isset($data["text_".$currentLocale])) {
+                        $data['title'] = $data["text_".$currentLocale];
+                        if ($withSummary) {
+                            $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
+                        }
+                    } else {
+                        $data['title'] = $data['text'];
+                    }                   
                     $contentType = $this->_getContentType($data['contentType']);
                     if (! $userCanWriteContents || $contentType['readOnly']) {
                         $data['readOnly'] = true;
@@ -795,6 +792,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $data['type'] = $contentType['type'];
                     break;
                 case 'dam':
+                    if (isset($data["title_".$currentLocale])) {
+                        $data['title'] = $data["title_".$currentLocale];
+                    } else {
+                        $data['title'] = $data['text'];
+                    }
                     $damType = $this->_getDamType($data['damType']);
                     if (! $userCanWriteDam || $damType['readOnly']) {
                         $data['readOnly'] = true;
@@ -912,12 +914,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $taxonomyTermsService->findById($value['term']);
-                                if($termItem){
-                                    $temp['terms'][$key]['label'] = $termItem['text'];
-                                }else{
-                                    unset($temp['terms'][$key]);
+                                if($termItem) {
+                                     $temp['terms'][$key]['label'] = $termItem['text'];
+                                } else {
+                                     unset($temp['terms'][$key]);
                                 }
-                                
                             }
                         } else {
                             $renderFacet = false;
