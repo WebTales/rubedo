@@ -213,7 +213,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function create (array $obj, $options = array(), $live = false,$ignoreIndex = false)
     {
         $obj = $this->_setDefaultWorkspace($obj);
-        $this->_filterInputData($obj);
+        $obj = $this->_filterInputData($obj);
         
         if ($this->_isValidInput) {
             $returnArray = parent::create($obj, $options, $live, $ignoreIndex);
@@ -250,7 +250,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $obj['target'][] = $obj['writeWorkspace'];
         }
         
-        $this->_filterInputData($obj);
+        $obj = $this->_filterInputData($obj);
         
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
@@ -357,6 +357,16 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         $contentTypeFields = $contentType['fields'];
         
+        foreach($contentTypeFields as $fieldConfig){
+            switch ($fieldConfig['cType']){
+                case 'CKEField':
+                    $obj = $this->filterCKEField($obj,$fieldConfig['config']['name']);
+                    break;
+                default;
+            }
+        }
+        
+        
         $fieldsArray = array();
         $missingField = array();
         
@@ -432,6 +442,25 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $obj;
     }
 
+    protected function filterCKEField($obj,$name){
+        $cleanerService = Manager::getService('HtmlCleaner');
+        
+        if(isset($obj['fields'][$name])){
+            $obj['fields'][$name] = $cleanerService->clean($obj['fields'][$name]);
+        }
+        
+        if(isset($obj['i18n'])){
+            foreach ($obj['i18n'] as $locale => $data){
+                if(isset($data['fields'][$name])){
+                    $obj['i18n'][$locale]['fields'][$name] = $cleanerService->clean($obj['i18n'][$locale]['fields'][$name]);
+                    //var_dump(explode('&',$obj['i18n'][$locale]['fields'][$name]));die();
+                }
+            }
+        }
+        return $obj;
+    }
+    
+    
     /**
      * Check if value is valid based on field config from type content
      *
