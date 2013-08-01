@@ -737,13 +737,13 @@ class DataSearch extends DataAbstract implements IDataSearch
                 foreach ($elasticaResultSet as $result) {
                     $highlights = $result->getHighlights();
                     if (isset($highlights['autocomplete_'.$currentLocale][0])) {
-                        $suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_'.$currentLocale][0]);
-                    } 
+                        $suggestTerms[]= $this->cleanSuggest($highlights['autocomplete_'.$currentLocale][0]);
+                    }
                     if (isset($highlights['autocomplete_'.$fallBackLocale][0])) {
-                        $suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_'.$fallBackLocale][0]);
+                        $suggestTerms[]= $this->cleanSuggest($highlights['autocomplete_'.$fallBackLocale][0]);
                     }
                     if (isset($highlights['autocomplete_nonlocalized'][0])) {
-                    	$suggestTerms[] = preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#uU", "$2$3", $highlights['autocomplete_nonlocalized'][0]);
+                        $suggestTerms[]= $this->cleanSuggest($highlights['autocomplete_nonlocalized'][0]);
                     }
                 }
                 return (array_values(array_unique($suggestTerms)));
@@ -1067,6 +1067,18 @@ class DataSearch extends DataAbstract implements IDataSearch
         return ($result);
     }
    
+    /**
+     * extract term from highlight
+     * 
+     * @param string $string
+     * @return string
+     */
+    protected function cleanSuggest($string){
+        
+        $newstring = mb_strtolower(preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#msuU", "$2$3", $string),'UTF-8');
+        return $newstring;
+    }
+    
     /**
      *
      * @param field_type $_isFrontEnd            
