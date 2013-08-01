@@ -81,7 +81,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                     'login' => array('type' => 'string', 'index' => 'no', 'store' => 'no')
                 )),
                 'text' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
-                'summary' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                 'target' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                 'writeWorkspace' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                 'availableLanguages' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes') 
@@ -91,6 +90,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             
             if ($type == 'content') {
                 $specific_mapping = array(
+                    'summary' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                     'contentType' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                     'startPublicationDate' => array('type' => 'integer', 'index' => 'not_analyzed', 'store' => 'yes'),
                     'endPublicationDate' => array('type' => 'integer', 'index' => 'not_analyzed', 'store' => 'yes')
@@ -125,35 +125,46 @@ class DataIndex extends DataAbstract implements IDataIndex
             
             $fields = $data['fields'];
             
-            // Add text and summary system fields
+            // Add system fields : text and summary for contents, title for dam
             
-            $fields[] = array(
-                    "cType" => "system",
-                    "config" => array (
-                            "name" => "text",
-                            "fieldLabel" => "text",
-                            "searchable" => true,
-                            "localizable" => true
-                    )
-            );
-            $fields[] = array(
-                    "cType" => "system",
-                    "config" => array (
-                            "name" => "title",
-                            "fieldLabel" => "text",
-                            "searchable" => true,
-                            "localizable" => true
-                    )
-            );
-            $fields[] = array(
-                    "cType" => "system",
-                    "config" => array (
-                            "name" => "summary",
-                            "fieldLabel" => "summary",
-                            "searchable" => true,
-                            "localizable" => true
-                    )
-            );
+            if ($type =='content') {
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "text",
+                                "fieldLabel" => "text",
+                                "searchable" => true,
+                                "localizable" => true
+                        )
+                );
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "summary",
+                                "fieldLabel" => "summary",
+                                "searchable" => true,
+                                "localizable" => true
+                        )
+                );
+            }
+            
+            if ($type =='dam') {
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "title",
+                                "fieldLabel" => "text",
+                                "searchable" => true,
+                                "localizable" => true
+                        )
+                );
+            }
+            
+            // unmapped fields are not allowed in fields and i18n
+            $mapping['fields']=array('dynamic'=>false,'type'=>'object');
+            foreach($activeLanguages as $lang) {
+                $mapping['i18n']['properties'][$lang['locale']]['properties']['fields']=array('dynamic'=>false,'type'=>'object');
+            }
             
             foreach ($fields as $field) {
                 
@@ -170,7 +181,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 $mapping['fields']['properties'][$name] = $config;
                             } else {
                                 foreach($activeLanguages as $lang) {
-                                    $mapping['i18n']['properties'][$locale]['properties']['fields'][$name] = $config;
+                                    $mapping['i18n']['properties'][$lang['locale']]['properties']['fields'][$name] = $config;
                                 }
                             }
                             break;
@@ -180,7 +191,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 $mapping['fields']['properties'][$name] = $config;
                             } else {
                                 foreach($activeLanguages as $lang) {
-                                    $mapping['i18n']['properties'][$locale]['properties']['fields'][$name] = $config;
+                                    $mapping['i18n']['properties'][$lang['locale']]['properties']['fields'][$name] = $config;
                                 }
                             }
                             break;
@@ -193,7 +204,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 $mapping['fields']['properties'][$name] = $config;
                             } else {
                                 foreach($activeLanguages as $lang) {
-                                    $mapping['i18n']['properties'][$locale]['properties']['fields'][$name] = $config;
+                                    $mapping['i18n']['properties'][$lang['locale']]['properties']['fields'][$name] = $config;
                                 }
                             }
                             break;
@@ -651,7 +662,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $indexData['target'][] = (string) $target;
             }
         }
-
+        
         // Add document
         $currentDam = new \Elastica\Document($data['id'], $indexData);
         
