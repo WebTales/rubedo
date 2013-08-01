@@ -197,7 +197,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                             break;
                         case 'localiserField':
                             $config = array('properties' => array(
-                                'location' => array('type' => 'geo_point','store' => 'yes'),
+                                'location' => array('properties' => array(
+                                    'coordinates' => array('type' => 'geo_point','store' => 'yes')
+                                 )),
                                 'address' => array('type' => 'string','store' => 'yes'),
                             ));
                             if (!$field['config']['localizable']) {

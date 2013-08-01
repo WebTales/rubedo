@@ -436,7 +436,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $this->_params['suplon'],
                 $this->_params['inflat']
             );
-            $filter = new \Elastica\Filter\GeoBoundingBox('fields.position_location', array(
+            $filter = new \Elastica\Filter\GeoBoundingBox('fields.position.location.coordinates', array(
                 $topleft,
                 $bottomright
             ));

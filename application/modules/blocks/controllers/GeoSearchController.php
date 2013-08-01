@@ -139,9 +139,9 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         // return $results;
         $tmpResults = array();
         foreach ($results['data'] as $item) {
-            $subkey = (string) $item['fields.position.location'][0] . '_' . (string) $item['fields.position.location'][1];
+            $subkey = (string) $item['fields.position.location.coordinates'][0] . '_' . (string) $item['fields.position.location.coordinates'][1];
             if (! isset($tmpResults[$subkey])) {
-                $tmpResults[$subkey]['position_location'] = $item['fields.position.location'];
+                $tmpResults[$subkey]['position_location'] = $item['fields.position.location.coordinates'];
                 $tmpResults[$subkey]['count'] = 0;
                 $tmpResults[$subkey]['id'] = '';
             }
