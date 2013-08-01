@@ -728,7 +728,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 ));
     
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
-         
+
                 foreach ($elasticaResultSet as $result) {
                     $highlights = $result->getHighlights();
                     if (isset($highlights['autocomplete_'.$currentLocale][0])) {
