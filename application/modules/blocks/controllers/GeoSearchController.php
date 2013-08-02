@@ -182,8 +182,13 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                     $intermedVar = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId']);
                     $entity['type'] = $intermedVar['type'];
                 }
-                $templateName = preg_replace('#[^a-zA-Z]#', '', $entity['type']);
-                $templateName .= ".html.twig";
+                
+                if (isset($entity['code']) && !empty($entity['code'])) {
+                    $templateName = $entity['code'] . ".html.twig";
+                } else {
+                    $templateName = preg_replace('#[^a-zA-Z]#', '', $entity["type"]);
+                    $templateName .= ".html.twig";
+                }
                 $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/single/" . $templateName);
                 
                 if (! is_file($templateService->getTemplateDir() . '/' . $contentOrDamTemplate)) {

@@ -162,9 +162,13 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             }
                         }
             }
+            if (isset($type['code']) && !empty($type['code'])) {
+                $templateName = $type['code'] . ".html.twig";
+            } else {
+                $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
+                $templateName .= ".html.twig";
+            }
             
-            $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
-            $templateName .= ".html.twig";
             $output["data"] = $data;
             $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
             $output["type"] = $cTypeArray;
