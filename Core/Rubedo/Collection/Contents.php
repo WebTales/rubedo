@@ -790,7 +790,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function isTypeUsed ($typeId)
     {
         $filter = Filter::factory('Value')->setName('typeId')->setValue($typeId);
-        $result = $this->_dataService->findOne($filter);
+        $result = $this->_dataService->findOne($filter,false);
         return ($result != null) ? array(
             "used" => true
         ) : array(
