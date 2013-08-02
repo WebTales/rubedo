@@ -347,8 +347,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                             "location" => array(
                                                 "type" => "Point",
                                                 "coordinates" => array(
-                                                    $lon,
-                                                    $lat
+                                                    (float) $lon,
+                                                    (float) $lat
                                                 )
                                             )
                                         );
