@@ -20,18 +20,18 @@
 		    {% if data.date %}
 		        {% if data.dateEnd%}	
 		            <div class="entry-info">
-                        <span class="date" id="{{ data.id }}_date" data-locale="{{ locale }}">Du {{data.date|localizeddate('long', 'none', lang)}}</span> au <span class="date" id="{{ data.id }}_date">{{data.dateEnd|localizeddate('long', 'none', lang)}}</span>
+                        <span class="date" id="{{ data.id }}_date" data-locale="{{ locale }}">{{ "date.from" | fotrans | ucfirst}} {{data.date|localizeddate('long', 'none', lang)}}</span> {{ "date.to" | fotrans }} <span class="date" id="{{ data.id }}_date">{{data.dateEnd|localizeddate('long', 'none', lang)}}</span>
                     </div>
 		        {% else %}
 		            {%  if(type["date"]["config"]["multivalued"]) and data.date is iterable%}
 	                    {% for item in data.date %}
     	                    <div class="entry-info date" id="{{ data.id }}_date-{{ loop.index-1 }}" data-locale="{{ locale }}">
-        	                    A partir du {{item|localizeddate('long', 'none', lang)}}
+        	                    {{ "date.startingFrom" | fotrans | ucfirst}} {{item|localizeddate('long', 'none', lang)}}
                             </div>
     	                {% endfor %}
                     {% else %}
     	                <div class="entry-info date" id="{{ data.id }}_date" data-locale="{{ locale }}">
-                            A partir du {{data.date|localizeddate('long', 'none', lang)}}
+                            {{ "date.startingFrom" | fotrans | ucfirst }} {{data.date|localizeddate('long', 'none', lang)}}
                         </div>
                         
                         <br>
