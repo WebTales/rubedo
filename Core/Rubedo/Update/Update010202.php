@@ -35,6 +35,40 @@ class Update010202 extends Update {
 	 * @return boolean
 	 */
 	public static function upgrade() {
+	    static::defaultCtypeCode();
         return true;
     } 
+    
+    /**
+     * Set not filed dam items in the directory 'not filed'
+     *
+     * @return boolean
+     */
+    public static function defaultCtypeCode()
+    {
+        $data = array(
+            '$set' => array(
+                'code' => 'article'
+            )
+        );
+        $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bb0c1c3dac60700000e');
+        Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
+        
+        $data = array(
+            '$set' => array(
+                'code' => 'event'
+            )
+        );
+        $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bbdc1c3da9a0a000009');
+        Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
+        
+        $data = array(
+            '$set' => array(
+                'code' => 'news'
+            )
+        );
+        $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bcdc1c3dadc08000012');
+        Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
+        return true;
+    }
 }
