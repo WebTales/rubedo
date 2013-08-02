@@ -12,7 +12,7 @@
 				{% if orderby == "lastUpdateTime" %}
 				{{"Search.Label.OrderByDate"|fotrans}}
 				{% endif %}
-				{% if orderby == "author" %}
+				{% if orderby == "createUser.fullName" %}
 				{{"Search.Label.OrderByAuthor"|fotrans}}
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
@@ -26,9 +26,9 @@
 						<a href="{{url({'orderby': 'lastUpdateTime'})}}">{{"Search.Label.OrderByDate"|fotrans}}</a>
 					</li>
 					{% endif %}
-					{% if orderby != "author" %}
+					{% if orderby != "createUser.fullName" %}
 					<li>
-						<a href="{{url({'orderby': 'author'})}}">{{"Search.Label.OrderByAuthor"|fotrans}}</a>
+						<a href="{{url({'orderby': 'createUser.fullName','orderbyDirection': 'asc'})}}">{{"Search.Label.OrderByAuthor"|fotrans}}</a>
 					</li>
 					{% endif %}
 				</ul>
