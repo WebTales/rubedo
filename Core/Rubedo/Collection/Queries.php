@@ -620,7 +620,15 @@ class Queries extends AbstractCollection implements IQueries
         $obj = $this->boToDbQuery($obj);
         
         //Update the query with the new values
-        return parent::update($obj, $options);
+        //return parent::update($obj, $options);
+        unset($obj['readOnly']);
+        $result = $this->_dataService->update($obj, $options);
+        if ($result['success']) {
+            $result['data'] = $this->_addReadableProperty($result['data']);
+            $result['data'] = $this->dbToBoQuery($result['data']);
+        }
+        
+        return $result;
     }
     
     /**
