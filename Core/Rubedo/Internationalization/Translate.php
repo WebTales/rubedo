@@ -109,7 +109,7 @@ class Translate implements ITranslate
      */
     public function translateInWorkingLanguage ($code, $defaultLabel = "")
     {
-        $language = Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
+        $language = \Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
         if ($language === null) {
             $language = self::$defaultLanguage;
         }

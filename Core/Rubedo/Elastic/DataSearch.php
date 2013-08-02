@@ -627,10 +627,10 @@ class DataSearch extends DataAbstract implements IDataSearch
             );
             $timeLabel = array();
             
-            $timeLabel[$lastday] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Day", 'Past 24H');
-            $timeLabel[$lastweek] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Week", 'Past week');
-            $timeLabel[$lastmonth] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Month", 'Past month');
-            $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
+            $timeLabel[$lastday] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Day", 'Past 24H');
+            $timeLabel[$lastweek] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Week", 'Past week');
+            $timeLabel[$lastmonth] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Month", 'Past month');
+            $timeLabel[$lastyear] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Year", 'Past year');
 
             $elasticaFacetDate->setRanges($ranges);
             
