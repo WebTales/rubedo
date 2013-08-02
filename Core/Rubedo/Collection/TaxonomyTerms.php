@@ -333,6 +333,8 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term = array();
         $term["parentId"] = 'all';
         $term['text'] = $site['text'];
+        $term['i18n'] = $site['i18n'];
+        $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();;
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
         $term['isNotPage'] = true;
@@ -348,7 +350,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     {
         $mainRoot = array();
         $mainRoot["parentId"] = 'root';
-        $mainRoot['text'] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.AllSites", 'All sites');
+        $mainRoot['text'] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.AllSites", 'All sites'); 
         $mainRoot['id'] = 'all';
         $mainRoot['canAssign'] = true;
         $mainRoot['isNotPage'] = true;
@@ -356,6 +358,13 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         if (! self::isUserFilterDisabled()) {
             $mainRoot['readOnly'] = true;
         }
+        
+        foreach (Manager::getService('Languages')->getActiveLocales() as $locale){
+            $mainRoot['i18n'][$locale] = array();
+            $mainRoot['i18n'][$locale]['locale'] = $locale;
+            $mainRoot['i18n'][$locale]['text'] = Manager::getService('Translate')->getTranslation("TaxonomyTerms.PagePicker.AllSites", $locale); 
+        }
+        $mainRoot['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         return $mainRoot;
     }
 
@@ -368,6 +377,8 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     protected function _pageToTerm ($page)
     {
         $term = array();
+        $term['i18n'] = $page['i18n'];
+        $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         $term["parentId"] = ($page['parentId'] == 'root') ? $page['site'] : $page['parentId'];
         $term['text'] = $page['text'];
         $term['id'] = $page['id'];
