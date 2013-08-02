@@ -90,6 +90,7 @@
 	"defaultId": "51a60bbdc1c3da9a0a000009",
 	"system": false ,
 	"type": "###Event.type###" ,
+	"code": "event",
 	"updateTime": null  ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,

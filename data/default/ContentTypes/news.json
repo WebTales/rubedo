@@ -71,6 +71,7 @@
 	"defaultId": "51a60bcdc1c3dadc08000012",
 	"system": false ,
 	"type": "###News.type###" ,
+	"code": "news",
 	"updateTime": null  ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
