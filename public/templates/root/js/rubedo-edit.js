@@ -52,7 +52,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				editor.config.toolbar = [
                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-                   { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+                   { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },'/',
                    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
                    { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
                    { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
@@ -67,7 +67,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				editor.config.toolbar = [
 	                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline','Strike', '-', 'RemoveFormat' ] },
 	                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock','-','Image']},
-	                { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+	                { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },
 	                { name: 'styles', items: [ 'Font', 'FontSize' ] }
                 ];
 			});
@@ -83,7 +83,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 					{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
 					{ name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
 					'/',
-					{ name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+					{ name: 'colors', items: [ 'TextColor','BGColor'] },
 					{ name: 'tools', items: [ 'Maximize', '-','ShowBlocks' ] },
 					{ name: 'links', items: [ 'Link', "Rubedolink", 'Unlink','-','Anchor' ] },
 					{ name: 'insert', items: [ 'Image',  '-', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak', 'Iframe' ] }
@@ -101,7 +101,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 			editor.config.toolbar = [
 			    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
 	            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-	            { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+	            { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },'/',
 	            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
 	            { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
 	            { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
