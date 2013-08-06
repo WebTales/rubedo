@@ -17,6 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IFiles;
+use Rubedo\Service\Manager;
 
 /**
  * Service to handle Users
