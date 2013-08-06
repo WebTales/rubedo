@@ -291,6 +291,15 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
             throw new \Rubedo\Exceptions\Access('can\'t create a navigation vocabulary', "Exception52");
         }
         $obj = $this->_addDefaultWorkspace($obj);
+        
+        foreach($origObj['i18n'] as $locale => $value){
+            if(!isset($obj['i18n'][$locale])){
+                $wasFiltered = AbstractCollection::disableUserFilter();
+                Manager::getService('TaxonomyTerms')->removeI18nByVocabularyId($obj['id'],$locale);
+                AbstractCollection::disableUserFilter($wasFiltered);
+            }
+        }
+        
         return parent::update($obj, $options);
     }
 

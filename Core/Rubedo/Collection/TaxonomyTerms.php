@@ -717,4 +717,17 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $Filters = Filter::factory('InUid')->setValue($deleteArray);
         return $this->_dataService->customDelete($Filters);
     }
+    
+    public function removeI18nByVocabularyId($vocabularyId,$locale){
+        $filters = Filter::factory();
+        $filter = Filter::factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
+        $filters->addFilter($filter);
+        $filter = Filter::factory('OperatorToValue')->SetName('i18n.'.$locale)->setOperator('$exists')->setValue(true);
+        $filters->addFilter($filter);
+        $options = array(
+            'multiple' => true
+        );
+        $data = array('$unset'=>'i18n.'.$locale);
+        return $this->customUpdate($data, $filters,$options);
+    }
 }
