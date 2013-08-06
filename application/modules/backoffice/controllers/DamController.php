@@ -86,18 +86,21 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
+        $version = $this->getParam('version',$media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if ($mediaType['mainFileType'] == 'Image') {
             $this->_forward('get-thumbnail', 'image', 'default', array(
-                'file-id' => $media['originalFileId']
+                'file-id' => $media['originalFileId'],
+                'version' => $version
             ));
         } else {
             $this->_forward('get-thumbnail', 'file', 'default', array(
                 'file-id' => $media['originalFileId'],
-                'file-type' => $mediaType['mainFileType']
+                'file-type' => $mediaType['mainFileType'],
+                'version' => $version
             ));
         }
     }
@@ -112,17 +115,20 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
+        $version = $this->getParam('version',$media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if ($mediaType['mainFileType'] == 'Image') {
             $this->_forward('index', 'image', 'default', array(
-                'file-id' => $media['originalFileId']
+                'file-id' => $media['originalFileId'],
+                'version' => $version
             ));
         } else {
             $this->_forward('index', 'file', 'default', array(
-                'file-id' => $media['originalFileId']
+                'file-id' => $media['originalFileId'],
+                'version' => $version
             ));
         }
     }
