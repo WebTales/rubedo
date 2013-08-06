@@ -83,7 +83,8 @@ class DataIndex extends DataAbstract implements IDataIndex
                 'text' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                 'target' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                 'writeWorkspace' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
-                'availableLanguages' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes') 
+                'availableLanguages' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                'version' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes')
             );
             
             // Set specific mapping for contents
@@ -523,8 +524,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0,
             'status' => $data['status'],
             'createUser' => $data['createUser'],
-            'availableLanguages' => array_keys($data['i18n'])
-          
+            'availableLanguages' => array_keys($data['i18n']),
+            'version' => $data['version']
         );
     
          // Add taxonomy
@@ -621,8 +622,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0,
             'createUser' => $data['createUser'],
             'availableLanguages' => array_keys($data['i18n']),
-            'fileSize' => isset($data['fileSize']) ? (integer) $data['fileSize'] : 0
-          
+            'fileSize' => isset($data['fileSize']) ? (integer) $data['fileSize'] : 0,
+            'version' => $data['version']
         );       
 
         // Add taxonomy
