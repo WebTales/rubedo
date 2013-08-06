@@ -303,7 +303,7 @@ jQuery(".date").click( function () {
 
 jQuery(".time").click( function () {
 	var currentTimePicker = jQuery(this).parent().context.id;
-	var locale = jQUery("#"+currentTimePicker).attr("data-locale");
+	var locale = jQuery("#"+currentTimePicker).attr("data-locale");
 	var currentTime = "";
 	var olderTime= "";
 	var houresAreSet = false;
