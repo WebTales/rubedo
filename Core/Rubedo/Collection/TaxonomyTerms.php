@@ -727,7 +727,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $options = array(
             'multiple' => true
         );
-        $data = array('$unset'=>'i18n.'.$locale);
+        $data = array('$unset'=>array('i18n.'.$locale=>true));
         return $this->customUpdate($data, $filters,$options);
     }
 }
