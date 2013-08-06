@@ -93,7 +93,7 @@
       data-site-id="{{ siteID }}"
       data-language="{{ lang }}"
       data-bolanguage="{{ boLocale }}"
-      data-foeditsuccess="{{ "Edit.foEditSuccess" | botrans }}"
+      data-foeditsuccess="{{ "FO.Administration.Toolbar.foEditSuccess" | botrans }}"
       >
 {% endblock %}
 	
@@ -190,12 +190,12 @@
 	{% block contentTypeSelectModal %}
     <div id="contentTypeSelectModal" class="modal hide fade" tabindex="-1" data-width="410">
 		<div class="modal-body">
-			<h4>Sélectionnez le type de contenu à ajouter</h4>
+			<h4>{{ "FO.Administration.Toolbar.foSelectCtype" | botrans }}</h4>
 			<div id="contentTypeSelectBody">
 			
 			<select id='select-type-box'></select>
-				<button id='btn-cancel-ctselect-form' class='btn pull-right' style='margin-left:8px;'>Annuler</button>
-				<button id='btn-validate-ctselect' class='btn btn-primary pull-right'>Valider</button>
+				<button id='btn-cancel-ctselect-form' class='btn pull-right' style='margin-left:8px;'>{{ "FO.Administration.Toolbar.Button.Cancel" | botrans }}</button>
+				<button id='btn-validate-ctselect' class='btn btn-primary pull-right'>{{ "FO.Administration.Toolbar.Button.Validate" | botrans }}</button>
 			</div>
 		</div>
 	</div>

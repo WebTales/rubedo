@@ -654,7 +654,7 @@ function addContent(type,typeId,queryId){
 		 */
 		jQuery("#select-type-box").empty();
 		jQuery.ajax({
-			"url" : "/backoffice/content-types/get-readable-content-types/",
+			"url" : "/backoffice/content-types/get-readable-content-types/?workingLanguage="+jQuery("body").attr('data-bolanguage'),
 			"async" : false,
 			"type" : "GET",
 			"dataType" : "json",
