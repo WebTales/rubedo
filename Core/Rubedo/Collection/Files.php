@@ -124,6 +124,10 @@ class Files extends AbstractFileCollection implements IFiles
                 break;
         }
         
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        Manager::getService('Dam')->updateVersionForFileId($fileObj['id']);
+        AbstractCollection::disableUserFilter($wasFiltered);
+        
         return parent::create($fileObj);
     }
 }
