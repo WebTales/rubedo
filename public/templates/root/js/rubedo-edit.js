@@ -608,7 +608,7 @@ function save(data) {
 					notify("failure", message);
 				}
 			} else {
-				notify("success", "La mise à jour à bien été effectuée.");
+				notify("success", jQuery("body").attr('data-foeditsuccess'));
 			}
 		}
 	});
