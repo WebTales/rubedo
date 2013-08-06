@@ -775,6 +775,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $data['score'] = round($score * 100);
             $data['authorName'] = $data['createUser.fullName'];
             $data['author'] = $data['createUser.id'];
+            $data['version'] = $data['version'];
 
             if (isset($data['availableLanguages']) && !is_array($data['availableLanguages'])) {
                 $data['availableLanguages'] = array($data['availableLanguages']);
