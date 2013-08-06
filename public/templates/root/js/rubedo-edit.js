@@ -30,7 +30,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 		//Minimal configuration for titles
 		editor.on('configLoaded', function() {
 			// Remove unnecessary plugins
-			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
+			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat' + 'smiley,specialchar,stylescombo,templates,wsc';
 
 			editor.getData=function(){return(editor.editable().getText());};
 			editor.forcePasteAsPlainText = true;
@@ -493,6 +493,8 @@ function swithToEditMode() {
 	});
 	 starEdit=true;
 	 EditMode=true;
+	 jQuery(".field-tip-btn").popover({placement:"left",trigger:"hover"});
+	 jQuery(".field-tip-btn").show();
 	 jQuery(".complete-edition-btn").show();
 	 jQuery(".complete-edition-btn").click(function(){
 	 		var siteUrl = getDomainName();
@@ -525,6 +527,7 @@ function swithToViewMode() {
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
 	jQuery(".complete-edition-btn").hide();
+	jQuery(".field-tip-btn").hide();
 	jQuery(".complete-edition-btn").unbind();
 	jQuery('.checkbox-edit').each(function() {
 		jQuery(this).find("input").attr("disabled","diabled");

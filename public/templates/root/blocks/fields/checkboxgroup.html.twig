@@ -1,4 +1,5 @@
 {%  if type[key]["config"]["multivalued"] and data[key] is iterable %}
+{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
     <p>{{ type[key]["config"]["fieldLabel"] }} </p>
 	{% for item in data[key] %}
         <div class="checkboxgroup-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-locale="{{ locale }}" >
@@ -11,6 +12,7 @@
 	    </div>
 	{% endfor %}
 {% else %}
+{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
     <p>{{ type[key]["config"]["fieldLabel"] }} </p>
     <div class="checkboxgroup-edit" id="{{ data.id }}_{{ key }}" data-locale="{{ locale }}" > 
         {% for radioButton in type[key]["config"]["items"] %}

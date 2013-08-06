@@ -1,11 +1,13 @@
 
 {%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
 	{% for item in data[key] %}
+	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
         <div class="time" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-locale="{{ locale }}">
             <span class="currentTime">{{ item }}</span>
         </div>
 	{% endfor %}
 {% else %}
+{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
     <div class="time" id="{{ data.id }}_{{ key }}" data-locale="{{ locale }}">
         <span class="currentTime">{{ data[key] }}</span>
     </div>
