@@ -295,7 +295,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
         $options = array(
             'multiple' => true
         );
-        $data = array('$inc'=>'version');
+        $data = array('$inc'=>array('version'=>1));
         return $this->customUpdate($data, $filters,$options);
     }
 }

@@ -17,7 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IFiles;
-use Rubedo\Service\Manager;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Users
@@ -125,10 +125,16 @@ class Files extends AbstractFileCollection implements IFiles
                 break;
         }
         
-//         $wasFiltered = AbstractCollection::disableUserFilter();
-//         Manager::getService('Dam')->updateVersionForFileId($fileObj['id']);
-//         AbstractCollection::disableUserFilter($wasFiltered);
         
-        return parent::create($fileObj);
+        $result = parent::create($fileObj);
+        
+        if($result['success']){
+            $wasFiltered = AbstractCollection::disableUserFilter();
+            Manager::getService('Dam')->updateVersionForFileId($result['data']['id']);
+            AbstractCollection::disableUserFilter($wasFiltered);
+        }
+        
+        
+        return $result;
     }
 }
