@@ -6,6 +6,8 @@ function loadVideo() {
 	var dataFile = jQuery(this).attr('data-videoFile');
 	var config = new Object();
 	config.file = dataFile;
+	
+	
 	if (jQuery(this).attr('data-image')) {
 		config.image = jQuery(this).attr('data-image');
 	}
@@ -36,14 +38,16 @@ function loadAudio() {
 	var dataFile = jQuery(this).attr('data-audioFile');
 	var config = new Object();
 	config.file = dataFile;
-	config.width = '100%';
 	config.primary = 'flash';
 	config.height = '40';
-
+	
 	if (jQuery(this).attr('data-controls')) {
 		config.controls = jQuery(this).attr('data-controls');
 	} else {
 		config.controls = false;
+	}
+	if (jQuery(this).attr('data-width')) {
+		config.width = jQuery(this).attr('data-width');
 	}
 	if (jQuery(this).attr('data-repeat')) {
 		config.repeat = jQuery(this).attr('data-repeat');

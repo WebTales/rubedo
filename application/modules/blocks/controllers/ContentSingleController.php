@@ -55,8 +55,17 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                         if ($key == 'navigation') {
                             continue;
                         }
+                        
+                        if(!is_array($terms) && is_string($terms)) {
+                            $terms = array($terms);
+                        }
+                        
                         foreach ($terms as $term) {
                             $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
+                            
+                            if($readTerm === null) {
+                                $readTerm = array();
+                            }
                             
                             foreach ($readTerm as $key => $value) {
                                 $termsArray[$key][] = $value;
@@ -85,8 +94,11 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             $contentTitlesArray[$value['config']['name']][] = $intermedContent['text'];
                         }
                     } else {
-                        $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
-                        $contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
+                        if (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1){
+                            $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
+                            $contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
+                        }
+                        
                     }
                 } else 
                     if ($value["cType"] == "CKEField") {
