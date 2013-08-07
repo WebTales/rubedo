@@ -1,9 +1,11 @@
 {%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
 	{% for item in data[key] %}
+	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
 	    <div class="clear-right">
-	        <p class="editable "  id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item }}</p>
+	        <p class="editable "  id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-locale="{{ locale }}">{{ item }}</p>
 	    </div>
 	{% endfor %}
 {% else %}
-    <div class="clear-right"><p class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">{{ data[key] }}</p></div>
+{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
+    <div class="clear-right"><p class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-locale="{{ locale }}">{{ data[key] }}</p></div>
 {% endif %}

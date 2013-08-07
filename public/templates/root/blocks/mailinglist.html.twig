@@ -4,8 +4,8 @@
     <div class="block newsletter">
 		<form class="form-inline">
 			<div class="input-append">
-    			<input id="email" class="input-medium" type="text" placeholder="Email"/>
-    			<input class="btn btn-primary" type="button" value="Go !" onclick="addEmail(jQuery('#email').val(), '{{ blockConfig.mailingListId }}');"/>
+    			<input id="email" class="input-medium" type="text" placeholder="{{ "Label.Email" | fotrans }}"/>
+    			<input class="btn btn-primary" type="button" value="{{ "Label.Subscribe" | fotrans }}" onclick="addEmail(jQuery('#email').val(), '{{ blockConfig.mailingListId }}');"/>
 			</div>
 		</form>
 		

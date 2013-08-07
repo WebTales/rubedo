@@ -35,30 +35,40 @@ class Update010202 extends Update {
 	 * @return boolean
 	 */
 	public static function upgrade() {
-       static::importLanguages();
+	    static::defaultCtypeCode();
+        return true;
+    } 
+    
+    /**
+     * Set not filed dam items in the directory 'not filed'
+     *
+     * @return boolean
+     */
+    public static function defaultCtypeCode()
+    {
+        $data = array(
+            '$set' => array(
+                'code' => 'article'
+            )
+        );
+        $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bb0c1c3dac60700000e');
+        Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
+        
+        $data = array(
+            '$set' => array(
+                'code' => 'event'
+            )
+        );
+        $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bbdc1c3da9a0a000009');
+        Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
+        
+        $data = array(
+            '$set' => array(
+                'code' => 'news'
+            )
+        );
+        $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bcdc1c3dadc08000012');
+        Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
         return true;
     }
-
-    
-    public static function importLanguages(){
-    	$tsvFile = APPLICATION_PATH.'/../data/ISO-639-2_utf-8.txt';
-    	$file = fopen($tsvFile, 'r');
-    	$service = Manager::getService('Languages');
-    	while($line = fgetcsv($file,null,'|')){
-    		if(empty($line[2])){
-    			continue;
-    		}
-    		$lang = array();
-    		$lang['iso2']=$line[2];
-    		$lang['locale']=$line[2];
-    		$lang['iso3']=$line[0];
-    		$lang['label']=$line[3];
-    		$lang['labelFr']=$line[4];
-    	
-    		$upsertFilter = Filter::factory('Value')->setName('locale')->setValue($lang['locale']);
-    		$service->create($lang,array('upsert'=>$upsertFilter));
-    	}
-    	return true;
-    }
- 
 }

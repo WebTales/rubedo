@@ -6,7 +6,12 @@
 			"cType": "datefield" ,
 			"config": {
 				"name": "date" ,
-				"fieldLabel": "Date" ,
+				"fieldLabel": "###News.date###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###News.date###"
+				    }
+				},		
 				"allowBlank": true ,
 				"localizable": false ,
 				"searchable": false ,
@@ -20,7 +25,12 @@
 			"cType": "CKEField" ,
 			"config": {
 				"name": "body" ,
-				"fieldLabel": "Corps" ,
+				"fieldLabel": "###News.body###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###News.body###"
+				    }
+				},	
 				"maxLength": 600000 ,
 				"minLength": 0 ,
 				"allowBlank": true ,
@@ -39,7 +49,12 @@
 			"cType": "ImagePickerField" ,
 			"config": {
 				"name": "image" ,
-				"fieldLabel": "Image" ,
+				"fieldLabel": "###News.image###" ,
+				"i18n":{
+				    "###Locale###":{
+				        "fieldLabel": "###News.image###"
+				    }
+				},	
 				"localizable": false ,
 				"searchable": false ,
 				"multivalued": false ,
@@ -55,7 +70,8 @@
 	] ,
 	"defaultId": "51a60bcdc1c3dadc08000012",
 	"system": false ,
-	"type": "Actualité" ,
+	"type": "###News.type###" ,
+	"code": "news",
 	"updateTime": null  ,
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,

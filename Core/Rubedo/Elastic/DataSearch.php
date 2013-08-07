@@ -45,7 +45,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
     protected $_facetOperators;
 
-    protected $_displayedFacets;
+    protected $_displayedFacets = array();
 
     protected $_facetDisplayMode;
 
@@ -107,15 +107,15 @@ class DataSearch extends DataAbstract implements IDataSearch
         $filterEmpty = true;
         switch ($operator) {
             case 'or':
-                $filter = new \Elastica_Filter_Terms();
+                $filter = new \Elastica\Filter\Terms();
                 $filter->setTerms($field, $this->_params[$name]);
                 $filterEmpty = false;
                 break;
             case 'and':
             default:
-                $filter = new \Elastica_Filter_And();
+                $filter = new \Elastica\Filter\BoolAnd();
                 foreach ($this->_params[$name] as $type) {
-                    $termFilter = new \Elastica_Filter_Term();
+                    $termFilter = new \Elastica\Filter\Term();
                     $termFilter->setTerm($field, $type);
                     $filter->addFilter($termFilter);
                     $filterEmpty = false;
@@ -129,19 +129,27 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
     }
 
+    protected function setLocaleFilter(array $values)
+    {
+        $filter = new \Elastica\Filter\Terms();
+        $filter->setTerms('availableLanguages', $values);
+        $this->_globalFilterList['availableLanguages'] = $filter;
+        $this->_setFilter = true;
+    }
+
     /**
      * Build Elastica facet filter from name
      *
      * @param string $name
      *            filter name
-     * @return Elastica_Filter or null
+     * @return Elastica\Filter or null
      */
     protected function _getFacetFilter ($name)
     {
         // get mode for this facet
         $operator = isset($this->_facetOperators[$name]) ? $this->_facetOperators[$name] : 'and';
         if (! empty($this->_globalFilterList)) {
-            $facetFilter = new \Elastica_Filter_And();
+            $facetFilter = new \Elastica\Filter\BoolAnd();
             $result = false;
             foreach ($this->_globalFilterList as $key => $filter) {
                 if ($key != $name or $operator == 'and') {
@@ -183,7 +191,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      * @see \Rubedo\Interfaces\IDataSearch::search()
      * @param
      *            s array $params search parameters : query, type, damtype, lang, author, date, taxonomy, target, pager, orderby, pagesize
-     * @return Elastica_ResultSet
+     * @return Elastica\ResultSet
      */
     public function search (array $params, $option = 'all', $withSummary = true)
     {
@@ -192,13 +200,27 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $this->_params = $params;
         
+        
         $this->_facetDisplayMode = isset($this->_params['block-config']['displayMode']) ? $this->_params['block-config']['displayMode'] : 'standard';
         
         // front-end search
         if ((self::$_isFrontEnd)) {
             
-            // get list of displayed Facets
-            $this->_displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
+            // get list of displayed Facets, only for non suggest requests
+            if ($option != 'suggest') {
+                $this->_displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
+            } else {
+                $this->_displayedFacets = array();
+            }
+            
+            // get current user language             
+            $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+            
+            // get site localization strategy
+            $localizationStrategy = $taxonomyService->getLocalizationStrategy();
+            
+            // get locale fall back
+            $fallBackLocale = $taxonomyService->getFallbackLocale();
             
             // if there is any facet to display, get overrides
             if (! empty($this->_displayedFacets)) {
@@ -248,6 +270,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                     }
                 }
             }
+        } else {
+            // for BO, the strategy is to search into the working langage with fallback on all other langages (_all)
+            $localizationStrategy = "backOffice";
+            $currentUser= Manager::getService('CurrentUser')->getCurrentUser();
+            $currentLocale = $currentUser["workingLanguage"];
+
         }
         
         $result = array();
@@ -267,7 +295,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             'date' => '',
             'pager' => 0,
             'orderby' => '_score',
-            'orderbyDirection' => 'asc',
+            'orderbyDirection' => 'desc',
             'pagesize' => 25
         );
         
@@ -291,12 +319,14 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if (! array_key_exists('query', $this->_params))
             $this->_params['query'] = $defaultVars['query'];
+        
+        $this->_params['query'] = strip_tags( $this->_params['query']);
             
             // Build global filter
         
         $this->_setFilter = false;
         
-        $globalFilter = new \Elastica_Filter_And();
+        $globalFilter = new \Elastica\Filter\BoolAnd();
         
         // Filter on read Workspaces
         
@@ -304,9 +334,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if (! in_array('all', $readWorkspaceArray) && ! empty($readWorkspaceArray)) {
             
-            $workspacesFilter = new \Elastica_Filter_Or();
+            $workspacesFilter = new \Elastica\Filter\BoolOr();
             foreach ($readWorkspaceArray as $wsTerm) {
-                $workspaceFilter = new \Elastica_Filter_Term();
+                $workspaceFilter = new \Elastica\Filter\Term();
                 $workspaceFilter->setTerm('target', $wsTerm);
                 $workspacesFilter->addFilter($workspaceFilter);
             }
@@ -321,28 +351,28 @@ class DataSearch extends DataAbstract implements IDataSearch
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             // filter on start
-            $beginFilterValue = new \Elastica_Filter_NumericRange('startPublicationDate', array(
+            $beginFilterValue = new \Elastica\Filter\NumericRange('startPublicationDate', array(
                 'to' => $now
             ));
-            $beginFilterNotExists = new \Elastica_Filter_Not(new \Elastica_Filter_Exists('startPublicationDate'));
-            $beginFilter = new \Elastica_Filter_Or();
+            $beginFilterNotExists = new \Elastica\Filter\BoolNot(new \Elastica\Filter\Exists('startPublicationDate'));
+            $beginFilter = new \Elastica\Filter\BoolOr();
             $beginFilter->addFilter($beginFilterNotExists);
             $beginFilter->addFilter($beginFilterValue);
             
             // filter on end : not set or not ended
-            $endFilter = new \Elastica_Filter_Or();
-            $endFilterWithValue = new \Elastica_Filter_NumericRange('endPublicationDate', array(
+            $endFilter = new \Elastica\Filter\BoolOr();
+            $endFilterWithValue = new \Elastica\Filter\NumericRange('endPublicationDate', array(
                 'from' => $now
             ));
-            $endFilterWithoutValue = new \Elastica_Filter_Term();
+            $endFilterWithoutValue = new \Elastica\Filter\Term();
             $endFilterWithoutValue->setTerm('endPublicationDate', 0);
-            $endFilterNotExists = new \Elastica_Filter_Not(new \Elastica_Filter_Exists('endPublicationDate'));
+            $endFilterNotExists = new \Elastica\Filter\BoolNot(new \Elastica\Filter\Exists('endPublicationDate'));
             $endFilter->addFilter($endFilterNotExists);
             $endFilter->addFilter($endFilterWithoutValue);
             $endFilter->addFilter($endFilterWithValue);
             
             // build complete filter
-            $frontEndFilter = new \Elastica_Filter_And();
+            $frontEndFilter = new \Elastica\Filter\BoolAnd();
             $frontEndFilter->addFilter($beginFilter);
             $frontEndFilter->addFilter($endFilter);
             
@@ -365,9 +395,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($option == 'geo') {
             $contentTypeList = Manager::getService('ContentTypes')->getGeolocatedContentTypes();
             if (! empty($contentTypeList)) {
-                $geoFilter = new \Elastica_Filter_Or();
+                $geoFilter = new \Elastica\Filter\BoolOr();
                 foreach ($contentTypeList as $contentTypeId) {
-                    $geoTypeFilter = new \Elastica_Filter_Term();
+                    $geoTypeFilter = new \Elastica\Filter\Term();
                     $geoTypeFilter->setTerm('contentType', $contentTypeId);
                     $geoFilter->addFilter($geoTypeFilter);
                 }
@@ -385,12 +415,12 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // filter on author
         if (array_key_exists('author', $this->_params)) {
-            $this->_addFilter('author', 'author');
+            $this->_addFilter('author', 'createUser.id');
         }
         
         // filter on date
         if (array_key_exists('lastupdatetime', $this->_params)) {
-            $filter = new \Elastica_Filter_Range('lastUpdateTime', array(
+            $filter = new \Elastica\Filter\Range('lastUpdateTime', array(
                 'from' => $this->_params['lastupdatetime']
             ));
             $this->_globalFilterList['lastupdatetime'] = $filter;
@@ -408,7 +438,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $this->_params['suplon'],
                 $this->_params['inflat']
             );
-            $filter = new \Elastica_Filter_GeoBoundingBox('position_location', array(
+            $filter = new \Elastica\Filter\GeoBoundingBox('fields.position.location.coordinates', array(
                 $topleft,
                 $bottomright
             ));
@@ -432,15 +462,53 @@ class DataSearch extends DataAbstract implements IDataSearch
                 }
             }
         }
+              
         
-        // Set query on terms
+        $elasticaQuery = new \Elastica\Query();
         
-        $elasticaQueryString = new \Elastica_Query_QueryString($this->_params['query'] . "*");
+        $elasticaQueryString = new \Elastica\Query\QueryString();
         
-        $elasticaQuery = new \Elastica_Query();
-        
+        // Setting fields from localization strategy
+        switch ($localizationStrategy) {
+            case 'backOffice' :
+                $this->setLocaleFilter(Manager::getService('Languages')->getActiveLocales());
+                $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
+                break;
+            case 'onlyOne' :
+                $this->setLocaleFilter(array($currentLocale));
+                if ($option!='suggest') {
+                	$elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
+                } else {
+                    $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
+                }
+                break;
+            case 'fallback':
+            default:
+                $this->setLocaleFilter(array($currentLocale,$fallBackLocale));
+                if ($currentLocale!=$fallBackLocale) {
+                    if ($option!='suggest') {
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","all_nonlocalized^0.1"));
+                    } else {
+                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1","autocomplete_nonlocalized"));
+                    }
+                } else {
+                    if ($option!='suggest') {
+                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
+                    } else {
+                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
+                    }
+                }
+                break;              
+        }
+
+        // add user query
+        if ($this->_params['query']!="") {
+            $elasticaQueryString->setQuery($this->_params['query']);   
+        } else {
+            $elasticaQueryString->setQuery('*');
+        }
         $elasticaQuery->setQuery($elasticaQueryString);
-        
+                
         // Apply filter to query
         if (! empty($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {
@@ -452,7 +520,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Define the type facet
         
         if ($this->_isFacetDisplayed('contentType')) {
-            $elasticaFacetType = new \Elastica_Facet_Terms('type');
+            $elasticaFacetType = new \Elastica\Facet\Terms('type');
             $elasticaFacetType->setField('contentType');
             
             // Exclude active Facets for this vocabulary
@@ -478,7 +546,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if ($this->_isFacetDisplayed('damType')) {
             
-            $elasticaFacetDamType = new \Elastica_Facet_Terms('damType');
+            $elasticaFacetDamType = new \Elastica\Facet\Terms('damType');
             $elasticaFacetDamType->setField('damType');
             
             // Exclude active Facets for this vocabulary
@@ -505,8 +573,8 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if ($this->_isFacetDisplayed('author')) {
             
-            $elasticaFacetAuthor = new \Elastica_Facet_Terms('author');
-            $elasticaFacetAuthor->setField('author');
+            $elasticaFacetAuthor = new \Elastica\Facet\Terms('author');
+            $elasticaFacetAuthor->setField('createUser.id');
             
             // Exclude active Facets for this vocabulary
             if ($this->_facetDisplayMode != 'checkbox' and isset($this->_filters['author'])) {
@@ -531,14 +599,20 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         if ($this->_isFacetDisplayed('date')) {
             
-            $elasticaFacetDate = new \Elastica_Facet_Range('date');
+            $elasticaFacetDate = new \Elastica\Facet\Range('date');
             $elasticaFacetDate->setField('lastUpdateTime');
             $d = Manager::getService('CurrentTime')->getCurrentTime();
             
-            $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d));
-            $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d));
-            $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d));
-            $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1);
+            // In ES 0.9, date are in microseconds
+            $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d))*1000;
+            // Cast to string for 32bits systems
+            $lastday = (string) $lastday;      
+            $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d))*1000;
+            $lastweek = (string) $lastweek;
+            $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d))*1000;
+            $lastmonth = (string) $lastmonth;
+            $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1)*1000;
+            $lastyear = (string) $lastyear;
             $ranges = array(
                 array(
                     'from' => $lastday
@@ -554,11 +628,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                 )
             );
             $timeLabel = array();
-            $timeLabel[$lastday] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Day", 'Past 24H');
-            $timeLabel[$lastweek] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Week", 'Past week');
-            $timeLabel[$lastmonth] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Month", 'Past month');
-            $timeLabel[$lastyear] = Manager::getService('Translate')->translate("Search.Facets.Label.Date.Year", 'Past year');
             
+            $timeLabel[$lastday] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Day", 'Past 24H');
+            $timeLabel[$lastweek] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Week", 'Past week');
+            $timeLabel[$lastmonth] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Month", 'Past month');
+            $timeLabel[$lastyear] = Manager::getService('Translate')->translateInWorkingLanguage("Search.Facets.Label.Date.Year", 'Past year');
+
             $elasticaFacetDate->setRanges($ranges);
             
             // Apply filters from other facets
@@ -577,7 +652,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             
             if ($this->_isFacetDisplayed($vocabulary)) {
                 
-                $elasticaFacetTaxonomy = new \Elastica_Facet_Terms($vocabulary);
+                $elasticaFacetTaxonomy = new \Elastica\Facet\Terms($vocabulary);
                 $elasticaFacetTaxonomy->setField('taxonomy.' . $taxonomy['id']);
                 
                 // Exclude active Facets for this vocabulary
@@ -600,16 +675,17 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Add pagination
         if (is_numeric($this->_params['pagesize'])) {
-            $elasticaQuery->setSize($this->_params['pagesize'])->setFrom($this->_params['pager'] * $this->_params['pagesize']);
+            $elasticaQuery->setSize($this->_params['pagesize']);
+            $elasticaQuery->setFrom($this->_params['pager'] * $this->_params['pagesize']);
         }
         
         // add sort
-        if ($this->_params['orderby'] == 'text') {
-            $this->_params['orderby'] = 'text_not_analyzed';
-        }
         $elasticaQuery->setSort(array(
             $this->_params['orderby'] => strtolower($this->_params['orderbyDirection'])
         ));
+        
+        $returnedFieldsArray = array("*");
+        $elasticaQuery->setFields($returnedFieldsArray);
         
         // run query
         switch ($option) {
@@ -621,7 +697,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'all':
                 $client = self::$_content_index->getClient();
-                $search = new \Elastica_Search($client);
+                $search = new \Elastica\Search($client);
                 $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_content_index);
                 $elasticaResultSet = $search->search($elasticaQuery);
@@ -629,6 +705,52 @@ class DataSearch extends DataAbstract implements IDataSearch
             case 'geo':
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
                 break;
+            case 'suggest':
+                $suggestTerms = array();
+                $elasticaQuery->setHighlight(array(
+                        "pre_tags" => array("<term>"),
+                        "post_tags" => array("</term>"),
+                        "fields" => array(
+                            'autocomplete_'.$currentLocale=> array(
+                                    "fragment_offset" => 0,
+                                    "fragment_size" => 18,
+                                    "number_of_fragments" => 1
+                            ),
+                            'autocomplete_'.$fallBackLocale=> array(
+                                    "fragment_offset" => 0,
+                                    "fragment_size" => 18,
+                                    "number_of_fragments" => 1
+                            ),
+                        	'autocomplete_nonlocalized'=> array(
+                                    "fragment_offset" => 0,
+                                    "fragment_size" => 18,
+                                    "number_of_fragments" => 1
+                            )
+                        )
+                ));
+                
+                $client = self::$_content_index->getClient();
+                $search = new \Elastica\Search($client);
+                $search->addIndex(self::$_dam_index);
+                $search->addIndex(self::$_content_index);
+                
+                $elasticaResultSet = $search->search($elasticaQuery);
+
+                foreach ($elasticaResultSet as $result) {
+                    $highlights = $result->getHighlights();
+                    if (isset($highlights['autocomplete_'.$currentLocale][0])) {
+                        $suggestTerms[]= $this->cleanSuggest($highlights['autocomplete_'.$currentLocale][0]);
+                    }
+                    if (isset($highlights['autocomplete_'.$fallBackLocale][0])) {
+                        $suggestTerms[]= $this->cleanSuggest($highlights['autocomplete_'.$fallBackLocale][0]);
+                    }
+                    if (isset($highlights['autocomplete_nonlocalized'][0])) {
+                        $suggestTerms[]= $this->cleanSuggest($highlights['autocomplete_nonlocalized'][0]);
+                    }
+                }
+                return (array_values(array_unique($suggestTerms)));
+                break;
+                
         }
         
         // Update data
@@ -644,22 +766,31 @@ class DataSearch extends DataAbstract implements IDataSearch
         foreach ($resultsList as $resultItem) {
             
             $data = $resultItem->getData();
-            
+          
             $data['id'] = $resultItem->getId();
             $data['typeId'] = $resultItem->getType();
             $score = $resultItem->getScore();
             if (! is_float($score))
                 $score = 1;
             $data['score'] = round($score * 100);
-            
-            $data['title'] = $data['text'];
-            
-            if ($withSummary and ! isset($data['summary'])) {
-                $data['summary'] = $data['text'];
+            $data['authorName'] = $data['createUser.fullName'];
+            $data['author'] = $data['createUser.id'];
+            $data['version'] = $data['version'];
+
+            if (isset($data['availableLanguages']) && !is_array($data['availableLanguages'])) {
+                $data['availableLanguages'] = array($data['availableLanguages']);
             }
-            
+
             switch ($data['objectType']) {
                 case 'content':
+                    if (isset($data["text_".$currentLocale])) {
+                        $data['title'] = $data["text_".$currentLocale];
+                        if ($withSummary) {
+                            $data['summary'] = (isset($data["summary_".$currentLocale])) ? $data["summary_".$currentLocale] : $data["text_".$currentLocale];
+                        }
+                    } else {
+                        $data['title'] = $data['text'];
+                    }                   
                     $contentType = $this->_getContentType($data['contentType']);
                     if (! $userCanWriteContents || $contentType['readOnly']) {
                         $data['readOnly'] = true;
@@ -669,6 +800,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $data['type'] = $contentType['type'];
                     break;
                 case 'dam':
+                    if (isset($data["title_".$currentLocale])) {
+                        $data['title'] = $data["title_".$currentLocale];
+                    } else {
+                        $data['title'] = $data['text'];
+                    }
                     $damType = $this->_getDamType($data['damType']);
                     if (! $userCanWriteDam || $damType['readOnly']) {
                         $data['readOnly'] = true;
@@ -679,6 +815,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                     break;
             }
             
+            //ensure that date is formated as timestamp while handled as date type for ES
+            $data['lastUpdateTime'] = strtotime($data['lastUpdateTime']);
+            
             // Set read only
             
             if (in_array($data['writeWorkspace'], $writeWorkspaceArray)) {
@@ -686,8 +825,6 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $data['readOnly'] = true;
             }
-            // do not return attached file if exists : can't be declared not stored as any other fields
-            unset($data['file']);
             $result['data'][] = $data;
         }
         
@@ -765,7 +902,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                                 $rangeCount = $temp['ranges'][$key]['count'];
                                 // unset facet when count = 0 or total results count when display mode is not set to checkbox
                                 if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount < $result['total'])) {
-                                    $temp['ranges'][$key]['label'] = $timeLabel[$temp['ranges'][$key]['from']];
+                                    $temp['ranges'][$key]['label'] = $timeLabel[(string) $temp['ranges'][$key]['from']];
                                 } else {
                                     unset($temp['ranges'][$key]);
                                 }
@@ -785,7 +922,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                         if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $taxonomyTermsService->findById($value['term']);
-                                $temp['terms'][$key]['label'] = $termItem['text'];
+                                if($termItem) {
+                                     $temp['terms'][$key]['label'] = $termItem['text'];
+                                } else {
+                                     unset($temp['terms'][$key]);
+                                }
                             }
                         } else {
                             $renderFacet = false;
@@ -857,10 +998,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                             'terms' => array(
                                 array(
                                     'term' => $termId,
-                                    'label' => $timeLabel[$termId]
+                                    'label' => $timeLabel[(string) $termId]
                                 )
-                            )
+                            )  
                         );
+
                         break;
                     
                     case 'query':
@@ -927,7 +1069,20 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         return ($result);
     }
-
+   
+    /**
+     * extract term from highlight
+     * 
+     * @param string $string
+     * @return string
+     */
+    protected function cleanSuggest($string){
+        
+        $newstring = mb_strtolower(html_entity_decode(preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#msuU", "$2$3", $string)),'UTF-8');
+        $newstring = strip_tags($newstring);
+        return $newstring;
+    }
+    
     /**
      *
      * @param field_type $_isFrontEnd            

@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Controller\Action, Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  * Front Office Defautl Controller
@@ -102,7 +103,7 @@ class IndexController extends Zend_Controller_Action
     /**
      * Main Action : render the Front Office view
      */
-    public function indexAction ()
+    public function indexAction()
     {
         if ($this->getParam('tk', null)) {
             $this->_forward('index', 'tiny');
@@ -115,7 +116,7 @@ class IndexController extends Zend_Controller_Action
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
         $this->_servicePage = Manager::getService('PageContent');
-        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
+        
         $this->_session = Manager::getService('Session');
         
         $this->_pageId = $this->getRequest()->getParam('pageId');
@@ -148,8 +149,22 @@ class IndexController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
+        // init browser languages
+        $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
+        $browserLanguages = array_keys($zend_locale->getBrowser());
+        
         // context
-        $lang = $this->_session->get('lang', 'fr');
+        $cookieValue = $this->getRequest()->getCookie('locale');
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages,$cookieValue);
+        $domain = $this->getRequest()->getHeader('host');
+        if($domain){
+            $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
+        }
+        
+        // reload page in localization context
+        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
+        
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $hasAccessToBO = Manager::getService('Acl')->hasAccess('ui.backoffice');
         if (! $isLoggedIn || ! $hasAccessToBO) {
@@ -175,6 +190,9 @@ class IndexController extends Zend_Controller_Action
             Zend_Registry::set('draft', false);
         }
         
+        // template service
+        $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
+        
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
         
@@ -188,6 +206,17 @@ class IndexController extends Zend_Controller_Action
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
+            
+            $js = array(
+                '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+                '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-'. Manager::getService('CurrentUser')->getLanguage() .'.js',
+                '/components/jquery/timepicker/jquery.ui.timepicker.js'
+            );
+            if (is_array($js)) {
+                foreach ($js as $value) {
+                    $this->_servicePage->appendJs($value);
+                }
+            }
         }
         
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
@@ -232,7 +261,7 @@ class IndexController extends Zend_Controller_Action
         
         $keywords = $this->_servicePage->getKeywords();
         if (count($keywords) === 0) {
-            $keywords = is_array($this->_site['keywords']) ? $this->_site['keywords'] : array();
+            $keywords = (isset($this->_site['keywords']) && is_array($this->_site['keywords'])) ? $this->_site['keywords'] : array();
         }
         if (is_array($keywords)) {
             $twigVar['keywords'] = implode(',', $keywords);
@@ -259,6 +288,7 @@ class IndexController extends Zend_Controller_Action
         $twigVar['isLoggedIn'] = $isLoggedIn;
         $twigVar['hasAccessToBO'] = $hasAccessToBO;
         $twigVar['canEdit'] = $canEdit;
+        $twigVar['boLocale'] = Manager::getService('CurrentUser')->getLanguage();
         
         $twigVar['pageProperties'] = isset($this->_mask['pageProperties']) ? $this->_mask['pageProperties'] : null;
         
@@ -275,7 +305,7 @@ class IndexController extends Zend_Controller_Action
         $this->getResponse()->appendBody($content, 'default');
     }
 
-    public function testMailAction ()
+    public function testMailAction()
     {
         $to = $this->getParam('to', null);
         if (is_null($to)) {
@@ -316,7 +346,7 @@ class IndexController extends Zend_Controller_Action
      *            requested URL
      * @return array
      */
-    protected function _getPageInfo ($pageId)
+    protected function _getPageInfo($pageId)
     {
         $this->_mask = Manager::getService('Masks')->findById($this->_pageInfo['maskId']); // maskId
         if (! $this->_mask) {
@@ -349,15 +379,15 @@ class IndexController extends Zend_Controller_Action
         }
         
         $this->_pageInfo['rows'] = $this->_mask['rows'];
-        
+                
         if (! isset($this->_site['theme'])) {
             $this->_site['theme'] = 'default';
         }
         $this->_serviceTemplate->setCurrentTheme($this->_site['theme']);
         
         $this->_servicePage->setPageTitle($this->_pageInfo['title']);
-        $this->_servicePage->setDescription($this->_pageInfo['description']);
-        $this->_servicePage->setKeywords($this->_pageInfo['keywords']);
+        $this->_servicePage->setDescription(isset($this->_pageInfo['description']) ? $this->_pageInfo['description'] : "");
+        $this->_servicePage->setKeywords(isset($this->_pageInfo['keywords'])?$this->_pageInfo['keywords']:array());
         
         $rootline = Manager::getService('Pages')->getAncestors($this->_pageInfo);
         $this->_rootlineArray = array();
@@ -371,7 +401,7 @@ class IndexController extends Zend_Controller_Action
         return $this->_pageInfo;
     }
 
-    protected function _getSingleBlock ()
+    protected function _getSingleBlock()
     {
         $block = array();
         $block['configBloc'] = array();
@@ -386,7 +416,7 @@ class IndexController extends Zend_Controller_Action
         return $block;
     }
 
-    protected function _getMainColumn ()
+    protected function _getMainColumn()
     {
         return isset($this->_mask['mainColumnId']) ? $this->_mask['mainColumnId'] : null;
     }
@@ -397,17 +427,19 @@ class IndexController extends Zend_Controller_Action
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos (array $columns = null, $noSpan = false)
+    protected function _getColumnsInfos(array $columns = null, $noSpan = false)
     {
         if ($columns === null) {
             return null;
         }
         $returnArray = $columns;
         foreach ($columns as $key => $column) {
+            $column = $this->localizeTitle($column);
             if ($noSpan) {
                 $returnArray[$key]['span'] = null;
             }
             $returnArray[$key]['displayTitle'] = isset($column['displayTitle']) ? $column['displayTitle'] : null;
+            $returnArray[$key]['eTitle'] = isset($column['eTitle']) ? $column['eTitle'] : null;
             $returnArray[$key]['elementTag'] = isset($column['elementTag']) ? $column['elementTag'] : null;
             $returnArray[$key]['elementStyle'] = isset($column['elementStyle']) ? $column['elementStyle'] : null;
             $returnArray[$key]['renderSpan'] = isset($column['renderSpan']) ? $column['renderSpan'] : true;
@@ -427,12 +459,39 @@ class IndexController extends Zend_Controller_Action
     }
 
     /**
+     * Change title to localized title for row, column or block
+     * 
+     * @param array $item
+     * @return array
+     */
+    protected function localizeTitle(array $item)
+    {
+        if (isset($item['i18n'])) {
+            if (isset($item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()])) {
+                if (isset($item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()]['eTitle'])) {
+                    $item['eTitle'] = $item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()]['eTitle'];
+                } else {
+                    $item['title'] = $item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()]['title'];
+                }
+            } elseif (isset($item['i18n'][$this->_site['defaultLanguage']])) {
+                if (isset($item['i18n'][$this->_site['defaultLanguage']]['eTitle'])) {
+                    $item['eTitle'] = $item['i18n'][$this->_site['defaultLanguage']]['eTitle'];
+                } else {
+                    $item['title'] = $item['i18n'][$this->_site['defaultLanguage']]['title'];
+                }
+            }
+            unset($item['i18n']);
+        }
+        return $item;
+    }
+
+    /**
      * get Blocks infos
      *
      * @param array $blocks            
      * @return array
      */
-    protected function _getBlocksInfos (array $blocks)
+    protected function _getBlocksInfos(array $blocks)
     {
         $returnArray = array();
         foreach ($blocks as $block) {
@@ -447,13 +506,15 @@ class IndexController extends Zend_Controller_Action
      * @param array $rows            
      * @return array
      */
-    protected function _getRowsInfos (array $rows = null)
+    protected function _getRowsInfos(array $rows = null)
     {
         if ($rows === null) {
             return null;
         }
         $returnArray = $rows;
         foreach ($rows as $key => $row) {
+            $row = $this->localizeTitle($row);
+            $returnArray[$key]['eTitle'] = isset($row['eTitle']) ? $row['eTitle'] : null;
             $returnArray[$key]['displayTitle'] = isset($row['displayTitle']) ? $row['displayTitle'] : null;
             $returnArray[$key]['template'] = Manager::getService('FrontOfficeTemplates')->getFileThemePath('row.html.twig');
             $returnArray[$key]['classHtml'] = isset($row['classHTML']) ? $row['classHTML'] : null;
@@ -485,13 +546,14 @@ class IndexController extends Zend_Controller_Action
      *            bloc options (type, filter params...)
      * @return array block data to be rendered
      */
-    protected function _getBlockData ($block)
+    protected function _getBlockData($block)
     {
+        $block = $this->localizeTitle($block);
         $params = array();
         $params['block-config'] = $block['configBloc'];
         $params['site'] = $this->_site;
         $params['blockId'] = $block['id'];
-        $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc'.$block['id'];
+        $params['prefix'] = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
         $params['classHtml'] = isset($block['classHTML']) ? $block['classHTML'] : null;
         $params['classHtml'] .= $this->_buildResponsiveClass($block['responsive']);
         $params['elementTag'] = isset($block['elementTag']) ? $block['elementTag'] : null;
@@ -648,11 +710,21 @@ class IndexController extends Zend_Controller_Action
             case 'resource':
                 $controller = "resource";
                 break;
+            case 'imageMap':
+                $controller = "image-map";
+                break;
             case 'advancedSearchForm':
                 $controller = "advanced-search";
                 break;
             case "mailingList":
                 $controller = "mailing-list";
+                break;
+            case "twitter":
+                $controller = "twitter";
+                break;
+            
+            case "languageMenu":
+                $controller = "language-menu";
                 break;
             
             case 'Controleur Zend':
@@ -662,7 +734,7 @@ class IndexController extends Zend_Controller_Action
                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc'.$block['id'];
+                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
                 $route->setPrefix($prefix);
                 
                 $allParams = $this->getAllParams();
@@ -720,7 +792,7 @@ class IndexController extends Zend_Controller_Action
         );
     }
 
-    protected function _buildResponsiveClass ($responsiveArray)
+    protected function _buildResponsiveClass($responsiveArray)
     {
         foreach ($responsiveArray as $key => $value) {
             if (false == $value) {

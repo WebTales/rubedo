@@ -203,6 +203,9 @@ return array(
         'Translate' => array(
             'class' => 'Rubedo\\Internationalization\\Translate'
         ),
+        'CurrentLocalization' => array(
+            'class' => 'Rubedo\\Internationalization\\Current'
+        ),
         'Languages' => array(
             'class' => 'Rubedo\\Collection\\Languages'
         )
@@ -221,6 +224,17 @@ return array(
         0 => 'public/components/webtales/rubedo-localization/languagekey/Exceptions/generalExceptions.json',
         1 => 'public/components/webtales/rubedo-localization/languagekey/Generic/genericTranslations.json',
         2 => 'public/components/webtales/rubedo-localization/languagekey/BackOffice/FrontEndEdition/frontEndLabels.json',
-        3 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Search/search.json'
+        3 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Search/search.json',
+        4 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ContentList/list.json',
+        5 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Authentication/auth.json',
+        6 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Contact/contact.json',
+        7 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Form/form.json',
+        8 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Gallery/gallery.json',
+        9 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/GeoSearch/geo.json',
+        10 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Fields/Localizer/loc.json',
+        11 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ProtectedRessource/ressource.json',
+        12 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Fields/Date/date.json',
+        13 => 'public/components/webtales/rubedo-localization/languagekey/Install/defaultContents.json',
+        14 => 'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Single/single.json',
     )
 );

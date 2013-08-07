@@ -41,6 +41,9 @@ class ImageController extends Zend_Controller_Action
         $fileId = $this->getRequest()->getParam('file-id');
         $filePath = $this->getParam('filepath');
         $size = $this->getParam('size', 'custom');
+        
+        $version = $this->getParam('version',1);
+        
         if ($size == "custom") {
             $width = $this->getParam('width', null);
             $height = $this->getParam('height', null);
@@ -59,7 +62,7 @@ class ImageController extends Zend_Controller_Action
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
-            $filePath = sys_get_temp_dir() . '/' . $fileId;
+            $filePath = sys_get_temp_dir() . '/' . $fileId . '_' . $version;
             if (! is_file($filePath) || $now - filemtime($filePath) > 7 * 24 * 3600) {
                 $obj->write($filePath);
             }
@@ -114,16 +117,23 @@ class ImageController extends Zend_Controller_Action
             
             $this->getResponse()->clearBody();
             $this->getResponse()->clearHeaders();
+            $this->getResponse()->clearRawHeaders();
             if ($forceDownload) {
                 $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
             }
             $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
-            $this->getResponse()->setHeader('Pragma', 'Public');
-            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 24 * 3600, true);
-            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 1 day")), true);
+            $this->getResponse()->setHeader('Pragma', 'Public',true);
+            
+            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 7 * 24 * 3600, true);
+            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime("7 day")), true);
             $this->getResponse()->sendHeaders();
+            
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            flush();
             readfile($tmpImagePath);
-            //exit();
+            exit;
         } else {
             throw new \Rubedo\Exceptions\User("No Image Given", "Exception80");
         }

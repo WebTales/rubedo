@@ -37,6 +37,7 @@ class FileController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender();
         
         $fileId = $this->getRequest()->getParam('file-id');
+        $version = $this->getParam('version',1);
         
         if (isset($fileId)) {
             
@@ -46,7 +47,7 @@ class FileController extends Zend_Controller_Action
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
-            $tmpImagePath = sys_get_temp_dir() . '/' . $fileId;
+            $tmpImagePath = sys_get_temp_dir() . '/' . $fileId. '_' . $version;
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
@@ -171,7 +172,7 @@ class FileController extends Zend_Controller_Action
                 readfile($tmpImagePath);
             }
             
-            //exit();
+            exit();
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }

@@ -22,7 +22,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	var editor = event.editor, element = editor.element;
 	editor.config.entities = false;
 	editor.config.entities_latin = false;
-	editor.config.language = jQuery("body").attr("data-language");
+	editor.config.language = jQuery("body").attr("data-bolanguage");
 	
 	// Customize CKEditor
 	if (element.getAttribute("data-field-type") =="title" || element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="textfield" || element.getAttribute("data-field-type") =="textareafield") {
@@ -30,7 +30,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 		//Minimal configuration for titles
 		editor.on('configLoaded', function() {
 			// Remove unnecessary plugins
-			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
+			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat' + 'smiley,specialchar,stylescombo,templates,wsc';
 
 			editor.getData=function(){return(editor.editable().getText());};
 			editor.forcePasteAsPlainText = true;
@@ -52,7 +52,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				editor.config.toolbar = [
                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-                   { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+                   { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },'/',
                    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
                    { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
                    { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
@@ -67,7 +67,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				editor.config.toolbar = [
 	                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline','Strike', '-', 'RemoveFormat' ] },
 	                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock','-','Image']},
-	                { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+	                { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },
 	                { name: 'styles', items: [ 'Font', 'FontSize' ] }
                 ];
 			});
@@ -83,7 +83,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 					{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
 					{ name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
 					'/',
-					{ name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+					{ name: 'colors', items: [ 'TextColor','BGColor'] },
 					{ name: 'tools', items: [ 'Maximize', '-','ShowBlocks' ] },
 					{ name: 'links', items: [ 'Link', "Rubedolink", 'Unlink','-','Anchor' ] },
 					{ name: 'insert', items: [ 'Image',  '-', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak', 'Iframe' ] }
@@ -101,7 +101,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 			editor.config.toolbar = [
 			    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
 	            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-	            { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+	            { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },'/',
 	            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
 	            { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
 	            { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
@@ -172,12 +172,16 @@ jQuery('#btn-save').click(function() {
 						//Remove dirty flag
 						CKEDITOR.instances[z].resetDirty();
 					}
-					modifications[CKEId[0]] = {"newValue" : data};
+					
+					var locale = jQuery("#"+id).attr("data-locale");
+					
+					modifications[CKEId[0]] = {"newValue" : data, "locale" : locale};
 				}else{
 					var id = CKEDITOR.instances[i].element.getId();
 					var newValue = CKEDITOR.instances[i].getData();
+					var locale = jQuery("#"+id).attr("data-locale");
 					
-					modifications[id] = {"newValue" : newValue};
+					modifications[id] = {"newValue" : newValue, "locale" : locale};
 					
 					//Remove dirty flag
 					CKEDITOR.instances[i].resetDirty();
@@ -271,6 +275,7 @@ function saveImage(currentContentId, newImageId) {
 
 jQuery(".date").click( function () {
 	var currentDatePicker = jQuery(this).parent().context.id;
+	var locale = jQuery("#"+currentDatePicker).attr("data-locale");
 	jQuery("#"+currentDatePicker+" .datepicker").datepicker({
 			regional: jQuery("body").attr("data-language"),
 			dateFormat : "d MM yy",
@@ -298,6 +303,7 @@ jQuery(".date").click( function () {
 
 jQuery(".time").click( function () {
 	var currentTimePicker = jQuery(this).parent().context.id;
+	var locale = jQuery("#"+currentTimePicker).attr("data-locale");
 	var currentTime = "";
 	var olderTime= "";
 	var houresAreSet = false;
@@ -330,12 +336,12 @@ jQuery(".time").click( function () {
 				}
 
 				if(currentMinutes != olderMinutes) {
-					modifications[currentTimePicker] = {"newValue" : currentTime};
+					modifications[currentTimePicker] = {"newValue" : currentTime, "locale" : locale};
 					
 					jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 				}
 			} else if(currentMinutes == olderMinutes && currentHoures == olderHoures && houresAreSet){
-				modifications[currentTimePicker] = {"newValue" : currentTime};
+				modifications[currentTimePicker] = {"newValue" : currentTime, "locale" : locale};
 				
 				jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 			}
@@ -370,7 +376,8 @@ jQuery(".checkbox-edit").click( function () {
 	if(!jQuery(this).find("input").is(":disabled")){
 		var newValue=jQuery(this).find("input").is(":checked");
 		var checkboxId=jQuery(this).attr("id");
-		modifications[checkboxId] = {"newValue" : newValue};
+		var locale=jQuery(this).attr("data-locale");
+		modifications[checkboxId] = {"newValue" : newValue, "locale" : locale};
 	}
 	
 });
@@ -402,6 +409,7 @@ jQuery(".radiogroup-edit").click( function () {
 jQuery(".checkboxgroup-edit").click( function () {
 	if(!jQuery(this).find("input").is(":disabled")){
 		var checkboxGroupId=jQuery(this).attr("id");
+		var locale=jQuery(this).attr("data-locale");
 		var newValue={ };
 		newValue[jQuery(this).find("input").attr("name")]=new Array();
 		jQuery(this).find("input").each(function(b,a){
@@ -410,7 +418,7 @@ jQuery(".checkboxgroup-edit").click( function () {
 			}
 		});
 		
-		modifications[checkboxGroupId] = { "type" : "checkboxgroup", "newValue" : newValue };
+		modifications[checkboxGroupId] = { "type" : "checkboxgroup", "newValue" : newValue, "locale" : locale };
 	}
 	
 });
@@ -485,11 +493,13 @@ function swithToEditMode() {
 	});
 	 starEdit=true;
 	 EditMode=true;
+	 jQuery(".field-tip-btn").popover({placement:"left",trigger:"hover"});
+	 jQuery(".field-tip-btn").show();
 	 jQuery(".complete-edition-btn").show();
 	 jQuery(".complete-edition-btn").click(function(){
 	 		var siteUrl = getDomainName();
 	 		var targetContentId=jQuery(this).attr("data-content-id");
-	 		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?edit-mode=true&content-id="+targetContentId;
+	 		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?edit-mode=true&content-id="+targetContentId+"&workingLanguage="+jQuery("html").attr("lang");;
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
 			var availHeight=window.innerHeight*(90/100);
@@ -517,6 +527,7 @@ function swithToViewMode() {
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
 	jQuery(".complete-edition-btn").hide();
+	jQuery(".field-tip-btn").hide();
 	jQuery(".complete-edition-btn").unbind();
 	jQuery('.checkbox-edit').each(function() {
 		jQuery(this).find("input").attr("disabled","diabled");
@@ -553,7 +564,7 @@ function checkIfDirty() {
  */
 function save(data) {
 	var data = JSON.stringify(data);
-
+	
 	jQuery.ajax({
 		type : 'POST',
 		url : "/xhr-edit",
@@ -597,7 +608,7 @@ function save(data) {
 					notify("failure", message);
 				}
 			} else {
-				notify("success", "La mise à jour à bien été effectuée.");
+				notify("success", jQuery("body").attr('data-foeditsuccess'));
 			}
 		}
 	});
@@ -643,7 +654,7 @@ function addContent(type,typeId,queryId){
 		 */
 		jQuery("#select-type-box").empty();
 		jQuery.ajax({
-			"url" : "/backoffice/content-types/get-readable-content-types/",
+			"url" : "/backoffice/content-types/get-readable-content-types/?workingLanguage="+jQuery("body").attr('data-bolanguage'),
 			"async" : false,
 			"type" : "GET",
 			"dataType" : "json",
@@ -667,7 +678,7 @@ function addContent(type,typeId,queryId){
 		    jQuery('#btn-valid-form').unbind();
 		    jQuery('#btn-cancel-ctselect-form').unbind();
 		    jQuery("#contentTypeSelectModal").modal("hide");
-			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
+			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace')+"&workingLanguage="+jQuery("html").attr("lang");;
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
 			var availHeight=window.innerHeight*(90/100);
@@ -684,7 +695,7 @@ function addContent(type,typeId,queryId){
 		
 		jQuery("#contentTypeSelectModal").modal("show");
 		}else{
-			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace');
+			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace')+"&workingLanguage="+jQuery("html").attr("lang");
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
 			var availHeight=window.innerHeight*(90/100);

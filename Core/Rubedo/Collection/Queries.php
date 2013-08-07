@@ -380,7 +380,7 @@ class Queries extends AbstractCollection implements IQueries
             $ruleOperator = array_search($value['rule'], $operatorsArray);
     
             //Set the filter of the query
-            if (!isset($value['sort'])) {
+            if (isset($value['value'])) {
                 $this->setFilters($fieldType, $property, $value, $ruleOperator, $filters);
             }
     
@@ -568,9 +568,6 @@ class Queries extends AbstractCollection implements IQueries
         
         $query = $this->findById($id);
         
-        //Edit the query to be compatible with the BO
-        $query = $this->dbToBoQuery($query);
-        
         if ($query) {
             return $this->getFilterArrayByQuery($query);
         } else {
@@ -623,7 +620,15 @@ class Queries extends AbstractCollection implements IQueries
         $obj = $this->boToDbQuery($obj);
         
         //Update the query with the new values
-        return parent::update($obj, $options);
+        //return parent::update($obj, $options);
+        unset($obj['readOnly']);
+        $result = $this->_dataService->update($obj, $options);
+        if ($result['success']) {
+            $result['data'] = $this->_addReadableProperty($result['data']);
+            $result['data'] = $this->dbToBoQuery($result['data']);
+        }
+        
+        return $result;
     }
     
     /**

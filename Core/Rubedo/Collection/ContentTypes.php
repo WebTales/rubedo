@@ -25,9 +25,11 @@ use Rubedo\Interfaces\Collection\IContentTypes, Rubedo\Services\Manager, WebTale
  * @category Rubedo
  * @package Rubedo
  */
-class ContentTypes extends AbstractCollection implements IContentTypes
+class ContentTypes extends AbstractLocalizableCollection implements IContentTypes
 {
-
+    protected static $nonLocalizableFields = array("fields","vocabularies","dependant","activateDisqus","dependantTypes","readOnly","workspaces","workflow","system","CTType","code");
+    protected static $labelField = 'type';
+    
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -375,5 +377,32 @@ class ContentTypes extends AbstractCollection implements IContentTypes
         }
         
         return $result;
+    }
+    
+    /**
+     * Return localizable fields for content type
+     * 
+     * @param string $cTypeId
+     * @return array
+     */
+    public function getLocalizableFieldForCType($cTypeId){
+        $contentType = $this->findById($cTypeId);
+        $fieldsDef = $contentType['fields'];
+        
+        $localizableFieldArray = array();
+        $localizableFieldArray[] = 'text';
+        $localizableFieldArray[] = 'summary';
+        
+        foreach($fieldsDef as $fieldDef){
+            if(isset($fieldDef['config']['localizable']) && $fieldDef['config']['localizable']==true){
+                $localizableFieldArray[]=$fieldDef['config']['name'];
+            }
+        }
+        
+        if(isset($contentType['CTType']) && in_array($contentType['CTType'],array('richText','simpleText'))){
+            $localizableFieldArray[] = 'body';
+        }
+        
+        return $localizableFieldArray;
     }
 }

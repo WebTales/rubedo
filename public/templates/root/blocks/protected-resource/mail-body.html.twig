@@ -1,11 +1,11 @@
-<p>Bonjour,</p>
+<p>{{ "Blocks.ProtectedRessource.Mail.Hello" | fotrans }}</p>
 
 <p>
-Suite à votre demande, nous avons le plaisir de vous adresser votre lien de téléchargement. Celui-ci sera actif 48 h.
+{{ "Blocks.ProtectedRessource.Mail.Body" | fotrans }}
 <a href="{{ downloadUrl|raw }}">{{ downloadUrl|raw }}</a>
 </p>
 <p>
-Cordialement
+{{ "Blocks.ProtectedRessource.Mail.Regards" | fotrans }}
 </p>
 
 <p>{{ signature }}</p>

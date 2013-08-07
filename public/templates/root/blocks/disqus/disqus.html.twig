@@ -2,8 +2,11 @@
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = "{{  disqusKey }}"; // required: replace example with your forum shortname
-        var disqus_identifier = "{{ data.id }}";
-       	 var disqus_title = "{{ data.text }}";
+        var disqus_identifier = "{{ data.id }}_{{ data.locale }}";
+       	var disqus_title = "{{ data.text }}";
+       	var disqus_config = function () { 
+         	  this.language = document.getElementsByTagName("body")[0].getAttribute("data-language");
+        };
         /* * * DON'T EDIT BELOW THIS LINE * * */
         (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

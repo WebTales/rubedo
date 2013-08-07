@@ -75,7 +75,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         $query->init();
                 
         $results = $query->search($params);
-        
+        $results['searchParams']=\Zend_Json::encode($params);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
@@ -88,6 +88,7 @@ class Blocks_SearchController extends Blocks_AbstractController
             $pagecount = 1;
         }
         $results['displayMode'] = isset($params['block-config']['displayMode']) ? $params['block-config']['displayMode'] : 'standard';
+        $results['autoComplete'] = isset($params['block-config']['autoComplete']) ? $params['block-config']['autoComplete'] : false;
         $results['facetsToHide'] = $facetsToHide;
         $results['current'] = $params['pager'];
         $results['pagecount'] = $pagecount;
@@ -96,7 +97,7 @@ class Blocks_SearchController extends Blocks_AbstractController
             10
         ));
         
-        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->getParam('current-page');
+        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->getParam('current-page');       
         $results['singlePage'] = $this->getParam('single-page', $singlePage);
         
         $results['displayTitle'] = $this->getParam('displayTitle');
@@ -106,9 +107,38 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $css = array();
         $js = array(
-        		'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js")
+        	'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js"),
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/autocomplete.js")
 		);
         
         $this->_sendResponse($results, $template, $css, $js);
+    }
+    
+    public function xhrGetSuggestsAction ()
+    {
+        // get search parameters
+
+        $params = \Zend_Json::decode($this->getRequest()->getParam('searchParams'));
+        
+        // get current language
+        $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        
+        // set query
+        $params['query'] = $this->getRequest()->getParam('query');
+       
+        // set field for autocomplete
+        $params['field'] = 'autocomplete_'.$currentLocale;
+               
+        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        
+        $elasticaQuery = Manager::getService('ElasticDataSearch');
+        $elasticaQuery->init();
+
+        $suggestTerms = $elasticaQuery->search($params,'suggest');
+    
+        $data = array(
+                'terms' => $suggestTerms
+        );
+        $this->_helper->json($data);
     }
 }

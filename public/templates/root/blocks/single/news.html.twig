@@ -1,4 +1,3 @@
-
 {% extends "root/block.html.twig" %}
 
 {% block mainContent %}
@@ -6,15 +5,23 @@
     <div class="block headline">
         {% include "/root/blocks/edition/full-edition-button.html.twig" %}
     
-        <h2 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h2>
-    
-        {% if data.date %}
-            {% include "/root/blocks/fields/date.html.twig" with { "key" : "date" } %}
+		<h2 class="editable" id="{{ data.id }}_text" data-field-type="title" data-locale="{{ locale }}">{{ data.text }}</h2>
+		<div class="alignright">
+            {% for taxonomy in data.terms %}
+			    {% for term in taxonomy %}
+			        <span class="label label-warning">{{term}}</span>
+			    {% endfor %}
+			{% endfor %}
+		</div>
+		<div class="clear-both"></div>
+		<br>
+		
+		{% if data.date %}
+		    {% include "/root/blocks/fields/date.html.twig" with { "key" : "date" } %}
         {% endif %}
-        <div class="clear-both"></div>
-        <br/>
+        <br>
         
-        <div class="row-fluid">
+		<div class="row-fluid">
             {% if data.image %}
                 <div class="span3">
                     {% include "/root/blocks/fields/mediaField.html.twig" with { "key" : "image" } %}
@@ -35,4 +42,3 @@
     {% endif %}
     
 {% endblock %}
-

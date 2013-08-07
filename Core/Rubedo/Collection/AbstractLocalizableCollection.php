@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IAbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IAbstractCollection;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the API to MongoDB for localizable collections
@@ -29,6 +31,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 {
 
     protected static $defaultLocale = 'en';
+
+    protected static $labelField = 'text';
+
+    protected static $localizationStrategy = "all";
+
+    protected static $fallbackLocale;
 
     /**
      * Contain common fields
@@ -45,14 +53,14 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         'lastPendingUser',
         'version',
         'online',
-        'text',
         'nativeLanguage',
         'i18n',
         'workspace',
         'orderValue',
-        'parentId'
+        'parentId',
+        'text'
     );
-    
+
     protected static $nonLocalizableFields = array();
 
     /**
@@ -63,6 +71,59 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     protected static $workingLocale = null;
 
     protected static $includeI18n = true;
+
+    protected static $isLocaleFiltered = false;
+    
+    /*
+     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::_init()
+     */
+    protected function _init()
+    {
+        parent::_init();
+        
+        $this->initLocaleFilter();
+    }
+    
+    protected function initLocaleFilter(){
+        if (static::$isLocaleFiltered) {
+            switch (static::$localizationStrategy) {
+                case 'onlyOne':
+                    $this->_dataService->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
+                    ->setOperator('$exists')
+                    ->setValue(true));
+                    break;
+                case 'fallback':
+                    $fallbackLocale = isset(static::$fallbackLocale) ? static::$fallbackLocale : static::$defaultLocale;
+                    if ($fallbackLocale != static::$workingLocale) {
+                        $orFilter = Filter::factory('Or');
+                        $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
+                            ->setOperator('$exists')
+                            ->setValue(true));
+                        $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . $fallbackLocale)
+                            ->setOperator('$exists')
+                            ->setValue(true));
+                        $this->_dataService->addFilter($orFilter);
+                    } else {
+                        $this->_dataService->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
+                            ->setOperator('$exists')
+                            ->setValue(true));
+                    }
+    
+                    break;
+                default:
+                    $localeArray = Manager::getService('Languages')->getActiveLocales();
+                    $orFilter = Filter::factory('Or');
+                    foreach($localeArray as $locale){
+                        $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . $locale)
+                            ->setOperator('$exists')
+                            ->setValue(true));
+                    }
+                    
+                    $this->_dataService->addFilter($orFilter);
+                    break;
+            }
+        }
+    }
 
     /**
      * Do a find request on the current collection
@@ -138,7 +199,13 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         $this->_filterInputData($obj);
         
         unset($obj['readOnly']);
-        return $this->_dataService->create($obj, $options);
+        
+        $obj = $this->localizeInput($obj);
+        $result = $this->_dataService->create($obj, $options);
+        if ($result['success']) {
+            $result['data'] = $this->localizeOutput($result['data']);
+        }
+        return $result;
     }
 
     /**
@@ -154,7 +221,11 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     {
         unset($obj['readOnly']);
         $obj = $this->localizeInput($obj);
-        return $this->_dataService->update($obj, $options);
+        $result = $this->_dataService->update($obj, $options);
+        if ($result['success']) {
+            $result['data'] = $this->localizeOutput($result['data']);
+        }
+        return $result;
     }
     
     /*
@@ -202,11 +273,15 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      *
+     *
+     *
+     * Update item with localized content as fields.
+     *
      * @param array $obj
      *            collection item
      * @return array collection item localized
      */
-    protected function localizeOutput($obj)
+    protected function localizeOutput($obj, $alternativeFallBack = null)
     {
         if ($obj === null) {
             return $obj;
@@ -224,18 +299,27 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             $locale = static::$workingLocale;
         }
         
-        if (! isset($obj['i18n'][$locale])) {
-            if (! isset($obj['nativeLanguage'])) {
-                throw new Rubedo\Exceptions\Server('No defined native language for this item');
+        if ($alternativeFallBack === null && static::$isLocaleFiltered && static::$localizationStrategy == 'fallback') {
+            $alternativeFallBack = static::$fallbackLocale;
+        }
+        // \Zend_Debug::dump(static::$fallbackLocale);//die();
+        
+        if (! isset($obj['nativeLanguage'])) {
+            throw new \Rubedo\Exceptions\Server('No defined native language for this item');
+        }
+        
+        $obj = $this->merge($obj, $obj['i18n'][$obj['nativeLanguage']]);
+        $obj['locale'] = $obj['nativeLanguage'];
+        
+        if ($locale != $obj['nativeLanguage']) {
+            if (isset($obj['i18n'][$locale])) {
+                $obj = $this->merge($obj, $obj['i18n'][$locale]);
+                $obj['locale'] = $locale;
+            } elseif (isset($alternativeFallBack) && isset($obj['i18n'][$alternativeFallBack])) {
+                $obj = $this->merge($obj, $obj['i18n'][$alternativeFallBack]);
+                $obj['locale'] = $alternativeFallBack;
             }
-            $locale = $obj['nativeLanguage'];
         }
-        
-        if (! isset($obj['i18n'][$locale])) {
-            throw new Rubedo\Exceptions\Server('No localized data are available for this item');
-        }
-        
-        $obj = $this->merge($obj, $obj['i18n'][$locale]);
         
         if (! static::$includeI18n) {
             unset($obj['i18n']);
@@ -284,16 +368,43 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     protected function localizeInput($obj)
     {
+        $metadataFields = $this->getMetaDataFields();
+        // force label to contain only native title in DB
+        if (isset($obj['i18n'])) {
+            if (isset($obj['i18n'][$obj['nativeLanguage']][static::$labelField])) {
+                $obj[static::$labelField] = $obj['i18n'][$obj['nativeLanguage']][static::$labelField];
+            }
+        }
         
         
+        // prevent localizable data to be stored in root level
         foreach ($obj as $key => $field) {
-            if (! in_array($key, $this->metaDataFields)) {
+            if (! in_array($key, $metadataFields) && $key !== static::$labelField) {
                 unset($obj[$key]);
             }
         }
+        
+        // prevent non localizable data to be store in localization document
+        if (isset($obj['i18n'])) {
+            foreach ($obj['i18n'] as $locale => $localization) {
+                foreach ($localization as $key => $value) {
+                    if (in_array($key, $metadataFields) && $key !== static::$labelField) {
+                        unset($obj['i18n'][$locale][$key]);
+                    }
+                }
+                $obj['i18n'][$locale]['locale'] = $locale;
+            }
+        }
+        
         return $obj;
     }
 
+    /**
+     * Set localization information on a not yet localized item
+     *
+     * @param array $obj            
+     * @return array
+     */
     public function addlocalization($obj)
     {
         if (isset($obj['nativeLanguage'])) {
@@ -301,12 +412,14 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         }
         $nativeContent = $obj;
         
-        foreach ($this->metaDataFields as $metaField) {
-            unset($nativeContent[$metaField]);
+        foreach ($this->getMetaDataFields() as $metaField) {
+            if ($metaField !== static::$labelField) {
+                unset($nativeContent[$metaField]);
+            }
             $nativeContent['locale'] = static::$defaultLocale;
         }
         foreach ($obj as $key => $field) {
-            if (! in_array($key, $this->metaDataFields)) {
+            if (! in_array($key, $this->getMetaDataFields())) {
                 unset($obj[$key]);
             }
         }
@@ -317,19 +430,43 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         return $obj;
     }
 
-    public static function addLocalizationForCollection()
+    /**
+     * Localize not yet localized items of the current collection
+     */
+    public function addLocalizationForCollection()
     {
         $wasFiltered = parent::disableUserFilter();
-        $service = new static();
-        $items = $service->getList();
-        
-        foreach ($items['data'] as $item) {
-            
-            $item = $service->addlocalization($item);
-            $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
-            $service->update($item);
+        $this->_dataService->clearFilter();
+        $items = parent::getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
+            ->setOperator('$exists')
+            ->setValue(false));
+        if ($items['count'] > 0) {
+            foreach ($items['data'] as $item) {
+                if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
+                    $item = $this->addlocalization($item);
+                    // $service->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
+                    $this->update($item);
+                }
+            }
         }
+        
         parent::disableUserFilter($wasFiltered);
+    }
+
+    /**
+     * Ensure that every localizable collection is fully localized
+     */
+    public static function localizeAllCollection()
+    {
+        self::setDefaultLocale(Manager::getService('Languages')->getDefaultLanguage());
+        
+        $services = \Rubedo\Interfaces\config::getCollectionServices();
+        foreach ($services as $serviceName) {
+            $service = Manager::getService($serviceName);
+            if ($service instanceof AbstractLocalizableCollection) {
+                $service->addLocalizationForCollection();
+            }
+        }
     }
 
     /**
@@ -385,12 +522,54 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     {
         AbstractLocalizableCollection::$workingLocale = $workingLocale;
     }
-    
-    protected function getMetaDataFields(){
-        if(!isset($this->metaDataFields)){
-            $this->metaDataFields = array_merge(self::$globalNonLocalizableFields,static::$nonLocalizableFields);
+
+    /**
+     * Return non localizable fields for the current collection
+     *
+     * @return array
+     */
+    protected function getMetaDataFields()
+    {
+        if (! isset($this->metaDataFields)) {
+            $this->metaDataFields = array_merge(self::$globalNonLocalizableFields, static::$nonLocalizableFields);
         }
         return $this->metaDataFields;
+    }
+
+    /**
+     *
+     * @return the $localizationStrategy
+     */
+    public static function getLocalizationStrategy()
+    {
+        return AbstractLocalizableCollection::$localizationStrategy;
+    }
+
+    /**
+     *
+     * @param string $localizationStrategy            
+     */
+    public static function setLocalizationStrategy($localizationStrategy)
+    {
+        AbstractLocalizableCollection::$localizationStrategy = $localizationStrategy;
+    }
+
+    /**
+     *
+     * @return the $fallbackLocale
+     */
+    public static function getFallbackLocale()
+    {
+        return AbstractLocalizableCollection::$fallbackLocale;
+    }
+
+    /**
+     *
+     * @param field_type $fallbackLocale            
+     */
+    public static function setFallbackLocale($fallbackLocale)
+    {
+        AbstractLocalizableCollection::$fallbackLocale = $fallbackLocale;
     }
 }
 	

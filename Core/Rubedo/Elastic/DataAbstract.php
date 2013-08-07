@@ -76,16 +76,10 @@ class DataAbstract
 
     /**
      * Object which represent the default ES index param
-     * @TODO : get param from config
      * 
      * @var \Elastica_Index
      */
-    protected static $_content_index_param = array(
-        'index' => array(
-            'number_of_shards' => 1,
-            'number_of_replicas' => 0
-        )
-    );
+    protected static $_content_index_param;
 
     /**
      * Object which represent the dam ES index
@@ -126,7 +120,7 @@ class DataAbstract
             $port = self::$_options['port'];
         }
         
-        $this->_client = new \Elastica_Client(array(
+        $this->_client = new \Elastica\Client(array(
             'port' => $port,
             'host' => $host
         ));
@@ -174,6 +168,16 @@ class DataAbstract
         self::$_content_index_param = $options;
     }
 
+    /**
+     * Set the options for the content-dam
+     *
+     * @param string $host
+     */
+    public static function setDamIndexOption (array $options)
+    {
+        self::$_dam_index_param = $options;
+    }
+    
     /**
      * Return the ElasticSearch Server Version
      * 

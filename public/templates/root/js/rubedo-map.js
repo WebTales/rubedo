@@ -266,7 +266,8 @@ var gMap = function (options,id,title,text,field) {
 													"lon" : lon
 												}
 							
-							modifications[id] = {"newValue" : markerObject};
+							var locale = jQuery("#"+id).attr("data-locale");
+							modifications[id] = {"newValue" : markerObject, "locale" : locale};
 							
 							if(me.map.markers.length>1){
 								if(me.map.markerToEdit){

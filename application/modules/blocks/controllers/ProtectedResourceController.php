@@ -131,6 +131,9 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         return $resultArray;
     }
 
+    /**
+     * @todo change from address !
+     */
     protected function _sendEmail ($url)
     {
         $twigVar = array(

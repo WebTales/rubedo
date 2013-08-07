@@ -22,8 +22,9 @@ Installation
 * Phing (http://www.phing.info)
 * MongoDB (http://www.mongodb.org) >= 2.2
 * PHP MongoDB Driver >= 1.3.0
-* ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 0.19.8 at this moment (https://github.com/ruflin/Elastica/)
+* ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 0.90.2 at this moment (https://github.com/ruflin/Elastica/)
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
+* ICU Analysis plugin for ElasticSearch (https://github.com/elasticsearch/elasticsearch-analysis-icu)
 
 ### Install Steps
 * Download Source from gitHub (https://github.com/WebTales/rubedo/tags)

@@ -1,6 +1,320 @@
 {
 	"index": {
 		"number_of_shards" : 1, 
-		"number_of_replicas" : 0
+		"number_of_replicas" : 0,
+		"analysis": {
+		    "filter": {
+		        "ar_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_arabic_"]
+		        },
+		        "bg_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_bulgarian_"]
+		        },
+		        "ca_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_catalan_"]
+		        },
+		        "cs_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_czech_"]
+		        },
+		        "da_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_danish_"]
+		        },
+		        "de_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_german_"]
+		        },
+		        "de_stem_filter": {
+		            "type": "stemmer",
+		            "name": "minimal_german"
+		        },
+		        "el_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_greek_"]
+		        },
+		        "en_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_english_"]
+		        },
+		        "en_stem_filter": {
+		            "type": "stemmer",
+		            "name": "minimal_english"
+		        },
+		        "es_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_spanish_"]
+		        },
+		        "es_stem_filter": {
+		            "type": "stemmer",
+		            "name": "light_spanish"
+		        },
+		        "eu_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_basque_"]
+		        },
+		        "fa_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_persian_"]
+		        },
+		        "fi_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_finnish_"]
+		        },
+		        "fi_stem_filter": {
+		            "type": "stemmer",
+		            "name": "light_finish"
+		        },
+		        "fr_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_french_"]
+		        },
+		        "fr_stem_filter": {
+		            "type": "stemmer",
+		            "name": "minimal_french"
+		        },
+		        "hi_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_hindi_"]
+		        },
+		        "hu_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_hungarian_"]
+		        },
+		        "hu_stem_filter": {
+		            "type": "stemmer",
+		            "name": "light_hungarian"
+		        },
+		        "hy_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_armenian_"]
+		        },
+		        "id_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_indonesian_"]
+		        },
+		        "it_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_italian_"]
+		        },
+		        "it_stem_filter": {
+		            "type": "stemmer",
+		            "name": "light_italian"
+		        },
+		        "nl_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_dutch_"]
+		        },
+		        "no_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_norwegian_"]
+		        },
+		        "pt_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_portuguese_"]
+		        },
+		        "pt_stem_filter": {
+		            "type": "stemmer",
+		            "name": "minimal_portuguese"
+		        },
+		        "ro_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_romanian_"]
+		        },
+		        "ru_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_russian_"]
+		        },
+		        "ru_stem_filter": {
+		            "type": "stemmer",
+		            "name": "light_russian"
+		        },
+		        "sv_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_swedish_"]
+		        },
+		        "sv_stem_filter": {
+		            "type": "stemmer",
+		            "name": "light_swedish"
+		        },
+		        "tr_stop_filter": {
+		            "type": "stop",
+		            "stopwords": ["_turkish_"]
+		        },
+		        "autocomplete": {
+		            "type" : "edgeNGram",
+                    "min_gram" : "3",
+                    "max_gram" : "15"
+		        }
+		    },
+		    "analyzer": {
+		        "ar_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "ar_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "bg_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "bg_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "ca_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "ca_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "cs_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "cs_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "da_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "da_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "de_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "de_stop_filter", "de_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "el_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "el_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "en_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "en_stop_filter", "en_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "es_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "es_stop_filter", "es_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "eu_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "eu_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "fa_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "fa_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "fi_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "fi_stop_filter", "fi_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "fr_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "fr_stop_filter", "fr_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "hi_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "hi_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "hu_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "hu_stop_filter", "hu_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "hy_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "hy_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "id_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "id_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "it_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "it_stop_filter", "it_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "ko_analyzer": {
+		            "type": "cjk"
+		        },
+		        "nl_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "nl_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "no_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "no_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "pt_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "pt_stop_filter", "pt_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "ro_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "ro_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "ru_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "ru_stop_filter", "ru_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "sv_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "sv_stop_filter", "sv_stem_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "tr_analyzer": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer", "tr_stop_filter"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "autocomplete": {
+		            "type": "custom",
+ 					"tokenizer": "whitespace",
+                    "filter": ["icu_folding", "icu_normalizer", "autocomplete"],
+		            "char_filter": ["html_strip"]
+		        },
+		        "default": {
+		            "type": "custom",
+		            "tokenizer": "icu_tokenizer"
+		        }
+		    }
+		}
 	}
 }

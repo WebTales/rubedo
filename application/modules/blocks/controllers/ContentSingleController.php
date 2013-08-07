@@ -31,7 +31,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
@@ -76,6 +76,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             }
             $data['terms'] = $termsArray;
             $data["id"] = $mongoId;
+            $data['locale']=$content['locale'];
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
@@ -173,9 +174,13 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             }
                         }
             }
+            if (isset($type['code']) && !empty($type['code'])) {
+                $templateName = $type['code'] . ".html.twig";
+            } else {
+                $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
+                $templateName .= ".html.twig";
+            }
             
-            $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
-            $templateName .= ".html.twig";
             $output["data"] = $data;
             $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
             $output["type"] = $cTypeArray;
@@ -186,11 +191,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
-                '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
-                '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
-                '/components/jquery/timepicker/jquery.ui.timepicker.js',
-                '/components/longtailvideo/jwplayer/jwplayer.js',
-                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/video.js")
             );
             
             if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
@@ -216,12 +216,12 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $this->_sendResponse($output, $template, $css, $js);
     }
 
-    public function getContentsAction ()
+    public function getContentsAction()
     {
         $this->_dataReader = Manager::getService('Contents');
         $returnArray = array();
         $data = $this->getRequest()->getParams();
-        if (isset($data['block']['contentId'])) {
+        if (isset($data['block']['contentId']) && ! empty($data['block']['contentId'])) {
             $content = $this->_dataReader->findById($data['block']['contentId']);
             $returnArray[] = array(
                 'text' => $content['text'],

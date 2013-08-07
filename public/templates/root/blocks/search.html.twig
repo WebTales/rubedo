@@ -1,7 +1,7 @@
 {% extends "root/blocks/contentlist.html.twig" %} 
 {% block mainContent %}
 <br />
-<div class="navbar">
+<div class="navbar" id="searchpage" data-searchparams='{{ searchParams }}'>
 	<div class="navbar-inner">
 		<a class="brand">{% if total > 1 %}{{"Search.ThereAre"|fotrans}}{% else %}{{"Search.ThereIs"|fotrans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if total > 1 %}{{"Search.Results"|fotrans}}{% else %}{{"Search.Result"|fotrans}}{% endif %}</a>
 		<ul class="nav pull-right">
@@ -12,7 +12,7 @@
 				{% if orderby == "lastUpdateTime" %}
 				{{"Search.Label.OrderByDate"|fotrans}}
 				{% endif %}
-				{% if orderby == "author" %}
+				{% if orderby == "createUser.fullName" %}
 				{{"Search.Label.OrderByAuthor"|fotrans}}
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
@@ -26,9 +26,9 @@
 						<a href="{{url({'orderby': 'lastUpdateTime'})}}">{{"Search.Label.OrderByDate"|fotrans}}</a>
 					</li>
 					{% endif %}
-					{% if orderby != "author" %}
+					{% if orderby != "createUser.fullName" %}
 					<li>
-						<a href="{{url({'orderby': 'author'})}}">{{"Search.Label.OrderByAuthor"|fotrans}}</a>
+						<a href="{{url({'orderby': 'createUser.fullName','orderbyDirection': 'asc'})}}">{{"Search.Label.OrderByAuthor"|fotrans}}</a>
 					</li>
 					{% endif %}
 				</ul>
@@ -63,7 +63,7 @@
 {% if displayMode != 'checkbox' %}
 <div class="navbar">
 	<div class="navbar-inner">
-		<p class="brand">Critères de recherche :&nbsp;&nbsp;
+		<p class="brand">{{ "Blocks.Search.Label.SearchCriteria" | fotrans }} :&nbsp;&nbsp;
 {% endif %}
 		{% for facet in activeFacets %}
 
@@ -92,7 +92,7 @@
 			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
 		</p>
 			<form class="form-search" action="{{url({},true)}}">
-				<input type="text" class="input-medium search-query" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
+				<input type="text" class="input-medium search-query {%  if autoComplete %}typeahead{%  endif %}" autocomplete="off" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
 			</form>
 		
 		{% for facet in facets %}
@@ -229,11 +229,11 @@
 				</li>
 				{% if current==0 %}
 				<li class="disabled">
-					<a href="#"><<</a>
+					<a href="#">&lt;&lt;</a>
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': current-1})}}"><<</a>
+					<a href="{{url({'pager': current-1})}}">&lt;&lt;</a>
 				</li>
 				{% endif %}
 				{%if current<wrap+1 or limit<10%}
@@ -257,11 +257,11 @@
 				{%endif%}
 				{% if current==pagecount-1%}
 				<li class="disabled">
-					<a href="#">>></a>
+					<a href="#">&gt;&gt;</a>
 				</li>
 				{% else %}
 				<li>
-					<a href="{{url({'pager': current+1})}}">>></a>
+					<a href="{{url({'pager': current+1})}}">&gt;&gt;</a>
 				</li>
 				{% endif %}
 			</ul>

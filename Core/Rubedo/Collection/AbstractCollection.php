@@ -433,10 +433,15 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $options            
      * @return array
      */
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         unset($obj['readOnly']);
-        return $this->_dataService->update($obj, $options);
+        $result = $this->_dataService->update($obj, $options);
+        if ($result['success']) {
+            $result['data'] = $this->_addReadableProperty($result['data']);
+        }
+        
+        return $result;
     }
 
     /**

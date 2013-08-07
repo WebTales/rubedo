@@ -25,9 +25,10 @@ use Rubedo\Interfaces\Collection\IDamTypes, Rubedo\Services\Manager, WebTales\Mo
  * @category Rubedo
  * @package Rubedo
  */
-class DamTypes extends AbstractCollection implements IDamTypes
+class DamTypes extends AbstractLocalizableCollection implements IDamTypes
 {
-
+    protected static $nonLocalizableFields = array("fields","vocabularies","mainFileType","activateDisqus","readOnly","workspaces");
+    protected static $labelField = 'type';
     protected $_indexes = array(
         array(
             'keys' => array(

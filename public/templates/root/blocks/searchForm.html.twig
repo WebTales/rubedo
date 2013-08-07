@@ -3,7 +3,7 @@
     {% if searchPage %}
         <form class="navbar-search" action="{{url({'pageId': searchPage})}}">
         	<input type="text" class="search-query"
-        		placeholder="{% if placeholder %}{{placeholder}}{% else %}Rechercher{% endif %}"
+        		placeholder="{% if placeholder %}{{placeholder}}{% else %}{{ "Search.Label.Search" | fotrans }}{% endif %}"
         		name="query">
         </form>
     {% endif %}

@@ -46,140 +46,217 @@ class DataIndex extends DataAbstract implements IDataIndex
     protected $_documents;
 
     /**
-     * Get ES type structure
+     * Returns mapping from content or dam type data
      *
-     * @param string $id
-     *            content type id
+     * @param array $data
+     *        string $type = 'content' or 'dam'
+     *            
      * @return array
      */
-    public function getContentTypeStructure ($id)
-    {
-        $returnArray = array();
-        
-        $searchableFields = array(
-            'lastUpdateTime',
-            'text',
-            'text_not_analysed',
-            'summary',
-            'type',
-            'author',
-            'target'
-        );
-        
-        if (! isset($this->_contentTypeCache[$id])) {
-            // Get content type config by id
-            $this->_contentTypeCache[$id] = Manager::getService('ContentTypes')->findById($id);
-        }
-        
-        // System contents are not indexed
-        if (isset($this->_contentTypeCache[$id]['system']) and $this->_contentTypeCache[$id]['system'] == TRUE) {
-            return array();
-        }
-        
-        // Get indexable fields
-        $fields = $this->_contentTypeCache[$id]["fields"];
-        foreach ($fields as $field) {
-            if ($field['config']['searchable']) {
-                $searchableFields[] = $field['config']['name'];
-            }
-        }
-        
-        $returnArray['searchableFields'] = $searchableFields;
-        return $returnArray;
-    }
+       
+    public function getIndexMapping (array $data, $type) {
 
-    /**
-     * Get ES DAM type structure
-     *
-     * @param string $id
-     *            DAM type id
-     * @return array
-     */
-    public function getDamTypeStructure ($id)
-    {
-        $returnArray = array();
-        $searchableFields = array(
-            'lastUpdateTime',
-            'text',
-            'text_not_analysed',
-            'type',
-            'author',
-            'fileSize',
-            'target'
-        );
-        
-        if (! isset($this->_damTypeCache[$id])) {
-            // Get content type config by id
-            $this->_damTypeCache[$id] = Manager::getService('DamTypes')->findById($id);
-        }
-        
-        // Search summary field
-        $fields = $this->_damTypeCache[$id]["fields"];
-        foreach ($fields as $field) {
-            if ($field['config']['searchable']) {
-                $searchableFields[] = $field['config']['name'];
-            }
-        }
-        
-        $returnArray['searchableFields'] = $searchableFields;
-        return $returnArray;
-    }
-
-    /**
-     * Returns the indexable fields and their configuration
-     *
-     * @param array $fields
-     *            contain the fields and their configuration
-     * @return array
-     */
-    public function getIndexMapping (array $fields)
-    {
-        $indexMapping = array();
-        
-        foreach ($fields as $field) {
+       $mapping = array();
+       
+       if (isset($data['fields']) && is_array($data['fields'])) {
+           
+            // get active languages
+            $languages = Manager::getService("Languages");
+            $activeLanguages = $languages->getActiveLanguages();
             
-            // Only searchable fields get indexed
-            if ($field['config']['searchable']) {
+            // get active analysers
+            $activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
+            
+            // get vocabularies
+            $vocabularies = $this->_getVocabularies($data);
+                        
+            // Set generic mapping for contents & dam
+            
+            $generic_mapping = array(
+                'objectType' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
+                'lastUpdateTime' => array('type' => 'date','store' => 'yes'),
+                'createUser' => array('type' => 'object','store' => 'yes', 'properties' => array(
+                    'id' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                    'fullName' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                    'login' => array('type' => 'string', 'index' => 'no', 'store' => 'no')
+                )),
+                'text' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                'target' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                'writeWorkspace' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                'availableLanguages' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                'version' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes')
+            );
+            
+            // Set specific mapping for contents
+            
+            if ($type == 'content') {
+                $specific_mapping = array(
+                    'summary' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                    'contentType' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                    'startPublicationDate' => array('type' => 'integer', 'index' => 'not_analyzed', 'store' => 'yes'),
+                    'endPublicationDate' => array('type' => 'integer', 'index' => 'not_analyzed', 'store' => 'yes')
+                );
                 
-                $name = $field['config']['fieldLabel'];
-                $store = "yes";
-                
-                switch ($field['cType']) {
-                    case 'datefield':
-                        $indexMapping[$name] = array(
-                            'type' => 'date',
-                            'format' => 'yyyy-MM-dd',
-                            'store' => $store
-                        );
-                        break;
-                    case 'document':
-                        $indexMapping[$name] = array(
-                            'type' => 'attachment',
-                            'store' => 'no'
-                        );
-                        break;
-                    case 'localiserField':
-                        $indexMapping["position_location"] = array(
-                            'type' => 'geo_point',
-                            'store' => 'yes'
-                        );
-                        $indexMapping["position_adress"] = array(
-                            'type' => 'string',
-                            'store' => 'yes'
-                        );
-                        break;
-                    default:
-                        $indexMapping[$name] = array(
-                            'type' => 'string',
-                            'store' => $store
-                        );
-                        break;
-                }
             }
+            
+            // Set specific mapping for dam
+            
+            if ($type == 'dam') {
+                $specific_mapping = array(
+                    'damType' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                    'fileSize' => array('type' => 'integer', 'store' => 'yes'),
+                    'file' => array('type' => 'attachment')
+                );            
+            }
+            
+            // Merge generic and specific mappings
+            
+            $mapping = array_merge($generic_mapping, $specific_mapping);
+            
+            // Add Taxonomies
+            foreach ($vocabularies as $vocabularyName) {
+                $mapping["taxonomy." . $vocabularyName] = array(
+                    'type' => 'string',
+                    'index' => 'not_analyzed',
+                    'store' => 'no'
+                );
+            }
+                
+            // Add Fields
+            
+            $fields = $data['fields'];
+            
+            // Add system fields : text and summary for contents, title for dam
+            
+            if ($type =='content') {
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "text",
+                                "fieldLabel" => "text",
+                                "searchable" => true,
+                                "localizable" => true
+                        )
+                );
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "summary",
+                                "fieldLabel" => "summary",
+                                "searchable" => true,
+                                "localizable" => true
+                        )
+                );
+            }
+            
+            if ($type =='dam') {
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "title",
+                                "fieldLabel" => "text",
+                                "searchable" => true,
+                                "localizable" => true
+                        )
+                );
+            }
+            
+            // unmapped fields are not allowed in fields and i18n
+            $mapping['fields']=array('dynamic'=>false,'type'=>'object');
+            foreach($activeLanguages as $lang) {
+                $mapping['i18n']['properties'][$lang['locale']]['properties']['fields']=array('dynamic'=>false,'type'=>'object');
+            }
+            
+            foreach ($fields as $field) {
+                
+                // Only searchable fields get indexed
+                if ($field['config']['searchable']) {
+                    
+                    $name = $field['config']['name'];
+                    $store = "yes";
+                                       
+                    switch ($field['cType']) {
+                        case 'datefield':
+                            $config = array('type' => 'string', 'store' => $store);
+                            if (!$field['config']['localizable']) {
+                                $mapping['fields']['properties'][$name] = $config;
+                            } else {
+                                foreach($activeLanguages as $lang) {
+                                    $mapping['i18n']['properties'][$lang['locale']]['properties']['fields'][$name] = $config;
+                                }
+                            }
+                            break;
+                        case 'document':
+                            $config = array('type' => 'attachment','store' => 'no');
+                            if (!$field['config']['localizable']) {
+                                $mapping['fields']['properties'][$name] = $config;
+                            } else {
+                                foreach($activeLanguages as $lang) {
+                                    $mapping['i18n']['properties'][$lang['locale']]['properties']['fields'][$name] = $config;
+                                }
+                            }
+                            break;
+                        case 'localiserField':
+                            $config = array('properties' => array(
+                                'location' => array('properties' => array(
+                                    'coordinates' => array('type' => 'geo_point','store' => 'yes')
+                                 )),
+                                'address' => array('type' => 'string','store' => 'yes'),
+                            ));
+                            if (!$field['config']['localizable']) {
+                                $mapping['fields']['properties'][$name] = $config;
+                            } else {
+                                foreach($activeLanguages as $lang) {
+                                    $mapping['i18n']['properties'][$lang['locale']]['properties']['fields'][$name] = $config;
+                                }
+                            }
+                            break;
+                        default:                     	
+                            if (!$field['config']['localizable']) {
+                                $_autocomplete = 'autocomplete_nonlocalized';
+                                $_all = 'all_nonlocalized';
+                                $config = array(
+                                        "type" => "multi_field",
+                                        "path" => "just_name",
+                                        "fields" => array(
+                                                $name => array("type" => "string", 'store' => $store),
+                                                $_all => array("type" => "string", 'store' => $store),
+                                                $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
+                                        )
+                                );
+                                $mapping['fields']['properties'][$name] = $config;
+                            } else {
+                                foreach($activeLanguages as $lang) {
+                                    $locale = $lang['locale'];
+                                    $fieldName = $name.'_'.$locale;
+                                    $_all = 'all_'.$locale;
+                                    $_autocomplete = 'autocomplete_'.$locale;
+                                    if (in_array($locale.'_analyzer',$activeAnalysers))	{
+                                        $lg_analyser = $locale.'_analyzer';
+                                    } else {
+                                        $lg_analyser = 'default';
+                                    }
+                                    $config = array(
+        									"type" => "multi_field",
+        									"path" => "just_name",
+        									"fields" => array(
+        											$fieldName => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+        											$_all => array("type" => "string", "analyzer" => $lg_analyser, 'store' => $store),
+        									        $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
+        									)
+        							);
+                                    $mapping['i18n']['properties'][$locale]['properties']['fields']['properties'][$name] = $config;
+                                }                                
+                            }
+                        }
+                    }
+                }
+           }
+
+           return $mapping;
+
+         
         }
-        
-        return $indexMapping;
-    }
     
     /**
      * Return all the vocabularies contained in the id list
@@ -197,7 +274,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         return $vocabularies;
     }
-    
+   
     /**
      * Index ES type for new or updated content type
      *
@@ -213,6 +290,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Unicity type id check
         $mapping = self::$_content_index->getMapping();
+        
         if (array_key_exists($id, $mapping[self::$_options['contentIndex']])) {
             if ($overwrite) {
                 // delete existing content type
@@ -222,80 +300,14 @@ class DataIndex extends DataAbstract implements IDataIndex
                 throw new \Rubedo\Exceptions\Server('%1$s type already exists', "Exception64", $id);
             }
         }
-        
-        $vocabularies = $this->_getVocabularies($data);
-        
+               
         // Create mapping
-        if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
-        }
-        
-        // Add systems metadata
-        $indexMapping["lastUpdateTime"] = array(
-            'type' => 'date',
-            'store' => 'yes'
-        );
-        $indexMapping["text"] = array(
-            'type' => 'string',
-            'store' => 'yes'
-        );
-        $indexMapping["text_not_analyzed"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["objectType"] = array(
-            'type' => 'string',
-            'store' => 'yes'
-        );
-        $indexMapping["summary"] = array(
-            'type' => 'string',
-            'store' => 'yes'
-        );
-        $indexMapping["author"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["contentType"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["target"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["writeWorkspace"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["startPublicationDate"] = array(
-            'type' => 'integer',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["endPublicationDate"] = array(
-            'type' => 'integer',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        
-        // Add Taxonomies
-        foreach ($vocabularies as $vocabularyName) {
-            $indexMapping["taxonomy." . $vocabularyName] = array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
-                'store' => 'no'
-            );
-        }
-        
+        $indexMapping = $this->getIndexMapping($data,'content');
+     
         // Create new ES type if not empty
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_content_index, $id);
+            $type = new \Elastica\Type(self::$_content_index, $id);
             
             // Set mapping
             $type->setMapping($indexMapping);
@@ -332,90 +344,19 @@ class DataIndex extends DataAbstract implements IDataIndex
                 throw new \Rubedo\Exceptions\Server('%1$s type already exists', "Exception64", $id);
             }
         }
-        
-        $vocabularies = $this->_getVocabularies($data);
-        
+              
         // Create mapping
-        if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
-        }
-        
-        // Add systems metadata
-        $indexMapping["lastUpdateTime"] = array(
-            'type' => 'date',
-            'store' => 'yes'
-        );
-        $indexMapping["text"] = array(
-            'type' => 'string',
-            'store' => 'yes'
-        );
-        $indexMapping["text_not_analyzed"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["objectType"] = array(
-            'type' => 'string',
-            'store' => 'yes'
-        );
-        $indexMapping["summary"] = array(
-            'type' => 'string',
-            'store' => 'yes'
-        );
-        $indexMapping["author"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["damType"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["fileSize"] = array(
-            'type' => 'integer',
-            'store' => 'yes'
-        );
-        $indexMapping["file"] = array(
-            'type' => 'attachment'
-        );
-        $indexMapping["target"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["writeWorkspace"] = array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["startPublicationDate"] = array(
-            'type' => 'integer',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        $indexMapping["endPublicationDate"] = array(
-            'type' => 'integer',
-            'index' => 'not_analyzed',
-            'store' => 'yes'
-        );
-        
-        // Add Taxonomies
-        foreach ($vocabularies as $vocabularyName) {
-            $indexMapping["taxonomy." . $vocabularyName] = array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
-                'store' => 'no'
-            );
-        }
-        
+        $indexMapping = $this->getIndexMapping($data,'dam');
+             
         // If there is no searchable field, the new type is not created
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_dam_index, $id);
+            $type = new \Elastica\Type(self::$_dam_index, $id);
             
             // Set mapping
-            $type->setMapping($indexMapping);
+            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
+            $indexMappingObject->disableSource();
+            $type->setMapping($indexMappingObject);
             
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
@@ -453,9 +394,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $vocabularies = $this->_getVocabularies($data);
     
         // Create mapping
-        if (isset($data["fields"]) && is_array($data["fields"])) {
-            $indexMapping = $this->getIndexMapping($data["fields"]);
-        }
+        $indexMapping = $this->getIndexMapping($data);
     
         // Add systems metadata
         $indexMapping["lastUpdateTime"] = array(
@@ -479,10 +418,12 @@ class DataIndex extends DataAbstract implements IDataIndex
         // If there is no searchable field, the new type is not created
         if (! empty($indexMapping)) {
             // Create new type
-            $type = new \Elastica_Type(self::$_user_index, $id);
+            $type = new \Elastica\Type(self::$_user_index, $id);
     
             // Set mapping
-            $type->setMapping($indexMapping);
+            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
+            $indexMappingObject->disableSource();
+            $type->setMapping($indexMappingObject);
     
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
@@ -501,7 +442,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContentType ($id)
     {
-        $type = new \Elastica_Type(self::$_content_index, $id);
+        $type = new \Elastica\Type(self::$_content_index, $id);
         $type->delete();
     }
 
@@ -517,7 +458,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContent ($typeId, $id)
     {
-        $type = new \Elastica_Type(self::$_content_index, $typeId);
+        $type = new \Elastica\Type(self::$_content_index, $typeId);
         $type->deleteById($id);
     }
 
@@ -531,7 +472,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDamType ($id)
     {
-        $type = new \Elastica_Type(self::$_dam_index, $id);
+        $type = new \Elastica\Type(self::$_dam_index, $id);
         $type->delete();
     }
 
@@ -547,7 +488,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDam ($typeId, $id)
     {
-        $type = new \Elastica_Type(self::$_dam_index, $typeId);
+        $type = new \Elastica\Type(self::$_dam_index, $typeId);
         $type->deleteById($id);
     }
 
@@ -561,129 +502,91 @@ class DataIndex extends DataAbstract implements IDataIndex
      *            live if true, workspace if live
      * @return array
      */
+    
     public function indexContent ($data, $bulk = false)
     {
         $typeId = $data['typeId'];
-        
+    
         // Load ES type
         $contentType = self::$_content_index->getType($typeId);
-        
-        // Get content type structure
-        $typeStructure = $this->getContentTypeStructure($typeId);
-        
-        // System contents are not indexed
-        if (empty($typeStructure)) {
-            return;
-        }
-        
-        // Add fields to index
-        $contentData = array();
-        
-        if (isset($data['fields'])) {
-            foreach ($data['fields'] as $field => $var) {
-                
-                // only index searchable fields
-                if (in_array($field, $typeStructure['searchableFields'])) {
-                    if (is_array($var)) {
-                        foreach ($var as $key => $subvalue) {
-                            if ($field != 'position') {
-                                $contentData[$field][$key] = (string) $subvalue;
-                            } else {
-                                if ($key == 'address') {
-                                    $contentData['position_address'] = (string) $subvalue;
-                                }
-                                if ($key == 'location') {
-                                    if (isset($subvalue['coordinates'][0]) && isset($subvalue['coordinates'][1])) {
-                                        $lon = $subvalue['coordinates'][0];
-                                        $lat = $subvalue['coordinates'][1];
-                                        
-                                        $contentData['position_location'] = array(
-                                            (float) $lon,
-                                            (float) $lat
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        $contentData[$field] = (string) $var;
-                    }
-                }
-            }
-        }
-        
-        // Add default meta's
-        $contentData['objectType'] = 'content';
-        $contentData['contentType'] = $typeId;
-        $contentData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : null;
-        $contentData['startPublicationDate'] = isset($data['startPublicationDate']) ? intval($data['startPublicationDate']) : null;
-        $contentData['endPublicationDate'] = isset($data['endPublicationDate']) ? intval($data['endPublicationDate']) : null;
-        $contentData['text'] = (string) $data['text'];
-        $contentData['text_not_analyzed'] = (string) $data['text'];
-        $contentData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
-        $contentData['status'] = (isset($data['status'])) ? (string) $data['status'] : 'unknown';
-        $contentData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
-        $contentData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
-        
-        // Add taxonomy
+       
+        // Initialize data array to push into index
+     
+        $indexData = array(
+            'objectType' => 'content',
+            'contentType' => $typeId,
+            'text' => $data['text'],
+            'fields' => $data['fields'],
+            'i18n' => $data['i18n'],
+            'writeWorkspace' => $data['writeWorkspace'],
+            'startPublicationDate' => $data['startPublicationDate'],
+            'endPublicationDate' => $data['endPublicationDate'],
+            'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0,
+            'status' => $data['status'],
+            'createUser' => $data['createUser'],
+            'availableLanguages' => array_keys($data['i18n']),
+            'version' => $data['version']
+        );
+    
+         // Add taxonomy
         if (isset($data["taxonomy"])) {
-            
+    
             $taxonomyService = Manager::getService('Taxonomy');
             $taxonomyTermsService = Manager::getService('TaxonomyTerms');
-            
+    
             foreach ($data["taxonomy"] as $vocabulary => $terms) {
                 if (! is_array($terms)) {
                     continue;
                 }
-                
+    
                 $taxonomy = $taxonomyService->findById($vocabulary);
                 $termsArray = array();
-                
+    
                 foreach ($terms as $term) {
-                	if($term == 'all'){
-                		continue;
-                	}
+                    if($term == 'all'){
+                        continue;
+                    }
                     $term = $taxonomyTermsService->findById($term);
-                    
+    
                     if (! $term) {
                         continue;
                     }
-                    
+    
                     if (! isset($termsArray[$term["id"]])) {
                         $termsArray[$term["id"]] = $taxonomyTermsService->getAncestors($term);
                         $termsArray[$term["id"]][] = $term;
                     }
-                    
+    
                     foreach ($termsArray[$term["id"]] as $tempTerm) {
-                        $contentData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+                        $indexData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
             }
         }
         
         // Add read workspace
-        $contentData['target'] = array();
+        $indexData['target'] = array();
         if (isset($data['target'])) {
             if (! is_array($data['target'])) {
                 $data['target'] = array(
-                    $data['target']
+                        $data['target']
                 );
             }
             foreach ($data['target'] as $key => $target) {
-                $contentData['target'][] = (string) $target;
+                $indexData['target'][] = (string) $target;
             }
         }
-        if (empty($contentData['target'])) {
-            $contentData['target'][] = 'global';
+        if (empty($indexData['target'])) {
+            $indexData['target'][] = 'global';
         }
-        
+
         // Add document
-        $currentDocument = new \Elastica_Document($data['id'], $contentData);
-        
-        if (isset($contentData['attachment']) && $contentData['attachment'] != '') {
-            $currentDocument->addFile('file', $contentData['attachment']);
+        $currentDocument = new \Elastica\Document($data['id'], $indexData);
+    
+        if (isset($indexData['attachment']) && $indexData['attachment'] != '') {
+            $currentDocument->addFile('file', $indexData['attachment']);
         }
-        
+    
         // Add content to content type index
         if (! $bulk) {
             $contentType->addDocument($currentDocument);
@@ -691,8 +594,8 @@ class DataIndex extends DataAbstract implements IDataIndex
         } else {
             $this->_documents[] = $currentDocument;
         }
-    }
-
+    }      
+    
     /**
      * Create or update index for existing Dam document
      *
@@ -706,41 +609,23 @@ class DataIndex extends DataAbstract implements IDataIndex
         
         // Load ES dam type
         $damType = self::$_dam_index->getType($typeId);
-        
-        // Get dam type structure
-        $typeStructure = $this->getDamTypeStructure($typeId);
-        
-        // Add fields to index
-        $damData = array();
-        
-        if (array_key_exists('fields', $data) && is_array($data['fields'])) {
-            foreach ($data['fields'] as $field => $var) {
-                
-                // only index searchable fields
-                if (in_array($field, $typeStructure['searchableFields'])) {
-                    if (is_array($var)) {
-                        foreach ($var as $key => $subvalue) {
-                            $damData[$field][] = (string) $subvalue;
-                        }
-                    } else {
-                        $damData[$field] = (string) $var;
-                    }
-                }
-            }
-        }
-        
-        // Add default meta's
-        $damData['damType'] = $typeId;
-        $damData['objectType'] = 'dam';
-        $damData['writeWorkspace'] = isset($data['writeWorkspace']) ? $data['writeWorkspace'] : array();
-        $damData['text'] = (string) $data['title'];
-        $damData['text_not_analyzed'] = (string) $data['title'];
-        $fileSize = isset($data['fileSize']) ? (integer) $data['fileSize'] : 0;
-        $damData['fileSize'] = $fileSize;
-        $damData['lastUpdateTime'] = (isset($data['lastUpdateTime'])) ? (string) $data['lastUpdateTime'] : 0;
-        $damData['author'] = (isset($data['createUser'])) ? (string) $data['createUser']['id'] : 'unknown';
-        $damData['authorName'] = (isset($data['createUser'])) ? (string) $data['createUser']['fullName'] : 'unknown';
-        
+               
+        // Initialize data array to push into index
+     
+        $indexData = array(
+            'objectType' => 'dam',
+            'damType' => $typeId,
+            'text' => $data['title'],
+            'fields' => $data['fields'],
+            'i18n' => $data['i18n'],
+            'writeWorkspace' => $data['writeWorkspace'],
+            'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0,
+            'createUser' => $data['createUser'],
+            'availableLanguages' => array_keys($data['i18n']),
+            'fileSize' => isset($data['fileSize']) ? (integer) $data['fileSize'] : 0,
+            'version' => $data['version']
+        );       
+
         // Add taxonomy
         if (isset($data["taxonomy"])) {
             $taxonomyTermsService = Manager::getService('TaxonomyTerms');
@@ -767,22 +652,22 @@ class DataIndex extends DataAbstract implements IDataIndex
                     }
                     
                     foreach ($termsArray[$term["id"]] as $tempTerm) {
-                        $damData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+                        $indexData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
             }
         }
         
         // Add target
-        $damData['target'] = array();
+        $indexData['target'] = array();
         if (isset($data['target'])) {
             foreach ($data['target'] as $key => $target) {
-                $damData['target'][] = (string) $target;
+                $indexData['target'][] = (string) $target;
             }
         }
         
         // Add document
-        $currentDam = new \Elastica_Document($data['id'], $damData);
+        $currentDam = new \Elastica\Document($data['id'], $indexData);
         
         if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
             

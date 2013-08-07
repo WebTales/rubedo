@@ -12,7 +12,8 @@
 		"longtailvideo/jwplayer": "6",
 		"webtales/rubedo-localization": "dev-master",
 		"jschr/bootstrap-modal": "2.1",
-		"WebTales/bsie": "dev-master"
+		"WebTales/bsie": "dev-master",
+		"stowball/jQuery-rwdImageMaps": "1.0"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -87,6 +88,16 @@
 				"version": "0.3.2",
 				"dist": {
 					"url": "http://fgelinas.com/code/timepicker/releases/jquery-ui-timepicker-0.3.2.zip",
+					"type": "zip"
+				}
+			}
+		},{
+			"type": "package",
+			"package": {
+				"name": "stowball/jQuery-rwdImageMaps",
+				"version": "1.0",
+				"dist": {
+					"url": "https://github.com/stowball/jQuery-rwdImageMaps/archive/master.zip",
 					"type": "zip"
 				}
 			}

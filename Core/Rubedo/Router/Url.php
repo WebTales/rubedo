@@ -201,7 +201,10 @@ class Url implements IUrl
             if (is_array($value)) {
                 foreach ($value as $arrayValue) {
                     $arrayValue = ($encode) ? urlencode($arrayValue) : $arrayValue;
-                    $queryStringArray[] = $key . '[]=' . $arrayValue;
+                    $string = $key;
+                    $string .= ($encode) ? urlencode('[]') : '[]';
+                    $string .=  '=' . $arrayValue;
+                    $queryStringArray[] = $string;
                 }
             } else {
                 if ($encode)

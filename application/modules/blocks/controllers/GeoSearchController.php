@@ -39,7 +39,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $results['blockTitle'] = $this->getParam('blockTitle');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         $css = array();
-        $js = array();
+        $js=array();
         $this->_sendResponse($results, $template, $css, $js);
     }
 
@@ -53,7 +53,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $params['block-config']['displayedFacets']=isset($params['displayedFacets']) ? $params['displayedFacets'] : array();
         $params['block-config']['facetOverrides']=isset($params['facetOverrides']) ? $params['facetOverrides'] : \Zend_Json::encode(array());
         $params['block-config']['displayMode']=isset($params['displayMode']) ? $params['displayMode'] : 'standard';
-
+        $params['block-config']['autoComplete']=isset($params['autoComplete']) ? $params['autoComplete'] : false;
+        
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
             $this->_option = $params['option'];
@@ -89,6 +90,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         
         $results['displayMode'] =  $params['block-config']['displayMode'];
         
+        $results['autoComplete'] =  $params['block-config']['autoComplete'];
+        
         $results['facetsToHide'] = $facetsToHide;
         
         $activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/activeFacets.html.twig");
@@ -102,18 +105,47 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $this->_helper->json($results);
     }
 
+    public function xhrGetSuggestsAction ()
+    {
+        // get search parameters
+        
+        $params = \Zend_Json::decode($this->getRequest()->getParam('searchParams'));
+        
+        // get current language
+        $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        
+        // set query
+        $params['query'] = $this->getRequest()->getParam('query');
+         
+        // set field for autocomplete
+        $params['field'] = 'autocomplete_'.$currentLocale;
+         
+        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        
+        $elasticaQuery = Manager::getService('ElasticDataSearch');
+        $elasticaQuery->init();
+        
+        $suggestTerms = $elasticaQuery->search($params,'suggest');
+        
+        $data = array(
+                'terms' => $suggestTerms
+        );
+        $this->_helper->json($data);    
+
+    }
+    
     protected function _clusterResults ($results)
     {
         // return $results;
         $tmpResults = array();
         foreach ($results['data'] as $item) {
-            $subkey = (string) $item['position_location'][0] . '_' . (string) $item['position_location'][1];
+            $subkey = $item['fields.position.location.coordinates'];
             if (! isset($tmpResults[$subkey])) {
-                $tmpResults[$subkey]['position_location'] = $item['position_location'];
+                $tmpResults[$subkey]['position_location'] = $item['fields.position.location.coordinates'];
                 $tmpResults[$subkey]['count'] = 0;
                 $tmpResults[$subkey]['id'] = '';
             }
-            unset($item['position_location']);
+            unset($item['fields.position.location.coordinates']);
             $tmpResults[$subkey]['count'] ++;
             if ($tmpResults[$subkey]['count'] > 1) {
                 $tmpResults[$subkey]['title'] = $tmpResults[$subkey]['count'];
@@ -150,8 +182,13 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                     $intermedVar = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId']);
                     $entity['type'] = $intermedVar['type'];
                 }
-                $templateName = preg_replace('#[^a-zA-Z]#', '', $entity['type']);
-                $templateName .= ".html.twig";
+                
+                if (isset($entity['code']) && !empty($entity['code'])) {
+                    $templateName = $entity['code'] . ".html.twig";
+                } else {
+                    $templateName = preg_replace('#[^a-zA-Z]#', '', $entity["type"]);
+                    $templateName .= ".html.twig";
+                }
                 $contentOrDamTemplate = $templateService->getFileThemePath("blocks/geoSearch/single/" . $templateName);
                 
                 if (! is_file($templateService->getTemplateDir() . '/' . $contentOrDamTemplate)) {
@@ -181,7 +218,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                 
                 $twigVars = array();
                 $twigVars['result'] = $entity;
-                $twigVars['lang'] = $sessionService->get('lang', 'fr');
+                $twigVars['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
                 $twigVars['result']['terms'] = $termsArray;
                 
                 $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);

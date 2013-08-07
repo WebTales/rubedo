@@ -25,7 +25,7 @@ use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager, WebTales\Mongo
  * @category Rubedo
  * @package Rubedo
  */
-class Pages extends AbstractCollection implements IPages
+class Pages extends AbstractLocalizableCollection implements IPages
 {
 
     protected $_indexes = array(
@@ -118,6 +118,23 @@ class Pages extends AbstractCollection implements IPages
             'required' => true
         )
     );
+    
+    /**
+     * Contain common fields
+     */
+    protected static $nonLocalizableFields = array(
+        'workspace',
+        'inheritWorkspace',
+        'expandable',
+        'excludeFromMenu',
+        'orderValue',
+        'maskId',
+        'site',
+        'blocks',
+        'parentId'
+    );
+    
+    protected static $isLocaleFiltered = true;
 
     /**
      * Only access to content with read access
@@ -149,11 +166,22 @@ class Pages extends AbstractCollection implements IPages
     {
         if (! $siteId) {
             return null;
+        }else{
+            $site = Manager::getService('Sites')->findById($siteId);
+            $locales = array();
+            if($site and isset($site['languages']) and is_array($site['languages'])){
+                $locales = $site['languages'];
+            }
         }
         $filters = Filter::factory('And');
         
-        $filter = Filter::factory('Value');
-        $filter->setName('pageURL')->setValue($urlSegment);
+        $filter = Filter::factory('Or');
+        
+        $filter->addFilter(Filter::factory('Value')->setName('pageURL')->setValue($urlSegment));
+        foreach($locales as $locale){
+            $filter->addFilter(Filter::factory('Value')->setName('i18n.'.$locale.'.pageURL')->setValue($urlSegment));
+        }
+        //$filter->setName('i18n.$.pageURL')->setValue($urlSegment);
         $filters->addFilter($filter);
         
         $filter = Filter::factory('Value');
@@ -302,15 +330,19 @@ class Pages extends AbstractCollection implements IPages
             $obj['text'] = $obj['title'];
         }
         
-        // set pageUrl
-        if (empty($obj['pageURL'])) {
-            $dataUrl = $obj['title'];
-        } else {
-            $dataUrl = $obj['pageURL'];
+        //ensure validity of pageUrl Fields for each locale
+        foreach($obj['i18n'] as $locale => $value){
+            // set pageUrl
+            if (empty($value['pageURL'])) {
+                $dataUrl = $value['title'];
+            } else {
+                $dataUrl = $value['pageURL'];
+            }
+            
+            // filter URL
+            $obj['i18n'][$locale]['pageURL'] = $this->filterUrl($dataUrl);
         }
-        
-        // filter URL
-        $obj['pageURL'] = $this->filterUrl($dataUrl);
+       
         if (isset($obj['id'])) {
             $obj = $this->writeBlocks($obj);
         }

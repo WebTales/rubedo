@@ -111,11 +111,13 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
             foreach ($typeArray['data'] as $dataType) {
-                /*
-                 * $dataType['type']= htmlentities($dataType['type'], ENT_NOQUOTES, 'utf-8');//Convert special chars to htmlentities $dataType['type']= preg_replace('#&([A-za-z])(?:acute|cedil|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $dataType['type']);//Replace all special char by normal char $dataType['type']= preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $dataType['type']); // to special char e.g. '&oelig;'
-                 */
-                
-                $path = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" . preg_replace('#[^a-zA-Z]#', '', $dataType['type']) . ".html.twig");
+                if (isset($dataType['code']) && !empty($dataType['code'])) {
+                    $templateName = $dataType['code'] . ".html.twig";
+                } else {
+                    $templateName = preg_replace('#[^a-zA-Z]#', '', $dataType["type"]);
+                    $templateName .= ".html.twig";
+                }
+                $path = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/" . $templateName);
                 if (Manager::getService('FrontOfficeTemplates')->templateFileExists($path)) {
                     $contentTypeArray[(string) $dataType['id']] = $path;
                 } else {
@@ -129,6 +131,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $fields['id'] = (string) $vignette['id'];
                 $fields['typeId'] = $vignette['typeId'];
                 $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
+                $fields["locale"] = $vignette["locale"];
                 $data[] = $fields;
             }
             $output['blockConfig'] = $blockConfig;

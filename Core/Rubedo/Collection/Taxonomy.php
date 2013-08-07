@@ -25,9 +25,13 @@ use Rubedo\Interfaces\Collection\ITaxonomy, Rubedo\Services\Manager, WebTales\Mo
  * @category Rubedo
  * @package Rubedo
  */
-class Taxonomy extends AbstractCollection implements ITaxonomy
+class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
 {
 
+    protected static $nonLocalizableFields = array("mandatory","workspaces","facetOperator","readOnly","order","expandable","inputAsTree","multiSelect");
+    
+    protected static $labelField = 'name';
+    
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -89,6 +93,14 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
     {
         $this->_collectionName = 'Taxonomy';
         parent::__construct();
+        
+        foreach (Manager::getService('Languages')->getActiveLocales() as $locale){
+            $temp[$locale] = array();
+            $temp[$locale]['locale'] = $locale;
+            $temp[$locale]['name'] = Manager::getService('Translate')->getTranslation("Taxonomy.Navigation", $locale);
+        }        
+        $this->_virtualNavigationVocabulary['i18n'] = $temp;
+        $this->_virtualNavigationVocabulary['locale'] = AbstractLocalizableCollection::getWorkingLocale();
     }
 
     /**
@@ -272,10 +284,22 @@ class Taxonomy extends AbstractCollection implements ITaxonomy
         if ($obj['id'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access('You can not update navigation vocabulary', "Exception53");
         }
-        if ($obj['name'] == 'Navigation') {
+        
+        $locale = isset($obj['locale'])?$obj['locale']:self::getDefaultLocale();
+        
+        if ($obj['i18n'][$locale]['name'] == 'Navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t create a navigation vocabulary', "Exception52");
         }
         $obj = $this->_addDefaultWorkspace($obj);
+        
+        foreach($origObj['i18n'] as $locale => $value){
+            if(!isset($obj['i18n'][$locale])){
+                $wasFiltered = AbstractCollection::disableUserFilter();
+                Manager::getService('TaxonomyTerms')->removeI18nByVocabularyId($obj['id'],$locale);
+                AbstractCollection::disableUserFilter($wasFiltered);
+            }
+        }
+        
         return parent::update($obj, $options);
     }
 

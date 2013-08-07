@@ -89,6 +89,9 @@ class Translate implements ITranslate
         }
         
         $translatedValue = $this->getTranslation($code, $language);
+        if ($translatedValue == null) {
+            $translatedValue = $this->getTranslation($code, "en");
+        }
         
         if ($translatedValue == null) {
             $translatedValue = $defaultLabel;
@@ -96,12 +99,50 @@ class Translate implements ITranslate
         
         return $translatedValue;
     }
-
-    public function getTranslation ($code, $language)
+    
+    /**
+     * translate a label given by its code and its default value
+     *
+     * @param string $code
+     * @param string $defaultLabel
+     * @return string
+     */
+    public function translateInWorkingLanguage ($code, $defaultLabel = "")
     {
-        $this->loadLanguage($language);
-        if (isset(self::$translationArray[$language][$code])) {
+        $language = \Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
+        if ($language === null) {
+            $language = self::$defaultLanguage;
+        }
+    
+        $translatedValue = $this->getTranslation($code, $language);
+        if ($translatedValue == null) {
+            $translatedValue = $this->getTranslation($code, "en");
+        }
+    
+        if ($translatedValue == null) {
+            $translatedValue = $defaultLabel;
+        }
+    
+        return $translatedValue;
+    }
+
+    public function getTranslation($code, $language,$fallBack = null)
+    {
+        if(isset($language)){
+            $this->loadLanguage($language);
+        }
+        if(isset($fallBack)){
+            $this->loadLanguage($fallBack);
+        }
+        
+        $this->loadLanguage('en');
+        
+        if (isset($language) && isset(self::$translationArray[$language][$code])) {
             return self::$translationArray[$language][$code];
+        } elseif (isset($fallBack) && isset(self::$translationArray[$fallBack][$code])) {
+            return self::$translationArray[$fallBack][$code];
+        } elseif (isset(self::$translationArray['en'][$code])) {
+            return self::$translationArray['en'][$code];
         } else {
             return false;
         }
@@ -120,14 +161,7 @@ class Translate implements ITranslate
                 $tempJson = file_get_contents($realLanguagePath);
                 $tempArray = \Zend_Json::decode($tempJson);
                 self::$translationArray[$language] = array_merge(self::$translationArray[$language], $tempArray);
-            } else {
-                $defaultLanguagePath = APPLICATION_PATH . '/../' . str_replace('languagekey', self::$defaultLanguage, $jsonFilePath);
-                if (is_file($defaultLanguagePath)) {
-                    $tempJson = file_get_contents($defaultLanguagePath);
-                    $tempArray = \Zend_Json::decode($tempJson);
-                    self::$translationArray[$language] = array_merge(self::$translationArray[$language], $tempArray);
-                }
-            }
+            } 
         }
     }
 }

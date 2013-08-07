@@ -14,7 +14,7 @@
 	<div class="span9">
 	   {% if blockConfig.showPlacesSearch %}
 	   <div id="{{prefix}}holderpanel">
-          <input id="{{prefix}}target" type="text" placeholder="Adresse">
+          <input id="{{prefix}}target" type="text" placeholder="{{ "Blocks.GeoSearch.Label.Address" | fotrans }}">
         </div>
         {% endif %}
         <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
@@ -24,7 +24,7 @@
 	<div class="span12">
 	   {% if blockConfig.showPlacesSearch %}
     	<div id="{{prefix}}holderpanel">
-          <input id="{{prefix}}target" type="text" placeholder="Adresse">
+          <input id="{{prefix}}target" type="text" placeholder="{{ "Blocks.GeoSearch.Label.Address" | fotrans }}">
         </div>
         {% endif %}
 		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
@@ -32,7 +32,7 @@
 	{% endif %}
 </div>
 <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key={{ googleMapsKey }}&libraries=places&sensor=true">
+      src="https://maps.googleapis.com/maps/api/js?key={{ googleMapsKey }}&amp;libraries=places&amp;sensor=true&amp;language={{ lang }}">
     </script>
     <script type="text/javascript"
       src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js">
@@ -154,7 +154,8 @@
     				'suplat': bounds.getNorthEast().lat(),	
     				'inflon': bounds.getSouthWest().lng(),
     				'suplon': bounds.getNorthEast().lng(),
-    				'displayMode':displayMode
+    				'displayMode':displayMode,
+    				'autoComplete':{% if blockConfig.autoComplete%}true{% else %}false{% endif %} ,
     			}
           var currentFacets=window.activeFacets;
           for (var attrname in currentFacets) { params[attrname] = currentFacets[attrname]; }
@@ -219,6 +220,29 @@
             			window.updateFacets(jQuery(this).attr("data-facet-id"),jQuery(this).attr("data-facet-term"),false);
                 	}
         			})
+        			$('.typeahead').typeahead({
+	    source: function (query, process) {
+			var request = jQuery.ajax({
+				url : '/blocks/geosearch/xhr-get-suggests',
+				type : "POST",
+				data : {
+					'query': query,
+					'current-page':jQuery('body').attr('data-current-page'),
+					'searchParams': jQuery('#searchpage').attr('data-searchparams')
+				},
+				dataType : "json"
+			});
+			request.done(function(data) {
+				return process(data.terms);
+			});
+			
+	    },
+	    matcher: function() {
+	    	return true;
+	    },
+	    items:10,
+	    minLength:3
+	})
     			//console.log("data fetch done");
     		});
 
@@ -258,8 +282,9 @@
       }
 	  
       function handleContent(contentPosition, title,entityId,idArray,count){
+    	  contentPosition=contentPosition.split(",");
     	   if (contentPosition[0]&&contentPosition[1]){
-    		  createContentMarker(new google.maps.LatLng(contentPosition[1],contentPosition[0]), title,entityId,idArray,count);     
+    		  createContentMarker(new google.maps.LatLng(contentPosition[0],contentPosition[1]), title,entityId,idArray,count);     
           }
       }
       var activeInfoWindows=[ ];
@@ -326,24 +351,56 @@
       }
      
       window.onload = initialize;
+
+      function placeField() {
+          var mapCanvasWidth = document.getElementById("{{prefix}}map_canvas").clientWidth;
+          var fieldContainer = document.getElementById("{{prefix}}holderpanel");
+          var field = document.getElementById("{{prefix}}target");
+          
+          if(mapCanvasWidth < 430) {
+              var width = mapCanvasWidth - 35;
+              
+              fieldContainer.style.width = width+"px";
+              fieldContainer.style.marginLeft = "35px";
+    
+              field.style.width = (width*0.7)+"px";
+    
+              var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 35;
+    
+              if(fieldMargin > 0) {
+          	      field.style.marginLeft = fieldMargin+"px";
+              }
+          } else {
+        	  var width = mapCanvasWidth - 75;
+        	  
+        	  fieldContainer.style.width = width+"px";
+        	  fieldContainer.style.marginLeft = "75px";
+    
+        	  field.style.width = (width*0.7)+"px";
+    
+        	  var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 75;
+    
+        	  if(fieldMargin > 0) {
+        	      field.style.marginLeft = fieldMargin+"px";
+        	  }
+          }
+      }
+
+      placeField();
+      window.onresize = function() {
+    	  placeField();
+      };
 </script>
 
 <style type="text/css">
 {% if blockConfig.showPlacesSearch %}
 #{{prefix}}holderpanel {
-        width: 360px;
-	    margin-left:auto;
-	    margin-right:auto;
-	    position:relative;
-	    padding-top:10px;
-	    z-index:9999999;
-      }
-#{{prefix}}target {
-        width: 360px;
+    position: relative;
+    bottom: -45px;
+    z-index: 1;
 }
 #{{prefix}}map_canvas{
-    position: relative;
-	margin-top:-50px;
+    bottom: 30px;
 }{% endif %}
 #{{prefix}}map_canvas img {
     max-width: none;

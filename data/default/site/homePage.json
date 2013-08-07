@@ -6,9 +6,9 @@
   "inheritWorkspace": true,
   "keywords": "",
   "orderValue": 100,
-  "pageURL": "accueil",
+  "pageURL": "###NewSite.homepage.url###",
   "parentId": "root",
-  "text": "Accueil",
-  "title": "Accueil",
+  "text": "###NewSite.homepage.title###",
+  "title": "###NewSite.homepage.title###",
   "workspace": "global"
 }
