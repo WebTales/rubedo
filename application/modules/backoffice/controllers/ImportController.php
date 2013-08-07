@@ -200,6 +200,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 		$taxonomyService = Rubedo\Services\Manager::getService ( 'Taxonomy' );
 		$taxonomyTermsService = Rubedo\Services\Manager::getService ( 'TaxonomyTerms' );
 		$contentsService = Rubedo\Services\Manager::getService ( 'Contents' );
+		$damService = Rubedo\Services\Manager::getService('Dam');
 		$brokenLines = array ();
 		
 		if (! $adapter->receive ( "csvFile" )) {
@@ -363,9 +364,10 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 											$c = new Zend_Http_Client ();
 											$c->setUri ( $imageUrl );
 											$result = $c->request ( 'GET' );
-											$img = imagecreatefromstring ( $result->getBody () );
+											$img = $result->getBody ();
 											
-											$mimeType = mime_content_type ( $imageUrl );
+											//$mimeType = mime_content_type ( $imageUrl );
+											$mimeType = "image/jpg";
 											
 											$fileObj = array (
 													'bytes' => $img,
@@ -375,7 +377,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 													'mainFileType' => 'Ilustration' 
 											);
 											$result = $fileService->createBinary ( $fileObj );
-											if ((! $result ['success']) || ($returnFullResult)) {
+											if (! $result ['success']) {
 												// TODO change exception
 												throw new \Rubedo\Exceptions\Server ( "The server cannot get image file.", "Exception95" );
 											}
@@ -385,7 +387,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 											$damList [] = $fileId;
 											$typeId = $value ['mediaTypeId'];
 											
-											$damType = Manager::getService ( 'DamTypes' )->findById ( $typeId );
+											$damType = Rubedo\Services\Manager::getService ( 'DamTypes' )->findById ( $typeId );
 											
 											if (! $damType) {
 												throw new \Rubedo\Exceptions\Server ( 'unknown type', "Exception9" );
@@ -407,7 +409,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 											$obj ['i18n'] [$workingLanguage] ['fields'] = $obj ['fields'];
 											unset ( $obj ['i18n'] [$workingLanguage] ['fields'] ['writeWorkspace'] );
 											unset ( $obj ['i18n'] [$workingLanguage] ['fields'] ['target'] );
-											$returnArray = $this->_dataService->create ( $obj );
+											$returnArray = $damService->create ( $obj );
 											if (! $returnArray ['success']) {
 												$this->getResponse ()->setHttpResponseCode ( 500 );
 											}

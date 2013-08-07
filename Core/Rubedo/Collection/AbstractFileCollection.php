@@ -116,6 +116,11 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
         return $this->_dataService->create($obj, $options);
     }
 
+    public function createBinary (array $obj, $options = array())
+    {
+    	return $this->_dataService->createBinary($obj, $options);
+    }
+    
     /**
      * Update an objet in the current collection
      *
