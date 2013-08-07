@@ -206,6 +206,62 @@ class FileAccess extends DataAccess implements IFileAccess
         return $returnArray;
     }
 
+    public function createBinary (array $obj, $options = array())
+    {
+    	
+    	$bites = $obj['bytes'];
+
+    	$filename = $obj['filename'];
+    	$partList = explode('.', $filename);
+    	$extension = array_pop($partList);
+    	
+    	if (! $this->_isValidExtension($extension)) {
+    		return array(
+    				'success' => false,
+    				'msg' => 'not allowed file extension : ' . $extension
+    		);
+    	}
+    	
+    	$mimeType = $obj['Content-Type'];
+    	if (! $this->_isValidContentType($mimeType)) {
+    		return array(
+    				'success' => false,
+    				'msg' => 'not allowed file type : ' . $mimeType
+    		);
+    	}
+    	
+    	$obj['version'] = 1;
+    
+    	unset($obj['bytes']);
+    
+    	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+    	$currentUser = $currentUserService->getCurrentUserSummary();
+    	$obj['lastUpdateUser'] = $currentUser;
+    	$obj['createUser'] = $currentUser;
+    
+    	$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+    	$currentTime = $currentTimeService->getCurrentTime();
+    
+    	$obj['createTime'] = $currentTime;
+    	$obj['lastUpdateTime'] = $currentTime;
+    
+    	$fileId = $this->_collection->storeBytes($bites, $obj);
+    
+    	if ($fileId) {
+    		$obj['id'] = (string) $fileId;
+    		$returnArray = array(
+    				'success' => true,
+    				"data" => $obj
+    		);
+    	} else {
+    		$returnArray = array(
+    				'success' => false
+    		);
+    	}
+    
+    	return $returnArray;
+    }    
+    
     /**
      * Delete objets in the current collection
      *

@@ -354,6 +354,75 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                         );
                                     }
                                 }
+                                
+                            } elseif ($value['cType'] == "ImagePickerField") {
+                            	if (! empty($currentLine[$value['csvIndex']])) {
+                            		$splitedImages = explode(",",$currentLine[$value['csvIndex']]);
+                            		foreach($splitedImages as $imageUrl) {
+                            			
+                            			// create asset in GridFS
+                            			$damList = array();
+                            			$fileService = Manager::getService('Files');
+                            			$tab = explode($imageUrl, "/" );
+                            			$fileName = $tab[sizeof($tab) - 1];
+                            			$properName=explode(".", $fileName);
+                            			
+                            			$c = new Zend_Http_Client();
+                            			$c->setUri($imageUrl);
+                            			$result = $c->request('GET');
+                            			$img = imagecreatefromstring($result->getBody());
+                            			                           			
+                            			$mimeType = mime_content_type($imageUrl);
+                            			
+                            			$fileObj = array(
+                            					'bytes' => $img,
+                            					'text' => $properName[0],
+                            					'filename' => $fileName,
+                            					'Content-Type' => $mimeType,
+                            					'mainFileType' => 'Ilustration'
+                            			);
+                            			$result = $fileService->createBinary($fileObj);
+                            			if ((! $result['success']) || ($returnFullResult)) {
+                            				// TODO change exception
+                            				throw new \Rubedo\Exceptions\Server("The server cannot get image file.", "Exception95");
+                            			}
+                            			
+                            			// Create DAM
+                            			$fileId = $result['data']['id'];
+                            			$damList[] = $fileId;
+                            			$typeId = ""; // en dur pour l'instant
+                         
+                            			$damType = Manager::getService('DamTypes')->findById($typeId);
+
+                            			if (! $damType) {
+                            				throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
+                            			}
+                            			$obj = array();
+                            			$damDirectory = 'notFiled';
+                            			$obj['directory'] = $damDirectory;
+                            			$obj['typeId'] = $damType['id'];
+                            			$obj['mainFileType'] = $damType['mainFileType'];
+                            			$obj['fields'] = array();
+                            			$obj['taxonomy'] = array();
+                            			$obj['title'] = $properName[0];
+                            			$obj['fields']['title'] = $properName[0];
+                            			$obj['originalFileId'] = $fileId;
+                            			$obj['Content-Type'] = $mimeType;
+                                 		$obj['nativeLanguage']=$workingLanguage;
+                            			$obj['i18n']=array();
+                            			$obj['i18n'][$workingLanguage]=array();
+                            			$obj['i18n'][$workingLanguage]['fields']=$obj['fields'];
+                            			unset($obj['i18n'][$workingLanguage]['fields']['writeWorkspace']);
+                            			unset($obj['i18n'][$workingLanguage]['fields']['target']);
+                            			$returnArray = $this->_dataService->create($obj);
+                            			if (! $returnArray['success']) {
+                            				$this->getResponse()->setHttpResponseCode(500);
+                            			}    			
+                            			
+                            			// add assets in content data
+                            			$contentParamsFields[$value['newName']] = $damList;
+                            		}
+                            	}
                             } else {
                                 $contentParamsFields[$value['newName']] = $currentLine[$value['csvIndex']];
                             }
