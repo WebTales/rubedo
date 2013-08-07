@@ -368,29 +368,36 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                         if (isset($currentLine[$value['csvIndex']])) {
                             $detectedTermText = $currentLine[$value['csvIndex']];
                             if (! empty($detectedTermText)) {
-                                $theTerm = $taxonomyTermsService->findByVocabularyIdAndName($theTaxoId, $detectedTermText);
-                                if ($theTerm == null) {
-                                    $termI18n=array();
-                                    $termI18n[$workingLanguage]=array(
-                                        "text" => $detectedTermText,
-                                        "locale"=>$workingLanguage
-                                    );
-                                    $termParams = array(
-                                        "text" => $detectedTermText,
-                                        "vocabularyId" => $theTaxoId,
-                                        "parentId" => "root",
-                                        "leaf" => true,
-                                        "expandable" => false,
-                                        "nativeLanguage"=>$workingLanguage,
-                                        "i18n"=>$termI18n
-                                    );
-                                    $theTerm = $taxonomyTermsService->create($termParams);
-                                }
-                                if (isset($theTerm['id'])) {
-                                    $contentParamsTaxonomy[$theTaxoId][] = $theTerm['id'];
-                                } else if (isset($theTerm['data']['id'])){
-                                    $contentParamsTaxonomy[$theTaxoId][] = $theTerm['data']['id'];
-                                }
+                            	$termsList = array_unique(explode(",",$detectedTermText));
+                            	foreach ($termsList as $term) {
+                            		if ($term!="") {
+	                            		$theTerm = $taxonomyTermsService->findByVocabularyIdAndName($theTaxoId, $term);
+		                            	
+		                                if ($theTerm == null) {
+		                                    $termI18n=array();
+		                                    $termI18n[$workingLanguage]=array(
+		                                        "text" => $term,
+		                                        "locale"=>$workingLanguage
+		                                    );
+		                                    $termParams = array(
+		                                        "text" => $term,
+		                                        "vocabularyId" => $theTaxoId,
+		                                        "parentId" => "root",
+		                                        "leaf" => true,
+		                                        "expandable" => false,
+		                                        "nativeLanguage"=>$workingLanguage,
+		                                        "i18n"=>$termI18n
+		                                    );
+		                                    $theTerm = $taxonomyTermsService->create($termParams);
+		                                }
+	                                }
+                                
+	                                if (isset($theTerm['id'])) {
+	                                    $contentParamsTaxonomy[$theTaxoId][] = $theTerm['id'];
+	                                } else if (isset($theTerm['data']['id'])){
+	                                    $contentParamsTaxonomy[$theTaxoId][] = $theTerm['data']['id'];
+	                                }
+                            	}
                             }
                         }
                     }
