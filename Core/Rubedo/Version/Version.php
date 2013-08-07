@@ -23,7 +23,7 @@ use Rubedo\Services\Manager;
 /**
  * Class to store and retrieve the version of Rubedo.
  *
- * Design the same way than Zend Framework 2 Version class
+ * Designed the same way than Zend Framework 2 Version class
  */
 final class Version
 {
@@ -31,7 +31,7 @@ final class Version
     /**
      * Zend Framework version identification - see compareVersion()
      */
-    const VERSION = '1.3.0dev';
+    const VERSION = '1.3.0RC1';
 
     /**
      * Github Service Identifier for version information is retreived from
