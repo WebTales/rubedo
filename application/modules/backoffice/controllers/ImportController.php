@@ -134,7 +134,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 $csvColumns = fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
                 
                 //get the encoding of the line
-                $stringCsvColumns = implode(";", $csvColumns);
+                $stringCsvColumns = implode($separator, $csvColumns);
                 $encoding = $this->getEncoding($stringCsvColumns);
                 
                 //Overwrite default encoding if it is specified
@@ -305,7 +305,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                 
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
                     //get the encoding of the line
-                    $stringCsvColumns = implode(";", $currentLine);
+                    $stringCsvColumns = implode($separator, $currentLine);
                     
                     //Encode fields
                     foreach ($currentLine as $key => $string) {
