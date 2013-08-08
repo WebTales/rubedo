@@ -19,6 +19,7 @@ namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IFiles;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Users
@@ -188,5 +189,12 @@ class Files extends AbstractFileCollection implements IFiles {
 		}
 		
 		return $result;
+	}
+	
+	public function  findByFileNAme($name) {
+	
+	    $filter = Filter::factory('Value')->SetName('filename')->setValue($name);
+	    return $this->findOne($filter);
+	
 	}
 }

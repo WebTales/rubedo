@@ -320,5 +320,20 @@ class Dam extends AbstractLocalizableCollection implements IDam
         $data = array('$inc'=>array('version'=>1));
         return $this->customUpdate($data, $filters,$options);
     }
+    
+    public function  findByTitle($title) {
+
+        $filter = Filter::factory('Value')->SetName('title')->setValue($title);
+        return $this->findOne($filter);
+              
+    }
+    
+    public function  findByOriginalFileId($id) {
+    
+        $filter = Filter::factory('Value')->SetName('originalFileId')->setValue($id);
+        return $this->findOne($filter);
+    
+    }
+    
 }
 

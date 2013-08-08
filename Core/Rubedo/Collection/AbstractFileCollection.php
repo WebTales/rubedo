@@ -111,6 +111,21 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *            data object
      * @return array
      */
+    
+    
+    /**
+     * Do a findone request
+     *
+     * @param \WebTales\MongoFilters\IFilter $value
+     *            search condition
+     * @return array
+     */
+    public function findOne (\WebTales\MongoFilters\IFilter $value)
+    {
+        return  $this->_dataService->findOne($value);
+
+    }
+    
     public function create (array $obj, $options = array())
     {
         return $this->_dataService->create($obj, $options);

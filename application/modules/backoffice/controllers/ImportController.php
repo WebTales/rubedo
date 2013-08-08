@@ -201,6 +201,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 		$taxonomyTermsService = Rubedo\Services\Manager::getService ( 'TaxonomyTerms' );
 		$contentsService = Rubedo\Services\Manager::getService ( 'Contents' );
 		$damService = Rubedo\Services\Manager::getService('Dam');
+		$fileService = Rubedo\Services\Manager::getService ( 'Files' );
+		
 		$brokenLines = array ();
 		
 		if (! $adapter->receive ( "csvFile" )) {
@@ -354,68 +356,96 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 									foreach ( $splitedImages as $imageUrl ) {
 										
 										if ($imageUrl != "") {
-											// create asset in GridFS
-											$damList = array ();
-											$fileService = Rubedo\Services\Manager::getService ( 'Files' );
-											$tab = explode ( $imageUrl, "/" );
-											$fileName = $tab [sizeof ( $tab ) - 1];
-											$properName = explode ( ".", $fileName );
-											
-											$c = new Zend_Http_Client ();
-											$c->setUri ( $imageUrl );
-											$result = $c->request ( 'GET' );
-											$img = $result->getBody ();
-											
-											//$mimeType = mime_content_type ( $imageUrl );
-											$mimeType = "image/jpg";
-											
-											$fileObj = array (
-													'bytes' => $img,
-													'text' => $properName [0],
-													'filename' => $fileName,
-													'Content-Type' => $mimeType,
-													'mainFileType' => 'Ilustration' 
-											);
-											$result = $fileService->createBinary ( $fileObj );
-											if (! $result ['success']) {
-												// TODO change exception
-												throw new \Rubedo\Exceptions\Server ( "The server cannot get image file.", "Exception95" );
-											}
-											
-											// Create DAM
-											$fileId = $result ['data'] ['id'];
-											$damList [] = $fileId;
-											$typeId = $value ['mediaTypeId'];
-											
-											$damType = Rubedo\Services\Manager::getService ( 'DamTypes' )->findById ( $typeId );
-											
-											if (! $damType) {
-												throw new \Rubedo\Exceptions\Server ( 'unknown type', "Exception9" );
-											}
-											$obj = array ();
-											$damDirectory = 'notFiled';
-											$obj ['directory'] = $damDirectory;
-											$obj ['typeId'] = $damType ['id'];
-											$obj ['mainFileType'] = $damType ['mainFileType'];
-											$obj ['fields'] = array ();
-											$obj ['taxonomy'] = array ();
-											$obj ['title'] = $properName [0];
-											$obj ['fields'] ['title'] = $properName [0];
-											$obj ['originalFileId'] = $fileId;
-											$obj ['Content-Type'] = $mimeType;
-											$obj ['nativeLanguage'] = $workingLanguage;
-											$obj ['i18n'] = array ();
-											$obj ['i18n'] [$workingLanguage] = array ();
-											$obj ['i18n'] [$workingLanguage] ['fields'] = $obj ['fields'];
-											unset ( $obj ['i18n'] [$workingLanguage] ['fields'] ['writeWorkspace'] );
-											unset ( $obj ['i18n'] [$workingLanguage] ['fields'] ['target'] );
-											$returnArray = $damService->create ( $obj );
-											if (! $returnArray ['success']) {
-												$this->getResponse ()->setHttpResponseCode ( 500 );
-											}
-											
-											// add assets in content data
-											$contentParamsFields [$value ['newName']] = $damList;
+										    
+										    $info = pathinfo($imageUrl);
+										    
+										    // get mime type
+										    $mimeType = "image/".$info['extension'];
+										    
+										    // search existing file on name
+										    $existingFile = $fileService->findByFileName($info['basename']);
+										    
+										    if (is_null($existingFile)) {
+										    
+    											// if no file found create asset in GridFS
+    											    											
+    											$c = new Zend_Http_Client ();
+    											$c->setUri ( $imageUrl );
+    											$result = $c->request ( 'GET' );
+    											$img = $result->getBody ();
+    											
+    											$fileObj = array (
+    													'bytes' => $img,
+    													'text' => $info['filename'],
+    													'filename' => $info['basename'],
+    													'Content-Type' => $mimeType,
+    													'mainFileType' => 'Image' 
+    											);
+    
+    											$result = $fileService->createBinary ( $fileObj );
+    											if (! $result ['success']) {
+    												// TODO change exception
+    												throw new \Rubedo\Exceptions\Server ( "The server cannot get image file.", "Exception95" );
+    											}
+    											
+    											$fileId = $result ['data'] ['id'];
+    											$newFile = true;
+    											
+										    } else {
+										        
+										        // if file is found get file id
+
+										        $fileId = (string) $existingFile->file['_id'];
+										        $newFile = false;
+										        
+										    }
+										  
+										    if (!$newFile) {
+										        // search DAM referencing File
+										        $existingDam = $damService->findByOriginalFileId($fileId);
+										    
+										        if (is_null($existingDam)) {
+										            $newDam = true;
+										        } else {
+										            $newDam = false;
+										        }
+										    } else {
+										        $newDam = true;
+										    }
+										    
+										    if ($newDam) {
+										    
+    											$typeId = $value ['mediaTypeId'];
+    											
+    											$obj = array ();
+    											$damDirectory = 'notFiled';
+    											$obj ['directory'] = $damDirectory;
+    											$obj ['typeId'] = $typeId;
+    											$obj ['mainFileType'] = 'Image';
+    											$obj ['fields'] = array ();
+    											$obj ['taxonomy'] = array ();
+    											$obj ['title'] = $info['filename'];
+    											$obj ['fields'] ['title'] = $info['filename'];
+    											$obj ['originalFileId'] = $fileId;
+    											$obj ['Content-Type'] = $mimeType;
+    											$obj ['nativeLanguage'] = $workingLanguage;
+    											$obj ['i18n'] = array ();
+    											$obj ['i18n'] [$workingLanguage] = array ();
+    											$obj ['i18n'] [$workingLanguage] ['fields'] = $obj ['fields'];
+    											unset ( $obj ['i18n'] [$workingLanguage] ['fields'] ['writeWorkspace'] );
+    											unset ( $obj ['i18n'] [$workingLanguage] ['fields'] ['target'] );
+    
+    											$returnArray = $damService->create ( $obj );
+    											if (! $returnArray ['success']) {
+    												$this->getResponse ()->setHttpResponseCode ( 500 );
+    											} else {
+    											
+        											// add assets in content data
+        											$contentParamsFields [$value ['newName']] = $returnArray['data'] ['id'];
+    											}
+										    } else {
+										        $contentParamsFields [$value ['newName']] = $existingDam['id'];
+										    }
 										}
 									}
 								}
