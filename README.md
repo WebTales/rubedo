@@ -37,6 +37,8 @@ Installation
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
 * Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot
+* Inside project root, choose the develop branch : `git checkout develop`
+* Inside project root, run `php composer.phar self-update`
 * Inside project root, run `php composer.phar install --dev`
 * Access the */install* URL and run the config wizard
 
