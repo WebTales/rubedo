@@ -505,6 +505,10 @@ class DataIndex extends DataAbstract implements IDataIndex
     
     public function indexContent ($data, $bulk = false)
     {
+        if(!isset($data['fields']) || !isset($data['i18n'])){
+            return;
+        }
+        
         $typeId = $data['typeId'];
     
         // Load ES type
