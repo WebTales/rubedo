@@ -207,7 +207,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ((self::$_isFrontEnd)) {
             
             // get list of displayed Facets, only for non suggest requests
-            if ($option != 'suggest') {
+            if (!in_array($option,array('suggest','geosuggest'))) {
                 $this->_displayedFacets = isset($this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
             } else {
                 $this->_displayedFacets = array();
@@ -392,7 +392,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         
         // add filter for geo search on content types with 'position' field
-        if ($option == 'geo') {
+        if (in_array($option,array('suggest','geosuggest'))) {
             $contentTypeList = Manager::getService('ContentTypes')->getGeolocatedContentTypes();
             if (! empty($contentTypeList)) {
                 $geoFilter = new \Elastica\Filter\BoolOr();
@@ -476,7 +476,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'onlyOne' :
                 $this->setLocaleFilter(array($currentLocale));
-                if ($option!='suggest') {
+                if (!in_array($option,array('suggest','geosuggest'))) {
                 	$elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
                 } else {
                     $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
@@ -486,13 +486,13 @@ class DataSearch extends DataAbstract implements IDataSearch
             default:
                 $this->setLocaleFilter(array($currentLocale,$fallBackLocale));
                 if ($currentLocale!=$fallBackLocale) {
-                    if ($option!='suggest') {
+                    if (!in_array($option,array('suggest','geosuggest'))) {
                         $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","all_nonlocalized^0.1"));
                     } else {
                         $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1","autocomplete_nonlocalized"));
                     }
                 } else {
-                    if ($option!='suggest') {
+                    if (!in_array($option,array('suggest','geosuggest'))) {
                         $elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
                     } else {
                         $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
@@ -706,6 +706,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $elasticaResultSet = self::$_content_index->search($elasticaQuery);
                 break;
             case 'suggest':
+            case 'geosuggest':
                 $suggestTerms = array();
                 $elasticaQuery->setHighlight(array(
                         "pre_tags" => array("<term>"),
