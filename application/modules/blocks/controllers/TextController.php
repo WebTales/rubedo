@@ -38,6 +38,7 @@ class Blocks_TextController extends Blocks_AbstractController
             $content = Manager::getService('Contents')->findById($blockConfig["contentId"],true,false);
         }
         $output = $this->getAllParams();
+        $output['contentId'] = $blockConfig["contentId"];
         $output['text'] = $content["fields"]["body"];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/text.html.twig");
         
