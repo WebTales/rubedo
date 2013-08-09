@@ -311,6 +311,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _indexContent ($obj)
     {
+        $contentType = Manager::getService('ContentTypes')->findById($obj['typeId']);
+        if(!$contentType || (isset($contentType['system']) && $contentType['system']==true)){
+            return;
+        }
+        
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContent($obj);
