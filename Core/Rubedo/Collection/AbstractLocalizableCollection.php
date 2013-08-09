@@ -315,9 +315,15 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             if (isset($obj['i18n'][$locale])) {
                 $obj = $this->merge($obj, $obj['i18n'][$locale]);
                 $obj['locale'] = $locale;
+//                 if(static::$_isFrontEnd){
+//                     $obj[static::$labelField]=$obj['i18n'][$locale][static::$labelField];
+//                 }
             } elseif (isset($alternativeFallBack) && isset($obj['i18n'][$alternativeFallBack])) {
                 $obj = $this->merge($obj, $obj['i18n'][$alternativeFallBack]);
                 $obj['locale'] = $alternativeFallBack;
+//                 if(static::$_isFrontEnd){
+//                     $obj[static::$labelField]=$obj['i18n'][$alternativeFallBack][static::$labelField];
+//                 }
             }
         }
         
