@@ -42,8 +42,11 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array());
         $output = $this->getAllParams();
         
-        if (isset($blockConfig['introduction'])) {
-            $output['introduction'] = $blockConfig['introduction'];
+        if ((isset($blockConfig['introduction']))&&($blockConfig['introduction']!="")) {
+            $content = Manager::getService('Contents')->findById($blockConfig["introduction"],true,false);
+            $output['contentId'] = $blockConfig["introduction"];
+            $output['text'] = $content["fields"]["body"];
+            $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
         }
         
         $output['mailingListId'] = $blockConfig['mailingListId'];
