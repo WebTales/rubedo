@@ -37,8 +37,8 @@
         }
     },
     "scripts": {
-        "post-update-cmd": "./vendor/bin/phing set-rights composer.front.update",
-        "post-install-cmd": "./vendor/bin/phing set-rights composer.front.install"
+        "post-update-cmd": "vendor/bin/phing set-rights composer.front.update",
+        "post-install-cmd": "vendor/bin/phing set-rights composer.front.install"
     }
 }
 
