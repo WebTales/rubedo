@@ -93,14 +93,17 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $results['autoComplete'] =  $params['block-config']['autoComplete'];
         
         $results['facetsToHide'] = $facetsToHide;
+        $results['searchParams']=\Zend_Json::encode($params);
         
         $activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/activeFacets.html.twig");
         $facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/facets.html.twig");
+        
         
         $results['activeFacetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($activeFacetsTemplate, $results);
         $results['facetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($facetsTemplate, $results);
         $results['success'] = true;
         $results['message'] = 'OK';
+        unset($results['searchParams']);
         
         $this->_helper->json($results);
     }
@@ -125,7 +128,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
         
-        $suggestTerms = $elasticaQuery->search($params,'suggest');
+        $suggestTerms = $elasticaQuery->search($params,'geosuggest');
         
         $data = array(
                 'terms' => $suggestTerms

@@ -1,5 +1,5 @@
 <div id="activeFacetBox">
-<div class="navbar">
+<div class="navbar" id="searchpage" data-searchparams='{{ searchParams }}'>
 	<div class="navbar-inner">
 		<a class="brand">{% if total > 1 %}{{"Search.ThereAre"|fotrans}}{% else %}{{"Search.ThereIs"|fotrans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if total > 1 %}{{"Search.Results"|fotrans}}{% else %}{{"Search.Result"|fotrans}}{% endif %}</a>
 	</div>
