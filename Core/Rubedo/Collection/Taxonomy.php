@@ -99,7 +99,7 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
             $temp[$locale]['locale'] = $locale;
             $temp[$locale]['name'] = Manager::getService('Translate')->getTranslation("Taxonomy.Navigation", $locale);
         } 
-        if($temp){
+        if(isset($temp)){
             $this->_virtualNavigationVocabulary['i18n'] = $temp;
             $this->_virtualNavigationVocabulary['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         }       
