@@ -323,7 +323,6 @@ class DataAccess implements IDataAccess
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-        
         // get the cursor
         $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
         $nbItems = $cursor->count();
