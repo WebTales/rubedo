@@ -124,17 +124,6 @@ class IndexController extends Zend_Controller_Action
         
         // if no page found, maybe installation isn't set
         if (! $this->_pageId) {
-            $applicationOptions = $this->getFrontController()
-                ->getParam('bootstrap')
-                ->getApplication()
-                ->getOptions();
-            
-            if (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished') {
-                $this->_helper->redirector->gotoUrl($this->_helper->url('index', 'index', 'install')); // redirect
-                                                                                                           // to
-                                                                                                           // install
-                                                                                                           // tool
-            }
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
