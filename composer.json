@@ -12,7 +12,8 @@
 		"ezyang/htmlpurifier": "4.5.*",
 		"bombayworks/zendframework1": "1.12.*",
 		"alb/oembed": "1.1.*",
-		"swiftmailer/swiftmailer": "5.0.*"
+		"swiftmailer/swiftmailer": "5.0.*",
+		"phing/phing": "2.5.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
@@ -34,6 +35,10 @@
         "psr-0": {
             "Rubedo": "Core/Rubedo"
         }
+    },
+    "scripts": {
+        "post-update-cmd": "./vendor/bin/phing set-rights composer.front.update",
+        "post-install-cmd": "./vendor/bin/phing set-rights composer.front.install"
     }
 }
 
