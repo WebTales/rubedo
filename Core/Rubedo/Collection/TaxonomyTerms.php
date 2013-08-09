@@ -333,7 +333,9 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term = array();
         $term["parentId"] = 'all';
         $term['text'] = $site['text'];
-        $term['i18n'] = $site['i18n'];
+        if(isset($site['i18n'])){
+            $term['i18n'] = $site['i18n'];
+        }
         $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();;
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
@@ -377,7 +379,9 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     protected function _pageToTerm ($page)
     {
         $term = array();
-        $term['i18n'] = $page['i18n'];
+        if(isset($page['i18n'])){
+            $term['i18n'] = $page['i18n'];
+        }
         $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         $term["parentId"] = ($page['parentId'] == 'root') ? $page['site'] : $page['parentId'];
         $term['text'] = $page['text'];
