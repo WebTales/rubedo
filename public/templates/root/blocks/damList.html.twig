@@ -29,7 +29,7 @@
 		</ul>
 		{% if pagecount > 1 %}
 		<div class="pagination pagination-centered">
-		{%set wrap=limit//2%}
+		{%set wrap=3 %}
 		{%set lastWrap=(pagecount-1)-current%}
 			<ul>
 			<li class="disabled">
@@ -46,9 +46,11 @@
 				{% endif %}
 				{%if current<wrap+1 or limit<10%}
 				{% for i in range(0, limit) %}
+				{% if i<current+wrap and i>current-wrap %}
 				<li {% if current==i %}class="disabled"{% endif %}>
 					<a class="cursor-pointer" onClick="window['{{ prefix }}refresh']({{ i }})">{{ i+1 }}</a>
 				</li>
+				{% endif %}
 				{% endfor %}
 				{%elseif limit>wrap and current+wrap<pagecount %}
 				{% for  i in current-(wrap)..current+wrap%}
