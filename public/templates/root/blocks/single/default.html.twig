@@ -26,7 +26,7 @@
 						{%elseif(cValue["cType"]=="treepicker")%}
 							{% include 'root/blocks/fields/link-to-page.html.twig' %}
 						{%elseif(cValue["cType"]=="localiserField")%}
-						    {% if value is defined and value.address != "" %}
+						    {% if value is defined %}
 							    {% include 'root/blocks/fields/localiser.html.twig' %}
 							{% endif %}
       					{%elseif(cValue["cType"]=="datefield")%}

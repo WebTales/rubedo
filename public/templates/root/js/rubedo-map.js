@@ -47,10 +47,11 @@ var gMap = function (options,id,title,text,field) {
 		 }
 			jQuery(self.options).each(function(){
 				var marker=this;
-				if (this.address) {
+				
+				if ((this.address)&&(this.address!="")) {
 			      	self.geocoder.geocode( { 'address': this.address}, function(results, status) {
 			      		if (status == google.maps.GeocoderStatus.OK) {
-			      			self.addMarker(marker,self.title,self.text);
+			      			self.createMarker(results[0].geometry.location,self.title,self.text);
 			      			if(self.center==true){
 			      				self.map.setCenter(new google.maps.LatLng(30,-40));
 			      			}else{
