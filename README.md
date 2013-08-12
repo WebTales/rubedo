@@ -29,18 +29,15 @@ Installation
 * Extract them on your server
 * Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot
-* Inside project root, run `php composer.phar self-update`
-* Inside project root, run `php composer.phar install -o`
+* If on Unix server : Inside project root, run `./install.sh`
+* If on Windows server : Inside project root, run `install`
 * Access the */install* URL and run the config wizard
 
 ### For Developpers
+* You'll need Git!
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
-* Define a simple vHost with the *public* directory as documentRoot
-* Add an AllowOverride All on this documentRoot
 * Inside project root, choose the develop branch : `git checkout develop`
-* Inside project root, run `php composer.phar self-update`
-* Inside project root, run `php composer.phar install --dev`
-* Access the */install* URL and run the config wizard
+* Do as in normal install process
 
 
 Setting Up Your VHOST
