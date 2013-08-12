@@ -302,7 +302,6 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($alternativeFallBack === null && static::$isLocaleFiltered && static::$localizationStrategy == 'fallback') {
             $alternativeFallBack = static::$fallbackLocale;
         }
-        // \Zend_Debug::dump(static::$fallbackLocale);//die();
         
         if (! isset($obj['nativeLanguage'])) {
             throw new \Rubedo\Exceptions\Server('No defined native language for this item');

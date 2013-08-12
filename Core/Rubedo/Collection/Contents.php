@@ -456,7 +456,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
             foreach ($obj['i18n'] as $locale => $data){
                 if(isset($data['fields'][$name])){
                     $obj['i18n'][$locale]['fields'][$name] = $cleanerService->clean($obj['i18n'][$locale]['fields'][$name]);
-                    //var_dump(explode('&',$obj['i18n'][$locale]['fields'][$name]));die();
                 }
             }
         }
