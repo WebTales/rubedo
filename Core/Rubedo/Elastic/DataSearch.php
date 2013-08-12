@@ -200,7 +200,6 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $this->_params = $params;
         
-        
         $this->_facetDisplayMode = isset($this->_params['block-config']['displayMode']) ? $this->_params['block-config']['displayMode'] : 'standard';
         
         // front-end search
@@ -449,6 +448,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // filter on taxonomy
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy['id'];
+            
             if (array_key_exists($vocabulary, $this->_params)) {
                 // transform param to array if single value
                 if (! is_array($this->_params[$vocabulary])) {
@@ -459,11 +459,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                 foreach ($this->_params[$vocabulary] as $term) {
                     
                     $this->_addFilter($vocabulary, 'taxonomy.' . $vocabulary);
+
                 }
             }
         }
-              
-        
+
         $elasticaQuery = new \Elastica\Query();
         
         $elasticaQueryString = new \Elastica\Query\QueryString();
@@ -687,6 +687,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         $returnedFieldsArray = array("*");
         $elasticaQuery->setFields($returnedFieldsArray);
         
+        
+        //print_r($elasticaQuery);
+        //exit;
         // run query
         switch ($option) {
             case 'content':
