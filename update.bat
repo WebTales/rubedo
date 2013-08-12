@@ -1,0 +1,3 @@
+php composer.phar update -nodev -o;
+COMPOSER=composer.front.json php composer.phar update;
+vendor\bin\phing set-rights;
