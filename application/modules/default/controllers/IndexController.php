@@ -138,6 +138,8 @@ class IndexController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
+        Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
+        
         // init browser languages
         $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
         $browserLanguages = array_keys($zend_locale->getBrowser());
@@ -151,7 +153,10 @@ class IndexController extends Zend_Controller_Action
         }
         
         // reload page in localization context
-        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId,true);
+        if(!$this->_pageInfo){
+            throw new Rubedo\Exceptions\NotFound('Page not found in this language','Exception101');
+        }
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
