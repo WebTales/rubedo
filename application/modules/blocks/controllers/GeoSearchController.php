@@ -81,10 +81,14 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         if (isset($params['predefinedFacets'])) {
             $predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
             foreach ($predefParamsArray as $key => $value) {
-                $params[$key] = $value;
-                $facetsToHide[] = $key;
+                if (!isset($params[$key]) or !in_array($value,$params[$key])) $params[$key][] = $value;
+                $facetsToHide[] = $value;
             }
         }
+        
+        $facetsToHide = array_unique($facetsToHide);
+        
+        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
         $query = Manager::getService('ElasticDataSearch');
         

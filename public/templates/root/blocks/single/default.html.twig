@@ -31,6 +31,8 @@
 							{% endif %}
       					{%elseif(cValue["cType"]=="datefield")%}
 							    {% include 'root/blocks/fields/date.html.twig' %}
+					    {%elseif(cValue["cType"]=="combobox")%}
+							    {% include 'root/blocks/fields/combobox.html.twig' %}
 						{%elseif(cValue["cType"]=="timefield")%}
 							{% include 'root/blocks/fields/time.html.twig' %}
 						{%elseif(cValue["cType"]=="numberfield")%}
