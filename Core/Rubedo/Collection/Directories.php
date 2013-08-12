@@ -412,7 +412,6 @@ class Directories extends AbstractCollection implements IDirectories
         $directoryFrom = $this->findById($directoryFrom);
         
         $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        \Zend_Debug::dump($directoryFrom['workspace']);
         if(!in_array($directoryFrom['workspace'],$writeWorkspaceArray)){
             throw new \Rubedo\Exceptions\Access("can't move media from this directory due to insufficient rights");
         }
