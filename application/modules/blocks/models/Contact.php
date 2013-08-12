@@ -1,5 +1,6 @@
 <?php
 
+use Rubedo\Services\Manager;
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -38,6 +39,7 @@ class Blocks_Model_Contact extends Zend_Form
     public function init ()
     {
         $request = new Zend_Controller_Request_Http();
+        $translationService = Manager::getService("Translate");
         
         $this->setMethod('post');
         $this->setAttrib('action', $this->getView()
@@ -48,26 +50,26 @@ class Blocks_Model_Contact extends Zend_Form
         $status->setValue('true');
         
         $name = new Zend_Form_Element_Text('name');
-        $name->setLabel('Nom *');
+        $name->setLabel($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Name.Label"));
         $name->setRequired(true);
-        $name->addErrorMessage("Le champ suivant ne doit pas être vide");
+        $name->addErrorMessage($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Error.CanNotBeEmpty"));
         
         $email = new Zend_Form_Element_Text('email');
-        $email->setLabel('Adresse e-mail *');
+        $email->setLabel($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Email.Label"));
         $email->setRequired(true);
         $email->addValidator('EmailAddress');
-        $email->addErrorMessage("Le champ suivant ne doit pas être vide et l'adresse e-mail doit etre sous la forme : exemple@exemple.fr");
+        $email->addErrorMessage($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Error.EmailAddress"));
         
         $subject = new Zend_Form_Element_Text('subject');
-        $subject->setLabel('Objet *');
+        $subject->setLabel($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Subject.Label"));
         $subject->setRequired(true);
-        $subject->addErrorMessage("Le champ suivant ne doit pas être vide");
+        $subject->addErrorMessage($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Error.CanNotBeEmpty"));
         
         $message = new Zend_Form_Element_Textarea('message');
-        $message->setLabel('Message *');
+        $message->setLabel($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Message.Label"));
         $message->setRequired(true);
         $message->setAttrib('rows', 5);
-        $message->addErrorMessage("Le champ suivant ne doit pas être vide");
+        $message->addErrorMessage($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Error.CanNotBeEmpty"));
         
         $this->addElements(array(
             $name,
@@ -78,7 +80,7 @@ class Blocks_Model_Contact extends Zend_Form
         
         if ($this->_captcha) {
             $captcha = new Zend_Form_Element_Captcha('captcha', array(
-                'label' => "Merci de saisir le code ci-dessous :",
+                'label' => $translationService->translateInWorkingLanguage("Blocks.Contact.Input.Captcha.Label"),
                 'required' => true,
                 'captcha' => array(
                     'captcha' => 'image',
@@ -93,12 +95,12 @@ class Blocks_Model_Contact extends Zend_Form
                     'lineNoiseLevel' => 20
                 )
             ));
-            $captcha->addErrorMessage("Le code que vous avez saisi ne correspond pas avec l'image");
+            $captcha->addErrorMessage($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Error.BadCaptcha"));
             
             $this->addElement($captcha);
         }
         
-        $submit = new Zend_Form_Element_Submit('Valider');
+        $submit = new Zend_Form_Element_Submit($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Submit.Label")); 
         $submit->setAttrib('class', 'btn btn-success custom-btn btn-large');
         
         $this->addElement($submit);
