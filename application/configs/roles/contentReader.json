@@ -10,6 +10,7 @@
         "execute.controller.contents.find-one.backoffice",
         "execute.controller.versioning.index.backoffice",
         "execute.controller.taxonomy-terms.index.backoffice",
+        "execute.controller.taxonomy-terms.tree.backoffice",
         "execute.controller.dam.get-thumbnail.backoffice",
         "execute.controller.dam-types.index.backoffice",
         "execute.controller.dam.index.backoffice"
