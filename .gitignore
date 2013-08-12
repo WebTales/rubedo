@@ -13,6 +13,8 @@ library/HTMLPurifier
 .buildpath
 /vendor
 /composer.lock
+composer.front.lock
 public/templates/fps-tower-theme
 public/templates/citroen
 Thumbs.db
+
