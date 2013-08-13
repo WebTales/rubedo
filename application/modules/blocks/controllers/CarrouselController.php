@@ -98,6 +98,8 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $output["imageWidth"] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
         $output["imageHeight"] = isset($blockConfig['imageHeight']) ? $blockConfig['imageHeight'] : null;
         $output["mode"] = isset($blockConfig['mode']) ? $blockConfig['mode'] : null;
+        $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
+        $output['singlePage'] = $this->getParam('single-page', $singlePage);
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
