@@ -281,6 +281,10 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 				}
 				
 				// create CT
+				$newCTi18n = array ();
+				$newCTi18n [$workingLanguage] = array (
+				    "type" => $configs ['ContentTypeType']
+				);
 				$contentTypeParams = array (
 						"dependant" => false,
 						"dependantTypes" => array (),
@@ -289,7 +293,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 						"vocabularies" => $CTvocabularies,
 						"workspaces" => $configs ['ContentTypeWorkspaces'],
 						"workflow" => $configs ['ContentTypeWorkflow'],
-						"activateDisqus" => false 
+						"activateDisqus" => false ,
+				        "nativeLanguage" => $workingLanguage,
+				        "i18n" => $newCTi18n
 				);
 				$contentType = Rubedo\Services\Manager::getService ( 'ContentTypes' )->create ( $contentTypeParams );
 				
