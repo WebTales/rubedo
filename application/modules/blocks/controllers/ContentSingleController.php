@@ -76,7 +76,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             }
             $data['terms'] = $termsArray;
             $data["id"] = $mongoId;
-            $data['locale']=$content['locale'];
+            $data['locale'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();

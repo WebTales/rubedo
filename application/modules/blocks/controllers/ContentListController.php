@@ -131,7 +131,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
                 $fields['id'] = (string) $vignette['id'];
                 $fields['typeId'] = $vignette['typeId'];
                 $fields['type'] = $contentTypeArray[(string) $vignette['typeId']];
-                $fields["locale"] = $vignette["locale"];
+                $fields["locale"] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
                 $data[] = $fields;
             }
             $output['blockConfig'] = $blockConfig;
