@@ -136,7 +136,13 @@ class Blocks_CalendarController extends Blocks_ContentListController
                 unset($fields['text']);
                 $fields['id'] = (string) $vignette['id'];
                 $fields['typeId'] = $vignette['typeId'];
-                $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField]);
+                
+                if(!is_array($vignette["fields"]["date"])){
+                    $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField]);
+                } else {
+                    $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField][0]);
+                }
+                
                 $data[] = $fields;
                 
                 if(!is_array($vignette["fields"]["date"])){
