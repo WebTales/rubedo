@@ -138,7 +138,18 @@ class Blocks_CalendarController extends Blocks_ContentListController
                 $fields['typeId'] = $vignette['typeId'];
                 $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField]);
                 $data[] = $fields;
-                $filledDate[date('d', $vignette['fields'][$dateField])] = true;
+                
+                if(!is_array($vignette["fields"]["date"])){
+                    $day = date('d', $vignette["fields"]["date"]);
+                    $filledDate[$day] = true;
+                } else {
+                    foreach ($vignette["fields"]["date"] as $value) {
+                        $day = date('d', $value);
+                        $filledDate[$day] = true;
+                    }
+                }
+                
+                //$filledDate[date('d', $vignette['fields'][$dateField])] = true;
             }
         } else {}
         
