@@ -41,11 +41,11 @@ class Blocks extends AbstractCollection implements IBlocks
         if (AbstractCollection::getIsFrontEnd()) {
             $wLocale = AbstractLocalizableCollection::getWorkingLocale();
             $filters = Filter::factory('Or');
-            $filter = Filter::factory('OperatorToValue')->setName('localeFilters')
+            $filter = Filter::factory('OperatorToValue')->setName('blockData.localeFilters')
                 ->setOperator('$exists')
                 ->setValue(false);
             $filters->addFilter($filter);
-            $filter = Filter::factory('In')->setName('localeFilters')->setValue(array($wLocale,'all'));
+            $filter = Filter::factory('In')->setName('blockData.localeFilters')->setValue(array($wLocale,'all'));
             $filters->addFilter($filter);
             $this->_dataService->addFilter($filters);
         }
