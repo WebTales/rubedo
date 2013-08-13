@@ -266,9 +266,19 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     public function readTree(\WebTales\MongoFilters\IFilter $filters = null)
     {
-        // ...
         $tree = $this->_dataService->readTree($filters);
+        $tree = $this->adaptTree($tree);
         return $tree['children'];
+    }
+    
+    protected function adaptTree($tree){
+        $children = $tree['children'];
+        $tree['children'] = array();
+        $tree = $this->localizeOutput($tree);
+        foreach ($children as $child){
+            $tree['children'][] = $this->adaptTree($child);
+        }
+        return $tree;
     }
 
     /**
