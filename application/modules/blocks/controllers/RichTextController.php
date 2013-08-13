@@ -41,7 +41,7 @@ class Blocks_RichTextController extends Blocks_AbstractController
         $output['contentId'] = $blockConfig["contentId"];
         $output['text'] = $content["fields"]["body"];
         $output['editorConfig'] = isset($blockConfig['editorConfig']) ? $blockConfig['editorConfig'] : null;
-        $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
+        $output["locale"] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/richtext.html.twig");
         
         $css = array();
