@@ -1,13 +1,13 @@
 {%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
 	{% for item in data[key] %}
 	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
-<label class="checkbox cursor-default checkbox-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-locale="{{ locale }}">
+<label class="checkbox cursor-default checkbox-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-locale="{{ data.locale }}">
    <input disabled type="checkbox" {%  if (item) %}checked{% endif %}>  {{ type[key]["config"]["fieldLabel"] }} 
 </label>
 	{% endfor %}
 {% else %}
 	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
-<label class="checkbox cursor-default checkbox-edit" id="{{ data.id }}_{{ key }}" data-locale="{{ locale }}">
+<label class="checkbox cursor-default checkbox-edit" id="{{ data.id }}_{{ key }}" data-locale="{{ data.locale }}">
    <input disabled type="checkbox" {%  if (data[key]) %}checked{% endif %}>  {{ type[key]["config"]["fieldLabel"] }} 
 </label>
 {% endif %}

@@ -2,7 +2,7 @@
 {% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
     <p>{{ type[key]["config"]["fieldLabel"] }} </p>
 	{% for item in data[key] %}
-        <div class="checkboxgroup-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-locale="{{ locale }}" >
+        <div class="checkboxgroup-edit" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-locale="{{ data.locale }}" >
 	        {% for radioButton in type[key]["config"]["items"] %}
 		        <label class="cursor-default checkboxgroupel-edit">
     		        <input type="checkbox" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==item[radioButton.name]%}checked{% elseif item[radioButton.name] is iterable and radioButton.inputValue in item[radioButton.name] %}checked{% endif  %}>
@@ -14,7 +14,7 @@
 {% else %}
 {% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
     <p>{{ type[key]["config"]["fieldLabel"] }} </p>
-    <div class="checkboxgroup-edit" id="{{ data.id }}_{{ key }}" data-locale="{{ locale }}" > 
+    <div class="checkboxgroup-edit" id="{{ data.id }}_{{ key }}" data-locale="{{ data.locale }}" > 
         {% for radioButton in type[key]["config"]["items"] %}
             <label class="cursor-default checkboxgroupel-edit">
                 <input type="checkbox" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}" disabled {% if radioButton.inputValue==data[key][radioButton.name]%}checked{% elseif value[radioButton.name] is iterable and radioButton.inputValue in value[radioButton.name] %}checked{% endif  %}>
