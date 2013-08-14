@@ -56,7 +56,12 @@ abstract class AbstractException extends \Exception
         
         // convert message to proper language using $code and $langage, use $message directly if nothing more appropriate coud be found
         if (! static::$doNotTranslate && $code) {
-            $message = Manager::getService('Translate')->translate($code, $message);
+            if(\Rubedo\Collection\AbstractCollection::getIsFrontEnd()){
+                $message = Manager::getService('Translate')->translateInWorkingLanguage($code, $message);
+            }else{
+                $message = Manager::getService('Translate')->translate($code, $message);
+            }
+            
         }
         
         // apply params to message if there are any

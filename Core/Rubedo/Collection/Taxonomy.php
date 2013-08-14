@@ -98,9 +98,12 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
             $temp[$locale] = array();
             $temp[$locale]['locale'] = $locale;
             $temp[$locale]['name'] = Manager::getService('Translate')->getTranslation("Taxonomy.Navigation", $locale);
-        }        
-        $this->_virtualNavigationVocabulary['i18n'] = $temp;
-        $this->_virtualNavigationVocabulary['locale'] = AbstractLocalizableCollection::getWorkingLocale();
+        } 
+        if(isset($temp)){
+            $this->_virtualNavigationVocabulary['i18n'] = $temp;
+            $this->_virtualNavigationVocabulary['locale'] = AbstractLocalizableCollection::getWorkingLocale();
+        }       
+        
     }
 
     /**
@@ -291,14 +294,16 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
             throw new \Rubedo\Exceptions\Access('can\'t create a navigation vocabulary', "Exception52");
         }
         $obj = $this->_addDefaultWorkspace($obj);
-        
-        foreach($origObj['i18n'] as $locale => $value){
-            if(!isset($obj['i18n'][$locale])){
-                $wasFiltered = AbstractCollection::disableUserFilter();
-                Manager::getService('TaxonomyTerms')->removeI18nByVocabularyId($obj['id'],$locale);
-                AbstractCollection::disableUserFilter($wasFiltered);
-            }
+        if(isset($origObj['i18n'])){
+            foreach($origObj['i18n'] as $locale => $value){
+                if(!isset($obj['i18n'][$locale])){
+                    $wasFiltered = AbstractCollection::disableUserFilter();
+                    Manager::getService('TaxonomyTerms')->removeI18nByVocabularyId($obj['id'],$locale);
+                    AbstractCollection::disableUserFilter($wasFiltered);
+                }
+            } 
         }
+        
         
         return parent::update($obj, $options);
     }

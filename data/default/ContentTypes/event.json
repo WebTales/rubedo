@@ -78,7 +78,7 @@
 				},
 				"allowBlank": true ,
 				"localizable": false ,
-				"searchable": false ,
+				"searchable": true ,
 				"multivalued": false ,
 				"tooltip": "" ,
 				"labelSeparator": " "

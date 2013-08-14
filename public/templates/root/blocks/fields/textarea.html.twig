@@ -2,10 +2,10 @@
 	{% for item in data[key] %}
 	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
 	    <div class="clear-right">
-	        <p class="editable "  id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-locale="{{ locale }}">{{ item }}</p>
+	        <p class="editable "  id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-locale="{{ data.locale }}">{{ item }}</p>
 	    </div>
 	{% endfor %}
 {% else %}
 {% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
-    <div class="clear-right"><p class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-locale="{{ locale }}">{{ data[key] }}</p></div>
+    <div class="clear-right"><p class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-locale="{{ data.locale }}">{{ data[key] }}</p></div>
 {% endif %}

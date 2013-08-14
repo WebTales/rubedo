@@ -36,6 +36,10 @@ class Blocks_ImageMapController extends Blocks_AbstractController
         
         $output = $this->getAllParams();
         $output['image'] =$blockConfig['image'];
+        if(!isset($output['image'])){
+            $this->_sendResponse(array(), "block.html.twig");
+            return ;
+        }
         $output['map'] =Zend_Json::decode($blockConfig['map']);
         foreach ($output['map'] as &$mapElement) {
           if ($mapElement['type']=="polygon"){

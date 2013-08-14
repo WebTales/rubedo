@@ -76,7 +76,6 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
         
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit, false);
-        
         $response = array();
         $response['total'] = $dataValues['count'];
         $response['data'] = $dataValues['data'];

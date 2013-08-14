@@ -4,28 +4,28 @@
 	<target name="update" depends="set-rights,composer.update,composer.front.update"></target>
 	<target name="update-dev" depends="git.pull,set-rights,composer.update-dev,composer.front.update-dev"></target>
 	<target name="composer.install">
-		<exec command="composer install -o" passthru="true" dir="${project.basedir}"/>
+		<exec command="php composer.phar install -o" passthru="true" dir="${project.basedir}"/>
 	</target>
 	<target name="composer.front.install">
-		<exec command="composer install" passthru="true" dir="${project.basedir}/public"/>
+		<exec command="php ../composer.phar install" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	<target name="composer.update">
-		<exec command="composer update -o" passthru="true" dir="${project.basedir}"/>
+		<exec command="php composer.phar update -o" passthru="true" dir="${project.basedir}"/>
 	</target>
 	<target name="composer.front.update">
-		<exec command="composer update" passthru="true" dir="${project.basedir}/public"/>
+		<exec command="php ../composer.phar update" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	<target name="composer.install-dev">
-		<exec command="composer install -o --dev  --prefer-source" passthru="true" dir="${project.basedir}"/>
+		<exec command="php composer.phar install -o --dev  --prefer-source" passthru="true" dir="${project.basedir}"/>
 	</target>
 	<target name="composer.front.install-dev">
 		<exec command="composer install --dev  --prefer-source" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	<target name="composer.update-dev">
-		<exec command="composer update -o --dev --prefer-source" passthru="true" dir="${project.basedir}"/>
+		<exec command="php composer.phar update -o --dev --prefer-source" passthru="true" dir="${project.basedir}"/>
 	</target>
 	<target name="composer.front.update-dev">
-		<exec command="composer update --dev  --prefer-source" passthru="true" dir="${project.basedir}/public"/>
+		<exec command="php ../composer.phar update --dev  --prefer-source" passthru="true" dir="${project.basedir}/public"/>
 	</target>
 	<target name="prepare-cache" depends="">
 		<mkdir dir="${project.basedir}/cache"/>

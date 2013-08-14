@@ -247,63 +247,17 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             $maskObj['nativeLanguage']=$this->locale;
             
             // Home mask
-            $homeMask = $maskObj;
+            $homeMaskCreation = $this->createMask($maskObj,'NewSite.homepage.title',1);
             
-            $homeFirstColumnId = (string) new MongoId();
-            $homeSecondColumnId = (string) new MongoId();
-            
-            $homeMask['rows'][0]['id'] = (string) new MongoId();
-            $homeMask['rows'][1]['id'] = (string) new MongoId();
-            $homeMask['rows'][0]['columns'][0]['id'] = $homeFirstColumnId;
-            $homeMask['rows'][1]['columns'][0]['id'] = $homeSecondColumnId;
-            
-            $homeMask['mainColumnId'] = $homeSecondColumnId;
-            
-            $homeMask['blocks'][0]['id'] = (string) new MongoId();
-            $homeMask['blocks'][0]['parentCol'] = $homeFirstColumnId;
-            
-            $homeMask['text'] = $this->translateService->getTranslation('NewSite.homepage.title',$this->locale);
-            $homeMask['i18n'][$this->locale]['text'] = $homeMask['text'];
-            $homeMaskCreation = Rubedo\Services\Manager::getService('Masks')->create($homeMask);
-            
+
             // Detail mask
-            $detailMask = $maskObj;
-            
-            $detailFirstColumnId = (string) new MongoId();
             $detailSecondColumnId = (string) new MongoId();
-            
-            $detailMask['rows'][0]['id'] = (string) new MongoId();
-            $detailMask['rows'][1]['id'] = (string) new MongoId();
-            $detailMask['rows'][0]['columns'][0]['id'] = $detailFirstColumnId;
-            $detailMask['rows'][1]['columns'][0]['id'] = $detailSecondColumnId;
-            
-            $detailMask['mainColumnId'] = $detailSecondColumnId;
-            
-            $detailMask['blocks'][0]['id'] = (string) new MongoId();
-            $detailMask['blocks'][0]['parentCol'] = $detailFirstColumnId;
-            
-            $detailMask['text'] = $this->translateService->getTranslation('NewSite.single.title',$this->locale);
-            $detailMask['i18n'][$this->locale]['text'] = $detailMask['text'];
-            $detailMaskCreation = Rubedo\Services\Manager::getService('Masks')->create($detailMask);
+            $detailMaskCreation = $this->createMask($maskObj,'NewSite.single.title',1,$detailSecondColumnId);
             
             // Search mask
-            $searchMask = $maskObj;
+            $searchColumnId = (string) new MongoId();
+            $searchMaskCreation = $this->createMask($maskObj,'NewSite.search.title',1,$searchColumnId);
             
-            $searchFirstColumnId = (string) new MongoId();
-            $searchSecondColumnId = (string) new MongoId();
-            
-            $searchMask['rows'][0]['id'] = (string) new MongoId();
-            $searchMask['rows'][1]['id'] = (string) new MongoId();
-            $searchMask['rows'][0]['columns'][0]['id'] = $searchFirstColumnId;
-            $searchMask['rows'][1]['columns'][0]['id'] = $searchSecondColumnId;
-            
-            $searchMask['mainColumnId'] = $searchSecondColumnId;
-            
-            $searchMask['blocks'][0]['id'] = (string) new MongoId();
-            $searchMask['blocks'][0]['parentCol'] = $searchFirstColumnId;
-            
-            $searchMask['i18n'][$this->locale]['text'] = $searchMask['text'] = $this->translateService->getTranslation('NewSite.search.title',$this->locale);
-            $searchMaskCreation = Rubedo\Services\Manager::getService('Masks')->create($searchMask);
             
             if ($homeMaskCreation['success'] && $detailMaskCreation['success'] && $searchMaskCreation['success']) {
                 /* Create Home Page */
@@ -364,34 +318,20 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
                 $searchPageObj['site'] = $site['data']['id'];
                 $searchPageObj['maskId'] = $searchMaskCreation['data']['id'];
                 $searchPageObj['blocks'][0]['id'] = (string) new MongoId();
-                $searchPageObj['blocks'][0]['parentCol'] = $searchSecondColumnId;
+                $searchPageObj['blocks'][0]['parentCol'] = $searchColumnId;
                 $searchPage = Rubedo\Services\Manager::getService('Pages')->create($searchPageObj);
                 
                 if ($page['success'] && $homePage['success'] && $searchPage['success']) {
-                    $updateMask = $homeMaskCreation['data'];
-                    $updateMask["blocks"][0]['configBloc'] = array(
-                        "useSearchEngine" => true,
-                        "rootPage" => $homePage['data']['id'],
-                        "searchPage" => $searchPage['data']['id']
-                    );
-                    $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($updateMask);
+
+                    $updateMaskReturn = $this->updateMenuForMask($homeMaskCreation['data'],$homePage['data']['id'],$searchPage['data']['id']);
+                    $updateMaskReturn = $this->updateMenuForMask($searchMaskCreation['data'],$homePage['data']['id'],$searchPage['data']['id']);
+                    $updateMaskReturn = $this->updateMenuForMask($detailMaskCreation['data'],$homePage['data']['id'],$searchPage['data']['id']);
                     
-                    $updateMask = $searchMaskCreation['data'];
-                    $updateMask["blocks"][0]['configBloc'] = array(
-                        "useSearchEngine" => true,
-                        "rootPage" => $homePage['data']['id'],
-                        "searchPage" => $searchPage['data']['id']
-                    );
-                    $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($updateMask);
-                    
-                    $updateMask = $detailMaskCreation['data'];
-                    $updateMask["blocks"][0]['configBloc'] = array(
-                        "useSearchEngine" => true,
-                        "rootPage" => $homePage['data']['id'],
-                        "searchPage" => $searchPage['data']['id']
-                    );
-                    $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($updateMask);
-                    
+                    //add 1 to 3 colmumns masks
+                    for($i=1;$i<=3;$i++){
+                        $mask = $this->createMask($maskObj,'NewSite.'.$i.'col.title',$i);
+                        $this->updateMenuForMask($mask['data'],$homePage['data']['id'],$searchPage['data']['id']);
+                    }
                     
                     if ($updateMaskReturn['success'] === true) {
                         $updateData = $site['data'];
@@ -456,5 +396,51 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
             throw new \Rubedo\Exceptions\Server('can\'t translate :'.$matches[1]);
         }
         return $result;
+    }
+    
+    protected function createMask($maskObj,$name,$numcol=1,$forceCol = null){
+        // Search mask
+        $mask = $maskObj;
+        
+        $searchFirstColumnId = (string) new MongoId();
+        $searchSecondColumnId = (string) new MongoId();
+        
+        $mask['rows'][0]['id'] = (string) new MongoId();
+        $mask['rows'][1]['id'] = (string) new MongoId();
+        $mask['rows'][0]['columns'][0]['id'] = $searchFirstColumnId;
+        
+        $tempCol = $mask['rows'][1]['columns'][0];
+        $tempCol['span'] = floor(12/$numcol);
+        unset($mask['rows'][1]['columns']);
+        for($i = 1; $i <= $numcol; $i++){
+            $mask['rows'][1]['columns'][$i-1]=$tempCol;
+            $mask['rows'][1]['columns'][$i-1]['id'] = (string) new MongoId();
+            if($forceCol && $i == 1){
+                $mask['rows'][1]['columns'][$i-1]['id'] = $forceCol;
+            }
+            if($i <=2){
+                $mask['mainColumnId']=$mask['rows'][1]['columns'][$i-1]['id'];
+            }
+        }
+                
+        $mask['blocks'][0]['id'] = (string) new MongoId();
+        $mask['blocks'][0]['parentCol'] = $searchFirstColumnId;
+        
+        $mask['i18n'][$this->locale]['text'] = $mask['text'] = $this->translateService->getTranslation($name,$this->locale);
+        $maskCreation = Rubedo\Services\Manager::getService('Masks')->create($mask);
+        if($maskCreation['success']){
+            return $maskCreation;
+        }
+    }
+    
+    protected function updateMenuForMask($mask,$homePage,$searchPage){
+        $mask["blocks"][0]['configBloc'] = array(
+            "useSearchEngine" => true,
+            "rootPage" => $homePage,
+            "searchPage" => $searchPage
+        );
+        $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($mask);
+        
+        return $updateMaskReturn;
     }
 }

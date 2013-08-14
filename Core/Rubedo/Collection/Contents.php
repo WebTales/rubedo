@@ -28,8 +28,6 @@ use WebTales\MongoFilters\Filter;
 class Contents extends WorkflowAbstractCollection implements IContents
 {
 
-    protected static $_isFrontEnd = false;
-
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -156,7 +154,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
         }
         
-        if (self::$_isFrontEnd) {
+        if (static::$_isFrontEnd) {
             if (\Zend_Registry::isRegistered('draft')) {
                 $live = (\Zend_Registry::get('draft') === 'false' || \Zend_Registry::get('draft') === false) ? true : false;
             } else {
@@ -311,6 +309,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _indexContent ($obj)
     {
+        $contentType = Manager::getService('ContentTypes')->findById($obj['typeId']);
+        if(!$contentType || (isset($contentType['system']) && $contentType['system']==true)){
+            return;
+        }
+        
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContent($obj);
@@ -453,7 +456,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
             foreach ($obj['i18n'] as $locale => $data){
                 if(isset($data['fields'][$name])){
                     $obj['i18n'][$locale]['fields'][$name] = $cleanerService->clean($obj['i18n'][$locale]['fields'][$name]);
-                    //var_dump(explode('&',$obj['i18n'][$locale]['fields'][$name]));die();
                 }
             }
         }
@@ -798,23 +800,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         );
     }
 
-    /**
-     *
-     * @return the $_isFrontEnd
-     */
-    public static function getIsFrontEnd ()
-    {
-        return Contents::$_isFrontEnd;
-    }
-
-    /**
-     *
-     * @param boolean $_isFrontEnd            
-     */
-    public static function setIsFrontEnd ($_isFrontEnd)
-    {
-        Contents::$_isFrontEnd = $_isFrontEnd;
-    }
+    
 
     /**
      * Return a list of ordered objects

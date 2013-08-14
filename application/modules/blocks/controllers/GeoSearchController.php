@@ -28,6 +28,11 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 {
 
     protected $_option = 'geo';
+    
+    public function init(){
+        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        parent::init();
+    }
 
     public function indexAction ()
     {
@@ -76,10 +81,13 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         if (isset($params['predefinedFacets'])) {
             $predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
             foreach ($predefParamsArray as $key => $value) {
-                $params[$key] = $value;
-                $facetsToHide[] = $key;
+                if (!isset($params[$key]) or !in_array($value,$params[$key])) $params[$key][] = $value;
+                $facetsToHide[] = $value;
             }
         }
+        
+        $facetsToHide = array_unique($facetsToHide);
+        
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
         $query = Manager::getService('ElasticDataSearch');
@@ -93,14 +101,17 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $results['autoComplete'] =  $params['block-config']['autoComplete'];
         
         $results['facetsToHide'] = $facetsToHide;
+        $results['searchParams']=\Zend_Json::encode($params);
         
         $activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/activeFacets.html.twig");
         $facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/facets.html.twig");
+        
         
         $results['activeFacetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($activeFacetsTemplate, $results);
         $results['facetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($facetsTemplate, $results);
         $results['success'] = true;
         $results['message'] = 'OK';
+        unset($results['searchParams']);
         
         $this->_helper->json($results);
     }
@@ -119,13 +130,11 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
          
         // set field for autocomplete
         $params['field'] = 'autocomplete_'.$currentLocale;
-         
-        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
-        
+                 
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
         
-        $suggestTerms = $elasticaQuery->search($params,'suggest');
+        $suggestTerms = $elasticaQuery->search($params,'geosuggest');
         
         $data = array(
                 'terms' => $suggestTerms

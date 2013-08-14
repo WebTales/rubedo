@@ -5,14 +5,14 @@
 		"jquery/jqueryui": "1.10.3",
 		"jquery/timepicker": "0.3.2",
 		"sencha/extjs": "4.1.1a",
-		"webtales/ckeditor": "1.3.0RC1",
+		"webtales/ckeditor": "dev-master",
 		"twitter/bootstrap": "v2.3.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "1.3.0RC1",
+		"webtales/rubedo-backoffice-ui": "dev-develop",
 		"longtailvideo/jwplayer": "6",
 		"webtales/rubedo-localization": "dev-master",
 		"jschr/bootstrap-modal": "2.1",
-		"WebTales/bsie": "1.3.0RC1",
+		"WebTales/bsie": "dev-master",
 		"stowball/jQuery-rwdImageMaps": "1.0"
 	},
 	"require-dev": {},
@@ -124,6 +124,6 @@
 	"minimum-stability": "stable",
 	"config": {
 		"process-timeout": 600,
-		"vendor-dir": "components"
+		"vendor-dir": "public/components"
 	}
 }

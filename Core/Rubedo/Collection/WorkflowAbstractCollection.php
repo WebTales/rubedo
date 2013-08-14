@@ -50,12 +50,19 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
      *            should we wait for a server response
      * @return array
      */
-    public function update (array $obj, $options = array(), $live = true)
+    public function update(array $obj, $options = array(), $live = true)
     {
         if ($live === true) {
             $this->_dataService->setLive();
         } else {
             $this->_dataService->setWorkspace();
+        }
+        
+        if ($obj['status'] == "pending") {
+            $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
+            $obj['lastPendingUser'] = $currentUser;
+            $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
+            $obj['lastPendingTime'] = $currentTime;
         }
         
         $previousVersion = $this->findById($obj['id'], $live, false);
@@ -65,9 +72,6 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         if ($returnArray['success']) {
             if (! $live) {
                 $transitionResult = $this->_transitionEvent($returnArray['data'], $previousStatus);
-                if ($transitionResult) {
-                    $returnArray = $transitionResult;
-                }
             }
         } else {
             $returnArray = array(
@@ -89,7 +93,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
      *            should we wait for a server response
      * @return array
      */
-    public function create (array $obj, $options = array(), $live = false,$ignoreIndex = false)
+    public function create(array $obj, $options = array(), $live = false, $ignoreIndex = false)
     {
         if ($live === true) {
             throw new \Rubedo\Exceptions\Access('You can not create a content directly published', "Exception60");
@@ -97,17 +101,25 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         
         $this->_dataService->setWorkspace();
         
-        $returnArray = parent::create($obj, $options);
+        if ($obj['status'] == "pending") {
+            $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
+            $obj['lastPendingUser'] = $currentUser;
+            $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
+            $obj['lastPendingTime'] = $currentTime;
+        }
         
+        $returnArray = parent::create($obj, $options);
         if ($returnArray['success']) {
             if ($returnArray['data']['status'] === 'published') {
-                $result = $this->publish($returnArray['data']['id'],$ignoreIndex);
+                $result = $this->publish($returnArray['data']['id'], $ignoreIndex);
                 
                 if (! $result['success']) {
                     $returnArray['success'] = false;
                     $returnArray['msg'] = "failed to publish the content";
                     unset($returnArray['data']);
                 }
+            } else {
+                $transitionResult = $this->_transitionEvent($returnArray['data'], null);
             }
         } else {
             $returnArray = array(
@@ -189,7 +201,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         return $this->_dataService->publish($objectId);
     }
 
-    protected function _transitionEvent ($obj, $previousStatus)
+    protected function _transitionEvent($obj, $previousStatus)
     {
         if ($obj['status'] === 'published') {
             $returnArray = array();
@@ -201,11 +213,6 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
                 unset($returnArray['data']);
             }
         } elseif ($previousStatus != 'pending' && $obj['status'] == "pending") {
-            $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
-            $obj['lastPendingUser'] = $currentUser;
-            $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
-            $obj['lastPendingTime'] = $currentTime;
-            $returnArray = parent::update($obj);
             $this->_notify($obj, 'pending');
         } else {
             $returnArray = null;
@@ -218,7 +225,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
             $this->_notify($obj, 'published');
         }
         
-        return $returnArray;
+        return true;
     }
 
     protected function _notify ($obj, $notificationType)

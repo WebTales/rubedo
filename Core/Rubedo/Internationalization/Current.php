@@ -50,10 +50,10 @@ class Current implements ICurrent
             if ($forceLocal && in_array($forceLocal, $site['languages'])) {
                 // if locale is forced through URL
                 $locale = $forceLocal;
-            } elseif ($user && isset($user['preferedLanguage']) && isset($user['preferedLanguage'][$siteId])) {
+            } elseif ($user && isset($user['preferedLanguage']) && isset($user['preferedLanguage'][$siteId]) && in_array($user['preferedLanguage'][$siteId], $site['languages'])) {
                 // if prefered locale is known for current user
                 $locale = $user['preferedLanguage'][$siteId];
-            } elseif (!$user && isset($cookieValue)) {
+            } elseif (!$user && isset($cookieValue) && in_array($cookieValue, $site['languages'])) {
                 // fetch current locale from cookie
                 $locale = $cookieValue;
             }else {

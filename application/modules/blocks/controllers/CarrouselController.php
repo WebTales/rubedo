@@ -77,20 +77,22 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $data = array();
         if ($nbItems > 0) {
             foreach ($contentArray['data'] as $vignette) {
-                $fields = $vignette['fields'];
-                $terms = isset($vignette['taxonomy']) && count($vignette['taxonomy']) > 0 ? array_pop($vignette['taxonomy']) : array();
-                $termsArray = array();
-                foreach ($terms as $term) {
-                    if ($term == 'navigation') {
-                        continue;
+                if (isset($vignette['fields']['image'])) {
+                    $fields = $vignette['fields'];
+                    $terms = isset($vignette['taxonomy']) && count($vignette['taxonomy']) > 0 ? array_pop($vignette['taxonomy']) : array();
+                    $termsArray = array();
+                    foreach ($terms as $term) {
+                        if ($term == 'navigation') {
+                            continue;
+                        }
+                        $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
                     }
-                    $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+                    $fields['terms'] = $termsArray;
+                    $fields['title'] = $fields['text'];
+                    unset($fields['text']);
+                    $fields['id'] = (string) $vignette['id'];
+                    $data[] = $fields;
                 }
-                $fields['terms'] = $termsArray;
-                $fields['title'] = $fields['text'];
-                unset($fields['text']);
-                $fields['id'] = (string) $vignette['id'];
-                $data[] = $fields;
             }
         }
         $output = $this->getAllParams();
@@ -98,6 +100,8 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $output["imageWidth"] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
         $output["imageHeight"] = isset($blockConfig['imageHeight']) ? $blockConfig['imageHeight'] : null;
         $output["mode"] = isset($blockConfig['mode']) ? $blockConfig['mode'] : null;
+        $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
+        $output['singlePage'] = $this->getParam('single-page', $singlePage);
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {

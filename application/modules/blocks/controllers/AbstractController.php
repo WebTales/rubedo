@@ -32,7 +32,7 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         
         
         $templateService = Manager::getService('FrontOfficeTemplates');
-        Rubedo\Collection\Contents::setIsFrontEnd(true);
+        Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
         
         // handle preview for ajax request, only if user is a backoffice user
         if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
