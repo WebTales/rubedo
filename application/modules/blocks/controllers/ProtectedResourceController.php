@@ -28,14 +28,6 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
 {
 
     protected $_defaultTemplate = 'protected-resource';
-    
-    /*
-     * (non-PHPdoc) @see Blocks_AbstractController::init()
-     */
-    public function init ()
-    {
-        // TODO Auto-generated method stub
-    }
 
     public function indexAction ()
     {
@@ -125,7 +117,7 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         if (! Zend_Registry::getInstance()->isRegistered('swiftMail')) {
             $resultArray = array(
                 'success' => true,
-                'msg' => '<a href="' . $fileUrl . '">Cliquez pour votre téléchargement</a>'
+                'msg' => '<a href="' . $fileUrl . '">' . Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.Download") . 'Cliquez pour votre téléchargement</a>'
             );
         } else {
             $resultArray = $this->_sendEmail($fileUrl);
@@ -142,7 +134,7 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         $twigVar = array(
             'downloadUrl' => $url
         );
-        $twigVar['signature'] = 'Le site ' . Manager::getService('Sites')->getHost($this->siteId);
+        $twigVar['signature'] = Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Mail.signature") . ' ' . Manager::getService('Sites')->getHost($this->siteId);
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/protected-resource/mail-body.html.twig");
         $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
         
@@ -156,7 +148,7 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         $message->setTo(array(
             $this->email
         ));
-        $message->setSubject('[' . Manager::getService('Sites')->getHost($this->siteId) . '] Téléchargement du votre fichier');
+        $message->setSubject('[' . Manager::getService('Sites')->getHost($this->siteId) . '] '. Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Mail.Subject"));
         
         $message->setBody($plainMailBody);
         $message->addPart($mailBody, 'text/html');
@@ -165,12 +157,12 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         if ($result === 1) {
             $resultArray = array(
                 'success' => true,
-                'msg' => 'Un courriel contenant le lien de téléchargement vous a été adressé.'
+                'msg' => Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.EmailSent")
             );
         } else {
             $resultArray = array(
                 'success' => false,
-                'msg' => 'Impossible d\'envoyer un courriel'
+                'msg' => Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.EmailSent")
             );
         }
         
