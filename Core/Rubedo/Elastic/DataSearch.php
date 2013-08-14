@@ -216,8 +216,8 @@ class DataSearch extends DataAbstract implements IDataSearch
             $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
             
             // get site localization strategy
-            $localizationStrategy = $params['site']['locStrategy'];
-                       
+            $localizationStrategy = $taxonomyService->getLocalizationStrategy();
+            
             // get locale fall back
             $fallBackLocale = $taxonomyService->getFallbackLocale();
             
