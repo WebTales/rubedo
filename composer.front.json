@@ -55,7 +55,7 @@
 				"name": "twitter/bootstrap",
 				"version": "v2.3.0",
 				"dist": {
-					"url": "http://twitter.github.com/bootstrap/assets/bootstrap.zip",
+					"url": "http://getbootstrap.com/2.3.2/assets/bootstrap.zip",
 					"type": "zip"
 				}
 			}
