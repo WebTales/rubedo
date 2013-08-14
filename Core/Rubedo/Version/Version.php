@@ -170,8 +170,8 @@ final class Version
         }
         
         $componentsArray['frontComponents'] = array();
-        if (is_file(APPLICATION_PATH . '/../public/composer.lock')) {
-            $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../public/composer.lock'));
+        if (is_file(APPLICATION_PATH . '/../composer.front.lock')) {
+            $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.front.lock'));
             foreach ($phpComponentsArray['packages'] as $package) {
                 $componentsArray['frontComponents'][$package['name']] = $package['version'];
             }
