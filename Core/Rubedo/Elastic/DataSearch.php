@@ -197,7 +197,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     {
         $taxonomyService = Manager::getService('Taxonomy');
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
-        
+
         $this->_params = $params;
         
         $this->_facetDisplayMode = isset($this->_params['block-config']['displayMode']) ? $this->_params['block-config']['displayMode'] : 'standard';
@@ -216,8 +216,8 @@ class DataSearch extends DataAbstract implements IDataSearch
             $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
             
             // get site localization strategy
-            $localizationStrategy = $taxonomyService->getLocalizationStrategy();
-            
+            $localizationStrategy = $params['site']['locStrategy'];
+                       
             // get locale fall back
             $fallBackLocale = $taxonomyService->getFallbackLocale();
             
