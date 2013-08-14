@@ -310,9 +310,11 @@
                     "filter": ["icu_folding", "icu_normalizer", "autocomplete"],
 		            "char_filter": ["html_strip"]
 		        },
-		        "default": {
+		        "default_analyzer": {
 		            "type": "custom",
-		            "tokenizer": "icu_tokenizer"
+		            "tokenizer": "icu_tokenizer",
+		            "filter": ["icu_folding", "icu_normalizer"],
+		            "char_filter": ["html_strip"]
 		        }
 		    }
 		}

@@ -219,8 +219,8 @@ class DataIndex extends DataAbstract implements IDataIndex
                                         "type" => "multi_field",
                                         "path" => "just_name",
                                         "fields" => array(
-                                                $name => array("type" => "string", 'store' => $store),
-                                                $_all => array("type" => "string", 'store' => $store),
+                                                $name => array("type" => "string", "store" => $store),
+                                                $_all => array("type" => "string", "analyzer" => "default_analyzer", "store" => $store),
                                                 $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
                                         )
                                 );
@@ -303,7 +303,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                
         // Create mapping
         $indexMapping = $this->getIndexMapping($data,'content');
-     
+
         // Create new ES type if not empty
         if (! empty($indexMapping)) {
             // Create new type
