@@ -5,7 +5,7 @@
 	"expandable": false ,
 	"inheritWorkspace": false ,
 	"members": [] ,
-	"name": "###Groups.reviewers###" ,
+	"name": "###Groups.reviewer###" ,
 	"parentId": "root" ,
 	"readWorkspaces": ["global"] ,
 	"rights": [] ,
