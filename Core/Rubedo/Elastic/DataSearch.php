@@ -529,8 +529,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $this->_filters['type']
                 ));
             }
-            $elasticaFacetType->setSize(10);
-            $elasticaFacetType->setOrder('reverse_count');
+            $elasticaFacetType->setSize(1000);
+            $elasticaFacetType->setOrder('count');
             
             // Apply filters from other facets
             $facetFilter = $this->_getFacetFilter('type');
@@ -555,8 +555,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                     $this->_filters['damType']
                 ));
             }
-            $elasticaFacetDamType->setSize(10);
-            $elasticaFacetDamType->setOrder('reverse_count');
+            $elasticaFacetDamType->setSize(1000);
+            $elasticaFacetDamType->setOrder('count');
             
             // Apply filters from other facets
             $facetFilter = $this->_getFacetFilter('damType');
@@ -583,7 +583,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 ));
             }
             $elasticaFacetAuthor->setSize(5);
-            $elasticaFacetAuthor->setOrder('reverse_count');
+            $elasticaFacetAuthor->setOrder('count');
             
             // Apply filters from other facets
             $facetFilter = $this->_getFacetFilter('author');
