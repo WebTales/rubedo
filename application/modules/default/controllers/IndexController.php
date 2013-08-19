@@ -201,9 +201,15 @@ class IndexController extends Zend_Controller_Action
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
             
+            if(Manager::getService('CurrentUser')->getLanguage() == 'en'){
+                $datepickerJs = 'jquery.ui.datepicker-en-GB.js';
+            }else{
+                $datepickerJs = 'jquery.ui.datepicker-'. Manager::getService('CurrentUser')->getLanguage() .'.js';
+            }
+            
             $js = array(
                 '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
-                '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-'. Manager::getService('CurrentUser')->getLanguage() .'.js',
+                '/components/jquery/jqueryui/ui/i18n/'.$datepickerJs,
                 '/components/jquery/timepicker/jquery.ui.timepicker.js'
             );
             if (is_array($js)) {
