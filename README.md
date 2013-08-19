@@ -24,7 +24,14 @@ Installation
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 * ICU Analysis plugin for ElasticSearch (https://github.com/elasticsearch/elasticsearch-analysis-icu)
 
-### Install Steps
+### Already packaged Rubedo
+* Prebuilt releases of Rubedo are available on releases page (https://github.com/WebTales/rubedo/releases)
+* Install preRequisites (Apache,PHP,DB,Search Engine)
+* Define a simple vHost with the *public* directory as documentRoot
+* Add an AllowOverride All on this documentRoot
+* Access the */install* URL and run the config wizard
+
+### From Source Install Steps
 * Download Source from gitHub (https://github.com/WebTales/rubedo/tags)
 * Extract them on your server
 * Define a simple vHost with the *public* directory as documentRoot
@@ -38,6 +45,7 @@ Installation
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
 * Inside project root, choose the develop branch : `git checkout develop`
 * Do as in normal install process
+
 
 
 Setting Up Your VHOST
