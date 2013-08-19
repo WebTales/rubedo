@@ -504,6 +504,9 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     {
         if (! isset(self::$_termsArray[$id])) {
             if ($vocabularyId == null || $vocabularyId != 'navigation') {
+                if ($id == "all"){
+                    return $this->_getMainRoot ();
+                }
 				$term = parent::findById ( $id );
 			} else {
 				if ($id == "all") {
