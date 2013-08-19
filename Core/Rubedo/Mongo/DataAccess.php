@@ -179,13 +179,13 @@ class DataAccess implements IDataAccess
         }
         
         if (gettype($mongo) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$mongo should be a string', "Exception40", '$mongo');
+            throw new \Rubedo\Exceptions\Server('$mongo should be a string');
         }
         if (gettype($dbName) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$db should be a string', "Exception40", '$db');
+            throw new \Rubedo\Exceptions\Server('$db should be a string');
         }
         if (gettype($collection) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$collection should be a string', "Exception40", '$collection');
+            throw new \Rubedo\Exceptions\Server('$collection should be a string');
         }
         $this->_collection = $this->_getCollection($collection, $dbName, $mongo);
     }
