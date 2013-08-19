@@ -391,7 +391,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         
         // add filter for geo search on content types with 'position' field
-        if (in_array($option,array('suggest','geosuggest'))) {
+        if (in_array($option,array('geo','geosuggest'))) {
             $contentTypeList = Manager::getService('ContentTypes')->getGeolocatedContentTypes();
             if (! empty($contentTypeList)) {
                 $geoFilter = new \Elastica\Filter\BoolOr();
@@ -739,7 +739,6 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $search->addIndex(self::$_content_index);
                 
                 $elasticaResultSet = $search->search($elasticaQuery);
-
                 foreach ($elasticaResultSet as $result) {
                     $highlights = $result->getHighlights();
                     if (isset($highlights['autocomplete_'.$currentLocale][0])) {
