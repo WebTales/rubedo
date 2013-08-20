@@ -6,7 +6,8 @@
     },
     "rights":[
         "write.ui.contents",
-        "execute.controller.contents.@dot*"
+        "execute.controller.contents.@dot*",
+        "write.frontoffice.contents"
     ],
     "includes":[
         "contentWriter"

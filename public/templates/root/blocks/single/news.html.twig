@@ -5,7 +5,7 @@
     <div class="block headline">
         {% include "/root/blocks/edition/full-edition-button.html.twig" %}
     
-		<h2 class="editable" id="{{ data.id }}_text" data-field-type="title" data-locale="{{ locale }}">{{ data.text }}</h2>
+		<h2 class="editable" id="{{ data.id }}_text" data-field-type="title" data-locale="{{ data.locale }}">{{ data.text }}</h2>
 		<div class="alignright">
             {% for taxonomy in data.terms %}
 			    {% for term in taxonomy %}
@@ -24,7 +24,7 @@
 		<div class="row-fluid">
             {% if data.image %}
                 <div class="span3">
-                    {% include "/root/blocks/fields/imageField.html.twig" with { "key" : "image" } %}
+                    {% include "/root/blocks/fields/mediaField.html.twig" with { "key" : "image" } %}
                 </div>
             {% endif %}
     

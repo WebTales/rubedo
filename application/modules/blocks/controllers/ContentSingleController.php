@@ -55,8 +55,17 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                         if ($key == 'navigation') {
                             continue;
                         }
+                        
+                        if(!is_array($terms) && is_string($terms)) {
+                            $terms = array($terms);
+                        }
+                        
                         foreach ($terms as $term) {
                             $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
+                            
+                            if($readTerm === null) {
+                                $readTerm = array();
+                            }
                             
                             foreach ($readTerm as $key => $value) {
                                 $termsArray[$key][] = $value;
@@ -67,7 +76,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             }
             $data['terms'] = $termsArray;
             $data["id"] = $mongoId;
-            $data['locale']=$content['locale'];
+            $data['locale'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
@@ -85,8 +94,11 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             $contentTitlesArray[$value['config']['name']][] = $intermedContent['text'];
                         }
                     } else {
-                        $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
-                        $contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
+                        if (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1){
+                            $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
+                            $contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
+                        }
+                        
                     }
                 } else 
                     if ($value["cType"] == "CKEField") {
@@ -162,9 +174,13 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             }
                         }
             }
+            if (isset($type['code']) && !empty($type['code'])) {
+                $templateName = $type['code'] . ".html.twig";
+            } else {
+                $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
+                $templateName .= ".html.twig";
+            }
             
-            $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
-            $templateName .= ".html.twig";
             $output["data"] = $data;
             $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
             $output["type"] = $cTypeArray;
@@ -175,9 +191,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
-                '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
-                '/components/jquery/jqueryui/ui/i18n/jquery.ui.datepicker-fr.js',
-                '/components/jquery/timepicker/jquery.ui.timepicker.js'
             );
             
             if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {

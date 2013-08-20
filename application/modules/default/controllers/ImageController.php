@@ -41,6 +41,9 @@ class ImageController extends Zend_Controller_Action
         $fileId = $this->getRequest()->getParam('file-id');
         $filePath = $this->getParam('filepath');
         $size = $this->getParam('size', 'custom');
+        
+        $version = $this->getParam('version',1);
+        
         if ($size == "custom") {
             $width = $this->getParam('width', null);
             $height = $this->getParam('height', null);
@@ -59,7 +62,7 @@ class ImageController extends Zend_Controller_Action
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
-            $filePath = sys_get_temp_dir() . '/' . $fileId;
+            $filePath = sys_get_temp_dir() . '/' . $fileId . '_' . $version;
             if (! is_file($filePath) || $now - filemtime($filePath) > 7 * 24 * 3600) {
                 $obj->write($filePath);
             }

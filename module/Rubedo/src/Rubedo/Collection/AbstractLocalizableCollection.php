@@ -266,9 +266,19 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     public function readTree(\WebTales\MongoFilters\IFilter $filters = null)
     {
-        // ...
         $tree = $this->_dataService->readTree($filters);
+        $tree = $this->adaptTree($tree);
         return $tree['children'];
+    }
+    
+    protected function adaptTree($tree){
+        $children = $tree['children'];
+        $tree['children'] = array();
+        $tree = $this->localizeOutput($tree);
+        foreach ($children as $child){
+            $tree['children'][] = $this->adaptTree($child);
+        }
+        return $tree;
     }
 
     /**
@@ -302,7 +312,6 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($alternativeFallBack === null && static::$isLocaleFiltered && static::$localizationStrategy == 'fallback') {
             $alternativeFallBack = static::$fallbackLocale;
         }
-        // \Zend_Debug::dump(static::$fallbackLocale);//die();
         
         if (! isset($obj['nativeLanguage'])) {
             throw new \Rubedo\Exceptions\Server('No defined native language for this item');
@@ -315,9 +324,15 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             if (isset($obj['i18n'][$locale])) {
                 $obj = $this->merge($obj, $obj['i18n'][$locale]);
                 $obj['locale'] = $locale;
+//                 if(static::$_isFrontEnd){
+//                     $obj[static::$labelField]=$obj['i18n'][$locale][static::$labelField];
+//                 }
             } elseif (isset($alternativeFallBack) && isset($obj['i18n'][$alternativeFallBack])) {
                 $obj = $this->merge($obj, $obj['i18n'][$alternativeFallBack]);
                 $obj['locale'] = $alternativeFallBack;
+//                 if(static::$_isFrontEnd){
+//                     $obj[static::$labelField]=$obj['i18n'][$alternativeFallBack][static::$labelField];
+//                 }
             }
         }
         

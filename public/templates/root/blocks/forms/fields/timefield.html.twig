@@ -1,5 +1,5 @@
 <div class="control-group {% if field.id in errors|keys %}error{% endif %} {% if field.itemConfig.hidden %}hide{% endif %}">
-    <label class="control-label" for="{{ field.id }}">{{ field.itemConfig.label }}</label>{% if field.itemConfig.fieldConfig.mandatory %} *{% endif %}
+    <label class="control-label" for="{{ field.id }}">{{ field.itemConfig.label | cleanHtml }}</label>{% if field.itemConfig.fieldConfig.mandatory %} *{% endif %}
     {% if field.itemConfig.tooltip !=""%}
     <a href="#" class="help" data-toggle="tooltip"  data-placement="right" title="{{ field.itemConfig.tooltip }}" data-original-title="{{ field.itemConfig.tooltip }}">
       <i class="icon-exclamation-sign icon-margin"></i></a>

@@ -179,13 +179,13 @@ class DataAccess implements IDataAccess
         }
         
         if (gettype($mongo) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$mongo should be a string', "Exception40", '$mongo');
+            throw new \Rubedo\Exceptions\Server('$mongo should be a string');
         }
         if (gettype($dbName) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$db should be a string', "Exception40", '$db');
+            throw new \Rubedo\Exceptions\Server('$db should be a string');
         }
         if (gettype($collection) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$collection should be a string', "Exception40", '$collection');
+            throw new \Rubedo\Exceptions\Server('$collection should be a string');
         }
         $this->_collection = $this->_getCollection($collection, $dbName, $mongo);
     }
@@ -323,7 +323,6 @@ class DataAccess implements IDataAccess
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-        
         // get the cursor
         $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
         $nbItems = $cursor->count();
@@ -489,6 +488,12 @@ class DataAccess implements IDataAccess
         
         // apply sort, paging, filter
         $cursor->sort($sort);
+        
+        //limit to 50 in BO for rendering until Extjs 4.2 (@todo remove when updated)
+        if(!\Rubedo\Collection\AbstractCollection::getIsFrontEnd()){
+            $cursor->limit(50);
+        }
+        
         
         // switch from cursor to actual array
         $data = iterator_to_array($cursor);

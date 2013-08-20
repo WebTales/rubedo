@@ -34,15 +34,18 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
         $blockConfig = $this->getRequest()->getParam('block-config');
         $formName = isset($blockConfig["formName"]) ? $blockConfig["formName"] : null;
         
-        if ($formName !== null) {
+        $error = false;
+        
+        if ($formName !== null && isset($blockConfig['contacts'])) {
             $output = $this->getAllParams();
             
-            $errors = array();
-            
             $formPath = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/forms/" . $formName . ".html.twig");
-            $realPath = realpath(APPLICATION_PATH . "/../public/templates/" . Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/forms/" . $formName . ".html.twig"));
+            $realPath = realpath(APPLICATION_PATH . "/../public/templates/" . $formPath);
             
-            if (file_exists($realPath)) {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/email-templates/" . $formName . ".html.twig");
+            $templateRealPath = realpath(APPLICATION_PATH . "/../public/templates/" . $template);
+            
+            if (file_exists($realPath) && file_exists($templateRealPath)) {
                 $form = Manager::getService('FrontOfficeTemplates')->render($formPath, array());
                 
                 // Check if the form was send
@@ -50,7 +53,6 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
                     
                     $twigVar = $this->_request->getPost();
                     
-                    $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/email-templates/" . $formName . ".html.twig");
                     $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
                     
                     // Create a mailer object
@@ -60,38 +62,35 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
                     // Get recipients from block config
                     $recipients = $blockConfig['contacts'];
                     
-                    if ($recipients) {
-                        // Build e-mail
-                        $subject = "[Rubedo]";
-                        
-                        $mailerObject->setSubject($subject);
-                        $mailerObject->setFrom("admin@rubedo.fr");
-                        $mailerObject->setTo($recipients);
-                        $mailerObject->setBody($mailBody);
-                        
-                        // Send e-mail
-                        $sendResult = $mailerService->sendMessage($mailerObject, $errors);
-                        
-                        if (! $sendResult) {
-                            $errors[] = "L'envoi du mail à échoué, merci de réessayer ultèrieurement";
-                        } else {
-                            $output['sendResult'] = true;
-                        }
+                    // Build e-mail
+                    $subject = $blockConfig['subject'];
+                    
+                    $mailerObject->setSubject($subject);
+                    $mailerObject->setFrom($blockConfig['from']);
+                    $mailerObject->setTo($recipients);
+                    $mailerObject->setBody($mailBody);
+                    
+                    if(isset($blockConfig['cc']) && is_array($blockConfig["cc"])) {
+                        $mailerObject->setCc($blockConfig['cc']);
+                    }
+                    
+                    // Send e-mail
+                    $sendResult = $mailerService->sendMessage($mailerObject);
+                    
+                    if (! $sendResult) {
+                        $error = true;
                     } else {
-                        $errors[] = "Merci de renseigner un destinataire dans les paramètres de configuration du bloc contact avancé.";
+                        $output['sendResult'] = true;
                     }
                 }
                 
-                if (count($errors) > 0) {
-                    $output['errors'] = $errors;
-                }
                 
                 $output["blockConfig"] = $blockConfig;
             } else {
-                $form = "<div class=\"alert alert-danger\">Le nom de template spécifié n'éxiste pas.</div>";
+                $error = true;
             }
         } else {
-            $form = "<div class=\"alert alert-danger\">Vous devez spécifier un nom de template.</div>";
+            $error = true;
         }
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
@@ -100,6 +99,7 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
         }
         
+        $output['error'] = $error;
         $output['form'] = $form;
         
         $css = array();

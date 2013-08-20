@@ -1,5 +1,5 @@
 <div id="activeFacetBox">
-<div class="navbar">
+<div class="navbar" id="searchpage" data-searchparams='{{ searchParams }}'>
 	<div class="navbar-inner">
 		<a class="brand">{% if total > 1 %}{{"Search.ThereAre"|fotrans}}{% else %}{{"Search.ThereIs"|fotrans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if total > 1 %}{{"Search.Results"|fotrans}}{% else %}{{"Search.Result"|fotrans}}{% endif %}</a>
 	</div>
@@ -12,15 +12,15 @@
 		{% for facet in activeFacets %}
 		    {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' %}
                 {% for term in facet.terms %}
-	                <a {% if facet.id not in facetsToHide %}class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)"{% endif %}>
-					<span class="badge badge-info"> {% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
+	                <a {% if term.term not in facetsToHide %}class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)"{% endif %}>
+					<span class="badge badge-info"> {% if term.term not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
 				    </a>
 		        {% endfor %}
             {% else %}
                 {% for term in facet.terms %}
                     {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
-		            <a {% if facet.id not in facetsToHide %}class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)"{% endif %}>
-				        <span class="badge badge-info">{% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %}{{ term.label }}</span>
+		            <a {% if term.term not in facetsToHide %}class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',false)"{% endif %}>
+				        <span class="badge badge-info">{% if term.term not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %}{{ term.label }}</span>
 			        </a>
 			        {% endif %}
 		        {% endfor %}

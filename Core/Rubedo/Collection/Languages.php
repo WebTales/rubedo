@@ -45,11 +45,11 @@ class Languages extends AbstractCollection implements ILanguages
     );
 
     protected static $activated = null;
-    
-    protected static $activeLocalesArray = null;
 
     protected static $activeLanguages = array();
 
+    protected static $activeLocalesArray = null;
+    
     protected static $defaultLanguage = null;
 
     public function __construct()
@@ -127,12 +127,6 @@ class Languages extends AbstractCollection implements ILanguages
         }
     }
     
-    /**
-     * Return the list of active languages
-     * 
-     * @param string $siteId
-     * @return array
-     */
     public function getActiveLanguages($siteId = null)
     {
     	
@@ -143,10 +137,10 @@ class Languages extends AbstractCollection implements ILanguages
     	return $result['data'];
 
     }
-    
+
     /**
      * Return the list of active locales
-     * 
+     *
      * @return array
      */
     public function getActiveLocales()
@@ -158,7 +152,7 @@ class Languages extends AbstractCollection implements ILanguages
             }
         }
         return self::$activeLocalesArray;
-    }
+    }    
     
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()

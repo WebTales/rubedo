@@ -124,17 +124,6 @@ class IndexController extends Zend_Controller_Action
         
         // if no page found, maybe installation isn't set
         if (! $this->_pageId) {
-            $applicationOptions = $this->getFrontController()
-                ->getParam('bootstrap')
-                ->getApplication()
-                ->getOptions();
-            
-            if (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished') {
-                $this->_helper->redirector->gotoUrl($this->_helper->url('index', 'index', 'install')); // redirect
-                                                                                                           // to
-                                                                                                           // install
-                                                                                                           // tool
-            }
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
@@ -149,6 +138,8 @@ class IndexController extends Zend_Controller_Action
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
+        Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
+        
         // init browser languages
         $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
         $browserLanguages = array_keys($zend_locale->getBrowser());
@@ -162,7 +153,10 @@ class IndexController extends Zend_Controller_Action
         }
         
         // reload page in localization context
-        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId,true);
+        if(!$this->_pageInfo){
+            throw new Rubedo\Exceptions\NotFound('Page not found in this language','Exception101');
+        }
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
@@ -206,6 +200,23 @@ class IndexController extends Zend_Controller_Action
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
+            
+            if(Manager::getService('CurrentUser')->getLanguage() == 'en'){
+                $datepickerJs = 'jquery.ui.datepicker-en-GB.js';
+            }else{
+                $datepickerJs = 'jquery.ui.datepicker-'. Manager::getService('CurrentUser')->getLanguage() .'.js';
+            }
+            
+            $js = array(
+                '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
+                '/components/jquery/jqueryui/ui/i18n/'.$datepickerJs,
+                '/components/jquery/timepicker/jquery.ui.timepicker.js'
+            );
+            if (is_array($js)) {
+                foreach ($js as $value) {
+                    $this->_servicePage->appendJs($value);
+                }
+            }
         }
         
         $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
@@ -277,6 +288,7 @@ class IndexController extends Zend_Controller_Action
         $twigVar['isLoggedIn'] = $isLoggedIn;
         $twigVar['hasAccessToBO'] = $hasAccessToBO;
         $twigVar['canEdit'] = $canEdit;
+        $twigVar['boLocale'] = Manager::getService('CurrentUser')->getLanguage();
         
         $twigVar['pageProperties'] = isset($this->_mask['pageProperties']) ? $this->_mask['pageProperties'] : null;
         

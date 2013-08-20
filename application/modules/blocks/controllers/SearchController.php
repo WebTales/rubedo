@@ -32,7 +32,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         // get search parameters
         $params = $this->getRequest()->getParams();
-
+       
         //remove empty facets from criteria
         foreach($params as $key => $value){
             
@@ -63,8 +63,8 @@ class Blocks_SearchController extends Blocks_AbstractController
             $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
             if (is_array($predefParamsArray)) {
                 foreach ($predefParamsArray as $key => $value) {
-                    $params[$key] = $value;
-                    $facetsToHide[] = $key;
+                    $params[$key][] = $value;
+                    $facetsToHide[] = $value;
                 }
             }
         }
@@ -73,7 +73,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
-                
+
         $results = $query->search($params);
         $results['searchParams']=\Zend_Json::encode($params);
         $results['currentSite'] = isset($siteId) ? $siteId : null;

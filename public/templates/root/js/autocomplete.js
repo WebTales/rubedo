@@ -16,8 +16,9 @@ $(function(){
 			});
 			
 	    },
-	    matcher: function() {
-	    	return true;
+	    matcher: function(item) {
+	    	var strlength = this.query.length;
+	    	return this.query.toLowerCase() == item.toLowerCase().substring(0,strlength);
 	    },
 	    items:10,
 	    minLength:3

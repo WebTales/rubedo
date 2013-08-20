@@ -23,7 +23,7 @@ use Rubedo\Services\Manager;
 /**
  * Class to store and retrieve the version of Rubedo.
  *
- * Design the same way than Zend Framework 2 Version class
+ * Designed the same way than Zend Framework 2 Version class
  */
 final class Version
 {
@@ -31,7 +31,7 @@ final class Version
     /**
      * Zend Framework version identification - see compareVersion()
      */
-    const VERSION = '1.3.0dev';
+    const VERSION = '1.4.0dev';
 
     /**
      * Github Service Identifier for version information is retreived from
@@ -170,8 +170,8 @@ final class Version
         }
         
         $componentsArray['frontComponents'] = array();
-        if (is_file(APPLICATION_PATH . '/../public/composer.lock')) {
-            $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../public/composer.lock'));
+        if (is_file(APPLICATION_PATH . '/../composer.front.lock')) {
+            $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.front.lock'));
             foreach ($phpComponentsArray['packages'] as $package) {
                 $componentsArray['frontComponents'][$package['name']] = $package['version'];
             }

@@ -286,5 +286,54 @@ class Dam extends AbstractLocalizableCollection implements IDam
         
         return parent::_filterInputData($obj, $model);
     }
+    
+    /**
+     * Get the media type
+     *
+     * @param string $mediaId
+     * @return The media type (video, image, document etc)
+     */
+    public function getMediaType($mediaId) {
+        if (! $mediaId instanceof \MongoId) {
+            if (! is_string($mediaId) || preg_match('/[\dabcdef]{24}/', $mediaId) !== 1) {
+                throw new \Rubedo\Exceptions\User('Invalid MongoId :' . $mediaId);
+            }
+       }
+        $media = $this->findById($mediaId);
+        $damTypeId = $media["typeId"];
+        
+        $damType = Manager::getService("DamTypes")->findById($damTypeId);
+        
+        $mediaType = $damType["type"];
+        
+        return $mediaType;
+    }
+    
+    public function updateVersionForFileId($fileId){
+        $filters = Filter::factory();
+        $filter = Filter::factory('Value')->SetName('originalFileId')->setValue($fileId);
+        $filters->addFilter($filter);
+        
+        $options = array(
+            'multiple' => true
+        );
+        $data = array('$inc'=>array('version'=>1));
+        return $this->customUpdate($data, $filters,$options);
+    }
+    
+    public function  findByTitle($title) {
+
+        $filter = Filter::factory('Value')->SetName('title')->setValue($title);
+        return $this->findOne($filter);
+              
+    }
+    
+    public function  findByOriginalFileId($id) {
+    
+        $filter = Filter::factory('Value')->SetName('originalFileId')->setValue($id);
+        return $this->findOne($filter);
+    
+    }
+    
 }
 

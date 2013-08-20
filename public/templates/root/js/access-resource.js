@@ -6,7 +6,8 @@ function submitEmail(prefix) {
 			'mailing-list-id' : jQuery('#mailingListId-'+prefix).val(),
 			'email' : jQuery('#email-'+prefix).val(),
 			'dam-id' : jQuery('#damId-'+prefix).val(),
-			'site-id' : jQuery("body").attr('data-site-id')
+			'site-id' : jQuery("body").attr('data-site-id'),
+			'current-page':jQuery('body').attr('data-current-page')
 		},
 		dataType : "json"
 	});

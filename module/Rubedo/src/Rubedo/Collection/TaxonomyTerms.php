@@ -333,6 +333,10 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term = array();
         $term["parentId"] = 'all';
         $term['text'] = $site['text'];
+        if(isset($site['i18n'])){
+            $term['i18n'] = $site['i18n'];
+        }
+        $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();;
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
         $term['isNotPage'] = true;
@@ -348,7 +352,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     {
         $mainRoot = array();
         $mainRoot["parentId"] = 'root';
-        $mainRoot['text'] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.AllSites", 'All sites');
+        $mainRoot['text'] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.AllSites", 'All sites'); 
         $mainRoot['id'] = 'all';
         $mainRoot['canAssign'] = true;
         $mainRoot['isNotPage'] = true;
@@ -356,6 +360,13 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         if (! self::isUserFilterDisabled()) {
             $mainRoot['readOnly'] = true;
         }
+        
+        foreach (Manager::getService('Languages')->getActiveLocales() as $locale){
+            $mainRoot['i18n'][$locale] = array();
+            $mainRoot['i18n'][$locale]['locale'] = $locale;
+            $mainRoot['i18n'][$locale]['text'] = Manager::getService('Translate')->getTranslation("TaxonomyTerms.PagePicker.AllSites", $locale); 
+        }
+        $mainRoot['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         return $mainRoot;
     }
 
@@ -368,6 +379,10 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     protected function _pageToTerm ($page)
     {
         $term = array();
+        if(isset($page['i18n'])){
+            $term['i18n'] = $page['i18n'];
+        }
+        $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         $term["parentId"] = ($page['parentId'] == 'root') ? $page['site'] : $page['parentId'];
         $term['text'] = $page['text'];
         $term['id'] = $page['id'];
@@ -489,6 +504,9 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     {
         if (! isset(self::$_termsArray[$id])) {
             if ($vocabularyId == null || $vocabularyId != 'navigation') {
+                if ($id == "all"){
+                    return $this->_getMainRoot ();
+                }
 				$term = parent::findById ( $id );
 			} else {
 				if ($id == "all") {
@@ -705,5 +723,18 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         
         $Filters = Filter::factory('InUid')->setValue($deleteArray);
         return $this->_dataService->customDelete($Filters);
+    }
+    
+    public function removeI18nByVocabularyId($vocabularyId,$locale){
+        $filters = Filter::factory();
+        $filter = Filter::factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
+        $filters->addFilter($filter);
+        $filter = Filter::factory('OperatorToValue')->SetName('i18n.'.$locale)->setOperator('$exists')->setValue(true);
+        $filters->addFilter($filter);
+        $options = array(
+            'multiple' => true
+        );
+        $data = array('$unset'=>array('i18n.'.$locale=>true));
+        return $this->customUpdate($data, $filters,$options);
     }
 }

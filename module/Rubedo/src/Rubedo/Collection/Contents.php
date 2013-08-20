@@ -28,8 +28,6 @@ use WebTales\MongoFilters\Filter;
 class Contents extends WorkflowAbstractCollection implements IContents
 {
 
-    protected static $_isFrontEnd = false;
-
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -156,7 +154,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
         }
         
-        if (self::$_isFrontEnd) {
+        if (static::$_isFrontEnd) {
             if (\Zend_Registry::isRegistered('draft')) {
                 $live = (\Zend_Registry::get('draft') === 'false' || \Zend_Registry::get('draft') === false) ? true : false;
             } else {
@@ -213,7 +211,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function create (array $obj, $options = array(), $live = false,$ignoreIndex = false)
     {
         $obj = $this->_setDefaultWorkspace($obj);
-        $this->_filterInputData($obj);
+        $obj = $this->_filterInputData($obj);
         
         if ($this->_isValidInput) {
             $returnArray = parent::create($obj, $options, $live, $ignoreIndex);
@@ -250,7 +248,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $obj['target'][] = $obj['writeWorkspace'];
         }
         
-        $this->_filterInputData($obj);
+        $obj = $this->_filterInputData($obj);
         
         if ($this->_isValidInput) {
             $returnArray = parent::update($obj, $options, $live);
@@ -311,6 +309,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _indexContent ($obj)
     {
+        $contentType = Manager::getService('ContentTypes')->findById($obj['typeId']);
+        if(!$contentType || (isset($contentType['system']) && $contentType['system']==true)){
+            return;
+        }
+        
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContent($obj);
@@ -356,6 +359,16 @@ class Contents extends WorkflowAbstractCollection implements IContents
             throw new \Rubedo\Exceptions\Access('You can not assign this content type to this workspace', "Exception37");
         }
         $contentTypeFields = $contentType['fields'];
+        
+        foreach($contentTypeFields as $fieldConfig){
+            switch ($fieldConfig['cType']){
+                case 'CKEField':
+                    $obj = $this->filterCKEField($obj,$fieldConfig['config']['name']);
+                    break;
+                default;
+            }
+        }
+        
         
         $fieldsArray = array();
         $missingField = array();
@@ -432,6 +445,24 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $obj;
     }
 
+    protected function filterCKEField($obj,$name){
+        $cleanerService = Manager::getService('HtmlCleaner');
+        
+        if(isset($obj['fields'][$name])){
+            $obj['fields'][$name] = $cleanerService->clean($obj['fields'][$name]);
+        }
+        
+        if(isset($obj['i18n'])){
+            foreach ($obj['i18n'] as $locale => $data){
+                if(isset($data['fields'][$name])){
+                    $obj['i18n'][$locale]['fields'][$name] = $cleanerService->clean($obj['i18n'][$locale]['fields'][$name]);
+                }
+            }
+        }
+        return $obj;
+    }
+    
+    
     /**
      * Check if value is valid based on field config from type content
      *
@@ -761,7 +792,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function isTypeUsed ($typeId)
     {
         $filter = Filter::factory('Value')->setName('typeId')->setValue($typeId);
-        $result = $this->_dataService->findOne($filter);
+        $result = $this->_dataService->findOne($filter,false);
         return ($result != null) ? array(
             "used" => true
         ) : array(
@@ -769,23 +800,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         );
     }
 
-    /**
-     *
-     * @return the $_isFrontEnd
-     */
-    public static function getIsFrontEnd ()
-    {
-        return Contents::$_isFrontEnd;
-    }
-
-    /**
-     *
-     * @param boolean $_isFrontEnd            
-     */
-    public static function setIsFrontEnd ($_isFrontEnd)
-    {
-        Contents::$_isFrontEnd = $_isFrontEnd;
-    }
+    
 
     /**
      * Return a list of ordered objects

@@ -57,7 +57,8 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
         
         if (! isset($flParams['user']) && ! isset($flParams['tags'])) {
             $output['doNotShow'] = true;
-            return $output;
+            $this->_sendResponse(array(), "block.html.twig");
+            return ;
         }
         
         $cache = Rubedo\Services\Cache::getCache('flicker');
@@ -128,7 +129,6 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
         /**
          * *****************************************************
          */
-        
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/flicker.html.twig");
         
         $css = array();

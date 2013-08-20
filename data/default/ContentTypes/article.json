@@ -71,6 +71,7 @@
 	"defaultId": "51a60bb0c1c3dac60700000e",
 	"system": false ,
 	"type": "###Article.type###" ,
+	"code": "article",
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"workflow": "Basique" ,

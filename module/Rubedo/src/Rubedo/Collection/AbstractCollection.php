@@ -75,6 +75,8 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var array
      */
     protected static $_fetchedObjects = array();
+    
+    protected static $_isFrontEnd = false;
 
     protected function _init ()
     {
@@ -733,6 +735,24 @@ abstract class AbstractCollection implements IAbstractCollection
         ));
         
         AbstractCollection::disableUserFilter($wasFiltered);
+    }
+    
+    /**
+     *
+     * @return the $_isFrontEnd
+     */
+    public static function getIsFrontEnd ()
+    {
+        return static::$_isFrontEnd;
+    }
+    
+    /**
+     *
+     * @param boolean $_isFrontEnd
+     */
+    public static function setIsFrontEnd ($_isFrontEnd)
+    {
+        static::$_isFrontEnd = $_isFrontEnd;
     }
 }
 	

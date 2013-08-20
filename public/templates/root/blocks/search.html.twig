@@ -12,7 +12,7 @@
 				{% if orderby == "lastUpdateTime" %}
 				{{"Search.Label.OrderByDate"|fotrans}}
 				{% endif %}
-				{% if orderby == "author" %}
+				{% if orderby == "createUser.fullName" %}
 				{{"Search.Label.OrderByAuthor"|fotrans}}
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
@@ -26,9 +26,9 @@
 						<a href="{{url({'orderby': 'lastUpdateTime'})}}">{{"Search.Label.OrderByDate"|fotrans}}</a>
 					</li>
 					{% endif %}
-					{% if orderby != "author" %}
+					{% if orderby != "createUser.fullName" %}
 					<li>
-						<a href="{{url({'orderby': 'author'})}}">{{"Search.Label.OrderByAuthor"|fotrans}}</a>
+						<a href="{{url({'orderby': 'createUser.fullName','orderbyDirection': 'asc'})}}">{{"Search.Label.OrderByAuthor"|fotrans}}</a>
 					</li>
 					{% endif %}
 				</ul>
@@ -71,8 +71,8 @@
                     {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
                     {% set activeFacetsList = activeFacetsList|merge([term.term]) %}
                     {% if displayMode != 'checkbox' %}
-		            <a {% if facet.id not in facetsToHide %}href="{{url({(facet.id): term.term},'sub')}}"{% endif %} >
-				        <span class="badge badge-info">{% if facet.id not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
+		            <a {% if term.term not in facetsToHide %}href="{{url({(facet.id): term.term},'sub')}}"{% endif %} >
+				        <span class="badge badge-info">{% if term.term not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
 			        </a>
 			        {% endif %}
 			        {% endif %}

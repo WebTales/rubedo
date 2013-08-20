@@ -22,7 +22,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	var editor = event.editor, element = editor.element;
 	editor.config.entities = false;
 	editor.config.entities_latin = false;
-	editor.config.language = jQuery("body").attr("data-language");
+	editor.config.language = jQuery("body").attr("data-bolanguage");
 	
 	// Customize CKEditor
 	if (element.getAttribute("data-field-type") =="title" || element.getAttribute("data-field-type") =="text" || element.getAttribute("data-field-type") =="textfield" || element.getAttribute("data-field-type") =="textareafield") {
@@ -30,7 +30,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 		//Minimal configuration for titles
 		editor.on('configLoaded', function() {
 			// Remove unnecessary plugins
-			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat,scayt,' + 'smiley,specialchar,stylescombo,templates,wsc';
+			editor.config.removePlugins = 'colorbutton,find,flash,font,' + 'forms,iframe,image,newpage,removeformat' + 'smiley,specialchar,stylescombo,templates,wsc';
 
 			editor.getData=function(){return(editor.editable().getText());};
 			editor.forcePasteAsPlainText = true;
@@ -52,7 +52,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				editor.config.toolbar = [
                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-                   { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+                   { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },'/',
                    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
                    { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
                    { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
@@ -67,7 +67,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 				editor.config.toolbar = [
 	                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline','Strike', '-', 'RemoveFormat' ] },
 	                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock','-','Image']},
-	                { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+	                { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },
 	                { name: 'styles', items: [ 'Font', 'FontSize' ] }
                 ];
 			});
@@ -83,7 +83,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 					{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
 					{ name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
 					'/',
-					{ name: 'colors', items: [ 'TextColor', '-','BGColor' ] },
+					{ name: 'colors', items: [ 'TextColor','BGColor'] },
 					{ name: 'tools', items: [ 'Maximize', '-','ShowBlocks' ] },
 					{ name: 'links', items: [ 'Link', "Rubedolink", 'Unlink','-','Anchor' ] },
 					{ name: 'insert', items: [ 'Image',  '-', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak', 'Iframe' ] }
@@ -101,7 +101,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 			editor.config.toolbar = [
 			    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
 	            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-	            { name: 'colors', items: [ 'TextColor', '-','BGColor' ] },'/',
+	            { name: 'colors', items: [ 'TextColor','BGColor','-', 'Scayt' ] },'/',
 	            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
 	            { name: 'insert', items: [ 'Image',  '-', 'Table', 'SpecialChar', 'PageBreak', 'Link', "Rubedolink", 'Unlink', 'Anchor'] },
 	            { name: 'managing', items: [ 'Maximize','-','Undo', 'Redo'  ] }
@@ -303,7 +303,7 @@ jQuery(".date").click( function () {
 
 jQuery(".time").click( function () {
 	var currentTimePicker = jQuery(this).parent().context.id;
-	var locale = jQUery("#"+currentTimePicker).attr("data-locale");
+	var locale = jQuery("#"+currentTimePicker).attr("data-locale");
 	var currentTime = "";
 	var olderTime= "";
 	var houresAreSet = false;
@@ -493,6 +493,8 @@ function swithToEditMode() {
 	});
 	 starEdit=true;
 	 EditMode=true;
+	 jQuery(".field-tip-btn").popover({placement:"left",trigger:"hover"});
+	 jQuery(".field-tip-btn").show();
 	 jQuery(".complete-edition-btn").show();
 	 jQuery(".complete-edition-btn").click(function(){
 	 		var siteUrl = getDomainName();
@@ -525,6 +527,7 @@ function swithToViewMode() {
 	jQuery("#list-editmode").hide();
 	jQuery(".list-editmode").hide();
 	jQuery(".complete-edition-btn").hide();
+	jQuery(".field-tip-btn").hide();
 	jQuery(".complete-edition-btn").unbind();
 	jQuery('.checkbox-edit').each(function() {
 		jQuery(this).find("input").attr("disabled","diabled");
@@ -605,7 +608,7 @@ function save(data) {
 					notify("failure", message);
 				}
 			} else {
-				notify("success", "La mise à jour à bien été effectuée.");
+				notify("success", jQuery("body").attr('data-foeditsuccess'));
 			}
 		}
 	});
@@ -651,7 +654,7 @@ function addContent(type,typeId,queryId){
 		 */
 		jQuery("#select-type-box").empty();
 		jQuery.ajax({
-			"url" : "/backoffice/content-types/get-readable-content-types/",
+			"url" : "/backoffice/content-types/get-readable-content-types/?workingLanguage="+jQuery("body").attr('data-bolanguage'),
 			"async" : false,
 			"type" : "GET",
 			"dataType" : "json",

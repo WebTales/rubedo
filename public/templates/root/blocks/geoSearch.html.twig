@@ -360,28 +360,26 @@
           if(mapCanvasWidth < 430) {
               var width = mapCanvasWidth - 35;
               
-              fieldContainer.style.width = width+"px";
-              fieldContainer.style.marginLeft = "35px";
+              fieldContainer.style.width = (width*0.7)+"px";
     
               field.style.width = (width*0.7)+"px";
     
               var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 35;
     
               if(fieldMargin > 0) {
-          	      field.style.marginLeft = fieldMargin+"px";
+            	  fieldContainer.style.marginLeft = (fieldMargin+35)+"px";
               }
           } else {
         	  var width = mapCanvasWidth - 75;
         	  
-        	  fieldContainer.style.width = width+"px";
-        	  fieldContainer.style.marginLeft = "75px";
+        	  fieldContainer.style.width = (width*0.7)+"px";
     
         	  field.style.width = (width*0.7)+"px";
     
         	  var fieldMargin = ((mapCanvasWidth - field.clientWidth) / 2) - 75;
     
         	  if(fieldMargin > 0) {
-        	      field.style.marginLeft = fieldMargin+"px";
+        		  fieldContainer.style.marginLeft = (fieldMargin+75)+"px";
         	  }
           }
       }

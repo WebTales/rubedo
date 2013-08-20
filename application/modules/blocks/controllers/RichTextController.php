@@ -33,14 +33,15 @@ class Blocks_RichTextController extends Blocks_AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->getParam('block-config', array());
-        
-        $content = Manager::getService('Contents')->findById($blockConfig["contentId"],true,false);
-        
+        $content=array();
+        if ($blockConfig["contentId"]){
+            $content = Manager::getService('Contents')->findById($blockConfig["contentId"],true,false);
+        }
         $output = $this->getAllParams();
         $output['contentId'] = $blockConfig["contentId"];
         $output['text'] = $content["fields"]["body"];
         $output['editorConfig'] = isset($blockConfig['editorConfig']) ? $blockConfig['editorConfig'] : null;
-        $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
+        $output["locale"] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/richtext.html.twig");
         
         $css = array();

@@ -148,8 +148,14 @@ class Install
             }
             if ($file->getExtension() == 'json') {
                 $itemJson = file_get_contents($file->getPathname());
-                $item = \Zend_Json::decode($itemJson);
                 
+                $itemJson = preg_replace_callback('/###(.*)###/U', array(
+                    'Rubedo\\Update\\Install',
+                    'replaceWithTranslation'
+                ), $itemJson);
+                
+                $item = \Zend_Json::decode($itemJson);
+                                
                 if ($item['name'] == 'admin') {
                     $item['workspace'] = $adminWorkspaceId;
                     $item['inheritWorkspace'] = false;

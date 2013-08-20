@@ -35,6 +35,22 @@ class Blocks extends AbstractCollection implements IBlocks
         parent::__construct();
     }
 
+    public function _init()
+    {
+        parent::_init();
+        if (AbstractCollection::getIsFrontEnd()) {
+            $wLocale = AbstractLocalizableCollection::getWorkingLocale();
+            $filters = Filter::factory('Or');
+            $filter = Filter::factory('OperatorToValue')->setName('blockData.localeFilters')
+                ->setOperator('$exists')
+                ->setValue(false);
+            $filters->addFilter($filter);
+            $filter = Filter::factory('In')->setName('blockData.localeFilters')->setValue(array($wLocale,'all'));
+            $filters->addFilter($filter);
+            $this->_dataService->addFilter($filters);
+        }
+    }
+
     /**
      * Find all blocks for a given mask
      *

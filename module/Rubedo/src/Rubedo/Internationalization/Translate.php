@@ -109,7 +109,7 @@ class Translate implements ITranslate
      */
     public function translateInWorkingLanguage ($code, $defaultLabel = "")
     {
-        $language = Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
+        $language = \Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
         if ($language === null) {
             $language = self::$defaultLanguage;
         }
@@ -126,12 +126,21 @@ class Translate implements ITranslate
         return $translatedValue;
     }
 
-    public function getTranslation($code, $language)
+    public function getTranslation($code, $language,$fallBack = null)
     {
-        $this->loadLanguage($language);
+        if(isset($language)){
+            $this->loadLanguage($language);
+        }
+        if(isset($fallBack)){
+            $this->loadLanguage($fallBack);
+        }
+        
         $this->loadLanguage('en');
-        if (isset(self::$translationArray[$language][$code])) {
+        
+        if (isset($language) && isset(self::$translationArray[$language][$code])) {
             return self::$translationArray[$language][$code];
+        } elseif (isset($fallBack) && isset(self::$translationArray[$fallBack][$code])) {
+            return self::$translationArray[$fallBack][$code];
         } elseif (isset(self::$translationArray['en'][$code])) {
             return self::$translationArray['en'][$code];
         } else {
@@ -152,14 +161,7 @@ class Translate implements ITranslate
                 $tempJson = file_get_contents($realLanguagePath);
                 $tempArray = \Zend_Json::decode($tempJson);
                 self::$translationArray[$language] = array_merge(self::$translationArray[$language], $tempArray);
-            } else {
-                $defaultLanguagePath = APPLICATION_PATH . '/../' . str_replace('languagekey', self::$defaultLanguage, $jsonFilePath);
-                if (is_file($defaultLanguagePath)) {
-                    $tempJson = file_get_contents($defaultLanguagePath);
-                    $tempArray = \Zend_Json::decode($tempJson);
-                    self::$translationArray[$language] = array_merge(self::$translationArray[$language], $tempArray);
-                }
-            }
+            } 
         }
     }
 }

@@ -49,8 +49,13 @@ class Blocks_FormsController extends Blocks_AbstractController
     {
         parent::init();
         
+        
+        
         $this->_blockConfig = $this->getParam('block-config', array());
         $this->_formId = $this->_blockConfig["formId"];
+        if(!isset($this->_formId)){
+            return;
+        }
         $this->_form = Manager::getService('Forms')->findById($this->_formId);
         if (! $this->getRequest()->isPost() && $this->getParam("getNew") == 1) {
             if ($this->_form["uniqueAnswer"] == "false") {
@@ -74,6 +79,10 @@ class Blocks_FormsController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
+        if(!isset($this->_formId)){
+            $this->_sendResponse(array(), "block.html.twig");
+            return ;
+        }
     	$output = $this->getAllParams();
         // recupération de paramètre éventuels de la page en cours
         $currentFormPage = $this->formsSessionArray[$this->_formId]['currentFormPage'];

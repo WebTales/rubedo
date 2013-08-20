@@ -16,6 +16,9 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
+use Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractLocalizableCollection;
+
 /**
  * Controller providing Elastic Search querying
  *
@@ -30,6 +33,24 @@ class Backoffice_ElasticSearchController extends Zend_Controller_Action
 {
 
     protected $_option = 'all';
+
+    public function init()
+    {
+        parent::init();
+        
+        // initialize
+        // localized
+        // collections
+        $serviceLanguages = Manager::getService('Languages');
+        if ($serviceLanguages->isActivated()) {
+            $workingLanguage = $this->getParam('workingLanguage');
+            if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
+                AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
+            } else {
+                AbstractLocalizableCollection::setWorkingLocale($serviceLanguages->getDefaultLanguage());
+            }
+        }
+    }
 
     public function indexAction ()
     {

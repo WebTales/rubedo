@@ -42,7 +42,7 @@ function changePage(pageNumber, itemCount, itemsPerPage, maxPage, prefix,
 		request.fail(function(jqXHR, textStatus) {
 					jQuery('#' + prefix + ' > .progress-gallery').addClass(
 							'hide');
-					var errorHtml = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>Erreur !</h4>Impossible de charger les images</div>';
+					var errorHtml = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>'+jQuery("body").attr("data-error")+'</h4>+jQuery("body").attr("data-noimageerror")+</div>';
 					jQuery('#' + prefix).prepend(errorHtml);
 					jQuery('#' + prefix + ' > .active-items').show();
 					console.log(textStatus);
