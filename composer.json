@@ -35,7 +35,7 @@
         "psr-0": {
             "Rubedo": "Core/Rubedo"
         },
-        "classmap": ["Core/Rubedo"]
+        "classmap": ["module/Rubedo/src/Rubedo"]
     }
 }
 
