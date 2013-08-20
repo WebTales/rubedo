@@ -83,14 +83,6 @@ class XhrEditController extends Zend_Controller_Action
             $content = $this->_dataService->findById($id, true, false);
             $contentType = Manager::getService("ContentTypes")->findById($content['typeId']);
             
-            //Create the translation if it doesn't exist
-            if(!isset($content["i18n"][$locale])) {
-                $nativeLanguage = $content["nativeLanguage"];
-                
-                $content["i18n"][$locale] = $content["i18n"][$nativeLanguage];
-                $content["i18n"][$locale]["locale"] = $locale;
-            }
-            
             foreach ($contentType["fields"] as $fieldObj) {
                 if($fieldObj["config"]["name"] === $name) {
                     $localizable = isset($fieldObj["config"]["localizable"]) ? $fieldObj["config"]["localizable"] : false;
@@ -106,12 +98,19 @@ class XhrEditController extends Zend_Controller_Action
             }
             
             if ($content["status"] !== 'published') {
-                $returnArray['success'] = false;
-                $returnArray['msg'] = 'Content already have a draft version';
+                $errors[] = 'Content already have a draft version';
             } else {
                 if($localizable) {
                     
                     if($locale !== null) {
+                        //Create the translation if it doesn't exist
+                        if(!isset($content["i18n"][$locale])) {
+                            $nativeLanguage = $content["nativeLanguage"];
+                        
+                            $content["i18n"][$locale] = $content["i18n"][$nativeLanguage];
+                            $content["i18n"][$locale]["locale"] = $locale;
+                        }
+                        
                         if (count($field) > 1) {
                             $content["i18n"][$locale]['fields'][$name][$index] = $value["newValue"];
                         } else {
