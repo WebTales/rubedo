@@ -65,15 +65,6 @@ class Backoffice_FoThemesController extends Zend_Controller_Action
      */
     public function indexAction ()
     {
-        $dataValues = array();
-        $dataValues[] = array(
-            'text' => 'default',
-            'label' => 'Default'
-        );
-        $dataValues[] = array(
-            'text' => 'cnews',
-            'label' => 'Ville'
-        );
         
         $response = Manager::getService('FrontOfficeTemplates')->getAvailableThemes();
         
