@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rubedo</title>
+<meta property="og:title" content="Rubedo">
+<meta property="Content-Type" content="text/html; charset=UTF-8">
+<?php
+
+$this->headLink()
+    ->prependStylesheet("/components/twitter/bootstrap/css/bootstrap-responsive.min.css", "screen")
+    ->prependStylesheet("/components/twitter/bootstrap/css/bootstrap.min.css", "screen");
+$this->headScript()
+    ->appendFile("/components/jquery/jquery/jquery-1.10.1.min.js")
+    ->appendFile("/components/twitter/bootstrap/js/bootstrap.min.js");
+
+echo $this->headLink();
+?>
+</head>
+
+<body
+	style="background-image: url('/backoffice/resources/images/logo.png'); background-position: 50% 50%; background-repeat: no-repeat no-repeat; min-height: 800px;">
+	<div class="container">
+		<div class="row-fluid" style="height: 250px;"></div>
+		<div class="row-fluid">
+			<div class="span2"></div>
+			<div class="span8">
+				<div class="well">
+    				<?php echo $this->content?>
+    				<div class='clearfix'></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<?php echo $this->headScript(); ?>
+		
+</body>
+</html>
