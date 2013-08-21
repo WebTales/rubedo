@@ -4,7 +4,7 @@
 <head>
 <meta property="Content-Type" content="text/html; charset=UTF-8">
 <link rel="shortcut icon" type="image/x-icon"
-	href="<?php echo $this->baseUrl();?>/backoffice/resources/icones/faviconRubedo.ico" />
+	href="<?php echo $this->baseUrl;?>/backoffice/resources/icones/faviconRubedo.ico" />
 <title>Rubedo Connexion</title>
 <script
 	src="<?php echo $this->extJsPath;?>/<?php echo $this->extJsScript;?>"></script>
@@ -31,7 +31,7 @@ Ext.define('Connector.view.Viewport', {
     hidden: false,
     renderTo: Ext.getBody(),
     id: 'ConnectionViewport',
-    style: 'background: url(<?php echo $this->baseUrl();?>/backoffice/resources/images/logo.png)  center no-repeat;',
+    style: 'background: url(<?php echo $this->baseUrl;?>/backoffice/resources/images/logo.png)  center no-repeat;',
     layout: {
         align: 'center',
         pack: 'center',
@@ -49,7 +49,7 @@ Ext.define('Connector.view.Viewport', {
                     height: 151,
                     width: 400,
                     bodyPadding: 10,
-                    icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/lock.png',
+                    icon: '<?php echo $this->baseUrl;?>/backoffice/resources/images/lock.png',
                     title: 'Log in',
                     items: [
                         {
@@ -71,7 +71,7 @@ Ext.define('Connector.view.Viewport', {
                             xtype: 'button',
                             style: 'float: right;',
                             handleMouseEvents: false,
-                            icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/info.png',
+                            icon: '<?php echo $this->baseUrl;?>/backoffice/resources/images/info.png',
                             text: '',
                             tabIndex:998,
                             tooltip: 'User login'
@@ -99,7 +99,7 @@ Ext.define('Connector.view.Viewport', {
                             xtype: 'button',
                             style: 'float: right;',
                             handleMouseEvents: false,
-                            icon: '<?php echo $this->baseUrl();?>/backoffice/resources/images/info.png',
+                            icon: '<?php echo $this->baseUrl;?>/backoffice/resources/images/info.png',
                             text: '',
                             tabIndex:1000,
                             tooltip: 'User password'
@@ -115,7 +115,7 @@ Ext.define('Connector.view.Viewport', {
 
 
                                     myForm.submit({
-                                        url:"<?php echo $this->baseUrl();?>/backoffice/xhr-authentication/login",
+                                        url:"<?php echo $this->baseUrl;?>/backoffice/xhr-authentication/login",
                                         success: function(form, action) {
 										window.location.reload();
                                         },

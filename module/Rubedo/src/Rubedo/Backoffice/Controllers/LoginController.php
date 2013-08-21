@@ -15,7 +15,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
 
+Use Rubedo\Services\Manager;
 
 /**
  * BO Login Controller
@@ -38,26 +40,26 @@ class LoginController extends AbstractExtLoaderController
     /**
      * Init the authentication service
      */
-    public function init ()
+    public function __construct()
     {
-        $this->_auth = Rubedo\Services\Manager::getService('Authentication');
-        $this->getHelper('Layout')->disableLayout();
+        $this->_auth = Manager::getService('Authentication');
     }
 
     /**
      * Redirect the user to the backoffice if he's connected
      */
-    public function indexAction ()
+    public function indexAction()
     {
         if ($this->_auth->getIdentity()) {
-            $backofficeUrl = $this->view->baseUrl() . '/backoffice/';
-            if ($this->getParam('content')) {
-                $backofficeUrl .= '?content=' . $this->getParam('content');
+            $backofficeUrl = $this->request->getBasePath() . '/backoffice/';
+            if ($this->params()->fromQuery('content')) {
+                $backofficeUrl .= '?content=' . $this->params()->fromQuery('content');
             }
-            $this->_helper->redirector->gotoUrl($backofficeUrl);
+            
+            return $this->redirect()->toUrl($backofficeUrl);
         }
         
-        $this->loadExtApps();
+        return $this->loadExtApps();
     }
 }
 

@@ -32,6 +32,7 @@ use Zend\View\Model\ViewModel;
 
 abstract class AbstractExtLoaderController extends AbstractActionController
 {
+        
     /**
      * Load ext apps for the backoffice and the front office
      */
@@ -57,7 +58,6 @@ abstract class AbstractExtLoaderController extends AbstractActionController
         } else {
             $this->viewData['extJsScript'] = 'ext-all.js';
         }
-                
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);
         

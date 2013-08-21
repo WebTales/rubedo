@@ -204,6 +204,7 @@ $config = array(
     'controllers' => array(
         'invokables' => array(
              'Rubedo\Backoffice\Controller\Index' => 'Rubedo\Backoffice\Controller\IndexController',
+             'Rubedo\Backoffice\Controller\Login' => 'Rubedo\Backoffice\Controller\LoginController'
 //             'Application\Controller\Projects' => 'Application\Controller\ProjectsController'
         ),
     ),
@@ -220,6 +221,8 @@ $config = array(
             'error/404'                         => __DIR__ . '/../view/error/404.phtml',
             'error/index'                       => __DIR__ . '/../view/error/index.phtml',
             'rubedo/controller/index/index'     => $boViewsPath.'/index/index.phtml',
+            'rubedo/controller/index/index'     => $boViewsPath.'/index/index.phtml',
+            'rubedo/controller/login/index'     => $boViewsPath.'/login/index.phtml',
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',
