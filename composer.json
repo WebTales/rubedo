@@ -13,7 +13,8 @@
 		"bombayworks/zendframework1": "1.12.*",
 		"alb/oembed": "1.1.*",
 		"swiftmailer/swiftmailer": "5.0.*",
-		"phing/phing": "2.5.0"
+		"phing/phing": "2.5.0",
+		"leafo/lessphp": "v0.4.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
@@ -38,4 +39,3 @@
         "classmap": ["Core/Rubedo"]
     }
 }
-

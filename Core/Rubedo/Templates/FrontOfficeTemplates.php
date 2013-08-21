@@ -260,6 +260,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         
         $themeInfosArray = array();
         
+        //get real file themes
         foreach ($templateDirIterator as $directory) {
             if ($directory->isDot() || ! $directory->isDir()) {
                 continue;
@@ -270,6 +271,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
                 $themeInfos = \Zend_Json::decode($themeJson);
                 $themeInfosArray[] = $themeInfos;
             }
+        }
+        //get database custom themes
+        $customThemesArray=Manager::getService('CustomThemes')->getList();
+        $customThemesArray=$customThemesArray['data'];
+        foreach ($customThemesArray as &$value) {
+            $value['text']=$value['id'];
+            $value['label']=$value['name'];
+            $themeInfosArray[]=$value;
         }
         
         $response = array();
