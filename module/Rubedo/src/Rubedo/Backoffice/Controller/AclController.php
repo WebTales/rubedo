@@ -41,7 +41,7 @@ class AclController extends AbstractActionController
         $AclArray = array();
         $dataJson = $this->params()->fromPost('data');
         if (isset($dataJson)) {
-            $dataArray = Json::decode($dataJson);
+            $dataArray = Json::decode($dataJson,Json::TYPE_ARRAY);
             if (is_array($dataArray)) {
                 $aclService = Manager::getService('Acl');
                 $AclArray = $aclService->accessList(array_keys($dataArray));
