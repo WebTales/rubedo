@@ -14,7 +14,12 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Backoffice\Controller;
+
+
+use Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 
 /**
  * Backoffice asynchroneous authentication Controller
@@ -23,13 +28,11 @@ Use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
+class XhrAuthenticationController extends AbstractActionController
 {
 
-    public function init ()
-    {
-        parent::init();
-        
+    public function __construct()
+    {        
         // init the data access service
         $this->_dataService = Manager::getService('Authentication');
     }
@@ -39,20 +42,19 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
      *
      * @return bool
      */
-    public function loginAction ()
+    public function loginAction()
     {
-        $login = $_POST['login'];
-        $password = $_POST['password'];
+        $login = $this->params()->fromPost('login');//$_POST['login'];
+        $password = $this->params()->fromPost('password');//$_POST['password'];
         
         $loginResult = $this->_dataService->authenticate($login, $password);
         
         if ($loginResult) {
             $response['success'] = true;
-            return $this->_helper->json($response);
         } else {
             $response['success'] = false;
-            return $this->_helper->json($response);
         }
+        return new JsonModel($response);
     }
 
     /**
@@ -60,20 +62,20 @@ class Backoffice_XhrAuthenticationController extends Zend_Controller_Action
      *
      * @return bool
      */
-    public function logoutAction ()
+    public function logoutAction()
     {
         $this->_dataService->clearIdentity();
         
         $response['success'] = true;
-        return $this->_helper->json($response);
+        return new JsonModel($response);
     }
 
-    public function isSessionExpiringAction ()
+    public function isSessionExpiringAction()
     {
         $hasIdentity = Manager::getService('Authentication')->hasIdentity();
         $time = Manager::getService('Authentication')->getExpirationTime();
         $status = $hasIdentity && ($time > 0);
-        $this->_helper->json(array(
+        return new JsonModel(array(
             'time' => $time,
             'status' => $status
         ));

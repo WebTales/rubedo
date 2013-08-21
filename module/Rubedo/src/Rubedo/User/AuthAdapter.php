@@ -16,8 +16,10 @@
  */
 namespace Rubedo\User;
 
-use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
-
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Zend\Authentication\Adapter\AdapterInterface;
+use Zend\Authentication\Result;
 /**
  * Adapter to check authentication against mongoDB user collection
  *
@@ -27,7 +29,7 @@ use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
  * @category Rubedo
  * @package Rubedo
  */
-class AuthAdapter implements \Zend_Auth_Adapter_Interface
+class AuthAdapter implements AdapterInterface
 {
 
     /**
@@ -59,7 +61,7 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
      */
     public function authenticate ()
     {
-        $dataService = \Rubedo\Services\Manager::getService('MongoDataAccess');
+        $dataService = Manager::getService('MongoDataAccess');
         $dataService->init('Users');
         $dataService->addToFieldList(array(
             'login',
@@ -69,7 +71,7 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
             'endValidity'
         ));
         
-        $hashService = \Rubedo\Services\Manager::getService('Hash');
+        $hashService = Manager::getService('Hash');
         
         $loginCond = array(
             array(
@@ -91,13 +93,12 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
         $dataService->addFilter($loginCond);
         $resultIdentitiesArray = $dataService->read();
         $resultIdentities = $resultIdentitiesArray['data'];
-        
         if (count($resultIdentities) < 1) {
-            $this->_authenticateResultInfo['code'] = \Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND;
+            $this->_authenticateResultInfo['code'] = Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->_authenticateResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
             return $this->_authenticateCreateAuthResult();
         } elseif (count($resultIdentities) > 1) {
-            $this->_authenticateResultInfo['code'] = \Zend_Auth_Result::FAILURE_IDENTITY_AMBIGUOUS;
+            $this->_authenticateResultInfo['code'] = Result::FAILURE_IDENTITY_AMBIGUOUS;
             $this->_authenticateResultInfo['messages'][] = 'More than one record matches the supplied identity.';
             return $this->_authenticateCreateAuthResult();
         }
@@ -125,12 +126,12 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
         }
         
         if ($valid) {
-            $this->_authenticateResultInfo['code'] = \Zend_Auth_Result::SUCCESS;
+            $this->_authenticateResultInfo['code'] = Result::SUCCESS;
             $this->_authenticateResultInfo['messages'][] = 'Authentication successful.';
             $this->_authenticateResultInfo['identity'] = $user;
             return $this->_authenticateCreateAuthResult();
         } else {
-            $this->_authenticateResultInfo['code'] = \Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID;
+            $this->_authenticateResultInfo['code'] = Result::FAILURE_CREDENTIAL_INVALID;
             $this->_authenticateResultInfo['messages'][] = 'Supplied credential is invalid.';
             return $this->_authenticateCreateAuthResult();
         }
@@ -166,6 +167,6 @@ class AuthAdapter implements \Zend_Auth_Adapter_Interface
      */
     protected function _authenticateCreateAuthResult ()
     {
-        return new \Zend_Auth_Result($this->_authenticateResultInfo['code'], $this->_authenticateResultInfo['identity'], $this->_authenticateResultInfo['messages']);
+        return new Result($this->_authenticateResultInfo['code'], $this->_authenticateResultInfo['identity'], $this->_authenticateResultInfo['messages']);
     }
 }

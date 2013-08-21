@@ -14,9 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-require_once ('DataAccessController.php');
+namespace Rubedo\Backoffice\Controller;
 
-Use Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing CRUD API for the Groups JSON
@@ -29,7 +30,7 @@ Use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class Backoffice_DamController extends DataAccessController
+class DamController extends DataAccessController
 {
 
     /**
@@ -51,9 +52,9 @@ class Backoffice_DamController extends DataAccessController
      */
     protected $_mimeType = "";
 
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('Dam');

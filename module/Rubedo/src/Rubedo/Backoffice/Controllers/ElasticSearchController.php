@@ -15,7 +15,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
 
+use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Rubedo\Collection\AbstractLocalizableCollection;
 
@@ -29,14 +31,14 @@ use Rubedo\Collection\AbstractLocalizableCollection;
  * @package Rubedo
  *         
  */
-class Backoffice_ElasticSearchController extends Zend_Controller_Action
+class ElasticSearchController extends AbstractActionController
 {
 
     protected $_option = 'all';
 
-    public function init()
+    public function __construct()
     {
-        parent::init();
+        parent::__construct();
         
         // initialize
         // localized

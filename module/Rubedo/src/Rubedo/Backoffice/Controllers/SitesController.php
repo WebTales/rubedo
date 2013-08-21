@@ -14,9 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 use WebTales\MongoFilters\Filter;
 use Rubedo\Services\Manager;
-require_once ('DataAccessController.php');
 
 /**
  * Controller providing CRUD API for the sitesController JSON
@@ -29,12 +31,12 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_SitesController extends DataAccessController
+class SitesController extends DataAccessController
 {
 
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('Sites');

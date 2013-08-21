@@ -14,6 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -24,7 +27,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_UpdateController extends Zend_Controller_Action
+class UpdateController extends AbstractActionController
 {
 
     public function indexAction ()

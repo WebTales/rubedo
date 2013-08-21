@@ -14,7 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-require_once ('DataAccessController.php');
+namespace Rubedo\Backoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Controller providing CRUD API for the Versioning
@@ -27,12 +29,12 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_VersioningController extends DataAccessController
+class VersioningController extends DataAccessController
 {
 
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('Versioning');

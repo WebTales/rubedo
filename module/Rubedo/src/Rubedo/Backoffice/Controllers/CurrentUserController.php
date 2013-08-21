@@ -14,6 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -27,7 +30,7 @@ use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class Backoffice_CurrentUserController extends Zend_Controller_Action
+class CurrentUserController extends AbstractActionController
 {
 
     /**
@@ -54,9 +57,9 @@ class Backoffice_CurrentUserController extends Zend_Controller_Action
     /**
      * Initialise the controller
      */
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         $this->_auth = Manager::getService('Authentication');
         $this->_currentUserService = Manager::getService('CurrentUser');

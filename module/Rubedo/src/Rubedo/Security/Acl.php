@@ -16,7 +16,10 @@
  */
 namespace Rubedo\Security;
 
-use Rubedo\Interfaces\Security\IAcl, Rubedo\Services\Manager, Rubedo\Collection\AbstractCollection;
+use Rubedo\Interfaces\Security\IAcl;
+use Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractCollection;
+use Zend\Json\Json;
 
 /**
  * Interface of Access Control List Implementation
@@ -40,7 +43,7 @@ class Acl implements IAcl
 
     public function __construct ()
     {
-        $this->_rolesDirectory = realpath(APPLICATION_PATH . '/configs/roles');
+        $this->_rolesDirectory = realpath(APPLICATION_PATH . '/config/roles');
     }
 
     /**
@@ -56,7 +59,6 @@ class Acl implements IAcl
         if (! isset(self::$_hasAccessRults[$resource])) {
             $result = false;
             $currentUserService = Manager::getService('CurrentUser');
-            
             $wasFiltered = AbstractCollection::disableUserFilter();
             $groups = $currentUserService->getGroups();
             AbstractCollection::disableUserFilter($wasFiltered);
@@ -138,7 +140,7 @@ class Acl implements IAcl
     /**
      * Return the role configuration from its name
      *
-     * Read infos from configs/role/jsonfile
+     * Read infos from configs/role/Jsonfile
      *
      * @param string $name            
      * @return array null
@@ -147,7 +149,7 @@ class Acl implements IAcl
     {
         $pathName = $this->_rolesDirectory . '/' . $name . '.json';
         if (is_file($pathName)) {
-            $roleInfos = \Zend_Json::decode(file_get_contents($pathName));
+            $roleInfos = Json::decode(file_get_contents($pathName),Json::TYPE_ARRAY);
             return $roleInfos;
         } else {
             return null;
@@ -221,7 +223,7 @@ class Acl implements IAcl
             }
             if ($file->getExtension() == 'json') {
                 $roleJson = file_get_contents($file->getPathname());
-                $roleInfos = \Zend_Json::decode($roleJson);
+                $roleInfos = Json::decode($roleJson,Json::TYPE_ARRAY);
                 $roleLabel = $roleInfos['label'][$userLang];
                 $roleInfos['label'] = $roleLabel;
                 unset($roleInfos['rights']);

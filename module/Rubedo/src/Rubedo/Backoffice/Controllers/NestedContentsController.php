@@ -15,7 +15,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
 
+use Zend\Mvc\Controller\AbstractActionController;
 /**
  * Controller providing CRUD API for the nested contents
  *
@@ -27,7 +29,7 @@
  * @package Rubedo
  *         
  */
-class Backoffice_NestedContentsController extends Zend_Controller_Action
+class NestedContentsController extends AbstractActionController
 {
 
     /**
@@ -55,9 +57,9 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
      *
-     * @see Zend_Controller_Action::init()
+     * @see AbstractActionController::init()
      */
-    public function init ()
+    public function __construct ()
     {
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('NestedContents');

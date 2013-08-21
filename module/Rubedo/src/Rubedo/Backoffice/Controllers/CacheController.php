@@ -12,9 +12,13 @@
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
- * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
+  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Services\Manager, Rubedo\Services\Cache;
+namespace Rubedo\Backoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+use Rubedo\Services\Cache;
 
 /**
  * Controller providing control over the cached contents
@@ -24,7 +28,7 @@ use Rubedo\Services\Manager, Rubedo\Services\Cache;
  * @package Rubedo
  *         
  */
-class Backoffice_CacheController extends Zend_Controller_Action
+class CacheController extends AbstractActionController
 {
 
     /**
@@ -34,7 +38,7 @@ class Backoffice_CacheController extends Zend_Controller_Action
      */
     protected $_cache;
 
-    public function init ()
+    public function __construct ()
     {
         // $this->_cache = Rubedo\Services\Cache::getCache();
     }

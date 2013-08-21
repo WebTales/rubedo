@@ -15,8 +15,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
 
-require_once ('AbstractExtLoaderController.php');
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Controller handling media finder for contribution
@@ -25,7 +26,7 @@ require_once ('AbstractExtLoaderController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_LinkFinderController extends Backoffice_AbstractExtLoaderController
+class LinkFinderController extends AbstractExtLoaderController
 {
 
     /**

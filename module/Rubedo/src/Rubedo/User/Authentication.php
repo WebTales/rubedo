@@ -18,6 +18,7 @@ namespace Rubedo\User;
 
 use Rubedo\Interfaces\User\IAuthentication;
 use Zend\Authentication\AuthenticationService;
+use Rubedo\User\AuthAdapter;
 
 /**
  * Current Authentication Service
@@ -67,7 +68,7 @@ class Authentication implements IAuthentication
      */
     public function authenticate ($login, $password)
     {
-        $authAdapter = new \Rubedo\User\AuthAdapter($login, $password);
+        $authAdapter = new AuthAdapter($login, $password);
         $result = $this->_getZendAuth()->authenticate($authAdapter);
         if (! $result->isValid()) {
             Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
@@ -117,7 +118,7 @@ class Authentication implements IAuthentication
      */
     public function forceReAuth ($login, $password)
     {
-        $authAdapter = new \Rubedo\User\AuthAdapter($login, $password);
+        $authAdapter = new AuthAdapter($login, $password);
         $result = $authAdapter->authenticate($authAdapter);
         return $result->isValid();
     }

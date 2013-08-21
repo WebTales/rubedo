@@ -40,13 +40,13 @@ class IndexController extends AbstractExtLoaderController
         
         if (! $this->_auth->getIdentity()) {
             $redirectParams = array('action'=>'index','controller'=>'login');
-            $backofficeUrl = $this->url()->fromRoute(null,$redirectParams);
             
             if ($this->params()->fromQuery('content')) {
                 $redirectParams['content'] = $this->params()->fromQuery('content');
             }
             return $this->redirect()->toRoute(null,$redirectParams);
         }
+        //var_dump(Manager::getService('Acl')->hasAccess('ui.backoffice'));die();
         
         if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $redirectParams = array('action'=>'confirm-logout','controller'=>'logout');

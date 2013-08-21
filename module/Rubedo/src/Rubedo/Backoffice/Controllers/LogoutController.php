@@ -14,7 +14,12 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
+
 use Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
+
 
 /**
  * BO Logout controller
@@ -23,7 +28,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_LogoutController extends Zend_Controller_Action
+class LogoutController extends AbstractActionController
 {
 
     /**
@@ -37,7 +42,7 @@ class Backoffice_LogoutController extends Zend_Controller_Action
     /**
      * Init the authentication service
      */
-    public function init ()
+    public function __construct()
     {
         $this->_auth = Manager::getService('Authentication');
     }
@@ -54,9 +59,10 @@ class Backoffice_LogoutController extends Zend_Controller_Action
         }
         
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $this->_helper->json($response);
+            return new JsonModel($response);
         } else {
-            $this->_helper->redirector->gotoUrl("/backoffice/login");
+            $redirectParams = array('action'=>'index','controller'=>'login');
+            return $this->redirect()->toRoute(null,$redirectParams);
         }
     }
 

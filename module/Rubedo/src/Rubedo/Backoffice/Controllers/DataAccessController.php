@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -70,14 +71,13 @@ abstract class DataAccessController extends AbstractActionController
     );
 
     public function __construct(){
-        static::init();
+//         static::init();
     }
     
     /**
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
      *
-     * @see Zend_Controller_Action::init()
      */
     public function init()
     {      
@@ -85,7 +85,7 @@ abstract class DataAccessController extends AbstractActionController
         //initialize localized collections
         $serviceLanguages = Manager::getService('Languages');
         if ($serviceLanguages->isActivated()) {
-            $workingLanguage = $this->getParam('workingLanguage');
+            $workingLanguage = $this->params()->fromQuery('workingLanguage');
             if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
                 AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
             } else {
@@ -95,19 +95,20 @@ abstract class DataAccessController extends AbstractActionController
         
         $sessionService = Manager::getService('Session');
         
+        //todo move it to an event
         // refuse write action not send by POST
-        if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-            throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
-        } else {
-            if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-                $user = $sessionService->get('user');
-                $token = $this->getRequest()->getParam('token');
+//         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getAction(), $this->_readOnlyAction)) {
+//             throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
+//         } else {
+//             if (! in_array($this->getRequest()->getAction(), $this->_readOnlyAction)) {
+//                 $user = $sessionService->get('user');
+//                 $token = $this->params()->fromQuery('token');
                 
-                if ($token !== $user['token']) {
-                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-                }
-            }
-        }
+//                 if ($token !== $user['token']) {
+//                     throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
+//                 }
+//             }
+//         }
     }
 
     /**
@@ -121,17 +122,6 @@ abstract class DataAccessController extends AbstractActionController
     {
         $answer = new JsonModel($data);
         return $answer;
-        
-        // disable layout and set content type
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setHeader('Content-Type', "application/json", true);
-        
-        $returnValue = Zend_Json::encode($data);
-        if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
-        }
-        $this->getResponse()->setBody($returnValue);
     }
 
     /**
@@ -142,27 +132,28 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function indexAction()
     {
-        $filterJson = $this->getRequest()->getParam('filter');
+        static::init();
+        $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Zend_Json::decode($filterJson);
+            $filters = Json::decode($filterJson);
         } else {
             $filters = null;
         }
-        $sortJson = $this->getRequest()->getParam('sort');
+        $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Zend_Json::decode($sortJson);
+            $sort = Json::decode($sortJson);
         } else {
             $sort = null;
         }
-        $startJson = $this->getRequest()->getParam('start');
+        $startJson = $this->params()->fromQuery('start');
         if (isset($startJson)) {
-            $start = Zend_Json::decode($startJson);
+            $start = Json::decode($startJson);
         } else {
             $start = null;
         }
-        $limitJson = $this->getRequest()->getParam('limit');
+        $limitJson = $this->params()->fromQuery('limit');
         if (isset($limitJson)) {
-            $limit = Zend_Json::decode($limitJson);
+            $limit = Json::decode($limitJson);
         } else {
             $limit = null;
         }
@@ -218,20 +209,21 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function readChildAction()
     {
-        $filterJson = $this->getRequest()->getParam('filter');
+        static::init();
+        $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Zend_Json::decode($filterJson);
+            $filters = Json::decode($filterJson);
         } else {
             $filters = null;
         }
-        $sortJson = $this->getRequest()->getParam('sort');
+        $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Zend_Json::decode($sortJson);
+            $sort = Json::decode($sortJson);
         } else {
             $sort = null;
         }
         
-        $parentId = $this->getRequest()->getParam('node', 'root');
+        $parentId = $this->params()->fromQuery('node', 'root');
         
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->readChild($parentId, $mongoFilters, $sort);
@@ -252,10 +244,11 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function deleteChildAction()
     {
-        $data = $this->getRequest()->getParam('data');
+        static::init();
+        $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $data = Zend_Json::decode($data);
+            $data = Json::decode($data);
             
             if (is_array($data)) {
                 
@@ -289,9 +282,10 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function treeAction()
     {
-        $filterJson = $this->getRequest()->getParam('filter');
+        static::init();
+        $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Zend_Json::decode($filterJson);
+            $filters = Json::decode($filterJson);
         } else {
             $filters = null;
         }
@@ -312,10 +306,11 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function deleteAction()
     {
-        $data = $this->getRequest()->getParam('data');
+        static::init();
+        $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $data = Zend_Json::decode($data);
+            $data = Json::decode($data);
             if (is_array($data)) {
                 
                 $returnArray = $this->_dataService->destroy($data);
@@ -342,10 +337,11 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function createAction()
     {
-        $data = $this->getRequest()->getParam('data');
+        static::init();
+        $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $insertData = Zend_Json::decode($data);
+            $insertData = Json::decode($data);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($insertData);
             } else {
@@ -371,10 +367,11 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function updateAction()
     {
-        $data = $this->getRequest()->getParam('data');
+        static::init();
+        $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $updateData = Zend_Json::decode($data);
+            $updateData = Json::decode($data);
             if (is_array($updateData)) {
                 
                 $returnArray = $this->_dataService->update($updateData);
@@ -403,7 +400,8 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function findOneAction()
     {
-        $contentId = $this->getRequest()->getParam('id');
+        static::init();
+        $contentId = $this->params()->fromQuery('id');
         
         if (! is_null($contentId)) {
             

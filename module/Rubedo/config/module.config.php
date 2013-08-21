@@ -6,8 +6,6 @@
  * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-defined('APPLICATION_PATH') || define('APPLICATION_PATH', '../../');
-
 $boViewsPath = realpath(__DIR__ . '/../src/Rubedo/Backoffice/views/scripts');
 
 $serviceArray = array(
@@ -71,6 +69,9 @@ $serviceArray = array(
     'ReusableElements' => array(
         'class' => 'Rubedo\\Collection\\ReusableElements'
     ),
+    'Blocks' => array(
+        'class' => 'Rubedo\\Collection\\Blocks'
+    ),
     'Contents' => array(
         'class' => 'Rubedo\\Collection\\Contents'
     ),
@@ -95,6 +96,7 @@ $serviceArray = array(
     'Icons' => array(
         'class' => 'Rubedo\\Collection\\Icons'
     ),
+    
     'PersonalPrefs' => array(
         'class' => 'Rubedo\\Collection\\PersonalPrefs'
     ),
@@ -109,6 +111,9 @@ $serviceArray = array(
     ),
     'Themes' => array(
         'class' => 'Rubedo\\Collection\\Themes'
+    ),
+    'TinyUrl' => array(
+        'class' => 'Rubedo\\Collection\\TinyUrl'
     ),
     'Wallpapers' => array(
         'class' => 'Rubedo\\Collection\\Wallpapers'
@@ -145,6 +150,33 @@ $serviceArray = array(
     ),
     'Mailer' => array(
         'class' => 'Rubedo\\Mail\\Mailer'
+    ),
+    'Notification' => array(
+        'class' => 'Rubedo\\Mail\\Notification'
+    ),
+    'MailingList' => array(
+        'class' => 'Rubedo\\Collection\\MailingList'
+    ),
+    'Localisation' => array(
+        'class' => 'Rubedo\\Collection\\Localisation'
+    ),
+    'RubedoVersion' => array(
+        'class' => 'Rubedo\\Collection\\RubedoVersion'
+    ),
+    'Directories' => array(
+        'class' => 'Rubedo\\Collection\\Directories'
+    ),
+    'Translate' => array(
+        'class' => 'Rubedo\\Internationalization\\Translate'
+    ),
+    'CurrentLocalization' => array(
+        'class' => 'Rubedo\\Internationalization\\Current'
+    ),
+    'Languages' => array(
+        'class' => 'Rubedo\\Collection\\Languages'
+    ),
+    'CustomThemes' => array(
+        'class' => 'Rubedo\\Collection\\CustomThemes'
     )
 );
 
@@ -161,93 +193,79 @@ $config = array(
             'home' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route'    => '/',
+                    'route' => '/',
                     'defaults' => array(
-//                         'controller' => 'Application\Controller\Index',
-                        'action'     => 'index',
-                    ),
-                ),
+                        'controller' => 'Rubedo\Frontoffice\Controller\Index',
+                        'action' => 'index'
+                    )
+                )
             ),
             // The following is a route to simplify getting started creating
             // new controllers and actions without needing to create a new
             // module. Simply drop new controllers in, and you can access them
             // using the path /application/:controller/:action
             'application' => array(
-                'type'    => 'Literal',
+                'type' => 'Literal',
                 'options' => array(
-                    'route'    => '/backoffice',
+                    'route' => '/backoffice',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Rubedo\Backoffice\Controller',
-                        'controller'    => 'Index',
-                        'action'        => 'index',
-                    ),
+                        'controller' => 'Index',
+                        'action' => 'index'
+                    )
                 ),
                 'may_terminate' => true,
                 'child_routes' => array(
                     'default' => array(
-                        'type'    => 'Segment',
+                        'type' => 'Segment',
                         'options' => array(
-                            'route'    => '/[:controller[/:action]]',
+                            'route' => '/[:controller[/:action]]',
                             '__NAMESPACE__' => 'Rubedo\Backoffice\Controller',
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
                             ),
-                            'defaults' => array(
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
+                            'defaults' => array()
+                        )
+                    )
+                )
+            )
+        )
     ),
     'controllers' => array(
         'invokables' => array(
-             'Rubedo\Backoffice\Controller\Index' => 'Rubedo\Backoffice\Controller\IndexController',
-             'Rubedo\Backoffice\Controller\Login' => 'Rubedo\Backoffice\Controller\LoginController'
-//             'Application\Controller\Projects' => 'Application\Controller\ProjectsController'
-        ),
+            'Rubedo\Backoffice\Controller\Index' => 'Rubedo\Backoffice\Controller\IndexController',
+            'Rubedo\Backoffice\Controller\Login' => 'Rubedo\Backoffice\Controller\LoginController',
+            'Rubedo\Backoffice\Controller\Logout' => 'Rubedo\Backoffice\Controller\LogoutController',
+            'Rubedo\Backoffice\Controller\XhrAuthentication' => 'Rubedo\Backoffice\Controller\XhrAuthenticationController',
+            'Rubedo\Backoffice\Controller\Icons'=>'Rubedo\Backoffice\Controller\IconsController'
+        )
     ),
     'view_manager' => array(
         'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/404',
-        'exception_template'       => 'error/index',
+        'display_exceptions' => true,
+        'doctype' => 'HTML5',
+        'not_found_template' => 'error/404',
+        'exception_template' => 'error/index',
         'template_map' => array(
-            'layout/layout'                     => __DIR__ . '/../view/layout/layout.phtml',
-            //'application/index/index'         => __DIR__ . '/../view/application/index/index.phtml',
-            //'application/projects/index'      => __DIR__ . '/../view/application/projects/index.phtml',
-            'error/404'                         => __DIR__ . '/../view/error/404.phtml',
-            'error/index'                       => __DIR__ . '/../view/error/index.phtml',
-            'rubedo/controller/index/index'     => $boViewsPath.'/index/index.phtml',
-            'rubedo/controller/index/index'     => $boViewsPath.'/index/index.phtml',
-            'rubedo/controller/login/index'     => $boViewsPath.'/login/index.phtml',
+            'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
+            'error/404' => __DIR__ . '/../view/error/404.phtml',
+            'error/index' => __DIR__ . '/../view/error/index.phtml',
+            'rubedo/controller/index/index' => $boViewsPath . '/index/index.phtml',
+            'rubedo/controller/index/index' => $boViewsPath . '/index/index.phtml',
+            'rubedo/controller/login/index' => $boViewsPath . '/login/index.phtml'
         ),
         'template_path_stack' => array(
-            __DIR__ . '/../view',
+            __DIR__ . '/../view'
         ),
         'strategies' => array(
             'ViewJsonStrategy'
         )
     ),
-    'datastream' => array(
-        'mongo' => array(
-            'server' => 'localhost',
-            'port' => '27017',
-            'db' => 'rubedo-webinar',
-            'login' => '',
-            'password' => ''
-        )
-    ),
     'service_manager' => array(
         'invokables' => $serviceMapArray,
         'shared' => $serviceSharedMapArray
-    ),
-    'services' => array(
-        'logLevel' => '3',
-        'enableCache' => '0'
-    ),
+    )
 );
 
 return $config;

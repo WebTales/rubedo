@@ -15,8 +15,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
 
-require_once ('AbstractExtLoaderController.php');
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Controller for handling FO contributions
@@ -26,7 +27,7 @@ require_once ('AbstractExtLoaderController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_ContentContributorController extends Backoffice_AbstractExtLoaderController
+class ContentContributorController extends AbstractExtLoaderController
 {
 
     public function indexAction ()

@@ -11,6 +11,7 @@ namespace Rubedo;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\Debug\Debug;
 
 class Module
 {
@@ -20,7 +21,9 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         
-        $config = $this->getConfig();
+        $application = $e->getApplication();
+        $config = $application->getConfig();
+        
         $options = $config['datastream'];
         if (isset($options)) {
             $connectionString = 'mongodb://';
@@ -37,16 +40,12 @@ class Module
             Mongo\DataAccess::setDefaultDb($options['mongo']['db']);
         }
         
-        $options = $config['services'];
-        if (isset($options)) {
-            Services\Manager::setOptions($options);
-        } else {
-            $defaultArray = array(
-                'logLevel' => 3,
-                'enableCache' => 1
-            );
-            Services\Manager::setOptions($defaultArray);
-        }
+        $defaultArray = array(
+            'logLevel' => 3,
+            'enableCache' => 1
+        );
+        Services\Manager::setOptions($defaultArray);
+        
         $serviceOptions = Services\Manager::getOptions();
         
         Interfaces\config::initInterfaces();

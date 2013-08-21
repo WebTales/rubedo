@@ -16,7 +16,9 @@
  */
 namespace Rubedo\User;
 
-use Rubedo\Interfaces\User\ICurrentUser, Rubedo\Services\Manager, Rubedo\Collection\AbstractCollection;
+use Rubedo\Interfaces\User\ICurrentUser;
+use Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractCollection;
 
 /**
  * Current User Service

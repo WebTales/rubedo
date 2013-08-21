@@ -14,9 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Backoffice\Controller;
 
-require_once ('DataAccessController.php');
+use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+
 
 /**
  * Controller providing CRUD API for the Forms JSON
@@ -29,7 +31,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_FormsController extends DataAccessController
+class FormsController extends DataAccessController
 {
 
     /**
@@ -45,9 +47,9 @@ class Backoffice_FormsController extends DataAccessController
         'get-stats'
     );
 
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         // init the data access service
         $this->_dataService = Rubedo\Services\Manager::getService('Forms');

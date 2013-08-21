@@ -17,7 +17,8 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-Use Rubedo\Services\Manager;
+use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  * BO Login Controller

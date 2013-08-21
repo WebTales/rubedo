@@ -15,7 +15,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
 
+use Zend\Mvc\Controller\AbstractActionController;
 /**
  * Controller sending version information
  *
@@ -25,7 +27,7 @@
  * @package Rubedo
  *         
  */
-class Backoffice_RubedoVersionController extends Zend_Controller_Action
+class RubedoVersionController extends AbstractActionController
 {
 
     /**

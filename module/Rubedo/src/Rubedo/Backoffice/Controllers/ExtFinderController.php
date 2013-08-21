@@ -16,7 +16,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-require_once ('AbstractExtLoaderController.php');
+namespace Rubedo\Backoffice\Controller;
 
 /**
  * Controller handling media finder for contribution
@@ -25,7 +25,7 @@ require_once ('AbstractExtLoaderController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_ExtFinderController extends Backoffice_AbstractExtLoaderController
+class ExtFinderController extends AbstractExtLoaderController
 {
 
     /**

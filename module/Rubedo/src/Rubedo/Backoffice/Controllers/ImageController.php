@@ -14,6 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -27,7 +30,7 @@ use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class Backoffice_ImageController extends Zend_Controller_Action
+class ImageController extends AbstractActionController
 {
 
     /**
@@ -43,11 +46,11 @@ class Backoffice_ImageController extends Zend_Controller_Action
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
      *
-     * @see Zend_Controller_Action::init()
+     * @see AbstractActionController::init()
      */
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         $sessionService = Manager::getService('Session');
         

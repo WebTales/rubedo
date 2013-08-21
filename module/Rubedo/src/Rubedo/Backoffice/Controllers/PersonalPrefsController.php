@@ -14,7 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-require_once ('DataAccessController.php');
+namespace Rubedo\Backoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Controller providing CRUD API for the PersonalPrefs JSON
@@ -27,7 +29,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_PersonalPrefsController extends DataAccessController
+class PersonalPrefsController extends DataAccessController
 {
 
     /**
@@ -45,9 +47,9 @@ class Backoffice_PersonalPrefsController extends DataAccessController
     /**
      * Initialise the controller
      */
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
     }
