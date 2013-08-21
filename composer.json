@@ -33,7 +33,7 @@
 	],
 	"autoload": {
         "psr-0": {
-            "Rubedo": "Core/Rubedo"
+            "Rubedo": "module/Rubedo/src/Rubedo"
         },
         "classmap": ["module/Rubedo/src/Rubedo"]
     }

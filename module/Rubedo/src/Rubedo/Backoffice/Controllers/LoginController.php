@@ -16,7 +16,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-require_once ('AbstractExtLoaderController.php');
 
 /**
  * BO Login Controller
@@ -25,7 +24,7 @@ require_once ('AbstractExtLoaderController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_LoginController extends Backoffice_AbstractExtLoaderController
+class LoginController extends AbstractExtLoaderController
 {
 
     /**
