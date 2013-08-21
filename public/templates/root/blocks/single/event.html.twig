@@ -5,7 +5,7 @@
     <div class="block headline">
         {% include "/root/blocks/edition/full-edition-button.html.twig" %}
         
-		<h2 class="editable" id="{{ data.id }}_text"  data-field-type="title" data-locale="{{ data.locale }}">{{ data.text }}</h2>
+		<h2 class="editable" id="{{ data.id }}_text"  data-field-type="title">{{ data.text }}</h2>
 		<div class="alignright">
 			{% for taxonomy in data.terms %}
 			    {% for term in taxonomy %}
@@ -20,17 +20,17 @@
 		    {% if data.date %}
 		        {% if data.dateEnd%}	
 		            <div class="entry-info">
-                        <span class="date" id="{{ data.id }}_date" data-locale="{{ data.locale }}">{{ "date.from" | fotrans | ucfirst}} {{data.date|localizeddate('long', 'none', lang)}}</span> {{ "date.to" | fotrans }} <span class="date" id="{{ data.id }}_date">{{data.dateEnd|localizeddate('long', 'none', lang)}}</span>
+                        <span class="date" id="{{ data.id }}_date">{{ "date.from" | fotrans | ucfirst}} {{data.date|localizeddate('long', 'none', lang)}}</span> {{ "date.to" | fotrans }} <span class="date" id="{{ data.id }}_date">{{data.dateEnd|localizeddate('long', 'none', lang)}}</span>
                     </div>
 		        {% else %}
 		            {%  if(type["date"]["config"]["multivalued"]) and data.date is iterable%}
 	                    {% for item in data.date %}
-    	                    <div class="entry-info date" id="{{ data.id }}_date-{{ loop.index-1 }}" data-locale="{{ data.locale }}">
+    	                    <div class="entry-info date" id="{{ data.id }}_date-{{ loop.index-1 }}">
         	                    {{ "date.startingFrom" | fotrans | ucfirst}} {{item|localizeddate('long', 'none', lang)}}
                             </div>
     	                {% endfor %}
                     {% else %}
-    	                <div class="entry-info date" id="{{ data.id }}_date" data-locale="{{ data.locale }}">
+    	                <div class="entry-info date" id="{{ data.id }}_date">
                             {{ "date.startingFrom" | fotrans | ucfirst }} {{data.date|localizeddate('long', 'none', lang)}}
                         </div>
                         
