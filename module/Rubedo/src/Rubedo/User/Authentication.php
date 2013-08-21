@@ -19,6 +19,7 @@ namespace Rubedo\User;
 use Rubedo\Interfaces\User\IAuthentication;
 use Zend\Authentication\AuthenticationService;
 use Rubedo\User\AuthAdapter;
+use Zend\Session\Container as SessionContainer;
 
 /**
  * Current Authentication Service
@@ -130,8 +131,6 @@ class Authentication implements IAuthentication
      */
     public function resetExpirationTime ()
     {
-        $namespace = new \Zend_Session_Namespace('Zend_Auth');
-        $namespace->setExpirationSeconds(self::$_authLifetime);
     }
 
     /**
@@ -141,7 +140,6 @@ class Authentication implements IAuthentication
      */
     public function getExpirationTime ()
     {
-        return (isset($_SESSION['__ZF']['Zend_Auth']['ENT'])) ? ($_SESSION['__ZF']['Zend_Auth']['ENT'] - time()) : 0;
     }
 
     /**
