@@ -2,13 +2,13 @@
 {%  if type[key]["config"]["multivalued"] and data[key] is iterable %}
 	{% for item in data[key]%}
 	    {% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
-		<div class="editable" id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}" data-locale="{{ data.locale }}">
+		<div class="editable" id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
 		    {{item|cleanHtml}}
 		</div>
 	{% endfor %}
 {% else %}
     {% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
-	<div class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}" data-locale="{{ data.locale }}">
+	<div class="editable "  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
 	    {{data[key]|cleanHtml}}
 	</div>
 	

@@ -6,7 +6,7 @@
             {% set mediaType = getMediaType(contentId) %}
             
             {% if mediaType == "Image" %}
-                {% include 'root/blocks/fields/imageField.html.twig' with {width: "300", height: "300", mode: "boxed", data: {(key) : item}} %}
+                {% include 'root/blocks/fields/imageField.html.twig' with {data: {(key) : item, id : data.id}, index : number} %}
             {% elseif mediaType == "Video" %}
                 {% include 'root/blocks/fields/videoField.html.twig' %}
             {% elseif mediaType == "Audio" %}

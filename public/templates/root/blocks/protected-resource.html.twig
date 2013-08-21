@@ -1,6 +1,6 @@
 {% extends "root/block.html.twig" %} {% block mainContent %} {% if
 contentId %}
-<div id="introduction-{{prefix}}"><div class="editable" id="{{ contentId }}_body"  data-locale="{{ locale }}">{{ text|cleanHtml }}</div></div>
+<div id="introduction-{{prefix}}"><div class="editable" id="{{ contentId }}_body">{{ text|cleanHtml }}</div></div>
 <div class="clearfix"></div>
 
 {% endif %}

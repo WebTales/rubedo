@@ -5,8 +5,9 @@ var contentId = "";
 var imageId = "";
 var object = null;
 var errors = new Array();
-var starEdit=false;
-var EditMode=true;
+var starEdit = false;
+var EditMode = true;
+var locale = jQuery("body").attr("data-language");
 
 var modifications = {};
 /*****************************/
@@ -173,15 +174,12 @@ jQuery('#btn-save').click(function() {
 						CKEDITOR.instances[z].resetDirty();
 					}
 					
-					var locale = jQuery("#"+id).attr("data-locale");
-					
-					modifications[CKEId[0]] = {"newValue" : data, "locale" : locale};
+					modifications[CKEId[0]] = {"newValue" : data};
 				}else{
 					var id = CKEDITOR.instances[i].element.getId();
 					var newValue = CKEDITOR.instances[i].getData();
-					var locale = jQuery("#"+id).attr("data-locale");
 					
-					modifications[id] = {"newValue" : newValue, "locale" : locale};
+					modifications[id] = {"newValue" : newValue};
 					
 					//Remove dirty flag
 					CKEDITOR.instances[i].resetDirty();
@@ -275,7 +273,6 @@ function saveImage(currentContentId, newImageId) {
 
 jQuery(".date").click( function () {
 	var currentDatePicker = jQuery(this).parent().context.id;
-	var locale = jQuery("#"+currentDatePicker).attr("data-locale");
 	jQuery("#"+currentDatePicker+" .datepicker").datepicker({
 			regional: jQuery("body").attr("data-language"),
 			dateFormat : "d MM yy",
@@ -303,7 +300,6 @@ jQuery(".date").click( function () {
 
 jQuery(".time").click( function () {
 	var currentTimePicker = jQuery(this).parent().context.id;
-	var locale = jQuery("#"+currentTimePicker).attr("data-locale");
 	var currentTime = "";
 	var olderTime= "";
 	var houresAreSet = false;
@@ -336,12 +332,12 @@ jQuery(".time").click( function () {
 				}
 
 				if(currentMinutes != olderMinutes) {
-					modifications[currentTimePicker] = {"newValue" : currentTime, "locale" : locale};
+					modifications[currentTimePicker] = {"newValue" : currentTime};
 					
 					jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 				}
 			} else if(currentMinutes == olderMinutes && currentHoures == olderHoures && houresAreSet){
-				modifications[currentTimePicker] = {"newValue" : currentTime, "locale" : locale};
+				modifications[currentTimePicker] = {"newValue" : currentTime};
 				
 				jQuery("#"+currentTimePicker+" .timepicker").timepicker("destroy");
 			}
@@ -376,8 +372,7 @@ jQuery(".checkbox-edit").click( function () {
 	if(!jQuery(this).find("input").is(":disabled")){
 		var newValue=jQuery(this).find("input").is(":checked");
 		var checkboxId=jQuery(this).attr("id");
-		var locale=jQuery(this).attr("data-locale");
-		modifications[checkboxId] = {"newValue" : newValue, "locale" : locale};
+		modifications[checkboxId] = {"newValue" : newValue};
 	}
 	
 });
@@ -409,7 +404,6 @@ jQuery(".radiogroup-edit").click( function () {
 jQuery(".checkboxgroup-edit").click( function () {
 	if(!jQuery(this).find("input").is(":disabled")){
 		var checkboxGroupId=jQuery(this).attr("id");
-		var locale=jQuery(this).attr("data-locale");
 		var newValue={ };
 		newValue[jQuery(this).find("input").attr("name")]=new Array();
 		jQuery(this).find("input").each(function(b,a){
@@ -418,7 +412,7 @@ jQuery(".checkboxgroup-edit").click( function () {
 			}
 		});
 		
-		modifications[checkboxGroupId] = { "type" : "checkboxgroup", "newValue" : newValue, "locale" : locale };
+		modifications[checkboxGroupId] = { "type" : "checkboxgroup", "newValue" : newValue};
 	}
 	
 });
@@ -570,7 +564,8 @@ function save(data) {
 		url : "/xhr-edit",
 		dataType: "json",
 		data : {
-			'data' : data
+			'data' : data,
+			'locale' : locale
 		},
 		"error" : function(jqXHR, textStatus, errorThrown) {
 			var response = jqXHR.responseText;
@@ -583,9 +578,9 @@ function save(data) {
 			}
 			
 			if(errors.length > 0) {
-				notify("failure", "Erreur serveur avec message rubedo");
+				notify("failure", "Erreur serveur, merci de contacter l'administrateur de ce site web");
 			} else {
-				notify("failure", "Erreur serveur sans message rubedo");
+				notify("failure", "Erreur serveur, merci de contacter l'administrateur de ce site web");
 			}
 		},
 		"success":function(data){
