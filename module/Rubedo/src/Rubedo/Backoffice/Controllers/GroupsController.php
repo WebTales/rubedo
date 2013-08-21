@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_GroupsController extends Backoffice_DataAccessController
+class Backoffice_GroupsController extends DataAccessController
 {
 
     /**
@@ -60,13 +60,13 @@ class Backoffice_GroupsController extends Backoffice_DataAccessController
     {
         $result = $this->_dataService->clearOrphanGroups();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function countOrphanGroupsAction ()
     {
         $result = $this->_dataService->countOrphanGroups();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 }

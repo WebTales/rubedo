@@ -67,7 +67,7 @@ class Backoffice_RolesController extends Zend_Controller_Action
     {
         $response = Manager::getService('Acl')->getAvailaibleRoles();
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     /**
@@ -76,6 +76,6 @@ class Backoffice_RolesController extends Zend_Controller_Action
     {
         $themeName = $this->getParam('theme', 'default');
         $response = Manager::getService('FrontOfficeTemplates')->getThemeInfos($themeName);
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 }

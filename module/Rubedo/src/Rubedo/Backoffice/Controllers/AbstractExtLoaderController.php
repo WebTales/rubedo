@@ -15,8 +15,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
 
 Use \Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
+
 
 /**
  * Abstract ext loader controller
@@ -26,32 +29,38 @@ Use \Rubedo\Services\Manager;
  * @package Rubedo
  */
 
-abstract class Backoffice_AbstractExtLoaderController extends Zend_Controller_Action
+abstract class AbstractExtLoaderController extends AbstractActionController
 {
     /**
      * Load ext apps for the backoffice and the front office
      */
     protected function loadExtApps() {
+        $this->viewData = array();
         $extjsOptions = Zend_Registry::get('extjs');
         
         if (isset($extjsOptions['network']) && $extjsOptions['network'] == 'cdn') {
-            $this->view->extJsPath = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
+            $this->viewData->extJsPath = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
         } else {
-            $this->view->extJsPath = $this->view->baseUrl() . '/components/sencha/extjs';
+            $this->viewData->extJsPath = $this->viewData->baseUrl() . '/components/sencha/extjs';
         }
         // setting user language for loading proper extjs locale file
-        $this->view->userLang = 'en'; // default value
+        $this->viewData->userLang = 'en'; // default value
         $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
         if (! empty($currentUserLanguage)) {
-            $this->view->userLang = $currentUserLanguage;
+            $this->viewData->userLang = $currentUserLanguage;
         }
         
         if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {
-            $this->view->extJsScript = 'ext-all-debug.js';
+            $this->viewData->extJsScript = 'ext-all-debug.js';
         } else {
-            $this->view->extJsScript = 'ext-all.js';
+            $this->viewData->extJsScript = 'ext-all.js';
         }
         
         $this->getHelper('Layout')->disableLayout();
+        
+        $viewModel = new ViewModel($this->viewData);
+        $viewModel->setTerminal(true);
+        
+        return $viewModel;
     }
 }

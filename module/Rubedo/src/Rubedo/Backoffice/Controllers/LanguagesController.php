@@ -30,7 +30,7 @@ use WebTales\MongoFilters\Filter;
  * @package Rubedo
  *         
  */
-class Backoffice_LanguagesController extends Backoffice_DataAccessController
+class Backoffice_LanguagesController extends DataAccessController
 {
 
     /**
@@ -82,7 +82,7 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
                 'label' => isset($languages['ownLabel'])&&($languages['ownLabel']!="")?$languages['ownLabel']:$languages['label']
             );
         }
-        $this->_returnJson(array(
+        return $this->_returnJson(array(
             'data' => $languagesArray,
             'success' => true
         ));
@@ -133,6 +133,6 @@ class Backoffice_LanguagesController extends Backoffice_DataAccessController
         }
         $result = array('data'=>$flagsArray);
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 }

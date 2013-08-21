@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_DirectoriesController extends Backoffice_DataAccessController
+class Backoffice_DirectoriesController extends DataAccessController
 {
 
     /**
@@ -60,14 +60,14 @@ class Backoffice_DirectoriesController extends Backoffice_DataAccessController
     {
         $result = $this->_dataService->clearOrphanPages();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function countOrphanDirectoriesAction ()
     {
         $result = $this->_dataService->countOrphanPages();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
     public function classifyAction ()
     {
@@ -75,7 +75,7 @@ class Backoffice_DirectoriesController extends Backoffice_DataAccessController
         $decodedArray=Zend_Json::decode($encodedArray);
         $directoryId=$this->getRequest()->getParam("directoryId");
         $result = $this->_dataService->classify($decodedArray,$directoryId);
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
    
 }

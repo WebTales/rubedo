@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_ImportController extends Backoffice_DataAccessController {
+class Backoffice_ImportController extends DataAccessController {
 	
 	/**
 	 * Array with the read only actions

@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_IconsController extends Backoffice_DataAccessController
+class Backoffice_IconsController extends DataAccessController
 {
 
     /**
@@ -54,13 +54,13 @@ class Backoffice_IconsController extends Backoffice_DataAccessController
     {
         $result = $this->_dataService->clearOrphanIcons();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function countOrphanIconsAction ()
     {
         $result = $this->_dataService->countOrphanIcons();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 }

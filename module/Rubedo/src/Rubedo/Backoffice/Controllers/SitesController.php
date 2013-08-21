@@ -29,7 +29,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_SitesController extends Backoffice_DataAccessController
+class Backoffice_SitesController extends DataAccessController
 {
 
     public function init ()
@@ -63,7 +63,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     public function wizardCreateAction ()
@@ -90,7 +90,7 @@ class Backoffice_SitesController extends Backoffice_DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     protected function createFromModel ($insertData)

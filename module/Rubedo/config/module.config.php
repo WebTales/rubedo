@@ -201,7 +201,7 @@ $config = array(
     ),
     'controllers' => array(
         'invokables' => array(
-//             'Application\Controller\Index' => 'Application\Controller\IndexController',
+             'Rubedo\Backoffice\Controller\Index' => 'Rubedo\Backoffice\Controller\IndexController',
 //             'Application\Controller\Projects' => 'Application\Controller\ProjectsController'
         ),
     ),
@@ -221,6 +221,9 @@ $config = array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
+        'strategies' => array(
+            'ViewJsonStrategy'
+        )
     ),
     'datastream' => array(
         'mongo' => array(

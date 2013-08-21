@@ -69,7 +69,7 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
             $response['success'] = false;
             $response['message'] = 'no parentId Given';
             $this->getResponse()->setHttpResponseCode(500);
-            $this->_returnJson($response);
+            return $this->_returnJson($response);
         }
         
         $sessionService = \Rubedo\Services\Manager::getService('Session');
@@ -144,7 +144,7 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
         $response['success'] = TRUE;
         $response['message'] = 'OK';
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     /**
@@ -178,7 +178,7 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -211,7 +211,7 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -245,6 +245,6 @@ class Backoffice_NestedContentsController extends Zend_Controller_Action
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 }

@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_WorkspacesController extends Backoffice_DataAccessController
+class Backoffice_WorkspacesController extends DataAccessController
 {
 
     public function init ()
@@ -39,7 +39,7 @@ class Backoffice_WorkspacesController extends Backoffice_DataAccessController
     }
     
     /*
-     * (non-PHPdoc) @see Backoffice_DataAccessController::indexAction()
+     * (non-PHPdoc) @see DataAccessController::indexAction()
      */
     public function indexAction ()
     {
@@ -83,6 +83,6 @@ class Backoffice_WorkspacesController extends Backoffice_DataAccessController
         $response['success'] = TRUE;
         $response['message'] = 'OK';
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 }

@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
+class Backoffice_TaxonomyTermsController extends DataAccessController
 {
 
     /**
@@ -61,14 +61,14 @@ class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
     {
         $result = $this->_dataService->clearOrphanTerms();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function countOrphanTermsAction ()
     {
         $result = $this->_dataService->countOrphanTerms();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function navigationTreeAction ()
@@ -78,6 +78,6 @@ class Backoffice_TaxonomyTermsController extends Backoffice_DataAccessController
         $resultArray = array();
         $resultArray['success'] = true;
         $resultArray['children'] = $result;
-        $this->_returnJson($resultArray);
+        return $this->_returnJson($resultArray);
     }
 }

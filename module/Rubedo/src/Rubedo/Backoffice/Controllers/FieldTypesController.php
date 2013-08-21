@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_FieldTypesController extends Backoffice_DataAccessController
+class Backoffice_FieldTypesController extends DataAccessController
 {
 
     public function init ()

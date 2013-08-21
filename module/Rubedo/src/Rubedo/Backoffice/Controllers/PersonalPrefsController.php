@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
+class Backoffice_PersonalPrefsController extends DataAccessController
 {
 
     /**
@@ -56,13 +56,13 @@ class Backoffice_PersonalPrefsController extends Backoffice_DataAccessController
     {
         $result = $this->_dataService->clearOrphanPrefs();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function countOrphanPrefsAction ()
     {
         $result = $this->_dataService->countOrphanPrefs();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 }

@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_MailingListsController extends Backoffice_DataAccessController
+class Backoffice_MailingListsController extends DataAccessController
 {
 
     public function init ()

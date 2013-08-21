@@ -14,9 +14,14 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
+
 use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\AbstractLocalizableCollection;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 
 /**
  * Abstract Controller providing CRUD API and dealing with the data access
@@ -29,7 +34,7 @@ use Rubedo\Collection\AbstractLocalizableCollection;
  * @package Rubedo
  *         
  */
-abstract class Backoffice_DataAccessController extends Zend_Controller_Action
+abstract class DataAccessController extends AbstractActionController
 {
 
     /**
@@ -64,6 +69,10 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         'model'
     );
 
+    public function __construct(){
+        static::init();
+    }
+    
     /**
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
@@ -71,9 +80,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      * @see Zend_Controller_Action::init()
      */
     public function init()
-    {
-        parent::init();
-        
+    {      
         
         //initialize localized collections
         $serviceLanguages = Manager::getService('Languages');
@@ -112,6 +119,9 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
      */
     protected function _returnJson($data)
     {
+        $answer = new JsonModel($data);
+        return $answer;
+        
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
@@ -167,7 +177,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $response['success'] = TRUE;
         $response['message'] = 'OK';
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     protected function _buildFilter($filters = null)
@@ -232,7 +242,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $response['success'] = TRUE;
         $response['message'] = 'OK';
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     /**
@@ -266,7 +276,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
             $this->getResponse()->setHttpResponseCode(500);
         }
         
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -294,7 +304,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         $response['success'] = TRUE;
         $response['message'] = 'OK';
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     /**
@@ -324,7 +334,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -353,7 +363,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -383,7 +393,7 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -420,12 +430,12 @@ abstract class Backoffice_DataAccessController extends Zend_Controller_Action
             );
         }
         
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     public function modelAction()
     {
         $model = $this->_dataService->getModel();
-        $this->_returnJson($model);
+        return $this->_returnJson($model);
     }
 }

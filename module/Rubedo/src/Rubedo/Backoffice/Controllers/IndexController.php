@@ -14,6 +14,8 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Backoffice\Controller;
+
 Use Rubedo\Services\Manager;
 
 require_once ('AbstractExtLoaderController.php');
@@ -27,7 +29,7 @@ require_once ('AbstractExtLoaderController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Backoffice_IndexController extends Backoffice_AbstractExtLoaderController
+class IndexController extends AbstractExtLoaderController
 {
 
     /**
@@ -49,7 +51,7 @@ class Backoffice_IndexController extends Backoffice_AbstractExtLoaderController
             $this->_helper->redirector->gotoUrl($this->_helper->url('confirm-logout', 'logout', 'backoffice'));
         }
         
-        $this->loadExtApps();
+        return $this->loadExtApps();
     }
 }
 

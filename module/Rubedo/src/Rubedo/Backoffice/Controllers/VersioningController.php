@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_VersioningController extends Backoffice_DataAccessController
+class Backoffice_VersioningController extends DataAccessController
 {
 
     public function init ()

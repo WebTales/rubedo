@@ -28,7 +28,7 @@ use Rubedo\Controller\Action;
  * @package Rubedo
  *         
  */
-class Backoffice_PagesController extends Backoffice_DataAccessController
+class Backoffice_PagesController extends DataAccessController
 {
 
     /**
@@ -62,14 +62,14 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
     {
         $result = $this->_dataService->clearOrphanPages();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function countOrphanPagesAction ()
     {
         $result = $this->_dataService->countOrphanPages();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     /**
@@ -81,7 +81,7 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
         $result = array();
         $result['holdsDefault'] = $this->_dataService->hasDefaultPageAsChild($id);
         $result['success'] = true;
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function getContentListAction ()
@@ -162,6 +162,6 @@ class Backoffice_PagesController extends Backoffice_DataAccessController
                 "data" => array()
             );
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 }

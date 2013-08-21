@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_MasksController extends Backoffice_DataAccessController
+class Backoffice_MasksController extends DataAccessController
 {
 
     /**
@@ -57,6 +57,6 @@ class Backoffice_MasksController extends Backoffice_DataAccessController
         $result = Rubedo\Services\Manager::getService('Pages')->isMaskUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
         // $resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 }

@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_ContentTypesController extends Backoffice_DataAccessController
+class Backoffice_ContentTypesController extends DataAccessController
 {
 
     /**
@@ -54,7 +54,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
 
     public function getReadableContentTypesAction ()
     {
-        return $this->_returnJson($this->_dataService->getReadableContentTypes());
+        return return $this->_returnJson($this->_dataService->getReadableContentTypes());
     }
 
     public function isUsedAction ()
@@ -63,7 +63,7 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
         $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
         $result = Rubedo\Services\Manager::getService('Contents')->isTypeUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function isChangeableAction ()
@@ -90,6 +90,6 @@ class Backoffice_ContentTypesController extends Backoffice_DataAccessController
                 "modify" => "no"
             );
         }
-        $this->_returnJson($resultArray);
+        return $this->_returnJson($resultArray);
     }
 }

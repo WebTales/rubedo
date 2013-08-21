@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_ContentsController extends Backoffice_DataAccessController
+class Backoffice_ContentsController extends DataAccessController
 {
 
     /**
@@ -82,7 +82,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         $response['success'] = TRUE;
         $response['message'] = 'OK';
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     /**
@@ -115,7 +115,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         $response['success'] = TRUE;
         $response['message'] = 'OK';
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     /**
@@ -145,7 +145,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -175,7 +175,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -210,7 +210,7 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
             );
         }
         
-        $this->_returnJson($returnArray);
+        return $this->_returnJson($returnArray);
     }
 
     /**
@@ -241,14 +241,14 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
     {
         $result = $this->_dataService->clearOrphanContents();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function countOrphanContentsAction ()
     {
         $result = $this->_dataService->countOrphanContents();
         
-        $this->_returnJson($result);
+        return $this->_returnJson($result);
     }
 
     public function deleteByContentTypeIdAction ()
@@ -259,6 +259,6 @@ class Backoffice_ContentsController extends Backoffice_DataAccessController
         }
         $deleteResult = $this->_dataService->deleteByContentType($typeId);
         
-        $this->_returnJson($deleteResult);
+        return $this->_returnJson($deleteResult);
     }
 }

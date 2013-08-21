@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_GenericCleaningController extends Backoffice_DataAccessController
+class Backoffice_GenericCleaningController extends DataAccessController
 {
 
     /**
@@ -65,7 +65,7 @@ class Backoffice_GenericCleaningController extends Backoffice_DataAccessControll
         $results['contents'] = $contentsService->clearOrphanContents();
         $results['groups'] = $groupsService->clearOrphanGroups();
         
-        $this->_returnJson($results);
+        return $this->_returnJson($results);
     }
 
     public function countOrphansAction ()
@@ -86,6 +86,6 @@ class Backoffice_GenericCleaningController extends Backoffice_DataAccessControll
         $results['contents'] = $contentsService->countOrphanContents();
         $results['groups'] = $groupsService->countOrphanGroups();
         
-        $this->_returnJson($results);
+        return $this->_returnJson($results);
     }
 }

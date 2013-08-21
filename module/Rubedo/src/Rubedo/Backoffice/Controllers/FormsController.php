@@ -29,7 +29,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_FormsController extends Backoffice_DataAccessController
+class Backoffice_FormsController extends DataAccessController
 {
 
     /**

@@ -29,7 +29,7 @@ Use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class Backoffice_DamController extends Backoffice_DataAccessController
+class Backoffice_DamController extends DataAccessController
 {
 
     /**
@@ -60,7 +60,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
     }
     
     /*
-     * (non-PHPdoc) @see Backoffice_DataAccessController::indexAction()
+     * (non-PHPdoc) @see DataAccessController::indexAction()
      */
     public function indexAction ()
     {
@@ -194,7 +194,7 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             if (! is_array($uploadResult)) {
                 $obj['fields'][$name] = $uploadResult;
             } else {
-                return $this->_returnJson($uploadResult);
+                return return $this->_returnJson($uploadResult);
             }
             
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
@@ -206,14 +206,14 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         if (! is_array($uploadResult)) {
             $obj['originalFileId'] = $uploadResult;
         } else {
-            return $this->_returnJson($uploadResult);
+            return return $this->_returnJson($uploadResult);
         }
         
         $obj['Content-Type'] = $this->_mimeType;
         
         if (! $obj['originalFileId']) {
             $this->getResponse()->setHttpResponseCode(500);
-            return $this->_returnJson(array(
+            return return $this->_returnJson(array(
                 'success' => false,
                 'msg' => 'no main file uploaded'
             ));
@@ -283,12 +283,12 @@ class Backoffice_DamController extends Backoffice_DataAccessController
             $obj['fields']['title'] = $properName[0];
             $obj['originalFileId'] = $uploadResult['data']['id'];
         } else {
-            return $this->_returnJson($uploadResult);
+            return return $this->_returnJson($uploadResult);
         }
         $obj['Content-Type'] = $this->_mimeType;
         if (! $obj['originalFileId']) {
             $this->getResponse()->setHttpResponseCode(500);
-            return $this->_returnJson(array(
+            return return $this->_returnJson(array(
                 'success' => false,
                 'msg' => 'no main file uploaded'
             ));

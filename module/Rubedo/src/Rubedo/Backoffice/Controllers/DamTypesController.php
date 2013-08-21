@@ -27,7 +27,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_DamTypesController extends Backoffice_DataAccessController
+class Backoffice_DamTypesController extends DataAccessController
 {
 
     public function init ()
@@ -47,6 +47,6 @@ class Backoffice_DamTypesController extends Backoffice_DataAccessController
         ) : array(
             "used" => false
         );
-        $this->_returnJson($resultArray);
+        return $this->_returnJson($resultArray);
     }
 }

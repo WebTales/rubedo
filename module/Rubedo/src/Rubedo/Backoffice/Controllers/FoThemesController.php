@@ -77,7 +77,7 @@ class Backoffice_FoThemesController extends Zend_Controller_Action
         
         $response = Manager::getService('FrontOfficeTemplates')->getAvailableThemes();
         
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 
     /**
@@ -86,6 +86,6 @@ class Backoffice_FoThemesController extends Zend_Controller_Action
     {
         $themeName = $this->getParam('theme', 'default');
         $response = Manager::getService('FrontOfficeTemplates')->getThemeInfos($themeName);
-        $this->_returnJson($response);
+        return $this->_returnJson($response);
     }
 }
