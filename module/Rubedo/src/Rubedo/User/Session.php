@@ -17,6 +17,7 @@
 namespace Rubedo\User;
 
 use Rubedo\Interfaces\User\ISession;
+use Zend\Session\Container as SessionContainer;
 
 /**
  * Current User Service
@@ -41,8 +42,8 @@ class Session implements ISession
      */
     protected function _getSessionObject ()
     {
-        if (! $this->_sessionObject instanceof \Zend_Session_Namespace) {
-            $this->_sessionObject = new \Zend_Session_Namespace(static::$_sessionName);
+        if (! $this->_sessionObject instanceof SessionContainer) {
+            $this->_sessionObject = new SessionContainer(static::$_sessionName);
         }
         return $this->_sessionObject;
     }

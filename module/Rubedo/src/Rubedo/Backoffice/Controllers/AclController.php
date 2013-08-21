@@ -17,8 +17,10 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-
 use Rubedo\Services\Manager;
+use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
+
 
 /**
  * Controller providing access control list
@@ -34,46 +36,18 @@ use Rubedo\Services\Manager;
 class AclController extends AbstractActionController
 {
 
-    /**
-     * should json be prettified
-     *
-     * @var bool
-     */
-    protected $_prettyJson = true;
-
-    /**
-     * Set the response body with Json content
-     * Option : json is made human readable
-     * 
-     * @param mixed $data
-     *            data to be json encoded
-     */
-    protected function _returnJson ($data)
-    {
-        // disable layout and set content type
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setHeader('Content-Type', "application/json", true);
-        
-        $returnValue = Zend_Json::encode($data);
-        if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
-        }
-        $this->getResponse()->setBody($returnValue);
-    }
-
-    function indexAction ()
+    function indexAction()
     {
         $AclArray = array();
-        $dataJson = $this->getRequest()->getParam('data');
+        $dataJson = $this->params()->fromPost('data');
         if (isset($dataJson)) {
-            $dataArray = Zend_Json::decode($dataJson);
+            $dataArray = Json::decode($dataJson);
             if (is_array($dataArray)) {
                 $aclService = Manager::getService('Acl');
                 $AclArray = $aclService->accessList(array_keys($dataArray));
             }
         }
         
-        return $this->_returnJson($AclArray);
+        return new JsonModel($AclArray);
     }
 }

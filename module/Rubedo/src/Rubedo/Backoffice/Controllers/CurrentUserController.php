@@ -18,6 +18,8 @@ namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
+
 
 /**
  * Controller providing action concerning the current user
@@ -59,24 +61,23 @@ class CurrentUserController extends AbstractActionController
      */
     public function __construct ()
     {
-        parent::__construct();
         
         $this->_auth = Manager::getService('Authentication');
         $this->_currentUserService = Manager::getService('CurrentUser');
         
-        // refuse write action not send by POST
-        if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-            throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
-        } else {
-            if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-                $user = Manager::getService('Session')->get('user');
-                $token = $this->getRequest()->getParam('token');
+//         // refuse write action not send by POST
+//         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
+//             throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
+//         } else {
+//             if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
+//                 $user = Manager::getService('Session')->get('user');
+//                 $token = $this->getRequest()->getParam('token');
                 
-                if ($token !== $user['token']) {
-                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-                }
-            }
-        }
+//                 if ($token !== $user['token']) {
+//                     throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
+//                 }
+//             }
+//         }
     }
 
     /**
@@ -95,8 +96,7 @@ class CurrentUserController extends AbstractActionController
         } else {
             $newResponse['sucess'] = false;
         }
-        
-        $this->_helper->json($newResponse);
+        return new JsonModel($newResponse);
     }
 
     /**
@@ -143,7 +143,7 @@ class CurrentUserController extends AbstractActionController
         if (! $returnArray['success']) {
             $this->getResponse()->setHttpResponseCode(500);
         }
-        $this->_helper->json($returnArray);
+        return new JsonModel($returnArray);
     }
 
     /**
@@ -160,9 +160,7 @@ class CurrentUserController extends AbstractActionController
         } else {
             $result = false;
         }
-        $this->_helper->json(array(
-            'success' => $result
-        ));
+        return new JsonModel($result);
     }
 
     /**
@@ -176,7 +174,7 @@ class CurrentUserController extends AbstractActionController
         if (mb_strlen($response['token']) != 128 && ! ctype_alnum($response['token'])) {
             $this->getResponse()->setHttpResponseCode(500);
         } else {
-            $this->_helper->json($response);
+            return new JsonModel($response);
         }
     }
 }
