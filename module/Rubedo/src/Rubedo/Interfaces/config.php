@@ -95,7 +95,8 @@ class config
         'Translate' => 'Rubedo\\Interfaces\\Internationalization\\ITranslate',
         'CurrentLocalization' => 'Rubedo\\Interfaces\\Internationalization\\ICurrent',        
         'Directories' => 'Rubedo\\Interfaces\\Collection\\IDirectories',
-        'Languages' => 'Rubedo\\Interfaces\\Collection\\ILanguages'
+        'Languages' => 'Rubedo\\Interfaces\\Collection\\ILanguages',
+        'CustomThemes' => 'Rubedo\\Interfaces\\Collection\\ICustomThemes'
     );
 
     /**

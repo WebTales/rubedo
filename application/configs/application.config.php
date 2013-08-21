@@ -208,6 +208,9 @@ return array(
         ),
         'Languages' => array(
             'class' => 'Rubedo\\Collection\\Languages'
+        ),
+        'CustomThemes' => array(
+            'class' => 'Rubedo\\Collection\\CustomThemes'
         )
     ),
     'backoffice' => array(
