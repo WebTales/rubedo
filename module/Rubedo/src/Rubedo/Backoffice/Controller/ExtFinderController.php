@@ -18,6 +18,8 @@
 
 namespace Rubedo\Backoffice\Controller;
 
+use Rubedo\Services\Manager;
+
 /**
  * Controller handling media finder for contribution
  *

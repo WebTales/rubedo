@@ -18,6 +18,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+
 /**
  * Controller providing Elastic Search indexation
  *

@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+
 /**
  * Controller providing data import for csv
  *
@@ -530,11 +531,11 @@ class ImportController extends DataAccessController {
 					try {
 						$contentsService->create ( $contentParams, array (), false, true );
 						$lineCounter ++;
-					} catch ( Exception $e ) {
+					} catch ( \Exception $e ) {
 					}
 				}
 				fclose ( $recievedFile );
-				$ElasticDataIndexService = \Manager::getService ( 'ElasticDataIndex' );
+				$ElasticDataIndexService = Manager::getService ( 'ElasticDataIndex' );
 				$ElasticDataIndexService->init ();
 				
 				$ElasticDataIndexService->indexByType ( 'content', $contentType ['data'] ['id'] );

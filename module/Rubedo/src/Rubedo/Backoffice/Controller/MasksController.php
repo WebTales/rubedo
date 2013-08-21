@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Collection\AbstractCollection;
+use Rubedo\Services\Manager;
 /**
  * Controller providing CRUD API for the masks JSON
  *
@@ -53,10 +54,10 @@ class MasksController extends DataAccessController
 
     public function isUsedAction ()
     {
-        $id = $this->getRequest()->getParam('id');
-        $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
+        $id = $this->params('id');
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $result = Manager::getService('Pages')->isMaskUsed($id);
-        Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
+        AbstractCollection::disableUserFilter($wasFiltered);
         // $resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
         return $this->_returnJson($result);
     }

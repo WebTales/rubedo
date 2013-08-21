@@ -17,7 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Manager;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing access control list
@@ -99,7 +99,7 @@ class FileController extends AbstractActionController
         $files = $adapter->getFileInfo();
         $fileInfo = array_pop($files);
         
-        $finfo = new finfo(FILEINFO_MIME);
+        $finfo = new \finfo(FILEINFO_MIME);
         $mimeType = $finfo->file($fileInfo['tmp_name']);
         
         $fileService = Manager::getService('Files');
@@ -148,12 +148,12 @@ class FileController extends AbstractActionController
             'filename' => $fileInfos['name'],
             'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
             'mainFileType' => 'Image',
-            '_id' => new MongoId($originalId)
+            '_id' => new \MongoId($originalId)
         );
         $updateResult=$fileService->create($fileObj);
         
         //trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
-        $directoryIterator = new DirectoryIterator(sys_get_temp_dir());
+        $directoryIterator = new \DirectoryIterator(sys_get_temp_dir());
         foreach ($directoryIterator as $file){
             if($file->isDot()){
                 continue;

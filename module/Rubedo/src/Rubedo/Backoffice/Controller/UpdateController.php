@@ -17,7 +17,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Manager;
+use Rubedo\Services\Manager;
+use Rubedo\Update\Update;
 
 /**
  * Installer Controller
@@ -44,7 +45,7 @@ class UpdateController extends AbstractActionController
     {
         $result = array(
             'success' => true,
-            'version' => Rubedo\Update\Update::update()
+            'version' => Update::update()
         );
         $this->_helper->json($result);
     }

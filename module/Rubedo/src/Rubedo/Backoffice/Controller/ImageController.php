@@ -17,7 +17,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Manager;
+use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  * Controller providing access control list
@@ -48,7 +49,7 @@ class ImageController extends AbstractActionController
      *
      * @see AbstractActionController::init()
      */
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         
@@ -69,7 +70,7 @@ class ImageController extends AbstractActionController
         }
     }
 
-    function indexAction ()
+    function indexAction()
     {
         $fileService = Manager::getService('Images');
         $filesArray = $fileService->getList();
@@ -87,7 +88,7 @@ class ImageController extends AbstractActionController
         ));
     }
 
-    function putAction ()
+    function putAction()
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
@@ -110,13 +111,13 @@ class ImageController extends AbstractActionController
         $this->_helper->json($result);
     }
 
-    function deleteAction ()
+    function deleteAction()
     {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
         
-        $dataJson = $this->getRequest()->getParam('data', Zend_Json::encode(array()));
-        $data = Zend_Json::decode($dataJson);
+        $dataJson = $this->getRequest()->getParam('data', Json::encode(array()));
+        $data = Json::decode($dataJson);
         
         if (isset($data['id'])) {
             $fileService = Manager::getService('Images');
@@ -128,19 +129,19 @@ class ImageController extends AbstractActionController
         }
     }
 
-    function getAction ()
+    function getAction()
     {
         $this->_forward('index', 'image', 'default');
     }
 
-    function getMetaAction ()
+    function getMetaAction()
     {
         $fileId = $this->getRequest()->getParam('file-id');
         
         if (isset($fileId)) {
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof MongoGridFSFile) {
+            if (! $obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             $this->_helper->json($obj->file);

@@ -16,8 +16,9 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Controller\Action;
+use Rubedo\Services\Manager;
+
 
 /**
  * Controller providing CRUD API for the Pages JSON

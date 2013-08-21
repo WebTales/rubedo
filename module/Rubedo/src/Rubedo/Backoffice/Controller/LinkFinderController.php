@@ -17,7 +17,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
 
 /**
  * Controller handling media finder for contribution

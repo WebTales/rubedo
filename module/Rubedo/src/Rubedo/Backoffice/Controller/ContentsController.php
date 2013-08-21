@@ -17,6 +17,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+
 
 /**
  * Controller providing CRUD API for the field types JSON
@@ -257,7 +259,7 @@ class ContentsController extends DataAccessController
     {
         $typeId = $this->getParam('type-id');
         if (! $typeId) {
-            throw new Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
+            throw new \Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
         }
         $deleteResult = $this->_dataService->deleteByContentType($typeId);
         

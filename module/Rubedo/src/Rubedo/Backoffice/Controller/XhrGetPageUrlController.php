@@ -17,7 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Manager;
+use Rubedo\Services\Manager;
 
 /**
  * Get Page URL Controller
@@ -46,7 +46,7 @@ class XhrGetPageUrlController extends AbstractActionController
         
         $targetSite = Manager::getService('Sites')->findById($page['site']);
         if (! is_array($targetSite['protocol']) || count($targetSite['protocol']) == 0) {
-            throw new Rubedo\Exceptions\Server('Protocol is not set for current site.', "Exception14");
+            throw new \Rubedo\Exceptions\Server('Protocol is not set for current site.', "Exception14");
         }
         $protocol = in_array($httpProtocol, $targetSite['protocol']) ? $httpProtocol : array_pop($targetSite['protocol']);
         $protocol = strtolower($protocol);

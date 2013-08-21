@@ -159,7 +159,7 @@ class Languages extends AbstractCollection implements ILanguages
      */
     public function destroy(array $obj, $options = array())
     {
-        throw new Rubedo\Exceptions\User('Languages can\'t be deleted', "Exception100");
+        throw new \Rubedo\Exceptions\User('Languages can\'t be deleted', "Exception100");
     }
 
     /**

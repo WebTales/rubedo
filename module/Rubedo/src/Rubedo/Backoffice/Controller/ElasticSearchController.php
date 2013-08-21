@@ -18,8 +18,10 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Manager;
+use Rubedo\Services\Manager;
 use Rubedo\Collection\AbstractLocalizableCollection;
+use Zend\Json\Json;
+use Rubedo\Elastic\DataAbstract;
 
 /**
  * Controller providing Elastic Search querying
@@ -68,7 +70,7 @@ class ElasticSearchController extends AbstractActionController
         // search over every sites
         $params['site'] = null;
         
-        $query = \Manager::getService('ElasticDataSearch');
+        $query = Manager::getService('ElasticDataSearch');
         
         $query->init();
         if (isset($params['limit'])) {
@@ -78,7 +80,7 @@ class ElasticSearchController extends AbstractActionController
             $params['pager'] = (int) $params['page'] - 1;
         }
         if (isset($params['sort'])) {
-            $sort = Zend_Json::decode($params['sort']);
+            $sort = Json::decode($params['sort']);
             $params['orderby'] = ($sort[0]['property'] == 'score') ? '_score' : $sort[0]['property'];
             $params['orderbyDirection'] = $sort[0]['direction'];
         }
@@ -92,15 +94,15 @@ class ElasticSearchController extends AbstractActionController
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', 'application/json', true);
         
-        $returnValue = Zend_Json::encode($results);
-        $returnValue = Zend_Json::prettyPrint($returnValue);
+        $returnValue = Json::encode($results);
+        $returnValue = Json::prettyPrint($returnValue);
         
         $this->getResponse()->setBody($returnValue);
     }
 
     public function getOptionsAction ()
     {
-        $esOptions = Rubedo\Elastic\DataAbstract::getOptions();
+        $esOptions = DataAbstract::getOptions();
         $returnArray = array();
         $returnArray['success'] = true;
         $returnArray['data'] = $esOptions;

@@ -17,6 +17,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractCollection;
+use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the field types JSON
@@ -62,23 +64,23 @@ class ContentTypesController extends DataAccessController
     public function isUsedAction ()
     {
         $id = $this->getRequest()->getParam('id');
-        $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $result = Manager::getService('Contents')->isTypeUsed($id);
-        Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
+        AbstractCollection::disableUserFilter($wasFiltered);
         return $this->_returnJson($result);
     }
 
     public function isChangeableAction ()
     {
         $data = $this->getRequest()->getParams();
-        $newType = Zend_Json::decode($data['fields']);
+        $newType = Json::decode($data['fields']);
         $id = $data['id'];
         $originalType = $this->_dataService->findById($id);
         $originalType = $originalType['fields'];
         
-        $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $isUsedResult = Manager::getService('Contents')->isTypeUsed($id);
-        Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
+        AbstractCollection::disableUserFilter($wasFiltered);
         if (! $isUsedResult['used']) {
             $resultArray = array(
                 "modify" => "ok"

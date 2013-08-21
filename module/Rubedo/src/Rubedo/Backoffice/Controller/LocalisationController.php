@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing CRUD API for the localisation JSON

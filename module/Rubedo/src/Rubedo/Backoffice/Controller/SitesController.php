@@ -16,9 +16,9 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use WebTales\MongoFilters\Filter;
-use Manager;
+use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the sitesController JSON
@@ -47,7 +47,7 @@ class SitesController extends DataAccessController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $data = Zend_Json::decode($data);
+            $data = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($data)) {
                 $returnArray = $this->_dataService->destroy($data);
             } else {
@@ -76,7 +76,7 @@ class SitesController extends DataAccessController
             "msg" => 'no data recieved'
         );
         if (! is_null($data)) {
-            $insertData = Zend_Json::decode($data);
+            $insertData = Json::decode($data,Json::TYPE_ARRAY);
             if ((isset($insertData['builtOnEmptySite'])) && ($insertData['builtOnEmptySite'])) {
                 $returnArray = $this->createFromEmpty($insertData);
             } else 
@@ -114,7 +114,7 @@ class SitesController extends DataAccessController
         
         $modelId = $model['id'];
         $oldIdArray[] = $modelId;
-        $theBigString = $theBigString . Zend_Json::encode($model);
+        $theBigString = $theBigString . Json::encode($model);
         $theBigString = $theBigString . "SEntityS";
         
         $oldMaskFilters = Filter::factory('value')->setName('site')->setValue($modelId);
@@ -125,11 +125,11 @@ class SitesController extends DataAccessController
             foreach($value['blocks'] as $subkey => $someBlock){
                     unset($oldMasksArray['data'][$key]['blocks'][$subkey]['id']);
                     unset($oldMasksArray['data'][$key]['blocks'][$subkey]['_id']);
-                    $oldMasksArray['data'][$key]['blocks'][$subkey]['id']=(string) new MongoId();
+                    $oldMasksArray['data'][$key]['blocks'][$subkey]['id']=(string) new \MongoId();
                 }
             }
             $oldIdArray[] = $value['id'];
-            $theBigString = $theBigString . Zend_Json::encode($oldMasksArray['data'][$key]);
+            $theBigString = $theBigString . Json::encode($oldMasksArray['data'][$key]);
             $theBigString = $theBigString . "SMaskS";
         }
         $theBigString .= "SEntityS";
@@ -139,11 +139,11 @@ class SitesController extends DataAccessController
                 foreach($value['blocks'] as $subkey => $someBlock){
                     unset($oldPagesArray['data'][$key]['blocks'][$subkey]['id']);
                     unset($oldPagesArray['data'][$key]['blocks'][$subkey]['_id']);
-                    $oldPagesArray['data'][$key]['blocks'][$subkey]['id']=(string)new MongoId();
+                    $oldPagesArray['data'][$key]['blocks'][$subkey]['id']=(string)new \MongoId();
                 }
             }
             $oldIdArray[] = $value['id'];
-            $theBigString = $theBigString . Zend_Json::encode($oldPagesArray['data'][$key]);
+            $theBigString = $theBigString . Json::encode($oldPagesArray['data'][$key]);
             $theBigString = $theBigString . "SPageS";
         }
         $newIdArray = array();
@@ -165,7 +165,7 @@ class SitesController extends DataAccessController
         $queriesList=$queriesService->getList($queriesFilter);
         foreach ($queriesList['data'] as $someQuery){
             if(strpos($theBigString, $someQuery['id'])){
-                $MongoId = new MongoId();
+                $MongoId = new \MongoId();
                 $MongoIdString = (string) $MongoId;
                 $theBigString = str_replace($someQuery['id'], $MongoIdString, $theBigString);
                 $someQuery['_id'] = $MongoId;
@@ -176,7 +176,7 @@ class SitesController extends DataAccessController
         }
         foreach ($systemContentList['data'] as $systemContent){
             if(strpos($theBigString, $systemContent['id'])){
-                $MongoId = new MongoId();
+                $MongoId = new \MongoId();
                 $MongoIdString = (string) $MongoId;
                 $theBigString = str_replace($systemContent['id'], $MongoIdString, $theBigString);
                 $systemContent['_id'] = $MongoId;
@@ -188,7 +188,7 @@ class SitesController extends DataAccessController
         
         
         foreach ($oldIdArray as $value) {
-            $MongoId = new MongoId();
+            $MongoId = new \MongoId();
             $MongoId = (string) $MongoId;
             $newIdArray[] = $MongoId;
             $theBigString = str_replace($value, $MongoId, $theBigString);
@@ -196,7 +196,7 @@ class SitesController extends DataAccessController
         $explodedBigString = array();
         $explodedBigString = explode("SEntityS", $theBigString);
         
-        $newSite = Zend_Json::decode($explodedBigString[0]);
+        $newSite = Json::decode($explodedBigString[0],Json::TYPE_ARRAY);
         $newMasksJsonArray = explode("SMaskS", $explodedBigString[1]);
         $newPagesJsonArray = explode("SPageS", $explodedBigString[2]);
         foreach ($insertData as $key => $value) {
@@ -204,23 +204,23 @@ class SitesController extends DataAccessController
                 $newSite[$key] = $value;
             }
         }
-        $newSite['_id'] = new MongoId($newSite['id']);
+        $newSite['_id'] = new \MongoId($newSite['id']);
         unset($newSite['id']);
         unset($newSite['version']);
         $returnArray = $this->_dataService->create($newSite);
         foreach ($newMasksJsonArray as $key => $value) {
-            $newMask = Zend_Json::decode($newMasksJsonArray[$key]);
+            $newMask = Json::decode($newMasksJsonArray[$key],Json::TYPE_ARRAY);
             if (is_array($newMask)) {
-                $newMask['_id'] = new MongoId($newMask['id']);
+                $newMask['_id'] = new \MongoId($newMask['id']);
                 unset($newMask['id']);
                 unset($newMask['version']);
                 $masksService->create($newMask);
             }
         }
         foreach ($newPagesJsonArray as $key => $value) {
-            $newPage = Zend_Json::decode($newPagesJsonArray[$key]);
+            $newPage = Json::decode($newPagesJsonArray[$key],Json::TYPE_ARRAY);
             if (is_array($newPage)) {
-                $newPage['_id'] = new MongoId($newPage['id']);
+                $newPage['_id'] = new \MongoId($newPage['id']);
                 unset($newPage['id']);
                 unset($newPage['version']);
                 $pagesService->create($newPage);
@@ -244,7 +244,7 @@ class SitesController extends DataAccessController
         if ($site['success'] === true) {
             // Make the mask skeleton
             $jsonMask = realpath(APPLICATION_PATH . "/../data/default/site/mask.json");
-            $maskObj = (Zend_Json::decode(file_get_contents($jsonMask), true));
+            $maskObj = Json::decode(file_get_contents($jsonMask), Json::TYPE_ARRAY);
             $maskObj['site'] = $site['data']['id'];
             $maskObj['nativeLanguage']=$this->locale;
             
@@ -253,11 +253,11 @@ class SitesController extends DataAccessController
             
 
             // Detail mask
-            $detailSecondColumnId = (string) new MongoId();
+            $detailSecondColumnId = (string) new \MongoId();
             $detailMaskCreation = $this->createMask($maskObj,'NewSite.single.title',1,$detailSecondColumnId);
             
             // Search mask
-            $searchColumnId = (string) new MongoId();
+            $searchColumnId = (string) new \MongoId();
             $searchMaskCreation = $this->createMask($maskObj,'NewSite.search.title',1,$searchColumnId);
             
             
@@ -269,7 +269,7 @@ class SitesController extends DataAccessController
                     $this,
                     'replaceWithTranslation'
                 ), $itemJson);
-                $homePageObj = (Zend_Json::decode($itemJson, true));
+                $homePageObj = Json::decode($itemJson, Json::TYPE_ARRAY);
                 $homePageObj['site'] = $site['data']['id'];
                 $homePageObj['maskId'] = $homeMaskCreation['data']['id'];
                 $homePageObj['nativeLanguage']=$site['data']['nativeLanguage'];
@@ -288,7 +288,7 @@ class SitesController extends DataAccessController
                     $this,
                     'replaceWithTranslation'
                 ), $itemJson);
-                $singlePageObj = (Zend_Json::decode($itemJson, true));
+                $singlePageObj = Json::decode($itemJson,Json::TYPE_ARRAY);
                 $singlePageObj['site'] = $site['data']['id'];
                 $singlePageObj['maskId'] = $detailMaskCreation['data']['id'];
                 $singlePageObj['nativeLanguage']=$site['data']['nativeLanguage'];
@@ -298,7 +298,7 @@ class SitesController extends DataAccessController
                     "description"=>$singlePageObj['description']
                 
                 ));
-                $singlePageObj['blocks'][0]['id'] = (string) new MongoId();
+                $singlePageObj['blocks'][0]['id'] = (string) new \MongoId();
                 $singlePageObj['blocks'][0]['parentCol'] = $detailSecondColumnId;
                 $page = Manager::getService('Pages')->create($singlePageObj);
                 
@@ -309,7 +309,7 @@ class SitesController extends DataAccessController
                     $this,
                     'replaceWithTranslation'
                 ), $itemJson);
-                $searchPageObj = (Zend_Json::decode($itemJson, true));
+                $searchPageObj = Json::decode($itemJson,Json::TYPE_ARRAY);
                 $searchPageObj['nativeLanguage']=$site['data']['nativeLanguage'];
                 $searchPageObj['i18n']=array($site['data']['nativeLanguage']=>array(
                     "text"=>$searchPageObj['text'],
@@ -319,7 +319,7 @@ class SitesController extends DataAccessController
                 ));
                 $searchPageObj['site'] = $site['data']['id'];
                 $searchPageObj['maskId'] = $searchMaskCreation['data']['id'];
-                $searchPageObj['blocks'][0]['id'] = (string) new MongoId();
+                $searchPageObj['blocks'][0]['id'] = (string) new \MongoId();
                 $searchPageObj['blocks'][0]['parentCol'] = $searchColumnId;
                 $searchPage = Manager::getService('Pages')->create($searchPageObj);
                 
@@ -404,11 +404,11 @@ class SitesController extends DataAccessController
         // Search mask
         $mask = $maskObj;
         
-        $searchFirstColumnId = (string) new MongoId();
-        $searchSecondColumnId = (string) new MongoId();
+        $searchFirstColumnId = (string) new \MongoId();
+        $searchSecondColumnId = (string) new \MongoId();
         
-        $mask['rows'][0]['id'] = (string) new MongoId();
-        $mask['rows'][1]['id'] = (string) new MongoId();
+        $mask['rows'][0]['id'] = (string) new \MongoId();
+        $mask['rows'][1]['id'] = (string) new \MongoId();
         $mask['rows'][0]['columns'][0]['id'] = $searchFirstColumnId;
         
         $tempCol = $mask['rows'][1]['columns'][0];
@@ -416,7 +416,7 @@ class SitesController extends DataAccessController
         unset($mask['rows'][1]['columns']);
         for($i = 1; $i <= $numcol; $i++){
             $mask['rows'][1]['columns'][$i-1]=$tempCol;
-            $mask['rows'][1]['columns'][$i-1]['id'] = (string) new MongoId();
+            $mask['rows'][1]['columns'][$i-1]['id'] = (string) new \MongoId();
             if($forceCol && $i == 1){
                 $mask['rows'][1]['columns'][$i-1]['id'] = $forceCol;
             }
@@ -425,7 +425,7 @@ class SitesController extends DataAccessController
             }
         }
                 
-        $mask['blocks'][0]['id'] = (string) new MongoId();
+        $mask['blocks'][0]['id'] = (string) new \MongoId();
         $mask['blocks'][0]['parentCol'] = $searchFirstColumnId;
         
         $mask['i18n'][$this->locale]['text'] = $mask['text'] = $this->translateService->getTranslation($name,$this->locale);

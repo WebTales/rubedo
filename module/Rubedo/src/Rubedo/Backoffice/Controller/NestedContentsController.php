@@ -18,6 +18,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+
 /**
  * Controller providing CRUD API for the nested contents
  *
@@ -74,7 +76,7 @@ class NestedContentsController extends AbstractActionController
             return $this->_returnJson($response);
         }
         
-        $sessionService = \Manager::getService('Session');
+        $sessionService = Manager::getService('Session');
         
         // refuse write action not send by POST
         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {

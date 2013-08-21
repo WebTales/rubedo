@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+
 /**
  * Controller providing CRUD API for the Queries JSON
  *
@@ -31,7 +32,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 class QueriesController extends DataAccessController
 {
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         

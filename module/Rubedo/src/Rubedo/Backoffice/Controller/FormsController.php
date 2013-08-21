@@ -17,7 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Manager;
+use Rubedo\Services\Manager;
 
 
 /**
@@ -59,7 +59,7 @@ class FormsController extends DataAccessController
     {
         $formId = $this->getParam('form-id');
         if (! $formId) {
-            throw new Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
+            throw new \Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
         $statsResponse = array();
         $statsResponse['validResults'] = Manager::getService('FormsResponses')->countValidResponsesByFormId($formId);
@@ -75,7 +75,7 @@ class FormsController extends DataAccessController
     {
         $formId = $this->getParam('form-id');
         if (! $formId) {
-            throw new Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
+            throw new \Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
         
         $form = Manager::getService('Forms')->findById($formId);

@@ -1081,7 +1081,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      */
     protected function cleanSuggest($string){
         
-        $newstring = mb_strtolower(html_entity_decode(preg_replace("#^(.*)<term>(.*)</term>(\w*)([^\w].*)?$#msuU", "$2$3", $string)),'UTF-8');
+        $newstring = mb_strtolower(html_entity_decode(preg_replace("#^(.*)<term>(.*)</term>(\\w*)([^\\w].*)?$#msuU", "$2$3", $string)),'UTF-8');
         $newstring = strip_tags($newstring);
         return $newstring;
     }

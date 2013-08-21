@@ -16,9 +16,8 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Manager;
+use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
-use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
@@ -135,25 +134,25 @@ abstract class DataAccessController extends AbstractActionController
         static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson);
+            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson);
+            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
         $startJson = $this->params()->fromQuery('start');
         if (isset($startJson)) {
-            $start = Json::decode($startJson);
+            $start = Json::decode($startJson,Json::TYPE_ARRAY);
         } else {
             $start = null;
         }
         $limitJson = $this->params()->fromQuery('limit');
         if (isset($limitJson)) {
-            $limit = Json::decode($limitJson);
+            $limit = Json::decode($limitJson,Json::TYPE_ARRAY);
         } else {
             $limit = null;
         }
@@ -212,13 +211,13 @@ abstract class DataAccessController extends AbstractActionController
         static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson);
+            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson);
+            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
@@ -248,7 +247,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $data = Json::decode($data);
+            $data = Json::decode($data,Json::TYPE_ARRAY);
             
             if (is_array($data)) {
                 
@@ -285,7 +284,7 @@ abstract class DataAccessController extends AbstractActionController
         static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson);
+            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
@@ -310,7 +309,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $data = Json::decode($data);
+            $data = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($data)) {
                 
                 $returnArray = $this->_dataService->destroy($data);
@@ -341,7 +340,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $insertData = Json::decode($data);
+            $insertData = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($insertData);
             } else {
@@ -371,7 +370,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromQuery('data');
         
         if (! is_null($data)) {
-            $updateData = Json::decode($data);
+            $updateData = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($updateData)) {
                 
                 $returnArray = $this->_dataService->update($updateData);
