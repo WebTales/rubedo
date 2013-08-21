@@ -17,6 +17,7 @@
 namespace Rubedo\User;
 
 use Rubedo\Interfaces\User\IAuthentication;
+use Zend\Authentication\AuthenticationService;
 
 /**
  * Current Authentication Service
@@ -48,7 +49,7 @@ class Authentication implements IAuthentication
     protected function _getZendAuth ()
     {
         if (! isset(static::$_zendAuth)) {
-            static::$_zendAuth = \Zend_Auth::getInstance();
+            static::$_zendAuth = new AuthenticationService();
         }
         
         return static::$_zendAuth;

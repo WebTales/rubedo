@@ -17,8 +17,9 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-Use \Rubedo\Services\Manager;
+use \Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
 
 
 /**
@@ -36,28 +37,27 @@ abstract class AbstractExtLoaderController extends AbstractActionController
      */
     protected function loadExtApps() {
         $this->viewData = array();
-        $extjsOptions = Zend_Registry::get('extjs');
+        $extjsOptions = array();//Zend_Registry::get('extjs');
+        $this->viewData['baseUrl'] = $this->request->getBasePath();
         
         if (isset($extjsOptions['network']) && $extjsOptions['network'] == 'cdn') {
-            $this->viewData->extJsPath = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
+            $this->viewData['extJsPath'] = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
         } else {
-            $this->viewData->extJsPath = $this->viewData->baseUrl() . '/components/sencha/extjs';
+            $this->viewData['extJsPath'] = $this->request->getBasePath().'/components/sencha/extjs';
         }
         // setting user language for loading proper extjs locale file
-        $this->viewData->userLang = 'en'; // default value
+        $this->viewData['userLang'] = 'en'; // default value
         $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
         if (! empty($currentUserLanguage)) {
-            $this->viewData->userLang = $currentUserLanguage;
+            $this->viewData['userLang'] = $currentUserLanguage;
         }
         
         if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {
-            $this->viewData->extJsScript = 'ext-all-debug.js';
+            $this->viewData['extJsScript'] = 'ext-all-debug.js';
         } else {
-            $this->viewData->extJsScript = 'ext-all.js';
+            $this->viewData['extJsScript'] = 'ext-all.js';
         }
-        
-        $this->getHelper('Layout')->disableLayout();
-        
+                
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);
         

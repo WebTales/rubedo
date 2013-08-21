@@ -39,17 +39,17 @@ class IndexController extends AbstractExtLoaderController
     {
         $this->_auth = Manager::getService('Authentication');
         
-        if (! $this->_auth->getIdentity()) {
-            $backofficeUrl = $this->_helper->url('index', 'login', 'backoffice');
-            if ($this->getParam('content')) {
-                $backofficeUrl .= '?content=' . $this->getParam('content');
-            }
-            $this->_helper->redirector->gotoUrl($backofficeUrl);
-        }
+//         if (! $this->_auth->getIdentity()) {
+//             $backofficeUrl = $this->_helper->url('index', 'login', 'backoffice');
+//             if ($this->getParam('content')) {
+//                 $backofficeUrl .= '?content=' . $this->getParam('content');
+//             }
+//             $this->_helper->redirector->gotoUrl($backofficeUrl);
+//         }
         
-        if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
-            $this->_helper->redirector->gotoUrl($this->_helper->url('confirm-logout', 'logout', 'backoffice'));
-        }
+//         if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
+//             $this->_helper->redirector->gotoUrl($this->_helper->url('confirm-logout', 'logout', 'backoffice'));
+//         }
         
         return $this->loadExtApps();
     }
