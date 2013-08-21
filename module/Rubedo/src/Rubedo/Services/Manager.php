@@ -16,8 +16,6 @@
  */
 namespace Rubedo\Services;
 
-use Rubedo\Interfaces\Services\IServicesManager, Rubedo\Interfaces\config;
-
 /**
  * Service Manager Interface
  *
@@ -28,17 +26,10 @@ use Rubedo\Interfaces\Services\IServicesManager, Rubedo\Interfaces\config;
  * @category Rubedo
  * @package Rubedo
  */
-class Manager implements IServicesManager
+class Manager
 {
 
     protected static $_serviceLocator;
-
-    /**
-     * array of current service parameters
-     *
-     * @var array
-     */
-    protected static $_servicesOptions;
 
     /**
      * Array of mock service
@@ -67,84 +58,17 @@ class Manager implements IServicesManager
     }
 
     /**
-     * Setter of services parameters, to init them from bootstrap
-     *
-     * @param array $options            
-     */
-    public static function setOptions($options)
-    {
-        if ('array' !== gettype($options)) {
-            throw new \Rubedo\Exceptions\Server('Services parameters should be an array');
-        }
-        self::$_servicesOptions = $options;
-    }
-
-    /**
-     * getter of services parameters, to init them from bootstrap
-     *
-     * @return array array of all the services
-     */
-    public static function getOptions()
-    {
-        return self::$_servicesOptions;
-    }
-
-    /**
      * Public static method to get an instance of the service given by its
      * name
      *
-     * Return an instance of the manager containing the actual service object
      *
      * @param string $serviceName
      *            name of the service
-     * @return static instance of the manager
+     * @return static instance of the service
      */
     public static function getService($serviceName)
     {
         return self::getServiceLocator()->get($serviceName);
-        
-        if (gettype($serviceName) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('getService only accept string argument');
-        }
-        
-        if (isset(static::$_mockServicesArray[$serviceName])) {
-            return static::$_mockServicesArray[$serviceName];
-        }
-        
-        $serviceClassName = self::resolveName($serviceName);
-        
-        if (count(config::getConcerns($serviceName))) {
-            return new Proxy($serviceClassName, $serviceName);
-        } else {
-            return new $serviceClassName();
-        }
-    }
-
-    /**
-     * Resolve the service name to the service class name for dependancy
-     * injection
-     *
-     * @param string $serviceName
-     *            name of the service
-     * @return string class to instanciate
-     */
-    protected static function resolveName($serviceName)
-    {
-        $options = self::$_servicesOptions;
-        
-        if (isset($options[$serviceName]['class'])) {
-            $className = $options[$serviceName]['class'];
-        } else {
-            throw new \Rubedo\Exceptions\Server('Classe name for ' . $serviceName . ' service should be defined in config file');
-        }
-        if (! $interfaceName = config::getInterface($serviceName)) {
-            throw new \Rubedo\Exceptions\Server($serviceName . ' isn\'t declared in service interface config');
-        }
-        if (! in_array($interfaceName, class_implements($className))) {
-            throw new \Rubedo\Exceptions\Server($className . ' don\'t implement ' . $interfaceName);
-        }
-        
-        return $className;
     }
 
     /**

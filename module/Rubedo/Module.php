@@ -40,14 +40,6 @@ class Module
             Mongo\DataAccess::setDefaultDb($options['mongo']['db']);
         }
         
-        $defaultArray = array(
-            'logLevel' => 3,
-            'enableCache' => 1
-        );
-        Services\Manager::setOptions($defaultArray);
-        
-        $serviceOptions = Services\Manager::getOptions();
-        
         Interfaces\config::initInterfaces();
         
         Services\Manager::setServiceLocator($e->getApplication()->getServiceManager());
