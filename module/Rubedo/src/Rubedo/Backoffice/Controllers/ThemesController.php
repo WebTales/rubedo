@@ -37,6 +37,6 @@ class ThemesController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Themes');
+        $this->_dataService = Manager::getService('Themes');
     }
 }

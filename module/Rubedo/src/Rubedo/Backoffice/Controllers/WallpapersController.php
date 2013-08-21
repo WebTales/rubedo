@@ -37,6 +37,6 @@ class WallpapersController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Wallpapers');
+        $this->_dataService = Manager::getService('Wallpapers');
     }
 }

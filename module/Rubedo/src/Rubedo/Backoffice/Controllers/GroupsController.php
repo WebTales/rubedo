@@ -50,7 +50,7 @@ class GroupsController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Groups');
+        $this->_dataService = Manager::getService('Groups');
     }
 
     /**

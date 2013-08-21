@@ -50,7 +50,7 @@ class ContentsController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Contents');
+        $this->_dataService = Manager::getService('Contents');
     }
 
     /**

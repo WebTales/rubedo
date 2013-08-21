@@ -36,7 +36,7 @@ class LinkFinderController extends AbstractExtLoaderController
      */
     public function indexAction ()
     {
-        $this->_auth = Rubedo\Services\Manager::getService('Authentication');
+        $this->_auth = Manager::getService('Authentication');
         
         if (! $this->_auth->getIdentity()) {
             $this->_helper->redirector->gotoUrl("/backoffice/login");

@@ -37,13 +37,13 @@ class DamTypesController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('DamTypes');
+        $this->_dataService = Manager::getService('DamTypes');
     }
 
     public function isUsedAction ()
     {
         $id = $this->getRequest()->getParam('id');
-        $listResult = Rubedo\Services\Manager::getService('Dam')->getListByDamTypeId($id);
+        $listResult = Manager::getService('Dam')->getListByDamTypeId($id);
         $resultArray = (is_array($listResult) && $listResult['count'] > 0) ? array(
             "used" => true
         ) : array(

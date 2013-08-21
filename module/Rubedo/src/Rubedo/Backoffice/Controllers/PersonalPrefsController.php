@@ -51,7 +51,7 @@ class PersonalPrefsController extends DataAccessController
     {
         parent::__construct();
         
-        $this->_dataService = Rubedo\Services\Manager::getService('PersonalPrefs');
+        $this->_dataService = Manager::getService('PersonalPrefs');
     }
 
     public function clearOrphanPrefsAction ()

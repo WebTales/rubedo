@@ -18,7 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use WebTales\MongoFilters\Filter;
-use Rubedo\Services\Manager;
+use Manager;
 
 /**
  * Controller providing CRUD API for the sitesController JSON
@@ -39,7 +39,7 @@ class SitesController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Sites');
+        $this->_dataService = Manager::getService('Sites');
     }
 
     public function deleteAction ()
@@ -105,10 +105,10 @@ class SitesController extends DataAccessController
             );
             return ($returnArray);
         }
-        $masksService = Rubedo\Services\Manager::getService('Masks');
-        $pagesService = Rubedo\Services\Manager::getService('Pages');
-        $queriesService = Rubedo\Services\Manager::getService('Queries');
-        $contentsService = Rubedo\Services\Manager::getService('Contents');
+        $masksService = Manager::getService('Masks');
+        $pagesService = Manager::getService('Pages');
+        $queriesService = Manager::getService('Queries');
+        $contentsService = Manager::getService('Contents');
         $oldIdArray = array();
         $theBigString = "";
         
@@ -279,7 +279,7 @@ class SitesController extends DataAccessController
                     "description"=>$homePageObj['description']
                 
                 ));
-                $homePage = Rubedo\Services\Manager::getService('Pages')->create($homePageObj);
+                $homePage = Manager::getService('Pages')->create($homePageObj);
                 
                 /* Create Single Page */
                 $jsonSinglePage = realpath(APPLICATION_PATH . "/../data/default/site/singlePage.json");
@@ -300,7 +300,7 @@ class SitesController extends DataAccessController
                 ));
                 $singlePageObj['blocks'][0]['id'] = (string) new MongoId();
                 $singlePageObj['blocks'][0]['parentCol'] = $detailSecondColumnId;
-                $page = Rubedo\Services\Manager::getService('Pages')->create($singlePageObj);
+                $page = Manager::getService('Pages')->create($singlePageObj);
                 
                 /* Create Search Page */
                 $jsonSearchPage = realpath(APPLICATION_PATH . "/../data/default/site/searchPage.json");
@@ -321,7 +321,7 @@ class SitesController extends DataAccessController
                 $searchPageObj['maskId'] = $searchMaskCreation['data']['id'];
                 $searchPageObj['blocks'][0]['id'] = (string) new MongoId();
                 $searchPageObj['blocks'][0]['parentCol'] = $searchColumnId;
-                $searchPage = Rubedo\Services\Manager::getService('Pages')->create($searchPageObj);
+                $searchPage = Manager::getService('Pages')->create($searchPageObj);
                 
                 if ($page['success'] && $homePage['success'] && $searchPage['success']) {
 
@@ -374,8 +374,8 @@ class SitesController extends DataAccessController
         }
         if (! $returnArray['success']) {
             $siteId = $site['data']['id'];
-            $resultPages = Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($siteId);
-            $resultMasks = Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($siteId);
+            $resultPages = Manager::getService('Pages')->deleteBySiteId($siteId);
+            $resultMasks = Manager::getService('Masks')->deleteBySiteId($siteId);
             if ($resultPages['ok'] == 1 && $resultMasks['ok'] == 1) {
                 $returnArray['delete'] = $this->_dataService->deleteById($siteId);
             } else {
@@ -429,7 +429,7 @@ class SitesController extends DataAccessController
         $mask['blocks'][0]['parentCol'] = $searchFirstColumnId;
         
         $mask['i18n'][$this->locale]['text'] = $mask['text'] = $this->translateService->getTranslation($name,$this->locale);
-        $maskCreation = Rubedo\Services\Manager::getService('Masks')->create($mask);
+        $maskCreation = Manager::getService('Masks')->create($mask);
         if($maskCreation['success']){
             return $maskCreation;
         }
@@ -441,7 +441,7 @@ class SitesController extends DataAccessController
             "rootPage" => $homePage,
             "searchPage" => $searchPage
         );
-        $updateMaskReturn = Rubedo\Services\Manager::getService('Masks')->update($mask);
+        $updateMaskReturn = Manager::getService('Masks')->update($mask);
         
         return $updateMaskReturn;
     }

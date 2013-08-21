@@ -36,6 +36,6 @@ class FieldTypesController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('FieldTypes');
+        $this->_dataService = Manager::getService('FieldTypes');
     }
 }

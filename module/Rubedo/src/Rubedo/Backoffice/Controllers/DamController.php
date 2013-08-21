@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -57,7 +56,7 @@ class DamController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Dam');
+        $this->_dataService = Manager::getService('Dam');
     }
     
     /*
@@ -195,7 +194,7 @@ class DamController extends DataAccessController
             if (! is_array($uploadResult)) {
                 $obj['fields'][$name] = $uploadResult;
             } else {
-                return return $this->_returnJson($uploadResult);
+                return $this->_returnJson($uploadResult);
             }
             
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
@@ -207,14 +206,14 @@ class DamController extends DataAccessController
         if (! is_array($uploadResult)) {
             $obj['originalFileId'] = $uploadResult;
         } else {
-            return return $this->_returnJson($uploadResult);
+            return $this->_returnJson($uploadResult);
         }
         
         $obj['Content-Type'] = $this->_mimeType;
         
         if (! $obj['originalFileId']) {
             $this->getResponse()->setHttpResponseCode(500);
-            return return $this->_returnJson(array(
+            return $this->_returnJson(array(
                 'success' => false,
                 'msg' => 'no main file uploaded'
             ));
@@ -284,12 +283,12 @@ class DamController extends DataAccessController
             $obj['fields']['title'] = $properName[0];
             $obj['originalFileId'] = $uploadResult['data']['id'];
         } else {
-            return return $this->_returnJson($uploadResult);
+            return $this->_returnJson($uploadResult);
         }
         $obj['Content-Type'] = $this->_mimeType;
         if (! $obj['originalFileId']) {
             $this->getResponse()->setHttpResponseCode(500);
-            return return $this->_returnJson(array(
+            return $this->_returnJson(array(
                 'success' => false,
                 'msg' => 'no main file uploaded'
             ));

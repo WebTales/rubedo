@@ -62,7 +62,7 @@ class NestedContentsController extends AbstractActionController
     public function __construct ()
     {
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('NestedContents');
+        $this->_dataService = Manager::getService('NestedContents');
         
         $this->_parentId = $this->getRequest()->getParam('parentId');
         
@@ -74,7 +74,7 @@ class NestedContentsController extends AbstractActionController
             return $this->_returnJson($response);
         }
         
-        $sessionService = \Rubedo\Services\Manager::getService('Session');
+        $sessionService = \Manager::getService('Session');
         
         // refuse write action not send by POST
         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {

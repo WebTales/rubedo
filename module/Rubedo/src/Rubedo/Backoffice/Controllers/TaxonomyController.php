@@ -36,7 +36,7 @@ class TaxonomyController extends DataAccessController
     {
         parent::__construct();
         
-        $this->_dataService = Rubedo\Services\Manager::getService('Taxonomy');
-        $this->_dataTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
+        $this->_dataService = Manager::getService('Taxonomy');
+        $this->_dataTermsService = Manager::getService('TaxonomyTerms');
     }
 }

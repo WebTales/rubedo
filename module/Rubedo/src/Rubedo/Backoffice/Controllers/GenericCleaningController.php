@@ -50,12 +50,12 @@ class GenericCleaningController extends DataAccessController
 
     public function clearOrphansAction ()
     {
-        $iconsService = Rubedo\Services\Manager::getService('Icons');
-        $personalPrefsService = Rubedo\Services\Manager::getService('PersonalPrefs');
-        $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-        $pagesService = Rubedo\Services\Manager::getService('Pages');
-        $contentsService = Rubedo\Services\Manager::getService('Contents');
-        $groupsService = Rubedo\Services\Manager::getService('Groups');
+        $iconsService = Manager::getService('Icons');
+        $personalPrefsService = Manager::getService('PersonalPrefs');
+        $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+        $pagesService = Manager::getService('Pages');
+        $contentsService = Manager::getService('Contents');
+        $groupsService = Manager::getService('Groups');
         
         $results = array();
         
@@ -71,12 +71,12 @@ class GenericCleaningController extends DataAccessController
 
     public function countOrphansAction ()
     {
-        $iconsService = Rubedo\Services\Manager::getService('Icons');
-        $personalPrefsService = Rubedo\Services\Manager::getService('PersonalPrefs');
-        $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-        $pagesService = Rubedo\Services\Manager::getService('Pages');
-        $contentsService = Rubedo\Services\Manager::getService('Contents');
-        $groupsService = Rubedo\Services\Manager::getService('Groups');
+        $iconsService = Manager::getService('Icons');
+        $personalPrefsService = Manager::getService('PersonalPrefs');
+        $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+        $pagesService = Manager::getService('Pages');
+        $contentsService = Manager::getService('Contents');
+        $groupsService = Manager::getService('Groups');
         
         $results = array();
         

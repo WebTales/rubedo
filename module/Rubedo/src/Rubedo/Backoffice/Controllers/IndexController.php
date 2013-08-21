@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-Use Rubedo\Services\Manager;
+use Rubedo\Services\Manager;
 
 
 /**

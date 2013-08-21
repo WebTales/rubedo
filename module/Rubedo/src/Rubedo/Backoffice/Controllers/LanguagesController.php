@@ -16,9 +16,9 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  * Controller providing CRUD API for the Languages JSON
@@ -54,12 +54,12 @@ class LanguagesController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Languages');
+        $this->_dataService = Manager::getService('Languages');
     }
 
     public function getBoLanguagesAction()
     {
-        $directoryIterator = new DirectoryIterator(APPLICATION_PATH . '/../public/components/webtales/rubedo-localization');
+        $directoryIterator = new \DirectoryIterator(APPLICATION_PATH . '/public/components/webtales/rubedo-localization');
         $boLangDirArray = array();
         foreach ($directoryIterator as $item) {
             if (! $item->isDir() || $item->isDot() || $item->getFilename() == '.git') {
@@ -113,14 +113,14 @@ class LanguagesController extends DataAccessController
 
     public function addLocalizationAction()
     {
-        \Rubedo\Collection\AbstractLocalizableCollection::localizeAllCollection();
-        $this->_helper->json(array(
+        AbstractLocalizableCollection::localizeAllCollection();
+        return $this->_returnJson(array(
             'success' => true
         ));
     }
     
     public function getFlagsListAction(){
-        $directoryIterator = new DirectoryIterator(APPLICATION_PATH . '/../public/assets/flags/16');
+        $directoryIterator = new \DirectoryIterator(APPLICATION_PATH . '/public/assets/flags/16');
         $flagsArray = array();
         foreach ($directoryIterator as $item) {
             if ( $item->isDir() || $item->isDot()) {

@@ -18,7 +18,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Rubedo\Services\Manager;
+use Manager;
 use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
@@ -68,7 +68,7 @@ class ElasticSearchController extends AbstractActionController
         // search over every sites
         $params['site'] = null;
         
-        $query = \Rubedo\Services\Manager::getService('ElasticDataSearch');
+        $query = \Manager::getService('ElasticDataSearch');
         
         $query->init();
         if (isset($params['limit'])) {

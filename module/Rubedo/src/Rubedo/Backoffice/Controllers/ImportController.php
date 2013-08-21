@@ -198,11 +198,11 @@ class ImportController extends DataAccessController {
 		
 		$adapter = new Zend_File_Transfer_Adapter_Http ();
 		$returnArray = array ();
-		$taxonomyService = Rubedo\Services\Manager::getService ( 'Taxonomy' );
-		$taxonomyTermsService = Rubedo\Services\Manager::getService ( 'TaxonomyTerms' );
-		$contentsService = Rubedo\Services\Manager::getService ( 'Contents' );
-		$damService = Rubedo\Services\Manager::getService('Dam');
-		$fileService = Rubedo\Services\Manager::getService ( 'Files' );
+		$taxonomyService = Manager::getService ( 'Taxonomy' );
+		$taxonomyTermsService = Manager::getService ( 'TaxonomyTerms' );
+		$contentsService = Manager::getService ( 'Contents' );
+		$damService = Manager::getService('Dam');
+		$fileService = Manager::getService ( 'Files' );
 		
 		$brokenLines = array ();
 		
@@ -298,7 +298,7 @@ class ImportController extends DataAccessController {
 				        "nativeLanguage" => $workingLanguage,
 				        "i18n" => $newCTi18n
 				);
-				$contentType = Rubedo\Services\Manager::getService ( 'ContentTypes' )->create ( $contentTypeParams );
+				$contentType = Manager::getService ( 'ContentTypes' )->create ( $contentTypeParams );
 				
 				// add contents to CT and terms to vocabularies
 				$recievedFile = fopen ( $fileInfos ['tmp_name'], 'r' );
@@ -534,7 +534,7 @@ class ImportController extends DataAccessController {
 					}
 				}
 				fclose ( $recievedFile );
-				$ElasticDataIndexService = \Rubedo\Services\Manager::getService ( 'ElasticDataIndex' );
+				$ElasticDataIndexService = \Manager::getService ( 'ElasticDataIndex' );
 				$ElasticDataIndexService->init ();
 				
 				$ElasticDataIndexService->indexByType ( 'content', $contentType ['data'] ['id'] );

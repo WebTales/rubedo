@@ -52,7 +52,7 @@ class PagesController extends DataAccessController
     {
         parent::__construct();
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Pages');
+        $this->_dataService = Manager::getService('Pages');
     }
 
     /**
@@ -99,7 +99,7 @@ class PagesController extends DataAccessController
         );
         $page = $this->_dataService->findById($data['id']);
         $params['current-page'] = $data['id'];
-        $mask = Rubedo\Services\Manager::getService('Masks')->findById($page['maskId']);
+        $mask = Manager::getService('Masks')->findById($page['maskId']);
         
         $pageBlocks = array_merge($page['blocks'], $mask['blocks']);
         

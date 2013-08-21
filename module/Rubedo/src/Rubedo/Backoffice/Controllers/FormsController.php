@@ -17,7 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Rubedo\Services\Manager;
+use Manager;
 
 
 /**
@@ -52,7 +52,7 @@ class FormsController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Forms');
+        $this->_dataService = Manager::getService('Forms');
     }
 
     public function getStatsAction ()

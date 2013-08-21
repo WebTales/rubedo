@@ -37,7 +37,7 @@ class UsersController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Users');
+        $this->_dataService = Manager::getService('Users');
     }
 
     public function changePasswordAction ()

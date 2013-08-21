@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Rubedo\Services\Manager;
+use Manager;
 use WebTales\MongoFilters\Filter;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\AbstractLocalizableCollection;

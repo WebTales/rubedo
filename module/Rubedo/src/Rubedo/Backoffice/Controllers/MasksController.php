@@ -48,14 +48,14 @@ class MasksController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Masks');
+        $this->_dataService = Manager::getService('Masks');
     }
 
     public function isUsedAction ()
     {
         $id = $this->getRequest()->getParam('id');
         $wasFiltered = Rubedo\Collection\AbstractCollection::disableUserFilter();
-        $result = Rubedo\Services\Manager::getService('Pages')->isMaskUsed($id);
+        $result = Manager::getService('Pages')->isMaskUsed($id);
         Rubedo\Collection\AbstractCollection::disableUserFilter($wasFiltered);
         // $resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
         return $this->_returnJson($result);

@@ -41,7 +41,7 @@ class ElasticIndexerController extends AbstractActionController
         
         $option = isset($params['option']) ? $params['option'] : 'all';
         
-        $es = Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $es = Manager::getService('ElasticDataIndex');
         $es->init();
         $return = $es->indexAll($option);
         $this->_helper->json($return);

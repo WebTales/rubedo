@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Rubedo\Services\Manager;
+use Manager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 

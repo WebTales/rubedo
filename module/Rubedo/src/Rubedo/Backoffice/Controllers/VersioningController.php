@@ -37,6 +37,6 @@ class VersioningController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Versioning');
+        $this->_dataService = Manager::getService('Versioning');
     }
 }

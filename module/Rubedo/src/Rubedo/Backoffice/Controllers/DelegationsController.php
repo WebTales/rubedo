@@ -37,6 +37,6 @@ class DelegationsController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Delegations');
+        $this->_dataService = Manager::getService('Delegations');
     }
 }

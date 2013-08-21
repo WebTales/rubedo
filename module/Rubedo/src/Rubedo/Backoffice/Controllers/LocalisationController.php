@@ -37,6 +37,6 @@ class LocalisationController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Localisation');
+        $this->_dataService = Manager::getService('Localisation');
     }
 }

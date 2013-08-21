@@ -49,7 +49,7 @@ class DirectoriesController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Directories');
+        $this->_dataService = Manager::getService('Directories');
     }
 
     /**
