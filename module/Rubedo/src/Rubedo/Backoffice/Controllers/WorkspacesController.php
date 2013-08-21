@@ -17,6 +17,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the Workspaces JSON
@@ -37,7 +39,7 @@ class WorkspacesController extends DataAccessController
         parent::__construct();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('Workspaces');
+        $this->_dataService = Manager::getService('Workspaces');
     }
     
     /*
@@ -45,34 +47,34 @@ class WorkspacesController extends DataAccessController
      */
     public function indexAction ()
     {
-        $filterJson = $this->getRequest()->getParam('filter');
+        $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Zend_Json::decode($filterJson);
+            $filters = Json::decode($filterJson);
         } else {
             $filters = null;
         }
-        $sortJson = $this->getRequest()->getParam('sort');
+        $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Zend_Json::decode($sortJson);
+            $sort = Json::decode($sortJson);
         } else {
             $sort = null;
         }
-        $startJson = $this->getRequest()->getParam('start');
+        $startJson = $this->params()->fromQuery('start');
         if (isset($startJson)) {
-            $start = Zend_Json::decode($startJson);
+            $start = Json::decode($startJson);
         } else {
             $start = null;
         }
-        $limitJson = $this->getRequest()->getParam('limit');
+        $limitJson = $this->params()->fromQuery('limit');
         if (isset($limitJson)) {
-            $limit = Zend_Json::decode($limitJson);
+            $limit = Json::decode($limitJson);
         } else {
             $limit = null;
         }
         
         $mongoFilters = $this->_buildFilter($filters);
         
-        $notAll = $this->getParam('notAll', false);
+        $notAll = $this->params()->fromQuery('notAll', false);
         if ($notAll) {
             $mongoFilters->addFilter(new \Rubedo\Mongo\NotAllWorkspacesFilter());
         }
