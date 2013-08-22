@@ -118,7 +118,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $mapping["taxonomy." . $vocabularyName] = array(
                     'type' => 'string',
                     'index' => 'not_analyzed',
-                    'store' => 'no'
+                    'store' => 'yes'
                 );
             }
                 
