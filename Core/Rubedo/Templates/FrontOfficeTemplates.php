@@ -356,8 +356,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public static function getContent($contentId) {
         $contentService = Manager::getService("Contents");
-    
-        return $contentService->findById($contentId);
+        
+        $return = $contentService->findById($contentId,true,false);
+        return $return;
     }
     
     /**
