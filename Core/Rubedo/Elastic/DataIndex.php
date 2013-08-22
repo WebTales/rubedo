@@ -269,7 +269,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $vocabularies = array();
         foreach ($data['vocabularies'] as $vocabularyId) {
             $vocabulary = Manager::getService('Taxonomy')->findById($vocabularyId);
-            $vocabularies[] = $vocabulary['name'];
+            $vocabularies[] = $vocabulary['id'];
         }
         
         return $vocabularies;
@@ -562,7 +562,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     }
     
                     foreach ($termsArray[$term["id"]] as $tempTerm) {
-                        $indexData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+                        $indexData['taxonomy.'.$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
             }
