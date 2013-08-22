@@ -54,9 +54,9 @@ class RolesController extends AbstractActionController
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
         
-        $returnValue = Zend_Json::encode($data);
+        $returnValue = Json::encode($data);
         if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
+            $returnValue = Json::prettyPrint($returnValue);
         }
         $this->getResponse()->setBody($returnValue);
     }

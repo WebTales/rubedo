@@ -19,6 +19,7 @@
 namespace Rubedo\Version;
 
 use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  * Class to store and retrieve the version of Rubedo.
@@ -119,7 +120,7 @@ final class Version
                 if ($result === false) {
                     return null;
                 }
-                $apiResponse = \Zend_Json::decode($result);
+                $apiResponse = Json::decode($result,Json::TYPE_ARRAY);
                 if (isset($apiResponse['message'])) {
                     return null;
                 }
@@ -160,7 +161,7 @@ final class Version
         );
         
         if (is_file(APPLICATION_PATH . '/../composer.lock')) {
-            $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.lock'));
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.lock'),Json::TYPE_ARRAY);
             foreach ($phpComponentsArray['packages'] as $package) {
                 if ($package['name'] == 'bombayworks/zendframework1') {
                     continue;
@@ -171,7 +172,7 @@ final class Version
         
         $componentsArray['frontComponents'] = array();
         if (is_file(APPLICATION_PATH . '/../composer.front.lock')) {
-            $phpComponentsArray = \Zend_Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.front.lock'));
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.front.lock'),Json::TYPE_ARRAY);
             foreach ($phpComponentsArray['packages'] as $package) {
                 $componentsArray['frontComponents'][$package['name']] = $package['version'];
             }

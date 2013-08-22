@@ -117,9 +117,9 @@ class FileController extends AbstractActionController
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         
-        $returnValue = Zend_Json::encode($result);
+        $returnValue = Json::encode($result);
         
-        $returnValue = Zend_Json::prettyPrint($returnValue);
+        $returnValue = Json::prettyPrint($returnValue);
         
         $this->getResponse()->setBody($returnValue);
     }

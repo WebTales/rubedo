@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Update;
 
-use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 
 /**
  * Methods for update tool
@@ -57,7 +59,7 @@ class Update010000 extends Update
                 }
                 if ($file->getExtension() == 'json') {
                     $itemJson = file_get_contents($file->getPathname());
-                    $item = \Zend_Json::decode($itemJson);
+                    $item = Json::decode($itemJson,Json::TYPE_ARRAY);
                     try {
                         switch ($collection) {
                             case 'ContentTypes':

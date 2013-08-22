@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Templates;
 
-use Rubedo\Interfaces\Templates\IFrontOfficeTemplates, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Templates\IFrontOfficeTemplates;
+use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  * Front Office URL service
@@ -268,7 +270,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             $jsonFilePath = $directory->getPathname() . '/theme.json';
             if (is_file($jsonFilePath)) {
                 $themeJson = file_get_contents($jsonFilePath);
-                $themeInfos = \Zend_Json::decode($themeJson);
+                $themeInfos = Json::decode($themeJson,Json::TYPE_ARRAY);
                 $themeInfosArray[] = $themeInfos;
             }
         }
@@ -295,7 +297,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $jsonFilePath = $this->getTemplateDir() . '/' . $name . '/theme.json';
         if (is_file($jsonFilePath)) {
             $themeJson = file_get_contents($jsonFilePath);
-            $themeInfos = \Zend_Json::decode($themeJson);
+            $themeInfos = Json::decode($themeJson,Json::TYPE_ARRAY);
             return $themeInfos;
         } else {
             return null;

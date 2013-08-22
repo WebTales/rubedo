@@ -131,7 +131,7 @@ class PagesController extends DataAccessController
             }
             if (isset($contentArray) && ! empty($contentArray)) {
                 foreach ($contentArray as $key => $content) {
-                    $content = Zend_Json::decode($content);
+                    $content = Json::decode($content,Json::TYPE_ARRAY);
                     if ($content["success"] == true) {
                         $total = $total + $content["total"];
                         unset($content['total']);

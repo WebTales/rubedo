@@ -17,6 +17,7 @@ namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IContents;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 
 /**
  * Service to handle contents
@@ -898,7 +899,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $filterArray->addFilter(Filter::factory('Value')->setName('fields.' . $fieldName)
             ->setValue($contentId));
         
-        $sort = \Zend_Json::decode($sort);
+        $sort = Json::decode($sort,Json::TYPE_ARRAY);
         
         return $this->getList($filterArray, $sort, null, null, true);
     }

@@ -14,8 +14,9 @@
  */
 namespace Rubedo\Internationalization;
 
-Use Rubedo\Services\Manager, Rubedo\Interfaces\Internationalization\ITranslate;
-
+use Rubedo\Services\Manager;
+use Rubedo\Interfaces\Internationalization\ITranslate;
+use Zend\Json\Json;
 /**
  * Implement translation for label in Rubedo
  *
@@ -159,7 +160,7 @@ class Translate implements ITranslate
             $realLanguagePath = APPLICATION_PATH . '/../' . str_replace('languagekey', $language, $jsonFilePath);
             if (is_file($realLanguagePath)) {
                 $tempJson = file_get_contents($realLanguagePath);
-                $tempArray = \Zend_Json::decode($tempJson);
+                $tempArray = Json::decode($tempJson,Json::TYPE_ARRAY);
                 self::$translationArray[$language] = array_merge(self::$translationArray[$language], $tempArray);
             } 
         }

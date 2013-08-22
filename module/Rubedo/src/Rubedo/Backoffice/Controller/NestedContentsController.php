@@ -109,9 +109,9 @@ class NestedContentsController extends AbstractActionController
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
         
-        $returnValue = Zend_Json::encode($data);
+        $returnValue = Json::encode($data);
         if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
+            $returnValue = Json::prettyPrint($returnValue);
         }
         $this->getResponse()->setBody($returnValue);
     }
@@ -130,13 +130,13 @@ class NestedContentsController extends AbstractActionController
         
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
-            $filters = Zend_Json::decode($filterJson);
+            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->getRequest()->getParam('sort');
         if (isset($sortJson)) {
-            $sort = Zend_Json::decode($sortJson);
+            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
@@ -165,7 +165,7 @@ class NestedContentsController extends AbstractActionController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $data = Zend_Json::decode($data);
+            $data = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($data)) {
                 
                 $returnArray = $this->_dataService->destroy($this->_parentId, $data, true);
@@ -199,7 +199,7 @@ class NestedContentsController extends AbstractActionController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $insertData = Zend_Json::decode($data);
+            $insertData = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($this->_parentId, $insertData, true);
             } else {
@@ -232,7 +232,7 @@ class NestedContentsController extends AbstractActionController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $updateData = Zend_Json::decode($data);
+            $updateData = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($updateData)) {
                 
                 $returnArray = $this->_dataService->update($this->_parentId, $updateData, true);

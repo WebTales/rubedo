@@ -179,9 +179,9 @@ class ImportController extends DataAccessController {
 		$this->getHelper ( 'ViewRenderer' )->setNoRender ();
 		
 		// Encode the response in json
-		$returnValue = Zend_Json::encode ( $returnArray );
+		$returnValue = Json::encode ( $returnArray );
 		if ($this->_prettyJson) {
-			$returnValue = Zend_Json::prettyPrint ( $returnValue );
+			$returnValue = Json::prettyPrint ( $returnValue );
 		}
 		
 		// Return the repsonse
@@ -219,9 +219,9 @@ class ImportController extends DataAccessController {
 				$returnArray ['message'] = "Le fichier doit doit être au format CSV.";
 			} else {
 				// recieve params
-				$configs = Zend_Json::decode ( $this->getParam ( 'configs', "[ ]" ) );
-				$importAsField = Zend_Json::decode ( $this->getParam ( 'inportAsField', "[ ]" ) );
-				$importAsTaxo = Zend_Json::decode ( $this->getParam ( 'inportAsTaxo', "[ ]" ) );
+				$configs = Json::decode ( $this->getParam ( 'configs', "[ ]" ),Json::TYPE_ARRAY );
+				$importAsField = Json::decode ( $this->getParam ( 'inportAsField', "[ ]" ),Json::TYPE_ARRAY );
+				$importAsTaxo = Json::decode ( $this->getParam ( 'inportAsTaxo', "[ ]" ),Json::TYPE_ARRAY );
 				
 				// create vocabularies
 				$newTaxos = array ();
@@ -550,9 +550,9 @@ class ImportController extends DataAccessController {
 		
 		$this->getHelper ( 'Layout' )->disableLayout ();
 		$this->getHelper ( 'ViewRenderer' )->setNoRender ();
-		$returnValue = Zend_Json::encode ( $returnArray );
+		$returnValue = Json::encode ( $returnArray );
 		if ($this->_prettyJson) {
-			$returnValue = Zend_Json::prettyPrint ( $returnValue );
+			$returnValue = Json::prettyPrint ( $returnValue );
 		}
 		$this->getResponse ()->setBody ( $returnValue );
 	}

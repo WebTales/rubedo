@@ -75,7 +75,7 @@ class DirectoriesController extends DataAccessController
     public function classifyAction ()
     {
         $encodedArray = $this->getRequest()->getParam("mediaArray","[ ]");
-        $decodedArray=Zend_Json::decode($encodedArray);
+        $decodedArray=Json::decode($encodedArray,Json::TYPE_ARRAY);
         $directoryId=$this->getRequest()->getParam("directoryId");
         $result = $this->_dataService->classify($decodedArray,$directoryId);
         return $this->_returnJson($result);

@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Interfaces\Elastic\IDataSearch, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Elastic\IDataSearch;
+use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  * Class implementing the Rubedo API to Elastic Search using Elastica API
@@ -228,7 +230,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 
                 // check if facetOverrides exists
                 
-                $facetOverrides = isset($this->_params['block-config']['facetOverrides']) ? (\Zend_Json::decode($this->_params['block-config']['facetOverrides'])) : array();
+                $facetOverrides = isset($this->_params['block-config']['facetOverrides']) ? (Json::decode($this->_params['block-config']['facetOverrides'],Json::TYPE_ARRAY)) : array();
                 
                 if (! empty($facetOverrides)) {
                     

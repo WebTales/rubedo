@@ -19,6 +19,7 @@ namespace Rubedo\Update;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Rubedo;
+use Zend\Json\Json;
 
 /**
  * Methods
@@ -75,7 +76,7 @@ class Install
                         'replaceWithTranslation'
                         ), $itemJson);
                     
-                    $item = \Zend_Json::decode($itemJson);
+                    $item = Json::decode($itemJson,Json::TYPE_ARRAY);
                     
                     
                     try {
@@ -154,7 +155,7 @@ class Install
                     'replaceWithTranslation'
                 ), $itemJson);
                 
-                $item = \Zend_Json::decode($itemJson);
+                $item = Json::decode($itemJson,Json::TYPE_ARRAY);
                                 
                 if ($item['name'] == 'admin') {
                     $item['workspace'] = $adminWorkspaceId;
