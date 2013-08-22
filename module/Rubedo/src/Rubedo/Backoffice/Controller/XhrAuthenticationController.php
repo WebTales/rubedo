@@ -70,15 +70,20 @@ class XhrAuthenticationController extends AbstractActionController
         return new JsonModel($response);
     }
 
+    /**
+     * @todo implement a method to return remaining session time without renewing it
+     * @return \Zend\View\Model\JsonModel
+     */
     public function isSessionExpiringAction()
     {
-        session_name('rubedo');
-        session_start();
-        $accessTime = intval($_SESSION['__ZF']['_REQUEST_ACCESS_TIME']);
-        $time = max(0,$accessTime - time() + 500);
+//         session_name('rubedo');
+//         session_start();
+//         $accessTime = intval($_SESSION['__ZF']['_REQUEST_ACCESS_TIME']);
+//         $time = max(0,$accessTime - time() + 500);
         //$hasIdentity = Manager::getService('Authentication')->hasIdentity();
         //$time = Manager::getService('Authentication')->getExpirationTime();
         //$status = $hasIdentity && ($time > 0);
+        $time = 1200;
         $status = $time > 0;
         return new JsonModel(array(
             'time' => $time,
