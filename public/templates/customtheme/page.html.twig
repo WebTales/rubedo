@@ -3,10 +3,9 @@
     
     {% block pageStyle %}
     <!-- Le styles -->
-    <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{baseUrl}}/css?id={{ customThemeId }}" rel="stylesheet">
     <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="{{baseUrl}}/components/jschr/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet">
-{#     {{ customThemeId }} needs to be used to get right compiled css #}
     {% for sheet in css %}
     <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
     {% endfor %}
