@@ -56,14 +56,7 @@ class FileController extends AbstractActionController
 
     public function putAction()
     {
-        $adapter = new Zend_File_Transfer_Adapter_Http();
-        
-        if (! $adapter->receive()) {
-            throw new \Rubedo\Exceptions\Server(implode("\n", $adapter->getMessages()));
-        }
-        
-        $files = $adapter->getFileInfo();
-        $fileInfo = array_pop($files);
+        $fileInfo = array_pop($this->params()->fromFiles());
         
         $finfo = new \finfo(FILEINFO_MIME);
         $mimeType = $finfo->file($fileInfo['tmp_name']);
@@ -78,29 +71,18 @@ class FileController extends AbstractActionController
             'mainFileType' => $this->getParam('mainFileType', null)
         );
         $result = $fileService->create($obj);
-        // disable layout and set content type
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
         
         return new JsonModel($result);
     }
 
     public function updateAction()
     {
-        $adapter = new Zend_File_Transfer_Adapter_Http();
-        
-        if (! $adapter->receive('image')) {
-            throw new \Rubedo\Exceptions\Server(implode("\n", $adapter->getMessages()));
-        }
-        
-        $filesArray = $adapter->getFileInfo();
-        
-        $fileInfos = $filesArray['image'];
+        $fileInfos = $this->params()->fromFiles('image');
         
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         
         $fileService = Manager::getService('Files');
-        $originalId = $this->getRequest()->getParam("originalId");
+        $originalId = $this->params()->fromPost("originalId");
         $removeOldResult = $fileService->destroy(array(
             'id' => $originalId,
             'version' => 1
@@ -125,14 +107,11 @@ class FileController extends AbstractActionController
                 unlink($file->getPathname());
             }
         }
-        
-        $this->_helper->redirector->gotoUrl('/backoffice/resources/afterPixlr.html');
-        // just a test prototype, work in progress on this action
+        return $this->redirect()->toUrl('/backoffice/resources/afterPixlr.html');
     }
 
     public function deleteAction()
     {
-        
         $fileId = $this->params()->fromPost('file-id');
         $version = $this->params()->fromPost('file-version', 1);
         

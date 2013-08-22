@@ -60,7 +60,8 @@ class DamController extends DataAccessController
         $globalFilterArray = array_merge($tFilterArray, $filterArray);
         
         // call standard method with merge array
-        $this->getRequest()->getQuery()
+        $this->getRequest()
+            ->getQuery()
             ->set('filter', Json::encode($globalFilterArray));
         return parent::indexAction();
     }
@@ -82,20 +83,17 @@ class DamController extends DataAccessController
         }
         if ($mediaType['mainFileType'] == 'Image') {
             $queryString = $this->getRequest()->getQuery();
-            $queryString->set('file-id',$media['originalFileId']);
+            $queryString->set('file-id', $media['originalFileId']);
             $queryString->set('version', $version);
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
                 'action' => 'get-thumbnail'
             ));
-//             $this->_forward('get-thumbnail', 'image', 'default', array(
-//                 'file-id' => $media['originalFileId'],
-//                 'version' => $version
-//             ));
         } else {
-            $this->_forward('get-thumbnail', 'file', 'default', array(
-                'file-id' => $media['originalFileId'],
-                'file-type' => $mediaType['mainFileType'],
-                'version' => $version
+            $queryString = $this->getRequest()->getQuery();
+            $queryString->set('file-id', $media['originalFileId']);
+            $queryString->set('version', $version);
+            return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
+                'action' => 'get-thumbnail'
             ));
         }
     }
@@ -151,7 +149,7 @@ class DamController extends DataAccessController
         
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
-        $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', '[]'),Json::TYPE_ARRAY);
+        $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', '[]'), Json::TYPE_ARRAY);
         
         $workspace = $this->params()->fromPost('writeWorkspace');
         if (! is_null($workspace) && $workspace != "") {
@@ -159,8 +157,7 @@ class DamController extends DataAccessController
             $obj['fields']['writeWorkspace'] = $workspace;
         }
         
-        $targets = Json::decode($this->params()
-            ->fromPost('targetArray'),Json::TYPE_ARRAY);
+        $targets = Json::decode($this->params()->fromPost('targetArray'), Json::TYPE_ARRAY);
         if (is_array($targets) && count($targets) > 0) {
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
@@ -296,7 +293,7 @@ class DamController extends DataAccessController
     }
 
     protected function _uploadFile($name, $fileType, $returnFullResult = false)
-    {       
+    {
         $fileInfos = $this->params()->fromFiles($name);
         
         $mimeType = mime_content_type($fileInfos['tmp_name']);
