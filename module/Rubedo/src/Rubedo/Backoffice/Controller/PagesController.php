@@ -81,7 +81,7 @@ class PagesController extends DataAccessController
      */
     public function holdsSiteDefaultAction ()
     {
-        $id = $this->getRequest()->getParam('id');
+        $id = $this->params()->fromQuery('id');
         $result = array();
         $result['holdsDefault'] = $this->_dataService->hasDefaultPageAsChild($id);
         $result['success'] = true;
@@ -93,7 +93,7 @@ class PagesController extends DataAccessController
         $returnArray = array();
         $total = 0;
         $contentArray = array();
-        $data = $this->getRequest()->getParams();
+        $data = $this->params()->fromQuery()->toArray();
         $params["pagination"] = array(
             "page" => $data['page'],
             "start" => $data["start"],
