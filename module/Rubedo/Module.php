@@ -62,7 +62,7 @@ class Module
     /**
      * Authenticate user or redirect to log in
      */
-    public function authPreDispatch($event)
+    public function authPreDispatch(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -70,23 +70,20 @@ class Module
             $this->initializeSession($event);
         }
         
-        // $userService = $event->getApplication()->getServiceManager()->get('CurrentUser');
-        // $whiteListController = array(
-        // 'MxAccueil\\Controller\\Index',
-        // 'MxAccueil\\Controller\\Login'
-        // );
-        // $adminOnly = array('MxAccueil\\Controller\\Customers'=>array('get-segments'));
-        
-        // if (! in_array($event->getRouteMatch()->getParam('controller'), $whiteListController)) {
-        // if (! $userService->isLoggedIn()) {
-        // throw new \Zend\Authentication\Exception\RuntimeException('Authentification requise');
-        // }
-        // }
-        // if(isset($adminOnly[$controller]) && in_array($action, $adminOnly[$controller])){
-        // if(!$userService->isAdmin()){
-        // throw new \Zend\Authentication\Exception\RuntimeException('Seuls les administrateurs ont accès à cette fonctionnalité');
-        // }
-        // }
+        //check authentication
+
+        //check BO Token        
+        $isBackoffice = strpos($controller,'Rubedo\\Backoffice\\Controller')===0;
+        $doNotCheckTokenControllers = array('Rubedo\\Backoffice\\Controller\\Acl');
+        if($isBackoffice && $event->getRequest()->isPost() && !in_array($controller,$doNotCheckTokenControllers)){
+            $user = Manager::getService('Session')->get('user');
+            $token = $event->getRequest()->getPost('token');
+            
+            if ($token !== $user['token']) {
+                throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
+            }
+        }
+
     }
 
     public function initializeSession(MvcEvent $e)
