@@ -337,7 +337,7 @@ abstract class DataAccessController extends AbstractActionController
     public function createAction()
     {
         static::init();
-        $data = $this->params()->fromQuery('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
             $insertData = Json::decode($data,Json::TYPE_ARRAY);
@@ -356,7 +356,7 @@ abstract class DataAccessController extends AbstractActionController
             );
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }
@@ -367,7 +367,7 @@ abstract class DataAccessController extends AbstractActionController
     public function updateAction()
     {
         static::init();
-        $data = $this->params()->fromQuery('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
             $updateData = Json::decode($data,Json::TYPE_ARRAY);
@@ -387,7 +387,7 @@ abstract class DataAccessController extends AbstractActionController
             );
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }
