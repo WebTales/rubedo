@@ -66,7 +66,7 @@ class WorkspacesController extends DataAccessController
         }
         $limitJson = $this->params()->fromQuery('limit');
         if (isset($limitJson)) {
-            $limit = Json::decode($limitJson);
+            $limit = Json::decode($limitJson,Json::TYPE_ARRAY);
         } else {
             $limit = null;
         }

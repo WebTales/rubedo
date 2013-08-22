@@ -244,7 +244,7 @@ abstract class DataAccessController extends AbstractActionController
     public function deleteChildAction()
     {
         static::init();
-        $data = $this->params()->fromQuery('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
             $data = Json::decode($data,Json::TYPE_ARRAY);
@@ -306,7 +306,7 @@ abstract class DataAccessController extends AbstractActionController
     public function deleteAction()
     {
         static::init();
-        $data = $this->params()->fromQuery('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
             $data = Json::decode($data,Json::TYPE_ARRAY);
