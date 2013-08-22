@@ -81,10 +81,16 @@ class DamController extends DataAccessController
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if ($mediaType['mainFileType'] == 'Image') {
-            $this->_forward('get-thumbnail', 'image', 'default', array(
-                'file-id' => $media['originalFileId'],
-                'version' => $version
+            $queryString = $this->getRequest()->getQuery();
+            $queryString->set('file-id',$media['originalFileId']);
+            $queryString->set('version', $version);
+            return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
+                'action' => 'get-thumbnail'
             ));
+//             $this->_forward('get-thumbnail', 'image', 'default', array(
+//                 'file-id' => $media['originalFileId'],
+//                 'version' => $version
+//             ));
         } else {
             $this->_forward('get-thumbnail', 'file', 'default', array(
                 'file-id' => $media['originalFileId'],
@@ -286,27 +292,12 @@ class DamController extends DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
-        // disable layout and set content type
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        
-        $returnValue = Json::encode($returnArray);
-        $this->getResponse()->setBody($returnValue);
+        return new JsonModel($returnArray);
     }
 
     protected function _uploadFile($name, $fileType, $returnFullResult = false)
-    {
-//         $adapter = new Zend_File_Transfer_Adapter_Http();
-        
-//         if (! $adapter->receive($name)) {
-//             return null;
-//         }
-        
-//         $filesArray = $adapter->getFileInfo();
-        
-//         $fileInfos = $filesArray[$name];
-        
-        $fileInfos = $this->params()->fromFile($name);
+    {       
+        $fileInfos = $this->params()->fromFiles($name);
         
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         

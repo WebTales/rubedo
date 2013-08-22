@@ -14,6 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Frontoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -28,26 +31,23 @@ use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class ImageController extends Zend_Controller_Action
+class ImageController extends AbstractActionController
 {
 
     function indexAction()
     {
         $now = Manager::getService('CurrentTime')->getCurrentTime();
         
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
+        $fileId = $this->params()->fromQuery('file-id');
+        $filePath = $this->params()->fromQuery('filepath');
+        $size = $this->params()->fromQuery('size', 'custom');
         
-        $fileId = $this->getRequest()->getParam('file-id');
-        $filePath = $this->getParam('filepath');
-        $size = $this->getParam('size', 'custom');
-        
-        $version = $this->getParam('version',1);
+        $version = $this->params()->fromQuery('version', 1);
         
         if ($size == "custom") {
-            $width = $this->getParam('width', null);
-            $height = $this->getParam('height', null);
-            $mode = $this->getParam('mode', 'morph');
+            $width = $this->params()->fromQuery('width', null);
+            $height = $this->params()->fromQuery('height', null);
+            $mode = $this->params()->fromQuery('mode', 'morph');
         }
         if ($size == "thumbnail") {
             $width = 100;
@@ -58,7 +58,7 @@ class ImageController extends Zend_Controller_Action
         if (isset($fileId)) {
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof MongoGridFSFile) {
+            if (! $obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
@@ -84,12 +84,12 @@ class ImageController extends Zend_Controller_Action
             
             $type = strtolower($extension);
             $type = ($type == 'jpg') ? 'jpeg' : $type;
-            $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)).'_'.basename($filePath);//str_replace('/', '_', $filePath);
+            $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)) . '_' . basename($filePath); // str_replace('/', '_', $filePath);
             $tmpImagePath = sys_get_temp_dir() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
                 
-                $imageService = new Rubedo\Image\Image();
+                $imageService = new \Rubedo\Image\Image();
                 $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, $size);
                 
                 switch ($type) {
@@ -106,7 +106,7 @@ class ImageController extends Zend_Controller_Action
                 
                 imagedestroy($newImage);
             }
-            switch ($this->getParam('attachment', null)) {
+            switch ($this->params()->fromQuery('attachment', null)) {
                 case 'download':
                     $forceDownload = true;
                     break;
@@ -115,25 +115,28 @@ class ImageController extends Zend_Controller_Action
                     break;
             }
             
-            $this->getResponse()->clearBody();
-            $this->getResponse()->clearHeaders();
-            $this->getResponse()->clearRawHeaders();
+            $stream = fopen($tmpImagePath, 'r');
+            
+            $response = new \Zend\Http\Response\Stream();
+            $response->getHeaders()->addHeaders(array(
+                'Content-type' => 'image/' . $type,
+                'Content-Disposition' => 'inline; filename="' . $filename,
+                'Pragma' => 'Public',
+                'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
+                'Expires' => date(DATE_RFC822, strtotime("7 day"))
+            ));
+            
             if ($forceDownload) {
-                $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Disposition' => 'attachment; filename="' . $filename
+                ));
+            } else {
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Disposition' => 'inline; filename="' . $filename
+                ));
             }
-            $this->getResponse()->setHeader('Content-Type', 'image/' . $type);
-            $this->getResponse()->setHeader('Pragma', 'Public',true);
-            
-            $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 7 * 24 * 3600, true);
-            $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime("7 day")), true);
-            $this->getResponse()->sendHeaders();
-            
-            while (ob_get_level() > 0) {
-                ob_end_clean();
-            }
-            flush();
-            readfile($tmpImagePath);
-            exit;
+            $response->setStream($stream);
+            return $response;
         } else {
             throw new \Rubedo\Exceptions\User("No Image Given", "Exception80");
         }
@@ -141,8 +144,10 @@ class ImageController extends Zend_Controller_Action
 
     public function getThumbnailAction()
     {
-        $this->_forward('index', 'image', 'default', array(
-            'size' => 'thumbnail'
+        $queryString = $this->getRequest()->getQuery();
+        $queryString->set('size', 'thumbnail');
+        return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
+            'action' => 'index'
         ));
     }
 }

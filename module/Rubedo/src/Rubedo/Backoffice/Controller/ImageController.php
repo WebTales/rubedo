@@ -54,15 +54,8 @@ class ImageController extends AbstractActionController
     }
 
     function putAction()
-    {
-        $adapter = new Zend_File_Transfer_Adapter_Http();
-        
-        if (! $adapter->receive()) {
-            $messages = $adapter->getMessages();
-            echo implode("\n", $messages);
-        }
-        
-        $fileInfo = array_pop($adapter->getFileInfo());
+    {        
+        $fileInfo = array_pop($this->params()->fromFiles());
         
         $fileService = Manager::getService('Images');
         $obj = array(
@@ -93,12 +86,14 @@ class ImageController extends AbstractActionController
 
     function getAction()
     {
-        $this->_forward('index', 'image', 'default');
+        return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
+            'action' => 'index'
+        ));
     }
 
     function getMetaAction()
     {
-        $fileId = $this->getRequest()->getParam('file-id');
+        $fileId = $this->params()->fromQuery('file-id');
         
         if (isset($fileId)) {
             $fileService = Manager::getService('Images');
