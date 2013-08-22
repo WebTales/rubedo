@@ -74,7 +74,7 @@ class NestedContentsController extends AbstractActionController
             $response = array();
             $response['success'] = false;
             $response['message'] = 'no parentId Given';
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
             return $this->_returnJson($response);
         }
         
@@ -182,7 +182,7 @@ class NestedContentsController extends AbstractActionController
             );
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }
@@ -215,7 +215,7 @@ class NestedContentsController extends AbstractActionController
             );
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }
@@ -249,7 +249,7 @@ class NestedContentsController extends AbstractActionController
             );
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }

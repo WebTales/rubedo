@@ -142,7 +142,7 @@ class CurrentUserController extends AbstractActionController
             );
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return new JsonModel($returnArray);
     }
@@ -173,7 +173,7 @@ class CurrentUserController extends AbstractActionController
         $response['token'] = $this->_currentUserService->getToken();
         
         if (mb_strlen($response['token']) != 128 && ! ctype_alnum($response['token'])) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         } else {
             return new JsonModel($response);
         }

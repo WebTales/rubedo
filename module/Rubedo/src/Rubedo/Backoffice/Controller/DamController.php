@@ -213,7 +213,7 @@ class DamController extends DataAccessController
         $obj['Content-Type'] = $this->_mimeType;
         
         if (! $obj['originalFileId']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
             return $this->_returnJson(array(
                 'success' => false,
                 'msg' => 'no main file uploaded'
@@ -228,7 +228,7 @@ class DamController extends DataAccessController
         $returnArray = $this->_dataService->create($obj);
         
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
@@ -288,7 +288,7 @@ class DamController extends DataAccessController
         }
         $obj['Content-Type'] = $this->_mimeType;
         if (! $obj['originalFileId']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
             return $this->_returnJson(array(
                 'success' => false,
                 'msg' => 'no main file uploaded'
@@ -302,7 +302,7 @@ class DamController extends DataAccessController
         unset($obj['i18n'][$nativeLanguage]['fields']['target']);
         $returnArray = $this->_dataService->create($obj);
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();

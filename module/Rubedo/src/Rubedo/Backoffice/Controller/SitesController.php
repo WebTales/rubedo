@@ -63,7 +63,7 @@ class SitesController extends DataAccessController
             );
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }
@@ -90,7 +90,7 @@ class SitesController extends DataAccessController
                 }
         }
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }

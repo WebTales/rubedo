@@ -65,7 +65,7 @@ class UsersController extends DataAccessController
         }
         
         if (! $returnArray['success']) {
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setStatusCode(500);
         }
         
         return $this->_helper->json($returnArray);
