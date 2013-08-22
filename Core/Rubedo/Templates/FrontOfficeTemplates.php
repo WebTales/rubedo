@@ -56,7 +56,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * @var string
      */
     protected static $_currentTheme = null;
-
+    
+    
+    /**
+     * Custom theme id
+     *
+     * @var string
+     */
+    protected static $_customThemeId = null;
     /**
      * had main theme been set ?
      *
@@ -196,6 +203,17 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
         return self::$_currentTheme;
     }
+    
+    /**
+     * Get the custom theme id
+     *
+     * @return string
+     */
+    public function getCustomThemeId ()
+    {
+        
+        return self::$_customThemeId;
+    }
 
     /**
      * Set the current theme name
@@ -204,8 +222,15 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public function setCurrentTheme ($theme)
     {
-        self::$_currentTheme = $theme;
-        self::$_themeHasBeenSet = true;
+        //check if it is a custom theme 
+        if ( preg_match('/[\dabcdef]{24}/', $theme) == 1) {
+            self::$_currentTheme = "customtheme";
+            self::$_customThemeId = $theme;
+            self::$_themeHasBeenSet = true;
+        } else {
+            self::$_currentTheme = $theme;
+            self::$_themeHasBeenSet = true;
+        }
     }
 
     public function themeHadBeenSet ()
@@ -263,6 +288,10 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         //get real file themes
         foreach ($templateDirIterator as $directory) {
             if ($directory->isDot() || ! $directory->isDir()) {
+                continue;
+            }
+            //ignore generic custom theme folder
+            if ($directory->getFilename()=="customtheme"){
                 continue;
             }
             $jsonFilePath = $directory->getPathname() . '/theme.json';

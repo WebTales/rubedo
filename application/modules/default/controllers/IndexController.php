@@ -241,6 +241,9 @@ class IndexController extends Zend_Controller_Action
         $twigVar['isDraft'] = Zend_Registry::get('draft');
         $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
+        if ($twigVar['theme']=="customtheme"){
+            $twigVar['customThemeId'] = $this->_serviceTemplate->getCustomThemeId();
+        }
         $twigVar['lang'] = $lang;
         $twigVar['siteID'] = $this->_pageInfo['site'];
         $twigVar['prefixTitle'] = isset($this->_site['title']) && ! empty($this->_site['title']) ? $this->_site['title'] . ' - ' : '';
