@@ -66,10 +66,10 @@ class DamController extends DataAccessController
     public function indexAction ()
     {
         // merge filter and tFilter
-        $jsonFilter = $this->params()->fromGet('filter', Json::encode(array()));
-        $jsonTFilter = $this->params()->fromGet('tFilter', Json::encode(array()));
-        $filterArray = Json::decode($jsonFilter);
-        $tFilterArray = Json::decode($jsonTFilter);
+        $jsonFilter = $this->params()->fromGet('filter', '[]');
+        $jsonTFilter = $this->params()->fromGet('tFilter', '[]');
+        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
         $globalFilterArray = array_merge($tFilterArray, $filterArray);
         
         // call standard method with merge array
@@ -156,7 +156,7 @@ class DamController extends DataAccessController
         }
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
-        $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', Json::encode(array())));
+        $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', '[]'));
         
         $workspace = $this->params()->fromPost('writeWorkspace');
         if (! is_null($workspace) && $workspace != "") {

@@ -33,18 +33,6 @@ class PersonalPrefsController extends DataAccessController
 {
 
     /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-prefs',
-        'count-orphan-prefs'
-    );
-
-    /**
      * Initialise the controller
      */
     public function __construct ()

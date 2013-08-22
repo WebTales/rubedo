@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing access control list
@@ -34,42 +35,6 @@ use Zend\Json\Json;
 class ImageController extends AbstractActionController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'get',
-        'get-meta'
-    );
-
-    /**
-     * Disable layout & rendering, set content type to json
-     * init the store parameter if transmitted
-     *
-     * @see AbstractActionController::init()
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        
-        $sessionService = Manager::getService('Session');
-        
-        // refuse write action not send by POST
-        if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-            throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
-        } else {
-            if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-                $user = $sessionService->get('user');
-                $token = $this->getRequest()->getParam('token');
-                
-                if ($token !== $user['token']) {
-                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-                }
-            }
-        }
-    }
-
     function indexAction()
     {
         $fileService = Manager::getService('Images');
@@ -82,7 +47,7 @@ class ImageController extends AbstractActionController
             unset($metaData['_id']);
             $files[] = $metaData;
         }
-        return $this->_helper->json(array(
+        return new JsonModel(array(
             'data' => $files,
             'total' => $filesArray['count']
         ));
@@ -108,22 +73,19 @@ class ImageController extends AbstractActionController
         );
         $result = $fileService->create($obj);
         
-        $this->_helper->json($result);
+        return new JsonModel($result);
     }
 
     function deleteAction()
     {
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
-        
-        $dataJson = $this->getRequest()->getParam('data', Json::encode(array()));
+        $dataJson = $this->params()->fromPost('data', Json::encode(array()));
         $data = Json::decode($dataJson);
         
         if (isset($data['id'])) {
             $fileService = Manager::getService('Images');
             $result = $fileService->destroy($data);
             
-            $this->_helper->json($result);
+            return new JsonModel($result);
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }
@@ -144,7 +106,7 @@ class ImageController extends AbstractActionController
             if (! $obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
-            $this->_helper->json($obj->file);
+            return new JsonModel($obj->file);
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }

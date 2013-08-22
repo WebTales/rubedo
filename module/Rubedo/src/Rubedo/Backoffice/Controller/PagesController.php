@@ -20,7 +20,6 @@ use Rubedo\Controller\Action;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
 
-
 /**
  * Controller providing CRUD API for the Pages JSON
  *
@@ -34,23 +33,7 @@ use Zend\Json\Json;
  */
 class PagesController extends DataAccessController
 {
-
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-pages',
-        'count-orphan-pages',
-        'model',
-        'get-content-list',
-        'holds-site-default',
-    );
-
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         // init the data access service
@@ -62,14 +45,14 @@ class PagesController extends DataAccessController
      *
      * @return array Result of the request
      */
-    public function clearOrphanPagesAction ()
+    public function clearOrphanPagesAction()
     {
         $result = $this->_dataService->clearOrphanPages();
         
         return $this->_returnJson($result);
     }
 
-    public function countOrphanPagesAction ()
+    public function countOrphanPagesAction()
     {
         $result = $this->_dataService->countOrphanPages();
         
@@ -79,7 +62,7 @@ class PagesController extends DataAccessController
     /**
      * Check if page is or is the father of the default page of its site
      */
-    public function holdsSiteDefaultAction ()
+    public function holdsSiteDefaultAction()
     {
         $id = $this->params()->fromQuery('id');
         $result = array();
@@ -88,12 +71,17 @@ class PagesController extends DataAccessController
         return $this->_returnJson($result);
     }
 
-    public function getContentListAction ()
+    
+    /**
+     * @todo comment what this action do
+     */
+    public function getContentListAction()
     {
         $returnArray = array();
         $total = 0;
         $contentArray = array();
-        $data = $this->params()->fromQuery()->toArray();
+        $data = $this->params()
+            ->fromQuery();
         $params["pagination"] = array(
             "page" => $data['page'],
             "start" => $data["start"],
@@ -131,7 +119,7 @@ class PagesController extends DataAccessController
             }
             if (isset($contentArray) && ! empty($contentArray)) {
                 foreach ($contentArray as $key => $content) {
-                    $content = Json::decode($content,Json::TYPE_ARRAY);
+                    $content = Json::decode($content, Json::TYPE_ARRAY);
                     if ($content["success"] == true) {
                         $total = $total + $content["total"];
                         unset($content['total']);

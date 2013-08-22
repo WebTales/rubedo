@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing the list of available Roles
@@ -34,52 +35,26 @@ class RolesController extends AbstractActionController
 {
 
     /**
-     * should json be prettified
-     *
-     * @var bool
-     */
-    protected $_prettyJson = true;
-
-    /**
-     * Set the response body with Json content
-     * Option : json is made human readable
-     * 
-     * @param mixed $data
-     *            data to be json encoded
-     */
-    protected function _returnJson ($data)
-    {
-        // disable layout and set content type
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setHeader('Content-Type', "application/json", true);
-        
-        $returnValue = Json::encode($data);
-        if ($this->_prettyJson) {
-            $returnValue = Json::prettyPrint($returnValue);
-        }
-        $this->getResponse()->setBody($returnValue);
-    }
-
-    /**
      * The default read Action
      *
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $response = Manager::getService('Acl')->getAvailaibleRoles();
         
-        return $this->_returnJson($response);
+        return new JsonModel($response);
     }
 
     /**
+     * @todo is this action in the correct controller ?
+     * @return \Zend\View\Model\JsonModel
      */
-    public function getThemeInfosAction ()
+    public function getThemeInfosAction()
     {
         $themeName = $this->getParam('theme', 'default');
         $response = Manager::getService('FrontOfficeTemplates')->getThemeInfos($themeName);
-        return $this->_returnJson($response);
+        return new JsonModel($response);
     }
 }

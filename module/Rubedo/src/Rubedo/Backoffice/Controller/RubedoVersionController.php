@@ -19,6 +19,9 @@ namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Version\Version;
+use Zend\View\Model\JsonModel;
+use \Zend\Version\Version as ZendVersion;
+
 /**
  * Controller sending version information
  *
@@ -34,10 +37,10 @@ class RubedoVersionController extends AbstractActionController
     /**
      * Return a json which describe all components of the current Rubedo Instance
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $versionArray = array(
-            'ZendFramework' => \Zend\Version\Version::VERSION,
+            'ZendFramework' => ZendVersion::VERSION,
             'RubedoVersion' => Version::getVersion(),
             'MongoDB' => Version::getMongoServerVersion(),
             'ElasticSearch' => Version::getESServerVersion(),
@@ -45,6 +48,6 @@ class RubedoVersionController extends AbstractActionController
             'Components' => Version::getComponentsVersion()
         );
         
-        $this->_helper->json($versionArray);
+        return new JsonModel($versionArray);
     }
 }

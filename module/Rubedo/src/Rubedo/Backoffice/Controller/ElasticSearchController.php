@@ -22,6 +22,8 @@ use Rubedo\Services\Manager;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Zend\Json\Json;
 use Rubedo\Elastic\DataAbstract;
+use Zend\View\Model\JsonModel;
+
 
 /**
  * Controller providing Elastic Search querying
@@ -39,15 +41,13 @@ class ElasticSearchController extends AbstractActionController
     protected $_option = 'all';
 
     public function __construct()
-    {
-        parent::__construct();
-        
+    {        
         // initialize
         // localized
         // collections
         $serviceLanguages = Manager::getService('Languages');
         if ($serviceLanguages->isActivated()) {
-            $workingLanguage = $this->getParam('workingLanguage');
+            $workingLanguage = $this->params()->fromQuery('workingLanguage');
             if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
                 AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
             } else {
@@ -60,7 +60,7 @@ class ElasticSearchController extends AbstractActionController
     {
         
         // get params
-        $params = $this->getRequest()->getParams();
+        $params = $this->params()->fromQuery();
         
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
@@ -80,7 +80,7 @@ class ElasticSearchController extends AbstractActionController
             $params['pager'] = (int) $params['page'] - 1;
         }
         if (isset($params['sort'])) {
-            $sort = Json::decode($params['sort']);
+            $sort = Json::decode($params['sort'],Json::TYPE_ARRAY);
             $params['orderby'] = ($sort[0]['property'] == 'score') ? '_score' : $sort[0]['property'];
             $params['orderbyDirection'] = $sort[0]['direction'];
         }
@@ -90,14 +90,7 @@ class ElasticSearchController extends AbstractActionController
         $results['success'] = true;
         $results['message'] = 'OK';
         
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setHeader('Content-Type', 'application/json', true);
-        
-        $returnValue = Json::encode($results);
-        $returnValue = Json::prettyPrint($returnValue);
-        
-        $this->getResponse()->setBody($returnValue);
+        return new JsonModel($results);
     }
 
     public function getOptionsAction ()
@@ -106,6 +99,6 @@ class ElasticSearchController extends AbstractActionController
         $returnArray = array();
         $returnArray['success'] = true;
         $returnArray['data'] = $esOptions;
-        $this->_helper->json($returnArray);
+        return new JsonModel($returnArray);
     }
 }

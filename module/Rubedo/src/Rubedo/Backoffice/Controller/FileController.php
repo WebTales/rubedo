@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing access control list
@@ -35,43 +36,7 @@ use Zend\Json\Json;
 class FileController extends AbstractActionController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'get',
-        'get-meta'
-    );
-
-    /**
-     * Disable layout & rendering, set content type to json
-     * init the store parameter if transmitted
-     *
-     * @see AbstractActionController::init()
-     */
-    public function __construct ()
-    {
-        parent::__construct();
-        
-        $sessionService = Manager::getService('Session');
-        
-        // refuse write action not send by POST
-        if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-            throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
-        } else {
-            if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-                $user = $sessionService->get('user');
-                $token = $this->getRequest()->getParam('token');
-                
-                if ($token !== $user['token']) {
-                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-                }
-            }
-        }
-    }
-
-    public function indexAction ()
+    public function indexAction()
     {
         $fileService = Manager::getService('Files');
         $filesArray = $fileService->getList();
@@ -83,13 +48,13 @@ class FileController extends AbstractActionController
             unset($metaData['_id']);
             $files[] = $metaData;
         }
-        return $this->_helper->json(array(
+        return new JsonModel(array(
             'data' => $files,
             'total' => $filesArray['count']
         ));
     }
 
-    public function putAction ()
+    public function putAction()
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
@@ -117,13 +82,10 @@ class FileController extends AbstractActionController
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         
-        $returnValue = Json::encode($result);
-        
-        $returnValue = Json::prettyPrint($returnValue);
-        
-        $this->getResponse()->setBody($returnValue);
+        return new JsonModel($result);
     }
-    public function updateAction ()
+
+    public function updateAction()
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         
@@ -138,7 +100,7 @@ class FileController extends AbstractActionController
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         
         $fileService = Manager::getService('Files');
-        $originalId=$this->getRequest()->getParam("originalId");
+        $originalId = $this->getRequest()->getParam("originalId");
         $removeOldResult = $fileService->destroy(array(
             'id' => $originalId,
             'version' => 1
@@ -151,30 +113,28 @@ class FileController extends AbstractActionController
             'mainFileType' => 'Image',
             '_id' => new \MongoId($originalId)
         );
-        $updateResult=$fileService->create($fileObj);
+        $updateResult = $fileService->create($fileObj);
         
-        //trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
+        // trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
         $directoryIterator = new \DirectoryIterator(sys_get_temp_dir());
-        foreach ($directoryIterator as $file){
-            if($file->isDot()){
+        foreach ($directoryIterator as $file) {
+            if ($file->isDot()) {
                 continue;
             }
-            if(strpos($file->getFilename(),$originalId)===0){
+            if (strpos($file->getFilename(), $originalId) === 0) {
                 unlink($file->getPathname());
             }
         }
         
         $this->_helper->redirector->gotoUrl('/backoffice/resources/afterPixlr.html');
-        //just a test prototype, work in progress on this action
+        // just a test prototype, work in progress on this action
     }
 
-    public function deleteAction ()
+    public function deleteAction()
     {
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
         
-        $fileId = $this->getRequest()->getParam('file-id');
-        $version = $this->getRequest()->getParam('file-version', 1);
+        $fileId = $this->params()->fromPost('file-id');
+        $version = $this->params()->fromPost('file-version', 1);
         
         if (isset($fileId)) {
             $fileService = Manager::getService('Files');
@@ -191,31 +151,31 @@ class FileController extends AbstractActionController
         }
     }
 
-    public function getAction ()
+    public function getAction()
     {
         $this->_forward('index', 'file', 'default');
     }
 
-    public function getMetaAction ()
+    public function getMetaAction()
     {
-        $fileId = $this->getRequest()->getParam('file-id');
+        $fileId = $this->params()->fromQuery('file-id');
         
         if (isset($fileId)) {
             $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof MongoGridFSFile) {
+            if (! $obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
-            $this->_helper->json($obj->file);
+            return new JsonModel($obj->file);
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }
     }
 
-    public function dropAllFilesAction ()
+    public function dropAllFilesAction()
     {
         $fileService = Manager::getService('MongoFileAccess');
         $fileService->init();
-        return $this->_helper->json($fileService->drop());
+        return new JsonModel($fileService->drop());
     }
 }

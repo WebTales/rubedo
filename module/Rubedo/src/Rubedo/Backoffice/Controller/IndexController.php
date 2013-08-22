@@ -18,7 +18,6 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
 
-
 /**
  * Back Office Default Controller
  *
@@ -34,23 +33,28 @@ class IndexController extends AbstractExtLoaderController
     /**
      * Default Action, return the Ext/Js HTML loader
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $this->_auth = Manager::getService('Authentication');
         
         if (! $this->_auth->getIdentity()) {
-            $redirectParams = array('action'=>'index','controller'=>'login');
+            $redirectParams = array(
+                'action' => 'index',
+                'controller' => 'login'
+            );
             
             if ($this->params()->fromQuery('content')) {
                 $redirectParams['content'] = $this->params()->fromQuery('content');
             }
-            return $this->redirect()->toRoute(null,$redirectParams);
+            return $this->redirect()->toRoute(null, $redirectParams);
         }
-        //var_dump(Manager::getService('Acl')->hasAccess('ui.backoffice'));die();
         
         if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
-            $redirectParams = array('action'=>'confirm-logout','controller'=>'logout');
-            return $this->redirect()->toRoute(null,$redirectParams);
+            $redirectParams = array(
+                'action' => 'confirm-logout',
+                'controller' => 'logout'
+            );
+            return $this->redirect()->toRoute(null, $redirectParams);
         }
         
         return $this->loadExtApps();

@@ -44,7 +44,7 @@ class SitesController extends DataAccessController
 
     public function deleteAction ()
     {
-        $data = $this->getRequest()->getParam('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
             $data = Json::decode($data,Json::TYPE_ARRAY);
@@ -70,7 +70,7 @@ class SitesController extends DataAccessController
 
     public function wizardCreateAction ()
     {
-        $data = $this->getRequest()->getParam('data');
+        $data = $this->params()->fromPost('data');
         $returnArray = array(
             'success' => false,
             "msg" => 'no data recieved'

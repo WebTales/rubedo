@@ -106,7 +106,7 @@ class CurrentUserController extends AbstractActionController
     public function updateAction ()
     {
         $usersService = Manager::getService('Users');
-        $data = $this->getRequest()->getParam('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
             $insertData = Json::decode($data,Json::TYPE_ARRAY);
@@ -152,8 +152,8 @@ class CurrentUserController extends AbstractActionController
      */
     public function changePasswordAction ()
     {
-        $oldPassword = $this->getRequest()->getParam('oldPassword');
-        $newPassword = $this->getRequest()->getParam('newPassword');
+        $oldPassword = $this->params()->fromPost('oldPassword');
+        $newPassword = $this->params()->fromPost('newPassword');
         
         if (is_string($oldPassword) && is_string($newPassword)) {
             $currentUserService = Manager::getService('CurrentUser');

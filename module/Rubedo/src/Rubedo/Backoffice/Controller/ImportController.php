@@ -33,11 +33,6 @@ use Zend\Json\Json;
 class ImportController extends DataAccessController {
 	
 	/**
-	 * Array with the read only actions
-	 */
-	protected $_readOnlyAction = array ();
-	
-	/**
 	 * Return the encoding of the string
 	 *
 	 * @param string $string        	
@@ -110,6 +105,10 @@ class ImportController extends DataAccessController {
 	protected function forceUtf8($string, $encoding) {
 		return mb_convert_encoding ( $string, "UTF-8", $encoding );
 	}
+	
+	/**
+	 * @todo comment this method
+	 */
 	public function analyseAction() {
 		$separator = $this->getParam ( 'separator', ";" );
 		$userEncoding = $this->getParam ( 'encoding' );

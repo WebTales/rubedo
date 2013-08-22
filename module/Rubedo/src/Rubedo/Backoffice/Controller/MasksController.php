@@ -18,6 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
+
 /**
  * Controller providing CRUD API for the masks JSON
  *
@@ -32,19 +33,7 @@ use Rubedo\Services\Manager;
 class MasksController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'model',
-        'is-used'
-    );
-
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         
@@ -52,13 +41,12 @@ class MasksController extends DataAccessController
         $this->_dataService = Manager::getService('Masks');
     }
 
-    public function isUsedAction ()
+    public function isUsedAction()
     {
         $id = $this->params('id');
         $wasFiltered = AbstractCollection::disableUserFilter();
         $result = Manager::getService('Pages')->isMaskUsed($id);
         AbstractCollection::disableUserFilter($wasFiltered);
-        // $resultArray = (is_array($listResult) && $listResult['count']>0) ? array("used"=>true) : array("used"=>false);
         return $this->_returnJson($result);
     }
 }

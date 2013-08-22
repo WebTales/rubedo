@@ -18,6 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 
 /**
@@ -231,7 +232,7 @@ class ContentsController extends DataAccessController
         $limit = Json::decode($this->params()->fromQuery('limit', null),Json::TYPE_ARRAY);
         
         $mongoFilters = $this->_buildFilter($filters);
-        $this->_helper->json($this->_dataService->getOrderedList($mongoFilters, $sort, $start, $limit, false));
+        return new JsonModel($this->_dataService->getOrderedList($mongoFilters, $sort, $start, $limit, false));
     }
 
     public function clearOrphanContentsAction ()

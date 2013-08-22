@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 /**
  * Controller providing Elastic Search querying in contents
  *

@@ -46,7 +46,7 @@ class DirectoriesController extends DataAccessController
         'model'
     );
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         
@@ -59,25 +59,26 @@ class DirectoriesController extends DataAccessController
      *
      * @return array Result of the request
      */
-    public function clearOrphanDirectoriesAction ()
+    public function clearOrphanDirectoriesAction()
     {
         $result = $this->_dataService->clearOrphanPages();
         
         return $this->_returnJson($result);
     }
 
-    public function countOrphanDirectoriesAction ()
+    public function countOrphanDirectoriesAction()
     {
         $result = $this->_dataService->countOrphanPages();
         
         return $this->_returnJson($result);
     }
-    public function classifyAction ()
+
+    public function classifyAction()
     {
-        $encodedArray = $this->getRequest()->getParam("mediaArray","[ ]");
-        $decodedArray=Json::decode($encodedArray,Json::TYPE_ARRAY);
-        $directoryId=$this->getRequest()->getParam("directoryId");
-        $result = $this->_dataService->classify($decodedArray,$directoryId);
+        $encodedArray = $this->params()->fromPost("mediaArray", "[ ]");
+        $decodedArray = Json::decode($encodedArray, Json::TYPE_ARRAY);
+        $directoryId = $this->params()->fromPost("directoryId");
+        $result = $this->_dataService->classify($decodedArray, $directoryId);
         return $this->_returnJson($result);
     }
    

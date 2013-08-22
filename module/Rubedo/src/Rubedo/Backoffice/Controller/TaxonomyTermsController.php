@@ -75,7 +75,7 @@ class TaxonomyTermsController extends DataAccessController
 
     public function navigationTreeAction ()
     {
-        $withCurrentPage = $this->getParam('add-current-page', false);
+        $withCurrentPage = $this->params()->fromQuery('add-current-page', false);
         $result = $this->_dataService->getNavigationTree($withCurrentPage);
         $resultArray = array();
         $resultArray['success'] = true;

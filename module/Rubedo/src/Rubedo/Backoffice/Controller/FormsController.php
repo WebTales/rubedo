@@ -16,9 +16,8 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
-
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the Forms JSON
@@ -57,7 +56,7 @@ class FormsController extends DataAccessController
 
     public function getStatsAction ()
     {
-        $formId = $this->getParam('form-id');
+        $formId = $this->params()->fromQuery('form-id');
         if (! $formId) {
             throw new \Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
@@ -68,19 +67,19 @@ class FormsController extends DataAccessController
         $response = array();
         $response['data'] = $statsResponse;
         $response['success'] = true;
-        $this->_helper->json($response);
+        return new JsonModel($response);
     }
 
     public function getCsvAction ()
     {
-        $formId = $this->getParam('form-id');
+        $formId = $this->params()->fromQuery('form-id');
         if (! $formId) {
             throw new \Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
         
         $form = Manager::getService('Forms')->findById($formId);
         
-        $displayQnb = $this->getParam('display-qnb', false);
+        $displayQnb = $this->params()->fromQuery('display-qnb', false);
         $fileTitle = Manager::getService('Pages')->filterUrl($form['title']); // $this->_filterName($form['title']);
         
         $fileName = $fileTitle . '_' . $formId . '_' . date('Ymd') . '.csv';

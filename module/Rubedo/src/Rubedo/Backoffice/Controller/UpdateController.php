@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Rubedo\Update\Update;
+use Zend\View\Model\JsonModel;
 
 /**
  * Installer Controller
@@ -38,7 +39,7 @@ class UpdateController extends AbstractActionController
         $result = array(
             'needUpdate' => ! $rubedoDbVersionService->isDbUpToDate()
         );
-        $this->_helper->json($result);
+        return new JsonModel($result);
     }
 
     public function runAction ()
@@ -47,7 +48,7 @@ class UpdateController extends AbstractActionController
             'success' => true,
             'version' => Update::update()
         );
-        $this->_helper->json($result);
+        return new JsonModel($result);
     }
 }
 

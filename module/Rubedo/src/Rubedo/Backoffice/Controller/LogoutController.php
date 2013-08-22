@@ -20,7 +20,6 @@ use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
-
 /**
  * BO Logout controller
  *
@@ -50,7 +49,7 @@ class LogoutController extends AbstractActionController
     /**
      * Redirect the user to the login page if he's not connected
      */
-    public function indexAction ()
+    public function indexAction()
     {
         if ($this->_auth->getIdentity()) {
             $this->_auth->clearIdentity();
@@ -61,8 +60,11 @@ class LogoutController extends AbstractActionController
         if ($this->getRequest()->isXmlHttpRequest()) {
             return new JsonModel($response);
         } else {
-            $redirectParams = array('action'=>'index','controller'=>'login');
-            return $this->redirect()->toRoute(null,$redirectParams);
+            $redirectParams = array(
+                'action' => 'index',
+                'controller' => 'login'
+            );
+            return $this->redirect()->toRoute(null, $redirectParams);
         }
     }
 

@@ -63,7 +63,7 @@ class ContentTypesController extends DataAccessController
 
     public function isUsedAction ()
     {
-        $id = $this->getRequest()->getParam('id');
+        $id = $this->params()->fromQuery('id');
         $wasFiltered = AbstractCollection::disableUserFilter();
         $result = Manager::getService('Contents')->isTypeUsed($id);
         AbstractCollection::disableUserFilter($wasFiltered);
@@ -72,12 +72,12 @@ class ContentTypesController extends DataAccessController
 
     public function isChangeableAction ()
     {
-        $data = $this->getRequest()->getParams();
-        $newType = Json::decode($data['fields']);
+        $data = $this->params()->fromPost();
+        $newType = Json::decode($data['fields'],Json::TYPE_ARRAY);
         $id = $data['id'];
         $originalType = $this->_dataService->findById($id);
         $originalType = $originalType['fields'];
-        
+
         $wasFiltered = AbstractCollection::disableUserFilter();
         $isUsedResult = Manager::getService('Contents')->isTypeUsed($id);
         AbstractCollection::disableUserFilter($wasFiltered);

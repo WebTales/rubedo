@@ -18,6 +18,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
+
 /**
  * Controller providing a new MongoId
  *
@@ -39,7 +41,7 @@ class XhrGetMongoIdController extends AbstractActionController
     {
         $MongoId = new \MongoId();
         $MongoId = (string) $MongoId;
-        $this->_helper->json(array(
+        return new JsonModel(array(
             'mongoID' => $MongoId
         ));
     }

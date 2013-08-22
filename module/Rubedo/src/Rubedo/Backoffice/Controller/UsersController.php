@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the users JSON
@@ -42,9 +43,9 @@ class UsersController extends DataAccessController
 
     public function changePasswordAction ()
     {
-        $password = $this->getRequest()->getParam('password');
-        $id = $this->getRequest()->getParam('id');
-        $version = $this->getRequest()->getParam('version');
+        $password = $this->params()->fromPost('password');
+        $id = $this->params()->fromPost('id');
+        $version = $this->params()->fromPost('version');
         
         if (! empty($password) && ! empty($id) && ! empty($version)) {
             
@@ -56,7 +57,7 @@ class UsersController extends DataAccessController
                 $message['success'] = false;
             }
             
-            return $this->_helper->json($message);
+            return new JsonModel($message);
         } else {
             $returnArray = array(
                 'success' => false,
@@ -68,6 +69,6 @@ class UsersController extends DataAccessController
             $this->getResponse()->setStatusCode(500);
         }
         
-        return $this->_helper->json($returnArray);
+        return new JsonModel($returnArray);
     }
 }

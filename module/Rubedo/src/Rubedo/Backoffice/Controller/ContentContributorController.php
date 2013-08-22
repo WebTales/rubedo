@@ -17,7 +17,6 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -36,7 +35,7 @@ class ContentContributorController extends AbstractExtLoaderController
         $this->_auth = Manager::getService('Authentication');
         
         if (! $this->_auth->getIdentity()) {
-            $this->_helper->redirector->gotoUrl("/backoffice/login");
+            return $this->redirect()->toUrl("/backoffice/login");
         }
         
         $this->loadExtApps();

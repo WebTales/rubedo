@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Rubedo\Services\Cache;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing control over the cached contents
@@ -38,11 +39,6 @@ class CacheController extends AbstractActionController
      */
     protected $_cache;
 
-    public function __construct ()
-    {
-        // $this->_cache = Rubedo\Services\Cache::getCache();
-    }
-
     /**
      * The default read Action
      *
@@ -54,7 +50,7 @@ class CacheController extends AbstractActionController
         $countArray = array();
         $countArray['cachedItems'] = Manager::getService('Cache')->count();
         $countArray['cachedUrl'] = Manager::getService('UrlCache')->count();
-        $this->_helper->json($countArray);
+        return new JsonModel($countArray);
     }
 
     public function clearAction ()
@@ -66,6 +62,6 @@ class CacheController extends AbstractActionController
         } else {
             $countArray['Cached Url'] = true;
         }
-        $this->_helper->json($countArray);
+        return new JsonModel($countArray);
     }
 }

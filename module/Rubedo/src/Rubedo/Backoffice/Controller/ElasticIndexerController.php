@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing Elastic Search indexation
@@ -33,11 +34,11 @@ use Rubedo\Services\Manager;
 class ElasticIndexerController extends AbstractActionController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         
         // get params
-        $params = $this->getRequest()->getParams();
+        $params = $this->params()->fromQuery();
         
         // get option : all, dam, content
         
@@ -46,6 +47,6 @@ class ElasticIndexerController extends AbstractActionController
         $es = Manager::getService('ElasticDataIndex');
         $es->init();
         $return = $es->indexAll($option);
-        $this->_helper->json($return);
+        return new JsonModel($return);
     }
 }

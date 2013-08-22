@@ -34,21 +34,6 @@ use Rubedo\Collection\AbstractLocalizableCollection;
 class LanguagesController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'get-bo-languages',
-        'model',
-        'import-languages',
-        'add-localization',
-        'get-flags-list'
-    );
-
     public function __construct()
     {
         parent::__construct();
@@ -80,7 +65,7 @@ class LanguagesController extends DataAccessController
         foreach ($result['data'] as $languages) {
             $languagesArray[] = array(
                 'key' => $languages['locale'],
-                'label' => isset($languages['ownLabel'])&&($languages['ownLabel']!="")?$languages['ownLabel']:$languages['label']
+                'label' => isset($languages['ownLabel']) && ($languages['ownLabel'] != "") ? $languages['ownLabel'] : $languages['label']
             );
         }
         return $this->_returnJson(array(
@@ -89,7 +74,6 @@ class LanguagesController extends DataAccessController
         ));
     }
 
-    
     public function importLanguagesAction()
     {
         $tsvFile = APPLICATION_PATH . '/../data/ISO-639-2_utf-8.txt';
@@ -118,21 +102,25 @@ class LanguagesController extends DataAccessController
             'success' => true
         ));
     }
-    
-    public function getFlagsListAction(){
+
+    public function getFlagsListAction()
+    {
         $directoryIterator = new \DirectoryIterator(APPLICATION_PATH . '/public/assets/flags/16');
         $flagsArray = array();
         foreach ($directoryIterator as $item) {
-            if ( $item->isDir() || $item->isDot()) {
+            if ($item->isDir() || $item->isDot()) {
                 continue;
             }
             
             $matches = array();
-            if(preg_match('#(.*)\.png#', $item->getFilename(),$matches)){
-                $flagsArray[] = array('code'=>$matches[1]);
-            }           
+            if (preg_match('#(.*)\.png#', $item->getFilename(), $matches)) {
+                $flagsArray[] = array(
+                    'code' => $matches[1]
+                );
+            }
         }
-        $result = array('data'=>$flagsArray);
+        $result = array(
+            'data'=>$flagsArray);
         
         return $this->_returnJson($result);
     }

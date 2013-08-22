@@ -83,8 +83,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     protected function _init ()
     {
         $this->_options = array(
-            'templateDir' => APPLICATION_PATH . "/../public/templates",
-            'cache' => APPLICATION_PATH . "/../cache/twig",
+            'templateDir' => APPLICATION_PATH . "/public/templates",
+            'cache' => APPLICATION_PATH . "/cache/twig",
             'debug' => true,
             'auto_reload' => true
         );
@@ -151,8 +151,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         if (! isset(self::$templateDir)) {
             $this->_options = array(
-                'templateDir' => APPLICATION_PATH . "/../public/templates",
-                'cache' => APPLICATION_PATH . "/../cache/twig",
+                'templateDir' => APPLICATION_PATH . "/public/templates",
+                'cache' => APPLICATION_PATH . "/cache/twig",
                 'debug' => true,
                 'auto_reload' => true
             );

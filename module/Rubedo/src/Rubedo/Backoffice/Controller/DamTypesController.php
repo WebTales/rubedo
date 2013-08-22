@@ -42,7 +42,7 @@ class DamTypesController extends DataAccessController
 
     public function isUsedAction ()
     {
-        $id = $this->getRequest()->getParam('id');
+        $id = $this->params()->fromQuery('id');
         $listResult = Manager::getService('Dam')->getListByDamTypeId($id);
         $resultArray = (is_array($listResult) && $listResult['count'] > 0) ? array(
             "used" => true

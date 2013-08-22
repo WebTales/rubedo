@@ -18,7 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
-
+use Zend\View\Model\JsonModel;
 /**
  * Get Page URL Controller
  *
@@ -31,7 +31,7 @@ class XhrGetPageUrlController extends AbstractActionController
 
     public function indexAction ()
     {
-        $pageId = $this->getRequest()->getParam('page-id');
+        $pageId = $this->params()->fromQuery('page-id');
         if (! $pageId) {
             throw new \Rubedo\Exceptions\User('This action needs a page-id as argument.', "Exception12");
         }
@@ -57,6 +57,6 @@ class XhrGetPageUrlController extends AbstractActionController
             'url' => $url
         );
         
-        $this->_helper->json($returnArray);
+        return new JsonModel($returnArray);
     }
 }

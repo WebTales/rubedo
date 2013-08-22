@@ -44,8 +44,8 @@ class XhrAuthenticationController extends AbstractActionController
      */
     public function loginAction()
     {
-        $login = $this->params()->fromPost('login');//$_POST['login'];
-        $password = $this->params()->fromPost('password');//$_POST['password'];
+        $login = $this->params()->fromPost('login');
+        $password = $this->params()->fromPost('password');
         
         $loginResult = $this->_dataService->authenticate($login, $password);
         
