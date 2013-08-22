@@ -59,27 +59,7 @@ abstract class DataAccessController extends AbstractActionController
     protected $_prettyJson = true;
 
     public function __construct()
-    {
-        // static::init();
-    }
-
-    /**
-     * Disable layout & rendering, set content type to json
-     * init the store parameter if transmitted
-     */
-    public function init()
-    {
-        // initialize localized collections
-        $serviceLanguages = Manager::getService('Languages');
-        if ($serviceLanguages->isActivated()) {
-            $workingLanguage = $this->params()->fromQuery('workingLanguage');
-            if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
-                AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
-            } else {
-                AbstractLocalizableCollection::setWorkingLocale($serviceLanguages->getDefaultLanguage());
-            }
-        }
-    }
+    {}
 
     /**
      * Set the response body with Json content
@@ -102,7 +82,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function indexAction()
     {
-        static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
             $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
@@ -179,7 +158,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function readChildAction()
     {
-        static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
             $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
@@ -214,7 +192,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function deleteChildAction()
     {
-        static::init();
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
@@ -252,7 +229,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function treeAction()
     {
-        static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
             $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
@@ -276,7 +252,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function deleteAction()
     {
-        static::init();
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
@@ -307,7 +282,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function createAction()
     {
-        static::init();
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
@@ -337,7 +311,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function updateAction()
     {
-        static::init();
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
@@ -370,7 +343,6 @@ abstract class DataAccessController extends AbstractActionController
      */
     public function findOneAction()
     {
-        static::init();
         $contentId = $this->params()->fromQuery('id');
         
         if (! is_null($contentId)) {

@@ -13,9 +13,11 @@ use Zend\Mvc\MvcEvent;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
+use Zend\Json\Json;
 use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataAbstract;
-use Zend\Json\Json;
+
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 class Module
 {
@@ -36,10 +38,9 @@ class Module
         
         Services\Manager::setServiceLocator($e->getApplication()->getServiceManager());
         
-        $eventManager = $e->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
             $this,
-            'authPreDispatch'
+            'preDispatch'
         ), 1);
     }
 
@@ -60,9 +61,14 @@ class Module
     }
 
     /**
-     * Authenticate user or redirect to log in
+     * Set context before dispatch
+     * 
+     * Session, User, Rights, Language
+     * 
+     * @param MvcEvent $event
+     * @throws \Rubedo\Exceptions\Access
      */
-    public function authPreDispatch(MvcEvent $event)
+    public function preDispatch(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -81,6 +87,22 @@ class Module
             
             if ($token !== $user['token']) {
                 throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
+            }
+        }
+        
+        if($isBackoffice){
+            // initialize localization for collections
+            $serviceLanguages = Manager::getService('Languages');
+            if ($serviceLanguages->isActivated()) {
+                $workingLanguage = $event->getRequest()->getPost('workingLanguage',false);
+                if(!$workingLanguage){
+                    $workingLanguage = $event->getRequest()->getQuery('workingLanguage',null);
+                }
+                if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
+                    AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
+                } else {
+                    AbstractLocalizableCollection::setWorkingLocale($serviceLanguages->getDefaultLanguage());
+                }
             }
         }
 
