@@ -19,6 +19,8 @@ namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
+use Zend\Json\Json;
+
 
 /**
  * Controller providing CRUD API for the nested contents

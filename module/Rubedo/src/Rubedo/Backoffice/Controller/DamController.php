@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the Groups JSON
@@ -65,20 +66,20 @@ class DamController extends DataAccessController
     public function indexAction ()
     {
         // merge filter and tFilter
-        $jsonFilter = $this->getParam('filter', Zend_Json::encode(array()));
-        $jsonTFilter = $this->getParam('tFilter', Zend_Json::encode(array()));
-        $filterArray = Zend_Json::decode($jsonFilter);
-        $tFilterArray = Zend_Json::decode($jsonTFilter);
+        $jsonFilter = $this->params()->fromGet('filter', Json::encode(array()));
+        $jsonTFilter = $this->params()->fromGet('tFilter', Json::encode(array()));
+        $filterArray = Json::decode($jsonFilter);
+        $tFilterArray = Json::decode($jsonTFilter);
         $globalFilterArray = array_merge($tFilterArray, $filterArray);
         
         // call standard method with merge array
-        $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
+        $this->params()->fromGet()->set('filter', Json::encode($globalFilterArray));
         parent::indexAction();
     }
 
     public function getThumbnailAction ()
     {
-        $mediaId = $this->getParam('id', null);
+        $mediaId = $this->params()->fromGet('id', null);
         if (! $mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
@@ -86,7 +87,7 @@ class DamController extends DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        $version = $this->getParam('version',$media['id']);
+        $version = $this->params()->fromGet('version',$media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
@@ -107,7 +108,7 @@ class DamController extends DataAccessController
 
     public function getOriginalFileAction ()
     {
-        $mediaId = $this->getParam('id', null);
+        $mediaId = $this->params()->fromGet('id', null);
         if (! $mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
@@ -115,7 +116,7 @@ class DamController extends DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        $version = $this->getParam('version',$media['id']);
+        $version = $this->params()->fromGet('version',$media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
@@ -135,13 +136,13 @@ class DamController extends DataAccessController
 
     public function createAction ()
     {
-        $typeId = $this->getParam('typeId');
+        $typeId = $this->params()->fromPost('typeId');
         if (! $typeId) {
             throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
-        $damDirectory = $this->getParam('directory','notFiled');
-        $nativeLanguage = $this->getParam('workingLanguage','en');
+        $damDirectory = $this->params()->fromPost('directory','notFiled');
+        $nativeLanguage = $this->params()->fromPost('workingLanguage','en');
         if (! $damType) {
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
@@ -149,21 +150,21 @@ class DamController extends DataAccessController
         $obj['directory'] = $damDirectory;
         $obj['mainFileType'] = $damType['mainFileType'];
         
-        $title = $this->getParam('title');
+        $title = $this->params()->fromPost('title');
         if (! $title) {
             throw new \Rubedo\Exceptions\User('missing title', "Exception10");
         }
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
-        $obj['taxonomy'] = Zend_Json::decode($this->getParam('taxonomy', Zend_Json::encode(array())));
+        $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', Json::encode(array())));
         
-        $workspace = $this->getParam('writeWorkspace');
+        $workspace = $this->params()->fromPost('writeWorkspace');
         if (! is_null($workspace) && $workspace != "") {
             $obj['writeWorkspace'] = $workspace;
             $obj['fields']['writeWorkspace'] = $workspace;
         }
         
-        $targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
+        $targets = Json::decode($this->params()->fromPost()->getParam('targetArray'));
         if (is_array($targets) && count($targets) > 0) {
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
@@ -177,7 +178,7 @@ class DamController extends DataAccessController
             }
             $fieldConfig = $field['config'];
             $name = $fieldConfig['name'];
-            $obj['fields'][$name] = $this->getParam($name);
+            $obj['fields'][$name] = $this->params()->fromPost($name);
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
                 throw new \Rubedo\Exceptions\User('Required field missing: %1$s', 'Exception4', $name);
             }
@@ -233,9 +234,9 @@ class DamController extends DataAccessController
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         
-        $returnValue = Zend_Json::encode($returnArray);
+        $returnValue = Json::encode($returnArray);
         if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
+            $returnValue = Json::prettyPrint($returnValue);
         }
         $this->getResponse()->setBody($returnValue);
     }
@@ -244,34 +245,34 @@ class DamController extends DataAccessController
      */
     public function massUploadAction ()
     {
-        $typeId = $this->getParam('typeId');
+        $typeId = $this->params()->fromPost('typeId');
         if (! $typeId) {
             throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
-        $nativeLanguage = $this->getParam('workingLanguage','en');
+        $nativeLanguage = $this->params()->fromPost('workingLanguage','en');
         if (! $damType) {
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
         $obj = array();
-        $damDirectory = $this->getParam('directory','notFiled');
+        $damDirectory = $this->params()->fromPost('directory','notFiled');
         $obj['directory'] = $damDirectory;
         $obj['typeId'] = $damType['id'];
         $obj['mainFileType'] = $damType['mainFileType'];
         $obj['fields'] = array();
         $obj['taxonomy'] = array();
-        $encodedActiveFacets = $this->getParam('activeFacets');
-        $activeFacets = Zend_Json::decode($encodedActiveFacets);
-        $applyTaxoFacets = $this->getParam('applyTaxoFacets', false);
+        $encodedActiveFacets = $this->params()->fromPost('activeFacets');
+        $activeFacets = Json::decode($encodedActiveFacets);
+        $applyTaxoFacets = $this->params()->fromPost('applyTaxoFacets', false);
         if (($applyTaxoFacets) && ($applyTaxoFacets != "false")) {
             $obj['taxonomy'] = $activeFacets;
         }
-        $workspace = $this->getParam('writeWorkspace');
+        $workspace = $this->params()->fromPost('writeWorkspace');
         if (! is_null($workspace) && $workspace != "") {
             $obj['writeWorkspace'] = $workspace;
             $obj['fields']['writeWorkspace'] = $workspace;
         }
-        $targets = Zend_Json::decode($this->getRequest()->getParam('targetArray'));
+        $targets = Json::decode($this->params()->fromPost('targetArray'));
         if (is_array($targets) && count($targets) > 0) {
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
@@ -307,10 +308,7 @@ class DamController extends DataAccessController
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         
-        $returnValue = Zend_Json::encode($returnArray);
-        if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
-        }
+        $returnValue = Json::encode($returnArray);
         $this->getResponse()->setBody($returnValue);
     }
 

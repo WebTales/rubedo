@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 
 
 /**
@@ -108,7 +109,7 @@ class CurrentUserController extends AbstractActionController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $insertData = Zend_Json::decode($data);
+            $insertData = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $result = $this->_auth->getIdentity();
                 if ($result) {

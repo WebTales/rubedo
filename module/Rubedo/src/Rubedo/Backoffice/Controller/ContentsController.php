@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 
 /**
@@ -63,20 +64,17 @@ class ContentsController extends DataAccessController
     public function indexAction ()
     {
         // merge filter and tFilter
-        $jsonFilter = $this->getParam('filter', Zend_Json::encode(array()));
-        $jsonTFilter = $this->getParam('tFilter', Zend_Json::encode(array()));
-        $filterArray = Zend_Json::decode($jsonFilter);
-        $tFilterArray = Zend_Json::decode($jsonTFilter);
-        $globalFilterArray = array_merge($tFilterArray, $filterArray);
+        $jsonFilter = $this->params()->fromQuery('filter', '[]');
+        $jsonTFilter = $this->params()->fromQuery('tFilter', '[]');
+        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
         
-        // call standard method with merge array
-        $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
-        
-        $filters = Zend_Json::decode($this->getRequest()->getParam('filter', null));
+        $filters = array_merge($tFilterArray, $filterArray);
         $mongoFilters = $this->_buildFilter($filters);
-        $sort = Zend_Json::decode($this->getRequest()->getParam('sort', null));
-        $start = Zend_Json::decode($this->getRequest()->getParam('start', null));
-        $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
+                
+        $sort = Json::decode($this->params()->fromQuery('sort', null),Json::TYPE_ARRAY);
+        $start = Json::decode($this->params()->fromQuery('start', null),Json::TYPE_ARRAY);
+        $limit = Json::decode($this->params()->fromQuery('limit', null),Json::TYPE_ARRAY);
         
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit, false);
         $response = array();
@@ -95,20 +93,20 @@ class ContentsController extends DataAccessController
      */
     public function readChildAction ()
     {
-        $filterJson = $this->getRequest()->getParam('filter');
+        $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Zend_Json::decode($filterJson);
+            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
-        $sortJson = $this->getRequest()->getParam('sort');
+        $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Zend_Json::decode($sortJson);
+            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
         
-        $parentId = $this->getRequest()->getParam('node', 'root');
+        $parentId = $this->params()->fromQuery('node', 'root');
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->readChild($parentId, $mongoFilters, $sort, false);
         
@@ -126,10 +124,10 @@ class ContentsController extends DataAccessController
      */
     public function createAction ()
     {
-        $data = $this->getRequest()->getParam('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
-            $insertData = Zend_Json::decode($data);
+            $insertData = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $insertData["target"] = isset($insertData["target"]) ? $insertData["target"] : array();
                 $returnArray = $this->_dataService->create($insertData, array(), false);
@@ -156,10 +154,10 @@ class ContentsController extends DataAccessController
      */
     public function updateAction ()
     {
-        $data = $this->getRequest()->getParam('data');
+        $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
-            $updateData = Zend_Json::decode($data);
+            $updateData = Json::decode($data,Json::TYPE_ARRAY);
             if (is_array($updateData)) {
                 
                 $returnArray = $this->_dataService->update($updateData, array(), false);
@@ -186,7 +184,7 @@ class ContentsController extends DataAccessController
      */
     public function findOneAction ()
     {
-        $contentId = $this->getRequest()->getParam('id');
+        $contentId = $this->params()->fromQuery('id');
         
         if (! is_null($contentId)) {
             
@@ -222,19 +220,15 @@ class ContentsController extends DataAccessController
     public function getOrderedListAction ()
     {
         // merge filter and tFilter
-        $jsonFilter = $this->getParam('filter', Zend_Json::encode(array()));
-        $jsonTFilter = $this->getParam('tFilter', Zend_Json::encode(array()));
-        $filterArray = Zend_Json::decode($jsonFilter);
-        $tFilterArray = Zend_Json::decode($jsonTFilter);
-        $globalFilterArray = array_merge($tFilterArray, $filterArray);
+        $jsonFilter = $this->params()->fromQuery('filter', '[]');
+        $jsonTFilter = $this->params()->fromQuery('tFilter', '[]');
+        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
         
-        // call standard method with merge array
-        $this->getRequest()->setParam('filter', Zend_Json::encode($globalFilterArray));
-        
-        $filters = Zend_Json::decode($this->getRequest()->getParam('filter', null));
-        $sort = Zend_Json::decode($this->getRequest()->getParam('sort', null));
-        $start = Zend_Json::decode($this->getRequest()->getParam('start', null));
-        $limit = Zend_Json::decode($this->getRequest()->getParam('limit', null));
+        $filters = array_merge($tFilterArray, $filterArray);
+        $sort = Json::decode($this->params()->fromQuery('sort', null),Json::TYPE_ARRAY);
+        $start = Json::decode($this->params()->fromQuery('start', null),Json::TYPE_ARRAY);
+        $limit = Json::decode($this->params()->fromQuery('limit', null),Json::TYPE_ARRAY);
         
         $mongoFilters = $this->_buildFilter($filters);
         $this->_helper->json($this->_dataService->getOrderedList($mongoFilters, $sort, $start, $limit, false));
@@ -256,7 +250,7 @@ class ContentsController extends DataAccessController
 
     public function deleteByContentTypeIdAction ()
     {
-        $typeId = $this->getParam('type-id');
+        $typeId = $this->params()->fromPost('type-id');
         if (! $typeId) {
             throw new \Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
         }
