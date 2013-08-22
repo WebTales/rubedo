@@ -58,30 +58,18 @@ abstract class DataAccessController extends AbstractActionController
      */
     protected $_prettyJson = true;
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'model'
-    );
-
-    public function __construct(){
-//         static::init();
+    public function __construct()
+    {
+        // static::init();
     }
-    
+
     /**
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
-     *
      */
     public function init()
-    {      
-        
-        //initialize localized collections
+    {
+        // initialize localized collections
         $serviceLanguages = Manager::getService('Languages');
         if ($serviceLanguages->isActivated()) {
             $workingLanguage = $this->params()->fromQuery('workingLanguage');
@@ -91,23 +79,6 @@ abstract class DataAccessController extends AbstractActionController
                 AbstractLocalizableCollection::setWorkingLocale($serviceLanguages->getDefaultLanguage());
             }
         }
-        
-        $sessionService = Manager::getService('Session');
-        
-        //todo move it to an event
-        // refuse write action not send by POST
-//         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getAction(), $this->_readOnlyAction)) {
-//             throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
-//         } else {
-//             if (! in_array($this->getRequest()->getAction(), $this->_readOnlyAction)) {
-//                 $user = $sessionService->get('user');
-//                 $token = $this->params()->fromQuery('token');
-                
-//                 if ($token !== $user['token']) {
-//                     throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-//                 }
-//             }
-//         }
     }
 
     /**
@@ -134,25 +105,25 @@ abstract class DataAccessController extends AbstractActionController
         static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
+            $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
+            $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
         $startJson = $this->params()->fromQuery('start');
         if (isset($startJson)) {
-            $start = Json::decode($startJson,Json::TYPE_ARRAY);
+            $start = Json::decode($startJson, Json::TYPE_ARRAY);
         } else {
             $start = null;
         }
         $limitJson = $this->params()->fromQuery('limit');
         if (isset($limitJson)) {
-            $limit = Json::decode($limitJson,Json::TYPE_ARRAY);
+            $limit = Json::decode($limitJson, Json::TYPE_ARRAY);
         } else {
             $limit = null;
         }
@@ -180,10 +151,10 @@ abstract class DataAccessController extends AbstractActionController
         foreach ($filters as $filter) {
             if (isset($filter['operator']) && $filter['operator'] == 'like') {
                 $mongoFilter = Filter::factory('Regex')->setName($filter['property'])->setValue('/.*' . $filter["value"] . '.*/i');
-             } elseif (isset($filter['operator']) && $filter['operator'] == '$in' && $filter['property'] == 'id') {
+            } elseif (isset($filter['operator']) && $filter['operator'] == '$in' && $filter['property'] == 'id') {
                 $mongoFilter = Filter::factory('InUid')->setValue($filter['value']);
             } elseif (isset($filter['operator']) && $filter['operator'] == '$nin' && $filter['property'] == 'id') {
-                if(count($filter['value'])==0){
+                if (count($filter['value']) == 0) {
                     continue;
                 }
                 $mongoFilter = Filter::factory('NotInUid')->setValue($filter['value']);
@@ -211,13 +182,13 @@ abstract class DataAccessController extends AbstractActionController
         static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
+            $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
+            $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
@@ -247,7 +218,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
-            $data = Json::decode($data,Json::TYPE_ARRAY);
+            $data = Json::decode($data, Json::TYPE_ARRAY);
             
             if (is_array($data)) {
                 
@@ -284,7 +255,7 @@ abstract class DataAccessController extends AbstractActionController
         static::init();
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
+            $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
@@ -309,7 +280,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
-            $data = Json::decode($data,Json::TYPE_ARRAY);
+            $data = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($data)) {
                 
                 $returnArray = $this->_dataService->destroy($data);
@@ -340,7 +311,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
-            $insertData = Json::decode($data,Json::TYPE_ARRAY);
+            $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($insertData);
             } else {
@@ -370,7 +341,7 @@ abstract class DataAccessController extends AbstractActionController
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
-            $updateData = Json::decode($data,Json::TYPE_ARRAY);
+            $updateData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($updateData)) {
                 
                 $returnArray = $this->_dataService->update($updateData);

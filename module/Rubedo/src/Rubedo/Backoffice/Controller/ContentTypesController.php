@@ -34,20 +34,6 @@ use Zend\Json\Json;
 class ContentTypesController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'model',
-        'get-readable-content-types',
-        'is-used',
-        'is-changeable'
-    );
-
     public function __construct ()
     {
         parent::__construct();

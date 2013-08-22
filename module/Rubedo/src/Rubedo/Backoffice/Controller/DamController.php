@@ -34,25 +34,11 @@ class DamController extends DataAccessController
 {
 
     /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-terms',
-        'model',
-        'get-original-file',
-        'get-thumbnail'
-    );
-
-    /**
      * Contain the MIME type
      */
     protected $_mimeType = "";
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         
@@ -63,21 +49,23 @@ class DamController extends DataAccessController
     /*
      * (non-PHPdoc) @see DataAccessController::indexAction()
      */
-    public function indexAction ()
+    public function indexAction()
     {
         // merge filter and tFilter
         $jsonFilter = $this->params()->fromGet('filter', '[]');
         $jsonTFilter = $this->params()->fromGet('tFilter', '[]');
-        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
-        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
+        $filterArray = Json::decode($jsonFilter, Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter, Json::TYPE_ARRAY);
         $globalFilterArray = array_merge($tFilterArray, $filterArray);
         
         // call standard method with merge array
-        $this->params()->fromGet()->set('filter', Json::encode($globalFilterArray));
+        $this->params()
+            ->fromGet()
+            ->set('filter', Json::encode($globalFilterArray));
         parent::indexAction();
     }
 
-    public function getThumbnailAction ()
+    public function getThumbnailAction()
     {
         $mediaId = $this->params()->fromGet('id', null);
         if (! $mediaId) {
@@ -87,7 +75,7 @@ class DamController extends DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        $version = $this->params()->fromGet('version',$media['id']);
+        $version = $this->params()->fromGet('version', $media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
@@ -106,7 +94,7 @@ class DamController extends DataAccessController
         }
     }
 
-    public function getOriginalFileAction ()
+    public function getOriginalFileAction()
     {
         $mediaId = $this->params()->fromGet('id', null);
         if (! $mediaId) {
@@ -116,7 +104,7 @@ class DamController extends DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        $version = $this->params()->fromGet('version',$media['id']);
+        $version = $this->params()->fromGet('version', $media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
@@ -134,15 +122,15 @@ class DamController extends DataAccessController
         }
     }
 
-    public function createAction ()
+    public function createAction()
     {
         $typeId = $this->params()->fromPost('typeId');
         if (! $typeId) {
             throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
-        $damDirectory = $this->params()->fromPost('directory','notFiled');
-        $nativeLanguage = $this->params()->fromPost('workingLanguage','en');
+        $damDirectory = $this->params()->fromPost('directory', 'notFiled');
+        $nativeLanguage = $this->params()->fromPost('workingLanguage', 'en');
         if (! $damType) {
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
@@ -164,7 +152,9 @@ class DamController extends DataAccessController
             $obj['fields']['writeWorkspace'] = $workspace;
         }
         
-        $targets = Json::decode($this->params()->fromPost()->getParam('targetArray'));
+        $targets = Json::decode($this->params()
+            ->fromPost()
+            ->getParam('targetArray'));
         if (is_array($targets) && count($targets) > 0) {
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
@@ -219,10 +209,10 @@ class DamController extends DataAccessController
                 'msg' => 'no main file uploaded'
             ));
         }
-        $obj['nativeLanguage']=$nativeLanguage;
-        $obj['i18n']=array();
-        $obj['i18n'][$nativeLanguage]=array();
-        $obj['i18n'][$nativeLanguage]['fields']=$obj['fields'];
+        $obj['nativeLanguage'] = $nativeLanguage;
+        $obj['i18n'] = array();
+        $obj['i18n'][$nativeLanguage] = array();
+        $obj['i18n'][$nativeLanguage]['fields'] = $obj['fields'];
         unset($obj['i18n'][$nativeLanguage]['fields']['writeWorkspace']);
         unset($obj['i18n'][$nativeLanguage]['fields']['target']);
         $returnArray = $this->_dataService->create($obj);
@@ -243,19 +233,19 @@ class DamController extends DataAccessController
     /*
      * Method used by Back Office mass uploader for each file
      */
-    public function massUploadAction ()
+    public function massUploadAction()
     {
         $typeId = $this->params()->fromPost('typeId');
         if (! $typeId) {
             throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
-        $nativeLanguage = $this->params()->fromPost('workingLanguage','en');
+        $nativeLanguage = $this->params()->fromPost('workingLanguage', 'en');
         if (! $damType) {
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
         $obj = array();
-        $damDirectory = $this->params()->fromPost('directory','notFiled');
+        $damDirectory = $this->params()->fromPost('directory', 'notFiled');
         $obj['directory'] = $damDirectory;
         $obj['typeId'] = $damType['id'];
         $obj['mainFileType'] = $damType['mainFileType'];
@@ -279,7 +269,7 @@ class DamController extends DataAccessController
         }
         $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true);
         if ($uploadResult['success']) {
-            $properName=explode(".", $uploadResult['data']['text']);
+            $properName = explode(".", $uploadResult['data']['text']);
             $obj['title'] = $properName[0];
             $obj['fields']['title'] = $properName[0];
             $obj['originalFileId'] = $uploadResult['data']['id'];
@@ -294,10 +284,10 @@ class DamController extends DataAccessController
                 'msg' => 'no main file uploaded'
             ));
         }
-        $obj['nativeLanguage']=$nativeLanguage;
-        $obj['i18n']=array();
-        $obj['i18n'][$nativeLanguage]=array();
-        $obj['i18n'][$nativeLanguage]['fields']=$obj['fields'];
+        $obj['nativeLanguage'] = $nativeLanguage;
+        $obj['i18n'] = array();
+        $obj['i18n'][$nativeLanguage] = array();
+        $obj['i18n'][$nativeLanguage]['fields'] = $obj['fields'];
         unset($obj['i18n'][$nativeLanguage]['fields']['writeWorkspace']);
         unset($obj['i18n'][$nativeLanguage]['fields']['target']);
         $returnArray = $this->_dataService->create($obj);
@@ -312,7 +302,7 @@ class DamController extends DataAccessController
         $this->getResponse()->setBody($returnValue);
     }
 
-    protected function _uploadFile ($name, $fileType, $returnFullResult = false)
+    protected function _uploadFile($name, $fileType, $returnFullResult = false)
     {
         $adapter = new Zend_File_Transfer_Adapter_Http();
         

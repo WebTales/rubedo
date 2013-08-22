@@ -32,20 +32,7 @@ use Rubedo\Services\Manager;
 class GroupsController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-groups',
-        'count-orphan-groups',
-        'model'
-    );
-
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         
@@ -58,14 +45,14 @@ class GroupsController extends DataAccessController
      *
      * @return array Result of the request
      */
-    public function clearOrphanGroupsAction ()
+    public function clearOrphanGroupsAction()
     {
         $result = $this->_dataService->clearOrphanGroups();
         
         return $this->_returnJson($result);
     }
 
-    public function countOrphanGroupsAction ()
+    public function countOrphanGroupsAction()
     {
         $result = $this->_dataService->countOrphanGroups();
         

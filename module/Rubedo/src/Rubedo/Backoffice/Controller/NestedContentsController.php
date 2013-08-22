@@ -21,7 +21,6 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
 
-
 /**
  * Controller providing CRUD API for the nested contents
  *
@@ -51,19 +50,12 @@ class NestedContentsController extends AbstractActionController
     protected $_prettyJson = true;
 
     /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index'
-    );
-
-    /**
      * Disable layout & rendering, set content type to json
      * init the store parameter if transmitted
      *
      * @see AbstractActionController::init()
      */
-    public function __construct ()
+    public function __construct()
     {
         // init the data access service
         $this->_dataService = Manager::getService('NestedContents');
@@ -77,32 +69,16 @@ class NestedContentsController extends AbstractActionController
             $this->getResponse()->setStatusCode(500);
             return $this->_returnJson($response);
         }
-        
-        $sessionService = Manager::getService('Session');
-        
-        // refuse write action not send by POST
-        if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-            throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
-        } else {
-            if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-                $user = $sessionService->get('user');
-                $token = $this->getRequest()->getParam('token');
-                
-                if ($token !== $user['token']) {
-                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-                }
-            }
-        }
     }
 
     /**
      * Set the response body with Json content
      * Option : json is made human readable
-     * 
+     *
      * @param mixed $data
      *            data to be json encoded
      */
-    protected function _returnJson ($data)
+    protected function _returnJson($data)
     {
         // disable layout and set content type
         $this->getHelper('Layout')->disableLayout();
@@ -122,7 +98,7 @@ class NestedContentsController extends AbstractActionController
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
      */
-    public function indexAction ()
+    public function indexAction()
     {
         if (! isset($this->_parentId)) {
             return;
@@ -130,13 +106,13 @@ class NestedContentsController extends AbstractActionController
         
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
+            $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->getRequest()->getParam('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
+            $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
@@ -156,7 +132,7 @@ class NestedContentsController extends AbstractActionController
     /**
      * The destroy action of the CRUD API
      */
-    public function deleteAction ()
+    public function deleteAction()
     {
         if (! isset($this->_parentId)) {
             return;
@@ -165,7 +141,7 @@ class NestedContentsController extends AbstractActionController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $data = Json::decode($data,Json::TYPE_ARRAY);
+            $data = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($data)) {
                 
                 $returnArray = $this->_dataService->destroy($this->_parentId, $data, true);
@@ -190,7 +166,7 @@ class NestedContentsController extends AbstractActionController
     /**
      * The create action of the CRUD API
      */
-    public function createAction ()
+    public function createAction()
     {
         if (! isset($this->_parentId)) {
             return;
@@ -199,7 +175,7 @@ class NestedContentsController extends AbstractActionController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $insertData = Json::decode($data,Json::TYPE_ARRAY);
+            $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($this->_parentId, $insertData, true);
             } else {
@@ -223,7 +199,7 @@ class NestedContentsController extends AbstractActionController
     /**
      * The update action of the CRUD API
      */
-    public function updateAction ()
+    public function updateAction()
     {
         if (! isset($this->_parentId)) {
             return;
@@ -232,7 +208,7 @@ class NestedContentsController extends AbstractActionController
         $data = $this->getRequest()->getParam('data');
         
         if (! is_null($data)) {
-            $updateData = Json::decode($data,Json::TYPE_ARRAY);
+            $updateData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($updateData)) {
                 
                 $returnArray = $this->_dataService->update($this->_parentId, $updateData, true);

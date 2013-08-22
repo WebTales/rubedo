@@ -32,18 +32,6 @@ use Rubedo\Services\Manager;
 class IconsController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-icons',
-        'count-orphan-icons'
-    );
-
     public function __construct ()
     {
         parent::__construct();

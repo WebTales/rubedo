@@ -33,19 +33,6 @@ use Zend\View\Model\JsonModel;
 class FormsController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'model',
-        'get-csv',
-        'get-stats'
-    );
-
     public function __construct ()
     {
         parent::__construct();

@@ -33,19 +33,6 @@ use Zend\Json\Json;
 class DirectoriesController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-pages',
-        'count-orphan-pages',
-        'model'
-    );
-
     public function __construct()
     {
         parent::__construct();

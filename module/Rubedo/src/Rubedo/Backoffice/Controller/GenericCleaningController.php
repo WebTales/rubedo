@@ -32,24 +32,7 @@ use Rubedo\Services\Manager;
 class GenericCleaningController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphans',
-        'count-orphans'
-    );
-
-    public function __construct ()
-    {
-        parent::__construct();
-    }
-
-    public function clearOrphansAction ()
+    public function clearOrphansAction()
     {
         $iconsService = Manager::getService('Icons');
         $personalPrefsService = Manager::getService('PersonalPrefs');
@@ -70,7 +53,7 @@ class GenericCleaningController extends DataAccessController
         return $this->_returnJson($results);
     }
 
-    public function countOrphansAction ()
+    public function countOrphansAction()
     {
         $iconsService = Manager::getService('Icons');
         $personalPrefsService = Manager::getService('PersonalPrefs');

@@ -21,7 +21,6 @@ use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
-
 /**
  * Controller providing action concerning the current user
  *
@@ -50,35 +49,12 @@ class CurrentUserController extends AbstractActionController
     protected $_currentUserService;
 
     /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'get-token'
-    );
-
-    /**
      * Initialise the controller
      */
-    public function __construct ()
+    public function __construct()
     {
-        
         $this->_auth = Manager::getService('Authentication');
         $this->_currentUserService = Manager::getService('CurrentUser');
-        
-//         // refuse write action not send by POST
-//         if (! $this->getRequest()->isPost() && ! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-//             throw new \Rubedo\Exceptions\Access("You can't call a write action with a GET request", "Exception5");
-//         } else {
-//             if (! in_array($this->getRequest()->getActionName(), $this->_readOnlyAction)) {
-//                 $user = Manager::getService('Session')->get('user');
-//                 $token = $this->getRequest()->getParam('token');
-                
-//                 if ($token !== $user['token']) {
-//                     throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
-//                 }
-//             }
-//         }
     }
 
     /**
@@ -86,7 +62,7 @@ class CurrentUserController extends AbstractActionController
      *
      * @return array
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $currentUserService = Manager::getService('CurrentUser');
         $response = $currentUserService->getCurrentUser();
@@ -103,13 +79,13 @@ class CurrentUserController extends AbstractActionController
     /**
      * Update the current values for the user
      */
-    public function updateAction ()
+    public function updateAction()
     {
         $usersService = Manager::getService('Users');
         $data = $this->params()->fromPost('data');
         
         if (! is_null($data)) {
-            $insertData = Json::decode($data,Json::TYPE_ARRAY);
+            $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $result = $this->_auth->getIdentity();
                 if ($result) {
@@ -150,7 +126,7 @@ class CurrentUserController extends AbstractActionController
     /**
      * Action to change the current user password
      */
-    public function changePasswordAction ()
+    public function changePasswordAction()
     {
         $oldPassword = $this->params()->fromPost('oldPassword');
         $newPassword = $this->params()->fromPost('newPassword');
@@ -167,7 +143,7 @@ class CurrentUserController extends AbstractActionController
     /**
      * Return a json with the token of the current user
      */
-    public function getTokenAction ()
+    public function getTokenAction()
     {
         $response = array();
         $response['token'] = $this->_currentUserService->getToken();

@@ -35,19 +35,6 @@ use Zend\View\Model\JsonModel;
 class ContentsController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'tree',
-        'clear-orphan-contents',
-        'count-orphan-contents',
-        'get-ordered-list'
-    );
-
     public function __construct ()
     {
         parent::__construct();

@@ -32,21 +32,7 @@ use Rubedo\Services\Manager;
 class TaxonomyTermsController extends DataAccessController
 {
 
-    /**
-     * Array with the read only actions
-     */
-    protected $_readOnlyAction = array(
-        'index',
-        'find-one',
-        'read-child',
-        'navigation-tree',
-        'clear-orphan-terms',
-        'count-orphan-terms',
-        'model',
-        'tree'
-    );
-
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
         
@@ -59,21 +45,21 @@ class TaxonomyTermsController extends DataAccessController
      *
      * @return array Result of the request
      */
-    public function clearOrphanTermsAction ()
+    public function clearOrphanTermsAction()
     {
         $result = $this->_dataService->clearOrphanTerms();
         
         return $this->_returnJson($result);
     }
 
-    public function countOrphanTermsAction ()
+    public function countOrphanTermsAction()
     {
         $result = $this->_dataService->countOrphanTerms();
         
         return $this->_returnJson($result);
     }
 
-    public function navigationTreeAction ()
+    public function navigationTreeAction()
     {
         $withCurrentPage = $this->params()->fromQuery('add-current-page', false);
         $result = $this->_dataService->getNavigationTree($withCurrentPage);
