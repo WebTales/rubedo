@@ -18,6 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the Groups JSON
@@ -52,22 +53,21 @@ class DamController extends DataAccessController
     public function indexAction()
     {
         // merge filter and tFilter
-        $jsonFilter = $this->params()->fromGet('filter', '[]');
-        $jsonTFilter = $this->params()->fromGet('tFilter', '[]');
+        $jsonFilter = $this->params()->fromQuery('filter', '[]');
+        $jsonTFilter = $this->params()->fromQuery('tFilter', '[]');
         $filterArray = Json::decode($jsonFilter, Json::TYPE_ARRAY);
         $tFilterArray = Json::decode($jsonTFilter, Json::TYPE_ARRAY);
         $globalFilterArray = array_merge($tFilterArray, $filterArray);
         
         // call standard method with merge array
-        $this->params()
-            ->fromGet()
+        $this->getRequest()->getQuery()
             ->set('filter', Json::encode($globalFilterArray));
-        parent::indexAction();
+        return parent::indexAction();
     }
 
     public function getThumbnailAction()
     {
-        $mediaId = $this->params()->fromGet('id', null);
+        $mediaId = $this->params()->fromQuery('id', null);
         if (! $mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
@@ -75,7 +75,7 @@ class DamController extends DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        $version = $this->params()->fromGet('version', $media['id']);
+        $version = $this->params()->fromQuery('version', $media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
@@ -96,7 +96,7 @@ class DamController extends DataAccessController
 
     public function getOriginalFileAction()
     {
-        $mediaId = $this->params()->fromGet('id', null);
+        $mediaId = $this->params()->fromQuery('id', null);
         if (! $mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
@@ -104,7 +104,7 @@ class DamController extends DataAccessController
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        $version = $this->params()->fromGet('version', $media['id']);
+        $version = $this->params()->fromQuery('version', $media['id']);
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
@@ -142,9 +142,10 @@ class DamController extends DataAccessController
         if (! $title) {
             throw new \Rubedo\Exceptions\User('missing title', "Exception10");
         }
+        
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
-        $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', '[]'));
+        $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', '[]'),Json::TYPE_ARRAY);
         
         $workspace = $this->params()->fromPost('writeWorkspace');
         if (! is_null($workspace) && $workspace != "") {
@@ -153,8 +154,7 @@ class DamController extends DataAccessController
         }
         
         $targets = Json::decode($this->params()
-            ->fromPost()
-            ->getParam('targetArray'));
+            ->fromPost('targetArray'),Json::TYPE_ARRAY);
         if (is_array($targets) && count($targets) > 0) {
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
@@ -220,15 +220,7 @@ class DamController extends DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
-        // disable layout and set content type
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        
-        $returnValue = Json::encode($returnArray);
-        if ($this->_prettyJson) {
-            $returnValue = Json::prettyPrint($returnValue);
-        }
-        $this->getResponse()->setBody($returnValue);
+        return new JsonModel($returnArray);
     }
     /*
      * Method used by Back Office mass uploader for each file
@@ -304,15 +296,17 @@ class DamController extends DataAccessController
 
     protected function _uploadFile($name, $fileType, $returnFullResult = false)
     {
-        $adapter = new Zend_File_Transfer_Adapter_Http();
+//         $adapter = new Zend_File_Transfer_Adapter_Http();
         
-        if (! $adapter->receive($name)) {
-            return null;
-        }
+//         if (! $adapter->receive($name)) {
+//             return null;
+//         }
         
-        $filesArray = $adapter->getFileInfo();
+//         $filesArray = $adapter->getFileInfo();
         
-        $fileInfos = $filesArray[$name];
+//         $fileInfos = $filesArray[$name];
+        
+        $fileInfos = $this->params()->fromFile($name);
         
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         

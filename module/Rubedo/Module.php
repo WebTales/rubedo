@@ -76,11 +76,28 @@ class Module
             $this->initializeSession($event);
         }
         
-        //check authentication
+        list($applicationName,$moduleName,$constant,$controllerName) = explode('\\', $controller);
+        $controllerName = strtolower($controllerName);
+        $moduleName = strtolower($moduleName);
+        
+        //check access
+        $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;
+        if ($moduleName == 'install') {
+            $hasAccess = true;
+        } elseif (($moduleName == 'frontoffice' || ! isset($moduleName)) && (($action == 'index' && $controller == 'index') || ($action == 'error' && $controller == 'error') || ($action == 'index' && $controller == 'image') || ($action == 'index' && $controller == 'dam'))) {
+            $hasAccess = true;
+        } else {
+            $aclService = Manager::getService('Acl');
+            $hasAccess = $aclService->hasAccess($ressourceName);
+        }
+        
+        if (! $hasAccess) {
+            throw new \Rubedo\Exceptions\Access('Can\'t access %1$s', "Exception30", $ressourceName);
+        }
 
         //check BO Token        
         $isBackoffice = strpos($controller,'Rubedo\\Backoffice\\Controller')===0;
-        $doNotCheckTokenControllers = array('Rubedo\\Backoffice\\Controller\\Acl');
+        $doNotCheckTokenControllers = array('Rubedo\\Backoffice\\Controller\\Acl','Rubedo\\Backoffice\\Controller\\XhrAuthentication');
         if($isBackoffice && $event->getRequest()->isPost() && !in_array($controller,$doNotCheckTokenControllers)){
             $user = Manager::getService('Session')->get('user');
             $token = $event->getRequest()->getPost('token');

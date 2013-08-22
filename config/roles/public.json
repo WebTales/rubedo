@@ -36,6 +36,7 @@
         "execute.controller.xhr-language.define-language.default",
         "execute.controller.languages.get-flags-list.backoffice",
         "execute.controller.search.xhr-get-suggests.blocks",
-        "execute.controller.geosearch.xhr-get-suggests.blocks"
+        "execute.controller.geosearch.xhr-get-suggests.blocks",
+        "execute.controller.languages.index.backoffice"
  	]
 }
