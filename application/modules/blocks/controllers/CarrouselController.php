@@ -77,22 +77,20 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $data = array();
         if ($nbItems > 0) {
             foreach ($contentArray['data'] as $vignette) {
-                if (isset($vignette['fields']['image'])) {
-                    $fields = $vignette['fields'];
-                    $terms = isset($vignette['taxonomy']) && count($vignette['taxonomy']) > 0 ? array_pop($vignette['taxonomy']) : array();
-                    $termsArray = array();
-                    foreach ($terms as $term) {
-                        if ($term == 'navigation') {
-                            continue;
-                        }
-                        $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
+                $fields = $vignette['fields'];
+                $terms = isset($vignette['taxonomy']) && count($vignette['taxonomy']) > 0 ? array_pop($vignette['taxonomy']) : array();
+                $termsArray = array();
+                foreach ($terms as $term) {
+                    if ($term == 'navigation') {
+                        continue;
                     }
-                    $fields['terms'] = $termsArray;
-                    $fields['title'] = $fields['text'];
-                    unset($fields['text']);
-                    $fields['id'] = (string) $vignette['id'];
-                    $data[] = $fields;
+                    $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
                 }
+                $fields['terms'] = $termsArray;
+                $fields['title'] = $fields['text'];
+                unset($fields['text']);
+                $fields['id'] = (string) $vignette['id'];
+                $data[] = $fields;
             }
         }
         $output = $this->getAllParams();

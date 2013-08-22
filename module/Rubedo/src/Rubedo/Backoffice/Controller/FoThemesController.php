@@ -68,15 +68,6 @@ class FoThemesController extends AbstractActionController
      */
     public function indexAction ()
     {
-        $dataValues = array();
-        $dataValues[] = array(
-            'text' => 'default',
-            'label' => 'Default'
-        );
-        $dataValues[] = array(
-            'text' => 'cnews',
-            'label' => 'Ville'
-        );
         
         $response = Manager::getService('FrontOfficeTemplates')->getAvailableThemes();
         

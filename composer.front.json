@@ -13,7 +13,8 @@
 		"webtales/rubedo-localization": "dev-master",
 		"jschr/bootstrap-modal": "2.1",
 		"WebTales/bsie": "dev-master",
-		"stowball/jQuery-rwdImageMaps": "1.0"
+		"stowball/jQuery-rwdImageMaps": "1.0",
+		"twbs/bootstrap": "v2.3.2"
 	},
 	"require-dev": {},
 	"repositories": [
@@ -119,6 +120,9 @@
 		},{
 		    "type": "vcs",
 		    "url": "git://github.com/WebTales/bsie.git"
+		},{
+		    "type": "vcs",
+		    "url": "git://github.com/twbs/bootstrap.git"
 		}
 	],
 	"minimum-stability": "stable",
