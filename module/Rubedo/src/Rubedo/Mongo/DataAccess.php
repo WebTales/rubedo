@@ -141,6 +141,8 @@ class DataAccess implements IDataAccess
     {
         return static::$_defaultMongo;
     }
+    
+    
 
     /**
      * temp data for tree view
@@ -150,6 +152,14 @@ class DataAccess implements IDataAccess
     protected $_lostChildren = array();
 
     /**
+     * @return the $_defaultDb
+     */
+    public static function getDefaultDb()
+    {
+        return DataAccess::$_defaultDb;
+    }
+
+	/**
      * init the filter with a global "and" filter
      */
     public function __construct ()
@@ -215,7 +225,7 @@ class DataAccess implements IDataAccess
      *            mongoDB connection string
      * @return \Mongo
      */
-    protected function _getAdapter ($mongo)
+    public function getAdapter ($mongo)
     {
         if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \MongoClient) {
             return self::$_adapterArray[$mongo];
@@ -238,7 +248,7 @@ class DataAccess implements IDataAccess
         if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
             return self::$_dbArray[$mongo . '_' . $dbName];
         } else {
-            $this->_adapter = $this->_getAdapter($mongo . '/' . $dbName);
+            $this->_adapter = $this->getAdapter($mongo . '/' . $dbName);
             $db = $this->_adapter->$dbName;
             self::$_dbArray[$mongo . '_' . $dbName] = $db;
             return $db;

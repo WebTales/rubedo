@@ -13,10 +13,13 @@ use Zend\Mvc\MvcEvent;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
+use Zend\Session\SaveHandler\MongoDB;
+use Zend\Session\SaveHandler\MongoDBOptions;
 use Zend\Json\Json;
 use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataAbstract;
 use Rubedo\Collection\AbstractLocalizableCollection;
+use Rubedo\Mongo\DataAccess;
 
 class Module
 {
@@ -126,7 +129,7 @@ class Module
         }
     }
 
-    public function initializeSession (MvcEvent $e)
+    protected function initializeSession (MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()
@@ -135,9 +138,24 @@ class Module
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config['session']);
         
+        $mongoInfos = Mongo\DataAccess::getDefaultMongo();
+        $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
+        $dbName = Mongo\DataAccess::getDefaultDb();
+        
+        
+        $options = new MongoDBOptions(array(
+            'database' => $dbName,
+            'collection' => 'sessions',
+        ));
+        
+        $saveHandler = new MongoDB($adapter, $options);
+        
+        
+        
         $sessionManager = new SessionManager($sessionConfig);
+        $sessionManager->setSaveHandler($saveHandler);
+        
         $sessionManager->start();
-        // $sessionManager->regenerateId(false);
         
         Container::setDefaultManager($sessionManager);
     }

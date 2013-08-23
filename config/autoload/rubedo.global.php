@@ -1,12 +1,16 @@
 <?php
 $config = array();
 
+$sessionLifeTime = 300;
+
 $config['session'] = array(
-    'remember_me_seconds' => 300,
+    'remember_me_seconds' => $sessionLifeTime,
     'use_cookies' => true,
     'cookie_httponly' => false,
-    // 'cookieLifetime' => 300,
-    'name' => 'rubedo'
+    //'cookieLifetime' => $sessionLifeTime,
+    'gc_maxlifetime' => $sessionLifeTime,
+    'name' => 'rubedo',
+    'cookie_httponly'=>true
 );
 
 $config['datastream'] = array();
