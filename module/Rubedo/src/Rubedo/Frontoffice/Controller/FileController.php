@@ -14,6 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Frontoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -28,22 +31,21 @@ use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class FileController extends Zend_Controller_Action
+class FileController extends AbstractActionController
 {
 
     function indexAction ()
     {
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
+
         
-        $fileId = $this->getRequest()->getParam('file-id');
-        $version = $this->getParam('version',1);
+        $fileId = $this->params()->fromQuery('file-id');
+        $version = $this->params()->fromQuery('version',1);
         
         if (isset($fileId)) {
             
             $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof MongoGridFSFile) {
+            if (! $obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
@@ -109,70 +111,74 @@ class FileController extends Zend_Controller_Action
                 $seekEnd = ($range[1] > 0) ? intval($range[1]) : - 1;
             }
             
+            $response = new \Zend\Http\Response\Stream();
+            $response->getHeaders()->addHeaders(array(
+                'Content-type' => 'image/' . $type,
+                'Content-Disposition' => 'inline; filename="' . $filename,
+                'Pragma' => 'Public',
+                'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
+                'Expires' => date(DATE_RFC822, strtotime("7 day"))
+            ));
+            
+            if ($forceDownload) {
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Disposition' => 'attachment; filename="' . $filename
+                ));
+            } else {
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Disposition' => 'inline; filename="' . $filename
+                ));
+            }
+            $response->setStream($stream);
+            return $response;
+            
             // error_log("access par tranche : $filename $seekStart => $seekEnd");
-            $this->getResponse()->clearBody();
-            $this->getResponse()->clearHeaders();
+           
             if (strpos($mimeType, 'video') !== false) {
                 list ($mimeType) = explode(';', $mimeType);
             }
+            $response->getHeaders()->addHeaders(array(
+                'Content-Type'=> $mimeType
+            ));
             $this->getResponse()->setHeader('Content-Type', $mimeType, true);
             
-            if ($doNotDownload) {
-                $this->getResponse()->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"', true);
-            } else {
-                $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"', true);
-            }
-            
-            // ensure no buffering for memory issues
-            while (ob_get_level() > 0) {
-                ob_end_clean();
-            }
+            $stream = fopen($tmpImagePath, 'rb');
             
             if ($seekStart >= 0 && $seekEnd > 0 && ! ($filelength == $seekEnd - $seekStart)) {
-                $this->getResponse()->setHeader('Content-Length', $filelength - $seekStart, true);
-                $this->getResponse()->setHeader('Content-Range', "bytes $seekStart-$seekEnd/$filelength", true);
-                $this->getResponse()->setHeader('Accept-Ranges', "bytes", true);
-                $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
-                $this->getResponse()->setHttpResponseCode(206);
-                $this->getResponse()->setHeader('Status', '206 Partial Content');
-                $this->getResponse()->sendHeaders();
-                $fo = fopen($tmpImagePath, 'rb');
-                $bufferSize = 1024 * 200;
-                $currentByte = $seekStart;
-                fseek($fo, $seekStart);
-                
-                while ($currentByte <= $seekEnd) {
-                    $actualBuffer = ($seekEnd + 1 - $currentByte > $bufferSize) ? $bufferSize : $seekEnd + 1 - $currentByte;
-                    echo fread($fo, $actualBuffer);
-                    $currentByte += $actualBuffer;
-                    flush();
-                }
-                
-                fclose($fo);
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Length'=> $filelength - $seekStart,
+                    'Content-Range'=> "bytes $seekStart-$seekEnd/$filelength",
+                    'Accept-Ranges', "bytes",
+                    'Status'=> '206 Partial Content'
+                ));
+                $response->setStatusCode(206);
+                $response->setReasonPhrase('Partial Content');
+                $response->setContentLength($seekEnd+1-$seekStart);
+                //set offset
+
+               
             } elseif ($seekStart > 0 && $seekEnd == - 1) {
-                $this->getResponse()->setHeader('Content-Length', $filelength - $seekStart, true);
-                $this->getResponse()->setHeader('Content-Range', "bytes $seekStart-$lastByte/$filelength", true);
-                $this->getResponse()->setHeader('Accept-Ranges', "bytes", true);
-                $this->getResponse()->setRawHeader('HTTP/1.1 206 Partial Content');
-                $this->getResponse()->setHttpResponseCode(206);
-                $this->getResponse()->setHeader('Status', '206 Partial Content');
-                $this->getResponse()->sendHeaders();
-                $fo = fopen($tmpImagePath, 'rb');
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Length'=> $filelength - $seekStart,
+                    'Content-Range'=> "bytes $seekStart-$lastByte/$filelength",
+                    'Accept-Ranges', "bytes",
+                    'Status'=> '206 Partial Content'
+                ));
+                $response->setStatusCode(206);
+                $response->setReasonPhrase('Partial Content');
+                //set offset
                 
-                fseek($fo, $seekStart);
-                fpassthru($fo);
-                fclose($fo);
+                
             } else {
-                $this->getResponse()->setHeader('Accept-Ranges', "bytes", true);
-                $this->getResponse()->setHeader('Content-Range', "bytes 0-$lastByte/$filelength", true);
-                $this->getResponse()->setHeader('Content-Length', $filelength);
-                $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 7 * 24 * 3600, true);
-                $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime(" 7 day")), true);
-                $this->getResponse()->sendHeaders();
-                readfile($tmpImagePath);
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Length'=> $filelength,
+                    'Content-Range'=> "bytes 0-/$filelength",
+                    'Accept-Ranges', "bytes",
+                ));
+
             }
-            
-            exit();
+            $response->setStream($stream);
+            return $response;
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }
