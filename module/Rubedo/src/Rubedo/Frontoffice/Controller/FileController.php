@@ -84,7 +84,7 @@ class FileController extends AbstractActionController
                 $doNotDownload = true;
             }
             
-            switch ($this->getParam('attachment', null)) {
+            switch ($this->params()->fromQuery('attachment', null)) {
                 case 'download':
                     $doNotDownload = false;
                     break;
@@ -111,7 +111,7 @@ class FileController extends AbstractActionController
             
             $response = new \Zend\Http\Response\Stream();
             
-            if ($forceDownload) {
+            if (!$doNotDownload) {
                 $response->getHeaders()->addHeaders(array(
                     'Content-Disposition' => 'attachment; filename="' . $filename
                 ));
