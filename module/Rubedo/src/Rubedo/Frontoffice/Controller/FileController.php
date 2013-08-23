@@ -61,7 +61,7 @@ class FileController extends AbstractActionController
             $filename = $meta['filename'];
             
             if (class_exists('finfo')) {
-                $finfo = new finfo(FILEINFO_MIME);
+                $finfo = new \finfo(FILEINFO_MIME);
                 $mimeType = $finfo->file($tmpImagePath);
             }
             
