@@ -51,11 +51,13 @@ class LogoutController extends AbstractActionController
      */
     public function indexAction()
     {
-        if ($this->_auth->getIdentity()) {
+        if ($this->_auth->hasIdentity()) {
             $this->_auth->clearIdentity();
             
             $response['success'] = true;
         }
+        Manager::getService('Session')->getSessionObject()->getManager()->regenerateId(true);
+        
         
         if ($this->getRequest()->isXmlHttpRequest()) {
             return new JsonModel($response);

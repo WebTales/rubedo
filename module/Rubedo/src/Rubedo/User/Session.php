@@ -40,7 +40,7 @@ class Session implements ISession
      *
      * @return object
      */
-    protected function _getSessionObject ()
+    public function getSessionObject ()
     {
         if (! $this->_sessionObject instanceof SessionContainer) {
             $this->_sessionObject = new SessionContainer(static::$_sessionName);
@@ -56,7 +56,7 @@ class Session implements ISession
      */
     public function set ($name, $value)
     {
-        $this->_getSessionObject()->$name = $value;
+        $this->getSessionObject()->$name = $value;
     }
 
     /**
@@ -70,11 +70,11 @@ class Session implements ISession
      */
     public function get ($name, $defaultValue = null)
     {
-        if (! isset($this->_getSessionObject()->$name)) {
-            $this->_getSessionObject()->$name = $defaultValue;
+        if (! isset($this->getSessionObject()->$name)) {
+            $this->getSessionObject()->$name = $defaultValue;
             return $defaultValue;
         } else {
-            return $this->_getSessionObject()->$name;
+            return $this->getSessionObject()->$name;
         }
     }
 }

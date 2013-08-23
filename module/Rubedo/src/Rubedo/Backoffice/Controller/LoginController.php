@@ -58,7 +58,7 @@ class LoginController extends AbstractExtLoaderController
             
             return $this->redirect()->toUrl($backofficeUrl);
         }
-        
+        Manager::getService('Session')->getSessionObject()->getManager()->regenerateId(true);
         return $this->loadExtApps();
     }
 }

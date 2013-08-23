@@ -105,7 +105,10 @@ class Authentication implements IAuthentication
      */
     public function clearIdentity ()
     {
-        return $this->getZendAuth()->clearIdentity();
+        $this->getZendAuth()->clearIdentity();
+        Manager::getService('Session')->getSessionObject()->getManager()
+            ->getStorage()
+            ->clear();
     }
 
     /**

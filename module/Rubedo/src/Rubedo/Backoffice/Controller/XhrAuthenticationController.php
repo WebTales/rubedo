@@ -46,6 +46,7 @@ class XhrAuthenticationController extends AbstractActionController
     {
         $login = $this->params()->fromPost('login');
         $password = $this->params()->fromPost('password');
+        Manager::getService('Session')->getSessionObject()->getManager()->regenerateId(true);
         
         $loginResult = $this->_dataService->authenticate($login, $password);
         
