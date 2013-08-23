@@ -34,12 +34,10 @@ use Rubedo\Services\Manager;
 class FileController extends AbstractActionController
 {
 
-    function indexAction ()
+    function indexAction()
     {
-
-        
         $fileId = $this->params()->fromQuery('file-id');
-        $version = $this->params()->fromQuery('version',1);
+        $version = $this->params()->fromQuery('version', 1);
         
         if (isset($fileId)) {
             
@@ -49,7 +47,7 @@ class FileController extends AbstractActionController
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
-            $tmpImagePath = sys_get_temp_dir() . '/' . $fileId. '_' . $version;
+            $tmpImagePath = sys_get_temp_dir() . '/' . $fileId . '_' . $version;
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
@@ -112,13 +110,6 @@ class FileController extends AbstractActionController
             }
             
             $response = new \Zend\Http\Response\Stream();
-            $response->getHeaders()->addHeaders(array(
-                'Content-type' => 'image/' . $type,
-                'Content-Disposition' => 'inline; filename="' . $filename,
-                'Pragma' => 'Public',
-                'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
-                'Expires' => date(DATE_RFC822, strtotime("7 day"))
-            ));
             
             if ($forceDownload) {
                 $response->getHeaders()->addHeaders(array(
@@ -129,16 +120,12 @@ class FileController extends AbstractActionController
                     'Content-Disposition' => 'inline; filename="' . $filename
                 ));
             }
-            $response->setStream($stream);
-            return $response;
             
-            // error_log("access par tranche : $filename $seekStart => $seekEnd");
-           
             if (strpos($mimeType, 'video') !== false) {
                 list ($mimeType) = explode(';', $mimeType);
             }
             $response->getHeaders()->addHeaders(array(
-                'Content-Type'=> $mimeType
+                'Content-Type' => $mimeType
             ));
             $this->getResponse()->setHeader('Content-Type', $mimeType, true);
             
@@ -146,36 +133,33 @@ class FileController extends AbstractActionController
             
             if ($seekStart >= 0 && $seekEnd > 0 && ! ($filelength == $seekEnd - $seekStart)) {
                 $response->getHeaders()->addHeaders(array(
-                    'Content-Length'=> $filelength - $seekStart,
-                    'Content-Range'=> "bytes $seekStart-$seekEnd/$filelength",
-                    'Accept-Ranges', "bytes",
-                    'Status'=> '206 Partial Content'
+                    'Content-Length' => $filelength - $seekStart,
+                    'Content-Range' => "bytes $seekStart-$seekEnd/$filelength",
+                    'Accept-Ranges' => "bytes",
+                    'Status' => '206 Partial Content'
                 ));
                 $response->setStatusCode(206);
                 $response->setReasonPhrase('Partial Content');
-                $response->setContentLength($seekEnd+1-$seekStart);
-                //set offset
-
-               
+                $response->setContentLength($seekEnd + 1 - $seekStart);
             } elseif ($seekStart > 0 && $seekEnd == - 1) {
                 $response->getHeaders()->addHeaders(array(
-                    'Content-Length'=> $filelength - $seekStart,
-                    'Content-Range'=> "bytes $seekStart-$lastByte/$filelength",
-                    'Accept-Ranges', "bytes",
-                    'Status'=> '206 Partial Content'
+                    'Content-Length' => $filelength - $seekStart,
+                    'Content-Range' => "bytes $seekStart-$lastByte/$filelength",
+                    'Accept-Ranges' => "bytes",
+                    'Status' => '206 Partial Content'
                 ));
                 $response->setStatusCode(206);
                 $response->setReasonPhrase('Partial Content');
-                //set offset
-                
-                
             } else {
                 $response->getHeaders()->addHeaders(array(
-                    'Content-Length'=> $filelength,
-                    'Content-Range'=> "bytes 0-/$filelength",
-                    'Accept-Ranges', "bytes",
+                    'Content-Length' => $filelength,
+                    'Content-Range' => "bytes 0-/$filelength",
+                    'Accept-Ranges',
+                    "bytes"
                 ));
-
+            }
+            if ($seekStart) {
+                fseek($stream, $seekStart);
             }
             $response->setStream($stream);
             return $response;
@@ -184,27 +168,29 @@ class FileController extends AbstractActionController
         }
     }
 
-    public function getThumbnailAction ()
+    public function getThumbnailAction()
     {
-        $iconPath = realpath(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png');
+        $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png');
         switch ($this->getParam('file-type')) {
             case 'Audio':
-                $iconPath = realpath(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/speaker.png');
+                $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/speaker.png');
                 break;
             case 'Video':
-                $iconPath = realpath(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/video.png');
+                $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/video.png');
                 break;
             case 'Animation':
-                $iconPath = realpath(APPLICATION_PATH . '/../public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/palette.png');
+                $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/palette.png');
                 break;
             default:
                 break;
         }
         
-        $this->_forward('index', 'image', 'default', array(
-            'size' => 'thumbnail',
-            'file-id' => null,
-            'filepath' => $iconPath
+        $queryString = $this->getRequest()->getQuery();
+        $queryString->set('size', 'thumbnail');
+        $queryString->set('file-id', null);
+        $queryString->set('filepath', $iconPath);
+        return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
+            'action' => 'index'
         ));
     }
 }
