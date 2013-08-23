@@ -78,9 +78,17 @@ class XhrAuthenticationController extends AbstractActionController
     {
         session_name('rubedo');
         session_start();
-        $accessTime = intval($_SESSION['__ZF']['_REQUEST_ACCESS_TIME']);
-        $time = max(0,$accessTime - time() + 500);
-        $status = $time > 0;
+        if(isset($_SESSION['__ZF'])){
+            $accessTime = intval($_SESSION['__ZF']['_REQUEST_ACCESS_TIME']);
+            $time = max(0,$accessTime - time() + 500);
+            $status = $time > 0;
+            $hasIdentity = isset($_SESSION["Zend_Auth"]) && !empty($_SESSION["Zend_Auth"]->storage);
+            $status = $status && $hasIdentity;
+        }else{
+            $status = false;
+            $time = 0;
+        }
+         
         return new JsonModel(array(
             'time' => $time,
             'status' => $status
