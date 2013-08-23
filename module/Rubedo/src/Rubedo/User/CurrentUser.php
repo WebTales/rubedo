@@ -78,7 +78,7 @@ class CurrentUser implements ICurrentUser
     public function getCurrentUser ()
     {
         if (! isset(self::$_currentUser)) {
-            if ($this->isAuthenticated()) {
+            if ($this->isAuthenticated()) {               
                 $user = $this->_fetchCurrentUser();
                 if ($user === null) {
                     Manager::getService('Authentication')->clearIdentity();

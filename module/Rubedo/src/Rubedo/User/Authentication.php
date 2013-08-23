@@ -34,27 +34,28 @@ class Authentication implements IAuthentication
 {
 
     /**
-     * embed zend_auth
+     * Authentication service of ZF
      *
      * @param
-     *            Zend_Auth
+     *            AuthenticationService
+     *            
      */
-    protected static $_zendAuth;
+    protected static $zendAuth;
 
     protected static $_authLifetime = 60;
 
     /**
      * Return the Zend_Auth object and instanciate it if it's necessary
      *
-     * @return Zend_Auth object
+     * @return AuthenticationService
      */
-    protected function _getZendAuth ()
+    protected function getZendAuth ()
     {
-        if (! isset(static::$_zendAuth)) {
-            static::$_zendAuth = new AuthenticationService();
+        if (! isset(static::$zendAuth)) {
+            static::$zendAuth = new AuthenticationService();
         }
         
-        return static::$_zendAuth;
+        return static::$zendAuth;
     }
 
     /**
@@ -70,7 +71,7 @@ class Authentication implements IAuthentication
     public function authenticate ($login, $password)
     {
         $authAdapter = new AuthAdapter($login, $password);
-        $result = $this->_getZendAuth()->authenticate($authAdapter);
+        $result = $this->getZendAuth()->authenticate($authAdapter);
         if (! $result->isValid()) {
             Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
         }
@@ -84,7 +85,7 @@ class Authentication implements IAuthentication
      */
     public function getIdentity ()
     {
-        return $this->_getZendAuth()->getIdentity();
+        return $this->getZendAuth()->getIdentity();
     }
 
     /**
@@ -94,7 +95,7 @@ class Authentication implements IAuthentication
      */
     public function hasIdentity ()
     {
-        return $this->_getZendAuth()->hasIdentity();
+        return $this->getZendAuth()->hasIdentity();
     }
 
     /**
@@ -104,7 +105,7 @@ class Authentication implements IAuthentication
      */
     public function clearIdentity ()
     {
-        return $this->_getZendAuth()->clearIdentity();
+        return $this->getZendAuth()->clearIdentity();
     }
 
     /**
@@ -126,21 +127,19 @@ class Authentication implements IAuthentication
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Interfaces\User\IAuthentication::resetExpirationTime()
      */
     public function resetExpirationTime ()
-    {
-    }
+    {}
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Interfaces\User\IAuthentication::getExpirationTime()
      */
     public function getExpirationTime ()
-    {
-    }
+    {}
 
     /**
      *

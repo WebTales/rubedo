@@ -16,13 +16,12 @@ use Zend\Session\Container;
 use Zend\Json\Json;
 use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataAbstract;
-
 use Rubedo\Collection\AbstractLocalizableCollection;
 
 class Module
 {
 
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap (MvcEvent $e)
     {
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
@@ -31,25 +30,25 @@ class Module
         $application = $e->getApplication();
         $config = $application->getConfig();
         
-        $this->initMongodb($config);        
+        $this->initMongodb($config);
         $this->initElastic($config);
         
         Interfaces\config::initInterfaces();
         
         Services\Manager::setServiceLocator($e->getApplication()->getServiceManager());
         
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
             $this,
             'preDispatch'
-        ), 1);
+        ));
     }
 
-    public function getConfig()
+    public function getConfig ()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig()
+    public function getAutoloaderConfig ()
     {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
@@ -62,25 +61,24 @@ class Module
 
     /**
      * Set context before dispatch
-     * 
+     *
      * Session, User, Rights, Language
-     * 
-     * @param MvcEvent $event
+     *
+     * @param MvcEvent $event            
      * @throws \Rubedo\Exceptions\Access
      */
-    public function preDispatch(MvcEvent $event)
+    public function preDispatch (MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
         if ($controller != 'Rubedo\\Backoffice\\Controller\\XhrAuthentication' || $action != 'is-session-expiring') {
             $this->initializeSession($event);
         }
-        
-        list($applicationName,$moduleName,$constant,$controllerName) = explode('\\', $controller);
+        list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
         $controllerName = strtolower($controllerName);
         $moduleName = strtolower($moduleName);
         
-        //check access
+        // check access
         $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;
         if ($moduleName == 'install') {
             $hasAccess = true;
@@ -94,11 +92,14 @@ class Module
         if (! $hasAccess) {
             throw new \Rubedo\Exceptions\Access('Can\'t access %1$s', "Exception30", $ressourceName);
         }
-
-        //check BO Token        
-        $isBackoffice = strpos($controller,'Rubedo\\Backoffice\\Controller')===0;
-        $doNotCheckTokenControllers = array('Rubedo\\Backoffice\\Controller\\Acl','Rubedo\\Backoffice\\Controller\\XhrAuthentication');
-        if($isBackoffice && $event->getRequest()->isPost() && !in_array($controller,$doNotCheckTokenControllers)){
+        
+        // check BO Token
+        $isBackoffice = strpos($controller, 'Rubedo\\Backoffice\\Controller') === 0;
+        $doNotCheckTokenControllers = array(
+            'Rubedo\\Backoffice\\Controller\\Acl',
+            'Rubedo\\Backoffice\\Controller\\XhrAuthentication'
+        );
+        if ($isBackoffice && $event->getRequest()->isPost() && ! in_array($controller, $doNotCheckTokenControllers)) {
             $user = Manager::getService('Session')->get('user');
             $token = $event->getRequest()->getPost('token');
             
@@ -107,13 +108,13 @@ class Module
             }
         }
         
-        if($isBackoffice){
+        if ($isBackoffice) {
             // initialize localization for collections
             $serviceLanguages = Manager::getService('Languages');
             if ($serviceLanguages->isActivated()) {
-                $workingLanguage = $event->getRequest()->getPost('workingLanguage',false);
-                if(!$workingLanguage){
-                    $workingLanguage = $event->getRequest()->getQuery('workingLanguage',null);
+                $workingLanguage = $event->getRequest()->getPost('workingLanguage', false);
+                if (! $workingLanguage) {
+                    $workingLanguage = $event->getRequest()->getQuery('workingLanguage', null);
                 }
                 if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
                     AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
@@ -122,10 +123,9 @@ class Module
                 }
             }
         }
-
     }
 
-    public function initializeSession(MvcEvent $e)
+    public function initializeSession (MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()
@@ -141,18 +141,18 @@ class Module
         Container::setDefaultManager($sessionManager);
     }
 
-    protected function initElastic($options)
+    protected function initElastic ($options)
     {
         if (isset($options)) {
             DataAbstract::setOptions($options['elastic']);
         }
         $indexContentOptionsJson = file_get_contents(APPLICATION_PATH . '/config/elastica.json');
-        $indexContentOptions = Json::decode($indexContentOptionsJson,Json::TYPE_ARRAY);
+        $indexContentOptions = Json::decode($indexContentOptionsJson, Json::TYPE_ARRAY);
         DataAbstract::setContentIndexOption($indexContentOptions);
         DataAbstract::setDamIndexOption($indexContentOptions);
     }
 
-    protected function initMongodb($config)
+    protected function initMongodb ($config)
     {
         $options = $config['datastream'];
         if (isset($options)) {
