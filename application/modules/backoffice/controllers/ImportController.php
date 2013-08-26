@@ -302,7 +302,9 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 				// add contents to CT and terms to vocabularies
 				$recievedFile = fopen ( $fileInfos ['tmp_name'], 'r' );
 				// Read the first line to start at the second line
-				fgetcsv ( $recievedFile, 1000000, $separator, '"', '\\' );
+				$firstLine = fgetcsv ( $recievedFile, 1000000, $separator, '"', '\\' );
+				$enTextFieldIndex = array_search("text_en",$firstLine);
+                $enSummaryFieldIndex = array_search("summary_en",$firstLine);
 				$lineCounter = 0;
 				
 				while ( ($currentLine = fgetcsv ( $recievedFile, 1000000, $separator, '"', '\\' )) !== false ) {
@@ -315,7 +317,6 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 						$currentLine [$key] = $utf8String;
 					}
 					
-					// add taxo terms if not already in correspondent vocabulary
 					// create content fields
 					$contentParamsFields = array (
 							"text" => $currentLine [$textFieldIndex],
@@ -324,6 +325,18 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 					if ($summaryFieldIndex !== null) {
 						$contentParamsFields ['summary'] = $currentLine [$summaryFieldIndex];
 					}
+					// create i18n for text and summary fields
+					$contenti18n = array ();
+					if ($enTextFieldIndex) {
+					    $contenti18n ["en"] = array (
+					            "fields" => array("text" => $currentLine[$enTextFieldIndex]),
+					            "locale" => "en"
+					    );
+					    if ($enSummaryFieldIndex) {
+					        $contenti18n ["en"]["fields"] = array("summary" => $currentLine[$enSummaryFieldIndex]);
+					    }
+					}
+
 					foreach ( $importAsField as $key => $value ) {
 						if (($value ['protoId'] != 'text') && ($value ['protoId'] != 'summary')) {
 							if ($value ['cType'] == "localiserField") {
@@ -503,7 +516,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 						}
 					}
 					// create content
-					$contenti18n = array ();
+					
 					$contenti18n [$workingLanguage] = array (
 							"fields" => $contentParamsFields,
 							"locale" => $workingLanguage 
