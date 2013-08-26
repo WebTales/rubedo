@@ -219,6 +219,8 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 				$configs = Zend_Json::decode ( $this->getParam ( 'configs', "[ ]" ) );
 				$importAsField = Zend_Json::decode ( $this->getParam ( 'inportAsField', "[ ]" ) );
 				$importAsTaxo = Zend_Json::decode ( $this->getParam ( 'inportAsTaxo', "[ ]" ) );
+				$importAsFieldTranslation = Zend_Json::decode ( $this->getParam ( 'inportAsFieldTranslation', "[ ]" ) );
+				$importAsTaxoTranslation = Zend_Json::decode ( $this->getParam ( 'inportAsTaxoTranslation', "[ ]" ) );
 				
 				// create vocabularies
 				$newTaxos = array ();
@@ -327,6 +329,31 @@ class Backoffice_ImportController extends Backoffice_DataAccessController {
 					}
 					// create i18n for text and summary fields
 					$contenti18n = array ();
+					foreach ( $importAsFieldTranslation as $key => $value ) {
+					    // DEbug
+					    foreach ($importAsField as $key => $importedField) {
+					        if ($importedField["csvIndex"] == $value["translatedElement"]) {
+					            $importedFieldKey = $key;
+					        }
+					    }
+					    $translatedElement = $importAsField[$importedFieldKey];
+					    switch ($translatedElement['protoId']) {
+					        case 'text':
+					            $fieldName = "text";
+					            break;
+					        case 'summary':
+					            $fieldName = "summary";
+					            break;
+					        default:
+					            $fieldName = $translatedElement["newName"];
+					            break;
+					    }
+					    if (!isset($contenti18n [$value["translateToLanguage"]]["locale"])) {
+					        $contenti18n [$value["translateToLanguage"]]["locale"] = $value["translateToLanguage"];
+					    }
+					    $contenti18n [$value["translateToLanguage"]]["fields"][$fieldName] = $currentLine[$value["csvIndex"]];
+					
+					}
 					if ($enTextFieldIndex) {
 					    $contenti18n ["en"] = array (
 					            "fields" => array("text" => $currentLine[$enTextFieldIndex]),
