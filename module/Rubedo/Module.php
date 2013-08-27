@@ -110,7 +110,8 @@ class Module
             $isBackoffice = strpos($controller, 'Rubedo\\Backoffice\\Controller') === 0;
             $doNotCheckTokenControllers = array(
                 'Rubedo\\Backoffice\\Controller\\Acl',
-                'Rubedo\\Backoffice\\Controller\\XhrAuthentication'
+                'Rubedo\\Backoffice\\Controller\\XhrAuthentication',
+                'Rubedo\\Backoffice\\Controller\\Logout'
             );
             if ($isBackoffice && $event->getRequest()->isPost() && ! in_array($controller, $doNotCheckTokenControllers)) {
                 $user = Manager::getService('Session')->get('user');
