@@ -94,7 +94,12 @@ class SitesController extends DataAccessController
         }
         return $this->_returnJson($returnArray);
     }
-
+    
+    /**
+     * @todo move to a service
+     * @param unknown $insertData
+     * @return multitype:boolean string |unknown
+     */
     protected function createFromModel ($insertData)
     {
         $model = $this->_dataService->findById($insertData['builtOnModelSiteId']);
@@ -230,6 +235,11 @@ class SitesController extends DataAccessController
         return ($returnArray);
     }
 
+    /**
+     * @todo move to a service
+     * @param unknown $insertData
+     * @return multitype:boolean string multitype:boolean string  NULL
+     */
     protected function createFromEmpty ($insertData)
     {
         $this->translateService = Manager::getService('Translate');
@@ -388,6 +398,12 @@ class SitesController extends DataAccessController
         return ($returnArray);
     }
     
+    /**
+     * @todo move to a service
+     * @param unknown $matches
+     * @throws \Rubedo\Exceptions\Server
+     * @return unknown
+     */
     protected function replaceWithTranslation($matches){
        
         if($matches[1]=='Locale'){
@@ -400,6 +416,14 @@ class SitesController extends DataAccessController
         return $result;
     }
     
+    /**
+     * @todo move to a service
+     * @param unknown $maskObj
+     * @param unknown $name
+     * @param number $numcol
+     * @param string $forceCol
+     * @return unknown
+     */
     protected function createMask($maskObj,$name,$numcol=1,$forceCol = null){
         // Search mask
         $mask = $maskObj;
