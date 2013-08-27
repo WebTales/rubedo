@@ -48,7 +48,7 @@ class HtmlPurifier extends HtmlCleaner
         if (! isset(self::$_purifier)) {
             $config = \HTMLPurifier_Config::createDefault();
             $config->set('Core.Encoding', 'UTF-8');
-            $config->set('Cache.SerializerPath', APPLICATION_PATH . "/../cache/htmlpurifier");
+            $config->set('Cache.SerializerPath', APPLICATION_PATH . "/cache/htmlpurifier");
             $config->set('Attr.AllowedFrameTargets', array(
                 "_blank",
                 "_self",
