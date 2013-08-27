@@ -20,6 +20,7 @@ use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataAbstract;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Mongo\DataAccess;
+use Rubedo\Exceptions\JsonExceptionStrategy;
 
 class Module
 {
@@ -44,6 +45,15 @@ class Module
             $this,
             'preDispatch'
         ));
+        
+        // Config json enabled exceptionStrategy
+        $exceptionStrategy = new JsonExceptionStrategy();
+        
+        //@todo import config
+        $displayExceptions = true;
+                
+        $exceptionStrategy->setDisplayExceptions($displayExceptions);
+        $exceptionStrategy->attach($application->getEventManager());
     }
 
     public function getConfig ()
