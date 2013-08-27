@@ -76,6 +76,7 @@ class Authentication implements IAuthentication
         if (! $result->isValid()) {
             Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
         }
+        Manager::getService('CurrentUser')->getToken();
         return $result->isValid();
     }
 
