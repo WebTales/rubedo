@@ -1,58 +1,82 @@
-<h1><?php echo ('An error occurred') ?></h1>
-<h2><?php echo $this->message ?></h2>
+<div class="alert alert-error">
+	<h2><?php echo $this->message ?></h2>
+
+<?php if (isset($this->exception)){ ?>
+
+<p>
+	<?php echo $this->exception->getMessage()?>
+  </p>
+<?php } ?>
+</div>
 
 <?php if (isset($this->display_exceptions) && $this->display_exceptions): ?>
 
 <?php if(isset($this->exception) && $this->exception instanceof Exception): ?>
-<hr/>
-<h2><?php echo ('Additional information') ?>:</h2>
-<h3><?php echo get_class($this->exception); ?></h3>
-<dl>
-    <dt><?php echo ('File') ?>:</dt>
-    <dd>
-        <pre class="prettyprint linenums"><?php echo $this->exception->getFile() ?>:<?php echo $this->exception->getLine() ?></pre>
-    </dd>
-    <dt><?php echo ('Message') ?>:</dt>
-    <dd>
-        <pre class="prettyprint linenums"><?php echo $this->exception->getMessage() ?></pre>
-    </dd>
-    <dt><?php echo ('Stack trace') ?>:</dt>
-    <dd>
-        <pre class="prettyprint linenums"><?php echo $this->exception->getTraceAsString() ?></pre>
-    </dd>
-</dl>
+<div class="accordion" id="trace">
+	<div class="accordion-group">
+		<div class="accordion-heading">
+			<div class="pull-right">
+				<a class="accordion-toggle " data-toggle="collapse"
+					data-parent="#trace" href="#collapseOne">More info <i
+					class="icon-chevron-down"></i></a>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div id="collapseOne" class="accordion-body collapse">
+			<div class="accordion-inner">
+
+				<h2><?php echo ('Additional information') ?>:</h2>
+				<h3><?php echo get_class($this->exception); ?></h3>
+				<dl>
+					<dt><?php echo ('File') ?>:</dt>
+					<dd>
+						<pre class="prettyprint linenums"><?php echo $this->exception->getFile() ?>:<?php echo $this->exception->getLine() ?></pre>
+					</dd>
+					<dt><?php echo ('Message') ?>:</dt>
+					<dd>
+						<pre class="prettyprint linenums"><?php echo $this->exception->getMessage() ?></pre>
+					</dd>
+					<dt><?php echo ('Stack trace') ?>:</dt>
+					<dd>
+						<pre class="prettyprint linenums"><?php echo $this->exception->getTraceAsString() ?></pre>
+					</dd>
+				</dl>
 <?php
-    $e = $this->exception->getPrevious();
-    if ($e) :
-?>
-<hr/>
-<h2><?php echo ('Previous exceptions') ?>:</h2>
-<ul class="unstyled">
+        $e = $this->exception->getPrevious();
+        if ($e) :
+            ?>
+<hr />
+				<h2><?php echo ('Previous exceptions') ?>:</h2>
+				<ul class="unstyled">
     <?php while($e) : ?>
     <li>
-        <h3><?php echo get_class($e); ?></h3>
-        <dl>
-            <dt><?php echo ('File') ?>:</dt>
-            <dd>
-                <pre class="prettyprint linenums"><?php echo $e->getFile() ?>:<?php echo $e->getLine() ?></pre>
-            </dd>
-            <dt><?php echo ('Message') ?>:</dt>
-            <dd>
-                <pre class="prettyprint linenums"><?php echo $e->getMessage() ?></pre>
-            </dd>
-            <dt><?php echo ('Stack trace') ?>:</dt>
-            <dd>
-                <pre class="prettyprint linenums"><?php echo $e->getTraceAsString() ?></pre>
-            </dd>
-        </dl>
-    </li>
+						<h3><?php echo get_class($e); ?></h3>
+						<dl>
+							<dt><?php echo ('File') ?>:</dt>
+							<dd>
+								<pre class="prettyprint linenums"><?php echo $e->getFile() ?>:<?php echo $e->getLine() ?></pre>
+							</dd>
+							<dt><?php echo ('Message') ?>:</dt>
+							<dd>
+								<pre class="prettyprint linenums"><?php echo $e->getMessage() ?></pre>
+							</dd>
+							<dt><?php echo ('Stack trace') ?>:</dt>
+							<dd>
+								<pre class="prettyprint linenums"><?php echo $e->getTraceAsString() ?></pre>
+							</dd>
+						</dl>
+					</li>
     <?php
-        $e = $e->getPrevious();
-        endwhile;
-    ?>
+                $e = $e->getPrevious();
+            endwhile
+            ;
+            ?>
 </ul>
 <?php endif; ?>
-
+</div>
+		</div>
+	</div>
+</div>
 <?php else: ?>
 
 <h3><?php echo ('No Exception available') ?></h3>
@@ -60,3 +84,4 @@
 <?php endif ?>
 
 <?php endif ?>
+
