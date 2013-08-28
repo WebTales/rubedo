@@ -29,7 +29,7 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  *        
  */
-class Update010300 extends Update
+class Update010400 extends Update
 {
 
     protected static $toVersion = '2.0.0';
