@@ -43,7 +43,7 @@ class MasksController extends DataAccessController
 
     public function isUsedAction()
     {
-        $id = $this->params('id');
+        $id = $this->params()->fromPost('id');
         $wasFiltered = AbstractCollection::disableUserFilter();
         $result = Manager::getService('Pages')->isMaskUsed($id);
         AbstractCollection::disableUserFilter($wasFiltered);
