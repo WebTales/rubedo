@@ -18,6 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
+use Rubedo\Content\Context;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
@@ -56,7 +57,8 @@ class FileController extends AbstractActionController
 
     public function putAction()
     {
-        $fileInfo = array_pop($this->params()->fromFiles());
+        Context::setExpectJson();
+        $fileInfo = $this->params()->fromFiles('file');
         
         $finfo = new \finfo(FILEINFO_MIME);
         $mimeType = $finfo->file($fileInfo['tmp_name']);
@@ -68,7 +70,7 @@ class FileController extends AbstractActionController
             'text' => $fileInfo['name'],
             'filename' => $fileInfo['name'],
             'Content-Type' => $mimeType,
-            'mainFileType' => $this->getParam('mainFileType', null)
+            'mainFileType' => $this->params()->fromPost('mainFileType', null)
         );
         $result = $fileService->create($obj);
         
@@ -77,6 +79,7 @@ class FileController extends AbstractActionController
 
     public function updateAction()
     {
+        Context::setExpectJson();
         $fileInfos = $this->params()->fromFiles('image');
         
         $mimeType = mime_content_type($fileInfos['tmp_name']);
