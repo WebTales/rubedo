@@ -98,25 +98,15 @@ class JsonExceptionStrategy extends ExceptionStrategy
         if (! $e->getRequest() instanceof Request) {
             return;
         }
-        
-        if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
-            return;
-        }
-        
         if (! ($exception = $e->getParam('exception'))) {
             return;
         }
-        
-        $modelData = $this->serializeException($exception);
-        $e->setResult(new JsonModel($modelData));
-        $e->setError(false);
         
         $response = $e->getResponse();
         if (! $response) {
             $response = new HttpResponse();
             $e->setResponse($response);
         }
-        
         switch (get_class($exception)) {
             case 'Rubedo\\Exceptions\\User':
                 $response->setStatusCode(200);
@@ -131,6 +121,14 @@ class JsonExceptionStrategy extends ExceptionStrategy
                 $response->setStatusCode(500);
                 break;
         }
+        
+        if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
+            return;
+        }
+        
+        $modelData = $this->serializeException($exception);
+        $e->setResult(new JsonModel($modelData));
+        $e->setError(false);
         
         $response->getHeaders()->addHeaders([
             ContentType::fromString('Content-type: application/json')
