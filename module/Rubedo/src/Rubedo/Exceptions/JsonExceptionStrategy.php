@@ -22,6 +22,8 @@ use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\View\Http\ExceptionStrategy;
+use Rubedo\Content\Context;
+
 
 /**
  * Handle response as Json if in an asynchroneus context
@@ -100,7 +102,7 @@ class JsonExceptionStrategy extends ExceptionStrategy
             return;
         }
         
-        if (! $e->getRequest()->isXmlHttpRequest()) {
+        if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
             return;
         }
         

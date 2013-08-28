@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Rubedo\Content\Context;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
@@ -187,7 +188,8 @@ class ImportController extends DataAccessController
      */
     public function importAction()
     {
-        Zend_Registry::set('Expects_Json', true);
+        Context::setExpectJson();
+        //Zend_Registry::set('Expects_Json', true);
         set_time_limit(5000);
         $separator = $this->params()->fromPost('separator', ";");
         $userEncoding = $this->params()->fromPost('encoding');
@@ -217,9 +219,9 @@ class ImportController extends DataAccessController
                 $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             } else {
                 // recieve params
-                $configs = Json::decode($this->getParam('configs', "[ ]"), Json::TYPE_ARRAY);
-                $importAsField = Json::decode($this->getParam('inportAsField', "[ ]"), Json::TYPE_ARRAY);
-                $importAsTaxo = Json::decode($this->getParam('inportAsTaxo', "[ ]"), Json::TYPE_ARRAY);
+                $configs = Json::decode($this->params()->fromPost('configs', "[ ]"), Json::TYPE_ARRAY);
+                $importAsField = Json::decode($this->params()->fromPost('inportAsField', "[ ]"), Json::TYPE_ARRAY);
+                $importAsTaxo = Json::decode($this->params()->fromPost('inportAsTaxo', "[ ]"), Json::TYPE_ARRAY);
                 
                 // create vocabularies
                 $newTaxos = array();
