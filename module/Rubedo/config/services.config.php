@@ -168,5 +168,9 @@ return array(
     ),
     'CustomThemes' => array(
         'class' => 'Rubedo\\Collection\\CustomThemes'
-    )
+    ),
+    'SessionData' => array(
+        'class' => 'Rubedo\\Collection\\SessionData'
+    ),
+    
 );

@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
-
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
@@ -32,7 +31,7 @@ class XhrAuthenticationController extends AbstractActionController
 {
 
     public function __construct()
-    {        
+    {
         // init the data access service
         $this->_dataService = Manager::getService('Authentication');
     }
@@ -46,7 +45,9 @@ class XhrAuthenticationController extends AbstractActionController
     {
         $login = $this->params()->fromPost('login');
         $password = $this->params()->fromPost('password');
-        Manager::getService('Session')->getSessionObject()->getManager()->regenerateId(true);
+        Manager::getService('Session')->getSessionObject()
+            ->getManager()
+            ->regenerateId(true);
         
         $loginResult = $this->_dataService->authenticate($login, $password);
         
@@ -72,25 +73,40 @@ class XhrAuthenticationController extends AbstractActionController
     }
 
     /**
-     * @todo implement a method to return remaining session time without renewing it
+     * Check session without renewing its lifetime
+     *
+     * @todo use config cookiename
      * @return \Zend\View\Model\JsonModel
      */
     public function isSessionExpiringAction()
     {
-//         session_name('rubedo');
-//         session_start();
-//         if(isset($_SESSION['__ZF'])){
-//             $accessTime = intval($_SESSION['__ZF']['_REQUEST_ACCESS_TIME']);
-//             $time = max(0,$accessTime - time() + 500);
-//             $status = $time > 0;
-//             $hasIdentity = isset($_SESSION["Zend_Auth"]) && !empty($_SESSION["Zend_Auth"]->storage);
-//             $status = $status && $hasIdentity;
-//         }else{
-//             $status = false;
-//             $time = 0;
-//         }
-        $status = true;
-        $time = 600;
+        $sessionDataService = Manager::getService('SessionData');
+        $cookie = $this->getRequest()->getCookie();
+        if (isset($cookie->rubedo)) {
+            
+            // get data from sessions collection without using session handler : do not renew lifetime
+            $sessionData = $sessionDataService->findById($cookie->rubedo);
+            $modified = $sessionData["modified"];
+            $modifiedTstamp = $modified->sec;
+            $lifetime = $sessionData["lifetime"];
+            $time = max(0, $lifetime + $modifiedTstamp - time());
+            $status = $time > 0;
+            
+            // check if a user is stored
+            if ($status) {
+                $decodedSessionData = $sessionDataService->decode($sessionData["data"]);
+                if (isset($decodedSessionData['Zend_Auth']) && ! empty($decodedSessionData['Zend_Auth']->storage)) {
+                    $status = true;
+                } else {
+                    $status = false;
+                }
+            }
+        } else {
+            // no cookie, no chocolate
+            $status = false;
+            $time = 0;
+        }
+        
         return new JsonModel(array(
             'time' => $time,
             'status' => $status
