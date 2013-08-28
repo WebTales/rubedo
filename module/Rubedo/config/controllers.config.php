@@ -70,5 +70,6 @@ return array(
     'Rubedo\\Backoffice\\Controller\\XhrAuthentication' => 'Rubedo\\Backoffice\\Controller\\XhrAuthenticationController',
     'Rubedo\\Backoffice\\Controller\\XhrGetMongoId' => 'Rubedo\\Backoffice\\Controller\\XhrGetMongoIdController',
     'Rubedo\\Backoffice\\Controller\\XhrGetPageUrl' => 'Rubedo\\Backoffice\\Controller\\XhrGetPageUrlController',
-    'Rubedo\\Frontoffice\\Controller\\Image' => 'Rubedo\\Frontoffice\\Controller\\ImageController'
+    'Rubedo\\Frontoffice\\Controller\\Image' => 'Rubedo\\Frontoffice\\Controller\\ImageController',
+    'Rubedo\\Frontoffice\\Controller\\Error'=>'Rubedo\\Frontoffice\\Controller\\ErrorController'
 );

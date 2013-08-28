@@ -19,13 +19,13 @@ use Zend\Json\Json;
 use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataAbstract;
 use Rubedo\Collection\AbstractLocalizableCollection;
-use Rubedo\Mongo\DataAccess;
 use Rubedo\Exceptions\JsonExceptionStrategy;
+use Rubedo\Exceptions\Access as AccessException;
 
 class Module
 {
 
-    public function onBootstrap (MvcEvent $e)
+    public function onBootstrap(MvcEvent $e)
     {
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
@@ -49,19 +49,19 @@ class Module
         // Config json enabled exceptionStrategy
         $exceptionStrategy = new JsonExceptionStrategy();
         
-        //@todo import config
+        // @todo import config
         $displayExceptions = true;
-                
+        
         $exceptionStrategy->setDisplayExceptions($displayExceptions);
         $exceptionStrategy->attach($application->getEventManager());
     }
 
-    public function getConfig ()
+    public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig ()
+    public function getAutoloaderConfig()
     {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
@@ -80,7 +80,7 @@ class Module
      * @param MvcEvent $event            
      * @throws \Rubedo\Exceptions\Access
      */
-    public function preDispatch (MvcEvent $event)
+    public function preDispatch(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -103,7 +103,7 @@ class Module
             }
             
             if (! $hasAccess) {
-                throw new \Rubedo\Exceptions\Access('Can\'t access %1$s', "Exception30", $ressourceName);
+                $this->toDeadEnd($event, new AccessException('Can\'t access %1$s', "Exception30", $ressourceName));
             }
             
             // check BO Token
@@ -118,7 +118,7 @@ class Module
                 $token = $event->getRequest()->getPost('token');
                 
                 if ($token !== $user['token']) {
-                    throw new \Rubedo\Exceptions\Access("The token given in the request doesn't match with the token in session", "Exception6");
+                    $this->toDeadEnd($event, new AccessException("The token given in the request doesn't match with the token in session", "Exception6"));
                 }
             }
             
@@ -140,7 +140,7 @@ class Module
         }
     }
 
-    protected function initializeSession (MvcEvent $e)
+    protected function initializeSession(MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()
@@ -153,15 +153,12 @@ class Module
         $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
         $dbName = Mongo\DataAccess::getDefaultDb();
         
-        
         $options = new MongoDBOptions(array(
             'database' => $dbName,
-            'collection' => 'sessions',
+            'collection' => 'sessions'
         ));
         
         $saveHandler = new MongoDB($adapter, $options);
-        
-        
         
         $sessionManager = new SessionManager($sessionConfig);
         $sessionManager->setSaveHandler($saveHandler);
@@ -171,7 +168,7 @@ class Module
         Container::setDefaultManager($sessionManager);
     }
 
-    protected function initElastic ($options)
+    protected function initElastic($options)
     {
         if (isset($options)) {
             DataAbstract::setOptions($options['elastic']);
@@ -182,7 +179,7 @@ class Module
         DataAbstract::setDamIndexOption($indexContentOptions);
     }
 
-    protected function initMongodb ($config)
+    protected function initMongodb($config)
     {
         $options = $config['datastream'];
         if (isset($options)) {
@@ -199,5 +196,16 @@ class Module
             
             Mongo\DataAccess::setDefaultDb($options['mongo']['db']);
         }
+    }
+
+    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
+    {
+        $routeMatches = $event->getRouteMatch();
+        $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
+        $routeMatches->setParam('action', 'index');
+        $event->getRequest()
+            ->getQuery()
+            ->set('exception', $exception);
+        return;
     }
 }

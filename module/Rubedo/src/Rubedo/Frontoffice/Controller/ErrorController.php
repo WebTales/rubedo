@@ -15,96 +15,32 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Frontoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Exceptions\Access;
 
 /**
- * Front Office Error Controller
+ * Dead end error controller
  *
- * Invoked when somthing failed and is catchable a the last moment
+ * Invoked when something failed on bootstrap.
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-class ErrorController extends Zend_Controller_Action
+class ErrorController extends AbstractActionController
 {
 
     /**
      * Main Action of this controller
      *
-     * Return an error message and can expose the failure description
+     * Throw Error from context
      */
-    public function errorAction ()
+    public function indexAction()
     {
-        $this->getHelper('Layout')->enableLayout();
-        
-        $errors = $this->_getParam('error_handler');
-        
-        if (! $errors || ! $errors instanceof ArrayObject) {
-            $this->view->message = 'You have reached the error page';
-            return;
-        }
-        if ($errors->type == Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER) {
-            $exceptionType = get_class($errors->exception);
-            
-            switch ($exceptionType) {
-                case 'Rubedo\\Exceptions\\Access':
-                    $errors->type = 'access';
-                    break;
-                case 'Rubedo\\Exceptions\\User':
-                    $errors->type = 'user';
-                    break;
-                case 'Rubedo\\Exceptions\\Server':
-                    $errors->type = 'server';
-                    break;
-                case 'Rubedo\\Exceptions\\NotFound':
-                    $errors->type = 'notFound';
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-        switch ($errors->type) {
-            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
-            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
-            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
-            case 'notFound':
-                // 404 error -- controller or action not found
-                $this->getResponse()->setHttpResponseCode(404);
-                $priority = Zend_Log::NOTICE;
-                $this->view->message = 'Page not found';
-                break;
-            case 'access':
-                $this->getResponse()->setHttpResponseCode(403);
-                $priority = Zend_Log::NOTICE;
-                $this->view->message = 'Forbidden';
-                break;
-            case 'user':
-                $priority = Zend_Log::NOTICE;
-                $this->view->message = 'User error';
-                break;
-            default:
-                // application error
-                $this->getResponse()->setHttpResponseCode(500);
-                $priority = Zend_Log::CRIT;
-                $this->view->message = 'Application error';
-                break;
-        }
-        
-        if ($this->getRequest()->isXmlHttpRequest() || (Zend_Registry::getInstance()->isRegistered('Expects_Json') && Zend_Registry::get('Expects_Json'))) {
-            $returnArray = array();
-            $returnArray['success'] = false;
-            $returnArray['msg'] = $errors->exception->getMessage();
-            $returnArray['exceptionClass'] = get_class($errors->exception);
-            $returnArray['errorTrace'] = $errors->exception->getTrace();
-            $this->_helper->json($returnArray);
-        }
-        
-        if ($this->getInvokeArg('displayExceptions') == true) {
-            $this->view->exception = $errors->exception;
-        }
-        
-        $this->view->request = $errors->request;
+        $exception = $this->params()->fromQuery('exception', new Access('Deadend controller'));
+        throw $exception;
     }
 }
 
