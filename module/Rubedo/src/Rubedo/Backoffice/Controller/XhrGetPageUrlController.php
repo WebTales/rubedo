@@ -31,7 +31,7 @@ class XhrGetPageUrlController extends AbstractActionController
 
     public function indexAction ()
     {
-        $pageId = $this->params()->fromQuery('page-id');
+        $pageId = $this->params()->fromPost('page-id');
         if (! $pageId) {
             throw new \Rubedo\Exceptions\User('This action needs a page-id as argument.', "Exception12");
         }
