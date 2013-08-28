@@ -81,11 +81,12 @@ class XhrAuthenticationController extends AbstractActionController
     public function isSessionExpiringAction()
     {
         $sessionDataService = Manager::getService('SessionData');
+        $sessionName = $sessionDataService->getSessionName();
         $cookie = $this->getRequest()->getCookie();
-        if (isset($cookie->rubedo)) {
+        if (isset($cookie->$sessionName)) {
             
             // get data from sessions collection without using session handler : do not renew lifetime
-            $sessionData = $sessionDataService->findById($cookie->rubedo);
+            $sessionData = $sessionDataService->findById($cookie->$sessionName);
             $modified = $sessionData["modified"];
             $modifiedTstamp = $modified->sec;
             $lifetime = $sessionData["lifetime"];

@@ -21,6 +21,7 @@ use Rubedo\Elastic\DataAbstract;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Exceptions\JsonExceptionStrategy;
 use Rubedo\Exceptions\Access as AccessException;
+use Rubedo\Collection\SessionData;
 
 class Module
 {
@@ -36,6 +37,7 @@ class Module
         
         $this->initMongodb($config);
         $this->initElastic($config);
+        SessionData::setSessionName($config['session']['name']);
         
         Interfaces\config::initInterfaces();
         
@@ -148,6 +150,7 @@ class Module
         
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config['session']);
+        
         
         $mongoInfos = Mongo\DataAccess::getDefaultMongo();
         $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);

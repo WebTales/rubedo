@@ -28,6 +28,13 @@ use WebTales\MongoFilters\Filter;
 class SessionData extends AbstractCollection
 {
 
+    /**
+     * Name of the session
+     * 
+     * @var string
+     */
+    protected static $sessionName = 'rubedo';
+
     public function __construct()
     {
         $this->_collectionName = 'sessions';
@@ -60,5 +67,23 @@ class SessionData extends AbstractCollection
             $offset += strlen(serialize($data));
         }
         return $return_data;
+    }
+
+    /**
+     *
+     * @return the $sessionName
+     */
+    public function getSessionName()
+    {
+        return SessionData::$sessionName;
+    }
+
+    /**
+     *
+     * @param field_type $sessionName            
+     */
+    public static function setSessionName($sessionName)
+    {
+        SessionData::$sessionName = $sessionName;
     }
 }

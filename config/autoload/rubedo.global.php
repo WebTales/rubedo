@@ -7,7 +7,6 @@ $config['session'] = array(
     'remember_me_seconds' => $sessionLifeTime,
     'use_cookies' => true,
     'cookie_httponly' => false,
-    //'cookieLifetime' => $sessionLifeTime,
     'gc_maxlifetime' => $sessionLifeTime,
     'name' => 'rubedo',
     'cookie_httponly'=>true
