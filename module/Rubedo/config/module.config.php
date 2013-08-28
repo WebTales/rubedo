@@ -6,11 +6,9 @@
  * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-$boViewsPath = realpath(__DIR__ . '/../src/Rubedo/Backoffice/views/scripts');
-
-$serviceArray = include(__DIR__.'/services.config.php');
-$controllerArray = include(__DIR__.'/controllers.config.php');
-$viewArray = include(__DIR__.'/views.config.php');
+$serviceArray = include (__DIR__ . '/services.config.php');
+$controllerArray = include (__DIR__ . '/controllers.config.php');
+$viewArray = include (__DIR__ . '/views.config.php');
 $serviceMapArray = array();
 
 foreach ($serviceArray as $key => $value) {
