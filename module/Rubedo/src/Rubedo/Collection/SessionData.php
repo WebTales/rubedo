@@ -46,7 +46,7 @@ class SessionData extends AbstractCollection
         if (empty($token)) {
             return null;
         }
-        $filter = Filter::factory('value')->setName('_id')->setValue($token);
+        $filter = Filter::factory('Value')->setName('_id')->setValue($token);
         return $this->findOne($filter);
     }
 
