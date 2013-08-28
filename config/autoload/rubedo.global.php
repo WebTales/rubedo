@@ -1,7 +1,7 @@
 <?php
 $config = array();
 
-$sessionLifeTime = 300;
+$sessionLifeTime = 3600;
 
 $config['session'] = array(
     'remember_me_seconds' => $sessionLifeTime,
