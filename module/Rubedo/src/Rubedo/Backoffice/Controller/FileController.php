@@ -82,7 +82,10 @@ class FileController extends AbstractActionController
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         
         $fileService = Manager::getService('Files');
-        $originalId = $this->params()->fromPost("originalId");
+        $originalId = $this->params()->fromQuery("originalId");
+        if(!$originalId){
+            throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+        }
         $removeOldResult = $fileService->destroy(array(
             'id' => $originalId,
             'version' => 1

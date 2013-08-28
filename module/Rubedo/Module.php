@@ -118,6 +118,9 @@ class Module
             if ($isBackoffice && $event->getRequest()->isPost() && ! in_array($controller, $doNotCheckTokenControllers)) {
                 $user = Manager::getService('Session')->get('user');
                 $token = $event->getRequest()->getPost('token');
+                if(!isset($token)){
+                    $token = $event->getRequest()->getQuery('token');
+                }
                 
                 if ($token !== $user['token']) {
                     $this->toDeadEnd($event, new AccessException("The token given in the request doesn't match with the token in session", "Exception6"));
