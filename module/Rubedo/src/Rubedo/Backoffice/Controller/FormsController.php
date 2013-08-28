@@ -43,7 +43,7 @@ class FormsController extends DataAccessController
 
     public function getStatsAction ()
     {
-        $formId = $this->params()->fromQuery('form-id');
+        $formId = $this->params()->fromPost('form-id');
         if (! $formId) {
             throw new \Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
@@ -57,16 +57,21 @@ class FormsController extends DataAccessController
         return new JsonModel($response);
     }
 
+    /**
+     * @todo convert to ZF2
+     * @throws \Rubedo\Exceptions\User
+     */
     public function getCsvAction ()
     {
-        $formId = $this->params()->fromQuery('form-id');
+        throw new \Rubedo\Exceptions\Server('no yet converted to ZF2');
+        $formId = $this->params()->fromPost('form-id');
         if (! $formId) {
             throw new \Rubedo\Exceptions\User('This action needs a form id as argument.', "Exception11");
         }
         
         $form = Manager::getService('Forms')->findById($formId);
         
-        $displayQnb = $this->params()->fromQuery('display-qnb', false);
+        $displayQnb = $this->params()->fromPost('display-qnb', false);
         $fileTitle = Manager::getService('Pages')->filterUrl($form['title']); // $this->_filterName($form['title']);
         
         $fileName = $fileTitle . '_' . $formId . '_' . date('Ymd') . '.csv';
