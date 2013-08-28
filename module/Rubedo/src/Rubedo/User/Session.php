@@ -38,7 +38,7 @@ class Session implements ISession
     /**
      * Returns a session object
      *
-     * @return object
+     * @return SessionContainer
      */
     public function getSessionObject ()
     {
