@@ -160,8 +160,8 @@ final class Version
             'MongoDriver' => \MongoClient::VERSION
         );
         
-        if (is_file(APPLICATION_PATH . '/../composer.lock')) {
-            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.lock'),Json::TYPE_ARRAY);
+        if (is_file(APPLICATION_PATH . '/composer.lock')) {
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.lock'),Json::TYPE_ARRAY);
             foreach ($phpComponentsArray['packages'] as $package) {
                 if ($package['name'] == 'bombayworks/zendframework1') {
                     continue;
@@ -171,8 +171,8 @@ final class Version
         }
         
         $componentsArray['frontComponents'] = array();
-        if (is_file(APPLICATION_PATH . '/../composer.front.lock')) {
-            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/../composer.front.lock'),Json::TYPE_ARRAY);
+        if (is_file(APPLICATION_PATH . '/composer.front.lock')) {
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.front.lock'),Json::TYPE_ARRAY);
             foreach ($phpComponentsArray['packages'] as $package) {
                 $componentsArray['frontComponents'][$package['name']] = $package['version'];
             }
