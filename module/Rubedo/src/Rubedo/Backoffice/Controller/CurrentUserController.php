@@ -134,8 +134,13 @@ class CurrentUserController extends AbstractActionController
         if (is_string($oldPassword) && is_string($newPassword)) {
             $currentUserService = Manager::getService('CurrentUser');
             $result = $currentUserService->changePassword($oldPassword, $newPassword);
+            $result = array(
+                'success' => $result
+            );
         } else {
-            $result = false;
+            $result = array(
+                'success' => false
+            );
         }
         return new JsonModel($result);
     }
