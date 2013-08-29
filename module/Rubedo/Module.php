@@ -225,7 +225,10 @@ class Module
     }
 
     protected function initExtjs($config)
-    {}
+    {
+        $options = $config['backoffice']['extjs'];
+        \Rubedo\Backoffice\ExtConfig::setConfig($options);
+    }
 
     protected function initSwiftMail($config)
     {
@@ -254,7 +257,7 @@ class Module
         }
     }
 
-    protected function toDeadEnd(MvcEvent $event,\Exception $exception)
+    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
