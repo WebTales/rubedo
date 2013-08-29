@@ -37,16 +37,27 @@ class Acl implements IAcl
      *
      * @var string
      */
-    protected $_rolesDirectory;
+    protected static $rolesDirectory;
 
     protected static $_hasAccessRults = array();
 
-    public function __construct ()
+    /**
+     * @return the $rolesDirectory
+     */
+    public static function getRolesDirectory()
     {
-        $this->_rolesDirectory = realpath(APPLICATION_PATH . '/config/roles');
+        return Acl::$rolesDirectory;
     }
 
-    /**
+	/**
+     * @param string $rolesDirectory
+     */
+    public static function setRolesDirectory($rolesDirectory)
+    {
+        Acl::$rolesDirectory = $rolesDirectory;
+    }
+
+	/**
      * Check if the current user has access to a given resource for a given
      * access mode
      *
@@ -147,7 +158,7 @@ class Acl implements IAcl
      */
     protected function _getRoleByName ($name)
     {
-        $pathName = $this->_rolesDirectory . '/' . $name . '.json';
+        $pathName = self::$rolesDirectory . '/' . $name . '.json';
         if (is_file($pathName)) {
             $roleInfos = Json::decode(file_get_contents($pathName),Json::TYPE_ARRAY);
             return $roleInfos;
@@ -210,7 +221,7 @@ class Acl implements IAcl
         if (! empty($currentUserLanguage)) {
             $userLang = $currentUserLanguage;
         }
-        $templateDirIterator = new \DirectoryIterator($this->_rolesDirectory);
+        $templateDirIterator = new \DirectoryIterator(self::$rolesDirectory);
         if (! $templateDirIterator) {
             throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for role dir', "Exception67");
         }

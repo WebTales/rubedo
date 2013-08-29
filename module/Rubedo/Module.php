@@ -49,6 +49,7 @@ class Module
         $this->initSwiftMail($config);
         $this->initSites($config);
         $this->initSettings($config);
+        $this->initRoles($config);
         SessionData::setSessionName($config['session']['name']);
         
         Interfaces\config::initInterfaces();
@@ -262,6 +263,10 @@ class Module
             \Rubedo\Mail\Notification::setOptions('isBackofficeSSL', isset($options['isBackofficeSSL']) ? $options['isBackofficeSSL'] : false);
             \Rubedo\Mail\Notification::setOptions('fromEmailNotification', isset($options['fromEmailNotification']) ? $options['fromEmailNotification'] : null);
         }
+    }
+    protected function initRoles($config)
+    {
+        \Rubedo\Security\Acl::setRolesDirectory(__DIR__.'/config/roles');
     }
 
     protected function toDeadEnd(MvcEvent $event, \Exception $exception)
