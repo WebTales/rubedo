@@ -195,7 +195,7 @@ class Module
         if (isset($options)) {
             DataAbstract::setOptions($options['elastic']);
         }
-        $indexContentOptionsJson = file_get_contents(APPLICATION_PATH . '/config/elastica.json');
+        $indexContentOptionsJson = file_get_contents(__DIR__ . '/config/elastica.json');
         $indexContentOptions = Json::decode($indexContentOptionsJson, Json::TYPE_ARRAY);
         DataAbstract::setContentIndexOption($indexContentOptions);
         DataAbstract::setDamIndexOption($indexContentOptions);
