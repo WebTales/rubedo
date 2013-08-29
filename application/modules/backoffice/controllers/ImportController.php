@@ -210,6 +210,11 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         $contentsService = Rubedo\Services\Manager::getService('Contents');
         $damService = Rubedo\Services\Manager::getService('Dam');
         $fileService = Rubedo\Services\Manager::getService('Files');
+        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        
+        // get active locales for automatic dam translation
+        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        $activeLocales = $languagesService->getActiveLocales();
         
         $brokenLines = array();
         
@@ -336,11 +341,13 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                     }
                     // create i18n for translated fields
                     $contenti18n = array();
+                    $languages = array();
                     foreach ($importAsFieldTranslation as $fieldKey => $value) {
+                        
                         foreach ($importAsField as $key => $importedField) {
                             if ($importedField["csvIndex"] == $value["translatedElement"]) {
                                 $importedFieldKey = $key;
-                                break (2);
+                                break;
                             }
                         }
                         $translatedElement = $importAsField[$importedFieldKey];
@@ -359,7 +366,18 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                             $contenti18n[$value["translateToLanguage"]]["locale"] = $value["translateToLanguage"];
                         }
                         $contenti18n[$value["translateToLanguage"]]["fields"][$fieldName] = $currentLine[$value["csvIndex"]];
+                        if (!isset($languages[$value["translateToLanguage"]])) {
+                            $languages[] = $value["translateToLanguage"];
+                        }
                     }
+                    
+                    // Unset translation with empty text (title)
+                    foreach ($languages as $lang) {
+                        if (isset($contenti18n[$lang]["fields"]["text"]) && trim($contenti18n[$lang]["fields"]["text"]) == "") {
+                            unset($contenti18n[$lang]);
+                        }
+                    }
+                    
                     // create fields content
                     foreach ($importAsField as $key => $value) {
                         if (($value['protoId'] != 'text') && ($value['protoId'] != 'summary')) {
@@ -475,6 +493,14 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                                 $obj['i18n'][$workingLanguage]['fields'] = $obj['fields'];
                                                 unset($obj['i18n'][$workingLanguage]['fields']['writeWorkspace']);
                                                 unset($obj['i18n'][$workingLanguage]['fields']['target']);
+                                                
+                                                // Add i18n for all the other active languages
+                                                foreach ($activeLocales as $locale) {
+                                                    if ($locale != $workingLanguage) {
+                                                        $obj['i18n'][$locale] = array();
+                                                        $obj['i18n'][$locale]['fields'] = array("title" => $info["filename"]);  
+                                                    }                                                  
+                                                }
                                                 
                                                 $returnArray = $damService->create($obj);
                                                 if (! $returnArray['success']) {
