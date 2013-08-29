@@ -29,10 +29,10 @@ class Module
 
     public function onBootstrap(MvcEvent $e)
     {
-        //register serviceLocator for global access by Rubedo
+        // register serviceLocator for global access by Rubedo
         Manager::setServiceLocator($e->getApplication()->getServiceManager());
         
-        //register eventManager for global access by Rubedo
+        // register eventManager for global access by Rubedo
         $eventManager = $e->getApplication()->getEventManager();
         Events::setEventManager($eventManager);
         
@@ -44,11 +44,14 @@ class Module
         
         $this->initMongodb($config);
         $this->initElastic($config);
+        $this->initLocalization($config);
+        $this->initExtjs($config);
+        $this->initSwiftMail($config);
+        $this->initSites($config);
+        $this->initSettings($config);
         SessionData::setSessionName($config['session']['name']);
         
         Interfaces\config::initInterfaces();
-        
-        
         
         $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
             $this,
@@ -125,7 +128,7 @@ class Module
             if ($isBackoffice && $event->getRequest()->isPost() && ! in_array($controller, $doNotCheckTokenControllers)) {
                 $user = Manager::getService('Session')->get('user');
                 $token = $event->getRequest()->getPost('token');
-                if(!isset($token)){
+                if (! isset($token)) {
                     $token = $event->getRequest()->getQuery('token');
                 }
                 
@@ -160,7 +163,6 @@ class Module
         
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config['session']);
-        
         
         $mongoInfos = Mongo\DataAccess::getDefaultMongo();
         $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
@@ -211,7 +213,44 @@ class Module
         }
     }
 
-    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
+    /**
+     * Load services parameter from application.ini to the service manager
+     */
+    protected function initSites($config)
+    {
+        $options = $config['site'];
+        if (isset($options['override'])) {
+            \Rubedo\Collection\Sites::setOverride($options['override']);
+        }
+    }
+
+    protected function initExtjs($config)
+    {}
+
+    protected function initSwiftMail($config)
+    {}
+
+    protected function initLocalization($config)
+    {
+        $options = $config['localisationfiles'];
+        if (isset($options)) {
+            
+            \Rubedo\Internationalization\Translate::setLocalizationJsonArray($options);
+        }
+    }
+
+    protected function initSettings($config)
+    {
+        $options = $config['phpSettings'];
+        if (isset($options['enableEmailNotification'])) {
+            \Rubedo\Mail\Notification::setSendNotification(true);
+            \Rubedo\Mail\Notification::setOptions('defaultBackofficeHost', isset($options['defaultBackofficeHost']) ? $options['defaultBackofficeHost'] : null);
+            \Rubedo\Mail\Notification::setOptions('isBackofficeSSL', isset($options['isBackofficeSSL']) ? $options['isBackofficeSSL'] : false);
+            \Rubedo\Mail\Notification::setOptions('fromEmailNotification', isset($options['fromEmailNotification']) ? $options['fromEmailNotification'] : null);
+        }
+    }
+
+    protected function toDeadEnd(MvcEvent $event,\Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
