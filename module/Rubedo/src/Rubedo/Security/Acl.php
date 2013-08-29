@@ -37,27 +37,29 @@ class Acl implements IAcl
      *
      * @var string
      */
-    protected static $rolesDirectory;
+    protected static $rolesDirectories;
 
     protected static $_hasAccessRults = array();
 
     /**
+     *
      * @return the $rolesDirectory
      */
-    public static function getRolesDirectory()
+    public static function getRolesDirectories()
     {
-        return Acl::$rolesDirectory;
+        return Acl::$rolesDirectories;
     }
 
-	/**
-     * @param string $rolesDirectory
+    /**
+     *
+     * @param string $rolesDirectory            
      */
-    public static function setRolesDirectory($rolesDirectory)
+    public static function setRolesDirectories($rolesDirectories)
     {
-        Acl::$rolesDirectory = $rolesDirectory;
+        Acl::$rolesDirectories = $rolesDirectories;
     }
 
-	/**
+    /**
      * Check if the current user has access to a given resource for a given
      * access mode
      *
@@ -65,7 +67,7 @@ class Acl implements IAcl
      *            resource name
      * @return boolean
      */
-    public function hasAccess ($resource)
+    public function hasAccess($resource)
     {
         if (! isset(self::$_hasAccessRults[$resource])) {
             $result = false;
@@ -100,7 +102,7 @@ class Acl implements IAcl
      * @param array $group            
      * @return array
      */
-    protected function _addGroupToRoleArray (array $roleArray, array $group = null)
+    protected function _addGroupToRoleArray(array $roleArray, array $group = null)
     {
         if (is_null($group)) {
             return $roleArray;
@@ -120,7 +122,7 @@ class Acl implements IAcl
      * @param string $role            
      * @return boolean
      */
-    protected function _roleHasAccess ($resource, $role)
+    protected function _roleHasAccess($resource, $role)
     {
         // @todo temporary disabling workflow components
         if (strpos($resource, 'workflows') !== false) {
@@ -156,15 +158,16 @@ class Acl implements IAcl
      * @param string $name            
      * @return array null
      */
-    protected function _getRoleByName ($name)
+    protected function _getRoleByName($name)
     {
-        $pathName = self::$rolesDirectory . '/' . $name . '.json';
-        if (is_file($pathName)) {
-            $roleInfos = Json::decode(file_get_contents($pathName),Json::TYPE_ARRAY);
-            return $roleInfos;
-        } else {
-            return null;
+        foreach (self::$rolesDirectories as $directory) {
+            $pathName = $directory . '/' . $name . '.json';
+            if (is_file($pathName)) {
+                $roleInfos = Json::decode(file_get_contents($pathName), Json::TYPE_ARRAY);
+                return $roleInfos;
+            }
         }
+        return null;
     }
 
     /**
@@ -173,7 +176,7 @@ class Acl implements IAcl
      * @param string $name            
      * @return array
      */
-    protected function _getRightsByRoleName ($name, $max = 5)
+    protected function _getRightsByRoleName($name, $max = 5)
     {
         $rightsArray = array();
         $roleInfos = $this->_getRoleByName($name);
@@ -195,7 +198,7 @@ class Acl implements IAcl
      *            array of ressources
      * @return array the array of boolean with ressource as key name
      */
-    public function accessList (array $ressourceArray)
+    public function accessList(array $ressourceArray)
     {
         $aclArray = array();
         if (isset($this->_service)) {
@@ -214,31 +217,33 @@ class Acl implements IAcl
      *
      * @see \Rubedo\Interfaces\Security\IAcl::getAvailaibleRoles()
      */
-    public function getAvailaibleRoles ()
+    public function getAvailaibleRoles()
     {
         $userLang = 'en'; // default value
         $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
         if (! empty($currentUserLanguage)) {
             $userLang = $currentUserLanguage;
         }
-        $templateDirIterator = new \DirectoryIterator(self::$rolesDirectory);
-        if (! $templateDirIterator) {
-            throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for role dir', "Exception67");
-        }
-        
         $rolesInfosArray = array();
         
-        foreach ($templateDirIterator as $file) {
-            if ($file->isDot() || $file->isDir()) {
-                continue;
+        foreach (self::$rolesDirectories as $directory) {
+            $templateDirIterator = new \DirectoryIterator($directory);
+            if (! $templateDirIterator) {
+                throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for role dir', "Exception67");
             }
-            if ($file->getExtension() == 'json') {
-                $roleJson = file_get_contents($file->getPathname());
-                $roleInfos = Json::decode($roleJson,Json::TYPE_ARRAY);
-                $roleLabel = $roleInfos['label'][$userLang];
-                $roleInfos['label'] = $roleLabel;
-                unset($roleInfos['rights']);
-                $rolesInfosArray[] = $roleInfos;
+            
+            foreach ($templateDirIterator as $file) {
+                if ($file->isDot() || $file->isDir()) {
+                    continue;
+                }
+                if ($file->getExtension() == 'json') {
+                    $roleJson = file_get_contents($file->getPathname());
+                    $roleInfos = Json::decode($roleJson, Json::TYPE_ARRAY);
+                    $roleLabel = $roleInfos['label'][$userLang];
+                    $roleInfos['label'] = $roleLabel;
+                    unset($roleInfos['rights']);
+                    $rolesInfosArray[] = $roleInfos;
+                }
             }
         }
         

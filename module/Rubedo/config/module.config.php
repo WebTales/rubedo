@@ -53,8 +53,10 @@ $config = array(
     ),
     'localisationfiles' => $localizationConfig,
     'site' => array(),
-    'applicationSettings'=>array(),
-    
+    'applicationSettings' => array(),
+    'rolesDirectories' => array(
+        __DIR__ . '/roles'
+    )
 );
 
 $sessionLifeTime = 3600;

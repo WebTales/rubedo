@@ -264,9 +264,10 @@ class Module
             \Rubedo\Mail\Notification::setOptions('fromEmailNotification', isset($options['fromEmailNotification']) ? $options['fromEmailNotification'] : null);
         }
     }
+
     protected function initRoles($config)
     {
-        \Rubedo\Security\Acl::setRolesDirectory(__DIR__.'/config/roles');
+        \Rubedo\Security\Acl::setRolesDirectories($config['rolesDirectories']);
     }
 
     protected function toDeadEnd(MvcEvent $event, \Exception $exception)
