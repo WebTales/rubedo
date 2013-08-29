@@ -317,8 +317,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             throw new \Rubedo\Exceptions\Server('No defined native language for this item');
         }
         
-        $obj = $this->merge($obj, $obj['i18n'][$obj['nativeLanguage']]);
-        $obj['locale'] = $obj['nativeLanguage'];
+        if($this->getFallbackLocale() == "" || !isset($obj['i18n'][$this->getFallbackLocale()])) {
+            return $obj;
+        }
+        
+        $obj = $this->merge($obj, $obj['i18n'][$this->getFallbackLocale()]);
+        $obj['locale'] = $this->getFallbackLocale();
         
         if ($locale != $obj['nativeLanguage']) {
             if (isset($obj['i18n'][$locale])) {
