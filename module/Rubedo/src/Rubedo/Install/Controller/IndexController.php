@@ -14,8 +14,15 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-use Rubedo\Mongo\DataAccess, Rubedo\Collection\AbstractCollection, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+namespace Rubedo\Install\Controller;
+
+use Rubedo\Mongo\DataAccess;
+use Rubedo\Collection\AbstractCollection;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Rubedo\Update\Install;
+use Zend\Mvc\Controller\AbstractActionController;
+
 
 /**
  * Installer Controller
@@ -25,7 +32,7 @@ use Rubedo\Update\Install;
  * @category Rubedo
  * @package Rubedo
  */
-class Install_IndexController extends Zend_Controller_Action
+class IndexController extends AbstractActionController
 {
 
     protected $_localConfigDir;
@@ -36,9 +43,9 @@ class Install_IndexController extends Zend_Controller_Action
 
     protected $_applicationOptions = array();
 
-    public function init ()
+    public function __construct()
     {
-        Rubedo\User\CurrentUser::setIsInstallerUser(true);
+        \Rubedo\User\CurrentUser::setIsInstallerUser(true);
         
         AbstractCollection::disableUserFilter();
         $this->_helper->_layout->setLayout('install-layout');
@@ -62,7 +69,7 @@ class Install_IndexController extends Zend_Controller_Action
     /**
      * get previous and next step for wizard
      */
-    protected function _setWizardSteps ()
+    protected function _setWizardSteps()
     {
         $getNext = false;
         $previous = null;
@@ -79,10 +86,10 @@ class Install_IndexController extends Zend_Controller_Action
         }
     }
 
-    public function indexAction ()
+    public function indexAction()
     {
         if (! $this->_isConfigWritable()) {
-            throw new Rubedo\Exceptions\User('Local config file %1$s should be writable', "Exception29", $this->_localConfigFile);
+            throw new \Rubedo\Exceptions\User('Local config file %1$s should be writable', "Exception29", $this->_localConfigFile);
         }
         if (! isset($this->_localConfig['installed']) || $this->_localConfig['installed']['status'] != 'finished') {
             if (! isset($this->_localConfig['installed']['action'])) {
@@ -93,7 +100,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
     }
 
-    public function dropIndexesAction ()
+    public function dropIndexesAction()
     {
         Manager::getService('UrlCache')->drop();
         Manager::getService('Cache')->drop();
@@ -105,7 +112,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_helper->json($result);
     }
 
-    public function startWizardAction ()
+    public function startWizardAction()
     {
         $this->_localConfig['installed'] = array(
             'status' => 'begin',
@@ -115,7 +122,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
-    public function finishWizardAction ()
+    public function finishWizardAction()
     {
         $this->_localConfig['installed']['status'] = 'finished';
         
@@ -126,7 +133,7 @@ class Install_IndexController extends Zend_Controller_Action
     /**
      * Check if a valid connection to MongoDB can be written in local config
      */
-    public function setDbAction ()
+    public function setDbAction()
     {
         $this->view->displayMode = 'regular';
         if ($this->_localConfig['installed']['status'] != 'finished') {
@@ -170,7 +177,7 @@ class Install_IndexController extends Zend_Controller_Action
     /**
      * Check if a valid connection to MongoDB can be written in local config
      */
-    public function setElasticSearchAction ()
+    public function setElasticSearchAction()
     {
         $this->view->displayMode = 'regular';
         if ($this->_localConfig['installed']['status'] != 'finished') {
@@ -248,7 +255,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
         $languageList = $languageListResult["data"];
         $languageSelectList = array();
-        $languageSelectList[]="";
+        $languageSelectList[] = "";
         
         foreach ($languageList as $value) {
             list ($label) = explode(';', $value['label']);
@@ -279,9 +286,8 @@ class Install_IndexController extends Zend_Controller_Action
         
         $this->_saveLocalConfig();
     }
-    
-    
-    public function setMailerAction ()
+
+    public function setMailerAction()
     {
         $this->view->displayMode = 'regular';
         if ($this->_localConfig['installed']['status'] != 'finished') {
@@ -327,7 +333,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
-    public function setLocalDomainsAction ()
+    public function setLocalDomainsAction()
     {
         $this->view->displayMode = 'regular';
         if ($this->_localConfig['installed']['status'] != 'finished') {
@@ -366,7 +372,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->view->form = $dbForm;
     }
 
-    public function setPhpSettingsAction ()
+    public function setPhpSettingsAction()
     {
         $this->view->displayMode = 'regular';
         if ($this->_localConfig['installed']['status'] != 'finished') {
@@ -414,7 +420,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
-    public function setDbContentsAction ()
+    public function setDbContentsAction()
     {
         $this->view->displayMode = 'regular';
         if ($this->_localConfig['installed']['status'] != 'finished') {
@@ -447,7 +453,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
-    public function setAdminAction ()
+    public function setAdminAction()
     {
         $this->view->displayMode = 'regular';
         if ($this->_localConfig['installed']['status'] != 'finished') {
@@ -505,7 +511,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_saveLocalConfig();
     }
 
-    protected function _buildConnectionString ($options)
+    protected function _buildConnectionString($options)
     {
         $connectionString = 'mongodb://';
         if (! empty($options['login'])) {
@@ -519,7 +525,7 @@ class Install_IndexController extends Zend_Controller_Action
         return $connectionString;
     }
 
-    protected function _isConfigWritable ()
+    protected function _isConfigWritable()
     {
         if (is_file($this->_localConfigFile)) {
             return is_writable($this->_localConfigFile);
@@ -528,7 +534,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
     }
 
-    protected function _saveLocalConfig ()
+    protected function _saveLocalConfig()
     {
         $iniWriter = new Zend_Config_Writer_Json();
         $iniWriter->setConfig(new Zend_Config($this->_localConfig));
@@ -537,7 +543,7 @@ class Install_IndexController extends Zend_Controller_Action
         $iniWriter->write();
     }
 
-    protected function _loadLocalConfig ()
+    protected function _loadLocalConfig()
     {
         if (is_file($this->_localConfigFile)) {
             $localConfig = new Zend_Config_Json($this->_localConfigFile, null, array(
@@ -553,7 +559,7 @@ class Install_IndexController extends Zend_Controller_Action
         $this->_localConfig = $localConfig->toArray();
     }
 
-    protected function _doEnsureIndexes ()
+    protected function _doEnsureIndexes()
     {
         Manager::getService('UrlCache')->drop();
         Manager::getService('Cache')->drop();
@@ -574,7 +580,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
     }
 
-    protected function _shouldIndex ()
+    protected function _shouldIndex()
     {
         if (isset($this->_applicationOptions['installed']['index']) && $this->_applicationOptions['installed']['index'] == $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
             return false;
@@ -583,7 +589,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
     }
 
-    protected function _shouldInitialize ()
+    protected function _shouldInitialize()
     {
         if (isset($this->_applicationOptions['installed']['contents']) && $this->_applicationOptions['installed']['contents'] == $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
             return false;
@@ -592,7 +598,7 @@ class Install_IndexController extends Zend_Controller_Action
         }
     }
 
-    protected function _docreateDefaultsGroup ()
+    protected function _docreateDefaultsGroup()
     {
         if ($this->_isDefaultGroupsExists()) {
             return;
@@ -608,7 +614,7 @@ class Install_IndexController extends Zend_Controller_Action
         return $success;
     }
 
-    protected function _isDefaultGroupsExists ()
+    protected function _isDefaultGroupsExists()
     {
         $adminGroup = Manager::getService('Groups')->findByName('admin');
         $publicGroup = Manager::getService('Groups')->findByName('public');
