@@ -7,7 +7,6 @@
     <target>build/phpdoc</target>
   </transformer>
   <files>
-    <directory>./application</directory>
-    <directory>./Core</directory>
+    <directory>./module/Rubedo</directory>
   </files>
 </phpdoc>
