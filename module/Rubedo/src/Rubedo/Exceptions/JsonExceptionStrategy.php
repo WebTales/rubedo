@@ -22,6 +22,7 @@ use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\View\Http\ExceptionStrategy;
+use Zend\Http\Response as HttpResponse;
 use Rubedo\Content\Context;
 
 
@@ -90,7 +91,7 @@ class JsonExceptionStrategy extends ExceptionStrategy
         
         // Do nothing if the result is a response object
         $result = $e->getResult();
-        if ($result instanceof Response) {
+        if ($result instanceof HttpResponse) {
             return;
         }
         

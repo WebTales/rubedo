@@ -35,7 +35,11 @@ use Zend\View\Model\JsonModel;
  */
 class AclController extends AbstractActionController
 {
-
+    /**
+     * Action that accept a list of ressource name and return a boolean for each
+     *
+     * resourceName => true if user can access it
+     */
     function indexAction()
     {
         $AclArray = array();

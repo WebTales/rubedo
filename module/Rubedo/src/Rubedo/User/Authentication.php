@@ -19,7 +19,6 @@ namespace Rubedo\User;
 use Rubedo\Interfaces\User\IAuthentication;
 use Zend\Authentication\AuthenticationService;
 use Rubedo\User\AuthAdapter;
-use Zend\Session\Container as SessionContainer;
 use Rubedo\Services\Manager;
 
 /**

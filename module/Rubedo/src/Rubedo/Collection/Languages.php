@@ -49,7 +49,7 @@ class Languages extends AbstractCollection implements ILanguages
     protected static $activeLanguages = array();
 
     protected static $activeLocalesArray = null;
-    
+
     protected static $defaultLanguage = null;
 
     public function __construct()
@@ -83,9 +83,8 @@ class Languages extends AbstractCollection implements ILanguages
     public function findByIso($iso)
     {
         $filter = Filter::factory('Value')->setValue($iso)->setName('iso2');
-        if ($result) {
-            $result = $this->_dataService->findOne($filter);
-        }
+        $result = $this->_dataService->findOne($filter);
+        
         return $result;
     }
 
@@ -126,16 +125,19 @@ class Languages extends AbstractCollection implements ILanguages
             return self::$defaultLanguage['locale'];
         }
     }
-    
+
     public function getActiveLanguages($siteId = null)
     {
-    	
-    	$filters = Filter::factory();
-    	$filters->addFilter(Filter::factory('Value')->setName('active')
-    			->setValue(true));
-    	$result = Manager::getService('Languages')->getList($filters,array(array('property'=>'label','direction'=>'ASC')));
-    	return $result['data'];
-
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('active')
+            ->setValue(true));
+        $result = Manager::getService('Languages')->getList($filters, array(
+            array(
+                'property' => 'label',
+                'direction' => 'ASC'
+            )
+        ));
+        return $result['data'];
     }
 
     /**
@@ -152,7 +154,7 @@ class Languages extends AbstractCollection implements ILanguages
             }
         }
         return self::$activeLocalesArray;
-    }    
+    }
     
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
