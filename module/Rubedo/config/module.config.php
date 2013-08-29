@@ -1,10 +1,15 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Rubedo -- ECM solution Copyright (c) 2013, WebTales
+ * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 $serviceArray = include (__DIR__ . '/services.config.php');
 $controllerArray = include (__DIR__ . '/controllers.config.php');
@@ -82,6 +87,34 @@ $config = array(
         'invokables' => $serviceMapArray,
         'shared' => $serviceSharedMapArray
     )
+);
+
+$sessionLifeTime = 3600;
+
+$config['session'] = array(
+    'remember_me_seconds' => $sessionLifeTime,
+    'use_cookies' => true,
+    'cookie_httponly' => false,
+    'gc_maxlifetime' => $sessionLifeTime,
+    'name' => 'rubedo',
+    'cookie_httponly' => true
+);
+
+$config['datastream'] = array();
+
+$config['datastream']['mongo'] = array(
+    'server' => 'localhost',
+    'port' => '27017',
+    'db' => 'rubedo',
+    'login' => '',
+    'password' => ''
+);
+
+$config['elastic'] = array(
+    "host" => "localhost",
+    "port" => "9200",
+    "contentIndex" => "contents",
+    "damIndex" => "dam"
 );
 
 return $config;
