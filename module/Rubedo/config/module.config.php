@@ -11,15 +11,15 @@
  * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-$serviceArray = include (__DIR__ . '/services.config.php');
+$serviceMapArray = include (__DIR__ . '/services.config.php');
 $controllerArray = include (__DIR__ . '/controllers.config.php');
 $viewArray = include (__DIR__ . '/views.config.php');
-$serviceMapArray = array();
 
-foreach ($serviceArray as $key => $value) {
-    $serviceMapArray[$key] = $value['class'];
+foreach ($serviceMapArray as $key => $value) {
     $serviceSharedMapArray[$key] = false;
 }
+
+
 
 $config = array(
     'router' => array(
