@@ -61,8 +61,7 @@ class Module
         // Config json enabled exceptionStrategy
         $exceptionStrategy = new JsonExceptionStrategy();
         
-        // @todo import config
-        $displayExceptions = true;
+        $displayExceptions = $config['viewManager']['display_exceptions'];
         
         $exceptionStrategy->setDisplayExceptions($displayExceptions);
         $exceptionStrategy->attach($application->getEventManager());
@@ -248,7 +247,7 @@ class Module
 
     protected function initSettings($config)
     {
-        $options = $config['phpSettings'];
+        $options = $config['applicationSettings'];
         if (isset($options['enableEmailNotification'])) {
             \Rubedo\Mail\Notification::setSendNotification(true);
             \Rubedo\Mail\Notification::setOptions('defaultBackofficeHost', isset($options['defaultBackofficeHost']) ? $options['defaultBackofficeHost'] : null);

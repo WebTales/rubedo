@@ -1,5 +1,5 @@
 <?php
-defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(__DIR__.'/..'));
+defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(__DIR__ . '/..'));
 
 return array(
     // This should be an array of module namespaces used in the application.
@@ -22,5 +22,9 @@ return array(
         'config_glob_paths' => array(
             'config/autoload/{,*.}{global,local}.php'
         )
+    ),
+    'phpSettings' => array(
+        'display_startup_errors' => '1',
+        'display_errors' => '1'
     )
 );
