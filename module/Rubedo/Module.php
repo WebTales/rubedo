@@ -228,7 +228,11 @@ class Module
     {}
 
     protected function initSwiftMail($config)
-    {}
+    {
+        if (isset($config['swiftmail'])) {
+            \Rubedo\Mail\Mailer::setOptions($config['swiftmail']);
+        }
+    }
 
     protected function initLocalization($config)
     {

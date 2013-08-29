@@ -28,6 +28,30 @@ class Mailer implements IMailer
 {
 
     /**
+     * Configuration for swift mail
+     * @var array
+     */
+    protected static $options = array();
+    
+    
+    
+    /**
+     * @return the $options
+     */
+    public function getOptions()
+    {
+        return Mailer::$options;
+    }
+
+	/**
+     * @param multitype: $options
+     */
+    public static function setOptions($options)
+    {
+        Mailer::$options = $options;
+    }
+
+	/**
      * (non-PHPdoc) @see \Rubedo\Interfaces\Mail\IMailer::getNewMessage()
      */
     public function getNewMessage ()
@@ -41,7 +65,7 @@ class Mailer implements IMailer
     public function sendMessage ($message, &$failedRecipients = null)
     {
         if (! isset($this->_transport)) {
-            $options = \Zend_Registry::get('swiftMail');
+            $options = $this->getOptions();
             if (! isset($options['smtp'])) {
                 throw new \Rubedo\Exceptions\Server('No smtp set in configuration', "Exception66");
             }
