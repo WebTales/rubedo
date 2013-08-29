@@ -270,7 +270,7 @@ class Module
         \Rubedo\Security\Acl::setRolesDirectories($config['rolesDirectories']);
     }
 
-    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
+    protected function toDeadEnd(MvcEvent $event,\Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
