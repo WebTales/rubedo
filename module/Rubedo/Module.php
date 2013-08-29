@@ -17,6 +17,7 @@ use Zend\Session\SaveHandler\MongoDB;
 use Zend\Session\SaveHandler\MongoDBOptions;
 use Zend\Json\Json;
 use Rubedo\Services\Manager;
+use Rubedo\Services\Events;
 use Rubedo\Elastic\DataAbstract;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Exceptions\JsonExceptionStrategy;
@@ -28,7 +29,13 @@ class Module
 
     public function onBootstrap(MvcEvent $e)
     {
+        //register serviceLocator for global access by Rubedo
+        Manager::setServiceLocator($e->getApplication()->getServiceManager());
+        
+        //register eventManager for global access by Rubedo
         $eventManager = $e->getApplication()->getEventManager();
+        Events::setEventManager($eventManager);
+        
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         
@@ -41,7 +48,7 @@ class Module
         
         Interfaces\config::initInterfaces();
         
-        Services\Manager::setServiceLocator($e->getApplication()->getServiceManager());
+        
         
         $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
             $this,

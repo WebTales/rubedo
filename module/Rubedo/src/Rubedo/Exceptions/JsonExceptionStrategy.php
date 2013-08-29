@@ -25,7 +25,6 @@ use Zend\Mvc\View\Http\ExceptionStrategy;
 use Zend\Http\Response as HttpResponse;
 use Rubedo\Content\Context;
 
-
 /**
  * Handle response as Json if in an asynchroneus context
  *
@@ -42,8 +41,6 @@ class JsonExceptionStrategy extends ExceptionStrategy
     protected $exceptionMap;
 
     protected $describePath;
-    
-
 
     public function getDisplayExceptions ()
     {
@@ -102,12 +99,31 @@ class JsonExceptionStrategy extends ExceptionStrategy
         if (! $e->getRequest() instanceof Request) {
             return;
         }
-        
-        if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
+        if (! ($exception = $e->getParam('exception'))) {
             return;
         }
         
-        if (! ($exception = $e->getParam('exception'))) {
+        $response = $e->getResponse();
+        if (! $response) {
+            $response = new HttpResponse();
+            $e->setResponse($response);
+        }
+        switch (get_class($exception)) {
+            case 'Rubedo\\Exceptions\\User':
+                $response->setStatusCode(200);
+                break;
+            case 'Rubedo\\Exceptions\\NotFound':
+                $response->setStatusCode(404);
+                break;
+            case 'Rubedo\\Exceptions\\Access':
+                $response->setStatusCode(403);
+                break;
+            default:
+                $response->setStatusCode(500);
+                break;
+        }
+        
+        if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
             return;
         }
         
@@ -115,17 +131,6 @@ class JsonExceptionStrategy extends ExceptionStrategy
         $e->setResult(new JsonModel($modelData));
         $e->setError(false);
         
-        $response = $e->getResponse();
-        if (! $response) {
-            $response = new HttpResponse();
-            $e->setResponse($response);
-        }
-        
-        if (isset($modelData['statusCode'])) {
-            $response->setStatusCode($modelData['statusCode']);
-        } else {
-            $response->setStatusCode(500);
-        }
         $response->getHeaders()->addHeaders([
             ContentType::fromString('Content-type: application/json')
         ]);
