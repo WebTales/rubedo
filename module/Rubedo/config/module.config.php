@@ -52,7 +52,9 @@ $config = array(
         )
     ),
     'localisationfiles' => $localizationConfig,
-    'site' => array()
+    'site' => array(),
+    'applicationSettings'=>array(),
+    
 );
 
 $sessionLifeTime = 3600;

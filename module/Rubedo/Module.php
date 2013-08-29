@@ -61,7 +61,7 @@ class Module
         // Config json enabled exceptionStrategy
         $exceptionStrategy = new JsonExceptionStrategy();
         
-        $displayExceptions = $config['viewManager']['display_exceptions'];
+        $displayExceptions = $config['view_manager']['display_exceptions'];
         
         $exceptionStrategy->setDisplayExceptions($displayExceptions);
         $exceptionStrategy->attach($application->getEventManager());
@@ -96,17 +96,17 @@ class Module
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
         
-        //prevent normal session if checking for session remaining lifetime
+        // prevent normal session if checking for session remaining lifetime
         if ($controller == 'Rubedo\\Backoffice\\Controller\\XhrAuthentication' && $action == 'is-session-expiring') {
             return;
         }
         
-        //init the session params and session itself
+        // init the session params and session itself
         $this->initializeSession($event);
         
-        //@todo forward if not installed
+        // @todo forward if not installed
         
-        //@todo forward if no language initialized
+        // @todo forward if no language initialized
         
         // check access
         list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
@@ -264,7 +264,7 @@ class Module
         }
     }
 
-    protected function toDeadEnd(MvcEvent $event,\Exception $exception)
+    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
