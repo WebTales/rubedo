@@ -157,7 +157,7 @@ class Translate implements ITranslate
         self::$translationArray[$language] = array();
         
         foreach (self::$localizationJsonArray as $jsonFilePath) {
-            $realLanguagePath = APPLICATION_PATH . '/../' . str_replace('languagekey', $language, $jsonFilePath);
+            $realLanguagePath = APPLICATION_PATH . '/' . str_replace('languagekey', $language, $jsonFilePath);
             if (is_file($realLanguagePath)) {
                 $tempJson = file_get_contents($realLanguagePath);
                 $tempArray = Json::decode($tempJson,Json::TYPE_ARRAY);

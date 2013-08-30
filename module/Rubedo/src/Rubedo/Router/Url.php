@@ -13,7 +13,9 @@
  */
 namespace Rubedo\Router;
 
-use Rubedo\Interfaces\Router\IUrl, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Router\IUrl;
+use Rubedo\Services\Manager;
+use Rubedo\Content\Context;
 
 /**
  * Front Office URL service
@@ -171,7 +173,8 @@ class Url implements IUrl
         }
         
         if (! isset($data['pageId'])) {
-            throw new \Zend_Controller_Router_Exception('no page given');
+            return null;
+            //throw new \Rubedo\Exceptions\Server('no page given');
         }
         
         $url = $this->getPageUrl($data['pageId']);
@@ -267,11 +270,8 @@ class Url implements IUrl
             $doNotAddSite = false;
         }
         
-        if (\Zend_Registry::getInstance()->offsetExists('draft')) {
-            $ws = \Zend_Registry::get('draft') ? 'draft' : 'live';
-        } else {
-            $ws = 'live';
-        }
+        $ws = Context::isDraft() ? 'draft' : 'live';
+        
         $content = Manager::getService('Contents')->findById($contentId, $ws === 'live', false);
         
         if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "") {

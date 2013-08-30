@@ -42,9 +42,6 @@ class Translate extends \Twig_Extension
      */
     public function translate ($text)
     {
-        $translate = new \Zend_Translate('gettext', APPLICATION_PATH . '/../data/languages/fr/default.mo', 'fr');
-        $translate->addTranslation(APPLICATION_PATH . '/../data/languages/en/default.mo', 'en');
-        $translate->setLocale($this->lang);
-        return $translate->_($text);
+        throw \Exception('obsolete method');
     }
 }
