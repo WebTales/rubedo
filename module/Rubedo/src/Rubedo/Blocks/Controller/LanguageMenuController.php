@@ -14,6 +14,8 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Blocks\Controller;
+
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 
@@ -29,7 +31,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_LanguageMenuController extends Blocks_AbstractController
+class LanguageMenuController extends AbstractController
 {
 
     /**
@@ -37,8 +39,7 @@ class Blocks_LanguageMenuController extends Blocks_AbstractController
      */
     public function indexAction()
     {
-        $output = $this->getAllParams();
-        
+        $output = $this->params()->fromQuery();        
 
         
         if (isset($output['block-config']['displayAs'])) {
@@ -78,6 +79,6 @@ class Blocks_LanguageMenuController extends Blocks_AbstractController
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/language.js")
         );
                 
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 }

@@ -14,9 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Blocks\Controller;
+
 Use Rubedo\Services\Manager;
 
-require_once ('AbstractController.php');
+
 
 /**
  *
@@ -24,7 +26,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_AuthenticationController extends Blocks_AbstractController
+class AuthenticationController extends AbstractController
 {
 
     /**
@@ -32,7 +34,7 @@ class Blocks_AuthenticationController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         if (in_array('HTTPS', $output['site']['protocol'])) {
             $output['enforceHTTPS'] = true;
         } else {
@@ -43,6 +45,6 @@ class Blocks_AuthenticationController extends Blocks_AbstractController
         $output['currentUser'] = $currentUser;
         $css = array();
         $js = array();
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 }
