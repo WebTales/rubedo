@@ -26,13 +26,23 @@ namespace Rubedo\Content;
  */
 class Context
 {
+
     /**
      * Set to true if a request expects JSON without isXmlHttpRequest
+     * 
      * @var bool
      */
     protected static $expectJson = false;
-    
-	/**
+
+    /**
+     * Do we preview draft contents
+     * 
+     * @var bool
+     */
+    protected static $isDraft = false;
+
+    /**
+     *
      * @return the $expectJson
      */
     public static function getExpectJson()
@@ -40,14 +50,30 @@ class Context
         return Context::$expectJson;
     }
 
-	/**
-     * @param boolean $expectJson
+    /**
+     *
+     * @param boolean $expectJson            
      */
-    public static function setExpectJson($expectJson=true)
+    public static function setExpectJson($expectJson = true)
     {
         Context::$expectJson = $expectJson;
     }
 
-    
-    
+    /**
+     *
+     * @return the $isDraft
+     */
+    public static function isDraft()
+    {
+        return Context::$isDraft;
+    }
+
+    /**
+     *
+     * @param boolean $isDraft            
+     */
+    public static function setIsDraft($isDraft = true)
+    {
+        Context::$isDraft = $isDraft;
+    }
 }
