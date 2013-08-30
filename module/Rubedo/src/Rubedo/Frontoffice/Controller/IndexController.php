@@ -19,7 +19,11 @@ namespace Rubedo\Frontoffice\Controller;
 use Rubedo\Controller\Action;
 use Rubedo\Services\Manager;
 use Rubedo\Collection\AbstractLocalizableCollection;
+use Rubedo\Collection\AbstractCollection;
+use Rubedo\Content\Context;
+use Rubedo\Templates\Twig\TwigViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
 
 /**
  * Front Office Defautl Controller
@@ -109,12 +113,15 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        var_dump($this->params()->fromRoute());
-        die();
+//         var_dump($this->params()->fromRoute());
+//         die();
         
-        if ($this->getParam('tk', null)) {
-            $this->_forward('index', 'tiny');
-            return;
+        if ($this->params()->fromQuery('tk', null)) {
+            $redirectParams = array(
+                'action' => 'index',
+                'controller' => 'tiny'
+            );
+            return $this->redirect()->toRoute(null, $redirectParams);
         }
         
         $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
@@ -126,7 +133,7 @@ class IndexController extends AbstractActionController
         
         $this->_session = Manager::getService('Session');
         
-        $this->_pageId = $this->getRequest()->getParam('pageId');
+        $this->_pageId = $this->params()->fromRoute('pageId');
         $this->_servicePage->setCurrentPage($this->_pageId);
         
         // if no page found, maybe installation isn't set
@@ -138,23 +145,25 @@ class IndexController extends AbstractActionController
         
         // ensure protocol is authorized for this site
         if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
-            throw new Rubedo\Exceptions\Server('Protocol is not set for current site', "Exception14");
+            throw new \Rubedo\Exceptions\Server('Protocol is not set for current site', "Exception14");
         }
         
         if (! in_array($httpProtocol, $this->_site['protocol'])) {
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }
         
-        Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
+        AbstractCollection::setIsFrontEnd(true);
         
         // init browser languages
-        $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
-        $browserLanguages = array_keys($zend_locale->getBrowser());
+        $browserLanguages = array();
+//         var_dump($_SERVER['HTTP_ACCEPT_LANGUAGE']);die();
+//         $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
+//         $browserLanguages = array_keys($zend_locale->getBrowser());
         
         // context
         $cookieValue = $this->getRequest()->getCookie('locale');
         $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages, $cookieValue);
-        $domain = $this->getRequest()->getHeader('host');
+        $domain = $this->getRequest()->getUri()->getHost();
         if ($domain) {
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
@@ -162,7 +171,7 @@ class IndexController extends AbstractActionController
         // reload page in localization context
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId, true);
         if (! $this->_pageInfo) {
-            throw new Rubedo\Exceptions\NotFound('Page not found in this language', 'Exception101');
+            throw new \Rubedo\Exceptions\NotFound('Page not found in this language', 'Exception101');
         }
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
@@ -171,24 +180,20 @@ class IndexController extends AbstractActionController
         if (! $isLoggedIn || ! $hasAccessToBO) {
             $isPreview = false;
         } else {
-            $isPreview = $this->getRequest()->getParam('preview', false);
+            $isPreview = $this->params()->fromQuery('preview', false);
         }
         
         if ($isPreview) {
             $isLoggedIn = false;
             Manager::getService('Url')->disableNavigation();
-            $simulatedTime = $this->getRequest()->getParam('preview_date', null);
+            $simulatedTime = $this->params()->fromQuery('preview_date', null);
             if (isset($simulatedTime)) {
                 Manager::getService('CurrentTime')->setSimulatedTime($simulatedTime);
             }
-            $isDraft = $this->getRequest()->getParam('preview_draft', null);
+            $isDraft = $this->params()->fromQuery('preview_draft', null);
             if (isset($isDraft) && $isDraft === "true") {
-                Zend_Registry::set('draft', true);
-            } else {
-                Zend_Registry::set('draft', false);
-            }
-        } else {
-            Zend_Registry::set('draft', false);
+                Context::setIsDraft(true);
+            } 
         }
         
         // template service
@@ -233,10 +238,10 @@ class IndexController extends AbstractActionController
         
         // change title & description if displaying a single content as main
         // content
-        $directContentId = $this->getParam('content-id', false);
+        $directContentId = $this->params()->fromRoute('content-id', false);
         if ($directContentId) {
             
-            $singleContent = Manager::getService('Contents')->findById($directContentId, ! Zend_Registry::get('draft'), false);
+            $singleContent = Manager::getService('Contents')->findById($directContentId, ! Context::isDraft(), false);
             if ($singleContent) {
                 $twigVar['contentId'] = $directContentId;
                 $this->_servicePage->setPageTitle($singleContent['text']);
@@ -245,8 +250,8 @@ class IndexController extends AbstractActionController
         }
         $twigVar['currentPage'] = $this->_pageId;
         $twigVar['currentWorkspace'] = $this->_pageInfo['workspace'];
-        $twigVar['isDraft'] = Zend_Registry::get('draft');
-        $twigVar["baseUrl"] = $this->getFrontController()->getBaseUrl();
+        $twigVar['isDraft'] = Context::isDraft();
+        $twigVar["baseUrl"] = $this->getRequest()->getBasePath();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         $twigVar['lang'] = $lang;
         $twigVar['siteID'] = $this->_pageInfo['site'];
@@ -301,20 +306,16 @@ class IndexController extends AbstractActionController
         
         $pageTemplate = $this->_serviceTemplate->getFileThemePath($this->_pageParams['template']);
         
-        // Render content with template
-        $content = $this->_serviceTemplate->render($pageTemplate, $twigVar);
+        $viewModel = new TwigViewModel($twigVar);
+        $viewModel->setTemplate($pageTemplate);
+        $viewModel->setTerminal(true);
         
-        // disable ZF view layer
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getHelper('Layout')->disableLayout();
-        
-        // return the content
-        $this->getResponse()->appendBody($content, 'default');
+        return $viewModel;
     }
 
     public function testMailAction()
     {
-        $to = $this->getParam('to', null);
+        $to = $this->params()->fromGet('to', null);
         if (is_null($to)) {
             throw new \Rubedo\Exceptions\User('Please, give an email adresse.', "Exception22");
         }
@@ -332,7 +333,7 @@ class IndexController extends AbstractActionController
             $to
         ));
         
-        $this->view->logo = $message->embed(Swift_Image::fromPath(APPLICATION_PATH . '/../vendor/webtales/rubedo-backoffice-ui/www/resources/images/logoRubedo.png'));
+        $this->view->logo = $message->embed(Swift_Image::fromPath(APPLICATION_PATH . '/vendor/webtales/rubedo-backoffice-ui/www/resources/images/logoRubedo.png'));
         $this->view->To = $to;
         // Set body content
         $msgContent = $this->view->render('index/mail.phtml');
@@ -360,7 +361,7 @@ class IndexController extends AbstractActionController
             throw new \Rubedo\Exceptions\Server('No mask found.', "Exception24");
         }
         
-        $this->_currentContent = $this->getParam('content-id', null);
+        $this->_currentContent = $this->params()->fromRoute('content-id', null);
         
         // @todo get main column
         if ($this->_currentContent) {
@@ -555,6 +556,13 @@ class IndexController extends AbstractActionController
      */
     protected function _getBlockData($block)
     {
+        $data = array();
+        $template = 'root/block.html';
+        return array(
+            'data' => $data,
+            'template' => $template
+        );
+        
         $block = $this->localizeTitle($block);
         $params = array();
         $params['block-config'] = $block['configBloc'];
@@ -571,7 +579,7 @@ class IndexController extends AbstractActionController
         $params['blockTitle'] = isset($block['title']) ? $block['title'] : null;
         $params['current-page'] = $this->_pageId;
         
-        $blockQueryParams = $this->getRequest()->getParam($params['prefix'], array());
+        $blockQueryParams = $this->params()->fromQuery($params['prefix'], array());
         foreach ($blockQueryParams as $key => $value) {
             $params[$key] = $value;
         }
@@ -582,8 +590,7 @@ class IndexController extends AbstractActionController
                 $controller = 'nav-bar';
                 $params['currentPage'] = $this->_pageId;
                 $params['rootline'] = $this->_rootlineArray;
-                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()
-                    ->getHttpHost());
+                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()->getUri()->getHost());
                 
                 break;
             case 'Carrousel':
@@ -647,7 +654,7 @@ class IndexController extends AbstractActionController
             case 'Détail de contenu':
             case 'contentDetail':
                 $controller = 'content-single';
-                $contentIdParam = $this->getRequest()->getParam('content-id');
+                $contentIdParam = $this->params()->fromRoute('content-id');
                 $contentId = $contentIdParam ? $contentIdParam : null;
                 if (! isset($contentId)) {
                     $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : null;

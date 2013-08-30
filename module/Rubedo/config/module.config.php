@@ -11,6 +11,7 @@
  * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 $serviceMapArray = include (__DIR__ . '/services.config.php');
 $controllerArray = include (__DIR__ . '/controllers.config.php');
 $viewArray = include (__DIR__ . '/views.config.php');
@@ -37,12 +38,19 @@ $config = array(
             __DIR__ . '/../view'
         ),
         'strategies' => array(
-            'ViewJsonStrategy'
+            'ViewJsonStrategy',
+            'TwigViewStrategy'
         )
     ),
     'service_manager' => array(
         'invokables' => $serviceMapArray,
-        'shared' => $serviceSharedMapArray
+        'shared' => $serviceSharedMapArray,
+        'factories' => array(
+            'TwigViewStrategy' => function($sm) {
+                $strategy = new Rubedo\Templates\Twig\TwigStrategy($sm->get('TwigRenderer'));
+                return $strategy;
+            }
+        )
     ),
     'backoffice' => array(
         'extjs' => array(

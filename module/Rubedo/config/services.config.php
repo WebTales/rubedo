@@ -51,6 +51,7 @@ return array(
     'Themes' => 'Rubedo\\Collection\\Themes',
     'TinyUrl' => 'Rubedo\\Collection\\TinyUrl',
     'Translate' => 'Rubedo\\Internationalization\\Translate',
+    'TwigRenderer' => 'Rubedo\\Templates\\Twig\\TwigRenderer',
     'Url' => 'Rubedo\\Router\\Url',
     'UrlCache' => 'Rubedo\\Collection\\UrlCache',
     'Users' => 'Rubedo\\Collection\\Users',
