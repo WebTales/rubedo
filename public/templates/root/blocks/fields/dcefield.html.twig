@@ -1,13 +1,17 @@
 {%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
 	{% for item in data[key] %}
 	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
-        <div>
-            <a href="{{ displayUrl(item) }}" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">{{ contentTitles[type[key]["config"]["name"]][loop.index-1] }}</a>
-        </div>
+        {% if data.id != "" %}
+            <div>
+                <a href="{{ displayUrl(item) }}" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">{{ contentTitles[type[key]["config"]["name"]][loop.index-1] }}</a>
+            </div>
+        {% endif %}
 	{% endfor %}
 {% else %}
 {% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
-  <div>
-      <a href="{{ displayUrl(data[key]) }}" id="{{ data.id }}_{{ key }}">{{ contentTitles[type[key]["config"]["name"]] }}</a>
-  </div>
+  {% if data.id != "" %}
+      <div>
+          <a href="{{ displayUrl(data[key]) }}" id="{{ data.id }}_{{ key }}">{{ contentTitles[type[key]["config"]["name"]] }}</a>
+      </div>
+  {% endif %}
 {% endif %}
