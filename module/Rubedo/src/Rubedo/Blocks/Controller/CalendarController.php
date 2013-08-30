@@ -26,7 +26,7 @@ use Zend\View\Model\JsonModel;
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_CalendarController extends ContentListController
+class CalendarController extends ContentListController
 {
 
     protected $_defaultTemplate = 'calendar';
