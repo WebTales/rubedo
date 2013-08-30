@@ -14,9 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('ContentListController.php');
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  *
@@ -24,7 +25,7 @@ require_once ('ContentListController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_CalendarController extends Blocks_ContentListController
+class Blocks_CalendarController extends ContentListController
 {
 
     protected $_defaultTemplate = 'calendar';
@@ -32,7 +33,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
     public function indexAction ()
     {
         $output = $this->_getList();
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
@@ -51,13 +52,13 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         
-        $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->getParam('date-field', 'date');
-        //$endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->getParam('endDateField', 'date_end');
+        $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->params()->fromQuery('date-field', 'date');
+        //$endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->params()->fromQuery('endDateField', 'date_end');
         $usedDateField = 'fields.' . $dateField;
         
-        $date = $this->getParam('cal-date');
+        $date = $this->params()->fromQuery('cal-date');
         if ($date) {
             list ($month, $year) = explode('-', $date);
         } else {
@@ -75,7 +76,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
         $nextMonth->add(new DateInterval('P1M'));
         $nextMonthTimeStamp = (string) $nextMonth->getTimestamp(); // cast to string as date are stored as text in DB
         
-        $queryId = $this->getParam('query-id', $blockConfig['query']);
+        $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
         $data = array();
         $filledDate = array();
         
@@ -93,7 +94,7 @@ class Blocks_CalendarController extends Blocks_ContentListController
             
             $queryFilter['filter']->addFilter($dateFilter);
             
-            $queryId = $this->getParam('query-id', $blockConfig['query']);
+            $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
             
             $query = $this->_queryReader->getQueryById($queryId);
             
@@ -187,9 +188,9 @@ class Blocks_CalendarController extends Blocks_ContentListController
             }
         }
         
-        $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
+        $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->params()->fromQuery('current-page');
         
-        $output['singlePage'] = $this->getParam('single-page', $singlePage);
+        $output['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
         
         $output['monthArray'] = Manager::getService('Date')->getMonthArray($timestamp);
         
