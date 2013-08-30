@@ -18,6 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\View\Model\JsonModel;
 
 /**
  *
@@ -44,7 +45,7 @@ class Blocks_CalendarController extends ContentListController
         $js = array(
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/calendar.js")
         );
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
     protected function _getList ()
@@ -212,6 +213,6 @@ class Blocks_CalendarController extends ContentListController
             'calendarHtml' => $calendarHtml,
             'html' => $html
         );
-        $this->_helper->json($data);
+        return new JsonModel($data);
     }
 }

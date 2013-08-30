@@ -18,6 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\View\Model\JsonModel;
 
 
 /**
@@ -49,7 +50,7 @@ class ContentListController extends AbstractController
         $js = array(
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/contentList.js")
         );
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
     protected function _getList ()
@@ -183,7 +184,7 @@ class ContentListController extends AbstractController
             'html' => $html,
             'pager' => $pager
         );
-        $this->_helper->json($data);
+        return new JsonModel($data);
     }
 
     /**
