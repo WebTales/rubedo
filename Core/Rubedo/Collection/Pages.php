@@ -524,8 +524,11 @@ class Pages extends AbstractLocalizableCollection implements IPages
         }
         
         $filters = Filter::factory('NotIn')->setName('maskId')->setValue($masksArray);
+        $options = array(
+            'multiple' => true
+        );
         
-        $result = $this->customDelete($filters);
+        $result = $this->customDelete($filters, $options);
         
         if ($result['ok'] == 1) {
             return array(
