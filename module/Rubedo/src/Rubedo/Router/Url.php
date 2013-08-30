@@ -47,7 +47,7 @@ class Url implements IUrl
      *            requested URL
      * @return string int
      */
-    public function getPageId ($url, $host)
+    public function getPageId($url, $host)
     {
         if (false !== strpos($url, '?')) {
             list ($url) = explode('?', $url);
@@ -110,7 +110,7 @@ class Url implements IUrl
         return $lastMatchedNode;
     }
 
-    public function disableNavigation ()
+    public function disableNavigation()
     {
         self::$_disableNav = true;
     }
@@ -120,7 +120,7 @@ class Url implements IUrl
      *
      * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
      */
-    public function getPageUrl ($pageId)
+    public function getPageUrl($pageId)
     {
         $cachedUrl = Manager::getService('UrlCache')->findByPageId($pageId);
         if (! self::$_useCache || null === $cachedUrl) {
@@ -162,7 +162,7 @@ class Url implements IUrl
      *
      * @see \Rubedo\Interfaces\Router\IUrl::getUrl()
      */
-    public function getUrl ($data, $encode = false)
+    public function getUrl($data, $encode = false)
     {
         if (self::$_disableNav) {
             $currentUri = \Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
@@ -203,7 +203,7 @@ class Url implements IUrl
                     $arrayValue = ($encode) ? urlencode($arrayValue) : $arrayValue;
                     $string = $key;
                     $string .= ($encode) ? urlencode('[]') : '[]';
-                    $string .=  '=' . $arrayValue;
+                    $string .= '=' . $arrayValue;
                     $queryStringArray[] = $string;
                 }
             } else {
@@ -234,7 +234,7 @@ class Url implements IUrl
      *            provided
      * @return string Url for the link href attribute.
      */
-    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         $router = \Zend_Controller_Front::getInstance()->getRouter();
         
@@ -254,7 +254,7 @@ class Url implements IUrl
      *            
      * @return string Url
      */
-    public function displayUrl ($contentId, $type = "default", $siteId = null, $defaultPage = null)
+    public function displayUrl($contentId, $type = "default", $siteId = null, $defaultPage = null)
     {
         $pageValid = false;
         if ($siteId === null) {
@@ -273,7 +273,7 @@ class Url implements IUrl
         
         if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "") {
             foreach ($content['taxonomy']['navigation'] as $pageId) {
-                if($pageId == 'all'){
+                if ($pageId == 'all') {
                     continue;
                 }
                 $page = Manager::getService('Pages')->findById($pageId);
@@ -285,7 +285,7 @@ class Url implements IUrl
         }
         
         if (! $pageValid) {
-            if($type == "default") {
+            if ($type == "default") {
                 if ($defaultPage) {
                     $pageId = $defaultPage;
                 } else {
@@ -311,7 +311,7 @@ class Url implements IUrl
                 'content-id' => $contentId
             );
             
-            if($type == "default") {
+            if ($type == "default") {
                 $pageUrl = $this->url($data, 'rewrite', true);
             } elseif ($type == "canonical") {
                 $pageUrl = $this->url($data, null, true);
@@ -330,7 +330,7 @@ class Url implements IUrl
         }
     }
 
-    protected function _getDefaultSingleBySiteID ($siteId)
+    protected function _getDefaultSingleBySiteID($siteId)
     {
         $site = Manager::getService('Sites')->findById($siteId);
         if (isset($site['defaultSingle'])) {

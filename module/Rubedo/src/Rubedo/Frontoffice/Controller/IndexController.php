@@ -14,8 +14,12 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Controller\Action, Rubedo\Services\Manager;
+namespace Rubedo\Frontoffice\Controller;
+
+use Rubedo\Controller\Action;
+use Rubedo\Services\Manager;
 use Rubedo\Collection\AbstractLocalizableCollection;
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Front Office Defautl Controller
@@ -26,7 +30,7 @@ use Rubedo\Collection\AbstractLocalizableCollection;
  * @category Rubedo
  * @package Rubedo
  */
-class IndexController extends Zend_Controller_Action
+class IndexController extends AbstractActionController
 {
 
     /**
@@ -105,6 +109,9 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction()
     {
+        var_dump($this->params()->fromRoute());
+        die();
+        
         if ($this->getParam('tk', null)) {
             $this->_forward('index', 'tiny');
             return;
@@ -146,16 +153,16 @@ class IndexController extends Zend_Controller_Action
         
         // context
         $cookieValue = $this->getRequest()->getCookie('locale');
-        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages,$cookieValue);
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages, $cookieValue);
         $domain = $this->getRequest()->getHeader('host');
-        if($domain){
+        if ($domain) {
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
         
         // reload page in localization context
-        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId,true);
-        if(!$this->_pageInfo){
-            throw new Rubedo\Exceptions\NotFound('Page not found in this language','Exception101');
+        $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId, true);
+        if (! $this->_pageInfo) {
+            throw new Rubedo\Exceptions\NotFound('Page not found in this language', 'Exception101');
         }
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
         
@@ -201,15 +208,15 @@ class IndexController extends Zend_Controller_Action
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
             $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
             
-            if(Manager::getService('CurrentUser')->getLanguage() == 'en'){
+            if (Manager::getService('CurrentUser')->getLanguage() == 'en') {
                 $datepickerJs = 'jquery.ui.datepicker-en-GB.js';
-            }else{
-                $datepickerJs = 'jquery.ui.datepicker-'. Manager::getService('CurrentUser')->getLanguage() .'.js';
+            } else {
+                $datepickerJs = 'jquery.ui.datepicker-' . Manager::getService('CurrentUser')->getLanguage() . '.js';
             }
             
             $js = array(
                 '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
-                '/components/jquery/jqueryui/ui/i18n/'.$datepickerJs,
+                '/components/jquery/jqueryui/ui/i18n/' . $datepickerJs,
                 '/components/jquery/timepicker/jquery.ui.timepicker.js'
             );
             if (is_array($js)) {
@@ -379,7 +386,7 @@ class IndexController extends Zend_Controller_Action
         }
         
         $this->_pageInfo['rows'] = $this->_mask['rows'];
-                
+        
         if (! isset($this->_site['theme'])) {
             $this->_site['theme'] = 'default';
         }
@@ -387,7 +394,7 @@ class IndexController extends Zend_Controller_Action
         
         $this->_servicePage->setPageTitle($this->_pageInfo['title']);
         $this->_servicePage->setDescription(isset($this->_pageInfo['description']) ? $this->_pageInfo['description'] : "");
-        $this->_servicePage->setKeywords(isset($this->_pageInfo['keywords'])?$this->_pageInfo['keywords']:array());
+        $this->_servicePage->setKeywords(isset($this->_pageInfo['keywords']) ? $this->_pageInfo['keywords'] : array());
         
         $rootline = Manager::getService('Pages')->getAncestors($this->_pageInfo);
         $this->_rootlineArray = array();
@@ -460,8 +467,8 @@ class IndexController extends Zend_Controller_Action
 
     /**
      * Change title to localized title for row, column or block
-     * 
-     * @param array $item
+     *
+     * @param array $item            
      * @return array
      */
     protected function localizeTitle(array $item)

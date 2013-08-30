@@ -114,9 +114,10 @@ class Module
         $controllerName = strtolower($controllerName);
         $moduleName = strtolower($moduleName);
         $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;
+
         if ($moduleName == 'install') {
             $hasAccess = true;
-        } elseif (($moduleName == 'frontoffice' || ! isset($moduleName)) && (($action == 'index' && $controller == 'index') || ($action == 'error' && $controller == 'error') || ($action == 'index' && $controller == 'image') || ($action == 'index' && $controller == 'dam'))) {
+        } elseif (($moduleName == 'frontoffice' || ! isset($moduleName)) && (($action == 'index' && $controllerName == 'index') || ($action == 'index' && $controllerName == 'error') || ($action == 'index' && $controllerName == 'image') || ($action == 'index' && $controllerName == 'dam'))) {
             $hasAccess = true;
         } else {
             $aclService = Manager::getService('Acl');

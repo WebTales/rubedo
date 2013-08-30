@@ -1,6 +1,16 @@
 <?php
 return array(
     'routes' => array(
+        'frontoffice' => array(
+            'type' => 'Rubedo\Router\FrontofficeRoute',
+            'options' => array(
+                'route' => '/',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Frontoffice\Controller\Index',
+                    'action' => 'index'
+                )
+            )
+        ),
         'home' => array(
             'type' => 'Zend\Mvc\Router\Http\Literal',
             'options' => array(
