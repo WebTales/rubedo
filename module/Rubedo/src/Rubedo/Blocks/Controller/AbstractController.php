@@ -14,15 +14,18 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
+use Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Templates\Raw\RawViewModel;
 /**
  *
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
  */
-abstract class Blocks_AbstractController extends Zend_Controller_Action
+abstract class AbstractController extends AbstractActionController
 {
 
     protected $_workspace;
@@ -74,7 +77,6 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         $this->_workspace = $currentPage['workspace'];
     }
 
-    abstract public function indexAction ();
 
     /**
      * handle the response weither it is a direct call or a partial call
@@ -93,45 +95,29 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
      */
     protected function _sendResponse (array $output, $template, array $css = null, array $js = null)
     {
-        $output['classHtml'] = $this->getRequest()->getParam('classHtml', '');
-        $output['idHtml'] = $this->getRequest()->getParam('idHtml', '');
+        $output['classHtml'] = $this->params()->fromQuery('classHtml', '');
+        $output['idHtml'] = $this->params()->fromQuery('idHtml', '');
         
         $output['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_servicePage = Manager::getService('PageContent');
         
-        if ($this->getResponse() instanceof \Rubedo\Controller\Response) {
-            
-            $this->getHelper('Layout')->disableLayout();
-            $this->getHelper('ViewRenderer')->setNoRender();
-            $this->getResponse()->setBody($output, 'content');
-            $this->getResponse()->setBody($template, 'template');
-            if (is_array($css)) {
-                foreach ($css as $value) {
-                    $this->_servicePage->appendCss($value);
-                }
+        if (is_array($css)) {
+            foreach ($css as $value) {
+                $this->_servicePage->appendCss($value);
             }
-            if (is_array($js)) {
-                foreach ($js as $value) {
-                    $this->_servicePage->appendJs($value);
-                }
-            }
-        } else {
-            $content = $this->_serviceTemplate->render($template, $output);
-            if (is_array($css)) {
-                foreach ($css as $value) {
-                    $this->view->headLink()->appendStylesheet($value);
-                }
-            }
-            if (is_array($js)) {
-                foreach ($js as $value) {
-                    $this->view->headScript()->appendFile($value);
-                }
-            }
-            
-            $this->getHelper('ViewRenderer')->setNoRender();
-            
-            $this->getResponse()->appendBody($content, 'default');
         }
+        if (is_array($js)) {
+            foreach ($js as $value) {
+                $this->_servicePage->appendJs($value);
+            }
+        }
+        
+        $viewModel = new RawViewModel($output);
+        $viewModel->setTemplate($template);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+        
+        
     }
 }

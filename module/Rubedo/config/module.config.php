@@ -39,7 +39,8 @@ $config = array(
         ),
         'strategies' => array(
             'ViewJsonStrategy',
-            'TwigViewStrategy'
+            'TwigViewStrategy',
+            'RawViewStrategy'
         )
     ),
     'service_manager' => array(
@@ -48,6 +49,10 @@ $config = array(
         'factories' => array(
             'TwigViewStrategy' => function($sm) {
                 $strategy = new Rubedo\Templates\Twig\TwigStrategy($sm->get('TwigRenderer'));
+                return $strategy;
+            },
+            'RawViewStrategy' => function($sm) {
+                $strategy = new Rubedo\Templates\Raw\RawStrategy($sm->get('RawRenderer'));
                 return $strategy;
             }
         )

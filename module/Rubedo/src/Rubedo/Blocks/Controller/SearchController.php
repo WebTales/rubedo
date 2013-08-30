@@ -14,9 +14,13 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
+use Rubedo\Elastic\DataSearch;
+use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
+
 
 /**
  *
@@ -24,14 +28,14 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_SearchController extends Blocks_AbstractController
+class SearchController extends AbstractController
 {
 
     public function indexAction ()
     {
         
         // get search parameters
-        $params = $this->getRequest()->getParams();
+        $params = $this->params()->fromQuery();
        
         //remove empty facets from criteria
         foreach($params as $key => $value){
@@ -48,11 +52,11 @@ class Blocks_SearchController extends Blocks_AbstractController
             }
         }
         
-        $params['pagesize'] = $this->getParam('pagesize', 10);
-        $params['pager'] = $this->getParam('pager', 0);
+        $params['pagesize'] = $this->params()->fromQuery('pagesize', 10);
+        $params['pager'] = $this->params()->fromQuery('pager', 0);
         
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
-            $site = $this->getRequest()->getParam('site');
+            $site = $this->getRequest()->params()->fromQuery('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;
         }
@@ -60,7 +64,7 @@ class Blocks_SearchController extends Blocks_AbstractController
         // apply predefined facets
         $facetsToHide = array();
         if (isset($params['block-config']['predefinedFacets'])) {
-            $predefParamsArray = \Zend_Json::decode($params['block-config']['predefinedFacets']);
+            $predefParamsArray = Json::decode($params['block-config']['predefinedFacets'],Json::TYPE_ARRAY);
             if (is_array($predefParamsArray)) {
                 foreach ($predefParamsArray as $key => $value) {
                     $params[$key][] = $value;
@@ -69,13 +73,13 @@ class Blocks_SearchController extends Blocks_AbstractController
             }
         }
         
-        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        Datasearch::setIsFrontEnd(true);
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
 
         $results = $query->search($params);
-        $results['searchParams']=\Zend_Json::encode($params);
+        $results['searchParams']=Json::encode($params,Json::TYPE_ARRAY);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
@@ -97,11 +101,11 @@ class Blocks_SearchController extends Blocks_AbstractController
             10
         ));
         
-        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->getParam('current-page');       
-        $results['singlePage'] = $this->getParam('single-page', $singlePage);
+        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->params()->fromQuery('current-page');       
+        $results['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
         
-        $results['displayTitle'] = $this->getParam('displayTitle');
-        $results['blockTitle'] = $this->getParam('blockTitle');
+        $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
+        $results['blockTitle'] = $this->params()->fromQuery('blockTitle');
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
         
@@ -111,25 +115,25 @@ class Blocks_SearchController extends Blocks_AbstractController
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/autocomplete.js")
 		);
         
-        $this->_sendResponse($results, $template, $css, $js);
+        return $this->_sendResponse($results, $template, $css, $js);
     }
     
     public function xhrGetSuggestsAction ()
     {
         // get search parameters
 
-        $params = \Zend_Json::decode($this->getRequest()->getParam('searchParams'));
+        $params = \Zend_Json::decode($this->getRequest()->params()->fromQuery('searchParams'));
         
         // get current language
         $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         
         // set query
-        $params['query'] = $this->getRequest()->getParam('query');
+        $params['query'] = $this->getRequest()->params()->fromQuery('query');
        
         // set field for autocomplete
         $params['field'] = 'autocomplete_'.$currentLocale;
                
-        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        Datasearch::setIsFrontEnd(true);
         
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
@@ -139,6 +143,6 @@ class Blocks_SearchController extends Blocks_AbstractController
         $data = array(
                 'terms' => $suggestTerms
         );
-        $this->_helper->json($data);
+        return new JsonModel($data);
     }
 }

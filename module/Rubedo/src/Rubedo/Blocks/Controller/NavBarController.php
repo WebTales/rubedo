@@ -14,9 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+
 
 /**
  *
@@ -24,7 +26,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_NavBarController extends Blocks_AbstractController
+class NavBarController extends AbstractController
 {
 
     /**
@@ -32,9 +34,9 @@ class Blocks_NavBarController extends Blocks_AbstractController
      */
     public function indexAction ()
     {
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         
-        $blockConfig = $this->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         if (isset($blockConfig['menuLevel'])) {
             $startLevel = $blockConfig['menuLevel'];
         } else {
@@ -54,7 +56,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         if (isset($blockConfig['rootPage'])) {
             $this->rootPage = $blockConfig['rootPage'];
         } else {
-            $this->rootPage = $this->getParam('rootPage');
+            $this->rootPage = $this->params()->fromQuery('rootPage');
         }
         
         if (isset($blockConfig['useSearchEngine'])) {
@@ -74,14 +76,14 @@ class Blocks_NavBarController extends Blocks_AbstractController
             $displayRootPage = true;
         }
         
-        $site = $this->getParam('site');
+        $site = $this->params()->fromQuery('site');
         $output['homePage'] = isset($site['homePage']) ? $site['homePage'] : null;
         
-        $output['currentPage'] = $this->getRequest()->getParam('currentPage');
+        $output['currentPage'] = $this->params()->fromQuery('currentPage');
         $this->currentPage = $output['currentPage'];
         
         $output['rootPage'] = Manager::getService('Pages')->findById($this->rootPage);
-        $output['rootline'] = $this->rootline = $this->getRequest()->getParam('rootline', array());
+        $output['rootline'] = $this->rootline = $this->params()->fromQuery('rootline', array());
         $output['useSearchEngine'] = $useSearchEngine;
         $output['searchPage'] = $searchPage;
         $output['pages'] = array();
@@ -120,7 +122,7 @@ class Blocks_NavBarController extends Blocks_AbstractController
         
         $css = array();
         $js = array();
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
     protected function _getPagesByLevel ($rootPage, $targetLevel, $currentLevel = 1)

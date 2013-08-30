@@ -29,7 +29,7 @@ use Rubedo\Collection\AbstractLocalizableCollection;
 class Current implements ICurrent
 {
 
-    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array(),$cookieValue = null)
+    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array(), $cookieValue = null)
     {
         $locale = null;
         
@@ -43,20 +43,19 @@ class Current implements ICurrent
         if ($site) {
             $sessionService = Manager::getService('Session');
             $currentLocaleInSession = $sessionService->get('currentLocale', array());
-                       
+            
             $user = Manager::getService('CurrentUser')->getCurrentUser();
             
-                        
             if ($forceLocal && in_array($forceLocal, $site['languages'])) {
                 // if locale is forced through URL
                 $locale = $forceLocal;
             } elseif ($user && isset($user['preferedLanguage']) && isset($user['preferedLanguage'][$siteId]) && in_array($user['preferedLanguage'][$siteId], $site['languages'])) {
                 // if prefered locale is known for current user
                 $locale = $user['preferedLanguage'][$siteId];
-            } elseif (!$user && isset($cookieValue) && in_array($cookieValue, $site['languages'])) {
+            } elseif (! $user && isset($cookieValue) && in_array($cookieValue, $site['languages'])) {
                 // fetch current locale from cookie
                 $locale = $cookieValue;
-            }else {
+            } else {
                 // default strategy
                 if (isset($site['useBrowserLanguage']) && $site['useBrowserLanguage'] == true) {
                     // use browser settings
@@ -76,11 +75,11 @@ class Current implements ICurrent
             }
             
             AbstractLocalizableCollection::setLocalizationStrategy($site['locStrategy']);
-            if($site['locStrategy']=='fallback'){
+            if ($site['locStrategy'] == 'fallback') {
                 AbstractLocalizableCollection::setFallbackLocale($site['defaultLanguage']);
             }
             
-            if($user){
+            if ($user) {
                 $user['preferedLanguage'][$siteId] = $locale;
                 Manager::getService('Users')->update($user);
             }
@@ -97,10 +96,10 @@ class Current implements ICurrent
 
     /**
      * find first match of site language for given user preferences through browser
-     * 
-     * @param array $languages
-     * @param array $browserArray
-     * @return string|NULL
+     *
+     * @param array $languages            
+     * @param array $browserArray            
+     * @return string NULL
      */
     protected function findBestMatchForBrowser($languages, $browserArray)
     {
@@ -115,5 +114,26 @@ class Current implements ICurrent
     public function getCurrentLocalization()
     {
         return AbstractLocalizableCollection::getWorkingLocale();
+    }
+
+    public function getBrowserLanguages()
+    {
+        // init browser languages
+        $browserLanguages = array();
+        $httpValue = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        if (! empty($httpValue)) {
+            $languages = explode(',', $httpValue);
+            foreach ($languages as $language) {
+                list ($locale) = explode(';', $language);
+                
+                $browserLanguages[] = $locale;
+            }
+        }
+        if (empty($browserLanguages)) {
+            $browserLanguages = array(
+                'en'
+            );
+        }
+        return $browserLanguages;
     }
 }

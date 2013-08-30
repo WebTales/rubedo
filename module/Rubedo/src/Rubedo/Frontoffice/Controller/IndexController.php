@@ -154,11 +154,7 @@ class IndexController extends AbstractActionController
         
         AbstractCollection::setIsFrontEnd(true);
         
-        // init browser languages
-        $browserLanguages = array();
-//         var_dump($_SERVER['HTTP_ACCEPT_LANGUAGE']);die();
-//         $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
-//         $browserLanguages = array_keys($zend_locale->getBrowser());
+        $browserLanguages = Manager::getService('CurrentLocalization')->getBrowserLanguages();
         
         // context
         $cookieValue = $this->getRequest()->getCookie('locale');
@@ -556,12 +552,9 @@ class IndexController extends AbstractActionController
      */
     protected function _getBlockData($block)
     {
-        $data = array();
-        $template = 'root/block.html';
-        return array(
-            'data' => $data,
-            'template' => $template
-        );
+//         $queryString = $this->getRequest()->getQuery();
+//         $queryString->set('file-id', $media['originalFileId']);
+//         $queryString->set('version', $version);
         
         $block = $this->localizeTitle($block);
         $params = array();
@@ -587,7 +580,7 @@ class IndexController extends AbstractActionController
         switch ($block['bType']) {
             case 'Bloc de navigation':
             case 'navigation':
-                $controller = 'nav-bar';
+                $controller = 'Rubedo\\Blocks\\Controller\\NavBar';
                 $params['currentPage'] = $this->_pageId;
                 $params['rootline'] = $this->_rootlineArray;
                 $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()->getUri()->getHost());
@@ -595,65 +588,65 @@ class IndexController extends AbstractActionController
                 break;
             case 'Carrousel':
             case 'carrousel':
-                $controller = 'carrousel';
+                $controller = 'Rubedo\\Blocks\\Controller\\Carrousel';
                 break;
             case 'googleMaps':
-                $controller = 'google-maps';
+                $controller = 'Rubedo\\Blocks\\Controller\\GoogleMaps';
                 break;
             case 'Gallerie Flickr':
             case 'flickrGallery':
-                $controller = 'flickr-gallery';
+                $controller = 'Rubedo\\Blocks\\Controller\\FlickrGallery';
                 break;
             case 'Liste de Contenus':
             case 'contentList':
-                $controller = 'content-list';
+                $controller = 'Rubedo\\Blocks\\Controller\\ContentList';
                 break;
             case 'Formulaire':
             case 'form':
-                $controller = 'forms';
+                $controller = 'Rubedo\\Blocks\\Controller\\Forms';
                 break;
             case 'calendar':
-                $controller = 'calendar';
+                $controller = 'Rubedo\\Blocks\\Controller\\Calendar';
                 break;
             case 'Pied de page':
             case 'footer':
-                $controller = 'footer';
+                $controller = 'Rubedo\\Blocks\\Controller\\Footer';
                 break;
             case 'Résultat de recherche':
             case 'searchResults':
                 $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
-                $controller = 'search';
+                $controller = 'Rubedo\\Blocks\\Controller\\Search';
                 
                 break;
             case 'geoSearchResults':
                 $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
-                $controller = 'geo-search';
+                $controller = 'Rubedo\\Blocks\\Controller\\GeoSearch';
                 
                 break;
             
             case 'damList':
                 $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
-                $controller = 'dam-list';
+                $controller = 'Rubedo\\Blocks\\Controller\\DamList';
                 
                 break;
             case 'Fil d\'Ariane':
             case 'breadcrumb':
                 $params['currentPage'] = $this->_pageId;
                 $params['rootline'] = $this->_rootlineArray;
-                $controller = 'breadcrumbs';
+                $controller = 'Rubedo\\Blocks\\Controller\\Breadcrumbs';
                 break;
             case 'searchForm':
-                $controller = 'search-form';
+                $controller = 'Rubedo\\Blocks\\Controller\\SearchForm';
                 break;
             case 'Twig':
             case 'twig':
-                $controller = 'twig';
+                $controller = 'Rubedo\\Blocks\\Controller\\Twig';
                 $params['template'] = $block['configBloc']['fileName'];
                 
                 break;
             case 'Détail de contenu':
             case 'contentDetail':
-                $controller = 'content-single';
+                $controller = 'Rubedo\\Blocks\\Controller\\ContentSingle';
                 $contentIdParam = $this->params()->fromRoute('content-id');
                 $contentId = $contentIdParam ? $contentIdParam : null;
                 if (! isset($contentId)) {
@@ -665,127 +658,127 @@ class IndexController extends AbstractActionController
                 break;
             case 'Média externe':
             case 'externalMedia':
-                $controller = 'embedded-media';
+                $controller = 'Rubedo\\Blocks\\Controller\\EmbeddedMedia';
                 break;
             case 'Image':
             case 'image':
-                $controller = 'image';
+                $controller = 'Rubedo\\Blocks\\Controller\\Image';
                 break;
             case 'Audio':
             case 'audio':
-                $controller = 'audio';
+                $controller = 'Rubedo\\Blocks\\Controller\\Audio';
                 break;
             case 'Video':
             case 'video':
-                $controller = 'video';
+                $controller = 'Rubedo\\Blocks\\Controller\\Video';
                 break;
             case 'Authentication':
             case 'authentication':
-                $controller = 'authentication';
+                $controller = 'Rubedo\\Blocks\\Controller\\Authentication';
                 break;
             case 'Texte':
             case 'simpleText':
-                $controller = 'text';
+                $controller = 'Rubedo\\Blocks\\Controller\\Text';
                 break;
             case 'imageGallery':
-                $controller = 'gallery';
+                $controller = 'Rubedo\\Blocks\\Controller\\Gallery';
                 break;
-            case 'Texte Riche':
-            case 'richText':
-                $controller = 'rich-text';
-                break;
+//             case 'Texte Riche':
+//             case 'richText':
+//                 $controller = 'rich-text';
+//                 break;
             case 'AddThis':
             case 'addThis':
-                $controller = 'addthis';
+                $controller = 'Rubedo\\Blocks\\Controller\\Addthis';
                 break;
             case 'AddThisFollow':
             case 'addThisFollow':
-                $controller = 'addthisfollow';
+                $controller = 'Rubedo\\Blocks\\Controller\\Addthisfollow';
                 break;
             case 'Menu':
             case 'menu':
-                $controller = 'menu';
+                $controller = 'Rubedo\\Blocks\\Controller\\Menu';
                 break;
             case 'Contact':
             case 'contact':
-                $controller = "contact";
+                $controller = 'Rubedo\\Blocks\\Controller\\Contact';
                 break;
             case 'AdvancedContact':
             case 'advancedContact':
-                $controller = "advanced-contact";
+                $controller = 'Rubedo\\Blocks\\Controller\\Advanced-contact';
                 break;
             case 'siteMap':
             case 'sitemap':
-                $controller = "site-map";
+                $controller = 'Rubedo\\Blocks\\Controller\\SiteMap';
                 break;
             case 'protectedResource':
-                $controller = "protected-resource";
+                $controller = 'Rubedo\\Blocks\\Controller\\ProtectedResource';
                 break;
             case 'resource':
-                $controller = "resource";
+                $controller = 'Rubedo\\Blocks\\Controller\\Resource';
                 break;
             case 'imageMap':
-                $controller = "image-map";
+                $controller = 'Rubedo\\Blocks\\Controller\\Image-map';
                 break;
             case 'advancedSearchForm':
-                $controller = "advanced-search";
+                $controller = 'Rubedo\\Blocks\\Controller\\AdvancedSearch';
                 break;
             case "mailingList":
-                $controller = "mailing-list";
+                $controller = 'Rubedo\\Blocks\\Controller\\MailingList';
                 break;
             case "twitter":
-                $controller = "twitter";
+                $controller = 'Rubedo\\Blocks\\Controller\\Twitter';
                 break;
             
             case "languageMenu":
-                $controller = "language-menu";
+                $controller = 'Rubedo\\Blocks\\Controller\\LanguageMenu';
                 break;
             
             case 'Controleur Zend':
             case 'zendController':
-                $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
-                $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
-                $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
+//                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
+//                 $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
+//                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
                 
-                $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-                $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
-                $route->setPrefix($prefix);
+//                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
+//                 $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
+//                 $route->setPrefix($prefix);
                 
-                $allParams = $this->getAllParams();
-                foreach ($allParams as $key => $value) {
-                    $prefixPos = strpos($key, $prefix . '_');
-                    if ($prefixPos === 0) {
-                        $subKey = substr($key, strlen($prefix . '_'));
-                        switch ($subKey) {
-                            case 'action':
-                                $action = $value;
-                                break;
-                            case 'controller':
-                                $controller = $value;
-                                break;
-                            case 'module':
-                                $module = $value;
-                                break;
-                            default:
-                                $params[$subKey] = $value;
-                                break;
-                        }
-                    } else {
-                        $params[$key] = $value;
-                    }
-                }
+//                 $allParams = $this->getAllParams();
+//                 foreach ($allParams as $key => $value) {
+//                     $prefixPos = strpos($key, $prefix . '_');
+//                     if ($prefixPos === 0) {
+//                         $subKey = substr($key, strlen($prefix . '_'));
+//                         switch ($subKey) {
+//                             case 'action':
+//                                 $action = $value;
+//                                 break;
+//                             case 'controller':
+//                                 $controller = $value;
+//                                 break;
+//                             case 'module':
+//                                 $module = $value;
+//                                 break;
+//                             default:
+//                                 $params[$subKey] = $value;
+//                                 break;
+//                         }
+//                     } else {
+//                         $params[$key] = $value;
+//                     }
+//                 }
                 
-                $response = Action::getInstance()->action($action, $controller, $module, $params);
-                $route->clearPrefix();
-                $data = $response->getBody();
+//                 $response = Action::getInstance()->action($action, $controller, $module, $params);
+//                 $route->clearPrefix();
+//                 $data = $response->getBody();
                 
-                return array(
-                    'data' => array(
-                        'content' => $data
-                    ),
-                    'template' => 'root/zend.html.twig'
-                );
-                break;
+//                 return array(
+//                     'data' => array(
+//                         'content' => $data
+//                     ),
+//                     'template' => 'root/zend.html.twig'
+//                 );
+//                 break;
             
             default:
                 $data = array();
@@ -797,13 +790,23 @@ class IndexController extends AbstractActionController
                 break;
         }
         
-        $response = Action::getInstance()->action('index', $controller, 'blocks', $params);
-        $data = $response->getBody('content');
-        $template = $response->getBody('template');
-        return array(
-            'data' => $data,
-            'template' => $template
-        );
+        $queryString = $this->getRequest()->getQuery();
+        foreach($params as $key => $value){
+            $queryString->set($key, $value);
+        }
+        
+        //'Rubedo\\Blocks\\Controller\\NavBar'
+        $result = $this->forward()->dispatch($controller, array(
+            'action' => 'index'
+        ));
+        
+        
+        
+        $return = array(
+            'data' => $result->getVariables(),
+            'template' => $result->getTemplate()
+        );        
+        return $return;
     }
 
     protected function _buildResponsiveClass($responsiveArray)

@@ -42,6 +42,7 @@ return array(
     'PersonalPrefs' => 'Rubedo\\Collection\\PersonalPrefs',
     'Queries' => 'Rubedo\\Collection\\Queries',
     'ReusableElements' => 'Rubedo\\Collection\\ReusableElements',
+    'RawRenderer' => 'Rubedo\\Templates\\Raw\\RawRenderer',
     'RubedoVersion' => 'Rubedo\\Collection\\RubedoVersion',
     'Session' => 'Rubedo\\User\\Session',
     'SessionData' => 'Rubedo\\Collection\\SessionData',

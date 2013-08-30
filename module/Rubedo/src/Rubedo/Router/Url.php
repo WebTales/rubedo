@@ -236,9 +236,12 @@ class Url implements IUrl
      */
     public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
-        $router = \Zend_Controller_Front::getInstance()->getRouter();
+        $url = $this->getUrl($urlOptions,true);
         
-        return $router->assemble($urlOptions, $name, $reset, $encode);
+        return $url;
+//         $router = \Zend_Controller_Front::getInstance()->getRouter();
+        
+//         return $router->assemble($urlOptions, $name, $reset, $encode);
     }
 
     /**
