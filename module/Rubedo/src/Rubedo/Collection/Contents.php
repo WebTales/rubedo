@@ -16,6 +16,7 @@ namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IContents;
 use Rubedo\Services\Manager;
+use Rubedo\Content\Context;
 use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
 
@@ -156,11 +157,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         
         if (static::$_isFrontEnd) {
-            if (\Zend_Registry::isRegistered('draft')) {
-                $live = (\Zend_Registry::get('draft') === 'false' || \Zend_Registry::get('draft') === false) ? true : false;
-            } else {
-                $live = true;
-            }
+                $live = (Context::isDraft() === 'false' || Context::isDraft() === false) ? true : false;
+            
             $now = (string) Manager::getService('CurrentTime')->getCurrentTime(); // cast to string as date are stored as text in DB
             $startPublicationDateField = ($live ? 'live' : 'workspace') . '.startPublicationDate';
             $endPublicationDateField = ($live ? 'live' : 'workspace') . '.endPublicationDate';
@@ -196,11 +194,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $filters->addFilter(Filter::factory('Value')->setName('online')
             ->setValue(true));
         
-        if (\Zend_Registry::isRegistered('draft')) {
-            $live = (\Zend_Registry::get('draft') === 'false' || \Zend_Registry::get('draft') === false) ? true : false;
-        } else {
-            $live = true;
-        }
+       $live = (Context::isDraft() === 'false' || Context::isDraft() === false) ? true : false;
+        
         $returnArray = $this->getList($filters, $sort, $start, $limit, $live);
         
         return $returnArray;

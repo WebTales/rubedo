@@ -683,10 +683,10 @@ class IndexController extends AbstractActionController
             case 'imageGallery':
                 $controller = 'Rubedo\\Blocks\\Controller\\Gallery';
                 break;
-//             case 'Texte Riche':
-//             case 'richText':
-//                 $controller = 'rich-text';
-//                 break;
+            case 'Texte Riche':
+            case 'richText':
+                $controller = 'Rubedo\\Blocks\\Controller\\RichText';
+                break;
             case 'AddThis':
             case 'addThis':
                 $controller = 'Rubedo\\Blocks\\Controller\\Addthis';
@@ -705,7 +705,7 @@ class IndexController extends AbstractActionController
                 break;
             case 'AdvancedContact':
             case 'advancedContact':
-                $controller = 'Rubedo\\Blocks\\Controller\\Advanced-contact';
+                $controller = 'Rubedo\\Blocks\\Controller\\AdvancedContact';
                 break;
             case 'siteMap':
             case 'sitemap':
@@ -718,7 +718,7 @@ class IndexController extends AbstractActionController
                 $controller = 'Rubedo\\Blocks\\Controller\\Resource';
                 break;
             case 'imageMap':
-                $controller = 'Rubedo\\Blocks\\Controller\\Image-map';
+                $controller = 'Rubedo\\Blocks\\Controller\\ImageMap';
                 break;
             case 'advancedSearchForm':
                 $controller = 'Rubedo\\Blocks\\Controller\\AdvancedSearch';

@@ -16,7 +16,10 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IQueries, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IQueries;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Rubedo\Content\Context;
 
 /**
  * Service to handle Queries
@@ -294,15 +297,12 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getFilterArrayForQuery ($query)
     {
-        if (\Zend_Registry::isRegistered('draft')) {
-            if (\Zend_Registry::get('draft') !== 'false' || \Zend_Registry::get('draft') !== false) {
-                $this->_workspace = 'live';
-            } else {
-                $this->_workspace = 'draft';
-            }
-        } else {
+        if (Context::isDraft() == 'false' || Context::isDraft() == false) {
             $this->_workspace = 'live';
+        } else {
+            $this->_workspace = 'draft';
         }
+        
         $this->_dateService = Manager::getService('Date');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
     

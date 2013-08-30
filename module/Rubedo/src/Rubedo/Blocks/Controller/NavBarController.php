@@ -98,7 +98,7 @@ class NavBarController extends AbstractController
         
         foreach ($levelOnePages as $page) {
             $tempArray = array();
-            $tempArray['url'] = $this->_helper->url->url(array(
+            $tempArray['url'] = manager::getService('Url')->url(array(
                 'pageId' => $page['id']
             ), null, true);
             $tempArray['title'] = $page['title'];
@@ -108,7 +108,7 @@ class NavBarController extends AbstractController
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {
                     $tempSubArray = array();
-                    $tempSubArray['url'] = $this->_helper->url->url(array(
+                    $tempSubArray['url'] = manager::getService('Url')->url(array(
                         'pageId' => $subPage['id']
                     ), null, true);
                     $tempSubArray['title'] = $subPage['title'];
