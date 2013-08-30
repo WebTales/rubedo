@@ -14,9 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+
 
 /**
  *
@@ -24,7 +26,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_ContentListController extends Blocks_AbstractController
+class ContentListController extends AbstractController
 {
 
     protected $_defaultTemplate = 'contentlist';
@@ -32,7 +34,7 @@ class Blocks_ContentListController extends Blocks_AbstractController
     public function indexAction ()
     {
         $output = $this->_getList();
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         $output["blockConfig"] = $blockConfig;
         if (! $output["blockConfig"]['columns']) {
             $output["blockConfig"]['columns'] = 1;
@@ -58,12 +60,12 @@ class Blocks_ContentListController extends Blocks_AbstractController
         $this->_queryReader = Manager::getService('Queries');
         
         // get params & context
-        $blockConfig = $this->getRequest()->getParam('block-config');
-        $queryId = $this->getParam('query-id', $blockConfig['query']);
+        $blockConfig = $this->params()->fromQuery('block-config');
+        $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
         
         // $queryConfig = $this->getQuery($queryId);
         // $queryType = $queryConfig['type'];
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         
         // build query
         $filters = $this->_queryReader->getFilterArrayById($queryId);
@@ -138,15 +140,15 @@ class Blocks_ContentListController extends Blocks_AbstractController
             $output["data"] = $data;
             $output["query"]['type'] = $queryType;
             $output["query"]['id'] = $queryId;
-            $output['prefix'] = $this->getRequest()->getParam('prefix');
+            $output['prefix'] = $this->params()->fromQuery('prefix');
             $output["page"] = $contentArray['page'];
             
             $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
-            $output['limit'] = $this->getParam('limit', $defaultLimit);
+            $output['limit'] = $this->params()->fromQuery('limit', $defaultLimit);
             
-            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
-            $output['singlePage'] = $this->getParam('single-page', $singlePage);
-            $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->getParam('displayType', null);
+            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->params()->fromQuery('current-page');
+            $output['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
+            $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->params()->fromQuery('displayType', null);
             $output['displayType'] = $displayType;
             
             $output['xhrUrl'] = $this->_helper->url->url(array(
@@ -163,8 +165,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
     {
         $twigVars = $this->_getList();
         
-        $displayType = $this->getParam('displayType', false);
-        $columnsNb = $this->getParam('columnsNb', '1');
+        $displayType = $this->params()->fromQuery('displayType', false);
+        $columnsNb = $this->params()->fromQuery('columnsNb', '1');
         
         $twigVars["columnNb"] = $columnsNb;
         
@@ -209,8 +211,8 @@ class Blocks_ContentListController extends Blocks_AbstractController
     {
         $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $defaultSkip = isset($blockConfig['resultsSkip']) ? $blockConfig['resultsSkip'] : 0;
-        $pageData['skip'] = $this->getParam('skip', $defaultSkip);
-        $pageData['limit'] = $this->getParam('limit', $defaultLimit);
+        $pageData['skip'] = $this->params()->fromQuery('skip', $defaultSkip);
+        $pageData['limit'] = $this->params()->fromQuery('limit', $defaultLimit);
         $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
         return $pageData;
     }
