@@ -432,11 +432,16 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $childrenToDelete = $this->_getChildToDelete($obj['id']);
         
         foreach ($childrenToDelete as $child) {
-            Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
+            Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child["id"]);
         }
         
-        $deleteCond = Filter::factory('InUid')->setValue(array_merge($childrenToDelete,array($obj['id'])));
+        $termsIdArray = array();
         
+        foreach ($childrenToDelete as $term) {
+            $termsIdArray[] = $term["id"];
+        }
+        
+        $deleteCond = Filter::factory('InUid')->setValue(array_merge($termsIdArray,array($obj['id'])));
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
         if ($resultArray['ok'] == 1) {
@@ -484,6 +489,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             $returnArray = array();
             
             foreach ($terms as $value) {
+                $returnArray = array_merge($returnArray, array($value));
                 $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
             }
         }
