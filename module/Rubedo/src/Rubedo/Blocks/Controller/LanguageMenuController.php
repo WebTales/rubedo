@@ -62,7 +62,7 @@ class LanguageMenuController extends AbstractController
         
         $output['currentLanguage'] = Manager::getService('Languages')->findByLocale($currentLocale);
         
-        $site = $this->getParam('site');
+        $site = $this->params()->fromQuery('site');
         if (isset($site['languages'])) {
             $filters = Filter::factory();
             $filters->addFilter(Filter::factory('In')->setName('locale')
