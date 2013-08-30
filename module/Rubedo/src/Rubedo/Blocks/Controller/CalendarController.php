@@ -72,9 +72,9 @@ class CalendarController extends ContentListController
         $date = (string) $month . '-' . (string) $year;
         
         $timestamp = (string) mktime(0, 0, 0, $month, 1, $year); // cast to string as date are stored as text in DB
-        $nextMonth = new DateTime();
+        $nextMonth = new \DateTime();
         $nextMonth->setTimestamp($timestamp);
-        $nextMonth->add(new DateInterval('P1M'));
+        $nextMonth->add(new \DateInterval('P1M'));
         $nextMonthTimeStamp = (string) $nextMonth->getTimestamp(); // cast to string as date are stored as text in DB
         
         $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
