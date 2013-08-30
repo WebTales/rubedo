@@ -214,14 +214,14 @@ class ContentListController extends AbstractController
         $defaultSkip = isset($blockConfig['resultsSkip']) ? $blockConfig['resultsSkip'] : 0;
         $pageData['skip'] = $this->params()->fromQuery('skip', $defaultSkip);
         $pageData['limit'] = $this->params()->fromQuery('limit', $defaultLimit);
-        $pageData['currentPage'] = $this->getRequest()->getParam("page", 1);
+        $pageData['currentPage'] = $this->params()->fromQuery("page", 1);
         return $pageData;
     }
 
     public function getContentsAction ()
     {
         $this->_dataReader = Manager::getService('Contents');
-        $data = $this->getRequest()->getParams();
+        $data = $this->params()->fromQuery();
         if (isset($data['block']['query'])) {
             
             $filters = Manager::getService('Queries')->getFilterArrayById($data['block']['query']);
