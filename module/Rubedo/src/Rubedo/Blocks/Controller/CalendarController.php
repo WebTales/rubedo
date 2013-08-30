@@ -161,7 +161,7 @@ class CalendarController extends ContentListController
             }
         } else {}
         
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['blockConfig'] = $blockConfig;
         $output["data"] = $data;
         $output["query"]['type'] = isset($queryType) ? $queryType : null;
