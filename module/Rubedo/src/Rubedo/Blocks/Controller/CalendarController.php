@@ -166,7 +166,7 @@ class CalendarController extends ContentListController
         $output["data"] = $data;
         $output["query"]['type'] = isset($queryType) ? $queryType : null;
         $output["query"]['id'] = isset($queryId) ? $queryId : null;
-        $output['prefix'] = $this->getRequest()->getParam('prefix');
+        $output['prefix'] = $this->param()->fromQuery('prefix');
         $output['filledDate'] = $filledDate;
         $output['days'] = Manager::getService('Date')->getShortDayList();
         $output['month'] = Manager::getService('Date')->getLocalised('MMMM', $timestamp);
