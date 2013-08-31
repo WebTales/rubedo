@@ -29,8 +29,8 @@ class VideoController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
-        $output = $this->getAllParams();
+        $blockConfig = $this->params()->fromQuery('block-config', array());
+        $output = $this->params()->fromQuery();
         $output['videoAutoPlay'] = isset($blockConfig['videoAutoPlay']) ? $blockConfig['videoAutoPlay'] : false;
         $output['videoPreload'] = isset($blockConfig['videoPreload']) ? $blockConfig['videoPreload'] : false;
         $output['videoControls'] = isset($blockConfig['videoControls']) ? $blockConfig['videoControls'] : false;
@@ -43,9 +43,8 @@ class VideoController extends AbstractController
         if ($output['videoFile']) {
             $media = Manager::getService('Dam')->findById($output['videoFile']);
             $output['contentType'] = $media['Content-Type'];
-            
             $mainFile = Manager::getService('Files')->findById($media['originalFileId']);
-            if (! $mainFile instanceof MongoGridFSFile) {
+            if (! $mainFile instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             $meta = $mainFile->file;

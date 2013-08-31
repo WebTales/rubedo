@@ -34,7 +34,7 @@ use Rubedo\Services\Manager;
 class FileController extends AbstractActionController
 {
 
-    function indexAction()
+    function indexAction ()
     {
         $fileId = $this->params()->fromQuery('file-id');
         $version = $this->params()->fromQuery('version', 1);
@@ -111,7 +111,7 @@ class FileController extends AbstractActionController
             
             $response = new \Zend\Http\Response\Stream();
             
-            if (!$doNotDownload) {
+            if (! $doNotDownload) {
                 $response->getHeaders()->addHeaders(array(
                     'Content-Disposition' => 'attachment; filename="' . $filename
                 ));
@@ -127,7 +127,6 @@ class FileController extends AbstractActionController
             $response->getHeaders()->addHeaders(array(
                 'Content-Type' => $mimeType
             ));
-            $this->getResponse()->setHeader('Content-Type', $mimeType, true);
             
             $stream = fopen($tmpImagePath, 'rb');
             
@@ -154,8 +153,7 @@ class FileController extends AbstractActionController
                 $response->getHeaders()->addHeaders(array(
                     'Content-Length' => $filelength,
                     'Content-Range' => "bytes 0-/$filelength",
-                    'Accept-Ranges',
-                    "bytes"
+                    'Accept-Ranges' => "bytes"
                 ));
             }
             if ($seekStart) {
@@ -168,7 +166,7 @@ class FileController extends AbstractActionController
         }
     }
 
-    public function getThumbnailAction()
+    public function getThumbnailAction ()
     {
         $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png');
         switch ($this->getParam('file-type')) {

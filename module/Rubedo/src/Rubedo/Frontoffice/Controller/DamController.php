@@ -67,10 +67,18 @@ class DamController extends AbstractActionController
                 'action' => 'index'
             ));
         } else {
-            $this->_forward('index', 'file', 'default', array(
+            $queryString = $this->getRequest()->getQuery();
+            $params = array(
                 'file-id' => $media['originalFileId'],
-                'attachment' => $this->getParam('attachment', null),
+                'attachment' => $this->params()->fromQuery('attachment', null),
                 'version' => $version
+            );
+            foreach ($params as $key => $value) {
+                $queryString->set($key, $value);
+            }
+            
+            return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
+                'action' => 'index'
             ));
         }
     }

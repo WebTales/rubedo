@@ -37,6 +37,17 @@ return array(
                 )
             )
         ),
+        'mp4' => array(
+            'type' => 'Literal',
+            'options' => array(
+                'route' => '/dam.mp4',
+                'defaults' => array(
+                    '__NAMESPACE__' => 'Rubedo\FrontOffice\Controller',
+                    'controller' => 'Dam',
+                    'action' => 'index'
+                )
+            )
+        ),
         'home' => array(
             'type' => 'Zend\Mvc\Router\Http\Literal',
             'options' => array(
