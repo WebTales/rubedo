@@ -14,6 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Frontoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
 /**
@@ -28,17 +31,12 @@ use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class DamController extends Zend_Controller_Action
+class DamController extends AbstractActionController
 {
 
     function indexAction ()
     {
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
-        
-        $mediaId = $this->getRequest()->getParam('media-id');
-        
-        
+        $mediaId = $this->params()->fromQuery('media-id');
         
         if (! $mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
@@ -48,17 +46,25 @@ class DamController extends Zend_Controller_Action
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
         
-        $version = $this->getParam('version',$media['id']);
+        $version = $this->params()->fromQuery('version', $media['id']);
         
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if (isset($mediaType['mainFileType']) && $mediaType['mainFileType'] == 'Image') {
-            $this->_forward('index', 'image', 'default', array(
+            $queryString = $this->getRequest()->getQuery();
+            $params = array(
                 'file-id' => $media['originalFileId'],
-                'attachment' => $this->getParam('attachment', null),
+                'attachment' => $this->params()->fromQuery('attachment', null),
                 'version' => $version
+            );
+            foreach ($params as $key => $value) {
+                $queryString->set($key, $value);
+            }
+            
+            return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
+                'action' => 'index'
             ));
         } else {
             $this->_forward('index', 'file', 'default', array(
@@ -71,7 +77,7 @@ class DamController extends Zend_Controller_Action
 
     public function getThumbnailAction ()
     {
-        $mediaId = $this->getParam('media-id', null);
+        $mediaId = $this->params()->fromQuery('media-id', null);
         if (! $mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
@@ -79,16 +85,24 @@ class DamController extends Zend_Controller_Action
         if (! $media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        $version = $this->getParam('version',$media['id']);
+        $version = $this->params()->fromQuery('version', $media['id']);
         
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
         if (! $mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if ($mediaType['mainFileType'] == 'Image') {
-            $this->_forward('get-thumbnail', 'image', 'default', array(
+            $queryString = $this->getRequest()->getQuery();
+            $params = array(
                 'file-id' => $media['originalFileId'],
                 'version' => $version
+            );
+            foreach ($params as $key => $value) {
+                $queryString->set($key, $value);
+            }
+            
+            return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
+                'action' => 'get-thumbnail'
             ));
         } else {
             $this->_forward('get-thumbnail', 'file', 'default', array(
