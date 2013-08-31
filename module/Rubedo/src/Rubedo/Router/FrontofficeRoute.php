@@ -46,7 +46,7 @@ class FrontofficeRoute implements RouteInterface
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::assemble()
      */
-    public function assemble(array $params = array(), array $options = array())
+    public function assemble (array $params = array(), array $options = array())
     {
         // @todo assemble for this route
     }
@@ -54,7 +54,7 @@ class FrontofficeRoute implements RouteInterface
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::match()
      */
-    public function match(\Zend\Stdlib\RequestInterface $request)
+    public function match (\Zend\Stdlib\RequestInterface $request)
     {
         try {
             if (method_exists($request, 'getUri')) {
@@ -67,11 +67,16 @@ class FrontofficeRoute implements RouteInterface
         if ($pageId === null) {
             return null;
         }
+        $contentId = $request->getQuery('content-id', false);
+        
         $this->value['pageId'] = $pageId;
         $params = array();
         $params['controller'] = 'Rubedo\\Frontoffice\\Controller\\Index';
         $params['action'] = 'index';
         $params['pageId'] = $pageId;
+        if ($contentId) {
+            $params['content-id'] = $contentId;
+        }
         $match = new RouteMatch(array_merge($this->defaults, $params));
         
         return $match;
@@ -85,7 +90,7 @@ class FrontofficeRoute implements RouteInterface
      * @return FrontofficeRoute
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory($options = array())
+    public static function factory ($options = array())
     {
         return new static();
     }
@@ -93,7 +98,7 @@ class FrontofficeRoute implements RouteInterface
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\Http\RouteInterface::getAssembledParams()
      */
-    public function getAssembledParams()
+    public function getAssembledParams ()
     {
         // this route may not occur as base route of other part routes, so we
         // don't have to return anything here.

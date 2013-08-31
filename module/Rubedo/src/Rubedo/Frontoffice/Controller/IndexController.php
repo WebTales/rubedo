@@ -108,11 +108,10 @@ class IndexController extends AbstractActionController
     /**
      * Main Action : render the Front Office view
      */
-    public function indexAction()
+    public function indexAction ()
     {
-//         var_dump($this->params()->fromRoute());
-//         die();
-        
+        // var_dump($this->params()->fromRoute());
+        // die();
         if ($this->params()->fromQuery('tk', null)) {
             $redirectParams = array(
                 'action' => 'index',
@@ -156,7 +155,9 @@ class IndexController extends AbstractActionController
         // context
         $cookieValue = $this->getRequest()->getCookie('locale');
         $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages, $cookieValue);
-        $domain = $this->getRequest()->getUri()->getHost();
+        $domain = $this->getRequest()
+            ->getUri()
+            ->getHost();
         if ($domain) {
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
@@ -186,7 +187,7 @@ class IndexController extends AbstractActionController
             $isDraft = $this->params()->fromQuery('preview_draft', null);
             if (isset($isDraft) && $isDraft === "true") {
                 Context::setIsDraft(true);
-            } 
+            }
         }
         
         // template service
@@ -306,7 +307,7 @@ class IndexController extends AbstractActionController
         return $viewModel;
     }
 
-    public function testMailAction()
+    public function testMailAction ()
     {
         $to = $this->params()->fromGet('to', null);
         if (is_null($to)) {
@@ -347,7 +348,7 @@ class IndexController extends AbstractActionController
      *            requested URL
      * @return array
      */
-    protected function _getPageInfo($pageId)
+    protected function _getPageInfo ($pageId)
     {
         $this->_mask = Manager::getService('Masks')->findById($this->_pageInfo['maskId']); // maskId
         if (! $this->_mask) {
@@ -402,7 +403,7 @@ class IndexController extends AbstractActionController
         return $this->_pageInfo;
     }
 
-    protected function _getSingleBlock()
+    protected function _getSingleBlock ()
     {
         $block = array();
         $block['configBloc'] = array();
@@ -417,7 +418,7 @@ class IndexController extends AbstractActionController
         return $block;
     }
 
-    protected function _getMainColumn()
+    protected function _getMainColumn ()
     {
         return isset($this->_mask['mainColumnId']) ? $this->_mask['mainColumnId'] : null;
     }
@@ -428,7 +429,7 @@ class IndexController extends AbstractActionController
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos(array $columns = null, $noSpan = false)
+    protected function _getColumnsInfos (array $columns = null, $noSpan = false)
     {
         if ($columns === null) {
             return null;
@@ -465,7 +466,7 @@ class IndexController extends AbstractActionController
      * @param array $item            
      * @return array
      */
-    protected function localizeTitle(array $item)
+    protected function localizeTitle (array $item)
     {
         if (isset($item['i18n'])) {
             if (isset($item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()])) {
@@ -492,7 +493,7 @@ class IndexController extends AbstractActionController
      * @param array $blocks            
      * @return array
      */
-    protected function _getBlocksInfos(array $blocks)
+    protected function _getBlocksInfos (array $blocks)
     {
         $returnArray = array();
         foreach ($blocks as $block) {
@@ -507,7 +508,7 @@ class IndexController extends AbstractActionController
      * @param array $rows            
      * @return array
      */
-    protected function _getRowsInfos(array $rows = null)
+    protected function _getRowsInfos (array $rows = null)
     {
         if ($rows === null) {
             return null;
@@ -547,12 +548,11 @@ class IndexController extends AbstractActionController
      *            bloc options (type, filter params...)
      * @return array block data to be rendered
      */
-    protected function _getBlockData($block)
+    protected function _getBlockData ($block)
     {
-//         $queryString = $this->getRequest()->getQuery();
-//         $queryString->set('file-id', $media['originalFileId']);
-//         $queryString->set('version', $version);
-        
+        // $queryString = $this->getRequest()->getQuery();
+        // $queryString->set('file-id', $media['originalFileId']);
+        // $queryString->set('version', $version);
         $block = $this->localizeTitle($block);
         $params = array();
         $params['block-config'] = $block['configBloc'];
@@ -580,7 +580,9 @@ class IndexController extends AbstractActionController
                 $controller = 'Rubedo\\Blocks\\Controller\\NavBar';
                 $params['currentPage'] = $this->_pageId;
                 $params['rootline'] = $this->_rootlineArray;
-                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()->getUri()->getHost());
+                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()
+                    ->getUri()
+                    ->getHost());
                 
                 break;
             case 'Carrousel':
@@ -733,49 +735,49 @@ class IndexController extends AbstractActionController
             
             case 'Controleur Zend':
             case 'zendController':
-//                 $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
-//                 $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
-//                 $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
-                
-//                 $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-//                 $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
-//                 $route->setPrefix($prefix);
-                
-//                 $allParams = $this->getAllParams();
-//                 foreach ($allParams as $key => $value) {
-//                     $prefixPos = strpos($key, $prefix . '_');
-//                     if ($prefixPos === 0) {
-//                         $subKey = substr($key, strlen($prefix . '_'));
-//                         switch ($subKey) {
-//                             case 'action':
-//                                 $action = $value;
-//                                 break;
-//                             case 'controller':
-//                                 $controller = $value;
-//                                 break;
-//                             case 'module':
-//                                 $module = $value;
-//                                 break;
-//                             default:
-//                                 $params[$subKey] = $value;
-//                                 break;
-//                         }
-//                     } else {
-//                         $params[$key] = $value;
-//                     }
-//                 }
-                
-//                 $response = Action::getInstance()->action($action, $controller, $module, $params);
-//                 $route->clearPrefix();
-//                 $data = $response->getBody();
-                
-//                 return array(
-//                     'data' => array(
-//                         'content' => $data
-//                     ),
-//                     'template' => 'root/zend.html.twig'
-//                 );
-//                 break;
+            // $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
+            // $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
+            // $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
+            
+            // $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
+            // $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
+            // $route->setPrefix($prefix);
+            
+            // $allParams = $this->getAllParams();
+            // foreach ($allParams as $key => $value) {
+            // $prefixPos = strpos($key, $prefix . '_');
+            // if ($prefixPos === 0) {
+            // $subKey = substr($key, strlen($prefix . '_'));
+            // switch ($subKey) {
+            // case 'action':
+            // $action = $value;
+            // break;
+            // case 'controller':
+            // $controller = $value;
+            // break;
+            // case 'module':
+            // $module = $value;
+            // break;
+            // default:
+            // $params[$subKey] = $value;
+            // break;
+            // }
+            // } else {
+            // $params[$key] = $value;
+            // }
+            // }
+            
+            // $response = Action::getInstance()->action($action, $controller, $module, $params);
+            // $route->clearPrefix();
+            // $data = $response->getBody();
+            
+            // return array(
+            // 'data' => array(
+            // 'content' => $data
+            // ),
+            // 'template' => 'root/zend.html.twig'
+            // );
+            // break;
             
             default:
                 $data = array();
@@ -787,26 +789,32 @@ class IndexController extends AbstractActionController
                 break;
         }
         
+        // Clone global request and override it woth block params
         $queryString = $this->getRequest()->getQuery();
-        foreach($params as $key => $value){
-            $queryString->set($key, $value);
-        }
+        $blockQueryString = clone ($queryString);
         
-        //'Rubedo\\Blocks\\Controller\\NavBar'
+        foreach ($params as $key => $value) {
+            $blockQueryString->set($key, $value);
+        }
+        $this->getRequest()->setQuery($blockQueryString);
+        
+        // run block and get response
         $result = $this->forward()->dispatch($controller, array(
             'action' => 'index'
         ));
         
+        // set back global query
+        $this->getRequest()->setQuery($queryString);
         
-        
+        // return result to global context
         $return = array(
             'data' => $result->getVariables(),
             'template' => $result->getTemplate()
-        );        
+        );
         return $return;
     }
 
-    protected function _buildResponsiveClass($responsiveArray)
+    protected function _buildResponsiveClass ($responsiveArray)
     {
         foreach ($responsiveArray as $key => $value) {
             if (false == $value) {

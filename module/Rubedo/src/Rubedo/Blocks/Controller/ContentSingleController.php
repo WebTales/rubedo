@@ -34,10 +34,10 @@ class ContentSingleController extends AbstractController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         $output["blockConfig"] = $blockConfig;
         
-        $mongoId = $this->getRequest()->getParam('content-id');
+        $mongoId = $this->params()->fromQuery('content-id');
         if (isset($output["blockConfig"]["contentId"])) {
             $mongoId = $output["blockConfig"]["contentId"];
         }
@@ -82,7 +82,7 @@ class ContentSingleController extends AbstractController
             $cTypeArray = array();
             $CKEConfigArray = array();
             $contentTitlesArray = array();
-            $output = $this->getAllParams();
+            $output = $this->params()->fromQuery();
             foreach ($type["fields"] as $value) {
                 
                 $cTypeArray[$value['config']['name']] = $value;
@@ -219,7 +219,7 @@ class ContentSingleController extends AbstractController
     {
         $this->_dataReader = Manager::getService('Contents');
         $returnArray = array();
-        $data = $this->getRequest()->getParams();
+        $data = $this->params()->fromQuery();
         if (isset($data['block']['contentId']) && ! empty($data['block']['contentId'])) {
             $content = $this->_dataReader->findById($data['block']['contentId']);
             $returnArray[] = array(
