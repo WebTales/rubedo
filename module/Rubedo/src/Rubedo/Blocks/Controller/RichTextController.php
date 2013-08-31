@@ -16,7 +16,7 @@
  */
 namespace Rubedo\Blocks\Controller;
 
-Use Rubedo\Services\Manager;
+use Rubedo\Services\Manager;
 
 /**
  *
@@ -27,10 +27,7 @@ Use Rubedo\Services\Manager;
 class RichTextController extends AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
-    public function indexAction()
+    public function indexAction ()
     {
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $content = array();

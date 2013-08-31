@@ -56,7 +56,7 @@ class CalendarController extends ContentListController
         $blockConfig = $this->params()->fromQuery('block-config');
         
         $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->params()->fromQuery('date-field', 'date');
-        //$endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->params()->fromQuery('endDateField', 'date_end');
+        // $endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->params()->fromQuery('endDateField', 'date_end');
         $usedDateField = 'fields.' . $dateField;
         
         $date = $this->params()->fromQuery('cal-date');
@@ -139,7 +139,7 @@ class CalendarController extends ContentListController
                 $fields['id'] = (string) $vignette['id'];
                 $fields['typeId'] = $vignette['typeId'];
                 
-                if(!is_array($vignette["fields"]["date"])){
+                if (! is_array($vignette["fields"]["date"])) {
                     $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField]);
                 } else {
                     $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField][0]);
@@ -147,7 +147,7 @@ class CalendarController extends ContentListController
                 
                 $data[] = $fields;
                 
-                if(!is_array($vignette["fields"]["date"])){
+                if (! is_array($vignette["fields"]["date"])) {
                     $day = date('d', $vignette["fields"]["date"]);
                     $filledDate[$day] = true;
                 } else {
@@ -157,7 +157,7 @@ class CalendarController extends ContentListController
                     }
                 }
                 
-                //$filledDate[date('d', $vignette['fields'][$dateField])] = true;
+                // $filledDate[date('d', $vignette['fields'][$dateField])] = true;
             }
         } else {}
         

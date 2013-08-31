@@ -14,9 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 
 /**
  *
@@ -24,12 +26,13 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_GeoSearchController extends Blocks_AbstractController
+class GeoSearchController extends AbstractController
 {
 
     protected $_option = 'geo';
-    
-    public function init(){
+
+    public function init ()
+    {
         Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         parent::init();
     }
@@ -37,15 +40,15 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
     public function indexAction ()
     {
         $params = $this->getRequest()->getParams();
-
+        
         $results = $params;
         $results['blockConfig'] = $params['block-config'];
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         $css = array();
-        $js=array();
-        $this->_sendResponse($results, $template, $css, $js);
+        $js = array();
+        return $this->_sendResponse($results, $template, $css, $js);
     }
 
     public function xhrSearchAction ()
@@ -53,12 +56,12 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         
         // get params
         $params = $this->getRequest()->getParams();
-
-        $params['block-config']=array();
-        $params['block-config']['displayedFacets']=isset($params['displayedFacets']) ? $params['displayedFacets'] : array();
-        $params['block-config']['facetOverrides']=isset($params['facetOverrides']) ? $params['facetOverrides'] : \Zend_Json::encode(array());
-        $params['block-config']['displayMode']=isset($params['displayMode']) ? $params['displayMode'] : 'standard';
-        $params['block-config']['autoComplete']=isset($params['autoComplete']) ? $params['autoComplete'] : false;
+        
+        $params['block-config'] = array();
+        $params['block-config']['displayedFacets'] = isset($params['displayedFacets']) ? $params['displayedFacets'] : array();
+        $params['block-config']['facetOverrides'] = isset($params['facetOverrides']) ? $params['facetOverrides'] : \Zend_Json::encode(array());
+        $params['block-config']['displayMode'] = isset($params['displayMode']) ? $params['displayMode'] : 'standard';
+        $params['block-config']['autoComplete'] = isset($params['autoComplete']) ? $params['autoComplete'] : false;
         
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
@@ -81,7 +84,8 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         if (isset($params['predefinedFacets'])) {
             $predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
             foreach ($predefParamsArray as $key => $value) {
-                if (!isset($params[$key]) or !in_array($value,$params[$key])) $params[$key][] = $value;
+                if (! isset($params[$key]) or ! in_array($value, $params[$key]))
+                    $params[$key][] = $value;
                 $facetsToHide[] = $value;
             }
         }
@@ -96,16 +100,15 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $results = $query->search($params, $this->_option, false);
         $results = $this->_clusterResults($results);
         
-        $results['displayMode'] =  $params['block-config']['displayMode'];
+        $results['displayMode'] = $params['block-config']['displayMode'];
         
-        $results['autoComplete'] =  $params['block-config']['autoComplete'];
+        $results['autoComplete'] = $params['block-config']['autoComplete'];
         
         $results['facetsToHide'] = $facetsToHide;
-        $results['searchParams']=\Zend_Json::encode($params);
+        $results['searchParams'] = Json::encode($params);
         
         $activeFacetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/activeFacets.html.twig");
         $facetsTemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch/facets.html.twig");
-        
         
         $results['activeFacetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($activeFacetsTemplate, $results);
         $results['facetsHtml'] = Manager::getService('FrontOfficeTemplates')->render($facetsTemplate, $results);
@@ -113,36 +116,34 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         $results['message'] = 'OK';
         unset($results['searchParams']);
         
-        $this->_helper->json($results);
+        return new JsonModel($results);
     }
 
     public function xhrGetSuggestsAction ()
     {
         // get search parameters
-        
-        $params = \Zend_Json::decode($this->getRequest()->getParam('searchParams'));
+        $params = Json::decode($this->getRequest()->getParam('searchParams'), Json::TYPE_ARRAY);
         
         // get current language
         $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         
         // set query
         $params['query'] = $this->getRequest()->getParam('query');
-         
+        
         // set field for autocomplete
-        $params['field'] = 'autocomplete_'.$currentLocale;
-                 
+        $params['field'] = 'autocomplete_' . $currentLocale;
+        
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
         
-        $suggestTerms = $elasticaQuery->search($params,'geosuggest');
+        $suggestTerms = $elasticaQuery->search($params, 'geosuggest');
         
         $data = array(
-                'terms' => $suggestTerms
+            'terms' => $suggestTerms
         );
-        $this->_helper->json($data);    
-
+        return new JsonModel($data);
     }
-    
+
     protected function _clusterResults ($results)
     {
         // return $results;
@@ -192,7 +193,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                     $entity['type'] = $intermedVar['type'];
                 }
                 
-                if (isset($entity['code']) && !empty($entity['code'])) {
+                if (isset($entity['code']) && ! empty($entity['code'])) {
                     $templateName = $entity['code'] . ".html.twig";
                 } else {
                     $templateName = preg_replace('#[^a-zA-Z]#', '', $entity["type"]);
@@ -213,7 +214,7 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
                             if ($key == 'navigation') {
                                 continue;
                             }
-                            if(is_array($terms)) {
+                            if (is_array($terms)) {
                                 foreach ($terms as $term) {
                                     $intermedTerm = Manager::getService('TaxonomyTerms')->findById($term);
                                     if (! empty($intermedTerm)) {
@@ -248,6 +249,6 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
             $result['success'] = false;
             $result['message'] = "No entity found";
         }
-        $this->_helper->json($result);
+        return new JsonModel($result);
     }
 }

@@ -42,6 +42,6 @@ class Translate extends \Twig_Extension
      */
     public function translate ($text)
     {
-        throw \Exception('obsolete method');
+        throw new \Exception('obsolete method');
     }
 }

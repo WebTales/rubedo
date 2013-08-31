@@ -14,9 +14,12 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('ContentListController.php');
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 
 /**
  *
@@ -24,12 +27,9 @@ require_once ('ContentListController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_GalleryController extends Blocks_ContentListController
+class GalleryController extends ContentListController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
     public function indexAction ()
     {
         $output = $this->_getList();
@@ -41,7 +41,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js")
         );
         
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
     public function xhrGetImagesAction ()
@@ -52,7 +52,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         $data = array(
             'html' => $html
         );
-        $this->_helper->json($data);
+        return new JsonModel($data);
     }
 
     /**
@@ -62,25 +62,25 @@ class Blocks_GalleryController extends Blocks_ContentListController
      */
     protected function _getList ()
     {
-        $currentPage = $this->getRequest()->getParam('page', 1);
+        $currentPage = $this->params()->fromQuery('page', 1);
         
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $limit = (int) $this->getParam('itemsPerPage', 5);
-            $prefix = $this->getParam('prefix');
-            $imgWidth = $this->getParam('width', null);
-            $imgHeight = $this->getParam('height', null);
-            $query = Zend_Json::decode($this->getParam("query", Zend_Json::encode(null)));
+            $limit = (int) $this->params()->fromQuery('itemsPerPage', 5);
+            $prefix = $this->params()->fromQuery('prefix');
+            $imgWidth = $this->params()->fromQuery('width', null);
+            $imgHeight = $this->params()->fromQuery('height', null);
+            $query = Json::decode($this->params()->fromQuery("query", Json::encode(null)), Json::TYPE_ARRAY);
             $filter = $this->setFilters($query);
         } else {
             // Get queryId, blockConfig and Datalist
-            $blockConfig = $this->getRequest()->getParam('block-config');
+            $blockConfig = $this->params()->fromQuery('block-config');
             $limit = (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
             
-            $query = Zend_Json::decode($blockConfig["query"]);
+            $query = Json::decode($blockConfig["query"], Json::TYPE_ARRAY);
             $filter = $this->setFilters($query);
             $imgWidth = $blockConfig['imageThumbnailWidth'];
             $imgHeight = $blockConfig['imageThumbnailHeight'];
-            $prefix = $this->getParam('prefix', $this->getParam('prefix'));
+            $prefix = $this->params()->fromQuery('prefix');
         }
         
         $this->_dataService = Manager::getservice('Dam');
@@ -121,7 +121,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         }
         
         // Values sent to the view
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['prefix'] = $prefix;
         $output['items'] = $data;
         $output['allDamCount'] = $allDamCount;
@@ -133,7 +133,7 @@ class Blocks_GalleryController extends Blocks_ContentListController
         $output["image"]["width"] = isset($imgWidth) ? $imgWidth : null;
         $output["image"]["height"] = isset($imgHeight) ? $imgHeight : null;
         $output['currentPage'] = $currentPage;
-        $output['jsonQuery'] = Zend_Json::encode($query);
+        $output['jsonQuery'] = Json::encode($query);
         
         return $output;
     }

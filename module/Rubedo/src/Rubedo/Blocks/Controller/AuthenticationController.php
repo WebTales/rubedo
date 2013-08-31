@@ -18,8 +18,6 @@ namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
 
-
-
 /**
  *
  * @author dfanchon
@@ -29,9 +27,6 @@ Use Rubedo\Services\Manager;
 class AuthenticationController extends AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
     public function indexAction ()
     {
         $output = $this->params()->fromQuery();

@@ -18,10 +18,11 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
-
 require_once ('AbstractController.php');
 
 /**
+ *
+ *
  *
  *
  *
@@ -34,13 +35,9 @@ require_once ('AbstractController.php');
 class LanguageMenuController extends AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
-    public function indexAction()
+    public function indexAction ()
     {
-        $output = $this->params()->fromQuery();        
-
+        $output = $this->params()->fromQuery();
         
         if (isset($output['block-config']['displayAs'])) {
             switch ($output['block-config']['displayAs']) {
@@ -69,7 +66,12 @@ class LanguageMenuController extends AbstractController
                 ->setValue($site['languages']));
             $filters->addFilter(Filter::factory('Value')->setName('active')
                 ->setValue(true));
-            $languageResult = Manager::getService('Languages')->getList($filters,array(array('property'=>'label','direction'=>'ASC')));
+            $languageResult = Manager::getService('Languages')->getList($filters, array(
+                array(
+                    'property' => 'label',
+                    'direction' => 'ASC'
+                )
+            ));
             $output['languages'] = $languageResult['data'];
             $output['showCurrentLanguage'] = $output['block-config']['showCurrentLanguage'];
         }
@@ -78,7 +80,7 @@ class LanguageMenuController extends AbstractController
         $js = array(
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/language.js")
         );
-                
+        
         return $this->_sendResponse($output, $template, $css, $js);
     }
 }

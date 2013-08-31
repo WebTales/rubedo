@@ -19,6 +19,7 @@ namespace Rubedo\Blocks\Controller;
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Templates\Raw\RawViewModel;
+
 /**
  *
  * @author jbourdin
@@ -32,8 +33,6 @@ abstract class AbstractController extends AbstractActionController
 
     public function init ()
     {
-        
-        
         $templateService = Manager::getService('FrontOfficeTemplates');
         Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
         
@@ -50,7 +49,6 @@ abstract class AbstractController extends AbstractActionController
         
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
         
-        
         if (is_null($currentPage)) {
             throw new Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
         } else {
@@ -58,13 +56,13 @@ abstract class AbstractController extends AbstractActionController
         }
         $this->siteId = $currentPage['site'];
         
-        if($this->getRequest()->isXmlHttpRequest()){
-            //init browser languages
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            // init browser languages
             $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
             $browserLanguages = array_keys($zend_locale->getBrowser());
             
             $cookieValue = $this->getRequest()->getCookie('locale');
-            Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'],null,$browserLanguages,$cookieValue);
+            Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'], null, $browserLanguages, $cookieValue);
         }
         
         if (! $templateService->themeHadBeenSet()) {
@@ -76,7 +74,6 @@ abstract class AbstractController extends AbstractActionController
         // set current workspace
         $this->_workspace = $currentPage['workspace'];
     }
-
 
     /**
      * handle the response weither it is a direct call or a partial call
@@ -117,7 +114,5 @@ abstract class AbstractController extends AbstractActionController
         $viewModel->setTemplate($template);
         $viewModel->setTerminal(true);
         return $viewModel;
-        
-        
     }
 }

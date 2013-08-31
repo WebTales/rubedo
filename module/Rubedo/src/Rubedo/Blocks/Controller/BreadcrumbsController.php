@@ -14,9 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+Use Rubedo\Services\Manager;
 
 /**
  *
@@ -24,12 +24,9 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_BreadcrumbsController extends Blocks_AbstractController
+class BreadcrumbsController extends AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
     public function indexAction ()
     {
         $output = $this->getAllParams();
@@ -73,6 +70,6 @@ class Blocks_BreadcrumbsController extends Blocks_AbstractController
         
         $css = array();
         $js = array();
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 }

@@ -14,9 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
+use Zend\Json\Json;
 
 /**
  *
@@ -24,7 +25,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_ImageMapController extends Blocks_AbstractController
+class ImageMapController extends AbstractController
 {
 
     /**
@@ -35,31 +36,31 @@ class Blocks_ImageMapController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array());
         
         $output = $this->getAllParams();
-        $output['image'] =$blockConfig['image'];
-        if(!isset($output['image'])){
+        $output['image'] = $blockConfig['image'];
+        if (! isset($output['image'])) {
             $this->_sendResponse(array(), "block.html.twig");
-            return ;
+            return;
         }
-        $output['map'] =Zend_Json::decode($blockConfig['map']);
+        $output['map'] = Json::decode($blockConfig['map'], Json::TYPE_ARRAY);
         foreach ($output['map'] as &$mapElement) {
-          if ($mapElement['type']=="polygon"){
-              $mapElement['type']="poly";
-          }
-          if ($mapElement['type']=="rect"){
-            $mapElement['params']['x1']=$mapElement['params']['x']+$mapElement['params']['width'];
-            $mapElement['params']['y1']=$mapElement['params']['y']+$mapElement['params']['height'];
-            $mapElement['coords']=$mapElement['params']['x'].",".$mapElement['params']['y'].",".$mapElement['params']['x1'].",".$mapElement['params']['y1'];
-          } else {
-            $mapElement['coords']=implode(",", $mapElement['params']);
-          }
-           
+            if ($mapElement['type'] == "polygon") {
+                $mapElement['type'] = "poly";
+            }
+            if ($mapElement['type'] == "rect") {
+                $mapElement['params']['x1'] = $mapElement['params']['x'] + $mapElement['params']['width'];
+                $mapElement['params']['y1'] = $mapElement['params']['y'] + $mapElement['params']['height'];
+                $mapElement['coords'] = $mapElement['params']['x'] . "," . $mapElement['params']['y'] . "," . $mapElement['params']['x1'] . "," . $mapElement['params']['y1'];
+            } else {
+                $mapElement['coords'] = implode(",", $mapElement['params']);
+            }
         }
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/imageMap.html.twig");
         
         $css = array();
-        $js = array("/components/stowball/jQuery-rwdImageMaps/jquery.rwdImageMaps.min.js",
+        $js = array(
+            "/components/stowball/jQuery-rwdImageMaps/jquery.rwdImageMaps.min.js",
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/imagemap.js")
         );
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 }

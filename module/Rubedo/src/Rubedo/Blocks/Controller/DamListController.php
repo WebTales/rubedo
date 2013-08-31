@@ -14,9 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  *
@@ -24,7 +25,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_DamListController extends Blocks_AbstractController
+class DamListController extends AbstractController
 {
 
     public function indexAction ()
@@ -37,7 +38,7 @@ class Blocks_DamListController extends Blocks_AbstractController
         $params['orderbyDirection'] = 'asc';
         $params['orderby'] = 'text';
         $params['pagesize'] = 25;
-        if (isset($params['block-config']['constrainToSite']) && ($params['block-config']['constrainToSite'] === true  || $params['block-config']['constrainToSite']==='true')) {
+        if (isset($params['block-config']['constrainToSite']) && ($params['block-config']['constrainToSite'] === true || $params['block-config']['constrainToSite'] === 'true')) {
             $site = $this->getRequest()->getParam('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;
@@ -96,9 +97,9 @@ class Blocks_DamListController extends Blocks_AbstractController
             $answer['data'] = Manager::getService('FrontOfficeTemplates')->render($template, $results);
             $answer['success'] = true;
             $answer['message'] = 'OK';
-            $this->_helper->json($answer);
+            return new JsonModel($answer);
         } else {
-            $this->_sendResponse($results, $template, $css, $js);
+            return $this->_sendResponse($results, $template, $css, $js);
         }
     }
 

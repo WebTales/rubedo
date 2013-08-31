@@ -17,7 +17,6 @@ namespace Rubedo\Router;
 use Rubedo\Services\Manager;
 use Zend\Mvc\Router\Http\RouteInterface;
 use Zend\Mvc\Router\Http\RouteMatch;
-use Zend\Mvc\Router\Http\TreeRouteStack;
 
 /**
  * Zend_Controller_Router_Route implementation for frontend pages

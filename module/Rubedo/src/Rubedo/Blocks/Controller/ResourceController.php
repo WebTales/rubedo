@@ -14,9 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
 
 /**
  *
@@ -24,7 +24,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_ResourceController extends Blocks_AbstractController
+class ResourceController extends AbstractController
 {
 
     protected $_defaultTemplate = 'resource';
@@ -42,8 +42,8 @@ class Blocks_ResourceController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array());
         $output = $this->getAllParams();
         
-        if ((isset($blockConfig['introduction']))&&($blockConfig['introduction']!="")) {
-            $content = Manager::getService('Contents')->findById($blockConfig["introduction"],true,false);
+        if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
+            $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
             $output['contentId'] = $blockConfig["introduction"];
             $output['text'] = $content["fields"]["body"];
             $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
@@ -64,6 +64,6 @@ class Blocks_ResourceController extends Blocks_AbstractController
         
         $css = array();
         $js = array();
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 }

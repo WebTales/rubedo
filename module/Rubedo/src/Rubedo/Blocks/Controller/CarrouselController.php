@@ -14,9 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('ContentListController.php');
+Use Rubedo\Services\Manager;
 
 /**
  *
@@ -24,23 +24,20 @@ require_once ('ContentListController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_CarrouselController extends Blocks_ContentListController
+class CarrouselController extends ContentListController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
     public function indexAction ()
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_queryReader = Manager::getService('Queries');
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         
         $filters = Manager::getService('Queries')->getFilterArrayById($blockConfig['query']);
         
         if ($filters !== false) {
             $queryType = $filters["queryType"];
-            $queryId = $this->getParam('query-id', $blockConfig['query']);
+            $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
             
             $query = $this->_queryReader->getQueryById($queryId);
             
@@ -93,13 +90,13 @@ class Blocks_CarrouselController extends Blocks_ContentListController
                 $data[] = $fields;
             }
         }
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output["items"] = $data;
         $output["imageWidth"] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
         $output["imageHeight"] = isset($blockConfig['imageHeight']) ? $blockConfig['imageHeight'] : null;
         $output["mode"] = isset($blockConfig['mode']) ? $blockConfig['mode'] : null;
-        $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParam('current-page');
-        $output['singlePage'] = $this->getParam('single-page', $singlePage);
+        $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->params()->fromQuery('current-page');
+        $output['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
         } else {
@@ -110,6 +107,6 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $js = array(
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js")
         );
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 }

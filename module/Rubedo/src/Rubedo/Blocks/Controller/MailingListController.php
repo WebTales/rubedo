@@ -14,9 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use \Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use \Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the MailingList JSON
@@ -29,7 +30,7 @@ require_once ('AbstractController.php');
  * @package Rubedo
  *         
  */
-class Blocks_MailingListController extends Blocks_AbstractController
+class MailingListController extends AbstractController
 {
 
     protected $_defaultTemplate = 'mailinglist';
@@ -48,7 +49,7 @@ class Blocks_MailingListController extends Blocks_AbstractController
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/mailingList.js")
         );
         
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
     /**
@@ -65,7 +66,7 @@ class Blocks_MailingListController extends Blocks_AbstractController
         }
         
         // Declare email validator
-        $emailValidator = new Zend_Validate_EmailAddress();
+        $emailValidator = new \Zend\Validator\EmailAddress();
         
         // MailingList service
         $mailingListService = \Rubedo\Services\Manager::getService("MailingList");
@@ -77,10 +78,9 @@ class Blocks_MailingListController extends Blocks_AbstractController
         if ($emailValidator->isValid($email)) {
             // Register user
             $suscribeResult = $mailingListService->subscribe($mailingListId, $email);
-            
-            $this->_helper->json($suscribeResult);
+            return new JsonModel($suscribeResult);
         } else {
-            $this->_helper->json(array(
+            return new JsonModel(array(
                 "success" => false,
                 "msg" => "Adresse e-mail invalide"
             ));

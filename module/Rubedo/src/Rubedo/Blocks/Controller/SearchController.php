@@ -21,7 +21,6 @@ use Rubedo\Elastic\DataSearch;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
-
 /**
  *
  * @author jbourdin
@@ -36,17 +35,17 @@ class SearchController extends AbstractController
         
         // get search parameters
         $params = $this->params()->fromQuery();
-       
-        //remove empty facets from criteria
-        foreach($params as $key => $value){
+        
+        // remove empty facets from criteria
+        foreach ($params as $key => $value) {
             
-            if(is_array($value)){
-                foreach ($value as $subkey => $subvalue){
-                    if(empty($subvalue)){
+            if (is_array($value)) {
+                foreach ($value as $subkey => $subvalue) {
+                    if (empty($subvalue)) {
                         unset($params[$key][$subkey]);
                     }
                 }
-                if(count($value)==0){
+                if (count($value) == 0) {
                     unset($params[$key]);
                 }
             }
@@ -56,7 +55,9 @@ class SearchController extends AbstractController
         $params['pager'] = $this->params()->fromQuery('pager', 0);
         
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
-            $site = $this->getRequest()->params()->fromQuery('site');
+            $site = $this->getRequest()
+                ->params()
+                ->fromQuery('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;
         }
@@ -64,7 +65,7 @@ class SearchController extends AbstractController
         // apply predefined facets
         $facetsToHide = array();
         if (isset($params['block-config']['predefinedFacets'])) {
-            $predefParamsArray = Json::decode($params['block-config']['predefinedFacets'],Json::TYPE_ARRAY);
+            $predefParamsArray = Json::decode($params['block-config']['predefinedFacets'], Json::TYPE_ARRAY);
             if (is_array($predefParamsArray)) {
                 foreach ($predefParamsArray as $key => $value) {
                     $params[$key][] = $value;
@@ -77,9 +78,9 @@ class SearchController extends AbstractController
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
-
+        
         $results = $query->search($params);
-        $results['searchParams']=Json::encode($params,Json::TYPE_ARRAY);
+        $results['searchParams'] = Json::encode($params, Json::TYPE_ARRAY);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
@@ -101,7 +102,7 @@ class SearchController extends AbstractController
             10
         ));
         
-        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->params()->fromQuery('current-page');       
+        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->params()->fromQuery('current-page');
         $results['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
         
         $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
@@ -111,37 +112,40 @@ class SearchController extends AbstractController
         
         $css = array();
         $js = array(
-        	'/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js"),
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js"),
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/autocomplete.js")
-		);
+        );
         
         return $this->_sendResponse($results, $template, $css, $js);
     }
-    
+
     public function xhrGetSuggestsAction ()
     {
         // get search parameters
-
-        $params = \Zend_Json::decode($this->getRequest()->params()->fromQuery('searchParams'));
+        $params = Json::decode($this->getRequest()
+            ->params()
+            ->fromQuery('searchParams'), Json::TYPE_ARRAY);
         
         // get current language
         $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         
         // set query
-        $params['query'] = $this->getRequest()->params()->fromQuery('query');
-       
+        $params['query'] = $this->getRequest()
+            ->params()
+            ->fromQuery('query');
+        
         // set field for autocomplete
-        $params['field'] = 'autocomplete_'.$currentLocale;
-               
+        $params['field'] = 'autocomplete_' . $currentLocale;
+        
         Datasearch::setIsFrontEnd(true);
         
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
-
-        $suggestTerms = $elasticaQuery->search($params,'suggest');
-    
+        
+        $suggestTerms = $elasticaQuery->search($params, 'suggest');
+        
         $data = array(
-                'terms' => $suggestTerms
+            'terms' => $suggestTerms
         );
         return new JsonModel($data);
     }

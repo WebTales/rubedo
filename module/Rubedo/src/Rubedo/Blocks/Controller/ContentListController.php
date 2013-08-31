@@ -20,7 +20,6 @@ use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\View\Model\JsonModel;
 
-
 /**
  *
  * @author jbourdin
@@ -114,7 +113,7 @@ class ContentListController extends AbstractController
             $typeArray = $this->_typeReader->getList();
             $contentTypeArray = array();
             foreach ($typeArray['data'] as $dataType) {
-                if (isset($dataType['code']) && !empty($dataType['code'])) {
+                if (isset($dataType['code']) && ! empty($dataType['code'])) {
                     $templateName = $dataType['code'] . ".html.twig";
                 } else {
                     $templateName = preg_replace('#[^a-zA-Z]#', '', $dataType["type"]);
@@ -189,7 +188,7 @@ class ContentListController extends AbstractController
 
     /**
      * Return a list of contents based on Filters and Pagination
-     * 
+     *
      * @param \Webtales\MongoFilters\IFilter $filters            
      * @param array $pageData            
      * @return array

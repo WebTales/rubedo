@@ -16,14 +16,11 @@
  */
 namespace Rubedo\Frontoffice\Controller;
 
-use Rubedo\Controller\Action;
 use Rubedo\Services\Manager;
-use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Content\Context;
 use Rubedo\Templates\Twig\TwigViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
 
 /**
  * Front Office Defautl Controller

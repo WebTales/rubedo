@@ -19,7 +19,6 @@ namespace Rubedo\Templates\Raw;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Resolver\ResolverInterface;
 use Zend\View\Renderer\RendererInterface;
-use Rubedo\Services\Manager;
 /**
  * Interface class for Zend_View compatible template engine implementations
  */

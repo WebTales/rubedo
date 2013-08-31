@@ -19,7 +19,6 @@ namespace Rubedo\Blocks\Controller;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 
-
 /**
  *
  * @author jbourdin
@@ -29,9 +28,6 @@ use WebTales\MongoFilters\Filter;
 class NavBarController extends AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
     public function indexAction ()
     {
         $output = $this->params()->fromQuery();

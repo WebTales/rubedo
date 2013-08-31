@@ -14,9 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+Use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  *
@@ -24,12 +25,9 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_FlickrGalleryController extends Blocks_AbstractController
+class FlickrGalleryController extends AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
     public function indexAction ()
     {
         // $output = $this->_getList();
@@ -58,11 +56,11 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
         if (! isset($flParams['user']) && ! isset($flParams['tags'])) {
             $output['doNotShow'] = true;
             $this->_sendResponse(array(), "block.html.twig");
-            return ;
+            return;
         }
         
         $cache = Rubedo\Services\Cache::getCache('flicker');
-        //$cacheKey = 'flickr_items_' . md5(serialize($flParams));
+        // $cacheKey = 'flickr_items_' . md5(serialize($flParams));
         $cacheKeyCount = 'flickr_items_' . md5('count-' . serialize($flParams));
         $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
         
@@ -136,7 +134,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js")
         );
         
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
     public function xhrGetImagesAction ()
@@ -148,7 +146,7 @@ class Blocks_FlickrGalleryController extends Blocks_AbstractController
             'html' => $html
         );
         
-        $this->_helper->json($data);
+        return new JsonModel($data);
     }
 
     protected function _getList ()

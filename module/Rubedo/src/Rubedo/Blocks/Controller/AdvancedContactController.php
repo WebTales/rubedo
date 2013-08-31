@@ -14,9 +14,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+Use Rubedo\Services\Manager;
 
 /**
  *
@@ -24,7 +24,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_AdvancedContactController extends Blocks_AbstractController
+class AdvancedContactController extends AbstractController
 {
 
     protected $_defaultTemplate = 'advancedContact';
@@ -70,7 +70,7 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
                     $mailerObject->setTo($recipients);
                     $mailerObject->setBody($mailBody);
                     
-                    if(isset($blockConfig['cc']) && is_array($blockConfig["cc"])) {
+                    if (isset($blockConfig['cc']) && is_array($blockConfig["cc"])) {
                         $mailerObject->setCc($blockConfig['cc']);
                     }
                     
@@ -83,7 +83,6 @@ class Blocks_AdvancedContactController extends Blocks_AbstractController
                         $output['sendResult'] = true;
                     }
                 }
-                
                 
                 $output["blockConfig"] = $blockConfig;
             } else {

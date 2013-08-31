@@ -14,9 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Blocks\Controller;
 
-require_once ('AbstractController.php');
+use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  *
@@ -24,7 +25,7 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_ProtectedResourceController extends Blocks_AbstractController
+class ProtectedResourceController extends AbstractController
 {
 
     protected $_defaultTemplate = 'protected-resource';
@@ -34,8 +35,8 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         $blockConfig = $this->getParam('block-config', array());
         $output = $this->getAllParams();
         
-        if ((isset($blockConfig['introduction']))&&($blockConfig['introduction']!="")) {
-            $content = Manager::getService('Contents')->findById($blockConfig["introduction"],true,false);
+        if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
+            $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
             $output['contentId'] = $blockConfig["introduction"];
             $output['text'] = $content["fields"]["body"];
             $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
@@ -54,7 +55,7 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         $js = array(
             '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/access-resource.js")
         );
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
     /**
@@ -79,7 +80,7 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         }
         
         // Declare email validator
-        $emailValidator = new Zend_Validate_EmailAddress();
+        $emailValidator = new \Zend\Validator\EmailAddress();
         
         // MailingList service
         $mailingListService = \Rubedo\Services\Manager::getService("MailingList");
@@ -96,9 +97,9 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
                 $resultArray = $this->_sendDamMail();
             }
             
-            $this->_helper->json($resultArray);
+            return new JsonModel($resultArray);
         } else {
-            $this->_helper->json(array(
+            return new JsonModel(array(
                 "success" => false,
                 "msg" => "Adresse e-mail invalide"
             ));
@@ -127,6 +128,7 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
     }
 
     /**
+     *
      * @todo change from address !
      */
     protected function _sendEmail ($url)
@@ -148,7 +150,7 @@ class Blocks_ProtectedResourceController extends Blocks_AbstractController
         $message->setTo(array(
             $this->email
         ));
-        $message->setSubject('[' . Manager::getService('Sites')->getHost($this->siteId) . '] '. Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Mail.Subject"));
+        $message->setSubject('[' . Manager::getService('Sites')->getHost($this->siteId) . '] ' . Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Mail.Subject"));
         
         $message->setBody($plainMailBody);
         $message->addPart($mailBody, 'text/html');

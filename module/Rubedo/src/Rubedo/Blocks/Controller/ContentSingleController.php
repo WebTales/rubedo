@@ -14,10 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Blocks\Controller;
+
 Use Rubedo\Services\Manager;
 Use Alb\OEmbed;
-
-require_once ('AbstractController.php');
+use Zend\View\Model\JsonModel;
 
 /**
  *
@@ -25,13 +26,10 @@ require_once ('AbstractController.php');
  * @category Rubedo
  * @package Rubedo
  */
-class Blocks_ContentSingleController extends Blocks_AbstractController
+class ContentSingleController extends AbstractController
 {
 
-    /**
-     * Default Action, return the Ext/Js HTML loader
-     */
-    public function indexAction()
+    public function indexAction ()
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
@@ -56,14 +54,16 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             continue;
                         }
                         
-                        if(!is_array($terms) && is_string($terms)) {
-                            $terms = array($terms);
+                        if (! is_array($terms) && is_string($terms)) {
+                            $terms = array(
+                                $terms
+                            );
                         }
                         
                         foreach ($terms as $term) {
                             $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
                             
-                            if($readTerm === null) {
+                            if ($readTerm === null) {
                                 $readTerm = array();
                             }
                             
@@ -94,11 +94,10 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             $contentTitlesArray[$value['config']['name']][] = $intermedContent['text'];
                         }
                     } else {
-                        if (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1){
+                        if (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1) {
                             $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
                             $contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
                         }
-                        
                     }
                 } else 
                     if ($value["cType"] == "CKEField") {
@@ -174,7 +173,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                             }
                         }
             }
-            if (isset($type['code']) && !empty($type['code'])) {
+            if (isset($type['code']) && ! empty($type['code'])) {
                 $templateName = $type['code'] . ".html.twig";
             } else {
                 $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
@@ -190,7 +189,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $js = array(
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
                 '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
-                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js"),
+                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js")
             );
             
             if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
@@ -213,10 +212,10 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             "/components/jquery/jqueryui/themes/base/jquery-ui.css"
         );
         
-        $this->_sendResponse($output, $template, $css, $js);
+        return $this->_sendResponse($output, $template, $css, $js);
     }
 
-    public function getContentsAction()
+    public function getContentsAction ()
     {
         $this->_dataReader = Manager::getService('Contents');
         $returnArray = array();
@@ -235,8 +234,6 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
                 "msg" => "No query found"
             );
         }
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setBody(Zend_Json::encode($returnArray), 'data');
+        return new JsonModel($returnArray);
     }
 }

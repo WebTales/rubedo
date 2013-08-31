@@ -19,6 +19,7 @@ namespace Rubedo\Install\Controller;
 use Rubedo\Mongo\DataAccess;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
+use Rubedo\Elastic\DataAbstract;
 use WebTales\MongoFilters\Filter;
 use Rubedo\Update\Install;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -158,7 +159,7 @@ class IndexController extends AbstractActionController
                 $params = $this->_applicationOptions["datastream"]["mongo"];
             }
             $connectionValid = true;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $connectionValid = false;
         }
         if ($connectionValid) {
@@ -192,7 +193,7 @@ class IndexController extends AbstractActionController
         try {
             if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
                 $params = $dbForm->getValues();
-                Rubedo\Elastic\DataAbstract::setOptions($params);
+                DataAbstract::setOptions($params);
                 $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init();
             } else {
@@ -201,7 +202,7 @@ class IndexController extends AbstractActionController
                 $query->init();
             }
             $connectionValid = true;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $connectionValid = false;
         }
         if ($connectionValid) {
@@ -317,7 +318,7 @@ class IndexController extends AbstractActionController
             $transport->start();
             $transport->stop();
             $connectionValid = true;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $connectionValid = false;
         }
         if ($connectionValid) {
@@ -563,7 +564,7 @@ class IndexController extends AbstractActionController
     {
         Manager::getService('UrlCache')->drop();
         Manager::getService('Cache')->drop();
-        $servicesArray = Rubedo\Interfaces\config::getCollectionServices();
+        $servicesArray = \Rubedo\Interfaces\config::getCollectionServices();
         $result = true;
         foreach ($servicesArray as $service) {
             if (! Manager::getService($service)->checkIndexes()) {
@@ -603,7 +604,7 @@ class IndexController extends AbstractActionController
         if ($this->_isDefaultGroupsExists()) {
             return;
         }
-        $success = Rubedo\Update\Install::doCreateDefaultsGroups();
+        $success = \Rubedo\Update\Install::doCreateDefaultsGroups();
         if (! $success) {
             $this->view->hasError = true;
             $this->view->errorMsgs = 'failed to create default groups';
@@ -625,10 +626,10 @@ class IndexController extends AbstractActionController
 
     protected function _doInsertContents()
     {
-        $success = Rubedo\Update\Install::doInsertContents();
+        $success = \Rubedo\Update\Install::doInsertContents();
         
         if ($success) {
-            Rubedo\Update\Update::update();
+            \Rubedo\Update\Update::update();
             \Rubedo\Collection\Pages::localizeAllCollection();
         }
         
