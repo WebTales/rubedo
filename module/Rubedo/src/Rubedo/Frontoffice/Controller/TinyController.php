@@ -30,18 +30,11 @@ use Zend\Mvc\Controller\AbstractActionController;
  */
 class TinyController extends AbstractActionController
 {
-    
-    /*
-     * (non-PHPdoc) @see Zend_Controller_Action::init()
-     */
-    public function init ()
+
+    function indexAction()
     {
         $this->tinyUrlService = Manager::getService('TinyUrl');
-    }
-
-    function indexAction ()
-    {
-        $tinyKey = $this->getParam('tk');
+        $tinyKey = $this->params()->fromQuery('tk');
         if (! $tinyKey) {
             throw new \Rubedo\Exceptions\User('No tiny URL given.', "Exception26");
         } else {
@@ -52,14 +45,14 @@ class TinyController extends AbstractActionController
         }
         
         if (isset($tinyUrlObj['url'])) {
-            $this->_redirect($tinyUrlObj['url']);
+            return $this->redirect()->toUrl($tinyUrlObj['url']);
         } else {
-            $controller = $tinyUrlObj['controller'];
-            $action = $tinyUrlObj['action'];
-            $module = $tinyUrlObj['module'];
-            $params = $tinyUrlObj['params'];
-            $params['tk'] = false;
-            $this->_forward($action, $controller, $module, $params);
+            $redirectParams = array(
+                'action' => $tinyUrlObj['action'],
+                'controller' => $tinyUrlObj['controller']
+            );
+            array_merge($redirectParams, $tinyUrlObj['params']);
+            return $this->redirect()->toRoute(null, $redirectParams);
         }
     }
 }
