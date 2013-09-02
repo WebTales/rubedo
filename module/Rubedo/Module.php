@@ -100,6 +100,7 @@ class Module
         
         $router = $event->getRouter();
         $matches = $event->getRouteMatch();
+        
         //store this route in URL service
         Url::setRouter($router);
         Url::setRouteName($matches->getMatchedRouteName());
@@ -122,10 +123,7 @@ class Module
         $controllerName = strtolower($controllerName);
         $moduleName = strtolower($moduleName);
         $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;
-
-        if ($moduleName == 'install') {
-            $hasAccess = true;
-        } elseif (($moduleName == 'frontoffice' || ! isset($moduleName)) && (($action == 'index' && $controllerName == 'index') || ($action == 'index' && $controllerName == 'error') || ($action == 'index' && $controllerName == 'image') || ($action == 'index' && $controllerName == 'dam'))) {
+        if ($moduleName == 'install' || $moduleName == 'frontoffice') {
             $hasAccess = true;
         } else {
             $aclService = Manager::getService('Acl');

@@ -14,7 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Frontoffice\Controller;
+
 use Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Controller Rendering TinyUrl accessed resources
@@ -25,7 +28,7 @@ use Rubedo\Services\Manager;
  * @package Rubedo
  *         
  */
-class TinyController extends Zend_Controller_Action
+class TinyController extends AbstractActionController
 {
     
     /*

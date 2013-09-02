@@ -15,8 +15,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Frontoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 
 /**
  * Language Switcher Controller
@@ -25,7 +28,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class XhrLanguageController extends Zend_Controller_Action
+class XhrLanguageController extends AbstractActionController
 {
 
     /**
@@ -33,36 +36,25 @@ class XhrLanguageController extends Zend_Controller_Action
      */
     public function defineLanguageAction()
     {
-        $forceLocale = $this->getRequest()->getParam('locale', null);
+        $forceLocale = $this->params()->fromQuery('locale', null);
         
         // get current page property
-        $this->currentPage = $this->getParam('current-page');
+        $this->currentPage = $this->params()->fromQuery('current-page');
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
         
         if (is_null($currentPage)) {
-            throw new Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
+            throw new \Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
         } else {
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
         
-        // init browser languages
-        $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
-        $browserLanguages = array_keys($zend_locale->getBrowser());
-        $locale = Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'], $forceLocale, $browserLanguages);
+        $locale = Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'], $forceLocale);
         $domain = $this->getRequest()->getHeader('host');
-        if($domain){
+        if ($domain) {
             $languageCookie = setcookie('locale', $locale, strtotime('+1 year'), '/', $domain);
         }
         
         $response['success'] = $locale;
-        
-        return $this->_helper->json($response);
-        
-        $language = $this->getRequest()->getParam('language', 'default');
-        $this->_session->set('lang', $language);
-        
-        $response['success'] = $this->_session->get('lang');
-        
-        return $this->_helper->json($response);
+        return new JsonModel($response);
     }
 }

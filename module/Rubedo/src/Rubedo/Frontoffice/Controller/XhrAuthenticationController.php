@@ -14,7 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-Use Rubedo\Services\Manager;
+namespace Rubedo\Frontoffice\Controller;
+
+use Rubedo\Services\Manager;
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Authentication Default Controller
@@ -23,7 +26,7 @@ Use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class XhrAuthenticationController extends Zend_Controller_Action
+class XhrAuthenticationController extends AbstractActionController
 {
 
     /**
@@ -37,7 +40,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
     /**
      * Init the authentication service
      */
-    public function init ()
+    public function init()
     {
         $this->_auth = Manager::getService('Authentication');
     }
@@ -45,7 +48,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
     /**
      * Log in the user and set a json response with a boolean and a message
      */
-    public function loginAction ()
+    public function loginAction()
     {
         $login = $this->getRequest()->getParam('login');
         $password = $this->getRequest()->getParam('password');
@@ -73,7 +76,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
     /**
      * Log out the user and set a json response with a boolean
      */
-    public function logoutAction ()
+    public function logoutAction()
     {
         $this->_auth->clearIdentity();
         
@@ -84,7 +87,7 @@ class XhrAuthenticationController extends Zend_Controller_Action
     /**
      * check if a user is connected and return its login if true (json array)
      */
-    public function isLoggedInAction ()
+    public function isLoggedInAction()
     {
         $currentUserService = Manager::getService('CurrentUser');
         
