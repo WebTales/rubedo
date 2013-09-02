@@ -14,12 +14,7 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-namespace Rubedo\Backoffice\Controller;
-
-use Rubedo\Services\Manager;
-use Rubedo\Content\Context;
-use Zend\Json\Json;
-use Zend\View\Model\JsonModel;
+require_once ('DataAccessController.php');
 
 /**
  * Controller providing data import for csv
@@ -32,8 +27,13 @@ use Zend\View\Model\JsonModel;
  * @package Rubedo
  *         
  */
-class ImportController extends DataAccessController
+class Backoffice_ImportController extends Backoffice_DataAccessController
 {
+
+    /**
+     * Array with the read only actions
+     */
+    protected $_readOnlyAction = array();
 
     /**
      * Return the encoding of the string
@@ -41,7 +41,7 @@ class ImportController extends DataAccessController
      * @param string $string            
      * @return array List of possible encodings of the string
      */
-    protected function getEncoding($string)
+    protected function getEncoding ($string)
     {
         $result = array();
         
@@ -93,7 +93,7 @@ class ImportController extends DataAccessController
      *            ISO-8859-1
      * @return boolean true if the encoding match with the string
      */
-    protected function checkEncoding($string, $encoding)
+    protected function checkEncoding ($string, $encoding)
     {
         return mb_check_encoding($string, $encoding);
     }
@@ -107,26 +107,24 @@ class ImportController extends DataAccessController
      *            The current encoding of the string
      * @return string Encoded string in UTF-8
      */
-    protected function forceUtf8($string, $encoding)
+    protected function forceUtf8 ($string, $encoding)
     {
         return mb_convert_encoding($string, "UTF-8", $encoding);
     }
 
-    /**
-     *
-     * @todo comment this method
-     * @todo move this to a service !
-     */
-    public function analyseAction()
+    public function analyseAction ()
     {
-        $separator = $this->params()->fromPost('separator', ";");
-        $userEncoding = $this->params()->fromPost('encoding');
+        $separator = $this->getParam('separator', ";");
+        $userEncoding = $this->getParam('encoding');
+        $adapter = new Zend_File_Transfer_Adapter_Http();
+        $returnArray = array();
         
-        if (! $this->params()->fromFiles('csvFile')) {
+        if (! $adapter->receive("csvFile")) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Pas de fichier reçu.";
         } else {
-            $fileInfos = $this->params()->fromFiles('csvFile');
+            $filesArray = $adapter->getFileInfo();
+            $fileInfos = $filesArray["csvFile"];
             if (($fileInfos['type'] != "text/plain") && ($fileInfos['type'] != "text/csv")) {
                 $returnArray['success'] = false;
                 $returnArray['message'] = "Le fichier doit doit être au format CSV.";
@@ -178,50 +176,64 @@ class ImportController extends DataAccessController
                 $returnArray['message'] = "OK";
             }
         }
-        return new JsonModel($returnArray);
+        
+        // Disable view
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        
+        // Encode the response in json
+        $returnValue = Zend_Json::encode($returnArray);
+        if ($this->_prettyJson) {
+            $returnValue = Zend_Json::prettyPrint($returnValue);
+        }
+        
+        // Return the repsonse
+        $this->getResponse()->setBody($returnValue);
     }
 
-    /**
-     * @todo move this to a service !
-     * @throws \Rubedo\Exceptions\Server
-     * @return \Zend\View\Model\JsonModel
-     */
-    public function importAction()
+    public function importAction ()
     {
-        Context::setExpectJson();
-        //Zend_Registry::set('Expects_Json', true);
+        Zend_Registry::set('Expects_Json', true);
         set_time_limit(5000);
-        $separator = $this->params()->fromPost('separator', ";");
-        $userEncoding = $this->params()->fromPost('encoding');
-        
-        $workingLanguage = $this->params()->fromPost('workingLanguage', 'en');
+        $separator = $this->getParam('separator', ";");
+        $userEncoding = $this->getParam('encoding');
+        $workingLanguage = $this->getParam('workingLanguage', 'en');
         
         if (! isset($userEncoding)) {
             throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
         }
         
+        $adapter = new Zend_File_Transfer_Adapter_Http();
         $returnArray = array();
-        $taxonomyService = Manager::getService('Taxonomy');
-        $taxonomyTermsService = Manager::getService('TaxonomyTerms');
-        $contentsService = Manager::getService('Contents');
-        $damService = Manager::getService('Dam');
-        $fileService = Manager::getService('Files');
+        $taxonomyService = Rubedo\Services\Manager::getService('Taxonomy');
+        $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
+        $contentsService = Rubedo\Services\Manager::getService('Contents');
+        $damService = Rubedo\Services\Manager::getService('Dam');
+        $fileService = Rubedo\Services\Manager::getService('Files');
+        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        
+        // get active locales for automatic dam translation
+        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        $activeLocales = $languagesService->getActiveLocales();
         
         $brokenLines = array();
         
-        if (! $this->params()->fromFiles('csvFile')) {
+        if (! $adapter->receive("csvFile")) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Pas de fichier reçu.";
         } else {
-            $fileInfos = $this->params()->fromFiles('csvFile');
+            $filesArray = $adapter->getFileInfo();
+            $fileInfos = $filesArray["csvFile"];
             if (($fileInfos['type'] != "text/plain") && ($fileInfos['type'] != "text/csv")) {
                 $returnArray['success'] = false;
                 $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             } else {
-                // recieve params
-                $configs = Json::decode($this->params()->fromPost('configs', "[ ]"), Json::TYPE_ARRAY);
-                $importAsField = Json::decode($this->params()->fromPost('inportAsField', "[ ]"), Json::TYPE_ARRAY);
-                $importAsTaxo = Json::decode($this->params()->fromPost('inportAsTaxo', "[ ]"), Json::TYPE_ARRAY);
+                // receive params
+                $configs = Zend_Json::decode($this->getParam('configs', "[ ]"));
+                $importAsField = Zend_Json::decode($this->getParam('inportAsField', "[ ]"));
+                $importAsTaxo = Zend_Json::decode($this->getParam('inportAsTaxo', "[ ]"));
+                $importAsFieldTranslation = Zend_Json::decode($this->getParam('inportAsFieldTranslation', "[ ]"));
+                $importAsTaxoTranslation = Zend_Json::decode($this->getParam('inportAsTaxoTranslation', "[ ]"));
                 
                 // create vocabularies
                 $newTaxos = array();
@@ -300,12 +312,13 @@ class ImportController extends DataAccessController
                     "nativeLanguage" => $workingLanguage,
                     "i18n" => $newCTi18n
                 );
-                $contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
+                $contentType = Rubedo\Services\Manager::getService('ContentTypes')->create($contentTypeParams);
                 
                 // add contents to CT and terms to vocabularies
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
                 // Read the first line to start at the second line
                 fgetcsv($recievedFile, 1000000, $separator, '"', '\\');
+                
                 $lineCounter = 0;
                 
                 while (($currentLine = fgetcsv($recievedFile, 1000000, $separator, '"', '\\')) !== false) {
@@ -318,7 +331,6 @@ class ImportController extends DataAccessController
                         $currentLine[$key] = $utf8String;
                     }
                     
-                    // add taxo terms if not already in correspondent vocabulary
                     // create content fields
                     $contentParamsFields = array(
                         "text" => $currentLine[$textFieldIndex],
@@ -327,6 +339,46 @@ class ImportController extends DataAccessController
                     if ($summaryFieldIndex !== null) {
                         $contentParamsFields['summary'] = $currentLine[$summaryFieldIndex];
                     }
+                    // create i18n for translated fields
+                    $contenti18n = array();
+                    $languages = array();
+                    foreach ($importAsFieldTranslation as $fieldKey => $value) {
+                        
+                        foreach ($importAsField as $key => $importedField) {
+                            if ($importedField["csvIndex"] == $value["translatedElement"]) {
+                                $importedFieldKey = $key;
+                                break;
+                            }
+                        }
+                        $translatedElement = $importAsField[$importedFieldKey];
+                        switch ($translatedElement['protoId']) {
+                            case 'text':
+                                $fieldName = "text";
+                                break;
+                            case 'summary':
+                                $fieldName = "summary";
+                                break;
+                            default:
+                                $fieldName = $translatedElement["newName"];
+                                break;
+                        }
+                        if (! isset($contenti18n[$value["translateToLanguage"]]["locale"])) {
+                            $contenti18n[$value["translateToLanguage"]]["locale"] = $value["translateToLanguage"];
+                        }
+                        $contenti18n[$value["translateToLanguage"]]["fields"][$fieldName] = $currentLine[$value["csvIndex"]];
+                        if (!isset($languages[$value["translateToLanguage"]])) {
+                            $languages[] = $value["translateToLanguage"];
+                        }
+                    }
+                    
+                    // Unset translation with empty text (title)
+                    foreach ($languages as $lang) {
+                        if (isset($contenti18n[$lang]["fields"]["text"]) && trim($contenti18n[$lang]["fields"]["text"]) == "") {
+                            unset($contenti18n[$lang]);
+                        }
+                    }
+                    
+                    // create fields content
                     foreach ($importAsField as $key => $value) {
                         if (($value['protoId'] != 'text') && ($value['protoId'] != 'summary')) {
                             if ($value['cType'] == "localiserField") {
@@ -442,6 +494,14 @@ class ImportController extends DataAccessController
                                                 unset($obj['i18n'][$workingLanguage]['fields']['writeWorkspace']);
                                                 unset($obj['i18n'][$workingLanguage]['fields']['target']);
                                                 
+                                                // Add i18n for all the other active languages
+                                                foreach ($activeLocales as $locale) {
+                                                    if ($locale != $workingLanguage) {
+                                                        $obj['i18n'][$locale] = array();
+                                                        $obj['i18n'][$locale]['fields'] = array("title" => $info["filename"]);  
+                                                    }                                                  
+                                                }
+                                                
                                                 $returnArray = $damService->create($obj);
                                                 if (! $returnArray['success']) {
                                                     $this->getResponse()->setHttpResponseCode(500);
@@ -461,7 +521,7 @@ class ImportController extends DataAccessController
                             }
                         }
                     }
-                    // create content taxo
+                    // create content taxonomy
                     $contentParamsTaxonomy = array();
                     $contentParamsTaxonomy['navigation'] = isset($configs["ContentsNavTaxo"]) ? $configs["ContentsNavTaxo"] : null;
                     foreach ($importAsTaxo as $key => $value) {
@@ -470,8 +530,18 @@ class ImportController extends DataAccessController
                         if (isset($currentLine[$value['csvIndex']])) {
                             $detectedTermText = $currentLine[$value['csvIndex']];
                             if (! empty($detectedTermText)) {
-                                $termsList = array_unique(explode(",", $detectedTermText));
-                                foreach ($termsList as $term) {
+                                $termsList = explode(",", $detectedTermText);
+
+                                foreach ($importAsTaxoTranslation as $transKey => $transValue) {
+                                    if ($transValue["translatedElement"] == $value['csvIndex']) {
+                                        $translationKey = $key;
+                                        break;
+                                    }
+                                }
+                                $transLocale = $importAsTaxoTranslation[$translationKey]["translateToLanguage"];
+                                $translatedTermsList = explode(",", $currentLine[$importAsTaxoTranslation[$translationKey]["csvIndex"]]);
+
+                                foreach ($termsList as $termsListKey => $term) {
                                     if ($term != "") {
                                         $theTerm = $taxonomyTermsService->findByVocabularyIdAndName($theTaxoId, $term);
                                         
@@ -481,6 +551,12 @@ class ImportController extends DataAccessController
                                                 "text" => $term,
                                                 "locale" => $workingLanguage
                                             );
+                                            // Add translation if exists
+                                            if ($translatedTermsList[$termsListKey] != "" && $transLocale != "") {
+                                                if (! isset($termI18n[$transLocale]["locale"]))
+                                                    $termI18n[$transLocale]["locale"] = $transLocale;
+                                                $termI18n[$transLocale]["text"] = $translatedTermsList[$termsListKey];
+                                            }
                                             $termParams = array(
                                                 "text" => $term,
                                                 "vocabularyId" => $theTaxoId,
@@ -500,12 +576,13 @@ class ImportController extends DataAccessController
                                         if (isset($theTerm['data']['id'])) {
                                             $contentParamsTaxonomy[$theTaxoId][] = $theTerm['data']['id'];
                                         }
+                                    
                                 }
                             }
                         }
                     }
                     // create content
-                    $contenti18n = array();
+                    
                     $contenti18n[$workingLanguage] = array(
                         "fields" => $contentParamsFields,
                         "locale" => $workingLanguage
@@ -531,10 +608,10 @@ class ImportController extends DataAccessController
                     try {
                         $contentsService->create($contentParams, array(), false, true);
                         $lineCounter ++;
-                    } catch (\Exception $e) {}
+                    } catch (Exception $e) {}
                 }
                 fclose($recievedFile);
-                $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
+                $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $ElasticDataIndexService->init();
                 
                 $ElasticDataIndexService->indexByType('content', $contentType['data']['id']);
@@ -545,6 +622,13 @@ class ImportController extends DataAccessController
                 $returnArray['errors'] = $brokenLines;
             }
         }
-        return new JsonModel($returnArray);
+        
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        $returnValue = Zend_Json::encode($returnArray);
+        if ($this->_prettyJson) {
+            $returnValue = Zend_Json::prettyPrint($returnValue);
+        }
+        $this->getResponse()->setBody($returnValue);
     }
 }

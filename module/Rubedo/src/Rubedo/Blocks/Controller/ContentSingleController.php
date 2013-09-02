@@ -179,8 +179,16 @@ class ContentSingleController extends AbstractController
                 $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
                 $templateName .= ".html.twig";
             }
-            
+            $hasCustomLayout=false;
+            $customLayoutRows=array();
+            foreach ($type['layouts'] as $key => $value) {
+                if (($value['type']=="Detail")&&($value['active'])){
+                    $hasCustomLayout=true;
+                    $customLayoutRows=$value['rows'];
+                }
+            }
             $output["data"] = $data;
+            $output["customLayoutRows"]=$customLayoutRows;
             $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
             $output["type"] = $cTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
@@ -194,7 +202,9 @@ class ContentSingleController extends AbstractController
             
             if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
-            } else {
+            } else if ($hasCustomLayout) {
+                $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/customLayout.html.twig");
+            } else{
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/" . $templateName);
                 
                 if (! is_file($frontOfficeTemplatesService->getTemplateDir() . '/' . $template)) {

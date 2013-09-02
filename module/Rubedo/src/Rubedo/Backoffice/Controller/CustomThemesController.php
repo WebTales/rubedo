@@ -31,12 +31,61 @@ use Rubedo\Services\Manager;
  */
 class CustomThemesController extends DataAccessController
 {
-
-    public function __construct ()
+    protected $_readOnlyAction = array(
+        'index',
+        'find-one',
+        'get-color-palette',
+        'get-color-palette-bo'
+    );
+    
+    public function init ()
     {
-        parent::__construct();
+        parent::init();
         
         // init the data access service
-        $this->_dataService = Manager::getService('CustomThemes');
+        $this->_dataService = Rubedo\Services\Manager::getService('CustomThemes');
+    }
+    
+    public function getColorPaletteAction ()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender();
+        $curl = curl_init();
+        $offset=rand(1, 1000);
+        curl_setopt($curl,CURLOPT_URL,"http://www.colourlovers.com/api/palettes/top?format=json&numResults=1&resultOffset=".$offset);
+        curl_setopt($curl,CURLOPT_HEADER,false);
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+        $json = curl_exec($curl);
+        curl_close($curl);
+        header("Content-Type: text/json; charset=utf-8");
+        $this->getResponse()->clearBody();
+        $this->getResponse()->clearHeaders();
+        $this->getResponse()->clearRawHeaders();
+        $this->getResponse()->setHeader('Content-Type', 'text/json');
+        $this->getResponse()->setHeader('Pragma', 'Public',true);
+        $this->getResponse()->setBody($json);
+        $this->getResponse()->sendHeaders();
+    }
+    
+    public function getColorPaletteBoAction ()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender();
+        $values=$this->getRequest()->getParam('values');
+        $curl = curl_init();
+        $offset=rand(1, 1000);
+        curl_setopt($curl,CURLOPT_URL,"http://www.colourlovers.com/api/palettes/top?format=json&numResults=1&resultOffset=".$offset."&hueOption=".$values);
+        curl_setopt($curl,CURLOPT_HEADER,false);
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+        $json = curl_exec($curl);
+        curl_close($curl);
+        header("Content-Type: text/json; charset=utf-8");
+        $this->getResponse()->clearBody();
+        $this->getResponse()->clearHeaders();
+        $this->getResponse()->clearRawHeaders();
+        $this->getResponse()->setHeader('Content-Type', 'text/json');
+        $this->getResponse()->setHeader('Pragma', 'Public',true);
+        $this->getResponse()->setBody($json);
+        $this->getResponse()->sendHeaders();
     }
 }

@@ -244,6 +244,9 @@ class IndexController extends AbstractActionController
         $twigVar['isDraft'] = Context::isDraft();
         $twigVar["baseUrl"] = $this->getRequest()->getBasePath();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
+        if ($twigVar['theme']=="customtheme"){
+            $twigVar['customThemeId'] = $this->_serviceTemplate->getCustomThemeId();
+        }
         $twigVar['lang'] = $lang;
         $twigVar['siteID'] = $this->_pageInfo['site'];
         $twigVar['prefixTitle'] = isset($this->_site['title']) && ! empty($this->_site['title']) ? $this->_site['title'] . ' - ' : '';
@@ -531,6 +534,7 @@ class IndexController extends AbstractActionController
         $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : false;
         $params['blockTitle'] = isset($block['title']) ? $block['title'] : null;
         $params['current-page'] = $this->_pageId;
+        $params['googleMapsKey'] = $this->_site['googleMapsKey'];
         
         $blockQueryParams = $this->params()->fromQuery($params['prefix'], array());
         foreach ($blockQueryParams as $key => $value) {

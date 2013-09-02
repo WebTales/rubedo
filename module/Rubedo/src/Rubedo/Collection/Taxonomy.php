@@ -32,6 +32,8 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
     
     protected static $labelField = 'name';
     
+    protected static $isLocaleFiltered = true;
+    
     protected $_indexes = array(
         array(
             'keys' => array(

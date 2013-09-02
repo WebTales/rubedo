@@ -69,4 +69,6 @@ Interface IFrontOfficeTemplates
     public function setCurrentTheme ($theme);
 
     public function getAvailableThemes ();
+    
+    public function getCustomThemeId ();
 }

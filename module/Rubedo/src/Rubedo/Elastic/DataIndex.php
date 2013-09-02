@@ -118,7 +118,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $mapping["taxonomy." . $vocabularyName] = array(
                     'type' => 'string',
                     'index' => 'not_analyzed',
-                    'store' => 'no'
+                    'store' => 'yes'
                 );
             }
                 
@@ -269,7 +269,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $vocabularies = array();
         foreach ($data['vocabularies'] as $vocabularyId) {
             $vocabulary = Manager::getService('Taxonomy')->findById($vocabularyId);
-            $vocabularies[] = $vocabulary['name'];
+            $vocabularies[] = $vocabulary['id'];
         }
         
         return $vocabularies;
@@ -562,7 +562,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     }
     
                     foreach ($termsArray[$term["id"]] as $tempTerm) {
-                        $indexData['taxonomy'][$taxonomy['id']][] = $tempTerm['id'];
+                        $indexData['taxonomy.'.$taxonomy['id']][] = $tempTerm['id'];
                     }
                 }
             }
@@ -719,7 +719,9 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexAll ($option = 'all')
     {
-        
+    	// for big data set
+    	set_time_limit(240);
+    	
         // Bulk size
         $bulkSize = 500;
         $bulk = true;
@@ -740,6 +742,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
         
         $contentsService = Manager::getService('Contents');
+        $damService = Manager::getService('Dam');
         
         if ($option == 'all' or $option == 'content') {
             
@@ -754,26 +757,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                     // Create content type with overwrite set to true
                     $this->indexContentType($contentType["id"], $contentType, TRUE);
                     
-                    // Get content type ES type
-                    $ESType = self::$_content_index->getType($contentType["id"]);
+                    // Reindex all contents from given type
+                    $result = array_merge($result, $this->indexByType("content", $contentType["id"]));
                     
-                    // Index all contents from type
-                    $itemList = $contentsService->getByType($contentType["id"]);
-                    $bulkCount = 0;
-                    $this->_documents = array();
-                    $itemCount = 0;
-                    foreach ($itemList["data"] as $content) {
-                        $this->indexContent($content, $bulk);
-                        if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
-                            $ESType->addDocuments($this->_documents);
-                            $ESType->getIndex()->refresh();
-                            $bulkCount = 0;
-                            $this->_documents = array();
-                        }
-                        $itemCount ++;
-                        $bulkCount ++;
-                    }
-                    $result[$contentType["type"]] = $itemCount;
                 }
             }
         }
@@ -788,29 +774,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                 // Create dam type with overwrite set to true
                 $this->indexdamType($damType["id"], $damType, TRUE);
                 
-                // Get dam type ES type
-                $ESType = self::$_dam_index->getType($damType["id"]);
-                
-                // Index all dams from type
-                $itemList = Manager::getService('Dam')->getByType($damType["id"]);
-                $bulkCount = 0;
-                $this->_documents = array();
-                $itemCount = 0;
-                
-                foreach ($itemList["data"] as $dam) {
-                    
-                    $this->indexDam($dam, $bulk);
-                    if ($bulkCount == $bulkSize or count($itemList["data"]) == $itemCount + 1) {
-                        $ESType->addDocuments($this->_documents);
-                        $ESType->getIndex()->refresh();
-                        $bulkCount = 0;
-                        $this->_documents = array();
-                    }
-                    $itemCount ++;
-                    $bulkCount ++;
-                }
-                
-                $result[$damType["type"]] = $itemCount;
+                // Reindex all assets from given type
+                $result = array_merge($result, $this->indexByType("dam", $damType["id"]));
+
             }
         }
         
@@ -829,6 +795,9 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexByType ($option, $id)
     {
+    	// for big data set
+    	set_time_limit(240);
+    	
         // bulk size
         $bulkSize = 500;
         $bulk = true;
@@ -887,9 +856,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $contentType->addDocuments($this->_documents);
                 $contentType->getIndex()->refresh();
                 empty($this->_documents);
+                $start += $bulkSize;
             }
             
-            $start = $start + $bulkSize;
         } while (count($itemList['data']) == $bulkSize);
         
         $result[$type['type']] = $itemCount;

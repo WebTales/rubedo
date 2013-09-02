@@ -27,7 +27,7 @@ use Rubedo\Interfaces\Collection\IContentTypes, Rubedo\Services\Manager, WebTale
  */
 class ContentTypes extends AbstractLocalizableCollection implements IContentTypes
 {
-    protected static $nonLocalizableFields = array("fields","vocabularies","dependant","activateDisqus","dependantTypes","readOnly","workspaces","workflow","system","CTType","code");
+    protected static $nonLocalizableFields = array("fields","layouts","vocabularies","dependant","activateDisqus","dependantTypes","readOnly","workspaces","workflow","system","CTType","code");
     protected static $labelField = 'type';
     
     protected $_indexes = array(
@@ -182,7 +182,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         $returnArray = parent::update($obj, $options, $live);
         
         if ($returnArray["success"]) {
-            $this->indexContentType($returnArray['data']);
+            //$this->indexContentType($returnArray['data']);
         }
         
         return $returnArray;

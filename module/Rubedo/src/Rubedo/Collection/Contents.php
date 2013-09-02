@@ -673,7 +673,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $contentTypesArray[] = $value['id'];
         }
         $filter = Filter::factory('NotIn')->setName('typeId')->SetValue($contentTypesArray);
-        $result = $this->customDelete($filter);
+        $options = array(
+            'multiple' => true
+        );
+        
+        $result = $this->customDelete($filter, $options);
         
         if ($result['ok'] == 1) {
             return array(

@@ -33,6 +33,7 @@ class DamListController extends AbstractController
         
         // get search parameters
         $params = $this->getRequest()->getParams();
+        $blockConfig = $params['block-config'];
         
         $params['pager'] = $this->getParam('pager', 0);
         $params['orderbyDirection'] = 'asc';
@@ -76,7 +77,7 @@ class DamListController extends AbstractController
         }
         $results['facetsToHide'] = $facetsToHide;
         $results['prefix'] = $params['prefix'];
-        $results['blockConfig'] = $params['block-config'];
+        $results['blockConfig'] = $blockConfig;
         $results['current'] = $params['pager'];
         $results['pagecount'] = $pagecount;
         $results['limit'] = min(array(
@@ -88,7 +89,13 @@ class DamListController extends AbstractController
         }
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/damList.html.twig");
+        
+        if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+        } else {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/damList.html.twig");
+        }
+        
         $css = array();
         $js = array();
         if ((isset($params['xhrRefreshMode'])) && ($params['xhrRefreshMode'])) {

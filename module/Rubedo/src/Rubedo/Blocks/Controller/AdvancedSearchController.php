@@ -45,7 +45,11 @@ class AdvancedSearchController extends AbstractController
         $placeholder = isset($blockConfig["placeholder"]) ? $blockConfig["placeholder"] : null;
         
         foreach ($contentTypes as $contentTypeId) {
-            $taxonomies = array_merge($taxonomies, $taxonomyService->findByContentTypeId($contentTypeId));
+            $taxonomiesArray = $taxonomyService->findByContentTypeId($contentTypeId);
+            
+            unset($taxonomiesArray[""]);
+            
+            $taxonomies = array_merge($taxonomies, $taxonomiesArray);
         }
         
         $output["taxonomies"] = $taxonomies;

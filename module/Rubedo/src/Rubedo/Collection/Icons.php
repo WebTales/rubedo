@@ -69,8 +69,11 @@ class Icons extends AbstractCollection implements IIcons
         
         $ninFilter = Filter::factory('NotIn');
         $ninFilter->setName('userId')->setValue($usersArray);
+        $options = array(
+            'multiple' => true
+        );
         
-        $result = $this->customDelete($ninFilter);
+        $result = $this->customDelete($ninFilter, $options);
         
         if ($result['ok'] == 1) {
             return array(

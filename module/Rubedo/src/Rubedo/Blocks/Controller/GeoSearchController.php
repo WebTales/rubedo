@@ -39,14 +39,23 @@ class GeoSearchController extends AbstractController
 
     public function indexAction ()
     {
+        $googleMapsKey = $this->getRequest()->getParam('googleMapsKey');
         $params = $this->getRequest()->getParams();
         
         $results = $params;
         $results['blockConfig'] = $params['block-config'];
+        $results['encodedConfig']=Zend_Json::encode($results['blockConfig']);
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         $css = array();
+        $js = array(
+            'https://maps.googleapis.com/maps/api/js?key='.$googleMapsKey.'&libraries=places&sensor=true&language='.Manager::getService('CurrentLocalization')->getCurrentLocalization(),
+            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/geosearch.js"),
+            'http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js',
+            'http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.8/src/markerwithlabel_packed.js',
+            );
+        $this->_sendResponse($results, $template, $css, $js);
         $js = array();
         return $this->_sendResponse($results, $template, $css, $js);
     }
