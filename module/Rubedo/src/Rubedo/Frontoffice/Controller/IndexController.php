@@ -109,9 +109,7 @@ class IndexController extends AbstractActionController
      * Main Action : render the Front Office view
      */
     public function indexAction ()
-    {
-        // var_dump($this->params()->fromRoute());
-        // die();
+    {       
         if ($this->params()->fromQuery('tk', null)) {
             $redirectParams = array(
                 'action' => 'index',
@@ -126,13 +124,10 @@ class IndexController extends AbstractActionController
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
         $this->_servicePage = Manager::getService('PageContent');
-        
-        $this->_session = Manager::getService('Session');
-        
+                
         $this->_pageId = $this->params()->fromRoute('pageId');
         $this->_servicePage->setCurrentPage($this->_pageId);
         
-        // if no page found, maybe installation isn't set
         if (! $this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
@@ -143,7 +138,9 @@ class IndexController extends AbstractActionController
         if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
             throw new \Rubedo\Exceptions\Server('Protocol is not set for current site', "Exception14");
         }
-        
+        /**
+         * @todo rewrite this in ZF2 way
+         */
         if (! in_array($httpProtocol, $this->_site['protocol'])) {
             $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         }

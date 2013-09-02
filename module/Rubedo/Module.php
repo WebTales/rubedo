@@ -178,6 +178,7 @@ class Module
         
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config['session']);
+        //\Zend\Debug\Debug::dump($sessionConfig);die();
         
         $mongoInfos = Mongo\DataAccess::getDefaultMongo();
         $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);

@@ -80,7 +80,8 @@ $config['session'] = array(
     'cookie_httponly' => false,
     'gc_maxlifetime' => $sessionLifeTime,
     'name' => 'rubedo',
-    'cookie_httponly' => true
+    'cookie_httponly' => true,
+    'cookiePath' => '/'
 );
 
 $config['datastream'] = array();

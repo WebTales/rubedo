@@ -18,6 +18,7 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 
 /**
  * Authentication Default Controller
@@ -40,7 +41,7 @@ class XhrAuthenticationController extends AbstractActionController
     /**
      * Init the authentication service
      */
-    public function init()
+    public function __construct()
     {
         $this->_auth = Manager::getService('Authentication');
     }
@@ -50,8 +51,8 @@ class XhrAuthenticationController extends AbstractActionController
      */
     public function loginAction()
     {
-        $login = $this->getRequest()->getParam('login');
-        $password = $this->getRequest()->getParam('password');
+        $login = $this->params()->fromPost('login');
+        $password = $this->params()->fromPost('password');
         if ($this->getRequest()->isPost()) {
             if (! empty($login) && ! empty($password)) {
                 $loginResult = $this->_auth->authenticate($login, $password);
@@ -70,7 +71,7 @@ class XhrAuthenticationController extends AbstractActionController
             $response['succes'] = false;
             $response['message'] = 'The login and the password should be sent in a POST request !';
         }
-        return $this->_helper->json($response);
+        return new JsonModel($response);
     }
 
     /**
@@ -81,7 +82,7 @@ class XhrAuthenticationController extends AbstractActionController
         $this->_auth->clearIdentity();
         
         $response['success'] = true;
-        return $this->_helper->json($response);
+        return new JsonModel($response);
     }
 
     /**

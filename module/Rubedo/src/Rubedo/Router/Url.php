@@ -16,6 +16,7 @@ namespace Rubedo\Router;
 use Rubedo\Interfaces\Router\IUrl;
 use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
+use Rubedo\Collection\AbstractCollection;
 use Zend\Mvc\Router\RouteInterface;
 
 
@@ -96,8 +97,9 @@ class Url implements IUrl
         if (false !== strpos($url, '?')) {
             list ($url) = explode('?', $url);
         }
-        
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $site = Manager::getService('Sites')->findByHost($host);
+        AbstractCollection::disableUserFilter($wasFiltered);
         if (null == $site) {
             $siteArray = Manager::getService('Sites')->getList();
             $site = current($siteArray['data']);
@@ -124,7 +126,10 @@ class Url implements IUrl
         $nbMatched = 0;
         
         foreach ($urlSegments as $value) {
+            $wasFiltered = AbstractCollection::disableUserFilter();
             $matchedNode = Manager::getService('Pages')->matchSegment($value, $lastMatchedNode, $siteId);
+            AbstractCollection::disableUserFilter($wasFiltered);
+            
             if (null === $matchedNode) {
                 break;
             } else {
