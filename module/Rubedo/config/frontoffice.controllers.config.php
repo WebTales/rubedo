@@ -5,5 +5,5 @@ return array(
     'Rubedo\\Frontoffice\\Controller\\Error' => 'Rubedo\\Frontoffice\\Controller\\ErrorController',
     'Rubedo\\Frontoffice\\Controller\\File' => 'Rubedo\\Frontoffice\\Controller\\FileController',
     'Rubedo\\Frontoffice\\Controller\\Index' => 'Rubedo\\Frontoffice\\Controller\\IndexController',
-    'Rubedo\FrontOffice\Controller\XhrLanguage'=> 'Rubedo\FrontOffice\Controller\XhrLanguageController'
+    'Rubedo\\Frontoffice\\Controller\\XhrLanguage'=> 'Rubedo\\Frontoffice\\Controller\\XhrLanguageController'
 );

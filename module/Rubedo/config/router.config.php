@@ -7,7 +7,7 @@ return array(
             'options' => array(
                 'route' => '/',
                 'defaults' => array(
-                    '__NAMESPACE__' => 'Rubedo\FrontOffice\Controller',
+                    '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
                     'controller' => 'Index',
                     'action' => 'index'
                 )
