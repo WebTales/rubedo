@@ -37,27 +37,6 @@ return array(
                 )
             )
         ),
-        'mp4' => array(
-            'type' => 'Literal',
-            'options' => array(
-                'route' => '/dam.mp4',
-                'defaults' => array(
-                    '__NAMESPACE__' => 'Rubedo\FrontOffice\Controller',
-                    'controller' => 'Dam',
-                    'action' => 'index'
-                )
-            )
-        ),
-        'home' => array(
-            'type' => 'Zend\Mvc\Router\Http\Literal',
-            'options' => array(
-                'route' => '/',
-                'defaults' => array(
-                    'controller' => 'Rubedo\Frontoffice\Controller\Index',
-                    'action' => 'index'
-                )
-            )
-        ),
         // Backoffice route : prefix by backoffice
         'backoffice' => array(
             'type' => 'Literal',
