@@ -40,11 +40,14 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
 
         $results = $params;
         $results['blockConfig'] = $params['block-config'];
+        $results['encodedConfig']=Zend_Json::encode($results['blockConfig']);
         $results['displayTitle'] = $this->getParam('displayTitle');
         $results['blockTitle'] = $this->getParam('blockTitle');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         $css = array();
-        $js=array();
+        $js = array(
+                '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/geosearch.js"),
+            );
         $this->_sendResponse($results, $template, $css, $js);
     }
 
