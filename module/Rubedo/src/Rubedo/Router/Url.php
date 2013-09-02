@@ -19,7 +19,6 @@ use Rubedo\Content\Context;
 use Rubedo\Collection\AbstractCollection;
 use Zend\Mvc\Router\RouteInterface;
 
-
 /**
  * Front Office URL service
  *
@@ -44,21 +43,23 @@ class Url implements IUrl
     const URI_DELIMITER = '/';
 
     protected static $_disableNav = false;
-    
+
     /**
      * MVC Router
-     * 
+     *
      * @var Zend\Mvc\Router\RouteInterface
      */
     protected static $router = null;
-    
+
     /**
      * current route name
+     *
      * @var string
      */
     protected static $routeName = null;
 
     /**
+     *
      * @return Zend\Mvc\Router\RouteInterface
      */
     public function getRouter()
@@ -66,26 +67,26 @@ class Url implements IUrl
         return Url::$router;
     }
 
-	/**
-	 * Set the current Route
-	 * 
-     * @param Zend\Mvc\Router\RouteInterface $route
+    /**
+     * Set the current Route
+     *
+     * @param Zend\Mvc\Router\RouteInterface $route            
      */
     public static function setRouter(RouteInterface $router)
     {
         Url::$router = $router;
     }
-    
 
-	/**
-     * @param string $routeName
+    /**
+     *
+     * @param string $routeName            
      */
     public static function setRouteName($routeName)
     {
         Url::$routeName = $routeName;
     }
 
-	/**
+    /**
      * Return page id based on request URL
      *
      * @param string $url
@@ -177,7 +178,7 @@ class Url implements IUrl
             $page = Manager::getService('Pages')->findById($pageId);
             
             if (! isset($page['pageURL'])) {
-                throw new \Zend_Controller_Router_Exception('no page found');
+                throw new \Rubedo\Exceptions\NotFound('no page found');
             }
             
             $siteId = $page['site'];
@@ -214,14 +215,12 @@ class Url implements IUrl
     public function getUrl($data, $encode = false)
     {
         if (self::$_disableNav) {
-            $currentUri = \Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-            
-            return trim($currentUri . '#', self::URI_DELIMITER);
+            return trim('#', self::URI_DELIMITER);
         }
         
         if (! isset($data['pageId'])) {
             return null;
-            //throw new \Rubedo\Exceptions\Server('no page given');
+            // throw new \Rubedo\Exceptions\Server('no page given');
         }
         
         $url = $this->getPageUrl($data['pageId']);
@@ -266,7 +265,7 @@ class Url implements IUrl
             $url .= '?' . implode(self::PARAM_DELIMITER, $queryStringArray);
         }
         
-        return '/'.ltrim($url, self::URI_DELIMITER);
+        return '/' . ltrim($url, self::URI_DELIMITER);
     }
 
     /**
@@ -289,13 +288,13 @@ class Url implements IUrl
         $options = array(
             'encode' => $encode,
             'reset' => $reset,
-            'name'=> self::$routeName
+            'name' => self::$routeName
         );
-        if($name){
+        if ($name) {
             $options['name'] = $name;
         }
-        return $this->getRouter()->assemble($urlOptions,$options);
-        $url = $this->getUrl($urlOptions,true);
+        return $this->getRouter()->assemble($urlOptions, $options);
+        $url = $this->getUrl($urlOptions, true);
         
         return $url;
     }

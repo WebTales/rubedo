@@ -304,40 +304,6 @@ class IndexController extends AbstractActionController
         return $viewModel;
     }
 
-    public function testMailAction ()
-    {
-        $to = $this->params()->fromGet('to', null);
-        if (is_null($to)) {
-            throw new \Rubedo\Exceptions\User('Please, give an email adresse.', "Exception22");
-        }
-        $message = Manager::getService('Mailer')->getNewMessage();
-        
-        $message->setSubject('Rubedo Test Mail');
-        $message->setReplyTo(array(
-            'rubedo@webtales.fr' => 'Rubedo'
-        ));
-        $message->setReturnPath('jbourdin@gmail.com');
-        $message->setFrom(array(
-            'jbourdin@gmail.com'
-        ));
-        $message->setTo(array(
-            $to
-        ));
-        
-        $this->view->logo = $message->embed(Swift_Image::fromPath(APPLICATION_PATH . '/vendor/webtales/rubedo-backoffice-ui/www/resources/images/logoRubedo.png'));
-        $this->view->To = $to;
-        // Set body content
-        $msgContent = $this->view->render('index/mail.phtml');
-        
-        // Set the body
-        $message->setBody($msgContent, 'text/html');
-        
-        $send = Manager::getService('Mailer')->sendMessage($message);
-        if ($send == 0) {
-            throw new \Rubedo\Exceptions\Server('No mail has been sent !', "Exception23");
-        }
-    }
-
     /**
      * Return page infos based on its ID
      *

@@ -18,6 +18,9 @@
 namespace Rubedo\Frontoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
+
 /**
  * Theme default controller
  *
@@ -39,21 +42,21 @@ class XhrThemeController extends AbstractActionController
     /**
      * Init the session service
      */
-    public function init ()
+    public function init()
     {
-        $this->_session = Rubedo\Services\Manager::getService('Session');
+        $this->_session = Manager::getService('Session');
     }
 
     /**
      * Allow to define the current theme
      */
-    public function defineThemeAction ()
+    public function defineThemeAction()
     {
-        $theme = $this->getRequest()->getParam('theme', "default");
+        $theme = $this->params()->fromQuery('theme', "default");
         $this->_session->set('themeCSS', $theme);
         
         $response['success'] = $this->_session->get('themeCSS');
         
-        return $this->_helper->json($response);
+        return new JsonModel($response);
     }
 }

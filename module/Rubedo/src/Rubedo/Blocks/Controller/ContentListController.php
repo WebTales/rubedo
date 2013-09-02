@@ -17,7 +17,6 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
-use WebTales\MongoFilters\Filter;
 use Zend\View\Model\JsonModel;
 
 /**
@@ -253,8 +252,6 @@ class ContentListController extends AbstractController
             );
         }
         
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $this->getResponse()->setBody(Zend_Json::encode($returnArray));
-    }
+        return new JsonModel($returnArray);
+        }
 }
