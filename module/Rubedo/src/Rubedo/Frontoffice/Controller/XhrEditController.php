@@ -18,6 +18,8 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 /**
  * Front End Edition controller
@@ -46,22 +48,14 @@ class XhrEditController extends AbstractActionController
     protected $_dataService;
 
     /**
-     * Init the session service
-     */
-    public function init()
-    {
-        $this->_dataService = Manager::getService('Contents');
-    }
-
-    /**
      * Allow to define the current theme
      */
     public function indexAction()
     {
-        $data = Zend_Json::decode($this->getParam("data", null));
-        $locale = $this->getParam("locale", null);
+        $data = Json::decode($this->params()->fromPost("data", "[]"), Json::TYPE_ARRAY);
+        $locale = $this->params()->fromPost("locale", null);
         $errors = array();
-        
+        $this->_dataService = Manager::getService('Contents');
         foreach ($data as $contentId => $value) {
             // Get content id, the field name and the optionnal number of multivalued field
             $contentId = explode("_", $contentId);
@@ -151,12 +145,9 @@ class XhrEditController extends AbstractActionController
         
         // Send reponse
         if (count($errors) > 0) {
-            return $this->_helper->json(array(
-                "success" => false,
-                "msg" => $errors
-            ));
+            throw new Rubedo\Exceptions\Server($errors);
         } else {
-            return $this->_helper->json(array(
+            return new JsonModel(array(
                 "success" => true
             ));
         }
