@@ -28,7 +28,7 @@ use WebTales\MongoFilters\Filter;
 class NavBarController extends AbstractController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $output = $this->params()->fromQuery();
         
@@ -92,11 +92,17 @@ class NavBarController extends AbstractController
         
         $levelOnePages = $this->_getPagesByLevel($output['rootPage']['id'], $startLevel);
         
+        $urlOptions = array(
+            'encode' => true,
+            'reset' => true
+        );
+        
         foreach ($levelOnePages as $page) {
             $tempArray = array();
-            $tempArray['url'] = manager::getService('Url')->url(array(
+            $tempArray['url'] = $this->url()->fromRoute(null, array(
                 'pageId' => $page['id']
-            ), null, true);
+            ), $urlOptions);
+            
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
             $levelTwoPages = $this->pageService->readChild($page['id'], $this->excludeFromMenuCondition);
@@ -104,9 +110,10 @@ class NavBarController extends AbstractController
                 $tempArray['pages'] = array();
                 foreach ($levelTwoPages as $subPage) {
                     $tempSubArray = array();
-                    $tempSubArray['url'] = manager::getService('Url')->url(array(
+                    $tempSubArray['url'] = $this->url()->fromRoute(null, array(
                         'pageId' => $subPage['id']
-                    ), null, true);
+                    ), $urlOptions);
+                    
                     $tempSubArray['title'] = $subPage['title'];
                     $tempSubArray['id'] = $subPage['id'];
                     $tempArray['pages'][] = $tempSubArray;
@@ -121,7 +128,7 @@ class NavBarController extends AbstractController
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
-    protected function _getPagesByLevel ($rootPage, $targetLevel, $currentLevel = 1)
+    protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1)
     {
         $pages = $this->pageService->readChild($rootPage, $this->excludeFromMenuCondition);
         if ($currentLevel === $targetLevel) {

@@ -41,25 +41,41 @@ class FrontofficeRoute implements RouteInterface
      *
      * @var array
      */
-    protected $value = array();
+    protected $pageID = null;
+
+    protected $uri = null;
     
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::assemble()
      */
-    public function assemble (array $params = array(), array $options = array())
+    public function assemble(array $params = array(), array $options = array())
     {
-        // @todo assemble for this route
+        //set pageId
+        $mergedParams = array_merge(array(
+            'pageId' => $this->pageID
+        ), $params);
+        //if not reseting, get Query params from stored URI
+        if (! isset($options['reset']) || $options['reset'] === false) {
+            $mergedParams = array_merge($this->uri->getQueryAsArray(), $mergedParams);
+        }
+        $this->assembledParams = array();
+        
+        foreach ($mergedParams as $key => $value) {
+            $this->assembledParams[] = $key;
+        }
+        $encode = isset($options['encode']) ? $options['encode'] : true;
+        return '/' . Manager::getService('Url')->getUrl($mergedParams, $encode);
     }
     
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::match()
      */
-    public function match (\Zend\Stdlib\RequestInterface $request)
+    public function match(\Zend\Stdlib\RequestInterface $request)
     {
         try {
             if (method_exists($request, 'getUri')) {
-                $uri = $request->getUri();
-                $pageId = Manager::getService('Url')->getPageId($uri->getPath(), $uri->getHost());
+                $this->uri = clone ($request->getUri());
+                $pageId = Manager::getService('Url')->getPageId($this->uri->getPath(), $this->uri->getHost());
             }
         } catch (\Rubedo\Exceptions\Server $exception) {
             return null;
@@ -69,7 +85,7 @@ class FrontofficeRoute implements RouteInterface
         }
         $contentId = $request->getQuery('content-id', false);
         
-        $this->value['pageId'] = $pageId;
+        $this->pageID = $pageId;
         $params = array();
         $params['controller'] = 'Rubedo\\Frontoffice\\Controller\\Index';
         $params['action'] = 'index';
@@ -90,7 +106,7 @@ class FrontofficeRoute implements RouteInterface
      * @return FrontofficeRoute
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory ($options = array())
+    public static function factory($options = array())
     {
         return new static();
     }
@@ -98,10 +114,8 @@ class FrontofficeRoute implements RouteInterface
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\Http\RouteInterface::getAssembledParams()
      */
-    public function getAssembledParams ()
+    public function getAssembledParams()
     {
-        // this route may not occur as base route of other part routes, so we
-        // don't have to return anything here.
-        return array();
+        return $this->assembledParams;
     }
 }

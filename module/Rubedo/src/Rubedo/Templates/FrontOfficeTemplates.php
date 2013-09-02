@@ -225,7 +225,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     public static function url (array $urlOptions = array(), $reset = false, $encode = true, $route = null)
     {
-        return Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
+        return '/'.Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
     }
 
     public static function displayUrl ($contentId, $type = "default", $siteId = null, $defaultUrl = null)
