@@ -1,17 +1,19 @@
 function initialize() {
-
+	// retrieve params
 	var blockConfig = JSON.parse(jQuery(".gmapmapcanvas")
 			.attr("data-mapparams"));
 	var prefix = jQuery(".gmapmapcanvas").attr("data-prefix");
+	// define map options
 	var mapOptions = {
 		center : new google.maps.LatLng(48.8567, 2.3508),
 		zoom : blockConfig.zoom || 12,
 		mapTypeId : google.maps.MapTypeId.ROADMAP
 	};
-
+	// initialize map and geocoder
 	var map = new google.maps.Map(document
 			.getElementById(prefix + "map_canvas"), mapOptions);
 	var geocoder = new google.maps.Geocoder();
+	// set up places serach system if option is active
 	if (blockConfig.showPlacesSearch) {
 		var input = /** @type {HTMLInputElement} */
 		(document.getElementById(prefix + 'target'));
@@ -31,6 +33,7 @@ function initialize() {
 			searchBox.setBounds(bounds);
 		});
 	}
+	// set up marker clustering
 	var usedMarkers = [];
 	var markerCluster = new MarkerClusterer(map, usedMarkers, {
 		batchSize : 20000,
@@ -38,6 +41,7 @@ function initialize() {
 		gridSize : 60,
 		batchSizeIE : 20000
 	});
+	// redefine cluster counter to take multi-content markers into account
 	markerCluster.setCalculator(function(a, b) {
 		var total = 0;
 		for ( var i = 0; i < a.length; i++) {
@@ -51,6 +55,7 @@ function initialize() {
 			index : c
 		}
 	});
+	// extract params for map behaviour
 	var useLocation = blockConfig.useLocation;
 	var centerAddress = blockConfig.centerAddress;
 	var centerLatitude = blockConfig.centerLatitude;
@@ -63,6 +68,7 @@ function initialize() {
 	displayedFacets = displayedFacets;
 	var facetOverrides = blockConfig.facetOverrides;
 	var pagesize = blockConfig.pageSize;
+	// set initial map position (geoloc or address or coordinates in this order)
 	if (useLocation && navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			var initialLocation = new google.maps.LatLng(
@@ -106,6 +112,7 @@ function initialize() {
 			});
 		}
 	}
+	// set up data fetch timer and auxilary arrays
 	var mapTimer = null;
 	google.maps.event.addListener(map, 'bounds_changed', function() {
 		clearTimeout(mapTimer);
@@ -118,7 +125,9 @@ function initialize() {
 	var oldPositions = [];
 	var newPositions = [];
 	window.fireQuery = fetchData;
+	// main data retrieval function
 	function fetchData() {
+		// get params and fire request
 		var bounds = map.getBounds();
 		var params = {
 			'current-page' : jQuery('body').attr('data-current-page'),
@@ -148,6 +157,9 @@ function initialize() {
 
 		request
 				.done(function(data) {
+					// calculate which markers to keep and which to remove, send
+					// new markers to content handler, rerender facets and
+					// active facets
 					oldPositions = [];
 					newPositions = [];
 					for ( var j = 0; j < usedMarkers.length; j++) {
@@ -190,7 +202,9 @@ function initialize() {
 					}
 					usedMarkers = [];
 					usedMarkers = newUsed;
+					// repaint cluster only after calculations are done
 					markerCluster.repaint();
+					// reatach events for checkbox mode and autocomplete
 					jQuery('.facetCheckbox').click(
 							function() {
 								if (jQuery(this).prop("checked")) {
@@ -241,6 +255,7 @@ function initialize() {
 			console.log("failed to fetch data");
 		});
 	}
+	// facet updating function, modifies active facets and fires the query
 	window.updateFacets = updateFacets;
 	function updateFacets(id, term, add) {
 		if ((id == "author") || (id == "date") || (id == "query")) {
@@ -271,7 +286,7 @@ function initialize() {
 		}
 		window.fireQuery();
 	}
-
+	// content handler, formats params and passes them to marker builder
 	function handleContent(contentPosition, title, entityId, idArray, count) {
 		contentPosition = contentPosition.split(",");
 		if (contentPosition[0] && contentPosition[1]) {
@@ -280,7 +295,9 @@ function initialize() {
 		}
 	}
 	var activeInfoWindows = [];
+	// content marker creator
 	function createContentMarker(location, title, entityId, idArray, count) {
+		// register with auxilary arrays, check if not existent and build
 		newPositions.push(entityId);
 		if (oldPositions.indexOf(entityId) == -1) {
 			var marker = new google.maps.Marker({
@@ -294,12 +311,14 @@ function initialize() {
 			});
 			usedMarkers.push(marker);
 			markerCluster.addMarker(marker, true);
-
+			// add info display listener
 			google.maps.event.addListener(marker, 'click', function() {
+				//close other info windows
 				for ( var p = 0; p < activeInfoWindows.length; p++) {
 					activeInfoWindows[p].close();
 				}
 				activeInfoWindows = [];
+				// detail retriever request
 				var request2 = jQuery.ajax({
 					url : window.location.protocol + '//'
 							+ window.location.host
@@ -314,6 +333,7 @@ function initialize() {
 				});
 
 				request2.done(function(data) {
+					//display and register infowindow
 					var infowindow = new google.maps.InfoWindow({
 						content : data.data
 					});
@@ -331,7 +351,7 @@ function initialize() {
 		}
 
 	}
-
+	// handle places search field positionn if it is used
 	if (blockConfig.showPlacesSearch) {
 		function placeField() {
 			var mapCanvasWidth = document.getElementById(prefix + "map_canvas").clientWidth;
