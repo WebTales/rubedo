@@ -16,6 +16,8 @@ namespace Rubedo\Router;
 use Rubedo\Interfaces\Router\IUrl;
 use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
+use Zend\Mvc\Router\RouteInterface;
+
 
 /**
  * Front Office URL service
@@ -41,8 +43,48 @@ class Url implements IUrl
     const URI_DELIMITER = '/';
 
     protected static $_disableNav = false;
+    
+    /**
+     * MVC Router
+     * 
+     * @var Zend\Mvc\Router\RouteInterface
+     */
+    protected static $router = null;
+    
+    /**
+     * current route name
+     * @var string
+     */
+    protected static $routeName = null;
 
     /**
+     * @return Zend\Mvc\Router\RouteInterface
+     */
+    public function getRouter()
+    {
+        return Url::$router;
+    }
+
+	/**
+	 * Set the current Route
+	 * 
+     * @param Zend\Mvc\Router\RouteInterface $route
+     */
+    public static function setRouter(RouteInterface $router)
+    {
+        Url::$router = $router;
+    }
+    
+
+	/**
+     * @param string $routeName
+     */
+    public static function setRouteName($routeName)
+    {
+        Url::$routeName = $routeName;
+    }
+
+	/**
      * Return page id based on request URL
      *
      * @param string $url
@@ -239,6 +281,15 @@ class Url implements IUrl
      */
     public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
+        $options = array(
+            'encode' => $encode,
+            'reset' => $reset,
+            'name'=> self::$routeName
+        );
+        if($name){
+            $options['name'] = $name;
+        }
+        return $this->getRouter()->assemble($urlOptions,$options);
         $url = $this->getUrl($urlOptions,true);
         
         return $url;

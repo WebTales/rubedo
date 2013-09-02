@@ -1,7 +1,7 @@
 <?php
 return array(
     'routes' => array(
-        'frontoffice' => array(
+        'rewrite' => array(
             'type' => 'Rubedo\Router\FrontofficeRoute',
             'options' => array(
                 'route' => '/',

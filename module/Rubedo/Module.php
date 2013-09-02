@@ -23,6 +23,7 @@ use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Exceptions\JsonExceptionStrategy;
 use Rubedo\Exceptions\Access as AccessException;
 use Rubedo\Collection\SessionData;
+use Rubedo\Router\Url;
 
 class Module
 {
@@ -96,6 +97,13 @@ class Module
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
+        
+        $router = $event->getRouter();
+        $matches = $event->getRouteMatch();
+        //store this route in URL service
+        Url::setRouter($router);
+        Url::setRouteName($matches->getMatchedRouteName());
+        
         
         // prevent normal session if checking for session remaining lifetime
         if ($controller == 'Rubedo\\Backoffice\\Controller\\XhrAuthentication' && $action == 'is-session-expiring') {

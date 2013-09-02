@@ -50,21 +50,67 @@ class FrontofficeRoute implements RouteInterface
      */
     public function assemble(array $params = array(), array $options = array())
     {
-        //set pageId
+        // set pageId
         $mergedParams = array_merge(array(
             'pageId' => $this->pageID
         ), $params);
-        //if not reseting, get Query params from stored URI
-        if (! isset($options['reset']) || $options['reset'] === false) {
-            $mergedParams = array_merge($this->uri->getQueryAsArray(), $mergedParams);
+        
+        if (! isset($options['reset'])) {
+            $options['reset'] = false;
         }
+        
+        //check if params should be altered by reseting, adding or substracting
+        switch ($options['reset']) {
+            case 'true':
+                break;
+            case 'add':
+                $currentParams = $this->uri->getQueryAsArray();
+                foreach ($mergedParams as $key => $value) {
+                    if($key=='pageId'){
+                        continue;
+                    }
+                    if (! isset($currentParams[$key])) {
+                        $currentParams[$key] = array();
+                    }
+                    if (! is_array($value)) {
+                        $value = array(
+                            $value
+                        );
+                    }
+                    $mergedParams[$key] = array_unique(array_merge($currentParams[$key], $value));
+                }
+                $mergedParams = array_merge($currentParams, $mergedParams);
+                break;
+            case 'sub':
+                $currentParams = $this->uri->getQueryAsArray();
+                foreach ($mergedParams as $key => $value) {
+                    if($key=='pageId'){
+                        continue;
+                    }
+                    if (! isset($currentParams[$key])) {
+                        $currentParams[$key] = array();
+                    }
+                    if (! is_array($value)) {
+                        $value = array(
+                            $value
+                        );
+                    }
+                    $mergedParams[$key] = array_diff($currentParams[$key], $value);
+                }
+                $mergedParams = array_merge($currentParams, $mergedParams);
+                break;
+            default:
+                $mergedParams = array_merge($this->uri->getQueryAsArray(), $mergedParams);
+                break;
+        }
+        
         $this->assembledParams = array();
         
         foreach ($mergedParams as $key => $value) {
             $this->assembledParams[] = $key;
         }
         $encode = isset($options['encode']) ? $options['encode'] : true;
-        return '/' . Manager::getService('Url')->getUrl($mergedParams, $encode);
+        return Manager::getService('Url')->getUrl($mergedParams, $encode);
     }
     
     /*
@@ -83,6 +129,7 @@ class FrontofficeRoute implements RouteInterface
         if ($pageId === null) {
             return null;
         }
+        
         $contentId = $request->getQuery('content-id', false);
         
         $this->pageID = $pageId;
