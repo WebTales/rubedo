@@ -566,6 +566,7 @@ class IndexController extends Zend_Controller_Action
         $params['displayTitle'] = isset($block['displayTitle']) ? $block['displayTitle'] : false;
         $params['blockTitle'] = isset($block['title']) ? $block['title'] : null;
         $params['current-page'] = $this->_pageId;
+        $params['googleMapsKey'] = $this->_site['googleMapsKey'];
         
         $blockQueryParams = $this->getRequest()->getParam($params['prefix'], array());
         foreach ($blockQueryParams as $key => $value) {
