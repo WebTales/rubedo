@@ -61,7 +61,7 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
             ->getApplication()
             ->getOptions();
         
-        if ($module != 'install' && (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished')) {
+        if ($module != 'install' && !$controller=='error' && (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished')) {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
             $redirector->gotoSimple('index', 'index', 'install');
         }
@@ -88,7 +88,7 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
             $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
         } catch (Exception $e) {}
         
-        if ($module != 'install' && ! isset($defaultLocale)) {
+        if ($module != 'install' && !$controller=='error' && ! isset($defaultLocale)) {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
             $redirector->gotoSimple('define-languages', 'index', 'install');
         }
