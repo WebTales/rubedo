@@ -13,21 +13,21 @@
 	</div>
 	<div class="span9">
 	   {% if blockConfig.showPlacesSearch %}
-	   <div id="{{prefix}}holderpanel">
+	   <div id="{{prefix}}holderpanel" class="gmapholderpanel">
           <input id="{{prefix}}target" type="text" placeholder="{{ "Blocks.GeoSearch.Label.Address" | fotrans }}">
         </div>
         {% endif %}
-        <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+        <div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid gmapmapcanvas {% if blockConfig.showPlacesSearch %}gmapmapcanvascorrected{% endif %}"></div>
 		
 	</div>
 	{% else %}
 	<div class="span12">
 	   {% if blockConfig.showPlacesSearch %}
-    	<div id="{{prefix}}holderpanel">
+    	<div id="{{prefix}}holderpanel" class="gmapholderpanel">
           <input id="{{prefix}}target" type="text" placeholder="{{ "Blocks.GeoSearch.Label.Address" | fotrans }}">
         </div>
         {% endif %}
-		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid"></div>
+		<div id="{{prefix}}map_canvas" style="height:{{blockConfig.height}}px;" class="row-fluid gmapmapcanvas {% if blockConfig.showPlacesSearch %}gmapmapcanvascorrected{% endif %}"></div>
 	</div>
 	{% endif %}
 </div>
@@ -43,7 +43,7 @@
     
 <script type="text/javascript">
       function initialize() {
-    
+  	     
           
         var mapOptions = {
           center: new google.maps.LatLng(48.8567, 2.3508),
@@ -352,6 +352,7 @@
      
       window.onload = initialize;
 
+      {% if blockConfig.showPlacesSearch %}
       function placeField() {
           var mapCanvasWidth = document.getElementById("{{prefix}}map_canvas").clientWidth;
           var fieldContainer = document.getElementById("{{prefix}}holderpanel");
@@ -388,21 +389,6 @@
       window.onresize = function() {
     	  placeField();
       };
+      {% endif %}
 </script>
-
-<style type="text/css">
-{% if blockConfig.showPlacesSearch %}
-#{{prefix}}holderpanel {
-    position: relative;
-    bottom: -45px;
-    z-index: 1;
-}
-#{{prefix}}map_canvas{
-    bottom: 30px;
-}{% endif %}
-#{{prefix}}map_canvas img {
-    max-width: none;
-}
-	  
-</style>
 {% endblock %}

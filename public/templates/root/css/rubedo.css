@@ -493,3 +493,17 @@ a:hover, a:focus {
 .flickr-rubedo {
 	text-align: center;
 }
+/**
+ * Google Map block properties and fixes
+ */
+.gmapholderpanel {
+    position: relative;
+    bottom: -45px;
+    z-index: 1;
+}
+.gmapmapcanvascorrected{
+    bottom: 30px;
+}
+.gmapmapcanvas img {
+    max-width: none;
+}
