@@ -11,7 +11,6 @@
  * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
 $serviceMapArray = include (__DIR__ . '/services.config.php');
 $controllerArray = include (__DIR__ . '/controllers.config.php');
 $viewArray = include (__DIR__ . '/views.config.php');
@@ -47,14 +46,8 @@ $config = array(
         'invokables' => $serviceMapArray,
         'shared' => $serviceSharedMapArray,
         'factories' => array(
-            'TwigViewStrategy' => function($sm) {
-                $strategy = new Rubedo\Templates\Twig\TwigStrategy($sm->get('TwigRenderer'));
-                return $strategy;
-            },
-            'RawViewStrategy' => function($sm) {
-                $strategy = new Rubedo\Templates\Raw\RawStrategy($sm->get('RawRenderer'));
-                return $strategy;
-            }
+            'TwigViewStrategy' => 'Rubedo\\Templates\\Twig\\TwigStrategyFactory',
+            'RawViewStrategy' => 'Rubedo\\Templates\\Raw\\RawStrategyFactory'
         )
     ),
     'backoffice' => array(

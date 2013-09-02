@@ -8,6 +8,9 @@ return array(
     ),
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
+        'config_cache_enabled'     => true,
+        'module_map_cache_enabled' => true,
+        'cache_dir'                => 'cache/config',
         // This should be an array of paths in which modules reside.
         // If a string key is provided, the listener will consider that a module
         // namespace, the value of that key the specific path to that module's
