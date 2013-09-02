@@ -261,7 +261,7 @@ class Url implements IUrl
             $url .= '?' . implode(self::PARAM_DELIMITER, $queryStringArray);
         }
         
-        return ltrim($url, self::URI_DELIMITER);
+        return '/'.ltrim($url, self::URI_DELIMITER);
     }
 
     /**
@@ -293,9 +293,6 @@ class Url implements IUrl
         $url = $this->getUrl($urlOptions,true);
         
         return $url;
-//         $router = \Zend_Controller_Front::getInstance()->getRouter();
-        
-//         return $router->assemble($urlOptions, $name, $reset, $encode);
     }
 
     /**

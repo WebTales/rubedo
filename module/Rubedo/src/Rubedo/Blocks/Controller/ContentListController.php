@@ -31,10 +31,19 @@ class ContentListController extends AbstractController
 
     protected $_defaultTemplate = 'contentlist';
 
-    public function indexAction ()
+    protected function getParamFromQuery($name = null, $default = null)
+    {
+        if ($this->getRequest()->getMethod() == 'POST') {
+            return $this->params()->fromPost($name, $default);
+        } else {
+            return $this->params()->fromQuery($name, $default);
+        }
+    }
+
+    public function indexAction()
     {
         $output = $this->_getList();
-        $blockConfig = $this->params()->fromQuery('block-config');
+        $blockConfig = $this->getParamFromQuery('block-config');
         $output["blockConfig"] = $blockConfig;
         if (! $output["blockConfig"]['columns']) {
             $output["blockConfig"]['columns'] = 1;
@@ -52,7 +61,7 @@ class ContentListController extends AbstractController
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
-    protected function _getList ()
+    protected function _getList()
     {
         // init services
         $this->_dataReader = Manager::getService('Contents');
@@ -60,12 +69,10 @@ class ContentListController extends AbstractController
         $this->_queryReader = Manager::getService('Queries');
         
         // get params & context
-        $blockConfig = $this->params()->fromQuery('block-config');
-        $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
+        $blockConfig = $this->getParamFromQuery('block-config');
+        $queryId = $this->getParamFromQuery('query-id', $blockConfig['query']);
         
-        // $queryConfig = $this->getQuery($queryId);
-        // $queryType = $queryConfig['type'];
-        $output = $this->params()->fromQuery();
+        $output = $this->getParamFromQuery();
         
         // build query
         $filters = $this->_queryReader->getFilterArrayById($queryId);
@@ -140,33 +147,31 @@ class ContentListController extends AbstractController
             $output["data"] = $data;
             $output["query"]['type'] = $queryType;
             $output["query"]['id'] = $queryId;
-            $output['prefix'] = $this->params()->fromQuery('prefix');
+            $output['prefix'] = $this->getParamFromQuery('prefix');
             $output["page"] = $contentArray['page'];
             
             $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
-            $output['limit'] = $this->params()->fromQuery('limit', $defaultLimit);
+            $output['limit'] = $this->getParamFromQuery('limit', $defaultLimit);
             
-            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->params()->fromQuery('current-page');
-            $output['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
-            $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->params()->fromQuery('displayType', null);
+            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParamFromQuery('current-page');
+            $output['singlePage'] = $this->getParamFromQuery('single-page', $singlePage);
+            $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->getParamFromQuery('displayType', null);
             $output['displayType'] = $displayType;
-            
-            $output['xhrUrl'] = $this->_helper->url->url(array(
-                'module' => 'blocks',
-                'controller' => 'content-list',
+            $output['xhrUrl'] = $this->url()->fromRoute('blocks', array(
+                'controller' => 'ContentList',
                 'action' => 'xhr-get-items'
-            ), 'default');
+            ));
         }
         
         return $output;
     }
 
-    public function xhrGetItemsAction ()
+    public function xhrGetItemsAction()
     {
         $twigVars = $this->_getList();
         
-        $displayType = $this->params()->fromQuery('displayType', false);
-        $columnsNb = $this->params()->fromQuery('columnsNb', '1');
+        $displayType = $this->getParamFromQuery('displayType', false);
+        $columnsNb = $this->getParamFromQuery('columnsNb', '1');
         
         $twigVars["columnNb"] = $columnsNb;
         
@@ -193,7 +198,7 @@ class ContentListController extends AbstractController
      * @param array $pageData            
      * @return array
      */
-    protected function getContentList ($filters, $pageData)
+    protected function getContentList($filters, $pageData)
     {
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
         $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']) + $pageData['skip'], $pageData['limit']);
@@ -202,20 +207,20 @@ class ContentListController extends AbstractController
         return $contentArray;
     }
 
-    protected function setPaginationValues ($blockConfig)
+    protected function setPaginationValues($blockConfig)
     {
         $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
         $defaultSkip = isset($blockConfig['resultsSkip']) ? $blockConfig['resultsSkip'] : 0;
-        $pageData['skip'] = $this->params()->fromQuery('skip', $defaultSkip);
-        $pageData['limit'] = $this->params()->fromQuery('limit', $defaultLimit);
-        $pageData['currentPage'] = $this->params()->fromQuery("page", 1);
+        $pageData['skip'] = $this->getParamFromQuery('skip', $defaultSkip);
+        $pageData['limit'] = $this->getParamFromQuery('limit', $defaultLimit);
+        $pageData['currentPage'] = $this->getParamFromQuery("page", 1);
         return $pageData;
     }
 
-    public function getContentsAction ()
+    public function getContentsAction()
     {
         $this->_dataReader = Manager::getService('Contents');
-        $data = $this->params()->fromQuery();
+        $data = $this->getParamFromQuery();
         if (isset($data['block']['query'])) {
             
             $filters = Manager::getService('Queries')->getFilterArrayById($data['block']['query']);
