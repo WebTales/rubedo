@@ -89,6 +89,8 @@ class FrontofficeRoute implements RouteInterface
                     }
                     if (! isset($currentParams[$key])) {
                         $currentParams[$key] = array();
+                    }elseif(!is_array($currentParams[$key])){
+                        $currentParams[$key] = array($currentParams[$key]);
                     }
                     if (! is_array($value)) {
                         $value = array(
