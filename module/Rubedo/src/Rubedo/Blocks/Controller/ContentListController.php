@@ -195,11 +195,6 @@ class ContentListController extends AbstractController
      */
     protected function getContentList ($filters, $pageData)
     {
-        $filter = Filter::factory('In')->setName('target')->setValue(array(
-            $this->_workspace,
-            'all'
-        ));
-        $filters["filter"]->addFilter($filter);
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
         $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']) + $pageData['skip'], $pageData['limit']);
         $contentArray['page'] = $pageData;

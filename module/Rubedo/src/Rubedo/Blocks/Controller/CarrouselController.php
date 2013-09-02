@@ -27,7 +27,7 @@ Use Rubedo\Services\Manager;
 class CarrouselController extends ContentListController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_queryReader = Manager::getService('Queries');
@@ -48,7 +48,6 @@ class CarrouselController extends ContentListController
                 
                 // getList
                 $unorderedContentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
-                
                 foreach ($contentOrder as $value) {
                     foreach ($unorderedContentArray['data'] as $subKey => $subValue) {
                         if ($value === $subValue['id']) {
@@ -70,19 +69,21 @@ class CarrouselController extends ContentListController
         } else {
             $nbItems = 0;
         }
-        
         $data = array();
         if ($nbItems > 0) {
             foreach ($contentArray['data'] as $vignette) {
                 $fields = $vignette['fields'];
                 $terms = isset($vignette['taxonomy']) && count($vignette['taxonomy']) > 0 ? array_pop($vignette['taxonomy']) : array();
                 $termsArray = array();
-                foreach ($terms as $term) {
-                    if ($term == 'navigation') {
-                        continue;
+                if ($terms) {
+                    foreach ($terms as $term) {
+                        if ($term == 'navigation') {
+                            continue;
+                        }
+                        $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
                     }
-                    $termsArray[] = Manager::getService('TaxonomyTerms')->getTerm($term);
                 }
+                
                 $fields['terms'] = $termsArray;
                 $fields['title'] = $fields['text'];
                 unset($fields['text']);
