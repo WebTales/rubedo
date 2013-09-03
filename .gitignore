@@ -17,4 +17,4 @@ composer.front.lock
 public/templates/fps-tower-theme
 public/templates/citroen
 Thumbs.db
-
+extensions/*
