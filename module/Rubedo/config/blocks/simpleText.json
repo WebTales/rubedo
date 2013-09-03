@@ -1,0 +1,36 @@
+{
+	"type":"#ext-gen1130#",
+	"description":"#ext-gen1131#",
+	"configBasique":{
+		"title":"#ext-gen1130#",
+		"bType":"simpleText",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1104#",
+					"champs":[
+						{
+							"type":"Rubedo.view.DCEField",
+							"config":{
+								"fieldLabel":"#ext-gen1104#",
+								"name":"contentId",
+								"allowedCT":"simpleText",
+								"addOnly":true
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1068#",
+	"bType":"simpleText",
+	"id":"51222c6ac0e0511a0d000003"
+}

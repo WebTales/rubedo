@@ -1,0 +1,34 @@
+{
+	"type":"#ext-gen1151#",
+	"description":"#ext-gen1152#",
+	"configBasique":{
+		"title":"#ext-gen1151#",
+		"bType":"mailingList",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1063#",
+					"champs":[
+						{
+							"type":"Rubedo.view.MailingListPickerField",
+							"config":{
+								"fieldLabel":"#ext-gen1155#",
+								"name":"mailingListId"
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1150#",
+	"bType":"mailingList",
+	"id":"514ae0c5c0e051ac0d001672"
+}

@@ -1,0 +1,46 @@
+{
+	"type":"#ext-gen1101#",
+	"description":"#ext-gen1102#",
+	"configBasique":{
+		"title":"#ext-gen1101#",
+		"bType":"contentDetail",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1104#",
+					"champs":[
+						{
+							"type":"Rubedo.view.DCEField",
+							"config":{
+								"fieldLabel":"#ext-gen1105#",
+								"name":"contentId",
+								"chooseOnly":true
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+				{
+					"categorie":"#ext-gen1072#",
+					"champs":[
+						{
+							"type":"Ext.form.field.Text",
+							"config":{
+								"fieldLabel":"#ext-gen1082#",
+								"name":"displayType"
+							}
+						}
+					]
+				}
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1068#",
+	"bType":"contentDetail",
+	"id":"506441f8c64804d514000001"
+}

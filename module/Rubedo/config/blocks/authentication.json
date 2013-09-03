@@ -1,0 +1,23 @@
+{
+	"type":"#ext-gen1366#",
+	"description":"#ext-gen1367#",
+	"configBasique":{
+		"title":"#ext-gen1366#",
+		"bType":"authentication",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1211#",
+	"bType":"authentication",
+	"id":"511e6508c0e051bd12000001"
+}

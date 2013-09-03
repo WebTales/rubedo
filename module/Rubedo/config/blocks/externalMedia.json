@@ -1,0 +1,53 @@
+{
+	"type":"#ext-gen1242#",
+	"description":"#ext-gen1243#",
+	"configBasique":{
+		"title":"#ext-gen1242#",
+		"bType":"externalMedia",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1139#",
+					"champs":[
+						{
+							"type":"Ext.form.field.Text",
+							"config":{
+								"fieldLabel":"#ext-gen1246#",
+								"name":"url",
+								"vtype":"url"
+							}
+						},
+						{
+							"type":"Ext.form.field.Number",
+							"config":{
+								"fieldLabel":"#ext-gen1247#",
+								"name":"maxWidth",
+								"allowDecimals":false,
+								"minValue":0
+							}
+						},
+						{
+							"type":"Ext.form.field.Number",
+							"config":{
+								"fieldLabel":"#ext-gen1248#",
+								"name":"maxHeight",
+								"allowDecimals":false,
+								"minValue":0
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1187#",
+	"bType":"externalMedia",
+	"id":"50f81083c0e0514e10000005"
+}

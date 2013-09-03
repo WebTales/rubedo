@@ -1,0 +1,43 @@
+{
+	"type":"#ext-gen1400#",
+	"description":"#ext-gen1401#",
+	"configBasique":{
+		"title":"#ext-gen1400#",
+		"bType":"imageMap",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1143#",
+					"champs":[
+						{
+							"type":"Rubedo.view.ImagePickerField",
+							"config":{
+								"fieldLabel":"#ext-gen1219#",
+								"name":"image",
+								"allowedFileType":"Image",
+								"smallMode":true
+							}
+						},
+						{
+							"type":"Rubedo.view.ImageMapField",
+							"config":{
+								"fieldLabel":"#ext-gen1402#",
+								"name":"map"
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1187#",
+	"bType":"imageMap",
+	"id":"511e6508c0e051bd11237456"
+}

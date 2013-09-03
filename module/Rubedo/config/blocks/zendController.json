@@ -1,0 +1,55 @@
+{
+	"type":"#ext-gen1136#",
+	"description":"#ext-gen1137#",
+	"configBasique":{
+		"title":"#ext-gen1136#",
+		"bType":"zendController",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1139#",
+					"champs":[
+						{
+							"type":"Ext.form.field.Text",
+							"config":{
+								"fieldLabel":"#ext-gen1140#",
+								"name":"module"
+							}
+						},
+						{
+							"type":"Ext.form.field.Text",
+							"config":{
+								"fieldLabel":"#ext-gen1141#",
+								"name":"controller"
+							}
+						},
+						{
+							"type":"Ext.form.field.Text",
+							"config":{
+								"fieldLabel":"#ext-gen1142#",
+								"name":"action"
+							}
+						},
+						{
+							"type":"Ext.form.field.TextArea",
+							"config":{
+								"fieldLabel":"#ext-gen1143#",
+								"name":"options"
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1135#",
+	"bType":"zendController",
+	"id":"50f694edc0e051280d000001"
+}

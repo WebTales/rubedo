@@ -1,0 +1,44 @@
+{
+	"type":"#ext-gen1250#",
+	"description":"#ext-gen1251#",
+	"configBasique":{
+		"title":"#ext-gen1250#",
+		"bType":"resource",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1063#",
+					"champs":[
+						{
+							"type":"Rubedo.view.ImagePickerField",
+							"config":{
+								"fieldLabel":"#ext-gen1254#",
+								"name":"documentId",
+								"smallMode":true
+							}
+						},
+						{
+							"type":"Rubedo.view.DCEField",
+							"config":{
+								"fieldLabel":"#ext-gen1255#",
+								"name":"introduction",
+								"allowedCT":"richText",
+								"addOnly":true
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1187#",
+	"bType":"resource",
+	"id":"516404ecc0e0518d0f123418"
+}

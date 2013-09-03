@@ -1,0 +1,34 @@
+{
+	"type":"#ext-gen1145#",
+	"description":"#ext-gen1146#",
+	"configBasique":{
+		"title":"#ext-gen1145#",
+		"bType":"twig",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1148#",
+					"champs":[
+						{
+							"type":"Ext.form.field.Text",
+							"config":{
+								"fieldLabel":"#ext-gen1149#",
+								"name":"fileName"
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1135#",
+	"bType":"twig",
+	"id":"506441f8c64804d514066000"
+}

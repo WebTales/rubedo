@@ -1,0 +1,41 @@
+{
+	"type":"#ext-gen1308#",
+	"description":"#ext-gen1309#",
+	"configBasique":{
+		"title":"#ext-gen1308#",
+		"bType":"searchForm",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				{
+					"categorie":"#ext-gen1139#",
+					"champs":[
+						{
+							"type":"Ext.ux.TreePicker",
+							"config":{
+								"fieldLabel":"#ext-gen1289#",
+								"name":"searchPage"
+							}
+						},
+						{
+							"type":"Ext.form.field.Text",
+							"config":{
+								"fieldLabel":"#ext-gen1313#",
+								"name":"placeholder"
+							}
+						}
+					]
+				}
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1064#",
+	"bType":"searchForm",
+	"id":"510001e9c0e0510a11000001"
+}
