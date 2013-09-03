@@ -253,7 +253,7 @@ class SitesController extends DataAccessController
         
         if ($site['success'] === true) {
             // Make the mask skeleton
-            $jsonMask = realpath(APPLICATION_PATH . "/../data/default/site/mask.json");
+            $jsonMask = realpath(APPLICATION_PATH . "/data/default/site/mask.json");
             $maskObj = Json::decode(file_get_contents($jsonMask), Json::TYPE_ARRAY);
             $maskObj['site'] = $site['data']['id'];
             $maskObj['nativeLanguage']=$this->locale;
@@ -273,7 +273,7 @@ class SitesController extends DataAccessController
             
             if ($homeMaskCreation['success'] && $detailMaskCreation['success'] && $searchMaskCreation['success']) {
                 /* Create Home Page */
-                $jsonHomePage = realpath(APPLICATION_PATH . "/../data/default/site/homePage.json");
+                $jsonHomePage = realpath(APPLICATION_PATH . "/data/default/site/homePage.json");
                 $itemJson = file_get_contents($jsonHomePage);
                 $itemJson = preg_replace_callback('/###(.*)###/U', array(
                     $this,
@@ -292,7 +292,7 @@ class SitesController extends DataAccessController
                 $homePage = Manager::getService('Pages')->create($homePageObj);
                 
                 /* Create Single Page */
-                $jsonSinglePage = realpath(APPLICATION_PATH . "/../data/default/site/singlePage.json");
+                $jsonSinglePage = realpath(APPLICATION_PATH . "/data/default/site/singlePage.json");
                 $itemJson = file_get_contents($jsonSinglePage);
                 $itemJson = preg_replace_callback('/###(.*)###/U', array(
                     $this,
@@ -313,7 +313,7 @@ class SitesController extends DataAccessController
                 $page = Manager::getService('Pages')->create($singlePageObj);
                 
                 /* Create Search Page */
-                $jsonSearchPage = realpath(APPLICATION_PATH . "/../data/default/site/searchPage.json");
+                $jsonSearchPage = realpath(APPLICATION_PATH . "/data/default/site/searchPage.json");
                 $itemJson = file_get_contents($jsonSearchPage);
                 $itemJson = preg_replace_callback('/###(.*)###/U', array(
                     $this,

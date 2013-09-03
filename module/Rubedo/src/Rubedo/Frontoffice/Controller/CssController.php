@@ -35,10 +35,10 @@ class CssController extends Zend_Controller_Action
         $customThemeId = $this->getRequest()->getParam('id');
         $customTheme=Manager::getService('CustomThemes')->findById($customThemeId);
         $less = new lessc;
-        $less->setImportDir(array(APPLICATION_PATH."/../public/components/webtales/bootstrap-less/less/"));
+        $less->setImportDir(array(APPLICATION_PATH."/public/components/webtales/bootstrap-less/less/"));
         $baseThemeOverrides=Zend_Json::decode($customTheme['lessVarsJson']);
         $less->setVariables($baseThemeOverrides);
-        $compiledCss=$less->compileFile(APPLICATION_PATH."/../public/components/webtales/bootstrap-less/less/bootstrapoverrider.less");
+        $compiledCss=$less->compileFile(APPLICATION_PATH."/public/components/webtales/bootstrap-less/less/bootstrapoverrider.less");
         $this->getResponse()->clearBody();
         $this->getResponse()->clearHeaders();
         $this->getResponse()->clearRawHeaders();

@@ -76,7 +76,7 @@ class LanguagesController extends DataAccessController
 
     public function importLanguagesAction()
     {
-        $tsvFile = APPLICATION_PATH . '/../data/ISO-639-2_utf-8.txt';
+        $tsvFile = APPLICATION_PATH . '/data/ISO-639-2_utf-8.txt';
         $file = fopen($tsvFile, 'r');
         $service = Manager::getService('Languages');
         while ($line = fgetcsv($file, null, '|')) {

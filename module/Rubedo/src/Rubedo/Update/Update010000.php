@@ -39,7 +39,7 @@ class Update010000 extends Update
     public static function doUpdateTitleContents ()
     {
         $success = true;
-        $contentPath = APPLICATION_PATH . '/../data/default/';
+        $contentPath = APPLICATION_PATH . '/data/default/';
         $contentIterator = new \DirectoryIterator($contentPath);
         foreach ($contentIterator as $directory) {
             if ($directory->isDot() || ! $directory->isDir()) {

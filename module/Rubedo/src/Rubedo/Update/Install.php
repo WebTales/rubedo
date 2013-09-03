@@ -48,7 +48,7 @@ class Install
         
         $success = true;
         
-        $contentPath = APPLICATION_PATH . '/../data/default/';
+        $contentPath = APPLICATION_PATH . '/data/default/';
         $contentIterator = new \DirectoryIterator($contentPath);
         foreach ($contentIterator as $directory) {
             if ($directory->isDot() || ! $directory->isDir()) {
@@ -141,7 +141,7 @@ class Install
         $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
         
         $success = true;
-        $groupsJsonPath = APPLICATION_PATH . '/../data/default/groups';
+        $groupsJsonPath = APPLICATION_PATH . '/data/default/groups';
         $groupsJson = new \DirectoryIterator($groupsJsonPath);
         foreach ($groupsJson as $file) {
             if ($file->isDot() || $file->isDir()) {
@@ -186,7 +186,7 @@ class Install
      */
     public static function importLanguages()
     {
-        $tsvFile = APPLICATION_PATH . '/../data/ISO-639-2_utf-8.txt';
+        $tsvFile = APPLICATION_PATH . '/data/ISO-639-2_utf-8.txt';
         $file = fopen($tsvFile, 'r');
         $service = Manager::getService('Languages');
         while ($line = fgetcsv($file, null, '|')) {
