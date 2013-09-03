@@ -30,15 +30,6 @@ class ContentListController extends AbstractController
 
     protected $_defaultTemplate = 'contentlist';
 
-    protected function getParamFromQuery($name = null, $default = null)
-    {
-        if ($this->getRequest()->getMethod() == 'POST') {
-            return $this->params()->fromPost($name, $default);
-        } else {
-            return $this->params()->fromQuery($name, $default);
-        }
-    }
-
     public function indexAction()
     {
         $output = $this->_getList();

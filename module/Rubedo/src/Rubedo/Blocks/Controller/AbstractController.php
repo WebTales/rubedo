@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use Rubedo\Content\Context;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Templates\Raw\RawViewModel;
 
@@ -31,26 +32,35 @@ abstract class AbstractController extends AbstractActionController
 
     protected $_workspace;
 
-    public function init ()
+    protected function getParamFromQuery($name = null, $default = null)
+    {
+        if ($this->getRequest()->getMethod() == 'POST') {
+            return $this->params()->fromPost($name, $default);
+        } else {
+            return $this->params()->fromQuery($name, $default);
+        }
+    }
+
+    public function init()
     {
         $templateService = Manager::getService('FrontOfficeTemplates');
-        Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
+        \Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
         
         // handle preview for ajax request, only if user is a backoffice user
         if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
-            $isDraft = $this->getParam('is-draft', false);
+            $isDraft = $this->getParamFromQuery('is-draft', false);
             if (! is_null($isDraft)) {
-                Zend_Registry::set('draft', $isDraft);
+                Context::setIsDraft($isDraft);
             }
         }
         
         // get current page property
-        $this->currentPage = $this->getParam('current-page');
+        $this->currentPage = $this->getParamFromQuery('current-page');
         
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
         
         if (is_null($currentPage)) {
-            throw new Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
+            throw new \Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
         } else {
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
@@ -90,10 +100,10 @@ abstract class AbstractController extends AbstractActionController
      * @param array $js
      *            array of JS that should be included
      */
-    protected function _sendResponse (array $output, $template, array $css = null, array $js = null)
+    protected function _sendResponse(array $output, $template, array $css = null, array $js = null)
     {
-        $output['classHtml'] = $this->params()->fromQuery('classHtml', '');
-        $output['idHtml'] = $this->params()->fromQuery('idHtml', '');
+        $output['classHtml'] = $this->getParamFromQuery('classHtml', '');
+        $output['idHtml'] = $this->getParamFromQuery('idHtml', '');
         
         $output['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
