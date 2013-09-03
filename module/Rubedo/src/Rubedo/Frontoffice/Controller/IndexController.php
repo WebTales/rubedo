@@ -540,221 +540,25 @@ class IndexController extends AbstractActionController
         foreach ($blockQueryParams as $key => $value) {
             $params[$key] = $value;
         }
-        
-        switch ($block['bType']) {
-            case 'Bloc de navigation':
-            case 'navigation':
-                $controller = 'Rubedo\\Blocks\\Controller\\NavBar';
-                $params['currentPage'] = $this->_pageId;
-                $params['rootline'] = $this->_rootlineArray;
-                $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()
-                    ->getUri()
-                    ->getHost());
-                
-                break;
-            case 'Carrousel':
-            case 'carrousel':
-                $controller = 'Rubedo\\Blocks\\Controller\\Carrousel';
-                break;
-            case 'googleMaps':
-                $controller = 'Rubedo\\Blocks\\Controller\\GoogleMaps';
-                break;
-            case 'Gallerie Flickr':
-            case 'flickrGallery':
-                $controller = 'Rubedo\\Blocks\\Controller\\FlickrGallery';
-                break;
-            case 'Liste de Contenus':
-            case 'contentList':
-                $controller = 'Rubedo\\Blocks\\Controller\\ContentList';
-                break;
-            case 'Formulaire':
-            case 'form':
-                $controller = 'Rubedo\\Blocks\\Controller\\Forms';
-                break;
-            case 'calendar':
-                $controller = 'Rubedo\\Blocks\\Controller\\Calendar';
-                break;
-            case 'Pied de page':
-            case 'footer':
-                $controller = 'Rubedo\\Blocks\\Controller\\Footer';
-                break;
-            case 'Résultat de recherche':
-            case 'searchResults':
-                $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
-                $controller = 'Rubedo\\Blocks\\Controller\\Search';
-                
-                break;
-            case 'geoSearchResults':
-                $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
-                $controller = 'Rubedo\\Blocks\\Controller\\GeoSearch';
-                
-                break;
-            
-            case 'damList':
-                $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
-                $controller = 'Rubedo\\Blocks\\Controller\\DamList';
-                
-                break;
-            case 'Fil d\'Ariane':
-            case 'breadcrumb':
-                $params['currentPage'] = $this->_pageId;
-                $params['rootline'] = $this->_rootlineArray;
-                $controller = 'Rubedo\\Blocks\\Controller\\Breadcrumbs';
-                break;
-            case 'searchForm':
-                $controller = 'Rubedo\\Blocks\\Controller\\SearchForm';
-                break;
-            case 'Twig':
-            case 'twig':
-                $controller = 'Rubedo\\Blocks\\Controller\\Twig';
-                $params['template'] = $block['configBloc']['fileName'];
-                
-                break;
-            case 'Détail de contenu':
-            case 'contentDetail':
-                $controller = 'Rubedo\\Blocks\\Controller\\ContentSingle';
-                $contentIdParam = $this->params()->fromRoute('content-id');
-                $contentId = $contentIdParam ? $contentIdParam : null;
-                if (! isset($contentId)) {
-                    $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : null;
-                }
-                
-                $params['content-id'] = $contentId;
-                
-                break;
-            case 'Média externe':
-            case 'externalMedia':
-                $controller = 'Rubedo\\Blocks\\Controller\\EmbeddedMedia';
-                break;
-            case 'Image':
-            case 'image':
-                $controller = 'Rubedo\\Blocks\\Controller\\Image';
-                break;
-            case 'Audio':
-            case 'audio':
-                $controller = 'Rubedo\\Blocks\\Controller\\Audio';
-                break;
-            case 'Video':
-            case 'video':
-                $controller = 'Rubedo\\Blocks\\Controller\\Video';
-                break;
-            case 'Authentication':
-            case 'authentication':
-                $controller = 'Rubedo\\Blocks\\Controller\\Authentication';
-                break;
-            case 'Texte':
-            case 'simpleText':
-                $controller = 'Rubedo\\Blocks\\Controller\\Text';
-                break;
-            case 'imageGallery':
-                $controller = 'Rubedo\\Blocks\\Controller\\Gallery';
-                break;
-            case 'Texte Riche':
-            case 'richText':
-                $controller = 'Rubedo\\Blocks\\Controller\\RichText';
-                break;
-            case 'AddThis':
-            case 'addThis':
-                $controller = 'Rubedo\\Blocks\\Controller\\Addthis';
-                break;
-            case 'AddThisFollow':
-            case 'addThisFollow':
-                $controller = 'Rubedo\\Blocks\\Controller\\Addthisfollow';
-                break;
-            case 'Menu':
-            case 'menu':
-                $controller = 'Rubedo\\Blocks\\Controller\\Menu';
-                break;
-            case 'Contact':
-            case 'contact':
-                $controller = 'Rubedo\\Blocks\\Controller\\Contact';
-                break;
-            case 'AdvancedContact':
-            case 'advancedContact':
-                $controller = 'Rubedo\\Blocks\\Controller\\AdvancedContact';
-                break;
-            case 'siteMap':
-            case 'sitemap':
-                $controller = 'Rubedo\\Blocks\\Controller\\SiteMap';
-                break;
-            case 'protectedResource':
-                $controller = 'Rubedo\\Blocks\\Controller\\ProtectedResource';
-                break;
-            case 'resource':
-                $controller = 'Rubedo\\Blocks\\Controller\\Resource';
-                break;
-            case 'imageMap':
-                $controller = 'Rubedo\\Blocks\\Controller\\ImageMap';
-                break;
-            case 'advancedSearchForm':
-                $controller = 'Rubedo\\Blocks\\Controller\\AdvancedSearch';
-                break;
-            case "mailingList":
-                $controller = 'Rubedo\\Blocks\\Controller\\MailingList';
-                break;
-            case "twitter":
-                $controller = 'Rubedo\\Blocks\\Controller\\Twitter';
-                break;
-            
-            case "languageMenu":
-                $controller = 'Rubedo\\Blocks\\Controller\\LanguageMenu';
-                break;
-            
-            case 'Controleur Zend':
-            case 'zendController':
-            // $module = isset($block['configBloc']['module']) ? $block['configBloc']['module'] : 'blocks';
-            // $controller = isset($block['configBloc']['controller']) ? $block['configBloc']['controller'] : null;
-            // $action = isset($block['configBloc']['action']) ? $block['configBloc']['action'] : null;
-            
-            // $route = Zend_Controller_Front::getInstance()->getRouter()->getCurrentRoute();
-            // $prefix = (isset($block['urlPrefix']) && ! empty($block['urlPrefix'])) ? $block['urlPrefix'] : 'bloc' . $block['id'];
-            // $route->setPrefix($prefix);
-            
-            // $allParams = $this->getAllParams();
-            // foreach ($allParams as $key => $value) {
-            // $prefixPos = strpos($key, $prefix . '_');
-            // if ($prefixPos === 0) {
-            // $subKey = substr($key, strlen($prefix . '_'));
-            // switch ($subKey) {
-            // case 'action':
-            // $action = $value;
-            // break;
-            // case 'controller':
-            // $controller = $value;
-            // break;
-            // case 'module':
-            // $module = $value;
-            // break;
-            // default:
-            // $params[$subKey] = $value;
-            // break;
-            // }
-            // } else {
-            // $params[$key] = $value;
-            // }
-            // }
-            
-            // $response = Action::getInstance()->action($action, $controller, $module, $params);
-            // $route->clearPrefix();
-            // $data = $response->getBody();
-            
-            // return array(
-            // 'data' => array(
-            // 'content' => $data
-            // ),
-            // 'template' => 'root/zend.html.twig'
-            // );
-            // break;
-            
-            default:
-                $data = array();
-                $template = 'root/block.html';
-                return array(
-                    'data' => $data,
-                    'template' => $template
-                );
-                break;
+        $params['currentPage'] = $this->_pageId;
+        $params['rootline'] = $this->_rootlineArray;
+        $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()
+            ->getUri()
+            ->getHost());
+        if(isset( $block['configBloc']['fileName'])){
+            $params['template'] = $block['configBloc']['fileName'];
         }
+        if(isset($block['configBloc']['constrainToSite'])){
+            $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
+        }
+        $contentIdParam = $this->params()->fromRoute('content-id');
+        $contentId = $contentIdParam ? $contentIdParam : null;
+        if (! isset($contentId)) {
+            $contentId = isset($block['configBloc']['contentId']) ? $block['configBloc']['contentId'] : null;
+        }
+        
+        $params['content-id'] = $contentId;
+        $controller = Manager::getService('Blocks')->getController($block['bType']);
         
         // Clone global request and override it woth block params
         $queryString = $this->getRequest()->getQuery();

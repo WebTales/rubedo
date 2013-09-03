@@ -268,4 +268,12 @@ class Blocks extends AbstractCollection implements IBlocks
         }
         return $globalArray;
     }
+    
+    public function getController($name){
+        $config = $this->getConfig();
+        if(!isset($config[$name])){
+            throw Rubedo\Exceptions\Server('Undefined block name :'.$name);
+        }
+        return $config[$name]['controller'];
+    }
 }

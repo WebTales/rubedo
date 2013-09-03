@@ -27,7 +27,7 @@ return array(
         'definitionFile' => $blocksPath . '/advancedContact.json'
     ),
     'advancedSearchForm' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedSearchForm',
+        'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedSearch',
         'definitionFile' => $blocksPath . '/advancedSearchForm.json'
     ),
     'audio' => array(
@@ -39,7 +39,7 @@ return array(
         'definitionFile' => $blocksPath . '/authentication.json'
     ),
     'breadcrumb' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\Breadcrumb',
+        'controller' => 'Rubedo\\Blocks\\Controller\\Breadcrumbs',
         'definitionFile' => $blocksPath . '/breadcrumb.json'
     ),
     'calendar' => array(
@@ -55,7 +55,7 @@ return array(
         'definitionFile' => $blocksPath . '/contact.json'
     ),
     'contentDetail' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\ContentDetail',
+        'controller' => 'Rubedo\\Blocks\\Controller\\ContentSingle',
         'definitionFile' => $blocksPath . '/contentDetail.json'
     ),
     'contentList' => array(
@@ -67,7 +67,7 @@ return array(
         'definitionFile' => $blocksPath . '/damList.json'
     ),
     'externalMedia' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\ExternalMedia',
+        'controller' => 'Rubedo\\Blocks\\Controller\\EmbeddedMedia',
         'definitionFile' => $blocksPath . '/externalMedia.json'
     ),
     'flickrGallery' => array(
@@ -103,7 +103,7 @@ return array(
         'definitionFile' => $blocksPath . '/mailingList.json'
     ),
     'navigation' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\Navigation',
+        'controller' => 'Rubedo\\Blocks\\Controller\\NavBar',
         'definitionFile' => $blocksPath . '/navigation.json'
     ),
     'protectedResource' => array(
@@ -123,7 +123,7 @@ return array(
         'definitionFile' => $blocksPath . '/searchForm.json'
     ),
     'searchResults' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\SearchResults',
+        'controller' => 'Rubedo\\Blocks\\Controller\\Search',
         'definitionFile' => $blocksPath . '/searchResults.json'
     ),
     'simpleText' => array(
