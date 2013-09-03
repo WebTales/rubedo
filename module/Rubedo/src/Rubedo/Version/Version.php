@@ -177,6 +177,14 @@ final class Version
                 $componentsArray['frontComponents'][$package['name']] = $package['version'];
             }
         }
+        
+        $componentsArray['extensions'] = array();
+        if (is_file(APPLICATION_PATH . '/composer.extension.lock')) {
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.extension.lock'),Json::TYPE_ARRAY);
+            foreach ($phpComponentsArray['packages'] as $package) {
+                $componentsArray['extensions'][$package['name']] = $package['version'];
+            }
+        }
         return $componentsArray;
     }
 
