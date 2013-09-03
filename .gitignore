@@ -19,3 +19,4 @@ public/templates/citroen
 Thumbs.db
 extensions/*
 !extensions/readme.txt
+/composer.extension.lock
