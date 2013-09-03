@@ -182,7 +182,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             }
             $hasCustomLayout=false;
             $customLayoutRows=array();
-            if (isset($type['layouts'])){
+            if ((isset($type['layouts']))&&(is_array($type['layouts']))){
                 foreach ($type['layouts'] as $key => $value) {
                     if (($value['type']=="Detail")&&($value['active'])){
                         $hasCustomLayout=true;
