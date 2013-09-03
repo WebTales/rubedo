@@ -35,7 +35,7 @@ abstract class AbstractController extends AbstractActionController
     protected function getParamFromQuery($name = null, $default = null)
     {
         if ($this->getRequest()->getMethod() == 'POST') {
-            return $this->params()->fromPost($name, $default);
+            return $this->params()->fromPost($name, $this->params()->fromQuery($name, $default));
         } else {
             return $this->params()->fromQuery($name, $default);
         }
