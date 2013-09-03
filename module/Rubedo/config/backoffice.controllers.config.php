@@ -21,7 +21,6 @@ return array(
     'Rubedo\\Backoffice\\Controller\\FieldTypes' => 'Rubedo\\Backoffice\\Controller\\FieldTypesController',
     'Rubedo\\Backoffice\\Controller\\File' => 'Rubedo\\Backoffice\\Controller\\FileController',
     'Rubedo\\Backoffice\\Controller\\FoThemes' => 'Rubedo\\Backoffice\\Controller\\FoThemesController',
-    'Rubedo\\Backoffice\\Controller\\Forms' => 'Rubedo\\Backoffice\\Controller\\FormsController',
     'Rubedo\\Backoffice\\Controller\\GenericCleaning' => 'Rubedo\\Backoffice\\Controller\\GenericCleaningController',
     'Rubedo\\Backoffice\\Controller\\Groups' => 'Rubedo\\Backoffice\\Controller\\GroupsController',
     'Rubedo\\Backoffice\\Controller\\Icons' => 'Rubedo\\Backoffice\\Controller\\IconsController',
