@@ -1,6 +1,7 @@
 <?php
 return array(
     'Rubedo\\Backoffice\\Controller\\Acl' => 'Rubedo\\Backoffice\\Controller\\AclController',
+    'Rubedo\\Backoffice\\Controller\\Blocks' => 'Rubedo\\Backoffice\\Controller\\BlocksController',
     'Rubedo\\Backoffice\\Controller\\Cache' => 'Rubedo\\Backoffice\\Controller\\CacheController',
     'Rubedo\\Backoffice\\Controller\\ContentContributor' => 'Rubedo\\Backoffice\\Controller\\ContentContributorController',
     'Rubedo\\Backoffice\\Controller\\ContentTypes' => 'Rubedo\\Backoffice\\Controller\\ContentTypesController',

@@ -51,6 +51,7 @@ class Module
         $this->initSites($config);
         $this->initSettings($config);
         $this->initRoles($config);
+        $this->initBlocks($config);
         SessionData::setSessionName($config['session']['name']);
         
         Interfaces\config::initInterfaces();
@@ -276,6 +277,11 @@ class Module
     protected function initRoles($config)
     {
         \Rubedo\Security\Acl::setRolesDirectories($config['rolesDirectories']);
+    }
+    
+    protected function initBlocks($config)
+    {
+        \Rubedo\Collection\Blocks::setConfig($config['blocksDefinition']);
     }
 
     protected function toDeadEnd(MvcEvent $event,\Exception $exception)

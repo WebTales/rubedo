@@ -74,10 +74,6 @@ return array(
         'controller' => 'Rubedo\\Blocks\\Controller\\FlickrGallery',
         'definitionFile' => $blocksPath . '/flickrGallery.json'
     ),
-    'footer' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\Footer',
-        'definitionFile' => $blocksPath . '/footer.json'
-    ),
     'form' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Form',
         'definitionFile' => $blocksPath . '/form.json'
@@ -85,10 +81,6 @@ return array(
     'geoSearchResults' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\GeoSearchResults',
         'definitionFile' => $blocksPath . '/geoSearchResults.json'
-    ),
-    'googleMaps' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\GoogleMaps',
-        'definitionFile' => $blocksPath . '/googleMaps.json'
     ),
     'image' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Image',
@@ -109,10 +101,6 @@ return array(
     'mailingList' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\MailingList',
         'definitionFile' => $blocksPath . '/mailingList.json'
-    ),
-    'menu' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\Menu',
-        'definitionFile' => $blocksPath . '/menu.json'
     ),
     'navigation' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Navigation',

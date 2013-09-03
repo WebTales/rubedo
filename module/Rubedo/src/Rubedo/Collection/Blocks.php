@@ -18,6 +18,7 @@ namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IBlocks;
 use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 
 /**
  * Service to handle Blocks
@@ -28,14 +29,37 @@ use WebTales\MongoFilters\Filter;
  */
 class Blocks extends AbstractCollection implements IBlocks
 {
-
+    /**
+     * Configuration of available blocks
+     * @var array
+     */
+    protected static $config = array();
+    
     public function __construct ()
     {
         $this->_collectionName = 'Blocks';
         parent::__construct();
     }
+    
+    
 
-    public function _init()
+    /**
+     * @return the $config
+     */
+    public function getConfig()
+    {
+        return Blocks::$config;
+    }
+
+	/**
+     * @param multitype: $config
+     */
+    public static function setConfig($config)
+    {
+        Blocks::$config = $config;
+    }
+
+	public function _init()
     {
         parent::_init();
         if (AbstractCollection::getIsFrontEnd()) {
@@ -234,5 +258,14 @@ class Blocks extends AbstractCollection implements IBlocks
         $result['checksum'] = $data["checksum"];
         $result['id'] = $data['id'];
         return $result;
+    }
+    
+    public function getGlobalBlocksJson(){
+        $globalArray = array();
+        foreach($this->getConfig() as $blockConfig){
+            $blockJsonData = file_get_contents($blockConfig['definitionFile']);
+            $globalArray[] = Json::decode($blockJsonData,Json::TYPE_ARRAY);
+        }
+        return $globalArray;
     }
 }
