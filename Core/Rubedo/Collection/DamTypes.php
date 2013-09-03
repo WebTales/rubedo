@@ -86,7 +86,7 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
         $returnArray = parent::create($obj, $options);
         
         if ($returnArray["success"]) {
-            $this->_indexDamType($returnArray['data']);
+            $this->indexDamType($returnArray['data']);
         }
         
         return $returnArray;
@@ -104,7 +104,7 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
         $returnArray = parent::update($obj, $options);
         
         if ($returnArray["success"]) {
-            $this->_indexDamType($returnArray['data']);
+            $this->indexDamType($returnArray['data']);
         }
         
         return $returnArray;
@@ -119,7 +119,7 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
     {
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
-            $this->_unIndexDamType($obj);
+            $this->unIndexDamType($obj);
         }
         return $returnArray;
     }
@@ -161,7 +161,7 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
      *
      * @param array $obj            
      */
-    protected function _indexDamType ($obj)
+    public function indexDamType ($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         
@@ -179,7 +179,7 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
      *
      * @param array $obj            
      */
-    protected function _unIndexDamType ($obj)
+    public function unIndexDamType ($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         

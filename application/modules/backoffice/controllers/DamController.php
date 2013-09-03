@@ -347,4 +347,15 @@ class Backoffice_DamController extends Backoffice_DataAccessController
         }
         return $result['data']['id'];
     }
+    
+    public function deleteByDamTypeIdAction ()
+    {
+        $typeId = $this->getParam('type-id');
+        if (! $typeId) {
+            throw new Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
+        }
+        $deleteResult = $this->_dataService->deleteByDamType($typeId);
+    
+        $this->_returnJson($deleteResult);
+    }
 }
