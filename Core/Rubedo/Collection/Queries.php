@@ -133,23 +133,6 @@ class Queries extends AbstractCollection implements IQueries
      * @return array
      */
     protected function boToDbQuery($obj) {
-        if(isset($obj["query"]["fieldRules"])) {
-            foreach ($obj["query"]["fieldRules"] as $key => $value) {
-                //Don't update if the condition was already treated
-                if(!is_string($key) || isset($value["field"])) {
-                    continue;
-                }
-        
-                //Create new object
-                $newField = array("field" => $key);
-                $value = array_merge($value, $newField);
-        
-                //Insert new object and delete older
-                $obj["query"]["fieldRules"][] = $value;
-                unset($obj["query"]["fieldRules"][$key]);
-            }
-        }
-        
         return $obj;
     }
     
@@ -160,24 +143,7 @@ class Queries extends AbstractCollection implements IQueries
      *     Query object
      * @return array
      */
-    protected function dbToBoQuery($obj) {
-        if(isset($obj["query"]["fieldRules"])) {
-            foreach ($obj["query"]["fieldRules"] as $key => $value) {
-                //Don't update if the condition was already treated
-                if(is_string($key) || !isset($value["field"])) {
-                    continue;
-                }
-        
-                //Get new values
-                $newKey = $value["field"];
-                unset($value["field"]);
-        
-                //Insert new object and delete older
-                $obj["query"]["fieldRules"][$newKey] = $value;
-                unset($obj["query"]["fieldRules"][$key]);
-            }
-        }
-        
+    protected function dbToBoQuery($obj) {     
         return $obj;
     }
     
@@ -334,7 +300,8 @@ class Queries extends AbstractCollection implements IQueries
         }
     
         /* Add filter on FieldRule */
-        foreach ($query['fieldRules'] as $property => $value) {
+        foreach ($query['fieldRules'] as $value) {
+            $property=$value['field'];
             //Contain the type of the field (date, time, text ...)
             $fieldType = "";
     
