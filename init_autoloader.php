@@ -21,6 +21,10 @@ if (file_exists('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
 }
 
+if (file_exists('extensions/autoload.php')) {
+    $extensionLoader = include 'extensions/autoload.php';
+}
+
 $zf2Path = false;
 
 if (getenv('ZF2_PATH')) {           // Support for ZF2_PATH environment variable or git submodule
