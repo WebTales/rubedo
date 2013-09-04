@@ -115,10 +115,12 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             'templateDir' => $config['templateDir'],
             'cache' => $config['cache'],
             'debug' => $config['debug'],
-            'auto_reload' => $config['auto_reload']
+            'auto_reload' => $config['auto_reload'],
+            'overrideThemes' => $config['overrideThemes']
         );
-                
+        
         $loader = new \Twig_Loader_Filesystem($this->options['templateDir'] . '/' . $this->getCurrentTheme());
+        
         $loader->addPath($this->options['templateDir'] . '/root', 'Root');
         $loader->addPath($this->options['templateDir'] . '/root');
         $this->_twig = new \Twig_Environment($loader, $this->options);
@@ -127,11 +129,15 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             $loader->prependPath($path, $name);
         }
         
+        if (isset($this->options['overrideThemes']) && isset($this->options['overrideThemes'][$this->getCurrentTheme()])) {
+            $loader->prependPath($this->options['overrideThemes'][$this->getCurrentTheme()]);
+        }
+        
         $this->_twig->addExtension(new \Twig_Extension_Debug());
         
         $this->_twig->addExtension(new BackOfficeTranslate());
         $this->_twig->addExtension(new FrontOfficeTranslate());
-                
+        
         $this->_twig->addExtension(new \Twig_Extensions_Extension_Intl());
         
         $this->_twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml', array(
@@ -180,7 +186,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
                 'templateDir' => $config['templateDir'],
                 'cache' => $config['cache'],
                 'debug' => $config['debug'],
-                'auto_reload' => $config['auto_reload']
+                'auto_reload' => $config['auto_reload'],
+                'overrideThemes' => $config['overrideThemes']
             );
             
             self::$templateDir = $this->options['templateDir'];
