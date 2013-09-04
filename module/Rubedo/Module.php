@@ -53,6 +53,7 @@ class Module
         $this->initRoles($config);
         $this->initBlocks($config);
         $this->initTemplates($config);
+        $this->initAppExtension($config);
         SessionData::setSessionName($config['session']['name']);
         
         Interfaces\config::initInterfaces();
@@ -288,6 +289,11 @@ class Module
     protected function initTemplates($config)
     {
         \Rubedo\Templates\FrontOfficeTemplates::setConfig($config['templates']);
+    }
+    
+    protected function initAppExtension($config)
+    {
+        \Rubedo\Backoffice\Service\AppExtension::setConfig($config['appExtension']);
     }
 
     protected function toDeadEnd(MvcEvent $event,\Exception $exception)
