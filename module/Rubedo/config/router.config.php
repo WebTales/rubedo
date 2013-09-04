@@ -93,8 +93,7 @@ return array(
                 )
             )
         ),
-        
-        // Backoffice route : prefix by backoffice
+//         Backoffice route : prefix by backoffice
         'backoffice' => array(
             'type' => 'Literal',
             'options' => array(
@@ -120,6 +119,31 @@ return array(
                     )
                 )
             )
-        )
+        ),
+        // AppExtension route : prefix by backoffice/app
+        'AppExtension' => array(
+            'type' => 'Literal',
+            'options' => array(
+                'route' => '/backoffice/app',
+                'defaults' => array(
+                    '__NAMESPACE__' => 'Rubedo\Backoffice\Controller',
+                    'controller' => 'AppExtension',
+                    'action' => 'get-file'
+                )
+            ),
+            'may_terminate' => true,
+            'child_routes' => array(
+                'default' => array(
+                    'type' => 'Segment',
+                    'options' => array(
+                        'route' => '/:app-name/:filepath{-}',
+                        '__NAMESPACE__' => 'Rubedo\Blocks\Controller',
+                        'constraints' => array(
+                        ),
+                        'defaults' => array()
+                    )
+                )
+            )
+        ),
     )
 );

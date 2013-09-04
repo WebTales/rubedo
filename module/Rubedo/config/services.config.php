@@ -1,6 +1,7 @@
 <?php
 return array(
     'Acl' => 'Rubedo\\Security\\Acl',
+    'AppExtension' => 'Rubedo\\Backoffice\\Service\\AppExtension',
     'Authentication' => 'Rubedo\\User\\Authentication',
     'Blocks' => 'Rubedo\\Collection\\Blocks',
     'Cache' => 'Rubedo\\Collection\\Cache',

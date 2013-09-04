@@ -44,4 +44,14 @@ class AppExtensionController extends AbstractActionController
         
         return new JsonModel($config);
     }
+    
+    function getFileAction(){
+        $appName = $this->params()->fromRoute('app-name');
+        $filePath = $this->params()->fromRoute('filepath');
+        
+        $basePath = Manager::getService('AppExtension')->getBasePath($appName);
+        
+        $retour = array('appName'=>$appName,'filePath'=>$filePath);
+        return new JsonModel($retour);
+    }
 }
