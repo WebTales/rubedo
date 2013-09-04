@@ -58,14 +58,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * @var string
      */
     protected static $_currentTheme = null;
-    
-    
+
     /**
      * Custom theme id
      *
      * @var string
      */
     protected static $_customThemeId = null;
+
     /**
      * had main theme been set ?
      *
@@ -76,7 +76,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     /**
      * Constructor
      */
-    public function __construct ()
+    public function __construct()
     {
         $this->_init();
     }
@@ -87,7 +87,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * @param string $lang
      *            current language
      */
-    protected function _init ()
+    protected function _init()
     {
         $this->_options = array(
             'templateDir' => APPLICATION_PATH . "/public/templates",
@@ -100,12 +100,12 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
         
         $lang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
-        //fallback when $lang is not specified in twig function
+        // fallback when $lang is not specified in twig function
         locale_set_default($lang);
         
-        $loader = new \Twig_Loader_Filesystem($this->_options['templateDir'].'/'.$this->getCurrentTheme()); 
-        $loader->addPath($this->_options['templateDir'].'/root','Root');
-        $loader->addPath($this->_options['templateDir'].'/root');
+        $loader = new \Twig_Loader_Filesystem($this->_options['templateDir'] . '/' . $this->getCurrentTheme());
+        $loader->addPath($this->_options['templateDir'] . '/root', 'Root');
+        $loader->addPath($this->_options['templateDir'] . '/root');
         $this->_twig = new \Twig_Environment($loader, $this->_options);
         
         $this->_twig->addExtension(new \Twig_Extension_Debug());
@@ -133,7 +133,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('getContent', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getContent'));
         $this->_twig->addFunction('isInRootline', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::isInRootline'));
         $this->_twig->addFunction('getMediaType', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getMediaType'));
-        $this->_twig->addFilter(new \Twig_SimpleFilter('ucfirst','\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
+        $this->_twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
     }
 
     /**
@@ -145,7 +145,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      *            array of data to be rendered
      * @return string HTML produced by twig
      */
-    public function render ($template, array $vars)
+    public function render($template, array $vars)
     {
         $templateObj = $this->_twig->loadTemplate($template);
         return $templateObj->render($vars);
@@ -156,7 +156,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      *
      * @return string
      */
-    public function getTemplateDir ()
+    public function getTemplateDir()
     {
         if (! isset(self::$templateDir)) {
             $this->_options = array(
@@ -181,9 +181,13 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      *
      * @return string
      */
-    public function getFileThemePath ($path)
+    public function getFileThemePath($path)
     {
-        return $path;
+        // no longer use this function for twig : use advanced twig_loader config
+        if (pathinfo($path, PATHINFO_EXTENSION) == 'twig') {
+            return $path;
+        }
+        
         if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
             return '' . $this->getCurrentTheme() . '/' . $path;
         } else {
@@ -191,7 +195,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
     }
 
-    public function templateFileExists ($path)
+    public function templateFileExists($path)
     {
         return is_file($this->getTemplateDir() . '/' . $path);
     }
@@ -201,22 +205,21 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      *
      * @return string
      */
-    public function getCurrentTheme ()
+    public function getCurrentTheme()
     {
         if (! isset(self::$_currentTheme)) {
             self::$_currentTheme = 'default';
         }
         return self::$_currentTheme;
     }
-    
+
     /**
      * Get the custom theme id
      *
      * @return string
      */
-    public function getCustomThemeId ()
+    public function getCustomThemeId()
     {
-        
         return self::$_customThemeId;
     }
 
@@ -225,10 +228,10 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      *
      * @param string $theme            
      */
-    public function setCurrentTheme ($theme)
+    public function setCurrentTheme($theme)
     {
-        //check if it is a custom theme 
-        if ( preg_match('/[\dabcdef]{24}/', $theme) == 1) {
+        // check if it is a custom theme
+        if (preg_match('/[\dabcdef]{24}/', $theme) == 1) {
             self::$_currentTheme = "customtheme";
             self::$_customThemeId = $theme;
             self::$_themeHasBeenSet = true;
@@ -238,7 +241,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
     }
 
-    public function themeHadBeenSet ()
+    public function themeHadBeenSet()
     {
         return self::$_themeHasBeenSet;
     }
@@ -246,22 +249,22 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     /**
      * Call the Html Cleaner Service
      */
-    public static function cleanHtml ($html)
+    public static function cleanHtml($html)
     {
         return Manager::getService('HtmlCleaner')->clean($html);
     }
 
-    public static function url (array $urlOptions = array(), $reset = false, $encode = true, $route = null)
+    public static function url(array $urlOptions = array(), $reset = false, $encode = true, $route = null)
     {
         return Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
     }
 
-    public static function displayUrl ($contentId, $type = "default", $siteId = null, $defaultUrl = null)
+    public static function displayUrl($contentId, $type = "default", $siteId = null, $defaultUrl = null)
     {
         return Manager::getService('Url')->displayUrl($contentId, $type, $siteId, $defaultUrl);
     }
 
-    public static function getPageTitle ($contentId)
+    public static function getPageTitle($contentId)
     {
         $page = Manager::getService('Pages')->findByID($contentId);
         if ($page) {
@@ -271,17 +274,17 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
     }
 
-    public static function getLinkedContents ($contentId, $typeId, $fieldName, $sort = null)
+    public static function getLinkedContents($contentId, $typeId, $fieldName, $sort = null)
     {
         return Manager::getService('Contents')->getReflexiveLinkedContents($contentId, $typeId, $fieldName, $sort);
     }
 
-    public static function getTaxonomyTerm ($id)
+    public static function getTaxonomyTerm($id)
     {
         return Manager::getService('TaxonomyTerms')->findById($id);
     }
 
-    public function getAvailableThemes ()
+    public function getAvailableThemes()
     {
         $templateDirIterator = new \DirectoryIterator($this->getTemplateDir());
         if (! isset($templateDirIterator)) {
@@ -290,29 +293,29 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         
         $themeInfosArray = array();
         
-        //get real file themes
+        // get real file themes
         foreach ($templateDirIterator as $directory) {
             if ($directory->isDot() || ! $directory->isDir()) {
                 continue;
             }
-            //ignore generic custom theme folder
-            if ($directory->getFilename()=="customtheme"){
+            // ignore generic custom theme folder
+            if ($directory->getFilename() == "customtheme") {
                 continue;
             }
             $jsonFilePath = $directory->getPathname() . '/theme.json';
             if (is_file($jsonFilePath)) {
                 $themeJson = file_get_contents($jsonFilePath);
-                $themeInfos = Json::decode($themeJson,Json::TYPE_ARRAY);
+                $themeInfos = Json::decode($themeJson, Json::TYPE_ARRAY);
                 $themeInfosArray[] = $themeInfos;
             }
         }
-        //get database custom themes
-        $customThemesArray=Manager::getService('CustomThemes')->getList();
-        $customThemesArray=$customThemesArray['data'];
+        // get database custom themes
+        $customThemesArray = Manager::getService('CustomThemes')->getList();
+        $customThemesArray = $customThemesArray['data'];
         foreach ($customThemesArray as &$value) {
-            $value['text']=$value['id'];
-            $value['label']=$value['name'];
-            $themeInfosArray[]=$value;
+            $value['text'] = $value['id'];
+            $value['label'] = $value['name'];
+            $themeInfosArray[] = $value;
         }
         
         $response = array();
@@ -324,74 +327,79 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return $response;
     }
 
-    public function getThemeInfos ($name)
+    public function getThemeInfos($name)
     {
         $jsonFilePath = $this->getTemplateDir() . '/' . $name . '/theme.json';
         if (is_file($jsonFilePath)) {
             $themeJson = file_get_contents($jsonFilePath);
-            $themeInfos = Json::decode($themeJson,Json::TYPE_ARRAY);
+            $themeInfos = Json::decode($themeJson, Json::TYPE_ARRAY);
             return $themeInfos;
         } else {
             return null;
         }
     }
 
-    public function getCurrentThemeInfos ()
+    public function getCurrentThemeInfos()
     {
         return $this->getThemeInfos($this->getCurrentTheme());
     }
-    
+
     /**
      * Find a dam by its id
      *
      * @param string $damtId
-     *             Contain the id of the requested dam
+     *            Contain the id of the requested dam
      */
-    public static function getDam($damId) {
+    public static function getDam($damId)
+    {
         $damService = Manager::getService("Dam");
         
         return $damService->findById($damId);
     }
-    
+
     /**
      * Find a content by its id
-     * 
+     *
      * @param string $contentId
-     *             Contain the id of the requested content
+     *            Contain the id of the requested content
      */
-    public static function getContent($contentId) {
+    public static function getContent($contentId)
+    {
         $contentService = Manager::getService("Contents");
         
-        $return = $contentService->findById($contentId,true,false);
+        $return = $contentService->findById($contentId, true, false);
         return $return;
     }
-    
+
     /**
      * Return true if the given page is in the current rootline
-     * 
+     *
      * @param string $pageId
-     *         id of the page
+     *            id of the page
      * @return boolean
      */
-    public static function isInRootline($pageId) {
+    public static function isInRootline($pageId)
+    {
         return Manager::getService("Pages")->isInRootline($pageId);
     }
-    
+
     /**
      * Get the media type
      */
-    public static function getMediaType($mediaId) {
+    public static function getMediaType($mediaId)
+    {
         return Manager::getService("Dam")->getMediaType($mediaId);
     }
-    
-    public static function mbucfirst($string) {
-        $e ='utf-8';
-        if (function_exists('mb_strtoupper') && function_exists('mb_substr') && !empty($string)) { 
-            $string = mb_strtolower($string, $e); 
-            $upper = mb_strtoupper($string, $e); 
-            preg_match('#(.)#us', $upper, $matches); 
-            $string = $matches[1] . mb_substr($string, 1, mb_strlen($string, $e), $e); 
-        } else { 
+
+    public static function mbucfirst($string)
+    {
+        $e = 'utf-8';
+        if (function_exists('mb_strtoupper') && function_exists('mb_substr') && ! empty($string)) {
+            $string = mb_strtolower($string, $e);
+            $upper = mb_strtoupper($string, $e);
+            preg_match('#(.)#us', $upper, $matches);
+            $string = $matches[1] . mb_substr($string, 1, mb_strlen($string, $e), $e);
+        } else {
             $string = ucfirst($string); 
         } 
         return $string; 
