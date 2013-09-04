@@ -798,8 +798,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     	// for big data set
     	set_time_limit(240);
     	
-        // bulk size
-        $bulkSize = 500;
+        // bulk enabled   
         $bulk = true;
         
         // Initialize result array
@@ -808,11 +807,13 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Retrieve data and ES index for type
         switch ($option) {
             case 'content':
+                $bulkSize = 500;
                 $serviceType = 'ContentTypes';
                 $serviceData = 'Contents';
                 $contentType = self::$_content_index->getType($id);
                 break;
             case 'dam':
+                $bulkSize = 50;
                 $serviceType = 'DamTypes';
                 $serviceData = 'Dam';
                 $contentType = self::$_dam_index->getType($id);
