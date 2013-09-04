@@ -52,6 +52,7 @@ class Module
         $this->initSettings($config);
         $this->initRoles($config);
         $this->initBlocks($config);
+        $this->initTemplates($config);
         SessionData::setSessionName($config['session']['name']);
         
         Interfaces\config::initInterfaces();
@@ -282,6 +283,11 @@ class Module
     protected function initBlocks($config)
     {
         \Rubedo\Collection\Blocks::setConfig($config['blocksDefinition']);
+    }
+    
+    protected function initTemplates($config)
+    {
+        \Rubedo\Templates\FrontOfficeTemplates::setConfig($config['templates']);
     }
 
     protected function toDeadEnd(MvcEvent $event,\Exception $exception)

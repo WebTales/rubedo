@@ -30,7 +30,10 @@ use Zend\Json\Json;
  */
 class FrontOfficeTemplates implements IFrontOfficeTemplates
 {
-
+    protected static $config;
+    
+    
+    
     /**
      * twig environnelent object
      *
@@ -43,7 +46,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      *
      * @var array
      */
-    protected $_options = array();
+    protected $options = array();
 
     /**
      * Directory containing twig templates
@@ -74,6 +77,22 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     protected static $_themeHasBeenSet = false;
 
     /**
+     * @return the $config
+     */
+    public function getConfig()
+    {
+        return FrontOfficeTemplates::$config;
+    }
+
+	/**
+     * @param field_type $config
+     */
+    public static function setConfig($config)
+    {
+        FrontOfficeTemplates::$config = $config;
+    }
+
+	/**
      * Constructor
      */
     public function __construct()
@@ -89,24 +108,30 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     protected function _init()
     {
-        $this->_options = array(
+        $config = $this->getConfig();
+        
+        $this->options = array(
             'templateDir' => APPLICATION_PATH . "/public/templates",
             'cache' => APPLICATION_PATH . "/cache/twig",
             'debug' => true,
             'auto_reload' => true
         );
         if (isset($this->_service)) {
-            $this->_options = $this->_service->getCurrentOptions();
+            $this->options = $this->_service->getCurrentOptions();
         }
         
         $lang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         // fallback when $lang is not specified in twig function
         locale_set_default($lang);
         
-        $loader = new \Twig_Loader_Filesystem($this->_options['templateDir'] . '/' . $this->getCurrentTheme());
-        $loader->addPath($this->_options['templateDir'] . '/root', 'Root');
-        $loader->addPath($this->_options['templateDir'] . '/root');
-        $this->_twig = new \Twig_Environment($loader, $this->_options);
+        $loader = new \Twig_Loader_Filesystem($this->options['templateDir'] . '/' . $this->getCurrentTheme());
+        $loader->addPath($this->options['templateDir'] . '/root', 'Root');
+        $loader->addPath($this->options['templateDir'] . '/root');
+        $this->_twig = new \Twig_Environment($loader, $this->options);
+        
+        foreach($config['workspaces'] as $name => $path){
+            $loader->prependPath($path,$name);
+        }
         
         $this->_twig->addExtension(new \Twig_Extension_Debug());
         
@@ -159,17 +184,17 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getTemplateDir()
     {
         if (! isset(self::$templateDir)) {
-            $this->_options = array(
+            $this->options = array(
                 'templateDir' => APPLICATION_PATH . "/public/templates",
                 'cache' => APPLICATION_PATH . "/cache/twig",
                 'debug' => true,
                 'auto_reload' => true
             );
             if (isset($this->_service)) {
-                $this->_options = array_merge($this->_options, $this->_service->getCurrentOptions());
+                $this->options = array_merge($this->options, $this->_service->getCurrentOptions());
             }
             
-            self::$templateDir = $this->_options['templateDir'];
+            self::$templateDir = $this->options['templateDir'];
         }
         return self::$templateDir;
     }
