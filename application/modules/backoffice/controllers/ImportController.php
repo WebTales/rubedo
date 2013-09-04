@@ -210,10 +210,10 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
         $contentsService = Rubedo\Services\Manager::getService('Contents');
         $damService = Rubedo\Services\Manager::getService('Dam');
         $fileService = Rubedo\Services\Manager::getService('Files');
-        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        $languagesService = Rubedo\Services\Manager::getService('Languages');
         
         // get active locales for automatic dam translation
-        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        $languagesService = Rubedo\Services\Manager::getService('Languages');
         $activeLocales = $languagesService->getActiveLocales();
         
         $brokenLines = array();
@@ -366,7 +366,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                             $contenti18n[$value["translateToLanguage"]]["locale"] = $value["translateToLanguage"];
                         }
                         $contenti18n[$value["translateToLanguage"]]["fields"][$fieldName] = $currentLine[$value["csvIndex"]];
-                        if (!isset($languages[$value["translateToLanguage"]])) {
+                        if (! isset($languages[$value["translateToLanguage"]])) {
                             $languages[] = $value["translateToLanguage"];
                         }
                     }
@@ -475,10 +475,10 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                             if ($newDam) {
                                                 
                                                 $typeId = $value['mediaTypeId'];
-                                                
                                                 $obj = array();
                                                 $damDirectory = 'notFiled';
                                                 $obj['directory'] = $damDirectory;
+                                                // bug import $typeId null
                                                 $obj['typeId'] = $typeId;
                                                 $obj['mainFileType'] = 'Image';
                                                 $obj['fields'] = array();
@@ -498,8 +498,10 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                                 foreach ($activeLocales as $locale) {
                                                     if ($locale != $workingLanguage) {
                                                         $obj['i18n'][$locale] = array();
-                                                        $obj['i18n'][$locale]['fields'] = array("title" => $info["filename"]);  
-                                                    }                                                  
+                                                        $obj['i18n'][$locale]['fields'] = array(
+                                                            "title" => $info["filename"]
+                                                        );
+                                                    }
                                                 }
                                                 
                                                 $returnArray = $damService->create($obj);
@@ -531,7 +533,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                             $detectedTermText = $currentLine[$value['csvIndex']];
                             if (! empty($detectedTermText)) {
                                 $termsList = explode(",", $detectedTermText);
-
+                                
                                 foreach ($importAsTaxoTranslation as $transKey => $transValue) {
                                     if ($transValue["translatedElement"] == $value['csvIndex']) {
                                         $translationKey = $key;
@@ -540,7 +542,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                 }
                                 $transLocale = $importAsTaxoTranslation[$translationKey]["translateToLanguage"];
                                 $translatedTermsList = explode(",", $currentLine[$importAsTaxoTranslation[$translationKey]["csvIndex"]]);
-
+                                
                                 foreach ($termsList as $termsListKey => $term) {
                                     if ($term != "") {
                                         $theTerm = $taxonomyTermsService->findByVocabularyIdAndName($theTaxoId, $term);
@@ -576,7 +578,6 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                         if (isset($theTerm['data']['id'])) {
                                             $contentParamsTaxonomy[$theTaxoId][] = $theTerm['data']['id'];
                                         }
-                                    
                                 }
                             }
                         }

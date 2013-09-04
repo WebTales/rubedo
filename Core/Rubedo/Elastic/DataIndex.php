@@ -721,11 +721,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     {
     	// for big data set
     	set_time_limit(240);
-    	
-        // Bulk size
-        $bulkSize = 500;
-        $bulk = true;
-        
+    	       
         // Initialize result array
         $result = array();
         
@@ -797,10 +793,7 @@ class DataIndex extends DataAbstract implements IDataIndex
     {
     	// for big data set
     	set_time_limit(240);
-    	
-        // bulk enabled   
-        $bulk = true;
-        
+    	        
         // Initialize result array
         $result = array();
         
@@ -808,12 +801,14 @@ class DataIndex extends DataAbstract implements IDataIndex
         switch ($option) {
             case 'content':
                 $bulkSize = 500;
+                $bulk = true;
                 $serviceType = 'ContentTypes';
                 $serviceData = 'Contents';
                 $contentType = self::$_content_index->getType($id);
                 break;
             case 'dam':
                 $bulkSize = 50;
+                $bulk = true;
                 $serviceType = 'DamTypes';
                 $serviceData = 'Dam';
                 $contentType = self::$_dam_index->getType($id);
