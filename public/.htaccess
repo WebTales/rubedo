@@ -34,7 +34,7 @@ RewriteRule ^/$ /index.php [L]
 ####################################################################
 RewriteRule ^backoffice$ /backoffice/ [L,R=301]
 RewriteRule ^backoffice(/)?$ /index.php [L]
-RewriteRule ^backoffice/app/appextensions/.* /index.php [L]
+RewriteRule ^backoffice/app/([^/]*)/appextensions/.* /index.php [L]
 RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [L]
 
 ####################################################################

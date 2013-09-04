@@ -122,9 +122,9 @@ return array(
         ),
         // AppExtension route : prefix by backoffice/app
         'AppExtension' => array(
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => array(
-                'route' => '/backoffice/app/appextensions',
+                'route' => '/backoffice/app/:type/appextensions',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\Backoffice\Controller',
                     'controller' => 'AppExtension',
