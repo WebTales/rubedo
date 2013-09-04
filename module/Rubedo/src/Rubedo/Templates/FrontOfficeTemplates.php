@@ -30,10 +30,9 @@ use Zend\Json\Json;
  */
 class FrontOfficeTemplates implements IFrontOfficeTemplates
 {
+
     protected static $config;
-    
-    
-    
+
     /**
      * twig environnelent object
      *
@@ -77,6 +76,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     protected static $_themeHasBeenSet = false;
 
     /**
+     *
      * @return the $config
      */
     public function getConfig()
@@ -84,15 +84,16 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return FrontOfficeTemplates::$config;
     }
 
-	/**
-     * @param field_type $config
+    /**
+     *
+     * @param field_type $config            
      */
     public static function setConfig($config)
     {
         FrontOfficeTemplates::$config = $config;
     }
 
-	/**
+    /**
      * Constructor
      */
     public function __construct()
@@ -111,35 +112,31 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $config = $this->getConfig();
         
         $this->options = array(
-            'templateDir' => APPLICATION_PATH . "/public/templates",
-            'cache' => APPLICATION_PATH . "/cache/twig",
-            'debug' => true,
-            'auto_reload' => true
+            'templateDir' => $config['templateDir'],
+            'cache' => $config['cache'],
+            'debug' => $config['debug'],
+            'auto_reload' => $config['auto_reload'],
+            'overrideThemes' => $config['overrideThemes']
         );
-        if (isset($this->_service)) {
-            $this->options = $this->_service->getCurrentOptions();
-        }
-        
-        $lang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
-        // fallback when $lang is not specified in twig function
-        locale_set_default($lang);
         
         $loader = new \Twig_Loader_Filesystem($this->options['templateDir'] . '/' . $this->getCurrentTheme());
+        
         $loader->addPath($this->options['templateDir'] . '/root', 'Root');
         $loader->addPath($this->options['templateDir'] . '/root');
         $this->_twig = new \Twig_Environment($loader, $this->options);
         
-        foreach($config['workspaces'] as $name => $path){
-            $loader->prependPath($path,$name);
+        foreach ($config['workspaces'] as $name => $path) {
+            $loader->prependPath($path, $name);
+        }
+        
+        if (isset($this->options['overrideThemes']) && isset($this->options['overrideThemes'][$this->getCurrentTheme()])) {
+            $loader->prependPath($this->options['overrideThemes'][$this->getCurrentTheme()]);
         }
         
         $this->_twig->addExtension(new \Twig_Extension_Debug());
         
-        $this->_twig->addExtension(new Translate($lang));
         $this->_twig->addExtension(new BackOfficeTranslate());
         $this->_twig->addExtension(new FrontOfficeTranslate());
-        
-        // $this->_twig->addExtension(new \Twig_Extension_Highlight());
         
         $this->_twig->addExtension(new \Twig_Extensions_Extension_Intl());
         
@@ -184,15 +181,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getTemplateDir()
     {
         if (! isset(self::$templateDir)) {
+            $config = $this->getConfig();
             $this->options = array(
-                'templateDir' => APPLICATION_PATH . "/public/templates",
-                'cache' => APPLICATION_PATH . "/cache/twig",
-                'debug' => true,
-                'auto_reload' => true
+                'templateDir' => $config['templateDir'],
+                'cache' => $config['cache'],
+                'debug' => $config['debug'],
+                'auto_reload' => $config['auto_reload'],
+                'overrideThemes' => $config['overrideThemes']
             );
-            if (isset($this->_service)) {
-                $this->options = array_merge($this->options, $this->_service->getCurrentOptions());
-            }
             
             self::$templateDir = $this->options['templateDir'];
         }
@@ -425,8 +421,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             preg_match('#(.)#us', $upper, $matches);
             $string = $matches[1] . mb_substr($string, 1, mb_strlen($string, $e), $e);
         } else {
-            $string = ucfirst($string); 
-        } 
-        return $string; 
-    } 
+            $string = ucfirst($string);
+        }
+        return $string;
+    }
 }

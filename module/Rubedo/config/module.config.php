@@ -17,6 +17,7 @@ $viewArray = include (__DIR__ . '/views.config.php');
 $localizationConfig = include (__DIR__ . '/localization.config.php');
 $router = include (__DIR__ . '/router.config.php');
 $blocksDefinition = include (__DIR__ . '/blocks.definition.config.php');
+$templateConfig = include (__DIR__ . '/templates.config.php');
 
 foreach ($serviceMapArray as $key => $value) {
     $serviceSharedMapArray[$key] = false;
@@ -96,5 +97,7 @@ $config['elastic'] = array(
 );
 
 $config['blocksDefinition'] = $blocksDefinition;
+
+$config['templates'] = $templateConfig;
 
 return $config;
