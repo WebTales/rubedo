@@ -7,13 +7,13 @@
         <div class="span12">
             {% if display.showCal %}
                 <div id='calendar-{{ prefix }}' class='calendar-rubedo'>
-                    {% include 'root/blocks/calendar/table.html.twig' %}
+                    {% include '@Root/blocks/calendar/table.html.twig' %}
                 </div>
             {% endif %}
             
             {% if display.showList %}
                 <div id='calendar-items-{{ prefix }}' class="calendar-items-rubedo">
-                    {% include 'root/blocks/calendar/list.html.twig' %}
+                    {% include '@Root/blocks/calendar/list.html.twig' %}
                 </div>
             {% endif %}
         </div>

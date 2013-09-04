@@ -20,42 +20,42 @@
     	               {% if cValue %}
     	                   {%if cValue["cType"]=="ImagePickerField"%}
           					    {% if value != "" %}
-          					        {% include 'root/blocks/fields/mediaField.html.twig' %}
+          					        {% include '@Root/blocks/fields/mediaField.html.twig' %}
           					    {% endif %}
           					{%elseif(cValue["cType"]=="CKEField")%}
-          						{% include 'root/blocks/fields/CKEfield.html.twig' %}
+          						{% include '@Root/blocks/fields/CKEfield.html.twig' %}
           					{%elseif(cValue["cType"]=="ratingField")%}
-          						{% include 'root/blocks/fields/rating.html.twig' %}
+          						{% include '@Root/blocks/fields/rating.html.twig' %}
           					{%elseif(cValue["cType"]=="textareafield")%}
-          						{% include 'root/blocks/fields/textarea.html.twig' %}
+          						{% include '@Root/blocks/fields/textarea.html.twig' %}
           					{%elseif(cValue["cType"]=="textfield")%}
-          						{% include 'root/blocks/fields/text.html.twig' %}
+          						{% include '@Root/blocks/fields/text.html.twig' %}
           					{%elseif(cValue["cType"]=="slider")%}
-          						{% include 'root/blocks/fields/slider.html.twig' %}
+          						{% include '@Root/blocks/fields/slider.html.twig' %}
     						{%elseif(cValue["cType"]=="treepicker")%}
-    							{% include 'root/blocks/fields/link-to-page.html.twig' %}
+    							{% include '@Root/blocks/fields/link-to-page.html.twig' %}
     						{%elseif(cValue["cType"]=="localiserField")%}
     						    {% if value is defined %}
-    							    {% include 'root/blocks/fields/localiser.html.twig' %}
+    							    {% include '@Root/blocks/fields/localiser.html.twig' %}
     							{% endif %}
           					{%elseif(cValue["cType"]=="datefield")%}
-    							    {% include 'root/blocks/fields/date.html.twig' %}
+    							    {% include '@Root/blocks/fields/date.html.twig' %}
     					    {%elseif(cValue["cType"]=="combobox")%}
-    							    {% include 'root/blocks/fields/combobox.html.twig' %}
+    							    {% include '@Root/blocks/fields/combobox.html.twig' %}
     						{%elseif(cValue["cType"]=="timefield")%}
-    							{% include 'root/blocks/fields/time.html.twig' %}
+    							{% include '@Root/blocks/fields/time.html.twig' %}
     						{%elseif(cValue["cType"]=="numberfield")%}
-    							{% include 'root/blocks/fields/number.html.twig' %}
+    							{% include '@Root/blocks/fields/number.html.twig' %}
     						{%elseif(cValue["cType"]=="externalMediaField")%}
-    							{% include 'root/blocks/fields/external-media.html.twig' %}
+    							{% include '@Root/blocks/fields/external-media.html.twig' %}
     						{%elseif(cValue["cType"]=="checkboxfield")%}
-    							{% include 'root/blocks/fields/checkbox.html.twig' %}
+    							{% include '@Root/blocks/fields/checkbox.html.twig' %}
     						{%elseif(cValue["cType"]=="checkboxgroup")%}
-    							{% include 'root/blocks/fields/checkboxgroup.html.twig' %}
+    							{% include '@Root/blocks/fields/checkboxgroup.html.twig' %}
     						{%elseif(cValue["cType"]=="radiogroup")%}
-    							{% include 'root/blocks/fields/radiogroup.html.twig' %}
+    							{% include '@Root/blocks/fields/radiogroup.html.twig' %}
     						{%elseif(cValue["cType"]=="DCEField")%}
-    							{% include 'root/blocks/fields/dcefield.html.twig' %}
+    							{% include '@Root/blocks/fields/dcefield.html.twig' %}
           					{%endif%}
     	               {% endif %}
     	           {% endif %}
