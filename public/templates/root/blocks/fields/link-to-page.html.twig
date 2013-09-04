@@ -1,12 +1,12 @@
 {% if(type[key]["config"]["multivalued"])and data[key] is iterable %}
     {% for item in data[key] %}
-    {% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
+    {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
         <div>
         	<a href="{{url({pageId: item},true)}}">{{getPageTitle(item)}}</a>
         </div>
     {% endfor %} 
 {% else %}
-{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
+{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
     <div>
     	<a href="{{url({pageId: data[key]},true)}}">{{getPageTitle(data[key])}}</a>
     </div>

@@ -1,8 +1,8 @@
-{% extends "root/block.html.twig" %}
+{% extends "@Root/block.html.twig" %}
 
 {% block mainContent %} 
 	<div class="block headline">
-	{% include "/root/blocks/edition/full-edition-button.html.twig" %}
+	{% include "/blocks/edition/full-edition-button.html.twig" %}
 	{% for row in customLayoutRows %} 
 	   <div class="row-fluid {{ row.responsiveClass }} {{ row.classHTML }}" style="{{ row.elementStyle }}">
 	   {% for col in row.columns %}
@@ -12,7 +12,7 @@
 	               {% if assignedField.name=="text"%}
 	                   <h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h1>
 	               {% elseif assignedField.name=="summary"%}
-	                   {% include "/root/blocks/fields/CKEfield.html.twig" with {"data": data, "key": "summary"} %}
+	                   {% include "/blocks/fields/CKEfield.html.twig" with {"data": data, "key": "summary"} %}
 	               {% else %}
 	                   {% set key=assignedField.name %}
     	               {% set value=data[assignedField.name] %}
@@ -68,6 +68,6 @@
     
 </div>
 {% if activateDisqus and disqusKey %}
-{{ include('root/blocks/disqus/disqus.html.twig') }}
+{{ include('blocks/disqus/disqus.html.twig') }}
 {% endif %}
 {% endblock %}

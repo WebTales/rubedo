@@ -8,7 +8,7 @@
     	{%else%}
     		{%set decimal = "true"%}
 		{%endif%}
-		{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
+		{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
 		<div id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-rate="{{ item }}">
 			{%for i in 1..type[key]["config"]["numberOfStars"]%}
 				{%if loop.index==fvalue and decimal=="true" %}
@@ -31,7 +31,7 @@
 	{% else %}
 	    {% set decimal = "true" %}
 	{% endif %}
-	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
+	{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
 	<div id="{{ data.id }}_{{ key }}" data-rate="{{ data[key] }}">
 		{%for i in 1..type[key]["config"]["numberOfStars"]%}
 			{%if loop.index==fvalue and decimal=="true" %}

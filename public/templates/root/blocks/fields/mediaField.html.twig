@@ -6,13 +6,13 @@
             {% set mediaType = getMediaType(contentId) %}
             
             {% if mediaType == "Image" %}
-                {% include 'root/blocks/fields/imageField.html.twig' with {data: {(key) : item, id : data.id}, index : number} %}
+                {% include 'blocks/fields/imageField.html.twig' with {data: {(key) : item, id : data.id}, index : number} %}
             {% elseif mediaType == "Video" %}
-                {% include 'root/blocks/fields/videoField.html.twig' %}
+                {% include 'blocks/fields/videoField.html.twig' %}
             {% elseif mediaType == "Audio" %}
-                {% include 'root/blocks/fields/audioField.html.twig' %}
+                {% include 'blocks/fields/audioField.html.twig' %}
             {% elseif mediaType == "Document" %}
-                {% include 'root/blocks/fields/documentField.html.twig' %}
+                {% include 'blocks/fields/documentField.html.twig' %}
             {% endif %}
         {% endif %}
     {% endfor %}
@@ -26,13 +26,13 @@
         {% set mediaType = getMediaType(contentId) %}
         
         {% if mediaType == "Image" %}
-            {% include 'root/blocks/fields/imageField.html.twig' %}
+            {% include 'blocks/fields/imageField.html.twig' %}
         {% elseif mediaType == "Video" %}
-            {% include 'root/blocks/fields/videoField.html.twig' %}
+            {% include 'blocks/fields/videoField.html.twig' %}
         {% elseif mediaType == "Audio" %}
-            {% include 'root/blocks/fields/audioField.html.twig' %}
+            {% include 'blocks/fields/audioField.html.twig' %}
         {% elseif mediaType == "Document" %}
-            {% include 'root/blocks/fields/documentField.html.twig' %}
+            {% include 'blocks/fields/documentField.html.twig' %}
         {% endif %}
     {% endif %}
 {% endif %}

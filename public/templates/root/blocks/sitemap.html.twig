@@ -1,4 +1,4 @@
-{% extends "root/block.html.twig" %} 
+{% extends "@Root/block.html.twig" %} 
 
 {% block mainContent %}
     <input type="hidden" value="{%if displayLevel %}{{ displayLevel }}{% else %}0{% endif %}" id="displayLevel" />
@@ -7,7 +7,7 @@
         {% for page in pages %}
             <li>{% if page.pages is defined %}<a href="#" class="expend" onclick="editList(this, '{{ page.id }}');return false;"><i class="icon-minus min"></i></a>{% endif %}<a href="{{ page.url }}">{{ page.title }}</a></li>
             {% if page.pages is defined %}
-                {% include "root/blocks/tree/pages.html.twig" with {"pages" : page.pages, "rootPage" : page} only %}
+                {% include "/blocks/tree/pages.html.twig" with {"pages" : page.pages, "rootPage" : page} only %}
             {% endif %}
         {% endfor %}
     </ul>

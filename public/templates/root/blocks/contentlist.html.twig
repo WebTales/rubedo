@@ -1,4 +1,4 @@
-{% extends "root/block.html.twig" %}
+{% extends "@Root/block.html.twig" %}
 
 {% block mainContent %}
 
@@ -24,14 +24,14 @@
         
     <div id='list-{{ prefix }}'>
         {% block mainList %}
-    	    {% include '/root/blocks/contentList/list.html.twig' %}
+    	    {% include '/blocks/contentList/list.html.twig' %}
     	{% endblock %}
     </div>
         
     {% if blockConfig.showPager %}
         <div id='list-pager-{{ prefix }}'>
         	{% block pager %}
-        	    {% include '/root/blocks/contentList/pager.html.twig' %}
+        	    {% include '/blocks/contentList/pager.html.twig' %}
         	{% endblock %}
     	</div>
 	{% endif %}

@@ -10,9 +10,9 @@
 	{% if blocks %}
 		{% for block in blocks %}
 		    {% if not block.data %}
-		    {% include [block.template,'root/block.html.twig'] %}
+		    {% include [block.template,'block.html.twig'] %}
 		    {% else %}
-		    {% include [block.template,'root/block.html.twig'] with block.data %}
+		    {% include [block.template,'block.html.twig'] with block.data %}
 		    {% endif %}
 			
 			

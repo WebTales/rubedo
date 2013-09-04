@@ -1,9 +1,9 @@
-{% extends "root/block.html.twig" %}
+{% extends "@Root/block.html.twig" %}
 
 {% block mainContent %}
 
     <div class="block headline">
-        {% include "/root/blocks/edition/full-edition-button.html.twig" %}
+        {% include "/blocks/edition/full-edition-button.html.twig" %}
     
 		<h2 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h2>
 		<div class="alignright">
@@ -17,14 +17,14 @@
 		<br>
 		
 		{% if data.date %}
-		    {% include "/root/blocks/fields/date.html.twig" with { "key" : "date" } %}
+		    {% include "/blocks/fields/date.html.twig" with { "key" : "date" } %}
         {% endif %}
         <br>
         
 		<div class="row-fluid">
             {% if data.image %}
                 <div class="span3">
-                    {% include "/root/blocks/fields/mediaField.html.twig" with { "key" : "image" } %}
+                    {% include "/blocks/fields/mediaField.html.twig" with { "key" : "image" } %}
                 </div>
             {% endif %}
     
@@ -33,12 +33,12 @@
             {% else %}
                 <div class="span12">
             {% endif %}
-                {% include "/root/blocks/fields/CKEfield.html.twig" with { "key" : "body" } %}
+                {% include "/blocks/fields/CKEfield.html.twig" with { "key" : "body" } %}
             </div>
         </div>
     </div>
     {% if activateDisqus and disqusKey %}
-        {{ include('root/blocks/disqus/disqus.html.twig') }}
+        {{ include('blocks/disqus/disqus.html.twig') }}
     {% endif %}
     
 {% endblock %}

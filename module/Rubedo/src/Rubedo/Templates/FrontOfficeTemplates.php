@@ -103,7 +103,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         //fallback when $lang is not specified in twig function
         locale_set_default($lang);
         
-        $loader = new \Twig_Loader_Filesystem($this->_options['templateDir']);
+        $loader = new \Twig_Loader_Filesystem($this->_options['templateDir'].'/'.$this->getCurrentTheme()); 
+        $loader->addPath($this->_options['templateDir'].'/root','Root');
+        $loader->addPath($this->_options['templateDir'].'/root');
         $this->_twig = new \Twig_Environment($loader, $this->_options);
         
         $this->_twig->addExtension(new \Twig_Extension_Debug());
@@ -181,6 +183,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public function getFileThemePath ($path)
     {
+        return $path;
         if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
             return '' . $this->getCurrentTheme() . '/' . $path;
         } else {

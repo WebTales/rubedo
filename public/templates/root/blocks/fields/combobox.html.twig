@@ -1,6 +1,6 @@
 {%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
 	{% for item in data[key] %}
-	{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
+	{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
 		<ul>
         {% for option in item %}
             {% for dataelement in type[key]["store"]["data"] %}
@@ -12,7 +12,7 @@
         </ul>
 	{% endfor %}
 {% else %}
-{% include "/root/blocks/edition/edition-tooltip-button.html.twig" %}
+{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
     <ul>
     {% for option in data[key] %}
             {% for dataelement in type[key]["store"]["data"] %}

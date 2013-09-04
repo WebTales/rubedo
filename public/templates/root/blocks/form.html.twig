@@ -1,4 +1,4 @@
-{% extends "root/block.html.twig" %} 
+{% extends "@Root/block.html.twig" %} 
 
 {% block mainContent %}
 {% set progress= ((currentFormPage+1)*100)/nbFormPages %}
@@ -26,7 +26,7 @@
 	        <input type="hidden" name="currentFormPage" value="{{ currentFormPage }}"/>
 	        
 	        {% for field in formFields.elements %}
-	            {%   include "/root/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
+	            {%   include "/blocks/forms/"~field.itemConfig.fType~".html.twig" %}
 	        {% endfor %}
 	        
             <div class="row-fluid">
