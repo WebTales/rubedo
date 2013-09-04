@@ -17,7 +17,7 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Interfaces\Elastic\IDataIndex, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Elastic\IDataIndex, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using
@@ -632,12 +632,16 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         // Add taxonomy
         if (isset($data["taxonomy"])) {
+            
+            $taxonomyService = Manager::getService('Taxonomy');
             $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+            
             foreach ($data["taxonomy"] as $vocabulary => $terms) {
+                
                 if (! is_array($terms)) {
                     continue;
                 }
-                $taxonomy = Manager::getService('Taxonomy')->findById($vocabulary);
+                $taxonomy = $taxonomyService->findById($vocabulary);
                 $termsArray = array();
                 
                 foreach ($terms as $term) {
@@ -794,24 +798,22 @@ class DataIndex extends DataAbstract implements IDataIndex
     	// for big data set
     	set_time_limit(240);
     	        
-        // Initialize result array
+        // Initialize result array and variables     
         $result = array();
-        
+        $itemCount = 0;
+        $this->_documents = array();
+                
         // Retrieve data and ES index for type
         switch ($option) {
             case 'content':
                 $bulkSize = 500;
-                $bulk = true;
-                $serviceType = 'ContentTypes';
                 $serviceData = 'Contents';
-                $contentType = self::$_content_index->getType($id);
+                $serviceType = 'ContentTypes';
                 break;
             case 'dam':
-                $bulkSize = 50;
-                $bulk = true;
-                $serviceType = 'DamTypes';
+                $bulkSize = 100;
                 $serviceData = 'Dam';
-                $contentType = self::$_dam_index->getType($id);
+                $serviceType = 'DamTypes';
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server("Option argument should be set to content or dam", "Exception65");
@@ -821,44 +823,101 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Retrieve data and ES index for type
         
         $type = Manager::getService($serviceType)->findById($id);
-        
-        $itemCount = 0;
-        $start = 0;
-        $this->_documents = array();
-        
+              
         // Index all dam or contents from given type
         
-        $dataService = Manager::getService($serviceData);
+        if (!class_exists("ZendJobQueue")) {
+               
+            do {
+                
+                $nbIndexedItems = $this->bulkIndex($option, $id, $itemCount, $bulkSize);
+                
+                $itemCount+=$nbIndexedItems;
+                       
+            } while ($nbIndexedItems == $bulkSize);
         
-        do {
+        } else {
             
-            $itemList = $dataService->getByType($id, $start, $bulkSize);
+            // Get total items to be indexed
             
-            foreach ($itemList["data"] as $item) {
-                
-                if ($option == 'content') {
-                    $this->indexContent($item, $bulk);
-                }
-                
-                if ($option == 'dam') {
-                    $this->indexDam($item, $bulk);
-                }
-                
-                $itemCount ++;
+            $dataService = Manager::getService($serviceData);
+            
+            $filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
+            
+            $totalToBeIndexed = $dataService->count($filter);
+
+            $queue = new \ZendJobQueue();
+            $start = 0;
+
+            // Push jobs in queue
+            
+            if ($totalToBeIndexed > 0) {
+                do {
+                    
+                    $jobID = $queue->createHttpJob("http://rubedo.local/queue?service=ElasticDataIndex&class=bulkIndex&Option=$option&id=$id&start=$start&bulkSize=$bulkSize");
+                    $start+=$bulkSize;
+                    
+                    
+                } while ($start<$totalToBeIndexed);
             }
             
-            if (! empty($this->_documents)) {
-                
-                $contentType->addDocuments($this->_documents);
-                $contentType->getIndex()->refresh();
-                empty($this->_documents);
-                $start += $bulkSize;
-            }
+            $itemCount = $totalToBeIndexed;           
             
-        } while (count($itemList['data']) == $bulkSize);
+        }
         
         $result[$type['type']] = $itemCount;
         
         return ($result);
+    }
+
+    public function bulkIndex ($option, $id, $start, $bulkSize) {
+        
+        switch ($option) {
+            case 'content':
+                $serviceData = 'Contents';
+                $contentType = self::$_content_index->getType($id);
+                break;
+            case 'dam':
+                $serviceData = 'Dam';
+                $contentType = self::$_dam_index->getType($id);
+                break;
+            default:
+                throw new \Rubedo\Exceptions\Server("Option argument should be set to content or dam", "Exception65");
+                break;
+        }
+        
+        $this->_documents = array();
+                
+        $dataService = Manager::getService($serviceData);
+        $wasFiltered = $dataService::disableUserFilter();
+        $itemList = $dataService->getByType($id, (int) $start, (int) $bulkSize);
+        $dataService::disableUserFilter($wasFiltered);
+        foreach ($itemList["data"] as $item) {
+        
+            if ($option == 'content') {
+                $this->indexContent($item, TRUE);
+            }
+        
+            if ($option == 'dam') {
+                $this->indexDam($item, TRUE);
+            }
+        
+        }
+        
+        if (! empty($this->_documents)) {
+        
+            $contentType->addDocuments($this->_documents);
+            $contentType->getIndex()->refresh();
+            empty($this->_documents);
+            $return  = count($itemList['data']);
+            
+        } else {
+            
+            $return = 0;
+            
+        }      
+
+        return $return;
+        
     }
 }
