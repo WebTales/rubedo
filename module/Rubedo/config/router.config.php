@@ -124,7 +124,7 @@ return array(
         'AppExtension' => array(
             'type' => 'Literal',
             'options' => array(
-                'route' => '/backoffice/app',
+                'route' => '/backoffice/app/appextensions',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\Backoffice\Controller',
                     'controller' => 'AppExtension',
