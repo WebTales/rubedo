@@ -300,8 +300,13 @@ class Queries extends AbstractCollection implements IQueries
         }
     
         /* Add filter on FieldRule */
-        foreach ($query['fieldRules'] as $value) {
-            $property=$value['field'];
+        foreach ($query['fieldRules'] as $key => $value) {
+            if (isset($value['field'])){
+                $property=$value['field'];
+            }
+            else{
+                $property=$key;
+            }
             //Contain the type of the field (date, time, text ...)
             $fieldType = "";
     
