@@ -37,6 +37,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         $this->_typeReader = Manager::getService('ContentTypes');
         
         $blockConfig = $this->getRequest()->getParam('block-config');
+        $site = $this->getRequest()->getParam('site');
         $output["blockConfig"] = $blockConfig;
         
         $mongoId = $this->getRequest()->getParam('content-id');
@@ -184,7 +185,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
             $customLayoutRows=array();
             if ((isset($type['layouts']))&&(is_array($type['layouts']))){
                 foreach ($type['layouts'] as $key => $value) {
-                    if (($value['type']=="Detail")&&($value['active'])){
+                    if (($value['type']=="Detail")&&($value['active'])&&($value['site']==$site['id'])){
                         $hasCustomLayout=true;
                         $customLayoutRows=$value['rows'];
                     }
