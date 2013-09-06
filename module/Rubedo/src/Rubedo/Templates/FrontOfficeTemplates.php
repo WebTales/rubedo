@@ -125,7 +125,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $loader->addPath($this->options['templateDir'] . '/root');
         $this->_twig = new \Twig_Environment($loader, $this->options);
         
-        foreach ($config['workspaces'] as $name => $path) {
+        foreach ($config['namespaces'] as $name => $path) {
             $loader->prependPath($path, $name);
         }
         
@@ -208,18 +208,24 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         if (pathinfo($path, PATHINFO_EXTENSION) == 'twig') {
             return $path;
         } else {
+            
+            if(strpos($path, '@')===0){
+                $path = str_replace('@', 'ws-',$path);
+            }
             return 'theme/' . $this->getCurrentTheme() . '/' . $path;
-        }
-        
-        if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
-            return '' . $this->getCurrentTheme() . '/' . $path;
-        } else {
-            return 'root/' . $path;
         }
     }
 
     public function getFilePath($theme, $path)
     {
+        $namespace = null;
+        if(strpos($path, 'ws-')===0){
+            $path = str_replace('ws-','',$path);
+            $segmentArray = explode('/',$path);
+            
+            $namespace = array_shift($segmentArray);
+            $path = implode('/', $segmentArray);
+        }
         // no longer use this function for twig : use advanced twig_loader config
         if (in_array(pathinfo($path, PATHINFO_EXTENSION), array(
             'twig',
@@ -233,6 +239,13 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
         if (isset($config['overrideThemes'][$theme])) {
             $dir = $config['overrideThemes'][$theme];
+            if (is_file($dir . '/' . $path)) {
+                return $dir . '/' . $path;
+            }
+        }
+        
+        if ($namespace && isset($config['namespaces'][$namespace])) {
+            $dir = $config['namespaces'][$namespace];
             if (is_file($dir . '/' . $path)) {
                 return $dir . '/' . $path;
             }

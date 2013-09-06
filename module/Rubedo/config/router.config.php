@@ -160,7 +160,7 @@ return array(
                 'default' => array(
                     'type' => 'Segment',
                     'options' => array(
-                        'route' => '/:theme/:filepath{-}',
+                        'route' => '/:theme/:filepath{*}',
                         '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
                         'constraints' => array(),
                         'defaults' => array()

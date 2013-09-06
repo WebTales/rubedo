@@ -7,7 +7,7 @@ return array(
     'templateDir' => APPLICATION_PATH . "/public/templates",
     'debug' => false,
     'auto_reload' => true,
-    'workspaces' => array(),
+    'namespaces' => array(),
     'overrideThemes' => array(),
     'themes' => array(
         'default' => array(
