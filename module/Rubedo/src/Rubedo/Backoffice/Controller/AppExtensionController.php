@@ -39,7 +39,11 @@ class AppExtensionController extends AbstractActionController
     function indexAction()
     {
         $value = Manager::getService('AppExtension')->getGlobalBlocksJson();
-        return new JsonModel($value);
+        $result = array(
+            'success' => true,
+            'data' => $value
+        );
+        return new JsonModel($result);
     }
 
     function getFileAction()
