@@ -20,8 +20,6 @@ return array(
     'ElasticDataSearch' => 'Rubedo\\Elastic\\DataSearch',
     'FieldTypes' => 'Rubedo\\Collection\\FieldTypes',
     'Files' => 'Rubedo\\Collection\\Files',
-    'Forms' => 'Rubedo\\Collection\\Forms',
-    'FormsResponses' => 'Rubedo\\Collection\\FormsResponses',
     'FrontOfficeTemplates' => 'Rubedo\\Templates\\FrontOfficeTemplates',
     'Groups' => 'Rubedo\\Collection\\Groups',
     'Hash' => 'Rubedo\\Security\\Hash',
