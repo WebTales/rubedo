@@ -8,5 +8,6 @@ return array(
     'Rubedo\\Frontoffice\\Controller\\XhrLanguage' => 'Rubedo\\Frontoffice\\Controller\\XhrLanguageController',
     'Rubedo\\Frontoffice\\Controller\\XhrAuthentication' => 'Rubedo\\Frontoffice\\Controller\\XhrAuthenticationController',
     'Rubedo\\Frontoffice\\Controller\\XhrEdit' => 'Rubedo\\Frontoffice\\Controller\\XhrEditController',
-    'Rubedo\\Frontoffice\\Controller\\Tiny' => 'Rubedo\\Frontoffice\\Controller\\TinyController'
+    'Rubedo\\Frontoffice\\Controller\\Tiny' => 'Rubedo\\Frontoffice\\Controller\\TinyController',
+    'Rubedo\\Frontoffice\\Controller\\Theme' => 'Rubedo\\Frontoffice\\Controller\\ThemeController'
 );

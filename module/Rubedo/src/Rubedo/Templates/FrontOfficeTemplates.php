@@ -215,6 +215,19 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             return 'root/' . $path;
         }
     }
+    
+    public function getFilePath($theme,$path){
+        // no longer use this function for twig : use advanced twig_loader config
+        if (pathinfo($path, PATHINFO_EXTENSION) == 'twig') {
+            return false;
+        }
+        
+        if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
+            return $this->getTemplateDir().'/' . $this->getCurrentTheme() . '/' . $path;
+        } else {
+            return $this->getTemplateDir().'/root/' . $path;
+        }
+    }
 
     public function templateFileExists($path)
     {
