@@ -197,9 +197,9 @@ class ContentSingleController extends AbstractController
             $output["contentTitles"] = $contentTitlesArray;
             
             $js = array(
-                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
-                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
-                '/templates/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js")
+                $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
+                $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
+                $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js")
             );
             
             if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {

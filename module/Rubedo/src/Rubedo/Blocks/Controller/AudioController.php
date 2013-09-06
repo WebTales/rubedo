@@ -58,7 +58,7 @@ class AudioController extends AbstractController
         $css = array();
         $js = array(
             '/components/longtailvideo/jwplayer/jwplayer.js',
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/video.js")
         );
         return $this->_sendResponse($output, $template, $css, $js);
     }

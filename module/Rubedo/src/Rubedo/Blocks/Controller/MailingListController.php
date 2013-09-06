@@ -46,7 +46,7 @@ class MailingListController extends AbstractController
         
         $css = array();
         $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/mailingList.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/mailingList.js")
         );
         
         return $this->_sendResponse($output, $template, $css, $js);

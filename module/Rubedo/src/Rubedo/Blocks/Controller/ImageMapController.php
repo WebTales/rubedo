@@ -59,7 +59,7 @@ class ImageMapController extends AbstractController
         $css = array();
         $js = array(
             "/components/stowball/jQuery-rwdImageMaps/jquery.rwdImageMaps.min.js",
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/imagemap.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/imagemap.js")
         );
         return $this->_sendResponse($output, $template, $css, $js);
     }

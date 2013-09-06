@@ -207,6 +207,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         // no longer use this function for twig : use advanced twig_loader config
         if (pathinfo($path, PATHINFO_EXTENSION) == 'twig') {
             return $path;
+        } else {
+            return 'theme/' . $this->getCurrentTheme() . '/' . $path;
         }
         
         if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
@@ -215,17 +217,38 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             return 'root/' . $path;
         }
     }
-    
-    public function getFilePath($theme,$path){
+
+    public function getFilePath($theme, $path)
+    {
         // no longer use this function for twig : use advanced twig_loader config
-        if (pathinfo($path, PATHINFO_EXTENSION) == 'twig') {
+        if (in_array(pathinfo($path, PATHINFO_EXTENSION), array(
+            'twig',
+            'php'
+        ))) {
             return false;
         }
+        $config = $this->getConfig();
+        if (! isset($config['themes'][$theme])) {
+            return false;
+        }
+        if (isset($config['overrideThemes'][$theme])) {
+            $dir = $config['overrideThemes'][$theme];
+            if (is_file($dir . '/' . $path)) {
+                return $dir . '/' . $path;
+            }
+        }
         
-        if (is_file($this->getTemplateDir() . '/' . $this->getCurrentTheme() . '/' . $path)) {
-            return $this->getTemplateDir().'/' . $this->getCurrentTheme() . '/' . $path;
+        if (isset($config['themes'][$theme]['basePath'])) {
+            $dir = $config['themes'][$theme]['basePath'];
+            if (is_file($dir . '/' . $path)) {
+                return $dir . '/' . $path;
+            }
+        }
+        
+        if (is_file($config['rootTemplateDir'] . '/' . $path)) {
+            return $config['rootTemplateDir'] . '/' . $path;
         } else {
-            return $this->getTemplateDir().'/root/' . $path;
+            return false;
         }
     }
 

@@ -108,8 +108,8 @@ class IndexController extends AbstractActionController
     /**
      * Main Action : render the Front Office view
      */
-    public function indexAction ()
-    {       
+    public function indexAction()
+    {
         if ($this->params()->fromQuery('tk', null)) {
             $redirectParams = array(
                 'action' => 'index',
@@ -124,7 +124,7 @@ class IndexController extends AbstractActionController
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
         $this->_servicePage = Manager::getService('PageContent');
-                
+        
         $this->_pageId = $this->params()->fromRoute('pageId');
         $this->_servicePage->setCurrentPage($this->_pageId);
         
@@ -139,6 +139,7 @@ class IndexController extends AbstractActionController
             throw new \Rubedo\Exceptions\Server('Protocol is not set for current site', "Exception14");
         }
         /**
+         *
          * @todo rewrite this in ZF2 way
          */
         if (! in_array($httpProtocol, $this->_site['protocol'])) {
@@ -194,15 +195,18 @@ class IndexController extends AbstractActionController
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
         
         // Load the CSS files
-        $this->_servicePage->appendCss('/templates/' . $this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
+        $this->_servicePage->appendCss($this->getRequest()
+            ->getBasePath() . '/' . $this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
         
         $canEdit = $isLoggedIn && Manager::getService('Acl')->hasAccess('write.frontoffice.contents');
         
         // load the javaScripts files
         if ($canEdit) {
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
-            $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
-            $this->_servicePage->appendJs('/templates/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
+            $this->_servicePage->appendJs($this->getRequest()
+                ->getBasePath() . '/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
+            $this->_servicePage->appendJs($this->getRequest()
+                ->getBasePath() . '/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
             
             if (Manager::getService('CurrentUser')->getLanguage() == 'en') {
                 $datepickerJs = 'jquery.ui.datepicker-en-GB.js';
@@ -244,7 +248,7 @@ class IndexController extends AbstractActionController
         $twigVar['isDraft'] = Context::isDraft();
         $twigVar["baseUrl"] = $this->getRequest()->getBasePath();
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
-        if ($twigVar['theme']=="customtheme"){
+        if ($twigVar['theme'] == "customtheme") {
             $twigVar['customThemeId'] = $this->_serviceTemplate->getCustomThemeId();
         }
         $twigVar['lang'] = $lang;
@@ -314,7 +318,7 @@ class IndexController extends AbstractActionController
      *            requested URL
      * @return array
      */
-    protected function _getPageInfo ($pageId)
+    protected function _getPageInfo($pageId)
     {
         $this->_mask = Manager::getService('Masks')->findById($this->_pageInfo['maskId']); // maskId
         if (! $this->_mask) {
@@ -369,7 +373,7 @@ class IndexController extends AbstractActionController
         return $this->_pageInfo;
     }
 
-    protected function _getSingleBlock ()
+    protected function _getSingleBlock()
     {
         $block = array();
         $block['configBloc'] = array();
@@ -384,7 +388,7 @@ class IndexController extends AbstractActionController
         return $block;
     }
 
-    protected function _getMainColumn ()
+    protected function _getMainColumn()
     {
         return isset($this->_mask['mainColumnId']) ? $this->_mask['mainColumnId'] : null;
     }
@@ -395,7 +399,7 @@ class IndexController extends AbstractActionController
      * @param array $columns            
      * @return array
      */
-    protected function _getColumnsInfos (array $columns = null, $noSpan = false)
+    protected function _getColumnsInfos(array $columns = null, $noSpan = false)
     {
         if ($columns === null) {
             return null;
@@ -432,7 +436,7 @@ class IndexController extends AbstractActionController
      * @param array $item            
      * @return array
      */
-    protected function localizeTitle (array $item)
+    protected function localizeTitle(array $item)
     {
         if (isset($item['i18n'])) {
             if (isset($item['i18n'][Manager::getService('CurrentLocalization')->getCurrentLocalization()])) {
@@ -459,7 +463,7 @@ class IndexController extends AbstractActionController
      * @param array $blocks            
      * @return array
      */
-    protected function _getBlocksInfos (array $blocks)
+    protected function _getBlocksInfos(array $blocks)
     {
         $returnArray = array();
         foreach ($blocks as $block) {
@@ -474,7 +478,7 @@ class IndexController extends AbstractActionController
      * @param array $rows            
      * @return array
      */
-    protected function _getRowsInfos (array $rows = null)
+    protected function _getRowsInfos(array $rows = null)
     {
         if ($rows === null) {
             return null;
@@ -514,7 +518,7 @@ class IndexController extends AbstractActionController
      *            bloc options (type, filter params...)
      * @return array block data to be rendered
      */
-    protected function _getBlockData ($block)
+    protected function _getBlockData($block)
     {
         // $queryString = $this->getRequest()->getQuery();
         // $queryString->set('file-id', $media['originalFileId']);
@@ -545,10 +549,10 @@ class IndexController extends AbstractActionController
         $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()
             ->getUri()
             ->getHost());
-        if(isset( $block['configBloc']['fileName'])){
+        if (isset($block['configBloc']['fileName'])) {
             $params['template'] = $block['configBloc']['fileName'];
         }
-        if(isset($block['configBloc']['constrainToSite'])){
+        if (isset($block['configBloc']['constrainToSite'])) {
             $params['constrainToSite'] = $block['configBloc']['constrainToSite'];
         }
         $contentIdParam = $this->params()->fromRoute('content-id');
@@ -584,7 +588,7 @@ class IndexController extends AbstractActionController
         return $return;
     }
 
-    protected function _buildResponsiveClass ($responsiveArray)
+    protected function _buildResponsiveClass($responsiveArray)
     {
         foreach ($responsiveArray as $key => $value) {
             if (false == $value) {

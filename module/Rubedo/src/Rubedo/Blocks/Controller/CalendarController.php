@@ -43,7 +43,7 @@ class CalendarController extends ContentListController
         }
         $css = array();
         $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/calendar.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/calendar.js")
         );
         return $this->_sendResponse($output, $template, $css, $js);
     }

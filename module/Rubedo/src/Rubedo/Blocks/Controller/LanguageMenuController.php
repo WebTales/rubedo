@@ -78,7 +78,7 @@ class LanguageMenuController extends AbstractController
         
         $css = array();
         $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/language.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/language.js")
         );
         
         return $this->_sendResponse($output, $template, $css, $js);

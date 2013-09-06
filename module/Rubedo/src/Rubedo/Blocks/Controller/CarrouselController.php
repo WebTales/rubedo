@@ -106,7 +106,7 @@ class CarrouselController extends ContentListController
         
         $css = array();
         $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/gallery.js")
         );
         return $this->_sendResponse($output, $template, $css, $js);
     }

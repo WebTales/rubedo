@@ -3,6 +3,7 @@ $themePath = realpath(APPLICATION_PATH . '/public/templates');
 
 return array(
     'cache' => APPLICATION_PATH . "/cache/twig",
+    'rootTemplateDir' => $themePath . "/root",
     'templateDir' => APPLICATION_PATH . "/public/templates",
     'debug' => false,
     'auto_reload' => true,

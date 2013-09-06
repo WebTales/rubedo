@@ -112,8 +112,8 @@ class SearchController extends AbstractController
         
         $css = array();
         $js = array(
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js"),
-            '/templates/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/autocomplete.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js"),
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/autocomplete.js")
         );
         
         return $this->_sendResponse($results, $template, $css, $js);
