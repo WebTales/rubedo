@@ -1,10 +1,10 @@
 <?php
-$themePath = realpath(APPLICATION_PATH . '/public/templates');
+$themePath = realpath(APPLICATION_PATH . '/templates');
 
 return array(
     'cache' => APPLICATION_PATH . "/cache/twig",
     'rootTemplateDir' => $themePath . "/root",
-    'templateDir' => APPLICATION_PATH . "/public/templates",
+    'templateDir' => APPLICATION_PATH . "/templates",
     'debug' => false,
     'auto_reload' => true,
     'namespaces' => array(),

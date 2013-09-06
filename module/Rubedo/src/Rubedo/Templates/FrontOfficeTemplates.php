@@ -116,7 +116,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             'cache' => $config['cache'],
             'debug' => $config['debug'],
             'auto_reload' => $config['auto_reload'],
-            'overrideThemes' => $config['overrideThemes']
+            'overrideThemes' => $config['overrideThemes'],
+            'rootTemplateDir' => $config['rootTemplateDir']
         );
         
         $loader = new \Twig_Loader_Filesystem($this->options['templateDir'] . '/' . $this->getCurrentTheme());
@@ -187,7 +188,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
                 'cache' => $config['cache'],
                 'debug' => $config['debug'],
                 'auto_reload' => $config['auto_reload'],
-                'overrideThemes' => $config['overrideThemes']
+                'overrideThemes' => $config['overrideThemes'],
+                'rootTemplateDir' => $config['rootTemplateDir']
             );
             
             self::$templateDir = $this->options['templateDir'];
@@ -209,8 +211,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             return $path;
         } else {
             
-            if(strpos($path, '@')===0){
-                $path = str_replace('@', 'ws-',$path);
+            if (strpos($path, '@') === 0) {
+                $path = str_replace('@', 'ws-', $path);
             }
             return 'theme/' . $this->getCurrentTheme() . '/' . $path;
         }
@@ -219,9 +221,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getFilePath($theme, $path)
     {
         $namespace = null;
-        if(strpos($path, 'ws-')===0){
-            $path = str_replace('ws-','',$path);
-            $segmentArray = explode('/',$path);
+        if (strpos($path, 'ws-') === 0) {
+            $path = str_replace('ws-', '', $path);
+            $segmentArray = explode('/', $path);
             
             $namespace = array_shift($segmentArray);
             $path = implode('/', $segmentArray);
@@ -356,29 +358,17 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     public function getAvailableThemes()
     {
-        $templateDirIterator = new \DirectoryIterator($this->getTemplateDir());
-        if (! isset($templateDirIterator)) {
-            throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for template dir', "Exception67");
-        }
-        
         $themeInfosArray = array();
         
-        // get real file themes
-        foreach ($templateDirIterator as $directory) {
-            if ($directory->isDot() || ! $directory->isDir()) {
-                continue;
-            }
-            // ignore generic custom theme folder
-            if ($directory->getFilename() == "customtheme") {
-                continue;
-            }
-            $jsonFilePath = $directory->getPathname() . '/theme.json';
-            if (is_file($jsonFilePath)) {
-                $themeJson = file_get_contents($jsonFilePath);
-                $themeInfos = Json::decode($themeJson, Json::TYPE_ARRAY);
-                $themeInfosArray[] = $themeInfos;
-            }
+        // get declared themes
+        $config = $this->getConfig();
+        foreach ($config['themes'] as $key => $value) {
+            $themeInfosArray[] = array(
+                'text' => $key,
+                'label' => $value['label']
+            );
         }
+        
         // get database custom themes
         $customThemesArray = Manager::getService('CustomThemes')->getList();
         $customThemesArray = $customThemesArray['data'];
