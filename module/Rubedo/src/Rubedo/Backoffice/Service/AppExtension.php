@@ -27,9 +27,11 @@ use Zend\Json\Json;
  */
 class AppExtension
 {
+
     protected static $config;
-    
-	/**
+
+    /**
+     *
      * @return the $config
      */
     public function getConfig()
@@ -37,29 +39,38 @@ class AppExtension
         return AppExtension::$config;
     }
 
-	/**
-     * @param field_type $config
+    /**
+     *
+     * @param field_type $config            
      */
     public static function setConfig($config)
     {
         AppExtension::$config = $config;
     }
-    
+
     /**
      * Return the real path name of the given application
-     * 
-     * @param string $extensionName
+     *
+     * @param string $extensionName            
      * @return string
      */
-    public function getBasePath($extensionName){
+    public function getBasePath($extensionName)
+    {
         $config = $this->getConfig();
-        if(!isset($config[$extensionName])){
+        if (! isset($config[$extensionName])) {
             throw new \Rubedo\Exceptions\Server('Unknown application');
-        }else{
+        } else {
             return $config[$extensionName]['basePath'];
         }
     }
 
-    
-    
+    public function getGlobalBlocksJson()
+    {
+        $globalArray = array();
+        foreach ($this->getConfig() as $appConfig) {
+            $blockJsonData = file_get_contents($appConfig['definitionFile']);
+            $globalArray[] = Json::decode($blockJsonData, Json::TYPE_ARRAY);
+        }
+        return $globalArray;
+    }
 }
