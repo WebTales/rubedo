@@ -40,10 +40,11 @@ class AppExtensionController extends AbstractActionController
     {
         $data=array(
             array(
-                "models"=>array("resources.extensionstest.dummyextension.dummyModel"),
-                "stores"=>array("resources.extensionstest.dummyextension.DummyStore"),
-                "views"=>array("resources.extensionstest.dummyextension.DummyWindow"),
-                "controllers"=>array("resources.extensionstest.dummyextension.DummyController")
+                "extensionName"=>"dummyextension",
+                "models"=>array("dummyModel"),
+                "stores"=>array("DummyStore"),
+                "views"=>array("DummyWindow"),
+                "controllers"=>array("DummyController")
             )
         );
         $config = array(
