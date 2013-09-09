@@ -29,7 +29,7 @@ $view = $child->getVariables();
 			<a class="brand"
 				href="<?php echo $this->url(null,array(),array('action'=>'index'));?>">Rubedo
 				Install Tool</a>
-			<?php if(isset($view['displayMode']) && $view['displayMode']!='wizard' && $view['displayMode']!='start-wizard'){?>
+			<?php if((isset($view['displayMode']) && $view['displayMode']!='wizard' && $view['displayMode']!='start-wizard') || !isset($view['displayMode'])){?>
 			<div class="nav-collapse collapse">
 				<ul class="nav">
 				    <?php if(isset($view['navigationContainer'])){?>
