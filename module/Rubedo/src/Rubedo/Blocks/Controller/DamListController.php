@@ -18,6 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 
 /**
  *
@@ -32,10 +33,10 @@ class DamListController extends AbstractController
     {
         
         // get search parameters
-        $params = $this->getRequest()->getParams();
+        $params = $this->params()->fromQuery();
         $blockConfig = $params['block-config'];
         
-        $params['pager'] = $this->getParam('pager', 0);
+        $params['pager'] = $this->params()->fromQuery('pager', 0);
         $params['orderbyDirection'] = 'asc';
         $params['orderby'] = 'text';
         $params['pagesize'] = 25;
@@ -53,7 +54,7 @@ class DamListController extends AbstractController
         // apply predefined facets
         $facetsToHide = array();
         if (isset($params['block-config']['facets'])) {
-            $predefParamsArray = \Zend_Json::decode($params['block-config']['facets']);
+            $predefParamsArray = Json::decode($params['block-config']['facets'],Json::TYPE_ARRAY);
             if (is_array($predefParamsArray)) {
                 foreach ($predefParamsArray as $key => $value) {
                     $params[$key] = $value;
@@ -61,7 +62,7 @@ class DamListController extends AbstractController
                 }
             }
         }
-        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
         $results = $query->search($params, 'dam');
@@ -87,8 +88,8 @@ class DamListController extends AbstractController
         foreach ($results['data'] as $key => $value) {
             $results['data'][$key]['fileSize'] = $this->humanfilesize($value['fileSize']);
         }
-        $results['displayTitle'] = $this->getParam('displayTitle');
-        $results['blockTitle'] = $this->getParam('blockTitle');
+        $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
+        $results['blockTitle'] = $this->params()->fromQuery('blockTitle');
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
