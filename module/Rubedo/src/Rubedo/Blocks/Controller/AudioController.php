@@ -29,8 +29,8 @@ class AudioController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
-        $output = $this->getAllParams();
+        $blockConfig = $this->params()->fromQuery('block-config', array());
+        $output = $this->params()->fromQuery();
         $output['audioAutoPlay'] = isset($blockConfig['audioAutoPlay']) ? $blockConfig['audioAutoPlay'] : false;
         $output['audioPreload'] = isset($blockConfig['audioPreload']) ? $blockConfig['audioPreload'] : false;
         $output['audioControls'] = isset($blockConfig['audioControls']) ? $blockConfig['audioControls'] : true;

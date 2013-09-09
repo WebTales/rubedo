@@ -29,7 +29,7 @@ class AddthisfollowController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         $networks = $blockConfig;
         unset($networks["disposition"]);
         unset($networks["small"]);
@@ -38,7 +38,7 @@ class AddthisfollowController extends AbstractController
             $fields["userId"] = $user;
             $data[] = $fields;
         }
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['networks'] = $data;
         $output["type"] = isset($blockConfig["disposition"]) ? $blockConfig["disposition"] : "Horizontal";
         $output['small'] = $blockConfig['small'] == 1 ? false : true;
