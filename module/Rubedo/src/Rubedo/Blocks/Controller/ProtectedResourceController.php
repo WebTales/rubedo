@@ -32,8 +32,8 @@ class ProtectedResourceController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
-        $output = $this->getAllParams();
+        $blockConfig = $this->params()->fromQuery('block-config', array());
+        $output = $this->params()->fromQuery();
         
         if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
             $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
@@ -66,15 +66,15 @@ class ProtectedResourceController extends AbstractController
     public function xhrSubmitEmailAction ()
     {
         // Default mailing list
-        $this->mailingListId = $this->getParam("mailing-list-id");
+        $this->mailingListId = $this->params()->fromPost("mailing-list-id");
         if (! $this->mailingListId) {
             throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
-        $this->damId = $this->getParam("dam-id");
+        $this->damId = $this->params()->fromPost("dam-id");
         if (! $this->damId) {
             throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }
-        $this->siteId = $this->getParam("site-id");
+        $this->siteId = $this->params()->fromPost("site-id");
         if (! $this->siteId) {
             throw new \Rubedo\Exceptions\User("Incomplete form.", "Exception19");
         }

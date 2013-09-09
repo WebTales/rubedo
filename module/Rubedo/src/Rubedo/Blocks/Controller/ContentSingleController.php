@@ -59,16 +59,17 @@ class ContentSingleController extends AbstractController
                                 $terms
                             );
                         }
-                        
-                        foreach ($terms as $term) {
-                            $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
-                            
-                            if ($readTerm === null) {
-                                $readTerm = array();
-                            }
-                            
-                            foreach ($readTerm as $key => $value) {
-                                $termsArray[$key][] = $value;
+                        if (is_array($terms)){
+                            foreach ($terms as $term) {
+                                $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
+                                
+                                if ($readTerm === null) {
+                                    $readTerm = array();
+                                }
+                                
+                                foreach ($readTerm as $key => $value) {
+                                    $termsArray[$key][] = $value;
+                                }
                             }
                         }
                     }

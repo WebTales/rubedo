@@ -39,8 +39,8 @@ class ResourceController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
-        $output = $this->getAllParams();
+        $blockConfig = $this->params()->fromQuery('block-config', array());
+        $output = $this->params()->fromQuery();
         
         if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
             $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
@@ -50,10 +50,11 @@ class ResourceController extends AbstractController
         }
         if (isset($blockConfig['documentId'])) {
             $params = array(
-                'media-id' => $blockConfig['documentId'],
-                'attachment' => 'download'
+                'media-id='.$blockConfig['documentId'],
+                'attachment=download'
             );
-            $output['downloadUrl'] = $this->_helper->url('index', 'dam', 'default', $params);
+            
+            $output['downloadUrl'] =$this->url()->fromRoute("frontoffice/default",array('controller'=>'dam')).'?'.implode('&amp;',$params);
         }
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
