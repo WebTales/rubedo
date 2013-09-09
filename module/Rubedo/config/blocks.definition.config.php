@@ -83,7 +83,7 @@ return array(
         'definitionFile' => $blocksPath . '/image.json'
     ),
     'imageGallery' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\ImageGallery',
+        'controller' => 'Rubedo\\Blocks\\Controller\\Gallery',
         'definitionFile' => $blocksPath . '/imageGallery.json'
     ),
     'imageMap' => array(
@@ -126,8 +126,8 @@ return array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Text',
         'definitionFile' => $blocksPath . '/simpleText.json'
     ),
-    'sitemap' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\Sitemap',
+    'siteMap' => array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\SiteMap',
         'definitionFile' => $blocksPath . '/sitemap.json'
     ),
     'twig' => array(

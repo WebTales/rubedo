@@ -32,7 +32,7 @@ class SiteMapController extends AbstractController
 
     public function indexAction ()
     {
-        $params = $this->getAllParams();
+        $params = $this->params()->fromQuery();
         $blockConfig = $params['block-config'];
         $output = array();
         
@@ -45,22 +45,25 @@ class SiteMapController extends AbstractController
         $levelOnePages = Manager::getService('Pages')->readChild($output['rootPage'], $filters);
         
         $rootPage = Manager::getService('Pages')->findById($output['rootPage']);
-        
+        $urlOptions = array(
+            'encode' => true,
+            'reset' => true
+        );
         $output['pages'] = array();
         
         $output['pages'][] = array(
-            "url" => $this->_helper->url->url(array(
+            "url" => $this->url()->fromRoute(null, array(
                 'pageId' => $rootPage['id']
-            ), null, true),
+            ), $urlOptions),
             "title" => $rootPage["title"],
             "id" => $rootPage["id"]
         );
         
         foreach ($levelOnePages as $page) {
             $tempArray = array();
-            $tempArray['url'] = $this->_helper->url->url(array(
+            $tempArray['url'] = $this->url()->fromRoute(null, array(
                 'pageId' => $page['id']
-            ), null, true);
+            ), $urlOptions);
             
             $tempArray['title'] = $page['title'];
             $tempArray['id'] = $page['id'];
@@ -90,12 +93,15 @@ class SiteMapController extends AbstractController
     protected function _getPages (&$page, $childs)
     {
         $page['pages'] = array();
-        
+        $urlOptions = array(
+            'encode' => true,
+            'reset' => true
+        );
         foreach ($childs as $subPage) {
             $tempSubArray = array();
-            $tempSubArray['url'] = $this->_helper->url->url(array(
+            $tempSubArray['url'] = $this->url()->fromRoute(null, array(
                 'pageId' => $subPage['id']
-            ), null, true);
+            ), $urlOptions);
             $tempSubArray['title'] = $subPage['title'];
             $tempSubArray['id'] = $subPage['id'];
             
