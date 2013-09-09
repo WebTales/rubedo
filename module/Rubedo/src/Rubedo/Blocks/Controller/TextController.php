@@ -29,12 +29,12 @@ class TextController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         $content = array();
         if ($blockConfig["contentId"]) {
             $content = Manager::getService('Contents')->findById($blockConfig["contentId"], true, false);
         }
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['contentId'] = $blockConfig["contentId"];
         $output['text'] = $content["fields"]["body"];
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/text.html.twig");

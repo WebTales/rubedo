@@ -31,16 +31,16 @@ class ContactController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         
         $errors = array();
         
         if (isset($blockConfig['captcha'])) {
-            $contactForm = new Blocks_Model_Contact(null, $blockConfig['captcha']);
+            $contactForm = new \Blocks_Model_Contact(null, $blockConfig['captcha']);
         } else {
-            $contactForm = new Blocks_Model_Contact();
+            $contactForm = new \Blocks_Model_Contact();
         }
         
         // Check if the form was send

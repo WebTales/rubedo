@@ -123,7 +123,7 @@ return array(
         'definitionFile' => $blocksPath . '/searchResults.json'
     ),
     'simpleText' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\SimpleText',
+        'controller' => 'Rubedo\\Blocks\\Controller\\Text',
         'definitionFile' => $blocksPath . '/simpleText.json'
     ),
     'sitemap' => array(
