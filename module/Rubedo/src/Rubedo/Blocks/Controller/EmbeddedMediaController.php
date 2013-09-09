@@ -33,7 +33,7 @@ class EmbeddedMediaController extends AbstractController
      */
     public function indexAction ()
     {
-        $blockConfig = $this->getRequest()->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         
         if (isset($blockConfig['url']) && $blockConfig["url"] != "") {
             
@@ -115,7 +115,7 @@ class EmbeddedMediaController extends AbstractController
                 ));
             }
             
-            $output = $this->getAllParams();
+            $output = $this->params()->fromQuery();
             $output['item'] = $item;
         } else {
             

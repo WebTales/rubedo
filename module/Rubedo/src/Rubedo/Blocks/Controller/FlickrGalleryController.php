@@ -32,11 +32,11 @@ class FlickrGalleryController extends AbstractController
     {
         // $output = $this->_getList();
         $flParams = array();
-        $flParams['page'] = $this->getParam('page', 1);
-        $prefix = $this->getParam('prefix', $this->getParam('prefix'));
-        $output = $this->getAllParams();
+        $flParams['page'] = $this->params()->fromQuery('page', 1);
+        $prefix = $this->params()->fromQuery('prefix');
+        $output = $this->params()->fromQuery();
         
-        $blockConfig = $this->getRequest()->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         
         if (isset($blockConfig['itemsPerPage'])) {
             $flParams['perPage'] = $blockConfig['itemsPerPage'];
@@ -152,26 +152,26 @@ class FlickrGalleryController extends AbstractController
     protected function _getList ()
     {
         $flParams = array();
-        $flParams['page'] = $this->getParam('page', 1);
-        $prefix = $this->getParam('prefix', $this->getParam('prefix'));
-        $output = $this->getAllParams();
+        $flParams['page'] = $this->params()->fromQuery('page', 1);
+        $prefix =$this->params()->fromQuery('prefix');
+        $output =$this->params()->fromQuery();
         
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $flParams['perPage'] = $this->getParam('itemsPerPage', 12);
-            $flParams['user'] = $this->getParam('user', null);
+            $flParams['perPage'] = $this->params()->fromQuery('itemsPerPage', 12);
+            $flParams['user'] = $this->params()->fromQuery('user', null);
             if (empty($flParams['user'])) {
                 unset($flParams['user']);
             }
-            $flParams['tags'] = $this->getParam('tags', null);
+            $flParams['tags'] = $this->params()->fromQuery('tags', null);
             if (empty($flParams['tags'])) {
                 unset($flParams['tags']);
             }
-            $flParams['tag_mode'] = $this->getParam('tagMode', null);
+            $flParams['tag_mode'] = $this->params()->fromQuery('tagMode', null);
             if (empty($flParams['tag_mode'])) {
                 unset($flParams['tag_mode']);
             }
         } else {
-            $blockConfig = $this->getRequest()->getParam('block-config', array());
+            $blockConfig = $this->params()->fromQuery('block-config', array());
             
             if (isset($blockConfig['itemsPerPage'])) {
                 $flParams['perPage'] = $blockConfig['itemsPerPage'];
