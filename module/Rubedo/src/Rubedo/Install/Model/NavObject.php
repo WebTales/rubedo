@@ -18,7 +18,7 @@ namespace Rubedo\Install\Model;
 
 use Zend\Navigation\Page\Mvc;
 use Zend\Navigation\Navigation;
-
+use Rubedo\Services\Manager;
 
 /**
  * Form for DB Config
@@ -37,39 +37,46 @@ class NavObject
     public static function getNav ()
     {
         $container = new Navigation();
+        $routeMatch = Manager::getServiceLocator()->get('Application')->getMvcEvent()->getRouteMatch();
+        $router = Manager::getServiceLocator()->get('Router');
         
         $page = new Mvc(array(
             'label' => 'Database',
             'action' => 'set-db',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
         $page = new Mvc(array(
             'label' => 'ElasticSearch',
             'action' => 'set-elastic-search',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
         $page = new Mvc(array(
             'label' => 'Languages',
             'action' => 'define-languages',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
         $page = new Mvc(array(
             'label' => 'Contents',
             'action' => 'set-db-contents',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
         $page = new Mvc(array(
             'label' => 'Accounts',
             'action' => 'set-admin',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
@@ -78,24 +85,31 @@ class NavObject
         $page = new Mvc(array(
             'label' => 'Mailer',
             'action' => 'set-mailer',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
         $page = new Mvc(array(
             'label' => 'Local domains',
             'action' => 'set-local-domains',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
         $page = new Mvc(array(
             'label' => 'Application settings',
             'action' => 'set-php-settings',
-            'controller' => 'Rubedo\Install\Controller\Index',
+            'controller' => 'index',
+            'route'=>'install/default'
         ));
         $container->addPage($page);
         
+        foreach ($container as $page){
+            $page->setRouteMatch($routeMatch);
+            $page->setRouter($router);
+        }
         
         return $container;
     }

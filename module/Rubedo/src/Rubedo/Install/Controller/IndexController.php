@@ -53,6 +53,7 @@ class IndexController extends AbstractActionController
 
     public function __construct()
     {
+        $this->viewData = new \stdClass();
         \Rubedo\User\CurrentUser::setIsInstallerUser(true);
         
         AbstractCollection::disableUserFilter();
@@ -67,7 +68,7 @@ class IndexController extends AbstractActionController
 
         $this->installObject->loadLocalConfig();
         
-        $this->viewData = new \stdClass();
+        
         
     }
 
@@ -96,7 +97,6 @@ class IndexController extends AbstractActionController
         $this->layout('layout/install');
         $config = $this->installObject->getLocalConfig();
         if (! isset($config['installed']) || $config['installed']['status'] != 'finished') {
-            die('mais !');
             if (! isset($config['installed']['action'])) {
                 $config['installed']['action'] = 'start-wizard';
             }
