@@ -29,19 +29,19 @@ class BreadcrumbsController extends AbstractController
 
     public function indexAction ()
     {
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         
-        $blockConfig = $this->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         $output['displayBlock'] = false;
-        if (($site = $this->getParam('site', false)) && isset($site['homePage'])) {
+        if (($site = $this->params()->fromQuery('site', false)) && isset($site['homePage'])) {
             $rootPage = $site['homePage'];
         }
         
-        $currentPage = $this->getRequest()->getParam('currentPage');
+        $currentPage = $this->params()->fromQuery('currentPage');
         
         $output['currentPage'] = Manager::getService('Pages')->findById($currentPage);
         
-        $rootline = $this->getRequest()->getParam('rootline', array());
+        $rootline = $this->params()->fromQuery('rootline', array());
         $rootline = array_reverse($rootline);
         $rootlineArray = array();
         
@@ -49,7 +49,7 @@ class BreadcrumbsController extends AbstractController
             if ($pageId == $rootPage) {
                 $output['displayBlock'] = true;
             }
-            if ($pageId == $currentPage && ! $this->getParam('content-id')) {
+            if ($pageId == $currentPage && ! $this->params()->fromQuery('content-id')) {
                 continue;
             }
             $rootlineArray[] = Manager::getService('Pages')->findById($pageId);

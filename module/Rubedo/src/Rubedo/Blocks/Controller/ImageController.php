@@ -29,9 +29,9 @@ class ImageController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['mode'] = isset($blockConfig['mode']) ? $blockConfig['mode'] : 'morph';
         $output['imageLink'] = isset($blockConfig['imageLink']) ? $blockConfig['imageLink'] : null;
         $output['externalURL'] = isset($blockConfig['externalURL']) ? $blockConfig['externalURL'] : null;
