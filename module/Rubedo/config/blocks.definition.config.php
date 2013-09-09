@@ -75,7 +75,7 @@ return array(
         'definitionFile' => $blocksPath . '/flickrGallery.json'
     ),
     'geoSearchResults' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\GeoSearchResults',
+        'controller' => 'Rubedo\\Blocks\\Controller\\GeoSearch',
         'definitionFile' => $blocksPath . '/geoSearchResults.json'
     ),
     'image' => array(
