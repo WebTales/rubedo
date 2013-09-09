@@ -33,9 +33,9 @@ class ImageMapController extends AbstractController
      */
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['image'] = $blockConfig['image'];
         if (! isset($output['image'])) {
             $this->_sendResponse(array(), "block.html.twig");
