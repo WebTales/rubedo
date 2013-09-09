@@ -22,7 +22,10 @@ use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataAbstract;
 use WebTales\MongoFilters\Filter;
 use Rubedo\Update\Install;
+use Rubedo\Install\Model\NavObject;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+
 
 
 /**
@@ -36,13 +39,16 @@ use Zend\Mvc\Controller\AbstractActionController;
 class IndexController extends AbstractActionController
 {
 
-    protected $_localConfigDir;
+    protected $localConfigDir;
 
-    protected $_localConfigFile;
+    protected $localConfigFile;
 
     protected $_localConfig;
 
     protected $_applicationOptions = array();
+    
+    protected $installObject;
+    
 
     public function __construct()
     {
@@ -50,20 +56,16 @@ class IndexController extends AbstractActionController
         
         AbstractCollection::disableUserFilter();
         
-        $this->_navigation = Install_Model_NavObject::getNav();
-        $this->view->navigationContainer = $this->_navigation;
+        $this->navigation = NavObject::getNav();
         $this->_setWizardSteps();
         
-        $this->_localConfigDir = realpath(APPLICATION_PATH . '/configs/local/');
-        $this->_localConfigFile = $this->_localConfigDir . '/config.json';
-        $this->view->moduleDir = realpath(__DIR__ . '/..');
-        $this->view->localConfigFile = $this->_localConfigFile;
-        $this->_loadLocalConfig();
-        $this->_applicationOptions = $this->getFrontController()
-            ->getParam('bootstrap')
-            ->getApplication()
-            ->getOptions();
-        $this->view->options = $this->_applicationOptions;
+        $this->installObject = new Install();
+        if (! $this->installObject->isConfigWritable()) {
+            throw new \Rubedo\Exceptions\User('Local config file %1$s should be writable', "Exception29", $this->localConfigFile);
+        }
+
+        $this->installObject->loadLocalConfig();
+        
     }
 
     /**
@@ -73,13 +75,13 @@ class IndexController extends AbstractActionController
     {
         $getNext = false;
         $previous = null;
-        foreach ($this->_navigation as $page) {
+        foreach ($this->navigation as $page) {
             if ($getNext) {
-                $this->view->next = $page;
+                $view->next = $page;
                 break;
             }
             if ($page->isActive()) {
-                $this->view->previous = isset($previous) ? $previous : null;
+                $view->previous = isset($previous) ? $previous : null;
                 $getNext = true;
             }
             $previous = $page;
@@ -88,16 +90,26 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-        if (! $this->_isConfigWritable()) {
-            throw new \Rubedo\Exceptions\User('Local config file %1$s should be writable', "Exception29", $this->_localConfigFile);
-        }
-        if (! isset($this->_localConfig['installed']) || $this->_localConfig['installed']['status'] != 'finished') {
-            if (! isset($this->_localConfig['installed']['action'])) {
-                $this->_localConfig['installed']['action'] = 'start-wizard';
+        $this->layout('layout/install');
+        $config = $this->installObject->getLocalConfig();
+        if (! isset($config['installed']) || $config['installed']['status'] != 'finished') {
+            if (! isset($config['installed']['action'])) {
+                $config['installed']['action'] = 'start-wizard';
             }
-            $action = $this->_localConfig['installed']['action'];
-            $this->redirect($this->_helper->url($action));
+            $redirectParams = array(
+                'controller'=>'index',
+                'action' => $config['installed']['action'],
+            );
+            return $this->redirect()->toRoute('install/default', $redirectParams);
         }
+
+        //$this->installObject->saveLocalConfig();
+        $viewModel = new ViewModel(array(
+            'navigationContainer' => $this->navigation,
+            'localConfigFile'=> $this->installObject->getConfigFilePath()
+        ));
+        $viewModel->setTemplate('rubedo/install/controller/index/index');
+        return $viewModel;
     }
 
     public function dropIndexesAction()
@@ -114,19 +126,24 @@ class IndexController extends AbstractActionController
 
     public function startWizardAction()
     {
-        $this->_localConfig['installed'] = array(
+        $this->layout('layout/install');
+        $config = $this->installObject->getLocalConfig();
+        $config['installed'] = array(
             'status' => 'begin',
             'action' => 'start-wizard'
         );
-        $this->view->displayMode = "start-wizard";
-        $this->_saveLocalConfig();
+        $view = array('displayMode' => "start-wizard");
+        $this->installObject->saveLocalConfig($config);
+        $viewModel = new ViewModel($view);
+        $viewModel->setTemplate('rubedo/install/controller/index/start-wizard');
+        return $viewModel;
     }
 
     public function finishWizardAction()
     {
-        $this->_localConfig['installed']['status'] = 'finished';
+        $config['installed']['status'] = 'finished';
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
         $this->_forward('index');
     }
 
@@ -135,10 +152,12 @@ class IndexController extends AbstractActionController
      */
     public function setDbAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'set-db';
+        $view = new \stdClass();
+        $view->displayMode = 'regular';
+        $config = $this->installObject->getLocalConfig();
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'set-db';
         }
         
         $mongoOptions = isset($this->_applicationOptions["datastream"]["mongo"]) ? $this->_applicationOptions["datastream"]["mongo"] : array();
@@ -162,16 +181,21 @@ class IndexController extends AbstractActionController
             $connectionValid = false;
         }
         if ($connectionValid) {
-            $this->view->isReady = true;
-            $this->_localConfig["datastream"]["mongo"] = $params;
+            $view->isReady = true;
+            $config["datastream"]["mongo"] = $params;
         } else {
-            $this->view->hasError = true;
-            $this->view->errorMsgs = 'Rubedo can\'t connect itself to specified DB';
+            $view->hasError = true;
+            $view->errorMsgs = 'Rubedo can\'t connect itself to specified DB';
         }
         
-        $this->view->form = $dbForm;
+        $view->form = $dbForm;
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
+        $this->layout('layout/install');
+        $viewModel = new ViewModel($view);
+        $viewModel->setTemplate('rubedo/install/controller/index/set-db');
+        return $viewModel;
+        
     }
 
     /**
@@ -179,10 +203,10 @@ class IndexController extends AbstractActionController
      */
     public function setElasticSearchAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'set-elastic-search';
+        $view->displayMode = 'regular';
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'set-elastic-search';
         }
         
         $esOptions = isset($this->_applicationOptions["searchstream"]["elastic"]) ? $this->_applicationOptions["searchstream"]["elastic"] : array();
@@ -205,16 +229,16 @@ class IndexController extends AbstractActionController
             $connectionValid = false;
         }
         if ($connectionValid) {
-            $this->view->isReady = true;
-            $this->_localConfig["searchstream"]["elastic"] = $params;
+            $view->isReady = true;
+            $config["searchstream"]["elastic"] = $params;
         } else {
-            $this->view->hasError = true;
-            $this->view->errorMsgs = 'Rubedo can\'t connect itself to specified ES';
+            $view->hasError = true;
+            $view->errorMsgs = 'Rubedo can\'t connect itself to specified ES';
         }
         
-        $this->view->form = $dbForm;
+        $view->form = $dbForm;
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
     }
 
     /**
@@ -222,10 +246,10 @@ class IndexController extends AbstractActionController
      */
     public function defineLanguagesAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'define-languages';
+        $view->displayMode = 'regular';
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'define-languages';
         }
         
         $params = array();
@@ -276,23 +300,23 @@ class IndexController extends AbstractActionController
         }
         
         if ($ok) {
-            $this->view->isReady = true;
+            $view->isReady = true;
         } else {
-            $this->view->hasError = true;
-            $this->view->errorMsgs = 'A default language should be activated';
+            $view->hasError = true;
+            $view->errorMsgs = 'A default language should be activated';
         }
         
-        $this->view->form = $dbForm;
+        $view->form = $dbForm;
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
     }
 
     public function setMailerAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'set-mailer';
+        $view->displayMode = 'regular';
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'set-mailer';
         }
         
         $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array(
@@ -321,63 +345,63 @@ class IndexController extends AbstractActionController
             $connectionValid = false;
         }
         if ($connectionValid) {
-            $this->view->isSet = true;
-            $this->_localConfig["swiftmail"]["smtp"] = $params;
+            $view->isSet = true;
+            $config["swiftmail"]["smtp"] = $params;
         } else {
-            $this->view->hasError = true;
-            $this->view->errorMsgs = 'Rubedo can\'t connect to SMTP server';
+            $view->hasError = true;
+            $view->errorMsgs = 'Rubedo can\'t connect to SMTP server';
         }
-        $this->view->isReady = true;
-        $this->view->form = $dbForm;
+        $view->isReady = true;
+        $view->form = $dbForm;
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
     }
 
     public function setLocalDomainsAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'set-local-domains';
+        $view->displayMode = 'regular';
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'set-local-domains';
         }
         
         $dbForm = Install_Model_DomainAliasForm::getForm();
         
-        if (! isset($this->_localConfig['site']['override'])) {
-            $this->_localConfig['site']['override'] = array();
+        if (! isset($config['site']['override'])) {
+            $config['site']['override'] = array();
         }
         
         $key = $this->getParam('delete-domain');
         if ($key) {
-            unset($this->_localConfig['site']['override'][$key]);
-            $this->_saveLocalConfig();
+            unset($config['site']['override'][$key]);
+            $this->installObject->saveLocalConfig();
         }
         
         if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
             $params = $dbForm->getValues();
-            $overrideArray = array_values($this->_localConfig['site']['override']);
+            $overrideArray = array_values($config['site']['override']);
             if (in_array($params["localDomain"], $overrideArray)) {
-                $this->view->hasError = true;
-                $this->view->errorMsgs = "A domain can't be used to override twice.";
+                $view->hasError = true;
+                $view->errorMsgs = "A domain can't be used to override twice.";
             } else {
-                $this->_localConfig['site']['override'][$params["domain"]] = $params["localDomain"];
-                $this->_saveLocalConfig();
+                $config['site']['override'][$params["domain"]] = $params["localDomain"];
+                $this->installObject->saveLocalConfig();
             }
         }
         
-        $this->view->isReady = true;
+        $view->isReady = true;
         
-        $this->view->overrideList = $this->_localConfig['site']['override'];
+        $view->overrideList = $config['site']['override'];
         
-        $this->view->form = $dbForm;
+        $view->form = $dbForm;
     }
 
     public function setPhpSettingsAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'set-php-settings';
+        $view->displayMode = 'regular';
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'set-php-settings';
         }
         
         $phpOptions = isset($this->_applicationOptions["phpSettings"]) ? $this->_applicationOptions["phpSettings"] : array();
@@ -388,21 +412,21 @@ class IndexController extends AbstractActionController
         if (isset($this->_applicationOptions["backoffice"]["extjs"]["debug"])) {
             $phpOptions["extDebug"] = $this->_applicationOptions["backoffice"]["extjs"]["debug"];
         }
-        if (isset($this->_localConfig["authentication"]["authLifetime"])) {
-            $phpOptions["authLifetime"] = $this->_localConfig["authentication"]["authLifetime"];
+        if (isset($config["authentication"]["authLifetime"])) {
+            $phpOptions["authLifetime"] = $config["authentication"]["authLifetime"];
         }
-        if (isset($this->_localConfig["resources"]["session"]["name"])) {
-            $phpOptions["sessionName"] = $this->_localConfig["resources"]["session"]["name"];
+        if (isset($config["resources"]["session"]["name"])) {
+            $phpOptions["sessionName"] = $config["resources"]["session"]["name"];
         }
         
         $dbForm = Install_Model_PhpSettingsForm::getForm($phpOptions);
         
         if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
             $params = $dbForm->getValues();
-            $this->_localConfig["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
-            $this->_localConfig["backoffice"]["extjs"]["debug"] = $params["extDebug"];
-            $this->_localConfig["authentication"]["authLifetime"] = $params["authLifetime"];
-            $this->_localConfig["resources"]["session"]["name"] = $params["sessionName"];
+            $config["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
+            $config["backoffice"]["extjs"]["debug"] = $params["extDebug"];
+            $config["authentication"]["authLifetime"] = $params["authLifetime"];
+            $config["resources"]["session"]["name"] = $params["sessionName"];
             $params['display_startup_errors'] = $params['display_errors'];
             unset($params["displayExceptions"]);
             unset($params["extDebug"]);
@@ -410,55 +434,55 @@ class IndexController extends AbstractActionController
             unset($params["sessionName"]);
             // authentication.authLifetime
             // resources.session.name = rubedo
-            $this->_localConfig["phpSettings"] = $params;
+            $config["phpSettings"] = $params;
         }
         
-        $this->view->isReady = true;
+        $view->isReady = true;
         
-        $this->view->form = $dbForm;
+        $view->form = $dbForm;
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
     }
 
     public function setDbContentsAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'set-db-contents';
+        $view->displayMode = 'regular';
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'set-db-contents';
         }
         
         if ($this->getParam('doEnsureIndex', false)) {
-            $this->view->isIndexed = $this->_doEnsureIndexes();
-            if (! $this->view->isIndexed) {
-                $this->view->shouldIndex = true;
+            $view->isIndexed = $this->_doEnsureIndexes();
+            if (! $view->isIndexed) {
+                $view->shouldIndex = true;
             }
         } else {
-            $this->view->shouldIndex = $this->_shouldIndex();
+            $view->shouldIndex = $this->_shouldIndex();
         }
         
         if ($this->getParam('initContents', false)) {
-            $this->view->isContentsInitialized = $this->_doInsertContents();
+            $view->isContentsInitialized = $this->_doInsertContents();
         } else {
-            $this->view->shouldInitialize = $this->_shouldInitialize();
+            $view->shouldInitialize = $this->_shouldInitialize();
         }
         
         if ($this->getParam('doInsertGroups', false)) {
-            $this->view->groupCreated = $this->_docreateDefaultsGroup();
+            $view->groupCreated = $this->_docreateDefaultsGroup();
         }
-        if ($this->_isDefaultGroupsExists() && ! $this->view->shouldIndex && ! $this->view->shouldInitialize) {
-            $this->view->isReady = true;
+        if ($this->_isDefaultGroupsExists() && ! $view->shouldIndex && ! $view->shouldInitialize) {
+            $view->isReady = true;
         }
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
     }
 
     public function setAdminAction()
     {
-        $this->view->displayMode = 'regular';
-        if ($this->_localConfig['installed']['status'] != 'finished') {
-            $this->view->displayMode = "wizard";
-            $this->_localConfig['installed']['action'] = 'set-admin';
+        $view->displayMode = 'regular';
+        if ($config['installed']['status'] != 'finished') {
+            $view->displayMode = "wizard";
+            $config['installed']['action'] = 'set-admin';
         }
         
         $form = Install_Model_AdminConfigForm::getForm();
@@ -481,34 +505,34 @@ class IndexController extends AbstractActionController
             AbstractCollection::disableUserFilter($wasFiltered);
             
             if (! $result) {
-                $this->view->hasError = true;
-                $this->view->errorMsg = $response['msg'];
+                $view->hasError = true;
+                $view->errorMsg = $response['msg'];
             } else {
                 $userId = $response['data']['id'];
                 
                 $groupService = Manager::getService('Groups');
                 $adminGroup['members'][] = $userId;
                 $groupService->update($adminGroup);
-                $this->view->accountName = $params['name'];
+                $view->accountName = $params['name'];
             }
             
-            $this->view->creationDone = $result;
+            $view->creationDone = $result;
         }
         
         $listAdminUsers = Manager::getService('Users')->getAdminUsers();
         
         if ($listAdminUsers['count'] > 0) {
-            $this->view->hasAdmin = true;
-            $this->view->adminAccounts = $listAdminUsers['data'];
-            $this->view->isReady = true;
+            $view->hasAdmin = true;
+            $view->adminAccounts = $listAdminUsers['data'];
+            $view->isReady = true;
         } else {
             
-            $this->view->errorMsgs = 'No Admin Account Set';
+            $view->errorMsgs = 'No Admin Account Set';
         }
         
-        $this->view->form = $form;
+        $view->form = $form;
         
-        $this->_saveLocalConfig();
+        $this->installObject->saveLocalConfig();
     }
 
     protected function _buildConnectionString($options)
@@ -525,39 +549,6 @@ class IndexController extends AbstractActionController
         return $connectionString;
     }
 
-    protected function _isConfigWritable()
-    {
-        if (is_file($this->_localConfigFile)) {
-            return is_writable($this->_localConfigFile);
-        } else {
-            return is_writable($this->_localConfigDir);
-        }
-    }
-
-    protected function _saveLocalConfig()
-    {
-        $iniWriter = new Zend_Config_Writer_Json();
-        $iniWriter->setConfig(new Zend_Config($this->_localConfig));
-        $iniWriter->setFilename($this->_localConfigFile);
-        $iniWriter->setPrettyPrint(true);
-        $iniWriter->write();
-    }
-
-    protected function _loadLocalConfig()
-    {
-        if (is_file($this->_localConfigFile)) {
-            $localConfig = new Zend_Config_Json($this->_localConfigFile, null, array(
-                'allowModifications' => true
-            ));
-        } elseif (is_file(APPLICATION_PATH . '/configs/local.ini')) {
-            $localConfig = new Zend_Config_Ini(APPLICATION_PATH . '/configs/local.ini', null, array(
-                'allowModifications' => true
-            ));
-        } else {
-            $localConfig = new Zend_Config(array(), true);
-        }
-        $this->_localConfig = $localConfig->toArray();
-    }
 
     protected function _doEnsureIndexes()
     {
@@ -571,11 +562,11 @@ class IndexController extends AbstractActionController
             }
         }
         if ($result) {
-            $this->_localConfig['installed']['index'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
+            $config['installed']['index'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
             return true;
         } else {
-            $this->view->hasError = true;
-            $this->view->errorMsgs = 'failed to apply indexes';
+            $view->hasError = true;
+            $view->errorMsgs = 'failed to apply indexes';
             return false;
         }
     }
@@ -605,10 +596,10 @@ class IndexController extends AbstractActionController
         }
         $success = \Rubedo\Update\Install::doCreateDefaultsGroups();
         if (! $success) {
-            $this->view->hasError = true;
-            $this->view->errorMsgs = 'failed to create default groups';
+            $view->hasError = true;
+            $view->errorMsgs = 'failed to create default groups';
         } else {
-            $this->view->isGroupsCreated = true;
+            $view->isGroupsCreated = true;
         }
         
         return $success;
@@ -619,7 +610,7 @@ class IndexController extends AbstractActionController
         $adminGroup = Manager::getService('Groups')->findByName('admin');
         $publicGroup = Manager::getService('Groups')->findByName('public');
         $result = ! is_null($adminGroup) && ! is_null($publicGroup);
-        $this->view->isDefaultGroupsExists = $result;
+        $view->isDefaultGroupsExists = $result;
         return $result;
     }
 
@@ -633,11 +624,11 @@ class IndexController extends AbstractActionController
         }
         
         if (! $success) {
-            $this->view->hasError = true;
-            $this->view->errorMsgs = 'failed to initialize contents';
+            $view->hasError = true;
+            $view->errorMsgs = 'failed to initialize contents';
         } else {
-            $this->_localConfig['installed']['contents'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
-            $this->view->isContentInitialized = true;
+            $config['installed']['contents'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
+            $view->isContentInitialized = true;
         }
         
         return $success;
