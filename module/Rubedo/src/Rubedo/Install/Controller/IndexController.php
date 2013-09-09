@@ -96,6 +96,7 @@ class IndexController extends AbstractActionController
         $this->layout('layout/install');
         $config = $this->installObject->getLocalConfig();
         if (! isset($config['installed']) || $config['installed']['status'] != 'finished') {
+            die('mais !');
             if (! isset($config['installed']['action'])) {
                 $config['installed']['action'] = 'start-wizard';
             }
@@ -143,10 +144,14 @@ class IndexController extends AbstractActionController
 
     public function finishWizardAction()
     {
+        $config = $this->installObject->getLocalConfig();
         $config['installed']['status'] = 'finished';
-        
-        $this->installObject->saveLocalConfig();
-        $this->_forward('index');
+        $this->installObject->saveLocalConfig($config);
+        $redirectParams = array(
+            'controller'=>'index',
+            'action' => 'index',
+        );
+        return $this->redirect()->toRoute('install/default', $redirectParams);
     }
 
     /**
