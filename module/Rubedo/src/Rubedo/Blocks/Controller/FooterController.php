@@ -29,7 +29,7 @@ class FooterController extends AbstractController
 
     public function indexAction ()
     {
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output["items"] = null;
         
         // $template = manager::getService('template')->findTemplateFileFor('carrousel');
