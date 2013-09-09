@@ -33,7 +33,7 @@ class SearchFormController extends AbstractController
     public function indexAction ()
     {
         // get block config
-        $blockConfig = $this->getParam('block-config', array());
+        $blockConfig = $this->params()->fromQuery('block-config', array());
         
         if (isset($blockConfig['searchPage'])) {
             $searchPage = $blockConfig['searchPage'];
@@ -46,7 +46,7 @@ class SearchFormController extends AbstractController
         $css = array();
         $js = array();
         
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['searchPage'] = $searchPage;
         $output['placeholder'] = isset($blockConfig['placeholder']) ? $blockConfig['placeholder'] : null;
         
