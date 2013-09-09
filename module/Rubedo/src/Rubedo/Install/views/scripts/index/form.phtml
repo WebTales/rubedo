@@ -1,0 +1,26 @@
+<?php //form.phtml
+$form = $this->form;
+$form->prepare();
+
+echo $this->form()->openTag($form);
+foreach ($form as $element) {
+    
+    if ($element instanceof Zend\Form\FieldsetInterface) {
+        echo '<div class="form-actions">';
+        echo $this->formCollection()->render($element);
+        echo '</div>';
+    } else {
+        echo '<div class="control-group">';
+        echo '<div>';
+        echo $this->FormLabel($element);
+        echo '</div>';
+        echo '<div class="controls">';
+        echo $this->FormElement()->render($element);
+        echo '</div>';
+        
+        echo '</div>';
+    }
+}
+
+echo $this->form()->closeTag($form);
+//echo $this->form()->render($form);
