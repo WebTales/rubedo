@@ -39,14 +39,14 @@ class GeoSearchController extends AbstractController
 
     public function indexAction ()
     {
-        $googleMapsKey = $this->getRequest()->getParam('googleMapsKey');
-        $params = $this->getRequest()->getParams();
+        $googleMapsKey = $this->params()->fromQuery('googleMapsKey');
+        $params = $this->params()->fromQuery();
         
         $results = $params;
         $results['blockConfig'] = $params['block-config'];
-        $results['encodedConfig']=Zend_Json::encode($results['blockConfig']);
-        $results['displayTitle'] = $this->getParam('displayTitle');
-        $results['blockTitle'] = $this->getParam('blockTitle');
+        $results['encodedConfig']=Json::encode($results['blockConfig']);
+        $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
+        $results['blockTitle'] = $this->params()->fromQuery('blockTitle');
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/geoSearch.html.twig");
         $css = array();
         $js = array(
@@ -64,11 +64,11 @@ class GeoSearchController extends AbstractController
     {
         
         // get params
-        $params = $this->getRequest()->getParams();
+        $params = $this->params()->fromPost();
         
         $params['block-config'] = array();
         $params['block-config']['displayedFacets'] = isset($params['displayedFacets']) ? $params['displayedFacets'] : array();
-        $params['block-config']['facetOverrides'] = isset($params['facetOverrides']) ? $params['facetOverrides'] : \Zend_Json::encode(array());
+        $params['block-config']['facetOverrides'] = isset($params['facetOverrides']) ? $params['facetOverrides'] : Json::encode(array());
         $params['block-config']['displayMode'] = isset($params['displayMode']) ? $params['displayMode'] : 'standard';
         $params['block-config']['autoComplete'] = isset($params['autoComplete']) ? $params['autoComplete'] : false;
         
@@ -78,8 +78,8 @@ class GeoSearchController extends AbstractController
         }
         $facetsToHide = array();
         if (isset($params['constrainToSite']) && $params['constrainToSite'] === 'true') {
-            $currentPageId = $this->getRequest()->getParam('current-page');
-            $currentPage = Rubedo\Services\Manager::getService('Pages')->findById($currentPageId);
+            $currentPageId = $this->params()->fromPost('current-page');
+            $currentPage = \Rubedo\Services\Manager::getService('Pages')->findById($currentPageId);
             $siteId = $currentPage['site'];
             $facetsToHide[] = "navigation";
             if (! isset($params['navigation'])) {
@@ -91,20 +91,21 @@ class GeoSearchController extends AbstractController
         }
         // apply predefined facets
         if (isset($params['predefinedFacets'])) {
-            $predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
-            foreach ($predefParamsArray as $key => $value) {
-                if (! isset($params[$key]) or ! in_array($value, $params[$key]))
-                    $params[$key][] = $value;
-                $facetsToHide[] = $value;
+            $predefParamsArray = Json::decode($params['predefinedFacets'],Json::TYPE_ARRAY);
+            if (is_array($predefParamsArray)){
+                foreach ($predefParamsArray as $key => $value) {
+                    if (! isset($params[$key]) or ! in_array($value, $params[$key]))
+                        $params[$key][] = $value;
+                    $facetsToHide[] = $value;
+                }
             }
         }
         
         $facetsToHide = array_unique($facetsToHide);
         
-        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         
         $query = Manager::getService('ElasticDataSearch');
-        
         $query->init();
         $results = $query->search($params, $this->_option, false);
         $results = $this->_clusterResults($results);
@@ -131,13 +132,13 @@ class GeoSearchController extends AbstractController
     public function xhrGetSuggestsAction ()
     {
         // get search parameters
-        $params = Json::decode($this->getRequest()->getParam('searchParams'), Json::TYPE_ARRAY);
+        $params = Json::decode($this->params()->fromPost('searchParams'), Json::TYPE_ARRAY);
         
         // get current language
         $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         
         // set query
-        $params['query'] = $this->getRequest()->getParam('query');
+        $params['query'] =$this->params()->fromPost('query');
         
         // set field for autocomplete
         $params['field'] = 'autocomplete_' . $currentLocale;
@@ -183,7 +184,7 @@ class GeoSearchController extends AbstractController
         $templateService = Manager::getService('FrontOfficeTemplates');
         $sessionService = Manager::getService('Session');
         // get params
-        $idArray = $this->getRequest()->getParam('idArray');
+        $idArray = $this->params()->fromPost('idArray');
         $itemHtml = '';
         foreach ($idArray as $id) {
             $entity = Rubedo\Services\Manager::getService('Contents')->findById($id, true, false);
