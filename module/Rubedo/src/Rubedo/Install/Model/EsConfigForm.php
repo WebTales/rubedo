@@ -49,10 +49,10 @@ class Install_Model_EsConfigForm extends Install_Model_BootstrapForm
         $damIndexField->setLabel('Dam index name');
 
         $dbForm = new Zend_Form();
-        $dbForm->addElement($serverNameField);
-        $dbForm->addElement($serverPortField);
-        $dbForm->addElement($contentIndexField);
-        $dbForm->addElement($damIndexField);
+        $dbForm->add($serverNameField);
+        $dbForm->add($serverPortField);
+        $dbForm->add($contentIndexField);
+        $dbForm->add($damIndexField);
 
         $dbForm = self::setForm($dbForm);
         

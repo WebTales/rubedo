@@ -52,11 +52,11 @@ class Install_Model_AdminConfigForm extends Install_Model_BootstrapForm
         $emailField->setLabel('Email');
         
         $dbForm = new Zend_Form();
-        $dbForm->addElement($nameField);
-        $dbForm->addElement($loginField);
-        $dbForm->addElement($passwordField);
-        $dbForm->addElement($confirmPasswordField);
-        $dbForm->addElement($emailField);
+        $dbForm->add($nameField);
+        $dbForm->add($loginField);
+        $dbForm->add($passwordField);
+        $dbForm->add($confirmPasswordField);
+        $dbForm->add($emailField);
         
         $dbForm = self::setForm($dbForm);
         

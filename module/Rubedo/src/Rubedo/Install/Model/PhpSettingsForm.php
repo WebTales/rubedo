@@ -74,16 +74,16 @@ class Install_Model_PhpSettingsForm extends Install_Model_BootstrapForm
         
         
         $dbForm = new Zend_Form();
-        //$dbForm->addElement($displayStartupErrors);
-        $dbForm->addElement($displayErrors);
-        $dbForm->addElement($displayExceptions);
-        $dbForm->addElement($extDebug);
-        $dbForm->addElement($sessionName);
-        $dbForm->addElement($authLifetime);
-        $dbForm->addElement($defaultBackofficeHost);
-        $dbForm->addElement($isBackofficeSSL);
-        $dbForm->addElement($enableEmailNotification);
-        $dbForm->addElement($fromEmailNotification);
+        //$dbForm->add($displayStartupErrors);
+        $dbForm->add($displayErrors);
+        $dbForm->add($displayExceptions);
+        $dbForm->add($extDebug);
+        $dbForm->add($sessionName);
+        $dbForm->add($authLifetime);
+        $dbForm->add($defaultBackofficeHost);
+        $dbForm->add($isBackofficeSSL);
+        $dbForm->add($enableEmailNotification);
+        $dbForm->add($fromEmailNotification);
         
         
         

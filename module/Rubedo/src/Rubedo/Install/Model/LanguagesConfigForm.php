@@ -38,7 +38,7 @@ class Install_Model_LanguagesConfigForm extends Install_Model_BootstrapForm
         
  
         $dbForm = new Zend_Form();
-        $dbForm->addElement($languageField);
+        $dbForm->add($languageField);
         
         
         $dbForm = self::setForm($dbForm);

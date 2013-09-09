@@ -9,6 +9,8 @@ return array(
     'rubedo/controller/index/index' => $boViewsPath . '/index/index.phtml',
     'rubedo/controller/index/index' => $boViewsPath . '/index/index.phtml',
     'rubedo/controller/login/index' => $boViewsPath . '/login/index.phtml',
+    'rubedo/install/controller/index/form' => $installViewPath.'/index/form.phtml',
     'rubedo/install/controller/index/index' => $installViewPath.'/index/index.phtml',
-    'rubedo/install/controller/index/start-wizard' => $installViewPath.'/index/start-wizard.phtml'
+    'rubedo/install/controller/index/start-wizard' => $installViewPath.'/index/start-wizard.phtml',
+    'rubedo/install/controller/index/set-db' => $installViewPath.'/index/set-db.phtml'
 );

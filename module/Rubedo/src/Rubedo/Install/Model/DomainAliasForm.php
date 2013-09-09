@@ -38,8 +38,8 @@ class Install_Model_DomainAliasForm extends Install_Model_BootstrapForm
         $localDomainField->setLabel('Local domain');
         
         $dbForm = new Zend_Form();
-        $dbForm->addElement($domainField);
-        $dbForm->addElement($localDomainField);
+        $dbForm->add($domainField);
+        $dbForm->add($localDomainField);
         
         $dbForm = self::setForm($dbForm);
         
