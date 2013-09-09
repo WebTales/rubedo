@@ -14,6 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Install\Model;
+
+use Zend\Navigation\Page\Mvc;
+use Zend\Navigation\Navigation;
+
 
 /**
  * Form for DB Config
@@ -22,7 +27,7 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_NavObject
+class NavObject
 {
     /**
      * return installer navigation
@@ -31,71 +36,63 @@ class Install_Model_NavObject
      */
     public static function getNav ()
     {
-        $container = new Zend_Navigation();
+        $container = new Navigation();
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'Database',
             'action' => 'set-db',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'ElasticSearch',
             'action' => 'set-elastic-search',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'Languages',
             'action' => 'define-languages',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'Contents',
             'action' => 'set-db-contents',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'Accounts',
             'action' => 'set-admin',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         
         
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'Mailer',
             'action' => 'set-mailer',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'Local domains',
             'action' => 'set-local-domains',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         
-        $page = new Zend_Navigation_Page_Mvc(array(
+        $page = new Mvc(array(
             'label' => 'Application settings',
             'action' => 'set-php-settings',
-            'controller' => 'index',
-            'module' => 'install'
+            'controller' => 'Rubedo\Install\Controller\Index',
         ));
         $container->addPage($page);
         

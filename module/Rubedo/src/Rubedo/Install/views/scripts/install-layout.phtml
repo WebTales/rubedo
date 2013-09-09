@@ -22,16 +22,16 @@ echo $this->headLink();
 	<div class="navbar navbar-inverse">
 		<div class="navbar-inner">
 			<a class="brand"
-				href="<?php echo $this->url(array('action'=>'index','module'=>'install'),null,true);?>">Rubedo
+				href="<?php echo $this->url(null,array(),array('action'=>'index'));?>">Rubedo
 				Install Tool</a>
 			<?php if($this->displayMode!='wizard' && $this->displayMode!='start-wizard'){?>
 			<div class="nav-collapse collapse">
 				<ul class="nav">
-                   <?php foreach ($this->navigationContainer as $page){?>
+                   <?php /* foreach ($this->navigationContainer as $page){?>
                        <li <?php if($page->isActive()){?> class="active"
 						<?php }?>><a href="<?php echo $page->getHref();?>"><?php echo $page->getLabel();?></a>
 					</li>
-                   <?php } ?>
+                   <?php } */ ?>
                </ul>
 			</div>
 			<?php }?>
@@ -50,7 +50,7 @@ echo $this->headLink();
 			<div class="span2"></div>
 			<div class="span8">
 				<div class="well">
-    				<?php echo $this->layout()->content?>
+    				<?php echo $this->content;?>
     				<div class='clearfix'></div>
     				<?php if($this->displayMode=='wizard'){?>
                         <ul class="pager">

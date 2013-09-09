@@ -36,6 +36,55 @@ class Install
 
     protected static $translateService;
 
+    protected $configFilePath;
+    
+    protected $configDirPath;
+    
+    protected $localConfig = array();
+    
+
+    public function __construct(){
+        $this->configDirPath = realpath(APPLICATION_PATH . '/config/autoload/');
+        $this->configFilePath = $this->configDirPath . '/local.php';
+    }
+    
+    public function isConfigWritable(){
+        if (is_file($this->configFilePath)) {
+            return is_writable($this->configFilePath);
+        } else {
+            return is_writable($this->configDirPath);
+        }
+    }
+    
+    public function getConfigFilePath(){
+        return $this->configFilePath;
+    }
+
+    public function saveLocalConfig($config=null)
+    {
+        if($config){
+            $this->setLocalConfig($config);
+        }
+        $configContent = "<?php \n return ".var_export($this->getLocalConfig(),true).";";
+        file_put_contents($this->configFilePath, $configContent);
+        //@todo trigger event to clear cache config if used
+    }
+    
+    public function loadLocalConfig()
+    {
+        if (is_file($this->configFilePath)) {
+            $this->localConfig = require $this->configFilePath;
+        }
+    }
+    
+    public function getLocalConfig(){
+        return $this->localConfig;
+    }
+    
+    public function setLocalConfig(array $config){
+        $this->localConfig = $config;
+    }
+    
     public static function doInsertContents()
     {
         $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
@@ -74,10 +123,9 @@ class Install
                     $itemJson = preg_replace_callback('/###(.*)###/U', array(
                         'Rubedo\\Update\\Install',
                         'replaceWithTranslation'
-                        ), $itemJson);
+                    ), $itemJson);
                     
-                    $item = Json::decode($itemJson,Json::TYPE_ARRAY);
-                    
+                    $item = Json::decode($itemJson, Json::TYPE_ARRAY);
                     
                     try {
                         if (! $collectionService->findOne(Filter::factory('Value')->setName('defaultId')
@@ -105,12 +153,12 @@ class Install
             
             self::$translateService = Manager::getService('Translate');
         }
-        if($matches[1]=='Locale'){
+        if ($matches[1] == 'Locale') {
             return \Rubedo\Internationalization\Translate::getDefaultLanguage();
         }
         $result = self::$translateService->translate($matches[1]);
-        if(empty($result)){
-            throw new \Rubedo\Exceptions\Server('can\'t translate :'.$matches[1]);
+        if (empty($result)) {
+            throw new \Rubedo\Exceptions\Server('can\'t translate :' . $matches[1]);
         }
         return $result;
     }
@@ -155,8 +203,8 @@ class Install
                     'replaceWithTranslation'
                 ), $itemJson);
                 
-                $item = Json::decode($itemJson,Json::TYPE_ARRAY);
-                                
+                $item = Json::decode($itemJson, Json::TYPE_ARRAY);
+                
                 if ($item['name'] == 'admin') {
                     $item['workspace'] = $adminWorkspaceId;
                     $item['inheritWorkspace'] = false;

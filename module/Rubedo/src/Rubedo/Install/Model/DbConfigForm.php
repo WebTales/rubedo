@@ -15,7 +15,9 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-
+namespace Rubedo\Install\Model;
+use Zend\Form\Element\Text;
+use Zend\Form\Form;
 /**
  * Form for DB Config
  *
@@ -23,40 +25,40 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_DbConfigForm extends Install_Model_BootstrapForm
+class DbConfigForm extends BootstrapForm
 {
 
     public static function getForm ($params)
     {
-        $serverNameField = new Zend_Form_Element_Text('server');
-        $serverNameField->setRequired(true);
+        $serverNameField = new Text('server');
+        $serverNameField->setAttribute('Required',true);
         $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost');
         $serverNameField->setLabel('Server Name');
         
-        $serverPortField = new Zend_Form_Element_Text('port');
+        $serverPortField = new Text('port');
         $serverPortField->setValue(isset($params['port']) ? $params['port'] :27017);
-        $serverPortField->addValidator('digits');
+        //$serverPortField->addValidator('digits');
         $serverPortField->setLabel('Server Port');
         
-        $dbNameField = new Zend_Form_Element_Text('db');
-        $dbNameField->setRequired(true);
+        $dbNameField = new Text('db');
+        $dbNameField->setAttribute('Required',true);
         $dbNameField->setValue(isset($params['db']) ? $params['db'] : 'rubedo');
         $dbNameField->setLabel('Db Name');
         
-        $serverLoginField = new Zend_Form_Element_Text('login');
+        $serverLoginField = new Text('login');
         $serverLoginField->setValue(isset($params['login']) ? $params['login'] : null);
         $serverLoginField->setLabel('Username');
         
-        $serverPasswordField = new Zend_Form_Element_Text('password');
+        $serverPasswordField = new Text('password');
         $serverPasswordField->setValue(isset($params['password']) ? $params['password'] : null);
         $serverPasswordField->setLabel('Password');
  
-        $dbForm = new Zend_Form();
-        $dbForm->addElement($serverNameField);
-        $dbForm->addElement($serverPortField);
-        $dbForm->addElement($dbNameField);
-        $dbForm->addElement($serverLoginField);
-        $dbForm->addElement($serverPasswordField);
+        $dbForm = new Form();
+        $dbForm->add($serverNameField);
+        $dbForm->add($serverPortField);
+        $dbForm->add($dbNameField);
+        $dbForm->add($serverLoginField);
+        $dbForm->add($serverPasswordField);
         
         $dbForm = self::setForm($dbForm);
         

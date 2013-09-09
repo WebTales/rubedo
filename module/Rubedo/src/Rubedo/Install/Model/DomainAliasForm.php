@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
@@ -23,23 +22,24 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_LanguagesConfigForm extends Install_Model_BootstrapForm
+class Install_Model_DomainAliasForm extends Install_Model_BootstrapForm
 {
-
-    public static function getForm ($params)
-    {
-        $languageField = new Zend_Form_Element_Select('defaultLanguage');
-        $languageField->setRequired(true);
-        $languageField->addMultiOptions($params['languages']);
-        $languageField->setValue($params['defaultLanguage']);
+    public static function getForm(){
         
-        $languageField->setLabel('Default language');
+  
         
         
- 
+        $domainField = new Zend_Form_Element_Text('domain');
+        $domainField->setRequired(true);
+        $domainField->setLabel('Site domain');
+        
+        $localDomainField = new Zend_Form_Element_Text('localDomain');
+        $localDomainField->setRequired(true);
+        $localDomainField->setLabel('Local domain');
+        
         $dbForm = new Zend_Form();
-        $dbForm->addElement($languageField);
-        
+        $dbForm->add($domainField);
+        $dbForm->add($localDomainField);
         
         $dbForm = self::setForm($dbForm);
         

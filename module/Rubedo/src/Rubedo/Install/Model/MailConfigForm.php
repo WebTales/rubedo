@@ -51,11 +51,11 @@ class Install_Model_MailConfigForm extends Install_Model_BootstrapForm
 
         
         $dbForm = new Zend_Form();
-        $dbForm->addElement($serverNameField);
-        $dbForm->addElement($serverPortField);
-        $dbForm->addElement($sslField);
-        $dbForm->addElement($loginField);
-        $dbForm->addElement($passwordField);
+        $dbForm->add($serverNameField);
+        $dbForm->add($serverPortField);
+        $dbForm->add($sslField);
+        $dbForm->add($loginField);
+        $dbForm->add($passwordField);
         
         $dbForm = self::setForm($dbForm);
         
