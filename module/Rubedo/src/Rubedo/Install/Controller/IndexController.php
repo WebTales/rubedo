@@ -49,7 +49,6 @@ class IndexController extends AbstractActionController
         \Rubedo\User\CurrentUser::setIsInstallerUser(true);
         
         AbstractCollection::disableUserFilter();
-        $this->_helper->_layout->setLayout('install-layout');
         
         $this->_navigation = Install_Model_NavObject::getNav();
         $this->view->navigationContainer = $this->_navigation;

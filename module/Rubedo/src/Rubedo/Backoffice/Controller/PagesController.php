@@ -74,6 +74,7 @@ class PagesController extends DataAccessController
     
     /**
      * @todo comment what this action do
+     * @todo migrate to ZF2
      */
     public function getContentListAction()
     {

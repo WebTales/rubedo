@@ -43,7 +43,7 @@ class CustomThemesController extends DataAccessController
         parent::init();
         
         // init the data access service
-        $this->_dataService = Rubedo\Services\Manager::getService('CustomThemes');
+        $this->_dataService = Manager::getService('CustomThemes');
     }
     
     public function getColorPaletteAction ()
