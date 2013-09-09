@@ -49,6 +49,7 @@ $config = array(
         'invokables' => $serviceMapArray,
         'shared' => $serviceSharedMapArray,
         'factories' => array(
+            'navigation' => 'Zend\Navigation\Service\DefaultNavigationFactory',
             'TwigViewStrategy' => 'Rubedo\\Templates\\Twig\\TwigStrategyFactory',
             'RawViewStrategy' => 'Rubedo\\Templates\\Raw\\RawStrategyFactory'
         )
