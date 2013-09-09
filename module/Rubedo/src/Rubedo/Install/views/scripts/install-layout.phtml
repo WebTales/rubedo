@@ -5,7 +5,6 @@
 <meta property="og:title" content="Rubedo">
 <meta property="Content-Type" content="text/html; charset=UTF-8">
 <?php
-
 $this->headLink()
     ->prependStylesheet("/components/twitter/bootstrap/css/bootstrap-responsive.min.css", "screen")
     ->prependStylesheet("/components/twitter/bootstrap/css/bootstrap.min.css", "screen");
@@ -14,6 +13,12 @@ $this->headScript()
     ->appendFile("/components/twitter/bootstrap/js/bootstrap.min.js");
 
 echo $this->headLink();
+
+$children = $this->viewModel()
+    ->getCurrent()
+    ->getChildren();
+$child = $children[0];
+$view = $child->getVariables();
 ?>
 </head>
 
@@ -24,14 +29,15 @@ echo $this->headLink();
 			<a class="brand"
 				href="<?php echo $this->url(null,array(),array('action'=>'index'));?>">Rubedo
 				Install Tool</a>
-			<?php if($this->displayMode!='wizard' && $this->displayMode!='start-wizard'){?>
+			<?php if(isset($view['displayMode']) && $view['displayMode']!='wizard' && $view['displayMode']!='start-wizard'){?>
 			<div class="nav-collapse collapse">
 				<ul class="nav">
-                   <?php /* foreach ($this->navigationContainer as $page){?>
+				    <?php if(isset($view['navigationContainer'])){?>
+                   <?php  foreach ($view['navigationContainer'] as $page){?>
                        <li <?php if($page->isActive()){?> class="active"
 						<?php }?>><a href="<?php echo $page->getHref();?>"><?php echo $page->getLabel();?></a>
 					</li>
-                   <?php } */ ?>
+                   <?php }  }?>
                </ul>
 			</div>
 			<?php }?>
@@ -52,24 +58,24 @@ echo $this->headLink();
 				<div class="well">
     				<?php echo $this->content;?>
     				<div class='clearfix'></div>
-    				<?php if($this->displayMode=='wizard'){?>
+    				<?php if (isset($view['displayMode']) && $view['displayMode']=='wizard'){?>
                         <ul class="pager">
-                            <?php if($this->previous){?>
+                            <?php if(isset($view['previous'])){?>
                         	<li class="previous"><a
-							href="<?php echo $this->previous->getHref();?>">&larr; <?php echo $this->previous->getLabel();?></a></li>
+							href="<?php echo $view['previous']->getHref();?>">&larr; <?php echo $view['previous']->getLabel();?></a></li>
                         	<?php }else{?>
                         	    <li class="previous"><a
-							href="<?php echo $this->url(array('action'=>'start-wizard','module'=>'install'),null,true);?>">&larr;
+							href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'start-wizard','module'=>'install'),null,true);?>">&larr;
 								Intro</a></li>
                         	<?php } ?>
                         	
-                        	<?php if($this->isReady){?>
-                            	<?php if($this->next){?>
+                        	<?php if($view['isReady']){?>
+                            	<?php if(isset($view['next'])){?>
                             	<li class="next"><a
-							href="<?php echo $this->next->getHref();?>"><?php echo $this->next->getLabel();?> &rarr;</a></li>
+							href="<?php echo $view['next']->getHref();?>"><?php echo $view['next']->getLabel();?> &rarr;</a></li>
                             	<?php }else{?>
                             	    <li class="next"><a
-							href="<?php echo $this->url(array('action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish
+							href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish
 								&rarr;</a></li>
                             	<?php } ?>
                         	<?php } ?>

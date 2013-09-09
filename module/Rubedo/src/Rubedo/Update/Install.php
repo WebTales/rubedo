@@ -66,7 +66,7 @@ class Install
             $this->setLocalConfig($config);
         }
         $configContent = "<?php \n return ".var_export($this->getLocalConfig(),true).";";
-        file_put_contents($this->configFilePath, $configContent);
+        file_put_contents($this->configFilePath, $configContent,LOCK_EX);
         //@todo trigger event to clear cache config if used
     }
     
