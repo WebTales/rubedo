@@ -53,13 +53,13 @@ class CalendarController extends ContentListController
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $this->_queryReader = Manager::getService('Queries');
-        $blockConfig = $this->params()->fromQuery('block-config');
+        $blockConfig = $this->getParamFromQuery('block-config');
         
-        $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->params()->fromQuery('date-field', 'date');
+        $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->getParamFromQuery('date-field', 'date');
         // $endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->params()->fromQuery('endDateField', 'date_end');
         $usedDateField = 'fields.' . $dateField;
         
-        $date = $this->params()->fromQuery('cal-date');
+        $date = $this->getParamFromQuery('cal-date');
         if ($date) {
             list ($month, $year) = explode('-', $date);
         } else {
@@ -77,7 +77,7 @@ class CalendarController extends ContentListController
         $nextMonth->add(new \DateInterval('P1M'));
         $nextMonthTimeStamp = (string) $nextMonth->getTimestamp(); // cast to string as date are stored as text in DB
         
-        $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
+        $queryId = $this->getParamFromQuery('query-id', $blockConfig['query']);
         $data = array();
         $filledDate = array();
         
@@ -95,7 +95,7 @@ class CalendarController extends ContentListController
             
             $queryFilter['filter']->addFilter($dateFilter);
             
-            $queryId = $this->params()->fromQuery('query-id', $blockConfig['query']);
+            $queryId = $this->getParamFromQuery('query-id', $blockConfig['query']);
             
             $query = $this->_queryReader->getQueryById($queryId);
             
@@ -161,12 +161,12 @@ class CalendarController extends ContentListController
             }
         } else {}
         
-        $output = $this->params()->fromQuery();
+        $output = $this->getParamFromQuery();
         $output['blockConfig'] = $blockConfig;
         $output["data"] = $data;
         $output["query"]['type'] = isset($queryType) ? $queryType : null;
         $output["query"]['id'] = isset($queryId) ? $queryId : null;
-        $output['prefix'] = $this->params()->fromQuery('prefix');
+        $output['prefix'] = $this->getParamFromQuery('prefix');
         $output['filledDate'] = $filledDate;
         $output['days'] = Manager::getService('Date')->getShortDayList();
         $output['month'] = Manager::getService('Date')->getLocalised('MMMM', $timestamp);
@@ -191,7 +191,7 @@ class CalendarController extends ContentListController
         
         $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->params()->fromQuery('current-page');
         
-        $output['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
+        $output['singlePage'] = $this->getParamFromQuery('single-page', $singlePage);
         
         $output['monthArray'] = Manager::getService('Date')->getMonthArray($timestamp);
         
