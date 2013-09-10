@@ -31,7 +31,7 @@ class TwitterController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getParam('block-config', null);
+        $blockConfig = $this->params()->fromQuery('block-config', null);
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");

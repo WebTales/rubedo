@@ -29,9 +29,9 @@ class TwigController extends AbstractController
 
     public function indexAction ()
     {
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         
-        $templateName = $this->getRequest()->getParam('template', 'block.html');
+        $templateName = $this->params()->fromQuery('template', 'block.html');
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath($templateName);
         if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {

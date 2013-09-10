@@ -34,7 +34,7 @@ class AdvancedSearchController extends AbstractController
         // get search parameters
         $output = array();
         $taxonomies = array();
-        $params = $this->getRequest()->getParams();
+        $params = $this->params()->fromQuery();
         $output = $params;
         
         // get Taxonomies associated to the content type
