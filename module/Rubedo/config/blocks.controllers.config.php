@@ -15,7 +15,6 @@ return array(
     'Rubedo\\Blocks\\Controller\\DamList' => 'Rubedo\\Blocks\\Controller\\DamListController',
     'Rubedo\\Blocks\\Controller\\EmbeddedMedia' => 'Rubedo\\Blocks\\Controller\\EmbeddedMediaController',
     'Rubedo\\Blocks\\Controller\\FlickrGallery' => 'Rubedo\\Blocks\\Controller\\FlickrGalleryController',
-    'Rubedo\\Blocks\\Controller\\Footer' => 'Rubedo\\Blocks\\Controller\\FooterController',
     'Rubedo\\Blocks\\Controller\\Forms' => 'Rubedo\\Blocks\\Controller\\FormsController',
     'Rubedo\\Blocks\\Controller\\Gallery' => 'Rubedo\\Blocks\\Controller\\GalleryController',
     'Rubedo\\Blocks\\Controller\\GeoSearch' => 'Rubedo\\Blocks\\Controller\\GeoSearchController',
