@@ -260,7 +260,7 @@ class FlickrGalleryController extends AbstractController
                 $item = array();
                 $item['id'] = $photo->id;
                 $item['title'] = $photo->title;
-                $item['datetaken'] = new DateTime($photo->datetaken);
+                $item['datetaken'] = new \DateTime($photo->datetaken);
                 if (isset($photo->Large->uri)) {
                     $item['image'] = $photo->Large->uri;
                 } elseif ($photo->Medium->uri) {
