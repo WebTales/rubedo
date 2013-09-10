@@ -33,15 +33,15 @@ class DamListController extends AbstractController
     {
         
         // get search parameters
-        $params = $this->params()->fromQuery();
+        $params = $this->getParamFromQuery();
         $blockConfig = $params['block-config'];
         
-        $params['pager'] = $this->params()->fromQuery('pager', 0);
+        $params['pager'] = $this->getParamFromQuery('pager', 0);
         $params['orderbyDirection'] = 'asc';
         $params['orderby'] = 'text';
         $params['pagesize'] = 25;
         if (isset($params['block-config']['constrainToSite']) && ($params['block-config']['constrainToSite'] === true || $params['block-config']['constrainToSite'] === 'true')) {
-            $site = $this->getRequest()->getParam('site');
+            $site = $this->getParamFromQuery('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;
         }
@@ -88,8 +88,8 @@ class DamListController extends AbstractController
         foreach ($results['data'] as $key => $value) {
             $results['data'][$key]['fileSize'] = $this->humanfilesize($value['fileSize']);
         }
-        $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
-        $results['blockTitle'] = $this->params()->fromQuery('blockTitle');
+        $results['displayTitle'] = $this->getParamFromQuery('displayTitle');
+        $results['blockTitle'] = $this->getParamFromQuery('blockTitle');
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
