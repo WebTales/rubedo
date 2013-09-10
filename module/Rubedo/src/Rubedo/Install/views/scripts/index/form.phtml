@@ -10,12 +10,18 @@ foreach ($form as $element) {
         echo $this->formCollection()->render($element);
         echo '</div>';
     } else {
-        echo '<div class="control-group">';
+        $messages = $element->getMessages();
+        $hasError = !empty($messages);
+        $classError = $hasError?'error':'';
+        echo '<div class="control-group '.$classError.'">';
         echo '<div>';
         echo $this->FormLabel($element);
         echo '</div>';
         echo '<div class="controls">';
         echo $this->FormElement()->render($element);
+        echo $this->FormElementErrors()->setMessageOpenFormat('<div class="help-inline">')
+                ->setMessageSeparatorString('</div><div class="help-inline">')
+                ->setMessageCloseString('</div>')->render($element);
         echo '</div>';
         
         echo '</div>';

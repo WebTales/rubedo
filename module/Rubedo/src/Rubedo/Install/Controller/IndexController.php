@@ -29,6 +29,7 @@ use Rubedo\Install\Model\DbConfigForm;
 use Zend\View\Model\JsonModel;
 use Rubedo\Install\Model\EsConfigForm;
 use Rubedo\Install\Model\LanguagesConfigForm;
+use Rubedo\Install\Model\AdminConfigForm;
 
 /**
  * Installer
@@ -529,15 +530,20 @@ class IndexController extends AbstractActionController
     public function setAdminAction()
     {
         $this->viewData->displayMode = 'regular';
+        $this->viewData->isReady = false;
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-admin';
         }
         
-        $form = Install_Model_AdminConfigForm::getForm();
+        $form = AdminConfigForm::getForm();
+        $form->setData($this->params()
+            ->fromPost());
         
-        if ($this->getRequest()->isPost() && $form->isValid($this->getAllParams())) {
-            $params = $form->getValues();
+        if ($this->getRequest()->isPost() && $form->isValid()) {
+                        
+            $params = $form->getData();
+            unset($params['buttonGroup']);
             $hashService = \Rubedo\Services\Manager::getService('Hash');
             
             unset($params["confirmPassword"]);
@@ -580,8 +586,11 @@ class IndexController extends AbstractActionController
         }
         
         $this->viewData->form = $form;
-        
-        $this->installObject->saveLocalConfig();
+                
+        $this->layout('layout/install');
+        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-admin');
+        return $this->viewDataModel;
     }
 
     protected function buildConnectionString($options)

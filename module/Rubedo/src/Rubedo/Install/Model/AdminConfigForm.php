@@ -14,7 +14,13 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Install\Model;
 
+use Zend\Form\Element\Text;
+use Zend\Form\Form;
+use Zend\Form\Element\Password;
+use Zend\Form\Element\Email;
+use Zend\InputFilter\InputFilter;
 /**
  * Form for DB Config
  *
@@ -22,42 +28,66 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_AdminConfigForm extends Install_Model_BootstrapForm
+class AdminConfigForm extends BootstrapForm
 {
     public static function getForm(){
-        $nameField = new Zend_Form_Element_Text('name');
-        $nameField->setRequired(true);
-        $nameField->setAttrib('autocomplete', 'off');
+        $nameField = new Text('name');
+        $nameField->setAttribute('Required',true);
+        $nameField->setAttribute('autocomplete', 'off');
         $nameField->setLabel('Account Name');
         
-        $loginField = new Zend_Form_Element_Text('login');
-        $loginField->setRequired(true);
-        $loginField->setAttrib('autocomplete', 'off');
+        $loginField = new Text('login');
+        $loginField->setAttribute('Required',true);
+        $loginField->setAttribute('autocomplete', 'off');
         $loginField->setLabel('Login');
         
-        $passwordField = new Zend_Form_Element_Password('password');
-        $passwordField->setRequired(true);
-        $passwordField->setAttrib('autocomplete', 'off');
+        $passwordField = new Password('password');
+        $passwordField->setAttribute('Required',true);
+        $passwordField->setAttribute('autocomplete', 'off');
         $passwordField->setLabel('Password');
         
-        $confirmPasswordField = new Zend_Form_Element_Password('confirmPassword');
-        $confirmPasswordField->setRequired(true);
-        $confirmPasswordField->setAttrib('autocomplete', 'off');
+        $confirmPasswordField = new Password('confirmPassword');
+        $confirmPasswordField->setAttribute('Required',true);
+        $confirmPasswordField->setAttribute('autocomplete', 'off');
         $confirmPasswordField->setLabel('Confirm password');
-        $confirmPasswordField->addValidator('identical', true, array('password'));
         
-        $emailField = new Zend_Form_Element_Text('email');
-        $emailField->addValidator('EmailAddress');
-        $emailField->setRequired(true);
+        $emailField = new Email('email');
+        $emailField->setAttribute('Required',true);
         $emailField->setLabel('Email');
         
-        $dbForm = new Zend_Form();
+        $inputFilter = new InputFilter();
+        $inputFilter->add(array(
+            'name' => 'password',
+            'validators' => array(
+                array(
+                    'name' => 'StringLength',
+                    'options' => array(
+                        'encoding' => 'UTF-8',
+                        'min' => 8,
+                        'max' => 100
+                    )
+                )
+            )
+        ));
+        $inputFilter->add(array(
+            'name' => 'confirmPassword',
+            'validators' => array(
+                array(
+                    'name' => 'Identical',
+                    'options' => array(
+                        'token' => 'password'
+                    )
+                )
+            )
+        ));
+        
+        $dbForm = new Form();
         $dbForm->add($nameField);
         $dbForm->add($loginField);
         $dbForm->add($passwordField);
         $dbForm->add($confirmPasswordField);
         $dbForm->add($emailField);
-        
+        $dbForm->setInputFilter($inputFilter);
         $dbForm = self::setForm($dbForm);
         
         return $dbForm;

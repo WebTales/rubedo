@@ -18,7 +18,6 @@
 namespace Rubedo\Install\Model;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
-use Zend\Validator\Digits;
 use Zend\Form\Element\Number;
 /**
  * Form for DB Config
