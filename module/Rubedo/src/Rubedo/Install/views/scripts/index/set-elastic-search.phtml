@@ -11,4 +11,5 @@
     <div class="alert alert-success">Connection to ES is set</div>
     <?php }?>
 </div>
-<?php echo $this->form->render();?>
+<?php
+echo $this->partial('rubedo/install/controller/index/form',array('form'=>$this->form));

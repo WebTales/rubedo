@@ -12,5 +12,6 @@ return array(
     'rubedo/install/controller/index/form' => $installViewPath.'/index/form.phtml',
     'rubedo/install/controller/index/index' => $installViewPath.'/index/index.phtml',
     'rubedo/install/controller/index/start-wizard' => $installViewPath.'/index/start-wizard.phtml',
-    'rubedo/install/controller/index/set-db' => $installViewPath.'/index/set-db.phtml'
+    'rubedo/install/controller/index/set-db' => $installViewPath.'/index/set-db.phtml',
+    'rubedo/install/controller/index/set-elastic-search' => $installViewPath.'/index/set-elastic-search.phtml'
 );
