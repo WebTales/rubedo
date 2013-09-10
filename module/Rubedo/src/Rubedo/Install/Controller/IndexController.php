@@ -279,6 +279,7 @@ class IndexController extends AbstractActionController
     public function defineLanguagesAction()
     {
         $this->viewData->displayMode = 'regular';
+        $this->viewData->isReady = false;
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'define-languages';
@@ -322,10 +323,12 @@ class IndexController extends AbstractActionController
         $params['defaultLanguage'] = isset($defaultLocale) ? $defaultLocale : 'en';
         
         $dbForm = LanguagesConfigForm::getForm($params);
-        
-        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
-            $values = $dbForm->getValues();
-            $update = $this->installObject->setDefaultRubedoLanguage($values['defaultLanguage']);
+        $dbForm->setData($this->params()
+            ->fromPost());
+        if ($this->getRequest()->isPost() && $dbForm->isValid()) {
+            $params = $dbForm->getData();
+            unset($params['buttonGroup']);
+            $update = $this->installObject->setDefaultRubedoLanguage($params['defaultLanguage']);
             if ($update) {
                 $ok = true;
             }
@@ -630,8 +633,10 @@ class IndexController extends AbstractActionController
     {
         if ($this->isDefaultGroupsExists()) {
             return;
+        } else {
+            $this->viewData->isDefaultGroupsExists = false;
         }
-        $success = \Rubedo\Update\Install::doCreateDefaultsGroups();
+        $success = $this->installObject->doCreateDefaultsGroups();
         if (! $success) {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'failed to create default groups';
@@ -644,9 +649,7 @@ class IndexController extends AbstractActionController
 
     protected function isDefaultGroupsExists()
     {
-        $adminGroup = Manager::getService('Groups')->findByName('admin');
-        $publicGroup = Manager::getService('Groups')->findByName('public');
-        $result = ! is_null($adminGroup) && ! is_null($publicGroup);
+        $result = $this->installObject->isDefaultGroupsExists();
         $this->viewData->isDefaultGroupsExists = $result;
         return $result;
     }

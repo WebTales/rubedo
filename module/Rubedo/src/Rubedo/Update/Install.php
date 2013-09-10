@@ -163,7 +163,7 @@ class Install
         return $result;
     }
 
-    public static function doCreateDefaultsGroups()
+    public function doCreateDefaultsGroups()
     {
         $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
         if (! $defaultLocale) {
@@ -373,5 +373,13 @@ class Install
             $this->viewData->errorMsgs = 'failed to apply indexes';
             return false;
         }
+    }
+    
+    public function isDefaultGroupsExists()
+    {
+        $adminGroup = Manager::getService('Groups')->findByName('admin');
+        $publicGroup = Manager::getService('Groups')->findByName('public');
+        $result = ! is_null($adminGroup) && ! is_null($publicGroup);
+        return $result;
     }
 }
