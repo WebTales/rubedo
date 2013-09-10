@@ -27,6 +27,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Rubedo\Install\Model\DbConfigForm;
 use Zend\View\Model\JsonModel;
+use Rubedo\Install\Model\EsConfigForm;
 
 /**
  * Installer
@@ -144,7 +145,7 @@ class IndexController extends AbstractActionController
     {
         Manager::getService('UrlCache')->drop();
         Manager::getService('Cache')->drop();
-        $servicesArray = Rubedo\Interfaces\config::getCollectionServices();
+        $servicesArray = \Rubedo\Interfaces\config::getCollectionServices();
         $result = array();
         foreach ($servicesArray as $service) {
             $result[] = Manager::getService($service)->dropIndexes();
@@ -218,12 +219,12 @@ class IndexController extends AbstractActionController
                 }
             }
         } catch (\Exception $exception) {
-            throw $exception;
             $connectionValid = false;
         }
         if ($connectionValid) {
             $this->viewData->isReady = true;
             $this->config["datastream"]["mongo"] = $params;
+            $this->installObject->saveLocalConfig($this->config);
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified DB';
@@ -231,7 +232,7 @@ class IndexController extends AbstractActionController
         
         $this->viewData->form = $dbForm;
         
-        $this->installObject->saveLocalConfig($this->config);
+        
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-db');
@@ -261,13 +262,15 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'set-elastic-search';
         }
         
-        $esOptions = isset($this->_applicationOptions["searchstream"]["elastic"]) ? $this->_applicationOptions["searchstream"]["elastic"] : array();
+        $esOptions = isset($this->config["searchstream"]["elastic"]) ? $this->config["searchstream"]["elastic"] : array();
         
-        $dbForm = Install_Model_EsConfigForm::getForm($esOptions);
-        
+        $dbForm = EsConfigForm::getForm($esOptions);
+        $dbForm->setData($this->params()
+            ->fromPost());
         try {
-            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
-                $params = $dbForm->getValues();
+            if ($this->getRequest()->isPost() && $dbForm->isValid()) {
+                $params = $dbForm->getData();
+                unset($params['buttonGroup']);
                 DataAbstract::setOptions($params);
                 $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
                 $query->init();
@@ -283,6 +286,7 @@ class IndexController extends AbstractActionController
         if ($connectionValid) {
             $this->viewData->isReady = true;
             $this->config["searchstream"]["elastic"] = $params;
+            $this->installObject->saveLocalConfig($this->config);
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified ES';
@@ -290,7 +294,7 @@ class IndexController extends AbstractActionController
         
         $this->viewData->form = $dbForm;
         
-        $this->installObject->saveLocalConfig();
+        
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-elastic-search');
@@ -381,7 +385,7 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'set-mailer';
         }
         
-        $mailerOptions = isset($this->_applicationOptions["swiftmail"]["smtp"]) ? $this->_applicationOptions["swiftmail"]["smtp"] : array(
+        $mailerOptions = isset($this->config["swiftmail"]["smtp"]) ? $this->config["swiftmail"]["smtp"] : array(
             'server' => null,
             'port' => null,
             'ssl' => null
@@ -466,13 +470,13 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'set-php-settings';
         }
         
-        $phpOptions = isset($this->_applicationOptions["phpSettings"]) ? $this->_applicationOptions["phpSettings"] : array();
-        if (isset($this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"])) {
-            $phpOptions["displayExceptions"] = $this->_applicationOptions["resources"]["frontController"]["params"]["displayExceptions"];
+        $phpOptions = isset($this->config["phpSettings"]) ? $this->config["phpSettings"] : array();
+        if (isset($this->config["resources"]["frontController"]["params"]["displayExceptions"])) {
+            $phpOptions["displayExceptions"] = $this->config["resources"]["frontController"]["params"]["displayExceptions"];
         }
         
-        if (isset($this->_applicationOptions["backoffice"]["extjs"]["debug"])) {
-            $phpOptions["extDebug"] = $this->_applicationOptions["backoffice"]["extjs"]["debug"];
+        if (isset($this->config["backoffice"]["extjs"]["debug"])) {
+            $phpOptions["extDebug"] = $this->config["backoffice"]["extjs"]["debug"];
         }
         if (isset($this->config["authentication"]["authLifetime"])) {
             $phpOptions["authLifetime"] = $this->config["authentication"]["authLifetime"];
@@ -625,7 +629,7 @@ class IndexController extends AbstractActionController
             }
         }
         if ($result) {
-            $this->config['installed']['index'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
+            $this->config['installed']['index'] = $this->config["datastream"]["mongo"]["server"] . '/' . $this->config["datastream"]["mongo"]['db'];
             return true;
         } else {
             $this->viewData->hasError = true;
@@ -636,7 +640,7 @@ class IndexController extends AbstractActionController
 
     protected function _shouldIndex()
     {
-        if (isset($this->_applicationOptions['installed']['index']) && $this->_applicationOptions['installed']['index'] == $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
+        if (isset($this->config['installed']['index']) && $this->config['installed']['index'] == $this->config["datastream"]["mongo"]["server"] . '/' . $this->config["datastream"]["mongo"]['db']) {
             return false;
         } else {
             return true;
@@ -645,7 +649,7 @@ class IndexController extends AbstractActionController
 
     protected function _shouldInitialize()
     {
-        if (isset($this->_applicationOptions['installed']['contents']) && $this->_applicationOptions['installed']['contents'] == $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db']) {
+        if (isset($this->config['installed']['contents']) && $this->config['installed']['contents'] == $this->config["datastream"]["mongo"]["server"] . '/' . $this->config["datastream"]["mongo"]['db']) {
             return false;
         } else {
             return true;
@@ -690,7 +694,7 @@ class IndexController extends AbstractActionController
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'failed to initialize contents';
         } else {
-            $this->config['installed']['contents'] = $this->_applicationOptions["datastream"]["mongo"]["server"] . '/' . $this->_applicationOptions["datastream"]["mongo"]['db'];
+            $this->config['installed']['contents'] = $this->config["datastream"]["mongo"]["server"] . '/' . $this->config["datastream"]["mongo"]['db'];
             $this->viewData->isContentInitialized = true;
         }
         
