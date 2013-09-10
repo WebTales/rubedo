@@ -42,7 +42,7 @@ class LinkFinderController extends AbstractExtLoaderController
             return $this->redirect()->toUrl("/backoffice/login");
         }
         
-        $this->loadExtApps();
+        return $this->loadExtApps();
     }
 }
 

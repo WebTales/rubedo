@@ -9,6 +9,7 @@ return array(
     'rubedo/controller/index/index' => $boViewsPath . '/index/index.phtml',
     'rubedo/controller/content-contributor/index' => $boViewsPath . '/content-contributor/index.phtml',
     'rubedo/controller/ext-finder/index' => $boViewsPath . '/ext-finder/index.phtml',
+    'rubedo/controller/link-finder/index' => $boViewsPath . '/link-finder/index.phtml',
     'rubedo/controller/login/index' => $boViewsPath . '/login/index.phtml',
     'rubedo/install/controller/index/form' => $installViewPath.'/index/form.phtml',
     'rubedo/install/controller/index/index' => $installViewPath.'/index/index.phtml',
