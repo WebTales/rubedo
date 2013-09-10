@@ -33,7 +33,7 @@ class GeoSearchController extends AbstractController
 
     public function init ()
     {
-        Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         parent::init();
     }
 
