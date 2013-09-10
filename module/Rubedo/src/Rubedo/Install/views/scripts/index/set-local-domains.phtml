@@ -24,4 +24,5 @@
 <?php }?>
 
 <h4>Add local override</h4>
-<?php echo $this->form->render();?>
+<?php
+echo $this->partial('rubedo/install/controller/index/form',array('form'=>$this->form));

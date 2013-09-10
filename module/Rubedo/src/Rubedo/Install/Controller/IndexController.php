@@ -34,12 +34,9 @@ use Rubedo\Install\Model\EsConfigForm;
  * Controller
  *
  *
- * @author
- *         jbourdin
- * @category
- *           Rubedo
- * @package
- *          Rubedo
+ * @author jbourdin
+ * @category Rubedo
+ * @package Rubedo
  */
 class IndexController extends AbstractActionController
 {
@@ -93,7 +90,7 @@ class IndexController extends AbstractActionController
         
         $this->installObject->loadLocalConfig();
         $this->config = $this->installObject->getLocalConfig();
-        if(!isset($this->config['installed'])){
+        if (! isset($this->config['installed'])) {
             $this->config['installed'] = array();
         }
     }
@@ -118,7 +115,6 @@ class IndexController extends AbstractActionController
         }
     }
 
-    
     public function indexAction()
     {
         $this->layout('layout/install');
@@ -163,7 +159,7 @@ class IndexController extends AbstractActionController
         );
         $this->viewData->displayMode = "start-wizard";
         $this->installObject->saveLocalConfig($this->config);
-        $this->viewDataModel = new ViewModel((array)$this->viewData);
+        $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/start-wizard');
         return $this->viewDataModel;
     }
@@ -232,7 +228,6 @@ class IndexController extends AbstractActionController
         
         $this->viewData->form = $dbForm;
         
-        
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-db');
@@ -293,7 +288,6 @@ class IndexController extends AbstractActionController
         }
         
         $this->viewData->form = $dbForm;
-        
         
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
