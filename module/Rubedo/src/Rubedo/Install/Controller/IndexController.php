@@ -30,6 +30,8 @@ use Zend\View\Model\JsonModel;
 use Rubedo\Install\Model\EsConfigForm;
 use Rubedo\Install\Model\LanguagesConfigForm;
 use Rubedo\Install\Model\AdminConfigForm;
+use Rubedo\Install\Model\MailConfigForm;
+use Rubedo\Install\Model\DomainAliasForm;
 
 /**
  * Installer
@@ -113,6 +115,7 @@ class IndexController extends AbstractActionController
         if (! isset($this->config['installed']) || $this->config['installed']['status'] != 'finished') {
             if (! isset($this->config['installed']['action'])) {
                 $this->config['installed']['action'] = 'start-wizard';
+                $this->installObject->saveLocalConfig($this->config);
             }
             $redirectParams = array(
                 'controller' => 'index',
@@ -177,6 +180,7 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-db';
+            $this->installObject->saveLocalConfig($this->config);
         }
         
         $mongoOptions = isset($this->config["datastream"]["mongo"]) ? $this->config["datastream"]["mongo"] : array();
@@ -234,6 +238,7 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-elastic-search';
+            $this->installObject->saveLocalConfig($this->config);
         }
         
         $esOptions = isset($this->config["searchstream"]["elastic"]) ? $this->config["searchstream"]["elastic"] : array();
@@ -284,6 +289,7 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'define-languages';
+            $this->installObject->saveLocalConfig($this->config);
         }
         
         $params = array();
@@ -357,6 +363,7 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-mailer';
+            $this->installObject->saveLocalConfig($this->config);
         }
         
         $mailerOptions = isset($this->config["swiftmail"]["smtp"]) ? $this->config["swiftmail"]["smtp"] : array(
@@ -365,11 +372,14 @@ class IndexController extends AbstractActionController
             'ssl' => null
         );
         
-        $dbForm = Install_Model_MailConfigForm::getForm($mailerOptions);
-        
+        $dbForm = MailConfigForm::getForm($mailerOptions);
+        $dbForm->setData($this->params()
+            ->fromPost());
+       
         try {
-            if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
-                $params = $dbForm->getValues();
+             if ($this->getRequest()->isPost() && $dbForm->isValid()) {
+                $params = $dbForm->getData();
+                unset($params['buttonGroup']);
             } else {
                 $params = $mailerOptions;
             }
@@ -387,6 +397,8 @@ class IndexController extends AbstractActionController
         if ($connectionValid) {
             $this->viewData->isSet = true;
             $this->config["swiftmail"]["smtp"] = $params;
+            $this->installObject->saveLocalConfig($this->config);
+            
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect to SMTP server';
@@ -394,7 +406,10 @@ class IndexController extends AbstractActionController
         $this->viewData->isReady = true;
         $this->viewData->form = $dbForm;
         
-        $this->installObject->saveLocalConfig();
+        $this->layout('layout/install');
+        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-mailer');
+        return $this->viewDataModel;
     }
 
     public function setLocalDomainsAction()
@@ -405,20 +420,22 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'set-local-domains';
         }
         
-        $dbForm = Install_Model_DomainAliasForm::getForm();
+        $dbForm = DomainAliasForm::getForm();
         
         if (! isset($this->config['site']['override'])) {
             $this->config['site']['override'] = array();
         }
         
-        $key = $this->getParam('delete-domain');
+        $key = $this->params()->fromQuery('delete-domain');
         if ($key) {
             unset($this->config['site']['override'][$key]);
             $this->installObject->saveLocalConfig();
         }
-        
-        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
-            $params = $dbForm->getValues();
+        $dbForm->setData($this->params()
+            ->fromPost());
+        if ($this->getRequest()->isPost() && $dbForm->isValid()) {
+            $params = $dbForm->getData();
+            unset($params['buttonGroup']);
             $overrideArray = array_values($this->config['site']['override']);
             if (in_array($params["localDomain"], $overrideArray)) {
                 $this->viewData->hasError = true;
@@ -434,6 +451,11 @@ class IndexController extends AbstractActionController
         $this->viewData->overrideList = $this->config['site']['override'];
         
         $this->viewData->form = $dbForm;
+        
+        $this->installObject->saveLocalConfig($this->config);
+        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-local-domains');
+        return $this->viewDataModel;
     }
 
     public function setPhpSettingsAction()

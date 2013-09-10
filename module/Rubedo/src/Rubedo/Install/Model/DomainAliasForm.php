@@ -14,7 +14,10 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Install\Model;
 
+use Zend\Form\Element\Text;
+use Zend\Form\Form;
 /**
  * Form for DB Config
  *
@@ -22,22 +25,19 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_DomainAliasForm extends Install_Model_BootstrapForm
+class DomainAliasForm extends BootstrapForm
 {
     public static function getForm(){
-        
-  
-        
-        
-        $domainField = new Zend_Form_Element_Text('domain');
-        $domainField->setRequired(true);
+               
+        $domainField = new Text('domain');
+        $domainField->setAttribute('Required',true);
         $domainField->setLabel('Site domain');
         
-        $localDomainField = new Zend_Form_Element_Text('localDomain');
-        $localDomainField->setRequired(true);
+        $localDomainField = new Text('localDomain');
+        $localDomainField->setAttribute('Required',true);
         $localDomainField->setLabel('Local domain');
         
-        $dbForm = new Zend_Form();
+        $dbForm = new Form();
         $dbForm->add($domainField);
         $dbForm->add($localDomainField);
         

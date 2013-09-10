@@ -14,7 +14,14 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Install\Model;
 
+use Zend\Form\Element\Text;
+use Zend\Form\Form;
+use Zend\Form\Element\Password;
+use Zend\InputFilter\InputFilter;
+use Zend\Form\Element\Checkbox;
+use Zend\Form\Element\Number;
 /**
  * Form for DB Config
  *
@@ -22,35 +29,34 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_MailConfigForm extends Install_Model_BootstrapForm
+class MailConfigForm extends BootstrapForm
 {
     public static function getForm($params){
         
-        $serverNameField = new Zend_Form_Element_Text('server');
-        $serverNameField->setRequired(true);
+        $serverNameField = new Text('server');
+        $serverNameField->setAttribute('Required',true);
         $serverNameField->setValue(isset($params['server']) ? $params['server'] : null);
         $serverNameField->setLabel('Server Name');
         
-        $serverPortField = new Zend_Form_Element_Text('port');
+        $serverPortField = new Number('port');
+        $serverPortField->setAttribute('Required',true);
         $serverPortField->setValue(isset($params['port']) ? $params['port'] : null);
-        $serverPortField->addValidator('digits');
         $serverPortField->setLabel('Server Port');
         
-        $sslField = new Zend_Form_Element_Checkbox('ssl');
+        $sslField = new Checkbox('ssl');
         $sslField->setValue(isset($params['ssl']) ? $params['ssl'] : null);
         $sslField->setLabel('Use SSL');
         
-        $loginField = new Zend_Form_Element_Text('username');
+        $loginField = new Text('username');
         $loginField->setValue(isset($params['username']) ? $params['username'] : null);
         $loginField->setLabel('User name');
         
-        $passwordField = new Zend_Form_Element_Password('password');
-        $passwordField->setRenderPassword(true);
+        $passwordField = new Password('password');
         $passwordField->setValue(isset($params['password']) ? $params['password'] : null);
         $passwordField->setLabel('Password');
 
         
-        $dbForm = new Zend_Form();
+        $dbForm = new Form();
         $dbForm->add($serverNameField);
         $dbForm->add($serverPortField);
         $dbForm->add($sslField);
