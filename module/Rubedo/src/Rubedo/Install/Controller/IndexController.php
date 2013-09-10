@@ -481,14 +481,6 @@ class IndexController extends AbstractActionController
         if ($this->getRequest()->isPost() && $dbForm->isValid()) {
             $params = $dbForm->getData();
             unset($params['buttonGroup']);
-            // $this->config["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
-            // $this->config["backoffice"]["extjs"]["debug"] = $params["extDebug"];
-            // $this->config["authentication"]["authLifetime"] = $params["authLifetime"];
-            // $this->config["resources"]["session"]["name"] = $params["sessionName"];
-            unset($params['view_manager']);
-            unset($params["displayExceptions"]);
-            unset($params["extDebug"]);
-            unset($params["authLifetime"]);
             $params['session']['remember_me_seconds'] = $params['session']["authLifetime"];
             $params['session']['cookie_httponly'] = $params['session']["authLifetime"];
             unset($params["session"]["authLifetime"]);
