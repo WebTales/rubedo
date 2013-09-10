@@ -67,6 +67,7 @@ class Install
         }
         $configContent = "<?php \n return ".var_export($this->getLocalConfig(),true).";";
         file_put_contents($this->configFilePath, $configContent,LOCK_EX);
+        sleep(2);//@todo investigate latency on modification for config file.
         //@todo trigger event to clear cache config if used
     }
     
