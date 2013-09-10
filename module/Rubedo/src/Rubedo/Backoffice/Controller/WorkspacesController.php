@@ -48,19 +48,19 @@ class WorkspacesController extends DataAccessController
     {
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson);
+            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson);
+            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
         $startJson = $this->params()->fromQuery('start');
         if (isset($startJson)) {
-            $start = Json::decode($startJson);
+            $start = Json::decode($startJson,Json::TYPE_ARRAY);
         } else {
             $start = null;
         }
