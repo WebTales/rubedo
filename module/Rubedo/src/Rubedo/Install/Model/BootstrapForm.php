@@ -47,11 +47,13 @@ class BootstrapForm
                         'class' => 'control-label'
                     ));
                 }
+                $subElement->setAttribute('id',$subElement->getName());
                 continue;
             }
             $element->setLabelAttributes(array(
                 'class' => 'control-label'
             ));
+            $element->setAttribute('id',$element->getName());
         }
         
         $submitButton = new Submit('Submit');

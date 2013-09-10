@@ -32,6 +32,7 @@ use Rubedo\Install\Model\LanguagesConfigForm;
 use Rubedo\Install\Model\AdminConfigForm;
 use Rubedo\Install\Model\MailConfigForm;
 use Rubedo\Install\Model\DomainAliasForm;
+use Rubedo\Install\Model\PhpSettingsForm;
 
 /**
  * Installer
@@ -375,9 +376,9 @@ class IndexController extends AbstractActionController
         $dbForm = MailConfigForm::getForm($mailerOptions);
         $dbForm->setData($this->params()
             ->fromPost());
-       
+        
         try {
-             if ($this->getRequest()->isPost() && $dbForm->isValid()) {
+            if ($this->getRequest()->isPost() && $dbForm->isValid()) {
                 $params = $dbForm->getData();
                 unset($params['buttonGroup']);
             } else {
@@ -398,7 +399,6 @@ class IndexController extends AbstractActionController
             $this->viewData->isSet = true;
             $this->config["swiftmail"]["smtp"] = $params;
             $this->installObject->saveLocalConfig($this->config);
-            
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect to SMTP server';
@@ -433,6 +433,11 @@ class IndexController extends AbstractActionController
         }
         $dbForm->setData($this->params()
             ->fromPost());
+        $formUrl = $this->url()->fromRoute('install/default', array(
+            'controller' => 'index',
+            'action' => 'set-local-domains'
+        ));
+        $dbForm->setAttribute('action', $formUrl);
         if ($this->getRequest()->isPost() && $dbForm->isValid()) {
             $params = $dbForm->getData();
             unset($params['buttonGroup']);
@@ -442,7 +447,7 @@ class IndexController extends AbstractActionController
                 $this->viewData->errorMsgs = "A domain can't be used to override twice.";
             } else {
                 $this->config['site']['override'][$params["domain"]] = $params["localDomain"];
-                $this->installObject->saveLocalConfig();
+                $this->installObject->saveLocalConfig($this->config);
             }
         }
         
@@ -452,7 +457,7 @@ class IndexController extends AbstractActionController
         
         $this->viewData->form = $dbForm;
         
-        $this->installObject->saveLocalConfig($this->config);
+        $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-local-domains');
         return $this->viewDataModel;
@@ -464,48 +469,41 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-php-settings';
+            $this->installObject->saveLocalConfig($this->config);
         }
         
-        $phpOptions = isset($this->config["phpSettings"]) ? $this->config["phpSettings"] : array();
-        if (isset($this->config["resources"]["frontController"]["params"]["displayExceptions"])) {
-            $phpOptions["displayExceptions"] = $this->config["resources"]["frontController"]["params"]["displayExceptions"];
-        }
+        $applicationConfig = Manager::getService('application')->getConfig();
         
-        if (isset($this->config["backoffice"]["extjs"]["debug"])) {
-            $phpOptions["extDebug"] = $this->config["backoffice"]["extjs"]["debug"];
-        }
-        if (isset($this->config["authentication"]["authLifetime"])) {
-            $phpOptions["authLifetime"] = $this->config["authentication"]["authLifetime"];
-        }
-        if (isset($this->config["resources"]["session"]["name"])) {
-            $phpOptions["sessionName"] = $this->config["resources"]["session"]["name"];
-        }
+        $dbForm = PhpSettingsForm::getForm($applicationConfig);
+        $dbForm->setData($this->params()
+            ->fromPost());
         
-        $dbForm = Install_Model_PhpSettingsForm::getForm($phpOptions);
-        
-        if ($this->getRequest()->isPost() && $dbForm->isValid($this->getAllParams())) {
-            $params = $dbForm->getValues();
-            $this->config["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
-            $this->config["backoffice"]["extjs"]["debug"] = $params["extDebug"];
-            $this->config["authentication"]["authLifetime"] = $params["authLifetime"];
-            $this->config["resources"]["session"]["name"] = $params["sessionName"];
-            $params['display_startup_errors'] = $params['display_errors'];
+        if ($this->getRequest()->isPost() && $dbForm->isValid()) {
+            $params = $dbForm->getData();
+            unset($params['buttonGroup']);
+            // $this->config["resources"]["frontController"]["params"]["displayExceptions"] = $params["displayExceptions"];
+            // $this->config["backoffice"]["extjs"]["debug"] = $params["extDebug"];
+            // $this->config["authentication"]["authLifetime"] = $params["authLifetime"];
+            // $this->config["resources"]["session"]["name"] = $params["sessionName"];
+            unset($params['view_manager']);
             unset($params["displayExceptions"]);
             unset($params["extDebug"]);
             unset($params["authLifetime"]);
-            unset($params["sessionName"]);
-            // authentication.authLifetime
-            // resources.session.name
-            // =
-            // rubedo
-            $this->config["phpSettings"] = $params;
+            $params['session']['remember_me_seconds'] = $params['session']["authLifetime"];
+            $params['session']['cookie_httponly'] = $params['session']["authLifetime"];
+            unset($params["session"]["authLifetime"]);
+            $this->config = array_merge($this->config, $params);
+            $this->installObject->saveLocalConfig($this->config);
         }
         
         $this->viewData->isReady = true;
         
         $this->viewData->form = $dbForm;
         
-        $this->installObject->saveLocalConfig();
+        $this->layout('layout/install');
+        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-php-settings');
+        return $this->viewDataModel;
     }
 
     public function setDbContentsAction()
@@ -563,7 +561,7 @@ class IndexController extends AbstractActionController
             ->fromPost());
         
         if ($this->getRequest()->isPost() && $form->isValid()) {
-                        
+            
             $params = $form->getData();
             unset($params['buttonGroup']);
             $hashService = \Rubedo\Services\Manager::getService('Hash');
@@ -608,7 +606,7 @@ class IndexController extends AbstractActionController
         }
         
         $this->viewData->form = $form;
-                
+        
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-admin');

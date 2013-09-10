@@ -12,6 +12,7 @@ return array(
     'rubedo/controller/link-finder/index' => $boViewsPath . '/link-finder/index.phtml',
     'rubedo/controller/login/index' => $boViewsPath . '/login/index.phtml',
     'rubedo/install/controller/index/form' => $installViewPath . '/index/form.phtml',
+    'rubedo/install/controller/index/element' => $installViewPath . '/index/element.phtml',
     'rubedo/install/controller/index/index' => $installViewPath . '/index/index.phtml',
     'rubedo/install/controller/index/start-wizard' => $installViewPath . '/index/start-wizard.phtml',
     'rubedo/install/controller/index/set-db' => $installViewPath . '/index/set-db.phtml',
@@ -21,5 +22,5 @@ return array(
     'rubedo/install/controller/index/set-db-contents' => $installViewPath . '/index/set-db-contents.phtml',
     'rubedo/install/controller/index/set-local-domains' => $installViewPath . '/index/set-local-domains.phtml',
     'rubedo/install/controller/index/set-mailer' => $installViewPath . '/index/set-mailer.phtml',
-    'rubedo/install/controller/index/set-php-settings' => $installViewPath . '/index/set-php-settings'
+    'rubedo/install/controller/index/set-php-settings' => $installViewPath . '/index/set-php-settings.phtml'
 );

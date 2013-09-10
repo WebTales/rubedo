@@ -14,6 +14,12 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Install\Model;
+
+use Zend\Form\Element\Text;
+use Zend\Form\Form;
+use Zend\Form\Element\Checkbox;
+use Zend\Form\Fieldset;
 
 /**
  * Form for DB Config
@@ -22,71 +28,71 @@
  * @category Rubedo
  * @package Rubedo
  */
-class Install_Model_PhpSettingsForm extends Install_Model_BootstrapForm
+class PhpSettingsForm extends BootstrapForm
 {
-    public static function getForm($params){
-        
-        
-        
-//         $displayStartupErrors = new Zend_Form_Element_Checkbox('display_startup_errors');
-//         $displayStartupErrors->setValue(isset($params['display_startup_errors']) ? $params['display_startup_errors'] : null);
-//         $displayStartupErrors->setLabel('Display Startup Errors');
-        
-        
-        $displayErrors = new Zend_Form_Element_Checkbox('display_errors');
-        $displayErrors->setValue(isset($params['display_errors']) ? $params['display_errors'] : null);
+
+    public static function getForm($params)
+    {
+        $displayErrors = new Checkbox('display_errors');
+        $displayErrors->setValue(isset($params['phpSettings']['display_errors']) ? $params['phpSettings']['display_errors'] : null);
         $displayErrors->setLabel('Display PHP Errors');
         
-        $displayExceptions = new Zend_Form_Element_Checkbox('displayExceptions');
-        $displayExceptions->setValue(isset($params['displayExceptions']) ? $params['displayExceptions'] : null);
+        $phpSettingsFieldSet = new Fieldset('phpSettings');
+        $phpSettingsFieldSet->add($displayErrors);
+        
+        $displayExceptions = new Checkbox('display_exceptions');
+        $displayExceptions->setValue(isset($params['view_manager']['display_exceptions']) ? $params['view_manager']['display_exceptions'] : false);
         $displayExceptions->setLabel('Display application exceptions');
         
-        $extDebug = new Zend_Form_Element_Checkbox('extDebug');
-        $extDebug->setValue(isset($params['extDebug']) ? $params['extDebug'] : null);
+        $displayExceptionsFieldSet = new Fieldset('view_manager');
+        $displayExceptionsFieldSet->add($displayExceptions);
+        
+        $rubedoConfigFieldset= new Fieldset('rubedo_config');
+        
+        $extDebug = new Checkbox('extDebug');
+        $extDebug->setValue(isset($params['rubedo_config']['extDebug']) ? $params['rubedo_config']['extDebug'] : null);
         $extDebug->setLabel('Use debug mode of ExtJs');
         
-        $sessionName = new Zend_Form_Element_Text('sessionName');
-        $sessionName->setRequired(true);
-        $sessionName->setValue(isset($params['sessionName']) ? $params['sessionName'] : 'rubedo');
+        $sessionFieldset = new Fieldset('session');
+        $sessionName = new Text('name');
+        $sessionName->setAttribute('Required',true);
+        $sessionName->setValue(isset($params['session']['name']) ? $params['session']['name'] : 'rubedo');
         $sessionName->setLabel('Name of the session cookie');
+        $sessionFieldset->add($sessionName);
         
-        $authLifetime = new Zend_Form_Element_Text('authLifetime');
-        $authLifetime->setRequired(true);
-        $authLifetime->setValue(isset($params['authLifetime']) ? $params['authLifetime'] : '3600');
+        $authLifetime = new Text('authLifetime');
+        $authLifetime->setAttribute('Required',true);
+        $authLifetime->setValue(isset($params['session']['remember_me_seconds']) ? $params['session']['remember_me_seconds'] : '3600');
         $authLifetime->setLabel('Session lifetime');
+        $sessionFieldset->add($authLifetime);
         
-        $defaultBackofficeHost = new Zend_Form_Element_Text('defaultBackofficeHost');
-        $defaultBackofficeHost->setRequired(true);
-        $defaultBackofficeHost->setValue(isset($params['defaultBackofficeHost']) ? $params['defaultBackofficeHost'] : $_SERVER['HTTP_HOST']);
+        $defaultBackofficeHost = new Text('defaultBackofficeHost');
+        $defaultBackofficeHost->setAttribute('Required',true);
+        $defaultBackofficeHost->setValue(isset($params['rubedo_config']['defaultBackofficeHost']) ? $params['rubedo_config']['defaultBackofficeHost'] : $_SERVER['HTTP_HOST']);
         $defaultBackofficeHost->setLabel('Default backoffice domain');
         
-        $isBackofficeSSL = new Zend_Form_Element_Checkbox('isBackofficeSSL');
-        $isBackofficeSSL->setValue(isset($params['isBackofficeSSL']) ? $params['isBackofficeSSL'] : isset($_SERVER['HTTPS']));
+        $isBackofficeSSL = new Checkbox('isBackofficeSSL');
+        $isBackofficeSSL->setValue(isset($params['rubedo_config']['isBackofficeSSL']) ? $params['rubedo_config']['isBackofficeSSL'] : isset($_SERVER['HTTPS']));
         $isBackofficeSSL->setLabel('Use SSL for BackOffice');
         
-        $enableEmailNotification = new Zend_Form_Element_Checkbox('enableEmailNotification');
-        $enableEmailNotification->setValue(isset($params['enableEmailNotification']) ? $params['enableEmailNotification'] : false);
+        $enableEmailNotification = new Checkbox('enableEmailNotification');
+        $enableEmailNotification->setValue(isset($params['rubedo_config']['enableEmailNotification']) ? $params['rubedo_config']['enableEmailNotification'] : false);
         $enableEmailNotification->setLabel('Enable email notifications');
         
-        $fromEmailNotification = new Zend_Form_Element_Text('fromEmailNotification');
-        $fromEmailNotification->setValue(isset($params['fromEmailNotification']) ? $params['fromEmailNotification']:null);
+        $fromEmailNotification = new Text('fromEmailNotification');
+        $fromEmailNotification->setValue(isset($params['rubedo_config']['fromEmailNotification']) ? $params['rubedo_config']['fromEmailNotification'] : null);
         $fromEmailNotification->setLabel('Sender of notifications');
         
-        
-        $dbForm = new Zend_Form();
-        //$dbForm->add($displayStartupErrors);
-        $dbForm->add($displayErrors);
-        $dbForm->add($displayExceptions);
-        $dbForm->add($extDebug);
-        $dbForm->add($sessionName);
-        $dbForm->add($authLifetime);
-        $dbForm->add($defaultBackofficeHost);
-        $dbForm->add($isBackofficeSSL);
-        $dbForm->add($enableEmailNotification);
-        $dbForm->add($fromEmailNotification);
-        
-        
-        
+        $dbForm = new Form();
+        $dbForm->add($phpSettingsFieldSet);
+        $dbForm->add($displayExceptionsFieldSet);
+        $rubedoConfigFieldset->add($extDebug);;
+        $rubedoConfigFieldset->add($defaultBackofficeHost);
+        $rubedoConfigFieldset->add($isBackofficeSSL);
+        $rubedoConfigFieldset->add($enableEmailNotification);
+        $rubedoConfigFieldset->add($fromEmailNotification);
+        $dbForm->add($rubedoConfigFieldset);
+        $dbForm->add($sessionFieldset);
         
         $dbForm = self::setForm($dbForm);
         
