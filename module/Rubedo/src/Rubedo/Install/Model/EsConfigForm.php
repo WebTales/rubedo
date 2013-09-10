@@ -18,6 +18,7 @@ namespace Rubedo\Install\Model;
 
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
+use Zend\Form\Element\Number;
 
 /**
  * Form
@@ -42,9 +43,8 @@ class EsConfigForm extends BootstrapForm
         $serverNameField->setValue(isset($params['host']) ? $params['host'] : 'localhost');
         $serverNameField->setLabel('Server Name');
         
-        $serverPortField = new Text('port');
+        $serverPortField = new Number('port');
         $serverPortField->setValue(isset($params['port']) ? $params['port'] : 9200);
-        //$serverPortField->addValidator('digits');
         $serverPortField->setLabel('Server Port');
         
         $contentIndexField = new Text('contentIndex');
