@@ -22,7 +22,9 @@
     <?php }?>
     
     <?php if($this->isReady){?>
-    <div class="alert alert-success"><h4>All contents are set!</h4></div>
+    <div class="alert alert-success">
+		<h4>All contents are set!</h4>
+	</div>
 	<?php }?>
 </div>
 
@@ -30,7 +32,7 @@
 <div class="row-fluid">
 	<h4>Initialize default groups</h4>
 	<a
-		href="<?php echo $this->url(array('doInsertGroups'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+		href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'set-db-contents'),array('query'=>array('doInsertGroups'=>'1')));?>"
 		class="btn btn-large btn-primary" type="button"><i
 		class="icon-user icon-white"></i> Create groups</a>
 </div>
@@ -40,7 +42,7 @@
 
 	<h4>Apply indexes</h4>
 	<a
-		href="<?php echo $this->url(array('doEnsureIndex'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+		href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'set-db-contents'),array('query'=>array('doEnsureIndex'=>'1')));?>"
 		class="btn btn-large btn-primary" type="button"><i
 		class="icon-bookmark icon-white"></i> Run Indexes</a>
 
@@ -50,7 +52,7 @@
 
 	<h4>Initialize Db Contents</h4>
 	<a
-		href="<?php echo $this->url(array('initContents'=>'1','action'=>'set-db-contents','module'=>'install'),null,true);?>"
+		href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'set-db-contents'),array('query'=>array('initContents'=>'1')));?>"
 		class="btn btn-large btn-primary" type="button"><i
 		class="icon-user icon-white"></i> Initialize Contents</a>
 </div>

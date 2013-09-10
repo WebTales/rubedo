@@ -163,7 +163,7 @@ class Install
         return $result;
     }
 
-    public static function doCreateDefaultsGroups()
+    public function doCreateDefaultsGroups()
     {
         $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
         if (! $defaultLocale) {
@@ -267,7 +267,7 @@ class Install
      * @param string $locale            
      * @return boolean
      */
-    public static function setDefaultRubedoLanguage($locale)
+    public function setDefaultRubedoLanguage($locale)
     {
         $service = Manager::getService('Languages');
         
@@ -347,15 +347,39 @@ class Install
         );
         Manager::getService('Users')->customUpdate($data, $updateCond, $options);
         
-        // ensure
-        // that
-        // localizable
-        // collections
-        // are
-        // now
-        // localized
+        // ensure that localizable collections are now localized
         \Rubedo\Collection\AbstractLocalizableCollection::localizeAllCollection();
         
         return true;
+    }
+    
+    
+    public function doEnsureIndexes()
+    {
+        Manager::getService('UrlCache')->drop();
+        Manager::getService('Cache')->drop();
+        $servicesArray = \Rubedo\Interfaces\config::getCollectionServices();
+        $result = true;
+        foreach ($servicesArray as $service) {
+            if (! Manager::getService($service)->checkIndexes()) {
+                $result = $result && Manager::getService($service)->ensureIndexes();
+            }
+        }
+        if ($result) {
+            $this->localConfig['installed']['index'] = $this->localConfig["datastream"]["mongo"]["server"] . '/' . $this->localConfig["datastream"]["mongo"]['db'];
+            return true;
+        } else {
+            $this->viewData->hasError = true;
+            $this->viewData->errorMsgs = 'failed to apply indexes';
+            return false;
+        }
+    }
+    
+    public function isDefaultGroupsExists()
+    {
+        $adminGroup = Manager::getService('Groups')->findByName('admin');
+        $publicGroup = Manager::getService('Groups')->findByName('public');
+        $result = ! is_null($adminGroup) && ! is_null($publicGroup);
+        return $result;
     }
 }

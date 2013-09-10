@@ -18,6 +18,8 @@
 namespace Rubedo\Install\Model;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
+use Zend\Validator\Digits;
+use Zend\Form\Element\Number;
 /**
  * Form for DB Config
  *
@@ -35,9 +37,8 @@ class DbConfigForm extends BootstrapForm
         $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost');
         $serverNameField->setLabel('Server Name');
         
-        $serverPortField = new Text('port');
+        $serverPortField = new Number('port');
         $serverPortField->setValue(isset($params['port']) ? $params['port'] :27017);
-        //$serverPortField->addValidator('digits');
         $serverPortField->setLabel('Server Port');
         
         $dbNameField = new Text('db');

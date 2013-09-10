@@ -21,6 +21,10 @@
     <?php if($this->creationDone){?>
     <div class="alert alert-success">Account created : <?php echo $this->accountName;?></div>
     <?php }else{?>
-    <?php echo $this->form->render();?>
-    <?php }?>
+    <?php
+        echo $this->partial('rubedo/install/controller/index/form', array(
+            'form' => $this->form
+        ));
+    }
+    ?>
 </div>
