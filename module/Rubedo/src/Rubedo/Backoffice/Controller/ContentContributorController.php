@@ -38,7 +38,7 @@ class ContentContributorController extends AbstractExtLoaderController
             return $this->redirect()->toUrl("/backoffice/login");
         }
         
-        $this->loadExtApps();
+        return $this->loadExtApps();
     }
 }
 
