@@ -29,70 +29,72 @@ use Zend\Debug\Debug;
  * install
  * tool
  *
- * @author
- *         jbourdin
+ * @author jbourdin
  *        
  */
 class Install
 {
+
     const SAVECONFIG = 'install_saveconfig';
-    
+
     protected static $translateService;
 
     protected $configFilePath;
-    
-    protected $configDirPath;
-    
-    protected $localConfig = array();
-    
 
-    public function __construct(){
+    protected $configDirPath;
+
+    protected $localConfig = array();
+
+    public function __construct()
+    {
         $this->configDirPath = realpath(APPLICATION_PATH . '/config/autoload/');
         $this->configFilePath = $this->configDirPath . '/local.php';
     }
-    
-    public function isConfigWritable(){
+
+    public function isConfigWritable()
+    {
         if (is_file($this->configFilePath)) {
             return is_writable($this->configFilePath);
         } else {
             return is_writable($this->configDirPath);
         }
     }
-    
-    public function getConfigFilePath(){
+
+    public function getConfigFilePath()
+    {
         return $this->configFilePath;
     }
 
-    public function saveLocalConfig($config=null)
+    public function saveLocalConfig($config = null)
     {
-        if($config){
+        if ($config) {
             $this->setLocalConfig($config);
         }
-        $configContent = "<?php \n return ".var_export($this->getLocalConfig(),true).";";
-        file_put_contents($this->configFilePath, $configContent,LOCK_EX);
-        if (function_exists('accelerator_reset')) { //As config is a php file, we should reset bytecode cache to have new configuration
-            accelerator_reset(); 
+        $configContent = "<?php \n return " . var_export($this->getLocalConfig(), true) . ";";
+        file_put_contents($this->configFilePath, $configContent, LOCK_EX);
+        if (function_exists('accelerator_reset')) { // As config is a php file, we should reset bytecode cache to have new configuration
+            accelerator_reset();
         }
-        //@todo trigger event to clear cache config if used
-        $params = array();
-        Events::getEventManager()->trigger(static::SAVECONFIG, $this, $params);
+        Events::getEventManager()->trigger(static::SAVECONFIG);
     }
-    
+
     public function loadLocalConfig()
     {
         if (is_file($this->configFilePath)) {
             $this->localConfig = require $this->configFilePath;
         }
     }
-    
-    public function getLocalConfig(){
+
+    public function getLocalConfig()
+    {
         return $this->localConfig;
     }
-    
-    public function setLocalConfig(array $config){
+
+    public function setLocalConfig(array $config)
+    {
         $this->localConfig = $config;
     }
-    
+
     public static function doInsertContents()
     {
         $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
@@ -360,8 +362,7 @@ class Install
         
         return true;
     }
-    
-    
+
     public function doEnsureIndexes()
     {
         Manager::getService('UrlCache')->drop();
@@ -382,7 +383,7 @@ class Install
             return false;
         }
     }
-    
+
     public function isDefaultGroupsExists()
     {
         $adminGroup = Manager::getService('Groups')->findByName('admin');
@@ -390,9 +391,10 @@ class Install
         $result = ! is_null($adminGroup) && ! is_null($publicGroup);
         return $result;
     }
-    
-    public function clearConfigCache(){
-        $moduleConfigCachePath = CONFIG_CACHE_DIR.'/module-config-cache..php';
+
+    public function clearConfigCache()
+    {
+        $moduleConfigCachePath = CONFIG_CACHE_DIR . '/module-config-cache..php';
         unlink($moduleConfigCachePath);
     }
 }
