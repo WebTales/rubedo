@@ -14,8 +14,11 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-require_once ('DataAccessController.php');
+namespace Rubedo\Backoffice\Controller;
 
+use Rubedo\Services\Manager;
+use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 /**
  * Controller providing data import for csv
  *
@@ -27,7 +30,7 @@ require_once ('DataAccessController.php');
  * @package Rubedo
  *         
  */
-class Backoffice_ImportController extends Backoffice_DataAccessController
+class ImportController extends DataAccessController
 {
 
     /**
@@ -114,18 +117,19 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
 
     public function analyseAction ()
     {
-        $separator = $this->getParam('separator', ";");
-        $userEncoding = $this->getParam('encoding');
-        $adapter = new Zend_File_Transfer_Adapter_Http();
+        $separator = $this->params()->fromPost('separator', ";");
+        $userEncoding = $this->params()->fromPost('encoding');
         $returnArray = array();
-        
-        if (! $adapter->receive("csvFile")) {
+        $fileInfos = $this->params()->fromFiles('csvFile');
+        if (! isset($fileInfos)) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Pas de fichier reçu.";
         } else {
-            $filesArray = $adapter->getFileInfo();
-            $fileInfos = $filesArray["csvFile"];
-            if (($fileInfos['type'] != "text/plain") && ($fileInfos['type'] != "text/csv")) {
+            $mimeType = mime_content_type($fileInfos['tmp_name']);
+            $contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
+            
+            
+            if (($contentType != "text/plain") && ($contentType!= "text/csv")) {
                 $returnArray['success'] = false;
                 $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             } else {
@@ -177,18 +181,11 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
             }
         }
         
-        // Disable view
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
         
-        // Encode the response in json
-        $returnValue = Zend_Json::encode($returnArray);
-        if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
+        if (! $returnArray['success']) {
+            $this->getResponse()->setStatusCode(500);
         }
-        
-        // Return the repsonse
-        $this->getResponse()->setBody($returnValue);
+        return new JsonModel($returnArray);
     }
 
     public function importAction ()

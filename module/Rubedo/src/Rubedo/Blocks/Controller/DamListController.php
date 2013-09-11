@@ -31,6 +31,9 @@ class DamListController extends AbstractController
 
     public function indexAction ()
     {
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $this->init();
+        }
         
         // get search parameters
         $params = $this->getParamFromQuery();
