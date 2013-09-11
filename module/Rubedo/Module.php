@@ -24,6 +24,7 @@ use Rubedo\Exceptions\JsonExceptionStrategy;
 use Rubedo\Exceptions\Access as AccessException;
 use Rubedo\Collection\SessionData;
 use Rubedo\Router\Url;
+use Rubedo\Update\Install;
 
 class Module
 {
@@ -62,6 +63,8 @@ class Module
             $this,
             'preDispatch'
         ));
+        
+        $eventManager->attach(Install::SAVECONFIG,array(new Install(), 'clearConfigCache'));
         
         // Config json enabled exceptionStrategy
         $exceptionStrategy = new JsonExceptionStrategy();

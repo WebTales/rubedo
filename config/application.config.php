@@ -1,11 +1,11 @@
 <?php
 // define a constant for the root dir of the application
 defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(__DIR__ . '/..'));
+defined('CONFIG_CACHE_DIR') || define('CONFIG_CACHE_DIR', realpath(__DIR__ . '/../cache/config'));
+//$configCacheDir = realpath(__DIR__ . '/../cache/config');
 
-$configCacheDir = realpath(__DIR__ . '/../cache/config');
-
-if (file_exists($configCacheDir . '/extensions.array.php')) {
-    $extensionsArray = include_once $configCacheDir . '/extensions.array.php';
+if (file_exists(CONFIG_CACHE_DIR . '/extensions.array.php')) {
+    $extensionsArray = include_once CONFIG_CACHE_DIR . '/extensions.array.php';
 } else {
     // automatically discover extensions for Rubedo
     $extensionsArray = array();
@@ -35,7 +35,7 @@ if (file_exists($configCacheDir . '/extensions.array.php')) {
     }
     unset($extensionsIterator);
     $configContent = "<?php \n return ".var_export($extensionsArray,true).";";
-    file_put_contents($configCacheDir . '/extensions.array.php', $configContent);
+    file_put_contents(CONFIG_CACHE_DIR . '/extensions.array.php', $configContent);
 }
 
 // return configuration array. Similar to standard ZF2 app with an "extensions directory" and a list of modules from this directory
@@ -44,9 +44,9 @@ return array(
         'Rubedo'
     ), $extensionsArray),
     'module_listener_options' => array(
-        'config_cache_enabled' => false,
+        'config_cache_enabled' => true,
         'module_map_cache_enabled' => true,
-        'cache_dir' => $configCacheDir,
+        'cache_dir' => CONFIG_CACHE_DIR,
         'module_paths' => array(
             './module',
             './vendor',

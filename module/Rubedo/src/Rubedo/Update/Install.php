@@ -20,6 +20,8 @@ use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Rubedo;
 use Zend\Json\Json;
+use Rubedo\Services\Events;
+use Zend\Debug\Debug;
 
 /**
  * Methods
@@ -33,7 +35,8 @@ use Zend\Json\Json;
  */
 class Install
 {
-
+    const SAVECONFIG = 'install_saveconfig';
+    
     protected static $translateService;
 
     protected $configFilePath;
@@ -68,9 +71,11 @@ class Install
         $configContent = "<?php \n return ".var_export($this->getLocalConfig(),true).";";
         file_put_contents($this->configFilePath, $configContent,LOCK_EX);
         if (function_exists('accelerator_reset')) { //As config is a php file, we should reset bytecode cache to have new configuration
-            return accelerator_reset(); 
+            accelerator_reset(); 
         }
         //@todo trigger event to clear cache config if used
+        $params = array();
+        Events::getEventManager()->trigger(static::SAVECONFIG, $this, $params);
     }
     
     public function loadLocalConfig()
@@ -384,5 +389,10 @@ class Install
         $publicGroup = Manager::getService('Groups')->findByName('public');
         $result = ! is_null($adminGroup) && ! is_null($publicGroup);
         return $result;
+    }
+    
+    public function clearConfigCache(){
+        $moduleConfigCachePath = CONFIG_CACHE_DIR.'/module-config-cache..php';
+        unlink($moduleConfigCachePath);
     }
 }
