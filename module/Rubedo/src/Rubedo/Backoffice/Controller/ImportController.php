@@ -190,47 +190,50 @@ class ImportController extends DataAccessController
 
     public function importAction ()
     {
-        Zend_Registry::set('Expects_Json', true);
+        //Zend_Registry::set('Expects_Json', true); not yet ZF2
+        
         set_time_limit(5000);
-        $separator = $this->getParam('separator', ";");
-        $userEncoding = $this->getParam('encoding');
-        $workingLanguage = $this->getParam('workingLanguage', 'en');
+        $separator = $this->params()->fromPost('separator', ";");
+        $userEncoding = $this->params()->fromPost('encoding');
+        $workingLanguage = $this->params()->fromPost('workingLanguage', 'en');
         
         if (! isset($userEncoding)) {
             throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
         }
         
-        $adapter = new Zend_File_Transfer_Adapter_Http();
         $returnArray = array();
-        $taxonomyService = Rubedo\Services\Manager::getService('Taxonomy');
-        $taxonomyTermsService = Rubedo\Services\Manager::getService('TaxonomyTerms');
-        $contentsService = Rubedo\Services\Manager::getService('Contents');
-        $damService = Rubedo\Services\Manager::getService('Dam');
-        $fileService = Rubedo\Services\Manager::getService('Files');
-        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        $taxonomyService = Manager::getService('Taxonomy');
+        $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+        $contentsService = Manager::getService('Contents');
+        $damService = Manager::getService('Dam');
+        $fileService = Manager::getService('Files');
+        $languagesService =  Manager::getService('Languages');
         
         // get active locales for automatic dam translation
-        $languagesService =  Rubedo\Services\Manager::getService('Languages');
+        $languagesService = Manager::getService('Languages');
         $activeLocales = $languagesService->getActiveLocales();
         
         $brokenLines = array();
         
-        if (! $adapter->receive("csvFile")) {
+        $fileInfos = $this->params()->fromFiles('csvFile');
+        if (! isset($fileInfos)) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Pas de fichier reçu.";
         } else {
-            $filesArray = $adapter->getFileInfo();
-            $fileInfos = $filesArray["csvFile"];
-            if (($fileInfos['type'] != "text/plain") && ($fileInfos['type'] != "text/csv")) {
+            $mimeType = mime_content_type($fileInfos['tmp_name']);
+            $contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
+            
+            
+            if (($contentType != "text/plain") && ($contentType!= "text/csv")) {
                 $returnArray['success'] = false;
                 $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             } else {
                 // receive params
-                $configs = Zend_Json::decode($this->getParam('configs', "[ ]"));
-                $importAsField = Zend_Json::decode($this->getParam('inportAsField', "[ ]"));
-                $importAsTaxo = Zend_Json::decode($this->getParam('inportAsTaxo', "[ ]"));
-                $importAsFieldTranslation = Zend_Json::decode($this->getParam('inportAsFieldTranslation', "[ ]"));
-                $importAsTaxoTranslation = Zend_Json::decode($this->getParam('inportAsTaxoTranslation', "[ ]"));
+                $configs = Json::decode($this->params()->fromPost('configs', "[ ]"), Json::TYPE_ARRAY);
+                $importAsField = Json::decode($this->params()->fromPost('inportAsField', "[ ]"), Json::TYPE_ARRAY);
+                $importAsTaxo = Json::decode($this->params()->fromPost('inportAsTaxo', "[ ]"), Json::TYPE_ARRAY);
+                $importAsFieldTranslation = Json::decode($this->params()->fromPost('inportAsFieldTranslation', "[ ]"), Json::TYPE_ARRAY);
+                $importAsTaxoTranslation = Json::decode($this->params()->fromPost('inportAsTaxoTranslation', "[ ]"), Json::TYPE_ARRAY);
                 
                 // create vocabularies
                 $newTaxos = array();
@@ -309,7 +312,7 @@ class ImportController extends DataAccessController
                     "nativeLanguage" => $workingLanguage,
                     "i18n" => $newCTi18n
                 );
-                $contentType = Rubedo\Services\Manager::getService('ContentTypes')->create($contentTypeParams);
+                $contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
                 
                 // add contents to CT and terms to vocabularies
                 $recievedFile = fopen($fileInfos['tmp_name'], 'r');
@@ -620,12 +623,9 @@ class ImportController extends DataAccessController
             }
         }
         
-        $this->getHelper('Layout')->disableLayout();
-        $this->getHelper('ViewRenderer')->setNoRender();
-        $returnValue = Zend_Json::encode($returnArray);
-        if ($this->_prettyJson) {
-            $returnValue = Zend_Json::prettyPrint($returnValue);
+        if (! $returnArray['success']) {
+            $this->getResponse()->setStatusCode(500);
         }
-        $this->getResponse()->setBody($returnValue);
+        return new JsonModel($returnArray);
     }
 }
