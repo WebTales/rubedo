@@ -67,7 +67,9 @@ class Install
         }
         $configContent = "<?php \n return ".var_export($this->getLocalConfig(),true).";";
         file_put_contents($this->configFilePath, $configContent,LOCK_EX);
-        sleep(2);//@todo investigate latency on modification for config file.
+        if (function_exists('accelerator_reset')) { //As config is a php file, we should reset bytecode cache to have new configuration
+            return accelerator_reset(); 
+        }
         //@todo trigger event to clear cache config if used
     }
     
