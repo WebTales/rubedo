@@ -33,13 +33,6 @@ class PhpSettingsForm extends BootstrapForm
 
     public static function getForm($params)
     {
-        $displayErrors = new Checkbox('display_errors');
-        $displayErrors->setValue(isset($params['phpSettings']['display_errors']) ? $params['phpSettings']['display_errors'] : null);
-        $displayErrors->setLabel('Display PHP Errors');
-        
-        $phpSettingsFieldSet = new Fieldset('phpSettings');
-        $phpSettingsFieldSet->add($displayErrors);
-        
         $displayExceptions = new Checkbox('display_exceptions');
         $displayExceptions->setValue(isset($params['view_manager']['display_exceptions']) ? $params['view_manager']['display_exceptions'] : false);
         $displayExceptions->setLabel('Display application exceptions');
@@ -47,7 +40,7 @@ class PhpSettingsForm extends BootstrapForm
         $displayExceptionsFieldSet = new Fieldset('view_manager');
         $displayExceptionsFieldSet->add($displayExceptions);
         
-        $rubedoConfigFieldset= new Fieldset('rubedo_config');
+        $rubedoConfigFieldset = new Fieldset('rubedo_config');
         
         $extDebug = new Checkbox('extDebug');
         $extDebug->setValue(isset($params['rubedo_config']['extDebug']) ? $params['rubedo_config']['extDebug'] : null);
@@ -55,19 +48,19 @@ class PhpSettingsForm extends BootstrapForm
         
         $sessionFieldset = new Fieldset('session');
         $sessionName = new Text('name');
-        $sessionName->setAttribute('Required',true);
+        $sessionName->setAttribute('Required', true);
         $sessionName->setValue(isset($params['session']['name']) ? $params['session']['name'] : 'rubedo');
         $sessionName->setLabel('Name of the session cookie');
         $sessionFieldset->add($sessionName);
         
         $authLifetime = new Text('authLifetime');
-        $authLifetime->setAttribute('Required',true);
+        $authLifetime->setAttribute('Required', true);
         $authLifetime->setValue(isset($params['session']['remember_me_seconds']) ? $params['session']['remember_me_seconds'] : '3600');
         $authLifetime->setLabel('Session lifetime');
         $sessionFieldset->add($authLifetime);
         
         $defaultBackofficeHost = new Text('defaultBackofficeHost');
-        $defaultBackofficeHost->setAttribute('Required',true);
+        $defaultBackofficeHost->setAttribute('Required', true);
         $defaultBackofficeHost->setValue(isset($params['rubedo_config']['defaultBackofficeHost']) ? $params['rubedo_config']['defaultBackofficeHost'] : $_SERVER['HTTP_HOST']);
         $defaultBackofficeHost->setLabel('Default backoffice domain');
         
@@ -84,9 +77,9 @@ class PhpSettingsForm extends BootstrapForm
         $fromEmailNotification->setLabel('Sender of notifications');
         
         $dbForm = new Form();
-        $dbForm->add($phpSettingsFieldSet);
         $dbForm->add($displayExceptionsFieldSet);
-        $rubedoConfigFieldset->add($extDebug);;
+        $rubedoConfigFieldset->add($extDebug);
+        ;
         $rubedoConfigFieldset->add($defaultBackofficeHost);
         $rubedoConfigFieldset->add($isBackofficeSSL);
         $rubedoConfigFieldset->add($enableEmailNotification);
