@@ -30,7 +30,7 @@ use Rubedo\Mongo\DataAccess;
  */
 class Logger
 {
-    protected static $logName = 'Rubedo';
+    protected static $logName = 'error';
 
     protected $logger = null;
 

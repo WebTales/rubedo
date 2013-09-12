@@ -26,5 +26,5 @@ namespace Rubedo\Log;
  */
 class SecurityLogger extends Logger
 {
-    protected static $logName = 'Security';
+    protected static $logName = 'security';
 }
