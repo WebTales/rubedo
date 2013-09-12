@@ -177,6 +177,7 @@ class IndexController extends AbstractActionController
     public function setDbAction()
     {
         $this->viewData->displayMode = 'regular';
+        $this->viewData->isReady = false;
         $this->config = $this->installObject->getLocalConfig();
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
