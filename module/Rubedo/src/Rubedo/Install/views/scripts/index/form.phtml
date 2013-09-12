@@ -7,18 +7,9 @@ echo $this->form()->openTag($form);
 foreach ($form as $element) {
     
 if ($element instanceof Zend\Form\FieldsetInterface) {
-        if ($element->getName() == 'buttonGroup') {
-            echo '<div class="form-actions">';
-            echo $this->formCollection()->render($element);
-            echo '</div>';
-        } else {
-            foreach ($element as $subElements){
-                echo $this->partial('rubedo/install/controller/index/element', array(
-                    'element' => $subElements
-                ));
-            }
-            
-        }
+         echo $this->partial('rubedo/install/controller/index/fieldset', array(
+                'element' => $element
+            )); 
     } else {
         echo $this->partial('rubedo/install/controller/index/element', array(
             'element' => $element

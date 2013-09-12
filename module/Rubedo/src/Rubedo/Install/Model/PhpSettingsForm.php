@@ -20,6 +20,8 @@ use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\Fieldset;
+use Zend\Form\Element\Select;
+use Monolog\Logger;
 
 /**
  * Form for DB Config
@@ -39,8 +41,47 @@ class PhpSettingsForm extends BootstrapForm
         
         $displayExceptionsFieldSet = new Fieldset('view_manager');
         $displayExceptionsFieldSet->add($displayExceptions);
+        $displayExceptionsFieldSet->setAttribute('legend', 'Exception screen');
+        
+        // enableHandler
+        $loggerFieldSet = new Fieldset('logger');
+        $enableLoggerFieldSet = new Fieldset('enableHandler');
+        $enableLoggerFieldSet->setAttribute('legend', 'Error log Handler');
+        $handlerCheckbox = new Checkbox('ChromePHPHandler');
+        $handlerCheckbox->setLabel('ChromePHPHandler');
+        $handlerCheckbox->setValue($params['logger']['enableHandler']['ChromePHPHandler']);
+        $enableLoggerFieldSet->add($handlerCheckbox);
+        
+        $handlerCheckbox = new Checkbox('FirePHPHandler');
+        $handlerCheckbox->setLabel('FirePHPHandler');
+        $handlerCheckbox->setValue($params['logger']['enableHandler']['FirePHPHandler']);
+        $enableLoggerFieldSet->add($handlerCheckbox);
+        
+        $handlerCheckbox = new Checkbox('MongoDBHandler');
+        $handlerCheckbox->setLabel('MongoDBHandler');
+        $handlerCheckbox->setValue($params['logger']['enableHandler']['MongoDBHandler']);
+        $enableLoggerFieldSet->add($handlerCheckbox);
+        
+        $handlerCheckbox = new Checkbox('StreamHandler');
+        $handlerCheckbox->setLabel('Files');
+        $handlerCheckbox->setValue($params['logger']['enableHandler']['StreamHandler']);
+        $enableLoggerFieldSet->add($handlerCheckbox);
+        
+        $loggerFieldSet->add($enableLoggerFieldSet);
+        
+        $levels = array_flip(Logger::getLevels());
+        
+        $levelSelect = new Select('errorLevel');
+        $levelSelect->setLabel('Reporting Level');
+        $levelSelect->setValue($params['logger']['errorLevel']);
+        $levelSelect->setOptions(array(
+            'value_options' => $levels
+        ));
+        
+        $loggerFieldSet->add($levelSelect);
         
         $rubedoConfigFieldset = new Fieldset('rubedo_config');
+        $rubedoConfigFieldset->setAttribute('legend', 'Specific Rubedo options');
         
         $extDebug = new Checkbox('extDebug');
         $extDebug->setValue(isset($params['rubedo_config']['extDebug']) ? $params['rubedo_config']['extDebug'] : null);
@@ -78,6 +119,7 @@ class PhpSettingsForm extends BootstrapForm
         
         $dbForm = new Form();
         $dbForm->add($displayExceptionsFieldSet);
+        $dbForm->add($loggerFieldSet);
         $rubedoConfigFieldset->add($extDebug);
         ;
         $rubedoConfigFieldset->add($defaultBackofficeHost);

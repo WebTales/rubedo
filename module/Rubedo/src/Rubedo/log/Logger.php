@@ -43,9 +43,9 @@ class Logger
         $config = $this->getConfig();
         $levels = $this->logger->getLevels();
         if (isset($config['errorLevel'])) {
-            $level = $levels[$config['errorLevel']];
+            $level = $config['errorLevel'];
         } else {
-            $level = 'ERROR';
+            $level = monologger::ERROR;
         }
         if (isset($config['handlers'])) {
             foreach ($config['handlers'] as $key => $handler) {

@@ -45,6 +45,7 @@ return array(
     'ReusableElements' => 'Rubedo\\Collection\\ReusableElements',
     'RawRenderer' => 'Rubedo\\Templates\\Raw\\RawRenderer',
     'RubedoVersion' => 'Rubedo\\Collection\\RubedoVersion',
+    'SearchLogger' => 'Rubedo\\Log\\SearchLogger',
     'SecurityLogger' => 'Rubedo\\Log\\SecurityLogger',
     'Session' => 'Rubedo\\User\\Session',
     'SessionData' => 'Rubedo\\Collection\\SessionData',

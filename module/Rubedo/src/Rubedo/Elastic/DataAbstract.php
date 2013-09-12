@@ -126,7 +126,7 @@ class DataAbstract
             'host' => $host
         ));
         
-        $this->_client->setLogger(Manager::getService('logger')->getLogger());
+        $this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
         
         self::$_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
         

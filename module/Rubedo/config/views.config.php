@@ -13,6 +13,7 @@ return array(
     'rubedo/controller/login/index' => $boViewsPath . '/login/index.phtml',
     'rubedo/install/controller/index/form' => $installViewPath . '/index/form.phtml',
     'rubedo/install/controller/index/element' => $installViewPath . '/index/element.phtml',
+    'rubedo/install/controller/index/fieldset' => $installViewPath . '/index/fieldset.phtml',
     'rubedo/install/controller/index/index' => $installViewPath . '/index/index.phtml',
     'rubedo/install/controller/index/start-wizard' => $installViewPath . '/index/start-wizard.phtml',
     'rubedo/install/controller/index/set-db' => $installViewPath . '/index/set-db.phtml',

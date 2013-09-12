@@ -1,4 +1,6 @@
 <?php
+use Monolog\Logger;
+
 return array(
     'handlers' => array(
         'ChromePHPHandler' => array(
@@ -23,6 +25,6 @@ return array(
         'MongoDBHandler' => 0,
         'StreamHandler' => 0
     ),
-    'errorLevel' => 'ERROR',
-    'applicationLevel' => 'INFO'
+    'errorLevel' => Logger::ERROR,
+    'applicationLevel' => Logger::INFO
 );

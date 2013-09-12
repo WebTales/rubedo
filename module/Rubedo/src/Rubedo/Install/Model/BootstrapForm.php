@@ -41,19 +41,7 @@ class BootstrapForm
     protected static function setForm(Form $dbForm)
     {
         foreach ($dbForm as $element) {
-            if ($element instanceof FieldsetInterface) {
-                foreach ($element as $subElement) {
-                    $subElement->setLabelAttributes(array(
-                        'class' => 'control-label'
-                    ));
-                }
-                $subElement->setAttribute('id',$subElement->getName());
-                continue;
-            }
-            $element->setLabelAttributes(array(
-                'class' => 'control-label'
-            ));
-            $element->setAttribute('id',$element->getName());
+            self::setIds($element);
         }
         
         $submitButton = new Submit('Submit');
@@ -72,10 +60,23 @@ class BootstrapForm
         $buttonFieldSet->add($resetButton);
         $buttonFieldSet->setAttribute('class', 'form-actions');
         $dbForm->add($buttonFieldSet);
-        
         $dbForm->setAttribute('class', 'form-horizontal');
         
         return $dbForm;
+    }
+
+    protected static function setIds($element)
+    {
+        if ($element instanceof FieldsetInterface) {
+            foreach ($element as $subElement) {
+                self::setIds($subElement);
+            }
+            $subElement->setAttribute('id', $subElement->getName());
+        }
+        $element->setLabelAttributes(array(
+            'class' => 'control-label'
+        ));
+        $element->setAttribute('id',$element->getName());
     }
 }
 
