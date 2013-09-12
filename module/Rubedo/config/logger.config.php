@@ -16,7 +16,7 @@ return array(
             'collection' => 'Logs',
             'database' => 'inherit',
             'level' => 'ERROR',
-            'enable' => true
+            'enable' => false
         ),
         'StreamHandler' => array(
             'class' => 'Monolog\\Handler\\StreamHandler',
@@ -24,5 +24,6 @@ return array(
             'level' => 'ERROR',
             'enable' => false
         )
-    )
+    ),
+    'applicationLevel'=>'INFO'
 );
