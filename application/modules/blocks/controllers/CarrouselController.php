@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 Use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 require_once ('ContentListController.php');
 
@@ -37,6 +38,11 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $blockConfig = $this->getRequest()->getParam('block-config');
         
         $filters = Manager::getService('Queries')->getFilterArrayById($blockConfig['query']);
+        $localFilters = $filters['filter'];
+        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.image')->setOperator('$exists')->setValue(true);
+        $localFilters->addFilter($imageFilter);
+        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.image')->setOperator('$ne')->setValue('');
+        $localFilters->addFilter($imageFilter);
         
         if ($filters !== false) {
             $queryType = $filters["queryType"];
@@ -94,6 +100,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
             }
         }
         $output = $this->getAllParams();
+        $output['nbItems']= $nbItems;
         $output["items"] = $data;
         $output["imageWidth"] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
         $output["imageHeight"] = isset($blockConfig['imageHeight']) ? $blockConfig['imageHeight'] : null;

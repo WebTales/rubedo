@@ -2,6 +2,7 @@
 
 {% block mainContent %}
     <!-- carousel -->
+    {% if nbItems > 0 %}
     {%set carouselid="carousel-"~random() %}
     
     <div id="{{carouselid}}" class="carousel slide" style="{% if imageWidth %}max-width:{{ imageWidth }}px;{% endif %}{% if imageHeight %}max-height:{{ imageHeight }}px;{% endif %}">
@@ -32,4 +33,5 @@
     	<a class="carousel-control right" href="#{{ carouselid }}" data-slide="next">&rsaquo;</a>
     
     </div>
+    {% endif %}
 {% endblock %}
