@@ -8,6 +8,7 @@
 		"twig/twig": "1.13.*",
 		"webtales/mongo-filters": "dev-develop",
 		"twig/extensions": "1.0.*",
+		"monolog/monolog": "1.6.*",
 		"ruflin/Elastica": "0.90.*",
 		"ezyang/htmlpurifier": "4.5.*",
 		"zendframework/zendframework": "2.*",
