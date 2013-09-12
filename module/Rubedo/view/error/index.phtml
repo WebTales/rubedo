@@ -1,13 +1,4 @@
-<div class="alert alert-error">
-	<h2><?php echo $this->message ?></h2>
-
-<?php if (isset($this->exception)){ ?>
-
-<p>
-	<?php echo $this->exception->getMessage()?>
-  </p>
-<?php } ?>
-</div>
+	<h1><?php echo $this->message ?></h1>
 
 <?php if (isset($this->display_exceptions) && $this->display_exceptions): ?>
 

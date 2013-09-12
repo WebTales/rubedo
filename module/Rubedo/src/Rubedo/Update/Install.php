@@ -394,6 +394,9 @@ class Install
     public function clearConfigCache()
     {
         $moduleConfigCachePath = CONFIG_CACHE_DIR . '/module-config-cache..php';
-        unlink($moduleConfigCachePath);
+        if (is_file($moduleConfigCachePath)){
+            unlink($moduleConfigCachePath);
+        }
+        
     }
 }

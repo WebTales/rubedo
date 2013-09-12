@@ -125,28 +125,30 @@ class JsonExceptionStrategy extends ExceptionStrategy
                 break;
         }
         
-        $serverParams = $e->getRequest()->getServer();
-        $context = array(
-            'user' => Manager::getService('CurrentUser')->getCurrentUser(),
-            'remote_ip' => $serverParams->get('X-Forwarded-For', $serverParams->get('REMOTE_ADDR')),
-            'uri' => $e->getRequest()
-                ->getUri()
-                ->toString(),
-            'class' => get_class($exception),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'errorStack' =>$exception->getTrace()
-        )
-        ;
+        if ($response->getStatusCode() != 200) {
+            $serverParams = $e->getRequest()->getServer();
+            $context = array(
+                'user' => Manager::getService('CurrentUser')->getCurrentUser(),
+                'remote_ip' => $serverParams->get('X-Forwarded-For', $serverParams->get('REMOTE_ADDR')),
+                'uri' => $e->getRequest()
+                    ->getUri()
+                    ->toString(),
+                'class' => get_class($exception),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine()
+            )
+            ;
+        }
         
         if ($response->getStatusCode() == 500) {
+            $context['errorStack'] = $exception->getTrace();
             Manager::getService('Logger')->error($exception->getMessage(), $context);
         }
         
         if ($response->getStatusCode() == 403) {
-            
             Manager::getService('SecurityLogger')->error($exception->getMessage(), $context);
         }
+        
         if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
             return;
         }
@@ -162,9 +164,9 @@ class JsonExceptionStrategy extends ExceptionStrategy
 
     public function serializeException($exception)
     {
+        $data['success'] = false;
+        $data['msg'] = $exception->getMessage();
         if ($this->displayExceptions) {
-            $data['success'] = false;
-            $data['msg'] = $exception->getMessage();
             $data['class'] = get_class($exception);
             $data['file'] = $exception->getFile();
             $data['line'] = $exception->getLine();
