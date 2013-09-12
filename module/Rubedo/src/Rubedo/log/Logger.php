@@ -42,17 +42,18 @@ class Logger
         $this->logger = new monologger(static::$logName);
         $config = $this->getConfig();
         $levels = $this->logger->getLevels();
+        if (isset($config['errorLevel'])) {
+            $level = $levels[$config['errorLevel']];
+        } else {
+            $level = 'ERROR';
+        }
         if (isset($config['handlers'])) {
-            foreach ($config['handlers'] as $handler) {
-                if (! $handler['enable']) {
+            foreach ($config['handlers'] as $key => $handler) {
+                if (! $config['enableHandler'][$key]) {
                     continue;
                 }
                 $className = $handler['class'];
-                if (isset($handler['level'])) {
-                    $level = $levels[$handler['level']];
-                } else {
-                    $level = null;
-                }
+                
                 switch ($className) {
                     case 'Monolog\\Handler\\StreamHandler':
                         if(isset($handler['dirPath'])){
