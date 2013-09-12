@@ -432,7 +432,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $childrenToDelete = $this->_getChildToDelete($obj['id']);
         
         foreach ($childrenToDelete as $child) {
-            Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child["id"]);
+            Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
         }
         
         $deleteCond = Filter::factory('InUid')->setValue($childrenToDelete);
