@@ -540,8 +540,10 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                         break;
                                     }
                                 }
-                                $transLocale = $importAsTaxoTranslation[$translationKey]["translateToLanguage"];
-                                $translatedTermsList = explode(",", $currentLine[$importAsTaxoTranslation[$translationKey]["csvIndex"]]);
+                                if (isset($translationKey)){
+                                    $transLocale = $importAsTaxoTranslation[$translationKey]["translateToLanguage"];
+                                    $translatedTermsList = explode(",", $currentLine[$importAsTaxoTranslation[$translationKey]["csvIndex"]]);
+                                }
                                 
                                 foreach ($termsList as $termsListKey => $term) {
                                     if ($term != "") {
@@ -554,7 +556,7 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                                                 "locale" => $workingLanguage
                                             );
                                             // Add translation if exists
-                                            if ($translatedTermsList[$termsListKey] != "" && $transLocale != "") {
+                                            if (isset($translatedTermsList) && $translatedTermsList[$termsListKey] != "" && $transLocale != "") {
                                                 if (! isset($termI18n[$transLocale]["locale"]))
                                                     $termI18n[$transLocale]["locale"] = $transLocale;
                                                 $termI18n[$transLocale]["text"] = $translatedTermsList[$termsListKey];
