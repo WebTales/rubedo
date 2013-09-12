@@ -35,6 +35,7 @@ class Logger
     protected $logger = null;
 
     protected static $config;
+    
 
     public function __construct()
     {
@@ -54,6 +55,9 @@ class Logger
                 }
                 switch ($className) {
                     case 'Monolog\\Handler\\StreamHandler':
+                        if(isset($handler['dirPath'])){
+                            $handler['path'] = $handler['dirPath'].'/'.static::$logName.'.log';
+                        }
                         $handler = new $className($handler['path'], $level);
                         break;
                     case 'Monolog\\Handler\\MongoDBHandler':

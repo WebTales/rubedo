@@ -20,7 +20,7 @@ return array(
         ),
         'StreamHandler' => array(
             'class' => 'Monolog\\Handler\\StreamHandler',
-            'path' => APPLICATION_PATH . '/log/my_app.log',
+            'dirPath' => APPLICATION_PATH . '/log',
             'level' => 'ERROR',
             'enable' => false
         )
