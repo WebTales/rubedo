@@ -702,6 +702,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'all':
                 $client = self::$_content_index->getClient();
+                $client->setLogger(Manager::getService('logger')->getLogger());
                 $search = new \Elastica\Search($client);
                 $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_content_index);
@@ -736,6 +737,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 ));
                 
                 $client = self::$_content_index->getClient();
+                $client->setLogger(Manager::getService('logger')->getLogger());
                 $search = new \Elastica\Search($client);
                 $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_content_index);

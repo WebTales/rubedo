@@ -24,6 +24,8 @@ use Zend\View\Model\JsonModel;
 use Zend\Mvc\View\Http\ExceptionStrategy;
 use Zend\Http\Response as HttpResponse;
 use Rubedo\Content\Context;
+use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 
 /**
  * Handle response as Json if in an asynchroneus context
@@ -42,32 +44,32 @@ class JsonExceptionStrategy extends ExceptionStrategy
 
     protected $describePath;
 
-    public function getDisplayExceptions ()
+    public function getDisplayExceptions()
     {
         return $this->displayExceptions;
     }
 
-    public function setDisplayExceptions ($displayExceptions)
+    public function setDisplayExceptions($displayExceptions)
     {
         $this->displayExceptions = $displayExceptions;
     }
 
-    public function getExceptionMap ()
+    public function getExceptionMap()
     {
         return $this->exceptionMap;
     }
 
-    public function setExceptionMap ($exceptionMap)
+    public function setExceptionMap($exceptionMap)
     {
         $this->exceptionMap = $exceptionMap;
     }
 
-    public function getDescribePath ()
+    public function getDescribePath()
     {
         return $this->describePath;
     }
 
-    public function setDescribePath ($describePath)
+    public function setDescribePath($describePath)
     {
         $this->describePath = $describePath;
     }
@@ -79,7 +81,7 @@ class JsonExceptionStrategy extends ExceptionStrategy
      * @param MvcEvent $e            
      * @return void
      */
-    public function prepareExceptionViewModel (MvcEvent $e)
+    public function prepareExceptionViewModel(MvcEvent $e)
     {
         // Do nothing if no error in the event
         if (! ($error = $e->getError())) {
@@ -123,6 +125,28 @@ class JsonExceptionStrategy extends ExceptionStrategy
                 break;
         }
         
+        $serverParams = $e->getRequest()->getServer();
+        $context = array(
+            'user' => Manager::getService('CurrentUser')->getCurrentUser(),
+            'remote_ip' => $serverParams->get('X-Forwarded-For', $serverParams->get('REMOTE_ADDR')),
+            'uri' => $e->getRequest()
+                ->getUri()
+                ->toString(),
+            'class' => get_class($exception),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'errorStack' =>$exception->getTrace()
+        )
+        ;
+        
+        if ($response->getStatusCode() == 500) {
+            Manager::getService('Logger')->error($exception->getMessage(), $context);
+        }
+        
+        if ($response->getStatusCode() == 403) {
+            
+            Manager::getService('SecurityLogger')->error($exception->getMessage(), $context);
+        }
         if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
             return;
         }
@@ -136,7 +160,7 @@ class JsonExceptionStrategy extends ExceptionStrategy
         ]);
     }
 
-    public function serializeException ($exception)
+    public function serializeException($exception)
     {
         if ($this->displayExceptions) {
             $data['success'] = false;

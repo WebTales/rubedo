@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Elastic;
 
+use Rubedo\Services\Manager;
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using Elastica API
  *
@@ -124,6 +125,8 @@ class DataAbstract
             'port' => $port,
             'host' => $host
         ));
+        
+        $this->_client->setLogger(Manager::getService('logger')->getLogger());
         
         self::$_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
         

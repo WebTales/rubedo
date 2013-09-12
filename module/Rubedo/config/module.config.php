@@ -19,6 +19,7 @@ $router = include (__DIR__ . '/router.config.php');
 $blocksDefinition = include (__DIR__ . '/blocks.definition.config.php');
 $templateConfig = include (__DIR__ . '/templates.config.php');
 $appExtension = include (__DIR__ . '/app.extensions.config.php');
+$loggerConfig = include (__DIR__ . '/logger.config.php');
 
 foreach ($serviceMapArray as $key => $value) {
     $serviceSharedMapArray[$key] = false;
@@ -102,5 +103,7 @@ $config['blocksDefinition'] = $blocksDefinition;
 $config['templates'] = $templateConfig;
 
 $config['appExtension'] = $appExtension;
+
+$config['logger'] = $loggerConfig;
 
 return $config;
