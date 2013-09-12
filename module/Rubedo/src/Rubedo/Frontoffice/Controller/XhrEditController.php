@@ -145,7 +145,7 @@ class XhrEditController extends AbstractActionController
         
         // Send reponse
         if (count($errors) > 0) {
-            throw new Rubedo\Exceptions\Server($errors);
+            throw new \Rubedo\Exceptions\Server($errors);
         } else {
             return new JsonModel(array(
                 "success" => true

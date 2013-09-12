@@ -20,19 +20,19 @@ use Rubedo\Mongo\DataAccess;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataAbstract;
-use WebTales\MongoFilters\Filter;
 use Rubedo\Update\Install;
 use Rubedo\Install\Model\NavObject;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
 use Rubedo\Install\Model\DbConfigForm;
-use Zend\View\Model\JsonModel;
 use Rubedo\Install\Model\EsConfigForm;
 use Rubedo\Install\Model\LanguagesConfigForm;
 use Rubedo\Install\Model\AdminConfigForm;
 use Rubedo\Install\Model\MailConfigForm;
 use Rubedo\Install\Model\DomainAliasForm;
 use Rubedo\Install\Model\PhpSettingsForm;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
+
 
 /**
  * Installer

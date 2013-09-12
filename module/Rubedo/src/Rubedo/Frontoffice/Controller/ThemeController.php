@@ -18,7 +18,6 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
-use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing access to images in gridFS

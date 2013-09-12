@@ -19,7 +19,6 @@ namespace Rubedo\Install\Model;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\Form\Element\Password;
-use Zend\InputFilter\InputFilter;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Number;
 /**

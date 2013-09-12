@@ -21,7 +21,6 @@ use WebTales\MongoFilters\Filter;
 use Rubedo;
 use Zend\Json\Json;
 use Rubedo\Services\Events;
-use Zend\Debug\Debug;
 
 /**
  * Methods
