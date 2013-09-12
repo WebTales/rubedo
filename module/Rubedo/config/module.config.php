@@ -12,6 +12,7 @@
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 $serviceMapArray = include (__DIR__ . '/services.config.php');
+$sharedService = include (__DIR__ . '/shared.services.config.php');
 $controllerArray = include (__DIR__ . '/controllers.config.php');
 $viewArray = include (__DIR__ . '/views.config.php');
 $localizationConfig = include (__DIR__ . '/localization.config.php');
@@ -22,7 +23,11 @@ $appExtension = include (__DIR__ . '/app.extensions.config.php');
 $loggerConfig = include (__DIR__ . '/logger.config.php');
 
 foreach ($serviceMapArray as $key => $value) {
-    $serviceSharedMapArray[$key] = false;
+    if (in_array($key, $sharedService)) {
+        $serviceSharedMapArray[$key] = true;
+    } else {
+        $serviceSharedMapArray[$key] = false;
+    }
 }
 
 $config = array(
