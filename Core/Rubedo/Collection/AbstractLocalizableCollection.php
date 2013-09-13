@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IAbstractCollection;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 

@@ -17,9 +17,6 @@
  */
 namespace Rubedo\Update;
 
-use WebTales\MongoFilters\Filter;
-use Rubedo\Services\Manager;
-
 /**
  * Methods
  * for
@@ -45,6 +42,4 @@ class Update010300 extends Update
     {
         return true;
     }
-
-    
 }

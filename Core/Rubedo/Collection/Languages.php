@@ -80,12 +80,10 @@ class Languages extends AbstractCollection implements ILanguages
      * @param string $iso            
      * @return array
      */
-    public function findByIso($iso)
+    public function findByIso ($iso)
     {
         $filter = Filter::factory('Value')->setValue($iso)->setName('iso2');
-        if ($result) {
-            $result = $this->_dataService->findOne($filter);
-        }
+        $result = $this->_dataService->findOne($filter);
         return $result;
     }
 
@@ -159,7 +157,7 @@ class Languages extends AbstractCollection implements ILanguages
      */
     public function destroy(array $obj, $options = array())
     {
-        throw new Rubedo\Exceptions\User('Languages can\'t be deleted', "Exception100");
+        throw new \Rubedo\Exceptions\User('Languages can\'t be deleted', "Exception100");
     }
 
     /**

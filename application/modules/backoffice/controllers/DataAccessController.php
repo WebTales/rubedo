@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
-use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
