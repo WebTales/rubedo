@@ -47,8 +47,15 @@ class Groups extends AbstractCollection implements IGroups
             'keys' => array(
                 'members' => 1
             )
+        ),
+        array(
+            'keys' => array(
+                'name' => 1
+            )
         )
     );
+    
+    protected static $groupByName = array();
 
     public function __construct ()
     {
@@ -253,8 +260,11 @@ class Groups extends AbstractCollection implements IGroups
 
     public function findByName ($name)
     {
-        $filter = Filter::factory('Value')->setValue($name)->setName('name');
-        return $this->_dataService->findOne($filter);
+        if (! isset(static::$groupByName[$name])) {
+            $filter = Filter::factory('Value')->setValue($name)->setName('name');
+            static::$groupByName[$name] = $this->_dataService->findOne($filter);
+        }
+        return static::$groupByName[$name];
     }
 
     /**

@@ -41,7 +41,13 @@ class Blocks extends AbstractCollection implements IBlocks
         parent::__construct();
     }
     
-    
+    protected $_indexes = array(
+        array(
+            'keys' => array(
+                'pageId' => 1
+            ),
+        )
+    );
 
     /**
      * @return the $config

@@ -17,6 +17,9 @@
 namespace Rubedo\Mongo;
 
 use Rubedo\Interfaces\Mongo\IDataAccess, WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
+use Rubedo\Services\Manager;
+use Rubedo\Services\Events;
 
 /**
  * Class implementing the API to MongoDB
@@ -131,6 +134,8 @@ class DataAccess implements IDataAccess
      * @var array
      */
     protected $_excludeFieldList = array();
+    
+    protected static $requestArray = array();
 
     /**
      * Getter of the DB connection string
@@ -139,6 +144,9 @@ class DataAccess implements IDataAccess
      */
     public static function getDefaultMongo ()
     {
+        if(!isset(static::$_defaultDb)){
+            static::lazyLoadConfig();
+        }
         return static::$_defaultMongo;
     }
     
@@ -156,6 +164,9 @@ class DataAccess implements IDataAccess
      */
     public static function getDefaultDb()
     {
+        if(!isset(static::$_defaultDb)){
+            static::lazyLoadConfig();
+        }
         return DataAccess::$_defaultDb;
     }
 
@@ -164,6 +175,9 @@ class DataAccess implements IDataAccess
      */
     public function __construct ()
     {
+        if(!isset(static::$_defaultDb)){
+            static::lazyLoadConfig();
+        }
         $this->_filters = Filter::factory();
     }
 
@@ -270,9 +284,9 @@ class DataAccess implements IDataAccess
             return self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection];
         } else {
             $this->_dbName = $this->_getDB($dbName, $mongo);
-            $collection = $this->_dbName->$collection;
+            $collectionObj = new ProxyCollection($this->_dbName->$collection);
             self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] = $collection;
-            return $collection;
+            return $collectionObj;
         }
     }
 
@@ -1247,5 +1261,83 @@ class DataAccess implements IDataAccess
     public function checkIndex ($keys)
     {
         return false;
+    }
+    
+    public static function lazyLoadConfig(){
+        $config = Manager::getService('config');
+        $options = $config['datastream'];
+        if (isset($options)) {
+            $connectionString = 'mongodb://';
+            if (! empty($options['mongo']['login'])) {
+                $connectionString .= $options['mongo']['login'];
+                $connectionString .= ':' . $options['mongo']['password'] . '@';
+            }
+            $connectionString .= $options['mongo']['server'];
+            if (isset($options['mongo']['port'])) {
+                $connectionString .= ':' . $options['mongo']['port'];
+            }
+            self::setDefaultMongo($connectionString);
+        
+            self::setDefaultDb($options['mongo']['db']);
+        }
+        
+        Events::getEventManager()->attach(ProxyCollection::POST_REQUEST,array('Rubedo\\Mongo\\DataAccess','log'),1);
+        //         Events::getEventManager()->attach(ProxyCollection::POST_REQUEST,array('Rubedo\\Mongo\\DataAccess','alertOnIndex'),10);
+        //         Events::getEventManager()->attach(ProxyCollection::POST_REQUEST,array('Rubedo\\Mongo\\DataAccess','checkMultiple'),20);
+    }
+
+    public static function log ($e)
+    {
+        $target = $e->getTarget();
+        $mongoFunctionWithQuery = array(
+            'find',
+            'findOne',
+            'update',
+            'remove'
+        );
+        if (in_array($target->function, $mongoFunctionWithQuery)) {
+            Manager::getService('Logger')->Info("Request on MongoDB collection: '" . $target->collection->getName() . "'", array(
+                'Collection' => $target->collection->getName(),
+                'Function' => $target->function,
+                'Query' => $target->args[0]
+            ));
+        }
+    }
+    
+    public static function checkMultiple($e){
+        $target = $e->getTarget();
+        $args = $target->args;
+        $params = isset($args[0])?$args[0]:null;
+        $key = $target->collection->getName().'_'.$target->function.'_'.md5(serialize($params));
+        if(isset(static::$requestArray[$key])){
+            Manager::getService('Logger')->Error("An already sent query has again been called on '".$target->collection->getName()."'",array(
+            'Collection' => $target->collection->getName(),
+            'Query' => $target->args[0]
+            ));
+            static::$requestArray[$key]++;
+        }else{
+            static::$requestArray[$key]=1;
+        }
+    }
+
+    public static function alertOnIndex ($e)
+    {
+        $target = $e->getTarget();
+        $mongoFunctionWithQuery = array('find','update','remove');
+        if (in_array($target->function,$mongoFunctionWithQuery)) {
+            $cursor = $target->collection->find($target->args[0]);
+        } else {
+            $cursor = $e->getTarget()->result;
+        }
+        
+        if ($cursor instanceof \MongoCursor) {
+            $explain = $cursor->explain();
+            if ($explain['cursor'] == 'BasicCursor') {
+                Manager::getService('Logger')->Error("A query on the collection '".$target->collection->getName()."' didn't used an index",array(
+                    'Collection' => $target->collection->getName(),
+                    'Query' => $target->args[0]
+                ));
+            }
+        }
     }
 }

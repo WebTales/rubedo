@@ -31,8 +31,8 @@ class UrlCache extends AbstractCollection implements IUrlCache
     protected $_indexes = array(
         array(
             'keys' => array(
-                'siteId' => 1,
-                "url" => 1
+                "url" => 1,
+                'siteId' => 1
             ),
             'options' => array(
                 'unique' => true
@@ -46,9 +46,17 @@ class UrlCache extends AbstractCollection implements IUrlCache
             'options' => array(
                 'unique' => true
             )
+        ),
+        array(
+            'keys' => array(
+                'pageId' => 1
+            )
         )
-    )
-    ;
+    );
+
+    protected static $pageToUrl = array();
+
+    protected static $urlToPage = array();
 
     /**
      * Set the collection name
@@ -79,8 +87,11 @@ class UrlCache extends AbstractCollection implements IUrlCache
      */
     public function findByPageId ($pageId)
     {
-        return $this->_dataService->findOne(Filter::factory('value')->setName('pageId')
-            ->setValue($pageId));
+        if (! isset(static::$pageToUrl[$pageId])) {
+            static::$pageToUrl[$pageId] = $this->_dataService->findOne(Filter::factory('value')->setName('pageId')
+                ->setValue($pageId));
+        }
+        return static::$pageToUrl[$pageId];
     }
     
     /*
@@ -101,16 +112,19 @@ class UrlCache extends AbstractCollection implements IUrlCache
         if (! $siteId) {
             return null;
         }
-        $filters = Filter::factory('And');
-        
-        $filter = Filter::factory('Value');
-        $filter->setName('url')->setValue($url);
-        $filters->addFilter($filter);
-        
-        $filter = Filter::factory('Value');
-        $filter->setName('siteId')->setValue($siteId);
-        $filters->addFilter($filter);
-        
-        return $this->_dataService->findOne($filters);
+        if (! isset(static::$urlToPage[$siteId]) || ! isset(static::$urlToPage[$siteId][$url])) {
+            $filters = Filter::factory('And');
+            
+            $filter = Filter::factory('Value');
+            $filter->setName('url')->setValue($url);
+            $filters->addFilter($filter);
+            
+            $filter = Filter::factory('Value');
+            $filter->setName('siteId')->setValue($siteId);
+            $filters->addFilter($filter);
+            
+            static::$urlToPage[$siteId][$url] = $this->_dataService->findOne($filters);
+        }
+        return static::$urlToPage[$siteId][$url];
     }
 }

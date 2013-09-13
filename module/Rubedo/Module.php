@@ -25,6 +25,7 @@ use Rubedo\Exceptions\Access as AccessException;
 use Rubedo\Collection\SessionData;
 use Rubedo\Router\Url;
 use Rubedo\Update\Install;
+use Rubedo\Mongo\ProxyCollection;
 
 class Module
 {
@@ -44,9 +45,9 @@ class Module
         $application = $e->getApplication();
         $config = $application->getConfig();
         
-        $this->initMongodb($config);
-        $this->initElastic($config);
-        $this->initLocalization($config);
+        //$this->initMongodb($config);
+        //$this->initElastic($config);
+        //$this->initLocalization($config);
         $this->initExtjs($config);
         $this->initSwiftMail($config);
         $this->initSites($config);
@@ -213,25 +214,6 @@ class Module
         $indexContentOptions = Json::decode($indexContentOptionsJson, Json::TYPE_ARRAY);
         DataAbstract::setContentIndexOption($indexContentOptions);
         DataAbstract::setDamIndexOption($indexContentOptions);
-    }
-
-    protected function initMongodb($config)
-    {
-        $options = $config['datastream'];
-        if (isset($options)) {
-            $connectionString = 'mongodb://';
-            if (! empty($options['mongo']['login'])) {
-                $connectionString .= $options['mongo']['login'];
-                $connectionString .= ':' . $options['mongo']['password'] . '@';
-            }
-            $connectionString .= $options['mongo']['server'];
-            if (isset($options['mongo']['port'])) {
-                $connectionString .= ':' . $options['mongo']['port'];
-            }
-            Mongo\DataAccess::setDefaultMongo($connectionString);
-            
-            Mongo\DataAccess::setDefaultDb($options['mongo']['db']);
-        }
     }
 
     /**

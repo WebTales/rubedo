@@ -100,7 +100,8 @@ $config['elastic'] = array(
     "host" => "localhost",
     "port" => "9200",
     "contentIndex" => "contents",
-    "damIndex" => "dam"
+    "damIndex" => "dam",
+    "configFilePath" => __DIR__.'/elastica.json'
 );
 
 $config['blocksDefinition'] = $blocksDefinition;

@@ -36,6 +36,11 @@ class Languages extends AbstractCollection implements ILanguages
         ),
         array(
             'keys' => array(
+                'active' => 1
+            )
+        ),
+        array(
+            'keys' => array(
                 'locale' => 1
             ),
             'options' => array(

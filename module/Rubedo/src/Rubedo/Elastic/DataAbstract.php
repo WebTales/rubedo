@@ -17,6 +17,7 @@
 namespace Rubedo\Elastic;
 
 use Rubedo\Services\Manager;
+use Zend\Json\Json;
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using Elastica API
  *
@@ -101,6 +102,12 @@ class DataAbstract
             'number_of_replicas' => 0
         )
     );
+    
+    public function __construct(){
+        if(!isset(self::$_options)){
+            self::lazyLoadConfig();
+        }
+    }
 
     /**
      * Initialize a search service handler to index or query Elastic Search
@@ -158,6 +165,9 @@ class DataAbstract
      */
     public static function getOptions ()
     {
+        if(!isset(self::$_options)){
+            self::lazyLoadConfig();
+        }
         return self::$_options;
     }
 
@@ -194,4 +204,16 @@ class DataAbstract
         }
         return null;
     }
+
+    public static function lazyLoadConfig ()
+    {
+        $options = Manager::getService('config');
+        if (isset($options)) {
+            self::setOptions($options['elastic']);
+        }
+        $indexContentOptionsJson = file_get_contents($options['elastic']['configFilePath']);
+        $indexContentOptions = Json::decode($indexContentOptionsJson, Json::TYPE_ARRAY);
+        self::setContentIndexOption($indexContentOptions);
+        self::setDamIndexOption($indexContentOptions);
+    } 
 }

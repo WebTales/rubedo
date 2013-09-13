@@ -45,6 +45,9 @@ class Translate implements ITranslate
      */
     public static function getLocalizationJsonArray ()
     {
+        if(!isset(self::$localizationJsonArray)){
+            self::lazyLoadConfig();
+        }
         return Translate::$localizationJsonArray;
     }
 
@@ -63,6 +66,9 @@ class Translate implements ITranslate
      */
     public static function getDefaultLanguage ()
     {
+        if(!isset(self::$localizationJsonArray)){
+            self::lazyLoadConfig();
+        }
         return Translate::$defaultLanguage;
     }
 
@@ -75,6 +81,12 @@ class Translate implements ITranslate
         Translate::$defaultLanguage = $defaultLanguage;
     }
 
+    public function __construct(){
+        if(!isset(self::$localizationJsonArray)){
+            self::lazyLoadConfig();
+        }
+    }
+    
     /**
      * translate a label given by its code and its default value
      * 
@@ -163,6 +175,14 @@ class Translate implements ITranslate
                 $tempArray = Json::decode($tempJson,Json::TYPE_ARRAY);
                 self::$translationArray[$language] = array_merge(self::$translationArray[$language], $tempArray);
             } 
+        }
+    }
+    
+    public static function lazyLoadConfig(){
+        $config = Manager::getService('config');
+        $options = $config['localisationfiles'];
+        if (isset($options)) {
+            self::setLocalizationJsonArray($options);
         }
     }
 }
