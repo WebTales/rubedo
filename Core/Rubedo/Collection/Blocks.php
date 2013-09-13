@@ -177,7 +177,7 @@ class Blocks extends AbstractCollection implements IBlocks
     public function update (array $obj, $options = array())
     {
         $obj['checksum'] = $this->checksum($obj['blockData']);
-        parent::update($obj, $options);
+        return parent::update($obj, $options);
     }
 
     /**
