@@ -15,16 +15,13 @@ use Zend\Session\SessionManager;
 use Zend\Session\Container;
 use Zend\Session\SaveHandler\MongoDB;
 use Zend\Session\SaveHandler\MongoDBOptions;
-use Zend\Json\Json;
 use Rubedo\Services\Manager;
 use Rubedo\Services\Events;
-use Rubedo\Elastic\DataAbstract;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Exceptions\JsonExceptionStrategy;
 use Rubedo\Exceptions\Access as AccessException;
 use Rubedo\Collection\SessionData;
 use Rubedo\Router\Url;
-use Rubedo\Update\Install;
 
 class Module
 {
