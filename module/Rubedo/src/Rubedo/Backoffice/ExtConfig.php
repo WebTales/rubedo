@@ -13,6 +13,14 @@
  */
 namespace Rubedo\Backoffice;
 
+use Rubedo\Services\Manager;
+
+/**
+ * Configuration for ExtJs version
+ * 
+ * @author jbourdin
+ *
+ */
 class ExtConfig
 {
 
@@ -21,7 +29,7 @@ class ExtConfig
      *
      * @var array
      */
-    protected static $config = array();
+    protected static $config;
 
     /**
      *
@@ -29,6 +37,9 @@ class ExtConfig
      */
     public static function getConfig()
     {
+        if(!isset(self::$config)){
+            self::lazyloadConfig();
+        }
         return ExtConfig::$config;
     }
 
@@ -39,5 +50,14 @@ class ExtConfig
     public static function setConfig($config)
     {
         ExtConfig::$config = $config;
+    }
+    
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyloadConfig(){
+        $config = Manager::getService('config');
+        $options = $config['backoffice']['extjs'];
+        self::setConfig($options);
     }
 }

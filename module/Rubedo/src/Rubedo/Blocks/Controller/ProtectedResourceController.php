@@ -18,6 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
+use Rubedo\Mail\Mailer;
 
 /**
  *
@@ -115,7 +116,7 @@ class ProtectedResourceController extends AbstractController
         $fileUrl = $protocol . '://' . Manager::getService('Sites')->getHost($this->siteId) . '?tk=' . $tk;
         
         // $resultArray = array('success'=>true,'msg'=>'Un courriel contenant le lien de téléchargement vous a été envoyé.');
-        if (! Zend_Registry::getInstance()->isRegistered('swiftMail')) {
+        if (! Mailer::isActive()) {
             $resultArray = array(
                 'success' => true,
                 'msg' => '<a href="' . $fileUrl . '">' . Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.Download") . 'Cliquez pour votre téléchargement</a>'

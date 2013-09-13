@@ -14,7 +14,9 @@
 namespace Rubedo\Log;
 
 use Monolog\Handler\MongoDBHandler;
-
+use Monolog\Logger as monologger;
+use Rubedo\Services\Manager;
+use Rubedo\Mongo\DataAccess;
 /**
  * Logger Service for security Issues
  *

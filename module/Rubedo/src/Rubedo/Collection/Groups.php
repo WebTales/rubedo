@@ -360,7 +360,6 @@ class Groups extends AbstractCollection implements IGroups
         foreach ($arrayId as $stringId) {
             $deleteArray[] = $this->_dataService->getId($stringId);
         }
-        \Zend_Debug::dump("test");die();
         return $this->_dataService->customDelete(array(
             '_id' => array(
                 '$in' => $deleteArray

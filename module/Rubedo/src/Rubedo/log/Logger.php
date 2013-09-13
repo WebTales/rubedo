@@ -16,7 +16,6 @@ namespace Rubedo\Log;
 use Monolog\Logger as monologger;
 use Rubedo\Exceptions\Server;
 use Rubedo\Services\Manager;
-use Monolog\Handler\StreamHandler;
 use Rubedo\Mongo\DataAccess;
 
 /**

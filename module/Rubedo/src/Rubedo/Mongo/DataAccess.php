@@ -17,7 +17,6 @@
 namespace Rubedo\Mongo;
 
 use Rubedo\Interfaces\Mongo\IDataAccess, WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
 use Rubedo\Services\Manager;
 use Rubedo\Services\Events;
 use Zend\EventManager\EventInterface;

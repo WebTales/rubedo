@@ -25,7 +25,6 @@ use Zend\Mvc\View\Http\ExceptionStrategy;
 use Zend\Http\Response as HttpResponse;
 use Rubedo\Content\Context;
 use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
 
 /**
  * Handle response as Json if in an asynchroneus context

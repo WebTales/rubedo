@@ -14,7 +14,9 @@
 namespace Rubedo\Mail;
 
 use Rubedo\Interfaces\Mail\IMailer;
-
+use Rubedo\Services\Manager;
+use Swift_Mailer;
+use Swift_SmtpTransport;
 /**
  * Mailer Service
  *
@@ -40,9 +42,14 @@ class Mailer implements IMailer
      */
     public function getOptions()
     {
+        if(!isset(self::$options)){
+           self::lazyloadConfig(); 
+        }
         return Mailer::$options;
     }
 
+
+    
 	/**
      * @param multitype: $options
      */
@@ -69,16 +76,47 @@ class Mailer implements IMailer
             if (! isset($options['smtp'])) {
                 throw new \Rubedo\Exceptions\Server('No smtp set in configuration', "Exception66");
             }
-            $this->_transport = \Swift_SmtpTransport::newInstance($options['smtp']['server'], $options['smtp']['port'], $options['smtp']['ssl'] ? 'ssl' : null);
+            $this->_transport = Swift_SmtpTransport::newInstance($options['smtp']['server'], $options['smtp']['port'], $options['smtp']['ssl'] ? 'ssl' : null);
             if (isset($options['smtp']['username'])) {
                 $this->_transport->setUsername($options['smtp']['username'])->setPassword($options['smtp']['password']);
             }
         }
         if (! isset($this->_mailer)) {
-            $this->_mailer = \Swift_Mailer::newInstance($this->_transport);
+            $this->_mailer = Swift_Mailer::newInstance($this->_transport);
         }
         
         // Send the message
         return $this->_mailer->send($message, $failedRecipients);
+    }
+
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyloadConfig ()
+    {
+        $config = Manager::getService('config');
+        if (isset($config['swiftmail'])) {
+            self::setOptions($config['swiftmail']);
+        }else{
+            self::setOptions(array());
+        }
+    }
+    
+    /**
+     * Is the service mailer active
+     * 
+     * True if a configuration is available.
+     * 
+     * @return boolean
+     */
+    public static function isActive(){
+        if(!isset(self::$options)){
+            self::lazyloadConfig();
+        }
+        if(count(self::$options)>0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

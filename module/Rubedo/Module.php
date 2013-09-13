@@ -25,7 +25,6 @@ use Rubedo\Exceptions\Access as AccessException;
 use Rubedo\Collection\SessionData;
 use Rubedo\Router\Url;
 use Rubedo\Update\Install;
-use Rubedo\Mongo\ProxyCollection;
 
 class Module
 {
@@ -48,7 +47,7 @@ class Module
         //$this->initMongodb($config);
         //$this->initElastic($config);
         //$this->initLocalization($config);
-        $this->initExtjs($config);
+        //$this->initExtjs($config);
         $this->initSwiftMail($config);
         $this->initSites($config);
         $this->initSettings($config);
