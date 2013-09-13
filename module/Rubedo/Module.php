@@ -29,7 +29,7 @@ use Rubedo\Update\Install;
 class Module
 {
 
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap (MvcEvent $e)
     {
         // register serviceLocator for global access by Rubedo
         Manager::setServiceLocator($e->getApplication()->getServiceManager());
@@ -44,17 +44,6 @@ class Module
         $application = $e->getApplication();
         $config = $application->getConfig();
         
-        //$this->initMongodb($config);
-        //$this->initElastic($config);
-        //$this->initLocalization($config);
-        //$this->initExtjs($config);
-        $this->initSwiftMail($config);
-        $this->initSites($config);
-        $this->initSettings($config);
-        $this->initRoles($config);
-        $this->initBlocks($config);
-        $this->initTemplates($config);
-        $this->initAppExtension($config);
         SessionData::setSessionName($config['session']['name']);
         
         Interfaces\config::initInterfaces();
@@ -63,8 +52,6 @@ class Module
             $this,
             'preDispatch'
         ));
-        
-        $eventManager->attach(Install::SAVECONFIG,array(new Install(), 'clearConfigCache'));
         
         // Config json enabled exceptionStrategy
         $exceptionStrategy = new JsonExceptionStrategy();
@@ -75,12 +62,12 @@ class Module
         $exceptionStrategy->attach($application->getEventManager());
     }
 
-    public function getConfig()
+    public function getConfig ()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig()
+    public function getAutoloaderConfig ()
     {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
@@ -99,7 +86,7 @@ class Module
      * @param MvcEvent $event            
      * @throws \Rubedo\Exceptions\Access
      */
-    public function preDispatch(MvcEvent $event)
+    public function preDispatch (MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -107,10 +94,9 @@ class Module
         $router = $event->getRouter();
         $matches = $event->getRouteMatch();
         
-        //store this route in URL service
+        // store this route in URL service
         Url::setRouter($router);
         Url::setRouteName($matches->getMatchedRouteName());
-        
         
         // prevent normal session if checking for session remaining lifetime
         if ($controller == 'Rubedo\\Backoffice\\Controller\\XhrAuthentication' && $action == 'is-session-expiring') {
@@ -176,7 +162,7 @@ class Module
         }
     }
 
-    protected function initializeSession(MvcEvent $e)
+    protected function initializeSession (MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()
@@ -204,82 +190,7 @@ class Module
         Container::setDefaultManager($sessionManager);
     }
 
-    protected function initElastic($options)
-    {
-        if (isset($options)) {
-            DataAbstract::setOptions($options['elastic']);
-        }
-        $indexContentOptionsJson = file_get_contents(__DIR__ . '/config/elastica.json');
-        $indexContentOptions = Json::decode($indexContentOptionsJson, Json::TYPE_ARRAY);
-        DataAbstract::setContentIndexOption($indexContentOptions);
-        DataAbstract::setDamIndexOption($indexContentOptions);
-    }
-
-    /**
-     * Load services parameter from application.ini to the service manager
-     */
-    protected function initSites($config)
-    {
-        $options = $config['site'];
-        if (isset($options['override'])) {
-            \Rubedo\Collection\Sites::setOverride($options['override']);
-        }
-    }
-
-    protected function initExtjs($config)
-    {
-        $options = $config['backoffice']['extjs'];
-        \Rubedo\Backoffice\ExtConfig::setConfig($options);
-    }
-
-    protected function initSwiftMail($config)
-    {
-        if (isset($config['swiftmail'])) {
-            \Rubedo\Mail\Mailer::setOptions($config['swiftmail']);
-        }
-    }
-
-    protected function initLocalization($config)
-    {
-        $options = $config['localisationfiles'];
-        if (isset($options)) {
-            
-            \Rubedo\Internationalization\Translate::setLocalizationJsonArray($options);
-        }
-    }
-
-    protected function initSettings($config)
-    {
-        $options = $config['applicationSettings'];
-        if (isset($options['enableEmailNotification'])) {
-            \Rubedo\Mail\Notification::setSendNotification(true);
-            \Rubedo\Mail\Notification::setOptions('defaultBackofficeHost', isset($options['defaultBackofficeHost']) ? $options['defaultBackofficeHost'] : null);
-            \Rubedo\Mail\Notification::setOptions('isBackofficeSSL', isset($options['isBackofficeSSL']) ? $options['isBackofficeSSL'] : false);
-            \Rubedo\Mail\Notification::setOptions('fromEmailNotification', isset($options['fromEmailNotification']) ? $options['fromEmailNotification'] : null);
-        }
-    }
-
-    protected function initRoles($config)
-    {
-        \Rubedo\Security\Acl::setRolesDirectories($config['rolesDirectories']);
-    }
-    
-    protected function initBlocks($config)
-    {
-        \Rubedo\Collection\Blocks::setConfig($config['blocksDefinition']);
-    }
-    
-    protected function initTemplates($config)
-    {
-        \Rubedo\Templates\FrontOfficeTemplates::setConfig($config['templates']);
-    }
-    
-    protected function initAppExtension($config)
-    {
-        \Rubedo\Backoffice\Service\AppExtension::setConfig($config['appExtension']);
-    }
-
-    protected function toDeadEnd(MvcEvent $event,\Exception $exception)
+    protected function toDeadEnd (MvcEvent $event, \Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');

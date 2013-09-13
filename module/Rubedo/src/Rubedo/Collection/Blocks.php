@@ -19,6 +19,7 @@ namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IBlocks;
 use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Blocks
@@ -29,43 +30,53 @@ use Zend\Json\Json;
  */
 class Blocks extends AbstractCollection implements IBlocks
 {
+
     /**
      * Configuration of available blocks
+     * 
      * @var array
      */
-    protected static $config = array();
-    
+    protected static $config;
+
     public function __construct ()
     {
         $this->_collectionName = 'Blocks';
         parent::__construct();
+        if (! isset(self::$config)) {
+            self::lazyloadConfig();
+        }
     }
-    
+
     protected $_indexes = array(
         array(
             'keys' => array(
                 'pageId' => 1
-            ),
+            )
         )
     );
 
     /**
+     *
      * @return the $config
      */
-    public function getConfig()
+    public function getConfig ()
     {
-        return Blocks::$config;
+        if (! isset(self::$config)) {
+            self::lazyloadConfig();
+        }
+        return self::$config;
     }
 
-	/**
-     * @param multitype: $config
+    /**
+     *
+     * @param multitype: $config            
      */
-    public static function setConfig($config)
+    public static function setConfig ($config)
     {
-        Blocks::$config = $config;
+        self::$config = $config;
     }
 
-	public function _init()
+    public function _init ()
     {
         parent::_init();
         if (AbstractCollection::getIsFrontEnd()) {
@@ -75,7 +86,10 @@ class Blocks extends AbstractCollection implements IBlocks
                 ->setOperator('$exists')
                 ->setValue(false);
             $filters->addFilter($filter);
-            $filter = Filter::factory('In')->setName('blockData.localeFilters')->setValue(array($wLocale,'all'));
+            $filter = Filter::factory('In')->setName('blockData.localeFilters')->setValue(array(
+                $wLocale,
+                'all'
+            ));
             $filters->addFilter($filter);
             $this->_dataService->addFilter($filters);
         }
@@ -88,7 +102,7 @@ class Blocks extends AbstractCollection implements IBlocks
      * @param string $maskId            
      * @return array
      */
-    public function getListByMask($maskId)
+    public function getListByMask ($maskId)
     {
         $filter = Filter::factory('Value')->setName('maskId')->setValue($maskId);
         $result = $this->getList($filter, array(
@@ -125,7 +139,7 @@ class Blocks extends AbstractCollection implements IBlocks
      * @param string $pageId            
      * @return array
      */
-    public function getListByPage($pageId)
+    public function getListByPage ($pageId)
     {
         $filter = Filter::factory('Value')->setName('pageId')->setValue($pageId);
         $result = $this->getList($filter, array(
@@ -224,9 +238,9 @@ class Blocks extends AbstractCollection implements IBlocks
     public function upsertFromData ($data, $parentId, $type = 'page')
     {
         if ($this->isModified($data)) {
-        	if(strpos($data["id"],'unBloc')===0 || strpos($data["id"],'ext-gen')===0){
-        		$data['id'] = new \MongoId();
-        	}
+            if (strpos($data["id"], 'unBloc') === 0 || strpos($data["id"], 'ext-gen') === 0) {
+                $data['id'] = new \MongoId();
+            }
             $block = $this->findById($data['id']);
             if ($block) {
                 $block['blockData'] = $data;
@@ -265,21 +279,32 @@ class Blocks extends AbstractCollection implements IBlocks
         $result['id'] = $data['id'];
         return $result;
     }
-    
-    public function getGlobalBlocksJson(){
+
+    public function getGlobalBlocksJson ()
+    {
         $globalArray = array();
-        foreach($this->getConfig() as $blockConfig){
+        foreach ($this->getConfig() as $blockConfig) {
             $blockJsonData = file_get_contents($blockConfig['definitionFile']);
-            $globalArray[] = Json::decode($blockJsonData,Json::TYPE_ARRAY);
+            $globalArray[] = Json::decode($blockJsonData, Json::TYPE_ARRAY);
         }
         return $globalArray;
     }
-    
-    public function getController($name){
+
+    public function getController ($name)
+    {
         $config = $this->getConfig();
-        if(!isset($config[$name])){
-            throw new \Rubedo\Exceptions\Server('Undefined block name: '.$name);
+        if (! isset($config[$name])) {
+            throw new \Rubedo\Exceptions\Server('Undefined block name: ' . $name);
         }
         return $config[$name]['controller'];
+    }
+
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyloadConfig ()
+    {
+        $config = Manager::getService('config');
+        self::setConfig($config['blocksDefinition']);
     }
 }

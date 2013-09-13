@@ -48,6 +48,7 @@ class Install
     {
         $this->configDirPath = realpath(APPLICATION_PATH . '/config/autoload/');
         $this->configFilePath = $this->configDirPath . '/local.php';
+        Events::getEventManager()->attach(Install::SAVECONFIG,array($this, 'clearConfigCache'));
     }
 
     public function isConfigWritable()

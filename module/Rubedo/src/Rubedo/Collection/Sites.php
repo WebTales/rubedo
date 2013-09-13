@@ -27,9 +27,37 @@ use Rubedo\Interfaces\Collection\ISites, Rubedo\Services\Manager, WebTales\Mongo
  */
 class Sites extends AbstractLocalizableCollection implements ISites
 {
-    protected static $nonLocalizableFields = array("text","alias","defaultLanguage","languages","activeMessagery","SMTPServer","SMTPPort","SMTPLogin","SMTPPassword","defaultEmail","accessibilityLevel","opquastLogin","opquastPassword","protocol","filter","theme","homePage","workspace","readOnly","defaultSingle","googleMapsKey","googleAnalyticsKey","disqusKey","builtOnEmptySite","builtOnModelSiteId","locStrategy","useBrowserLanguage");
-    
-    
+
+    protected static $nonLocalizableFields = array(
+        "text",
+        "alias",
+        "defaultLanguage",
+        "languages",
+        "activeMessagery",
+        "SMTPServer",
+        "SMTPPort",
+        "SMTPLogin",
+        "SMTPPassword",
+        "defaultEmail",
+        "accessibilityLevel",
+        "opquastLogin",
+        "opquastPassword",
+        "protocol",
+        "filter",
+        "theme",
+        "homePage",
+        "workspace",
+        "readOnly",
+        "defaultSingle",
+        "googleMapsKey",
+        "googleAnalyticsKey",
+        "disqusKey",
+        "builtOnEmptySite",
+        "builtOnModelSiteId",
+        "locStrategy",
+        "useBrowserLanguage"
+    );
+
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -39,7 +67,6 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 'unique' => true
             )
         ),
-        // array('keys'=>array('alias'=>1),'options'=>array('unique'=>true)),
         array(
             'keys' => array(
                 'workspace' => 1
@@ -51,104 +78,9 @@ class Sites extends AbstractLocalizableCollection implements ISites
 
     protected static $_overrideSiteNameReverse = array();
 
-    protected $_model = array(
-        "text" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "alias" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "description" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "keywords" => array(
-            "domain" => "list",
-            "required" => true,
-            "items" => array(
-                "domain" => "string",
-                "required" => false
-            )
-        ),
-        "mainLanguage" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-		/*"languages" => array(
-			"domain" => "list",
-			"required" => true,
-			"items" => array(
-				"domain" => "string",
-				"required" => false,
-			),
-		),*/
-		"activeMessagery" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "SMTPServer" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "SMTPPort" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "SMTPLogin" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "SMTPPassword" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "defaultEmail" => array(
-            "domain" => "email",
-            "required" => true
-        ),
-        "accessibilityLevel" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "opquastLogin" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "opquastPassword" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "protocol" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-		/*"filter" => array(
-			"domain" => "array",
-			"required" => true,
-		),*/
-		"theme" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "homePage" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "title" => array(
-            "domain" => "string",
-            "required" => true
-        ),
-        "author" => array(
-            "domain" => "string",
-            "required" => true
-        )
-    );
-
     /**
      * Only access to content with read access
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init ()
@@ -165,6 +97,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
         }
     }
 
+    /**
+     * set the overrides
+     *
+     * @param array $array            
+     */
     public static function setOverride (array $array = null)
     {
         $newArray = array();
@@ -179,12 +116,25 @@ class Sites extends AbstractLocalizableCollection implements ISites
         self::$_overrideSiteNameReverse = array_flip($newArray);
     }
 
+    /**
+     * call parent and load site overrides
+     */
     public function __construct ()
     {
         $this->_collectionName = 'Sites';
         parent::__construct();
+        $config = Manager::getService('config');
+        $options = $config['site'];
+        if (isset($options['override'])) {
+            self::setOverride($options['override']);
+        }
     }
 
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\ISites::getHost()
+     */
     public function getHost ($site)
     {
         if (is_string($site)) {
@@ -197,6 +147,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
         return $label;
     }
 
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\ISites::findByHost()
+     */
     public function findByHost ($host)
     {
         if (isset(self::$_overrideSiteNameReverse[$host])) {
@@ -213,6 +168,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
         return $site;
     }
 
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Interfaces\Collection\ISites::deleteById()
+     */
     public function deleteById ($id)
     {
         $mongoId = $this->_dataService->getId($id);
@@ -221,6 +181,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
         ));
     }
 
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Rubedo\Collection\AbstractCollection::destroy()
+     */
     public function destroy (array $obj, $options = array())
     {
         if ($this->_isReadable($obj)) {
@@ -254,7 +219,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::update()
      */
     public function update (array $obj, $options = array())
@@ -268,6 +233,12 @@ class Sites extends AbstractLocalizableCollection implements ISites
         return $return;
     }
 
+    /**
+     * add workspace on a site object based on current user
+     *
+     * @param array $site            
+     * @return array
+     */
     protected function _setDefaultWorkspace ($site)
     {
         if (! isset($site['workspace']) || $site['workspace'] == '' || $site['workspace'] == array()) {
@@ -279,7 +250,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
 
     /**
      * (non-PHPdoc)
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::create()
      */
     public function create (array $obj, $options = array())

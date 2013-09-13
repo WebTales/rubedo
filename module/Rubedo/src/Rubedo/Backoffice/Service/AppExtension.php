@@ -34,7 +34,7 @@ class AppExtension
      *
      * @return the $config
      */
-    public function getConfig()
+    public function getConfig ()
     {
         return AppExtension::$config;
     }
@@ -43,9 +43,16 @@ class AppExtension
      *
      * @param field_type $config            
      */
-    public static function setConfig($config)
+    public static function setConfig ($config)
     {
         AppExtension::$config = $config;
+    }
+
+    public function __construct ()
+    {
+        if (! isset(self::$config)) {
+            self::lazyloadConfig();
+        }
     }
 
     /**
@@ -54,7 +61,7 @@ class AppExtension
      * @param string $extensionName            
      * @return string
      */
-    public function getBasePath($extensionName)
+    public function getBasePath ($extensionName)
     {
         $config = $this->getConfig();
         if (! isset($config[$extensionName])) {
@@ -64,7 +71,7 @@ class AppExtension
         }
     }
 
-    public function getGlobalBlocksJson()
+    public function getGlobalBlocksJson ()
     {
         $globalArray = array();
         foreach ($this->getConfig() as $appConfig) {
@@ -72,5 +79,14 @@ class AppExtension
             $globalArray[] = Json::decode($blockJsonData, Json::TYPE_ARRAY);
         }
         return $globalArray;
+    }
+
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyloadConfig ()
+    {
+        $config = Manager::getService('config');
+        self::setConfig($config['appExtension']);
     }
 }

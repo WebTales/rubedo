@@ -27,9 +27,9 @@ use Rubedo\Interfaces\Mail\INotification, Rubedo\Services\Manager;
 class Notification implements INotification
 {
 
-    protected static $_sendNotification = true;
+    protected static $sendNotificationFlag;
 
-    protected static $_options = array();
+    protected static $options = array();
 
     /**
      *
@@ -37,7 +37,10 @@ class Notification implements INotification
      */
     public static function getSendNotification ()
     {
-        return Notification::$_sendNotification;
+        if (! isset(self::$sendNotificationFlag)) {
+            self::lazyloadConfig();
+        }
+        return Notification::$sendNotificationFlag;
     }
 
     /**
@@ -46,13 +49,20 @@ class Notification implements INotification
      */
     public static function setSendNotification ($sendNotification)
     {
-        Notification::$_sendNotification = $sendNotification;
+        Notification::$sendNotificationFlag = $sendNotification;
+    }
+
+    public function __construct ()
+    {
+        if (! isset(self::$sendNotificationFlag)) {
+            self::lazyloadConfig();
+        }
     }
 
     public function getOptions ($name, $defaultValue = null)
     {
-        if (isset(self::$_options[$name])) {
-            return self::$_options[$name];
+        if (isset(self::$options[$name])) {
+            return self::$options[$name];
         } else {
             return $defaultValue;
         }
@@ -60,7 +70,7 @@ class Notification implements INotification
 
     public static function setOptions ($name, $value)
     {
-        Notification::$_options[$name] = $value;
+        Notification::$options[$name] = $value;
     }
 
     public function getNewMessage ()
@@ -77,28 +87,28 @@ class Notification implements INotification
 
     public function notify ($obj, $notificationType)
     {
-        if (! self::$_sendNotification) {
+        if (! self::$sendNotificationFlag) {
             return;
         }
         switch ($notificationType) {
             case 'published':
-                return $this->_notifyPublished($obj);
+                return $this->notifyPublished($obj);
                 break;
             case 'refused':
-                return $this->_notifyRefused($obj);
+                return $this->notifyRefused($obj);
                 break;
             case 'pending':
-                return $this->_notifyPending($obj);
+                return $this->notifyPending($obj);
                 break;
         }
     }
 
-    protected function _directUrl ($id)
+    protected function directUrl ($id)
     {
         return ($this->getOptions('isBackofficeSsl') ? 'https' : 'http') . '://' . $this->getOptions('defaultBackofficeHost') . '/backoffice/?content=' . $id;
     }
 
-    protected function _notifyPublished ($obj)
+    protected function notifyPublished ($obj)
     {
         if (! isset($obj["lastPendingUser"])) {
             return;
@@ -108,10 +118,10 @@ class Notification implements INotification
         );
         $template = 'published-body.html.twig';
         $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Publication du contenu "' . $obj['text'] . '"';
-        return $this->_sendNotification($userIdArray, $obj, $template, $subject);
+        return $this->sendNotification($userIdArray, $obj, $template, $subject);
     }
 
-    protected function _notifyRefused ($obj)
+    protected function notifyRefused ($obj)
     {
         if (! isset($obj["lastPendingUser"])) {
             return;
@@ -121,10 +131,10 @@ class Notification implements INotification
         );
         $template = 'refused-body.html.twig';
         $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Refus du contenu "' . $obj['text'] . '"';
-        return $this->_sendNotification($userIdArray, $obj, $template, $subject);
+        return $this->sendNotification($userIdArray, $obj, $template, $subject);
     }
 
-    protected function _notifyPending ($obj)
+    protected function notifyPending ($obj)
     {
         $userIdArray = Manager::getService('Users')->findValidatingUsersByWorkspace($obj['writeWorkspace']);
         if (count($userIdArray) === 0) {
@@ -132,16 +142,16 @@ class Notification implements INotification
         }
         $template = 'pending-body.html.twig';
         $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Soumission pour validation d\'un contenu "' . $obj['text'] . '"';
-        return $this->_sendNotification($userIdArray, $obj, $template, $subject, true);
+        return $this->sendNotification($userIdArray, $obj, $template, $subject, true);
     }
 
-    protected function _sendNotification ($userIdArray, $obj, $template, $subject, $hideTo = false)
+    protected function sendNotification ($userIdArray, $obj, $template, $subject, $hideTo = false)
     {
         $twigVar = array();
         $publishAuthor = Manager::getService('CurrentUser')->getCurrentUserSummary();
         $twigVar['publishingAuthor'] = (isset($publishAuthor['name']) && ! empty($publishAuthor['name'])) ? $publishAuthor['name'] : $publishAuthor['login'];
         $twigVar['title'] = $obj['text'];
-        $twigVar['directUrl'] = $this->_directUrl($obj['id']);
+        $twigVar['directUrl'] = $this->directUrl($obj['id']);
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("notification/" . $template);
         $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
@@ -168,6 +178,21 @@ class Notification implements INotification
             $message->setBcc($toArray);
         } else {
             $message->setTo($toArray);
+        }
+    }
+
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyloadConfig ()
+    {
+        $config = Manager::getService('config');
+        $options = $config['rubedo_config'];
+        if (isset($options['enableEmailNotification'])) {
+            \Rubedo\Mail\Notification::setSendNotification(true);
+            \Rubedo\Mail\Notification::setOptions('defaultBackofficeHost', isset($options['defaultBackofficeHost']) ? $options['defaultBackofficeHost'] : null);
+            \Rubedo\Mail\Notification::setOptions('isBackofficeSSL', isset($options['isBackofficeSSL']) ? $options['isBackofficeSSL'] : false);
+            \Rubedo\Mail\Notification::setOptions('fromEmailNotification', isset($options['fromEmailNotification']) ? $options['fromEmailNotification'] : null);
         }
     }
 }

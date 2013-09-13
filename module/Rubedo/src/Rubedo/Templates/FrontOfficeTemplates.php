@@ -98,6 +98,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public function __construct()
     {
+        if (! isset(self::$config)) {
+            self::lazyloadConfig();
+        }
         $this->_init();
     }
 
@@ -463,5 +466,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             $string = ucfirst($string);
         }
         return $string;
+    }
+    
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyloadConfig ()
+    {
+        $config = Manager::getService('config');
+        self::setConfig($config['templates']);
     }
 }

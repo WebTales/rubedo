@@ -39,24 +39,34 @@ class Acl implements IAcl
      */
     protected static $rolesDirectories;
 
-    protected static $_hasAccessRults = array();
+    protected static $hasAccessRults = array();
 
     /**
      *
      * @return the $rolesDirectory
      */
-    public static function getRolesDirectories()
+    public static function getRolesDirectories ()
     {
-        return Acl::$rolesDirectories;
+        if (! isset(self::$rolesDirectories)) {
+            self::lazyloadConfig();
+        }
+        return self::$rolesDirectories;
     }
 
     /**
      *
      * @param string $rolesDirectory            
      */
-    public static function setRolesDirectories($rolesDirectories)
+    public static function setRolesDirectories ($rolesDirectories)
     {
-        Acl::$rolesDirectories = $rolesDirectories;
+        self::$rolesDirectories = $rolesDirectories;
+    }
+
+    public function __construct ()
+    {
+        if (! isset(self::$rolesDirectories)) {
+            self::lazyloadConfig();
+        }
     }
 
     /**
@@ -67,9 +77,9 @@ class Acl implements IAcl
      *            resource name
      * @return boolean
      */
-    public function hasAccess($resource)
+    public function hasAccess ($resource)
     {
-        if (! isset(self::$_hasAccessRults[$resource])) {
+        if (! isset(self::$hasAccessRults[$resource])) {
             $result = false;
             $currentUserService = Manager::getService('CurrentUser');
             $wasFiltered = AbstractCollection::disableUserFilter();
@@ -78,21 +88,21 @@ class Acl implements IAcl
             
             $roleArray = array();
             foreach ($groups as $group) {
-                $roleArray = $this->_addGroupToRoleArray($roleArray, $group);
+                $roleArray = $this->addGroupToRoleArray($roleArray, $group);
             }
             $wasFiltered = AbstractCollection::disableUserFilter();
-            $roleArray = $this->_addGroupToRoleArray($roleArray, Manager::getService('Groups')->getPublicGroup());
+            $roleArray = $this->addGroupToRoleArray($roleArray, Manager::getService('Groups')->getPublicGroup());
             AbstractCollection::disableUserFilter($wasFiltered);
             
             foreach ($roleArray as $role) {
-                if ($this->_roleHasAccess($resource, $role)) {
+                if ($this->roleHasAccess($resource, $role)) {
                     $result = true || $result;
                     break;
                 }
             }
-            self::$_hasAccessRults[$resource] = $result;
+            self::$hasAccessRults[$resource] = $result;
         }
-        return self::$_hasAccessRults[$resource];
+        return self::$hasAccessRults[$resource];
     }
 
     /**
@@ -102,7 +112,7 @@ class Acl implements IAcl
      * @param array $group            
      * @return array
      */
-    protected function _addGroupToRoleArray(array $roleArray, array $group = null)
+    protected function addGroupToRoleArray (array $roleArray, array $group = null)
     {
         if (is_null($group)) {
             return $roleArray;
@@ -122,7 +132,7 @@ class Acl implements IAcl
      * @param string $role            
      * @return boolean
      */
-    protected function _roleHasAccess($resource, $role)
+    protected function roleHasAccess ($resource, $role)
     {
         // @todo temporary disabling workflow components
         if (strpos($resource, 'workflows') !== false) {
@@ -138,7 +148,7 @@ class Acl implements IAcl
             return false;
         }
         
-        $rightsArray = $this->_getRightsByRoleName($role);
+        $rightsArray = $this->getRightsByRoleName($role);
         foreach ($rightsArray as $rightAccess) {
             $rightAccess = str_replace('.', '\.', $rightAccess);
             $rightAccess = str_replace('@dot', '.', $rightAccess);
@@ -158,7 +168,7 @@ class Acl implements IAcl
      * @param string $name            
      * @return array null
      */
-    protected function _getRoleByName($name)
+    protected function getRoleByName ($name)
     {
         foreach (self::$rolesDirectories as $directory) {
             $pathName = $directory . '/' . $name . '.json';
@@ -176,15 +186,15 @@ class Acl implements IAcl
      * @param string $name            
      * @return array
      */
-    protected function _getRightsByRoleName($name, $max = 5)
+    protected function getRightsByRoleName ($name, $max = 5)
     {
         $rightsArray = array();
-        $roleInfos = $this->_getRoleByName($name);
+        $roleInfos = $this->getRoleByName($name);
         if ($roleInfos) {
             $rightsArray = $roleInfos['rights'];
             if (isset($roleInfos['includes']) && $max > 0) {
                 foreach ($roleInfos['includes'] as $include) {
-                    $rightsArray = array_merge($rightsArray, $this->_getRightsByRoleName($include, $max - 1));
+                    $rightsArray = array_merge($rightsArray, $this->getRightsByRoleName($include, $max - 1));
                 }
             }
         }
@@ -198,7 +208,7 @@ class Acl implements IAcl
      *            array of ressources
      * @return array the array of boolean with ressource as key name
      */
-    public function accessList(array $ressourceArray)
+    public function accessList (array $ressourceArray)
     {
         $aclArray = array();
         if (isset($this->_service)) {
@@ -217,7 +227,7 @@ class Acl implements IAcl
      *
      * @see \Rubedo\Interfaces\Security\IAcl::getAvailaibleRoles()
      */
-    public function getAvailaibleRoles()
+    public function getAvailaibleRoles ()
     {
         $userLang = 'en'; // default value
         $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
@@ -255,4 +265,15 @@ class Acl implements IAcl
         
         return $response;
     }
+
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyloadConfig ()
+    {
+        $config = Manager::getService('config');
+        self::setRolesDirectories($config['rolesDirectories']);
+    }
+    
+    
 }
