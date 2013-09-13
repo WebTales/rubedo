@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Service;
 
 use Zend\Json\Json;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Backoffice Application Extensions
