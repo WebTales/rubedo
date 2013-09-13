@@ -20,6 +20,7 @@ use Rubedo\Interfaces\Mongo\IDataAccess, WebTales\MongoFilters\Filter;
 use Zend\Debug\Debug;
 use Rubedo\Services\Manager;
 use Rubedo\Services\Events;
+use Zend\EventManager\EventInterface;
 
 /**
  * Class implementing the API to MongoDB
@@ -1262,8 +1263,12 @@ class DataAccess implements IDataAccess
     {
         return false;
     }
-    
-    public static function lazyLoadConfig(){
+
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
+    public static function lazyLoadConfig ()
+    {
         $config = Manager::getService('config');
         $options = $config['datastream'];
         if (isset($options)) {
@@ -1277,23 +1282,44 @@ class DataAccess implements IDataAccess
                 $connectionString .= ':' . $options['mongo']['port'];
             }
             self::setDefaultMongo($connectionString);
-        
+            
             self::setDefaultDb($options['mongo']['db']);
         }
+        // attach to log on info level the run queries.
+        Events::getEventManager()->attach(ProxyCollection::POST_REQUEST, array(
+            'Rubedo\\Mongo\\DataAccess',
+            'log'
+        ), 1);
         
-        Events::getEventManager()->attach(ProxyCollection::POST_REQUEST,array('Rubedo\\Mongo\\DataAccess','log'),1);
-        //         Events::getEventManager()->attach(ProxyCollection::POST_REQUEST,array('Rubedo\\Mongo\\DataAccess','alertOnIndex'),10);
-        //         Events::getEventManager()->attach(ProxyCollection::POST_REQUEST,array('Rubedo\\Mongo\\DataAccess','checkMultiple'),20);
+        //if profiling, check for index use and double requests
+        if (isset($options['mongo']['profiling']) and $options['mongo']['profiling'] === true) {
+            Events::getEventManager()->attach(ProxyCollection::POST_REQUEST, array(
+                'Rubedo\\Mongo\\DataAccess',
+                'alertOnIndex'
+            ), 10);
+            Events::getEventManager()->attach(ProxyCollection::POST_REQUEST, array(
+                'Rubedo\\Mongo\\DataAccess',
+                'checkMultiple'
+            ), 20);
+        }
     }
 
-    public static function log ($e)
+    /**
+     * listener to collection event
+     *
+     * Will log the request parameter for find, findOne, update, remove, save query
+     * 
+     * @param EventInterface $e            
+     */
+    public static function log (EventInterface $e)
     {
         $target = $e->getTarget();
         $mongoFunctionWithQuery = array(
             'find',
             'findOne',
             'update',
-            'remove'
+            'remove',
+            'save'
         );
         if (in_array($target->function, $mongoFunctionWithQuery)) {
             Manager::getService('Logger')->Info("Request on MongoDB collection: '" . $target->collection->getName() . "'", array(
@@ -1304,7 +1330,15 @@ class DataAccess implements IDataAccess
         }
     }
     
-    public static function checkMultiple($e){
+    /**
+     * listener to collection event
+     *
+     * Will check if the request had already been called on the same run
+     * (do not activate on production!)
+     *
+     * @param EventInterface $e
+     */
+    public static function checkMultiple(EventInterface $e){
         $target = $e->getTarget();
         $args = $target->args;
         $params = isset($args[0])?$args[0]:null;
@@ -1320,7 +1354,15 @@ class DataAccess implements IDataAccess
         }
     }
 
-    public static function alertOnIndex ($e)
+    /**
+     * listener to collection event
+     *
+     * Will check if the request had used an index or a full scan
+     * (do not activate on production!)
+     *
+     * @param EventInterface $e
+     */
+    public static function alertOnIndex (EventInterface $e)
     {
         $target = $e->getTarget();
         $mongoFunctionWithQuery = array('find','update','remove');

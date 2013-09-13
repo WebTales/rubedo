@@ -205,6 +205,9 @@ class DataAbstract
         return null;
     }
 
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
     public static function lazyLoadConfig ()
     {
         $options = Manager::getService('config');

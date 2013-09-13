@@ -178,6 +178,9 @@ class Translate implements ITranslate
         }
     }
     
+    /**
+     * Read configuration from global application config and load it for the current class
+     */
     public static function lazyLoadConfig(){
         $config = Manager::getService('config');
         $options = $config['localisationfiles'];
