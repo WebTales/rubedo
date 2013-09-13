@@ -17,6 +17,7 @@ use Rubedo\Interfaces\Mail\IMailer;
 use Rubedo\Services\Manager;
 use Swift_Mailer;
 use Swift_SmtpTransport;
+use Swift_Message;
 /**
  * Mailer Service
  *
@@ -63,7 +64,7 @@ class Mailer implements IMailer
      */
     public function getNewMessage ()
     {
-        return \Swift_Message::newInstance();
+        return Swift_Message::newInstance();
     }
 
     /**
