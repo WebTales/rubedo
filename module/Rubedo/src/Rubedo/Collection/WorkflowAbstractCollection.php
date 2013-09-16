@@ -29,7 +29,8 @@ use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection, Rubedo\Services\Ma
  */
 abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection implements IWorkflowAbstractCollection
 {
-
+    const POST_PUBLISH_COLLECTION = 'rubedo_collection_publish_post'; 
+    
     protected function _init ()
     {
     	if (empty($this->_collectionName)) {
@@ -198,7 +199,11 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
     public function publish ($objectId,$ignoreIndex = false)
     {
     	unset($ignoreIndex);
-        return $this->_dataService->publish($objectId);
+        $result = $this->_dataService->publish($objectId);
+        $args = $result;
+        $args['objectId'] = $objectId;
+        Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION,$this,$args);
+        return $result;
     }
 
     protected function _transitionEvent($obj, $previousStatus)

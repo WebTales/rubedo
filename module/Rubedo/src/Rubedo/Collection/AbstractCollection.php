@@ -19,6 +19,7 @@ namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IAbstractCollection;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Events;
 
 /**
  * Class implementing the API to MongoDB
@@ -29,7 +30,10 @@ use WebTales\MongoFilters\Filter;
  */
 abstract class AbstractCollection implements IAbstractCollection
 {
-
+    const POST_CREATE_COLLECTION = 'rubedo_collection_create_post';
+    const POST_UPDATE_COLLECTION = 'rubedo_collection_update_post';
+    const POST_DELETE_COLLECTION = 'rubedo_collection_delete_post';
+    
     /**
      * Indexes of the collection
      *
@@ -283,7 +287,9 @@ abstract class AbstractCollection implements IAbstractCollection
         $this->_filterInputData($obj);
         
         unset($obj['readOnly']);
-        return $this->_dataService->create($obj, $options);
+        $result = $this->_dataService->create($obj, $options);
+        Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION,$this,$result);
+        return $result;
     }
 
     /**
@@ -444,7 +450,7 @@ abstract class AbstractCollection implements IAbstractCollection
         if ($result['success']) {
             $result['data'] = $this->_addReadableProperty($result['data']);
         }
-        
+        Events::getEventManager()->trigger(self::POST_UPDATE_COLLECTION,$this,$result);
         return $result;
     }
 
@@ -459,7 +465,11 @@ abstract class AbstractCollection implements IAbstractCollection
      */
     public function destroy (array $obj, $options = array())
     {
-        return $this->_dataService->destroy($obj, $options);
+        $result = $this->_dataService->destroy($obj, $options);
+        $args = $result;
+        $args['data'] = $obj;
+        Events::getEventManager()->trigger(self::POST_DELETE_COLLECTION,$this,$args);
+        return $result;
     }
     
     /*
@@ -756,5 +766,10 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         static::$_isFrontEnd = $_isFrontEnd;
     }
+    
+    public function getCollectionName(){
+        return $this->_collectionName;
+    }
+    
 }
 	
