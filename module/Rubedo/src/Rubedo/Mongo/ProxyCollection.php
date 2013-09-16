@@ -17,7 +17,6 @@
 namespace Rubedo\Mongo;
 
 use \MongoCollection;
-use Rubedo\Services\Manager;
 use Rubedo\Services\Events;
 use Rubedo\Exceptions\Server;
 

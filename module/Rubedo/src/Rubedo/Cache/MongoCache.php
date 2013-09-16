@@ -56,7 +56,7 @@ class MongoCache extends AbstractAdapter
      */
     protected function internalGetMetadata(&$normalizedKey)
     {
-        $obj = $this->_dataService->findByCacheId($normalizedKey, $time);
+        $obj = $this->_dataService->findByCacheId($normalizedKey);
         
         if ($obj) {
             unset($obj['data']);

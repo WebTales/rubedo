@@ -65,14 +65,18 @@ abstract class AbstractController extends AbstractActionController
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
         $this->siteId = $currentPage['site'];
-        
         if ($this->getRequest()->isXmlHttpRequest()) {
-            // init browser languages
-            $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
-            $browserLanguages = array_keys($zend_locale->getBrowser());
+            $browserLanguages = Manager::getService('CurrentLocalization')->getBrowserLanguages();
             
+            // context
             $cookieValue = $this->getRequest()->getCookie('locale');
-            Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'], null, $browserLanguages, $cookieValue);
+            $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->siteId, null, $browserLanguages, $cookieValue);
+            $domain = $this->getRequest()
+                ->getUri()
+                ->getHost();
+            if ($domain) {
+                $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
+            }
         }
         
         if (! $templateService->themeHadBeenSet()) {
