@@ -34,15 +34,16 @@ class QueueController extends Zend_Controller_Action
         foreach ($params as $key => $value) {
             switch ($key) {
                 case "service":
+                    if(!in_array($value,array('ElasticDataIndex'))){
+                        throw Rubedo\Exceptions\Access('can\'t call this service');
+                    }
                     $serviceName = $value;
                     break;
                 case "class":
-                    $className = $value;
+                    $methodName = $value;
                     break;
                 case "module":
-                    break;
                 case "controller":
-                    break;
                 case "action":
                     break;
                 default:
@@ -51,29 +52,8 @@ class QueueController extends Zend_Controller_Action
         }
         $service = \Rubedo\Services\Manager::getService($serviceName);
         $service->init();
-        switch (count($vars)) {
-            case 0:
-                $return = $service->$className();
-                break;
-            case 1:
-                $return = $service->$className($vars[0]);
-                break;
-            case 2:
-                $return = $service->$className($vars[0],$vars[1]);
-                break;
-            case 3:
-                $return = $service->$className($vars[0],$vars[1],$vars[2]);
-                break;
-            case 4:
-                $return = $service->$className($vars[0],$vars[1],$vars[2],$vars[3]);
-                break;
-            case 5:
-                $return = $service->$className($vars[0],$vars[1],$vars[2],$vars[3],$vars[4]);
-                break;
-        }
-        echo $return;
-        exit;
-        
-
+ 
+        $callBack = array($service,$methodName);
+        $return = call_user_func_array($callBack, $vars);
     }
 }
