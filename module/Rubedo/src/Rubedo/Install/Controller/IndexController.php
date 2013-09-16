@@ -243,7 +243,7 @@ class IndexController extends AbstractActionController
             $this->installObject->saveLocalConfig($this->config);
         }
         
-        $esOptions = isset($this->config["searchstream"]["elastic"]) ? $this->config["searchstream"]["elastic"] : array();
+        $esOptions = isset($this->config["elastic"]) ? $this->config["elastic"] : array();
         
         $dbForm = EsConfigForm::getForm($esOptions);
         $dbForm->setData($this->params()
@@ -267,7 +267,7 @@ class IndexController extends AbstractActionController
         }
         if ($connectionValid) {
             $this->viewData->isReady = true;
-            $this->config["searchstream"]["elastic"] = $params;
+            $this->config["elastic"] = $params;
             $this->installObject->saveLocalConfig($this->config);
         } else {
             $this->viewData->hasError = true;
