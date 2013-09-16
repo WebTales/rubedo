@@ -420,8 +420,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      */
     public function count (\WebTales\MongoFilters\IFilter $filters = null)
     {
-        $this->_adaptFilter($filters);
-        return parent::count($filters);        
+        $localFilter = clone $this->getFilters();
+        if ($filters) {
+            $localFilter->addFilter($filters);
+        }
+        $this->_adaptFilter($localFilter);
+        return $this->_collection->count($localFilter->toArray());
     }
 
     
