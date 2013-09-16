@@ -114,13 +114,28 @@ class PagesController extends DataAccessController
                 }
                 if ($controller != false) {
                     $params["block"] = $block['configBloc'];
-                    $response = Action::getInstance()->action('get-contents', $controller, 'blocks', $params);
-                    $contentArray[] = $response->getBody();
+                    $controller = Manager::getService('Blocks')->getController($block['bType']);
+                    // Clone global request and override it woth block params
+                    $queryString = $this->getRequest()->getQuery();
+                    $blockQueryString = clone ($queryString);
+                    
+                    foreach ($params as $key => $value) {
+                        $blockQueryString->set($key, $value);
+                    }
+                    $this->getRequest()->setQuery($blockQueryString);
+                    
+                    // run block and get response
+                    $result = $this->forward()->dispatch($controller, array(
+                        'action' => 'get-contents'
+                    ));
+                    
+                    // set back global query
+                    $this->getRequest()->setQuery($queryString);
+                    $contentArray[] = $result->getVariables();
                 }
             }
             if (isset($contentArray) && ! empty($contentArray)) {
                 foreach ($contentArray as $key => $content) {
-                    $content = Json::decode($content, Json::TYPE_ARRAY);
                     if ($content["success"] == true) {
                         $total = $total + $content["total"];
                         unset($content['total']);
