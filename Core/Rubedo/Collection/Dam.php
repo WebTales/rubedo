@@ -29,7 +29,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
 {
     protected static $nonLocalizableFields = array("Content-Type","typeId","taxonomy","fileSize","mainFileType","target","writeWorkspace","directory","readOnly","originalFileId");
     protected static $labelField = 'title';
-    protected static $isLocaleFiltered = true;
+    protected static $isLocaleFiltered = false;
     
     protected $_indexes = array(
         array(
