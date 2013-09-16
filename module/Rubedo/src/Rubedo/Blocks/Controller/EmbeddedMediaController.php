@@ -18,6 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use Alb\OEmbed;
+use Rubedo\Services\Cache;
 
 /**
  *
@@ -39,7 +40,7 @@ class EmbeddedMediaController extends AbstractController
             
             $oembedParams['url'] = $blockConfig['url'];
             
-            $cache = Rubedo\Services\Cache::getCache('oembed');
+            $cache = Cache::getCache('oembed');
             
             $options = array();
             
@@ -58,8 +59,10 @@ class EmbeddedMediaController extends AbstractController
             }
             
             $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
+            $loaded = false;
+            $item = $cache->getItem($cacheKey,$loaded);
             
-            if (! ($item = $cache->load($cacheKey))) {
+            if (!$loaded) {
                 // If the URL come from flickr, we check the URL
                 if (stristr($oembedParams['url'], 'www.flickr.com')) {
                     $decomposedUrl = explode("/", $oembedParams['url']);
@@ -110,9 +113,7 @@ class EmbeddedMediaController extends AbstractController
                     $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
                 }
                 
-                $cache->save($item, $cacheKey, array(
-                    'oembed'
-                ));
+                $cache->setItem($cacheKey,$item);
             }
             
             $output = $this->params()->fromQuery();

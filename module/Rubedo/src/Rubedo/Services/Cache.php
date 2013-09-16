@@ -17,6 +17,7 @@
 namespace Rubedo\Services;
 
 Use Rubedo\Cache\MongoCache;
+use Zend\Cache\StorageFactory;
 
 /**
  * Cache manager
@@ -64,16 +65,16 @@ class Cache
      */
     public static function getCache ($cacheName = null)
     {
-        $frontendOptions = array(
-            'lifetime' => 7200,
-            'automatic_serialization' => true
-        );
+//         $frontendOptions = array(
+//             'lifetime' => 7200,
+//             'automatic_serialization' => true
+//         );
         
-        $backendOptions = array(
-            'cacheName' => $cacheName
-        );
-        
-        $cache = \Zend_Cache::factory('Core', new MongoCache(), $frontendOptions, $backendOptions);
+//         $backendOptions = array(
+//             'cacheName' => $cacheName
+//         );
+        //$adapter = new MongoCache();
+        $cache = StorageFactory::factory(array('adapter'=>'Rubedo\\Cache\\MongoCache'));
         
         return $cache;
     }

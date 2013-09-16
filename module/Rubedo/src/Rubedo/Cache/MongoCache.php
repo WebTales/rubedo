@@ -15,108 +15,73 @@
 namespace Rubedo\Cache;
 
 use Rubedo\Services\Manager;
-use WebTales\MongoFilters\Filter;
+use Zend\Cache\Storage\Adapter\AbstractAdapter;
 
 /**
- * Zend Cache Backend in MongoDb
+ * Zend Cache in MongoDb
  *
  * @author jbourdin
+ * @todo implement lifetime and cache names
  *        
  */
-class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Interface
+class MongoCache extends AbstractAdapter
 {
 
-    /**
-     * Constructor
-     *
-     * @param array $options
-     *            associative array of options
-     * @throws Zend_Cache_Exception
-     * @return void
-     */
-    public function __construct (array $options = array())
+    protected $_dataService;
+
+    public function __construct($options = null)
     {
         parent::__construct($options);
         $this->_dataService = Manager::getService('Cache');
     }
 
     /**
-     * Test if a cache is available for the given id and (if yes) return it
-     * (false else)
-     *
-     * Note : return value is always "string" (unserialization is done by the
-     * core not by the backend)
-     *
-     * @param string $id
-     *            Cache id
-     * @param boolean $doNotTestCacheValidity
-     *            If set to true, the cache validity won't be tested
-     * @return string false datas
+     * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalGetItem()
      */
-    public function load ($id, $doNotTestCacheValidity = false)
+    protected function internalGetItem(&$normalizedKey, &$success = null, &$casToken = null)
     {
-        if (! $doNotTestCacheValidity) {
-            $time = Manager::getService('CurrentTime')->getCurrentTime();
-        } else {
-            $time = null;
-        }
-        
-        $obj = $this->_dataService->findByCacheId($id, $time);
+        $obj = $this->_dataService->findByCacheId($normalizedKey);
         
         if ($obj) {
+            $success = true;
             return $obj['data'];
         } else {
-            return false;
+            $success = false;
+            return null;
         }
     }
 
     /**
-     * Test if a cache is available or not (for the given id)
-     *
-     * @param string $id
-     *            cache id
-     * @return mixed false cache is not available) or "last modified" timestamp
-     *         (int) of the available cache record
+     * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalGetMetadata()
      */
-    public function test ($id)
+    protected function internalGetMetadata(&$normalizedKey)
     {
-        $obj = $this->_dataService->findByCacheId($id);
+        $obj = $this->_dataService->findByCacheId($normalizedKey, $time);
         
         if ($obj) {
-            if (isset($obj['lastUpdateTime'])) {
-                return $obj['lastUpdateTime'];
-            } else {
-                return false;
-            }
+            unset($obj['data']);
+            return $obj;
         } else {
-            return false;
+            return null;
         }
     }
 
     /**
-     * Save some string datas into a cache record
-     *
-     * Note : $data is always "string" (serialization is done by the
-     * core not by the backend)
-     *
-     * @param string $data
-     *            Datas to cache
-     * @param string $id
-     *            Cache id
-     * @param array $tags
-     *            Array of strings, the cache record will be tagged by each
-     *            string entry
-     * @param int $specificLifetime
-     *            If != false, set a specific lifetime for this cache record
-     *            (null => infinite lifetime)
-     * @return boolean true if no problem
+     * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalRemoveItem()
      */
-    public function save ($data, $id, $tags = array(), $specificLifetime = false)
+    protected function internalRemoveItem(&$normalizedKey)
+    {
+        return $this->_dataService->deleteByCacheId($normalizedKey);
+    }
+
+    /**
+     * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalSetItem()
+     */
+    protected function internalSetItem(&$normalizedKey, &$value)
     {
         $obj = array();
-        $obj['data'] = $data;
-        $obj['cacheId'] = $id;
-        $obj['tags'] = $tags;
+        $obj['data'] = $value;
+        $obj['cacheId'] = $normalizedKey;
         
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
@@ -124,77 +89,17 @@ class MongoCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Inte
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
         
-        if ($specificLifetime) {
-            $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
-        } elseif ($this->getOption('lifetime')) {
-            $lifetime = $this->getOption('lifetime');
-            $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $lifetime;
-        }
+//         if ($specificLifetime) {
+//             $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
+//         } elseif ($this->getOption('lifetime')) {
+//             $lifetime = $this->getOption('lifetime');
+//             $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $lifetime;
+//         }
         
-        return $this->_dataService->upsertByCacheId($obj, $id);
+        return $this->_dataService->upsertByCacheId($obj, $normalizedKey);
     }
-
-    /**
-     * Remove a cache record
-     *
-     * @param string $id
-     *            Cache id
-     * @return boolean True if no problem
-     */
-    public function remove ($id)
-    {
-        return $this->_dataService->deleteByCacheId($id);
-    }
-
-    /**
-     * Clean some cache records
-     *
-     * Available modes are :
-     * Zend_Cache::CLEANING_MODE_ALL (default) => remove all cache entries
-     * ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_OLD => remove too old cache entries ($tags is
-     * not used)
-     * Zend_Cache::CLEANING_MODE_MATCHING_TAG => remove cache entries matching
-     * all given tags
-     * ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not
-     * {matching one of the given tags}
-     * ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries
-     * matching any given tags
-     * ($tags can be an array of strings or a single string)
-     *
-     * @param string $mode
-     *            Clean mode
-     * @param array $tags
-     *            Array of tags
-     * @return boolean true if no problem
-     */
-    public function clean ($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array())
-    {
-        
-        
-        switch ($mode) {
-            case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-                $filters = Filter::factory('OperatorToValue')->setName('tags')->setOperator('$all')->setValue($tags);
-                return $this->_dataService->customDelete($filters);
-                break;
-            case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
-                $inFilters = Filter::factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
-                $filters = Filter::factory('CompositeNot')->addFilter($inFilters);
-                
-                return $this->_dataService->customDelete($filters);
-                break;
-            case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                $filters = Filter::factory('OperatorToValue')->setName('tags')->setOperator('$in')->setValue($tags);
-                return $this->_dataService->customDelete($filters);
-                break;
-            case \Zend_Cache::CLEANING_MODE_OLD:
-                return $this->_dataService->deleteExpired();
-                break;
-            default:
-                return $this->_dataService->drop();
-                break;
-        }
+    
+    public function clean(){
+        return $this->_dataService->drop();
     }
 }
