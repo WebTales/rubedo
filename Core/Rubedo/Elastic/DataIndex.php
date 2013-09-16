@@ -854,7 +854,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             if ($totalToBeIndexed > 0) {
                 do {
                     
-                    $jobID = $queue->createHttpJob("http://rubedo.local/queue?service=ElasticDataIndex&class=bulkIndex&Option=$option&id=$id&start=$start&bulkSize=$bulkSize");
+                    $protocol = isset($_SERVER["HTTPS"]) ? "https://" : "http://";
+                    $jobID = $queue->createHttpJob($protocol.$_SERVER['HTTP_HOST']."/queue?service=ElasticDataIndex&class=bulkIndex&Option=$option&id=$id&start=$start&bulkSize=$bulkSize");
                     $start+=$bulkSize;
                     
                     
