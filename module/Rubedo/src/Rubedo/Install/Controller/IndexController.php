@@ -534,7 +534,7 @@ class IndexController extends AbstractActionController
             $this->viewData->isReady = true;
         }
         
-        $this->installObject->saveLocalConfig();
+        $this->installObject->saveLocalConfig($this->config);
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-db-contents');

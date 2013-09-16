@@ -35,7 +35,7 @@ class Translate implements ITranslate
      */
     protected static $defaultLanguage = 'en';
 
-    protected static $localizationJsonArray = array();
+    protected static $localizationJsonArray;
 
     protected static $translationArray = array();
 
