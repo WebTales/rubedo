@@ -19,6 +19,7 @@ namespace Rubedo\Update;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Rubedo\Collection\AbstractCollection;
 
 /**
  * Methods
@@ -41,14 +42,15 @@ class Update010300 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
         static::ressourceUpdate();
         return true;
     }
 
-    public static function ressourceUpdate ()
+    public static function ressourceUpdate()
     {
+        $wasFiltered = AbstractCollection::disableUserFilter();
         // introduction
         $service = Manager::getService('Blocks');
         
@@ -72,10 +74,23 @@ class Update010300 extends Update
                     $page = $pageService->findById($block['pageId']);
                     if (isset($page['nativeLanguage'])) {
                         $nativeLanguage = $page['nativeLanguage'];
+                    } else {
+                        $site = Manager::getService('Sites')->findById($page['site']);
+                        if ($site) {
+                            $nativeLanguage = $page['defaultLanguage'];
+                        } else {
+                            continue;
+                        }
                     }
                     $richtext = array(
                         'text' => 'resource',
-                        'fields' => array(),
+                        'fields' => array(
+                            'fields' => array(
+                                'body' => $introduction,
+                                'text' => 'resource',
+                                'summary' => ''
+                            )
+                        ),
                         'typeId' => '520b8644c1c3dad506000036',
                         'status' => 'published',
                         'version' => '',
@@ -84,7 +99,7 @@ class Update010300 extends Update
                         'maskId' => '',
                         'blockId' => $block['id'],
                         'locale' => '',
-                        'target' => isset($page['target']) ? $page['target'] : 'global',
+                        'target' => 'global',
                         'i18n' => array(
                             $nativeLanguage => array(
                                 'fields' => array(
@@ -105,8 +120,7 @@ class Update010300 extends Update
             }
         }
         
-        \Zend_Debug::dump($list);
-        die();
+        AbstractCollection::disableUserFilter($wasFiltered);
         
         return true;
     }
