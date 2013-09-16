@@ -55,5 +55,6 @@ class QueueController extends Zend_Controller_Action
  
         $callBack = array($service,$methodName);
         $return = call_user_func_array($callBack, $vars);
+        $this->_helper->json($return);
     }
 }
