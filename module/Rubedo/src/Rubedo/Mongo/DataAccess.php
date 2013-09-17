@@ -20,6 +20,7 @@ use Rubedo\Interfaces\Mongo\IDataAccess, WebTales\MongoFilters\Filter;
 use Rubedo\Services\Manager;
 use Rubedo\Services\Events;
 use Zend\EventManager\EventInterface;
+use Monolog\Logger;
 
 /**
  * Class implementing the API to MongoDB
@@ -1306,26 +1307,31 @@ class DataAccess implements IDataAccess
      * listener to collection event
      *
      * Will log the request parameter for find, findOne, update, remove, save query
-     * 
+     *
      * @param EventInterface $e            
      */
-    public static function log (EventInterface $e)
+    public static function log(EventInterface $e)
     {
         $target = $e->getTarget();
-        $mongoFunctionWithQuery = array(
-            'find',
-            'findOne',
-            'update',
-            'remove',
-            'save'
-        );
-        if (in_array($target->function, $mongoFunctionWithQuery)) {
-            Manager::getService('Logger')->Info("Request on MongoDB collection: '" . $target->collection->getName() . "'", array(
-                'Collection' => $target->collection->getName(),
-                'Function' => $target->function,
-                'Query' => $target->args[0]
-            ));
+
+        $level = Logger::INFO;
+        switch ($target->function) {
+            case 'find':
+            case 'findOne':
+                $level = Logger::DEBUG;
+            case 'update':
+            case 'remove':
+            case 'save':
+                Manager::getService('Logger')->addRecord($level,ucfirst($target->function)." Request on MongoDB collection: '" . $target->collection->getName() . "'", array(
+                    'Collection' => $target->collection->getName(),
+                    'Function' => $target->function,
+                    'Query' => $target->args[0]
+                ));
+                break;
+            default:
+                break;
         }
+
     }
     
     /**
