@@ -14,28 +14,32 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace Rubedo\Frontoffice\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing css for custom themes
  *
  *
- *
- * @author aDobre
+ * @todo need a serious refactoring!
+ * @author dfanchon
  * @category Rubedo
  * @package Rubedo
  *         
  */
-class QueueController extends Zend_Controller_Action
+class QueueController extends AbstractActionController
 {
     function indexAction ()
     {
-        $params = $this->getRequest()->getParams();
+        $params = $this->params()->fromQuery();
         $vars = array();
         foreach ($params as $key => $value) {
             switch ($key) {
                 case "service":
                     if(!in_array($value,array('ElasticDataIndex'))){
-                        throw Rubedo\Exceptions\Access('can\'t call this service');
+                        throw new \Rubedo\Exceptions\Access('can\'t call this service');
                     }
                     $serviceName = $value;
                     break;
@@ -55,6 +59,6 @@ class QueueController extends Zend_Controller_Action
  
         $callBack = array($service,$methodName);
         $return = call_user_func_array($callBack, $vars);
-        $this->_helper->json($return);
+        return new JsonModel($return);
     }
 }
