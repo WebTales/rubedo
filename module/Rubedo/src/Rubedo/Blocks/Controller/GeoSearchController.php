@@ -241,6 +241,7 @@ class GeoSearchController extends AbstractController
                 $twigVars = array();
                 $twigVars['result'] = $entity;
                 $twigVars['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+                $twigVars['singlePage'] = $this->getParamFromQuery('current-page');
                 $twigVars['result']['terms'] = $termsArray;
                 
                 $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);
