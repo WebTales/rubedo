@@ -658,7 +658,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     public function getByType ($typeId, $start = null, $limit = null)
     {
-        $filter = Filter::factory('Value')->setName('typeId')->SetValue($typeId);
+        $filter = Filter::factory('Value')->setName('typeId')->SetValue($typeId);      
         return $this->getList($filter, null, $start, $limit);
     }
 

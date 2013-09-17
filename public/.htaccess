@@ -9,7 +9,9 @@ RewriteEngine On
 #RewriteRule install$ - [F,L]
 #RewriteRule install/ - [F,L]
 
-
+RewriteCond %{REMOTE_ADDR} !^127.0.0.1 
+RewriteCond %{REMOTE_ADDR} !^::1
+RewriteRule ^queue$ - [F,L]
 
 ####################################################################
 #  Every request to dam.mp4/dam.ogg/dam.flv are dealt by Rubedo

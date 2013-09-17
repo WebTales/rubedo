@@ -29,7 +29,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
 {
     protected static $nonLocalizableFields = array("Content-Type","typeId","taxonomy","fileSize","mainFileType","target","writeWorkspace","directory","readOnly","originalFileId");
     protected static $labelField = 'title';
-    protected static $isLocaleFiltered = true;
+    protected static $isLocaleFiltered = false;
     
     protected $_indexes = array(
         array(
@@ -333,6 +333,31 @@ class Dam extends AbstractLocalizableCollection implements IDam
         $filter = Filter::factory('Value')->SetName('originalFileId')->setValue($id);
         return $this->findOne($filter);
     
+    }
+    
+    public function deleteByDamType ($contentTypeId)
+    {
+        if (! is_string($contentTypeId)) {
+            throw new \Rubedo\Exceptions\User('ContentTypeId should be a string', "Exception40", "ContentTypeId");
+        }
+        $contentTypeService = Manager::getService('DamTypes');
+        $contentType = $contentTypeService->findById($contentTypeId);
+        if (! $contentType) {
+            throw new \Rubedo\Exceptions\User('ContentType not found', "Exception41");
+        }
+    
+        $deleteCond = Filter::factory('Value')->setName('typeId')->setValue($contentTypeId);
+        $result = $this->_dataService->customDelete($deleteCond, array());
+    
+        if (isset($result['ok']) && $result['ok']) {
+            $contentTypeService->unIndexDamType($contentType);
+            $contentTypeService->indexDamType($contentType);
+            return array(
+                'success' => true
+            );
+        } else {
+            throw new \Rubedo\Exceptions\Server($result['err']);
+        }
     }
     
 }

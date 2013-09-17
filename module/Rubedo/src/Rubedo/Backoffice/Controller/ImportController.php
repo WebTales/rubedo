@@ -366,7 +366,7 @@ class ImportController extends DataAccessController
                             $contenti18n[$value["translateToLanguage"]]["locale"] = $value["translateToLanguage"];
                         }
                         $contenti18n[$value["translateToLanguage"]]["fields"][$fieldName] = $currentLine[$value["csvIndex"]];
-                        if (!isset($languages[$value["translateToLanguage"]])) {
+                        if (! isset($languages[$value["translateToLanguage"]])) {
                             $languages[] = $value["translateToLanguage"];
                         }
                     }
@@ -475,10 +475,10 @@ class ImportController extends DataAccessController
                                             if ($newDam) {
                                                 
                                                 $typeId = $value['mediaTypeId'];
-                                                
                                                 $obj = array();
                                                 $damDirectory = 'notFiled';
                                                 $obj['directory'] = $damDirectory;
+                                                // bug import $typeId null
                                                 $obj['typeId'] = $typeId;
                                                 $obj['mainFileType'] = 'Image';
                                                 $obj['fields'] = array();
@@ -498,8 +498,10 @@ class ImportController extends DataAccessController
                                                 foreach ($activeLocales as $locale) {
                                                     if ($locale != $workingLanguage) {
                                                         $obj['i18n'][$locale] = array();
-                                                        $obj['i18n'][$locale]['fields'] = array("title" => $info["filename"]);  
-                                                    }                                                  
+                                                        $obj['i18n'][$locale]['fields'] = array(
+                                                            "title" => $info["filename"]
+                                                        );
+                                                    }
                                                 }
                                                 
                                                 $returnArray = $damService->create($obj);
@@ -531,7 +533,7 @@ class ImportController extends DataAccessController
                             $detectedTermText = $currentLine[$value['csvIndex']];
                             if (! empty($detectedTermText)) {
                                 $termsList = explode(",", $detectedTermText);
-
+                                
                                 foreach ($importAsTaxoTranslation as $transKey => $transValue) {
                                     if ($transValue["translatedElement"] == $value['csvIndex']) {
                                         $translationKey = $key;
@@ -578,7 +580,6 @@ class ImportController extends DataAccessController
                                         if (isset($theTerm['data']['id'])) {
                                             $contentParamsTaxonomy[$theTaxoId][] = $theTerm['data']['id'];
                                         }
-                                    
                                 }
                             }
                         }

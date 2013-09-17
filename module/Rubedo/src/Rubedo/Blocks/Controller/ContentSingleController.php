@@ -200,9 +200,9 @@ class ContentSingleController extends AbstractController
             }
             $hasCustomLayout=false;
             $customLayoutRows=array();
-            if (isset($type['layouts'])){
+            if ((isset($type['layouts']))&&(is_array($type['layouts']))){
                 foreach ($type['layouts'] as $key => $value) {
-                    if (($value['type']=="Detail")&&($value['active'])){
+                    if (($value['type']=="Detail")&&($value['active'])&&($value['site']==$site['id'])){
                         $hasCustomLayout=true;
                         $customLayoutRows=$value['rows'];
                     }

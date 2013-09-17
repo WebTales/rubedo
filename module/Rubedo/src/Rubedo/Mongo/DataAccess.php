@@ -875,7 +875,6 @@ class DataAccess implements IDataAccess
         if ($filters) {
             $localFilter->addFilter($filters);
         }
-        
         return $this->_collection->count($localFilter->toArray());
     }
 

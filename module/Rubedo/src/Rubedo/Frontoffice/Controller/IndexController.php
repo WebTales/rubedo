@@ -259,11 +259,11 @@ class IndexController extends AbstractActionController
         // set metadata
         $description = $this->_servicePage->getDescription();
         if (empty($description)) {
-            $description = $this->_site['description'];
+            $description = isset($this->_site['description'])?$this->_site['description']:'';
         }
         $twigVar['description'] = $this->_servicePage->getDescription();
         
-        $author = $this->_site['author'];
+        $author = isset($this->_site['author'])?$this->_site['author']:'';
         if (empty($author)) {
             $author = $this->_servicePage->getAuthor();
         }

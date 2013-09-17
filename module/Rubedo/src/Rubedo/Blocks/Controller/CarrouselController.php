@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  *
@@ -34,6 +35,11 @@ class CarrouselController extends ContentListController
         $blockConfig = $this->params()->fromQuery('block-config');
         
         $filters = Manager::getService('Queries')->getFilterArrayById($blockConfig['query']);
+        $localFilters = $filters['filter'];
+        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.image')->setOperator('$exists')->setValue(true);
+        $localFilters->addFilter($imageFilter);
+        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.image')->setOperator('$ne')->setValue('');
+        $localFilters->addFilter($imageFilter);
         
         if ($filters !== false) {
             $queryType = $filters["queryType"];
@@ -92,6 +98,8 @@ class CarrouselController extends ContentListController
             }
         }
         $output = $this->params()->fromQuery();
+        $output = $this->getAllParams();
+        $output['nbItems']= $nbItems;
         $output["items"] = $data;
         $output["imageWidth"] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
         $output["imageHeight"] = isset($blockConfig['imageHeight']) ? $blockConfig['imageHeight'] : null;

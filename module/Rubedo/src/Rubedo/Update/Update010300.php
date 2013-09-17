@@ -17,6 +17,10 @@
  */
 namespace Rubedo\Update;
 
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Rubedo\Collection\AbstractCollection;
+
 /**
  * Methods
  * for
@@ -38,10 +42,86 @@ class Update010300 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
+        static::ressourceUpdate();
         return true;
     }
 
-    
+    public static function ressourceUpdate()
+    {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        // introduction
+        $service = Manager::getService('Blocks');
+        
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('In')->setName('blockData.bType')
+            ->setValue(array(
+            'resource',
+            'protectedResource'
+        )));
+        $filters->addFilter(Filter::factory('OperatorToValue')->setName('blockData.configBloc.introduction')
+            ->setValue('')
+            ->setOperator('$ne'));
+        
+        $list = $service->getList($filters);
+        if ($list['count'] > 0) {
+            $contentService = Manager::getService('Contents');
+            $pageService = Manager::getService('Pages');
+            foreach ($list['data'] as $block) {
+                $introduction = $block['blockData']['configBloc']['introduction'];
+                if (! is_string($introduction) || preg_match('/[\dabcdef]{24}/', $introduction) !== 1) {
+                    $page = $pageService->findById($block['pageId']);
+                    if (isset($page['nativeLanguage'])) {
+                        $nativeLanguage = $page['nativeLanguage'];
+                    } else {
+                        $site = Manager::getService('Sites')->findById($page['site']);
+                        if ($site) {
+                            $nativeLanguage = $page['defaultLanguage'];
+                        } else {
+                            continue;
+                        }
+                    }
+                    $richtext = array(
+                        'text' => 'resource',
+                        'fields' => array(
+                            'fields' => array(
+                                'body' => $introduction,
+                                'text' => 'resource',
+                                'summary' => ''
+                            )
+                        ),
+                        'typeId' => '520b8644c1c3dad506000036',
+                        'status' => 'published',
+                        'version' => '',
+                        'online' => true,
+                        'pageId' => $block['pageId'],
+                        'maskId' => '',
+                        'blockId' => $block['id'],
+                        'locale' => '',
+                        'target' => 'global',
+                        'i18n' => array(
+                            $nativeLanguage => array(
+                                'fields' => array(
+                                    'body' => $introduction,
+                                    'text' => 'resource',
+                                    'summary' => ''
+                                )
+                            )
+                        ),
+                        'nativeLanguage' => $nativeLanguage
+                    );
+                    
+                    $result = $contentService->create($richtext);
+                    $contentId = $result['data']['id'];
+                    $block['blockData']['configBloc']['introduction'] = $contentId;
+                    $result = $service->update($block);
+                }
+            }
+        }
+        
+        AbstractCollection::disableUserFilter($wasFiltered);
+        
+        return true;
+    }
 }

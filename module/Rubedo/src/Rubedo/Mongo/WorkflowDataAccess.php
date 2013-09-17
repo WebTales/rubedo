@@ -414,4 +414,20 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         
         return $this->_outputObjectFilter($data);
     }
+    
+	/* (non-PHPdoc)
+     * @see \Rubedo\Mongo\DataAccess::count()
+     */
+    public function count (\WebTales\MongoFilters\IFilter $filters = null)
+    {
+        $localFilter = clone $this->getFilters();
+        if ($filters) {
+            $localFilter->addFilter($filters);
+        }
+        $this->_adaptFilter($localFilter);
+        return $this->_collection->count($localFilter->toArray());
+    }
+
+    
+    
 }
