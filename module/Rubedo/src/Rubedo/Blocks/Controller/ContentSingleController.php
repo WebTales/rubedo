@@ -19,6 +19,7 @@ namespace Rubedo\Blocks\Controller;
 Use Rubedo\Services\Manager;
 Use Alb\OEmbed;
 use Zend\View\Model\JsonModel;
+use Rubedo\Services\Cache;
 
 /**
  *
@@ -101,7 +102,7 @@ class ContentSingleController extends AbstractController
                         }
                     }
                 } else 
-                    if ($value["cType"] == "CKEField") {
+                    if (($value["cType"] == "CKEField")&&(isset($value["config"]["CKETBConfig"]))) {
                         $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
                     } else 
                         if ($value["cType"] == "externalMediaField") {
@@ -111,66 +112,83 @@ class ContentSingleController extends AbstractController
                                 
                                 $oembedParams['url'] = $mediaConfig['url'];
                                 
-                                $cache = Rubedo\Services\Cache::getCache('oembed');
-                                
-                                $options = array();
-                                
-                                if (isset($mediaConfig['maxWidth']) && is_integer($mediaConfig['minHeight'])) {
-                                    $oembedParams['maxWidth'] = $mediaConfig['maxWidth'];
-                                    $options['maxWidth'] = $mediaConfig['maxWidth'];
-                                } else {
-                                    $oembedParams['maxWidth'] = 0;
-                                }
-                                
-                                if (isset($mediaConfig['maxHeight']) && is_integer($mediaConfig['maxHeight'])) {
-                                    $oembedParams['maxHeight'] = $mediaConfig['maxHeight'];
-                                    $options['maxHeight'] = $mediaConfig['maxHeight'];
-                                } else {
-                                    $oembedParams['maxHeight'] = 0;
-                                }
-                                
-                                $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
-                                
-                                if (! ($item = $cache->load($cacheKey))) {
-                                    $response = OEmbed\Simple::request($oembedParams['url'], $options);
-                                    
-                                    $item['width'] = $oembedParams['maxWidth'];
-                                    $item['height'] = $oembedParams['maxHeight'];
-                                    if ($response) {
-                                        if (! stristr($oembedParams['url'], 'www.flickr.com')) {
-                                            $item['html'] = $response->getHtml();
-                                        } else {
-                                            $raw = $response->getRaw();
-                                            if ($oembedParams['maxWidth'] > 0) {
-                                                $width_ratio = $raw->width / $oembedParams['maxWidth'];
-                                            } else {
-                                                $width_ratio = 1;
-                                            }
-                                            if ($oembedParams['maxHeight'] > 0) {
-                                                $height_ratio = $raw->height / $oembedParams['maxHeight'];
-                                            } else {
-                                                $height_ratio = 1;
-                                            }
-                                            
-                                            $size = "";
-                                            if ($width_ratio > $height_ratio) {
-                                                $size = "width='" . $oembedParams['maxWidth'] . "'";
-                                            }
-                                            if ($width_ratio < $height_ratio) {
-                                                $size = "height='" . $oembedParams['maxHeight'] . "'";
-                                            }
-                                            $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
-                                        }
-                                        
-                                        $cache->save($item, $cacheKey, array(
-                                            'oembed'
-                                        ));
-                                    } else {
-                                        $item["html"] = "<div class=\"alert alert-error\">Le média éxterne n'a pas pu être chargé</div>";
-                                    }
-                                }
-                                
-                                $output['item'] = $item;
+                                $cache = Cache::getCache('oembed');
+            
+            $options = array();
+            
+            if (isset($blockConfig['maxWidth'])) {
+                $oembedParams['maxWidth'] = $blockConfig['maxWidth'];
+                $options['maxWidth'] = $blockConfig['maxWidth'];
+            } else {
+                $oembedParams['maxWidth'] = 0;
+            }
+            
+            if (isset($blockConfig['maxHeight'])) {
+                $oembedParams['maxHeight'] = $blockConfig['maxHeight'];
+                $options['maxHeight'] = $blockConfig['maxHeight'];
+            } else {
+                $oembedParams['maxHeight'] = 0;
+            }
+            
+            $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
+            $loaded = false;
+            $item = $cache->getItem($cacheKey,$loaded);
+            
+            if (!$loaded) {
+                // If the URL come from flickr, we check the URL
+                if (stristr($oembedParams['url'], 'www.flickr.com')) {
+                    $decomposedUrl = explode("/", $oembedParams['url']);
+                    
+                    $end = false;
+                    
+                    // We search the photo identifiant and we remove all parameters after it
+                    foreach ($decomposedUrl as $key => $value) {
+                        if (is_numeric($value) && strlen($value) === 10) {
+                            $end = true;
+                            continue;
+                        }
+                        
+                        if ($end) {
+                            unset($decomposedUrl[$key]);
+                        }
+                    }
+                    
+                    $oembedParams['url'] = implode("/", $decomposedUrl);
+                }
+                
+                $response = OEmbed\Simple::request($oembedParams['url'], $options);
+                
+                $item['width'] = $oembedParams['maxWidth'];
+                $item['height'] = $oembedParams['maxHeight'];
+                if (! stristr($oembedParams['url'], 'www.flickr.com')) {
+                    $item['html'] = $response->getHtml();
+                } else {
+                    $raw = $response->getRaw();
+                    if ($oembedParams['maxWidth'] > 0) {
+                        $width_ratio = $raw->width / $oembedParams['maxWidth'];
+                    } else {
+                        $width_ratio = 1;
+                    }
+                    if ($oembedParams['maxHeight'] > 0) {
+                        $height_ratio = $raw->height / $oembedParams['maxHeight'];
+                    } else {
+                        $height_ratio = 1;
+                    }
+                    
+                    $size = "";
+                    if ($width_ratio > $height_ratio) {
+                        $size = "width='" . $oembedParams['maxWidth'] . "'";
+                    }
+                    if ($width_ratio < $height_ratio) {
+                        $size = "height='" . $oembedParams['maxHeight'] . "'";
+                    }
+                    $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
+                }
+                
+                $cache->setItem($cacheKey,$item);
+            }
+            
+            $output['item'] = $item;
                             }
                         }
             }
