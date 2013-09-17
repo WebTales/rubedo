@@ -37,11 +37,11 @@ class MailingListController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
         
-        $output = $this->getAllParams();
+        $output = $this->params()->fromQuery();
         $output['blockConfig'] = $blockConfig;
         
         $css = array();
@@ -60,7 +60,7 @@ class MailingListController extends AbstractController
     public function xhrAddEmailAction ()
     {
         // Default mailing list
-        $mailingListId = $this->getParam("mailing-list-id");
+        $mailingListId = $this->params()->fromPost("mailing-list-id");
         if (! $mailingListId) {
             throw new \Rubedo\Exceptions\User("No newsletter associeted to this form.", "Exception18");
         }
@@ -69,7 +69,7 @@ class MailingListController extends AbstractController
         $emailValidator = new \Zend\Validator\EmailAddress();
         
         // MailingList service
-        $mailingListService = \Rubedo\Services\Manager::getService("MailingList");
+        $mailingListService = Manager::getService("MailingList");
         
         // Get email
         $email = $this->getParam("email");
