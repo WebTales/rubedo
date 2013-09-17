@@ -3,6 +3,7 @@ return array(
     'Acl' => 'Rubedo\\Security\\Acl',
     'AppExtension' => 'Rubedo\\Backoffice\\Service\\AppExtension',
     'ApplicationLogger' => 'Rubedo\\Log\\ApplicationLogger',
+    'ApplicationLog' => 'Rubedo\\Collection\\ApplicationLog',
     'Authentication' => 'Rubedo\\User\\Authentication',
     'Blocks' => 'Rubedo\\Collection\\Blocks',
     'Cache' => 'Rubedo\\Collection\\Cache',
