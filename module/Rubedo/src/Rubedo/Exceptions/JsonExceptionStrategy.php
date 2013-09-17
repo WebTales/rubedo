@@ -137,8 +137,7 @@ class JsonExceptionStrategy extends ExceptionStrategy
                 'line' => $exception->getLine()
             )
             ;
-            if ($response->getStatusCode() == 500) {
-                $context['errorStack'] = $exception->getTrace();
+            if ($response->getStatusCode() == 500) {               
                 Manager::getService('Logger')->error($exception->getMessage(), $context);
             }elseif ($response->getStatusCode() == 403) {
                 Manager::getService('SecurityLogger')->error($exception->getMessage(), $context);
