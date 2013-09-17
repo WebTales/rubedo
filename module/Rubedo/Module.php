@@ -27,6 +27,7 @@ use Zend\EventManager\EventManager;
 use Rubedo\Cache\MongoCache;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
+use Rubedo\User\Authentication;
 
 class Module
 {
@@ -50,7 +51,7 @@ class Module
         
         Interfaces\config::initInterfaces();
         
-        //define all the events that should be handled
+        // define all the events that should be handled
         $this->setListeners($eventManager);
         
         // Config json enabled exceptionStrategy
@@ -64,13 +65,13 @@ class Module
 
     public function setListeners(EventManager $eventManager)
     {
-        //verify session and access right when dispatching
+        // verify session and access right when dispatching
         $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
             $this,
             'preDispatch'
         ));
         
-        //add some cache on HtmlCleaner method
+        // add some cache on HtmlCleaner method
         $eventManager->attach(HtmlCleaner::PRE_HTMLCLEANER, array(
             'Rubedo\Services\Cache',
             'getFromCache'
@@ -81,11 +82,34 @@ class Module
             'setToCache'
         ), 100);
         
-        //log hit & miss on Rubedo cache
-        $eventManager->attach(array(MongoCache::CACHE_HIT,MongoCache::CACHE_MISS),array('Rubedo\Services\Cache','logCacheHit'),1);
+        // log hit & miss on Rubedo cache
+        $eventManager->attach(array(
+            MongoCache::CACHE_HIT,
+            MongoCache::CACHE_MISS
+        ), array(
+            'Rubedo\Services\Cache',
+            'logCacheHit'
+        ), 1);
         
-        //log Rubedo writing on MongoDB collections
-        $eventManager->attach(array(AbstractCollection::POST_CREATE_COLLECTION,AbstractCollection::POST_UPDATE_COLLECTION,AbstractCollection::POST_DELETE_COLLECTION,WorkflowAbstractCollection::POST_PUBLISH_COLLECTION),array(Manager::getService('ApplicationLogger'),'logCollectionEvent'),1);
+        // log Rubedo writing on MongoDB collections
+        $eventManager->attach(array(
+            AbstractCollection::POST_CREATE_COLLECTION,
+            AbstractCollection::POST_UPDATE_COLLECTION,
+            AbstractCollection::POST_DELETE_COLLECTION,
+            WorkflowAbstractCollection::POST_PUBLISH_COLLECTION
+        ), array(
+            Manager::getService('ApplicationLogger'),
+            'logCollectionEvent'
+        ), 1);
+            
+            // log authentication attemps
+        $eventManager->attach(array(
+            Authentication::FAIL,
+            Authentication::SUCCESS
+        ), array(
+            Manager::getService('ApplicationLogger'),
+            'logAuthenticationEvent'
+        ), 1);
     }
 
     public function getConfig()

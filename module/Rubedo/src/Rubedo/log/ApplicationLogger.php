@@ -20,6 +20,7 @@ use Rubedo\Mongo\DataAccess;
 use Zend\EventManager\EventInterface;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
+use Rubedo\User\Authentication;
 
 /**
  * Logger Service for security Issues
@@ -59,6 +60,10 @@ class ApplicationLogger extends Logger
         
         $collection = $e->getTarget()->getCollectionName();
         $userSummary = Manager::getService('CurrentUser')->getCurrentUserSummary();
+        if (! $userSummary['fullName']) {
+            // do not log anonymous writing
+            return;
+        }
         switch ($e->getName()) {
             case AbstractCollection::POST_CREATE_COLLECTION:
                 $action = 'Create';
@@ -77,11 +82,44 @@ class ApplicationLogger extends Logger
                 break;
         }
         $context = array(
+            'type' => 'collection',
             'collection' => $collection,
             'user' => $userSummary,
             'event' => $e->getName(),
-            'data' => $params['data'],
+            'data' => $params['data']
         );
         $this->info($action . ' on ' . $collection . ' by ' . $userSummary['fullName'], $context);
+    }
+
+    public function logAuthenticationEvent(EventInterface $e)
+    {
+        $serverParams = Manager::getService('Application')->getRequest()->getServer();
+        $context = array(
+            'remote_ip' => $serverParams->get('X-Forwarded-For', $serverParams->get('REMOTE_ADDR')),
+            'uri' => Manager::getService('Application')->getRequest()
+                ->getUri()
+                ->toString()
+        );
+        
+        $userSummary = Manager::getService('CurrentUser')->getCurrentUserSummary();
+        
+        switch ($e->getName()) {
+            case Authentication::FAIL:
+                $message = 'Failed authentication';
+                $params = $e->getParams();
+                $login = $params['login'];
+                $level = \Monolog\Logger::WARNING;
+                $context['error']=$params['error'];
+                break;
+            case Authentication::SUCCESS:
+                $message = 'Successful authentication';
+                $action = 'Update';
+                $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
+                $login = $currentUser['login'];
+                $level = \Monolog\Logger::INFO;
+                break;
+        }
+        $context['login'] = $login;
+        $this->addRecord($level,$message, $context);
     }
 }

@@ -20,6 +20,7 @@ use Rubedo\Interfaces\User\IAuthentication;
 use Zend\Authentication\AuthenticationService;
 use Rubedo\User\AuthAdapter;
 use Rubedo\Services\Manager;
+use Rubedo\Services\Events;
 
 /**
  * Current Authentication Service
@@ -32,6 +33,8 @@ use Rubedo\Services\Manager;
  */
 class Authentication implements IAuthentication
 {
+    const SUCCESS = 'rubedo_authentication_success';
+    const FAIL = 'rubedo_authentication_fail';
 
     /**
      * Authentication service of ZF
@@ -73,8 +76,10 @@ class Authentication implements IAuthentication
         $authAdapter = new AuthAdapter($login, $password);
         $result = $this->getZendAuth()->authenticate($authAdapter);
         if (! $result->isValid()) {
+            Events::getEventManager()->trigger(self::FAIL,null,array('login'=>$login,'error'=>$result->getMessages()));
             Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
         }
+        Events::getEventManager()->trigger(self::SUCCESS);
         Manager::getService('CurrentUser')->getToken();
         return $result->isValid();
     }

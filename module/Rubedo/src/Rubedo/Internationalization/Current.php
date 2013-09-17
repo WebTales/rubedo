@@ -80,8 +80,10 @@ class Current implements ICurrent
             }
             
             if ($user) {
-                $user['preferedLanguage'][$siteId] = $locale;
-                Manager::getService('Users')->update($user);
+                if(!isset($user['preferedLanguage'][$siteId]) || $user['preferedLanguage'][$siteId] != $locale){
+                    $user['preferedLanguage'][$siteId] = $locale;
+                    Manager::getService('Users')->update($user);
+                }                
             }
         } else {
             $locale = 'en';
