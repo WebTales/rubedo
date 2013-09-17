@@ -114,6 +114,7 @@ class GalleryController extends ContentListController
         $mediaArray = $this->_dataService->getList($filter['filter'], $filter['sort'], (($currentPage - 1) * $limit), $limit);
         
         // Set the ID and the title for each pictures
+        $data=array();
         foreach ($mediaArray['data'] as $media) {
             $fields["image"] = (string) $media['id'];
             $fields["title"] = $media['title'];
