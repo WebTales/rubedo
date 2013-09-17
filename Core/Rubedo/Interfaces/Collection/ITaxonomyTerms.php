@@ -47,8 +47,7 @@ interface ITaxonomyTerms extends IAbstractCollection
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array());
-
+    
     /**
      * Allow to find a term by its id
      *
