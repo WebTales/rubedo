@@ -22,11 +22,14 @@ use Rubedo\Exceptions\JsonExceptionStrategy;
 use Rubedo\Exceptions\Access as AccessException;
 use Rubedo\Collection\SessionData;
 use Rubedo\Router\Url;
+use Rubedo\Security\HtmlCleaner;
+use Zend\EventManager\EventManager;
+use Rubedo\Services\Cache;
 
 class Module
 {
 
-    public function onBootstrap (MvcEvent $e)
+    public function onBootstrap(MvcEvent $e)
     {
         // register serviceLocator for global access by Rubedo
         Manager::setServiceLocator($e->getApplication()->getServiceManager());
@@ -45,10 +48,8 @@ class Module
         
         Interfaces\config::initInterfaces();
         
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
-            $this,
-            'preDispatch'
-        ));
+        //define all the events that should be handled
+        $this->setListeners($eventManager);
         
         // Config json enabled exceptionStrategy
         $exceptionStrategy = new JsonExceptionStrategy();
@@ -59,12 +60,35 @@ class Module
         $exceptionStrategy->attach($application->getEventManager());
     }
 
-    public function getConfig ()
+    public function setListeners(EventManager $eventManager)
+    {
+        //verify session and access right when dispatching
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
+            $this,
+            'preDispatch'
+        ));
+        
+        //add some cache on HtmlCleaner method
+        $eventManager->attach(HtmlCleaner::PRE_HTMLCLEANER, array(
+            'Rubedo\Services\Cache',
+            'getFromCache'
+        ), 100);
+        
+        $eventManager->attach(HtmlCleaner::POST_HTMLCLEANER, array(
+            'Rubedo\Services\Cache',
+            'setToCache'
+        ), 100);
+        
+        //log hit & miss on Rubedo cache
+        $eventManager->attach(array(Cache::CACHE_HIT,Cache::CACHE_MISS),array('Rubedo\Services\Cache','logCacheHit'),1);
+    }
+
+    public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig ()
+    public function getAutoloaderConfig()
     {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
@@ -83,7 +107,7 @@ class Module
      * @param MvcEvent $event            
      * @throws \Rubedo\Exceptions\Access
      */
-    public function preDispatch (MvcEvent $event)
+    public function preDispatch(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -159,7 +183,7 @@ class Module
         }
     }
 
-    protected function initializeSession (MvcEvent $e)
+    protected function initializeSession(MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()
@@ -187,7 +211,7 @@ class Module
         Container::setDefaultManager($sessionManager);
     }
 
-    protected function toDeadEnd (MvcEvent $event, \Exception $exception)
+    protected function toDeadEnd(MvcEvent $event,\Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');

@@ -17,6 +17,8 @@
 namespace Rubedo\Security;
 
 use Rubedo\Interfaces\Security\IHtmlCleaner;
+use Rubedo\Services\Manager;
+use Rubedo\Services\Events;
 
 /**
  * Service to handle allowed and disallowed HTML contents
@@ -29,13 +31,35 @@ use Rubedo\Interfaces\Security\IHtmlCleaner;
 class HtmlCleaner implements IHtmlCleaner
 {
 
+    const PRE_HTMLCLEANER = 'rubedo_htmlcleaner_pre';
+
+    const POST_HTMLCLEANER = 'rubedo_htmlcleaner_post';
+
     /**
      * Clean a raw content to become a valid HTML content without threats
      *
      * @param string $html            
      * @return string
      */
-    public function clean ($html)
+    public function clean($html)
+    {
+        $hash = Manager::getService('Hash')->hashString($html);
+        $key = 'htmlcleaner_' . $hash;
+        $response = Events::getEventManager()->trigger(self::PRE_HTMLCLEANER, null, array(
+            'key' => $key
+        ));
+        if ($response->stopped()) {
+            return $response->first();
+        }
+        $result = $this->internalClean($html);
+        Events::getEventManager()->trigger(self::POST_HTMLCLEANER, null, array(
+            'key' => $key,
+            'result' => $result
+        ));
+        return $result;
+    }
+
+    protected function internalClean($html)
     {
         $allowedTags = array(
             'p',

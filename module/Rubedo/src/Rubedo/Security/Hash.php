@@ -45,7 +45,7 @@ class Hash implements IHash
      *            
      * @return $hash The string hashed
      */
-    public function hashString ($string, $salt)
+    public function hashString ($string, $salt='')
     {
         if (gettype($string) !== 'string') {
             throw new \Rubedo\Exceptions\Server('$string should be a string', "Exception40", '$string');

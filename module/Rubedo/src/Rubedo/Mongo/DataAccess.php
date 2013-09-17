@@ -1291,7 +1291,7 @@ class DataAccess implements IDataAccess
         ), 1);
         
         //if profiling, check for index use and double requests
-        if (isset($options['mongo']['profiling']) and $options['mongo']['profiling'] === true) {
+        if (isset($options['mongo']['profiling']) && $options['mongo']['profiling'] === true) {
             Events::getEventManager()->attach(ProxyCollection::POST_REQUEST, array(
                 'Rubedo\\Mongo\\DataAccess',
                 'alertOnIndex'

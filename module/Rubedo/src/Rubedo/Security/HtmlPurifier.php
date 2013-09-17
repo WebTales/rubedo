@@ -36,14 +36,14 @@ class HtmlPurifier extends HtmlCleaner
      * @param string $html            
      * @return string
      */
-    public function clean ($html)
+    protected function internalClean($html)
     {
         if (empty($html)) {
             return $html;
         }
         
         if (! class_exists('\HTMLPurifier_Config')) {
-            return parent::clean($html);
+            return parent::internalClean($html);
         }
         if (! isset(self::$_purifier)) {
             $config = \HTMLPurifier_Config::createDefault();
@@ -55,7 +55,7 @@ class HtmlPurifier extends HtmlCleaner
                 "_parent",
                 "_top"
             ));
-            $config->set('HTML.Attr.Name.UseCDATA',true);
+            $config->set('HTML.Attr.Name.UseCDATA', true);
             self::$_purifier = new \HTMLPurifier($config);
         }
         $html = self::$_purifier->purify($html);
