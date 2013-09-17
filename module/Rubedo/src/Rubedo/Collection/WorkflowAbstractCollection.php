@@ -17,6 +17,8 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection, Rubedo\Services\Manager;
+use Rubedo\Services\Events;
+
 
 // require_once APPLICATION_PATH.'/../Core/Rubedo/Interfaces/Collection/IWorkflowAbstractCollection.php';
 
@@ -202,7 +204,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         $result = $this->_dataService->publish($objectId);
         $args = $result;
         $args['objectId'] = $objectId;
-        Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION,$this,$args);
+        Events::getEventManager()->trigger(self::POST_PUBLISH_COLLECTION,$this,$args);
         return $result;
     }
 
