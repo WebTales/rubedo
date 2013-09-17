@@ -203,7 +203,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
     	unset($ignoreIndex);
         $result = $this->_dataService->publish($objectId);
         $args = $result;
-        $args['objectId'] = $objectId;
+        $args['data'] = array('id'=>$objectId);
         Events::getEventManager()->trigger(self::POST_PUBLISH_COLLECTION,$this,$args);
         return $result;
     }

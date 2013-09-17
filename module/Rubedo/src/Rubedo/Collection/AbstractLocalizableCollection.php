@@ -18,6 +18,8 @@ namespace Rubedo\Collection;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Events;
+
 
 /**
  * Class implementing the API to MongoDB for localizable collections
@@ -204,6 +206,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($result['success']) {
             $result['data'] = $this->localizeOutput($result['data']);
         }
+        Events::getEventManager()->trigger(AbstractCollection::POST_CREATE_COLLECTION,$this,$result);
         return $result;
     }
 
@@ -224,6 +227,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($result['success']) {
             $result['data'] = $this->localizeOutput($result['data']);
         }
+        Events::getEventManager()->trigger(AbstractCollection::POST_UPDATE_COLLECTION,$this,$result);
         return $result;
     }
     

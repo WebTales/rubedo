@@ -25,6 +25,8 @@ use Rubedo\Router\Url;
 use Rubedo\Security\HtmlCleaner;
 use Zend\EventManager\EventManager;
 use Rubedo\Cache\MongoCache;
+use Rubedo\Collection\AbstractCollection;
+use Rubedo\Collection\WorkflowAbstractCollection;
 
 class Module
 {
@@ -81,6 +83,9 @@ class Module
         
         //log hit & miss on Rubedo cache
         $eventManager->attach(array(MongoCache::CACHE_HIT,MongoCache::CACHE_MISS),array('Rubedo\Services\Cache','logCacheHit'),1);
+        
+        //log Rubedo writing on MongoDB collections
+        $eventManager->attach(array(AbstractCollection::POST_CREATE_COLLECTION,AbstractCollection::POST_UPDATE_COLLECTION,AbstractCollection::POST_DELETE_COLLECTION,WorkflowAbstractCollection::POST_PUBLISH_COLLECTION),array(Manager::getService('ApplicationLogger'),'logCollectionEvent'),1);
     }
 
     public function getConfig()
