@@ -62,7 +62,9 @@ class GeoSearchController extends AbstractController
 
     public function xhrSearchAction ()
     {
-        
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $this->init();
+        }
         // get params
         $params = $this->params()->fromPost();
         
@@ -79,7 +81,7 @@ class GeoSearchController extends AbstractController
         $facetsToHide = array();
         if (isset($params['constrainToSite']) && $params['constrainToSite'] === 'true') {
             $currentPageId = $this->params()->fromPost('current-page');
-            $currentPage = \Rubedo\Services\Manager::getService('Pages')->findById($currentPageId);
+            $currentPage = Manager::getService('Pages')->findById($currentPageId);
             $siteId = $currentPage['site'];
             $facetsToHide[] = "navigation";
             if (! isset($params['navigation'])) {
@@ -187,19 +189,19 @@ class GeoSearchController extends AbstractController
         $idArray = $this->params()->fromPost('idArray');
         $itemHtml = '';
         foreach ($idArray as $id) {
-            $entity = Rubedo\Services\Manager::getService('Contents')->findById($id, true, false);
+            $entity = Manager::getService('Contents')->findById($id, true, false);
             if (isset($entity)) {
                 $type = "content";
             } else {
-                $entity = Rubedo\Services\Manager::getService('Dam')->findById($id);
+                $entity = Manager::getService('Dam')->findById($id);
                 $type = "dam";
             }
             if (isset($entity)) {
                 if ($type == "content") {
-                    $intermedVar = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId']);
+                    $intermedVar = Manager::getService('ContentTypes')->findById($entity['typeId']);
                     $entity['type'] = $intermedVar['type'];
                 } else {
-                    $intermedVar = Rubedo\Services\Manager::getService('ContentTypes')->findById($entity['typeId']);
+                    $intermedVar = Manager::getService('ContentTypes')->findById($entity['typeId']);
                     $entity['type'] = $intermedVar['type'];
                 }
                 
@@ -239,6 +241,7 @@ class GeoSearchController extends AbstractController
                 $twigVars = array();
                 $twigVars['result'] = $entity;
                 $twigVars['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+                $twigVars['singlePage'] = $this->getParamFromQuery('current-page');
                 $twigVars['result']['terms'] = $termsArray;
                 
                 $itemHtml .= $templateService->render($contentOrDamTemplate, $twigVars);

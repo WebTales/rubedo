@@ -18,7 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
-
+use Rubedo\Services\Cache;
 /**
  *
  * @author jbourdin
@@ -59,12 +59,13 @@ class FlickrGalleryController extends AbstractController
             return;
         }
         
-        $cache = Rubedo\Services\Cache::getCache('flicker');
-        // $cacheKey = 'flickr_items_' . md5(serialize($flParams));
+        $cache = Cache::getCache('flickr');
+        //$cacheKey = 'flickr_items_' . md5(serialize($flParams));
         $cacheKeyCount = 'flickr_items_' . md5('count-' . serialize($flParams));
-        $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
+        $flickrService = new \ZendService\Flickr\Flickr('f902ce3a994e839b5ff2c92d7f945641');
+        $loaded=$cache->getItem($cacheKeyCount);
         
-        if (! ($photosArrayCount = $cache->load($cacheKeyCount))) {
+        if (! $loaded) {
             if (isset($flParams['user'])) {
                 $photosArrayCount = $flickrService->userSearch($flParams['user'], array(
                     'per_page' => 1

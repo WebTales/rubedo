@@ -77,7 +77,7 @@ function initialize() {
 			if (showCenterMarker) {
 				new google.maps.Marker({
 					map : map,
-					icon : "/templates/root/img/target.png",
+					icon : "/theme/default/img/target.png",
 					position : initialLocation
 				});
 			}
@@ -95,7 +95,7 @@ function initialize() {
 				if (showCenterMarker) {
 					new google.maps.Marker({
 						map : map,
-						icon : "/templates/root/img/target.png",
+						icon : "/theme/default/img/target.png",
 						position : results[0].geometry.location
 					});
 				}
@@ -106,7 +106,7 @@ function initialize() {
 		if (showCenterMarker) {
 			new google.maps.Marker({
 				map : map,
-				icon : "/templates/root/img/target.png",
+				icon : "/theme/default/img/target.png",
 				position : new google.maps.LatLng(centerLatitude,
 						centerLongitude)
 			});
@@ -302,7 +302,7 @@ function initialize() {
 		if (oldPositions.indexOf(entityId) == -1) {
 			var marker = new google.maps.Marker({
 				map : map,
-				icon : "/templates/root/img/map_pin.png",
+				icon : "/theme/default/img/map_pin.png",
 				position : location,
 				title : "" + title,
 				count : count,
