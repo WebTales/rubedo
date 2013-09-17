@@ -88,9 +88,11 @@ class Blocks_GeoSearchController extends Blocks_AbstractController
         // apply predefined facets
         if (isset($params['predefinedFacets'])) {
             $predefParamsArray = \Zend_Json::decode($params['predefinedFacets']);
-            foreach ($predefParamsArray as $key => $value) {
-                if (!isset($params[$key]) or !in_array($value,$params[$key])) $params[$key][] = $value;
-                $facetsToHide[] = $value;
+            if (is_array($predefParamsArray)){
+                foreach ($predefParamsArray as $key => $value) {
+                    if (!isset($params[$key]) or !in_array($value,$params[$key])) $params[$key][] = $value;
+                    $facetsToHide[] = $value;
+                }
             }
         }
         
