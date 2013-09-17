@@ -37,7 +37,7 @@
         "execute.controller.languages.get-flags-list.backoffice",
         "execute.controller.search.xhr-get-suggests.blocks",
         "execute.controller.geosearch.xhr-get-suggests.blocks",
-        "execute.controller.languages.index.backoffice"
+        "execute.controller.languages.index.backoffice",
         "execute.controller.css.index.default",
         "execute.controller.calendar-zimmer.xhr-get-calendar.blocks",
         "execute.controller.queue.index.default"
