@@ -499,6 +499,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      */
     public function getTerm ($id, $vocabularyId = null)
     {
+        if(empty($id))return null;
         if (! isset(self::$_termsArray[$id])) {
             if ($vocabularyId == null || $vocabularyId != 'navigation') {
                 if ($id == "all"){
