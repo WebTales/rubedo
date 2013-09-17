@@ -17,6 +17,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Monolog\Logger;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the delegations JSON
@@ -38,5 +40,10 @@ class ApplicationLogController extends DataAccessController
         
         // init the data access service
         $this->_dataService = Manager::getService('ApplicationLog');
+    }
+    
+    public function getLevelsAction(){
+        $levels = Logger::getLevels();
+        return new JsonModel($levels);
     }
 }
