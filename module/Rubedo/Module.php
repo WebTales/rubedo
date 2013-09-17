@@ -110,6 +110,13 @@ class Module
             Manager::getService('ApplicationLogger'),
             'logAuthenticationEvent'
         ), 1);
+        
+        $eventManager->attach(array(
+            Authentication::FAIL,
+        ), array(
+            Manager::getService('SecurityLogger'),
+            'logAuthenticationEvent'
+        ), 10);
     }
 
     public function getConfig()

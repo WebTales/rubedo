@@ -13,6 +13,9 @@
  */
 namespace Rubedo\Log;
 
+use Rubedo\Services\Manager;
+use Zend\EventManager\EventInterface;
+use Rubedo\User\Authentication;
 
 
 /**
