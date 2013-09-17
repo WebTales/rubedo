@@ -20,6 +20,7 @@ use Zend\Cache\StorageFactory;
 use Zend\EventManager\EventInterface;
 use Rubedo\Exceptions\Server;
 use Monolog\Logger;
+use Rubedo\Cache\MongoCache;
 
 /**
  * Cache manager
@@ -30,11 +31,6 @@ use Monolog\Logger;
  */
 class Cache
 {
-
-    const CACHE_HIT = 'rubedo_cache_hit';
-
-    const CACHE_MISS = 'rubedo_cache_miss';
-
     /**
      * array of current service parameters
      *
@@ -97,21 +93,15 @@ class Cache
         $result = $cache->getItem($key, $loaded);
         if ($loaded) {
             $e->stopPropagation(true);
-            Events::getEventManager()->trigger(self::CACHE_HIT, null, array(
-                'key' => $key
-            ));
             return $result;
         } else {
-            Events::getEventManager()->trigger(self::CACHE_MISS, null, array(
-                'key' => $key
-            ));
             return null;
         }
     }
 
     /**
      * listener for event to cache current result
-     * 
+     *
      * @param EventInterface $e            
      */
     public static function setToCache(EventInterface $e)
@@ -144,11 +134,11 @@ class Cache
         }
         $e->getName();
         switch ($e->getName()) {
-            case (self::CACHE_HIT):
+            case (MongoCache::CACHE_HIT):
                 $message = 'Cache hit on the key: ' . $params['key'];
                 $level = Logger::INFO;
                 break;
-            case (self::CACHE_MISS):
+            case (MongoCache::CACHE_MISS):
                 $message = 'Cache miss for the key: ' . $params['key'];
                 $level = Logger::NOTICE;
                 break;

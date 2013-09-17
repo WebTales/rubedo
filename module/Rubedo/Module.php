@@ -24,7 +24,7 @@ use Rubedo\Collection\SessionData;
 use Rubedo\Router\Url;
 use Rubedo\Security\HtmlCleaner;
 use Zend\EventManager\EventManager;
-use Rubedo\Services\Cache;
+use Rubedo\Cache\MongoCache;
 
 class Module
 {
@@ -80,7 +80,7 @@ class Module
         ), 100);
         
         //log hit & miss on Rubedo cache
-        $eventManager->attach(array(Cache::CACHE_HIT,Cache::CACHE_MISS),array('Rubedo\Services\Cache','logCacheHit'),1);
+        $eventManager->attach(array(MongoCache::CACHE_HIT,MongoCache::CACHE_MISS),array('Rubedo\Services\Cache','logCacheHit'),1);
     }
 
     public function getConfig()

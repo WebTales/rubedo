@@ -16,16 +16,22 @@ namespace Rubedo\Cache;
 
 use Rubedo\Services\Manager;
 use Zend\Cache\Storage\Adapter\AbstractAdapter;
+use Rubedo\Services\Events;
+
 
 /**
  * Zend Cache in MongoDb
  *
  * @author jbourdin
  * @todo implement lifetime and cache names
- *        
+ *      
  */
 class MongoCache extends AbstractAdapter
 {
+
+    const CACHE_HIT = 'rubedo_cache_hit';
+
+    const CACHE_MISS = 'rubedo_cache_miss';
 
     protected $_dataService;
 
@@ -44,9 +50,15 @@ class MongoCache extends AbstractAdapter
         
         if ($obj) {
             $success = true;
+            Events::getEventManager()->trigger(self::CACHE_HIT, null, array(
+                'key' => $normalizedKey
+            ));
             return $obj['data'];
         } else {
             $success = false;
+            Events::getEventManager()->trigger(self::CACHE_MISS, null, array(
+                'key' => $normalizedKey
+            ));
             return null;
         }
     }
@@ -89,17 +101,18 @@ class MongoCache extends AbstractAdapter
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
         
-//         if ($specificLifetime) {
-//             $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
-//         } elseif ($this->getOption('lifetime')) {
-//             $lifetime = $this->getOption('lifetime');
-//             $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $lifetime;
-//         }
+        // if ($specificLifetime) {
+        // $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
+        // } elseif ($this->getOption('lifetime')) {
+        // $lifetime = $this->getOption('lifetime');
+        // $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $lifetime;
+        // }
         
         return $this->_dataService->upsertByCacheId($obj, $normalizedKey);
     }
-    
-    public function clean(){
+
+    public function clean()
+    {
         return $this->_dataService->drop();
     }
 }
