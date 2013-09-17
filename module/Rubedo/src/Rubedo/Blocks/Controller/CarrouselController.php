@@ -98,7 +98,6 @@ class CarrouselController extends ContentListController
             }
         }
         $output = $this->params()->fromQuery();
-        $output = $this->getAllParams();
         $output['nbItems']= $nbItems;
         $output["items"] = $data;
         $output["imageWidth"] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
