@@ -293,10 +293,21 @@ class Url implements IUrl
         if ($name) {
             $options['name'] = $name;
         }
-        return $this->getRouter()->assemble($urlOptions, $options);
-        $url = $this->getUrl($urlOptions, true);
-        
-        return $url;
+        $params = array();
+        foreach ($urlOptions as $key => $value) {
+            switch ($key) {
+                case 'pageId':
+                case 'controller':
+                case 'action':
+                    $params[$key] = $value;
+                    break;
+                case 'module':
+                    break;
+                default:
+                    $options['query'][$key]=$value;
+            }
+        }
+        return $this->getRouter()->assemble($params, $options);
     }
 
     /**
