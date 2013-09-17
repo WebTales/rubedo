@@ -36,12 +36,18 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $this->_dataReader = Manager::getService('Contents');
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getRequest()->getParam('block-config');
+        if(isset($blockConfig['imageField'])){
+            $imageField = $blockConfig['imageField'];
+        }else{
+            $imageField = 'image';
+        }
+        
         
         $filters = Manager::getService('Queries')->getFilterArrayById($blockConfig['query']);
         $localFilters = $filters['filter'];
-        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.image')->setOperator('$exists')->setValue(true);
+        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.'.$imageField)->setOperator('$exists')->setValue(true);
         $localFilters->addFilter($imageFilter);
-        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.image')->setOperator('$ne')->setValue('');
+        $imageFilter = Filter::factory('OperatorToValue')->setName('fields.'.$imageField)->setOperator('$ne')->setValue('');
         $localFilters->addFilter($imageFilter);
         
         if ($filters !== false) {
@@ -102,6 +108,7 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         $output = $this->getAllParams();
         $output['nbItems']= $nbItems;
         $output["items"] = $data;
+        $output["imageField"] = $imageField;
         $output["imageWidth"] = isset($blockConfig['imageWidth']) ? $blockConfig['imageWidth'] : null;
         $output["imageHeight"] = isset($blockConfig['imageHeight']) ? $blockConfig['imageHeight'] : null;
         $output["mode"] = isset($blockConfig['mode']) ? $blockConfig['mode'] : null;
