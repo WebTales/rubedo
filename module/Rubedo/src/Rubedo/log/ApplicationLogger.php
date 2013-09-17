@@ -98,7 +98,9 @@ class ApplicationLogger extends Logger
             'remote_ip' => $serverParams->get('X-Forwarded-For', $serverParams->get('REMOTE_ADDR')),
             'uri' => Manager::getService('Application')->getRequest()
                 ->getUri()
-                ->toString()
+                ->toString(),
+            'type'=> 'authentication',
+            'event' => $e->getName(),            
         );
         
         $userSummary = Manager::getService('CurrentUser')->getCurrentUserSummary();
