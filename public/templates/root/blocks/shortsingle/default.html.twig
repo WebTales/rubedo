@@ -2,18 +2,24 @@
 	
 	<header class="entry-header">
 		<h2 class="post-title-small">
-			<a href='{{ displayUrl(content.id,"default",null,singlePage) }}' title='{{content.title}}'>{{content.title}}</a>
+			<a href='{{ displayUrl(content.id,"default",null,singlePage) }}' title='{{content.title}}'>{{content.title}} </a>
 		</h2>
 	</header>
+	{% if not blockConfig.showOnlyTitle %}
 	{% if content.image %}
-	    <div class="pull-left shortsingle-img-container">
-    	    {% include "/root/blocks/fields/mediaField.html.twig" with { "data": content, "key": "image", "width": "80", "height": "80", "mode": "boxed" } %}
+	    <div class="pull-left shortsingle-img-container" {% if blockConfig.summaryHeight %} style="height:{{ blockConfig.summaryHeight }}px;" {% endif %}>
+	       {% if blockConfig.summaryHeight %}
+	           {% include "/root/blocks/fields/mediaField.html.twig" with { "data": content, "key": "image", "width":blockConfig.summaryHeight, "height": blockConfig.summaryHeight, "mode": "boxed" } %}
+	       {% else %}
+    	       {% include "/root/blocks/fields/mediaField.html.twig" with { "data": content, "key": "image", "width":"80", "height": "80", "mode": "boxed" } %}
+    	   {% endif %}
 	    </div>
     {% endif %}
 	
-	<div class="entry-content">
+	<div class="entry-content" {% if blockConfig.summaryHeight %} style="height:{{ blockConfig.summaryHeight }}px;" {% endif %}>
 	    {% include "/root/blocks/fields/CKEfield.html.twig" with {"data": content, "key": "summary"} %}
 	</div>
+	{% endif %}
 	
 	<div class="clear-both">
 	    {% if content.date %}
