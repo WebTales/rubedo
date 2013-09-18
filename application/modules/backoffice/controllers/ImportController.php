@@ -247,6 +247,19 @@ class Backoffice_ImportController extends Backoffice_DataAccessController
                         "helpText" => "",
                         "locale" => $workingLanguage
                     );
+                    //translate vocabulary if terms are translated
+                    foreach ($importAsTaxoTranslation as $transKey => $transValue) {
+                        if ($transValue["translatedElement"] == $value['csvIndex']) {
+                            $newTaxoLang=$transValue["translateToLanguage"];
+                            $newTaxoi18n[$newTaxoLang] = array(
+                                "name" => $value['newName'],
+                                "description" => "",
+                                "helpText" => "",
+                                "locale" => $newTaxoLang
+                            );
+                        }
+                    }
+                    
                     $newTaxoParams = array(
                         "name" => $value['newName'],
                         "description" => "",
