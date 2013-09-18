@@ -19,7 +19,7 @@
 	<div class="entry-content" {% if blockConfig.summaryHeight %} style="height:{{ blockConfig.summaryHeight }}px;" {% endif %}>
 	    {% include "/root/blocks/fields/CKEfield.html.twig" with {"data": content, "key": "summary"} %}
 	</div>
-	{% endif %}
+	
 	
 	<div class="clear-both">
 	    {% if content.date %}
@@ -28,4 +28,5 @@
     	{% include "/root/blocks/edition/full-edition-button.html.twig" with { "data" : content, "alignRight" : true } %}
     	<a class="pull-right" href="{{ displayUrl(content.id,"default",null,singlePage) }}">{{ "Block.ContentList.Label.ReadMore" | fotrans }}</a>
 	</div>
+	{% endif %}
 </div>
