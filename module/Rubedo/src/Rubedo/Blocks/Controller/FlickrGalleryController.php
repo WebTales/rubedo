@@ -19,6 +19,7 @@ namespace Rubedo\Blocks\Controller;
 Use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
 use Rubedo\Services\Cache;
+use Zend\Json\Json;
 /**
  *
  * @author jbourdin
@@ -78,9 +79,7 @@ class FlickrGalleryController extends AbstractController
             } else {
                 throw new \Rubedo\Exceptions\User('Need a criteria to display Flickr Contents.', "Exception16");
             }
-            $cache->save($photosArrayCount, $cacheKeyCount, array(
-                'flickr'
-            ));
+            //$cache->setItem($cacheKeyCount, $photosArrayCount);
         }
         
         // Get the number of pictures in database
@@ -112,7 +111,7 @@ class FlickrGalleryController extends AbstractController
             $output['user'] = $flParams['user'];
         }
         if (isset($flParams['tags'])) {
-            $output['tags'] = \Zend_Json::encode($flParams['tags']);
+            $output['tags'] =  Json::encode($flParams['tags']);
         }
         if (isset($flParams['tag_mode'])) {
             $output['tagMode'] = $flParams['tag_mode'];
@@ -153,26 +152,26 @@ class FlickrGalleryController extends AbstractController
     protected function _getList ()
     {
         $flParams = array();
-        $flParams['page'] = $this->params()->fromQuery('page', 1);
-        $prefix =$this->params()->fromQuery('prefix');
-        $output =$this->params()->fromQuery();
+        $flParams['page'] = $this->getParamFromQuery('page', 1);
+        $prefix =$this->getParamFromQuery('prefix');
+        $output =$this->getParamFromQuery();
         
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $flParams['perPage'] = $this->params()->fromQuery('itemsPerPage', 12);
-            $flParams['user'] = $this->params()->fromQuery('user', null);
+            $flParams['perPage'] = $this->getParamFromQuery('itemsPerPage', 12);
+            $flParams['user'] = $this->getParamFromQuery('user', null);
             if (empty($flParams['user'])) {
                 unset($flParams['user']);
             }
-            $flParams['tags'] = $this->params()->fromQuery('tags', null);
+            $flParams['tags'] =$this->getParamFromQuery('tags', null);
             if (empty($flParams['tags'])) {
                 unset($flParams['tags']);
             }
-            $flParams['tag_mode'] = $this->params()->fromQuery('tagMode', null);
+            $flParams['tag_mode'] = $this->getParamFromQuery('tagMode', null);
             if (empty($flParams['tag_mode'])) {
                 unset($flParams['tag_mode']);
             }
         } else {
-            $blockConfig = $this->params()->fromQuery('block-config', array());
+            $blockConfig = $this->getParamFromQuery('block-config', array());
             
             if (isset($blockConfig['itemsPerPage'])) {
                 $flParams['perPage'] = $blockConfig['itemsPerPage'];
@@ -193,12 +192,14 @@ class FlickrGalleryController extends AbstractController
             $output['doNotShow'] = true;
             return $output;
         }
-        $cache = Rubedo\Services\Cache::getCache('flicker');
+        $cache = Cache::getCache('flickr');
         $cacheKey = 'flickr_items_' . md5(serialize($flParams));
         $cacheKeyCount = 'flickr_items_' . md5('count-' . serialize($flParams));
-        $flickrService = new Zend_Service_Flickr('f902ce3a994e839b5ff2c92d7f945641');
+        $flickrService = new \ZendService\Flickr\Flickr('f902ce3a994e839b5ff2c92d7f945641');
         
-        if (! ($photosArrayCount = $cache->load($cacheKeyCount))) {
+        $loaded=$cache->getItem($cacheKeyCount);
+        
+        if (! $loaded) {
             if (isset($flParams['user'])) {
                 $photosArrayCount = $flickrService->userSearch($flParams['user'], array(
                     'per_page' => 1
@@ -211,9 +212,7 @@ class FlickrGalleryController extends AbstractController
             } else {
                 throw new \Rubedo\Exceptions\User('Need a criteria to display Flickr Contents.', "Exception16");
             }
-            $cache->save($photosArrayCount, $cacheKeyCount, array(
-                'flickr'
-            ));
+            //$cache->setItem($cacheKeyCount, $photosArrayCount);
         }
         
         // Get the number of pictures in database
@@ -240,7 +239,7 @@ class FlickrGalleryController extends AbstractController
         if ($flParams['page'] <= 1) {
             $previous = false;
         }
-        if (! ($items = $cache->load($cacheKey))) {
+        if (! ($items = $cache->getItem($cacheKey))) {
             // Get the pictures
             if (isset($flParams['user'])) {
                 $photosArray = $flickrService->userSearch($flParams['user'], array(
@@ -274,9 +273,7 @@ class FlickrGalleryController extends AbstractController
                 $item['thumbnail_height'] = $photo->Thumbnail->height;
                 $items[] = $item;
             }
-            $cache->save($items, $cacheKey, array(
-                'flickr'
-            ));
+            $cache->setItem($cacheKey,$items);
         }
         
         $output['items'] = $items;
@@ -284,7 +281,7 @@ class FlickrGalleryController extends AbstractController
             $output['user'] = $flParams['user'];
         }
         if (isset($flParams['tags'])) {
-            $output['tags'] = \Zend_Json::encode($flParams['tags']);
+            $output['tags'] = Json::encode($flParams['tags']);
         }
         if (isset($flParams['tag_mode'])) {
             $output['tagMode'] = $flParams['tag_mode'];

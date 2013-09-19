@@ -12,7 +12,7 @@
 		"ruflin/Elastica": "0.90.*",
 		"ezyang/htmlpurifier": "4.5.*",
 		"zendframework/zendframework": "2.*",
-		"zendframework/zendservice-flickr":"2.0.*",
+		"zendframework/zendservice-flickr":"dev-master",
 		"alb/oembed": "1.1.*",
 		"swiftmailer/swiftmailer": "5.0.*",
 		"phing/phing": "2.5.0",
