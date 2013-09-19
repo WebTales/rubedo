@@ -146,6 +146,7 @@ class GalleryController extends ContentListController
 
     protected function setFilters ($query)
     {
+        
         if ($query != null) {
             $filters = Filter::factory();
             /* Add filters on TypeId and publication */
@@ -181,11 +182,12 @@ class GalleryController extends ContentListController
                         ->setOperator($taxOperator));
                 }
             }
-            $filters->addFilter(Filter::factory('In')->setName('target')
-                ->setValue(array(
-                $this->_workspace,
-                'all'
-            )));
+            // bad filter breaks block
+//             $filters->addFilter(Filter::factory('In')->setName('target')
+//                 ->setValue(array(
+//                 $this->_workspace,
+//                'all'
+//             )));
             
             /*
              * Add Sort
@@ -210,6 +212,7 @@ class GalleryController extends ContentListController
             "filter" => $filters,
             "sort" => isset($sort) ? $sort : null
         );
+
         return $returnArray;
     }
 }
