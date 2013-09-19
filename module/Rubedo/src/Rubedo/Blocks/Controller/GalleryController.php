@@ -47,8 +47,8 @@ class GalleryController extends ContentListController
     public function xhrGetImagesAction ()
     {
         $twigVars = $this->_getList();
-        
-        $html = Manager::getService('FrontOfficeTemplates')->render('root/blocks/gallery/items.html.twig', $twigVars);
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery/items.html.twig");
+        $html = Manager::getService('FrontOfficeTemplates')->render($template, $twigVars);
         $data = array(
             'html' => $html
         );
@@ -62,25 +62,25 @@ class GalleryController extends ContentListController
      */
     protected function _getList ()
     {
-        $currentPage = $this->params()->fromQuery('page', 1);
+        $currentPage = $this->getParamFromQuery('page', 1);
         
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $limit = (int) $this->params()->fromQuery('itemsPerPage', 5);
-            $prefix = $this->params()->fromQuery('prefix');
-            $imgWidth = $this->params()->fromQuery('width', null);
-            $imgHeight = $this->params()->fromQuery('height', null);
-            $query = Json::decode($this->params()->fromQuery("query", Json::encode(null)), Json::TYPE_ARRAY);
+            $limit = (int) $this->getParamFromQuery('itemsPerPage', 5);
+            $prefix = $this->getParamFromQuery('prefix');
+            $imgWidth = $this->getParamFromQuery('width', null);
+            $imgHeight = $this->getParamFromQuery('height', null);
+            $query = Json::decode($this->getParamFromQuery("query", Json::encode(null)), Json::TYPE_ARRAY);
             $filter = $this->setFilters($query);
         } else {
             // Get queryId, blockConfig and Datalist
-            $blockConfig = $this->params()->fromQuery('block-config');
+            $blockConfig = $this->getParamFromQuery('block-config');
             $limit = (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
             
             $query = Json::decode($blockConfig["query"], Json::TYPE_ARRAY);
             $filter = $this->setFilters($query);
             $imgWidth = $blockConfig['imageThumbnailWidth'];
             $imgHeight = $blockConfig['imageThumbnailHeight'];
-            $prefix = $this->params()->fromQuery('prefix');
+            $prefix = $this->getParamFromQuery('prefix');
         }
         
         $this->_dataService = Manager::getservice('Dam');
@@ -122,7 +122,7 @@ class GalleryController extends ContentListController
         }
         
         // Values sent to the view
-        $output = $this->params()->fromQuery();
+        $output = $this->getParamFromQuery();
         $output['prefix'] = $prefix;
         $output['items'] = $data;
         $output['allDamCount'] = $allDamCount;
