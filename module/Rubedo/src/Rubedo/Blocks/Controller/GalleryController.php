@@ -182,12 +182,11 @@ class GalleryController extends ContentListController
                         ->setOperator($taxOperator));
                 }
             }
-            // bad filter breaks block
-//             $filters->addFilter(Filter::factory('In')->setName('target')
-//                 ->setValue(array(
-//                 $this->_workspace,
-//                'all'
-//             )));
+            $filters->addFilter(Filter::factory('In')->setName('target')
+                ->setValue(array(
+                $this->_workspace,
+               'global'
+            )));
             
             /*
              * Add Sort
