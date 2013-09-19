@@ -85,9 +85,11 @@ class ApplicationLogger extends Logger
             'type' => 'collection',
             'collection' => $collection,
             'user' => $userSummary,
-            'event' => $e->getName(),
-            'data' => $params['data']
+            'event' => $e->getName()
         );
+        if (isset($params['data'])){
+            $context['data']=$params['data'];
+        }
         $this->info($action . ' on ' . $collection . ' by ' . $userSummary['fullName'], $context);
     }
 
