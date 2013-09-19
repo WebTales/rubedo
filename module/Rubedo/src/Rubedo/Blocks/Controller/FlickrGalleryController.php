@@ -140,8 +140,8 @@ class FlickrGalleryController extends AbstractController
     public function xhrGetImagesAction ()
     {
         $twigVars = $this->_getList();
-        
-        $html = Manager::getService('FrontOfficeTemplates')->render('root/blocks/flickr/items.html.twig', $twigVars);
+        $template=Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/flickr/items.html.twig");
+        $html = Manager::getService('FrontOfficeTemplates')->render($template, $twigVars);
         $data = array(
             'html' => $html
         );
@@ -157,6 +157,7 @@ class FlickrGalleryController extends AbstractController
         $output =$this->getParamFromQuery();
         
         if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->init();
             $flParams['perPage'] = $this->getParamFromQuery('itemsPerPage', 12);
             $flParams['user'] = $this->getParamFromQuery('user', null);
             if (empty($flParams['user'])) {
@@ -243,14 +244,14 @@ class FlickrGalleryController extends AbstractController
             // Get the pictures
             if (isset($flParams['user'])) {
                 $photosArray = $flickrService->userSearch($flParams['user'], array(
-                    'per_page' => $flParams['perPage'],
-                    'page' => $flParams['page']
+                    'per_page' => (int) $flParams['perPage'],
+                    'page' => (int) $flParams['page']
                 ));
             } elseif (isset($flParams['tags'])) {
                 $photosArray = $flickrService->tagSearch($flParams['tags'], array(
-                    'per_page' => $flParams['perPage'],
+                    'per_page' => (int) $flParams['perPage'],
                     'tag_mode' => $flParams['tag_mode'],
-                    'page' => $flParams['page']
+                    'page' => (int) $flParams['page']
                 ));
             }
             
