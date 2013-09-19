@@ -20,6 +20,7 @@ use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
+use Zend\Debug\Debug;
 
 /**
  *
@@ -63,7 +64,6 @@ class GalleryController extends ContentListController
     protected function _getList ()
     {
         $currentPage = $this->getParamFromQuery('page', 1);
-        
         if ($this->getRequest()->isXmlHttpRequest()) {
             $limit = (int) $this->getParamFromQuery('itemsPerPage', 5);
             $prefix = $this->getParamFromQuery('prefix');
@@ -84,6 +84,12 @@ class GalleryController extends ContentListController
         }
         
         $this->_dataService = Manager::getservice('Dam');
+        if (!isset($filter['filter'])){
+            $filter['filter']=null;
+        }
+        if (!isset($filter['sort'])){
+            $filter['sort']=null;
+        }
         
         // Get the number of pictures in database
         $allDamCount = $this->_dataService->count($filter['filter']);
@@ -114,7 +120,7 @@ class GalleryController extends ContentListController
         $mediaArray = $this->_dataService->getList($filter['filter'], $filter['sort'], (($currentPage - 1) * $limit), $limit);
         
         // Set the ID and the title for each pictures
-        $data=array();
+         $data=array();
         foreach ($mediaArray['data'] as $media) {
             $fields["image"] = (string) $media['id'];
             $fields["title"] = $media['title'];
@@ -135,7 +141,6 @@ class GalleryController extends ContentListController
         $output["image"]["height"] = isset($imgHeight) ? $imgHeight : null;
         $output['currentPage'] = $currentPage;
         $output['jsonQuery'] = Json::encode($query);
-        
         return $output;
     }
 
