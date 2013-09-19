@@ -20,6 +20,7 @@ Installation
 * A full PHP 5.3+ stack (i.e. http://www.zend.com/products/server/)
 * MongoDB (http://www.mongodb.org) >= 2.2
 * PHP MongoDB Driver >= 1.3.0
+* intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
 * ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 0.90.2 at this moment (https://github.com/ruflin/Elastica/)
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 * ICU Analysis plugin for ElasticSearch (https://github.com/elasticsearch/elasticsearch-analysis-icu)
