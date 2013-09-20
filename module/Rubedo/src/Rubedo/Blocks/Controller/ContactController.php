@@ -38,13 +38,13 @@ class ContactController extends AbstractController
         $errors = array();
         
         if (isset($blockConfig['captcha'])) {
-            $contactForm = new \Blocks_Model_Contact(null, $blockConfig['captcha']);
+            $contactForm = new \Rubedo\Blocks\Model\Contact(null, $blockConfig['captcha']);
         } else {
-            $contactForm = new \Blocks_Model_Contact();
+            $contactForm = new \Rubedo\Blocks\Model\Contact();
         }
         
         // Check if the form was send
-        if (is_string($this->getParam('name'))) {
+        if (is_string($this->getParamFromQuery('name'))) {
             if ($contactForm->isValid($_POST)) {
                 if (isset($blockConfig['contacts']) && is_array($blockConfig['contacts']) && count($blockConfig['contacts']) > 0) {
                     // Create a mailer object
@@ -55,10 +55,10 @@ class ContactController extends AbstractController
                     $recipients = $blockConfig['contacts'];
                     
                     // Build e-mail
-                    $name = $this->getParam('name');
-                    $email = $this->getParam('email');
-                    $subject = $this->getParam('subject');
-                    $message = $this->getParam('message');
+                    $name = $this->getParamFromQuery('name');
+                    $email = $this->getParamFromQuery('email');
+                    $subject = $this->getParamFromQuery('subject');
+                    $message = $this->getParamFromQuery('message');
                     $message = $name . " (" . $email . ") : \n" . $message;
                     
                     $mailerObject->setSubject($subject);
