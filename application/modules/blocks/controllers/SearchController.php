@@ -42,7 +42,7 @@ class Blocks_SearchController extends Blocks_AbstractController
                         unset($params[$key][$subkey]);
                     }
                 }
-                if(count($value)==0){
+                if(count($params[$key])==0){
                     unset($params[$key]);
                 }
             }
