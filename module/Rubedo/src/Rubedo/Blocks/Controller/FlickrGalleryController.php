@@ -64,9 +64,9 @@ class FlickrGalleryController extends AbstractController
         //$cacheKey = 'flickr_items_' . md5(serialize($flParams));
         $cacheKeyCount = 'flickr_items_' . md5('count-' . serialize($flParams));
         $flickrService = new \ZendService\Flickr\Flickr('f902ce3a994e839b5ff2c92d7f945641');
-        $loaded=$cache->getItem($cacheKeyCount);
+        $photosArrayCount=$cache->getItem($cacheKeyCount);
         
-        if (! $loaded) {
+        if (! $photosArrayCount) {
             if (isset($flParams['user'])) {
                 $photosArrayCount = $flickrService->userSearch($flParams['user'], array(
                     'per_page' => 1
@@ -198,9 +198,9 @@ class FlickrGalleryController extends AbstractController
         $cacheKeyCount = 'flickr_items_' . md5('count-' . serialize($flParams));
         $flickrService = new \ZendService\Flickr\Flickr('f902ce3a994e839b5ff2c92d7f945641');
         
-        $loaded=$cache->getItem($cacheKeyCount);
+        $photosArrayCount=$cache->getItem($cacheKeyCount);
         
-        if (! $loaded) {
+        if (! $photosArrayCount) {
             if (isset($flParams['user'])) {
                 $photosArrayCount = $flickrService->userSearch($flParams['user'], array(
                     'per_page' => 1
