@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
+use Zend\Http\Client;
 /**
  * Controller providing data import for csv
  *
@@ -247,6 +248,18 @@ class ImportController extends DataAccessController
                         "helpText" => "",
                         "locale" => $workingLanguage
                     );
+                    //translate vocabulary if terms are translated
+                    foreach ($importAsTaxoTranslation as $transKey => $transValue) {
+                        if ($transValue["translatedElement"] == $value['csvIndex']) {
+                            $newTaxoLang=$transValue["translateToLanguage"];
+                            $newTaxoi18n[$newTaxoLang] = array(
+                                "name" => $value['newName'],
+                                "description" => "",
+                                "helpText" => "",
+                                "locale" => $newTaxoLang
+                            );
+                        }
+                    }
                     $newTaxoParams = array(
                         "name" => $value['newName'],
                         "description" => "",
@@ -430,7 +443,7 @@ class ImportController extends DataAccessController
                                                 
                                                 // if no file found create asset in GridFS
                                                 
-                                                $c = new Zend_Http_Client();
+                                                $c = new Client();
                                                 $c->setUri($imageUrl);
                                                 $result = $c->request('GET');
                                                 $img = $result->getBody();
@@ -611,10 +624,10 @@ class ImportController extends DataAccessController
                     try {
                         $contentsService->create($contentParams, array(), false, true);
                         $lineCounter ++;
-                    } catch (Exception $e) {}
+                    } catch (\Exception $e) {}
                 }
                 fclose($recievedFile);
-                $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+                $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
                 $ElasticDataIndexService->init();
                 
                 $ElasticDataIndexService->indexByType('content', $contentType['data']['id']);
