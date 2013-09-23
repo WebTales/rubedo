@@ -74,6 +74,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * @var boolean
      */
     protected static $_themeHasBeenSet = false;
+    
+    protected static $themeVersion = null;
 
     /**
      *
@@ -297,6 +299,16 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         return self::$_customThemeId;
     }
+    
+    /**
+     * Get the custom theme version
+     *
+     * @return string
+     */
+    public function getCustomThemeVersion()
+    {
+        return self::$themeVersion;
+    }
 
     /**
      * Set the current theme name
@@ -307,8 +319,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         // check if it is a custom theme
         if (preg_match('/[\dabcdef]{24}/', $theme) == 1) {
-            self::$_currentTheme = "customtheme";
-            self::$_customThemeId = $theme;
+            $themeData = Manager::getService('CustomThemes')->findById($theme);
+            if($themeData){
+                self::$_currentTheme = "customtheme";
+                self::$_customThemeId = $theme;
+                self::$themeVersion = $themeData['version'];
+            }else{
+                self::$_currentTheme = 'default';
+            }
             self::$_themeHasBeenSet = true;
         } else {
             self::$_currentTheme = $theme;

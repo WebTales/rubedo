@@ -22,10 +22,6 @@ return array(
             'label' => 'Cerulean',
             'basePath' => $themePath . '/cerulean'
         ),
-        'customtheme' => array(
-            'label' => 'Custom Theme',
-            'basePath' => $themePath . '/customtheme'
-        ),
         'cyborg' => array(
             'label' => 'Cyborg',
             'basePath' => $themePath . '/cyborg'

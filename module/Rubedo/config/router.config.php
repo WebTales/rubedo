@@ -167,6 +167,29 @@ return array(
                     )
                 )
             )
+        ),
+        'customTheme' => array(
+            'type' => 'Literal',
+            'options' => array(
+                'route' => '/theme/custom',
+                'defaults' => array(
+                    '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
+                    'controller' => 'Css',
+                    'action' => 'index'
+                )
+            ),
+            'may_terminate' => true,
+            'child_routes' => array(
+                'default' => array(
+                    'type' => 'Segment',
+                    'options' => array(
+                        'route' => '/:id/:version/theme.css',
+                        '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
+                        'constraints' => array(),
+                        'defaults' => array()
+                    )
+                )
+            )
         )
     )
 );

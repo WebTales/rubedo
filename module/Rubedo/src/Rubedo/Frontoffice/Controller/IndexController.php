@@ -250,6 +250,7 @@ class IndexController extends AbstractActionController
         $twigVar['theme'] = $this->_serviceTemplate->getCurrentTheme();
         if ($twigVar['theme'] == "customtheme") {
             $twigVar['customThemeId'] = $this->_serviceTemplate->getCustomThemeId();
+            $twigVar['customThemeVersion'] = $this->_serviceTemplate->getCustomThemeVersion();
         }
         $twigVar['lang'] = $lang;
         $twigVar['siteID'] = $this->_pageInfo['site'];
