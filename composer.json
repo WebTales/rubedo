@@ -16,7 +16,8 @@
 		"alb/oembed": "1.1.*",
 		"swiftmailer/swiftmailer": "5.0.*",
 		"phing/phing": "2.5.0",
-		"leafo/lessphp": "v0.4.0"
+		"leafo/lessphp": "v0.4.0",
+		"mrclay/minify": "2.1.7"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",

@@ -83,6 +83,10 @@ class PhpSettingsForm extends BootstrapForm
         $rubedoConfigFieldset = new Fieldset('rubedo_config');
         $rubedoConfigFieldset->setAttribute('legend', 'Specific Rubedo options');
         
+        $minify = new Checkbox('minify');
+        $minify->setValue(isset($params['rubedo_config']['minify']) ? $params['rubedo_config']['minify'] : 0);
+        $minify->setLabel('Minify CSS & Js');
+        
         $extDebug = new Checkbox('extDebug');
         $extDebug->setValue(isset($params['rubedo_config']['extDebug']) ? $params['rubedo_config']['extDebug'] : null);
         $extDebug->setLabel('Use debug mode of ExtJs');
@@ -120,6 +124,7 @@ class PhpSettingsForm extends BootstrapForm
         $dbForm = new Form();
         $dbForm->add($displayExceptionsFieldSet);
         $dbForm->add($loggerFieldSet);
+        $rubedoConfigFieldset->add($minify);
         $rubedoConfigFieldset->add($extDebug);
         ;
         $rubedoConfigFieldset->add($defaultBackofficeHost);

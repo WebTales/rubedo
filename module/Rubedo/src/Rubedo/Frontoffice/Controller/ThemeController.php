@@ -71,29 +71,45 @@ class ThemeController extends AbstractActionController
                 break;
         }
         
-        $publicThemePath = APPLICATION_PATH.'/public/theme';
-        $composedPath = $publicThemePath.'/'.$theme;
-        if(!file_exists($composedPath)){
-            mkdir($composedPath,0777);
+        $publicThemePath = APPLICATION_PATH . '/public/theme';
+        $composedPath = $publicThemePath . '/' . $theme;
+        if (! file_exists($composedPath)) {
+            mkdir($composedPath, 0777);
         }
         
-        $composedPath = $composedPath.'/'.dirname($filePath);
-        if(!file_exists($composedPath)){
-            mkdir($composedPath,0777,true);
+        $composedPath = $composedPath . '/' . dirname($filePath);
+        if (! file_exists($composedPath)) {
+            mkdir($composedPath, 0777, true);
+        }
+        $targetPath = $publicThemePath . '/' . $theme . '/' . $filePath;
+        
+        $content = file_get_contents($consolidatedFilePath);
+        
+        $config = manager::getService('Application')->getConfig();
+        
+        if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == true) {
+            if ($mimeType == 'text/css') {
+                $content = \Minify_CSS::minify($content, array(
+                    'preserveComments' => false
+                ));
+            } elseif ($mimeType == 'application/javascript') {
+                $content = \JSMin::minify($content);
+            }
         }
         
-        file_put_contents($publicThemePath.'/'.$theme.'/'.$filePath, file_get_contents($consolidatedFilePath));
-        
-        $stream = fopen($consolidatedFilePath, 'r');
+        if (file_put_contents($targetPath, $content)) {
+            $stream = fopen($targetPath, 'r');
+        } else {
+            $stream = fopen($consolidatedFilePath, 'r');
+        }
         
         $response = new \Zend\Http\Response\Stream();
-        
         $response->getHeaders()->addHeaders(array(
-            'Content-type' => $mimeType
-        // 'Pragma' => 'Public',
-        // 'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
-        // 'Expires' => date(DATE_RFC822, strtotime("7 day"))
-                ));
+            'Content-type' => $mimeType,
+            'Pragma' => 'Public',
+            'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
+            'Expires' => date(DATE_RFC822, strtotime("7 day"))
+        ));
         
         $response->setStream($stream);
         return $response;
