@@ -17,6 +17,8 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the mailing lists JSON
@@ -38,9 +40,9 @@ class CustomThemesController extends DataAccessController
         'get-color-palette-bo'
     );
     
-    public function init ()
+    public function __construct ()
     {
-        parent::init();
+        parent::__construct();
         
         // init the data access service
         $this->_dataService = Manager::getService('CustomThemes');
@@ -48,8 +50,6 @@ class CustomThemesController extends DataAccessController
     
     public function getColorPaletteAction ()
     {
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
         $curl = curl_init();
         $offset=rand(1, 1000);
         curl_setopt($curl,CURLOPT_URL,"http://www.colourlovers.com/api/palettes/top?format=json&numResults=1&resultOffset=".$offset);
@@ -57,21 +57,13 @@ class CustomThemesController extends DataAccessController
         curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
         $json = curl_exec($curl);
         curl_close($curl);
-        header("Content-Type: text/json; charset=utf-8");
-        $this->getResponse()->clearBody();
-        $this->getResponse()->clearHeaders();
-        $this->getResponse()->clearRawHeaders();
-        $this->getResponse()->setHeader('Content-Type', 'text/json');
-        $this->getResponse()->setHeader('Pragma', 'Public',true);
-        $this->getResponse()->setBody($json);
-        $this->getResponse()->sendHeaders();
+        return $this->_returnJson(Json::decode($json, Json::TYPE_ARRAY));
     }
     
     public function getColorPaletteBoAction ()
     {
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
-        $values=$this->getRequest()->getParam('values');
+
+        $values=$this->params()->fromPost('values');
         $curl = curl_init();
         $offset=rand(1, 1000);
         curl_setopt($curl,CURLOPT_URL,"http://www.colourlovers.com/api/palettes/top?format=json&numResults=1&resultOffset=".$offset."&hueOption=".$values);
@@ -79,13 +71,6 @@ class CustomThemesController extends DataAccessController
         curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
         $json = curl_exec($curl);
         curl_close($curl);
-        header("Content-Type: text/json; charset=utf-8");
-        $this->getResponse()->clearBody();
-        $this->getResponse()->clearHeaders();
-        $this->getResponse()->clearRawHeaders();
-        $this->getResponse()->setHeader('Content-Type', 'text/json');
-        $this->getResponse()->setHeader('Pragma', 'Public',true);
-        $this->getResponse()->setBody($json);
-        $this->getResponse()->sendHeaders();
+        return $this->_returnJson(Json::decode($json, Json::TYPE_ARRAY));
     }
 }

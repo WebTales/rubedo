@@ -34,7 +34,7 @@ class ContentSingleController extends AbstractController
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
-        
+        $site = $this->params()->fromQuery('site');
         $blockConfig = $this->params()->fromQuery('block-config');
         $output["blockConfig"] = $blockConfig;
         
