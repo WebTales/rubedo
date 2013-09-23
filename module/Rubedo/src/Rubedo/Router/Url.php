@@ -18,6 +18,7 @@ use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
 use Rubedo\Collection\AbstractCollection;
 use Zend\Mvc\Router\RouteInterface;
+use Zend\Debug\Debug;
 
 /**
  * Front Office URL service
@@ -220,50 +221,9 @@ class Url implements IUrl
         
         if (! isset($data['pageId'])) {
             return null;
-            // throw new \Rubedo\Exceptions\Server('no page given');
         }
         
         $url = $this->getPageUrl($data['pageId']);
-        unset($data['pageId']);
-        $queryStringArray = array();
-        
-        if (isset($data['prefix'])) {
-            
-            $prefix = $data['prefix'];
-            unset($data['prefix']);
-        } else {
-            $prefix = '';
-        }
-        
-        foreach ($data as $key => $value) {
-            if (in_array($key, array(
-                'controller',
-                'action'
-            ))) {
-                continue;
-            }
-            
-            if ($prefix) {
-                $key = $prefix . '[' . $key . ']';
-            }
-            $key = ($encode) ? urlencode($key) : $key;
-            if (is_array($value)) {
-                foreach ($value as $arrayValue) {
-                    $arrayValue = ($encode) ? urlencode($arrayValue) : $arrayValue;
-                    $string = $key;
-                    $string .= ($encode) ? urlencode('[]') : '[]';
-                    $string .= '=' . $arrayValue;
-                    $queryStringArray[] = $string;
-                }
-            } else {
-                if ($encode)
-                    $value = urlencode($value);
-                $queryStringArray[] = $key . '=' . $value;
-            }
-        }
-        if (count($queryStringArray) > 0) {
-            $url .= '?' . implode(self::PARAM_DELIMITER, $queryStringArray);
-        }
         
         return '/' . ltrim($url, self::URI_DELIMITER);
     }
@@ -294,6 +254,7 @@ class Url implements IUrl
             $options['name'] = $name;
         }
         $params = array();
+        $mergedParams = array();
         foreach ($urlOptions as $key => $value) {
             switch ($key) {
                 case 'pageId':
@@ -304,9 +265,73 @@ class Url implements IUrl
                 case 'module':
                     break;
                 default:
-                    $options['query'][$key]=$value;
+                    $mergedParams[$key]=$value;
             }
         }
+        $uri = Manager::getService('Application')->getRequest()->getUri();
+        
+        switch ($options['reset']) {
+            case 'true':
+                break;
+            case 'add':
+                $currentParams = $uri->getQueryAsArray();
+                foreach ($mergedParams as $key => $value) {
+
+                    if (! isset($currentParams[$key])) {
+                        $currentParams[$key] = array();
+                    }
+                    if (! is_array($value)) {
+                        $value = array(
+                            $value
+                        );
+                    }
+                    $mergedParams[$key] = array_unique(array_merge($currentParams[$key], $value));
+                }
+                $mergedParams = array_merge($currentParams, $mergedParams);
+                break;
+            case 'sub':
+                $currentParams = $uri->getQueryAsArray();
+                foreach ($mergedParams as $key => $value) {
+                    if($key=='pageId'){
+                        continue;
+                    }
+                    if (! isset($currentParams[$key])) {
+                        $currentParams[$key] = array();
+                    }elseif(!is_array($currentParams[$key])){
+                        $currentParams[$key] = array($currentParams[$key]);
+                    }
+                    if (! is_array($value)) {
+                        $value = array(
+                            $value
+                        );
+                    }
+                    $mergedParams[$key] = array_diff($currentParams[$key], $value);
+                }
+                $mergedParams = array_merge($currentParams, $mergedParams);
+                break;
+            default:
+                $mergedParams = array_merge($uri->getQueryAsArray(), $mergedParams);
+                break;
+        }
+        //prevent empty values to propagate through URL
+        foreach ($mergedParams as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $subkey => $subvalue) {
+                    if (empty($subvalue)) {
+                        unset($mergedParams[$key][$subkey]);
+                    }
+                }
+                if (count($mergedParams[$key]) == 0) {
+                    unset($mergedParams[$key]);
+                } else {
+                    $mergedParams[$key] = array_values($mergedParams[$key]);
+                }
+            } elseif (empty($value)) {
+                unset($mergedParams[$key]);
+            }
+        }
+        
+        $options['query'] = $mergedParams;
         return $this->getRouter()->assemble($params, $options);
     }
 
