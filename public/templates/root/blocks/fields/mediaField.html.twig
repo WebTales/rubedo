@@ -24,7 +24,6 @@
         
         {% set contentId = data[key] %}
         {% set mediaType = getMediaType(contentId) %}
-        
         {% if mediaType == "Image" %}
             {% include 'root/blocks/fields/imageField.html.twig' %}
         {% elseif mediaType == "Video" %}
