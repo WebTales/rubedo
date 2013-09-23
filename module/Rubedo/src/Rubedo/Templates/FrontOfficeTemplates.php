@@ -241,6 +241,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             return false;
         }
         $config = $this->getConfig();
+        if($theme == 'customtheme'){
+            $theme = 'default';
+        }
         if (! isset($config['themes'][$theme])) {
             return false;
         }
