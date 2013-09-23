@@ -24,8 +24,16 @@
     {% if contentId %}
     <link rel="canonical" href="{{ displayUrl(contentId, "canonical") }}"/>
     {% endif %}
+    {% endblock %}
     
-    {% endblock %} 
+     {% block credit %}
+<!--
+    This website is powered by Rubedo
+    Rubedo is a free open source Enterprise Content Management solution licensed under the terms of the Open Source GPL 3.0 license..
+    Rubedo is copyright 2013 of WebTales. Extensions are copyright of their respective owners.
+    Information and contribution at http://www.rubedo-project.org/
+-->
+     {% endblock %}
     
     {% block pageStyle %}
 
@@ -150,7 +158,7 @@
 	{% block pageMainContent %}
 		{% if pageProperties.showInDiv %}
 			<div class="{% if pageProperties.divClass is not empty %}{{ pageProperties.divClass }}{% endif %}" 
-					id="{% if pageProperties.divId is not empty %}{{ pageProperties.divId }}{% endif %}">
+					{% if pageProperties.divId is not empty %}id="{{ pageProperties.divId }}"{% endif %}>
 		{% endif %}
 	
 	    {% if rows %} 
