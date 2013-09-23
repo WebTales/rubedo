@@ -1,12 +1,8 @@
 *~
 library/Zend
-application/rubedo-backoffice-ui
-application/modules/zimmer
 build
 .DS_Store
-library/Phactory
 cache
-library/HTMLPurifier
 .project
 .settings
 .zfproject.xml
@@ -14,8 +10,7 @@ library/HTMLPurifier
 /vendor
 /composer.lock
 composer.front.lock
-public/templates/fps-tower-theme
-public/templates/citroen
+/public/theme
 Thumbs.db
 extensions/*
 !extensions/readme.txt

@@ -71,6 +71,19 @@ class ThemeController extends AbstractActionController
                 break;
         }
         
+        $publicThemePath = APPLICATION_PATH.'/public/theme';
+        $composedPath = $publicThemePath.'/'.$theme;
+        if(!file_exists($composedPath)){
+            mkdir($composedPath,0777);
+        }
+        
+        $composedPath = $composedPath.'/'.dirname($filePath);
+        if(!file_exists($composedPath)){
+            mkdir($composedPath,0777,true);
+        }
+        
+        file_put_contents($publicThemePath.'/'.$theme.'/'.$filePath, file_get_contents($consolidatedFilePath));
+        
         $stream = fopen($consolidatedFilePath, 'r');
         
         $response = new \Zend\Http\Response\Stream();
