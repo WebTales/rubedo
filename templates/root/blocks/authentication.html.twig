@@ -5,7 +5,7 @@
         <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                 {% if currentUser.photo %}
-			        <img src="/file?file-id={{ currentUser.photo }}" class="user-picture" style="height:18px;">
+			        <img src="/file?file-id={{ currentUser.photo }}" class="user-picture" alt="{{currentUser.name}}" style="height:18px;">
 			    {% else %}
                     <i class="icon-user"></i>
                 {% endif %} {{currentUser.name}}
