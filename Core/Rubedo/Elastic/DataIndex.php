@@ -827,10 +827,12 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Index all dam or contents from given type
         $useQueue = class_exists("ZendJobQueue");
         
-        try {
-            $queue = new \ZendJobQueue();
-        } catch (\Exception $e) {
-            $useQueue = false;
+        if ($useQueue) {
+            try {
+                $queue = new \ZendJobQueue();
+            } catch (\Exception $e) {
+                $useQueue = false;
+            }
         }
         
         if (! $useQueue) {
