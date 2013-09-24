@@ -32,7 +32,7 @@ class CarrouselController extends ContentListController
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_queryReader = Manager::getService('Queries');
-        $blockConfig = $this->getRequest()->getParam('block-config');
+        $blockConfig = $this->params()->fromQuery('block-config');
         if(isset($blockConfig['imageField'])){
             $imageField = $blockConfig['imageField'];
         }else{
