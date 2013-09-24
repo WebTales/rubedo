@@ -20,6 +20,7 @@ use Rubedo\Services\Manager;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Client;
+use Zend\Http\Request;
 /**
  * Controller providing data import for csv
  *
@@ -444,8 +445,9 @@ class ImportController extends DataAccessController
                                                 // if no file found create asset in GridFS
                                                 
                                                 $c = new Client();
-                                                $c->setUri($imageUrl);
-                                                $result = $c->request('GET');
+                                                $request = new Request;
+                                                $request->setUri($imageUrl);
+                                                $result = $c->send($request);
                                                 $img = $result->getBody();
                                                 
                                                 $fileObj = array(
