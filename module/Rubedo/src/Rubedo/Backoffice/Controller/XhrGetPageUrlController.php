@@ -32,6 +32,7 @@ class XhrGetPageUrlController extends AbstractActionController
     public function indexAction ()
     {
         $pageId = $this->params()->fromPost('page-id');
+        $locale = $this->params()->fromPost('locale');
         if (! $pageId) {
             throw new \Rubedo\Exceptions\User('This action needs a page-id as argument.', "Exception12");
         }
@@ -39,7 +40,7 @@ class XhrGetPageUrlController extends AbstractActionController
         if (! $page) {
             throw new \Rubedo\Exceptions\NotFound("The page-id doesn't match a page.", "Exception13");
         }
-        $pageUrl = Manager::getService('Url')->getPageUrl($pageId);
+        $pageUrl = Manager::getService('Url')->getPageUrl($pageId,$locale);
         
         $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
         $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';

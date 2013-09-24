@@ -224,9 +224,14 @@ class Url implements IUrl
         $page = Manager::getService('Pages')->findById($pageId);
         
         $siteId = $page['site'];
+        $site = Manager::getService('sites')->findById($siteId);
+        if($site['locStrategy']=='fallback'){
+            $fallbackLocale = $site['defaultLanguage'];
+        }
         
         $rootline = Manager::getService('Pages')->getAncestors($page);
-        $fallbackLocale = AbstractLocalizableCollection::getFallbackLocale();
+        
+        
         
         foreach ($rootline as $value) {
             if ($locale && isset($value['i18n'][$locale]['pageURL'])) {
@@ -235,10 +240,7 @@ class Url implements IUrl
             } elseif ($fallbackLocale && isset($value['i18n'][$fallbackLocale]['pageURL'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= urlencode($value['i18n'][$fallbackLocale]['pageURL']);
-            } elseif (! isset($value['i18n'])) {
-                $url .= self::URI_DELIMITER;
-                $url .= urlencode($value['pageURL']);
-            }else{
+            } else{
                 return null;
             }
         }
