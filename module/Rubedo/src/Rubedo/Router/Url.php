@@ -204,6 +204,9 @@ class Url implements IUrl
      */
     public function getPageUrl($pageId, $locale)
     {
+        if (self::$_disableNav) {
+            return trim('#', self::URI_DELIMITER);
+        }
         $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_PRE, null, array(
             'pageId' => $pageId,
             'local' => $locale
@@ -416,6 +419,9 @@ class Url implements IUrl
      */
     public function displayUrl($contentId, $type = "default", $siteId = null, $defaultPage = null)
     {
+        if (self::$_disableNav) {
+            return trim('#', self::URI_DELIMITER);
+        }
         $pageValid = false;
         if ($siteId === null) {
             $doNotAddSite = true;

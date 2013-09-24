@@ -177,9 +177,7 @@ class IndexController extends AbstractActionController
         } else {
             $isPreview = $this->params()->fromQuery('preview', false);
         }
-        
         if ($isPreview) {
-            $isLoggedIn = false;
             Manager::getService('Url')->disableNavigation();
             $simulatedTime = $this->params()->fromQuery('preview_date', null);
             if (isset($simulatedTime)) {
@@ -201,7 +199,7 @@ class IndexController extends AbstractActionController
         $this->_servicePage->appendCss($this->getRequest()
             ->getBasePath() . '/' . $this->_serviceTemplate->getFileThemePath('css/rubedo.css'));
         
-        $canEdit = $isLoggedIn && Manager::getService('Acl')->hasAccess('write.frontoffice.contents');
+        $canEdit = ! $isPreview && $isLoggedIn && Manager::getService('Acl')->hasAccess('write.frontoffice.contents');
         
         // load the javaScripts files
         if ($canEdit) {
