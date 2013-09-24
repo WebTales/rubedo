@@ -217,6 +217,10 @@ class Url implements IUrl
             $url .= self::URI_DELIMITER;
             $url .= $locale;
         }
+        
+        $wasFrontEnd = AbstractLocalizableCollection::getIncludeI18n();
+        AbstractLocalizableCollection::setIncludeI18n(true);
+        
         $page = Manager::getService('Pages')->findById($pageId);
         
         $siteId = $page['site'];
@@ -225,7 +229,6 @@ class Url implements IUrl
         $fallbackLocale = AbstractLocalizableCollection::getFallbackLocale();
         
         foreach ($rootline as $value) {
-            
             if ($locale && isset($value['i18n'][$locale]['pageURL'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= urlencode($value['i18n'][$locale]['pageURL']);
@@ -235,6 +238,8 @@ class Url implements IUrl
             } elseif (! isset($value['i18n'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= urlencode($value['pageURL']);
+            }else{
+                return null;
             }
         }
         
@@ -247,7 +252,11 @@ class Url implements IUrl
         } elseif (! isset($page['i18n'])) {
             $url .= self::URI_DELIMITER;
             $url .= urlencode($page['pageURL']);
+        }else{
+            return null;
         }
+        
+        AbstractLocalizableCollection::setIncludeI18n($wasFrontEnd);        
         
         $urlToCache = array(
             'pageId' => $pageId,

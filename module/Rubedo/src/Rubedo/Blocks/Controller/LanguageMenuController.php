@@ -18,9 +18,11 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
 require_once ('AbstractController.php');
 
 /**
+ *
  *
  *
  *
@@ -35,10 +37,9 @@ require_once ('AbstractController.php');
 class LanguageMenuController extends AbstractController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $output = $this->params()->fromQuery();
-        
         if (isset($output['block-config']['displayAs'])) {
             switch ($output['block-config']['displayAs']) {
                 case "menu":
@@ -73,13 +74,16 @@ class LanguageMenuController extends AbstractController
                 )
             ));
             $output['languages'] = $languageResult['data'];
+            foreach ($output['languages'] as $key => $language) {
+                $pageLocale = $language['locale'];
+                $pageUrl = Manager::getService('Url')->getPageUrl($output['currentPage'], $pageLocale);
+                $output['languages'][$key]['url'] = $pageUrl;
+            }
             $output['showCurrentLanguage'] = $output['block-config']['showCurrentLanguage'];
         }
         
         $css = array();
-        $js = array(
-            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/language.js")
-        );
+        $js = array();
         
         return $this->_sendResponse($output, $template, $css, $js);
     }
