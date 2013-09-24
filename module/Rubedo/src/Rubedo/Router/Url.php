@@ -230,6 +230,8 @@ class Url implements IUrl
         $site = Manager::getService('sites')->findById($siteId);
         if($site['locStrategy']=='fallback'){
             $fallbackLocale = $site['defaultLanguage'];
+        }else{
+            $fallbackLocale = null;
         }
         
         $rootline = Manager::getService('Pages')->getAncestors($page);
