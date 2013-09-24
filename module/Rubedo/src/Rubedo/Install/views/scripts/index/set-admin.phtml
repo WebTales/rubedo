@@ -15,7 +15,7 @@
             <?php }?>
         </ul>
 	</div>
-    <?php }else{?>
+    <?php }else if (!$this->creationDone){?>
     <div class="alert alert-error">No Admin Account Set</div>
     <?php }?>
     <?php if($this->creationDone){?>
