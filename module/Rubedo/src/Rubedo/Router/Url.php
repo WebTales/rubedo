@@ -248,10 +248,10 @@ class Url implements IUrl
             }
         }
         
-        if ($locale && isset($page['i18n'][$locale]['pageURL'])) {
+        if ($locale && isset($page['i18n'][$locale])) {
             $url .= self::URI_DELIMITER;
             $url .= urlencode($page['i18n'][$locale]['pageURL']);
-        } elseif ($fallbackLocale && isset($page['i18n'][$fallbackLocale]['pageURL'])) {
+        } elseif ($fallbackLocale && isset($page['i18n'][$fallbackLocale])) {
             $url .= self::URI_DELIMITER;
             $url .= urlencode($page['i18n'][$fallbackLocale]['pageURL']);
         } elseif (! isset($page['i18n'])) {

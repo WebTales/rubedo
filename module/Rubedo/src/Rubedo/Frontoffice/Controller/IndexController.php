@@ -154,7 +154,12 @@ class IndexController extends AbstractActionController
         
         // context
         $cookieValue = $this->getRequest()->getCookie('locale');
-        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], $this->params('locale'), $cookieValue['locale']);
+        if(!isset($cookieValue['locale'])){
+            $cookieValue = null;
+        }else{
+            $cookieValue = $cookieValue['locale'];
+        }
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], $this->params('locale'), $cookieValue);
         if ($lang && ! $this->params('locale')) {
             return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery());
         }
