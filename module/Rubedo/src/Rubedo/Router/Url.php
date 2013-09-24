@@ -18,7 +18,6 @@ use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
 use Rubedo\Collection\AbstractCollection;
 use Zend\Mvc\Router\RouteInterface;
-use Zend\Debug\Debug;
 
 /**
  * Front Office URL service

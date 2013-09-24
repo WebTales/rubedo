@@ -17,7 +17,6 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
-use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
 /**

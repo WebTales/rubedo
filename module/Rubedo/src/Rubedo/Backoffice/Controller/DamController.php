@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
+use Rubedo\Exceptions\User;
 
 /**
  * Controller providing CRUD API for the Groups JSON
@@ -322,7 +323,7 @@ class DamController extends DataAccessController
     {
         $typeId = $this->getParam('type-id');
         if (! $typeId) {
-            throw new Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
+            throw new User('This action needs a type-id as argument.', 'Exception3');
         }
         $deleteResult = $this->_dataService->deleteByDamType($typeId);
     

@@ -20,7 +20,6 @@ use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
-use Zend\Debug\Debug;
 
 /**
  *
