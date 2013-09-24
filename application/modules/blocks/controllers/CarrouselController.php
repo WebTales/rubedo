@@ -41,7 +41,10 @@ class Blocks_CarrouselController extends Blocks_ContentListController
         }else{
             $imageField = 'image';
         }
-        
+        if(!isset($blockConfig['query'])){
+            $this->_sendResponse(array(), "block.html.twig");
+            return ;
+        }
         
         $filters = Manager::getService('Queries')->getFilterArrayById($blockConfig['query']);
         $localFilters = $filters['filter'];
