@@ -66,11 +66,9 @@ abstract class AbstractController extends AbstractActionController
         }
         $this->siteId = $currentPage['site'];
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $browserLanguages = Manager::getService('CurrentLocalization')->getBrowserLanguages();
-            
             // context
             $cookieValue = $this->getRequest()->getCookie('locale');
-            $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->siteId, null, $browserLanguages, $cookieValue);
+            $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->siteId, null, $cookieValue['locale']);
             $domain = $this->getRequest()
                 ->getUri()
                 ->getHost();

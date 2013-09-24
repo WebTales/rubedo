@@ -164,6 +164,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
 
     public function matchSegment ($urlSegment, $parentId, $siteId)
     {
+        $urlSegment = urldecode($urlSegment);
         if (! $siteId) {
             return null;
         }else{
@@ -340,7 +341,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
             }
             
             // filter URL
-            $obj['i18n'][$locale]['pageURL'] = $this->filterUrl($dataUrl);
+            $obj['i18n'][$locale]['pageURL'] = $dataUrl;
         }
        
         if (isset($obj['id'])) {
@@ -419,86 +420,6 @@ class Pages extends AbstractLocalizableCollection implements IPages
         $result['data'] = $this->addBlocks($result['data']);
         $newResult = $this->update($result['data']);
         return $newResult;
-    }
-
-    public function filterUrl ($url)
-    {
-        mb_regex_encoding('UTF-8');
-        
-        $normalizeChars = array(
-            'Á' => 'A',
-            'À' => 'A',
-            'Â' => 'A',
-            'Ã' => 'A',
-            'Å' => 'A',
-            'Ä' => 'A',
-            'Æ' => 'AE',
-            'Ç' => 'C',
-            'É' => 'E',
-            'È' => 'E',
-            'Ê' => 'E',
-            'Ë' => 'E',
-            'Í' => 'I',
-            'Ì' => 'I',
-            'Î' => 'I',
-            'Ï' => 'I',
-            'Ð' => 'Eth',
-            'Ñ' => 'N',
-            'Ó' => 'O',
-            'Ò' => 'O',
-            'Ô' => 'O',
-            'Õ' => 'O',
-            'Ö' => 'O',
-            'Ø' => 'O',
-            'Ú' => 'U',
-            'Ù' => 'U',
-            'Û' => 'U',
-            'Ü' => 'U',
-            'Ý' => 'Y',
-            
-            'á' => 'a',
-            'à' => 'a',
-            'â' => 'a',
-            'ã' => 'a',
-            'å' => 'a',
-            'ä' => 'a',
-            'æ' => 'ae',
-            'ç' => 'c',
-            'é' => 'e',
-            'è' => 'e',
-            'ê' => 'e',
-            'ë' => 'e',
-            'í' => 'i',
-            'ì' => 'i',
-            'î' => 'i',
-            'ï' => 'i',
-            'ð' => 'eth',
-            'ñ' => 'n',
-            'ó' => 'o',
-            'ò' => 'o',
-            'ô' => 'o',
-            'õ' => 'o',
-            'ö' => 'o',
-            'ø' => 'o',
-            'ú' => 'u',
-            'ù' => 'u',
-            'û' => 'u',
-            'ü' => 'u',
-            'ý' => 'y',
-            
-            'ß' => 'sz',
-            'þ' => 'thorn',
-            'ÿ' => 'y',
-            ' ' => '-',
-            '\'' => '-'
-        );
-        
-        $url = strtr(trim($url), $normalizeChars);
-        $url = mb_strtolower($url, 'UTF-8');
-        $url = mb_ereg_replace("[^A-Za-z0-9\\.\\-]", "", $url);
-        $url = trim($url, '-');
-        
-        return $url;
     }
 
     public function deleteBySiteId ($id)

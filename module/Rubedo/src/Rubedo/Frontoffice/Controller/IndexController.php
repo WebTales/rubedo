@@ -138,24 +138,27 @@ class IndexController extends AbstractActionController
         if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
             throw new \Rubedo\Exceptions\Server('Protocol is not set for current site', "Exception14");
         }
+        
+        $uri = $this->getRequest()->getUri();
+        $domain = $uri->getHost();
+        
         /**
          *
          * @todo rewrite this in ZF2 way
          */
         if (! in_array($httpProtocol, $this->_site['protocol'])) {
-            $this->_helper->redirector->gotoUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . $uri->getPath() . '?' . $uri->getQuery());
         }
         
         AbstractCollection::setIsFrontEnd(true);
         
-        $browserLanguages = Manager::getService('CurrentLocalization')->getBrowserLanguages();
-        
         // context
         $cookieValue = $this->getRequest()->getCookie('locale');
-        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], null, $browserLanguages, $cookieValue);
-        $domain = $this->getRequest()
-            ->getUri()
-            ->getHost();
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], $this->params('locale'), $cookieValue['locale']);
+        if ($lang && ! $this->params('locale')) {
+            return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery());
+        }
+        
         if ($domain) {
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
@@ -260,11 +263,11 @@ class IndexController extends AbstractActionController
         // set metadata
         $description = $this->_servicePage->getDescription();
         if (empty($description)) {
-            $description = isset($this->_site['description'])?$this->_site['description']:'';
+            $description = isset($this->_site['description']) ? $this->_site['description'] : '';
         }
         $twigVar['description'] = $this->_servicePage->getDescription();
         
-        $author = isset($this->_site['author'])?$this->_site['author']:'';
+        $author = isset($this->_site['author']) ? $this->_site['author'] : '';
         if (empty($author)) {
             $author = $this->_servicePage->getAuthor();
         }

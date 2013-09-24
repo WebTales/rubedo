@@ -347,6 +347,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public static function cleanHtml($html)
     {
+        if(is_null($html) || empty($html)){
+            return '';
+        }
         return Manager::getService('HtmlCleaner')->clean($html);
     }
 

@@ -78,6 +78,26 @@ class Languages extends AbstractCollection implements ILanguages
         }
         return $result;
     }
+    
+    /**
+     * Find a language given by its Locale name
+     *
+     * @param string $name
+     * @return array
+     */
+    public function findActiveByLocale($name)
+    {
+        $filters = Filter::factory();
+        $filter = Filter::factory('Value')->setValue($name)->setName('locale');
+        $filters->addFilter($filter);
+        $filter = Filter::factory('Value')->setValue(true)->setName('active');
+        $filters->addFilter($filter);
+        $result = $this->_dataService->findOne($filters);
+        if ($result) {
+            $result = $this->_addReadableProperty($result);
+        }
+        return $result;
+    }
 
     /**
      * Find a language given by its ISO-639-1 code (2 letters ISO code)

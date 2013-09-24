@@ -18,6 +18,8 @@ use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
 use Rubedo\Collection\AbstractCollection;
 use Zend\Mvc\Router\RouteInterface;
+use Rubedo\Collection\AbstractLocalizableCollection;
+use Rubedo\Services\Events;
 
 /**
  * Front Office URL service
@@ -30,7 +32,7 @@ use Zend\Mvc\Router\RouteInterface;
 class Url implements IUrl
 {
 
-    protected static $_useCache = true;
+    protected static $_useCache = false;
 
     /**
      * param delimiter
@@ -41,6 +43,14 @@ class Url implements IUrl
      * URI delimiter
      */
     const URI_DELIMITER = '/';
+
+    const PAGE_TO_URL_READ_CACHE_PRE = 'rubedo_page_to_url_cache_pre';
+
+    const PAGE_TO_URL_READ_CACHE_POST = 'rubedo_page_to_url_cache_post';
+
+    const URL_TO_PAGE_READ_CACHE_PRE = 'rubedo_url_to_page_cache_pre';
+
+    const URL_TO_PAGE_READ_CACHE_POST = 'rubedo_url_to_page_cache_post';
 
     protected static $_disableNav = false;
 
@@ -102,22 +112,41 @@ class Url implements IUrl
         $site = Manager::getService('Sites')->findByHost($host);
         AbstractCollection::disableUserFilter($wasFiltered);
         if (null == $site) {
-            $siteArray = Manager::getService('Sites')->getList();
-            $site = current($siteArray['data']);
+            return null;
         }
-        
+        $locale = null;
         $siteId = $site['id'];
-        // unset($site);
-        $cachedUrl = Manager::getService('UrlCache')->findByUrl($url, $siteId);
-        if (self::$_useCache && null != $cachedUrl) {
-            return $cachedUrl['pageId'];
+        
+        $eventResult = Events::getEventManager()->trigger(self::URL_TO_PAGE_READ_CACHE_PRE, null, array(
+            'url' => $url,
+            'siteId' => $site['id']
+        ));
+        if ($eventResult->stopped()) {
+            $data = $eventResult->first();
+            return array(
+                $data['pageId'],
+                $data['locale']
+            );
         }
         
         $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
+        
+        // check for locale in URL
+        if (! empty($urlSegments[0])) {
+            $language = Manager::getService('Languages')->findActiveByLocale($urlSegments[0]);
+            if ($language && in_array($language['locale'], $site['languages'])) {
+                array_shift($urlSegments);
+                $locale = $language['locale'];
+            }
+        }
+        
         $lastMatchedNode = 'root';
         if (empty($urlSegments[0])) {
             if (isset($site['homePage'])) {
-                return $site['homePage'];
+                return array(
+                    $site['homePage'],
+                    $locale
+                );
             } else {
                 return null;
             }
@@ -147,17 +176,20 @@ class Url implements IUrl
             $partial = true;
         } else {
             $partial = false;
-            $urlToCache = array(
-                'pageId' => $lastMatchedNode,
-                'url' => $url,
-                'siteId' => $siteId
-            );
-            if (self::$_useCache) {
-                Manager::getService('UrlCache')->create($urlToCache);
-            }
         }
         
-        return $lastMatchedNode;
+        $urlToCache = array(
+            'pageId' => $lastMatchedNode,
+            'url' => $url,
+            'siteId' => $siteId,
+            'locale' => $locale
+        );
+        Events::getEventManager()->trigger(self::URL_TO_PAGE_READ_CACHE_POST, null, $urlToCache);
+        
+        return array(
+            $lastMatchedNode,
+            $locale
+        );
     }
 
     public function disableNavigation()
@@ -170,41 +202,62 @@ class Url implements IUrl
      *
      * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
      */
-    public function getPageUrl($pageId)
+    public function getPageUrl($pageId, $locale)
     {
-        $cachedUrl = Manager::getService('UrlCache')->findByPageId($pageId);
-        if (! self::$_useCache || null === $cachedUrl) {
-            $url = '';
-            $page = Manager::getService('Pages')->findById($pageId);
-            
-            if (! isset($page['pageURL'])) {
-                throw new \Rubedo\Exceptions\NotFound('no page found');
-            }
-            
-            $siteId = $page['site'];
-            
-            $rootline = Manager::getService('Pages')->getAncestors($page);
-            
-            foreach ($rootline as $value) {
-                $url .= self::URI_DELIMITER;
-                $url .= $value['pageURL'];
-            }
-            
-            $url .= self::URI_DELIMITER;
-            $url .= $page['pageURL'];
-            $urlToCache = array(
-                'pageId' => $pageId,
-                'url' => $url,
-                'siteId' => $siteId
-            );
-            if (self::$_useCache) {
-                Manager::getService('UrlCache')->create($urlToCache);
-            }
-            
-            return $url;
-        } else {
-            return $cachedUrl['url'];
+        $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_PRE, null, array(
+            'pageId' => $pageId,
+            'local' => $locale
+        ));
+        if ($eventResult->stopped()) {
+            return $eventResult->first();
         }
+        
+        $url = '';
+        if ($locale) {
+            $url .= self::URI_DELIMITER;
+            $url .= $locale;
+        }
+        $page = Manager::getService('Pages')->findById($pageId);
+        
+        $siteId = $page['site'];
+        
+        $rootline = Manager::getService('Pages')->getAncestors($page);
+        $fallbackLocale = AbstractLocalizableCollection::getFallbackLocale();
+        
+        foreach ($rootline as $value) {
+            
+            if ($locale && isset($value['i18n'][$locale]['pageURL'])) {
+                $url .= self::URI_DELIMITER;
+                $url .= urlencode($value['i18n'][$locale]['pageURL']);
+            } elseif ($fallbackLocale && isset($value['i18n'][$fallbackLocale]['pageURL'])) {
+                $url .= self::URI_DELIMITER;
+                $url .= urlencode($value['i18n'][$fallbackLocale]['pageURL']);
+            } elseif (! isset($value['i18n'])) {
+                $url .= self::URI_DELIMITER;
+                $url .= urlencode($value['pageURL']);
+            }
+        }
+        
+        if ($locale && isset($page['i18n'][$locale]['pageURL'])) {
+            $url .= self::URI_DELIMITER;
+            $url .= urlencode($page['i18n'][$locale]['pageURL']);
+        } elseif ($fallbackLocale && isset($page['i18n'][$fallbackLocale]['pageURL'])) {
+            $url .= self::URI_DELIMITER;
+            $url .= urlencode($page['i18n'][$fallbackLocale]['pageURL']);
+        } elseif (! isset($page['i18n'])) {
+            $url .= self::URI_DELIMITER;
+            $url .= urlencode($page['pageURL']);
+        }
+        
+        $urlToCache = array(
+            'pageId' => $pageId,
+            'url' => $url,
+            'siteId' => $siteId,
+            'locale' => $locale
+        );
+        $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_POST, null, $urlToCache);
+        
+        return $url;
     }
 
     /**
@@ -222,7 +275,7 @@ class Url implements IUrl
             return null;
         }
         
-        $url = $this->getPageUrl($data['pageId']);
+        $url = $this->getPageUrl($data['pageId'], $data['locale']);
         
         return '/' . ltrim($url, self::URI_DELIMITER);
     }
@@ -265,7 +318,7 @@ class Url implements IUrl
                 case 'module':
                     break;
                 default:
-                    $mergedParams[$key]=$value;
+                    $mergedParams[$key] = $value;
             }
         }
         $uri = Manager::getService('Application')->getRequest()->getUri();
@@ -276,7 +329,7 @@ class Url implements IUrl
             case 'add':
                 $currentParams = $uri->getQueryAsArray();
                 foreach ($mergedParams as $key => $value) {
-
+                    
                     if (! isset($currentParams[$key])) {
                         $currentParams[$key] = array();
                     }
@@ -292,13 +345,15 @@ class Url implements IUrl
             case 'sub':
                 $currentParams = $uri->getQueryAsArray();
                 foreach ($mergedParams as $key => $value) {
-                    if($key=='pageId'){
+                    if ($key == 'pageId') {
                         continue;
                     }
                     if (! isset($currentParams[$key])) {
                         $currentParams[$key] = array();
-                    }elseif(!is_array($currentParams[$key])){
-                        $currentParams[$key] = array($currentParams[$key]);
+                    } elseif (! is_array($currentParams[$key])) {
+                        $currentParams[$key] = array(
+                            $currentParams[$key]
+                        );
                     }
                     if (! is_array($value)) {
                         $value = array(
@@ -313,7 +368,7 @@ class Url implements IUrl
                 $mergedParams = array_merge($uri->getQueryAsArray(), $mergedParams);
                 break;
         }
-        //prevent empty values to propagate through URL
+        // prevent empty values to propagate through URL
         foreach ($mergedParams as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $subkey => $subvalue) {

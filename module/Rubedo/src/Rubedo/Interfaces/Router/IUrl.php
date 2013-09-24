@@ -56,7 +56,7 @@ Interface IUrl
      * @param string $pageId            
      * @return string
      */
-    public function getPageUrl ($pageId);
+    public function getPageUrl ($pageId,$locale);
 
     /**
      * Return the path part of the URL matching parameters given in $data array

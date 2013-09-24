@@ -43,6 +43,8 @@ class FrontofficeRoute implements RouteInterface
      */
     protected $pageID = null;
 
+    protected $locale = null;
+
     protected $uri = null;
     
     /*
@@ -52,7 +54,8 @@ class FrontofficeRoute implements RouteInterface
     {
         // set pageId
         $mergedParams = array_merge(array(
-            'pageId' => $this->pageID
+            'pageId' => $this->pageID,
+            'locale' => $this->locale
         ), $params);
         
         $encode = isset($options['encode']) ? $options['encode'] : true;
@@ -67,22 +70,26 @@ class FrontofficeRoute implements RouteInterface
         try {
             if (method_exists($request, 'getUri')) {
                 $this->uri = clone ($request->getUri());
-                $pageId = Manager::getService('Url')->getPageId($this->uri->getPath(), $this->uri->getHost());
+                $result = Manager::getService('Url')->getPageId($this->uri->getPath(), $this->uri->getHost());
             }
         } catch (\Rubedo\Exceptions\Server $exception) {
             return null;
         }
-        if ($pageId === null) {
+        if ($result === null) {
             return null;
+        } else {
+            list ($pageId, $locale) = $result;
         }
         
         $contentId = $request->getQuery('content-id', false);
         
         $this->pageID = $pageId;
+        $this->locale = $locale;
         $params = array();
         $params['controller'] = 'Rubedo\\Frontoffice\\Controller\\Index';
         $params['action'] = 'index';
         $params['pageId'] = $pageId;
+        $params['locale'] = $locale;
         if ($contentId) {
             $params['content-id'] = $contentId;
         }

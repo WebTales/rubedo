@@ -29,9 +29,10 @@ use Rubedo\Collection\AbstractLocalizableCollection;
 class Current implements ICurrent
 {
 
-    public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array(), $cookieValue = null)
+    public function resolveLocalization($siteId = null, $forceLocal = null, $cookieValue = null)
     {
         $locale = null;
+        $browserArray = Manager::getService('CurrentLocalization')->getBrowserLanguages();
         
         if ($siteId) {
             $site = Manager::getService('Sites')->findById($siteId);
