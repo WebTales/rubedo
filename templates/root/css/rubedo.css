@@ -465,15 +465,6 @@ padding-top: 5px;
 }
 
 /**
- * H2
- */
-h2 {
-	font-size: 20px !important;
-	line-height: 22px !important;
-	height: 46px;
-}
-
-/**
  * Rubedo block
  */
 .block-rubedo {

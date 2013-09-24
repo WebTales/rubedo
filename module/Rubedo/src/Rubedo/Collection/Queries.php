@@ -389,7 +389,7 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getVocabulariesFilters ($vocabularies, $vocabulariesRule = 'OU')
     {
-        if ($vocabulariesRule == 'OU') {
+        if (($vocabulariesRule == 'OU')||($vocabulariesRule == 'OR')) {
             $filters = Filter::factory('Or');
         } else {
             $filters = Filter::factory('And');

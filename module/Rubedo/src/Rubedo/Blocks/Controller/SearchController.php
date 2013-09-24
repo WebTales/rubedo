@@ -45,7 +45,7 @@ class SearchController extends AbstractController
                         unset($params[$key][$subkey]);
                     }
                 }
-                if (count($value) == 0) {
+                if(count($params[$key])==0){
                     unset($params[$key]);
                 }
             }
