@@ -31,7 +31,7 @@ Interface IUrl
      *            requested URL
      * @return string int
      */
-    public function getPageId ($url, $host);
+    public function matchPageRoute ($url, $host);
 
     /**
      * Generates an url given the name of a route.

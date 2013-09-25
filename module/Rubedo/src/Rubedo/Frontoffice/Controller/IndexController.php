@@ -553,7 +553,7 @@ class IndexController extends AbstractActionController
         }
         $params['currentPage'] = $this->_pageId;
         $params['rootline'] = $this->_rootlineArray;
-        $params['rootPage'] = $this->_serviceUrl->getPageId('accueil', $this->getRequest()
+        $params['rootPage'] = $this->_serviceUrl->matchPageRoute('accueil', $this->getRequest()
             ->getUri()
             ->getHost());
         if (isset($block['configBloc']['fileName'])) {

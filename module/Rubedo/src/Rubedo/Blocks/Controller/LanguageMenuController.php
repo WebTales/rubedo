@@ -18,7 +18,6 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
 require_once ('AbstractController.php');
 
 /**
@@ -76,7 +75,10 @@ class LanguageMenuController extends AbstractController
             $output['languages'] = $languageResult['data'];
             foreach ($output['languages'] as $key => $language) {
                 $pageLocale = $language['locale'];
-                $pageUrl = Manager::getService('Url')->getPageUrl($output['currentPage'], $pageLocale);
+                $contentId = isset($output['content-id'])?$output['content-id']:null;
+                //$pageUrl = Manager::getService('Url')->getPageUrl($output['currentPage'], $pageLocale);
+                $pageUrl = Manager::getService('Url')->url(array('pageId'=>$output['currentPage'],'locale'=>$pageLocale,'content-id'=>$contentId));
+                
                 $output['languages'][$key]['url'] = $pageUrl;
             }
             $output['showCurrentLanguage'] = $output['block-config']['showCurrentLanguage'];

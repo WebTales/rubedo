@@ -41,6 +41,8 @@ class FrontofficeRoute implements RouteInterface
      *
      * @var array
      */
+    protected $matchedParams = array();
+
     protected $pageID = null;
 
     protected $locale = null;
@@ -54,8 +56,8 @@ class FrontofficeRoute implements RouteInterface
     {
         // set pageId
         $mergedParams = array_merge(array(
-            'pageId' => $this->pageID,
-            'locale' => $this->locale
+            'pageId' => $this->matchedParams['pageId'],
+            'locale' => $this->matchedParams['locale']
         ), $params);
         
         $encode = isset($options['encode']) ? $options['encode'] : true;
@@ -70,7 +72,7 @@ class FrontofficeRoute implements RouteInterface
         try {
             if (method_exists($request, 'getUri')) {
                 $this->uri = clone ($request->getUri());
-                $result = Manager::getService('Url')->getPageId($this->uri->getPath(), $this->uri->getHost());
+                $result = Manager::getService('Url')->matchPageRoute($this->uri->getPath(), $this->uri->getHost());
             }
         } catch (\Rubedo\Exceptions\Server $exception) {
             return null;
@@ -78,21 +80,18 @@ class FrontofficeRoute implements RouteInterface
         if ($result === null) {
             return null;
         } else {
-            list ($pageId, $locale) = $result;
+            $this->matchedParams = $result;
         }
         
-        $contentId = $request->getQuery('content-id', false);
-        
-        $this->pageID = $pageId;
-        $this->locale = $locale;
         $params = array();
         $params['controller'] = 'Rubedo\\Frontoffice\\Controller\\Index';
         $params['action'] = 'index';
-        $params['pageId'] = $pageId;
-        $params['locale'] = $locale;
-        if ($contentId) {
-            $params['content-id'] = $contentId;
+        $params = array_merge($params, $this->matchedParams);
+        
+        if (! isset($params['content-id'])) {
+            $params['content-id'] = $request->getQuery('content-id', null);
         }
+        
         $match = new RouteMatch(array_merge($this->defaults, $params));
         
         return $match;
