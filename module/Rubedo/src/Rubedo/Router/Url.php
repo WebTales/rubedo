@@ -313,7 +313,9 @@ class Url implements IUrl
         $url = '';
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
         AbstractLocalizableCollection::setIncludeI18n(true);
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $content = Manager::getService('Contents')->findById($contentId, true, false);
+        AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
         if ($content) {
             if (isset($content['i18n'][$locale]['fields']['text'])) {
@@ -346,7 +348,9 @@ class Url implements IUrl
         }
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
         AbstractLocalizableCollection::setIncludeI18n(true);
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $content = Manager::getService('Contents')->findById($contentId, true, false);
+        AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
         $nativeLocale = $content['nativeLanguage'];
         if (isset($content['i18n'][$locale]['fields']['text']) && urlencode($content['i18n'][$locale]['fields']['text']) == $encodedText) {
