@@ -190,18 +190,20 @@ class Url implements IUrl
         // next segment could be a content-id
         if ($nbSegments > $this->nbMatched) {
             $urlSegments = array_slice($urlSegments, $this->nbMatched);
-            $segment = current($urlSegments);
-            $contentId = $this->matchContentRoute($segment, $locale);
-            if ($contentId) {
-                array_slice($urlSegments, 1);
-                $this->nbMatched ++;
+            if (count($urlSegments) > 1) {
+                $segment = array_slice($urlSegments, 0, 2);
+                $contentId = $this->matchContentRoute($segment, $locale);
+                if ($contentId) {
+                    array_slice($urlSegments, 2);
+                    $this->nbMatched = $this->nbMatched + 2;
+                }
             }
         }
         
         // trigger an event to allow more matches from specific rules
         if ($nbSegments > $this->nbMatched) {
             Events::getEventManager()->trigger(self::MATCH_EXTRA_PARAMS, $this, array(
-                $urlSegments => $urlSegments
+                'urlSegments' => $urlSegments
             ));
         }
         
@@ -278,7 +280,7 @@ class Url implements IUrl
                 $url .= self::URI_DELIMITER;
                 $url .= urlencode($value['i18n'][$fallbackLocale]['pageURL']);
             } else {
-                return null;
+                return false;
             }
         }
         
@@ -292,7 +294,7 @@ class Url implements IUrl
             $url .= self::URI_DELIMITER;
             $url .= urlencode($page['pageURL']);
         } else {
-            return null;
+            return false;
         }
         
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
@@ -321,12 +323,12 @@ class Url implements IUrl
             if (isset($content['i18n'][$locale]['fields']['text'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
-                $url .= '_';
+                $url .= self::URI_DELIMITER;
                 $url .= urlencode((string) $content['i18n'][$locale]['fields']['text']);
             } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['text'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
-                $url .= '_';
+                $url .= self::URI_DELIMITER;
                 $url .= urlencode((string) $content['i18n'][$fallbackLocale]['fields']['text']);
             }
         }
@@ -337,15 +339,14 @@ class Url implements IUrl
         }
     }
 
-    public function matchContentRoute($segment, $locale)
+    public function matchContentRoute($segments, $locale)
     {
         if (! $locale) {
             return null;
         }
-        $parts = explode('_', $segment);
-        if (count($parts) == 2) {
-            list ($contentId, $encodedText) = $parts;
-        }
+        
+        list ($contentId, $encodedText) = $segments;
+        
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
         AbstractLocalizableCollection::setIncludeI18n(true);
         $wasFiltered = AbstractCollection::disableUserFilter();
@@ -378,6 +379,10 @@ class Url implements IUrl
         }
         
         $url = $this->getPageUrl($data['pageId'], $data['locale']);
+        
+        if($url == false){
+            return false;
+        }
         
         if (isset($data['content-id'])) {
             $page = Manager::getService('Pages')->findById($data['pageId']);
