@@ -131,7 +131,9 @@ class Pages extends AbstractLocalizableCollection implements IPages
         'maskId',
         'site',
         'blocks',
-        'parentId'
+        'parentId',
+        'noIndex',
+        'noFollow'
     );
     
     protected static $isLocaleFiltered = true;
