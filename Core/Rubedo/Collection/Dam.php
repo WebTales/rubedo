@@ -304,7 +304,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
         
         $damType = Manager::getService("DamTypes")->findById($damTypeId);
         
-        $mediaType = $damType["type"];
+        $mediaType = $damType["mainFileType"];
         
         return $mediaType;
     }
