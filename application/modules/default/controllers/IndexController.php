@@ -248,6 +248,14 @@ class IndexController extends Zend_Controller_Action
         $twigVar['siteID'] = $this->_pageInfo['site'];
         $twigVar['prefixTitle'] = isset($this->_site['title']) && ! empty($this->_site['title']) ? $this->_site['title'] . ' - ' : '';
         $twigVar['title'] = $this->_servicePage->getPageTitle();
+        $metaRobot = array();
+        if(isset($this->_pageInfo['noIndex']) && $this->_pageInfo['noIndex']){
+            $metaRobot[] = 'noindex';
+        }
+        if(isset($this->_pageInfo['noFollow']) && $this->_pageInfo['noFollow']){
+            $metaRobot[] = 'noFollow';
+        }
+        $twigVar['metaRobot'] = implode(',',$metaRobot);
         
         // set metadata
         $description = $this->_servicePage->getDescription();
