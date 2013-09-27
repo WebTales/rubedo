@@ -253,7 +253,7 @@ class IndexController extends Zend_Controller_Action
             $metaRobot[] = 'noindex';
         }
         if(isset($this->_pageInfo['noFollow']) && $this->_pageInfo['noFollow']){
-            $metaRobot[] = 'noFollow';
+            $metaRobot[] = 'nofollow';
         }
         $twigVar['metaRobot'] = implode(',',$metaRobot);
         
