@@ -20,6 +20,10 @@
     <meta name="author" content="{{ author }}">
     {% endif %}
     
+    {% if metaRobot %}
+    <meta name="robots" content="{{ metaRobot }}">
+    {% endif %}
+    
     
     {% if contentId %}
     <link rel="canonical" href="{{ displayUrl(contentId, "canonical") }}"/>
