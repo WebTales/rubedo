@@ -29,7 +29,7 @@ namespace Rubedo\Update;
 class Update010400 extends Update
 {
 
-    protected static $toVersion = '2.0.0';
+    protected static $toVersion = '1.4.1';
 
     /**
      * do
@@ -38,10 +38,8 @@ class Update010400 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
         return true;
     }
-
-    
 }

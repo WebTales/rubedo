@@ -17,10 +17,6 @@
  */
 namespace Rubedo\Update;
 
-use Rubedo\Services\Manager;
-use WebTales\MongoFilters\Filter;
-use Rubedo\Collection\AbstractCollection;
-
 /**
  * Methods
  * for
@@ -30,10 +26,10 @@ use Rubedo\Collection\AbstractCollection;
  * @author jbourdin
  *        
  */
-class Update010400 extends Update
+class Update010401 extends Update
 {
 
-    protected static $toVersion = '1.4.1';
+    protected static $toVersion = '2.0.0';
 
     /**
      * do
@@ -42,9 +38,10 @@ class Update010400 extends Update
      *
      * @return boolean
      */
-    public static function upgrade()
+    public static function upgrade ()
     {
         return true;
     }
 
+    
 }
