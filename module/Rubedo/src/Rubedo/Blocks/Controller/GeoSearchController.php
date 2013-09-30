@@ -184,7 +184,6 @@ class GeoSearchController extends AbstractController
     public function xhrGetDetailAction ()
     {
         $templateService = Manager::getService('FrontOfficeTemplates');
-        $sessionService = Manager::getService('Session');
         // get params
         $idArray = $this->params()->fromPost('idArray');
         $itemHtml = '';

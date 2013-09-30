@@ -331,8 +331,10 @@ class Module
         
         $sessionManager = new SessionManager($sessionConfig);
         $sessionManager->setSaveHandler($saveHandler);
+        if(isset($_COOKIE[$config['session']['name']])){
+            $sessionManager->start();
+        }
         
-        $sessionManager->start();
         
         Container::setDefaultManager($sessionManager);
     }

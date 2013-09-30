@@ -33,7 +33,9 @@ use Rubedo\Services\Events;
  */
 class Authentication implements IAuthentication
 {
+
     const SUCCESS = 'rubedo_authentication_success';
+
     const FAIL = 'rubedo_authentication_fail';
 
     /**
@@ -52,7 +54,7 @@ class Authentication implements IAuthentication
      *
      * @return AuthenticationService
      */
-    protected function getZendAuth ()
+    protected function getZendAuth()
     {
         if (! isset(static::$zendAuth)) {
             static::$zendAuth = new AuthenticationService();
@@ -71,12 +73,15 @@ class Authentication implements IAuthentication
      *            
      * @return bool
      */
-    public function authenticate ($login, $password)
+    public function authenticate($login, $password)
     {
         $authAdapter = new AuthAdapter($login, $password);
         $result = $this->getZendAuth()->authenticate($authAdapter);
         if (! $result->isValid()) {
-            Events::getEventManager()->trigger(self::FAIL,null,array('login'=>$login,'error'=>$result->getMessages()));
+            Events::getEventManager()->trigger(self::FAIL, null, array(
+                'login' => $login,
+                'error' => $result->getMessages()
+            ));
             Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
         }
         Events::getEventManager()->trigger(self::SUCCESS);
@@ -89,9 +94,16 @@ class Authentication implements IAuthentication
      *
      * @return array
      */
-    public function getIdentity ()
+    public function getIdentity()
     {
-        return $this->getZendAuth()->getIdentity();
+        $config = Manager::getService('Application')->getConfig();
+        $cookieName = $config['session']['name'];
+        if (isset($_COOKIE[$cookieName])) {
+            return $this->getZendAuth()->getIdentity();
+        } else {
+            return null;
+        }
+        
     }
 
     /**
@@ -99,9 +111,15 @@ class Authentication implements IAuthentication
      *
      * @return bool
      */
-    public function hasIdentity ()
+    public function hasIdentity()
     {
-        return $this->getZendAuth()->hasIdentity();
+        $config = Manager::getService('Application')->getConfig();
+        $cookieName = $config['session']['name'];
+        if (isset($_COOKIE[$cookieName])) {
+            return $this->getZendAuth()->hasIdentity();
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -109,12 +127,16 @@ class Authentication implements IAuthentication
      *
      * @return bool
      */
-    public function clearIdentity ()
+    public function clearIdentity()
     {
         $this->getZendAuth()->clearIdentity();
-        Manager::getService('Session')->getSessionObject()->getManager()
+        Manager::getService('Session')->getSessionObject()
+            ->getManager()
             ->getStorage()
             ->clear();
+        $config = Manager::getService('Application')->getConfig();
+        $cookieName = $config['session']['name'];
+        setcookie($cookieName, "");
     }
 
     /**
@@ -127,7 +149,7 @@ class Authentication implements IAuthentication
      *            
      * @return bool
      */
-    public function forceReAuth ($login, $password)
+    public function forceReAuth($login, $password)
     {
         $authAdapter = new AuthAdapter($login, $password);
         $result = $authAdapter->authenticate($authAdapter);
@@ -139,7 +161,7 @@ class Authentication implements IAuthentication
      *
      * @see \Rubedo\Interfaces\User\IAuthentication::resetExpirationTime()
      */
-    public function resetExpirationTime ()
+    public function resetExpirationTime()
     {}
 
     /**
@@ -147,14 +169,14 @@ class Authentication implements IAuthentication
      *
      * @see \Rubedo\Interfaces\User\IAuthentication::getExpirationTime()
      */
-    public function getExpirationTime ()
+    public function getExpirationTime()
     {}
 
     /**
      *
      * @return the $_authLifetime
      */
-    public static function getAuthLifetime ()
+    public static function getAuthLifetime()
     {
         return Authentication::$_authLifetime;
     }
@@ -163,7 +185,7 @@ class Authentication implements IAuthentication
      *
      * @param number $_authLifetime            
      */
-    public static function setAuthLifetime ($_authLifetime)
+    public static function setAuthLifetime($_authLifetime)
     {
         Authentication::$_authLifetime = $_authLifetime;
     }
