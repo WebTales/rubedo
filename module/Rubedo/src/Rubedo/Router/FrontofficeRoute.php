@@ -69,9 +69,18 @@ class FrontofficeRoute implements RouteInterface
      */
     public function match(\Zend\Stdlib\RequestInterface $request)
     {
+        //ensure that no url like /dam or /image can match, without complex queries.
+        $frontControllerList = array('dam','image');
+        
         try {
             if (method_exists($request, 'getUri')) {
                 $this->uri = clone ($request->getUri());
+                $semgentList = explode('/',trim($this->uri->getPath(),'/'));
+                if(isset($semgentList[0])){
+                    if(in_array($semgentList[0], $frontControllerList)){
+                        return null;
+                    }
+                }
                 $result = Manager::getService('Url')->matchPageRoute($this->uri->getPath(), $this->uri->getHost());
             }
         } catch (\Rubedo\Exceptions\Server $exception) {

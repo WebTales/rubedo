@@ -45,7 +45,7 @@ return array(
     ), $extensionsArray),
     'module_listener_options' => array(
         'config_cache_enabled' => true,
-        'module_map_cache_enabled' => false,
+        'module_map_cache_enabled' => true,
         'cache_dir' => CONFIG_CACHE_DIR,
         'module_paths' => array(
             './module',

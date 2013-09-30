@@ -33,6 +33,8 @@ use Rubedo\Services\Cache;
 class Module
 {
     protected static $cachePageIsActive = false;
+    
+    protected $pageHit = false;
 
     public function onBootstrap(MvcEvent $e)
     {
@@ -42,6 +44,9 @@ class Module
         // register eventManager for global access by Rubedo
         $eventManager = $e->getApplication()->getEventManager();
         Events::setEventManager($eventManager);
+        
+        $message = 'Running Rubedo for '.$e->getRequest()->getUri();
+        Manager::getService('Logger')->info($message);
         
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -244,8 +249,11 @@ class Module
 
     public function preDispatch(MvcEvent $event)
     {
+        
         $controller = $event->getRouteMatch()->getParam('controller');
-        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index') {
+        $message = 'routing to '.$controller;
+        Manager::getService('Logger')->debug($message);
+        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
             $cache = Cache::getCache();
             $uri = $event->getRequest()->getUri();
             $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
@@ -258,6 +266,7 @@ class Module
             $loaded = false;
             $content = $cache->getItem($key, $loaded);
             if ($loaded) {
+                $this->pageHit = true;
                 $event->stopPropagation();
                 $response = $event->getResponse();
                 $response->setContent($content);
@@ -270,7 +279,12 @@ class Module
     public function postDispatch(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
-        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index') {
+        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
+            if($this->pageHit){
+                $message = 'returning cache for '.$controller;
+                Manager::getService('Logger')->info($message);
+                return;
+            }
             $cache = Cache::getCache();
             $response = $event->getResponse();
             $uri = $event->getRequest()->getUri();
@@ -283,6 +297,8 @@ class Module
             }
             $cache->setItem($key, $response->getContent());
         }
+        $message = 'finished rendering '.$controller;
+        Manager::getService('Logger')->info($message);
     }
 
     protected function initializeSession(MvcEvent $e)

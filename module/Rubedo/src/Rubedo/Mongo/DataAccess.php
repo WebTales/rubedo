@@ -1325,7 +1325,7 @@ class DataAccess implements IDataAccess
                 Manager::getService('Logger')->addRecord($level,ucfirst($target->function)." Request on MongoDB collection: '" . $target->collection->getName() . "'", array(
                     'Collection' => $target->collection->getName(),
                     'Function' => $target->function,
-                    'Query' => $target->args[0]
+                    'Query' => $target->args[0],
                 ));
                 break;
             default:

@@ -136,7 +136,7 @@ class UrlCache extends AbstractCollection implements IUrlCache
         $params = $event->getParams();
         $result = $this->findByUrl($params['url'], $params['siteId']);
         if ($result) {
-            $message = 'cache hit for current URL';
+            $message = 'cache hit for current URL '.Manager::getService('Application')->getRequest()->getUri();
             Manager::getService('Logger')->info($message);
             $event->stopPropagation();
             unset($result['date']);
