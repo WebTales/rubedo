@@ -20,6 +20,7 @@ use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Templates\Raw\RawViewModel;
+use Rubedo\Collection\AbstractLocalizableCollection;
 
 /**
  *
@@ -65,17 +66,9 @@ abstract class AbstractController extends AbstractActionController
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
         $this->siteId = $currentPage['site'];
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            // context
-            $cookieValue = $this->getRequest()->getCookie('locale');
-            $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->siteId, null, $cookieValue['locale']);
-            $domain = $this->getRequest()
-                ->getUri()
-                ->getHost();
-            if ($domain) {
-                $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
-            }
-        }
+        $locale = $this->params('locale',AbstractLocalizableCollection::getWorkingLocale());
+        $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->siteId, $locale);
+
         
         if (! $templateService->themeHadBeenSet()) {
             $currentSite = Manager::getService('Sites')->findById($currentPage['site']);

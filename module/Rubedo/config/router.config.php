@@ -82,7 +82,7 @@ return array(
                 'default' => array(
                     'type' => 'Segment',
                     'options' => array(
-                        'route' => '/[:controller[/:action]]',
+                        'route' => '/:locale/[:controller[/:action]]',
                         '__NAMESPACE__' => 'Rubedo\Blocks\Controller',
                         'constraints' => array(
                             'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',

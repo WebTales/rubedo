@@ -164,7 +164,7 @@ class IndexController extends AbstractActionController
             return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery());
         }
         
-        if ($domain) {
+        if ($domain && !$this->_site['useBrowserLanguage']) {
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
         

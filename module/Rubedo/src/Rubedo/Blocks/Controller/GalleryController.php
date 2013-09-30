@@ -46,6 +46,7 @@ class GalleryController extends ContentListController
 
     public function xhrGetImagesAction ()
     {
+        $this->init();
         $twigVars = $this->_getList();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery/items.html.twig");
         $html = Manager::getService('FrontOfficeTemplates')->render($template, $twigVars);

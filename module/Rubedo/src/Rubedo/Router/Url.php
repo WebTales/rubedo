@@ -447,6 +447,9 @@ class Url implements IUrl
                     $mergedParams[$key] = $value;
             }
         }
+        if(!isset($params['locale'])){
+            $params['locale'] = AbstractLocalizableCollection::getWorkingLocale();
+        }
         $uri = Manager::getService('Application')->getRequest()->getUri();
         
         switch ($options['reset']) {
