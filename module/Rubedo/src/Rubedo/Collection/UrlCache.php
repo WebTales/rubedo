@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class UrlCache extends AbstractCollection implements IUrlCache
+class UrlCache extends AbstractCollection
 {
 
     protected $_indexes = array(
@@ -63,13 +63,13 @@ class UrlCache extends AbstractCollection implements IUrlCache
     /**
      * Set the collection name
      */
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'UrlCache';
         parent::__construct();
     }
 
-    public function verifyIndexes ()
+    public function verifyIndexes()
     {
         $this->_dataService->ensureIndex(array(
             'url' => 1,
@@ -83,33 +83,31 @@ class UrlCache extends AbstractCollection implements IUrlCache
             'expireAfterSeconds' => 600
         ));
     }
-    
-    /*
-     * (non-PHPdoc) @see \Rubedo\Interfaces\Collection\IUrlCache::findByPageId()
-     */
-    public function findByPageId ($pageId)
+
+    public function findByPageId($pageId, $locale)
     {
-        if (! isset(static::$pageToUrl[$pageId])) {
-            static::$pageToUrl[$pageId] = $this->_dataService->findOne(Filter::factory('value')->setName('pageId')
+        if (! isset(static::$pageToUrl[$locale][$pageId])) {
+            $filters = Filter::factory();
+            $filters->addFilter(Filter::factory('value')->setName('pageId')
                 ->setValue($pageId));
+            $filters->addFilter(Filter::factory('value')->setName('locale')
+                ->setValue($locale));
+            $filters->addFilter(Filter::factory('operatorToValue')->setName('content-id')
+                ->setOperator('$exists')
+                ->setValue(false));
+            static::$pageToUrl[$locale][$pageId] = $this->_dataService->findOne($filters);
         }
-        return static::$pageToUrl[$pageId];
+        return static::$pageToUrl[$locale][$pageId];
     }
-    
-    /*
-     * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
-     */
-    public function create (array $obj, $options = array('w'=>false))
+
+    public function create(array $obj, $options = array('w'=>false))
     {
         $obj['date'] = $this->_dataService->getMongoDate();
         
         parent::create($obj, $options);
     }
-    
-    /*
-     * (non-PHPdoc) @see \Rubedo\Interfaces\Collection\IUrlCache::findByUrl()
-     */
-    public function findByUrl ($url, $siteId)
+
+    public function findByUrl($url, $siteId)
     {
         if (! $siteId) {
             return null;
@@ -132,11 +130,10 @@ class UrlCache extends AbstractCollection implements IUrlCache
 
     public function urlToPageReadCacheEvent(EventInterface $event)
     {
-        // URL_TO_PAGE_READ_CACHE_PRE
         $params = $event->getParams();
         $result = $this->findByUrl($params['url'], $params['siteId']);
         if ($result) {
-            $message = 'cache hit for current URL '.Manager::getService('Application')->getRequest()->getUri();
+            $message = 'cache hit for current URL ' . Manager::getService('Application')->getRequest()->getUri();
             Manager::getService('Logger')->info($message);
             $event->stopPropagation();
             unset($result['date']);
@@ -147,7 +144,18 @@ class UrlCache extends AbstractCollection implements IUrlCache
             unset($result['createUser']);
             unset($result['createTime']);
             return $result;
-            
+        }
+    }
+
+    public function PageToUrlReadCacheEvent(EventInterface $event)
+    {
+        $params = $event->getParams();
+        $result = $this->findByPageId($params['pageId'], $params['locale']);
+        if ($result) {
+            $message = 'cache hit for pageUrl ' . $result['url'];
+            Manager::getService('Logger')->info($message);
+            $event->stopPropagation();
+            return $result['url'];
         }
     }
 

@@ -245,7 +245,7 @@ class Url implements IUrl
         }
         $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_PRE, null, array(
             'pageId' => $pageId,
-            'local' => $locale
+            'locale' => $locale
         ));
         if ($eventResult->stopped()) {
             return $eventResult->first();

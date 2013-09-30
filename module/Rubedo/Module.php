@@ -78,6 +78,7 @@ class Module
             'preRouting'
         ));
         
+        //add page cache (GET only, based onUser)
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
             $this,
             'preDispatch'
@@ -88,13 +89,20 @@ class Module
             'postDispatch'
         ),-100);
         
+        //handle URL caching
         $urlCacheService = Manager::getService('UrlCache');
         $eventManager->attach(Url::URL_TO_PAGE_READ_CACHE_PRE, array(
             $urlCacheService,
             'urlToPageReadCacheEvent'
         ),-100);
         
-        $eventManager->attach(Url::URL_TO_PAGE_READ_CACHE_POST, array(
+        $urlCacheService = Manager::getService('UrlCache');
+        $eventManager->attach(Url::PAGE_TO_URL_READ_CACHE_PRE, array(
+            $urlCacheService,
+            'PageToUrlReadCacheEvent'
+        ),-100);
+        
+        $eventManager->attach(array(Url::URL_TO_PAGE_READ_CACHE_POST,Url::PAGE_TO_URL_READ_CACHE_POST), array(
             $urlCacheService,
             'urlToPageWriteCacheEvent'
         ),100);
