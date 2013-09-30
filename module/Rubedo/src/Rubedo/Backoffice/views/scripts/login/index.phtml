@@ -13,16 +13,7 @@
 	id="theme">
 <script type="text/javascript">
     	Ext.Loader.setConfig({
-    enabled: false});
-
-Ext.application({
-    views: [
-        'ConnectionViewport'
-    ],
-    autoCreateViewport: true,
-    name: 'Connector'
-});
-    	
+    enabled: false});    	
     	
 Ext.define('Connector.view.Viewport', {
     extend: 'Ext.container.Viewport',
@@ -148,6 +139,13 @@ Ext.define('Connector.view.Viewport', {
     }
 
 });
+var task = new Ext.util.DelayedTask(function(){
+	Ext.widget("ConnectionViewport");
+});
+
+task.delay(100);
+
+
     </script>
 </head>
 <body></body>
