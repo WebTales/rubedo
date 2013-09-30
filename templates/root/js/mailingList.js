@@ -1,6 +1,6 @@
 function addEmail(email, mailingListId) {
 	var request = jQuery.ajax({
-		url : "/blocks/mailing-list/xhr-add-email",
+		url : "/blocks/"+jQuery('html').attr('lang')+"/mailing-list/xhr-add-email",
 		type : "POST",
 		data : {
 			'mailing-list-id' : mailingListId,

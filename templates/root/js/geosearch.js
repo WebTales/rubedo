@@ -149,7 +149,7 @@ function initialize() {
 		}
 		var request = jQuery.ajax({
 			url : window.location.protocol + '//' + window.location.host
-					+ '/blocks/geo-search/xhr-search',
+					+ '/blocks/'+jQuery('html').attr('lang')+'/geo-search/xhr-search',
 			type : "POST",
 			data : params,
 			dataType : "json"
@@ -223,7 +223,7 @@ function initialize() {
 										source : function(query, process) {
 											var request = jQuery
 													.ajax({
-														url : '/blocks/geo-search/xhr-get-suggests',
+														url : '/blocks/'+jQuery('html').attr('lang')+'/geo-search/xhr-get-suggests',
 														type : "POST",
 														data : {
 															'query' : query,
@@ -322,7 +322,7 @@ function initialize() {
 				var request2 = jQuery.ajax({
 					url : window.location.protocol + '//'
 							+ window.location.host
-							+ '/blocks/geo-search/xhr-get-detail',
+							+ '/blocks/'+jQuery('html').attr('lang')+'/geo-search/xhr-get-detail',
 					type : "POST",
 					data : {
 						'current-page' : jQuery('body').attr(

@@ -158,6 +158,7 @@ class ContentListController extends AbstractController
 
     public function xhrGetItemsAction()
     {
+        $this->init();
         $twigVars = $this->_getList();
         
         $displayType = $this->getParamFromQuery('displayType', false);

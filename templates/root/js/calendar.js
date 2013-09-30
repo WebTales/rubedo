@@ -6,7 +6,7 @@ function calendarChangeDate(date, prefix, query, url, singlePage,dateField) {
 			var isDraft = false;
 		}
 		var request = jQuery.ajax({
-			url : url + '/blocks/calendar/xhr-get-calendar',
+			url : url + '/blocks/'+jQuery('html').attr('lang')+'/calendar/xhr-get-calendar',
 			type : "POST",
 			data : {
 				'cal-date' : date,

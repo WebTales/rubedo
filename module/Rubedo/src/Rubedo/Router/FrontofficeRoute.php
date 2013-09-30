@@ -55,10 +55,7 @@ class FrontofficeRoute implements RouteInterface
     public function assemble(array $params = array(), array $options = array())
     {
         // set pageId
-        $mergedParams = array_merge(array(
-            'pageId' => $this->matchedParams['pageId'],
-            'locale' => $this->matchedParams['locale']
-        ), $params);
+        $mergedParams = array_merge($this->matchedParams, $params);
         
         $encode = isset($options['encode']) ? $options['encode'] : true;
         return Manager::getService('Url')->getUrl($mergedParams, $encode);

@@ -1,6 +1,6 @@
 function submitEmail(prefix) {
 	var request = jQuery.ajax({
-		url : "/blocks/protected-resource/xhr-submit-email",
+		url : "/blocks/"+jQuery('html').attr('lang')+"/protected-resource/xhr-submit-email",
 		type : "POST",
 		data : {
 			'mailing-list-id' : jQuery('#mailingListId-'+prefix).val(),

@@ -2,7 +2,7 @@ $(function(){
 	$('.typeahead').typeahead({
 	    source: function (query, process) {
 			var request = jQuery.ajax({
-				url : '/blocks/search/xhr-get-suggests',
+				url : '/blocks/'+jQuery('html').attr('lang')+'/search/xhr-get-suggests',
 				type : "POST",
 				data : {
 					'query' : query,

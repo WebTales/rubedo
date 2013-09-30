@@ -6,7 +6,7 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 			var isDraft = false;
 		}
 		var request = jQuery.ajax({
-			url : url + '/blocks/content-list/xhr-get-items',
+			url : url + '/blocks/'+jQuery('html').attr('lang')+'/content-list/xhr-get-items',
 			type : "POST",
 			data : {
 				'page' : page,
