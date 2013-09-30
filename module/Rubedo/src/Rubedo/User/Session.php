@@ -18,6 +18,7 @@ namespace Rubedo\User;
 
 use Rubedo\Interfaces\User\ISession;
 use Zend\Session\Container as SessionContainer;
+use Rubedo\Services\Manager;
 
 /**
  * Current User Service
@@ -68,13 +69,19 @@ class Session implements ISession
      *            default value in case of not set parameter in session
      * @return mixed value in session
      */
-    public function get ($name, $defaultValue = null)
+    public function get($name, $defaultValue = null)
     {
-        if (! isset($this->getSessionObject()->$name)) {
-            $this->getSessionObject()->$name = $defaultValue;
+        $config = Manager::getService('Application')->getConfig();
+        $cookieName = $config['session']['name'];
+        if (isset($_COOKIE[$cookieName])) {
+            if (! isset($this->getSessionObject()->$name)) {
+                $this->getSessionObject()->$name = $defaultValue;
+                return $defaultValue;
+            } else {
+                return $this->getSessionObject()->$name;
+            }
+        } else{
             return $defaultValue;
-        } else {
-            return $this->getSessionObject()->$name;
         }
     }
 }
