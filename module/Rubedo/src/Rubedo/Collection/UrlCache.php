@@ -134,7 +134,7 @@ class UrlCache extends AbstractCollection
         $result = $this->findByUrl($params['url'], $params['siteId']);
         if ($result) {
             $message = 'cache hit for current URL ' . Manager::getService('Application')->getRequest()->getUri();
-            Manager::getService('Logger')->info($message);
+            Manager::getService('Logger')->debug($message);
             $event->stopPropagation();
             unset($result['date']);
             unset($result['siteId']);
@@ -153,7 +153,7 @@ class UrlCache extends AbstractCollection
         $result = $this->findByPageId($params['pageId'], $params['locale']);
         if ($result) {
             $message = 'cache hit for pageUrl ' . $result['url'];
-            Manager::getService('Logger')->info($message);
+            Manager::getService('Logger')->debug($message);
             $event->stopPropagation();
             return $result['url'];
         }

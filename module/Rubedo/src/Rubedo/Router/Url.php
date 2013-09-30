@@ -20,7 +20,6 @@ use Rubedo\Collection\AbstractCollection;
 use Zend\Mvc\Router\RouteInterface;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Services\Events;
-use Zend\Debug\Debug;
 
 /**
  * Front Office URL service
