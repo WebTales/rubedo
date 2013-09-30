@@ -4,13 +4,13 @@
 		"jquery/jquery": "1.10.1",
 		"jquery/jqueryui": "1.10.3",
 		"jquery/timepicker": "0.3.2",
-		"sencha/extjs": "4.1.1a",
+		"sencha/extjs": "4.2.1",
 		"webtales/ckeditor": "1.4.0",
 		"twitter/bootstrap": "v2.3.0",
 		"thomaspark/bootswatch" : "v2.3.0",
-		"webtales/rubedo-backoffice-ui": "dev-2.0dev",
+		"webtales/rubedo-backoffice-ui": "dev-ext42",
 		"longtailvideo/jwplayer": "6",
-		"webtales/rubedo-localization": "dev-2.0dev",
+		"webtales/rubedo-localization": "dev-master",
 		"jschr/bootstrap-modal": "2.1",
 		"WebTales/bsie": "1.4.0",
 		"stowball/jQuery-rwdImageMaps": "1.0",
@@ -44,9 +44,9 @@
 			"type": "package",
 			"package": {
 				"name": "sencha/extjs",
-				"version": "4.1.1a",
+				"version": "4.2.1",
 				"dist": {
-					"url": "http://cdn.sencha.com/ext-4.1.1a-gpl.zip",
+					"url": "http://cdn.sencha.com/ext/gpl/ext-4.2.1-gpl.zip",
 					"type": "zip"
 				}
 			}

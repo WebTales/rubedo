@@ -31,7 +31,7 @@ use Rubedo\Exceptions\Server;
  */
 class ProxyCollection
 {
-    protected static $deniedMethod = array();
+    protected static $deniedMethod = array("drop","remove");
 
     const PRE_REQUEST = 'RubedoMongoProxyCollectionPreRequest';
 
