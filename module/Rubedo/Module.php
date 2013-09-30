@@ -28,9 +28,12 @@ use Rubedo\Cache\MongoCache;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
 use Rubedo\User\Authentication;
+use Zend\Debug\Debug;
+use Rubedo\Services\Cache;
 
 class Module
 {
+    protected static $cachePageIsActive = false;
 
     public function onBootstrap(MvcEvent $e)
     {
@@ -68,8 +71,18 @@ class Module
         // verify session and access right when dispatching
         $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
             $this,
-            'preDispatch'
+            'preRouting'
         ));
+        
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
+            $this,
+            'preDispatch'
+        ),100);
+        
+        $eventManager->attach(MvcEvent::EVENT_FINISH, array(
+            $this,
+            'postDispatch'
+        ),-100);
         
         // add some cache on HtmlCleaner method
         $eventManager->attach(HtmlCleaner::PRE_HTMLCLEANER, array(
@@ -101,8 +114,8 @@ class Module
             Manager::getService('ApplicationLogger'),
             'logCollectionEvent'
         ), 1);
-            
-            // log authentication attemps
+        
+        // log authentication attemps
         $eventManager->attach(array(
             Authentication::FAIL,
             Authentication::SUCCESS
@@ -112,7 +125,7 @@ class Module
         ), 1);
         
         $eventManager->attach(array(
-            Authentication::FAIL,
+            Authentication::FAIL
         ), array(
             Manager::getService('SecurityLogger'),
             'logAuthenticationEvent'
@@ -143,7 +156,7 @@ class Module
      * @param MvcEvent $event            
      * @throws \Rubedo\Exceptions\Access
      */
-    public function preDispatch(MvcEvent $event)
+    public function preRouting(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -219,6 +232,49 @@ class Module
         }
     }
 
+    public function preDispatch(MvcEvent $event)
+    {
+        $controller = $event->getRouteMatch()->getParam('controller');
+        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index') {
+            $cache = Cache::getCache();
+            $uri = $event->getRequest()->getUri();
+            $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
+            $user = Manager::getService('CurrentUser')->getCurrentUser();
+            if($user){
+                $key .= '_user'.$user['id'];
+            }else{
+                $key .= '_nouser';
+            }
+            $loaded = false;
+            $content = $cache->getItem($key, $loaded);
+            if ($loaded) {
+                $event->stopPropagation();
+                $response = $event->getResponse();
+                $response->setContent($content);
+                return $response;
+            }
+
+        }
+    }
+
+    public function postDispatch(MvcEvent $event)
+    {
+        $controller = $event->getRouteMatch()->getParam('controller');
+        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index') {
+            $cache = Cache::getCache();
+            $response = $event->getResponse();
+            $uri = $event->getRequest()->getUri();
+            $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
+            $user = Manager::getService('CurrentUser')->getCurrentUser();
+            if($user){
+                $key .= '_user'.$user['id'];
+            }else{
+                $key .= '_nouser';
+            }
+            $cache->setItem($key, $response->getContent());
+        }
+    }
+
     protected function initializeSession(MvcEvent $e)
     {
         $config = $e->getApplication()
@@ -247,7 +303,7 @@ class Module
         Container::setDefaultManager($sessionManager);
     }
 
-    protected function toDeadEnd(MvcEvent $event,\Exception $exception)
+    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
