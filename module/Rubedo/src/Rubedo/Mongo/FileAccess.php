@@ -54,7 +54,7 @@ class FileAccess extends DataAccess implements IFileAccess
         
         $this->_adapter = new \MongoClient($mongo);
         $this->_dbName = $this->_adapter->$dbName;
-        $this->_collection = $this->_dbName->getGridFS();
+        $this->_collection = new ProxyGridFs($this->_dbName->getGridFS());
     }
 
     /**
