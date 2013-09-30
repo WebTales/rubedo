@@ -28,7 +28,6 @@ use Rubedo\Cache\MongoCache;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
 use Rubedo\User\Authentication;
-use Zend\Debug\Debug;
 use Rubedo\Services\Cache;
 
 class Module
@@ -83,6 +82,17 @@ class Module
             $this,
             'postDispatch'
         ),-100);
+        
+        $urlCacheService = Manager::getService('UrlCache');
+        $eventManager->attach(Url::URL_TO_PAGE_READ_CACHE_PRE, array(
+            $urlCacheService,
+            'urlToPageReadCacheEvent'
+        ),-100);
+        
+        $eventManager->attach(Url::URL_TO_PAGE_READ_CACHE_POST, array(
+            $urlCacheService,
+            'urlToPageWriteCacheEvent'
+        ),100);
         
         // add some cache on HtmlCleaner method
         $eventManager->attach(HtmlCleaner::PRE_HTMLCLEANER, array(

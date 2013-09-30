@@ -17,6 +17,8 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IUrlCache, WebTales\MongoFilters\Filter;
+use Zend\EventManager\EventInterface;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Users
@@ -126,5 +128,32 @@ class UrlCache extends AbstractCollection implements IUrlCache
             static::$urlToPage[$siteId][$url] = $this->_dataService->findOne($filters);
         }
         return static::$urlToPage[$siteId][$url];
+    }
+
+    public function urlToPageReadCacheEvent(EventInterface $event)
+    {
+        // URL_TO_PAGE_READ_CACHE_PRE
+        $params = $event->getParams();
+        $result = $this->findByUrl($params['url'], $params['siteId']);
+        if ($result) {
+            $message = 'cache hit for current URL';
+            Manager::getService('Logger')->info($message);
+            $event->stopPropagation();
+            unset($result['date']);
+            unset($result['siteId']);
+            unset($result['url']);
+            unset($result['version']);
+            unset($result['lastUpdateUser']);
+            unset($result['createUser']);
+            unset($result['createTime']);
+            return $result;
+            
+        }
+    }
+
+    public function urlToPageWriteCacheEvent(EventInterface $event)
+    {
+        $data = $event->getParams();
+        $this->create($data);
     }
 }
