@@ -31,6 +31,7 @@ use Rubedo\Exceptions\Server;
  */
 class ProxyCollection
 {
+    protected static $deniedMethod = array();
 
     const PRE_REQUEST = 'RubedoMongoProxyCollectionPreRequest';
 
@@ -49,7 +50,7 @@ class ProxyCollection
             $this->collection,
             $function
         );
-        if (! is_callable($callBack)) {
+        if (! is_callable($callBack) || in_array($function, self::$deniedMethod)) {
             throw new Server('Method not found');
         }
         
@@ -57,7 +58,6 @@ class ProxyCollection
         $this->args = $args;
         
         Events::getEventManager()->trigger(static::PRE_REQUEST, $this);
-        
         $result = call_user_func_array($callBack, $args);
         $this->result = $result;
         
