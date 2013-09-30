@@ -10,7 +10,7 @@
 		"thomaspark/bootswatch" : "v2.3.0",
 		"webtales/rubedo-backoffice-ui": "dev-2.0dev",
 		"longtailvideo/jwplayer": "6",
-		"webtales/rubedo-localization": "dev-2.0dev",
+		"webtales/rubedo-localization": "dev-master",
 		"jschr/bootstrap-modal": "2.1",
 		"WebTales/bsie": "1.4.0",
 		"stowball/jQuery-rwdImageMaps": "1.0",
