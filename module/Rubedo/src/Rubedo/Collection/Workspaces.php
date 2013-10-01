@@ -33,6 +33,8 @@ class Workspaces extends AbstractLocalizableCollection implements IWorkspaces
      */
     protected static $nonLocalizableFields = array('canContribute');
     
+    protected static $publicWorkspacesList;
+    
 
     protected $_indexes = array(
         array(
@@ -273,5 +275,15 @@ class Workspaces extends AbstractLocalizableCollection implements IWorkspaces
         }
         
         return false;
+    }
+    
+    public function getPublicWorkspaces(){
+        if(!isset(self::$publicWorkspacesList)){
+            $groupService = Manager::getService('Groups');
+            $publicGroup = $groupService->getPublicGroup();
+            $readWorkspaces = $groupService->getReadWorkspaces($publicGroup['id']);
+            self::$publicWorkspacesList = array_unique($readWorkspaces);
+        }
+        return self::$publicWorkspacesList;        
     }
 }

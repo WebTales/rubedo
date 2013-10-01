@@ -9,6 +9,9 @@
 		<mkdir dir="${project.basedir}/cache/config"/>
 		<mkdir dir="${project.basedir}/cache/images"/>
 		<mkdir dir="${project.basedir}/log"/>
+		<mkdir dir="${project.basedir}/public/captcha"/>
+		<mkdir dir="${project.basedir}/public/theme"/>
+		<mkdir dir="${project.basedir}/public/generate-image"/>
 		
 		<chmod file="${project.basedir}/cache" mode="777"/>
 		<chmod file="${project.basedir}/cache/twig" mode="777"/>
@@ -18,10 +21,9 @@
 		<chmod file="${project.basedir}/cache/images" mode="777"/>
 		<chmod file="${project.basedir}/log" mode="777"/>
 		<chmod file="${project.basedir}/config/autoload" mode="777"/>
-		<mkdir dir="${project.basedir}/public/captcha"/>
-		<mkdir dir="${project.basedir}/public/theme"/>
 		<chmod file="${project.basedir}/public/captcha" mode="777"/>
 		<chmod file="${project.basedir}/public/theme" mode="777"/>
+		<chmod file="${project.basedir}/public/generate-image" mode="777"/>
 		
 	</target>
 	

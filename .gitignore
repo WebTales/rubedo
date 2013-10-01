@@ -11,6 +11,7 @@ cache
 /composer.lock
 composer.front.lock
 /public/theme
+/public/generate-image
 Thumbs.db
 extensions/*
 !extensions/readme.txt

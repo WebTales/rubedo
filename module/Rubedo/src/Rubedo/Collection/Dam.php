@@ -17,6 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IDam, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
 
 /**
  * Service to handle Groups
@@ -358,6 +359,12 @@ class Dam extends AbstractLocalizableCollection implements IDam
         } else {
             throw new \Rubedo\Exceptions\Server($result['err']);
         }
+    }
+    
+    public function isPublic($MediaId){
+        $media = $this->findById($MediaId);
+        $publicWorkspaces = manager::getService('Workspaces')->getPublicWorkspaces();
+        return count(array_intersect($media['target'],$publicWorkspaces)) > 0;
     }
     
 }
