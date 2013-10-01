@@ -113,10 +113,11 @@ class DamController extends AbstractActionController
                 'action' => 'get-thumbnail'
             ));
         } else {
-            $this->_forward('get-thumbnail', 'file', 'default', array(
-                'file-id' => $media['originalFileId'],
-                'file-type' => $mediaType['mainFileType'],
-                'version' => $version
+            $queryString = $this->getRequest()->getQuery();
+            $queryString->set('file-id', $media['originalFileId']);
+            $queryString->set('version', $version);
+            return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
+                'action' => 'get-thumbnail'
             ));
         }
     }

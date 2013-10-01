@@ -18,6 +18,7 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 
 /**
  * Controller providing access to images in gridFS
@@ -34,7 +35,7 @@ use Rubedo\Services\Manager;
 class FileController extends AbstractActionController
 {
 
-    function indexAction ()
+    function indexAction()
     {
         $fileId = $this->params()->fromQuery('file-id');
         $version = $this->params()->fromQuery('version', 1);
@@ -47,25 +48,14 @@ class FileController extends AbstractActionController
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
-            $tmpImagePath = sys_get_temp_dir() . '/' . $fileId . '_' . $version;
-            $now = Manager::getService('CurrentTime')->getCurrentTime();
-            
-            if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
-                $obj->write($tmpImagePath);
-            }
-            
-            $filelength = filesize($tmpImagePath);
+            $filelength = $obj->getSize();
             $lastByte = (string) $filelength - 1;
             
             $meta = $obj->file;
             $filename = $meta['filename'];
+            $type = $meta['Content-Type'];
+            $doNotDownload = false;
             
-            if (class_exists('finfo')) {
-                $finfo = new \finfo(FILEINFO_MIME);
-                $mimeType = $finfo->file($tmpImagePath);
-            }
-            
-            list ($type) = explode(';', $mimeType);
             list ($subtype) = explode('/', $type);
             
             switch ($type) {
@@ -121,14 +111,11 @@ class FileController extends AbstractActionController
                 ));
             }
             
-            if (strpos($mimeType, 'video') !== false) {
-                list ($mimeType) = explode(';', $mimeType);
-            }
             $response->getHeaders()->addHeaders(array(
-                'Content-Type' => $mimeType
+                'Content-Type' => $meta['Content-Type']
             ));
             
-            $stream = fopen($tmpImagePath, 'rb');
+            $stream = $obj->getResource();
             
             if ($seekStart >= 0 && $seekEnd > 0 && ! ($filelength == $seekEnd - $seekStart)) {
                 $response->getHeaders()->addHeaders(array(
@@ -166,7 +153,7 @@ class FileController extends AbstractActionController
         }
     }
 
-    public function getThumbnailAction ()
+    public function getThumbnailAction()
     {
         $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png');
         switch ($this->params()->fromQuery('file-type')) {
