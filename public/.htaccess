@@ -78,4 +78,4 @@ RewriteRule !\.(js|ico|txt|gif|jpg|png|css)$ /index.php [L]
   </ifModule>
 
 
-
+FileETag MTime
