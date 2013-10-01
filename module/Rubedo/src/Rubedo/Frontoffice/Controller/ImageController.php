@@ -97,9 +97,9 @@ class ImageController extends AbstractActionController
         
         //should we store generated image in public path of the website
         if ($isPublic) {
-            $publicPath = APPLICATION_PATH . '/public/' . $this->getRequest()
+            $publicPath = APPLICATION_PATH . '/public/' . urldecode($this->getRequest()
                 ->getUri()
-                ->getPath();
+                ->getPath());
             $publicDirName = dirname($publicPath);
             if (! file_exists($publicDirName)) {
                 mkdir($publicDirName, 0777, true);
@@ -109,7 +109,6 @@ class ImageController extends AbstractActionController
             $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)) . '_' . basename($filePath); // str_replace('/', '_', $filePath);
             $tmpImagePath = $this->getTempImagesPaths() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
         }
-        
         if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
             
             $imageService = new \Rubedo\Image\Image();
