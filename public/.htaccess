@@ -16,7 +16,7 @@ RewriteRule ^queue$ - [F,L]
 ####################################################################
 #  Every request to dam.mp4/dam.ogg/dam.flv are dealt by Rubedo
 ####################################################################
-RewriteRule ^dam\.(.*)$ /index.php [L]
+RewriteRule ^dam\.(.*)$ /dam [R,L,QSA]
 
 ####################################################################
 #  Existing document are directly served
