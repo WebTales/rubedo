@@ -8,6 +8,7 @@
         {% if videoPoster %}data-image="/dam?media-id={{ videoPoster }}"{% endif %}
         {% if videoWidth %}data-width="{{ videoWidth }}"{% endif %} 
         {% if videoHeight %}data-height="{{ videoHeight }}"{% endif %}
+        {% if videoAspectratio %}data-aspectratio="{{ videoAspectratio }}"{% endif %}
         data-controls={% if videoControls %}true{% else %}false{% endif %}
         {% if videoLoop %}data-repeat=true{% endif %}
         data-autostart={% if videoAutoPlay %}true{% else %}false{% endif %}

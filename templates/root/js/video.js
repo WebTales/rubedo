@@ -12,7 +12,7 @@ function loadVideo() {
 		config.image = jQuery(this).attr('data-image');
 	}
 	if (jQuery(this).attr('data-width')) {
-		config.width = jQuery(this).attr('data-width');
+		config.width = jQuery(this).attr('data-width');        
 	}
 	if (jQuery(this).attr('data-height')) {
 		config.height = jQuery(this).attr('data-height');
@@ -27,6 +27,9 @@ function loadVideo() {
 	}
 	if (jQuery(this).attr('data-autostart')) {
 		config.autostart = jQuery(this).attr('data-autostart');
+	}
+	if (jQuery(this).attr('data-aspectratio')) {
+		config.aspectratio = jQuery(this).attr('data-aspectratio');
 	}
 	config.analytics = {'enabled':false,'cookies': false};
 	jwplayer(id).setup(config);

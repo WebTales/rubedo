@@ -38,6 +38,10 @@ class VideoController extends AbstractController
         $output['videoFile'] = isset($blockConfig['videoFile']) ? $blockConfig['videoFile'] : null;
         $output['videoWidth'] = isset($blockConfig['videoWidth']) ? $blockConfig['videoWidth'] . 'px' : '100%';
         $output['videoHeight'] = isset($blockConfig['videoHeight']) ? $blockConfig['videoHeight'] . 'px' : null;
+        $output['videoAspectratio'] = isset($blockConfig['videoAspectratio']) ? $blockConfig['videoAspectratio'] : null;
+        if($output['videoWidth'] == '100%' && $output['videoAspectratio']==null){
+            $output['videoAspectratio'] = '16:9';
+        }
         $output['videoPoster'] = isset($blockConfig['videoPoster']) ? $blockConfig['videoPoster'] : null;
         $output['alternativeMediaArray'] = array();
         if ($output['videoFile']) {
