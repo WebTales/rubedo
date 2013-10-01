@@ -20,6 +20,7 @@ use Rubedo\Collection\AbstractCollection;
 use Zend\Mvc\Router\RouteInterface;
 use Rubedo\Collection\AbstractLocalizableCollection;
 use Rubedo\Services\Events;
+use Zend\Debug\Debug;
 
 /**
  * Front Office URL service
@@ -631,22 +632,23 @@ class Url implements IUrl
 
     public function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
     {
-        $queryArray = array();
-        $queryArray['media-id'] = $mediaId;
-        if ($width) {
-            $queryArray['width'] = $width;
+        $width = $width?$width:'x';
+        $height = $height?$height:'x';
+        $mode = $mode?$mode:'crop';
+        $media = Manager::getService('Dam')->findById($mediaId);
+        if(!$media){
+            return '';
         }
-        if ($height) {
-            $queryArray['height'] = $height;
+        $fileService = Manager::getService('Files');
+        $obj = $fileService->findById($media['originalFileId']);
+        if(!$obj){
+            return '';
         }
-        if ($mode) {
-            $queryArray['mode'] = $mode;
-        }
-        $queryPart = array();
-        foreach ($queryArray as $key => $value) {
-            $queryPart[] = $key . '=' . $value;
-        }
-        $url = '/dam?' . implode('&', $queryPart);
+        $meta = $obj->file;
+        $version = $meta['version'];
+        $fileName = $meta['filename'];
+
+        $url = "/generate-image/$mediaId/$version/$width/$height/$mode/$fileName";
         return $url;
     }
 }

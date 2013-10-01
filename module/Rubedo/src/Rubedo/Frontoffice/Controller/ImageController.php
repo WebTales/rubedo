@@ -34,6 +34,117 @@ use Rubedo\Services\Manager;
 class ImageController extends AbstractActionController
 {
 
+    protected function getTempImagesPaths()
+    {
+        return APPLICATION_PATH . '/cache/images';
+    }
+
+    public function generateDamAction()
+    {
+        $now = Manager::getService('CurrentTime')->getCurrentTime();
+        $mediaId = $this->params('mediaId');
+        $media = Manager::getService('Dam')->findById($mediaId);
+        if (! $media) {
+            throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+        }
+        
+        $fileId = $media['originalFileId'];
+        
+        $version = $this->params('version', 1);
+        
+        $width = $this->params('width', null);
+        $width = ($width == 'x') ? null : $width;
+        $height = $this->params('height', null);
+        $height = ($height == 'x') ? null : $height;
+        $mode = $this->params('mode', 'morph');
+        
+        if (isset($fileId)) {
+            $fileService = Manager::getService('Images');
+            $obj = $fileService->findById($fileId);
+            if (! $obj instanceof \MongoGridFSFile) {
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+            }
+            
+            $filePath = $this->getTempImagesPaths() . '/' . $fileId . '_' . $version;
+            if (! is_file($filePath) || $now - filemtime($filePath) > 7 * 24 * 3600) {
+                $obj->write($filePath);
+            }
+            $meta = $obj->file;
+            $filename = $meta['filename'];
+        }
+        if ($filePath) {
+            $filename = isset($filename) ? $filename : basename($filePath);
+            $nameSegment = explode('.', $filename);
+            $extension = array_pop($nameSegment);
+            if (! in_array(strtolower($extension), array(
+                'gif',
+                'jpg',
+                'png',
+                'jpeg'
+            ))) {
+                throw new \Rubedo\Exceptions\Access('Not authorized file extension.', "Exception21");
+            }
+            
+            $type = strtolower($extension);
+            $type = ($type == 'jpg') ? 'jpeg' : $type;
+            $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)) . '_' . basename($filePath); // str_replace('/', '_', $filePath);
+            $tmpImagePath = $this->getTempImagesPaths() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
+            
+            if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
+                
+                $imageService = new \Rubedo\Image\Image();
+                $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, 'custom');
+                
+                switch ($type) {
+                    case 'jpeg':
+                        imagejpeg($newImage, $tmpImagePath, 90);
+                        break;
+                    case 'gif':
+                        imagegif($newImage, $tmpImagePath);
+                        break;
+                    case 'png':
+                        imagepng($newImage, $tmpImagePath, 9, PNG_ALL_FILTERS);
+                        break;
+                }
+                
+                imagedestroy($newImage);
+            }
+            switch ($this->params()->fromQuery('attachment', null)) {
+                case 'download':
+                    $forceDownload = true;
+                    break;
+                default:
+                    $forceDownload = false;
+                    break;
+            }
+            
+            $stream = fopen($tmpImagePath, 'r');
+            
+            $response = new \Zend\Http\Response\Stream();
+            $response->getHeaders()->addHeaders(array(
+                'Content-type' => 'image/' . $type,
+                'Content-Disposition' => 'inline; filename="' . $filename,
+                'Pragma' => 'Public',
+                'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
+                'Expires' => date(DATE_RFC822, strtotime("7 day"))
+            ));
+            
+            if ($forceDownload) {
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Disposition' => 'attachment; filename="' . $filename
+                ));
+            } else {
+                $response->getHeaders()->addHeaders(array(
+                    'Content-Disposition' => 'inline; filename="' . $filename
+                ));
+            }
+            $response->setStream($stream);
+            return $response;
+        } else {
+            throw new \Rubedo\Exceptions\User("No Image Given", "Exception80");
+        }
+    }
+
     function indexAction()
     {
         $now = Manager::getService('CurrentTime')->getCurrentTime();
@@ -62,7 +173,7 @@ class ImageController extends AbstractActionController
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             
-            $filePath = sys_get_temp_dir() . '/' . $fileId . '_' . $version;
+            $filePath = $this->getTempImagesPaths() . '/' . $fileId . '_' . $version;
             if (! is_file($filePath) || $now - filemtime($filePath) > 7 * 24 * 3600) {
                 $obj->write($filePath);
             }
@@ -85,7 +196,7 @@ class ImageController extends AbstractActionController
             $type = strtolower($extension);
             $type = ($type == 'jpg') ? 'jpeg' : $type;
             $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)) . '_' . basename($filePath); // str_replace('/', '_', $filePath);
-            $tmpImagePath = sys_get_temp_dir() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
+            $tmpImagePath = $this->getTempImagesPaths() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
                 

@@ -7,6 +7,7 @@
 		<mkdir dir="${project.basedir}/cache/htmlpurifier"/>
 		<mkdir dir="${project.basedir}/cache/zend"/>
 		<mkdir dir="${project.basedir}/cache/config"/>
+		<mkdir dir="${project.basedir}/cache/images"/>
 		<mkdir dir="${project.basedir}/log"/>
 		
 		<chmod file="${project.basedir}/cache" mode="777"/>
@@ -14,6 +15,7 @@
 		<chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
 		<chmod file="${project.basedir}/cache/zend" mode="777"/>
 		<chmod file="${project.basedir}/cache/config" mode="777"/>
+		<chmod file="${project.basedir}/cache/images" mode="777"/>
 		<chmod file="${project.basedir}/log" mode="777"/>
 		<chmod file="${project.basedir}/config/autoload" mode="777"/>
 		<mkdir dir="${project.basedir}/public/captcha"/>
