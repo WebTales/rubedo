@@ -32,7 +32,7 @@ class XhrGetPageUrlController extends AbstractActionController
     public function indexAction ()
     {
         $pageId = $this->params()->fromPost('page-id');
-        $locale = $this->params()->fromPost('locale');
+        $locale = $this->params()->fromPost('locale',$this->params()->fromPost('workingLanguage'));
         if (! $pageId) {
             throw new \Rubedo\Exceptions\User('This action needs a page-id as argument.', "Exception12");
         }
