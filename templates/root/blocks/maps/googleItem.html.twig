@@ -3,7 +3,7 @@
 
 	<div class="pull-left">
 		{% if content.image %} <img alt="" class="img-rounded"
-			src="/dam?media-id={{content.image}}&amp;width=100&amp;height=60&amp;mode=crop" />
+			src="{{ imageUrl(content.image,100,60) }}" />
 		{% endif %}
 	</div>
 

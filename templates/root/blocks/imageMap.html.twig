@@ -1,7 +1,7 @@
 {% extends "@Root/block.html.twig" %}
 
 {% block mainContent %}
-<img src="{{ baseUrl }}/dam?media-id={{ image }}" usemap="#{{ prefix }}map">
+<img src="{{ imageUrl(image) }}" usemap="#{{ prefix }}map">
 
 <map name="{{ prefix }}map">
 {% for mapElement in map %}

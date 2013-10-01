@@ -2,7 +2,7 @@
 				<td><h3><a href="{{ displayUrl(result.id) }}">{{ result.fields.text }}</a></h3>
 				<div class="pull-left thumbnail-rubedo">{% if result.fields.image %} <img
 				alt="" class="imageLeft"
-				src="/dam?media-id={{result.fields.image}}&amp;width=80&amp;height=80&amp;mode=boxed" /> {% endif %}</div>
+				src="{{ imageUrl(result.fields.image,80,80,boxed) }}" /> {% endif %}</div>
 				{% if result.fields.summary %}
 				<p>{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}

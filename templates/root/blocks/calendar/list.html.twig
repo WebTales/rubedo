@@ -9,12 +9,12 @@
 	                {% if content.image[0] != "" %}
             	        <img alt=""
             			class="img-rounded"
-            			src="/dam?media-id={{content.image[0]}}&amp;width=100&amp;height=60&amp;mode=crop" />
+            			src="{{ imageUrl(content.image[0],100,60) }}" />
         			{% endif %}
         		{% else %}
         		    <img alt=""
         			class="img-rounded"
-        			src="/dam?media-id={{content.image}}&amp;width=100&amp;height=60&amp;mode=crop" />
+        			src="{{ imageUrl(content.image[0],100,60) }}" />
         		{% endif %}
 			{% endif %}
 	    </div>
