@@ -169,7 +169,7 @@ class FileController extends AbstractActionController
     public function getThumbnailAction ()
     {
         $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png');
-        switch ($this->getParam('file-type')) {
+        switch ($this->params()->fromQuery('file-type')) {
             case 'Audio':
                 $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/speaker.png');
                 break;
