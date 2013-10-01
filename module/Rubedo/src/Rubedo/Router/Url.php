@@ -622,4 +622,31 @@ class Url implements IUrl
             return null;
         }
     }
+
+    public function mediaUrl($mediaId)
+    {}
+
+    public function thumbnailUrl($mediaId)
+    {}
+
+    public function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
+    {
+        $queryArray = array();
+        $queryArray['media-id'] = $mediaId;
+        if ($width) {
+            $queryArray['width'] = $width;
+        }
+        if ($height) {
+            $queryArray['height'] = $height;
+        }
+        if ($mode) {
+            $queryArray['mode'] = $mode;
+        }
+        $queryPart = array();
+        foreach ($queryArray as $key => $value) {
+            $queryPart[] = $key . '=' . $value;
+        }
+        $url = '/dam?' . implode('&', $queryPart);
+        return $url;
+    }
 }
