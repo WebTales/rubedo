@@ -87,7 +87,7 @@ class ProtectedResourceController extends AbstractController
         $mailingListService = \Rubedo\Services\Manager::getService("MailingList");
         
         // Get email
-        $this->email = $this->getParam("email");
+        $this->email = $this->params()->fromPost("email");
         
         // Validate email
         if ($emailValidator->isValid($this->email)) {
@@ -115,11 +115,10 @@ class ProtectedResourceController extends AbstractController
         
         $fileUrl = $protocol . '://' . Manager::getService('Sites')->getHost($this->siteId) . '?tk=' . $tk;
         
-        // $resultArray = array('success'=>true,'msg'=>'Un courriel contenant le lien de téléchargement vous a été envoyé.');
         if (! Mailer::isActive()) {
             $resultArray = array(
                 'success' => true,
-                'msg' => '<a href="' . $fileUrl . '">' . Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.Download") . 'Cliquez pour votre téléchargement</a>'
+                'msg' => '<a href="' . $fileUrl . '">' . Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.Download") . '</a>'
             );
         } else {
             $resultArray = $this->_sendEmail($fileUrl);

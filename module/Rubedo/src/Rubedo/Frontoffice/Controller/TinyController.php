@@ -18,6 +18,7 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Debug\Debug;
 
 /**
  * Controller Rendering TinyUrl accessed resources
@@ -51,8 +52,8 @@ class TinyController extends AbstractActionController
                 'action' => $tinyUrlObj['action'],
                 'controller' => $tinyUrlObj['controller']
             );
-            array_merge($redirectParams, $tinyUrlObj['params']);
-            return $this->redirect()->toRoute(null, $redirectParams);
+            $options = array('query'=>$tinyUrlObj['params']);
+            return $this->redirect()->toRoute('frontoffice/default', $redirectParams,$options);
         }
     }
 }

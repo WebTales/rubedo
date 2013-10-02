@@ -115,7 +115,8 @@ class IndexController extends AbstractActionController
                 'action' => 'index',
                 'controller' => 'tiny'
             );
-            return $this->redirect()->toRoute(null, $redirectParams);
+            $options = array('query'=>$this->params()->fromQuery());
+            return $this->redirect()->toRoute('frontoffice/default', $redirectParams,$options);
         }
         
         $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];

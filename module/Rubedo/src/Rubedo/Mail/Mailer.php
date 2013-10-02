@@ -34,7 +34,7 @@ class Mailer implements IMailer
      * Configuration for swift mail
      * @var array
      */
-    protected static $options = array();
+    protected static $options;
     
     
     
@@ -95,7 +95,7 @@ class Mailer implements IMailer
      */
     public static function lazyloadConfig ()
     {
-        $config = Manager::getService('config');
+        $config = Manager::getService('Application')->getConfig();
         if (isset($config['swiftmail'])) {
             self::setOptions($config['swiftmail']);
         }else{
