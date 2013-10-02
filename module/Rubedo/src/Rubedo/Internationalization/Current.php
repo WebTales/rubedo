@@ -119,24 +119,27 @@ class Current implements ICurrent
         return AbstractLocalizableCollection::getWorkingLocale();
     }
 
-    public function getBrowserLanguages()
+    public function getBrowserLanguages ()
     {
         // init browser languages
         $browserLanguages = array();
-        $httpValue = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        if (! empty($httpValue)) {
-            $languages = explode(',', $httpValue);
-            foreach ($languages as $language) {
-                list ($locale) = explode(';', $language);
-                
-                $browserLanguages[] = $locale;
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            $httpValue = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            if (! empty($httpValue)) {
+                $languages = explode(',', $httpValue);
+                foreach ($languages as $language) {
+                    list ($locale) = explode(';', $language);
+                    
+                    $browserLanguages[] = $locale;
+                }
             }
+            if (empty($browserLanguages)) {
+                $browserLanguages = array(
+                    'en'
+                );
+            }  
         }
-        if (empty($browserLanguages)) {
-            $browserLanguages = array(
-                'en'
-            );
-        }
+        
         return $browserLanguages;
     }
 }
