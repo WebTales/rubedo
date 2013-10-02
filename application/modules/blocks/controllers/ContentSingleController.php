@@ -49,7 +49,7 @@ class Blocks_ContentSingleController extends Blocks_AbstractController
         if (isset($mongoId) && $mongoId != 0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
             if ($content) {
-                
+                $data = $content['fields'];
                 $termsArray = array();
                 if (isset($content['taxonomy'])) {
                     if (is_array($content['taxonomy'])) {
