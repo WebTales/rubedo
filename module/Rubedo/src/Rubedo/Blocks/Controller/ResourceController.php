@@ -49,12 +49,7 @@ class ResourceController extends AbstractController
             $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
         }
         if (isset($blockConfig['documentId'])) {
-            $params = array(
-                'media-id='.$blockConfig['documentId'],
-                'attachment=download'
-            );
-            
-            $output['downloadUrl'] =$this->url()->fromRoute("frontoffice/default",array('controller'=>'dam')).'?'.implode('&amp;',$params);
+            $output['downloadUrl'] = Manager::getService('Url')->mediaUrl($blockConfig['documentId'],true);
         }
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {

@@ -11,7 +11,7 @@
 			</tr>
 			{% else %}
 			<tr>
-				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
+				<td><h3><a href="{{ mediaUrl(result.id) }}">{{ result.title }}</a></h3>
 				{% if result.fields.summary %}
 				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}

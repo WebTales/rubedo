@@ -1,5 +1,5 @@
 {% set doc = getDam(contentId) %}
 
 <p>
-    <a href="/dam/index/media-id/{{ contentId }}/attachment/download">{{ doc.title }}</a>
+    <a href="{{ mediaUrl(contentId,true) }}">{{ doc.title }}</a>
 </p>

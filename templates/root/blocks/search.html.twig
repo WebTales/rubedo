@@ -199,7 +199,7 @@
 			</tr>
 			{% else %}
 			<tr>
-				<td><h3><a href="/dam?media-id={{ result.id }}">{{ result.title }}</a></h3>
+				<td><h3><a href="{{ mediaUrl(result.id) }}">{{ result.title }}</a></h3>
 				<div class="progress progress-success search-progress">
 					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">
 						{{ result.score }}%
@@ -208,7 +208,7 @@
 				<br />
 				<br />
 				{% if result.summary %}
-				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.summary|cleanHtml }}</p>
+				<p><img src="{{ mediaThumbnailUrl(result.id) }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.summary|cleanHtml }}</p>
 				{% endif %}
 				<br />
 				{{"Contents.PublishedBy"|fotrans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"Contents.The"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>

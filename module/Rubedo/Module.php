@@ -258,7 +258,9 @@ class Module
     public function preDispatch(MvcEvent $event)
     {
         
-        $controller = $event->getRouteMatch()->getParam('controller');
+        if($event->getRouteMatch()){
+            $controller = $event->getRouteMatch()->getParam('controller');
+        }
         $message = 'routing to '.$controller;
         Manager::getService('Logger')->debug($message);
         if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
@@ -286,7 +288,12 @@ class Module
 
     public function postDispatch(MvcEvent $event)
     {
-        $controller = $event->getRouteMatch()->getParam('controller');
+        if($event->getRouteMatch()){
+            $controller = $event->getRouteMatch()->getParam('controller');
+        }else{
+            return;
+        }
+        
         if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
             if($this->pageHit){
                 $message = 'returning cache for '.$controller;

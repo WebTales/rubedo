@@ -624,11 +624,36 @@ class Url implements IUrl
         }
     }
 
-    public function mediaUrl($mediaId)
-    {}
+    public function mediaUrl($mediaId,$forceDownload = null)
+    {
+        $media = Manager::getService('Dam')->findById($mediaId);
+        if(!$media){
+            return '';
+        }
+        $fileService = Manager::getService('Files');
+        $obj = $fileService->findById($media['originalFileId']);
+        if(!$obj){
+            return '';
+        }
+        $meta = $obj->file;
+        $version = $meta['version'];
+        $fileName = $meta['filename'];
+        $download = $forceDownload?'download':'inline';
+        $url = "/access-dam/$mediaId/$version/$download/$fileName";
+        return $url;
+        
+        $url = '/dam?media-id='.$mediaId;
+        if($forceDownload == true){
+            $url .= '&attachment=download';
+        }
+        return $url;
+    }
 
-    public function thumbnailUrl($mediaId)
-    {}
+    public function mediaThumbnailUrl($mediaId)
+    {
+        $url = '/dam/get-thumbnail?media-id='.$mediaId;
+        return $url;
+    }
 
     public function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
     {

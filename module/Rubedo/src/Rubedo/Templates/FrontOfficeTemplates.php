@@ -162,6 +162,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('isInRootline', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::isInRootline'));
         $this->_twig->addFunction('getMediaType', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getMediaType'));
         $this->_twig->addFunction('imageUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::imageUrl'));
+        $this->_twig->addFunction('mediaUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaUrl'));
+        $this->_twig->addFunction('mediaThumbnailUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaThumbnailUrl'));
         $this->_twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
     }
 
@@ -369,6 +371,16 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public static function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
     {
         return Manager::getService('Url')->imageUrl($mediaId, $width, $height, $mode);
+    }
+    
+    public static function mediaUrl($mediaId, $forceDownload = null)
+    {
+        return Manager::getService('Url')->mediaUrl($mediaId, $forceDownload);
+    }
+    
+    public static function mediaThumbnailUrl($mediaId)
+    {
+        return Manager::getService('Url')->mediaThumbnailUrl($mediaId);
     }
 
     public static function getPageTitle($contentId)

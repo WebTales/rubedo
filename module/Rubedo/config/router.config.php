@@ -169,6 +169,30 @@ return array(
             )
         ),
         // themeResource route : prefix by theme
+        'mediaFromDam' => array(
+            'type' => 'Literal',
+            'options' => array(
+                'route' => '/access-dam',
+                'defaults' => array(
+                    '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
+                    'controller' => 'Dam',
+                    'action' => 'rewrite'
+                )
+            ),
+            'may_terminate' => true,
+            'child_routes' => array(
+                'default' => array(
+                    'type' => 'Segment',
+                    'options' => array(
+                        'route' => '/:mediaId/:version/:download/:filename',
+                        '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
+                        'constraints' => array(),
+                        'defaults' => array()
+                    )
+                )
+            )
+        ),
+        // themeResource route : prefix by theme
         'themeResource' => array(
             'type' => 'Literal',
             'options' => array(

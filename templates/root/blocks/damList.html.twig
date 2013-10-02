@@ -14,8 +14,8 @@
 			{% if result.objectType == 'content' %}
 			{% else %}
 			<li class="media">
-			<a class="pull-left" href="/dam?media-id={{ result.id }}">
-		    	<img class="media-object" height="50" width="50" src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'>
+			<a class="pull-left" href="{{ mediaUrl(result.id) }}">
+		    	<img class="media-object" height="50" width="50" src="{{ mediaThumbnailUrl(result.id)) }}" alt='{{ result.title }}'>
 		    </a>
 		    <div class="media-body">
       			<h4 class="media-heading">{{ result.title }}</h4>
