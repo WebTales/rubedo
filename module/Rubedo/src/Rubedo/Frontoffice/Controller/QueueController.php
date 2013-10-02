@@ -59,6 +59,6 @@ class QueueController extends AbstractActionController
  
         $callBack = array($service,$methodName);
         $return = call_user_func_array($callBack, $vars);
-        return new JsonModel($return);
+        return new JsonModel(array($return));
     }
 }
