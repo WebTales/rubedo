@@ -17,6 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\ITinyUrl, WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle TinyUrl
@@ -53,9 +54,8 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
      */
     public function findByUrl ($url)
     {
-        $cond = array();
-        $cond['url'] = $url;
-        return $this->_dataService->findOne($cond);
+        $filter = Filter::factory('Value')->setName('url')->setValue($url);
+        return $this->_dataService->findOne($filter);
     }
 
     /**
@@ -147,13 +147,7 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
      */
     public function creamDamAccessLinkKey ($damId)
     {
-        $action = 'index';
-        $controller = "dam";
-        $module = "default";
-        $params = array(
-            'media-id' => $damId,
-            'attachment' => "download"
-        );
-        return $this->createFromParameters($action, $controller, $module, $params, true);
+        $url = Manager::getService('Url')->mediaUrl($damId,true);
+        return $this->createUrlAlias($url,true);
     }
 }
