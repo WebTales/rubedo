@@ -156,9 +156,9 @@ class JsonExceptionStrategy extends ExceptionStrategy
         $e->setResult(new JsonModel($modelData));
         $e->setError(false);
         
-        $response->getHeaders()->addHeaders([
+        $response->getHeaders()->addHeaders(array(
             ContentType::fromString('Content-type: application/json')
-        ]);
+        ));
     }
 
     public function serializeException($exception)
