@@ -139,10 +139,14 @@ class IndexController extends Zend_Controller_Action
         }
         
         Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
-        
-        // init browser languages
-        $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
-        $browserLanguages = array_keys($zend_locale->getBrowser());
+            
+            // init browser languages
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
+            $browserLanguages = array_keys($zend_locale->getBrowser());
+        } else {
+            $browserLanguages = array();
+        }
         
         // context
         $cookieValue = $this->getRequest()->getCookie('locale');

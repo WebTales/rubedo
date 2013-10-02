@@ -56,9 +56,13 @@ abstract class Blocks_AbstractController extends Zend_Controller_Action
         $this->siteId = $currentPage['site'];
         
         if($this->getRequest()->isXmlHttpRequest()){
-            //init browser languages
-            $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
-            $browserLanguages = array_keys($zend_locale->getBrowser());
+                // init browser languages
+            if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                $zend_locale = new Zend_Locale(Zend_Locale::BROWSER);
+                $browserLanguages = array_keys($zend_locale->getBrowser());
+            } else {
+                $browserLanguages = array();
+            }
             
             $cookieValue = $this->getRequest()->getCookie('locale');
             Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'],null,$browserLanguages,$cookieValue);
