@@ -51,16 +51,16 @@ return array(
                     'constraints' => array(
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
-                    ),
+                    )
                 )
             ),
-            'may_terminate' => true,
+            'may_terminate' => true
         ),
         // Blocks controller (for Ajax Access)
         'blocks' => array(
             'type' => 'Segment',
             'options' => array(
-                'route' => '/blocks/:locale/[:controller[/:action]]',
+                'route' => '/blocks/[:locale/[:controller[/:action]]]',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\Blocks\Controller',
                     'constraints' => array(
@@ -71,7 +71,7 @@ return array(
                     'action' => 'index'
                 )
             ),
-            'may_terminate' => true,
+            'may_terminate' => true
         ),
         // Backoffice route : prefix by backoffice
         'backoffice' => array(
