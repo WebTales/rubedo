@@ -3,7 +3,7 @@
 
 <div style="width:100%;margin:1em 0;">
     <div id="video_{{ prefix }}{% if number %}-{{ number }}{% endif %}" class="videoPlaceholder" 
-        data-videoFile = "/dam.{% if extension[1] is defined %}{{ extension[1] }}{% else %}mp4{% endif %}?media-id={{ contentId }}"
+        data-videoFile = "{{ mediaUrl(contentId) }}"
         data-width = "500"
         data-controls = true
         data-autostart = false

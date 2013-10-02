@@ -641,12 +641,6 @@ class Url implements IUrl
         $download = $forceDownload?'download':'inline';
         $url = "/access-dam/$mediaId/$version/$download/$fileName";
         return $url;
-        
-        $url = '/dam?media-id='.$mediaId;
-        if($forceDownload == true){
-            $url .= '&attachment=download';
-        }
-        return $url;
     }
 
     public function mediaThumbnailUrl($mediaId)

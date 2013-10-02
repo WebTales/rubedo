@@ -6,7 +6,7 @@
     
     	<div style="max-width:{{ audioWidth }};margin:1em 0;">
             <div id="audio_{{ prefix }}" class="audioPlaceholder"
-            data-audioFile="/dam.{{ extension }}?media-id={{ audioFile }}"
+            data-audioFile="{{ mediaUrl(audioFile) }}"
             data-controls={% if audioControls %}true{% else %}false{% endif %}
             {% if audioLoop %}data-repeat=true{% endif %}
             data-autostart={% if audioAutoPlay %}true{% else %}false{% endif %}

@@ -13,7 +13,7 @@
 			<tr>
 				<td><h3><a href="{{ mediaUrl(result.id) }}">{{ result.title }}</a></h3>
 				{% if result.fields.summary %}
-				<p><img src="/dam/get-thumbnail?media-id={{ result.id }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.fields.summary|cleanHtml }}</p>
+				<p><img src="{{ mediaThumbnailUrl(result.id) }}" alt='{{ result.title }}'> &nbsp;&nbsp;{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}
 				<span class="label">{{ result.type }}</span> {{"Contents.PublishedBy"|fotrans}} <a class="cursor-pointer" onClick="window.updateFacets('author','{{ result.lastUpdateUser.id }}',true)">{{ result.lastUpdateUser.fullName }}</a> {{"Contents.On"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
