@@ -825,8 +825,17 @@ class DataIndex extends DataAbstract implements IDataIndex
         $type = Manager::getService($serviceType)->findById($id);
               
         // Index all dam or contents from given type
+        $useQueue = class_exists("ZendJobQueue");
         
-        if (!class_exists("ZendJobQueue")) {
+        if ($useQueue) {
+            try {
+                $queue = new \ZendJobQueue();
+            } catch (\Exception $e) {
+                $useQueue = false;
+            }
+        }
+        
+        if (! $useQueue) {
                
             do {
                 
@@ -846,7 +855,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             
             $totalToBeIndexed = $dataService->count($filter);
 
-            $queue = new \ZendJobQueue();
             $start = 0;
 
             // Push jobs in queue

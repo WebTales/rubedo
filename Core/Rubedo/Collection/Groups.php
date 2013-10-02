@@ -134,12 +134,8 @@ class Groups extends AbstractCollection implements IGroups
      */
     public function destroy (array $obj, $options = array())
     {
-        $deleteCond = array(
-            '_id' => array(
-                '$in' => $this->_getChildToDelete($obj['id'])
-            )
-        );
-        
+
+        $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
         $resultArray = $this->_dataService->customDelete($deleteCond);
         
         if ($resultArray['ok'] == 1) {

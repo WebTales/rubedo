@@ -44,6 +44,8 @@ class CssController extends Zend_Controller_Action
         $this->getResponse()->clearRawHeaders();
         $this->getResponse()->setHeader('Content-Type', 'text/css');
         $this->getResponse()->setHeader('Pragma', 'Public',true);
+        $this->getResponse()->setHeader('Cache-Control', 'public, max-age=' . 7 * 24 * 3600, true);
+        $this->getResponse()->setHeader('Expires', date(DATE_RFC822, strtotime("7 day")), true);
         $this->getResponse()->setBody($compiledCss);
         $this->getResponse()->sendHeaders();
     }

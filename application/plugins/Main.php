@@ -61,7 +61,7 @@ class Application_Plugin_Main extends Zend_Controller_Plugin_Abstract
             ->getApplication()
             ->getOptions();
         
-        if ($module != 'install' && !$controller=='error' && (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished')) {
+        if ($module != 'install' && $controller!='error' && (! isset($applicationOptions['installed']) || ! isset($applicationOptions['installed']['status']) || $applicationOptions['installed']['status'] !== 'finished')) {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
             $redirector->gotoSimple('index', 'index', 'install');
         }
