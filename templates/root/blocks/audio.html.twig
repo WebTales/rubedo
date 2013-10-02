@@ -4,7 +4,7 @@
 
     {% if audioFile %}
     
-    	<div style="max-width:{{ audioWidth }};margin:1em 0;">
+    	<div style="max-width:100%;margin:1em 0;">
             <div id="audio_{{ prefix }}" class="audioPlaceholder"
             data-audioFile="{{ mediaUrl(audioFile) }}"
             data-controls={% if audioControls %}true{% else %}false{% endif %}

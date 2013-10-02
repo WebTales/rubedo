@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
+use \MongoGridFSFile;
 
 /**
  *

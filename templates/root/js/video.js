@@ -49,9 +49,8 @@ function loadAudio() {
 	} else {
 		config.controls = false;
 	}
-	if (jQuery(this).attr('data-width')) {
-		config.width = jQuery(this).attr('data-width');
-	}
+		config.width = '100%';
+	
 	if (jQuery(this).attr('data-repeat')) {
 		config.repeat = jQuery(this).attr('data-repeat');
 	}
@@ -60,4 +59,5 @@ function loadAudio() {
 	}
 	//return false;
 	jwplayer(id).setup(config);
+	//jQuery(this).replaceWith('<audio controls><source src="'+config.file+'" type="'+jQuery(this).attr('data-contentType')+'"></audio>');
 }
