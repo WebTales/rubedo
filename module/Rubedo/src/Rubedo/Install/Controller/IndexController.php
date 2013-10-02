@@ -122,7 +122,7 @@ class IndexController extends AbstractActionController
                 'controller' => 'index',
                 'action' => $this->config['installed']['action']
             );
-            return $this->redirect()->toRoute('install/default', $redirectParams);
+            return $this->redirect()->toRoute('install', $redirectParams);
         }
         
         $this->viewData->localConfigFile = $this->installObject->getConfigFilePath();
@@ -168,7 +168,7 @@ class IndexController extends AbstractActionController
             'controller' => 'index',
             'action' => 'index'
         );
-        return $this->redirect()->toRoute('install/default', $redirectParams);
+        return $this->redirect()->toRoute('install', $redirectParams);
     }
 
     /**
@@ -435,7 +435,7 @@ class IndexController extends AbstractActionController
         }
         $dbForm->setData($this->params()
             ->fromPost());
-        $formUrl = $this->url()->fromRoute('install/default', array(
+        $formUrl = $this->url()->fromRoute('install', array(
             'controller' => 'index',
             'action' => 'set-local-domains'
         ));

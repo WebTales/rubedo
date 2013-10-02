@@ -44,7 +44,7 @@ class NavObject
             'label' => 'Database',
             'action' => 'set-db',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         
@@ -52,7 +52,7 @@ class NavObject
             'label' => 'ElasticSearch',
             'action' => 'set-elastic-search',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         
@@ -60,7 +60,7 @@ class NavObject
             'label' => 'Languages',
             'action' => 'define-languages',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         
@@ -68,7 +68,7 @@ class NavObject
             'label' => 'Contents',
             'action' => 'set-db-contents',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         
@@ -76,7 +76,7 @@ class NavObject
             'label' => 'Accounts',
             'action' => 'set-admin',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         
@@ -86,7 +86,7 @@ class NavObject
             'label' => 'Mailer',
             'action' => 'set-mailer',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         
@@ -94,7 +94,7 @@ class NavObject
             'label' => 'Local domains',
             'action' => 'set-local-domains',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         
@@ -102,7 +102,7 @@ class NavObject
             'label' => 'Application settings',
             'action' => 'set-php-settings',
             'controller' => 'index',
-            'route'=>'install/default'
+            'route'=>'install'
         ));
         $container->addPage($page);
         

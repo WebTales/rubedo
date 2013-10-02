@@ -41,57 +41,37 @@ return array(
         ),
         // install route : prefix by install
         'install' => array(
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => array(
-                'route' => '/install',
+                'route' => '/install/[:controller[/:action]]',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\Install\Controller',
                     'controller' => 'Index',
-                    'action' => 'index'
+                    'action' => 'index',
+                    'constraints' => array(
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ),
                 )
             ),
             'may_terminate' => true,
-            'child_routes' => array(
-                'default' => array(
-                    'type' => 'Segment',
-                    'options' => array(
-                        'route' => '/[:controller[/:action]]',
-                        '__NAMESPACE__' => 'Rubedo\Install\Controller',
-                        'constraints' => array(
-                            'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
-                        ),
-                        'defaults' => array()
-                    )
-                )
-            )
         ),
         // Blocks controller (for Ajax Access)
         'blocks' => array(
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => array(
-                'route' => '/blocks',
+                'route' => '/blocks/:locale/[:controller[/:action]]',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\Blocks\Controller',
+                    'constraints' => array(
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ),
                     'controller' => 'Index',
                     'action' => 'index'
                 )
             ),
             'may_terminate' => true,
-            'child_routes' => array(
-                'default' => array(
-                    'type' => 'Segment',
-                    'options' => array(
-                        'route' => '/:locale/[:controller[/:action]]',
-                        '__NAMESPACE__' => 'Rubedo\Blocks\Controller',
-                        'constraints' => array(
-                            'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
-                        ),
-                        'defaults' => array()
-                    )
-                )
-            )
         ),
         // Backoffice route : prefix by backoffice
         'backoffice' => array(
@@ -124,120 +104,65 @@ return array(
         'AppExtension' => array(
             'type' => 'Segment',
             'options' => array(
-                'route' => '/backoffice/app/appextensions',
+                'route' => '/backoffice/app/appextensions/:app-name/:filepath{-}',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\Backoffice\Controller',
                     'controller' => 'AppExtension',
                     'action' => 'get-file'
                 )
             ),
-            'may_terminate' => true,
-            'child_routes' => array(
-                'default' => array(
-                    'type' => 'Segment',
-                    'options' => array(
-                        'route' => '/:app-name/:filepath{-}',
-                        '__NAMESPACE__' => 'Rubedo\Blocks\Controller',
-                        'constraints' => array(),
-                        'defaults' => array()
-                    )
-                )
-            )
+            'may_terminate' => true
         ),
         // themeResource route : prefix by theme
         'imageFromDam' => array(
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => array(
-                'route' => '/generate-image',
+                'route' => '/generate-image/:mediaId/:version/:width/:height/:mode/:filename',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
                     'controller' => 'Image',
                     'action' => 'generate-dam'
                 )
             ),
-            'may_terminate' => true,
-            'child_routes' => array(
-                'default' => array(
-                    'type' => 'Segment',
-                    'options' => array(
-                        'route' => '/:mediaId/:version/:width/:height/:mode/:filename',
-                        '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
-                        'constraints' => array(),
-                        'defaults' => array()
-                    )
-                )
-            )
+            'may_terminate' => true
         ),
         // themeResource route : prefix by theme
         'mediaFromDam' => array(
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => array(
-                'route' => '/access-dam',
+                'route' => '/access-dam/:mediaId/:version/:download/:filename',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
                     'controller' => 'Dam',
                     'action' => 'rewrite'
                 )
             ),
-            'may_terminate' => true,
-            'child_routes' => array(
-                'default' => array(
-                    'type' => 'Segment',
-                    'options' => array(
-                        'route' => '/:mediaId/:version/:download/:filename',
-                        '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
-                        'constraints' => array(),
-                        'defaults' => array()
-                    )
-                )
-            )
+            'may_terminate' => true
         ),
         // themeResource route : prefix by theme
         'themeResource' => array(
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => array(
-                'route' => '/theme',
+                'route' => '/theme/:theme/:filepath{*}',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
                     'controller' => 'Theme',
                     'action' => 'index'
                 )
             ),
-            'may_terminate' => true,
-            'child_routes' => array(
-                'default' => array(
-                    'type' => 'Segment',
-                    'options' => array(
-                        'route' => '/:theme/:filepath{*}',
-                        '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
-                        'constraints' => array(),
-                        'defaults' => array()
-                    )
-                )
-            )
+            'may_terminate' => true
         ),
         'customTheme' => array(
-            'type' => 'Literal',
+            'type' => 'Segment',
             'options' => array(
-                'route' => '/theme/custom',
+                'route' => '/theme/custom/:id/:version/theme.css',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
                     'controller' => 'Css',
                     'action' => 'index'
                 )
             ),
-            'may_terminate' => true,
-            'child_routes' => array(
-                'default' => array(
-                    'type' => 'Segment',
-                    'options' => array(
-                        'route' => '/:id/:version/theme.css',
-                        '__NAMESPACE__' => 'Rubedo\Frontoffice\Controller',
-                        'constraints' => array(),
-                        'defaults' => array()
-                    )
-                )
-            )
+            'may_terminate' => true
         )
     )
 );

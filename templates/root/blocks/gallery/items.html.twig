@@ -13,16 +13,16 @@
         <div class="pagination pagination-centered show-rubedo clear-both margin-auto">
           <ul>
           {% if previous ==true %}
-        	<li><a href="{{url({'page':1,"prefix":prefix},true)}}" onclick="changePage({{1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'blocks/default')}}');return false;">&lsaquo; &lsaquo;</a></li>
+        	<li><a href="{{url({'page':1,"prefix":prefix},true)}}" onclick="changePage({{1}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'blocks')}}');return false;">&lsaquo; &lsaquo;</a></li>
         	{% endif %}
           {% for page in 1..maxPage %}
                 {% if loop.index in currentPage-2..currentPage+2 %}
-            	<li {% if loop.index==currentPage %}class="active"{% else %}class=""{% endif %}><a href="{{url({'page':loop.index,"prefix":prefix},true)}}" onclick="changePage({{loop.index}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'blocks/default')}}');return false;">{{ loop.index }}</a></li>
+            	<li {% if loop.index==currentPage %}class="active"{% else %}class=""{% endif %}><a href="{{url({'page':loop.index,"prefix":prefix},true)}}" onclick="changePage({{loop.index}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'blocks')}}');return false;">{{ loop.index }}</a></li>
         	   {% endif %}
           {% endfor %}
         
           {% if next ==true %}
-        	<li><a  href="{{url({'page':maxPage,"prefix":prefix},true)}}" onclick="changePage({{maxPage}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'blocks/default')}}');return false;">&rsaquo; &rsaquo;</a></li>
+        	<li><a  href="{{url({'page':maxPage,"prefix":prefix},true)}}" onclick="changePage({{maxPage}}, {{allDamCount}}, {{pageSize}}, {{maxPage}},'{{ prefix }}',{% if image.width %}{{ image.width }}{% else %}null{% endif %},{% if image.height %}{{ image.height }}{% else %}null{% endif %},'{{ jsonQuery|e('js') }}','{{url({'module':'blocks', 'controller':'gallery', 'action':'xhr-get-images'},null,null,'blocks')}}');return false;">&rsaquo; &rsaquo;</a></li>
         	{% endif %}
         	  </ul>
         </div>

@@ -65,7 +65,7 @@ $view = $child->getVariables();
 							href="<?php echo $view['previous']->getHref();?>">&larr; <?php echo $view['previous']->getLabel();?></a></li>
                         	<?php }else{?>
                         	    <li class="previous"><a
-							href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'start-wizard','module'=>'install'),null,true);?>">&larr;
+							href="<?php echo $this->url('install',array('controller'=>'index','action'=>'start-wizard','module'=>'install'),null,true);?>">&larr;
 								Intro</a></li>
                         	<?php } ?>
                         	<?php if($view['isReady']){?>
@@ -74,7 +74,7 @@ $view = $child->getVariables();
 							href="<?php echo $view['next']->getHref();?>"><?php echo $view['next']->getLabel();?> &rarr;</a></li>
                             	<?php }else{?>
                             	    <li class="next"><a
-							href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish
+							href="<?php echo $this->url('install',array('controller'=>'index','action'=>'finish-wizard','module'=>'install'),null,true);?>">Finish
 								&rarr;</a></li>
                             	<?php } ?>
                         	<?php } ?>

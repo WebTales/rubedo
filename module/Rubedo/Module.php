@@ -32,11 +32,12 @@ use Rubedo\Services\Cache;
 
 class Module
 {
+
     protected static $cachePageIsActive = false;
-    
+
     protected $pageHit = false;
 
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap (MvcEvent $e)
     {
         // register serviceLocator for global access by Rubedo
         Manager::setServiceLocator($e->getApplication()->getServiceManager());
@@ -45,7 +46,7 @@ class Module
         $eventManager = $e->getApplication()->getEventManager();
         Events::setEventManager($eventManager);
         
-        $message = 'Running Rubedo for '.$e->getRequest()->getUri();
+        $message = 'Running Rubedo for ' . $e->getRequest()->getUri();
         Manager::getService('Logger')->info($message);
         
         $moduleRouteListener = new ModuleRouteListener();
@@ -70,7 +71,7 @@ class Module
         $exceptionStrategy->attach($application->getEventManager());
     }
 
-    public function setListeners(EventManager $eventManager)
+    public function setListeners (EventManager $eventManager)
     {
         // verify session and access right when dispatching
         $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
@@ -78,34 +79,37 @@ class Module
             'preRouting'
         ));
         
-        //add page cache (GET only, based onUser)
+        // add page cache (GET only, based onUser)
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
             $this,
             'preDispatch'
-        ),100);
+        ), 100);
         
         $eventManager->attach(MvcEvent::EVENT_FINISH, array(
             $this,
             'postDispatch'
-        ),-100);
+        ), - 100);
         
-        //handle URL caching
+        // handle URL caching
         $urlCacheService = Manager::getService('UrlCache');
         $eventManager->attach(Url::URL_TO_PAGE_READ_CACHE_PRE, array(
             $urlCacheService,
             'urlToPageReadCacheEvent'
-        ),-100);
+        ), - 100);
         
         $urlCacheService = Manager::getService('UrlCache');
         $eventManager->attach(Url::PAGE_TO_URL_READ_CACHE_PRE, array(
             $urlCacheService,
             'PageToUrlReadCacheEvent'
-        ),-100);
+        ), - 100);
         
-        $eventManager->attach(array(Url::URL_TO_PAGE_READ_CACHE_POST,Url::PAGE_TO_URL_READ_CACHE_POST), array(
+        $eventManager->attach(array(
+            Url::URL_TO_PAGE_READ_CACHE_POST,
+            Url::PAGE_TO_URL_READ_CACHE_POST
+        ), array(
             $urlCacheService,
             'urlToPageWriteCacheEvent'
-        ),100);
+        ), 100);
         
         // add some cache on HtmlCleaner method
         $eventManager->attach(HtmlCleaner::PRE_HTMLCLEANER, array(
@@ -155,12 +159,12 @@ class Module
         ), 10);
     }
 
-    public function getConfig()
+    public function getConfig ()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig()
+    public function getAutoloaderConfig ()
     {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
@@ -179,7 +183,7 @@ class Module
      * @param MvcEvent $event            
      * @throws \Rubedo\Exceptions\Access
      */
-    public function preRouting(MvcEvent $event)
+    public function preRouting (MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -204,73 +208,76 @@ class Module
         // @todo forward if no language initialized
         
         // check access
-        list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
-        $controllerName = strtolower($controllerName);
-        $moduleName = strtolower($moduleName);
-        $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;
-        if ($moduleName == 'install' || $moduleName == 'frontoffice') {
-            $hasAccess = true;
-        } else {
-            $aclService = Manager::getService('Acl');
-            $hasAccess = $aclService->hasAccess($ressourceName);
-        }
-        
-        if (! $hasAccess) {
-            $this->toDeadEnd($event, new AccessException('Can\'t access %1$s', "Exception30", $ressourceName));
-        }
-        
-        // check BO Token
-        $isBackoffice = strpos($controller, 'Rubedo\\Backoffice\\Controller') === 0;
-        $doNotCheckTokenControllers = array(
-            'Rubedo\\Backoffice\\Controller\\Acl',
-            'Rubedo\\Backoffice\\Controller\\XhrAuthentication',
-            'Rubedo\\Backoffice\\Controller\\Logout'
-        );
-        if ($isBackoffice && $event->getRequest()->isPost() && ! in_array($controller, $doNotCheckTokenControllers)) {
-            $user = Manager::getService('Session')->get('user');
-            $token = $event->getRequest()->getPost('token');
-            if (! isset($token)) {
-                $token = $event->getRequest()->getQuery('token');
+
+        if ($controller) {
+            
+            list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
+            $controllerName = strtolower($controllerName);
+            $moduleName = strtolower($moduleName);
+            $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;
+            if ($moduleName == 'install' || $moduleName == 'frontoffice') {
+                $hasAccess = true;
+            } else {
+                $aclService = Manager::getService('Acl');
+                $hasAccess = $aclService->hasAccess($ressourceName);
             }
             
-            if ($token !== $user['token']) {
-                $this->toDeadEnd($event, new AccessException("The token given in the request doesn't match with the token in session", "Exception6"));
+            if (! $hasAccess) {
+                $this->toDeadEnd($event, new AccessException('Can\'t access %1$s', "Exception30", $ressourceName));
             }
-        }
-        
-        if ($isBackoffice) {
-            // initialize localization for collections
-            $serviceLanguages = Manager::getService('Languages');
-            if ($serviceLanguages->isActivated()) {
-                $workingLanguage = $event->getRequest()->getPost('workingLanguage', false);
-                if (! $workingLanguage) {
-                    $workingLanguage = $event->getRequest()->getQuery('workingLanguage', null);
+            
+            // check BO Token
+            $isBackoffice = strpos($controller, 'Rubedo\\Backoffice\\Controller') === 0;
+            $doNotCheckTokenControllers = array(
+                'Rubedo\\Backoffice\\Controller\\Acl',
+                'Rubedo\\Backoffice\\Controller\\XhrAuthentication',
+                'Rubedo\\Backoffice\\Controller\\Logout'
+            );
+            if ($isBackoffice && $event->getRequest()->isPost() && ! in_array($controller, $doNotCheckTokenControllers)) {
+                $user = Manager::getService('Session')->get('user');
+                $token = $event->getRequest()->getPost('token');
+                if (! isset($token)) {
+                    $token = $event->getRequest()->getQuery('token');
                 }
-                if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
-                    AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
-                } else {
-                    AbstractLocalizableCollection::setWorkingLocale($serviceLanguages->getDefaultLanguage());
+                
+                if ($token !== $user['token']) {
+                    $this->toDeadEnd($event, new AccessException("The token given in the request doesn't match with the token in session", "Exception6"));
+                }
+            }
+            
+            if ($isBackoffice) {
+                // initialize localization for collections
+                $serviceLanguages = Manager::getService('Languages');
+                if ($serviceLanguages->isActivated()) {
+                    $workingLanguage = $event->getRequest()->getPost('workingLanguage', false);
+                    if (! $workingLanguage) {
+                        $workingLanguage = $event->getRequest()->getQuery('workingLanguage', null);
+                    }
+                    if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
+                        AbstractLocalizableCollection::setWorkingLocale($workingLanguage);
+                    } else {
+                        AbstractLocalizableCollection::setWorkingLocale($serviceLanguages->getDefaultLanguage());
+                    }
                 }
             }
         }
     }
 
-    public function preDispatch(MvcEvent $event)
+    public function preDispatch (MvcEvent $event)
     {
-        
-        if($event->getRouteMatch()){
+        if ($event->getRouteMatch()) {
             $controller = $event->getRouteMatch()->getParam('controller');
         }
-        $message = 'routing to '.$controller;
+        $message = 'routing to ' . $controller;
         Manager::getService('Logger')->debug($message);
         if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
             $cache = Cache::getCache();
             $uri = $event->getRequest()->getUri();
             $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
             $user = Manager::getService('CurrentUser')->getCurrentUser();
-            if($user){
-                $key .= '_user'.$user['id'];
-            }else{
+            if ($user) {
+                $key .= '_user' . $user['id'];
+            } else {
                 $key .= '_nouser';
             }
             $loaded = false;
@@ -282,21 +289,20 @@ class Module
                 $response->setContent($content);
                 return $response;
             }
-
         }
     }
 
-    public function postDispatch(MvcEvent $event)
+    public function postDispatch (MvcEvent $event)
     {
-        if($event->getRouteMatch()){
+        if ($event->getRouteMatch()) {
             $controller = $event->getRouteMatch()->getParam('controller');
-        }else{
+        } else {
             return;
         }
         
         if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
-            if($this->pageHit){
-                $message = 'returning cache for '.$controller;
+            if ($this->pageHit) {
+                $message = 'returning cache for ' . $controller;
                 Manager::getService('Logger')->info($message);
                 return;
             }
@@ -305,18 +311,18 @@ class Module
             $uri = $event->getRequest()->getUri();
             $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
             $user = Manager::getService('CurrentUser')->getCurrentUser();
-            if($user){
-                $key .= '_user'.$user['id'];
-            }else{
+            if ($user) {
+                $key .= '_user' . $user['id'];
+            } else {
                 $key .= '_nouser';
             }
             $cache->setItem($key, $response->getContent());
         }
-        $message = 'finished rendering '.$controller;
+        $message = 'finished rendering ' . $controller;
         Manager::getService('Logger')->info($message);
     }
 
-    protected function initializeSession(MvcEvent $e)
+    protected function initializeSession (MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()

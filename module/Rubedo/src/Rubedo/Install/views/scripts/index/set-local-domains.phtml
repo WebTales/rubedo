@@ -17,7 +17,7 @@
 	<h4>Configured local domains</h4>
 	<ul>
    <?php foreach ($this->overrideList as $domain => $localDomain){?>
-   <li><?php echo $domain;?> => <?php echo $localDomain;?> <a title="Delete domain override" href="<?php echo $this->url('install/default',array('controller'=>'index','action'=>'set-local-domains'),array('query'=>array('delete-domain'=>$domain)));?>"><i class="icon-remove-sign"></i></a></li>
+   <li><?php echo $domain;?> => <?php echo $localDomain;?> <a title="Delete domain override" href="<?php echo $this->url('install',array('controller'=>'index','action'=>'set-local-domains'),array('query'=>array('delete-domain'=>$domain)));?>"><i class="icon-remove-sign"></i></a></li>
    <?php }?>
 </ul>
 </div>

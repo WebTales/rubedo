@@ -89,7 +89,7 @@ class Url implements IUrl
      *
      * @return Zend\Mvc\Router\RouteInterface
      */
-    public function getRouter()
+    public function getRouter ()
     {
         return Url::$router;
     }
@@ -99,7 +99,7 @@ class Url implements IUrl
      *
      * @param Zend\Mvc\Router\RouteInterface $route            
      */
-    public static function setRouter(RouteInterface $router)
+    public static function setRouter (RouteInterface $router)
     {
         Url::$router = $router;
     }
@@ -108,7 +108,7 @@ class Url implements IUrl
      *
      * @param string $routeName            
      */
-    public static function setRouteName($routeName)
+    public static function setRouteName ($routeName)
     {
         Url::$routeName = $routeName;
     }
@@ -120,7 +120,7 @@ class Url implements IUrl
      *            requested URL
      * @return string int
      */
-    public function matchPageRoute($url, $host)
+    public function matchPageRoute ($url, $host)
     {
         if (false !== strpos($url, '?')) {
             list ($url) = explode('?', $url);
@@ -228,7 +228,7 @@ class Url implements IUrl
         return $result;
     }
 
-    public function disableNavigation()
+    public function disableNavigation ()
     {
         self::$_disableNav = true;
     }
@@ -238,7 +238,7 @@ class Url implements IUrl
      *
      * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
      */
-    public function getPageUrl($pageId, $locale)
+    public function getPageUrl ($pageId, $locale)
     {
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
@@ -310,7 +310,7 @@ class Url implements IUrl
         return $url;
     }
 
-    public function getContentUrl($contentId, $locale, $fallbackLocale = null)
+    public function getContentUrl ($contentId, $locale, $fallbackLocale = null)
     {
         $url = '';
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
@@ -339,7 +339,7 @@ class Url implements IUrl
         }
     }
 
-    public function matchContentRoute($segments, $locale)
+    public function matchContentRoute ($segments, $locale)
     {
         if (! $locale) {
             return null;
@@ -368,7 +368,7 @@ class Url implements IUrl
      *
      * @see \Rubedo\Interfaces\Router\IUrl::getUrl()
      */
-    public function getUrl($data, $encode = false)
+    public function getUrl ($data, $encode = false)
     {
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
@@ -380,7 +380,7 @@ class Url implements IUrl
         
         $url = $this->getPageUrl($data['pageId'], $data['locale']);
         
-        if($url == false){
+        if ($url == false) {
             return false;
         }
         
@@ -421,7 +421,7 @@ class Url implements IUrl
      * @return string Url for the link href attribute.
      * @todo handle URL prefix
      */
-    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         $options = array(
             'encode' => $encode,
@@ -448,7 +448,7 @@ class Url implements IUrl
                     $mergedParams[$key] = $value;
             }
         }
-        if(!isset($params['locale'])){
+        if (! isset($params['locale'])) {
             $params['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         }
         $uri = Manager::getService('Application')->getRequest()->getUri();
@@ -533,7 +533,7 @@ class Url implements IUrl
      *            
      * @return string Url
      */
-    public function displayUrl($contentId, $type = "default", $siteId = null, $defaultPage = null)
+    public function displayUrl ($contentId, $type = "default", $siteId = null, $defaultPage = null)
     {
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
@@ -610,7 +610,7 @@ class Url implements IUrl
         }
     }
 
-    protected function _getDefaultSingleBySiteID($siteId)
+    protected function _getDefaultSingleBySiteID ($siteId)
     {
         $site = Manager::getService('Sites')->findById($siteId);
         if (isset($site['defaultSingle'])) {
@@ -624,50 +624,67 @@ class Url implements IUrl
         }
     }
 
-    public function mediaUrl($mediaId,$forceDownload = null)
+    public function mediaUrl ($mediaId, $forceDownload = null)
     {
         $media = Manager::getService('Dam')->findById($mediaId);
-        if(!$media){
+        if (! $media) {
             return '';
         }
         $fileService = Manager::getService('Files');
         $obj = $fileService->findById($media['originalFileId']);
-        if(!$obj){
+        if (! $obj) {
             return '';
         }
         $meta = $obj->file;
-        $version = $meta['version'];
-        $fileName = $meta['filename'];
-        $download = $forceDownload?'download':'inline';
-        $url = "/access-dam/$mediaId/$version/$download/$fileName";
+        
+        $router = Manager::getService('Router');
+        $options = array(
+            'name' => 'mediaFromDam'
+        );
+        $params = array(
+            'version' => $meta['version'],
+            'download' => $forceDownload ? 'download' : 'inline',
+            'mediaId' => $mediaId,
+            'filename' => $meta['filename']
+        );
+        $url = $router->assemble($params, $options);
+        
         return $url;
     }
 
-    public function mediaThumbnailUrl($mediaId)
+    public function mediaThumbnailUrl ($mediaId)
     {
-        $url = '/dam/get-thumbnail?media-id='.$mediaId;
+        $url = '/dam/get-thumbnail?media-id=' . $mediaId;
         return $url;
     }
 
-    public function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
+    public function imageUrl ($mediaId, $width = null, $height = null, $mode = 'crop')
     {
-        $width = $width?$width:'x';
-        $height = $height?$height:'x';
-        $mode = $mode?$mode:'crop';
         $media = Manager::getService('Dam')->findById($mediaId);
-        if(!$media){
+        if (! $media) {
             return '';
         }
         $fileService = Manager::getService('Files');
         $obj = $fileService->findById($media['originalFileId']);
-        if(!$obj){
+        if (! $obj) {
             return '';
         }
         $meta = $obj->file;
-        $version = $meta['version'];
-        $fileName = $meta['filename'];
-
-        $url = "/generate-image/$mediaId/$version/$width/$height/$mode/$fileName";
+        
+        $router = Manager::getService('Router');
+        $options = array(
+            'name' => 'imageFromDam'
+        );
+        $params = array(
+            'version' => $meta['version'],
+            'width' => $width ? $width : 'x',
+            'height' => $height ? $height : 'x',
+            'mode' => $mode ? $mode : 'crop',
+            'mediaId' => $mediaId,
+            'filename' => $meta['filename']
+        );
+        $url = $router->assemble($params, $options);
+        
         return $url;
     }
 }
