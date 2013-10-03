@@ -73,7 +73,6 @@ class RawRenderer implements RendererInterface
             $values = (array) $model->getVariables();
         }
         $result = array('template'=>$template,'data'=>$values);
-        var_dump($result);die();
         return $result;
     }
 
