@@ -17,7 +17,8 @@
 		"swiftmailer/swiftmailer": "5.0.*",
 		"phing/phing": "2.5.0",
 		"leafo/lessphp": "v0.4.0",
-		"mrclay/minify": "2.1.7"
+		"mrclay/minify": "2.1.7",
+		"zendframework/zendservice-recaptcha": "2.0.1"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",

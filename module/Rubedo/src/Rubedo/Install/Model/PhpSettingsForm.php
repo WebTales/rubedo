@@ -92,6 +92,7 @@ class PhpSettingsForm extends BootstrapForm
         $extDebug->setLabel('Use debug mode of ExtJs');
         
         $sessionFieldset = new Fieldset('session');
+        $sessionFieldset->setAttribute('legend', 'Session parameters');
         $sessionName = new Text('name');
         $sessionName->setAttribute('Required', true);
         $sessionName->setValue(isset($params['session']['name']) ? $params['session']['name'] : 'rubedo');
@@ -121,18 +122,34 @@ class PhpSettingsForm extends BootstrapForm
         $fromEmailNotification->setValue(isset($params['rubedo_config']['fromEmailNotification']) ? $params['rubedo_config']['fromEmailNotification'] : null);
         $fromEmailNotification->setLabel('Sender of notifications');
         
+        $recaptchaPublicKey = new Text('public_key');
+        $recaptchaPublicKey->setValue(isset($params['rubedo_config']['recaptcha']['public_key']) ? $params['rubedo_config']['recaptcha']['public_key'] : null);
+        $recaptchaPublicKey->setLabel('Public key');
+        
+        $recaptchaPrivateKey = new Text('private_key');
+        $recaptchaPrivateKey->setValue(isset($params['rubedo_config']['recaptcha']['private_key']) ? $params['rubedo_config']['recaptcha']['private_key'] : null);
+        $recaptchaPrivateKey->setLabel('Private key');
+        
+        $recaptchaFieldSet = new Fieldset('recaptcha');
+        $recaptchaFieldSet->add($recaptchaPublicKey);
+        $recaptchaFieldSet->add($recaptchaPrivateKey);
+        $recaptchaFieldSet->setAttribute('legend', 'Recaptcha parameters');
+        
+        
+        
         $dbForm = new Form();
         $dbForm->add($displayExceptionsFieldSet);
         $dbForm->add($loggerFieldSet);
         $rubedoConfigFieldset->add($minify);
         $rubedoConfigFieldset->add($extDebug);
-        ;
         $rubedoConfigFieldset->add($defaultBackofficeHost);
         $rubedoConfigFieldset->add($isBackofficeSSL);
         $rubedoConfigFieldset->add($enableEmailNotification);
         $rubedoConfigFieldset->add($fromEmailNotification);
-        $dbForm->add($rubedoConfigFieldset);
+        $rubedoConfigFieldset->add($recaptchaFieldSet);
         $dbForm->add($sessionFieldset);
+        $dbForm->add($rubedoConfigFieldset);
+        
         
         $dbForm = self::setForm($dbForm);
         

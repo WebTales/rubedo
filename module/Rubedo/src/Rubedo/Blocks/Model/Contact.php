@@ -31,6 +31,7 @@ use Zend\Http\Request;
 use Zend\Form\Element\Email;
 use Zend\Captcha\Image as CaptchaImage;
 use Zend\Captcha\AbstractWord;
+use Zend\Captcha\ReCaptcha;
 
 /**
  * Contact Form
@@ -98,17 +99,21 @@ class Contact extends Form
                 'imgDir' => APPLICATION_PATH . "/public/captcha/",
                 'imgUrl' => "/captcha",
                 'dotNoiseLevel' => 200,
-                'lineNoiseLevel' => 20,
+                'lineNoiseLevel' => 20
             );
+            $recaptchaKey = Manager::getService('Recaptcha')->getKeyPair();
+            if ($recaptchaKey) {
+                $captchaInstance = new ReCaptcha($recaptchaKey);
+            } else {
+                $captchaInstance = new CaptchaImage($captchaOptions);
+            }
             
-            $captchaImage = new CaptchaImage($captchaOptions);
-
             $this->add(array(
                 'type' => 'Zend\Form\Element\Captcha',
                 'name' => 'captcha',
                 'options' => array(
                     'label' => $translationService->translateInWorkingLanguage("Blocks.Contact.Input.Captcha.Label"),
-                    'captcha' => $captchaImage
+                    'captcha' => $captchaInstance
                 )
             ));
         }
@@ -125,8 +130,7 @@ class Contact extends Form
         $this->add($buttonFieldSet);
         $this->setAttribute('class', 'form-horizontal');
     }
-    
-    
+
     protected function setIds($element)
     {
         if ($element instanceof FieldsetInterface) {
@@ -138,6 +142,6 @@ class Contact extends Form
         $element->setLabelAttributes(array(
             'class' => 'control-label'
         ));
-        $element->setAttribute('id',$element->getName());
+        $element->setAttribute('id', $element->getName());
     }
 }

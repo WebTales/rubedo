@@ -44,6 +44,7 @@ return array(
     'PersonalPrefs' => 'Rubedo\\Collection\\PersonalPrefs',
     'Queries' => 'Rubedo\\Collection\\Queries',
     'ReusableElements' => 'Rubedo\\Collection\\ReusableElements',
+    'Recaptcha' => 'Rubedo\\Security\\Recaptcha',
     'RawRenderer' => 'Rubedo\\Templates\\Raw\\RawRenderer',
     'RubedoVersion' => 'Rubedo\\Collection\\RubedoVersion',
     'SearchLogger' => 'Rubedo\\Log\\SearchLogger',
