@@ -46,6 +46,7 @@ class ContactController extends AbstractController
         }
         $contactForm->init();
         $contactForm->setAttribute('action',$this->url()->fromRoute('rewrite'));
+        $contactForm->setAttribute('id', 'contact'.'_'.$this->params()->fromQuery('prefix'));
         
         // Check if the form was send
         if ($this->getRequest()->isPost()) {

@@ -30,6 +30,7 @@ use Rubedo\Services\Manager;
 use Zend\Http\Request;
 use Zend\Form\Element\Email;
 use Zend\Captcha\Image as CaptchaImage;
+use Zend\Captcha\AbstractWord;
 
 /**
  * Contact Form
@@ -92,16 +93,16 @@ class Contact extends Form
                 'wordLen' => 6,
                 'font' => APPLICATION_PATH . "/data/fonts/fonts-japanese-gothic.ttf",
                 'height' => 100,
-                'width' => 300,
+                'width' => 220,
                 'fontSize' => 50,
                 'imgDir' => APPLICATION_PATH . "/public/captcha/",
                 'imgUrl' => "/captcha",
                 'dotNoiseLevel' => 200,
-                'lineNoiseLevel' => 20
+                'lineNoiseLevel' => 20,
             );
             
             $captchaImage = new CaptchaImage($captchaOptions);
-            
+
             $this->add(array(
                 'type' => 'Zend\Form\Element\Captcha',
                 'name' => 'captcha',
@@ -111,6 +112,8 @@ class Contact extends Form
                 )
             ));
         }
+        
+        $this->setIds($this);
         
         $submitButton = new Submit('Submit');
         $submitButton->setValue($translationService->translateInWorkingLanguage("Blocks.Contact.Input.Submit.Label"));
