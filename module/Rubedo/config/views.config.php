@@ -1,6 +1,7 @@
 <?php
 $boViewsPath = realpath(__DIR__ . '/../src/Rubedo/Backoffice/views/scripts');
 $installViewPath = realpath(__DIR__ . '/../src/Rubedo/Install/views/scripts');
+$blockViewPath = realpath(__DIR__ . '/../src/Rubedo/Blocks/views/scripts');
 return array(
     'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
     'layout/install' => $installViewPath . '/install-layout.phtml',
@@ -23,5 +24,6 @@ return array(
     'rubedo/install/controller/index/set-db-contents' => $installViewPath . '/index/set-db-contents.phtml',
     'rubedo/install/controller/index/set-local-domains' => $installViewPath . '/index/set-local-domains.phtml',
     'rubedo/install/controller/index/set-mailer' => $installViewPath . '/index/set-mailer.phtml',
-    'rubedo/install/controller/index/set-php-settings' => $installViewPath . '/index/set-php-settings.phtml'
+    'rubedo/install/controller/index/set-php-settings' => $installViewPath . '/index/set-php-settings.phtml',
+    'rubedo/contact/render-form' => $blockViewPath . '/contact/form.phtml'
 );

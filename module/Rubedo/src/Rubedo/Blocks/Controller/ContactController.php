@@ -17,6 +17,8 @@
 namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
+use Zend\View\Model\ViewModel;
+use Zend\Debug\Debug;
 
 /**
  *
@@ -42,11 +44,16 @@ class ContactController extends AbstractController
         } else {
             $contactForm = new \Rubedo\Blocks\Model\Contact();
         }
+        $contactForm->init();
+        $contactForm->setAttribute('action',$this->url()->fromRoute('rewrite'));
         
         // Check if the form was send
-        if (is_string($this->getParamFromQuery('name'))) {
-            if ($contactForm->isValid($_POST)) {
+        if ($this->getRequest()->isPost()) {
+            $contactForm->setData($this->params()
+                ->fromPost());
+            if ($contactForm->isValid()) {
                 if (isset($blockConfig['contacts']) && is_array($blockConfig['contacts']) && count($blockConfig['contacts']) > 0) {
+                    $data = $contactForm->getData();
                     // Create a mailer object
                     $mailerService = Manager::getService('Mailer');
                     $mailerObject = $mailerService->getNewMessage();
@@ -55,10 +62,10 @@ class ContactController extends AbstractController
                     $recipients = $blockConfig['contacts'];
                     
                     // Build e-mail
-                    $name = $this->getParamFromQuery('name');
-                    $email = $this->getParamFromQuery('email');
-                    $subject = $this->getParamFromQuery('subject');
-                    $message = $this->getParamFromQuery('message');
+                    $name = $data['name'];
+                    $email = $data['email'];
+                    $subject = $data['subject'];
+                    $message = $data['message'];
                     $message = $name . " (" . $email . ") : \n" . $message;
                     
                     $mailerObject->setSubject($subject);
@@ -92,10 +99,18 @@ class ContactController extends AbstractController
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
         }
         
-        $output['contactForm'] = $contactForm;
+        $formViewModel = new ViewModel(array('form'=> $contactForm));
+        $formViewModel->setTemplate('rubedo/contact/render-form');
+        
+
+        $renderer = $this->serviceLocator->get('Zend\View\Renderer\RendererInterface');
+        $output['contactForm'] = $renderer->render($formViewModel);
+//         Debug::dump($renderer->render($formViewModel));
+//         die();
         
         $css = array();
         $js = array();
         return $this->_sendResponse($output, $template, $css, $js);
     }
+    
 }
