@@ -18,7 +18,6 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Debug\Debug;
 
 /**
  * Controller Rendering TinyUrl accessed resources

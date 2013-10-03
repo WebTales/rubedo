@@ -16,8 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IDam, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
+use Rubedo\Interfaces\Collection\IDam;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Groups
