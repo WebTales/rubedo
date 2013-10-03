@@ -270,7 +270,8 @@ class DamController extends DataAccessController
             $obj['fields']['title'] = $properName[0];
             $obj['originalFileId'] = $uploadResult['data']['id'];
         } else {
-            return $this->_returnJson($uploadResult);
+            $this->getResponse()->setStatusCode(500);
+            return new JsonModel($uploadResult);
         }
         $obj['Content-Type'] = $this->_mimeType;
         if (! $obj['originalFileId']) {
