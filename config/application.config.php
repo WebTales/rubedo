@@ -29,7 +29,7 @@ if (file_exists(CONFIG_CACHE_DIR . '/extensions.array.php')) {
                 if ($subItem->isDot() || strpos($subItem->getFilename(), '.') === 0) {
                     continue;
                 }
-                if (file_exists($subItem->getPath() . '/Module.php')) {
+                if (file_exists($subItem->getRealPath() . '/Module.php')) {
                     $extensionsArray[] = ucfirst($subItem->getFilename());
                 }
             }
