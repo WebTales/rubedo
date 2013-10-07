@@ -15,12 +15,12 @@ $blocksPath = realpath(__DIR__ . "/blocks/");
 return array(
     'addThis' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\AddThis',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/addThis.json'
     ),
     'addThisFollow' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\AddThisFollow',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/addThisFollow.json'
     ),
     'advancedContact' => array(
@@ -30,17 +30,17 @@ return array(
     ),
     'advancedSearchForm' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedSearch',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/advancedSearchForm.json'
     ),
     'audio' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Audio',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/audio.json'
     ),
     'authentication' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Authentication',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/authentication.json'
     ),
     'breadcrumb' => array(
@@ -130,17 +130,17 @@ return array(
     ),
     'resource' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Resource',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/resource.json'
     ),
     'richText' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\RichText',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/richText.json'
     ),
     'searchForm' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\SearchForm',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/searchForm.json'
     ),
     'searchResults' => array(
@@ -150,7 +150,7 @@ return array(
     ),
     'simpleText' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Text',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/simpleText.json'
     ),
     'siteMap' => array(
@@ -160,7 +160,7 @@ return array(
     ),
     'twig' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Twig',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/twig.json'
     ),
     'twitter' => array(
@@ -170,7 +170,7 @@ return array(
     ),
     'video' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Video',
-        'maxlifeTime' => 0,
+        'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/video.json'
     ),
     'zendController' => array(

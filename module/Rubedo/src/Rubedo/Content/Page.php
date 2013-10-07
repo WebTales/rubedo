@@ -70,7 +70,7 @@ class Page implements IPage
      */
     protected static $_currentSite = '';
     
-    protected static $maxLifeTime;
+    protected static $maxLifeTime = 86400;
 
     /**
      * append a css file to the file list
