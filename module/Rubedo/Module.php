@@ -312,15 +312,17 @@ class Module
             ));
             
             $response = $event->getResponse();
-            $uri = $event->getRequest()->getUri();
-            $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
-            $user = Manager::getService('CurrentUser')->getCurrentUser();
-            if ($user) {
-                $key .= '_user' . $user['id'];
-            } else {
-                $key .= '_nouser';
+            if($response->isOk()){
+                $uri = $event->getRequest()->getUri();
+                $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
+                $user = Manager::getService('CurrentUser')->getCurrentUser();
+                if ($user) {
+                    $key .= '_user' . $user['id'];
+                } else {
+                    $key .= '_nouser';
+                }
+                $cache->setItem($key, $response->getContent());
             }
-            $cache->setItem($key, $response->getContent());
         }
         $message = 'finished rendering ' . $controller;
         Manager::getService('Logger')->info($message);
