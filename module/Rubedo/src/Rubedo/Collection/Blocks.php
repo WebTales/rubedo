@@ -298,6 +298,14 @@ class Blocks extends AbstractCollection implements IBlocks
         }
         return $config[$name]['controller'];
     }
+    
+    public function getMaxLifetime($name){
+        $config = $this->getConfig();
+        if (! isset($config[$name]['maxlifeTime'])) {
+            return 0;
+        }
+        return $config[$name]['maxlifeTime'];
+    }
 
     /**
      * Read configuration from global application config and load it for the current class

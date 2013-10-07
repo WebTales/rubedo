@@ -301,27 +301,35 @@ class Module
         }
         
         if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
+            
             if ($this->pageHit) {
                 $message = 'returning cache for ' . $controller;
                 Manager::getService('Logger')->info($message);
                 return;
             }
             $cache = Cache::getCache();
-            $cache->setOptions(array(
-                'ttl' => 60
-            ));
             
-            $response = $event->getResponse();
-            if($response->isOk()){
-                $uri = $event->getRequest()->getUri();
-                $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
-                $user = Manager::getService('CurrentUser')->getCurrentUser();
-                if ($user) {
-                    $key .= '_user' . $user['id'];
-                } else {
-                    $key .= '_nouser';
+            $maxLifeTime = Manager::getService('PageContent')->getMaxLifeTime();
+            if ($maxLifeTime >= 0) {
+                if ($maxLifeTime > 0) {
+                    $cache->setOptions(array(
+                        'ttl' => $maxLifeTime
+                    ));
                 }
-                $cache->setItem($key, $response->getContent());
+                
+                $response = $event->getResponse();
+                
+                if ($response->isOk()) {
+                    $uri = $event->getRequest()->getUri();
+                    $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
+                    $user = Manager::getService('CurrentUser')->getCurrentUser();
+                    if ($user) {
+                        $key .= '_user' . $user['id'];
+                    } else {
+                        $key .= '_nouser';
+                    }
+                    $cache->setItem($key, $response->getContent());
+                }
             }
         }
         $message = 'finished rendering ' . $controller;
@@ -350,15 +358,14 @@ class Module
         
         $sessionManager = new SessionManager($sessionConfig);
         $sessionManager->setSaveHandler($saveHandler);
-        if(isset($_COOKIE[$config['session']['name']])){
+        if (isset($_COOKIE[$config['session']['name']])) {
             $sessionManager->start();
         }
-        
         
         Container::setDefaultManager($sessionManager);
     }
 
-    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
+    protected function toDeadEnd (MvcEvent $event,\Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');

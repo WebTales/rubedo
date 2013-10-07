@@ -579,6 +579,8 @@ class IndexController extends AbstractActionController
         
         $params['content-id'] = $contentId;
         $controller = Manager::getService('Blocks')->getController($block['bType']);
+        $maxLifeTime = Manager::getService('Blocks')->getMaxLifetime($block['bType']);
+        $this->_servicePage->setMaxLifeTime(min($maxLifeTime,$this->_servicePage->getMaxLifeTime()));
         // Clone global request and override it woth block params
         $queryString = $this->getRequest()->getQuery();
         $blockQueryString = clone ($queryString);

@@ -69,6 +69,8 @@ class Page implements IPage
      * @var string
      */
     protected static $_currentSite = '';
+    
+    protected static $maxLifeTime;
 
     /**
      * append a css file to the file list
@@ -245,4 +247,23 @@ class Page implements IPage
     {
         Page::$_author = $_author;
     }
+    
+	/**
+     * @return the $maxLifeTime
+     */
+    public static function getMaxLifeTime ()
+    {
+        return Page::$maxLifeTime;
+    }
+
+	/**
+     * @param field_type $maxLifeTime
+     */
+    public static function setMaxLifeTime ($maxLifeTime)
+    {
+        Page::$maxLifeTime = $maxLifeTime;
+    }
+
+    
+    
 }
