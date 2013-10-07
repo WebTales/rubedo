@@ -67,6 +67,12 @@ class Cache extends AbstractCollection implements ICache
     {
         $this->_collectionName = 'Cache';
         parent::__construct();
+        
+        // randomly call cleanning on expired cache entries
+        $factor = 100;
+        if (rand(1, $factor) % $factor === 0) {
+            $this->deleteExpired();
+        }
     }
 
     public function findByCacheId ($cacheId, $time = null)
@@ -117,11 +123,14 @@ class Cache extends AbstractCollection implements ICache
     /**
      * Remove expired cache items
      *
-     * @return boolean
+     * Use Fire And Forget query : do not wait for result
      */
     public function deleteExpired ()
     {
-        $options = array();
+        $options = array(
+            'multiple' => true,
+            'w' => false
+        );
         
         $updateCond = Filter::factory('OperatorToValue');
         $updateCond->setName('expire')
@@ -129,11 +138,6 @@ class Cache extends AbstractCollection implements ICache
             ->setValue(Manager::getService('CurrentTime')->getCurrentTime());
         
         $result = $this->_dataService->customDelete($updateCond, $options);
-        if ($result['ok']) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public function deleteByCacheId ($id)

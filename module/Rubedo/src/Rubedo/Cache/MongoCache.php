@@ -18,7 +18,6 @@ use Rubedo\Services\Manager;
 use Zend\Cache\Storage\Adapter\AbstractAdapter;
 use Rubedo\Services\Events;
 
-
 /**
  * Zend Cache in MongoDb
  *
@@ -35,7 +34,7 @@ class MongoCache extends AbstractAdapter
 
     protected $_dataService;
 
-    public function __construct($options = null)
+    public function __construct ($options = null)
     {
         parent::__construct($options);
         $this->_dataService = Manager::getService('Cache');
@@ -44,7 +43,7 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalGetItem()
      */
-    protected function internalGetItem(&$normalizedKey, &$success = null, &$casToken = null)
+    protected function internalGetItem (&$normalizedKey, &$success = null, &$casToken = null)
     {
         $obj = $this->_dataService->findByCacheId($normalizedKey);
         
@@ -66,7 +65,7 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalGetMetadata()
      */
-    protected function internalGetMetadata(&$normalizedKey)
+    protected function internalGetMetadata (&$normalizedKey)
     {
         $obj = $this->_dataService->findByCacheId($normalizedKey);
         
@@ -81,7 +80,7 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalRemoveItem()
      */
-    protected function internalRemoveItem(&$normalizedKey)
+    protected function internalRemoveItem (&$normalizedKey)
     {
         return $this->_dataService->deleteByCacheId($normalizedKey);
     }
@@ -89,7 +88,7 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalSetItem()
      */
-    protected function internalSetItem(&$normalizedKey, &$value)
+    protected function internalSetItem (&$normalizedKey, &$value)
     {
         $obj = array();
         $obj['data'] = $value;
@@ -100,6 +99,9 @@ class MongoCache extends AbstractAdapter
         
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
+        
+        $ttl = $this->options->getTtl();
+        $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $ttl;
         
         // if ($specificLifetime) {
         // $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
@@ -115,4 +117,5 @@ class MongoCache extends AbstractAdapter
     {
         return $this->_dataService->drop();
     }
+    
 }

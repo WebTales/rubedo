@@ -31,6 +31,7 @@ use Rubedo\Cache\MongoCache;
  */
 class Cache
 {
+
     /**
      * array of current service parameters
      *
@@ -43,7 +44,7 @@ class Cache
      *
      * @param array $options            
      */
-    public static function setOptions($options)
+    public static function setOptions ($options)
     {
         self::$_cacheOptions = $options;
     }
@@ -53,7 +54,7 @@ class Cache
      *
      * @return array array of all the services
      */
-    public static function getOptions()
+    public static function getOptions ()
     {
         return self::$_cacheOptions;
     }
@@ -65,7 +66,7 @@ class Cache
      *            name of the cache called
      * @return StorageFactory instance of the cache
      */
-    public static function getCache($cacheName = null)
+    public static function getCache ($cacheName = null)
     {
         $cache = StorageFactory::factory(array(
             'adapter' => 'Rubedo\\Cache\\MongoCache'
@@ -80,7 +81,7 @@ class Cache
      * @param EventInterface $e            
      * @return mixed NULL
      */
-    public static function getFromCache(EventInterface $e)
+    public static function getFromCache (EventInterface $e)
     {
         $params = $e->getParams();
         if (! isset($params['key'])) {
@@ -104,7 +105,7 @@ class Cache
      *
      * @param EventInterface $e            
      */
-    public static function setToCache(EventInterface $e)
+    public static function setToCache (EventInterface $e)
     {
         $params = $e->getParams();
         if (! isset($params['key'])) {
@@ -126,7 +127,7 @@ class Cache
      *
      * @param EventInterface $e            
      */
-    public static function logCacheHit(EventInterface $e)
+    public static function logCacheHit (EventInterface $e)
     {
         $params = $e->getParams();
         if (! isset($params['key'])) {

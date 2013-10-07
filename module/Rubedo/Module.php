@@ -33,7 +33,7 @@ use Rubedo\Services\Cache;
 class Module
 {
 
-    protected static $cachePageIsActive = false;
+    protected static $cachePageIsActive = true;
 
     protected $pageHit = false;
 
@@ -208,7 +208,7 @@ class Module
         // @todo forward if no language initialized
         
         // check access
-
+        
         if ($controller) {
             
             list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
@@ -307,6 +307,10 @@ class Module
                 return;
             }
             $cache = Cache::getCache();
+            $cache->setOptions(array(
+                'ttl' => 60
+            ));
+            
             $response = $event->getResponse();
             $uri = $event->getRequest()->getUri();
             $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
