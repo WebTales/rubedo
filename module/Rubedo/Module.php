@@ -276,10 +276,8 @@ class Module
             $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
             $user = Manager::getService('CurrentUser')->getCurrentUser();
             if ($user) {
-                $key .= '_user' . $user['id'];
-            } else {
-                $key .= '_nouser';
-            }
+                return;
+            } 
             $loaded = false;
             $content = $cache->getItem($key, $loaded);
             if ($loaded) {
@@ -324,10 +322,8 @@ class Module
                     $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
                     $user = Manager::getService('CurrentUser')->getCurrentUser();
                     if ($user) {
-                        $key .= '_user' . $user['id'];
-                    } else {
-                        $key .= '_nouser';
-                    }
+                        return;
+                    } 
                     $cache->setItem($key, $response->getContent());
                 }
             }
