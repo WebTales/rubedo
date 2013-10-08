@@ -72,7 +72,7 @@ class MailingListController extends AbstractController
         $mailingListService = Manager::getService("MailingList");
         
         // Get email
-        $email = $this->getParam("email");
+        $email = $this->params()->fromPost("email");
         
         // Validate email
         if ($emailValidator->isValid($email)) {

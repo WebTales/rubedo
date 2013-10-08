@@ -557,6 +557,16 @@ function checkIfDirty() {
  * @param data contain the new value of the field
  */
 function save(data) {
+	//correct extra tags in summary data
+	var stripTagsRE    = /<\/?[^>]+>/gi;
+	for (var property in data) {
+	    if (data.hasOwnProperty(property)) {
+	        if (property.indexOf("summary")!=-1){
+	        	data[property].newValue=data[property].newValue.replace(stripTagsRE,"");
+	        }
+	    }
+	}
+	
 	var data = JSON.stringify(data);
 	
 	jQuery.ajax({
@@ -649,7 +659,7 @@ function addContent(type,typeId,queryId){
 		 */
 		jQuery("#select-type-box").empty();
 		jQuery.ajax({
-			"url" : "/backoffice/content-types/get-readable-content-types/?workingLanguage="+jQuery("body").attr('data-bolanguage'),
+			"url" : "/backoffice/content-types/get-readable-content-types?workingLanguage="+jQuery("body").attr('data-bolanguage'),
 			"async" : false,
 			"type" : "GET",
 			"dataType" : "json",
