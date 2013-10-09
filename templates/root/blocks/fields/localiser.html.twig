@@ -32,18 +32,18 @@
             
             <div>
                 <label class="show-rubedo clear-both control-label" for="inputAddress">{{ "Blocks.GeoSearch.Label.Address" | fotrans }}</label>
-                <input class="input-xxlarge address localiser-address"  type="text" placeholder="{{ data[key].address|cleanHtml }}" >
+                <input class="input-xxlarge address localiser-address"  type="text" placeholder="{{ data[key].address }}" >
             </div>
             
             <div class="row-fluid">
                 <div class="span6">
                     <label class="show-rubedo clear-both control-label" for="inputLatitude">{{ "Fields.Localizer.Label.Latitude" | fotrans }}</label>
-                    <input class="latitude"  type="text" placeholder="{{ data[key].lat|cleanHtml }}">
+                    <input class="latitude"  type="text" placeholder="{{ data[key].lat }}">
                 </div>
         
                 <div class="span6">
                     <label class="show-rubedo clear-both control-label" for="inputLongitude" >{{ "Fields.Localizer.Label.Longitude" | fotrans }}</label>
-                    <input class="longitude" type="text" placeholder="{{ data[key].lon|cleanHtml }}">
+                    <input class="longitude" type="text" placeholder="{{ data[key].lon }}">
                 </div>
             </div>
             
