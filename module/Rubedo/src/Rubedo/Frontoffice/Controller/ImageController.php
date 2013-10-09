@@ -110,7 +110,7 @@ class ImageController extends AbstractActionController
             $tmpImagePath = $this->getTempImagesPaths() . '/' . $version . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
         }
         if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
-            if (! is_file(dirname($tmpImagePath))) {
+            if (! is_dir(dirname($tmpImagePath))) {
                 mkdir(dirname($tmpImagePath), 0755, true);
             }
             $imageService = new \Rubedo\Image\Image();
@@ -214,7 +214,7 @@ class ImageController extends AbstractActionController
             $tmpImagePath = $this->getTempImagesPaths() . '/' . $version . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
-                if (! is_file(dirname($tmpImagePath))) {
+                if (! is_dir(dirname($tmpImagePath))) {
                     mkdir(dirname($tmpImagePath), 0755, true);
                 }
                 $imageService = new \Rubedo\Image\Image();
