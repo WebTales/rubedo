@@ -30,31 +30,37 @@ use Rubedo\Services\Manager;
  */
 class Recaptcha
 {
+
     protected static $key;
-    
-    public function getKeyPair($siteId = null){
-        if(!$siteId){
+
+    public function getKeyPair($siteId = null)
+    {
+        if (! $siteId) {
             return $this->getGlobalKey();
         }
         $site = Manager::getService('Sites')->findById($siteId);
-        if(!site || !isset($site['recaptcha']) || !is_array($site['recaptcha'])){
+        if (! site || ! isset($site['recaptcha_public_key']) || ! isset($site['recaptcha_private_key'])) {
             return $this->getGlobalKey();
-        }else{
-            return $site['recaptcha'];
+        } else {
+            return array(
+                'recaptcha' => array(
+                    'public_key' => $site['recaptcha_public_key'],
+                    'private_key' => $site['recaptcha_private_key']
+                )
+            );
         }
     }
-    
-    protected function getGlobalKey(){
-        if(!isset(self::$key)){
+
+    protected function getGlobalKey()
+    {
+        if (! isset(self::$key)) {
             $config = Manager::getService('Application')->getConfig();
-            if(isset($config['rubedo_config']['recaptcha']) && !empty($config['rubedo_config']['recaptcha']['public_key']) && !empty($config['rubedo_config']['recaptcha']['private_key'])){
-                self::$key =  $config['rubedo_config']['recaptcha'];
-            }else{
+            if (isset($config['rubedo_config']['recaptcha']) && ! empty($config['rubedo_config']['recaptcha']['public_key']) && ! empty($config['rubedo_config']['recaptcha']['private_key'])) {
+                self::$key = $config['rubedo_config']['recaptcha'];
+            } else {
                 self::$key = null;
             }
         }
         return self::$key;
     }
-    
-    
 }
