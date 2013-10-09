@@ -93,12 +93,12 @@ class ContentSingleController extends AbstractController
                         $contentTitlesArray[$value['config']['name']] = array();
                         foreach ($data[$value['config']['name']] as $intermedValue) {
                             $intermedContent = $this->_dataReader->findById($intermedValue, true, false);
-                            $contentTitlesArray[$value['config']['name']][] = $intermedContent['text'];
+                            $contentTitlesArray[$value['config']['name']][] = $intermedContent['fields']['text'];
                         }
                     } else {
                         if (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1) {
                             $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
-                            $contentTitlesArray[$value['config']['name']] = $intermedContent['text'];
+                            $contentTitlesArray[$value['config']['name']] = $intermedContent['fields']['text'];
                         }
                     }
                 } else 
