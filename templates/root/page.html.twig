@@ -46,7 +46,7 @@
     <link href="{{staticUrl('/components/jschr/bootstrap-modal/css/bootstrap-modal.css')}}" rel="stylesheet">
     
     {% for sheet in css %}
-    <link href="{{staticUrl(sheet)}}" rel="stylesheet" />
+    <link href="{{sheet}}" rel="stylesheet" />
     {% endfor %}
     
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -249,7 +249,7 @@
     	<script src="{{staticUrl('/components/jschr/bootstrap-modal/js/bootstrap-modal.js')}}"></script>
     	
     	{% for file in js %}
-    	<script type="text/javascript" src="{{staticUrl(file)}}"></script>
+    	<script type="text/javascript" src="{{file}}"></script>
     	{% endfor %}
     	
     	
