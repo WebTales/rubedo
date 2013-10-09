@@ -11,7 +11,7 @@
 			</a> 
 			{% if displayRootPage %}
 			<a class="brand"
-				href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}"
+				href="{% if rootPage  %}{{ url({'pageId':rootPage.id},true) }}{% endif %}"
 				title="{{ rootPage.title }}" rel="home">{{ rootPage.title }}</a>
             {% endif %}
 			<!-- Everything you want hidden at 940px or less, place within here -->
