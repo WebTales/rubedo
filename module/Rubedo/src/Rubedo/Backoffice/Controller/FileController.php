@@ -137,7 +137,9 @@ class FileController extends AbstractActionController
 
     public function getAction()
     {
-        $this->_forward('index', 'file', 'default');
+        return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
+            'action' => 'index'
+        ));
     }
 
     public function getMetaAction()

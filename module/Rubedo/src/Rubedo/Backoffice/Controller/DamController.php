@@ -99,33 +99,33 @@ class DamController extends DataAccessController
         }
     }
 
-    public function getOriginalFileAction()
-    {
-        $mediaId = $this->params()->fromQuery('id', null);
-        if (! $mediaId) {
-            throw new \Rubedo\Exceptions\User('no id given', "Exception7");
-        }
-        $media = $this->_dataService->findById($mediaId);
-        if (! $media) {
-            throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
-        }
-        $version = $this->params()->fromQuery('version', $media['id']);
-        $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
-        if (! $mediaType) {
-            throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
-        }
-        if ($mediaType['mainFileType'] == 'Image') {
-            $this->_forward('index', 'image', 'default', array(
-                'file-id' => $media['originalFileId'],
-                'version' => $version
-            ));
-        } else {
-            $this->_forward('index', 'file', 'default', array(
-                'file-id' => $media['originalFileId'],
-                'version' => $version
-            ));
-        }
-    }
+//     public function getOriginalFileAction()
+//     {
+//         $mediaId = $this->params()->fromQuery('id', null);
+//         if (! $mediaId) {
+//             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
+//         }
+//         $media = $this->_dataService->findById($mediaId);
+//         if (! $media) {
+//             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
+//         }
+//         $version = $this->params()->fromQuery('version', $media['id']);
+//         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
+//         if (! $mediaType) {
+//             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
+//         }
+//         if ($mediaType['mainFileType'] == 'Image') {
+//             $this->_forward('index', 'image', 'default', array(
+//                 'file-id' => $media['originalFileId'],
+//                 'version' => $version
+//             ));
+//         } else {
+//             $this->_forward('index', 'file', 'default', array(
+//                 'file-id' => $media['originalFileId'],
+//                 'version' => $version
+//             ));
+//         }
+//     }
 
     public function createAction()
     {
