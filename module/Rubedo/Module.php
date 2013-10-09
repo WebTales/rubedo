@@ -37,7 +37,7 @@ class Module
 
     protected $pageHit = false;
 
-    public function onBootstrap (MvcEvent $e)
+    public function onBootstrap(MvcEvent $e)
     {
         // register serviceLocator for global access by Rubedo
         Manager::setServiceLocator($e->getApplication()->getServiceManager());
@@ -57,6 +57,8 @@ class Module
         
         SessionData::setSessionName($config['session']['name']);
         
+        $this->initializeSession($e);
+        
         Interfaces\config::initInterfaces();
         
         // define all the events that should be handled
@@ -71,7 +73,7 @@ class Module
         $exceptionStrategy->attach($application->getEventManager());
     }
 
-    public function setListeners (EventManager $eventManager)
+    public function setListeners(EventManager $eventManager)
     {
         // verify session and access right when dispatching
         $eventManager->attach(MvcEvent::EVENT_ROUTE, array(
@@ -159,12 +161,12 @@ class Module
         ), 10);
     }
 
-    public function getConfig ()
+    public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig ()
+    public function getAutoloaderConfig()
     {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
@@ -183,7 +185,7 @@ class Module
      * @param MvcEvent $event            
      * @throws \Rubedo\Exceptions\Access
      */
-    public function preRouting (MvcEvent $event)
+    public function preRouting(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
@@ -201,7 +203,7 @@ class Module
         }
         
         // init the session params and session itself
-        $this->initializeSession($event);
+        $this->startSession();
         
         // @todo forward if not installed
         
@@ -263,7 +265,7 @@ class Module
         }
     }
 
-    public function preDispatch (MvcEvent $event)
+    public function preDispatch(MvcEvent $event)
     {
         if ($event->getRouteMatch()) {
             $controller = $event->getRouteMatch()->getParam('controller');
@@ -277,7 +279,7 @@ class Module
             $user = Manager::getService('CurrentUser')->getCurrentUser();
             if ($user) {
                 return;
-            } 
+            }
             $loaded = false;
             $content = $cache->getItem($key, $loaded);
             if ($loaded) {
@@ -290,7 +292,7 @@ class Module
         }
     }
 
-    public function postDispatch (MvcEvent $event)
+    public function postDispatch(MvcEvent $event)
     {
         if ($event->getRouteMatch()) {
             $controller = $event->getRouteMatch()->getParam('controller');
@@ -323,7 +325,7 @@ class Module
                     $user = Manager::getService('CurrentUser')->getCurrentUser();
                     if ($user) {
                         return;
-                    } 
+                    }
                     $cache->setItem($key, $response->getContent());
                 }
             }
@@ -332,7 +334,7 @@ class Module
         Manager::getService('Logger')->info($message);
     }
 
-    protected function initializeSession (MvcEvent $e)
+    protected function initializeSession(MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()
@@ -340,6 +342,7 @@ class Module
         
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config['session']);
+        $this->sessionName = $config['session']['name'];
         
         $mongoInfos = Mongo\DataAccess::getDefaultMongo();
         $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
@@ -352,13 +355,17 @@ class Module
         
         $saveHandler = new MongoDB($adapter, $options);
         
-        $sessionManager = new SessionManager($sessionConfig);
-        $sessionManager->setSaveHandler($saveHandler);
-        if (isset($_COOKIE[$config['session']['name']])) {
-            $sessionManager->start();
-        }
+        $this->sessionManager = new SessionManager($sessionConfig);
+        $this->sessionManager->setSaveHandler($saveHandler);
         
-        Container::setDefaultManager($sessionManager);
+        Container::setDefaultManager($this->sessionManager);
+    }
+    
+    protected function startSession ()
+    {
+        if (isset($_COOKIE[$this->sessionName])) {
+            $this->sessionManager->start();
+        }
     }
 
     protected function toDeadEnd (MvcEvent $event,\Exception $exception)
