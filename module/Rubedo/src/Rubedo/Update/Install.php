@@ -48,7 +48,10 @@ class Install
     {
         $this->configDirPath = realpath(APPLICATION_PATH . '/config/autoload/');
         $this->configFilePath = $this->configDirPath . '/local.php';
-        Events::getEventManager()->attach(Install::SAVECONFIG,array($this, 'clearConfigCache'));
+        Events::getEventManager()->attach(Install::SAVECONFIG, array(
+            $this,
+            'clearConfigCache'
+        ));
     }
 
     public function isConfigWritable()
@@ -395,9 +398,46 @@ class Install
     public function clearConfigCache()
     {
         $moduleConfigCachePath = CONFIG_CACHE_DIR . '/module-config-cache..php';
-        if (is_file($moduleConfigCachePath)){
+        if (is_file($moduleConfigCachePath)) {
             unlink($moduleConfigCachePath);
         }
-        
+    }
+
+    public function clearFileCaches()
+    {
+        $paths = array(
+            APPLICATION_PATH . '/public/generate-image',
+            APPLICATION_PATH . '/public/theme',
+            APPLICATION_PATH . '/cache/images',
+            APPLICATION_PATH . '/cache/twig',
+            APPLICATION_PATH . '/cache/config',
+            APPLICATION_PATH . '/cache/htmlpurifier'
+        );
+        foreach ($paths as $path) {
+            $this->deletedFolderContent($path);
+        }
+    }
+
+    protected function deletedFolderContent($path)
+    {
+        if (! is_dir($path)) {
+            return;
+        }
+        $iterator = new \DirectoryIterator($path);
+        foreach ($iterator as $item) {
+            if ($item->isDot()) {
+                continue;
+            }
+            if ($item->isDir()) {
+                $this->deletedFolderContent($item->getPathname());
+                if ($item->isWritable()) {
+                    rmdir($item->getPathname());
+                }
+            } else {
+                if ($item->isWritable()) {
+                    unlink($item->getPathname());
+                }
+            }
+        }
     }
 }

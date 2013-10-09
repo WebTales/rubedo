@@ -58,6 +58,7 @@ class CacheController extends AbstractActionController
     {
         $installObject = new Install();
         $installObject->clearConfigCache();
+        $installObject->clearFileCaches();
         $countArray = array();
         $countArray['Cached items'] = Cache::getCache()->clean();
         if (Manager::getService('UrlCache')->count() > 0) {
