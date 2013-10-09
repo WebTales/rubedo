@@ -1,6 +1,6 @@
 {% if result.objectType == 'content' %}
 			<tr>
-				<td><h3><a href='{{ displayUrl(result.id,"default",null,singlePage) }}' title='{{result.fields.text}}'>{{ result.fields.text }}</a></h3>
+				<td><h3><a href='{{ displayUrl(result.id,"default",null) }}' title='{{result.fields.text}}'>{{ result.fields.text }}</a></h3>
 				{% if result.fields.summary %}
 				<p>{{ result.fields.summary|cleanHtml }}</p>
 				{% endif %}

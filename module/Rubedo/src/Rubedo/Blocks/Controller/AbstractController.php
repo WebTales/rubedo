@@ -66,6 +66,7 @@ abstract class AbstractController extends AbstractActionController
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
         $this->siteId = $currentPage['site'];
+        Manager::getService('PageContent')->setCurrentSite($this->siteId);
         $locale = $this->params('locale',AbstractLocalizableCollection::getWorkingLocale());
         $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->siteId, $locale);
 
