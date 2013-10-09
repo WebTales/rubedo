@@ -321,12 +321,12 @@ class Url implements IUrl
         AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
         if ($content) {
-            if (isset($content['i18n'][$locale]['fields']['urlSegment'])) {
+            if (isset($content['i18n'][$locale]['fields']['urlSegment']) && !empty($content['i18n'][$locale]['fields']['urlSegment'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
                 $url .= urlencode((string) $content['i18n'][$locale]['fields']['urlSegment']);
-            } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['urlSegment'])) {
+            } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['urlSegment']) && !empty($content['i18n'][$fallbackLocale]['fields']['urlSegment'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
