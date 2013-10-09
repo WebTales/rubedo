@@ -70,6 +70,8 @@ class Url implements IUrl
 
     protected static $staticDomain = null;
 
+    protected static $avatarUrls = array();
+    
     /**
      * Number of URL segment match
      *
@@ -756,24 +758,28 @@ class Url implements IUrl
 
     public function userAvatar($userId)
     {
-        $user = Manager::getService('Users')->findById($userId);
-        if (! $user || ! isset($user['photo']) || empty($user['photo'])) {
-            throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+        if(!isset(self::$avatarUrls[$userId])){
+            $user = Manager::getService('Users')->findById($userId);
+            if (! $user || ! isset($user['photo']) || empty($user['photo'])) {
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+            }
+            $fileId = $user['photo'];
+            $fileService = Manager::getService('Images');
+            $obj = $fileService->findById($fileId);
+            if (! $obj instanceof \MongoGridFSFile) {
+                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+            }
+            $meta = $obj->file;
+            $params = array('filename'=>$meta['filename'],'version'=>$meta['version'],'userId'=>$userId);
+            $options = array(
+                'name' => 'avatar'
+            );
+            $router = Manager::getService('Router');
+            $url = $router->assemble($params, $options);
+            $url = $this->staticUrl($url);
+            self::$avatarUrls[$userId] = $url;
         }
-        $fileId = $user['photo'];
-        $fileService = Manager::getService('Images');
-        $obj = $fileService->findById($fileId);
-        if (! $obj instanceof \MongoGridFSFile) {
-            throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
-        }
-        $meta = $obj->file;
-        $params = array('filename'=>$meta['filename'],'version'=>$meta['version'],'userId'=>$userId);
-        $options = array(
-            'name' => 'avatar'
-        );
-        $router = Manager::getService('Router');
-        $url = $router->assemble($params, $options);
-        $url = $this->staticUrl($url);
-        return $url;
+        return self::$avatarUrls[$userId];
+        
     }
 }
