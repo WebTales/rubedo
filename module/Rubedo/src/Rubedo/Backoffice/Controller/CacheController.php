@@ -20,6 +20,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Rubedo\Services\Cache;
 use Zend\View\Model\JsonModel;
+use Rubedo\Update\Install;
 
 /**
  * Controller providing control over the cached contents
@@ -55,6 +56,8 @@ class CacheController extends AbstractActionController
 
     public function clearAction ()
     {
+        $installObject = new Install();
+        $installObject->clearConfigCache();
         $countArray = array();
         $countArray['Cached items'] = Cache::getCache()->clean();
         if (Manager::getService('UrlCache')->count() > 0) {
