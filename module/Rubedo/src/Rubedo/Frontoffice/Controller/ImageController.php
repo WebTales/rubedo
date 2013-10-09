@@ -63,7 +63,7 @@ class ImageController extends AbstractActionController
         // is the image public ?
         $isPublic = $damService->isPublic($mediaId);
         
-        //get Image from GridFs
+        // get Image from GridFs
         $fileService = Manager::getService('Images');
         $obj = $fileService->findById($fileId);
         if (! $obj instanceof \MongoGridFSFile) {
@@ -95,22 +95,24 @@ class ImageController extends AbstractActionController
         $type = strtolower($extension);
         $type = ($type == 'jpg') ? 'jpeg' : $type;
         
-        //should we store generated image in public path of the website
+        // should we store generated image in public path of the website
         if ($isPublic) {
             $publicPath = APPLICATION_PATH . '/public/' . urldecode($this->getRequest()
                 ->getUri()
                 ->getPath());
             $publicDirName = dirname($publicPath);
             if (! file_exists($publicDirName)) {
-                mkdir($publicDirName, 0777, true);
+                mkdir($publicDirName, 0755, true);
             }
             $tmpImagePath = $publicPath;
         } else {
             $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)) . '_' . basename($filePath); // str_replace('/', '_', $filePath);
-            $tmpImagePath = $this->getTempImagesPaths() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
+            $tmpImagePath = $this->getTempImagesPaths() . '/' . $version . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
         }
         if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
-            
+            if (! is_file(dirname($tmpImagePath))) {
+                mkdir(dirname($tmpImagePath), 0755, true);
+            }
             $imageService = new \Rubedo\Image\Image();
             $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, 'custom');
             
@@ -192,6 +194,7 @@ class ImageController extends AbstractActionController
             $meta = $obj->file;
             $filename = $meta['filename'];
         }
+        // var_dump($filePath);die();
         if ($filePath) {
             $filename = isset($filename) ? $filename : basename($filePath);
             $nameSegment = explode('.', $filename);
@@ -208,10 +211,12 @@ class ImageController extends AbstractActionController
             $type = strtolower($extension);
             $type = ($type == 'jpg') ? 'jpeg' : $type;
             $fileSegment = isset($fileId) ? $fileId : crc32(dirname($filePath)) . '_' . basename($filePath); // str_replace('/', '_', $filePath);
-            $tmpImagePath = $this->getTempImagesPaths() . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
+            $tmpImagePath = $this->getTempImagesPaths() . '/' . $version . '/' . $fileSegment . '_' . (isset($width) ? $width : '') . '_' . (isset($height) ? $height : '') . '_' . (isset($mode) ? $mode : '') . '.' . $type;
             
             if (! is_file($tmpImagePath) || $now - filemtime($tmpImagePath) > 7 * 24 * 3600) {
-                
+                if (! is_file(dirname($tmpImagePath))) {
+                    mkdir(dirname($tmpImagePath), 0755, true);
+                }
                 $imageService = new \Rubedo\Image\Image();
                 $newImage = $imageService->resizeImage($filePath, $mode, $width, $height, $size);
                 
