@@ -700,4 +700,8 @@ class Url implements IUrl
         
         return $url;
     }
+    
+    public function staticUrl($url){
+        return $url;
+    }
 }

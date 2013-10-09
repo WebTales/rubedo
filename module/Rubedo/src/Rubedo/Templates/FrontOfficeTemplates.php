@@ -164,6 +164,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('imageUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::imageUrl'));
         $this->_twig->addFunction('mediaUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaUrl'));
         $this->_twig->addFunction('mediaThumbnailUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaThumbnailUrl'));
+        $this->_twig->addFunction('staticUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::staticUrl'));
         $this->_twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
     }
 
@@ -381,6 +382,10 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public static function mediaThumbnailUrl($mediaId)
     {
         return Manager::getService('Url')->mediaThumbnailUrl($mediaId);
+    }
+    
+    public static function staticUrl($url){
+        return Manager::getService('Url')->staticUrl($url);
     }
 
     public static function getPageTitle($contentId)
