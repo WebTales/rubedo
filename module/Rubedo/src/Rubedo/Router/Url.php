@@ -321,12 +321,12 @@ class Url implements IUrl
         AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
         if ($content) {
-            if (isset($content['i18n'][$locale]['fields']['urlSegment']) && !empty($content['i18n'][$locale]['fields']['urlSegment'])) {
+            if (isset($content['i18n'][$locale]['fields']['urlSegment']) && ! empty($content['i18n'][$locale]['fields']['urlSegment'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
                 $url .= urlencode((string) $content['i18n'][$locale]['fields']['urlSegment']);
-            } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['urlSegment']) && !empty($content['i18n'][$fallbackLocale]['fields']['urlSegment'])) {
+            } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['urlSegment']) && ! empty($content['i18n'][$fallbackLocale]['fields']['urlSegment'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
@@ -738,12 +738,42 @@ class Url implements IUrl
             return 'http://' . self::$staticDomain . '/' . ltrim($url, '/');
         }
     }
-    
-    public function flagUrl($code,$size=16){
-        if(!in_array($size,array(16,24,32,48,64))){
+
+    public function flagUrl($code, $size = 16)
+    {
+        if (! in_array($size, array(
+            16,
+            24,
+            32,
+            48,
+            64
+        ))) {
             $size = 16;
         }
         $url = "/assets/flags/$size/$code.png";
         return $this->staticUrl($url);
+    }
+
+    public function userAvatar($userId)
+    {
+        $user = Manager::getService('Users')->findById($userId);
+        if (! $user || ! isset($user['photo']) || empty($user['photo'])) {
+            throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+        }
+        $fileId = $user['photo'];
+        $fileService = Manager::getService('Images');
+        $obj = $fileService->findById($fileId);
+        if (! $obj instanceof \MongoGridFSFile) {
+            throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+        }
+        $meta = $obj->file;
+        $params = array('filename'=>$meta['filename'],'version'=>$meta['version'],'userId'=>$userId);
+        $options = array(
+            'name' => 'avatar'
+        );
+        $router = Manager::getService('Router');
+        $url = $router->assemble($params, $options);
+        $url = $this->staticUrl($url);
+        return $url;
     }
 }

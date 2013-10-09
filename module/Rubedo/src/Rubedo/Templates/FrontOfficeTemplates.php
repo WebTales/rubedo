@@ -74,7 +74,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      * @var boolean
      */
     protected static $_themeHasBeenSet = false;
-    
+
     protected static $themeVersion = null;
 
     /**
@@ -166,6 +166,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('mediaThumbnailUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaThumbnailUrl'));
         $this->_twig->addFunction('staticUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::staticUrl'));
         $this->_twig->addFunction('flagUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::flagUrl'));
+        $this->_twig->addFunction('userAvatar', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatar'));
         $this->_twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
     }
 
@@ -246,7 +247,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             return false;
         }
         $config = $this->getConfig();
-        if($theme == 'customtheme'){
+        if ($theme == 'customtheme') {
             $theme = 'default';
         }
         if (! isset($config['themes'][$theme])) {
@@ -307,7 +308,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         return self::$_customThemeId;
     }
-    
+
     /**
      * Get the custom theme version
      *
@@ -328,11 +329,11 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         // check if it is a custom theme
         if (preg_match('/[\dabcdef]{24}/', $theme) == 1) {
             $themeData = Manager::getService('CustomThemes')->findById($theme);
-            if($themeData){
+            if ($themeData) {
                 self::$_currentTheme = "customtheme";
                 self::$_customThemeId = $theme;
                 self::$themeVersion = $themeData['version'];
-            }else{
+            } else {
                 self::$_currentTheme = 'default';
             }
             self::$_themeHasBeenSet = true;
@@ -352,7 +353,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public static function cleanHtml($html)
     {
-        if(is_null($html) || empty($html)){
+        if (is_null($html) || empty($html)) {
             return '';
         }
         return Manager::getService('HtmlCleaner')->clean($html);
@@ -362,35 +363,40 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         return Manager::getService('Url')->url($urlOptions, $route, $reset, $encode);
     }
-    
-    
 
     public static function displayUrl($contentId, $type = "default", $siteId = null, $defaultUrl = null)
     {
         return Manager::getService('Url')->displayUrl($contentId, $type, $siteId, $defaultUrl);
     }
-    
+
     public static function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
     {
         return Manager::getService('Url')->imageUrl($mediaId, $width, $height, $mode);
     }
-    
+
     public static function mediaUrl($mediaId, $forceDownload = null)
     {
         return Manager::getService('Url')->mediaUrl($mediaId, $forceDownload);
     }
-    
+
     public static function mediaThumbnailUrl($mediaId)
     {
         return Manager::getService('Url')->mediaThumbnailUrl($mediaId);
     }
-    
-    public static function staticUrl($url){
+
+    public static function staticUrl($url)
+    {
         return Manager::getService('Url')->staticUrl($url);
     }
-    
-    public static function flagUrl($code,$size=16){
-        return Manager::getService('Url')->flagUrl($code,$size);
+
+    public static function flagUrl($code, $size = 16)
+    {
+        return Manager::getService('Url')->flagUrl($code, $size);
+    }
+
+    public static function userAvatar($userId)
+    {
+        return Manager::getService('Url')->userAvatar($userId);
     }
 
     public static function getPageTitle($contentId)
@@ -521,11 +527,11 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
         return $string;
     }
-    
+
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyloadConfig ()
+    public static function lazyloadConfig()
     {
         $config = Manager::getService('config');
         self::setConfig($config['templates']);
