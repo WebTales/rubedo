@@ -41,12 +41,12 @@
     
     {% block pageStyle %}
 
-    <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="{{baseUrl}}/components/jschr/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet">
+    <link href="{{staticUrl('/components/twitter/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{staticUrl('/components/twitter/bootstrap/css/bootstrap-responsive.min.css')}}" rel="stylesheet">
+    <link href="{{staticUrl('/components/jschr/bootstrap-modal/css/bootstrap-modal.css')}}" rel="stylesheet">
     
     {% for sheet in css %}
-    <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
+    <link href="{{staticUrl(sheet)}}" rel="stylesheet" />
     {% endfor %}
     
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -54,15 +54,15 @@
     {% endblock %} 
     
     <!--[if lte IE 6]>
-        <link rel="stylesheet" type="text/css" href="{{baseUrl}}/components/webtales/bsie/bootstrap/css/bootstrap-ie6.css">
-        <link rel="stylesheet" type="text/css" href="{{baseUrl}}/components/webtales/bsie/bootstrap/css/ie.css">
+        <link rel="stylesheet" type="text/css" href="{{staticUrl('/components/webtales/bsie/bootstrap/css/bootstrap-ie6.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{staticUrl('/components/webtales/bsie/bootstrap/css/ie.css')}}">
     <![endif]-->    
     
     {% block pageIcons %}
     
     {% if favicon %}
     <!-- favicon -->
-    <link rel="shortcut icon" href="{{baseUrl}}/{{ favicon }}">
+    <link rel="shortcut icon" href="{{staticUrl('favicon')}}">
     {% endif %}
     
     {% if AppleIcon %}
@@ -183,7 +183,7 @@
         </div>
         
         <div class="modal-body">
-            <img src="{{baseUrl}}/components/webtales/rubedo-backoffice-ui/www/resources/images/logo.png" id="fullScreenPicture" alt="">
+            <img src="{{staticUrl('/components/webtales/rubedo-backoffice-ui/www/resources/images/logo.png')}}" id="fullScreenPicture" alt="">
         </div>
         
         <div class="modal-footer">
@@ -243,20 +243,20 @@
     	<!-- Le javascript
     		================================================== -->
     	<!-- Placed at the end of the document so the pages load faster -->
-    	<script src="{{baseUrl}}/components/jquery/jquery/jquery-1.10.1.min.js"></script>
-    	<script src="{{baseUrl}}/components/twitter/bootstrap/js/bootstrap.min.js"></script>
-    	<script src="{{baseUrl}}/components/jschr/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
-    	<script src="{{baseUrl}}/components/jschr/bootstrap-modal/js/bootstrap-modal.js"></script>
+    	<script src="{{staticUrl('/components/jquery/jquery/jquery-1.10.1.min.js')}}"></script>
+    	<script src="{{staticUrl('/components/twitter/bootstrap/js/bootstrap.min.js')}}"></script>
+    	<script src="{{staticUrl('/components/jschr/bootstrap-modal/js/bootstrap-modalmanager.js')}}"></script>
+    	<script src="{{staticUrl('/components/jschr/bootstrap-modal/js/bootstrap-modalmanager.js')}}"></script>
     	
     	{% for file in js %}
-    	<script type="text/javascript" src="{{baseUrl}}{{file}}"></script>
+    	<script type="text/javascript" src="{{staticUrl(file)}}"></script>
     	{% endfor %}
     	
     	
 	{% endblock %}
 	
 	<!--[if lte IE 6]>
-        <script type="text/javascript" src="{{baseUrl}}/components/webtales/bsie/js/bootstrap-ie.js"></script>
+        <script type="text/javascript" src="{{staticUrl('/components/webtales/bsie/js/bootstrap-ie.js')}}"></script>
     <![endif]-->
 	
 </body>

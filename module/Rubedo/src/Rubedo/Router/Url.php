@@ -68,6 +68,8 @@ class Url implements IUrl
      */
     protected static $routeName = null;
 
+    protected static $staticDomain = null;
+
     /**
      * Number of URL segment match
      *
@@ -639,7 +641,9 @@ class Url implements IUrl
 
     public function mediaUrl($mediaId, $forceDownload = null)
     {
-        $media = Manager::getService('Dam')->findById($mediaId);
+        $damService = Manager::getService('Dam');
+        $media = $damService->findById($mediaId);
+        $isPublic = $damService->isPublic($mediaId);
         if (! $media) {
             return '';
         }
@@ -661,19 +665,28 @@ class Url implements IUrl
             'filename' => $meta['filename']
         );
         $url = $router->assemble($params, $options);
-        
+        if ($isPublic) {
+            $url = $this->staticUrl($url);
+        }
         return $url;
     }
 
     public function mediaThumbnailUrl($mediaId)
     {
         $url = '/dam/get-thumbnail?media-id=' . $mediaId;
+        $damService = Manager::getService('Dam');
+        $isPublic = $damService->isPublic($mediaId);
+        if ($isPublic) {
+            $url = $this->staticUrl($url);
+        }
         return $url;
     }
 
     public function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
     {
-        $media = Manager::getService('Dam')->findById($mediaId);
+        $damService = Manager::getService('Dam');
+        $media = $damService->findById($mediaId);
+        $isPublic = $damService->isPublic($mediaId);
         if (! $media) {
             return '';
         }
@@ -697,11 +710,32 @@ class Url implements IUrl
             'filename' => $meta['filename']
         );
         $url = $router->assemble($params, $options);
-        
+        if ($isPublic) {
+            $url = $this->staticUrl($url);
+        }
         return $url;
     }
-    
-    public function staticUrl($url){
-        return $url;
+
+    public function staticUrl($url)
+    {
+        if (! isset(self::$staticDomain)) {
+            $siteId = Manager::getService('PageContent')->getCurrentSite();
+            if ($siteId) {
+                $site = Manager::getService('Sites')->findById($siteId);
+                if ($site) {
+                    if (isset($site['staticDomain'])) {
+                        self::$staticDomain = $site['staticDomain'] ? $site['staticDomain'] : '';
+                    }
+                }
+            }
+            if (! isset(self::$staticDomain)) {
+                self::$staticDomain = '';
+            }
+        }
+        if (self::$staticDomain === '') {
+            return $url;
+        } else {
+            return 'http://' . self::$staticDomain . '/' . ltrim($url, '/');
+        }
     }
 }

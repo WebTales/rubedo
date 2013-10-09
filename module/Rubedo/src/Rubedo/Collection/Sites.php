@@ -55,7 +55,10 @@ class Sites extends AbstractLocalizableCollection implements ISites
         "builtOnEmptySite",
         "builtOnModelSiteId",
         "locStrategy",
-        "useBrowserLanguage"
+        "useBrowserLanguage",
+        "staticDomain",
+        "recaptcha_public_key",
+        "recaptcha_private_key"
     );
 
     protected $_indexes = array(
