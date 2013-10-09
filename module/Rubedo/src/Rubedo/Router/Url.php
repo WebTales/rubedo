@@ -88,7 +88,7 @@ class Url implements IUrl
      *
      * @return Zend\Mvc\Router\RouteInterface
      */
-    public function getRouter ()
+    public function getRouter()
     {
         return Url::$router;
     }
@@ -98,7 +98,7 @@ class Url implements IUrl
      *
      * @param Zend\Mvc\Router\RouteInterface $route            
      */
-    public static function setRouter (RouteInterface $router)
+    public static function setRouter(RouteInterface $router)
     {
         Url::$router = $router;
     }
@@ -107,7 +107,7 @@ class Url implements IUrl
      *
      * @param string $routeName            
      */
-    public static function setRouteName ($routeName)
+    public static function setRouteName($routeName)
     {
         Url::$routeName = $routeName;
     }
@@ -119,7 +119,7 @@ class Url implements IUrl
      *            requested URL
      * @return string int
      */
-    public function matchPageRoute ($url, $host)
+    public function matchPageRoute($url, $host)
     {
         if (false !== strpos($url, '?')) {
             list ($url) = explode('?', $url);
@@ -227,7 +227,7 @@ class Url implements IUrl
         return $result;
     }
 
-    public function disableNavigation ()
+    public function disableNavigation()
     {
         self::$_disableNav = true;
     }
@@ -237,7 +237,7 @@ class Url implements IUrl
      *
      * @see \Rubedo\Interfaces\Router\IUrl::getPageUrl()
      */
-    public function getPageUrl ($pageId, $locale)
+    public function getPageUrl($pageId, $locale)
     {
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
@@ -309,7 +309,7 @@ class Url implements IUrl
         return $url;
     }
 
-    public function getContentUrl ($contentId, $locale, $fallbackLocale = null)
+    public function getContentUrl($contentId, $locale, $fallbackLocale = null)
     {
         $url = '';
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
@@ -319,7 +319,17 @@ class Url implements IUrl
         AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
         if ($content) {
-            if (isset($content['i18n'][$locale]['fields']['text'])) {
+            if (isset($content['i18n'][$locale]['fields']['urlSegment'])) {
+                $url .= self::URI_DELIMITER;
+                $url .= (string) $content['id'];
+                $url .= self::URI_DELIMITER;
+                $url .= urlencode((string) $content['i18n'][$locale]['fields']['urlSegment']);
+            } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['urlSegment'])) {
+                $url .= self::URI_DELIMITER;
+                $url .= (string) $content['id'];
+                $url .= self::URI_DELIMITER;
+                $url .= urlencode((string) $content['i18n'][$fallbackLocale]['fields']['urlSegment']);
+            } elseif (isset($content['i18n'][$locale]['fields']['text'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
@@ -338,7 +348,7 @@ class Url implements IUrl
         }
     }
 
-    public function matchContentRoute ($segments, $locale)
+    public function matchContentRoute($segments, $locale)
     {
         if (! $locale) {
             return null;
@@ -353,7 +363,11 @@ class Url implements IUrl
         AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
         $nativeLocale = $content['nativeLanguage'];
-        if (isset($content['i18n'][$locale]['fields']['text']) && urlencode($content['i18n'][$locale]['fields']['text']) == $encodedText) {
+        if (isset($content['i18n'][$locale]['fields']['urlSegment']) && urlencode($content['i18n'][$locale]['fields']['urlSegment']) == $encodedText) {
+            return $contentId;
+        } elseif (isset($content['i18n'][$nativeLocale]['fields']['urlSegment']) && urlencode($content['i18n'][$nativeLocale]['fields']['urlSegment']) == $encodedText) {
+            return $contentId;
+        } elseif (isset($content['i18n'][$locale]['fields']['text']) && urlencode($content['i18n'][$locale]['fields']['text']) == $encodedText) {
             return $contentId;
         } elseif (isset($content['i18n'][$nativeLocale]['fields']['text']) && urlencode($content['i18n'][$nativeLocale]['fields']['text']) == $encodedText) {
             return $contentId;
@@ -367,7 +381,7 @@ class Url implements IUrl
      *
      * @see \Rubedo\Interfaces\Router\IUrl::getUrl()
      */
-    public function getUrl ($data, $encode = false)
+    public function getUrl($data, $encode = false)
     {
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
@@ -420,7 +434,7 @@ class Url implements IUrl
      * @return string Url for the link href attribute.
      * @todo handle URL prefix
      */
-    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
         $options = array(
             'encode' => $encode,
@@ -532,7 +546,7 @@ class Url implements IUrl
      *            
      * @return string Url
      */
-    public function displayUrl ($contentId, $type = "default", $siteId = null, $defaultPage = null)
+    public function displayUrl($contentId, $type = "default", $siteId = null, $defaultPage = null)
     {
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
@@ -609,7 +623,7 @@ class Url implements IUrl
         }
     }
 
-    protected function _getDefaultSingleBySiteID ($siteId)
+    protected function _getDefaultSingleBySiteID($siteId)
     {
         $site = Manager::getService('Sites')->findById($siteId);
         if (isset($site['defaultSingle'])) {
@@ -623,7 +637,7 @@ class Url implements IUrl
         }
     }
 
-    public function mediaUrl ($mediaId, $forceDownload = null)
+    public function mediaUrl($mediaId, $forceDownload = null)
     {
         $media = Manager::getService('Dam')->findById($mediaId);
         if (! $media) {
@@ -651,13 +665,13 @@ class Url implements IUrl
         return $url;
     }
 
-    public function mediaThumbnailUrl ($mediaId)
+    public function mediaThumbnailUrl($mediaId)
     {
         $url = '/dam/get-thumbnail?media-id=' . $mediaId;
         return $url;
     }
 
-    public function imageUrl ($mediaId, $width = null, $height = null, $mode = 'crop')
+    public function imageUrl($mediaId, $width = null, $height = null, $mode = 'crop')
     {
         $media = Manager::getService('Dam')->findById($mediaId);
         if (! $media) {

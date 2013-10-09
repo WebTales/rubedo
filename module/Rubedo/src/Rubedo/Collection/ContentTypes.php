@@ -391,6 +391,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         
         $localizableFieldArray = array();
         $localizableFieldArray[] = 'text';
+        $localizableFieldArray[] = 'urlSegment';
         $localizableFieldArray[] = 'summary';
         
         foreach($fieldsDef as $fieldDef){
