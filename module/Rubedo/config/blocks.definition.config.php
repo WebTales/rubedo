@@ -23,11 +23,11 @@ return array(
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/addThisFollow.json'
     ),
-    'advancedContact' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedContact',
-        'maxlifeTime' => - 1,
-        'definitionFile' => $blocksPath . '/advancedContact.json'
-    ),
+//     'advancedContact' => array(
+//         'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedContact',
+//         'maxlifeTime' => - 1,
+//         'definitionFile' => $blocksPath . '/advancedContact.json'
+//     ),
     'advancedSearchForm' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedSearch',
         'maxlifeTime' => 86400,
@@ -173,9 +173,9 @@ return array(
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/video.json'
     ),
-    'zendController' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\ZendController',
-        'maxlifeTime' => - 1,
-        'definitionFile' => $blocksPath . '/zendController.json'
-    )
+//     'zendController' => array(
+//         'controller' => 'Rubedo\\Blocks\\Controller\\ZendController',
+//         'maxlifeTime' => - 1,
+//         'definitionFile' => $blocksPath . '/zendController.json'
+//     )
 );
