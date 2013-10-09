@@ -39,17 +39,23 @@ class AdvancedSearchController extends AbstractController
         
         // get Taxonomies associated to the content type
         $blockConfig = $params["block-config"];
-        $contentTypes = $blockConfig['contentTypes'];
+        if (isset($blockConfig['contentTypes'])){
+            $contentTypes = $blockConfig['contentTypes'];
+        } else {
+            $contentTypes=array();
+        }
         
         $searchPage = isset($blockConfig["searchPage"]) ? $blockConfig["searchPage"] : null;
         $placeholder = isset($blockConfig["placeholder"]) ? $blockConfig["placeholder"] : null;
         
-        foreach ($contentTypes as $contentTypeId) {
-            $taxonomiesArray = $taxonomyService->findByContentTypeId($contentTypeId);
-            
-            unset($taxonomiesArray[""]);
-            
-            $taxonomies = array_merge($taxonomies, $taxonomiesArray);
+        if (isset($contentTypes)&&is_array($contentTypes)){
+            foreach ($contentTypes as $contentTypeId) {
+                $taxonomiesArray = $taxonomyService->findByContentTypeId($contentTypeId);
+                
+                unset($taxonomiesArray[""]);
+                
+                $taxonomies = array_merge($taxonomies, $taxonomiesArray);
+            }
         }
         
         $output["taxonomies"] = $taxonomies;
