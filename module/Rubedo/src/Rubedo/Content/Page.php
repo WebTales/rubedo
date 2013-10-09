@@ -17,6 +17,7 @@
 namespace Rubedo\Content;
 
 use Rubedo\Interfaces\Content\IPage;
+use Rubedo\Services\Manager;
 
 /**
  * Page service
@@ -80,6 +81,9 @@ class Page implements IPage
      */
     public function appendCss ($cssFile)
     {
+        if(strpos($cssFile,'http')!==0){
+            $cssFile = Manager::getService('Url')->staticUrl($cssFile);
+        }
         if (! in_array($cssFile, self::$_css)) {
             self::$_css[] = $cssFile;
         }
@@ -111,6 +115,10 @@ class Page implements IPage
      */
     public function appendJs ($jsFile)
     {
+        if(strpos($jsFile,'http')!==0){
+            $jsFile = Manager::getService('Url')->staticUrl($jsFile);
+        }
+        
         if (! in_array($jsFile, self::$_js)) {
             self::$_js[] = $jsFile;
         }

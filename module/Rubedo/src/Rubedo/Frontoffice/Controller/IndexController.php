@@ -175,6 +175,7 @@ class IndexController extends AbstractActionController
             throw new \Rubedo\Exceptions\NotFound('Page not found in this language', 'Exception101');
         }
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
+        $this->_servicePage->setCurrentSite($this->_pageInfo['site']);
         
         $isLoggedIn = Manager::getService('CurrentUser')->isAuthenticated();
         $hasAccessToBO = Manager::getService('Acl')->hasAccess('ui.backoffice');
@@ -198,8 +199,11 @@ class IndexController extends AbstractActionController
         // template service
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         
+        
+        
         // build contents tree
         $this->_pageParams = $this->_getPageInfo($this->_pageId);
+        
         
         // Load the CSS files
         $this->_servicePage->appendCss($this->getRequest()
@@ -233,7 +237,7 @@ class IndexController extends AbstractActionController
             }
         }
         
-        $this->_servicePage->setCurrentSite($this->_pageParams["site"]);
+        
         
         // Build Twig context
         $twigVar = $this->_pageParams;
