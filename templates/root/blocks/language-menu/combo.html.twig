@@ -9,7 +9,7 @@
 		{% for language in languages %}
 		{% if language.url and (showCurrentLanguage or language.locale != currentLanguage.locale) %}
 		<li><a href="{% if language.locale == currentLanguage.locale %}#{% else %}{{ language.url }}{% endif %}">
-		{% if language.flagCode %}<i class=""><img src="{{ flagUrl(currentLanguage.flagCode) }}" alt=""/></i>{% endif %} {% if language.ownLabel %}{{ language.ownLabel }}{% else %}{{ language.label }}{% endif %}</a></li> 
+		{% if language.flagCode %}<i class=""><img src="{{ flagUrl(language.flagCode) }}" alt=""/></i>{% endif %} {% if language.ownLabel %}{{ language.ownLabel }}{% else %}{{ language.label }}{% endif %}</a></li> 
 				{% endif %}
 		{% endfor %}
 
