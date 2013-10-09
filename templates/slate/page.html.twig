@@ -3,13 +3,13 @@
     
     {% block pageStyle %}
     <!-- Le styles -->
-    <link href="{{baseUrl}}/components/thomaspark/bootswatch/slate/bootstrap.min.css" rel="stylesheet">
-    <link href="{{baseUrl}}/components/twitter/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="{{baseUrl}}/components/jschr/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet">
+    <link href="{{staticUrl('/components/thomaspark/bootswatch/slate/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{staticUrl('/components/twitter/bootstrap/css/bootstrap-responsive.min.css')}}" rel="stylesheet">
+    <link href="{{staticUrl('/components/jschr/bootstrap-modal/css/bootstrap-modal.css')}}" rel="stylesheet">
     
     
     {% for sheet in css %}
-    <link href="{{baseUrl}}{{sheet}}" rel="stylesheet" />
+    <link href="{{staticUrl(sheet)}}" rel="stylesheet" />
     {% endfor %}
     
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
