@@ -45,6 +45,7 @@ RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [
 RewriteRule ^theme/.* /index.php [L]
 RewriteRule ^generate-image/.* /index.php [L]
 RewriteRule ^access-dam/.* /index.php [L]
+RewriteRule ^user-avatar/.* /index.php [L]
 RewriteRule !\.(js|ico|txt|gif|jpg|png|css)$ /index.php [L]
 
 ####################################################################

@@ -114,6 +114,19 @@ return array(
             'may_terminate' => true
         ),
         // themeResource route : prefix by theme
+        'avatar' => array(
+            'type' => 'Segment',
+            'options' => array(
+                'route' => '/user-avatar/:userId/:version/:filename',
+                'defaults' => array(
+                    '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
+                    'controller' => 'Image',
+                    'action' => 'get-user-avatar'
+                )
+            ),
+            'may_terminate' => true
+        ),
+        // themeResource route : prefix by theme
         'imageFromDam' => array(
             'type' => 'Segment',
             'options' => array(

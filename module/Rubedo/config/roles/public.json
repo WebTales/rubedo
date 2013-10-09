@@ -40,6 +40,7 @@
         "execute.controller.languages.index.backoffice",
         "execute.controller.css.index.default",
         "execute.controller.calendar-zimmer.xhr-get-calendar.blocks",
-        "execute.controller.queue.index.default"
+        "execute.controller.queue.index.default",
+        "execute.controller.image.get-user-avatar.default"
  	]
 }

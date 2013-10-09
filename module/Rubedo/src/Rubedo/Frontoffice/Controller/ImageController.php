@@ -18,6 +18,7 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 
 /**
  * Controller providing access to images in gridFS
@@ -274,6 +275,23 @@ class ImageController extends AbstractActionController
     {
         $queryString = $this->getRequest()->getQuery();
         $queryString->set('size', 'thumbnail');
+        return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
+            'action' => 'index'
+        ));
+    }
+    
+    public function getUserAvatarAction(){
+        $userId = $this->params('userId');
+        $version = $this->params('version');
+        $user = Manager::getService('Users')->findById($userId);
+        if(!$user || !isset($user['photo']) || empty($user['photo'])){
+            throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+        }
+        $fileId = $user['photo'];
+        
+        $queryString = $this->getRequest()->getQuery();
+        $queryString->set('file-id', $fileId);
+        $queryString->set('version', $version);
         return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
             'action' => 'index'
         ));
