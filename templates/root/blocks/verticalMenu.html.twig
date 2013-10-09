@@ -13,7 +13,7 @@
         <ul class="nav nav-tabs nav-stacked">
                 {% if displayRootPage %}
 			    <li><a class="brand"
-				href="{% if homePage  %}{{ url({'pageId':homePage},true) }}{% endif %}"
+				href="{% if rootPage  %}{{ url({'pageId':rootPage.id},true) }}{% endif %}"
 				title="{{ rootPage.title }}" rel="home">{{ rootPage.title }}</a></li>
             {% endif %}
             {% for page in pages %}
