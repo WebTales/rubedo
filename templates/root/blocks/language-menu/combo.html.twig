@@ -2,14 +2,14 @@
 {% block mainContent %}
 <div class="btn-group">
 	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> 
-	{% if currentLanguage.flagCode %}<i class=""><img src="/assets/flags/16/{{ currentLanguage.flagCode }}.png" alt=""/></i>{% endif %} {% if currentLanguage.ownLabel %}{{ currentLanguage.ownLabel }}{% else %}{{ currentLanguage.label }}{% endif %} <span class="caret"></span>
+	{% if currentLanguage.flagCode %}<i class=""><img src="{{ flagUrl(currentLanguage.flagCode) }}" alt=""/></i>{% endif %} {% if currentLanguage.ownLabel %}{{ currentLanguage.ownLabel }}{% else %}{{ currentLanguage.label }}{% endif %} <span class="caret"></span>
 	</a>
 
 	<ul class="dropdown-menu">
 		{% for language in languages %}
 		{% if language.url and (showCurrentLanguage or language.locale != currentLanguage.locale) %}
 		<li><a href="{% if language.locale == currentLanguage.locale %}#{% else %}{{ language.url }}{% endif %}">
-		{% if language.flagCode %}<i class=""><img src="/assets/flags/16/{{ language.flagCode }}.png" alt=""/></i>{% endif %} {% if language.ownLabel %}{{ language.ownLabel }}{% else %}{{ language.label }}{% endif %}</a></li> 
+		{% if language.flagCode %}<i class=""><img src="{{ flagUrl(currentLanguage.flagCode) }}" alt=""/></i>{% endif %} {% if language.ownLabel %}{{ language.ownLabel }}{% else %}{{ language.label }}{% endif %}</a></li> 
 				{% endif %}
 		{% endfor %}
 

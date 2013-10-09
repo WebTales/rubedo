@@ -738,4 +738,12 @@ class Url implements IUrl
             return 'http://' . self::$staticDomain . '/' . ltrim($url, '/');
         }
     }
+    
+    public function flagUrl($code,$size=16){
+        if(!in_array($size,array(16,24,32,48,64))){
+            $size = 16;
+        }
+        $url = "/assets/flags/$size/$code.png";
+        return $this->staticUrl($url);
+    }
 }
