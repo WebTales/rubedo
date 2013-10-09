@@ -39,7 +39,9 @@ class AuthenticationController extends AbstractController
         $currentUser = Manager::getService('CurrentUser')->getCurrentUser();
         $output['currentUser'] = $currentUser;
         $css = array();
-        $js = array();
+        $js = array(
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/authentication.js")
+        );
         return $this->_sendResponse($output, $template, $css, $js);
     }
 }
