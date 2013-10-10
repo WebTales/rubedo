@@ -493,7 +493,7 @@ function swithToEditMode() {
 	 jQuery(".complete-edition-btn").click(function(){
 	 		var siteUrl = getDomainName();
 	 		var targetContentId=jQuery(this).attr("data-content-id");
-	 		var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?edit-mode=true&content-id="+targetContentId+"&workingLanguage="+jQuery("html").attr("lang");;
+	 		var modalUrl = document.location.protocol+"//" + siteUrl + "/backoffice/content-contributor?edit-mode=true&content-id="+targetContentId+"&workingLanguage="+jQuery("html").attr("lang");;
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
 			var availHeight=window.innerHeight*(90/100);
@@ -683,7 +683,7 @@ function addContent(type,typeId,queryId){
 		    jQuery('#btn-valid-form').unbind();
 		    jQuery('#btn-cancel-ctselect-form').unbind();
 		    jQuery("#contentTypeSelectModal").modal("hide");
-			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace')+"&workingLanguage="+jQuery("html").attr("lang");;
+			var modalUrl = document.location.protocol+"//" + siteUrl + "/backoffice/content-contributor?typeId=" + selectedTypeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace')+"&workingLanguage="+jQuery("html").attr("lang");;
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
 			var availHeight=window.innerHeight*(90/100);
@@ -700,7 +700,7 @@ function addContent(type,typeId,queryId){
 		
 		jQuery("#contentTypeSelectModal").modal("show");
 		}else{
-			var modalUrl = "http://" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace')+"&workingLanguage="+jQuery("html").attr("lang");
+			var modalUrl = document.location.protocol+"//" + siteUrl + "/backoffice/content-contributor?typeId=" + typeId + "&queryId=" + queryId + "&current-page=" + jQuery('body').attr('data-current-page') + "&current-workspace=" + jQuery('body').attr('data-current-workspace')+"&workingLanguage="+jQuery("html").attr("lang");
 			var availWidth=window.innerWidth*(90/100);
 			var properWidth=Math.min(1000,availWidth);
 			var availHeight=window.innerHeight*(90/100);
