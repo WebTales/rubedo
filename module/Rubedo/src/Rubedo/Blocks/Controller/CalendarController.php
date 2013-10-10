@@ -204,6 +204,9 @@ class CalendarController extends ContentListController
 
     public function xhrGetCalendarAction ()
     {
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $this->init();
+        }
         $twigVars = $this->_getList();
         
         $calendarHtml = Manager::getService('FrontOfficeTemplates')->render($template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/calendar/table.html.twig"), $twigVars);

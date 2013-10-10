@@ -47,6 +47,31 @@ class ContentTypesController extends DataAccessController
         return $this->_returnJson($this->_dataService->getReadableContentTypes());
     }
 
+    public function indexAction ()
+    {
+        // merge filter and tFilter
+        $jsonFilter = $this->params()->fromQuery('filter', '[]');
+        $jsonTFilter = $this->params()->fromQuery('tFilter', '[]');
+        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
+    
+        $filters = array_merge($tFilterArray, $filterArray);
+        $mongoFilters = $this->_buildFilter($filters);
+    
+        $sort = Json::decode($this->params()->fromQuery('sort', null),Json::TYPE_ARRAY);
+        $start = Json::decode($this->params()->fromQuery('start', null),Json::TYPE_ARRAY);
+        $limit = Json::decode($this->params()->fromQuery('limit', null),Json::TYPE_ARRAY);
+    
+        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit, false);
+        $response = array();
+        $response['total'] = $dataValues['count'];
+        $response['data'] = $dataValues['data'];
+        $response['success'] = TRUE;
+        $response['message'] = 'OK';
+    
+        return $this->_returnJson($response);
+    }
+    
     public function isUsedAction ()
     {
         $id = $this->params()->fromQuery('id');
