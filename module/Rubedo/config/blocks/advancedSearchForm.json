@@ -30,16 +30,6 @@
 								"fieldLabel":"#ext-gen1321#",
 								"name":"contentTypes"
 							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"#ext-gen1322#",
-								"name":"dynamic",
-								"editable":false,
-								"disabled":true,
-								"inputValue":true
-							}
 						}
 					]
 				}
