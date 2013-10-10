@@ -340,7 +340,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $workspacesFilter->addFilter($workspaceFilter);
             }
             
-            $globalFilterList['target'] = $workspacesFilter;
+            $this->_globalFilterList['target'] = $workspacesFilter;
             $this->_setFilter = true;
         }
         
@@ -376,7 +376,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $frontEndFilter->addFilter($endFilter);
             
             // push filter to global
-            $globalFilterList['frontend'] = $frontEndFilter;
+            $this->_globalFilterList['frontend'] = $frontEndFilter;
             $this->_setFilter = true;
         }
         
