@@ -862,7 +862,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             if ($totalToBeIndexed > 0) {
                 do {
                     
-                    $protocol = isset($_SERVER["HTTPS"]) ? "https://" : "http://";
+                    //$protocol = isset($_SERVER["HTTPS"]) ? "https://" : "http://";
+                    $protocol = 'http://';
                     $jobID = $queue->createHttpJob($protocol.$_SERVER['HTTP_HOST']."/queue?service=ElasticDataIndex&class=bulkIndex&Option=$option&id=$id&start=$start&bulkSize=$bulkSize");
                     $start+=$bulkSize;
                     
