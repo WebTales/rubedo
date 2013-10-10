@@ -3,7 +3,9 @@
 {% block mainContent %}
 
     <form class="form-horizontal" action="{{url({'pageId': searchPage})}}" method="get">
-    
+    {% for type in contentTypes %}
+        <input type="hidden" name="type[]" value="{{ type }}">
+    {% endfor %}
         <div class="control-group">
             <label class="control-label" for="inputMotCle">{{ "Blocks.Search.Label.KeyWords" | fotrans }}</label>
             <div class="controls">

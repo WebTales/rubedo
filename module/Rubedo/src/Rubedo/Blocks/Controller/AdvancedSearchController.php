@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 
 /**
  *
@@ -46,6 +47,13 @@ class AdvancedSearchController extends AbstractController
         }
         
         $searchPage = isset($blockConfig["searchPage"]) ? $blockConfig["searchPage"] : null;
+        if (empty($searchPage)){
+            $output = array();
+            $css=array();
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/single/noContent.html.twig");
+            $js = array();
+            return $this->_sendResponse($output, $template, $css, $js);
+        }
         $placeholder = isset($blockConfig["placeholder"]) ? $blockConfig["placeholder"] : null;
         
         if (isset($contentTypes)&&is_array($contentTypes)){
@@ -59,6 +67,7 @@ class AdvancedSearchController extends AbstractController
         }
         
         $output["taxonomies"] = $taxonomies;
+        $output["contentTypes"]= $contentTypes;
         $output["searchPage"] = $searchPage;
         $output["placeholder"] = $placeholder;
         
