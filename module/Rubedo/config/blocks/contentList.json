@@ -28,7 +28,23 @@
 								"minValue":1,
 								"maxValue":4
 							}
-						}
+						},{
+                                "type": "Ext.form.field.Checkbox",
+                                "config": {
+                                    "fieldLabel": "#ext-gen1406#",
+                                    "name": "showOnlyTitle",
+                                    "inputValue": true
+                                }
+                            },{
+                                "type": "Ext.form.field.Number",
+                                "config": {
+                                    "fieldLabel": "#ext-gen1407#",
+                                    "name": "summaryHeight",
+                                    "allowDecimals": false,
+                                    "minValue": 0,
+                                    "value":80
+                                }
+                            }
 					]
 				},
 				{
@@ -91,7 +107,9 @@
 			]
 		},
 		"configBloc":{
-			"columns":1
+			"columns":1,
+			"showOnlyTitle":false,
+            "summaryHeight":80
 		}
 	},
 	"category":"#ext-gen1068#",
