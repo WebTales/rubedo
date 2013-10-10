@@ -6,11 +6,11 @@
     },
     "rights":[
         "write.ui.contentTypes",
-        "execute.controller.content-types.update.backoffice",
-        "execute.controller.content-types.delete.backoffice",
-        "execute.controller.content-types.create.backoffice",
-        "execute.controller.content-types.is-changeable.backoffice",
-        "execute.controller.content-types.is-used.backoffice"
+        "execute.controller.contenttypes.update.backoffice",
+        "execute.controller.contenttypes.delete.backoffice",
+        "execute.controller.contenttypes.create.backoffice",
+        "execute.controller.contenttypes.is-changeable.backoffice",
+        "execute.controller.contenttypes.is-used.backoffice"
     ],
     "includes":[
         "contentTypeReader"

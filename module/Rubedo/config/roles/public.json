@@ -22,7 +22,7 @@
         "execute.controller.logout.index.backoffice",
         "execute.controller.file.index.default",
         "execute.controller.geosearch.xhr-search.blocks",
-        "execute.controller.mailing-list.xhr-add-email.blocks",
+        "execute.controller.mailinglist.xhr-add-email.blocks",
         "execute.controller.geosearch.xhr-get-detail.blocks",
         "execute.controller.googlemaps.xhr-get-items.blocks",
         "execute.controller.tiny.index.default",
@@ -39,7 +39,6 @@
         "execute.controller.geosearch.xhr-get-suggests.blocks",
         "execute.controller.languages.index.backoffice",
         "execute.controller.css.index.default",
-        "execute.controller.calendar-zimmer.xhr-get-calendar.blocks",
         "execute.controller.queue.index.default",
         "execute.controller.image.get-user-avatar.default"
  	]

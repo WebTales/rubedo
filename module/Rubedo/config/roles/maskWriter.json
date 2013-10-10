@@ -7,7 +7,7 @@
     "rights":[
         "write.ui.masks",
         "execute.controller.masks.update.backoffice",
-        "execute.controller.xhr-get-mongo-id.index.backoffice",
+        "execute.controller.xhrgetmongoid.index.backoffice",
         "execute.controller.masks.create.backoffice",
         "execute.controller.masks.delete.backoffice"
     ],

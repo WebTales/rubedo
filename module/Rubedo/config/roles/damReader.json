@@ -7,7 +7,7 @@
     "rights":[
         "read.ui.dam$",
         "read.ui.directories$",
-        "execute.controller.dam-types.index.backoffice",
+        "execute.controller.damtypes.index.backoffice",
         "execute.controller.dam.index.backoffice",
         "execute.controller.dam.get-thumbnail.backoffice",
         "execute.controller.dam.get.backoffice",

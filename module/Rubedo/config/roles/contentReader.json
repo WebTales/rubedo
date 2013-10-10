@@ -9,10 +9,10 @@
         "execute.controller.contents.index.backoffice",
         "execute.controller.contents.find-one.backoffice",
         "execute.controller.versioning.index.backoffice",
-        "execute.controller.taxonomy-terms.index.backoffice",
-        "execute.controller.taxonomy-terms.tree.backoffice",
+        "execute.controller.taxonomyterms.index.backoffice",
+        "execute.controller.taxonomyterms.tree.backoffice",
         "execute.controller.dam.get-thumbnail.backoffice",
-        "execute.controller.dam-types.index.backoffice",
+        "execute.controller.damtypes.index.backoffice",
         "execute.controller.dam.index.backoffice"
     ]
 }

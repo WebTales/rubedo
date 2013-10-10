@@ -6,6 +6,6 @@
     },
     "rights":[
         "read.ui.damTypes",
-        "execute.controller.dam-types.index.backoffice"
+        "execute.controller.damtypes.index.backoffice"
     ]
 }

@@ -7,8 +7,8 @@
     "rights":[
         "read.ui.contentTypes",
         "execute.controller.contentTypes.index.backoffice",
-        "execute.controller.content-types.get-readable-content-types.backoffice",
-        "execute.controller.dam-types.index.backoffice",
+        "execute.controller.contentTypes.get-readable-content-types.backoffice",
+        "execute.controller.damtypes.index.backoffice",
         "execute.controller.dam.index.backoffice"
     ]
 }

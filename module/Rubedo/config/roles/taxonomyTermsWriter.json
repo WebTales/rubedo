@@ -6,9 +6,9 @@
     },
     "rights":[
         "write.ui.taxonomyTerms",
-        "execute.controller.taxonomy-terms.create.backoffice",
-        "execute.controller.taxonomy-terms.update.backoffice",
-        "execute.controller.taxonomy-terms.delete.backoffice"
+        "execute.controller.taxonomyterms.create.backoffice",
+        "execute.controller.taxonomyterms.update.backoffice",
+        "execute.controller.taxonomyterms.delete.backoffice"
     ],
     "includes":[
         "taxonomyReader"

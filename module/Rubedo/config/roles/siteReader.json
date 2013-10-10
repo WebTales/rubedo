@@ -8,6 +8,6 @@
         "read.ui.sites",
         "execute.controller.sites.index.backoffice",
         "execute.controller.pages.read-child.backoffice",
-        "execute.controller.fo-themes.index.backoffice"
+        "execute.controller.fothemes.index.backoffice"
     ]
 }

@@ -7,6 +7,6 @@
     "rights":[
         "read.ui.taxonomy",
         "execute.controller.taxonomy.index.backoffice",
-        "execute.controller.taxonomy-terms.read-child.backoffice"
+        "execute.controller.taxonomyterms.read-child.backoffice"
     ]
 }

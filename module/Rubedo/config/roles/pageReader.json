@@ -10,9 +10,9 @@
         "execute.controller.sites.index.backoffice",
         "execute.controller.masks.index.backoffice",
         "execute.controller.pages.read-child.backoffice",
-        "execute.controller.xhr-get-page-url.index.backoffice",
-        "execute.controller.xhr-authentication.is-logged-in.default",
-        "execute.controller.xhr-javascript.get-script.default",
+        "execute.controller.xhrgetpageurl.index.backoffice",
+        "execute.controller.xhrauthentication.is-logged-in.default",
+        "execute.controller.xhrjavascript.get-script.default",
         "execute.controller.pages.get-content-list.backoffice"
     ]
 }
