@@ -601,12 +601,23 @@ class IndexController extends AbstractActionController
         
         // set back global query
         $this->getRequest()->setQuery($queryString);
+
+        if($result instanceof \Rubedo\Templates\Raw\RawViewModel){
+            $return = array(
+                'data' => $result->getVariables(),
+                'template' => $result->getTemplate()
+            );
+        }else{
+            //if it was a classic ZF2 view model. Render it and add it to twig context
+            $renderer = $this->serviceLocator->get('Zend\View\Renderer\RendererInterface');
+            $data = $renderer->render($result);
+            $return = array(
+                'data' => array('content'=>$data),
+                'template' => 'blocks/not-twig-block.html.twig'
+            );
+        }
         
         // return result to global context
-        $return = array(
-            'data' => $result->getVariables(),
-            'template' => $result->getTemplate()
-        );
         return $return;
     }
 
