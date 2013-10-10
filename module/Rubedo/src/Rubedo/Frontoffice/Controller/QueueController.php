@@ -18,6 +18,7 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Rubedo\Collection\AbstractCollection;
 
 /**
  * Controller providing css for custom themes
@@ -33,6 +34,7 @@ class QueueController extends AbstractActionController
 {
     function indexAction ()
     {
+        AbstractCollection::disableUserFilter();
         $params = $this->params()->fromQuery();
         $vars = array();
         foreach ($params as $key => $value) {
