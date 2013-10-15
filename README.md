@@ -44,7 +44,7 @@ Installation
 ### For Developpers
 * You'll need Git!
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
-* Inside project root, choose the develop branch : `git checkout develop`
+* Inside project root, choose the branch you want to use (current or next) : `git checkout next`
 * Do as in normal install process
 
 
