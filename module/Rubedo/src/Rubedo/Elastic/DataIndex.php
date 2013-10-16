@@ -257,7 +257,114 @@ class DataIndex extends DataAbstract implements IDataIndex
 
          
         }
-    
+
+        /**
+         * Returns mapping from user type data
+         *
+         * @param array $data
+         *
+         * @return array
+         */
+         
+        public function getUserIndexMapping (array $data) {
+        
+            $mapping = array();
+             
+            if (isset($data['fields']) && is_array($data['fields'])) {
+                 
+                // get active analysers
+                $activeAnalysers = array_keys($this::$_content_index_param["index"]["analysis"]["analyzer"]);
+        
+                // get vocabularies
+                $vocabularies = $this->_getVocabularies($data);
+        
+                // Set mapping for user
+        
+                $mapping = array(
+                    'lastUpdateTime' => array('type' => 'date','store' => 'yes'),
+                    'createUser' => array('type' => 'object','store' => 'yes', 'properties' => array(
+                            'id' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                            'fullName' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
+                            'login' => array('type' => 'string', 'index' => 'no', 'store' => 'no')
+                    ))
+                );
+        
+                 // Add Taxonomies
+                foreach ($vocabularies as $vocabularyName) {
+                    $mapping["taxonomy." . $vocabularyName] = array(
+                            'type' => 'string',
+                            'index' => 'not_analyzed',
+                            'store' => 'yes'
+                    );
+                }
+        
+                // Add Fields
+        
+                $fields = $data['fields'];
+        
+                // Add system fields : email for user
+
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "email",
+                                "fieldLabel" => "email",
+                                "searchable" => false
+                        )
+                );
+        
+                // unmapped fields are not allowed in fields and i18n
+                $mapping['fields']=array('dynamic'=>false,'type'=>'object');
+        
+                foreach ($fields as $field) {
+        
+                    // Only searchable fields get indexed
+                    if ($field['config']['searchable']) {
+        
+                        $name = $field['config']['name'];
+                        $store = "yes";
+                         
+                        switch ($field['cType']) {
+                            case 'datefield':
+                                $config = array('type' => 'string', 'store' => $store);
+                                $mapping['fields']['properties'][$name] = $config;
+                                break;
+                            case 'document':
+                                $config = array('type' => 'attachment','store' => 'no');
+                                $mapping['fields']['properties'][$name] = $config;
+                                break;
+                            case 'localiserField':
+                                $config = array('properties' => array(
+                                'location' => array('properties' => array(
+                                'coordinates' => array('type' => 'geo_point','store' => 'yes')
+                                )),
+                                'address' => array('type' => 'string','store' => 'yes'),
+                                ));
+                                $mapping['fields']['properties'][$name] = $config;
+                                break;
+                            default:
+                                $_autocomplete = 'autocomplete_nonlocalized';
+                                $_all = 'all_nonlocalized';
+                                $config = array(
+                                        "type" => "multi_field",
+                                        "path" => "just_name",
+                                        "fields" => array(
+                                                $name => array("type" => "string", "store" => $store),
+                                                $_all => array("type" => "string", "analyzer" => "default_analyzer", "store" => $store),
+                                                $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
+                                        )
+                                );
+                                $mapping['fields']['properties'][$name] = $config;
+                        }
+                    }
+                }
+            }
+        
+            return $mapping;
+        
+             
+        }
+        
     /**
      * Return all the vocabularies contained in the id list
      * 
@@ -337,7 +444,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $mapping = self::$_dam_index->getMapping();
         if (array_key_exists($id, $mapping[self::$_options['damIndex']])) {
             if ($overwrite) {
-                // delete existing content type
+                // delete existing dam type
                 $this->deleteDamType($id);
             } else {
                 // throw exception
@@ -365,15 +472,14 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
     }
 
-    
     /**
-     * Index ES type for new or updated user
+     * Index ES type for new or updated duser type
      *
      * @see \Rubedo\Interfaces\IDataIndex:indexUserType()
      * @param string $id
-     *            user id
+     *            user type id
      * @param array $data
-     *            new user
+     *            user type data
      * @return array
      */
     public function indexUserType ($id, $data, $overwrite = FALSE)
@@ -383,38 +489,17 @@ class DataIndex extends DataAbstract implements IDataIndex
         $mapping = self::$_user_index->getMapping();
         if (array_key_exists($id, $mapping[self::$_options['userIndex']])) {
             if ($overwrite) {
-                // delete existing content type
+                // delete existing dam type
                 $this->deleteUserType($id);
             } else {
                 // throw exception
-                throw new \Rubedo\Exceptions\Server('%1$s user type already exists', "Exception64", $id);
+                throw new \Rubedo\Exceptions\Server('%1$s type already exists', "Exception64", $id);
             }
         }
     
-        $vocabularies = $this->_getVocabularies($data);
-    
         // Create mapping
-        $indexMapping = $this->getIndexMapping($data);
-    
-        // Add systems metadata
-        $indexMapping["lastUpdateTime"] = array(
-                'type' => 'date',
-                'store' => 'yes'
-        );
-        $indexMapping["name"] = array(
-                'type' => 'string',
-                'store' => 'yes'
-        );
-        $indexMapping["organisation"] = array(
-                'type' => 'string',
-                'store' => 'yes'
-        );
-        $indexMapping["photo"] = array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
-                'store' => 'yes'
-        );
-       
+        $indexMapping = $this->getUserIndexMapping($data);
+         
         // If there is no searchable field, the new type is not created
         if (! empty($indexMapping)) {
             // Create new type
@@ -431,7 +516,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             return array();
         }
     }
-    
+       
     /**
      * Delete ES type for existing content type
      *
@@ -492,6 +577,36 @@ class DataIndex extends DataAbstract implements IDataIndex
         $type->deleteById($id);
     }
 
+    /**
+     * Delete ES type for existing user type
+     *
+     * @see \Rubedo\Interfaces\IDataIndex::deleteUserType()
+     * @param string $id
+     *            user type id
+     * @return array
+     */
+    public function deleteUserType ($id)
+    {
+        $type = new \Elastica\Type(self::$_user_index, $id);
+        $type->delete();
+    }
+    
+    /**
+     * Delete existing user from index
+     *
+     * @see \Rubedo\Interfaces\IDataIndex::deleteUser()
+     * @param string $typeId
+     *            user type id
+     * @param string $id
+     *            user id
+     * @return array
+     */
+    public function deleteUser ($typeId, $id)
+    {
+        $type = new \Elastica\Type(self::$_user_index, $typeId);
+        $type->deleteById($id);
+    }
+    
     /**
      * Create or update index for existing content
      *
@@ -714,10 +829,90 @@ class DataIndex extends DataAbstract implements IDataIndex
     }
 
     /**
+     * Create or update index for existing user
+     *
+     * @see \Rubedo\Interfaces\IDataIndex::indexUser()
+     * @param obj $data
+     *            user data
+     * @return array
+     */
+    
+    public function indexUser ($data, $bulk = false)
+    {
+        if(!isset($data['fields'])){
+            return;
+        }
+    
+        $typeId = $data['typeId'];
+    
+        // Load ES type
+        $userType = self::$_user_index->getType($typeId);
+         
+        // Initialize data array to push into index
+         
+        $indexData = array(
+                'objectType' => 'user',
+                'contentType' => $typeId,
+                'email' => $data['email']
+        );
+    
+        // Add taxonomy
+        if (isset($data["taxonomy"])) {
+    
+            $taxonomyService = Manager::getService('Taxonomy');
+            $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+    
+            foreach ($data["taxonomy"] as $vocabulary => $terms) {
+                if (! is_array($terms)) {
+                    continue;
+                }
+    
+                $taxonomy = $taxonomyService->findById($vocabulary);
+                $termsArray = array();
+    
+                foreach ($terms as $term) {
+                    if($term == 'all'){
+                        continue;
+                    }
+                    $term = $taxonomyTermsService->findById($term);
+    
+                    if (! $term) {
+                        continue;
+                    }
+    
+                    if (! isset($termsArray[$term["id"]])) {
+                        $termsArray[$term["id"]] = $taxonomyTermsService->getAncestors($term);
+                        $termsArray[$term["id"]][] = $term;
+                    }
+    
+                    foreach ($termsArray[$term["id"]] as $tempTerm) {
+                        $indexData['taxonomy.'.$taxonomy['id']][] = $tempTerm['id'];
+                    }
+                }
+            }
+        }
+       
+        // Add document
+        $currentDocument = new \Elastica\Document($data['id'], $indexData);
+    
+        if (isset($indexData['attachment']) && $indexData['attachment'] != '') {
+            $currentDocument->addFile('file', $indexData['attachment']);
+        }
+    
+        // Add content to content type index
+        if (! $bulk) {
+            $userType->addDocument($currentDocument);
+            $userType->getIndex()->refresh();
+        } else {
+            $this->_documents[] = $currentDocument;
+        }
+    }
+    
+    /**
      * Reindex all content or dam
      *
      * @param string $option
-     *            : dam, content or all
+     *            : dam, content, user or all
      *            
      * @return array
      */
@@ -779,17 +974,33 @@ class DataIndex extends DataAbstract implements IDataIndex
 
             }
         }
+
+        if ($option == 'all' or $option == 'user') {
+        
+            // Retreive all user types
+            $userTypeList = Manager::getService('UserTypes')->getList();
+        
+            foreach ($userTypeList["data"] as $userType) {
+        
+                // Create user type with overwrite set to true
+                $this->indexUserType($userType["id"], $userType, TRUE);
+        
+                // Reindex all assets from given type
+                $result = array_merge($result, $this->indexByType("user", $userType["id"]));
+        
+            }
+        }
         
         return ($result);
     }
 
     /**
-     * Reindex all content or dam for one type
+     * Reindex all content or dam or user for one type
      *
      * @param string $option
-     *            : dam or content
+     *            : dam or content or user
      * @param string $id
-     *            : dam type or content type id
+     *            : dam type or content type or user type id
      *            
      * @return array
      */
@@ -815,8 +1026,13 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $serviceData = 'Dam';
                 $serviceType = 'DamTypes';
                 break;
+            case 'user':
+                $bulkSize = 500;
+                $serviceData = 'Users';
+                $serviceType = 'UserTypes';
+                break;
             default:
-                throw new \Rubedo\Exceptions\Server("Option argument should be set to content or dam", "Exception65");
+                throw new \Rubedo\Exceptions\Server("Option argument should be set to content, dam or user", "Exception65");
                 break;
         }
         
@@ -885,11 +1101,15 @@ class DataIndex extends DataAbstract implements IDataIndex
         switch ($option) {
             case 'content':
                 $serviceData = 'Contents';
-                $contentType = self::$_content_index->getType($id);
+                $serviceType = self::$_content_index->getType($id);
                 break;
             case 'dam':
                 $serviceData = 'Dam';
-                $contentType = self::$_dam_index->getType($id);
+                $serviceType = self::$_dam_index->getType($id);
+                break;
+            case 'user':
+                $serviceData = 'Users';
+                $serviceType = 'UserTypes';
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server("Option argument should be set to content or dam", "Exception65");
@@ -903,21 +1123,23 @@ class DataIndex extends DataAbstract implements IDataIndex
         $itemList = $dataService->getByType($id, (int) $start, (int) $bulkSize);
         $dataService::disableUserFilter($wasFiltered);
         foreach ($itemList["data"] as $item) {
-        
-            if ($option == 'content') {
-                $this->indexContent($item, TRUE);
-            }
-        
-            if ($option == 'dam') {
-                $this->indexDam($item, TRUE);
-            }
-        
+            switch ($option) {
+                case 'content':
+                    $this->indexContent($item, TRUE);
+                    break;
+                case 'dam':
+                    $this->indexDam($item, TRUE);
+                    break;
+                case 'user':
+                    $this->indexUser($item, TRUE);
+                    break;
+            }     
         }
         
         if (! empty($this->_documents)) {
         
-            $contentType->addDocuments($this->_documents);
-            $contentType->getIndex()->refresh();
+            $serviceType->addDocuments($this->_documents);
+            $serviceType->getIndex()->refresh();
             empty($this->_documents);
             $return  = count($itemList['data']);
             
