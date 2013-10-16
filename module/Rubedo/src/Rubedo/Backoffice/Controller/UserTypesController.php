@@ -44,6 +44,11 @@ class UserTypesController extends DataAccessController
         // init the data access service
         $this->_dataService = Manager::getService('UserTypes');
     }
-    
+    public function isUsedAction ()
+    {
+        $id = $this->params()->fromQuery('id');
+        $resultArray = array("used"=>false);
+        return $this->_returnJson($resultArray);
+    }
     
 }
