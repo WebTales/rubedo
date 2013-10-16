@@ -63,5 +63,6 @@ return array(
     'Users' => 'Rubedo\\Collection\\Users',
     'Versioning' => 'Rubedo\\Collection\\Versioning',
     'Wallpapers' => 'Rubedo\\Collection\\Wallpapers',
-    'Workspaces' => 'Rubedo\\Collection\\Workspaces'
+    'Workspaces' => 'Rubedo\\Collection\\Workspaces',
+    'UserTypes' => 'Rubedo\\Collection\\UserTypes'
 );
