@@ -96,12 +96,23 @@ class DataAbstract
      * 
      * @var \Elastica_Index
      */
-    protected static $_dam_index_param = array(
-        'index' => array(
-            'number_of_shards' => 1,
-            'number_of_replicas' => 0
-        )
-    );
+    protected static $_dam_index_param;
+
+    /**
+     * Object which represent the user ES index
+     *
+     * @var \Elastica_Index
+     */
+    protected static $_user_index;
+    
+    /**
+     * Object which represent the default user ES index param
+     * @TODO : get param from config
+     *
+     * @var \Elastica_Index
+     */
+    protected static $_user_index_param;
+    
     
     public function __construct(){
         if(!isset(self::$_options)){
@@ -135,18 +146,30 @@ class DataAbstract
         
         $this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
         
+        // Get content index
         self::$_content_index = $this->_client->getIndex(self::$_options['contentIndex']);
         
         // Create content index if not exists
         if (! self::$_content_index->exists()) {
             self::$_content_index->create(self::$_content_index_param, true);
         }
+        
+        // Get dam index
         self::$_dam_index = $this->_client->getIndex(self::$_options['damIndex']);
         
         // Create dam index if not exists
         if (! self::$_dam_index->exists()) {
             self::$_dam_index->create(self::$_dam_index_param, true);
         }
+        
+        // Get user index
+        self::$_user_index = $this->_client->getIndex(self::$_options['userIndex']);
+        
+        // Create user index if not exists
+        if (! self::$_user_index->exists()) {
+            self::$_user_index->create(self::$_user_index_param, true);
+        }
+        
     }
 
     /**
@@ -172,7 +195,7 @@ class DataAbstract
     }
 
     /**
-     * Set the options for the content-index
+     * Set the options for the content index
      *
      * @param string $host            
      */
@@ -182,13 +205,23 @@ class DataAbstract
     }
 
     /**
-     * Set the options for the content-dam
+     * Set the options for the dam index
      *
      * @param string $host
      */
     public static function setDamIndexOption (array $options)
     {
         self::$_dam_index_param = $options;
+    }
+
+    /**
+     * Set the options for the user index
+     *
+     * @param string $host
+     */
+    public static function setUserIndexOption (array $options)
+    {
+        self::$_user_index_param = $options;
     }
     
     /**
@@ -214,9 +247,10 @@ class DataAbstract
         if (isset($options)) {
             self::setOptions($options['elastic']);
         }
-        $indexContentOptionsJson = file_get_contents($options['elastic']['configFilePath']);
-        $indexContentOptions = Json::decode($indexContentOptionsJson, Json::TYPE_ARRAY);
-        self::setContentIndexOption($indexContentOptions);
-        self::setDamIndexOption($indexContentOptions);
+        $indexOptionsJson = file_get_contents($options['elastic']['configFilePath']);
+        $indexOptions = Json::decode($indexOptionsJson, Json::TYPE_ARRAY);
+        self::setContentIndexOption($indexOptions);
+        self::setDamIndexOption($indexOptions);
+        self::setUserIndexOption($indexOptions);
     } 
 }

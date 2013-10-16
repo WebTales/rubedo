@@ -101,6 +101,7 @@ $config['elastic'] = array(
     "port" => "9200",
     "contentIndex" => "contents",
     "damIndex" => "dam",
+    "userIndex" => "user",
     "configFilePath" => __DIR__.'/elastica.json'
 );
 
