@@ -88,6 +88,24 @@ class DataSearch extends DataAbstract implements IDataSearch
     }
 
     /**
+     * Cached getter for user type
+     *
+     * @param string $userTypeId
+     *            user type id
+     * @return array
+     */
+    protected function _getUserType ($userTypeId)
+    {
+        if (! isset($this->userTypesService)) {
+            $this->userTypesService = Manager::getService('userTypes');
+        }
+        if (! isset($this->userTypesArray[$userTypeId])) {
+            $this->userTypesArray[$userTypeId] = $this->userTypesService->findById($userTypeId);
+        }
+        return $this->userTypesArray[$userTypeId];
+    }
+    
+    /**
      * Add filter to Query
      *
      * @param string $name
@@ -213,7 +231,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $this->_displayedFacets = array();
             }
-            
+                       
             // get current user language             
             $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
             
@@ -348,7 +366,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Frontend filter on start and end publication date
         
-        if ((self::$_isFrontEnd)) {
+        if ((self::$_isFrontEnd)  && ($option!="user")) {
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             // filter on start
@@ -688,10 +706,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $returnedFieldsArray = array("*");
         $elasticaQuery->setFields($returnedFieldsArray);
-        
-        
-        //print_r($elasticaQuery);
-        //exit;
+
         // run query
         switch ($option) {
             case 'content':
@@ -700,12 +715,16 @@ class DataSearch extends DataAbstract implements IDataSearch
             case 'dam':
                 $elasticaResultSet = self::$_dam_index->search($elasticaQuery);
                 break;
+            case 'user':
+                $elasticaResultSet = self::$_user_index->search($elasticaQuery);
+                break;
             case 'all':
                 $client = self::$_content_index->getClient();
                 $client->setLogger(Manager::getService('SearchLogger')->getLogger());
                 $search = new \Elastica\Search($client);
                 $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_content_index);
+                $search->addIndex(self::$_user_index);
                 $elasticaResultSet = $search->search($elasticaQuery);
                 break;
             case 'geo':
