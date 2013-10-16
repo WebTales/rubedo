@@ -54,5 +54,6 @@ return array(
     'Rubedo\\Backoffice\\Controller\\Workspaces' => 'Rubedo\\Backoffice\\Controller\\WorkspacesController',
     'Rubedo\\Backoffice\\Controller\\XhrAuthentication' => 'Rubedo\\Backoffice\\Controller\\XhrAuthenticationController',
     'Rubedo\\Backoffice\\Controller\\XhrGetMongoId' => 'Rubedo\\Backoffice\\Controller\\XhrGetMongoIdController',
-    'Rubedo\\Backoffice\\Controller\\XhrGetPageUrl' => 'Rubedo\\Backoffice\\Controller\\XhrGetPageUrlController'
+    'Rubedo\\Backoffice\\Controller\\XhrGetPageUrl' => 'Rubedo\\Backoffice\\Controller\\XhrGetPageUrlController',
+    'Rubedo\\Backoffice\\Controller\\UserTypes' => 'Rubedo\\Backoffice\\Controller\\UserTypesController'
 );
