@@ -1,0 +1,8 @@
+{
+    "type": "EMail",
+    "fields": [],
+    "vocabularies": [],
+    "defaultGroup": "525e4d85f05c1d300e000007",
+    "signUpType": "none",
+    "defaultId":"email"
+}

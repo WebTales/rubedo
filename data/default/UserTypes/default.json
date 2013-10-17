@@ -1,0 +1,234 @@
+{
+    "type": "Default",
+    "fields": [
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "name",
+                "fieldLabel": "Name",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Name"
+                    },
+                    "fr": {
+                        "fieldLabel": "Nom"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "title",
+                "fieldLabel": "Civility",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Civility"
+                    },
+                    "fr": {
+                        "fieldLabel": "Civilité"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "organization",
+                "fieldLabel": "Organization",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Organization"
+                    },
+                    "fr": {
+                        "fieldLabel": "Organisation"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "service",
+                "fieldLabel": "Department",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Department"
+                    },
+                    "fr": {
+                        "fieldLabel": "Service"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "post",
+                "fieldLabel": "Job title",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Job title"
+                    },
+                    "fr": {
+                        "fieldLabel": "Poste"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "telephone",
+                "fieldLabel": "Phone",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Phone"
+                    },
+                    "fr": {
+                        "fieldLabel": "Téléphone"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "mobile",
+                "fieldLabel": "Mobile",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Mobile"
+                    },
+                    "fr": {
+                        "fieldLabel": "Mobile"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "coordinates",
+                "fieldLabel": "Coordinates",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Coordinates"
+                    },
+                    "fr": {
+                        "fieldLabel": "Coordonées"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        },
+        {
+            "cType": "Ext.form.field.Text",
+            "config": {
+                "name": "country",
+                "fieldLabel": "Country",
+                "maxLength": 255,
+                "minLength": 0,
+                "allowBlank": true,
+                "localizable": true,
+                "searchable": false,
+                "multivalued": false,
+                "tooltip": "",
+                "vtype": null,
+                "labelSeparator": " ",
+                "i18n": {
+                    "en": {
+                        "fieldLabel": "Country"
+                    },
+                    "fr": {
+                        "fieldLabel": "Pays"
+                    }
+                }
+            },
+            "protoId": "506441f8c648043912000017"
+        }
+    ],
+    "vocabularies": [],
+    "defaultGroup": "525e4d85f05c1d300e000007",
+    "signUpType": "none",
+    "defaultId":"default"
+}
