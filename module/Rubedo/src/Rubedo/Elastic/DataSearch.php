@@ -839,6 +839,15 @@ class DataSearch extends DataAbstract implements IDataSearch
                     }
                     $data['type'] = $damType['type'];
                     break;
+                case 'user':
+                	if (isset($data["name"])) {
+                		$data['title'] = $data['name'];
+                	} else {
+                		$data['title'] = $data['email'];
+                	}
+                	$userType = $this->_getUserType($data['userType']);
+                	$data['type'] = $userType['type'];
+                	break;
             }
             
             //ensure that date is formated as timestamp while handled as date type for ES
