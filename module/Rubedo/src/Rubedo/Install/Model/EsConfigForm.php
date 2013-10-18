@@ -57,11 +57,17 @@ class EsConfigForm extends BootstrapForm
         $damIndexField->setValue(isset($params['damIndex']) ? $params['damIndex'] : 'dam');
         $damIndexField->setLabel('Dam index name');
         
+        $userIndexField = new Text('userIndex');
+        $userIndexField->setAttribute('Required', true);
+        $userIndexField->setValue(isset($params['userIndex']) ? $params['userIndex'] : 'users');
+        $userIndexField->setLabel('Users index name');
+        
         $dbForm = new Form();
         $dbForm->add($serverNameField);
         $dbForm->add($serverPortField);
         $dbForm->add($contentIndexField);
         $dbForm->add($damIndexField);
+        $dbForm->add($userIndexField);
         
         $dbForm = self::setForm($dbForm);
         
