@@ -114,6 +114,8 @@ class MailingList extends AbstractCollection implements IMailingList
             // Make the default skeleton for the user if it's a new user
             $user = array(
                 "login" => $email,
+                "type"=>"email",
+                "fields"=>array(),
                 "email" => $email,
                 "name" => $email,
                 "workspace" => $mailingList["workspaces"],
