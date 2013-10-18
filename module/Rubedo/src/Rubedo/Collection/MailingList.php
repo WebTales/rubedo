@@ -121,6 +121,7 @@ class MailingList extends AbstractCollection implements IMailingList
                 "login" => $email,
                 "type"=>$emailUserType['id'],
                 "fields"=>array(),
+                "taxonomy"=>array(),
                 "email" => $email,
                 "name" => $email,
                 "workspace" => $mailingList["workspaces"],
