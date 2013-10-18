@@ -18,6 +18,7 @@ namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IMailingList;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Mailing list
@@ -112,9 +113,13 @@ class MailingList extends AbstractCollection implements IMailingList
             }
         } else {
             // Make the default skeleton for the user if it's a new user
+            $filters=Filter::factory();
+            $filters->addFilter(Filter::factory('Value')->setName('UTType')
+                ->setValue("email"));
+            $emailUserType=Manager::getService("UserTypes")->findOne($filters);
             $user = array(
                 "login" => $email,
-                "type"=>"email",
+                "type"=>$emailUserType['id'],
                 "fields"=>array(),
                 "email" => $email,
                 "name" => $email,
