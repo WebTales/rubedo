@@ -32,6 +32,7 @@ use Rubedo\Install\Model\PhpSettingsForm;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use WebTales\MongoFilters\Filter;
 
 
 /**
@@ -566,7 +567,11 @@ class IndexController extends AbstractActionController
             $params['password'] = $hashService->derivatePassword($params['password'], $params['salt']);
             $adminGroup = Manager::getService('Groups')->findByName('admin');
             $params['defaultGroup'] = $adminGroup['id'];
-            $params['type']="default";
+            $filters=Filter::factory();
+            $filters->addFilter(Filter::factory('Value')->setName('UTType')
+                ->setValue("default"));
+            $defaultUserType=Manager::getService("UserTypes")->findOne($filters);
+            $params['type']=$defaultUserType["id"];
             $params['fields']=array();
             $wasFiltered = AbstractCollection::disableUserFilter();
             $userService = Manager::getService('Users');
