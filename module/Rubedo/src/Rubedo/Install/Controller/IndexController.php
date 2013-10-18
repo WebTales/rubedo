@@ -567,7 +567,7 @@ class IndexController extends AbstractActionController
             $adminGroup = Manager::getService('Groups')->findByName('admin');
             $params['defaultGroup'] = $adminGroup['id'];
             $params['type']="default";
-            $params['fields']=array("name"=>$params['name']);
+            $params['fields']=array();
             $wasFiltered = AbstractCollection::disableUserFilter();
             $userService = Manager::getService('Users');
             $response = $userService->create($params);
