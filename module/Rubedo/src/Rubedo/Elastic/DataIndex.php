@@ -281,6 +281,10 @@ class DataIndex extends DataAbstract implements IDataIndex
                 // Set mapping for user
         
                 $mapping = array(
+                    'objectType' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
+                    'email' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
+                    'name' => array('type' => 'string', 'store' => 'yes'),
+                    'userType' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                     'lastUpdateTime' => array('type' => 'date','store' => 'yes'),
                     'createUser' => array('type' => 'object','store' => 'yes', 'properties' => array(
                             'id' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
@@ -852,8 +856,11 @@ class DataIndex extends DataAbstract implements IDataIndex
          
         $indexData = array(
                 'objectType' => 'user',
-                'contentType' => $typeId,
-                'email' => $data['email']
+                'userType' => $typeId,
+                'email' => $data['email'],
+                'name' => $data['name'],
+                'userType' => $typeId,
+                'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0
         );
     
         // Add taxonomy
@@ -1109,7 +1116,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 break;
             case 'user':
                 $serviceData = 'Users';
-                $serviceType = 'UserTypes';
+                $serviceType = self::$_user_index->getType($id);
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server("Option argument should be set to content or dam", "Exception65");
@@ -1121,6 +1128,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $dataService = Manager::getService($serviceData);
         $wasFiltered = $dataService::disableUserFilter();
         $itemList = $dataService->getByType($id, (int) $start, (int) $bulkSize);
+        
         $dataService::disableUserFilter($wasFiltered);
         foreach ($itemList["data"] as $item) {
             switch ($option) {

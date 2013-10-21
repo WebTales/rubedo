@@ -305,6 +305,13 @@ class Users extends AbstractCollection implements IUsers
         return $result;
     }
 
+    
+    public function getByType ($typeId, $start = null, $limit = null)
+    {
+        $filter = Filter::factory('Value')->setName('typeId')->SetValue($typeId);
+        return $this->getList($filter, null, $start, $limit);
+    }
+    
     public function findValidatingUsersByWorkspace ($workspace)
     {
         $members = array();
