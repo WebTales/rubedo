@@ -119,7 +119,7 @@ class MailingList extends AbstractCollection implements IMailingList
             $emailUserType=Manager::getService("UserTypes")->findOne($filters);
             $user = array(
                 "login" => $email,
-                "type"=>$emailUserType['id'],
+                "typeId"=>$emailUserType['id'],
                 "fields"=>array(),
                 "taxonomy"=>array(),
                 "email" => $email,

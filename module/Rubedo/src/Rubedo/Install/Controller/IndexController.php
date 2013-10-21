@@ -571,7 +571,7 @@ class IndexController extends AbstractActionController
             $filters->addFilter(Filter::factory('Value')->setName('UTType')
                 ->setValue("default"));
             $defaultUserType=Manager::getService("UserTypes")->findOne($filters);
-            $params['type']=$defaultUserType["id"];
+            $params['typeId']=$defaultUserType["id"];
             $params['taxonomy']=array();
             $params['fields']=array();
             $wasFiltered = AbstractCollection::disableUserFilter();
