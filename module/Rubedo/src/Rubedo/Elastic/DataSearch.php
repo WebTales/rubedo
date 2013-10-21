@@ -153,7 +153,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     {
         $filter = new \Elastica\Filter\Terms();
         $filter->setTerms('availableLanguages', $values);
-        $this->_globalFilterList['availableLanguages'] = $filter;
+        //$this->_globalFilterList['availableLanguages'] = $filter;
         $this->_setFilter = true;
     }
 
@@ -409,6 +409,16 @@ class DataSearch extends DataAbstract implements IDataSearch
         if (array_key_exists('type', $this->_params)) {
             $this->_addFilter('type', 'contentType');
         }
+
+        // filter on dam type
+        if (array_key_exists('damType', $this->_params)) {
+            $this->_addFilter('damType', 'damType');
+        }
+        
+        // filter on user type
+        if (array_key_exists('userType', $this->_params)) {
+            $this->_addFilter('userType', 'userType');
+        }
         
         // add filter for geo search on content types with 'position' field
         if (in_array($option,array('geo','geosuggest'))) {
@@ -425,11 +435,6 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $this->_globalFilterList['geoTypes'] = $geoFilter;
                 $this->_setFilter = true;
             }
-        }
-        
-        // filter on dam type
-        if (array_key_exists('damType', $this->_params)) {
-            $this->_addFilter('damType', 'damType');
         }
         
         // filter on author
@@ -587,6 +592,33 @@ class DataSearch extends DataAbstract implements IDataSearch
             
             // Add dam type facet to the search query object.
             $elasticaQuery->addFacet($elasticaFacetDamType);
+        }
+
+        // Define the user type facet
+        
+        if ($this->_isFacetDisplayed('userType')) {
+        
+            $elasticaFacetUserType = new \Elastica\Facet\Terms('userType');
+            $elasticaFacetUserType->setField('userType');
+        
+            // Exclude active Facets for this vocabulary
+            if ($this->_facetDisplayMode != 'checkbox' and isset($this->_filters['userType'])) {
+                $elasticaFacetUserType->setExclude(array(
+                        $this->_filters['userType']
+                ));
+            }
+            $elasticaFacetUserType->setSize(1000);
+            $elasticaFacetUserType->setOrder('count');
+        
+            // Apply filters from other facets
+            $facetFilter = $this->_getFacetFilter('userType');
+        
+            if (! is_null($facetFilter)) {
+                $elasticaFacetUserType->setFilter($facetFilter);
+            }
+        
+            // Add user type facet to the search query object.
+            $elasticaQuery->addFacet($elasticaFacetUserType);
         }
         
         // Define the author facet
@@ -799,9 +831,9 @@ class DataSearch extends DataAbstract implements IDataSearch
             if (! is_float($score))
                 $score = 1;
             $data['score'] = round($score * 100);
-            $data['authorName'] = $data['createUser.fullName'];
-            $data['author'] = $data['createUser.id'];
-            $data['version'] = $data['version'];
+            $data['authorName'] = isset($data['createUser.fullName']) ? $data['createUser.fullName'] : null;
+            $data['author'] = isset($data['createUser.id']) ? $data['createUser.id'] : null;
+            $data['version'] = isset($data['version']) ? $data['version'] : null;
 
             if (isset($data['availableLanguages']) && !is_array($data['availableLanguages'])) {
                 $data['availableLanguages'] = array($data['availableLanguages']);
@@ -855,7 +887,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             
             // Set read only
             
-            if (in_array($data['writeWorkspace'], $writeWorkspaceArray)) {
+            if (!isset($data['writeWorkspace']) or in_array($data['writeWorkspace'], $writeWorkspaceArray)) {
                 $data['readOnly'] = false;
             } else {
                 $data['readOnly'] = true;
@@ -914,7 +946,21 @@ class DataSearch extends DataAbstract implements IDataSearch
                             $renderFacet = false;
                         }
                         break;
+
+                    case 'userType':
                     
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.UserType", 'User type');
+                        if (array_key_exists('terms', $temp) and count($temp['terms']) > 0) {
+                            foreach ($temp['terms'] as $key => $value) {
+                    
+                                $termItem = $this->_getUserType($value['term']);
+                                $temp['terms'][$key]['label'] = $termItem['type'];
+                            }
+                        } else {
+                            $renderFacet = false;
+                        }
+                        break;
+                            
                     case 'author':
                         
                         $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author');
@@ -1010,7 +1056,22 @@ class DataSearch extends DataAbstract implements IDataSearch
                         }
                         
                         break;
-                    
+
+                    case 'userType':
+                        $temp = array(
+                            'id' => $vocabularyId,
+                            'label' => Manager::getService('Translate')->translate("Search.Facets.Label.UserType", 'User type')
+                        );
+                        foreach ($termId as $term) {
+                            $termItem = $this->_getUserType($term);
+                            $temp['terms'][] = array(
+                                    'term' => $term,
+                                    'label' => $termItem['type']
+                            );
+                        }
+                
+                    break;     
+                                       
                     case 'author':
                         $temp = array(
                             'id' => $vocabularyId,
