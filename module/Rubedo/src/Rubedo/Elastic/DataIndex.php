@@ -860,7 +860,8 @@ class DataIndex extends DataAbstract implements IDataIndex
                 'email' => $data['email'],
                 'name' => $data['name'],
                 'userType' => $typeId,
-                'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0
+                'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0,
+        		'fields' => $data['fields']
         );
     
         // Add taxonomy
@@ -901,7 +902,7 @@ class DataIndex extends DataAbstract implements IDataIndex
        
         // Add document
         $currentDocument = new \Elastica\Document($data['id'], $indexData);
-    
+
         if (isset($indexData['attachment']) && $indexData['attachment'] != '') {
             $currentDocument->addFile('file', $indexData['attachment']);
         }
