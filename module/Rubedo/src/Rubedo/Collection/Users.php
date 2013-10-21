@@ -184,7 +184,10 @@ class Users extends AbstractCollection implements IUsers
         
         $returnValue = parent::create($obj, $options);
         $createUser = $returnValue['data'];
-        
+
+        if ($returnValue["success"]) {
+            $this->_indexUser($createUser);
+        }        
         Manager::getService('Groups')->addUserToGroupList($createUser['id'], $groups);
         
         $personalPrefsObj = array(
@@ -271,10 +274,15 @@ class Users extends AbstractCollection implements IUsers
         Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
         $obj['groups'] = null;
         $result = parent::update($obj, $options);
+        
         if ($result['success']) {
             $result['data'] = $this->_addGroupsInfos($result['data']);
         }
-        
+
+        if ($result["success"]) {
+            $this->_indexUser($result['data']);
+        }
+
         $this->propagateUserUpdate($obj['id']);
         
         return $result;
@@ -286,9 +294,42 @@ class Users extends AbstractCollection implements IUsers
     public function destroy (array $obj, $options = array())
     {
         Manager::getService('Groups')->clearUserFromGroups($obj['id']);
-        return parent::destroy($obj, $options);
+        $returnArray =  parent::destroy($obj, $options);
+        if ($returnArray["success"]) {
+            $this->_unIndexUser($obj);
+        }
+        return $returnArray;
     }
 
+    /**
+     * Push the user to Elastic Search
+     *
+     * @param array $obj
+     */
+    protected function _indexUser ($obj)
+    {
+        $contentType = Manager::getService('UserTypes')->findById($obj['typeId']);
+        if(!$contentType || (isset($contentType['system']) && $contentType['system']==true)){
+            return;
+        }
+    
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->indexUser($obj);
+    }
+    
+    /**
+     * Remove the user from Indexed Search
+     *
+     * @param array $obj
+     */
+    protected function _unIndexUser ($obj)
+    {
+        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService->init();
+        $ElasticDataIndexService->deleteUser($obj['typeId'], $obj['id']);
+    }
+    
     /**
      * (non-PHPdoc)
      *
