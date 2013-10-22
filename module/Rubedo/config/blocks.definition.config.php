@@ -148,6 +148,11 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/searchResults.json'
     ),
+    'directory' => array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\Directory',
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/directory.json'
+    ),
     'simpleText' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Text',
         'maxlifeTime' => 86400,
