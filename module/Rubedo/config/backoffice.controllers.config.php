@@ -18,6 +18,7 @@ return array(
     'Rubedo\\Backoffice\\Controller\\ElasticSearch' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearchContent' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchContentController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearchDam' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchDamController',
+    'Rubedo\\Backoffice\\Controller\\ElasticSearchUser' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchUserController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearchGeo' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchGeoController',
     'Rubedo\\Backoffice\\Controller\\ExtFinder' => 'Rubedo\\Backoffice\\Controller\\ExtFinderController',
     'Rubedo\\Backoffice\\Controller\\FieldTypes' => 'Rubedo\\Backoffice\\Controller\\FieldTypesController',

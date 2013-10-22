@@ -32,5 +32,6 @@ return array(
     'Rubedo\\Blocks\\Controller\\Text' => 'Rubedo\\Blocks\\Controller\\TextController',
     'Rubedo\\Blocks\\Controller\\Twig' => 'Rubedo\\Blocks\\Controller\\TwigController',
     'Rubedo\\Blocks\\Controller\\Twitter' => 'Rubedo\\Blocks\\Controller\\TwitterController',
-    'Rubedo\\Blocks\\Controller\\Video' => 'Rubedo\\Blocks\\Controller\\VideoController'
+    'Rubedo\\Blocks\\Controller\\Video' => 'Rubedo\\Blocks\\Controller\\VideoController',
+    'Rubedo\\Blocks\\Controller\\Directory' => 'Rubedo\\Blocks\\Controller\\DirectoryController'
 );
