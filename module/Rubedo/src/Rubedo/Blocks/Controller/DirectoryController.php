@@ -54,13 +54,6 @@ class DirectoryController extends AbstractController
         $params['pagesize'] = $this->params()->fromQuery('pagesize', 10);
         $params['pager'] = $this->params()->fromQuery('pager', 0);
         
-        if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
-            $site = $this->getRequest()
-                ->params()
-                ->fromQuery('site');
-            $siteId = $site['id'];
-            $params['navigation'][] = $siteId;
-        }
         
         // apply predefined facets
         $facetsToHide = array();
@@ -79,7 +72,7 @@ class DirectoryController extends AbstractController
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
         
-        $results = $query->search($params);
+        $results = $query->search($params,'user');
         $results['searchParams'] = Json::encode($params, Json::TYPE_ARRAY);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
