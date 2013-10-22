@@ -283,7 +283,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $mapping = array(
                     'objectType' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
                     'email' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
-                    'name' => array('type' => 'string', 'store' => 'yes'),
+                    //'name' => array('type' => 'string', 'store' => 'yes'),
                     'userType' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                     'lastUpdateTime' => array('type' => 'date','store' => 'yes'),
                     'createUser' => array('type' => 'object','store' => 'yes', 'properties' => array(
@@ -306,7 +306,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         
                 $fields = $data['fields'];
         
-                // Add system fields : email for user
+                // Add system fields : email and name for user
 
                 $fields[] = array(
                         "cType" => "system",
@@ -316,7 +316,15 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 "searchable" => false
                         )
                 );
-        
+                $fields[] = array(
+                        "cType" => "system",
+                        "config" => array (
+                                "name" => "name",
+                                "fieldLabel" => "name",
+                                "searchable" => true
+                        )
+                );
+                        
                 // unmapped fields are not allowed in fields and i18n
                 $mapping['fields']=array('dynamic'=>false,'type'=>'object');
         
@@ -853,12 +861,13 @@ class DataIndex extends DataAbstract implements IDataIndex
         $userType = self::$_user_index->getType($typeId);
          
         // Initialize data array to push into index
-         
+
+        $data['fields']['name']=$data['name'];
+        
         $indexData = array(
                 'objectType' => 'user',
                 'userType' => $typeId,
                 'email' => $data['email'],
-                'name' => $data['name'],
                 'userType' => $typeId,
                 'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0,
         		'fields' => $data['fields']
