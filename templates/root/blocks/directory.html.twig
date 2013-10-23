@@ -83,6 +83,22 @@
 </div>
 {% endif %}
 {% endif %}
+{% if alphabeticIndex %}
+<div class="pagination">
+<ul>
+{% for facet in facets %}
+		    {% if facet.id == 'userName' %}
+		            {% for term in facet.terms %}
+    				  <li>
+    				  <a href="{{url({(facet.id) : term.term})}}">{{ term.label }} &nbsp;<sup class="text-success" >{{ term.count }}</sup></a>
+    				  
+    				  </li>
+    				{% endfor %}
+		    {% endif %}
+{% endfor %}
+</ul>
+</div>
+{% endif %}
 <div class="row-fluid">
 	<div class="span3 well well-large" id="inputSearchBlock">
 		<p>
@@ -94,7 +110,9 @@
 		
 		{% for facet in facets %}
 
-			{% if facet._type == 'terms' and facet.terms|length > 0 %}
+		    {% if facet.id == 'userName' %}
+		    
+			{% elseif facet._type == 'terms' and facet.terms|length > 0 %}
                 
     			{% if facet.id == 'type' %}
     			<p>
