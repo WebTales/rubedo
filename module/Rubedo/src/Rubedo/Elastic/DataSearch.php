@@ -1121,7 +1121,21 @@ class DataSearch extends DataAbstract implements IDataSearch
                         }
                         
                         break;
+
+                    case 'userName':
+                        $temp = array(
+                            'id' => $vocabularyId,
+                            'label' => Manager::getService('Translate')->translate("Search.Facets.Label.UserName", 'User Name')
+                        );
+                        foreach ($termId as $term) {
+                          $temp['terms'][] = array(
+                                    'term' => $term,
+                                    'label' => strtoupper($term)
+                            );
+                        }                   
                     
+                        break;
+                        
                     case 'lastupdatetime':
                         $temp = array(
                             'id' => 'lastupdatetime',
