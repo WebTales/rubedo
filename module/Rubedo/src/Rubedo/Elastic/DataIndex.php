@@ -283,7 +283,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $mapping = array(
                     'objectType' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
                     'email' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
-                    //'name' => array('type' => 'string', 'store' => 'yes'),
+                    'photo' => array('type' => 'string','index' => 'not_analyzed', 'store' => 'yes'),
                     'userType' => array('type' => 'string', 'index' => 'not_analyzed', 'store' => 'yes'),
                     'lastUpdateTime' => array('type' => 'date','store' => 'yes'),
                     'createUser' => array('type' => 'object','store' => 'yes', 'properties' => array(
@@ -874,7 +874,8 @@ class DataIndex extends DataAbstract implements IDataIndex
                 'email' => $data['email'],
                 'userType' => $typeId,
                 'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime']*1000) : 0,
-        		'fields' => $data['fields']
+        		'fields' => $data['fields'],
+                'photo' => isset($data['photo']) ? $data['photo'] : null
         );
     
         // Add taxonomy
