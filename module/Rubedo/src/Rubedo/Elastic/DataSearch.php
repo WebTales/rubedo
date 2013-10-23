@@ -441,6 +441,11 @@ class DataSearch extends DataAbstract implements IDataSearch
         if (array_key_exists('author', $this->_params)) {
             $this->_addFilter('author', 'createUser.id');
         }
+
+        // filter on author
+        if (array_key_exists('userName', $this->_params)) {
+            $this->_addFilter('userName', 'first_letter');
+        }
         
         // filter on date
         if (array_key_exists('lastupdatetime', $this->_params)) {
@@ -645,6 +650,27 @@ class DataSearch extends DataAbstract implements IDataSearch
             
             // Add that facet to the search query object.
             $elasticaQuery->addFacet($elasticaFacetAuthor);
+        }
+        
+        // Define the alphabetical name facet for users
+        
+        if ($option=="user") {
+
+            $elasticaFacetUserName = new \Elastica\Facet\Terms('userName');
+            $elasticaFacetUserName->setField('first_letter');
+            
+            //$elasticaFacetUserName->setSize(5);
+            //$elasticaFacetUserName->setOrder('count');
+            
+            // Apply filters from other facets
+            $facetFilter = $this->_getFacetFilter('userName');
+            if (! is_null($facetFilter)) {
+                $elasticaFacetUserName->setFilter($facetFilter);
+            }
+            
+            // Add that facet to the search query object.
+            $elasticaQuery->addFacet($elasticaFacetUserName);
+             
         }
         
         // Define the date facet.
@@ -974,7 +1000,16 @@ class DataSearch extends DataAbstract implements IDataSearch
                             $renderFacet = false;
                         }
                         break;
-                    
+
+                    case 'userName':
+                
+                        $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.UserName", 'User Name');
+                        foreach ($temp['terms'] as $key => $value) {
+                            $temp['terms'][$key]['label'] = strtoupper($value["term"]);
+                        }
+
+                    break;   
+                                         
                     case 'date':
                         
                         $temp['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ModificationDate", 'Modification date');

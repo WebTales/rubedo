@@ -150,6 +150,13 @@
                     "max_gram" : "15"
 		        }
 		    },
+		    "tokenizer" : { 
+		    	"first_letter" : { 
+		        	"pattern" : "^(.).*$", 
+		               "group" : 1, 
+		               "type" : "pattern" 
+		        } 
+		    }, 
 		    "analyzer": {
 		        "ar_analyzer": {
 		            "type": "custom",
@@ -315,7 +322,12 @@
 		            "tokenizer": "icu_tokenizer",
 		            "filter": ["icu_folding", "icu_normalizer"],
 		            "char_filter": ["html_strip"]
-		        }
+		        },
+	            "first_letter" : { 
+	                "type": "custom",
+	                "tokenizer" : "first_letter",
+	               	"filter" : ["lowercase"]   
+	            }
 		    }
 		}
 	}
