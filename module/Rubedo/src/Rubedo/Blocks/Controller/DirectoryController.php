@@ -86,6 +86,7 @@ class DirectoryController extends AbstractController
             $pagecount = 1;
         }
         $results['displayMode'] = isset($params['block-config']['displayMode']) ? $params['block-config']['displayMode'] : 'standard';
+        $results['userDisplayMode'] = isset($params['block-config']['userDisplayMode']) ? $params['block-config']['userDisplayMode'] : 'list';
         $results['autoComplete'] = isset($params['block-config']['autoComplete']) ? $params['block-config']['autoComplete'] : false;
         $results['alphabeticIndex'] = isset($params['block-config']['alphabeticIndex']) ? $params['block-config']['alphabeticIndex'] : false;
         $results['facetsToHide'] = $facetsToHide;

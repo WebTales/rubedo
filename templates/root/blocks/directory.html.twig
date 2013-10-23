@@ -90,7 +90,7 @@
 		    {% if facet.id == 'userName' %}
 		            {% for term in facet.terms %}
     				  <li>
-    				  <a href="{{url({(facet.id) : term.term})}}">{{ term.label }} &nbsp;<sup class="text-success" >{{ term.count }}</sup></a>
+    				  <a href="{{url({(facet.id) : term.term})}}">{{ term.label }} <sup class="text-success" >{{ term.count }}</sup></a>
     				  
     				  </li>
     				{% endfor %}
@@ -196,7 +196,7 @@
 			{{"Search.Label.NoResults"|fotrans}}
 		</div>
 		{% else %}
-
+        {% if userDisplayMode=='list' %}
 		<table class="table">
 			{% for result in data %}
 			{% if result.objectType == 'user' %}
@@ -217,6 +217,29 @@
 			{% endif %}
 			{% endfor %}
 		</table>
+		{% else %}
+		<div class="row-fluid">
+		    {% for result in data %}
+			{% if result.objectType == 'user' %}
+			<div class="well pull-left" style="height:140px; width:370px; margin-left:10px; margin-right:10px;">
+				{% if result.photo %}
+				    <img src="{{ userAvatar(result.id) }}"  alt="{{result.name}}" style="height:100px; margin-right:20px; margin-top:10px;" class="img-polaroid pull-left">
+				{% endif %}
+				<h3><a href="#">{{ result.name }} </a></h3>
+				<p>{{ result.email }}</p>
+				<div class="progress progress-success search-progress">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">
+						{{ result.score }}%
+					</div>
+				</div>
+			</div>
+			
+			{% endif %}
+			{% endfor %}
+			</div>
+		{% endif %}
+		
+		
 		{% if pagecount > 1 %}
 		<div class="pagination pagination-centered">
 		{%set wrap=limit//2%}
