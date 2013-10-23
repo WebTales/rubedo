@@ -366,7 +366,11 @@ class DataIndex extends DataAbstract implements IDataIndex
                                                 $_autocomplete => array("type"=> "string", "analyzer" => "autocomplete", 'store' => $store)
                                         )
                                 );
-                                $mapping['fields']['properties'][$name] = $config;
+                                // Add first letter indexing for user name
+                                if ($field["config"]["name"]=="name") {
+                                    $config["fields"]["first_letter"] = array("type" => "string","analyzer" => "first_letter");
+                                }
+                                $mapping["fields"]["properties"][$name] = $config;
                         }
                     }
                 }

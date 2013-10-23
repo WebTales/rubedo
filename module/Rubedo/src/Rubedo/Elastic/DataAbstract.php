@@ -166,6 +166,7 @@ class DataAbstract
         self::$_user_index = $this->_client->getIndex(self::$_options['userIndex']);
         
         // Create user index if not exists
+
         if (! self::$_user_index->exists()) {
             self::$_user_index->create(self::$_user_index_param, true);
         }
