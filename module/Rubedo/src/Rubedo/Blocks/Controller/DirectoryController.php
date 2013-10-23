@@ -95,13 +95,12 @@ class DirectoryController extends AbstractController
             10
         ));
         
-        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->params()->fromQuery('current-page');
-        $results['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
+        $results['profilePage'] = isset($params['block-config']['profilePage']) ? $params['block-config']['profilePage'] : false;
         
         $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
         $results['blockTitle'] = $this->params()->fromQuery('blockTitle');
         
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/directory.html.twig");
         
         $css = array();
         $js = array(

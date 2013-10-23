@@ -1,0 +1,254 @@
+{% extends "@Root/blocks/contentlist.html.twig" %} 
+{% block mainContent %}
+<br />
+<div class="navbar" id="searchpage" data-searchparams='{{ searchParams }}'>
+	<div class="navbar-inner">
+		<a class="brand">{% if total > 1 %}{{"Search.ThereAre"|fotrans}}{% else %}{{"Search.ThereIs"|fotrans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if total > 1 %}{{"Search.Results"|fotrans}}{% else %}{{"Search.Result"|fotrans}}{% endif %}</a>
+		<ul class="nav pull-right">
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if orderby == "_score" or orderby == "" %}
+				{{"Search.Label.OrderByRelevance"|fotrans}}
+				{% endif %}
+				{% if orderby == "lastUpdateTime" %}
+				{{"Search.Label.OrderByDate"|fotrans}}
+				{% endif %}
+				{% if orderby == "createUser.fullName" %}
+				{{"Search.Label.OrderByAuthor"|fotrans}}
+				{% endif %} <b class="caret"></b> </a>
+				<ul class="dropdown-menu">
+					{% if orderby != "_score" %}
+					<li>
+						<a href="{{url({'orderby': '_score'})}}">{{"Search.Label.OrderByRelevance"|fotrans}}</a>
+					</li>
+					{% endif %}
+					{% if orderby != "lastUpdateTime" %}
+					<li>
+						<a href="{{url({'orderby': 'lastUpdateTime'})}}">{{"Search.Label.OrderByDate"|fotrans}}</a>
+					</li>
+					{% endif %}
+					{% if orderby != "createUser.fullName" %}
+					<li>
+						<a href="{{url({'orderby': 'createUser.fullName','orderbyDirection': 'asc'})}}">{{"Search.Label.OrderByAuthor"|fotrans}}</a>
+					</li>
+					{% endif %}
+				</ul>
+			</li>
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if pagesize=="all" %}
+				{{"Blocks.Search.Label.AllInOnePage"|fotrans}}
+				{% else %}
+				{{ pagesize }} {{"Blocks.Search.Label.ByPage"|fotrans}}
+				{% endif %} <b class="caret"></b> </a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="{{url({'pagesize': '10'})}}">10 {{"Blocks.Search.Label.ByPage"|fotrans}}</a>
+					</li>
+					<li>
+						<a href="{{url({'pagesize': '20'})}}">20 {{"Blocks.Search.Label.ByPage"|fotrans}}</a>
+					</li>
+					<li>
+						<a href="{{url({'pagesize': '50'})}}">50 {{"Blocks.Search.Label.ByPage"|fotrans}}</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+
+{% if activeFacets|length > 0 %}
+{% set activeFacetsList = [] %}
+{% if displayMode != 'checkbox' %}
+<div class="navbar">
+	<div class="navbar-inner">
+		<p class="brand">{{ "Blocks.Search.Label.SearchCriteria" | fotrans }} :&nbsp;&nbsp;
+{% endif %}
+		{% for facet in activeFacets %}
+
+                {% for term in facet.terms %}
+                    {% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+                    {% set activeFacetsList = activeFacetsList|merge([term.term]) %}
+                    {% if displayMode != 'checkbox' %}
+		            <a {% if term.term not in facetsToHide %}href="{{url({(facet.id): term.term},'sub')}}"{% endif %} >
+				        <span class="badge badge-info">{% if term.term not in facetsToHide %}<i class="icon-remove-sign"></i>{% endif %} {{ term.label }}</span>
+			        </a>
+			        {% endif %}
+			        {% endif %}
+		        {% endfor %}
+
+		        
+		{% endfor %}
+{% if displayMode != 'checkbox' %}
+		</p>
+	</div>
+</div>
+{% endif %}
+{% endif %}
+<div class="row-fluid">
+	<div class="span3 well well-large" id="inputSearchBlock">
+		<p>
+			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
+		</p>
+			<form class="form-search" action="{{url({},true)}}">
+				<input type="text" class="input-medium search-query {%  if autoComplete %}typeahead{%  endif %}" autocomplete="off" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
+			</form>
+		
+		{% for facet in facets %}
+
+			{% if facet._type == 'terms' and facet.terms|length > 0 %}
+                
+    			{% if facet.id == 'type' %}
+    			<p>
+    				<i class="icon-file"></i> {{ "Search.Facets.Label.ContentType"|fotrans }}
+    			</p>	
+    			{% elseif facet.id == 'damType' %}
+    			<p>
+    				<i class="icon-file"></i> {{ "Search.Facets.Label.MediaType"|fotrans }}
+    			</p>	
+    			{% elseif facet.id == 'author' %}
+    			<p>
+    				<i class="icon-user"></i> {{ "Search.Facets.Label.Author"|fotrans }}
+    			</p>		
+    			{% else %}
+    			<p>
+    				<i class="icon-tags"></i> {{ facet.label }}
+    			</p>			
+    			{% endif %}	
+    	        {% if facet.id == 'date' %}
+    	          <ul>
+    				{% for term in facet.terms %}
+    				
+    				<li>
+    					<a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
+    				</li>
+    				
+    				{% endfor %}
+			    </ul>
+    	        {% else %}
+    	        <ul>
+    				{% for term in facet.terms %}
+    				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+    				{% if displayMode == 'checkbox' %}
+    				<label class="checkbox">
+      					<input type="checkbox" class="facetBox" data-target="{{url({(facet.id) : [term.term]},'add')}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+    				</label>
+    				{% else %}
+    				<li>
+    					<a href="{{url({(facet.id) : [term.term]},'add')}}">{{ term.label }} ({{ term.count }})</a>
+    				</li>
+    				{% endif %}
+    				{% endif %}
+    				{% endfor %}
+			    </ul>
+    					
+    			{% endif %}			
+			
+			{% endif %}
+			
+			{% if facet._type == 'range' and facet.ranges|length > 0 %}
+    			{% if facet.id == 'date' %}
+    				{% for range in facet.ranges %}
+
+    						{% if loop.first %}
+     							<p>
+    								<i class="icon-calendar"></i> {{"Search.Facets.Label.ModificationDate"|fotrans}}
+    							</p>
+    	        				<ul>
+    	        			{% endif %}
+                            {% if displayMode == 'checkbox' %}
+            				<label class="checkbox">
+              					<input type="checkbox" class="facetBox" data-target="{{url({lastupdatetime : range.from})}}" data-target-off="{{url({lastupdatetime : range.from},'sub')}}" {% if range.from in activeFacetsList %}checked{% endif %}> {{ range.label }} ({{ range.count }})
+            				</label>                            
+                            {% else %}
+    						<li>
+    							<a href="{{url({lastupdatetime : range.from})}}">{{ range.label }} ({{ range.count }})</a>
+    						</li>
+                            {% endif %}
+
+    				{% endfor %}
+			    	</ul>
+    			{% endif %}			
+			{% endif %}		
+		
+		{% endfor %}
+		
+	</div>
+	<div class="span9">
+		{% if total == 0 %}
+		<div class="alert alert-error">
+			{{"Search.Label.NoResults"|fotrans}}
+		</div>
+		{% else %}
+
+		<table class="table">
+			{% for result in data %}
+			{% if result.objectType == 'user' %}
+			<tr>
+				<td>
+				{% if result.photo %}
+				    <img src="{{ userAvatar(result.id) }}"  alt="{{result.name}}" style="height:100px; margin-right:20px; margin-top:10px;" class="img-polaroid pull-left">
+				{% endif %}
+				<h3><a href="#">{{ result.name }} </a></h3>
+				<p>{{ result.email }}</p>
+				<div class="progress progress-success search-progress">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">
+						{{ result.score }}%
+					</div>
+				</div>
+			</tr>
+			
+			{% endif %}
+			{% endfor %}
+		</table>
+		{% if pagecount > 1 %}
+		<div class="pagination pagination-centered">
+		{%set wrap=limit//2%}
+		{%set lastWrap=(pagecount-1)-current%}
+			<ul>
+			<li class="disabled">
+					<a href="#">{{"Search.Label.Page"|fotrans}} {{ current+1 }} {{"Contents.Of"|fotrans}} {{ pagecount }}</a>
+				</li>
+				{% if current==0 %}
+				<li class="disabled">
+					<a href="#">&lt;&lt;</a>
+				</li>
+				{% else %}
+				<li>
+					<a href="{{url({'pager': current-1})}}">&lt;&lt;</a>
+				</li>
+				{% endif %}
+				{%if current<wrap+1 or limit<10%}
+				{% for i in range(0, limit) %}
+				<li {% if current==i %}class="disabled"{% endif %}>
+					<a href="{{url({'pager': i})}}">{{ i+1 }}</a>
+				</li>
+				{% endfor %}
+				{%elseif limit>wrap and current+wrap<pagecount %}
+				{% for  i in current-(wrap)..current+wrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%else%}
+				{% for  i in current-(limit-(lastWrap)-1)..current+lastWrap%}
+				<li {% if current == i%}class="active"{%endif%}>
+					<a href="{{url({'pager': i},true)}}">{{i+1}}</a>
+				</li>
+				{%endfor%}
+				{%endif%}
+				{% if current==pagecount-1%}
+				<li class="disabled">
+					<a href="#">&gt;&gt;</a>
+				</li>
+				{% else %}
+				<li>
+					<a href="{{url({'pager': current+1})}}">&gt;&gt;</a>
+				</li>
+				{% endif %}
+			</ul>
+		</div>
+		{% endif %}
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}
