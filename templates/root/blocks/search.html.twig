@@ -197,6 +197,22 @@
 				<br />
 				{{"Contents.PublishedBy"|fotrans}} <a href="{{url({'author' : result.author},true)}}">{{ result.authorName }}</a> {{"Contents.The"|fotrans}} {{ (result.lastUpdateTime)|localizeddate('long', 'none', lang) }}. </td>
 			</tr>
+
+			{% elseif result.objectType == 'user' %}
+			<tr>
+				<td>
+				{% if result.photo %}
+				    <img src="{{ userAvatar(result.id) }}"  alt="{{result.name}}" style="height:100px; margin-right:20px; margin-top:10px;" class="img-polaroid pull-left">
+				{% endif %}
+				<h3><a href="#">{{ result.name }} </a></h3>
+				<p>{{ result.email }}</p>
+				<div class="progress progress-success search-progress">
+					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">
+						{{ result.score }}%
+					</div>
+				</div> &nbsp;<span class="label">User</span>
+			</tr>
+			
 			{% else %}
 			<tr>
 				<td><h3><a href="{{ mediaUrl(result.id) }}">{{ result.title }}</a></h3>

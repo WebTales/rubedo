@@ -100,6 +100,8 @@
 </div>
 {% endif %}
 <div class="row-fluid">
+
+{% if activateSearch %}
 	<div class="span3 well well-large" id="inputSearchBlock">
 		<p>
 			<i class="icon-search"></i> {{"Search.Label.FullTextSearch"|fotrans}}
@@ -190,7 +192,10 @@
 		{% endfor %}
 		
 	</div>
-	<div class="span9">
+	
+	{% endif %}
+	
+	<div class="{% if activateSearch %}span9{% else %}span12{% endif %}">
 		{% if total == 0 %}
 		<div class="alert alert-error">
 			{{"Search.Label.NoResults"|fotrans}}
@@ -221,7 +226,7 @@
 		<div class="row-fluid">
 		    {% for result in data %}
 			{% if result.objectType == 'user' %}
-			<div class="well pull-left" style="height:140px; width:370px; margin-left:10px; margin-right:10px;">
+			<div class="well pull-left" style="height:140px; width:{% if activateSearch %}370{% else %}330{% endif %}px; margin-left:10px; margin-right:10px;">
 				{% if result.photo %}
 				    <img src="{{ userAvatar(result.id) }}"  alt="{{result.name}}" style="height:100px; margin-right:20px; margin-top:10px;" class="img-polaroid pull-left">
 				{% endif %}
