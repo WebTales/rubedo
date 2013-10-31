@@ -61,13 +61,14 @@ class Logger
                         $handler = new $className($handler['path'], $level);
                         break;
                     case 'Monolog\\Handler\\MongoDBHandler':
+                        $dataAccess = Manager::getService('MongoDataAccess');
                         if ($handler['database'] == 'inherit') {
-                            $handler['database'] = DataAccess::getDefaultDb();
+                            $handler['database'] = $dataAccess::getDefaultDb();
                         }
                         if (! isset($handler['connectionPath'])) {
-                            $handler['connectionPath'] = DataAccess::getDefaultMongo();
+                            $handler['connectionPath'] = $dataAccess::getDefaultMongo();
                         }
-                        $mongoClient = Manager::getService('MongoDataAccess')->getAdapter($handler['connectionPath']);
+                        $mongoClient = $dataAccess->getAdapter($handler['connectionPath']);
                         $handler = new $className($mongoClient, $handler['database'], $handler['collection'], $level);
                         break;
                     default:
