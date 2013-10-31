@@ -48,7 +48,7 @@ interface IDataIndex
      *            overwrite content type if it exists
      * @return array
      */
-    public function indexContentType ($id, $data, $overwrite = false);
+    public function indexContentType ($id, $data);
 
     /**
      * Index ES type for new or updated dam type
@@ -61,7 +61,7 @@ interface IDataIndex
      *            overwrite dam type if it exists
      * @return array
      */
-    public function indexDamType ($id, $data, $overwrite = false);
+    public function indexDamType ($id, $data);
 
     /**
      * Index ES type for new or updated user type
@@ -74,7 +74,7 @@ interface IDataIndex
      *            overwrite user type if it exists
      * @return array
      */
-    public function indexUserType ($id, $data, $overwrite = false);
+    public function indexUserType ($id, $data);
     
     /**
      * Delete ES type for content type
