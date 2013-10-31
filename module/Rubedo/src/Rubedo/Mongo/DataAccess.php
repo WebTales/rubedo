@@ -313,10 +313,22 @@ class DataAccess implements IDataAccess
      */
     public static function setDefaultDb ($dbName)
     {
-        if (gettype($dbName) !== 'string') {
-            throw new \Rubedo\Exceptions\Server('$dbName should be a string', "Exception40", '$dbName');
+        switch (gettype($dbName)) {
+            case 'string':
+                self::$_defaultDb = $dbName;
+                break;
+            case 'array':
+                $host = $_SERVER['SERVER_NAME'];
+                if (isset($dbName[$host])) {
+                    self::$_defaultDb = $dbName[$host];
+                } else {
+                    throw new \Rubedo\Exceptions\Server('$host does not exists');
+                }
+                break;
+            default :
+                throw new \Rubedo\Exceptions\Server('$dbName should be a array or string', "Exception40", '$dbName');
         }
-        self::$_defaultDb = $dbName;
+    
     }
 
     /**
