@@ -161,7 +161,7 @@ return array(
     'siteMap' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\SiteMap',
         'maxlifeTime' => 60,
-        'definitionFile' => $blocksPath . '/sitemap.json'
+        'definitionFile' => $blocksPath . '/siteMap.json'
     ),
     'twig' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Twig',
