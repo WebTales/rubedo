@@ -3,7 +3,29 @@
 {% block mainContent %}
 <div class="row-fluid">
 	<div class="span12">
-	<p>TEST SIGNUP</p>
+	{% if contentId %}
+        <div id="introduction-{{prefix}}"><div class="editable" id="{{ contentId }}_body">{{ text|cleanHtml }}</div></div>
+        <div class="clearfix"></div>
+    {% endif %}
+	<form class="form-horizontal">
+    	<div class="control-group">
+            <label class="control-label" >Email *</label>
+            <div class="controls">
+              <input type="email" name="email" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" >Name *</label>
+            <div class="controls">
+              <input type="text" name="name" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+            <button type="submit" class="btn btn-primary">SIGN UP</button>
+            </div>
+        </div>
+	</form>
 	</div>
 </div>
 {% endblock %}
