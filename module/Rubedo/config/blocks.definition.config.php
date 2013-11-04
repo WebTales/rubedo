@@ -133,6 +133,11 @@ return array(
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/resource.json'
     ),
+    'signUp' => array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\SignUp',
+        'maxlifeTime' => 86400,
+        'definitionFile' => $blocksPath . '/signUp.json'
+    ),
     'richText' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\RichText',
         'maxlifeTime' => 86400,
