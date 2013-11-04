@@ -30,12 +30,14 @@ class SignUpController extends AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->params()->fromQuery('block-config', array());
-        
         $output = $this->params()->fromQuery();
-
-        
+        if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
+            $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
+            $output['contentId'] = $blockConfig["introduction"];
+            $output['text'] = $content["fields"]["body"];
+            $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
+        }
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signUp.html.twig");
-        
         $css = array();
         $js = array();
         return $this->_sendResponse($output, $template, $css, $js);
