@@ -11,6 +11,13 @@
 					"categorie":"#ext-gen1063#",
 					"champs":[
 						{
+							"type":"Rubedo.view.UTCField",
+							"config":{
+								"fieldLabel":"User type",
+								"name":"userType"
+							}
+						},
+						{
 							"type":"Rubedo.view.DCEField",
 							"config":{
 								"fieldLabel":"#ext-gen1255#",

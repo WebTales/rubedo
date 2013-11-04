@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 
 /**
  *
@@ -31,6 +32,12 @@ class SignUpController extends AbstractController
     {
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
+        if (! isset($blockConfig['userType'])) {
+            return $this->_sendResponse(array(), "block.html.twig");
+        }
+        $output['userTypeId']=$blockConfig['userType'];
+        $userType=Manager::getService('UserTypes')->findById($blockConfig['userType']);
+        $output['fields']=$userType['fields'];
         if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
             $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
             $output['contentId'] = $blockConfig["introduction"];
