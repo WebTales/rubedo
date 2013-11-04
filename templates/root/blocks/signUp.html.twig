@@ -24,12 +24,15 @@
         {% for field in fields %}
             {% if not field['config']['allowBlank'] %}
                 {% if field['cType']=='Ext.form.field.Text' %}
-                    <div class="control-group">
-                        <label class="control-label" >{{ field['config']['fieldLabel'] }}</label>
-                        <div class="controls">
-                          <input type="text" name="{{ field['config']['name'] }}" required>
-                        </div>
-                    </div>
+                    {% include '@Root/blocks/inputFields/text.html.twig' %}
+                {% elseif field['cType']=='Ext.form.field.TextArea' %}
+                    {% include '@Root/blocks/inputFields/textarea.html.twig' %}
+                {% elseif field['cType']=='Ext.form.field.Checkbox' %}
+                    {% include '@Root/blocks/inputFields/checkbox.html.twig' %}
+                {% elseif field['cType']=='Ext.form.CheckboxGroup' %}
+                    {% include '@Root/blocks/inputFields/checkboxgroup.html.twig' %}
+                {% elseif field['cType']=='Ext.form.RadioGroup' %}
+                    {% include '@Root/blocks/inputFields/radiogroup.html.twig' %}
                 {% endif %}
             {%  endif %}
         {% endfor %}
