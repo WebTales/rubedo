@@ -1,0 +1,23 @@
+{
+	"type":"Sign up",
+	"description":"not yet written",
+	"configBasique":{
+		"title":"Sign up",
+		"bType":"signUp",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1211#",
+	"bType":"signUp",
+	"id":"511e6508c0e051bd12123459"
+}
