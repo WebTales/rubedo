@@ -7,7 +7,7 @@
         <div id="introduction-{{prefix}}"><div class="editable" id="{{ contentId }}_body">{{ text|cleanHtml }}</div></div>
         <div class="clearfix"></div>
     {% endif %}
-	<form class="form-horizontal">
+	<form class="form-horizontal" id="form-{{ prefix }}">
     	<div class="control-group">
             <label class="control-label" >Email *</label>
             <div class="controls">
@@ -20,9 +20,24 @@
               <input type="text" name="name" required>
             </div>
         </div>
+        
+        {% for field in fields %}
+            {% if not field['config']['allowBlank'] %}
+                {% if field['cType']=='Ext.form.field.Text' %}
+                    <div class="control-group">
+                        <label class="control-label" >{{ field['config']['fieldLabel'] }}</label>
+                        <div class="controls">
+                          <input type="text" name="{{ field['config']['name'] }}" required>
+                        </div>
+                    </div>
+                {% endif %}
+            {%  endif %}
+        {% endfor %}
+        
         <div class="control-group">
             <div class="controls">
-            <button type="submit" class="btn btn-primary">SIGN UP</button>
+            <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
+            <button type="submit" id="submit-{{ prefix }}" class="btn btn-primary">SIGN UP</button>
             </div>
         </div>
 	</form>
