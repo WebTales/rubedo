@@ -1,0 +1,11 @@
+<div class="control-group">
+	<label class="control-label">{{ field['config']['fieldLabel'] }}</label>
+	    <div class="controls">
+        {% for radioButton in field["config"]["items"] %}
+            <label class="checkbox">
+                <input type="checkbox" name="{{ radioButton.name }}"  value="{{ radioButton.inputValue }}">
+                {{ radioButton.boxLabel }}
+            </label>
+        {% endfor %}
+        </div>
+</div>
