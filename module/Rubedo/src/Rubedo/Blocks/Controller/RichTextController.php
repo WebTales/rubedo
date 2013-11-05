@@ -45,4 +45,5 @@ class RichTextController extends AbstractController
         $js = array();
         return $this->_sendResponse($output, $template, $css, $js);
     }
+    
 }

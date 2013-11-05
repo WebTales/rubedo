@@ -7,7 +7,7 @@
         <div id="introduction-{{prefix}}"><div class="editable" id="{{ contentId }}_body">{{ text|cleanHtml }}</div></div>
         <div class="clearfix"></div>
     {% endif %}
-	<form class="form-horizontal" id="form-{{ prefix }}">
+	<form method="post" class="form-horizontal" id="form-{{ prefix }}" >
     	<div class="control-group">
             <label class="control-label" >Email *</label>
             <div class="controls">
@@ -37,11 +37,11 @@
             {%  endif %}
         {% endfor %}
         
-        <div class="control-group">
-            <div class="controls">
+
             <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
-            <button type="submit" id="submit-{{ prefix }}" class="btn btn-primary">SIGN UP</button>
-            </div>
+            
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary signupformtrigger" data-formid="form-{{ prefix }}" >SIGN UP</button>
         </div>
 	</form>
 	</div>

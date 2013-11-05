@@ -30,6 +30,45 @@ class SignUpController extends AbstractController
 
     public function indexAction ()
     {
+        if ($this->getRequest()->isPost()){
+            $params = $this->params()->fromPost();
+            $output = $this->params()->fromQuery();
+            if ((!isset($params['name']))||(!isset($params['email']))||(!isset($params['userTypeId']))){
+                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
+                return $this->_sendResponse($output, $template);
+            }
+            $userType=Manager::getService('UserTypes')->findById($params['userTypeId']);
+            if ($userType['signUpType']=="none") {
+                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
+                return $this->_sendResponse($output, $template);
+            }
+            $newUser=array();
+            $newUser['name']=$params['name'];
+            $newUser['email']=$params['email'];
+            $newUser['login']=$params['email'];
+            $newUser['typeId']=$params['userTypeId'];
+            $newUser['defaultGroup']=$userType['defaultGroup'];
+            $newUser['groups']=array($userType['defaultGroup']);
+            $newUser['taxonomy']=array();
+            unset($params['name']);
+            unset($params['email']);
+            unset($params['userTypeId']);
+            $newUser['fields']=$params;
+            if ($userType['signUpType']=="open") {
+                $newUser['status']="approved";
+            } else if ($userType['signUpType']=="moderated") {
+                $newUser['status']="pending";
+            }
+            
+            $createdUser=Manager::getService('Users')->create($newUser);
+            if (!$createdUser['success']) {
+                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
+                return $this->_sendResponse($output, $template);
+            } else {
+                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/done.html.twig");
+                return $this->_sendResponse($output, $template);
+            }
+        }
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
         if (! isset($blockConfig['userType'])) {
@@ -37,6 +76,9 @@ class SignUpController extends AbstractController
         }
         $output['userTypeId']=$blockConfig['userType'];
         $userType=Manager::getService('UserTypes')->findById($blockConfig['userType']);
+        if ($userType['signUpType']=="none") {
+            return $this->_sendResponse(array(), "block.html.twig");
+        }
         $output['fields']=$userType['fields'];
         if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
             $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
@@ -49,4 +91,6 @@ class SignUpController extends AbstractController
         $js = array();
         return $this->_sendResponse($output, $template, $css, $js);
     }
+    
+   
 }
