@@ -39,6 +39,12 @@ class SignUpController extends AbstractController
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
                 return $this->_sendResponse($output, $template);
             }
+            $alreadyExistingUser=Manager::getService("Users")->findByEmail($params['email']);
+            if ($alreadyExistingUser){
+                $output['signupMessage']="Email already in use.";
+                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
+                return $this->_sendResponse($output, $template);
+            }
             $userType=Manager::getService('UserTypes')->findById($params['userTypeId']);
             if ($userType['signUpType']=="none") {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
