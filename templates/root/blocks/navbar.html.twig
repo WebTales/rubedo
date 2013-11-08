@@ -12,7 +12,7 @@
 			{% if displayRootPage %}
 			<a class="brand"
 				href="{% if rootPage  %}{{ url({'pageId':rootPage.id},true) }}{% endif %}"
-				title="{{ rootPage.title }}" rel="home">{{ rootPage.title }}</a>
+                title="{{ rootPage.text }}" rel="home">{{ rootPage.text }}</a>
             {% endif %}
 			<!-- Everything you want hidden at 940px or less, place within here -->
 			<div class="nav-collapse nav-collapse-{{ id }} collapse">
@@ -24,18 +24,19 @@
 						class="{% if page.id in rootline %}active{% endif %} {% if page.pages %}dropdown{% endif %}">
 						<a 
 						    {% if page.pages %}class="dropdown-toggle" data-toggle="dropdown" data-target="#"{% endif %}
-						    href="{{page.url}}">{{page.title}}{% if page.pages %} <b class="caret"></b>{% endif %}</a> 
+                            title="{{ page.text }}"
+                            href="{{page.url}}">{{page.text}}{% if page.pages %} <b class="caret"></b>{% endif %}</a>
 						{% if page.pages %}
 						 <ul class="dropdown-menu">
 						    <li
 								class="{% if page.id==currentPage %}active{% endif %}">
-						    <a href="{{page.url}}">{{page.title}}</a>
+                            <a title="{{ page.text }}" href="{{page.url}}">{{page.text}}</a>
 						    </li>
 						    <li class="divider"></li>
 							{% for subpage in page.pages %}
 							<li
 								class="{% if subpage.id in rootline %}active{% endif %}">
-								<a href="{{subpage.url}}">{{subpage.title}}</a>
+                                <a title="{{subpage.text}}" href="{{subpage.url}}">{{subpage.text}}</a>
 							</li> {% endfor %}
 
 						</ul> {% endif %}

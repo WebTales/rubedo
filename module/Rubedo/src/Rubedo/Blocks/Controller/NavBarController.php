@@ -104,6 +104,7 @@ class NavBarController extends AbstractController
             ), $urlOptions);
             
             $tempArray['title'] = $page['title'];
+            $tempArray['text'] = $page['text'];
             $tempArray['id'] = $page['id'];
             $levelTwoPages = $this->pageService->readChild($page['id'], $this->excludeFromMenuCondition);
             if (count($levelTwoPages)) {
@@ -115,6 +116,7 @@ class NavBarController extends AbstractController
                     ), $urlOptions);
                     
                     $tempSubArray['title'] = $subPage['title'];
+                    $tempSubArray['text'] = $subPage['text'];
                     $tempSubArray['id'] = $subPage['id'];
                     $tempArray['pages'][] = $tempSubArray;
                 }
