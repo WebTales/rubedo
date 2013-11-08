@@ -5,10 +5,10 @@
         <ul class="breadcrumb">
     		{% for page in rootline %} 
         		<li>
-        		    <a href="{{url({'pageId':page.id},true)}}"> {{ page.text }} </a> <span class="divider">/</span>
+                    <a title="{{ page.text }}" href="{{url({'pageId':page.id},true)}}"> {{ page.text }} </a> <span class="divider">/</span>
         		</li>
     		{% endfor %}
-            <li class="active">{{ title }}</li>
+            <li class="active">{{ text }}</li>
         </ul>
     {% endif %}
 {% endblock %}

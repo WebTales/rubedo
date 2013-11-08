@@ -531,7 +531,7 @@ class DataAccess implements IDataAccess
         // switch from cursor to actual array
         $data = iterator_to_array($cursor);
         
-        // iterate throught data to convert ID to string and add version nulmber
+        // iterate throught data to convert ID to string and add version number
         // if none
         foreach ($data as &$value) {
             $value['id'] = (string) $value['_id'];
