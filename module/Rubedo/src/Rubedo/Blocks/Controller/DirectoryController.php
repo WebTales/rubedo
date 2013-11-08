@@ -98,7 +98,7 @@ class DirectoryController extends AbstractController
             $pagecount - 1,
             10
         ));
-        
+        $results['alphaArray']=range('a', 'z');
         $results['profilePage'] = isset($params['block-config']['profilePage']) ? $params['block-config']['profilePage'] : false;
         
         $results['displayTitle'] = $this->params()->fromQuery('displayTitle');

@@ -16,3 +16,4 @@ Thumbs.db
 extensions/*
 !extensions/readme.txt
 /composer.extension.*
+.idea*
