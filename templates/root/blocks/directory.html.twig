@@ -84,16 +84,27 @@
 {% endif %}
 {% endif %}
 {% if alphabeticIndex %}
-<div class="pagination">
+<div class="pagination text-center">
 <ul>
 {% for facet in facets %}
 		    {% if facet.id == 'userName' %}
-		            {% for term in facet.terms %}
-    				  <li>
-    				  <a href="{{url({(facet.id) : term.term})}}">{{ term.label }} <sup class="text-success" >{{ term.count }}</sup></a>
-    				  
-    				  </li>
-    				{% endfor %}
+                {% for letter in alphaArray %}
+                    {% set acounter=0 %}
+                    {% for term in facet.terms %}
+                        {% if term.term==letter %}
+                            {% set acounter=term.count %}
+                        {% endif %}
+                    {% endfor %}
+                    <li {% if acounter==0 %} class="disabled" {% endif %}>
+                        <a href="{% if acounter==0 %}#{% else %}{{url({(facet.id) : letter})}}{% endif %}" >{{ letter |upper}} <sup class="text-success" >
+                                {% if acounter>0 %}
+                                    {{ acounter }}
+                                {% endif %}
+                        </sup></a>
+
+                    </li>
+                {% endfor %}
+
 		    {% endif %}
 {% endfor %}
 </ul>
