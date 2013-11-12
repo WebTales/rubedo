@@ -69,6 +69,19 @@ class Files extends AbstractFileCollection implements IFiles {
 			'audio/ogg' 
 	);
 	public function create(array $fileObj) {
+        $config = Manager::getService('config');
+        $mongoConf=$config['datastream']['mongo'];
+        if ((isset($mongoConf['maximumDataSize']))&&(!empty($mongoConf['maximumDataSize']))){
+            $dbStats=$this->_dataService->getMongoDBStats();
+            $dataSize=$dbStats["dataSize"];
+            if ($dataSize>$mongoConf['maximumDataSize']){
+                $returnArray = array(
+                    'success' => false,
+                    'msg' => 'Maximum database size reached.'
+                );
+                return $returnArray;
+            }
+        }
 		switch ($fileObj ['mainFileType']) {
 			case 'Document' :
 				if (! in_array ( $fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes )) {
