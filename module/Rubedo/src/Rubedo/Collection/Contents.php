@@ -18,6 +18,7 @@ use Rubedo\Interfaces\Collection\IContents;
 use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
 use WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
 use Zend\Json\Json;
 
 /**
@@ -206,6 +207,19 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     public function create (array $obj, $options = array(), $live = false,$ignoreIndex = false)
     {
+        $config = Manager::getService('config');
+        $mongoConf=$config['datastream']['mongo'];
+        if ((isset($mongoConf['maximumDataSize']))&&(!empty($mongoConf['maximumDataSize']))){
+            $dbStats=$this->_dataService->getMongoDBStats();
+            $dataSize=$dbStats["dataSize"];
+            if ($dataSize>$mongoConf['maximumDataSize']){
+                $returnArray = array(
+                    'success' => false,
+                    'msg' => 'Maximum database size reached.'
+                );
+                return $returnArray;
+            }
+        }
         $obj = $this->_setDefaultWorkspace($obj);
         $obj = $this->_filterInputData($obj);
         

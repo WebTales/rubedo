@@ -160,6 +160,19 @@ class Dam extends AbstractLocalizableCollection implements IDam
      */
     public function create (array $obj, $options = array(), $index = true)
     {
+        $config = Manager::getService('config');
+        $mongoConf=$config['datastream']['mongo'];
+        if ((isset($mongoConf['maximumDataSize']))&&(!empty($mongoConf['maximumDataSize']))){
+            $dbStats=$this->_dataService->getMongoDBStats();
+            $dataSize=$dbStats["dataSize"];
+            if ($dataSize>$mongoConf['maximumDataSize']){
+                $returnArray = array(
+                    'success' => false,
+                    'msg' => 'Maximum database size reached.'
+                );
+                return $returnArray;
+            }
+        }
         $obj = $this->_setDefaultWorkspace($obj);
         
         $this->_filterInputData($obj);

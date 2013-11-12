@@ -233,6 +233,21 @@ class DataAccess implements IDataAccess
     }
 
     /**
+     * Return the mongoDB database stats
+     *
+     * @return array
+     */
+    public function getMongoDBStats ()
+    {
+        $dbInfo = $this->_dbName->command(array(
+            'dbStats' => true
+        ));
+
+        return ($dbInfo);
+    }
+
+
+    /**
      * Getter of Mongo adapter : should only connect once for each mongoDB
      * server
      *
