@@ -25,7 +25,13 @@
 								"allowedCT":"richText",
 								"addOnly":true
 							}
-						}
+						},{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Password field",
+                                "name":"collectPassword"
+                            }
+                        }
 					]
 				}
 			],
@@ -33,9 +39,11 @@
 
 			]
 		},
-		"configBloc":[
+		"configBloc":{
+            "collectPassword":false
+        }
 
-		]
+
 	},
 	"category":"#ext-gen1211#",
 	"bType":"signUp",

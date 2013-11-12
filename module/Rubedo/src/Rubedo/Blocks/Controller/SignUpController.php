@@ -39,6 +39,19 @@ class SignUpController extends AbstractController
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
                 return $this->_sendResponse($output, $template);
             }
+            $collectPassword=isset($output['block-config']['collectPassword']) ? $output['block-config']['collectPassword'] : false;
+            if ($collectPassword){
+                if ((!isset($params['password']))||(!isset($params['confirmPassword']))){
+                    $output['signupMessage']="Missing password parameters";
+                    $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
+                    return $this->_sendResponse($output, $template);
+                }
+                if ($params['password']!=$params['confirmPassword']){
+                    $output['signupMessage']="Password parameters don't match";
+                    $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
+                    return $this->_sendResponse($output, $template);
+                }
+            }
             $alreadyExistingUser=Manager::getService("Users")->findByEmail($params['email']);
             if ($alreadyExistingUser){
                 $output['signupMessage']="Email already in use.";
@@ -61,6 +74,11 @@ class SignUpController extends AbstractController
             unset($params['name']);
             unset($params['email']);
             unset($params['userTypeId']);
+            if ($collectPassword){
+                $newPassword=$params['password'];
+                unset($params['password']);
+                unset($params['confirmPassword']);
+            }
             $newUser['fields']=$params;
             if ($userType['signUpType']=="open") {
                 $newUser['status']="approved";
@@ -74,11 +92,13 @@ class SignUpController extends AbstractController
             }
             
             $createdUser=Manager::getService('Users')->create($newUser);
+            if (($createdUser['success'])&&($collectPassword)){
+                Manager::getService('Users')->changePassword($newPassword, $createdUser['data']['version'], $createdUser['data']['id']);
+            }
             if (!$createdUser['success']) {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
                 return $this->_sendResponse($output, $template);
             } else if ($userType['signUpType']=="emailConfirmation"){
-                //send email here
                 $emailVars=array();
                 $emailVars["name"]=$newUser["name"];
                 $emailVars["confirmUrl"]=$_SERVER['HTTP_REFERER'].'?confirmingEmail=1&userId='.$createdUser['data']['id'].'&signupTime='.$newUser["signupTime"];
@@ -161,6 +181,7 @@ class SignUpController extends AbstractController
             return $this->_sendResponse(array(), "block.html.twig");
         }
         $output['fields']=$userType['fields'];
+        $output['collectPassword']=isset($blockConfig['collectPassword']) ? $blockConfig['collectPassword'] : false;
         if ((isset($blockConfig['introduction'])) && ($blockConfig['introduction'] != "")) {
             $content = Manager::getService('Contents')->findById($blockConfig["introduction"], true, false);
             $output['contentId'] = $blockConfig["introduction"];

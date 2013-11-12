@@ -20,6 +20,20 @@
               <input type="text" name="name" required>
             </div>
         </div>
+        {% if collectPassword %}
+            <div class="control-group">
+                <label class="control-label" >Password *</label>
+                <div class="controls">
+                    <input type="password" name="password" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >Confirm password *</label>
+                <div class="controls">
+                    <input type="password" name="confirmPassword" required>
+                </div>
+            </div>
+        {% endif %}
         
         {% for field in fields %}
             {% if not field['config']['allowBlank'] %}
