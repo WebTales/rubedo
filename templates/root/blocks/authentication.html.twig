@@ -14,6 +14,7 @@
             
             <ul class="dropdown-menu">
                 {% if hasAccessToBO %}<li><a href="/backoffice" target="_blank"><i class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | fotrans }}</a></li>{% endif %}
+                {% if profilePage %}<li><a href="{{ profilePageUrl }}"><i class="icon-user"></i> Profile</a></li>{% endif %}
                 <li><a href="#" onclick="logout()"><i class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | fotrans }}</a></li>
             </ul>
         </div>

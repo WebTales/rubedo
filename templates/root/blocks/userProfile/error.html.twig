@@ -1,0 +1,12 @@
+{% extends "@Root/block.html.twig" %}
+
+{% block mainContent %}
+<div class="row-fluid">
+	<div class="span12">
+	<div class="alert alert-error">
+	   <button type="button" class="close" data-dismiss="alert">&times;</button>
+	   <strong>Error!</strong> {{ errorMessage }}
+	</div>
+	</div>
+</div>
+{% endblock %}

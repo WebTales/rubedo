@@ -7,7 +7,18 @@
 		"flex":1,
 		"champsConfig":{
 			"simple":[
-
+                {
+                    "categorie":"#ext-gen1287#",
+                    "champs":[
+                        {
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"Profile page",
+                                "name":"profilePage"
+                            }
+                        }
+                        ]
+                }
 			],
 			"avance":[
 
