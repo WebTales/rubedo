@@ -68,7 +68,8 @@ class AuthAdapter implements AdapterInterface
             'password',
             'salt',
             'startValidity',
-            'endValidity'
+            'endValidity',
+            'status'
         ));
         
         $hashService = Manager::getService('Hash');
@@ -122,6 +123,12 @@ class AuthAdapter implements AdapterInterface
             $valid = $valid && ($user['endValidity'] > $currentTime);
             if (! $valid) {
                 $this->_authenticateResultInfo['messages'][] = 'User account is no longer active';
+            }
+        }
+        if ($valid && isset($user['status']) && ! empty($user['status'])) {
+            $valid = $valid && ($user['status']=="approved");
+            if (! $valid) {
+                $this->_authenticateResultInfo['messages'][] = 'User account has not been activated';
             }
         }
         

@@ -119,7 +119,8 @@ Ext.define('Connector.view.Viewport', {
                                                 Ext.Msg.alert('Error', 'Ajax error');
                                                 break;
                                                 case Ext.form.action.Action.SERVER_INVALID:
-                                                Ext.Msg.alert('Error', 'Wrong login or password');
+                                                var reason=Ext.JSON.decode(action.response.responseText).msg;
+                                                Ext.Msg.alert('Error', reason);
                                             }
                                         }
                                     }); 
