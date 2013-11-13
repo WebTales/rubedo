@@ -1,13 +1,11 @@
 {% if type[key]["config"]["multivalued"] and data[key] is iterable %}
     {% for item in data[key] %}
-    {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-        <div class="{% if thumbnail %}thumbnail{% endif %} editable-img" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+        <div class="{% if thumbnail %}thumbnail{% endif %} " id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
             <img class="image-field {% if imageRounded %}image-rounded{% endif %} imageLeft" src="{{ imageUrl(item,width,height,mode) }}" alt="{{data.text}}" title="{{data.text}}" />
         </div>
     {% endfor %} 
 {% elseif data[key] is not iterable %}
-    {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-    <div class="{% if thumbnail %}thumbnail{% endif %} editable-img" id="{{ data.id }}_{{ key }}{% if index is defined %}-{{ index }}{% endif %}">
+    <div class="{% if thumbnail %}thumbnail{% endif %} " id="{{ data.id }}_{{ key }}{% if index is defined %}-{{ index }}{% endif %}">
         <img class="img-field {% if imageRounded %}image-rounded{% endif %} imageLeft" src="{{ imageUrl(data[key],width,height,mode) }}" alt="{{data.text}}" title="{{data.text}}" />
     </div>
 {% endif %}
