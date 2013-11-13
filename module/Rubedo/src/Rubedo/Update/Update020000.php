@@ -17,6 +17,9 @@
  */
 namespace Rubedo\Update;
 
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 /**
  * Methods
  * for
@@ -31,6 +34,54 @@ class Update020000 extends Update
 
     protected static $toVersion = '2.1.0';
 
+
+    public static function doCreateDefaultUserTypes ()
+    {
+        $success = true;
+        $contentPath = APPLICATION_PATH . '/data/default/';
+        $contentIterator = new \DirectoryIterator($contentPath);
+        foreach ($contentIterator as $directory) {
+            if ($directory->isDot() || ! $directory->isDir()) {
+                continue;
+            }
+            if ($directory->getFilename()!="UserTypes"){
+                continue;
+            }
+            $collection = ucfirst($directory->getFilename());
+            $itemsJson = new \DirectoryIterator($contentPath . '/' . $directory->getFilename());
+            foreach ($itemsJson as $file) {
+                if ($file->isDot() || $file->isDir()) {
+                    continue;
+                }
+                if ($file->getExtension() == 'json') {
+                    $itemJson = file_get_contents($file->getPathname());
+                    $item = Json::decode($itemJson,Json::TYPE_ARRAY);
+                    try {
+                        switch ($collection) {
+                            case 'UserTypes':
+                                $property = 'type';
+                                break;
+                            default:
+                                $property = 'text';
+                                break;
+                        }
+                        $filter = Filter::factory('Value')->setName($property)->setValue($item[$property]);
+                        $result = Manager::getService($collection)->customUpdate(array(
+                            '$set' => array(
+                                'defaultId' => $item['defaultId']
+                            )
+                        ), $filter);
+                    } catch (\Rubedo\Exceptions\User $exception) {
+                        $result['success'] = true;
+                    }
+
+                    $success = $result['success'] && $success;
+                }
+            }
+        }
+
+        return $success;
+    }
     /**
      * do
      * the
@@ -40,6 +91,10 @@ class Update020000 extends Update
      */
     public static function upgrade ()
     {
+
+        // create default user types
+        static::doCreateDefaultUserTypes();
+
         return true;
     }
 
