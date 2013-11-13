@@ -1,13 +1,11 @@
 {%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
 	{% for item in data[key] %}
-	{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-		<div class="number" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
-            <span class="currentNumber">{{ item }}</span>
-        </div>
+        <p><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+            <span class="currentNumber" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">{{ item }}</span>
+        </p>
 	{% endfor %}
 {% else %}
-{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-	<div class="number" id="{{ data.id }}_{{ key }}">
-        <span class="currentNumber">{{ data[key] }}</span>
-    </div>
+    <p><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+        <span class="currentNumber" id="{{ data.id }}_{{ key }}">{{ data[key] }}</span>
+    </p>
 {% endif %}
