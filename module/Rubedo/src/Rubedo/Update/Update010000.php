@@ -47,7 +47,8 @@ class Update010000 extends Update
             }
             if (in_array($directory->getFilename(), array(
                 'groups',
-                'site'
+                'site',
+                'UserTypes'
             ))) {
                 continue;
             }
@@ -64,7 +65,6 @@ class Update010000 extends Update
                         switch ($collection) {
                             case 'ContentTypes':
                             case 'DamTypes':
-                            case 'UserTypes':
                                 $property = 'type';
                                 break;
                             case 'Groups':
