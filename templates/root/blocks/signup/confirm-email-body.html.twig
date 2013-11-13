@@ -1,13 +1,13 @@
-<p>Hello {{ name }},</p>
+<p>{{ 'Blocks.SignUp.confirmEmail.hello'|fotrans({'%name%': name}) }}</p>
 
 <p>
-In order to complete you account creation please activate it by clicking on the following link :<br />
-<a href="{{ confirmUrl|raw }}">Confirm your email address</a>
+{{ 'Blocks.SignUp.confirmEmail.clickFollowing'|fotrans }}<br />
+<a href="{{ confirmUrl|raw }}">{{ 'Blocks.SignUp.confirmEmail.confirmLink'|fotrans }}</a>
 </p>
 <p>
-Regards
+{{ 'Blocks.SignUp.confirmEmail.thanks'|fotrans }}
 </p>
 
 <hr />
-This is an automated email.
+{{ 'Blocks.SignUp.confirmEmail.automatedMail'|fotrans }}
 <hr />

@@ -17,5 +17,6 @@ return array(
     'public/components/webtales/rubedo-localization/languagekey/Notification/pendingBody.json',
     'public/components/webtales/rubedo-localization/languagekey/Notification/refusedBody.json',
     'public/components/webtales/rubedo-localization/languagekey/Notification/publishedBody.json',
-    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Single/single.json'
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Single/single.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/confirmEmail.json'
 );
