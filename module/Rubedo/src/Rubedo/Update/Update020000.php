@@ -17,13 +17,16 @@
  */
 namespace Rubedo\Update;
 
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 /**
  * Methods
  * for
  * update
  * tool
  *
- * @author jbourdin
+ * @author adobre
  *        
  */
 class Update020000 extends Update
@@ -31,6 +34,94 @@ class Update020000 extends Update
 
     protected static $toVersion = '2.1.0';
 
+
+    public static function doCreateDefaultUserTypes ()
+    {
+        $success = true;
+        $contentPath = APPLICATION_PATH . '/data/default/';
+        $contentIterator = new \DirectoryIterator($contentPath);
+        foreach ($contentIterator as $directory) {
+            if ($directory->isDot() || ! $directory->isDir()) {
+                continue;
+            }
+            if ($directory->getFilename()!="UserTypes"){
+                continue;
+            }
+            $collection = ucfirst($directory->getFilename());
+            $itemsJson = new \DirectoryIterator($contentPath . '/' . $directory->getFilename());
+            foreach ($itemsJson as $file) {
+                if ($file->isDot() || $file->isDir()) {
+                    continue;
+                }
+                if ($file->getExtension() == 'json') {
+                    $itemJson = file_get_contents($file->getPathname());
+                    $item = Json::decode($itemJson,Json::TYPE_ARRAY);
+                    try {
+                        switch ($collection) {
+                            case 'UserTypes':
+                                $property = 'type';
+                                break;
+                            default:
+                                $property = 'text';
+                                break;
+                        }
+                        $filter = Filter::factory('Value')->setName($property)->setValue($item[$property]);
+                        $result = Manager::getService($collection)->customUpdate(array(
+                            '$set' => array(
+                                'defaultId' => $item['defaultId']
+                            )
+                        ), $filter);
+                    } catch (\Rubedo\Exceptions\User $exception) {
+                        $result['success'] = true;
+                    }
+
+                    $success = $result['success'] && $success;
+                }
+            }
+        }
+
+        return $success;
+    }
+
+    public static function doUpdateUserTypes ()
+    {
+
+        $success = true;
+        $publicGroup = Manager::getService('Groups')->findByName('public');
+        $userTypes=Manager::getService('UserTypes')->getList();
+        foreach ($userTypes['data'] as $userType){
+            $userType['defaultGroup']=$publicGroup['id'];
+            $result=Manager::getService('UserTypes')->update($userType);
+            $success = $result['success'] && $success;
+        }
+        return $success;
+    }
+
+
+    public static function doUpdateUsers ()
+    {
+        $success = true;
+        $publicGroup=Manager::getService("Groups")->findByName("public");
+
+        $filters=Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("default"));
+        $defaultUserType=Manager::getService("UserTypes")->findOne($filters);
+
+        $filters2=Filter::factory();
+        $filters2->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("email"));
+        $emailUserType=Manager::getService("UserTypes")->findOne($filters2);
+
+        $usersService=Manager::getService("Users");
+        $users=$usersService->getList();
+        foreach ($users['data'] as $user){
+            if (!isset($user['typeId'])){
+
+            }
+        }
+        return $success;
+    }
     /**
      * do
      * the
@@ -40,6 +131,16 @@ class Update020000 extends Update
      */
     public static function upgrade ()
     {
+
+        // create default user types
+        static::doCreateDefaultUserTypes();
+
+        // update user types with default group info
+        static::doUpdateUserTypes();
+
+        // update users
+        static::doUpdateUsers();
+
         return true;
     }
 
