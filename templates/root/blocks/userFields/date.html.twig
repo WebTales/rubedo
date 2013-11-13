@@ -1,0 +1,16 @@
+
+{% if type[key]["config"]["multivalued"] and data[key] is iterable %}
+	{% for item in data[key] %}
+	{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
+    	<div class="entry-info date" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+            {{item|localizeddate('long', 'none', lang)}}
+    	</div>
+	{% endfor %}
+{% elseif data[key] is defined and data[key] is not null%}
+{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
+	<div class="entry-info date" id="{{ data.id }}_{{ key }}">
+        {{data[key]|localizeddate('long', 'none', lang)}}
+	</div>
+{% else %}
+    <div class="alert alert-warning">{{ "Fields.Date.Label.BadFormat" | fotrans }}</div>
+{% endif %}

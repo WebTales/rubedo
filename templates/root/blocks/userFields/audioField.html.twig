@@ -1,0 +1,12 @@
+{% set audioObj = getDam(contentId) %}
+{% set extension = audioObj["Content-Type"] | split("/") %}
+
+<div style="width:100%;margin:1em 0;">
+    <div id="audio_{{ prefix }}{% if number %}-{{ number }}{% endif %}" class="audioPlaceholder" 
+        data-audioFile = "/dam.{% if extension[1] is defined %}{{ extension[1] }}{% else %}mp3{% endif %}?media-id={{ contentId }}"
+        data-width = "500"
+        data-controls = true
+        data-autostart = false
+    >
+    </div>
+</div>

@@ -1,0 +1,56 @@
+{% if isLoggedIn %}
+    {%if query.type=="manual" or query.type=="simple"%}
+        <div id="list-editmode" class="hide">
+        	<div class="btn-group pull-left">
+        	    <a class="btn" href="#" id="btn-add-content" onclick="createContentWindow('{{query.type}}','{{data[0].typeId}}','{{query.id}}')">
+        	        <i class="icon-plus-sign"></i> {{ "Fields.Localizer.Label.AddAContent" | fotrans }}
+        	    </a>
+        	</div>
+        </div>
+        <div class="clearfix"></div>
+    {%endif%}
+{%endif%}
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?{% if (googleMapsKey) %}key={{ googleMapsKey }}&{% endif %}sensor=true&language={{ lang }}"></script>
+
+{% if type[key]["config"]["multivalued"] and data[key] is iterable %}
+	<div id="{{ data.id }}_{{key}}" data-values="{{ data[key]|json_encode() }}" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="localiser-rubedo row-fluid mapPlaceholder"></div>
+{% else %}
+    <div id="{{ data.id }}_{{key}}" data-values="{{ data[key]|json_encode() }}" data-field="true" data-value="{{ data.summary }}" data-title="{{ data.text }}" class="localiser-rubedo row-fluid mapPlaceholder"></div>
+{% endif %}
+
+{% if isLoggedIn %}
+{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
+    <div  class="hide list-editmode">
+        <div id="{{ data.id }}_{{key}}-error-msg" class="hidden-rubedo alert alert-error">
+            <span class="msg"></span>
+    	    <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    
+        <div id="{{ data.id }}_{{key}}-edit">
+            <legend>{{ "Fields.Localizer.Label.Edition" | fotrans }}</legend>
+            
+            <div>
+                <label class="show-rubedo clear-both control-label" for="inputAddress">{{ "Blocks.GeoSearch.Label.Address" | fotrans }}</label>
+                <input class="input-xxlarge address localiser-address"  type="text" placeholder="{{ data[key].address }}" >
+            </div>
+            
+            <div class="row-fluid">
+                <div class="span6">
+                    <label class="show-rubedo clear-both control-label" for="inputLatitude">{{ "Fields.Localizer.Label.Latitude" | fotrans }}</label>
+                    <input class="latitude"  type="text" placeholder="{{ data[key].lat }}">
+                </div>
+        
+                <div class="span6">
+                    <label class="show-rubedo clear-both control-label" for="inputLongitude" >{{ "Fields.Localizer.Label.Longitude" | fotrans }}</label>
+                    <input class="longitude" type="text" placeholder="{{ data[key].lon }}">
+                </div>
+            </div>
+            
+            <div class="clear-both btn-group pull-right">
+               <a class="btn btn-warning" type="button" onclick='gMap.mapRefresh("{{ data.id }}_{{ key }}")'>{{ "Label.Refresh" | fotrans }}</a>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+{%endif%}
