@@ -277,10 +277,9 @@ class Users extends AbstractCollection implements IUsers
         
         if ($result['success']) {
             $result['data'] = $this->_addGroupsInfos($result['data']);
-        }
-
-        if ($result["success"]) {
-            $this->_indexUser($result['data']);
+             if (isset($options['reindexUser']) && $options['reindexUser']==true) {
+                $this->_indexUser($result['data']);
+            }
         }
 
         $this->propagateUserUpdate($obj['id']);
@@ -312,7 +311,6 @@ class Users extends AbstractCollection implements IUsers
         if(!$contentType || (isset($contentType['system']) && $contentType['system']==true)){
             return;
         }
-    
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexUser($obj);
