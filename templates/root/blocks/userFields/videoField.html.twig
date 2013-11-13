@@ -1,0 +1,13 @@
+{% set videoObj = getDam(contentId) %}
+{% set extension = videoObj["Content-Type"] | split("/") %}
+
+<div style="width:100%;margin:1em 0;">
+    <div id="video_{{ prefix }}{% if number %}-{{ number }}{% endif %}" class="videoPlaceholder" 
+        data-videoFile = "{{ mediaUrl(contentId) }}"
+        data-width = "500"
+        data-controls = true
+        data-autostart = false
+        data-contentType = {{ videoObj["Content-Type"] }}
+    >
+    </div>
+</div>

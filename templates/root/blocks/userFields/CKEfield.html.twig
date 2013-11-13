@@ -1,0 +1,13 @@
+
+{%  if type[key]["config"]["multivalued"] and data[key] is iterable %}
+	{% for item in data[key]%}
+		<div  id="{{ data.id }}_{{key}}#{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
+		    {{item|cleanHtml}}
+		</div>
+	{% endfor %}
+{% else %}
+	<div   id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}" data-cke-config="{{ CKEFields[key] }}">
+	    {{data[key]|cleanHtml}}
+	</div>
+	
+{% endif %}

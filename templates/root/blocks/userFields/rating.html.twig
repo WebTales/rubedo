@@ -1,0 +1,47 @@
+{%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
+
+	{% for item in data[key] %}
+		{%set fvalue = item|number_format(0, '.', '') %}
+		
+		{%if item == fvalue%}
+    		{%set decimal = "false"%}
+    	{%else%}
+    		{%set decimal = "true"%}
+		{%endif%}
+		<div id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}" data-rate="{{ item }}">
+            <strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+			{%for i in 1..type[key]["config"]["numberOfStars"]%}
+				{%if loop.index==fvalue and decimal=="true" %}
+    				<i class="half-star " data-index="{{ loop.index }}" data-value="0.5" data-min-value="{{ type[key]["config"]["minValue"] }}" data-max-value="{{ type[key]["config"]["maxValue"] }}"></i>
+				{%elseif loop.index>item%}
+    				<i class="empty-star " data-index="{{ loop.index }}" data-value="0" data-min-value="{{ type[key]["config"]["minValue"] }}" data-max-value="{{ type[key]["config"]["maxValue"] }}"></i>
+				{%else%}
+    				<i class="full-star " data-index="{{ loop.index }}" data-value="1" data-min-value="{{ type[key]["config"]["minValue"] }}"  data-max-value="{{ type[key]["config"]["maxValue"] }}"></i>
+				{%endif%}
+			{% endfor %}
+		</div>
+	{%endfor%}
+	
+{% else %}
+
+	{% set fvalue = data[key] | number_format(0, '.', '') %}
+	
+	{% if data[key] == fvalue %}
+	    {% set decimal = "false" %}
+	{% else %}
+	    {% set decimal = "true" %}
+	{% endif %}
+	<div id="{{ data.id }}_{{ key }}" data-rate="{{ data[key] }}">
+        <strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+		{%for i in 1..type[key]["config"]["numberOfStars"]%}
+			{%if loop.index==fvalue and decimal=="true" %}
+    			<i class="half-star " data-index="{{ loop.index }}" data-value="0.5" data-min-value="{{ type[key]["config"]["minValue"] }}" data-max-value="{{ type[key]["config"]["maxValue"] }}"></i>
+			{%elseif loop.index>value%}
+    			<i class="empty-star " data-index="{{ loop.index }}" data-value="0" data-min-value="{{ type[key]["config"]["minValue"] }}" data-max-value="{{ type[key]["config"]["maxValue"] }}"></i>
+			{%else%}
+    			<i class="full-star " data-index="{{ loop.index }}" data-value="1" data-min-value="{{ type[key]["config"]["minValue"] }}"  data-max-value="{{ type[key]["config"]["maxValue"] }}"></i>
+			{%endif%}
+		{%endfor%}
+	</div>
+{% endif %}
+

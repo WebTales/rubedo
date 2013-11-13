@@ -1,0 +1,11 @@
+{%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
+	{% for item in data[key] %}
+<label class="checkbox cursor-default" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">
+   <input disabled type="checkbox" {%  if (item) %}checked{% endif %}>  {{ type[key]["config"]["fieldLabel"] }} 
+</label>
+	{% endfor %}
+{% else %}
+<label class="checkbox cursor-default" id="{{ data.id }}_{{ key }}">
+   <input disabled type="checkbox" {%  if (data[key]) %}checked{% endif %}>  {{ type[key]["config"]["fieldLabel"] }} 
+</label>
+{% endif %}

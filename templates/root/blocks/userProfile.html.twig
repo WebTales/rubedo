@@ -7,7 +7,55 @@
                 <img src="{{ userAvatar(user.id) }}"  alt="{{user.name}} photo" style="width:140px; margin-right:20px;" class="img-polaroid pull-left">
             {% endif %}
             <h2>{{ user.name }}</h2>
-            <p>Email : {{ user.email }}</p>
+            <p><strong>Email : </strong> {{ user.email }}</p>
+            {% for key, value in data %}
+                {% if value is not null %}
+                    {%for cKey,cValue in type %}
+                        {%if(key==cKey)%}
+                            {%if cValue["cType"]=="Rubedo.view.ImagePickerField"%}
+                                {% if value != "" %}
+                                    {% include '@Root/blocks/userFields/mediaField.html.twig' %}
+                                {% endif %}
+                            {%elseif(cValue["cType"]=="Rubedo.view.CKEField")%}
+                                {% include '@Root/blocks/userFields/CKEfield.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.ux.widget.Rating")%}
+                                {% include '@Root/blocks/userFields/rating.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.field.TextArea")%}
+                                {% include '@Root/blocks/userFields/textarea.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.field.Text")%}
+                                {% include '@Root/blocks/userFields/text.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.slider.Single")%}
+                                {% include '@Root/blocks/userFields/slider.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.ux.TreePicker")%}
+                                {% include '@Root/blocks/userFields/link-to-page.html.twig' %}
+                            {%elseif(cValue["cType"]=="Rubedo.view.localiserField")%}
+                                {% if value is defined %}
+                                    {% include '@Root/blocks/userFields/localiser.html.twig' %}
+                                {% endif %}
+                            {%elseif(cValue["cType"]=="Ext.form.field.Date")%}
+                                {% include '@Root/blocks/userFields/date.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.field.ComboBox")%}
+                                {% include '@Root/blocks/userFields/combobox.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.field.Time")%}
+                                {% include '@Root/blocks/userFields/time.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.field.Number")%}
+                                {% include '@Root/blocks/userFields/number.html.twig' %}
+                            {%elseif(cValue["cType"]=="Rubedo.view.externalMediaField")%}
+                                {% include '@Root/blocks/userFields/external-media.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.field.Checkbox")%}
+                                {% include '@Root/blocks/userFields/checkbox.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.CheckboxGroup")%}
+                                {% include '@Root/blocks/userFields/checkboxgroup.html.twig' %}
+                            {%elseif(cValue["cType"]=="Ext.form.RadioGroup")%}
+                                {% include '@Root/blocks/userFields/radiogroup.html.twig' %}
+                            {%elseif(cValue["cType"]=="Rubedo.view.DCEField")%}
+                                {% include '@Root/blocks/userFields/dcefield.html.twig' %}
+                            {%endif%}
+
+                        {%endif%}
+                    {%endfor%}
+                {%endif%}
+            {% endfor %}
         </div>
      </div>
 {% endblock %}
