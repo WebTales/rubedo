@@ -377,4 +377,15 @@ class Users extends AbstractCollection implements IUsers
             $result = Manager::getService($service)->renameAuthor($userId) && $result;
         }
     }
+
+    public function isTypeUsed ($typeId)
+    {
+        $filter = Filter::factory('Value')->setName('typeId')->setValue($typeId);
+        $result = $this->_dataService->findOne($filter,false);
+        return ($result != null) ? array(
+            "used" => true
+        ) : array(
+            "used" => false
+        );
+    }
 }

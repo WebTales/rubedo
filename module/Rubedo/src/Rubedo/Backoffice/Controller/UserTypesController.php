@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Rubedo\Collection\AbstractCollection;
 use Zend\Json\Json;
 
 /**
@@ -47,8 +48,10 @@ class UserTypesController extends DataAccessController
     public function isUsedAction ()
     {
         $id = $this->params()->fromQuery('id');
-        $resultArray = array("used"=>false);
-        return $this->_returnJson($resultArray);
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $result = Manager::getService('Users')->isTypeUsed($id);
+        AbstractCollection::disableUserFilter($wasFiltered);
+        return $this->_returnJson($result);
     }
     
 }
