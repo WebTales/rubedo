@@ -14,5 +14,8 @@ return array(
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ProtectedRessource/ressource.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Fields/Date/date.json',
     'public/components/webtales/rubedo-localization/languagekey/Install/defaultContents.json',
+    'public/components/webtales/rubedo-localization/languagekey/Notification/pendingBody.json',
+    'public/components/webtales/rubedo-localization/languagekey/Notification/refusedBody.json',
+    'public/components/webtales/rubedo-localization/languagekey/Notification/publishedBody.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Single/single.json'
 );

@@ -1,13 +1,13 @@
-<p>Bonjour,</p>
+<p>{{ 'Notification.pendingBody.hello'|botrans([], lang) }}</p>
 
-<p>
-Le contenu "{{ title }}" a été soumis pour validation par {{ publishingAuthor }}.<br />
-<a href="{{ directUrl|raw }}">Vous pouvez retrouver ce contenu dans le back-office en suivant ce lien.</a>
+<p>{{ 'Notification.pendingBody.submittedBy'|botrans({'%title%': title, '%author%': publishingAuthor}, lang) }}
+<br />
+<a href="{{ directUrl|raw }}">{{ 'Notification.pendingBody.urlText'|botrans([], lang) }}</a>
 </p>
 <p>
-Cordialement
+{{ 'Notification.pendingBody.thanks'|botrans([], lang) }}
 </p>
 
 <hr />
-Ceci est un mail automatique.
+{{ 'Notification.pendingBody.automaticMail'|botrans([], lang) }}
 <hr />

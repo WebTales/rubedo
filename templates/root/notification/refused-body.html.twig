@@ -1,13 +1,11 @@
-<p>Bonjour,</p>
+<p>{{ 'Notification.refusedBody.hello'|botrans([], lang) }}</p>
 
-<p>
-Le contenu "{{ title }}" a été refusé par {{ publishingAuthor }}.<br />
-<a href="{{ directUrl|raw }}">Vous pouvez retrouver ce contenu dans le back-office en suivant ce lien.</a>
+<p>{{ 'Notification.refusedBody.refusedBy'|botrans({'%title%': title, '%author%': publishingAuthor}, lang) }}
+    <br />
+    <a href="{{ directUrl|raw }}">{{ 'Notification.refusedBody.urlText'|botrans([], lang) }}</a>
 </p>
-<p>
-Cordialement
-</p>
+<p>{{ 'Notification.refusedBody.thanks'|botrans([], lang) }}</p>
 
 <hr />
-Ceci est un mail automatique.
+{{ 'Notification.refusedBody.automaticMail'|botrans([], lang) }}
 <hr />

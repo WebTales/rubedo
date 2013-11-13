@@ -75,9 +75,9 @@ class FrontOfficeTranslate extends \Twig_Extension
     /**
      * Delegates translation to translate service
      *
-     * @param
-     *            text to translate
-     * @return translated text
+     * @param string $text Text to translate
+     *
+     * @return string Translated text
      */
     public function translate ($text)
     {

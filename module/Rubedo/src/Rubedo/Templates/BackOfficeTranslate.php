@@ -74,19 +74,21 @@ class BackOfficeTranslate extends \Twig_Extension
     /**
      * Delegates translation to translate service
      *
-     * @param
-     *            text to translate
-     * @return translated text
+     * @param string $text Text to translate
+     * @param array $placeholders  of placeholders and replacement value
+     * @param array $lang If defined, try to translate in this language
+     *
+     * @return string Translated text
      */
-    public function translate ($text)
+    public function translate ($text, $placeholders = array(), $lang = null)
     {
-        
-        $label = Manager::getService('Translate')->getTranslation($text, $this->lang);
-        
-        if($label != "") {
-            return $label;
-        } else {
-            return Manager::getService('Translate')->getTranslation($text, $this->defaultLang);
-        }
+        $label = Manager::getService('Translate')
+            ->getTranslation(
+                $text,
+                $lang?:$this->lang,
+                $this->defaultLang,
+                $placeholders
+            );
+        return $label;
     }
 }

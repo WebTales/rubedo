@@ -14,7 +14,7 @@
 namespace Rubedo\Mail;
 
 use Rubedo\Interfaces\Mail\INotification, Rubedo\Services\Manager;
-
+use WebTales\MongoFilters\Filter;
 /**
  * Mailer Service
  *
@@ -30,6 +30,11 @@ class Notification implements INotification
     protected static $sendNotificationFlag;
 
     protected static $options = array();
+
+    /**
+     * @var array $placeholders placeholders for translating
+     */
+    protected $placeholders = array();
 
     /**
      *
@@ -117,7 +122,8 @@ class Notification implements INotification
             $obj["lastPendingUser"]["id"]
         );
         $template = 'published-body.html.twig';
-        $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Publication du contenu "' . $obj['text'] . '"';
+        $subject = 'Notification.publishedBody.subject';
+        $this->placeholders['%title%'] = $obj['text'];
         return $this->sendNotification($userIdArray, $obj, $template, $subject);
     }
 
@@ -130,7 +136,8 @@ class Notification implements INotification
             $obj["lastPendingUser"]["id"]
         );
         $template = 'refused-body.html.twig';
-        $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Refus du contenu "' . $obj['text'] . '"';
+        $subject = 'Notification.refusedBody.subject';
+        $this->placeholders['%title%'] = $obj['text'];
         return $this->sendNotification($userIdArray, $obj, $template, $subject);
     }
 
@@ -141,44 +148,115 @@ class Notification implements INotification
             return;
         }
         $template = 'pending-body.html.twig';
-        $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] Soumission pour validation d\'un contenu "' . $obj['text'] . '"';
+        $subject = 'Notification.pendingBody.subject';
+        $this->placeholders['%title%'] = $obj['text'];
         return $this->sendNotification($userIdArray, $obj, $template, $subject, true);
     }
 
+    /**
+     * Send notifications, lang by lang.
+     *
+     * @param array $userIdArray Array of users ID
+     * @param array $obj
+     * @param string $template
+     * @param string $subject
+     * @param bool $hideTo
+     *
+     * @return bool success or failure
+     */
     protected function sendNotification ($userIdArray, $obj, $template, $subject, $hideTo = false)
     {
-        $twigVar = array();
-        $publishAuthor = Manager::getService('CurrentUser')->getCurrentUserSummary();
-        $twigVar['publishingAuthor'] = (isset($publishAuthor['name']) && ! empty($publishAuthor['name'])) ? $publishAuthor['name'] : $publishAuthor['login'];
-        $twigVar['title'] = $obj['text'];
-        $twigVar['directUrl'] = $this->directUrl($obj['id']);
-        
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("notification/" . $template);
-        $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
-        
-        $message = $this->getNewMessage();
-        $this->setTo($message, $userIdArray, $hideTo);
-        $message->setSubject($subject);
-        $message->setBody($mailBody, 'text/html');
-        
-        $result = $this->mailService->sendMessage($message);
+        $userService = Manager::getService("Users");
+        $filter = Filter::factory('InUid')->setValue($userIdArray);
+        $userArray = $userService->getList($filter);
+        $userArray = $this->sortByLang($userArray);
+
+        $result = true;
+        foreach ($userArray as $lang => $users) {
+            $publishAuthor = Manager::getService('CurrentUser')->getCurrentUserSummary();
+            $mailBody = $this->prepareBodyNotification($template, $publishAuthor, $obj, $lang);
+            $toArray = $this->prepareToNotification($users);
+            $subjectTranslated = $this->prepareSubjectNotification($subject, $lang);
+
+            $message = $this->getNewMessage();
+            $message->setSubject($subjectTranslated);
+            $message->setBody($mailBody, 'text/html');
+            if ($hideTo) {
+                $message->setBcc($toArray);
+            } else {
+                $message->setTo($toArray);
+            }
+            $result = $result && $this->mailService->sendMessage($message);
+        }
         return $result;
     }
 
-    protected function setTo ($message, $userIdArray, $hideTo = false)
+    /**
+     * Format array from database to mailer
+     *
+     * @param array $userArray array from database, one language
+     * @return array array for mailer
+     */
+    protected function prepareToNotification($userArray)
     {
-        $userService = Manager::getService("Users");
         $toArray = array();
-        foreach ($userIdArray as $userId) {
-            $user = $userService->findById($userId);
-            $name = (isset($user['name']) && ! empty($user['name'])) ? $user['name'] : $user['login'];
+        foreach ($userArray as $user) {
+            $name = (!empty($user['name'])) ? $user['name'] : $user['login'];
             $toArray[$user['email']] = $name;
         }
-        if ($hideTo) {
-            $message->setBcc($toArray);
-        } else {
-            $message->setTo($toArray);
+        return $toArray;
+    }
+
+    protected function prepareSubjectNotification($subject, $lang)
+    {
+        $subject = Manager::getService('Translate')
+            ->getTranslation(
+                $subject,
+                $lang,
+                'en',
+                $this->placeholders
+            );
+        $subject = '[' . $this->getOptions('defaultBackofficeHost') . '] ' . $subject;
+        return $subject;
+    }
+
+    /**
+     * Render twig of body notification
+     *
+     * @param string $template
+     * @param array $currentUser
+     * @param array $obj
+     * @param string $lang
+     *
+     * @return string HTML frow twig render
+     */
+    protected function prepareBodyNotification($template, $currentUser, $obj, $lang)
+    {
+        $twigVar = array();
+        $twigVar['publishingAuthor'] = (!empty($currentUser['name'])) ? $currentUser['name'] : $currentUser['login'];
+        $twigVar['title'] = $obj['text'];
+        $twigVar['directUrl'] = $this->directUrl($obj['id']);
+        $twigVar['lang'] = $lang;
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("notification/" . $template);
+        return Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
+    }
+
+    /**
+     * Sort user array by user language
+     *
+     * @param array $userArray Array indexed by data/count
+     * @return array Array indexed by language
+     */
+    protected function sortByLang($userArray)
+    {
+        $userByLangArray = array();
+        if (!array_key_exists('data', $userArray)) {
+            throw new \Rubedo\Exceptions\User('Translating sort is looking for a data key for users.');
         }
+        foreach($userArray['data'] as $user) {
+            $userByLangArray[$user['language']][] = $user;
+        }
+        return $userByLangArray;
     }
 
     /**
