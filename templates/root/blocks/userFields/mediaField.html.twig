@@ -1,0 +1,37 @@
+{% if type[key]["config"]["multivalued"] and data[key] is iterable %}
+    {% for item in data[key] %}
+        {% if item != "" %}
+            {% set contentId = item %}
+            {% set number = loop.index0 %}
+            {% set mediaType = getMediaType(contentId) %}
+            
+            {% if mediaType == "Image" %}
+                {% include 'blocks/userFields/imageField.html.twig' with {data: {(key) : item, id : data.id}, index : number} %}
+            {% elseif mediaType == "Video" %}
+                {% include 'blocks/userFields/videoField.html.twig' %}
+            {% elseif mediaType == "Audio" %}
+                {% include 'blocks/userFields/audioField.html.twig' %}
+            {% elseif mediaType == "Document" %}
+                {% include 'blocks/userFields/documentField.html.twig' %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% if data[key] != "" %}
+        {% if data[key] is iterable %}
+            {% set data = {(key) : data[key][0]} %}
+        {% endif %}
+        
+        {% set contentId = data[key] %}
+        {% set mediaType = getMediaType(contentId) %}
+        {% if mediaType == "Image" %}
+            {% include 'blocks/userFields/imageField.html.twig' %}
+        {% elseif mediaType == "Video" %}
+            {% include 'blocks/userFields/videoField.html.twig' %}
+        {% elseif mediaType == "Audio" %}
+            {% include 'blocks/userFields/audioField.html.twig' %}
+        {% elseif mediaType == "Document" %}
+            {% include 'blocks/userFields/documentField.html.twig' %}
+        {% endif %}
+    {% endif %}
+{% endif %}

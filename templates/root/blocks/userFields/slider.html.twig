@@ -1,0 +1,13 @@
+{% if(type[key]["config"]["multivalued"])and data[key] is iterable %}
+    {% for item in data[key] %}
+    {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
+        <div class="progress progress-info progress-striped clear-both">
+        	<div class="bar" style="width:{{ item }}%">{{ item }}%</div>
+        </div>
+    {% endfor %}
+{% else %}
+{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
+    <div class="progress progress-info progress-striped clear-both">
+    	<div class="bar" style="width:{{ data[key] }}%">{{ data[key] }}%</div>
+    </div>
+{% endif %}
