@@ -263,7 +263,7 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getFilterArrayForQuery ($query)
     {
-        if (Context::isDraft() == 'false' || Context::isDraft() == false) {
+        if (Context::isDraft() === 'false' || Context::isDraft() === false) {
             $this->_workspace = 'live';
         } else {
             $this->_workspace = 'draft';
@@ -287,10 +287,11 @@ class Queries extends AbstractCollection implements IQueries
         /* Add filters on TypeId and publication */
         $filters->addFilter(Filter::factory('In')->setName('typeId')
             ->setValue($query['contentTypes']));
-    
-        $filters->addFilter(Filter::factory('Value')->setName('status')
-            ->setValue('published'));
-    
+
+        if ($this->_workspace == 'live') {
+            $filters->addFilter(Filter::factory('Value')->setName('status')
+                ->setValue('published'));
+        }
         // add computed filter for vocabularies rules
         if (is_array($query['vocabularies'])) {
             if (! isset($query['vocabulariesRule'])) {
