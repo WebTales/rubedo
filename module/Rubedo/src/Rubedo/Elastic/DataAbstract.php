@@ -145,11 +145,13 @@ class DataAbstract
         ));
         
         $this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
-        
-        // Get content index
+
         $dataAccess = Manager::getService('MongoDataAccess');
         $defaultDB = $dataAccess::getDefaultDb();
-        $indexName = $defaultDB."-".self::$_options['contentIndex'];
+        $defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, "UTF-8");
+
+        // Get content index
+        $indexName = $defaultDB . "-" . self::$_options['contentIndex'];
         self::$_content_index = $this->_client->getIndex($indexName);
      
         // Create content index if not exists
@@ -158,7 +160,7 @@ class DataAbstract
         }
         
         // Get dam index
-        $indexName = $dataAccess::getDefaultDb()."-".self::$_options['damIndex'];
+        $indexName = $defaultDB . "-" . self::$_options['damIndex'];
         self::$_dam_index = $this->_client->getIndex($indexName);
         
         // Create dam index if not exists
@@ -167,7 +169,7 @@ class DataAbstract
         }
         
         // Get user index
-        $indexName = $dataAccess::getDefaultDb()."-".self::$_options['userIndex'];
+        $indexName = $defaultDB . "-" . self::$_options['userIndex'];
         self::$_user_index = $this->_client->getIndex($indexName);
         
         // Create user index if not exists

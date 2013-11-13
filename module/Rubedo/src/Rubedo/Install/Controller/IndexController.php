@@ -185,13 +185,13 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'set-db';
             $this->installObject->saveLocalConfig($this->config);
         }
-        
+
         $mongoOptions = isset($this->config["datastream"]["mongo"]) ? $this->config["datastream"]["mongo"] : array();
-        
+
         $dbForm = DbConfigForm::getForm($mongoOptions);
-        
+
         $mongoAccess = new DataAccess();
-        
+
         try {
             $dbForm->setData($this->params()
                 ->fromPost());
@@ -223,9 +223,9 @@ class IndexController extends AbstractActionController
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified DB';
         }
-        
+
         $this->viewData->form = $dbForm;
-        
+
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array) $this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-db');
@@ -238,14 +238,15 @@ class IndexController extends AbstractActionController
     public function setElasticSearchAction()
     {
         $this->viewData->displayMode = 'regular';
+        $this->viewData->isReady = false;
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-elastic-search';
             $this->installObject->saveLocalConfig($this->config);
         }
-        
+
         $esOptions = isset($this->config["elastic"]) ? $this->config["elastic"] : array();
-        
+
         $dbForm = EsConfigForm::getForm($esOptions);
         $dbForm->setData($this->params()
             ->fromPost());
@@ -265,6 +266,7 @@ class IndexController extends AbstractActionController
             $connectionValid = true;
         } catch (\Exception $exception) {
             $connectionValid = false;
+            $this->viewData->errorMsgs = $exception->getMessage();
         }
         if ($connectionValid) {
             $this->viewData->isReady = true;
@@ -272,7 +274,8 @@ class IndexController extends AbstractActionController
             $this->installObject->saveLocalConfig($this->config);
         } else {
             $this->viewData->hasError = true;
-            $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified ES';
+            $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified ES'
+                . (isset($this->viewData->errorMsgs) ? ' : ' . $this->viewData->errorMsgs : '');
         }
         
         $this->viewData->form = $dbForm;
@@ -591,13 +594,14 @@ class IndexController extends AbstractActionController
                 $adminGroup['members'][] = $userId;
                 $groupService->update($adminGroup);
                 $this->viewData->accountName = $params['name'];
+                $this->viewData->isReady = true;
             }
-            
+
             $this->viewData->creationDone = $result;
         }
-        
+
         $listAdminUsers = Manager::getService('Users')->getAdminUsers();
-        
+
         if ($listAdminUsers['count'] > 0) {
             $this->viewData->hasAdmin = true;
             $this->viewData->adminAccounts = $listAdminUsers['data'];
