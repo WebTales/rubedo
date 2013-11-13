@@ -1,0 +1,23 @@
+{
+	"type":"Profile page",
+	"description":"not yet written",
+	"configBasique":{
+		"title":"Profile page",
+		"bType":"userProfile",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1211#",
+	"bType":"userProfile",
+	"id":"511e6508c0e051bd17894123"
+}

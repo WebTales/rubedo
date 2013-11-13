@@ -38,6 +38,17 @@ class AuthenticationController extends AbstractController
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/authentication.html.twig");
         $currentUser = Manager::getService('CurrentUser')->getCurrentUser();
         $output['currentUser'] = $currentUser;
+        $output['profilePage'] = isset($output['block-config']['profilePage']) ? $output['block-config']['profilePage'] : false;
+        if ($output["profilePage"]){
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $output['profilePageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $output["profilePage"]
+            ), $urlOptions);
+        }
         $css = array();
         $js = array(
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/authentication.js")

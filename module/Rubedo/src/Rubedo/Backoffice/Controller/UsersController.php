@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
 /**
@@ -70,5 +71,35 @@ class UsersController extends DataAccessController
         }
         
         return new JsonModel($returnArray);
+    }
+    
+    //extends update method to explicitly reindex user
+    public function updateAction()
+    {
+        $data = $this->params()->fromPost('data');
+        
+        if (! is_null($data)) {
+            $updateData = Json::decode($data, Json::TYPE_ARRAY);
+            if (is_array($updateData)) {
+                $options=array();
+                $options['reindexUser'] = true;
+                $returnArray = $this->_dataService->update($updateData,$options);
+            } else {
+                $returnArray = array(
+                        'success' => false,
+                        "msg" => 'Not an array'
+                );
+            }
+        } else {
+            $returnArray = array(
+                    'success' => false,
+                    "msg" => 'No Data'
+            );
+        }
+        if (! $returnArray['success']) {
+            $this->getResponse()->setStatusCode(500);
+        }
+        return $this->_returnJson($returnArray);
+        
     }
 }

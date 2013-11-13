@@ -105,7 +105,7 @@ class ContentSingleController extends AbstractController
                     if (($value["cType"] == "CKEField")&&(isset($value["config"]["CKETBConfig"]))) {
                         $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
                     } else 
-                        if ($value["cType"] == "externalMediaField") {
+                        if (($value["cType"] == "externalMediaField")&&(isset( $data[$value["config"]["name"]]))) {
                             $mediaConfig = $data[$value["config"]["name"]];
                             
                             if (isset($mediaConfig['url'])) {
