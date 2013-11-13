@@ -26,7 +26,7 @@ use Zend\Json\Json;
  * update
  * tool
  *
- * @author jbourdin
+ * @author adobre
  *        
  */
 class Update020000 extends Update
@@ -82,6 +82,46 @@ class Update020000 extends Update
 
         return $success;
     }
+
+    public static function doUpdateUserTypes ()
+    {
+
+        $success = true;
+        $publicGroup = Manager::getService('Groups')->findByName('public');
+        $userTypes=Manager::getService('UserTypes')->getList();
+        foreach ($userTypes['data'] as $userType){
+            $userType['defaultGroup']=$publicGroup['id'];
+            $result=Manager::getService('UserTypes')->update($userType);
+            $success = $result['success'] && $success;
+        }
+        return $success;
+    }
+
+
+    public static function doUpdateUsers ()
+    {
+        $success = true;
+        $publicGroup=Manager::getService("Groups")->findByName("public");
+
+        $filters=Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("default"));
+        $defaultUserType=Manager::getService("UserTypes")->findOne($filters);
+
+        $filters2=Filter::factory();
+        $filters2->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("email"));
+        $emailUserType=Manager::getService("UserTypes")->findOne($filters2);
+
+        $usersService=Manager::getService("Users");
+        $users=$usersService->getList();
+        foreach ($users['data'] as $user){
+            if (!isset($user['typeId'])){
+
+            }
+        }
+        return $success;
+    }
     /**
      * do
      * the
@@ -94,6 +134,12 @@ class Update020000 extends Update
 
         // create default user types
         static::doCreateDefaultUserTypes();
+
+        // update user types with default group info
+        static::doUpdateUserTypes();
+
+        // update users
+        static::doUpdateUsers();
 
         return true;
     }
