@@ -99,26 +99,37 @@ class SignUpController extends AbstractController
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
                 return $this->_sendResponse($output, $template);
             } else if ($userType['signUpType']=="emailConfirmation"){
-                $emailVars=array();
-                $emailVars["name"]=$newUser["name"];
-                $emailVars["confirmUrl"]=$_SERVER['HTTP_REFERER'].'?confirmingEmail=1&userId='.$createdUser['data']['id'].'&signupTime='.$newUser["signupTime"];
-                $etemplate = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/confirm-email-body.html.twig");
+                $emailVars = array();
+                $emailVars["name"] = $newUser["name"];
+                $emailVars["confirmUrl"] = $_SERVER['HTTP_REFERER']
+                    . '?confirmingEmail=1&userId=' . $createdUser['data']['id']
+                    . '&signupTime=' . $newUser["signupTime"];
+
+                $etemplate = Manager::getService('FrontOfficeTemplates')
+                    ->getFileThemePath("blocks/signup/confirm-email-body.html.twig");
                 $mailBody = Manager::getService('FrontOfficeTemplates')->render($etemplate, $emailVars);
+
                 $mailService = Manager::getService('Mailer');
-                $message = $mailService->getNewMessage();
-                $message->setTo(array(
-                    $newUser["email"]
-                ));
                 $config = Manager::getService('config');
                 $options = $config['rubedo_config'];
-                $message->setFrom(array($options['fromEmailNotification']=>"Rubedo"));
-                $message->setSubject('['.Manager::getService('Sites')->getHost($output['site']['id']).'] '.'Account creation');
-                
-                $message->setBody($mailBody);
-                $message->addPart($mailBody, 'text/html');
-                
+                $currentLang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+                $subject = '['.Manager::getService('Sites')->getHost($output['site']['id']).'] '
+                    . Manager::getService('Translate')->getTranslation(
+                            'Blocks.SignUp.confirmEmail.subject',
+                            $currentLang,
+                            'en'
+                        );
+
+                $message = $mailService->getNewMessage()
+                    ->setTo(array(
+                        $newUser["email"] => (!empty($newUser['name'])) ? $newUser['name'] : $newUser['login'],
+                    ))
+                    ->setFrom(array($options['fromEmailNotification'] => "Rubedo"))
+                    ->setSubject($subject)
+                    ->setBody($mailBody, 'text/html');
                 $result = $mailService->sendMessage($message);
-                if ($result===1){
+
+                if ($result === 1){
                     $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/confirmEmail.html.twig");
                     return $this->_sendResponse($output, $template);
                 } else {
@@ -126,7 +137,7 @@ class SignUpController extends AbstractController
                     $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                     return $this->_sendResponse($output, $template);
                 }
-                
+
                 
             } else {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/done.html.twig");
