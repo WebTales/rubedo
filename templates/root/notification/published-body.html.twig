@@ -1,13 +1,11 @@
-<p>Bonjour,</p>
+<p>{{ 'Notification.publishedBody.hello'|botrans([], lang) }}</p>
 
-<p>
-Le contenu "{{ title }}" a été publié par {{ publishingAuthor }}.<br />
-<a href="{{ directUrl|raw }}">Vous pouvez retrouver ce contenu dans le back-office en suivant ce lien.</a>
+<p>{{ 'Notification.publishedBody.publishedBy'|botrans({'%title%': title, '%author%': publishingAuthor}, lang) }}
+    <br />
+    <a href="{{ directUrl|raw }}">{{ 'Notification.publishedBody.urlText'|botrans([], lang) }}</a>
 </p>
-<p>
-Cordialement
-</p>
+<p>{{ 'Notification.publishedBody.thanks'|botrans([], lang) }}</p>
 
 <hr />
-Ceci est un mail automatique.
+{{ 'Notification.publishedBody.automaticMail'|botrans([], lang) }}
 <hr />

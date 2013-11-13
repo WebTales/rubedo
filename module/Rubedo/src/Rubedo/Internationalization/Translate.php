@@ -139,7 +139,7 @@ class Translate implements ITranslate
         return $translatedValue;
     }
 
-    public function getTranslation($code, $language,$fallBack = null)
+    public function getTranslation($code, $language, $fallBack = null, $placeholders = array())
     {
         if(isset($language)){
             $this->loadLanguage($language);
@@ -149,18 +149,40 @@ class Translate implements ITranslate
         }
         
         $this->loadLanguage('en');
-        
+
+        $translated = false;
         if (isset($language) && isset(self::$translationArray[$language][$code])) {
-            return self::$translationArray[$language][$code];
+            $translated = self::$translationArray[$language][$code];
         } elseif (isset($fallBack) && isset(self::$translationArray[$fallBack][$code])) {
-            return self::$translationArray[$fallBack][$code];
+            $translated = self::$translationArray[$fallBack][$code];
         } elseif (isset(self::$translationArray['en'][$code])) {
-            return self::$translationArray['en'][$code];
-        } else {
-            return false;
+            $translated = self::$translationArray['en'][$code];
         }
+
+        if ($translated != false) {
+            $translated = $this->replacePlaceHolders($translated, $placeholders);
+        }
+        return $translated;
     }
 
+    /**
+     * Replace placeholders by real values
+     *
+     * @param string $stringToReplace String where replace placeholders
+     * @param array $placeholders Keys to replace by values
+     * @return string
+     */
+    protected function replacePlaceHolders($stringToReplace, $placeholders = array())
+    {
+        if (!empty($placeholders)) {
+            return str_replace(
+                array_keys($placeholders),
+                array_values($placeholders),
+                $stringToReplace
+            );
+        }
+        return $stringToReplace;
+    }
     protected function loadLanguage ($language)
     {
         if (isset(self::$translationArray[$language])) {
