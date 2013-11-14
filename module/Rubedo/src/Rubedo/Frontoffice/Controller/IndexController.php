@@ -247,7 +247,7 @@ class IndexController extends AbstractActionController
         $directContentId = $this->params()->fromRoute('content-id', false);
         if ($directContentId) {
             
-            $singleContent = Manager::getService('Contents')->findById($directContentId, ! Context::isDraft(), false);
+            $singleContent = Manager::getService('Contents')->findById($directContentId, Context::isLive(), false);
             if ($singleContent) {
                 $twigVar['contentId'] = $directContentId;
                 $this->_servicePage->setPageTitle($singleContent['fields']['text']);

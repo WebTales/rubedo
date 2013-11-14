@@ -158,11 +158,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
         
         if (static::$_isFrontEnd) {
-                $live = (Context::isDraft() === 'false' || Context::isDraft() === false) ? true : false;
-            
+
             $now = (string) Manager::getService('CurrentTime')->getCurrentTime(); // cast to string as date are stored as text in DB
-            $startPublicationDateField = ($live ? 'live' : 'workspace') . '.startPublicationDate';
-            $endPublicationDateField = ($live ? 'live' : 'workspace') . '.endPublicationDate';
+            $startPublicationDateField = (Context::isLive() ? 'live' : 'workspace') . '.startPublicationDate';
+            $endPublicationDateField = (Context::isLive() ? 'live' : 'workspace') . '.endPublicationDate';
             
             $this->_dataService->addFilter(Filter::factory('EmptyOrOperator')->setName($startPublicationDateField)
                 ->setOperator('$lte')
@@ -195,9 +194,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $filters->addFilter(Filter::factory('Value')->setName('online')
             ->setValue(true));
         
-       $live = (Context::isDraft() === 'false' || Context::isDraft() === false) ? true : false;
-        
-        $returnArray = $this->getList($filters, $sort, $start, $limit, $live);
+        $returnArray = $this->getList($filters, $sort, $start, $limit, Context::isLive());
         
         return $returnArray;
     }

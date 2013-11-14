@@ -60,12 +60,23 @@ class Context
     }
 
     /**
+     * Return true if it's a draft
      *
-     * @return the $isDraft
+     * @return boolean
      */
     public static function isDraft()
     {
-        return Context::$isDraft;
+        return filter_var(Context::$isDraft, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Return true if it's not a draft
+     *
+     * @return boolean
+     */
+    public static function isLive()
+    {
+        return !static::isDraft();
     }
 
     /**
