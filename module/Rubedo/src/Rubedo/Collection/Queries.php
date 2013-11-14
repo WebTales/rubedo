@@ -263,12 +263,7 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getFilterArrayForQuery ($query)
     {
-        if (Context::isDraft() === 'false' || Context::isDraft() === false) {
-            $this->_workspace = 'live';
-        } else {
-            $this->_workspace = 'draft';
-        }
-        
+        $this->_workspace = Context::isLive() ? 'live' : 'draft';
         $this->_dateService = Manager::getService('Date');
         $this->_taxonomyReader = Manager::getService('TaxonomyTerms');
     
