@@ -202,10 +202,18 @@ class Module
             return;
         }
         
+        $config = $event->getApplication()
+        ->getServiceManager()
+        ->get('Config');
+        
+        if(!isset($config['installed']) || ($config['installed']['status']!=='finished' && $controller!=='Rubedo\Install\Controller\Index')){
+            $routeMatches = $event->getRouteMatch();
+            $routeMatches->setParam('controller', 'Rubedo\Install\Controller\Index');
+            $routeMatches->setParam('action', 'index');
+        }
+        
         // init the session params and session itself
         $this->startSession();
-        
-        // @todo forward if not installed
         
         // @todo forward if no language initialized
         
