@@ -17,6 +17,7 @@ use Monolog\Logger as monologger;
 use Rubedo\Exceptions\Server;
 use Rubedo\Services\Manager;
 use Rubedo\Mongo\DataAccess;
+use Monolog\Handler\NullHandler;
 
 /**
  * Logger Service
@@ -39,6 +40,9 @@ class Logger
     public function __construct()
     {
         $this->logger = new monologger(static::$logName);
+        //ensure that if no logger is set, nothing is logged !
+        $this->logger->pushHandler(new NullHandler());
+        
         $config = $this->getConfig();
         $levels = $this->logger->getLevels();
         if (isset($config['errorLevel'])) {

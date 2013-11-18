@@ -21,6 +21,7 @@ use Zend\EventManager\EventInterface;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
 use Rubedo\User\Authentication;
+use Monolog\Handler\NullHandler;
 
 /**
  * Logger Service for security Issues
@@ -41,6 +42,9 @@ class ApplicationLogger extends Logger
     public function __construct()
     {
         $this->logger = new monologger(static::$logName);
+        //ensure that if no logger is set, nothing is logged !
+        $this->logger->pushHandler(new NullHandler());
+        
         $config = $this->getConfig();
         $level = monologger::INFO;
         try{
