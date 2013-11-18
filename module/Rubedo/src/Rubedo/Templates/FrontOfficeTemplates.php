@@ -125,8 +125,12 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             'rootTemplateDir' => $config['rootTemplateDir']
         );
         
-        //$loader = new \Twig_Loader_Filesystem($this->options['templateDir'] . '/' . $this->getCurrentTheme());
-        $loader = new \Twig_Loader_Filesystem($config['themes'][$this->getCurrentTheme()]['basePath']);
+        if($this->getCurrentTheme()!='customtheme'){
+            $loader = new \Twig_Loader_Filesystem($config['themes'][$this->getCurrentTheme()]['basePath']);
+        }else{
+            $loader = new \Twig_Loader_Filesystem($config['templateDir'].'/customtheme');
+        }
+        
         //basePath
         $loader->addPath($this->options['templateDir'] . '/root', 'Root');
         $loader->addPath($this->options['templateDir'] . '/root');
