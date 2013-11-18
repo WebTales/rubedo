@@ -59,6 +59,8 @@ class UrlCache extends AbstractCollection
     protected static $pageToUrl = array();
 
     protected static $urlToPage = array();
+    
+    protected $noDbConnection = false;
 
     /**
      * Set the collection name
@@ -66,7 +68,12 @@ class UrlCache extends AbstractCollection
     public function __construct()
     {
         $this->_collectionName = 'UrlCache';
-        parent::__construct();
+        try{
+            parent::__construct();
+        }catch(\MongoConnectionException $e){
+            $this->noDbConnection = true;
+        }
+        
     }
 
     public function verifyIndexes()
@@ -86,6 +93,9 @@ class UrlCache extends AbstractCollection
 
     public function findByPageId($pageId, $locale)
     {
+        if($this->noDbConnection){
+            return null;
+        }
         if (! isset(static::$pageToUrl[$locale][$pageId])) {
             $filters = Filter::factory();
             $filters->addFilter(Filter::factory('value')->setName('pageId')
@@ -109,6 +119,9 @@ class UrlCache extends AbstractCollection
 
     public function findByUrl($url, $siteId)
     {
+        if($this->noDbConnection){
+            return null;
+        }
         if (! $siteId) {
             return null;
         }
@@ -161,6 +174,9 @@ class UrlCache extends AbstractCollection
 
     public function urlToPageWriteCacheEvent(EventInterface $event)
     {
+        if($this->noDbConnection){
+            return null;
+        }
         $data = $event->getParams();
         $this->create($data);
     }

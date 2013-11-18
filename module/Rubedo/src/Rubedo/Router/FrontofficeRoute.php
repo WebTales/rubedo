@@ -17,6 +17,7 @@ namespace Rubedo\Router;
 use Rubedo\Services\Manager;
 use Zend\Mvc\Router\Http\RouteInterface;
 use Zend\Mvc\Router\Http\RouteMatch;
+use Rubedo\Mongo\DataAccess;
 
 /**
  * Zend_Controller_Router_Route implementation for frontend pages
@@ -67,12 +68,18 @@ class FrontofficeRoute implements RouteInterface
         $encode = isset($options['encode']) ? $options['encode'] : true;
         return Manager::getService('Url')->getUrl($mergedParams, $encode);
     }
-    
-    /*
+        
+        /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::match()
      */
     public function match(\Zend\Stdlib\RequestInterface $request)
     {
+        try {
+            Manager::getService('MongoDataAccess')->getAdapter(DataAccess::getDefaultMongo());
+            
+        }catch(\MongoConnectionException $e){
+            return false;
+        }
         //ensure that no url like /dam or /image can match, without complex queries.
         $frontControllerList = array('dam','image');
         
