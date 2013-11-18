@@ -345,20 +345,25 @@ class Module
         $this->sessionName = $config['session']['name'];
         
         $mongoInfos = Mongo\DataAccess::getDefaultMongo();
-        $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
-        $dbName = Mongo\DataAccess::getDefaultDb();
+        try{
+            $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
+            $dbName = Mongo\DataAccess::getDefaultDb();
+            
+            $options = new MongoDBOptions(array(
+                'database' => $dbName,
+                'collection' => 'sessions'
+            ));
+            
+            $saveHandler = new MongoDB($adapter, $options);
+            
+            $this->sessionManager = new SessionManager($sessionConfig);
+            $this->sessionManager->setSaveHandler($saveHandler);
+            
+            Container::setDefaultManager($this->sessionManager);
+        }catch(\MongoConnectionException $e){
+            static::$cachePageIsActive = false;
+        }
         
-        $options = new MongoDBOptions(array(
-            'database' => $dbName,
-            'collection' => 'sessions'
-        ));
-        
-        $saveHandler = new MongoDB($adapter, $options);
-        
-        $this->sessionManager = new SessionManager($sessionConfig);
-        $this->sessionManager->setSaveHandler($saveHandler);
-        
-        Container::setDefaultManager($this->sessionManager);
     }
     
     protected function startSession ()
