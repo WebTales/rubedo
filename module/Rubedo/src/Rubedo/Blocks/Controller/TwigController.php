@@ -27,17 +27,13 @@ use Rubedo\Services\Manager;
 class TwigController extends AbstractController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $output = $this->params()->fromQuery();
         
         $templateName = $this->params()->fromQuery('template', 'block.html');
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath($templateName);
-        if (! is_file(Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template)) {
-            $templatePath = Manager::getService('FrontOfficeTemplates')->getTemplateDir() . '/' . $template;
-            throw new \Rubedo\Exceptions\Server('File %1$s does not exists.', "Exception20", $templatePath);
-        }
         $css = array();
         $js = array();
         return $this->_sendResponse($output, $template, $css, $js);
