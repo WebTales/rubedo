@@ -228,7 +228,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         } else {
             
             if (strpos($path, '@') === 0) {
-                $path = str_replace('@', 'ws-', $path);
+                $path = str_replace('@', 'ns-', $path);
             }
             return 'theme/' . $this->getCurrentTheme() . '/' . $path;
         }
@@ -237,8 +237,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getFilePath($theme, $path)
     {
         $namespace = null;
-        if (strpos($path, 'ws-') === 0) {
-            $path = str_replace('ws-', '', $path);
+        if (strpos($path, 'ns-') === 0) {
+            $path = str_replace('ns-', '', $path);
             $segmentArray = explode('/', $path);
             
             $namespace = array_shift($segmentArray);
