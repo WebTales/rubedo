@@ -27,7 +27,7 @@ use Zend\Json\Json;
  * tool
  *
  * @author adobre
- *        
+ *
  */
 class Update020000 extends Update
 {
@@ -117,7 +117,35 @@ class Update020000 extends Update
         $users=$usersService->getList();
         foreach ($users['data'] as $user){
             if (!isset($user['typeId'])){
+                if ((isset($user['groups']))&&(is_array($user['groups']))&&($user['groups']!=array($publicGroup['id']))){
+                    $user['typeId']=$defaultUserType['id'];
+                    if (!isset($user['fields'])){
+                        $user['fields']=array();
+                        //process proper fields array creation here
+                    }
 
+                } else {
+                    $user['typeId']=$emailUserType['id'];
+                    if (!isset($user['name'])){
+                        $user['name']=$user['email'];
+                    }
+                    if (!isset($user['login'])){
+                        $user['login']=$user['email'];
+                    }
+                    if (!isset($user['fields'])){
+                        $user['fields']=array();
+                    }
+                }
+
+
+                if (!isset($user['status'])){
+                    $user['status']="approved";
+                }
+                if (!isset($user['taxonomy'])){
+                    $user['taxonomy']=array();
+                }
+                $updateResult=$usersService->update($user);
+                $success=$updateResult['success'] && $success;
             }
         }
         return $success;
@@ -144,5 +172,5 @@ class Update020000 extends Update
         return true;
     }
 
-    
+
 }
