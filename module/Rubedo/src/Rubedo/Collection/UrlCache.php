@@ -98,11 +98,11 @@ class UrlCache extends AbstractCollection
         }
         if (! isset(static::$pageToUrl[$locale][$pageId])) {
             $filters = Filter::factory();
-            $filters->addFilter(Filter::factory('value')->setName('pageId')
+            $filters->addFilter(Filter::factory('Value')->setName('pageId')
                 ->setValue($pageId));
-            $filters->addFilter(Filter::factory('value')->setName('locale')
+            $filters->addFilter(Filter::factory('Value')->setName('locale')
                 ->setValue($locale));
-            $filters->addFilter(Filter::factory('operatorToValue')->setName('content-id')
+            $filters->addFilter(Filter::factory('OperatorToValue')->setName('content-id')
                 ->setOperator('$exists')
                 ->setValue(false));
             static::$pageToUrl[$locale][$pageId] = $this->_dataService->findOne($filters);
