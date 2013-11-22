@@ -1,10 +1,15 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Rubedo -- ECM solution Copyright (c) 2013, WebTales
+ * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo;
 
@@ -29,14 +34,38 @@ use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
 use Rubedo\User\Authentication;
 use Rubedo\Services\Cache;
+use Zend\Http\Response;
 
+/**
+ * Loading class for the Rubedo Main module
+ *
+ * Handle initialization, configuration and events
+ * 
+ * @author jbourdin
+ *        
+ */
 class Module
 {
 
+    /**
+     * Do we use cache for web page
+     * 
+     * @var boolean
+     */
     protected static $cachePageIsActive = true;
 
+    /**
+     * Did the cache for current page had been found
+     * 
+     * @var unknown
+     */
     protected $pageHit = false;
 
+    /**
+     * Initialize Services, session, listeners for Rubedo
+     *
+     * @param MvcEvent $e            
+     */
     public function onBootstrap(MvcEvent $e)
     {
         // register serviceLocator for global access by Rubedo
@@ -73,6 +102,11 @@ class Module
         $exceptionStrategy->attach($application->getEventManager());
     }
 
+    /**
+     * Define needed event listeners
+     *
+     * @param EventManager $eventManager            
+     */
     public function setListeners(EventManager $eventManager)
     {
         // verify session and access right when dispatching
@@ -161,11 +195,19 @@ class Module
         ), 10);
     }
 
+    /**
+     * Return main module configuration
+     */
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
+    /**
+     * Standard autoloader configuration
+     * 
+     * @return multitype:multitype:multitype:string
+     */
     public function getAutoloaderConfig()
     {
         return array(
@@ -203,10 +245,10 @@ class Module
         }
         
         $config = $event->getApplication()
-        ->getServiceManager()
-        ->get('Config');
+            ->getServiceManager()
+            ->get('Config');
         
-        if(!isset($config['installed']) || ($config['installed']['status']!=='finished' && $controller!=='Rubedo\Install\Controller\Index')){
+        if (! isset($config['installed']) || ($config['installed']['status'] !== 'finished' && $controller !== 'Rubedo\Install\Controller\Index')) {
             $routeMatches = $event->getRouteMatch();
             $routeMatches->setParam('controller', 'Rubedo\Install\Controller\Index');
             $routeMatches->setParam('action', 'index');
@@ -273,6 +315,12 @@ class Module
         }
     }
 
+    /**
+     * Log dispatching and check for cached page
+     *
+     * @param MvcEvent $event            
+     * @return void Response
+     */
     public function preDispatch(MvcEvent $event)
     {
         if ($event->getRouteMatch()) {
@@ -300,6 +348,11 @@ class Module
         }
     }
 
+    /**
+     * Add post dispatching logging and cache writing
+     *
+     * @param MvcEvent $event            
+     */
     public function postDispatch(MvcEvent $event)
     {
         if ($event->getRouteMatch()) {
@@ -342,6 +395,11 @@ class Module
         Manager::getService('Logger')->info($message);
     }
 
+    /**
+     * If correct context, initialize user session
+     *
+     * @param MvcEvent $e            
+     */
     protected function initializeSession(MvcEvent $e)
     {
         $config = $e->getApplication()
@@ -353,7 +411,7 @@ class Module
         $this->sessionName = $config['session']['name'];
         
         $mongoInfos = Mongo\DataAccess::getDefaultMongo();
-        try{
+        try {
             $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
             $dbName = Mongo\DataAccess::getDefaultDb();
             
@@ -368,12 +426,16 @@ class Module
             $this->sessionManager->setSaveHandler($saveHandler);
             
             Container::setDefaultManager($this->sessionManager);
-        }catch(\MongoConnectionException $e){
+        } catch (\MongoConnectionException $e) {
             static::$cachePageIsActive = false;
         }
-        
     }
     
+    /**
+     * Actually start the session
+     * 
+     * Not called in special cases, even if initialize session was called
+     */
     protected function startSession ()
     {
         if (isset($_COOKIE[$this->sessionName])) {
@@ -381,6 +443,12 @@ class Module
         }
     }
 
+    /**
+     * Dispatch to a special controller to return dispatching exceptions the same way as later exceptions
+     * 
+     * @param MvcEvent $event
+     * @param \Exception $exception
+     */
     protected function toDeadEnd (MvcEvent $event,\Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
