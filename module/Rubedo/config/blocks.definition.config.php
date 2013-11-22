@@ -1,17 +1,21 @@
 <?php
-// use Zend\Json\Json;
-// use Zend\Debug\Debug;
+/**
+ * Rubedo -- ECM solution Copyright (c) 2013, WebTales
+ * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
+ *
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
+ */
 $blocksPath = realpath(__DIR__ . "/blocks/");
 
-// $globalJsonFile = file_get_contents(APPLICATION_PATH.'/public/components/webtales/rubedo-backoffice-ui/www/resources/localisationfiles/generic/blockTypes.json');
-
-// $globalJson = Json::decode($globalJsonFile,Json::TYPE_ARRAY);
-// foreach($globalJson as $blockConfig){
-// $blockType = $blockConfig['configBasique']['bType'];
-// $blockJson = Json::encode($blockConfig);
-// file_put_contents($blocksPath.'/'.$blockType.'.json', Json::prettyPrint($blockJson));
-// }
-
+/**
+ * List default Rubedo blocks
+ */
 return array(
     'addThis' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\AddThis',
@@ -23,11 +27,6 @@ return array(
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/addThisFollow.json'
     ),
-//     'advancedContact' => array(
-//         'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedContact',
-//         'maxlifeTime' => - 1,
-//         'definitionFile' => $blocksPath . '/advancedContact.json'
-//     ),
     'advancedSearchForm' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\AdvancedSearch',
         'maxlifeTime' => 86400,
@@ -187,10 +186,5 @@ return array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Video',
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/video.json'
-    ),
-//     'zendController' => array(
-//         'controller' => 'Rubedo\\Blocks\\Controller\\ZendController',
-//         'maxlifeTime' => - 1,
-//         'definitionFile' => $blocksPath . '/zendController.json'
-//     )
+    )
 );

@@ -1,7 +1,23 @@
 <?php
+/**
+ * Rubedo -- ECM solution Copyright (c) 2013, WebTales
+ * (http://www.webtales.fr/). All rights reserved. licensing@webtales.fr
+ * Open Source License
+ * ------------------------------------------------------------------------------------------
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
+ *
+ * @category Rubedo
+ * @package Rubedo
+ * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
+ */
 $boViewsPath = realpath(__DIR__ . '/../src/Rubedo/Backoffice/views/scripts');
 $installViewPath = realpath(__DIR__ . '/../src/Rubedo/Install/views/scripts');
 $blockViewPath = realpath(__DIR__ . '/../src/Rubedo/Blocks/views/scripts');
+
+/**
+ * Standard ZF2 views for Rubedo (when not using twig)
+ */
 return array(
     'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
     'layout/install' => $installViewPath . '/install-layout.phtml',
