@@ -125,8 +125,12 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             'rootTemplateDir' => $config['rootTemplateDir']
         );
         
-        //$loader = new \Twig_Loader_Filesystem($this->options['templateDir'] . '/' . $this->getCurrentTheme());
-        $loader = new \Twig_Loader_Filesystem($config['themes'][$this->getCurrentTheme()]['basePath']);
+        if($this->getCurrentTheme()!='customtheme'){
+            $loader = new \Twig_Loader_Filesystem($config['themes'][$this->getCurrentTheme()]['basePath']);
+        }else{
+            $loader = new \Twig_Loader_Filesystem($config['templateDir'].'/customtheme');
+        }
+        
         //basePath
         $loader->addPath($this->options['templateDir'] . '/root', 'Root');
         $loader->addPath($this->options['templateDir'] . '/root');
@@ -224,7 +228,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         } else {
             
             if (strpos($path, '@') === 0) {
-                $path = str_replace('@', 'ws-', $path);
+                $path = str_replace('@', 'ns-', $path);
             }
             return 'theme/' . $this->getCurrentTheme() . '/' . $path;
         }
@@ -233,8 +237,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getFilePath($theme, $path)
     {
         $namespace = null;
-        if (strpos($path, 'ws-') === 0) {
-            $path = str_replace('ws-', '', $path);
+        if (strpos($path, 'ns-') === 0) {
+            $path = str_replace('ns-', '', $path);
             $segmentArray = explode('/', $path);
             
             $namespace = array_shift($segmentArray);
