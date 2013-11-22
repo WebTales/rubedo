@@ -11,6 +11,10 @@
  * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
+/**
+ * Construct the whole configuration from split configurations files.
+ */
 $serviceMapArray = include (__DIR__ . '/services.config.php');
 $sharedService = include (__DIR__ . '/shared.services.config.php');
 $controllerArray = include (__DIR__ . '/controllers.config.php');
@@ -102,7 +106,7 @@ $config['elastic'] = array(
     "contentIndex" => "contents",
     "damIndex" => "dam",
     "userIndex" => "user",
-    "configFilePath" => __DIR__.'/elastica.json'
+    "configFilePath" => __DIR__ . '/elastica.json'
 );
 
 $config['blocksDefinition'] = $blocksDefinition;
