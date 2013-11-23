@@ -16,6 +16,26 @@
                                 "fieldLabel":"Profile page",
                                 "name":"profilePage"
                             }
+                        },{
+                            "type":"Ext.form.field.ComboBox",
+                            "isAutoStored":true,
+                            "autoStoreData":[
+                                {
+                                    "value":"pop-in",
+                                    "label":"Pop-in"
+                                },
+                                {
+                                    "value":"form",
+                                    "label":"Form"
+                                }
+                            ],
+                            "config":{
+                                "fieldLabel":"Display",
+                                "name":"display",
+                                "editable":false,
+                                "forceSelection":true,
+                                "queryMode":"local"
+                            }
                         }
                         ]
                 }
@@ -24,9 +44,11 @@
 
 			]
 		},
-		"configBloc":[
+		"configBloc":{
+            "display":"pop-in"
+        }
 
-		]
+
 	},
 	"category":"#ext-gen1211#",
 	"bType":"authentication",
