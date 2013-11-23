@@ -9,7 +9,7 @@ function loggin()
 		   success: function(msg){
 		   if(msg.success==false){
 		   jQuery("#error-msg").show();
-		   jQuery("#error-msg").html(msg.msg);
+		   jQuery("#error-msg").html(msg.message);
 		   }else{
 		   	jQuery('#password').val("");
 		    jQuery('#login').val("");
