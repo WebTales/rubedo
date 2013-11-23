@@ -19,32 +19,61 @@
             </ul>
         </div>
     {%else%}
+    	{% if displayMode == 'pop-in' %}
         <a href="#auth-modal" role="button" class="btn" data-toggle="modal">{{ "Blocks.Auth.Label.Connection" | fotrans }}</a>
         <div id="auth-modal" class="modal hide fade">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h3>{{ "Blocks.Auth.Label.LogIn" | fotrans }}</h3>
             </div>
-            
-            <form style="margin: 0;">
-              	<div class="modal-body">
-              	    <span class="form-inline">
-              	        <label for="login">{{ "Blocks.Auth.Label.Login" | fotrans }}</label>
-             	 	    <input type="text" id="login" class="input-medium" placeholder="{{ "Blocks.Auth.Label.LoginOrEmail" | fotrans }}">
-             	 	    
-             	 	    <label for="password">{{ "Blocks.Auth.Label.Password" | fotrans }}</label>
-            		    <input type="password" id="password" class="input-medium" placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}">
-            		</span>
-             	 </div>
-             	 
-             	 <div id="error-msg" class="alert alert-error hidden-rubedo"></div>
-             	 
-             	 <div class="modal-footer">
+ 			
+   			<form class="form-horizontal">
+   				<div class="modal-body">
+					<div class="control-group">
+						<label class="control-label" for="login">{{ "Blocks.Auth.Label.Login" | fotrans }} *</label>
+	          	        <div class="controls">
+	         	 	    	<input type="text" id="login" class="input-medium" placeholder="{{ "Blocks.Auth.Label.LoginOrEmail" | fotrans }}" required>
+	         	 	    </div>
+	             	</div>
+	             	<div class="control-group">   	
+	             	 	<label class="control-label" for="password">{{ "Blocks.Auth.Label.Password" | fotrans }} *</label>
+	 					<div class="controls">
+	            			<input type="password" id="password" class="input-medium" placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}"  required>
+	            		</div>
+					</div>
+				</div>
+				
+				<div id="error-msg" class="alert alert-error hidden-rubedo"></div>
+				
+				<div class="modal-footer">
                      <a href="#"  data-dismiss="modal" class="btn">{{ "Label.Cancel" | fotrans }}</a>
                      <input type="submit" onclick="loggin();return false;" class="btn btn-primary" value="{{ "Blocks.Auth.Label.LogIn" | fotrans }}">
-                 </div>
-             </form>
+		        </div>     
+             </form> 
         </div>
+        {% endif %}
+        {% if displayMode == 'form' %}
+ 			<form class="form-horizontal">
+				<div class="control-group">
+					<label class="control-label" for="login">{{ "Blocks.Auth.Label.Login" | fotrans }} *</label>
+          	        <div class="controls">
+         	 	    	<input type="text" id="login" class="input-medium" placeholder="{{ "Blocks.Auth.Label.LoginOrEmail" | fotrans }}" required>
+         	 	    </div>
+             	</div>
+             	<div class="control-group">   	
+             	 	<label class="control-label" for="password">{{ "Blocks.Auth.Label.Password" | fotrans }} *</label>
+ 					<div class="controls">
+            			<input type="password" id="password" class="input-medium" placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}"  required>
+            		</div>
+				</div>
+             	<div class="control-group">
+             		<div class="controls">
+             			<input type="submit" onclick="loggin();return false;" class="btn btn-primary" value="{{ "Blocks.Auth.Label.LogIn" | fotrans }}">
+             		</div>
+             	</div>
+	            <div id="error-msg" class="alert alert-error hidden-rubedo"></div> 
+             </form>       
+        {% endif %}
     {%endif%}
 {% endblock %}
 
