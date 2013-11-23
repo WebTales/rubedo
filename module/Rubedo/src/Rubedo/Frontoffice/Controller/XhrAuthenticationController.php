@@ -61,15 +61,15 @@ class XhrAuthenticationController extends AbstractActionController
                     $response['success'] = true;
                 } else {
                     $response['success'] = false;
-                    $response['message'] = 'Wrong crendentials';
+                    $response['msg'] = 'Wrong crendentials';
                 }
             } else {
                 $response['success'] = false;
-                $response['message'] = 'The login and the password should not be empty';
+                $response['msg'] = 'The login and the password should not be empty';
             }
         } else {
             $response['succes'] = false;
-            $response['message'] = 'The login and the password should be sent in a POST request !';
+            $response['msg'] = 'The login and the password should be sent in a POST request !';
         }
         return new JsonModel($response);
     }
