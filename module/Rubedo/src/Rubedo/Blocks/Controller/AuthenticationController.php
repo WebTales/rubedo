@@ -30,6 +30,9 @@ class AuthenticationController extends AbstractController
     public function indexAction ()
     {
         $output = $this->params()->fromQuery();
+        
+        $output['displayMode'] = isset($output['block-config']['displayMode']) ? $output['block-config']['displayMode'] : 'pop-in';
+        		
         if (in_array('HTTPS', $output['site']['protocol'])) {
             $output['enforceHTTPS'] = true;
         } else {
