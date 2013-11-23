@@ -30,8 +30,8 @@
                                 }
                             ],
                             "config":{
-                                "fieldLabel":"Display",
-                                "name":"display",
+                                "fieldLabel":"Display mode",
+                                "name":"displayMode",
                                 "editable":false,
                                 "forceSelection":true,
                                 "queryMode":"local"
@@ -45,7 +45,7 @@
 			]
 		},
 		"configBloc":{
-            "display":"pop-in"
+            "displayMode":"pop-in"
         }
 
 
