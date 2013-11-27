@@ -28,7 +28,6 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 			jQuery('#list-' + prefix).append(newHtml);
 			var pagerHtml = data.pager;
 			jQuery('#list-pager-' + prefix).append(pagerHtml);
-			//alert(pagerHtml);
 		});
 
 		request.fail(function(jqXHR, textStatus) {

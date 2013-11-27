@@ -109,7 +109,8 @@
 		"configBloc":{
 			"columns":1,
 			"showOnlyTitle":false,
-            "summaryHeight":80
+            "summaryHeight":80,
+            "showPager":true
 		}
 	},
 	"category":"#ext-gen1068#",
