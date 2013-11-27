@@ -1,9 +1,23 @@
 {%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
 	{% for item in data[key] %}
 	{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-		<div class="editable" id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item }}</div>
+		<div class="editable" id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">
+            {% if (type[key]["config"]['vtype']=="url")  %}
+                <a href="{{ item }}" target="_blank">{{ item }}</a>
+            {% else %}
+                {{ item }}
+            {% endif %}
+		</div>
 	{% endfor %}
 {% else %}
 {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-	<div class="editable" id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">{{ data[key] }}</div>
+	<div class="editable" id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">
+        {% if (type[key]["config"]['vtype']=="url")  %}
+            <a href="{{ data[key] }}" target="_blank">{{ data[key] }}</a>
+        {% else %}
+            {{ data[key] }}
+        {% endif %}
+    </div>
 {% endif %}
+
+
