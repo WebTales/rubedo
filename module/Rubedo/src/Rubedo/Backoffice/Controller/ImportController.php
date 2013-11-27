@@ -435,7 +435,7 @@ class ImportController extends DataAccessController
                                             $info = pathinfo($imageUrl);
                                             
                                             // get mime type
-                                            $mimeType = "image/" . $info['extension'];
+                                            $mimeType = "image/" . strtolower($info['extension']);
                                             
                                             // search existing file on name
                                             $existingFile = $fileService->findByFileName($info['basename']);
