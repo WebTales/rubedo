@@ -461,7 +461,7 @@ class ImportController extends DataAccessController
                                                 $result = $fileService->createBinary($fileObj);
                                                 if (! $result['success']) {
                                                     // TODO change exception
-                                                    throw new \Rubedo\Exceptions\Server("The server cannot get image file.", "Exception95");
+                                                    throw new \Rubedo\Exceptions\Server("The server cannot get image file ".$imageUrl);
                                                 }
                                                 
                                                 $fileId = $result['data']['id'];
