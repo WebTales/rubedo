@@ -330,4 +330,39 @@ class DamController extends DataAccessController
     
         $this->_returnJson($deleteResult);
     }
+
+    /**
+     * Do a findOneAction
+     */
+    public function findOneAction ()
+    {
+        $contentId = $this->params()->fromQuery('id');
+
+        if (! is_null($contentId)) {
+
+            $return = $this->_dataService->findById($contentId, false, false);
+
+            if (empty($return['id'])) {
+
+                $returnArray = array(
+                    'success' => false,
+                    "msg" => 'Object not found'
+                );
+            } else {
+
+                $returnArray = array(
+                    'succes' => true,
+                    'data' => $return
+                );
+            }
+        } else {
+
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'Missing param'
+            );
+        }
+
+        return $this->_returnJson($returnArray);
+    }
 }
