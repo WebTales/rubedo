@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the Queries JSON
@@ -38,5 +39,48 @@ class QueriesController extends DataAccessController
         
         // init the data access service
         $this->_dataService = Manager::getService('Queries');
+    }
+
+    public function simulateResultAction()
+    {
+        $contentsService = Manager::getService('Contents');
+        $data = $this->params()->fromQuery();
+        if (isset($data['query'])) {
+
+            $filters = $this->_dataService->getFilterArrayById($data['query']);
+            if ($filters !== false) {
+                $contentList = $contentsService->getOnlineList($filters['filter'], $filters["sort"], (($data['page']-1) * $data['limit']), intval($data['limit']));
+            } else {
+                $contentList = array(
+                    'count' => 0
+                );
+            }
+            if ($contentList["count"] > 0) {
+                $returnArray=array();
+                $returnArray["data"]=array();
+                foreach ($contentList['data'] as $content) {
+                    $returnArray["data"][] = array(
+                        'text' => $content['text'],
+                        'id' => $content['id']
+                    );
+                }
+                $returnArray['total'] = $contentList["count"];
+                $returnArray["success"] = true;
+            } else {
+                $returnArray = array(
+                    "success" => false,
+                    "msg" => "No contents found",
+                    "data" => array()
+                );
+            }
+        } else {
+            $returnArray = array(
+                "success" => false,
+                "msg" => "No query found",
+                "data" => array()
+            );
+        }
+
+        return new JsonModel($returnArray);
     }
 }
