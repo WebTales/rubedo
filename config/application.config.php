@@ -8,6 +8,8 @@ if (file_exists(CONFIG_CACHE_DIR . '/extensions.array.php')) {
     $extensionsArray = include_once CONFIG_CACHE_DIR . '/extensions.array.php';
 } else {
     // automatically discover extensions for Rubedo
+    
+    // you can manually add extensions if not handled by composer
     $extensionsArray = array();
     
     $ignoreExtName = array(
