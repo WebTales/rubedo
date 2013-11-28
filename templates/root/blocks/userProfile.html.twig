@@ -7,7 +7,7 @@
                 <img src="{{ userAvatar(user.id) }}"  alt="{{user.name}} photo" style="width:140px; height:180px; margin-right:20px;" class="img-polaroid pull-left">
             {% endif %}
             <h2>{{ user.name }}</h2>
-            <p><strong>Email : </strong> {{ user.email }}</p>
+            {#<p><strong>Email : </strong> {{ user.email }}</p>#}
             {% for key, value in data %}
                 {% if value is not null %}
                     {%for cKey,cValue in type %}
