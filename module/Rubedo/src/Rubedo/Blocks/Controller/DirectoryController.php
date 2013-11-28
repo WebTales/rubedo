@@ -100,6 +100,16 @@ class DirectoryController extends AbstractController
         ));
         $results['alphaArray']=range('a', 'z');
         $results['profilePage'] = isset($params['block-config']['profilePage']) ? $params['block-config']['profilePage'] : false;
+        if ($results["profilePage"]){
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $results['profilePageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $results["profilePage"]
+            ), $urlOptions);
+        }
         
         $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
         $results['blockTitle'] = $this->params()->fromQuery('blockTitle');
