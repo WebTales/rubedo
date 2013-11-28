@@ -163,6 +163,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      * @param string $name
      *            filter name
      * @return Elastica\Filter or null
+     * @todo refactor & split !!!
      */
     protected function _getFacetFilter ($name)
     {
