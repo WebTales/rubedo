@@ -221,7 +221,7 @@
 				{% if result.photo %}
 				    <img src="{{ userAvatar(result.id) }}"  alt="{{result.name}}" style="height:100px; margin-right:20px; margin-top:10px;" class="img-polaroid pull-left">
 				{% endif %}
-				<h3><a href="#">{{ result.name }} </a></h3>
+				<h3><a href="{% if profilePage %}{{ profilePageUrl }}?userprofile={{ result.id }}{% else %}#{% endif %}">{{ result.name }} </a></h3>
 				<p>{{ result.email }}</p>
 				<div class="progress progress-success search-progress">
 					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">

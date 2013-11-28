@@ -34,9 +34,14 @@ class UserProfileController extends AbstractController
     public function indexAction ()
     {
         $output = $this->params()->fromQuery();
-        $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        if ((isset($output['userprofile']))&&(!empty($output['userprofile']))){
+            $currentUser=Manager::getService("Users")->findById($output['userprofile']);
+        } else {
+            $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        }
+
         if (!$currentUser){
-            $output['errorMessage']="You need to be logged-in to view your profile";
+            $output['errorMessage']="No connected user or supplied user id";
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userProfile/error.html.twig");
             return $this->_sendResponse($output, $template);
         }
