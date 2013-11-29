@@ -75,5 +75,12 @@
 	"version": 1 ,
 	"vocabularies": ["navigation"] ,
 	"workflow": "Basique" ,
-	"workspaces": ["global"]
+	"workspaces": ["global"],
+    "nativeLanguage":"###Locale###",
+    "i18n":{
+        "###Locale###":{
+            "locale":"###Locale###",
+            "type":"###Article.type###"
+        }
+    }
 }
