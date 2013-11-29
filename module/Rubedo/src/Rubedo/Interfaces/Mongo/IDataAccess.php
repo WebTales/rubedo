@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -38,15 +38,15 @@ interface IDataAccess
      * @param string $connection
      *            connection string to the DB server
      */
-    public function init ($collection, $dbName = null, $connection = null);
+    public function init($collection, $dbName = null, $connection = null);
 
     /**
      * Do a find request on the current collection
      *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function read (\WebTales\MongoFilters\IFilter $filters = null);
+    public function read(\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Do a findone request on the current collection
@@ -56,79 +56,79 @@ interface IDataAccess
      *            search condition
      * @return array
      */
-    public function findOne (\WebTales\MongoFilters\IFilter $value);
+    public function findOne(\WebTales\MongoFilters\IFilter $value);
 
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId            
+     * @param string $contentId
      * @return array
      */
-    public function findById ($contentId);
+    public function findById($contentId);
 
     /**
      * Find an item given by its name (find only one if many)
      *
-     * @param string $name            
+     * @param string $name
      * @return array
      */
-    public function findByName ($name);
+    public function findByName($name);
 
     /**
      * Create an objet in the current collection
      *
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function create (array $obj, $options = array());
+    public function create(array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
      *
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function update (array $obj, $options = array());
+    public function update(array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
      *
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function destroy (array $obj, $options = array());
+    public function destroy(array $obj, $options = array());
 
     /**
      * Do a find request on the current collection and return content as tree
      *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return array
      */
-    public function readTree (\WebTales\MongoFilters\IFilter $filters = null);
+    public function readTree(\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Find child of a node tree
      *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @param $parentId id
      *            of the parent node
      * @return array children array
      */
-    public function readChild ($parentId,\WebTales\MongoFilters\IFilter $filters = null);
+    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Do a count request based on current filter
      *
-     * @param \WebTales\MongoFilters\IFilter $filters            
+     * @param \WebTales\MongoFilters\IFilter $filters
      * @return integer
      */
-    public function count (\WebTales\MongoFilters\IFilter $filters = null);
+    public function count(\WebTales\MongoFilters\IFilter $filters = null);
 
     /**
      * Add a filter condition to the service
@@ -140,10 +140,10 @@ interface IDataAccess
      * or
      * array('field'=>array('operator'=>value))
      *
-     * @param \WebTales\MongoFilters\IFilter $filter            
+     * @param \WebTales\MongoFilters\IFilter $filter
      * @return bool
      */
-    public function addFilter (\WebTales\MongoFilters\IFilter $filter);
+    public function addFilter(\WebTales\MongoFilters\IFilter $filter);
 
 
     /**
@@ -151,7 +151,7 @@ interface IDataAccess
      *
      * @return \WebTales\MongoFilters\IFilter
      */
-    public function getFilters ();
+    public function getFilters();
 
     /**
      * Unset all filter condition to the service
@@ -161,23 +161,23 @@ interface IDataAccess
     /**
      * Set the main MongoDB connection string
      *
-     * @param string $mongo            
+     * @param string $mongo
      * @throws \Exception
      */
-    public static function setDefaultMongo ($mongo);
+    public static function setDefaultMongo($mongo);
 
     /**
      * Set the main Database name
      *
-     * @param string $dbName            
+     * @param string $dbName
      * @throws \Exception
      */
-    public static function setDefaultDb ($dbName);
+    public static function setDefaultDb($dbName);
 
     /**
      * Clear the current Filters for this instance of the service
      */
-    public function clearFilter ();
+    public function clearFilter();
 
     /**
      * Add a sort condition to the service
@@ -191,21 +191,21 @@ interface IDataAccess
      *            Native Mongo syntax sort array
      * @return bool
      */
-    public function addSort (array $sort);
+    public function addSort(array $sort);
 
     /**
      * Return the current array of conditions.
      *
      * @return array
      */
-    public function getSortArray ();
+    public function getSortArray();
 
     /**
      * Unset all sort condition to the service
      *
      * @return bool
      */
-    public function clearSort ();
+    public function clearSort();
 
     /**
      * Set the number of the first result displayed
@@ -213,7 +213,7 @@ interface IDataAccess
      * @param $firstResult is
      *            the number of the first result displayed
      */
-    public function setFirstResult ($firstResult);
+    public function setFirstResult($firstResult);
 
     /**
      * Set the number of results displayed
@@ -221,105 +221,123 @@ interface IDataAccess
      * @param $numberOfResults is
      *            the number of results displayed
      */
-    public function setNumberOfResults ($numberOfResults);
+    public function setNumberOfResults($numberOfResults);
 
     /**
      * Set to zer the number of the first result displayed
      */
-    public function clearFirstResult ();
+    public function clearFirstResult();
 
     /**
      * Set to zero (unlimited) the number of results displayed
      */
-    public function clearNumberOfResults ();
+    public function clearNumberOfResults();
 
     /**
      * Return the current number of the first result displayed
      *
      * @return integer
      */
-    public function getFirstResult ();
+    public function getFirstResult();
 
     /**
      * Return the current number of results displayed
      *
      * @return integer
      */
-    public function getNumberOfResults ();
+    public function getNumberOfResults();
 
     /**
      * Add to the field list the array passed in argument
      *
-     * @param array $fieldList            
+     * @param array $fieldList
      */
-    public function addToFieldList (array $fieldList);
+    public function addToFieldList(array $fieldList);
 
     /**
      * Give the fields into the fieldList array
      *
      * @return array
      */
-    public function getFieldList ();
+    public function getFieldList();
 
     /**
      * Allow to remove one field in the current array
      *
-     * @param array $fieldToRemove            
+     * @param array $fieldToRemove
      */
-    public function removeFromFieldList (array $fieldToRemove);
+    public function removeFromFieldList(array $fieldToRemove);
 
     /**
      * Clear the fieldList array
      */
-    public function clearFieldList ();
+    public function clearFieldList();
 
     /**
      * Add to the exclude field list the array passed in argument
      *
-     * @param array $excludeFieldList            
+     * @param array $excludeFieldList
      */
-    public function addToExcludeFieldList (array $excludeFieldList);
+    public function addToExcludeFieldList(array $excludeFieldList);
 
     /**
      * Give the fields into the excludeFieldList array
      */
-    public function getExcludeFieldList ();
+    public function getExcludeFieldList();
 
     /**
      * Allow to remove one field in the current excludeFieldList array
      *
-     * @param array $fieldToRemove            
+     * @param array $fieldToRemove
      */
-    public function removeFromExcludeFieldList (array $fieldToRemove);
+    public function removeFromExcludeFieldList(array $fieldToRemove);
 
     /**
      * Clear the excludeFieldList array
      */
-    public function clearExcludeFieldList ();
+    public function clearExcludeFieldList();
 
     /**
      * Add index to collection
      *
-     * @param string|arrau $keys            
-     * @param array $options            
+     * @param string|array $keys
+     * @param array $options
      * @return boolean
      */
-    public function ensureIndex ($keys, $options = array());
+    public function ensureIndex($keys, $options = array());
 
     /**
-     * check if the index is set
+     * Drop all indexes
      *
-     * @param
-     *            array
      * @return boolean
      */
-    public function dropIndexes ();
+    public function dropIndexes();
 
-    public function checkIndex ($keys);
+    /**
+     * Check if the index is set
+     *
+     * @param array $keys
+     * @return boolean
+     */
+    public function checkIndex($keys);
 
-    public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array());
+    /**
+     * Delete with filter
+     *
+     * @param \WebTales\MongoFilters\IFilter $deleteCond
+     * @param array $options
+     * @return mixed
+     */
+    public function customDelete(\WebTales\MongoFilters\IFilter $deleteCond, $options = array());
 
-    public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array());
+    /**
+     * Find with filter
+     *
+     * @param \WebTales\MongoFilters\IFilter $filter
+     * @param array $fieldRule
+     * @return mixed
+     */
+    public function customFind(\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array());
 
     /**
      * Update an objet in the current collection
@@ -331,14 +349,31 @@ interface IDataAccess
      *            data to update
      * @param \WebTales\MongoFilters\IFilter $updateCond
      *            condition to determine what should be updated
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function customUpdate (array $data,\WebTales\MongoFilters\IFilter $updateCond, $options = array());
+    public function customUpdate(array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array());
 
-    public function getMongoDate ();
+    /**
+     * Return the mongo date
+     *
+     * @return \MongoDate
+     */
+    public function getMongoDate();
 
-    public function getId ($idString = null);
+    /**
+     * Cast string to MongoId
+     *
+     * @param string $idString
+     * @return \MongoId
+     */
+    public function getId($idString = null);
 
-    public function getRegex ($expr);
+    /**
+     * Cast string to MongoRegex
+     *
+     * @param string $expr
+     * @return \MongoRegex
+     */
+    public function getRegex($expr);
 }

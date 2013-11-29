@@ -23,17 +23,17 @@ namespace Rubedo\Interfaces\Mail;
  */
 Interface IMailer
 {
-
     /**
-     * return a message object
+     * Return the message
+     * @return object message
      */
-    public function getNewMessage ();
+    public function getNewMessage();
 
     /**
      * Send the message
      *
-     * @param object $message            
+     * @param object $message
      * @return boolean
      */
-    public function sendMessage ($message);
+    public function sendMessage($message);
 }

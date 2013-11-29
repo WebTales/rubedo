@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -35,7 +35,7 @@ interface IDataIndex
      * @param string $port
      *            http port
      */
-    public function init ($host = null, $port = null);
+    public function init($host = null, $port = null);
 
     /**
      * Index ES type for new or updated content type
@@ -44,11 +44,9 @@ interface IDataIndex
      *            content type id
      * @param array $data
      *            new content type
-     * @param boolean $overwrite
-     *            overwrite content type if it exists
      * @return array
      */
-    public function indexContentType ($id, $data);
+    public function indexContentType($id, $data);
 
     /**
      * Index ES type for new or updated dam type
@@ -57,11 +55,9 @@ interface IDataIndex
      *            dam type id
      * @param array $data
      *            new dam type
-     * @param boolean $overwrite
-     *            overwrite dam type if it exists
      * @return array
      */
-    public function indexDamType ($id, $data);
+    public function indexDamType($id, $data);
 
     /**
      * Index ES type for new or updated user type
@@ -70,12 +66,10 @@ interface IDataIndex
      *            user type id
      * @param array $data
      *            new user data
-     * @param boolean $overwrite
-     *            overwrite user type if it exists
      * @return array
      */
-    public function indexUserType ($id, $data);
-    
+    public function indexUserType($id, $data);
+
     /**
      * Delete ES type for content type
      *
@@ -83,7 +77,7 @@ interface IDataIndex
      *            content type id
      * @return array
      */
-    public function deleteContentType ($id);
+    public function deleteContentType($id);
 
     /**
      * Delete existing content from index
@@ -94,7 +88,7 @@ interface IDataIndex
      *            content id
      * @return array
      */
-    public function deleteContent ($typeId, $id);
+    public function deleteContent($typeId, $id);
 
     /**
      * Delete ES type for dam type
@@ -103,7 +97,7 @@ interface IDataIndex
      *            dam type id
      * @return array
      */
-    public function deleteDamType ($id);
+    public function deleteDamType($id);
 
     /**
      * Delete existing dam from index
@@ -114,47 +108,45 @@ interface IDataIndex
      *            content id
      * @return array
      */
-    public function deleteDam ($typeId, $id);
+    public function deleteDam($typeId, $id);
 
     /**
      * Create or update index for existing content
      *
-     * @param obj $data
+     * @param object $data
      *            content data
-     * @param boolean $live
-     *            live if true, workspace if live
      * @return array
      */
-    public function indexContent ($data);
+    public function indexContent($data);
 
     /**
      * Create or update index for existing Dam document
      *
-     * @param obj $data
+     * @param object $data
      *            dam data
      * @return array
      */
-    public function indexDam ($data);
+    public function indexDam($data);
 
     /**
      * Reindex all content or dam
-     * 
+     *
      * @param string $option
      *            : dam, content or all
-     *            
+     *
      * @return array
      */
-    public function indexAll ($option);
+    public function indexAll($option);
 
     /**
      * Reindex all content or dam for one type
-     * 
+     *
      * @param string $option
      *            : dam or content
      * @param string $id
      *            : dam type or content type id
-     *            
+     *
      * @return array
      */
-    public function indexByType ($option, $id);
+    public function indexByType($option, $id);
 }
