@@ -45,7 +45,14 @@
 								"fieldLabel":"#ext-gen1073#",
 								"name":"singlePage"
 							}
-						}
+						},
+                        {
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"Profile page",
+                                "name":"profilePage"
+                            }
+                        }
 					]
 				}
 			],
