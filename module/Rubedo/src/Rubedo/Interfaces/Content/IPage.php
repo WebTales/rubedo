@@ -29,43 +29,43 @@ Interface IPage
 
     /**
      * append a css file to the file list
-     * 
+     *
      * @param string $cssFile
      *            URL of the CSS added
      */
-    public function appendCss ($cssFile);
+    public function appendCss($cssFile);
 
     /**
      * clear the included css files list
      */
-    public function clearCss ();
+    public function clearCss();
 
     /**
      * Return the list of css files
-     * 
+     *
      * @return array list of URL
      */
-    public function getCss ();
+    public function getCss();
 
     /**
      * append a js file to the file list
-     * 
+     *
      * @param string $jsFile
      *            URL of the js added
      */
-    public function appendJs ($jsFile);
+    public function appendJs($jsFile);
 
     /**
      * clear the included js files list
      */
-    public function clearJs ();
+    public function clearJs();
 
     /**
      * Return the list of js files
-     * 
+     *
      * @return array list of URL
      */
-    public function getJs ();
+    public function getJs();
 
     /**
      * set the page title
@@ -73,21 +73,21 @@ Interface IPage
      * @param string $pageTitle
      *            page title
      */
-    public function setPageTitle ($pageTitle);
+    public function setPageTitle($pageTitle);
 
     /**
      * get the page title
      *
      * @return string page title
      */
-    public function getPageTitle ();
+    public function getPageTitle();
 
     /**
      * get the Current site
      *
      * @return string current site id
      */
-    public function getCurrentSite ();
+    public function getCurrentSite();
 
     /**
      * set the current site
@@ -95,21 +95,66 @@ Interface IPage
      * @param string $siteId
      *            site id
      */
-    public function setCurrentSite ($siteId);
+    public function setCurrentSite($siteId);
 
-    public function getDescription ();
+    /**
+     * Get the description
+     *
+     * @return mixed
+     */
+    public function getDescription();
 
-    public function getKeywords ();
+    /**
+     * Get keywords
+     *
+     * @return mixed
+     */
+    public function getKeywords();
 
-    public function setDescription ($_description);
+    /**
+     * Set the description
+     *
+     * @param $_description
+     * @return mixed
+     */
+    public function setDescription($_description);
 
-    public function setKeywords ($_keywords);
+    /**
+     * Set keywords
+     *
+     * @param $_keywords
+     * @return mixed
+     */
+    public function setKeywords($_keywords);
 
-    public static function getCurrentPage ();
 
-    public static function setCurrentPage ($_currentPage);
+    /**
+     * Get the current page
+     *
+     * @return mixed
+     */
+    public static function getCurrentPage();
 
-    public static function getAuthor ();
+    /**
+     * Set the current page
+     *
+     * @param $_currentPage
+     * @return mixed
+     */
+    public static function setCurrentPage($_currentPage);
 
-    public static function setAuthor ($_author);
+    /**
+     * Get the author
+     *
+     * @return mixed
+     */
+    public static function getAuthor();
+
+    /**
+     * Set the author
+     *
+     * @param $_author
+     * @return mixed
+     */
+    public static function setAuthor($_author);
 }

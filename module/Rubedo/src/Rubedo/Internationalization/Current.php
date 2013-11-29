@@ -32,8 +32,8 @@ class Current implements ICurrent
     public function resolveLocalization($siteId = null, $forceLocal = null, $cookieValue = null)
     {
         $locale = null;
+        $site = null;
         $browserArray = Manager::getService('CurrentLocalization')->getBrowserLanguages();
-        
         if ($siteId) {
             $site = Manager::getService('Sites')->findById($siteId);
             if (! isset($site['languages']) || ! is_array($site['languages'])) {
@@ -42,9 +42,6 @@ class Current implements ICurrent
         }
         
         if ($site) {
-            $sessionService = Manager::getService('Session');
-            $currentLocaleInSession = $sessionService->get('currentLocale', array());
-            
             $user = Manager::getService('CurrentUser')->getCurrentUser();
             
             if ($forceLocal && in_array($forceLocal, $site['languages'])) {

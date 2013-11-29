@@ -177,11 +177,13 @@ class Module
             Manager::getService('ApplicationLogger'),
             'logCollectionEvent'
         ), 1);
+
+        //@todo: fix issue with login
 //        $eventManager->attach(WorkflowAbstractCollection::POST_PUBLISH_COLLECTION, array(
 //           Manager::getService('Contents'),
-//            'indexPublish'
+//            'indexPublishEvent'
 //        ));
-        
+
         // log authentication attemps
         $eventManager->attach(array(
             Authentication::FAIL,
@@ -190,7 +192,7 @@ class Module
             Manager::getService('ApplicationLogger'),
             'logAuthenticationEvent'
         ), 1);
-        
+
         $eventManager->attach(array(
             Authentication::FAIL
         ), array(

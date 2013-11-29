@@ -27,12 +27,12 @@ interface IImage
     /**
      * Return a gdimage ressource which is a resized version of source imagefile
      *
-     * @param string $fileName            
-     * @param string $mode            
-     * @param int $width            
-     * @param int $height            
-     * @param string $size            
+     * @param string $fileName
+     * @param string $mode
+     * @param int $width
+     * @param int $height
+     * @param string $size
      * @return resource
      */
-    public function resizeImage ($fileName, $mode = null, $width = null, $height = null, $size = null);
+    public function resizeImage($fileName, $mode = null, $width = null, $height = null, $size = null);
 }
