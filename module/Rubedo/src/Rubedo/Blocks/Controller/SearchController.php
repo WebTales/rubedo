@@ -101,7 +101,17 @@ class SearchController extends AbstractController
             $pagecount - 1,
             10
         ));
-        
+        $results['profilePage'] = isset($params['block-config']['profilePage']) ? $params['block-config']['profilePage'] : false;
+        if ($results["profilePage"]){
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $results['profilePageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $results["profilePage"]
+            ), $urlOptions);
+        }
         $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->params()->fromQuery('current-page');
         $results['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
         

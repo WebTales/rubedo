@@ -177,10 +177,10 @@ class Module
             Manager::getService('ApplicationLogger'),
             'logCollectionEvent'
         ), 1);
-        $eventManager->attach(WorkflowAbstractCollection::POST_PUBLISH_COLLECTION, array(
-           Manager::getService('Contents'),
-            'indexPublish'
-        ));
+//        $eventManager->attach(WorkflowAbstractCollection::POST_PUBLISH_COLLECTION, array(
+//           Manager::getService('Contents'),
+//            'indexPublish'
+//        ));
         
         // log authentication attemps
         $eventManager->attach(array(
