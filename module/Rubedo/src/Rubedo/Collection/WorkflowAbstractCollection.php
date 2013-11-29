@@ -31,8 +31,8 @@ use Rubedo\Services\Events;
  */
 abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection implements IWorkflowAbstractCollection
 {
-    const POST_PUBLISH_COLLECTION = 'rubedo_collection_publish_post'; 
-    
+    const POST_PUBLISH_COLLECTION = 'rubedo_collection_publish_post';
+
     protected function _init ()
     {
     	if (empty($this->_collectionName)) {
@@ -136,8 +136,8 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
 
     /**
      * Find an item given by its literral ID
-     * 
-     * @param string $contentId            
+     *
+     * @param string $contentId
      * @return array
      */
     public function findById ($contentId, $live = true, $raw = true)
@@ -176,7 +176,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
 
     /**
      * Find child of a node tree
-     * 
+     *
      * @param string $parentId
      *            id of the parent node
      * @param \WebTales\MongoFilters\IFilter $filters
@@ -198,13 +198,22 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         return $returnArray;
     }
 
-    public function publish ($objectId,$ignoreIndex = false)
+    /**
+     * Publish the collection
+     *
+     * @param string $objectId ID of the object
+     * @param bool $ignoreIndex
+     * @return mixed
+     */
+    public function publish($objectId, $ignoreIndex = false)
     {
-    	unset($ignoreIndex);
         $result = $this->_dataService->publish($objectId);
         $args = $result;
-        $args['data'] = array('id'=>$objectId);
-        Events::getEventManager()->trigger(self::POST_PUBLISH_COLLECTION,$this,$args);
+        $args['data'] = array(
+            'id' => $objectId,
+            'ignoreIndex' => $ignoreIndex,
+        );
+        Events::getEventManager()->trigger(self::POST_PUBLISH_COLLECTION, $this, $args);
         return $result;
     }
 
