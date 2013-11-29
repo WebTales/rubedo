@@ -26,35 +26,39 @@ interface ITranslate
 {
 
     /**
+     * Get the localization array
      *
-     * @return the $localizationJsonArray
+     * @return array $localizationJsonArray
      */
-    public static function getLocalizationJsonArray ();
+    public static function getLocalizationJsonArray();
 
     /**
+     * Set the localization array
      *
-     * @param multitype: $localizationJsonArray            
+     * @param array $localizationJsonArray
      */
-    public static function setLocalizationJsonArray (array $localizationJsonArray);
+    public static function setLocalizationJsonArray(array $localizationJsonArray);
 
     /**
+     * Get the default language
      *
-     * @return the $defaultLanguage
+     * @return string $defaultLanguage
      */
-    public static function getDefaultLanguage ();
+    public static function getDefaultLanguage();
 
     /**
+     * Set the default language
      *
-     * @param string $defaultLanguage            
+     * @param string $defaultLanguage
      */
-    public static function setDefaultLanguage ($defaultLanguage);
+    public static function setDefaultLanguage($defaultLanguage);
 
     /**
      * translate a label given by its code and its default value
-     * 
-     * @param string $code            
-     * @param string $defaultLabel            
+     *
+     * @param string $code
+     * @param string $defaultLabel
      * @return string
      */
-    public function translate ($code, $defaultLabel = "");
+    public function translate($code, $defaultLabel = "");
 }

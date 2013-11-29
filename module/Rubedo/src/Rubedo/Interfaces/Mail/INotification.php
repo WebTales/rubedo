@@ -25,17 +25,49 @@ Interface INotification
 {
 
     /**
-     * return a message object
+     * Return the message object
+     *
+     * @return object message
      */
-    public function getNewMessage ();
+    public function getNewMessage();
 
-    public static function getSendNotification ();
+    /**
+     * Get the flag sendNotification
+     *
+     * @return boolean
+     */
+    public static function getSendNotification();
 
-    public static function setSendNotification ($sendNotification);
+    /**
+     * Set the flag sendNotification
+     *
+     * @param boolean $sendNotification
+     */
+    public static function setSendNotification($sendNotification);
 
-    public function getOptions ($name, $defaultValue = null);
+    /**
+     * Get the option $name. If not exist, return $defaultValue
+     *
+     * @param string|int $name
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    public function getOptions($name, $defaultValue = null);
 
-    public static function setOptions ($name, $value);
+    /**
+     * Add an option entry
+     *
+     * @param string|int $name
+     * @param mixed $value
+     */
+    public static function setOptions($name, $value);
 
-    public function notify ($obj, $notificationType);
+    /**
+     * Send the notification
+     *
+     * @param object $obj
+     * @param string $notificationType
+     * @return boolean result
+     */
+    public function notify($obj, $notificationType);
 }

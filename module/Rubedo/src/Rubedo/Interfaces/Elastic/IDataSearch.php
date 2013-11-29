@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -35,34 +35,23 @@ interface IDataSearch
      * @param string $port
      *            http port
      */
-    public function init ($host = null, $port = null);
+    public function init($host = null, $port = null);
 
     /**
      * Create ES type for new content type
      *
-     * @param string $terms
-     *            terms to search
-     * @param string $type
-     *            optional content type filter
-     * @param string $lang
-     *            optional lang filter
-     * @param string $author
-     *            optional author filter
-     * @param string $date
-     *            optional date filter
-     * @param string $pager
-     *            optional pager, default set to 10
-     * @param string $orderBy
-     *            optional orderBy, default sort on score
-     * @param string $pageSize
-     *            optional page size, "all" for everything
-     * @return Elastica_ResultSet
+     * @param array $params
+     * @param string $option
+     * @param bool $withSummary
+     *
+     * @return \Elastica\ResultSet
      */
-    public function search (array $params, $option = 'all', $withSummary = true);
+    public function search(array $params, $option = 'all', $withSummary = true);
 
     /**
+     * Set a param with
      *
-     * @param field_type $_isFrontEnd            
+     * @param boolean $_isFrontEnd
      */
-    public static function setIsFrontEnd ($_isFrontEnd);
+    public static function setIsFrontEnd($_isFrontEnd);
 }

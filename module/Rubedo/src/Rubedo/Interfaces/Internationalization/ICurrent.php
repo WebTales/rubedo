@@ -25,7 +25,20 @@ namespace Rubedo\Interfaces\Internationalization;
 interface ICurrent
 {
 
+    /**
+     * Find the current locale for a site
+     *
+     * @param $siteId
+     * @param $forceLocal
+     * @param array $browserArray
+     * @return string
+     */
     public function resolveLocalization($siteId = null, $forceLocal = null, $browserArray = array());
 
+    /**
+     * Get the current localization
+     *
+     * @return string
+     */
     public function getCurrentLocalization();
 }

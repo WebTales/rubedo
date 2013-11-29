@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,16 +29,18 @@ interface IWorkflowDataAccess extends IDataAccess
 
     /**
      * Set the current workspace to workspace
+     *
+     * @return mixed
      */
-    public function setWorkspace ();
+    public function setWorkspace();
 
     /**
      * Set the current workspace to live
      */
-    public function setLive ();
+    public function setLive();
 
     /**
      * Publish a content
      */
-    public function publish ($objectId);
+    public function publish($objectId);
 }
