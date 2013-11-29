@@ -111,7 +111,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected $_inputDataErrors = array();
 
     protected static $_userFilter;
-    
+
     protected static $nonLocalizableFields = array(
         'online',
         'typeId',
@@ -125,9 +125,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
         'blockId',
         'taxonomy'
     );
-    
+
     protected static $localizableFiledForCType = array();
-    
+
     protected static $isLocaleFiltered = true;
 
     public function __construct ()
@@ -387,63 +387,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }else{
             $tempFields['summary'] = "";
         }
-        
-        
-//         foreach ($contentTypeFields as $value) {
-//             $fieldsArray[$value['config']['name']] = $value;
-//             if (! isset($value['config']['allowBlank']) || ! $value['config']['allowBlank']) {
-//                 $result = false;
-//                 if ($value['config']['name'] == "text" || $value['config']['name'] == "summary") {
-//                     $field = $value['config']['name'];
-//                     $result = $this->_controlAllowBlank($tempFields[$field], false);
-//                 }
-//                 if ($result == false) {
-//                     $missingField[$value['config']['name']] = $value['config']['name'];
-//                 }
-//             }
-//         }
-        
-//         $fieldsList = array_keys($fieldsArray);
-        
-//         foreach ($obj['fields'] as $key => $value) {
-//             if (in_array($key, array(
-//                 'text',
-//                 'summary'
-//             ))) {
-//                 continue;
-//             }
-//             if (! in_array($key, $fieldsList)) {
-//                 unset($obj["fields"][$key]);
-//                 // $this->_inputDataErrors[$key] = 'unknown field';
-//             } else {
-//                 unset($missingField[$key]);
-                
-//                 if (isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true) {
-//                     $tempFields[$key] = array();
-//                     if (! is_array($value)) {
-//                         $value = array(
-//                             $value
-//                         );
-//                     }
-//                     foreach ($value as $valueItem) {
-//                         $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
-//                         $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
-//                     }
-//                 } else {
-//                     $this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
-                    
-//                     $tempFields[$key] = $this->_filterFieldValue($value, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
-//                 }
-//             }
-//         }
-        
-//         $obj['fields'] = $tempFields;
-        
-//         if (count($missingField) > 0) {
-//             foreach ($missingField as $value) {
-//                 $this->_inputDataErrors[$value] = 'missing field';
-//             }
-//         }
         
         if (count($this->_inputDataErrors) === 0) {
             $this->_isValidInput = true;
@@ -913,23 +856,21 @@ class Contents extends WorkflowAbstractCollection implements IContents
         
         return $this->getList($filterArray, $sort, null, null, true);
     }
-    
-    /*
-     * (non-PHPdoc) @see \Rubedo\Collection\WorkflowAbstractCollection::publish()
+
+    /**
+     * Search the content published and index it.
+     *
+     * @param \Zend\EventManager\Event $e the event
      */
-    public function publish ($objectId,$ignoreIndex = false)
-    {
-        $result = parent::publish($objectId,$ignoreIndex);
-        
-        if(!$ignoreIndex){
-	        // get the live content to send it to indexer service
-	        $content = $this->findById($objectId, true, false);
-	        
-	        $this->_indexContent($content);
+    public function indexPublish(\Zend\EventManager\Event $e) {
+        $data = $e->getParam('data', array());
+        if (!$data['ignoreIndex']) {
+            // get the live content to send it to indexer service
+            $content = $this->findById($data['id'], true, false);
+
+            $this->_indexContent($content);
         }
-        return $result;
     }
-    
     
 	/* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractLocalizableCollection::localizeInput()
