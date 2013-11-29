@@ -732,7 +732,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     }
                 }
                 //dirty dirty fix
-                if (((isset($obj['pageId']))&&($obj['pageId']!=""))||((isset($obj['pageId']))&&($obj['pageId']!=""))){
+                if (((isset($obj['pageId']))&&($obj['pageId']!=""))||((isset($obj['maskId']))&&($obj['maskId']!=""))){
                     $obj['readOnly'] = false;
                 }
             }
