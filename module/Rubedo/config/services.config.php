@@ -80,5 +80,7 @@ return array(
     'Versioning' => 'Rubedo\\Collection\\Versioning',
     'Wallpapers' => 'Rubedo\\Collection\\Wallpapers',
     'Workspaces' => 'Rubedo\\Collection\\Workspaces',
-    'UserTypes' => 'Rubedo\\Collection\\UserTypes'
+    'UserTypes' => 'Rubedo\\Collection\\UserTypes',
+    'Emails' => 'Rubedo\\Collection\\Emails',
+    'EmailTemplates' => 'Rubedo\\Collection\\EmailTemplates'
 );
