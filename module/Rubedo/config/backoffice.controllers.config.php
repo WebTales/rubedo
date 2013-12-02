@@ -72,5 +72,7 @@ return array(
     'Rubedo\\Backoffice\\Controller\\XhrAuthentication' => 'Rubedo\\Backoffice\\Controller\\XhrAuthenticationController',
     'Rubedo\\Backoffice\\Controller\\XhrGetMongoId' => 'Rubedo\\Backoffice\\Controller\\XhrGetMongoIdController',
     'Rubedo\\Backoffice\\Controller\\XhrGetPageUrl' => 'Rubedo\\Backoffice\\Controller\\XhrGetPageUrlController',
-    'Rubedo\\Backoffice\\Controller\\UserTypes' => 'Rubedo\\Backoffice\\Controller\\UserTypesController'
+    'Rubedo\\Backoffice\\Controller\\UserTypes' => 'Rubedo\\Backoffice\\Controller\\UserTypesController',
+    'Rubedo\\Backoffice\\Controller\\Emails' => 'Rubedo\\Backoffice\\Controller\\EmailsController',
+    'Rubedo\\Backoffice\\Controller\\EmailTemplates' => 'Rubedo\\Backoffice\\Controller\\EmailTemplatesController'
 );
