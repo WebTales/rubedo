@@ -39,4 +39,19 @@ class MailingListsController extends DataAccessController
         // init the data access service
         $this->_dataService = Manager::getService('MailingList');
     }
+
+    public function subscribeUserAction(){
+        $userId=$this->params()->fromPost("userId",null);
+        $mlId=$this->params()->fromPost("mlId",null);
+        $result=$this->_dataService->subscribe($mlId,$userId);
+        return $this->_returnJson($result);
+    }
+
+    public function unsubscribeUserAction(){
+        $userId=$this->params()->fromPost("userId",null);
+        $mlId=$this->params()->fromPost("mlId",null);
+        $result=array();
+        $result['success']=$this->_dataService->unSubscribe($mlId,$userId);
+        return $this->_returnJson($result);
+    }
 }
