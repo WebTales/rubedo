@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,8 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection;
 use Rubedo\Services\Events;
+use Rubedo\Services\Manager;
 
 
 // require_once APPLICATION_PATH.'/../Core/Rubedo/Interfaces/Collection/IWorkflowAbstractCollection.php';
@@ -33,11 +34,11 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
 {
     const POST_PUBLISH_COLLECTION = 'rubedo_collection_publish_post';
 
-    protected function _init ()
+    protected function _init()
     {
-    	if (empty($this->_collectionName)) {
-    		throw new \Rubedo\Exceptions\Server('Collection name is not set', "Exception97");
-    	}
+        if (empty($this->_collectionName)) {
+            throw new \Rubedo\Exceptions\Server('Collection name is not set', "Exception97");
+        }
         // init the data access service
         $this->_dataService = Manager::getService('MongoWorkflowDataAccess');
         $this->_dataService->init($this->_collectionName);
@@ -60,20 +61,20 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         } else {
             $this->_dataService->setWorkspace();
         }
-        
+
         if ($obj['status'] == "pending") {
             $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
             $obj['lastPendingUser'] = $currentUser;
             $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
             $obj['lastPendingTime'] = $currentTime;
         }
-        
+
         $previousVersion = $this->findById($obj['id'], $live, false);
         $previousStatus = $previousVersion['status'];
-        
+
         $returnArray = parent::update($obj, $options);
         if ($returnArray['success']) {
-            if (! $live) {
+            if (!$live) {
                 $transitionResult = $this->_transitionEvent($returnArray['data'], $previousStatus);
             }
         } else {
@@ -82,7 +83,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
                 'msg' => 'failed to update'
             );
         }
-        
+
         return $returnArray;
     }
 
@@ -101,22 +102,22 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         if ($live === true) {
             throw new \Rubedo\Exceptions\Access('You can not create a content directly published', "Exception60");
         }
-        
+
         $this->_dataService->setWorkspace();
-        
+
         if ($obj['status'] == "pending") {
             $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
             $obj['lastPendingUser'] = $currentUser;
             $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
             $obj['lastPendingTime'] = $currentTime;
         }
-        
+
         $returnArray = parent::create($obj, $options);
         if ($returnArray['success']) {
             if ($returnArray['data']['status'] === 'published') {
                 $result = $this->publish($returnArray['data']['id'], $ignoreIndex);
-                
-                if (! $result['success']) {
+
+                if (!$result['success']) {
                     $returnArray['success'] = false;
                     $returnArray['msg'] = "failed to publish the content";
                     unset($returnArray['data']);
@@ -130,7 +131,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
                 'msg' => 'failed to update'
             );
         }
-        
+
         return $returnArray;
     }
 
@@ -140,29 +141,29 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
      * @param string $contentId
      * @return array
      */
-    public function findById ($contentId, $live = true, $raw = true)
+    public function findById($contentId, $live = true, $raw = true)
     {
-    	if($contentId === null){
-    		return null;
-    	}
+        if ($contentId === null) {
+            return null;
+        }
         if ($live === true) {
             $this->_dataService->setLive();
         } else {
             $this->_dataService->setWorkspace();
         }
-        
+
         $obj = $this->_dataService->findById($contentId, $raw);
         if ($obj) {
             $obj = $this->_addReadableProperty($obj);
         }
         return $this->localizeOutput($obj);
-       // return $obj;
+        // return $obj;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null, $live = true)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null, $live = true)
     {
         if ($live === true) {
             $this->_dataService->setLive();
@@ -170,7 +171,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
             $this->_dataService->setWorkspace();
         }
         $returnArray = parent::getList($filters, $sort, $start, $limit);
-        
+
         return $returnArray;
     }
 
@@ -185,16 +186,16 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
      *            array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $live = true)
+    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $live = true)
     {
         if ($live === true) {
             $this->_dataService->setLive();
         } else {
             $this->_dataService->setWorkspace();
         }
-        
+
         $returnArray = parent::readChild($parentId, $filters, $sort);
-        
+
         return $returnArray;
     }
 
@@ -222,8 +223,8 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         if ($obj['status'] === 'published') {
             $returnArray = array();
             $result = $this->publish($obj['id']);
-            
-            if (! $result['success']) {
+
+            if (!$result['success']) {
                 $returnArray['success'] = false;
                 $returnArray['msg'] = "failed to publish the content";
                 unset($returnArray['data']);
@@ -233,18 +234,18 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         } else {
             $returnArray = null;
         }
-        
+
         if ($previousStatus == 'pending' && $obj['status'] == 'refused') {
             $this->_notify($obj, 'refused');
         }
         if ($previousStatus == 'pending' && $obj['status'] == 'published') {
             $this->_notify($obj, 'published');
         }
-        
+
         return true;
     }
 
-    protected function _notify ($obj, $notificationType)
+    protected function _notify($obj, $notificationType)
     {
         return Manager::getService('Notification')->notify($obj, $notificationType);
     }

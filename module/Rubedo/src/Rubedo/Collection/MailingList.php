@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use WebTales\MongoFilters\Filter;
 class MailingList extends AbstractCollection implements IMailingList
 {
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'MailingList';
         parent::__construct();
@@ -39,62 +39,62 @@ class MailingList extends AbstractCollection implements IMailingList
     /**
      * Add a user into a specified mailing list
      *
-     * @param string $mailingListId            
-     * @param string $email            
-     * @param boolean $doNotDuplicate            
+     * @param string $mailingListId
+     * @param string $email
+     * @param boolean $doNotDuplicate
      *
      * @return array
      *
      * @see \Rubedo\Interfaces\Collection\IMailingList::subscribe()
      */
-    public function subscribe ($mailingListId, $email, $doNotDuplicate = true)
+    public function subscribe($mailingListId, $email, $doNotDuplicate = true)
     {
         // Get mailing list
         $mailingList = $this->findById($mailingListId);
-        
+
         // Test if the mailing list exist in database
         if ($mailingList === null) {
             throw new \Rubedo\Exceptions\User('Invalid newsletter id', "Exception43");
         }
-        
+
         // Get the user
         $wasFiltered = AbstractCollection::disableUserFilter();
         $user = Manager::getService("Users")->findByEmail($email);
         AbstractCollection::disableUserFilter($wasFiltered);
-        
+
         // Create hash
         $hash = Manager::getService("Hash")->generateRandomString(24);
-        
+
         // Get current time
         $date = Manager::getService("CurrentTime")->getCurrentTime();
-        
+
         // Check if the user exist
         if ($user != null) {
             // Check if the user is already registered
             $isRegistered = false;
-            
+
             if (isset($user["mailingLists"]) && isset($user["mailingLists"][$mailingList["id"]]) && $user["mailingLists"][$mailingList["id"]]['status'] == true) {
                 $isRegistered = true;
             }
-            
+
             if ($isRegistered === false) {
                 // Attribute hash to the user
-                if (! isset($user['mailingListHash']) || empty($user['mailingListHash'])) {
+                if (!isset($user['mailingListHash']) || empty($user['mailingListHash'])) {
                     $user['mailingListHash'] = $hash;
                 }
-                
+
                 // Add new mailing list to the user
                 $user["mailingLists"][$mailingList["id"]] = array(
                     "id" => $mailingList["id"],
                     "status" => true,
                     "date" => $date
                 );
-                
+
                 // Update user
                 $wasFiltered = AbstractCollection::disableUserFilter();
                 $updateResult = Manager::getService("Users")->update($user);
                 AbstractCollection::disableUserFilter($wasFiltered);
-                
+
                 // Check the result of the update
                 if ($updateResult["success"]) {
                     $response = array(
@@ -113,15 +113,15 @@ class MailingList extends AbstractCollection implements IMailingList
             }
         } else {
             // Make the default skeleton for the user if it's a new user
-            $filters=Filter::factory();
+            $filters = Filter::factory();
             $filters->addFilter(Filter::factory('Value')->setName('UTType')
                 ->setValue("email"));
-            $emailUserType=Manager::getService("UserTypes")->findOne($filters);
+            $emailUserType = Manager::getService("UserTypes")->findOne($filters);
             $user = array(
                 "login" => $email,
-                "typeId"=>$emailUserType['id'],
-                "fields"=>array(),
-                "taxonomy"=>array(),
+                "typeId" => $emailUserType['id'],
+                "fields" => array(),
+                "taxonomy" => array(),
                 "email" => $email,
                 "name" => $email,
                 "workspace" => $mailingList["workspaces"],
@@ -134,10 +134,10 @@ class MailingList extends AbstractCollection implements IMailingList
                     )
                 )
             );
-            
+
             // Create the new user
             $createResult = Manager::getService("Users")->create($user);
-            
+
             // Check the result of the creation
             if ($createResult["success"]) {
                 $response = array(
@@ -148,21 +148,21 @@ class MailingList extends AbstractCollection implements IMailingList
                 throw new \Rubedo\Exceptions\User("Failed to create the user", "Exception45");
             }
         }
-        
+
         return $response;
     }
 
     /**
      * Remove a user from a specified mailing list
      *
-     * @param string $mailingListId            
-     * @param string $email            
+     * @param string $mailingListId
+     * @param string $email
      *
      * @return array
      *
      * @see \Rubedo\Interfaces\Collection\IMailingList::unSubscribe()
      */
-    public function unSubscribe ($mailingListId, $email)
+    public function unSubscribe($mailingListId, $email)
     {
         $mailingList = $this->findById($mailingListId);
         if ($mailingList === null) {
@@ -181,35 +181,35 @@ class MailingList extends AbstractCollection implements IMailingList
         return($response);
     }
 
-    public function getNewMessage ($mailingListId)
+    public function getNewMessage($mailingListId)
     {
         $mailingList = $this->findById($mailingListId);
-        if (! $mailingList) {
+        if (!$mailingList) {
             throw new \Rubedo\Exceptions\Server('Unknown mailing list', "Exception46");
         }
         $mailService = Manager::getService('Mailer');
         $message = $mailService->getNewMessage();
-        if (isset($mailingList['replyToAddress']) && ! empty($mailingList['replyToAddress'])) {
+        if (isset($mailingList['replyToAddress']) && !empty($mailingList['replyToAddress'])) {
             $replyTo = array();
-            
+
             $replyTo[$mailingList['replyToAddress']] = isset($mailingList['replyToName']) ? $mailingList['replyToName'] : $mailingList['replyToAddress'];
-            
+
             $message->setReplyTo($replyTo);
         }
-        
-        if (isset($mailingList['fromAddress']) && ! empty($mailingList['fromAddress'])) {
+
+        if (isset($mailingList['fromAddress']) && !empty($mailingList['fromAddress'])) {
             $from = array();
-            
+
             $from[$mailingList['fromAddress']] = isset($mailingList['fromName']) ? $mailingList['fromName'] : $mailingList['fromAddress'];
-            
+
             $message->setFrom($from);
         }
-        
-        if (isset($mailingList['returnPathAddress']) && ! empty($mailingList['returnPathAddress'])) {
+
+        if (isset($mailingList['returnPathAddress']) && !empty($mailingList['returnPathAddress'])) {
             $returnPath = $mailingList['returnPathAddress'];
             $message->setReturnPath($returnPath);
         }
-        
+
         return $message;
     }
 }

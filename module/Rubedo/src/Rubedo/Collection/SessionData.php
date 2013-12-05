@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ class SessionData extends AbstractCollection
 
     /**
      * Name of the session
-     * 
+     *
      * @var string
      */
     protected static $sessionName = 'rubedo';
@@ -55,7 +55,7 @@ class SessionData extends AbstractCollection
         $return_data = array();
         $offset = 0;
         while ($offset < strlen($session_data)) {
-            if (! strstr(substr($session_data, $offset), "|")) {
+            if (!strstr(substr($session_data, $offset), "|")) {
                 throw new \Exception("invalid data, remaining: " . substr($session_data, $offset));
             }
             $pos = strpos($session_data, "|", $offset);
@@ -80,7 +80,7 @@ class SessionData extends AbstractCollection
 
     /**
      *
-     * @param field_type $sessionName            
+     * @param field_type $sessionName
      */
     public static function setSessionName($sessionName)
     {

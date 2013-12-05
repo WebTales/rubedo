@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -28,7 +28,7 @@ use Rubedo\Interfaces\Collection\IEmails;
 class Emails extends AbstractCollection implements IEmails
 {
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'Emails';
         parent::__construct();

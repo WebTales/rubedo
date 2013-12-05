@@ -29,9 +29,10 @@ Interface IUrl
      *
      * @param string $url
      *            requested URL
+     * @param $host
      * @return string int
      */
-    public function matchPageRoute ($url, $host);
+    public function matchPageRoute($url, $host);
 
     /**
      * Generates an url given the name of a route.
@@ -46,26 +47,28 @@ Interface IUrl
      * @param bool $reset
      *            Whether or not to reset the route defaults with those
      *            provided
+     * @param bool $encode
      * @return string Url for the link href attribute.
      */
-    public function url (array $urlOptions = array(), $name = null, $reset = false, $encode = true);
+    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true);
 
     /**
      * Return the path part of the URL of a page given by its ID
      *
-     * @param string $pageId            
+     * @param string $pageId
+     * @param $locale
      * @return string
      */
-    public function getPageUrl ($pageId,$locale);
+    public function getPageUrl($pageId, $locale);
 
     /**
      * Return the path part of the URL matching parameters given in $data array
      *
-     * @param array $data            
-     * @param bool $encode            
+     * @param array $data
+     * @param bool $encode
      * @return string
      */
-    public function getUrl ($data, $encode = false);
+    public function getUrl($data, $encode = false);
 
     /**
      * Return the url of the single content page of the site if the single page
@@ -77,8 +80,9 @@ Interface IUrl
      *            Type of the URL : "default" or "cononical"
      * @param string $siteId
      *            Id of the site
-     *            
+     *
+     * @param string $defaultPage
      * @return string Url
      */
-    public function displayUrl ($contentId, $type = "default", $siteId = null, $defaultPage = null);
+    public function displayUrl($contentId, $type = "default", $siteId = null, $defaultPage = null);
 }

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -26,7 +26,7 @@ namespace Rubedo\Collection;
 class ApplicationLog extends AbstractCollection
 {
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'ApplicationLog';
         parent::__construct();
