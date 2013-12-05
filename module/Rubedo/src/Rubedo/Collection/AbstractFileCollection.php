@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IAbstractFileCollection, Rubedo\Services\Manager;
+use Rubedo\Interfaces\Collection\IAbstractFileCollection;
+use Rubedo\Services\Manager;
 
 /**
  * Class implementing the API to MongoDB GridFS
@@ -35,14 +36,14 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      */
     protected $_dataService;
 
-    protected function _init ()
+    protected function _init()
     {
         // init the data access service
         $this->_dataService = Manager::getService('MongoFileAccess');
         $this->_dataService->init();
     }
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_init();
     }
@@ -56,11 +57,11 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *            sort the list with mongo syntax
      * @return array
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null)
+    public function getList($filters = null, $sort = null, $start = null, $limit = null)
     {
         if (isset($sort)) {
             foreach ($sort as $value) {
-                
+
                 $this->_dataService->addSort(array(
                     $value["property"] => strtolower($value["direction"])
                 ));
@@ -72,33 +73,33 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
         if (isset($limit)) {
             $this->_dataService->setNumberOfResults($limit);
         }
-        
+
         $dataValues = $this->_dataService->read($filters);
-        
+
         return $dataValues;
     }
 
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId            
+     * @param string $contentId
      * @return array
      */
-    public function findById ($contentId)
+    public function findById($contentId)
     {
-    	if($contentId === null){
-    		return null;
-    	}
+        if ($contentId === null) {
+            return null;
+        }
         return $this->_dataService->findById($contentId);
     }
 
     /**
      * Find an item given by its name (find only one if many)
      *
-     * @param string $name            
+     * @param string $name
      * @return array
      */
-    public function findByName ($name)
+    public function findByName($name)
     {
         return $this->_dataService->findByName($name);
     }
@@ -111,8 +112,8 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *            data object
      * @return array
      */
-    
-    
+
+
     /**
      * Do a findone request
      *
@@ -120,32 +121,32 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      *            search condition
      * @return array
      */
-    public function findOne (\WebTales\MongoFilters\IFilter $value)
+    public function findOne(\WebTales\MongoFilters\IFilter $value)
     {
-        return  $this->_dataService->findOne($value);
+        return $this->_dataService->findOne($value);
 
     }
-    
-    public function create (array $obj, $options = array())
+
+    public function create(array $obj, $options = array())
     {
         return $this->_dataService->create($obj, $options);
     }
 
-    public function createBinary (array $obj, $options = array())
+    public function createBinary(array $obj, $options = array())
     {
-    	return $this->_dataService->createBinary($obj, $options);
+        return $this->_dataService->createBinary($obj, $options);
     }
-    
+
     /**
      * Update an objet in the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         return $this->_dataService->update($obj, $options);
     }
@@ -156,10 +157,10 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         return $this->_dataService->destroy($obj, $options);
     }

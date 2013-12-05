@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\ITaxonomyTerms;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle TaxonomyTerms
@@ -27,10 +29,10 @@ use Rubedo\Interfaces\Collection\ITaxonomyTerms, Rubedo\Services\Manager, WebTal
  */
 class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTerms
 {
-    protected static $nonLocalizableFields = array("vocabularyId","orderValue","readOnly","leaf","expandable","isNotPage","parentId");
-    
+    protected static $nonLocalizableFields = array("vocabularyId", "orderValue", "readOnly", "leaf", "expandable", "isNotPage", "parentId");
+
     protected static $isLocaleFiltered = true;
-    
+
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -51,7 +53,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         )
     );
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'TaxonomyTerms';
         parent::__construct();
@@ -77,22 +79,22 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         "canAssign" => 'true',
         "readOnly" => true
     );
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
         if ($obj['vocabularyId'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access('You can not create navigation terms', "Exception54");
         }
         return parent::create($obj, $options);
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getAncestors()
      */
-    public function getAncestors ($item, $limit = 10)
+    public function getAncestors($item, $limit = 10)
     {
         if (isset($item['vocabularyId']) && $item['vocabularyId'] == 'navigation') {
             if ($item['parentId'] == 'root') {
@@ -115,18 +117,18 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             return parent::getAncestors($item, $limit);
         }
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $navigation = false;
-        
+
         if ($filters) {
             $navigation = $this->_lookForNavigation($filters);
         }
-        
+
         if ($navigation) {
             $siteList = Manager::getService('Sites')->getList($filters);
             $contentArray = array();
@@ -137,7 +139,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             foreach ($pageList['data'] as $page) {
                 $contentArray[] = $this->_pageToTerm($page);
             }
-            
+
             $number = count($contentArray);
             return array(
                 'count' => $number,
@@ -148,16 +150,16 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         }
     }
 
-    protected function _lookForNavigation (\WebTales\MongoFilters\IFilter $filters)
+    protected function _lookForNavigation(\WebTales\MongoFilters\IFilter $filters)
     {
         $result = false;
         if ($filters instanceof \WebTales\MongoFilters\ICompositeFilter) { // do recursive adaptation to composite filter
             $filtersArray = $filters->getFilters();
             foreach ($filtersArray as $key => $filter) {
                 $result = $this->_lookForNavigation($filter) || $result;
-                if($this->_lookForNavigation($filter)){
+                if ($this->_lookForNavigation($filter)) {
                     $result = true;
-                    if($filter instanceof \WebTales\MongoFilters\ValueFilter){
+                    if ($filter instanceof \WebTales\MongoFilters\ValueFilter) {
                         unset($filtersArray[$key]);
                     }
                 }
@@ -173,32 +175,32 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         }
         return $result;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::readChild()
      */
-    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
-        
+
         $navigation = false;
-        
+
         if ($filters) {
             $navigation = $this->_lookForNavigation($filters);
         }
-        
-        if(preg_match('/[\dabcdef]{24}/', $parentId)==1){
+
+        if (preg_match('/[\dabcdef]{24}/', $parentId) == 1) {
             $parentItem = $this->findById($parentId);
             if ($parentItem['vocabularyId'] == 'navigation') {
                 $navigation = true;
             }
         }
-        
+
         if ($navigation) {
             if ($parentId == 'root') {
                 $returnArray = array();
-                
+
                 $returnArray[] = $this->_getMainRoot();
-                
+
                 return array_values($returnArray);
             } elseif ($parentId == 'all') {
                 $returnArray = array();
@@ -206,30 +208,30 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
                 foreach ($childrenArray['data'] as $site) {
                     $returnArray[] = $this->_siteToTerm($site);
                 }
-                
+
                 return array_values($returnArray);
             } else {
                 $rootPage = Manager::getService('Pages')->findById($parentId);
-                if (! $filters instanceof \WebTales\MongoFilters\IFilter) {
+                if (!$filters instanceof \WebTales\MongoFilters\IFilter) {
                     $filters = Filter::factory();
                 }
                 if ($rootPage) {
                     $filters->addFilter(Filter::factory('Value')->setName('site')
                         ->setValue($rootPage["site"]));
                 } else {
-                    
+
                     $filters->addFilter(Filter::factory('Value')->setName('site')
                         ->setValue($parentId));
                     $parentId = 'root';
                 }
-                
+
                 $returnArray = array();
                 $childrenArray = Manager::getService('Pages')->readChild($parentId, $filters);
-                
+
                 foreach ($childrenArray as $page) {
                     $returnArray[] = $this->_pageToTerm($page);
                 }
-                
+
                 return array_values($returnArray);
             }
             return array();
@@ -238,7 +240,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         }
     }
 
-    public function getNavigationTree ($withCurrentPage = false)
+    public function getNavigationTree($withCurrentPage = false)
     {
         $mainRoot = $this->_getMainRoot();
         $siteArray = Manager::getService('Sites')->getList();
@@ -260,15 +262,15 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         return $mainRoot;
     }
 
-    protected function _addChildrenToSite ($array)
+    protected function _addChildrenToSite($array)
     {
         $sort[] = array(
             'property' => 'orderValue',
             'direction' => 'ASC'
         );
-        
+
         $filters = Filter::factory('Value')->setName('site')->setValue($array['id']);
-        
+
         $children = Manager::getService('Pages')->readChild('root', $filters, $sort);
         if (count($children) > 0) {
             $array['expandable'] = true;
@@ -281,10 +283,10 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         return $array;
     }
 
-    protected function _addNavigationChildrenToArray ($array)
+    protected function _addNavigationChildrenToArray($array)
     {
         $filters = null;
-        
+
         $sort[] = array(
             'property' => 'orderValue',
             'direction' => 'ASC'
@@ -304,10 +306,10 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     /**
      * convert a site item to a taxonomy term item
      *
-     * @param array $workspace            
+     * @param array $workspace
      * @return array
      */
-    protected function _workspaceToTerm ($workspace)
+    protected function _workspaceToTerm($workspace)
     {
         $term = array();
         $term["parentId"] = 'root';
@@ -315,7 +317,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term['id'] = $workspace['id'];
         $term['vocabularyId'] = 'wokspaces';
         $term['isNotPage'] = true;
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
         $term['leaf'] = true;
@@ -325,15 +327,15 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     /**
      * convert a site item to a taxonomy term item
      *
-     * @param array $site            
+     * @param array $site
      * @return array
      */
-    protected function _siteToTerm ($site)
+    protected function _siteToTerm($site)
     {
         $term = array();
         $term["parentId"] = 'all';
         $term['text'] = $site['text'];
-        if(isset($site['i18n'])){
+        if (isset($site['i18n'])) {
             $term['i18n'] = $site['i18n'];
         }
         $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();;
@@ -341,30 +343,30 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term['vocabularyId'] = 'navigation';
         $term['isNotPage'] = true;
         $term['canAssign'] = (isset($site['readOnly']) && $site['readOnly']) ? false : true;
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
         $term['leaf'] = true;
         return $term;
     }
 
-    protected function _getMainRoot ()
+    protected function _getMainRoot()
     {
         $mainRoot = array();
         $mainRoot["parentId"] = 'root';
-        $mainRoot['text'] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.AllSites", 'All sites'); 
+        $mainRoot['text'] = Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.AllSites", 'All sites');
         $mainRoot['id'] = 'all';
         $mainRoot['canAssign'] = true;
         $mainRoot['isNotPage'] = true;
         $mainRoot['vocabularyId'] = 'navigation';
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             $mainRoot['readOnly'] = true;
         }
-        
-        foreach (Manager::getService('Languages')->getActiveLocales() as $locale){
+
+        foreach (Manager::getService('Languages')->getActiveLocales() as $locale) {
             $mainRoot['i18n'][$locale] = array();
             $mainRoot['i18n'][$locale]['locale'] = $locale;
-            $mainRoot['i18n'][$locale]['text'] = Manager::getService('Translate')->getTranslation("TaxonomyTerms.PagePicker.AllSites", $locale); 
+            $mainRoot['i18n'][$locale]['text'] = Manager::getService('Translate')->getTranslation("TaxonomyTerms.PagePicker.AllSites", $locale);
         }
         $mainRoot['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         return $mainRoot;
@@ -373,13 +375,13 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     /**
      * convert a page item to a taxonomy term item
      *
-     * @param array $site            
+     * @param array $site
      * @return array
      */
-    protected function _pageToTerm ($page)
+    protected function _pageToTerm($page)
     {
         $term = array();
-        if(isset($page['i18n'])){
+        if (isset($page['i18n'])) {
             $term['i18n'] = $page['i18n'];
         }
         $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();
@@ -391,17 +393,17 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term['orderValue'] = $page['orderValue'];
         $term['vocabularyId'] = 'navigation';
         $term['canAssign'] = (isset($page['readOnly']) && $page['readOnly']) ? false : true;
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             $term['readOnly'] = true;
         }
-        
+
         return $term;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
             throw new \Rubedo\Exceptions\Access('You can not update navigation terms', "Exception55");
@@ -419,25 +421,25 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         if (isset($obj['vocabularyId']) && ($obj['vocabularyId'] == 'navigation')) {
             throw new \Rubedo\Exceptions\Access('You can not destroy navigation terms', "Exception56");
         }
-        
-        if(!isset($obj["id"])) {
+
+        if (!isset($obj["id"])) {
             throw new \Rubedo\Exceptions\Server("The object must have an id");
         }
-        
+
         $childrenToDelete = $this->_getChildToDelete($obj['id']);
-        
+
         foreach ($childrenToDelete as $child) {
             Manager::getService('Contents')->unsetTerms($obj["vocabularyId"], $child);
         }
-        
+
         $deleteCond = Filter::factory('InUid')->setValue($childrenToDelete);
         $resultArray = $this->_dataService->customDelete($deleteCond);
-        
+
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] > 0) {
                 $returnArray = array(
@@ -464,27 +466,27 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      *            id whose children should be deleted
      * @return array array list of items to delete
      */
-    protected function _getChildToDelete ($id)
+    protected function _getChildToDelete($id)
     {
         // delete at least the node
         $returnArray = array(
             $id
         );
-        
+
         // read children list
         $terms = $this->readChild($id);
-        
+
         if ($terms === null) {
             throw new \Rubedo\Exceptions\Server("Term id not found in database", "Exception93");
         }
-        
+
         // for each child, get sublist of children
         if (is_array($terms)) {
             foreach ($terms as $value) {
                 $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
             }
         }
-        
+
         return $returnArray;
     }
 
@@ -497,36 +499,36 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      *            id of the vocabulary
      * @return array the term
      */
-    public function getTerm ($id, $vocabularyId = null)
+    public function getTerm($id, $vocabularyId = null)
     {
-        if(empty($id))return null;
-        if (! isset(self::$_termsArray[$id])) {
+        if (empty($id)) return null;
+        if (!isset(self::$_termsArray[$id])) {
             if ($vocabularyId == null || $vocabularyId != 'navigation') {
-                if ($id == "all"){
-                    return $this->_getMainRoot ();
+                if ($id == "all") {
+                    return $this->_getMainRoot();
                 }
-				$term = parent::findById ( $id );
-			} else {
-				if ($id == "all") {
-					$term = $this->_getMainRoot ();
-				} else {
-					$term = Manager::getService ( 'Sites' )->findById ( $id );
-					if (! $term) {
-						$term = Manager::getService ( 'Pages' )->findById ( $id );
-						if ($term) {
-							$term = $this->_pageToTerm ( $term );
-						}
-					} else {
-						$term = $this->_siteToTerm ( $term );
-					}
-				}
-			}
-            if (! isset($term['text'])) {
+                $term = parent::findById($id);
+            } else {
+                if ($id == "all") {
+                    $term = $this->_getMainRoot();
+                } else {
+                    $term = Manager::getService('Sites')->findById($id);
+                    if (!$term) {
+                        $term = Manager::getService('Pages')->findById($id);
+                        if ($term) {
+                            $term = $this->_pageToTerm($term);
+                        }
+                    } else {
+                        $term = $this->_siteToTerm($term);
+                    }
+                }
+            }
+            if (!isset($term['text'])) {
                 return null;
             }
-            
+
             $vocabulary = Manager::getService('Taxonomy')->findById($term["vocabularyId"]);
-            
+
             self::$_termsArray[$id] = array(
                 $vocabulary["name"] => $term['text']
             );
@@ -542,7 +544,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      * @return array Contain the terms associated to the vocabulary given in
      *         parameter
      */
-    public function findByVocabulary ($vocabularyId)
+    public function findByVocabulary($vocabularyId)
     {
         $filters = Filter::factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
         return $this->getList($filters);
@@ -557,12 +559,12 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      *            Contain the name of the term
      * @return array Contain the terms associated to the vocabulary given in parameter
      */
-    public function findByVocabularyIdAndName ($vocabularyId, $name)
+    public function findByVocabularyIdAndName($vocabularyId, $name)
     {
         $filters = Filter::factory()->addFilter(Filter::factory('Value')->SetName('vocabularyId')
             ->setValue($vocabularyId))
             ->addFilter(Filter::factory('Value')->SetName('text')
-            ->setValue($name));
+                ->setValue($name));
         return $this->_dataService->findOne($filters);
     }
 
@@ -571,7 +573,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      *
      * @see \Rubedo\Interfaces\Collection\ITaxonomyTerms::deleteByVocabularyId()
      */
-    public function deleteByVocabularyId ($id)
+    public function deleteByVocabularyId($id)
     {
         if ($id == 'navigation') {
             throw new \Rubedo\Exceptions\Access('can\'t destroy navigation terms ', "Exception56");
@@ -585,7 +587,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      *
      * @see \Rubedo\Collection\AbstractCollection::findByName()
      */
-    public function findByName ($name)
+    public function findByName($name)
     {
         throw new \Rubedo\Exceptions\Access('Terms names are not unique', "Exception57");
     }
@@ -599,18 +601,18 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      *            id of the vocabulary
      * @return array the term
      */
-    public function findById ($contentId)
+    public function findById($contentId)
     {
-    	if($contentId === null){
-    		return null;
-    	}
-    	if($contentId =="all"){
-    		return $this->_getMainRoot();
-    	}
+        if ($contentId === null) {
+            return null;
+        }
+        if ($contentId == "all") {
+            return $this->_getMainRoot();
+        }
         $term = parent::findById($contentId);
-        if (! $term) {
+        if (!$term) {
             $term = Manager::getService('Sites')->findById($contentId);
-            if (! $term) {
+            if (!$term) {
                 $term = Manager::getService('Pages')->findById($contentId);
                 if ($term) {
                     $term = $this->_pageToTerm($term);
@@ -622,7 +624,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         return $term;
     }
 
-    public function clearOrphanTerms ()
+    public function clearOrphanTerms()
     {
         $taxonomyService = Manager::getService('Taxonomy');
         $taxonomyArray = array();
@@ -633,37 +635,37 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         );
         $orphansArray = array();
         $orphansIdArray = array();
-        
+
         $taxonomyArray = $taxonomyService->getList();
         $termsArray = $this->getList();
-        
+
         foreach ($taxonomyArray['data'] as $value) {
             $taxonomyIdArray[] = $value['id'];
         }
-        
+
         foreach ($termsArray['data'] as $value) {
             $termsIdArray[] = $value['id'];
         }
-        
+
         $Filters = Filter::factory('Or')->addFilter(Filter::factory('NotIn')->setName('parentId')
             ->setValue($termsIdArray))
             ->addFilter(Filter::factory('NotIn')->setName('vocabularyId')
-            ->setValue($taxonomyIdArray));
-        
+                ->setValue($taxonomyIdArray));
+
         $orphansArray = $this->_dataService->customFind($Filters);
-        
+
         if ($orphansArray->count() > 0) {
             $orphansArray = iterator_to_array($orphansArray);
         } else {
             $orphansArray = array();
         }
-        
+
         foreach ($orphansArray as $value) {
             $orphansIdArray[] = $value['_id'];
         }
-        
+
         $result = $this->_deleteByArrayOfId($orphansIdArray);
-        
+
         if ($result['ok'] == 1) {
             return array(
                 'success' => 'true'
@@ -675,7 +677,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         }
     }
 
-    public function countOrphanTerms ()
+    public function countOrphanTerms()
     {
         $taxonomyService = Manager::getService('Taxonomy');
         $taxonomyArray = array();
@@ -685,58 +687,59 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             'root'
         );
         $orphansArray = array();
-        
+
         $taxonomyArray = $taxonomyService->getList();
         $termsArray = $this->getList();
-        
+
         foreach ($taxonomyArray['data'] as $value) {
             $taxonomyIdArray[] = $value['id'];
         }
-        
+
         foreach ($termsArray['data'] as $value) {
             $termsIdArray[] = $value['id'];
         }
-        
+
         $Filters = Filter::factory('Or')->addFilter(Filter::factory('NotIn')->setName('parentId')
             ->setValue($termsIdArray))
             ->addFilter(Filter::factory('NotIn')->setName('vocabularyId')
-            ->setValue($taxonomyIdArray));
+                ->setValue($taxonomyIdArray));
         $orphansArray = $this->_dataService->customFind($Filters);
-        
+
         if ($orphansArray->count() > 0) {
             $orphansArray = iterator_to_array($orphansArray);
         } else {
             $orphansArray = array();
         }
-        
+
         return count($orphansArray);
     }
 
-    protected function _deleteByArrayOfId ($arrayId)
+    protected function _deleteByArrayOfId($arrayId)
     {
         $deleteArray = array();
         foreach ($arrayId as $stringId) {
             $deleteArray[] = $this->_dataService->getId($stringId);
         }
-        
+
         $Filters = Filter::factory('InUid')->setValue($deleteArray);
         $options = array(
             'multiple' => true
         );
-        
+
         return $this->_dataService->customDelete($Filters, $options);
     }
-    
-    public function removeI18nByVocabularyId($vocabularyId,$locale){
+
+    public function removeI18nByVocabularyId($vocabularyId, $locale)
+    {
         $filters = Filter::factory();
         $filter = Filter::factory('Value')->SetName('vocabularyId')->setValue($vocabularyId);
         $filters->addFilter($filter);
-        $filter = Filter::factory('OperatorToValue')->SetName('i18n.'.$locale)->setOperator('$exists')->setValue(true);
+        $filter = Filter::factory('OperatorToValue')->SetName('i18n.' . $locale)->setOperator('$exists')->setValue(true);
         $filters->addFilter($filter);
         $options = array(
             'multiple' => true
         );
-        $data = array('$unset'=>array('i18n.'.$locale=>true));
-        return $this->customUpdate($data, $filters,$options);
+        $data = array('$unset' => array('i18n.' . $locale => true));
+        return $this->customUpdate($data, $filters, $options);
     }
 }

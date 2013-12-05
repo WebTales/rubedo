@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -17,7 +17,8 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\ICache;
-use Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle cached contents
@@ -63,11 +64,11 @@ class Cache extends AbstractCollection implements ICache
         )
     );
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'Cache';
         parent::__construct();
-        
+
         // randomly call cleanning on expired cache entries
         $factor = 100;
         if (rand(1, $factor) % $factor === 0) {
@@ -75,22 +76,22 @@ class Cache extends AbstractCollection implements ICache
         }
     }
 
-    public function findByCacheId ($cacheId, $time = null)
+    public function findByCacheId($cacheId, $time = null)
     {
-        if (! $time) {
+        if (!$time) {
             $time = Manager::getService('CurrentTime')->getCurrentTime();
         }
         $Filters = Filter::factory('And');
-        
+
         $Filter = Filter::factory('Value')->setName('cacheId')->setValue($cacheId);
         $Filters->addFilter($Filter);
-        
+
         $Filter = Filter::factory('EmptyOrOperator');
         $Filter->setName('expire')
             ->setOperator('$gt')
             ->setValue($time);
         $Filters->addFilter($Filter);
-        
+
         return $this->_dataService->findOne($Filters);
     }
 
@@ -103,15 +104,15 @@ class Cache extends AbstractCollection implements ICache
      *            string parameter of the cache entry
      * @return bool
      */
-    public function upsertByCacheId ($obj, $cacheId)
+    public function upsertByCacheId($obj, $cacheId)
     {
         $this->_filterInputData($obj);
         $options = array();
         $options['upsert'] = true;
-        
+
         $updateCond = Filter::factory('Value');
         $updateCond->setName('cacheId')->setValue($cacheId);
-        
+
         $result = $this->_dataService->customUpdate($obj, $updateCond, $options);
         if ($result['success']) {
             return true;
@@ -125,22 +126,22 @@ class Cache extends AbstractCollection implements ICache
      *
      * Use Fire And Forget query : do not wait for result
      */
-    public function deleteExpired ()
+    public function deleteExpired()
     {
         $options = array(
             'multiple' => true,
             'w' => false
         );
-        
+
         $updateCond = Filter::factory('OperatorToValue');
         $updateCond->setName('expire')
             ->setOperator('$lt')
             ->setValue(Manager::getService('CurrentTime')->getCurrentTime());
-        
+
         $result = $this->_dataService->customDelete($updateCond, $options);
     }
 
-    public function deleteByCacheId ($id)
+    public function deleteByCacheId($id)
     {
         $updateCond = Filter::factory('Value');
         $updateCond->setName('cacheId')->setValue($id);

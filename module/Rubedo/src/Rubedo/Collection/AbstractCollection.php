@@ -17,9 +17,9 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IAbstractCollection;
+use Rubedo\Services\Events;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
-use Rubedo\Services\Events;
 
 /**
  * Class implementing the API to MongoDB
@@ -33,7 +33,7 @@ abstract class AbstractCollection implements IAbstractCollection
     const POST_CREATE_COLLECTION = 'rubedo_collection_create_post';
     const POST_UPDATE_COLLECTION = 'rubedo_collection_update_post';
     const POST_DELETE_COLLECTION = 'rubedo_collection_delete_post';
-    
+
     /**
      * Indexes of the collection
      *
@@ -81,20 +81,20 @@ abstract class AbstractCollection implements IAbstractCollection
      * @var array
      */
     protected static $_fetchedObjects = array();
-    
+
     protected static $_isFrontEnd = false;
 
-    protected function _init ()
+    protected function _init()
     {
-    	if (empty($this->_collectionName)) {
-    		throw new \Rubedo\Exceptions\Server('Collection name is not set', "Exception97");
-    	}
+        if (empty($this->_collectionName)) {
+            throw new \Rubedo\Exceptions\Server('Collection name is not set', "Exception97");
+        }
         // init the data access service
         $this->_dataService = Manager::getService('MongoDataAccess');
         $this->_dataService->init($this->_collectionName);
     }
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_init();
     }
@@ -108,11 +108,10 @@ abstract class AbstractCollection implements IAbstractCollection
      *            sort the list with mongo syntax
      * @return array
      */
-    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         if (isset($sort)) {
             foreach ($sort as $value) {
-                
                 $this->_dataService->addSort(array(
                     $value["property"] => strtolower($value["direction"])
                 ));
@@ -130,17 +129,17 @@ abstract class AbstractCollection implements IAbstractCollection
                 $obj = $this->_addReadableProperty($obj);
             }
         }
-        
+
         return $dataValues;
     }
 
     /**
      * return a list with its parent-line
      *
-     * @param array $filters            
+     * @param array $filters
      * @return array:
      */
-    public function getListWithAncestors (\WebTales\MongoFilters\IFilter $filters = null)
+    public function getListWithAncestors(\WebTales\MongoFilters\IFilter $filters = null)
     {
         $returnArray = array();
         $listResult = $this->getList($filters);
@@ -156,12 +155,12 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * add parent-line of an item to an array
      *
-     * @param array $array            
-     * @param array $item            
-     * @param int $max            
+     * @param array $array
+     * @param array $item
+     * @param int $max
      * @return array
      */
-    protected function _addParentToArray ($array, $item, $max = 5)
+    protected function _addParentToArray($array, $item, $max = 5)
     {
         if (isset($array[$item['id']])) {
             return $array;
@@ -173,36 +172,36 @@ abstract class AbstractCollection implements IAbstractCollection
         if (isset($array[$item['parentId']])) {
             return $array;
         }
-        
+
         $parentItem = $this->findById($item['parentId']);
-        
+
         if ($parentItem) {
             $array[$parentItem['id']] = $parentItem;
             $array = $this->_addParentToArray($array, $parentItem, $max - 1);
         }
-        
+
         return $array;
     }
 
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId            
+     * @param string $contentId
      * @param boolean $forceReload
      *            should we ensure reading up-to-date content
      * @return array
      */
-    public function findById ($contentId, $forceReload = false)
+    public function findById($contentId, $forceReload = false)
     {
-    	if($contentId === null){
-    		return null;
-    	}
-        $contentId = (string) $contentId;
-        $className = (string) get_class($this);
-        if (! isset(self::$_fetchedObjects[$className])) {
+        if ($contentId === null) {
+            return null;
+        }
+        $contentId = (string)$contentId;
+        $className = (string)get_class($this);
+        if (!isset(self::$_fetchedObjects[$className])) {
             self::$_fetchedObjects[$className] = array();
         }
-        if ($forceReload || ! isset(self::$_fetchedObjects[$className][$contentId])) {
+        if ($forceReload || !isset(self::$_fetchedObjects[$className][$contentId])) {
             $obj = $this->_dataService->findById($contentId);
             if ($obj) {
                 $obj = $this->_addReadableProperty($obj);
@@ -215,10 +214,10 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Find an item given by its name (find only one if many)
      *
-     * @param string $name            
+     * @param string $name
      * @return array
      */
-    public function findByName ($name)
+    public function findByName($name)
     {
         $obj = $this->_dataService->findByName($name);
         if ($obj) {
@@ -234,7 +233,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *            search condition
      * @return array
      */
-    public function findOne (\WebTales\MongoFilters\IFilter $value)
+    public function findOne(\WebTales\MongoFilters\IFilter $value)
     {
         $obj = $this->_dataService->findOne($value);
         if ($obj) {
@@ -246,11 +245,11 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Do a custom find
      *
-     * @param \WebTales\MongoFilters\IFilter $filter            
-     * @param array $fieldRule            
+     * @param \WebTales\MongoFilters\IFilter $filter
+     * @param array $fieldRule
      * @return MongoCursor
      */
-    public function customFind (\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array())
+    public function customFind(\WebTales\MongoFilters\IFilter $filter = null, $fieldRule = array())
     {
         return $this->_dataService->customFind($filter, $fieldRule);
     }
@@ -265,10 +264,10 @@ abstract class AbstractCollection implements IAbstractCollection
      *            data to update
      * @param \WebTales\MongoFilters\IFilter $updateCond
      *            array of condition to determine what should be updated
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function customUpdate (array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array())
+    public function customUpdate(array $data, \WebTales\MongoFilters\IFilter $updateCond, $options = array())
     {
         return $this->_dataService->customUpdate($data, $updateCond, $options);
     }
@@ -279,37 +278,37 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
         $this->_filterInputData($obj);
-        
+
         unset($obj['readOnly']);
         $result = $this->_dataService->create($obj, $options);
-        Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION,$this,$result);
+        Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION, $this, $result);
         return $result;
     }
 
     /**
      * Return validated data from input data based on collection rules
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array:
      */
-    protected function _filterInputData (array $obj, array $model = null)
+    protected function _filterInputData(array $obj, array $model = null)
     {
         if ($model == null) {
             $model = $this->_model;
         }
-        
+
         foreach ($model as $key => $value) {
             // If the configuration is not specified for the current field
             if (isset($value['domain']) && isset($value['required'])) {
                 if (isset($obj[$key])) {
                     switch ($value['domain']) {
-                        
+
                         /**
                          * Case with a list domain
                          *
@@ -322,7 +321,7 @@ abstract class AbstractCollection implements IAbstractCollection
                                     if (count($obj[$key]) > 0) {
                                         foreach ($obj[$key] as $subKey => $subValue) {
                                             if ($value['items']['domain'] != "list" && $value['items']['domain'] != "array") {
-                                                if (! is_array($subValue) && ! $this->_isValid($subValue, $value['items']['domain'])) {
+                                                if (!is_array($subValue) && !$this->_isValid($subValue, $value['items']['domain'])) {
                                                     $this->_errors[$key][$subKey] = '"' . $subValue . '" doesn\'t correspond with the domain "' . $value['domain'] . '"';
                                                 }
                                             } else {
@@ -355,7 +354,7 @@ abstract class AbstractCollection implements IAbstractCollection
                                 continue;
                             }
                             break;
-                        
+
                         /**
                          * Case with an array domain
                          *
@@ -381,7 +380,7 @@ abstract class AbstractCollection implements IAbstractCollection
                                 continue;
                             }
                             break;
-                        
+
                         /**
                          * Case with a simple domain
                          *
@@ -389,7 +388,7 @@ abstract class AbstractCollection implements IAbstractCollection
                          * with the model
                          */
                         default:
-                            if (! is_array($obj[$key]) && ! $this->_isValid($obj[$key], $value['domain'])) {
+                            if (!is_array($obj[$key]) && !$this->_isValid($obj[$key], $value['domain'])) {
                                 $this->_errors[$key] = '"' . $obj[$key] . '" doesn\'t correspond with the domain "' . $value['domain'] . '"';
                             }
                             break;
@@ -403,23 +402,23 @@ abstract class AbstractCollection implements IAbstractCollection
                 }
             }
         }
-        
+
         return $obj;
     }
 
     /**
      * Is the data a valid input for the domain
      *
-     * @param mixed $data            
-     * @param string $domain            
+     * @param mixed $data
+     * @param string $domain
      * @throws Exception
      * @return boolean
      */
-    protected function _isValid ($data, $domain)
+    protected function _isValid($data, $domain)
     {
         $domainClassName = 'Rubedo\\Domains\\D' . ucfirst($domain);
-        if (! class_exists($domainClassName)) {
-            throw new \Rubedo\Exceptions\User('Domain not defined : %1$s', "Exception32", (string) $domain);
+        if (!class_exists($domainClassName)) {
+            throw new \Rubedo\Exceptions\User('Domain not defined : %1$s', "Exception32", (string)$domain);
         }
         return $domainClassName::isValid($data);
     }
@@ -429,7 +428,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      * @return array
      */
-    public function getModel ()
+    public function getModel()
     {
         return $this->_model;
     }
@@ -440,7 +439,7 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
     public function update(array $obj, $options = array())
@@ -450,7 +449,7 @@ abstract class AbstractCollection implements IAbstractCollection
         if ($result['success']) {
             $result['data'] = $this->_addReadableProperty($result['data']);
         }
-        Events::getEventManager()->trigger(self::POST_UPDATE_COLLECTION,$this,$result);
+        Events::getEventManager()->trigger(self::POST_UPDATE_COLLECTION, $this, $result);
         return $result;
     }
 
@@ -460,22 +459,22 @@ abstract class AbstractCollection implements IAbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         $result = $this->_dataService->destroy($obj, $options);
         $args = $result;
         $args['data'] = $obj;
-        Events::getEventManager()->trigger(self::POST_DELETE_COLLECTION,$this,$args);
+        Events::getEventManager()->trigger(self::POST_DELETE_COLLECTION, $this, $args);
         return $result;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Interfaces\Collection\IAbstractCollection::count()
      */
-    public function count (\WebTales\MongoFilters\IFilter $filters = null)
+    public function count(\WebTales\MongoFilters\IFilter $filters = null)
     {
         return $this->_dataService->count($filters);
     }
@@ -483,11 +482,11 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Do a delete on multiple items with a specific filter
      *
-     * @param unknown $deleteCond            
-     * @param unknown $options            
+     * @param unknown $deleteCond
+     * @param unknown $options
      * @return Ambigous <boolean, multitype:>
      */
-    public function customDelete (\WebTales\MongoFilters\IFilter $deleteCond, $options = array())
+    public function customDelete(\WebTales\MongoFilters\IFilter $deleteCond, $options = array())
     {
         return $this->_dataService->customDelete($deleteCond, $options);
     }
@@ -503,9 +502,9 @@ abstract class AbstractCollection implements IAbstractCollection
      *            array of data sorts (mongo syntax)
      * @return array children array
      */
-    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
-        if (! $parentId) {
+        if (!$parentId) {
             return array();
         }
         if (isset($sort)) {
@@ -519,7 +518,7 @@ abstract class AbstractCollection implements IAbstractCollection
                 "orderValue" => 1
             ));
         }
-        
+
         $result = $this->_dataService->readChild($parentId, $filters);
         if ($result && is_array($result)) {
             foreach ($result as &$obj) {
@@ -538,9 +537,9 @@ abstract class AbstractCollection implements IAbstractCollection
      *            max number of ancestors to be found
      * @return array array of ancestors
      */
-    public function getAncestors ($item, $limit = 10)
+    public function getAncestors($item, $limit = 10)
     {
-        if (! isset($item['parentId'])) {
+        if (!isset($item['parentId'])) {
             return array();
         }
         if ($item['parentId'] == 'root') {
@@ -555,31 +554,31 @@ abstract class AbstractCollection implements IAbstractCollection
         return $returnArray;
     }
 
-    public function fetchAllChildren ($parentId,\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
+    public function fetchAllChildren($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
     {
         $returnArray = array();
         $children = $this->readChild($parentId, $filters, $sort); // Read child
-                                                                  // of
-                                                                  // the
-                                                                  // parentId
+        // of
+        // the
+        // parentId
         foreach ($children as $value) { // for each child returned before if
-                                        // they can have children (leaf===false)
-                                        // do another read child.
+            // they can have children (leaf===false)
+            // do another read child.
             $returnArray[] = $value;
-            if ((! isset($value['leaf']) || $value['leaf'] === false) && $limit > 0) {
+            if ((!isset($value['leaf']) || $value['leaf'] === false) && $limit > 0) {
                 $returnArray = array_merge($returnArray, $this->readChild($value['id'], $filters, $sort, $limit - 1));
             }
         }
         return $returnArray;
     }
 
-    public function readTree (\WebTales\MongoFilters\IFilter $filters = null)
+    public function readTree(\WebTales\MongoFilters\IFilter $filters = null)
     {
         $tree = $this->_dataService->readTree($filters);
         return $tree['children'];
     }
 
-    public function drop ()
+    public function drop()
     {
         $result = $this->_dataService->drop();
         if ($result['ok']) {
@@ -593,17 +592,17 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      * @return the $_isUserFilterDisabled
      */
-    public static final function isUserFilterDisabled ()
+    public static final function isUserFilterDisabled()
     {
         return self::$_isUserFilterDisabled;
     }
 
     /**
      *
-     * @param boolean $_isUserFilterDisabled            
+     * @param boolean $_isUserFilterDisabled
      * @return boolean previous value of the param
      */
-    public static final function disableUserFilter ($_isUserFilterDisabled = true)
+    public static final function disableUserFilter($_isUserFilterDisabled = true)
     {
         $oldValue = self::$_isUserFilterDisabled;
         self::$_isUserFilterDisabled = $_isUserFilterDisabled;
@@ -615,7 +614,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      * @see \Rubedo\Interfaces\Collection\IAbstractCollection::checkIndexes()
      */
-    public function checkIndexes ()
+    public function checkIndexes()
     {
         $result = true;
         foreach ($this->_indexes as $index) {
@@ -629,7 +628,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *
      * @see \Rubedo\Interfaces\Collection\IAbstractCollection::ensureIndexes()
      */
-    public function ensureIndexes ()
+    public function ensureIndexes()
     {
         $result = true;
         foreach ($this->_indexes as $index) {
@@ -638,7 +637,7 @@ abstract class AbstractCollection implements IAbstractCollection
         return $result;
     }
 
-    public function dropIndexes ()
+    public function dropIndexes()
     {
         $result = $this->_dataService->dropIndexes();
         return $result;
@@ -647,10 +646,10 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Add a readOnly field to contents based on user rights
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array
      */
-    protected function _addReadableProperty ($obj)
+    protected function _addReadableProperty($obj)
     {
         return $obj;
     }
@@ -658,14 +657,14 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Return differences between two arrays with recursivity
      *
-     * @param Array $array1            
-     * @param Array $array2            
+     * @param Array $array1
+     * @param Array $array2
      * @return Array
      */
-    protected function _arrayDiffRecursive ($array1, $array2)
+    protected function _arrayDiffRecursive($array1, $array2)
     {
         $returnArray = array();
-        
+
         foreach ($array1 as $key => $value) {
             if (array_key_exists($key, $array2)) {
                 if (is_array($value)) {
@@ -688,9 +687,9 @@ abstract class AbstractCollection implements IAbstractCollection
     /**
      * Rename Author info in collection for a given AuthorId
      *
-     * @param string $authorId            
+     * @param string $authorId
      */
-    public function renameAuthor ($authorId)
+    public function renameAuthor($authorId)
     {
         $userInfos = Manager::getService('Users')->findById($authorId, true);
         $newUserSummary = array(
@@ -703,7 +702,7 @@ abstract class AbstractCollection implements IAbstractCollection
         $pendingCond = Filter::factory('Value')->setName('lastPendingUser.id')->setValue($authorId);
         $versioningCond = Filter::factory('Value')->setName('contentCreateUser.id')->setValue($authorId);
         $publishCond = Filter::factory('Value')->setName('publishUser.id')->setValue($authorId);
-        
+
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = new static();
         $service->customUpdate(array(
@@ -713,7 +712,7 @@ abstract class AbstractCollection implements IAbstractCollection
         ), $createCond, array(
             'multiple' => true
         ));
-        
+
         $service->customUpdate(array(
             '$set' => array(
                 'lastUpdateUser' => $newUserSummary
@@ -721,7 +720,7 @@ abstract class AbstractCollection implements IAbstractCollection
         ), $updateCond, array(
             'multiple' => true
         ));
-        
+
         $service->customUpdate(array(
             '$set' => array(
                 'lastPendingUser' => $newUserSummary
@@ -729,7 +728,7 @@ abstract class AbstractCollection implements IAbstractCollection
         ), $pendingCond, array(
             'multiple' => true
         ));
-        
+
         $service->customUpdate(array(
             '$set' => array(
                 'contentCreateUser' => $newUserSummary
@@ -737,7 +736,7 @@ abstract class AbstractCollection implements IAbstractCollection
         ), $versioningCond, array(
             'multiple' => true
         ));
-        
+
         $service->customUpdate(array(
             '$set' => array(
                 'publishUser' => $newUserSummary
@@ -745,31 +744,32 @@ abstract class AbstractCollection implements IAbstractCollection
         ), $publishCond, array(
             'multiple' => true
         ));
-        
+
         AbstractCollection::disableUserFilter($wasFiltered);
     }
-    
+
     /**
      *
      * @return the $_isFrontEnd
      */
-    public static function getIsFrontEnd ()
+    public static function getIsFrontEnd()
     {
         return static::$_isFrontEnd;
     }
-    
+
     /**
      *
      * @param boolean $_isFrontEnd
      */
-    public static function setIsFrontEnd ($_isFrontEnd)
+    public static function setIsFrontEnd($_isFrontEnd)
     {
         static::$_isFrontEnd = $_isFrontEnd;
     }
-    
-    public function getCollectionName(){
+
+    public function getCollectionName()
+    {
         return $this->_collectionName;
     }
-    
+
 }
 	

@@ -732,7 +732,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     }
                 }
                 //dirty dirty fix
-                if (((isset($obj['pageId']))&&($obj['pageId']!=""))||((isset($obj['maskId']))&&($obj['maskId']!=""))){
+                if (((isset($obj['pageId'])) && ($obj['pageId'] != "")) || ((isset($obj['maskId'])) && ($obj['maskId'] != ""))) {
                     $obj['readOnly'] = false;
                 }
             }
@@ -760,7 +760,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
             "used" => false
         );
     }
-
 
 
     /**
@@ -922,7 +921,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
 
 
-
         return $obj;
 
     }
@@ -944,7 +942,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
 
         $nativeContent = $obj;
-
 
 
         foreach ($this->getMetaDataFields() as $metaField) {

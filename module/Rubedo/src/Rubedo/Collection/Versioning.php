@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,8 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IVersioning, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IVersioning;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Versioning
@@ -32,40 +33,40 @@ class Versioning extends AbstractCollection implements IVersioning
         array(
             'keys' => array(
                 'contentId' => 1,
-                'contentVersion' => - 1
+                'contentVersion' => -1
             )
         )
     );
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'Versioning';
         parent::__construct();
     }
 
-    public function addVersion ($obj)
+    public function addVersion($obj)
     {
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
-        
+
         $createUser = null;
         $createTime = null;
         $version = null;
-        
-        $contentId = (string) $obj['_id'];
-        
+
+        $contentId = (string)$obj['_id'];
+
         $sort = array(
             'publishVersion' => 'desc'
         );
-        
+
         $filter = Filter::factory('Value');
         $filter->setName('contentId')->setValue($contentId);
-        
+
         $this->_dataService->addSort($sort);
-        
+
         $contentVersions = $this->_dataService->read($filter);
         $contentVersions = $contentVersions['data'];
-        
+
         if (isset($obj['createUser'])) {
             $createUser = $obj['createUser'];
         }
@@ -75,7 +76,7 @@ class Versioning extends AbstractCollection implements IVersioning
         if (isset($obj['version'])) {
             $version = $obj['version'];
         }
-        
+
         $version = array(
             'contentId' => $contentId,
             'publishUser' => $currentUserService->getCurrentUserSummary(),
@@ -84,22 +85,22 @@ class Versioning extends AbstractCollection implements IVersioning
             'contentCreateTime' => $createTime,
             'contentVersion' => $version
         );
-        
+
         if (count($contentVersions) > 0) {
             $version['publishVersion'] = $contentVersions[0]['publishVersion'] + 1;
-            
+
             $version = array_merge($version, $obj['live']);
         } else {
             $version['publishVersion'] = 0;
         }
-        
+
         // delete the first version in the collection
         if ($version['publishVersion'] === 1) {
             $this->_dataService->destroy($contentVersions[0]);
         }
-        
+
         $returnArray = $this->_dataService->create($version);
-        
+
         return $returnArray;
     }
 }

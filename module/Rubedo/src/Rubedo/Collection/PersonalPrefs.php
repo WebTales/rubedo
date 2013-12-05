@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IPersonalPrefs, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IPersonalPrefs;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle PersonalPrefs
@@ -39,41 +41,40 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         )
     );
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'PersonalPrefs';
         parent::__construct();
-        
+
         $currentUserService = Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $this->_userId = $currentUser['id'];
-        
-        $userFilter = Filter::factory('Value');
-        ;
+
+        $userFilter = Filter::factory('Value');;
         $userFilter->setName('userId')->setValue($this->_userId);
         $this->_dataService->addFilter($userFilter);
     }
 
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
-        if (! isset($obj['userId'])) {
+        if (!isset($obj['userId'])) {
             $obj['userId'] = $this->_userId;
         }
         return parent::create($obj, $options);
     }
 
-    public function getList (\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         $returnArray = parent::getList($filters, $sort, $start, $limit);
         if ($returnArray['count'] == 1) {
             $iconSet = $returnArray['data'][0]['iconSet'];
             Manager::getService('Session')->set('iconSet', $iconSet);
         }
-        
+
         return $returnArray;
     }
 
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         $returnArray = parent::update($obj, $options);
         if (isset($obj['iconSet'])) {
@@ -82,25 +83,25 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         return $returnArray;
     }
 
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         return parent::destroy($obj, $options);
     }
 
-    public function clearOrphanPrefs ()
+    public function clearOrphanPrefs()
     {
         $this->_dataService->clearFilter();
         $usersService = Manager::getService('Users');
-        
+
         $result = $usersService->getList();
-        
+
         foreach ($result['data'] as $value) {
             $usersArray[] = $value['id'];
         }
-        
+
         $ninFilter = Filter::factory('Value')->setName('userId')->setValue($usersArray);
         $result = $this->customDelete($ninFilter);
-        
+
         if ($result['ok'] == 1) {
             return array(
                 'success' => 'true'
@@ -112,13 +113,13 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         }
     }
 
-    public function countOrphanPrefs ()
+    public function countOrphanPrefs()
     {
         $this->_dataService->clearFilter();
         $usersService = Manager::getService('Users');
-        
+
         $result = $usersService->getList();
-        
+
         foreach ($result['data'] as $value) {
             $usersArray[] = $value['id'];
         }

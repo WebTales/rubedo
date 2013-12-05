@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IDirectories, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IDirectories;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Directories
@@ -91,17 +93,17 @@ class Directories extends AbstractCollection implements IDirectories
         "orderValue" => 1,
         "workspace" => 'global'
     );
-    
+
     /**
      * Only access to content with read access
      *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
-    protected function _init ()
+    protected function _init()
     {
         parent::_init();
-        
-        if (! self::isUserFilterDisabled()) {
+
+        if (!self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if (in_array('all', $readWorkspaceArray)) {
                 return;
@@ -112,15 +114,15 @@ class Directories extends AbstractCollection implements IDirectories
         }
     }
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'Directories';
         parent::__construct();
     }
 
-    public function readChild ($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
     {
-        if (! $parentId) {
+        if (!$parentId) {
             return array();
         }
         if (isset($sort)) {
@@ -134,15 +136,15 @@ class Directories extends AbstractCollection implements IDirectories
                 "orderValue" => 1
             ));
         }
-    
+
         $result = $this->_dataService->readChild($parentId, $filters);
         if ($result && is_array($result)) {
             foreach ($result as &$obj) {
                 $obj = $this->_addReadableProperty($obj);
             }
         }
-        if ($parentId=="root"){
-            $result[]=$this->_virtualNotFiledDirectory;
+        if ($parentId == "root") {
+            $result[] = $this->_virtualNotFiledDirectory;
         }
         return $result;
     }
@@ -157,12 +159,12 @@ class Directories extends AbstractCollection implements IDirectories
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
-        
+
         $resultArray = $this->_dataService->customDelete($deleteCond);
-        
+
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] > 0) {
                 $returnArray = array(
@@ -180,7 +182,7 @@ class Directories extends AbstractCollection implements IDirectories
                 "msg" => $resultArray["err"]
             );
         }
-        
+
         return $returnArray;
     }
 
@@ -188,79 +190,74 @@ class Directories extends AbstractCollection implements IDirectories
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
-        
+
         $returnValue = parent::update($obj, $options);
-                
+
         $this->propagateWorkspace($obj['id'], $obj['workspace']);
-        
+
         return $returnValue;
     }
 
     /**
      * Set workspace
      *
-     * @param array $obj            
+     * @param array $obj
      * @throws \Exception
      * @return array
      */
-    protected function _initContent ($obj)
+    protected function _initContent($obj)
     {
-        
+
         // set inheritance for workspace
-        if (! isset($obj['inheritWorkspace']) || $obj['inheritWorkspace'] !== false) {
+        if (!isset($obj['inheritWorkspace']) || $obj['inheritWorkspace'] !== false) {
             $obj['inheritWorkspace'] = true;
         }
         // resolve inheritance if not forced
         if ($obj['inheritWorkspace']) {
             unset($obj['workspace']);
-            
-            if ($obj['parentId']=="root"){
-                $obj['workspace']="global";
+
+            if ($obj['parentId'] == "root") {
+                $obj['workspace'] = "global";
             } else {
                 $ancestorsLine = array_reverse($this->getAncestors($obj));
-                $notFound=true;
+                $notFound = true;
                 foreach ($ancestorsLine as $ancestor) {
                     if (isset($ancestor['inheritWorkspace']) && $ancestor['inheritWorkspace'] == false) {
                         $obj['workspace'] = $ancestor['workspace'];
-                        $notFound=false;
+                        $notFound = false;
                         break;
                     }
                 }
-                if ($notFound){
-                    $obj['workspace']="global";
+                if ($notFound) {
+                    $obj['workspace'] = "global";
                 }
             }
-           
+
         }
         // verify workspace can be attributed
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-            
-            if (! in_array($obj['workspace'], $writeWorkspaces)) {
+
+            if (!in_array($obj['workspace'], $writeWorkspaces)) {
                 throw new \Rubedo\Exceptions\Access('You can not assign page to this workspace', "Exception48");
             }
         }
-        
 
-       
-        
+
         return $obj;
     }
 
 
-
-
-
-    public function getListByFilePlanId ($filePlanId)
+    public function getListByFilePlanId($filePlanId)
     {
         $filters = Filter::factory('Value')->setName('filePlan')->setValue($filePlanId);
         return $this->getList($filters);
     }
 
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         $result = parent::create($obj, $options);
@@ -273,15 +270,15 @@ class Directories extends AbstractCollection implements IDirectories
         $wasFiltered = AbstractCollection::disableUserFilter();
         $filters = Filter::factory('Value')->setName('filePlan')->setValue($id);
         $result = $this->_dataService->customDelete($filters);
-        
+
         AbstractCollection::disableUserFilter($wasFiltered);
-        
+
         return $result;
     }
 
-    public function clearOrphanDirectories ()
+    public function clearOrphanDirectories()
     {
-        
+
         $filePlansArray = array("default");
         $filters = Filter::factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
         $result = $this->customDelete($filters);
@@ -296,37 +293,36 @@ class Directories extends AbstractCollection implements IDirectories
         }
     }
 
-    public function countOrphanDirectories ()
+    public function countOrphanDirectories()
     {
         $filePlansArray = array("default");
         $filters = Filter::factory('NotIn')->setName('filePlan')->setValue($filePlansArray);
         return $this->count($filters);
     }
 
-    protected function _addReadableProperty ($obj)
+    protected function _addReadableProperty($obj)
     {
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             // Set the workspace for old items in database
-            if (! isset($obj['workspace'])) {
+            if (!isset($obj['workspace'])) {
                 $obj['workspace'] = 'global';
             }
-            
+
             $aclServive = Manager::getService('Acl');
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-            
-            if (! in_array($obj['workspace'], $writeWorkspaces) || ! $aclServive->hasAccess("write.ui.directories")) {
+
+            if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.directories")) {
                 $obj['readOnly'] = true;
             } else {
                 $obj['readOnly'] = false;
             }
         }
-        
+
         return $obj;
     }
 
 
-
-    public function propagateWorkspace ($parentId, $workspaceId, $filePlanId = null)
+    public function propagateWorkspace($parentId, $workspaceId, $filePlanId = null)
     {
         $filters = Filter::factory();
         if ($filePlanId) {
@@ -334,8 +330,8 @@ class Directories extends AbstractCollection implements IDirectories
         }
         $pageList = $this->readChild($parentId, $filters);
         foreach ($pageList as $page) {
-            if (! self::isUserFilterDisabled()) {
-                if (! $page['readOnly']) {
+            if (!self::isUserFilterDisabled()) {
+                if (!$page['readOnly']) {
                     if ($page['workspace'] != $workspaceId) {
                         $this->update($page);
                     }
@@ -354,37 +350,37 @@ class Directories extends AbstractCollection implements IDirectories
      *            id whose children should be deleted
      * @return array array list of items to delete
      */
-    protected function _getChildToDelete ($id)
+    protected function _getChildToDelete($id)
     {
         // delete at least the node
         $returnArray = array(
             $this->_dataService->getId($id)
         );
-        
+
         // read children list
         $terms = $this->readChild($id);
-        
+
         // for each child, get sublist of children
         if (is_array($terms)) {
             foreach ($terms as $value) {
                 $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
             }
         }
-        
+
         return $returnArray;
     }
 
     /**
      * Set the directory for dam items given by an array of ID
-     * 
+     *
      * @param unknown $arrayId
      * @param unknown $directoryId
      * @throws Rubedo\Exceptions\User
      */
     public function classify($arrayId, $directoryId)
     {
-        if(!is_string($directoryId)){
-            throw new \Rubedo\Exceptions\User('%1$s only accept string parameter',"Exception88", 'classify');
+        if (!is_string($directoryId)) {
+            throw new \Rubedo\Exceptions\User('%1$s only accept string parameter', "Exception88", 'classify');
         }
         $data = array(
             '$set' => array(
@@ -392,17 +388,17 @@ class Directories extends AbstractCollection implements IDirectories
             )
         );
         $updateCond = Filter::factory('InUid')->setValue($arrayId);
-        
+
         $damService = Manager::getService('Dam');
         $directoryFrom = null;
         $damList = $damService->getList($updateCond);
-        if(count($damList['data'])>0){
-            foreach($damList['data'] as $damItem){
-                if(isset($damItem['directory'])){
-                    if(is_null($directoryFrom)){
+        if (count($damList['data']) > 0) {
+            foreach ($damList['data'] as $damItem) {
+                if (isset($damItem['directory'])) {
+                    if (is_null($directoryFrom)) {
                         $directoryFrom = $damItem['directory'];
                     }
-                    if($damItem['directory'] != $directoryFrom){
+                    if ($damItem['directory'] != $directoryFrom) {
                         throw new \Rubedo\Exceptions\Access('only one source folder allowed');
                     }
                 }
@@ -410,15 +406,15 @@ class Directories extends AbstractCollection implements IDirectories
         }
 
         $directoryFrom = $this->findById($directoryFrom);
-        
+
         $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        if(!in_array($directoryFrom['workspace'],$writeWorkspaceArray)){
+        if (!in_array($directoryFrom['workspace'], $writeWorkspaceArray)) {
             throw new \Rubedo\Exceptions\Access("can't move media from this directory due to insufficient rights");
         }
 
-        $directoryTo= $this->findById($directoryId);
+        $directoryTo = $this->findById($directoryId);
 
-        if(!in_array($directoryTo['workspace'],$writeWorkspaceArray)){
+        if (!in_array($directoryTo['workspace'], $writeWorkspaceArray)) {
             throw new \Rubedo\Exceptions\Access("can't move media to this directory due to insufficient rights");
         }
         $options = array(
@@ -426,23 +422,22 @@ class Directories extends AbstractCollection implements IDirectories
         );
         return $damService->customUpdate($data, $updateCond, $options);
     }
-    
-	/* (non-PHPdoc)
+
+    /* (non-PHPdoc)
      * @see \Rubedo\Collection\AbstractCollection::findById()
      */
     public function findById($contentId, $forceReload = false)
     {
-    	if($contentId === null){
-    		return null;
-    	}
-        if($contentId == "notFiled"){
-            return $this->_virtualNotFiledDirectory;
-        }else{
-            return parent::findById($contentId,$forceReload);
+        if ($contentId === null) {
+            return null;
         }
-        
+        if ($contentId == "notFiled") {
+            return $this->_virtualNotFiledDirectory;
+        } else {
+            return parent::findById($contentId, $forceReload);
+        }
+
     }
 
-    
-    
+
 }
