@@ -16,9 +16,9 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Services\Events;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
-use Rubedo\Services\Events;
 
 
 /**
@@ -74,24 +74,25 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     protected static $includeI18n = true;
 
     protected static $isLocaleFiltered = false;
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::_init()
      */
     protected function _init()
     {
         parent::_init();
-        
+
         $this->initLocaleFilter();
     }
-    
-    protected function initLocaleFilter(){
+
+    protected function initLocaleFilter()
+    {
         if (static::$isLocaleFiltered) {
             switch (static::$localizationStrategy) {
                 case 'onlyOne':
                     $this->_dataService->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
-                    ->setOperator('$exists')
-                    ->setValue(true));
+                        ->setOperator('$exists')
+                        ->setValue(true));
                     break;
                 case 'fallback':
                     $fallbackLocale = isset(static::$fallbackLocale) ? static::$fallbackLocale : static::$defaultLocale;
@@ -109,17 +110,17 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                             ->setOperator('$exists')
                             ->setValue(true));
                     }
-    
+
                     break;
                 default:
                     $localeArray = Manager::getService('Languages')->getActiveLocales();
                     $orFilter = Filter::factory('Or');
-                    foreach($localeArray as $locale){
+                    foreach ($localeArray as $locale) {
                         $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . $locale)
                             ->setOperator('$exists')
                             ->setValue(true));
                     }
-                    
+
                     $this->_dataService->addFilter($orFilter);
                     break;
             }
@@ -143,14 +144,14 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                 $obj = $this->localizeOutput($obj);
             }
         }
-        
+
         return $dataValues;
     }
 
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId            
+     * @param string $contentId
      * @param boolean $forceReload
      *            should we ensure reading up-to-date content
      * @return array
@@ -164,7 +165,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     /**
      * Find an item given by its name (find only one if many)
      *
-     * @param string $name            
+     * @param string $name
      * @return array
      */
     public function findByName($name)
@@ -192,21 +193,21 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::create
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
     public function create(array $obj, $options = array())
     {
         $this->_filterInputData($obj);
-        
+
         unset($obj['readOnly']);
-        
+
         $obj = $this->localizeInput($obj);
         $result = $this->_dataService->create($obj, $options);
         if ($result['success']) {
             $result['data'] = $this->localizeOutput($result['data']);
         }
-        Events::getEventManager()->trigger(AbstractCollection::POST_CREATE_COLLECTION,$this,$result);
+        Events::getEventManager()->trigger(AbstractCollection::POST_CREATE_COLLECTION, $this, $result);
         return $result;
     }
 
@@ -216,7 +217,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      * @see \Rubedo\Interfaces\IDataAccess::update
      * @param array $obj
      *            data object
-     * @param array $options            
+     * @param array $options
      * @return array
      */
     public function update(array $obj, $options = array())
@@ -227,10 +228,10 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($result['success']) {
             $result['data'] = $this->localizeOutput($result['data']);
         }
-        Events::getEventManager()->trigger(AbstractCollection::POST_UPDATE_COLLECTION,$this,$result);
+        Events::getEventManager()->trigger(AbstractCollection::POST_UPDATE_COLLECTION, $this, $result);
         return $result;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Interfaces\Collection\IAbstractCollection::count()
      */
@@ -273,12 +274,13 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         $tree = $this->adaptTree($tree);
         return $tree['children'];
     }
-    
-    protected function adaptTree($tree){
+
+    protected function adaptTree($tree)
+    {
         $children = $tree['children'];
         $tree['children'] = array();
         $tree = $this->localizeOutput($tree);
-        foreach ($children as $child){
+        foreach ($children as $child) {
             $tree['children'][] = $this->adaptTree($child);
         }
         return $tree;
@@ -299,11 +301,11 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($obj === null) {
             return $obj;
         }
-        if (! isset($obj['i18n'])) {
+        if (!isset($obj['i18n'])) {
             return $obj;
         }
         if (static::$workingLocale === null) {
-            if (! isset($obj['nativeLanguage'])) {
+            if (!isset($obj['nativeLanguage'])) {
                 return $obj;
             } else {
                 $locale = $obj['nativeLanguage'];
@@ -311,21 +313,21 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         } else {
             $locale = static::$workingLocale;
         }
-        
+
         if ($alternativeFallBack === null && static::$isLocaleFiltered && static::$localizationStrategy == 'fallback') {
             $alternativeFallBack = static::$fallbackLocale;
         }
-        
-        if (! isset($obj['nativeLanguage'])) {
+
+        if (!isset($obj['nativeLanguage'])) {
             throw new \Rubedo\Exceptions\Server('No defined native language for this item');
         }
-        
+
         //Choose the good language for the content
-        if(isset($locale) && isset($obj['i18n'][$locale])) {
+        if (isset($locale) && isset($obj['i18n'][$locale])) {
             $obj = $this->merge($obj, $obj['i18n'][$locale]);
             $obj['locale'] = $locale;
         } else {
-            if($this->getFallbackLocale() !== null && isset($obj['i18n'][$this->getFallbackLocale()])) {
+            if ($this->getFallbackLocale() !== null && isset($obj['i18n'][$this->getFallbackLocale()])) {
                 $obj = $this->merge($obj, $obj['i18n'][$this->getFallbackLocale()]);
                 $obj['locale'] = $this->getFallbackLocale();
             } else {
@@ -333,7 +335,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                 return $obj;
             }
         }
-        
+
         if ($locale != $obj['nativeLanguage']) {
             if (isset($obj['i18n'][$locale])) {
                 $obj = $this->merge($obj, $obj['i18n'][$locale]);
@@ -349,11 +351,11 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 //                 }
             }
         }
-        
-        if (! static::$includeI18n) {
+
+        if (!static::$includeI18n) {
             unset($obj['i18n']);
         }
-        
+
         return $obj;
     }
 
@@ -362,14 +364,14 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      *
      * Do a recursive array merge except that numeric array are overriden
      *
-     * @param array $array1            
-     * @param array $array2            
+     * @param array $array1
+     * @param array $array2
      * @return array
      */
     protected function merge($array1, $array2)
     {
         foreach ($array2 as $key => $value) {
-            if (isset($array1[$key]) && is_array($value) && ! $this->isNumericArray($value)) {
+            if (isset($array1[$key]) && is_array($value) && !$this->isNumericArray($value)) {
                 $array1[$key] = $this->merge($array1[$key], $array2[$key]);
             } else {
                 $array1[$key] = $value;
@@ -381,7 +383,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     /**
      * return true for array
      *
-     * @param array $array            
+     * @param array $array
      * @return boolean
      */
     protected function isNumericArray($array)
@@ -404,15 +406,15 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                 $obj[static::$labelField] = $obj['i18n'][$obj['nativeLanguage']][static::$labelField];
             }
         }
-        
-        
+
+
         // prevent localizable data to be stored in root level
         foreach ($obj as $key => $field) {
-            if (! in_array($key, $metadataFields) && $key !== static::$labelField) {
+            if (!in_array($key, $metadataFields) && $key !== static::$labelField) {
                 unset($obj[$key]);
             }
         }
-        
+
         // prevent non localizable data to be store in localization document
         if (isset($obj['i18n'])) {
             foreach ($obj['i18n'] as $locale => $localization) {
@@ -424,14 +426,14 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                 $obj['i18n'][$locale]['locale'] = $locale;
             }
         }
-        
+
         return $obj;
     }
 
     /**
      * Set localization information on a not yet localized item
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array
      */
     public function addlocalization($obj)
@@ -440,7 +442,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             return $obj;
         }
         $nativeContent = $obj;
-        
+
         foreach ($this->getMetaDataFields() as $metaField) {
             if ($metaField !== static::$labelField) {
                 unset($nativeContent[$metaField]);
@@ -448,7 +450,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             $nativeContent['locale'] = static::$defaultLocale;
         }
         foreach ($obj as $key => $field) {
-            if (! in_array($key, $this->getMetaDataFields())) {
+            if (!in_array($key, $this->getMetaDataFields())) {
                 unset($obj[$key]);
             }
         }
@@ -478,7 +480,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                 }
             }
         }
-        
+
         parent::disableUserFilter($wasFiltered);
     }
 
@@ -488,7 +490,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     public static function localizeAllCollection()
     {
         self::setDefaultLocale(Manager::getService('Languages')->getDefaultLanguage());
-        
+
         $services = \Rubedo\Interfaces\config::getCollectionServices();
         foreach ($services as $serviceName) {
             $service = Manager::getService($serviceName);
@@ -509,7 +511,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      *
-     * @param string $defaultLocal            
+     * @param string $defaultLocal
      */
     public static function setDefaultLocale($defaultLocal)
     {
@@ -527,7 +529,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      *
-     * @param boolean $includeI18n            
+     * @param boolean $includeI18n
      */
     public static function setIncludeI18n($includeI18n)
     {
@@ -545,7 +547,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      *
-     * @param string $workingLocale            
+     * @param string $workingLocale
      */
     public static function setWorkingLocale($workingLocale)
     {
@@ -559,7 +561,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
      */
     protected function getMetaDataFields()
     {
-        if (! isset($this->metaDataFields)) {
+        if (!isset($this->metaDataFields)) {
             $this->metaDataFields = array_merge(self::$globalNonLocalizableFields, static::$nonLocalizableFields);
         }
         return $this->metaDataFields;
@@ -576,7 +578,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      *
-     * @param string $localizationStrategy            
+     * @param string $localizationStrategy
      */
     public static function setLocalizationStrategy($localizationStrategy)
     {
@@ -594,7 +596,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      *
-     * @param field_type $fallbackLocale            
+     * @param field_type $fallbackLocale
      */
     public static function setFallbackLocale($fallbackLocale)
     {

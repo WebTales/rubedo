@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IPages, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IPages;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Pages
@@ -85,15 +87,15 @@ class Pages extends AbstractLocalizableCollection implements IPages
             'domain' => 'string',
             'required' => true
         ),
-		/*'keywords' => array(
-			'domain' => 'list',
-			'required' => true,
-			'items' => array(
-				'domain' => 'string',
-				'required' => false,
-			),
-		),*/
-		'pageURL' => array(
+        /*'keywords' => array(
+            'domain' => 'list',
+            'required' => true,
+            'items' => array(
+                'domain' => 'string',
+                'required' => false,
+            ),
+        ),*/
+        'pageURL' => array(
             'domain' => 'string',
             'required' => true
         ),
@@ -118,7 +120,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
             'required' => true
         )
     );
-    
+
     /**
      * Contain common fields
      */
@@ -135,7 +137,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
         'noIndex',
         'noFollow'
     );
-    
+
     protected static $isLocaleFiltered = true;
 
     /**
@@ -143,11 +145,11 @@ class Pages extends AbstractLocalizableCollection implements IPages
      *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
-    protected function _init ()
+    protected function _init()
     {
         parent::_init();
-        
-        if (! self::isUserFilterDisabled()) {
+
+        if (!self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if (in_array('all', $readWorkspaceArray)) {
                 return;
@@ -158,43 +160,43 @@ class Pages extends AbstractLocalizableCollection implements IPages
         }
     }
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'Pages';
         parent::__construct();
     }
 
-    public function matchSegment ($urlSegment, $parentId, $siteId)
+    public function matchSegment($urlSegment, $parentId, $siteId)
     {
         $urlSegment = urldecode($urlSegment);
-        if (! $siteId) {
+        if (!$siteId) {
             return null;
-        }else{
+        } else {
             $site = Manager::getService('Sites')->findById($siteId);
             $locales = array();
-            if($site and isset($site['languages']) and is_array($site['languages'])){
+            if ($site and isset($site['languages']) and is_array($site['languages'])) {
                 $locales = $site['languages'];
             }
         }
         $filters = Filter::factory('And');
-        
+
         $filter = Filter::factory('Or');
-        
+
         $filter->addFilter(Filter::factory('Value')->setName('pageURL')->setValue($urlSegment));
-        foreach($locales as $locale){
-            $filter->addFilter(Filter::factory('Value')->setName('i18n.'.$locale.'.pageURL')->setValue($urlSegment));
+        foreach ($locales as $locale) {
+            $filter->addFilter(Filter::factory('Value')->setName('i18n.' . $locale . '.pageURL')->setValue($urlSegment));
         }
         //$filter->setName('i18n.$.pageURL')->setValue($urlSegment);
         $filters->addFilter($filter);
-        
+
         $filter = Filter::factory('Value');
         $filter->setName('parentId')->setValue($parentId);
         $filters->addFilter($filter);
-        
+
         $filter = Filter::factory('Value');
         $filter->setName('site')->setValue($siteId);
         $filters->addFilter($filter);
-        
+
         return $this->_dataService->findOne($filters);
     }
 
@@ -208,15 +210,15 @@ class Pages extends AbstractLocalizableCollection implements IPages
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         if ($this->hasDefaultPageAsChild($obj['id'])) {
             throw new \Rubedo\Exceptions\User("This page is the default single page or father of the default single page", "Exception47");
         }
         $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
-        
+
         $resultArray = $this->_dataService->customDelete($deleteCond);
-        
+
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] > 0) {
                 $returnArray = array(
@@ -234,7 +236,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
                 "msg" => $resultArray["err"]
             );
         }
-        
+
         $this->_clearCacheForPage($obj);
         return $returnArray;
     }
@@ -245,16 +247,16 @@ class Pages extends AbstractLocalizableCollection implements IPages
      * @return bool
      *
      */
-    public function hasDefaultPageAsChild ($pageId)
+    public function hasDefaultPageAsChild($pageId)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = Manager::getService('Pages');
         $sitesService = Manager::getService('Sites');
         AbstractCollection::disableUserFilter($wasFiltered);
-        
+
         // find site for $page ID
         $page = $service->findById($pageId);
-        
+
         if ($page) {
             // find site
             $sitedId = $page['site'];
@@ -267,41 +269,41 @@ class Pages extends AbstractLocalizableCollection implements IPages
         } else {
             $response = false;
         }
-        
+
         return ($response);
     }
 
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
-        
+
         $returnValue = parent::update($obj, $options);
-        
+
         $this->_clearCacheForPage($obj);
-        
+
         $this->propagateWorkspace($obj['id'], $obj['workspace']);
         if ($returnValue['success']) {
             $returnValue['data'] = $this->addBlocks($returnValue['data']);
         }
-        
+
         return $returnValue;
     }
 
     /**
      * Set workspace and URL.
      *
-     * @param array $obj            
+     * @param array $obj
      * @throws \Exception
      * @return array
      */
-    protected function _initContent ($obj)
+    protected function _initContent($obj)
     {
-        
+
         // set inheritance for workspace
-        if (! isset($obj['inheritWorkspace']) || $obj['inheritWorkspace'] !== false) {
+        if (!isset($obj['inheritWorkspace']) || $obj['inheritWorkspace'] !== false) {
             $obj['inheritWorkspace'] = true;
         }
         // resolve inheritance if not forced
@@ -314,42 +316,42 @@ class Pages extends AbstractLocalizableCollection implements IPages
                     break;
                 }
             }
-            if (! isset($obj['workspace'])) {
+            if (!isset($obj['workspace'])) {
                 $site = Manager::getService('Sites')->findById($obj['site']);
-                $obj['workspace'] = (isset($site['workspace']) && ! empty($site['workspace'])) ? $site['workspace'] : 'global';
+                $obj['workspace'] = (isset($site['workspace']) && !empty($site['workspace'])) ? $site['workspace'] : 'global';
             }
         }
         // verify workspace can be attributed
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-            
-            if (! in_array($obj['workspace'], $writeWorkspaces)) {
+
+            if (!in_array($obj['workspace'], $writeWorkspaces)) {
                 throw new \Rubedo\Exceptions\Access('You can not assign page to this workspace', "Exception48");
             }
         }
-        
+
         // set text property
         if (empty($obj['text'])) {
             $obj['text'] = $obj['title'];
         }
-        
+
         //ensure validity of pageUrl Fields for each locale
-        foreach($obj['i18n'] as $locale => $value){
+        foreach ($obj['i18n'] as $locale => $value) {
             // set pageUrl
             if (empty($value['pageURL'])) {
                 $dataUrl = $value['title'];
             } else {
                 $dataUrl = $value['pageURL'];
             }
-            
+
             // filter URL
             $obj['i18n'][$locale]['pageURL'] = $dataUrl;
         }
-       
+
         if (isset($obj['id'])) {
             $obj = $this->writeBlocks($obj);
         }
-        
+
         return $obj;
     }
 
@@ -358,10 +360,10 @@ class Pages extends AbstractLocalizableCollection implements IPages
      *
      * Delete the no longer used blocks.
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array
      */
-    protected function writeBlocks ($obj)
+    protected function writeBlocks($obj)
     {
         $blocksService = Manager::getService('Blocks');
         $arrayOfBlocksId = $blocksService->getIdListByPage($obj['id']);
@@ -375,12 +377,12 @@ class Pages extends AbstractLocalizableCollection implements IPages
         if (count($arrayOfBlocksId) > 0) {
             $blocksService->deletedByArrayOfId(array_keys($arrayOfBlocksId));
         }
-        
+
         $obj['blocks'] = array();
         return $obj;
     }
 
-    protected function _clearCacheForPage ($obj)
+    protected function _clearCacheForPage($obj)
     {
         $pageId = $obj['id'];
         Manager::getService('UrlCache')->customDelete(Filter::factory('Value')->setName('pageId')
@@ -389,22 +391,22 @@ class Pages extends AbstractLocalizableCollection implements IPages
         ));
     }
 
-    public function findByNameAndSite ($name, $siteId)
+    public function findByNameAndSite($name, $siteId)
     {
         $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('site')
             ->setValue($siteId))
             ->addFilter(Filter::factory('Value')->setName('text')
-            ->setValue($name));
+                ->setValue($name));
         return $this->_dataService->findOne($filters);
     }
 
-    public function getListByMaskId ($maskId)
+    public function getListByMaskId($maskId)
     {
         $filters = Filter::factory('Value')->setName('maskId')->setValue($maskId);
         return $this->getList($filters);
     }
 
-    public function isMaskUsed ($maskId)
+    public function isMaskUsed($maskId)
     {
         $filters = Filter::factory('Value')->setName('maskId')->setValue($maskId);
         $result = $this->_dataService->findOne($filters);
@@ -415,7 +417,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
         );
     }
 
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         $result = parent::create($obj, $options);
@@ -424,35 +426,35 @@ class Pages extends AbstractLocalizableCollection implements IPages
         return $newResult;
     }
 
-    public function deleteBySiteId ($id)
+    public function deleteBySiteId($id)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         $filters = Filter::factory('Value')->setName('site')->setValue($id);
         $result = $this->_dataService->customDelete($filters);
-        
+
         AbstractCollection::disableUserFilter($wasFiltered);
-        
+
         return $result;
     }
 
-    public function clearOrphanPages ()
+    public function clearOrphanPages()
     {
         $masksService = Manager::getService('Masks');
-        
+
         $result = $masksService->getList();
-        
+
         // recovers the list of contentTypes id
         foreach ($result['data'] as $value) {
             $masksArray[] = $value['id'];
         }
-        
+
         $filters = Filter::factory('NotIn')->setName('maskId')->setValue($masksArray);
         $options = array(
             'multiple' => true
         );
-        
+
         $result = $this->customDelete($filters, $options);
-        
+
         if ($result['ok'] == 1) {
             return array(
                 'success' => 'true'
@@ -464,12 +466,12 @@ class Pages extends AbstractLocalizableCollection implements IPages
         }
     }
 
-    public function countOrphanPages ()
+    public function countOrphanPages()
     {
         $masksService = Manager::getService('Masks');
-        
+
         $result = $masksService->getList();
-        
+
         // recovers the list of contentTypes id
         foreach ($result['data'] as $value) {
             $masksArray[] = $value['id'];
@@ -478,35 +480,35 @@ class Pages extends AbstractLocalizableCollection implements IPages
         return $this->count($filters);
     }
 
-    protected function _addReadableProperty ($obj)
+    protected function _addReadableProperty($obj)
     {
         $obj = $this->addBlocks($obj);
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             // Set the workspace for old items in database
-            if (! isset($obj['workspace'])) {
+            if (!isset($obj['workspace'])) {
                 $obj['workspace'] = 'global';
             }
-            
+
             $aclServive = Manager::getService('Acl');
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-            
-            if (! in_array($obj['workspace'], $writeWorkspaces) || ! $aclServive->hasAccess("write.ui.pages")) {
+
+            if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.pages")) {
                 $obj['readOnly'] = true;
             } else {
                 $obj['readOnly'] = false;
             }
         }
-        
+
         return $obj;
     }
 
     /**
      * Add blocks from blocks collection to the given page
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array
      */
-    protected function addBlocks ($obj)
+    protected function addBlocks($obj)
     {
         $blocksTemp = array();
         $blocksService = Manager::getService('Blocks');
@@ -520,7 +522,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
         return $obj;
     }
 
-    public function propagateWorkspace ($parentId, $workspaceId, $siteId = null)
+    public function propagateWorkspace($parentId, $workspaceId, $siteId = null)
     {
         $filters = Filter::factory();
         if ($siteId) {
@@ -528,8 +530,8 @@ class Pages extends AbstractLocalizableCollection implements IPages
         }
         $pageList = $this->readChild($parentId, $filters);
         foreach ($pageList as $page) {
-            if (! self::isUserFilterDisabled()) {
-                if (! $page['readOnly']) {
+            if (!self::isUserFilterDisabled()) {
+                if (!$page['readOnly']) {
                     if ($page['workspace'] != $workspaceId) {
                         $this->update($page);
                     }
@@ -548,26 +550,26 @@ class Pages extends AbstractLocalizableCollection implements IPages
      *            id whose children should be deleted
      * @return array array list of items to delete
      */
-    protected function _getChildToDelete ($id)
+    protected function _getChildToDelete($id)
     {
         // delete at least the node
         $returnArray = array(
             $this->_dataService->getId($id)
         );
-        
+
         // read children list
         $terms = $this->readChild($id);
-        
+
         // for each child, get sublist of children
         if (is_array($terms)) {
             foreach ($terms as $value) {
                 $returnArray = array_merge($returnArray, $this->_getChildToDelete($value['id']));
             }
         }
-        
+
         return $returnArray;
     }
-    
+
     /**
      * Return true if the given page is in the current rootline
      *
@@ -575,29 +577,30 @@ class Pages extends AbstractLocalizableCollection implements IPages
      *         id of the page
      * @return boolean
      */
-    public function isInRootline($pageId) {
+    public function isInRootline($pageId)
+    {
         //Get current page id
         $currentPage = Manager::getService('PageContent')->getCurrentPage();
-        
+
         // If the current page is the given page we return true
-        if($pageId == $currentPage){
+        if ($pageId == $currentPage) {
             return true;
         }
-        
+
         // Get the current page obj
         $currentPageObj = $this->findById($currentPage);
         $rootlineArray = array();
-        
+
         //Get rootline of the current page
         $rootline = $this->getAncestors($currentPageObj);
-        
+
         //Make the rootline pages id array
         foreach ($rootline as $ancestor) {
             $rootlineArray[] = $ancestor['id'];
         }
-        
+
         //If the given page is in the rootline we return true
-        if(in_array($pageId, $rootlineArray)) {
+        if (in_array($pageId, $rootlineArray)) {
             return true;
         } else {
             return false;

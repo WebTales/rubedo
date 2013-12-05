@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,9 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IUrlCache, WebTales\MongoFilters\Filter;
-use Zend\EventManager\EventInterface;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Zend\EventManager\EventInterface;
 
 /**
  * Service to handle Users
@@ -59,7 +59,7 @@ class UrlCache extends AbstractCollection
     protected static $pageToUrl = array();
 
     protected static $urlToPage = array();
-    
+
     protected $noDbConnection = false;
 
     /**
@@ -68,12 +68,12 @@ class UrlCache extends AbstractCollection
     public function __construct()
     {
         $this->_collectionName = 'UrlCache';
-        try{
+        try {
             parent::__construct();
-        }catch(\MongoConnectionException $e){
+        } catch (\MongoConnectionException $e) {
             $this->noDbConnection = true;
         }
-        
+
     }
 
     public function verifyIndexes()
@@ -93,10 +93,10 @@ class UrlCache extends AbstractCollection
 
     public function findByPageId($pageId, $locale)
     {
-        if($this->noDbConnection){
+        if ($this->noDbConnection) {
             return null;
         }
-        if (! isset(static::$pageToUrl[$locale][$pageId])) {
+        if (!isset(static::$pageToUrl[$locale][$pageId])) {
             $filters = Filter::factory();
             $filters->addFilter(Filter::factory('Value')->setName('pageId')
                 ->setValue($pageId));
@@ -110,32 +110,32 @@ class UrlCache extends AbstractCollection
         return static::$pageToUrl[$locale][$pageId];
     }
 
-    public function create(array $obj, $options = array('w'=>false))
+    public function create(array $obj, $options = array('w' => false))
     {
         $obj['date'] = $this->_dataService->getMongoDate();
-        
+
         parent::create($obj, $options);
     }
 
     public function findByUrl($url, $siteId)
     {
-        if($this->noDbConnection){
+        if ($this->noDbConnection) {
             return null;
         }
-        if (! $siteId) {
+        if (!$siteId) {
             return null;
         }
-        if (! isset(static::$urlToPage[$siteId]) || ! isset(static::$urlToPage[$siteId][$url])) {
+        if (!isset(static::$urlToPage[$siteId]) || !isset(static::$urlToPage[$siteId][$url])) {
             $filters = Filter::factory('And');
-            
+
             $filter = Filter::factory('Value');
             $filter->setName('url')->setValue($url);
             $filters->addFilter($filter);
-            
+
             $filter = Filter::factory('Value');
             $filter->setName('siteId')->setValue($siteId);
             $filters->addFilter($filter);
-            
+
             static::$urlToPage[$siteId][$url] = $this->_dataService->findOne($filters);
         }
         return static::$urlToPage[$siteId][$url];
@@ -174,7 +174,7 @@ class UrlCache extends AbstractCollection
 
     public function urlToPageWriteCacheEvent(EventInterface $event)
     {
-        if($this->noDbConnection){
+        if ($this->noDbConnection) {
             return null;
         }
         $data = $event->getParams();

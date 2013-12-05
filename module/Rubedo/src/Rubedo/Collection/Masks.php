@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IMasks, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IMasks;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Users
@@ -78,18 +80,18 @@ class Masks extends AbstractCollection implements IMasks
 
     /**
      * Only access to content with read access
-     * 
+     *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
-    protected function _init ()
+    protected function _init()
     {
         parent::_init();
-        
-        if (! self::isUserFilterDisabled()) {
+
+        if (!self::isUserFilterDisabled()) {
             $sites = Manager::getService('Sites')->getList();
             $sitesArray = array();
             foreach ($sites['data'] as $site) {
-                $sitesArray[] = (string) $site['id'];
+                $sitesArray[] = (string)$site['id'];
             }
             $filter = Filter::factory('In');
             $filter->setName('site')->setValue($sitesArray);
@@ -97,39 +99,39 @@ class Masks extends AbstractCollection implements IMasks
         }
     }
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'Masks';
         parent::__construct();
     }
 
-    protected function _addReadableProperty ($obj)
+    protected function _addReadableProperty($obj)
     {
         $obj = $this->addBlocks($obj);
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             $aclServive = Manager::getService('Acl');
-            
-            if (! $aclServive->hasAccess("write.ui.masks")) {
+
+            if (!$aclServive->hasAccess("write.ui.masks")) {
                 $obj['readOnly'] = true;
             } else {
                 $obj['readOnly'] = false;
             }
         }
-        
+
         return $obj;
     }
 
-    public function deleteBySiteId ($id)
+    public function deleteBySiteId($id)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-        
+
         $filter = Filter::factory('Value')->setName('site')->setValue($id);
-        
+
         return $this->_dataService->customDelete($filter);
         AbstractCollection::disableUserFilter($wasFiltered);
     }
 
-    protected function _initContent ($obj)
+    protected function _initContent($obj)
     {
         if (isset($obj['id'])) {
             $obj = $this->writeBlocks($obj);
@@ -142,10 +144,10 @@ class Masks extends AbstractCollection implements IMasks
      *
      * Delete the no longer used blocks.
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array
      */
-    protected function writeBlocks ($obj)
+    protected function writeBlocks($obj)
     {
         $blocksService = Manager::getService('Blocks');
         $arrayOfBlocksId = $blocksService->getIdListByMask($obj['id']);
@@ -159,7 +161,7 @@ class Masks extends AbstractCollection implements IMasks
         if (count($arrayOfBlocksId) > 0) {
             $blocksService->deletedByArrayOfId(array_keys($arrayOfBlocksId));
         }
-        
+
         $obj['blocks'] = array();
         return $obj;
     }
@@ -167,10 +169,10 @@ class Masks extends AbstractCollection implements IMasks
     /**
      * Add blocks from blocks collection to the given page
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array
      */
-    protected function addBlocks ($obj)
+    protected function addBlocks($obj)
     {
         $blocksTemp = array();
         $blocksService = Manager::getService('Blocks');
@@ -186,7 +188,7 @@ class Masks extends AbstractCollection implements IMasks
         return $obj;
     }
 
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
         $result = parent::create($obj, $options);
@@ -198,10 +200,10 @@ class Masks extends AbstractCollection implements IMasks
     /**
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         $obj = $this->_initContent($obj);
-        
+
         $returnValue = parent::update($obj, $options);
         if ($returnValue['success']) {
             $returnValue['data'] = $this->addBlocks($returnValue['data']);

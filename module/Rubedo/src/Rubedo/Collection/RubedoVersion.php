@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -17,8 +17,8 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IRubedoVersion;
-use WebTales\MongoFilters\Filter;
 use Rubedo\Version\Version;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Blocks
@@ -30,25 +30,25 @@ use Rubedo\Version\Version;
 class RubedoVersion extends AbstractCollection implements IRubedoVersion
 {
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'RubedoVersion';
         parent::__construct();
     }
 
-    public function getDbVersion ()
+    public function getDbVersion()
     {
         $versionRecord = $this->findOne(Filter::factory());
-        if (! $versionRecord) {
+        if (!$versionRecord) {
             return '1.0.0';
         }
         return $versionRecord['rubedoVersion'];
     }
 
-    public function setDbVersion ($version)
+    public function setDbVersion($version)
     {
         $versionRecord = $this->findOne(Filter::factory());
-        if (! $versionRecord) {
+        if (!$versionRecord) {
             $versionRecord = array(
                 'rubedoVersion' => $version
             );
@@ -59,7 +59,7 @@ class RubedoVersion extends AbstractCollection implements IRubedoVersion
         }
     }
 
-    public function isDbUpToDate ()
+    public function isDbUpToDate()
     {
         $rubedoVersion = Version::getVersion();
         $dbVersion = $this->getDbVersion();

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\IContentTypes, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\IContentTypes;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle ContentTypes
@@ -27,9 +29,9 @@ use Rubedo\Interfaces\Collection\IContentTypes, Rubedo\Services\Manager, WebTale
  */
 class ContentTypes extends AbstractLocalizableCollection implements IContentTypes
 {
-    protected static $nonLocalizableFields = array("fields","layouts","vocabularies","dependant","activateDisqus","dependantTypes","readOnly","workspaces","workflow","system","CTType","code");
+    protected static $nonLocalizableFields = array("fields", "layouts", "vocabularies", "dependant", "activateDisqus", "dependantTypes", "readOnly", "workspaces", "workflow", "system", "CTType", "code");
     protected static $labelField = 'type';
-    
+
     protected $_indexes = array(
         array(
             'keys' => array(
@@ -39,19 +41,19 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                 'unique' => true
             )
         )
-    // array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
-        );
+        // array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
+    );
 
     /**
      * Only access to content with read access
      *
      * @see \Rubedo\Collection\AbstractCollection::_init()
      */
-    protected function _init ()
+    protected function _init()
     {
         parent::_init();
-        
-        if (! self::isUserFilterDisabled()) {
+
+        if (!self::isUserFilterDisabled()) {
             $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
             if (in_array('all', $readWorkspaceArray)) {
                 return;
@@ -143,55 +145,55 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         )
     );
 
-    public function __construct ()
+    public function __construct()
     {
         $this->_collectionName = 'ContentTypes';
         parent::__construct();
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::create()
      */
-    public function create (array $obj, $options = array(), $live = true)
+    public function create(array $obj, $options = array(), $live = true)
     {
-        if (! isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
+        if (!isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
             $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
             $obj['workspaces'] = array(
                 $mainWorkspace['id']
             );
         }
         $returnArray = parent::create($obj, $options, $live);
-        
+
         if ($returnArray["success"]) {
             $this->indexContentType($returnArray['data']);
         }
         return $returnArray;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::update()
      */
-    public function update (array $obj, $options = array(), $live = true)
+    public function update(array $obj, $options = array(), $live = true)
     {
-        if (! isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
+        if (!isset($obj['workspaces']) || $obj['workspaces'] == '' || $obj['workspaces'] == array()) {
             $mainWorkspace = Manager::getService('CurrentUser')->getMainWorkspace();
             $obj['workspaces'] = array(
                 $mainWorkspace['id']
             );
         }
         $returnArray = parent::update($obj, $options, $live);
-        
+
         if ($returnArray["success"]) {
             //$this->indexContentType($returnArray['data']);
         }
-        
+
         return $returnArray;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
@@ -203,68 +205,68 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
     /**
      * Push the content type to Elastic Search
      *
-     * @param array $obj            
+     * @param array $obj
      */
-    public function indexContentType ($obj)
+    public function indexContentType($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-        
+
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContentType($obj['id'], $obj);
-        
+
         $ElasticDataIndexService->indexByType('content', $obj['id']);
-        
+
         AbstractCollection::disableUserFilter($wasFiltered);
     }
 
     /**
      * Remove the content type from Indexed Search
      *
-     * @param array $obj            
+     * @param array $obj
      */
-    public function unIndexContentType ($obj)
+    public function unIndexContentType($obj)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
-        
+
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteContentType($obj['id']);
-        
+
         AbstractCollection::disableUserFilter($wasFiltered);
     }
 
     /**
      * Find an item given by its name (find only one if many)
      *
-     * @param string $name            
+     * @param string $name
      * @return array
      */
-    public function findByName ($name)
+    public function findByName($name)
     {
         return $this->_dataService->findOne(array(
             'type' => $name
         ));
     }
 
-    protected function _addReadableProperty ($obj)
+    protected function _addReadableProperty($obj)
     {
-        if (! self::isUserFilterDisabled()) {
+        if (!self::isUserFilterDisabled()) {
             // Set the workspace for old items in database
-            if (! isset($obj['workspaces']) || $obj['workspaces'] == "") {
+            if (!isset($obj['workspaces']) || $obj['workspaces'] == "") {
                 $obj['workspaces'] = array(
                     'global'
                 );
             }
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-            
-            if (! Manager::getService('Acl')->hasAccess("write.ui.contentTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 && ! in_array("all", $writeWorkspaces))) {
+
+            if (!Manager::getService('Acl')->hasAccess("write.ui.contentTypes") || (count(array_intersect($obj['workspaces'], $writeWorkspaces)) == 0 && !in_array("all", $writeWorkspaces))) {
                 $obj['readOnly'] = true;
             } else {
                 $obj['readOnly'] = false;
             }
         }
-        
+
         return $obj;
     }
 
@@ -273,23 +275,23 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
      *
      * @see \Rubedo\Interfaces\Collection\IContentTypes::getReadableContentTypes()
      */
-    public function getReadableContentTypes ()
+    public function getReadableContentTypes()
     {
         $currentUserService = Manager::getService('CurrentUser');
         $contentTypesList = array();
-        
+
         $readWorkspaces = $currentUserService->getReadWorkspaces();
         $readWorkspaces[] = NULL;
-        
+
         $filters = Filter::factory();
-        if (! in_array("all", $readWorkspaces)) {
+        if (!in_array("all", $readWorkspaces)) {
             $filter = Filter::factory('In')->setName('workspaces')->setValue($readWorkspaces);
             $filters->addFilter($filter);
         }
         $filters->addFilter(Filter::factory('Not')->setName('system')
             ->setValue(true));
         $readableContentTypes = $this->getList($filters);
-        
+
         foreach ($readableContentTypes['data'] as $value) {
             $contentTypesList[$value['type']] = array(
                 'type' => $value['type'],
@@ -298,7 +300,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         }
         ksort($contentTypesList);
         $contentTypesList = array_values($contentTypesList);
-        
+
         return $contentTypesList;
     }
 
@@ -307,13 +309,13 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
      *
      * @see \Rubedo\Interfaces\Collection\IContentTypes::getGeolocatedContentTypes()
      */
-    public function getGeolocatedContentTypes ()
+    public function getGeolocatedContentTypes()
     {
         $contentTypesList = $this->getList();
         $geolocatedContentTypes = array();
-        
+
         foreach ($contentTypesList['data'] as $contentType) {
-            
+
             $fields = $contentType["fields"];
             foreach ($fields as $field) {
                 if ($field['config']['name'] == 'position') {
@@ -324,7 +326,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         return $geolocatedContentTypes;
     }
 
-    public function isChangeableContentType ($originalType, $newType)
+    public function isChangeableContentType($originalType, $newType)
     {
         $result = true;
         $authorizedCtype = array(
@@ -342,11 +344,11 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
          * Check for modified fields
          */
         foreach ($originalType as $originalField) {
-            if (! $result) {
+            if (!$result) {
                 break;
             }
             $found = false;
-            
+
             /*
              * Search for corresponding new field
              */
@@ -356,9 +358,9 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                     break;
                 }
             }
-            
+
             // if no field found
-            if (! $found) {
+            if (!$found) {
                 $result = true;
             } else {
                 if ($newField["cType"] != $originalField["cType"]) {
@@ -375,35 +377,36 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                 }
             }
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Return localizable fields for content type
-     * 
+     *
      * @param string $cTypeId
      * @return array
      */
-    public function getLocalizableFieldForCType($cTypeId){
+    public function getLocalizableFieldForCType($cTypeId)
+    {
         $contentType = $this->findById($cTypeId);
         $fieldsDef = $contentType['fields'];
-        
+
         $localizableFieldArray = array();
         $localizableFieldArray[] = 'text';
         $localizableFieldArray[] = 'urlSegment';
         $localizableFieldArray[] = 'summary';
-        
-        foreach($fieldsDef as $fieldDef){
-            if(isset($fieldDef['config']['localizable']) && $fieldDef['config']['localizable']==true){
-                $localizableFieldArray[]=$fieldDef['config']['name'];
+
+        foreach ($fieldsDef as $fieldDef) {
+            if (isset($fieldDef['config']['localizable']) && $fieldDef['config']['localizable'] == true) {
+                $localizableFieldArray[] = $fieldDef['config']['name'];
             }
         }
-        
-        if(isset($contentType['CTType']) && in_array($contentType['CTType'],array('richText','simpleText'))){
+
+        if (isset($contentType['CTType']) && in_array($contentType['CTType'], array('richText', 'simpleText'))) {
             $localizableFieldArray[] = 'body';
         }
-        
+
         return $localizableFieldArray;
     }
 }

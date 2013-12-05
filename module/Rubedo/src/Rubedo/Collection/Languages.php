@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Collection;
 
-use Rubedo\Interfaces\Collection\ILanguages, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Rubedo\Interfaces\Collection\ILanguages;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Languages
@@ -66,7 +68,7 @@ class Languages extends AbstractCollection implements ILanguages
     /**
      * Find a language given by its Locale name
      *
-     * @param string $name            
+     * @param string $name
      * @return array
      */
     public function findByLocale($name)
@@ -78,7 +80,7 @@ class Languages extends AbstractCollection implements ILanguages
         }
         return $result;
     }
-    
+
     /**
      * Find a language given by its Locale name
      *
@@ -102,46 +104,46 @@ class Languages extends AbstractCollection implements ILanguages
     /**
      * Find a language given by its ISO-639-1 code (2 letters ISO code)
      *
-     * @param string $iso            
+     * @param string $iso
      * @return array
      */
     public function findByIso($iso)
     {
         $filter = Filter::factory('Value')->setValue($iso)->setName('iso2');
         $result = $this->_dataService->findOne($filter);
-        
+
         return $result;
     }
 
     public function isActivated()
     {
-        if (! isset(self::$activated)) {
+        if (!isset(self::$activated)) {
             $filter = Filter::factory('Value')->setValue(true)->setName('active');
             $result = $this->_dataService->findOne($filter);
-            self::$activated = ! is_null($result);
+            self::$activated = !is_null($result);
         }
         return self::$activated;
     }
 
     public function isActive($locale)
     {
-        if (! isset(self::$activeLanguages[$locale])) {
+        if (!isset(self::$activeLanguages[$locale])) {
             $filters = Filter::factory();
             $filters->addFilter(Filter::factory('Value')->setValue(true)
                 ->setName('active'));
             $filters->addFilter(Filter::factory('Value')->setValue($locale)
                 ->setName('locale'));
-            
+
             $result = $this->_dataService->findOne($filters);
-            self::$activeLanguages[$locale] = ! is_null($result);
+            self::$activeLanguages[$locale] = !is_null($result);
         }
         return self::$activeLanguages[$locale];
     }
-    
+
     // todo : set this to "isDefault" when ready
     public function getDefaultLanguage()
     {
-        if (! isset(self::$defaultLanguage)) {
+        if (!isset(self::$defaultLanguage)) {
             $filter = Filter::factory('Value')->setValue(true)->setName('isDefault');
             $result = $this->_dataService->findOne($filter);
             self::$defaultLanguage = $result;
@@ -172,7 +174,7 @@ class Languages extends AbstractCollection implements ILanguages
      */
     public function getActiveLocales()
     {
-        if (! isset(self::$activeLocalesArray)) {
+        if (!isset(self::$activeLocalesArray)) {
             self::$activeLocalesArray = array();
             foreach ($this->getActiveLanguages() as $item) {
                 self::$activeLocalesArray[] = $item['locale'];
@@ -180,7 +182,7 @@ class Languages extends AbstractCollection implements ILanguages
         }
         return self::$activeLocalesArray;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::destroy()
      */
@@ -192,7 +194,7 @@ class Languages extends AbstractCollection implements ILanguages
     /**
      * Add a readOnly field to contents based on user rights
      *
-     * @param array $obj            
+     * @param array $obj
      * @return array
      */
     protected function _addReadableProperty($obj)
