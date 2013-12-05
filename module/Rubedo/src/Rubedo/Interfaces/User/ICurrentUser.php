@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -34,42 +34,42 @@ interface ICurrentUser
      *
      * @return array
      */
-    public function getCurrentUser ();
+    public function getCurrentUser();
 
     /**
      * Return the current user short info array
      *
      * @return array
      */
-    public function getCurrentUserSummary ();
+    public function getCurrentUserSummary();
 
-    /**
-     * Check if a user is authenticated
-     *
-     * @return boolean
-     */
     /**
      * Return the token of the current user
      *
      * @return string
      */
-    public function getToken ();
+    public function getToken();
 
     /**
      * Generate a token for the current user
      *
      * @return string
      */
-    public function generateToken ();
+    public function generateToken();
 
-    public function isAuthenticated ();
+    /**
+     * Check if a user is authenticated
+     *
+     * @return boolean
+     */
+    public function isAuthenticated();
 
     /**
      * return the groups of the current user.
      *
      * @return array
      */
-    public function getGroups ();
+    public function getGroups();
 
     /**
      * Change the password of the current user
@@ -79,39 +79,40 @@ interface ICurrentUser
      * @param string $newPass
      *            new password
      */
-    public function changePassword ($oldPass, $newPass);
+    public function changePassword($oldPass, $newPass);
 
     /**
      * return the main group of the current User
      *
      * @return arr
      */
-    public function getMainGroup ();
+    public function getMainGroup();
 
     /**
      * return current user "can read" workspaces
      *
      * @return array
      */
-    public function getReadWorkspaces ();
+    public function getReadWorkspaces();
 
     /**
      * return main workspace of the current user
      *
      * @return array
      */
-    public function getMainWorkspace ();
+    public function getMainWorkspace();
 
     /**
      * return current user "can write" workspaces
      *
      * @return array
      */
-    public function getWriteWorkspaces ();
+    public function getWriteWorkspaces();
 
     /**
+     * Set the flag installer User
      *
-     * @param boolean $_isInstallerUser            
+     * @param boolean $_isInstallerUser
      */
-    public static function setIsInstallerUser ($_isInstallerUser);
+    public static function setIsInstallerUser($_isInstallerUser);
 }

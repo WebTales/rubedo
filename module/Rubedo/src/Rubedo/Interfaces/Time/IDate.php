@@ -37,23 +37,23 @@ interface IDate
      * @return string timestamp format datetime (number of second since unix
      *         dawn of time)
      */
-    public function convertToTimeStamp ($dateString);
+    public function convertToTimeStamp($dateString);
 
     /**
      * Format to Y-m-d date string or timestamp
      *
-     * @param string $dateString            
-     * @return formatted date
+     * @param string $dateString
+     * @return String formatted date
      */
-    public function convertToYmd ($dateString);
+    public function convertToYmd($dateString);
 
     /**
      * Format to H:i:s date string or timestamp
      *
-     * @param string $dateString            
-     * @return formatted date
+     * @param string $dateString
+     * @return String formatted date
      */
-    public function convertToHis ($dateString);
+    public function convertToHis($dateString);
 
     /**
      * Return an array of a month (current or including given timestamp)
@@ -64,17 +64,17 @@ interface IDate
      *
      * i.e. mars 2013
      *
-     * 25	26	27	28	01	02	03
-     * 04	05	06	07	08	09	10
-     * 11	12	13	14	15	16	17
-     * 18	19	20	21	22	23	24
-     * 25	26	27	28	29	30	31
+     * 25    26    27    28    01    02    03
+     * 04    05    06    07    08    09    10
+     * 11    12    13    14    15    16    17
+     * 18    19    20    21    22    23    24
+     * 25    26    27    28    29    30    31
      *
      *
-     * @param string $timestamp            
+     * @param string $timestamp
      * @return array
      */
-    public function getMonthArray ($timestamp = null);
+    public function getMonthArray($timestamp = null);
 
     /**
      * Return the localized list of the days of the week.
@@ -82,22 +82,22 @@ interface IDate
      *
      * @return array
      */
-    public function getShortDayList ();
+    public function getShortDayList();
 
     /**
      * get a localized date with format and timestamp arguments
      *
-     * @param string $format            
-     * @param string $timestamp            
+     * @param string $format
+     * @param string $timestamp
      * @return string
      */
-    public function getLocalised ($format = null, $timestamp = null);
+    public function getLocalised($format = null, $timestamp = null);
 
     /**
      * Get a date time in local format
      *
-     * @param string $timestamp            
+     * @param string $timestamp
      * @return string
      */
-    public function getDefaultDatetime ($timestamp = null);
+    public function getDefaultDatetime($timestamp = null);
 }

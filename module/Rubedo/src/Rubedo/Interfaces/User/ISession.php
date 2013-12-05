@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -32,10 +32,10 @@ interface ISession
     /**
      * Set the session object with name and value params
      *
-     * @param string $name            
-     * @param mixed $value            
+     * @param string $name
+     * @param mixed $value
      */
-    public function set ($name, $value);
+    public function set($name, $value);
 
     /**
      * Return the session object requested by $name
@@ -46,5 +46,5 @@ interface ISession
      *            default value in case of not set parameter in session
      * @return mixed value in session
      */
-    public function get ($name, $defaultValue = null);
+    public function get($name, $defaultValue = null);
 }

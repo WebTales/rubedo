@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -34,7 +34,12 @@ interface ICurrentTime
      *
      * @return string current timestamp format datetime (number of second since unix dawn of time)
      */
-    public function getCurrentTime ();
+    public function getCurrentTime();
 
-    public function setSimulatedTime ($time);
+    /**
+     * Set the simulated time
+     *
+     * @param int $time
+     */
+    public function setSimulatedTime($time);
 }

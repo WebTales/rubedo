@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -34,21 +34,21 @@ interface IAcl
      *            resource name
      * @return boolean
      */
-    public function hasAccess ($resource);
+    public function hasAccess($resource);
 
     /**
      * For a given list of ressource, build an array of authorized ressources
-     * 
+     *
      * @param array $ressourceArray
      *            array of ressources
      * @return array the array of boolean with ressource as key name
      */
-    public function accessList (array $ressourceArray);
+    public function accessList(array $ressourceArray);
 
     /**
      * List availaible roles for groups configuration
-     * 
+     *
      * @return array
      */
-    public function getAvailaibleRoles ();
+    public function getAvailaibleRoles();
 }
