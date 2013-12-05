@@ -164,7 +164,21 @@ class MailingList extends AbstractCollection implements IMailingList
      */
     public function unSubscribe($mailingListId, $email)
     {
-        return true;
+        $mailingList = $this->findById($mailingListId);
+        if ($mailingList === null) {
+            throw new \Rubedo\Exceptions\User('Invalid newsletter id', "Exception43");
+        }
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $user = Manager::getService("Users")->findByEmail($email);
+        AbstractCollection::disableUserFilter($wasFiltered);
+        $user["mailingLists"][$mailingList["id"]]['status']=false;
+        $updateResult=Manager::getService("Users")->update($user);
+        if ($updateResult["success"]) {
+            $response = true;
+        } else {
+            throw new \Rubedo\Exceptions\User("Failed to update user", "Exception44");
+        }
+        return($response);
     }
 
     public function getNewMessage($mailingListId)
