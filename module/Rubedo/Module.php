@@ -178,11 +178,14 @@ class Module
             'logCollectionEvent'
         ), 1);
 
-        //@todo: fix issue with login
-//        $eventManager->attach(WorkflowAbstractCollection::POST_PUBLISH_COLLECTION, array(
-//           Manager::getService('Contents'),
-//            'indexPublishEvent'
-//        ));
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $contentsService = Manager::getService('Contents');
+        AbstractCollection::disableUserFilter($wasFiltered);
+
+        $eventManager->attach(WorkflowAbstractCollection::POST_PUBLISH_COLLECTION, array(
+            $contentsService,
+            'indexPublishEvent'
+        ));
 
         // log authentication attemps
         $eventManager->attach(array(
