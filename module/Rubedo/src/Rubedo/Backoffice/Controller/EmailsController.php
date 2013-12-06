@@ -39,4 +39,11 @@ class EmailsController extends DataAccessController
         // init the data access service
         $this->_dataService = Manager::getService('Emails');
     }
+
+    public function previewAction()
+    {
+        $row = Manager::getService('Emails')->findById($this->getRequest()->getQuery('id'));
+
+        return $this->getResponse()->setContent(Manager::getService('Newsletter')->htmlConstructor($row['text'], $row["bodyProperties"], $row["rows"], false)) ;
+    }
 }

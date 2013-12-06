@@ -1,0 +1,37 @@
+<HTML xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>{{ title }}</TITLE>
+</HEAD>
+<BODY>
+{% if properties.centered %}
+    <table width="100%" border="0" cellSpacing="0" cellPadding="0"><tr><td align="center">
+{% endif %}
+<table border=0 cellSpacing=0 cellPadding=0 {% if properties.bodyWidth is not empty %} width="{{ properties.bodyWidth }}px"{% endif %}
+        {% if properties.style is not empty %}style="{{ properties.style }}"{% endif %}>
+    {% for row in rows %}
+        <tr>
+            <td>
+                <table border=0 cellSpacing=0 cellPadding=0{% if row.config.styles is not empty %} style="{{ row.config.styles }}"{% endif %}>
+                    <tr>
+                    {% for col in row.cols %}
+                        <td{% if col.width is not null and col.width > 0 %} width="{{ col.width }}"{% endif %}
+                                {% if col.config.styles is not empty %} style="{{ col.config.styles }}"{% endif %}>
+                            {% for component in col.components %}
+                                {% if component.type == 'imageComponent' %}
+                                    <img src="{{ component.config.image }}" />
+                                {% elseif component.type == 'textComponent' %}
+                                    {{ component.config.html|raw }}
+                                {% else %}
+                                    <!--type exception-->
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if properties.centered %}
+    </td></tr></table>
+{% endif %}
+</BODY></HTML>
