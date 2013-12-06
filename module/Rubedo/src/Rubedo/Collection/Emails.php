@@ -161,7 +161,7 @@ class Emails extends AbstractCollection implements IEmails
 
     public function setMessageTXT($txt)
     {
-        //@todo : alternative text
+        $this->swiftMessage->addPart($txt, 'text/plain');
         return $this;
     }
 
@@ -170,9 +170,19 @@ class Emails extends AbstractCollection implements IEmails
         $this->swiftMessage->setTo($to);
     }
 
-    public function setFrom(array $from = array())
+    public function setFrom(array $list)
     {
-
+        $from = array();
+        if (!empty($list['fromAddress']) && !empty($list['fromName'])) {
+            $from[$list['fromAddress']] = $list['fromName'];
+        } elseif (!empty($list['fromAddress'])) {
+            $from[] = $list['fromAddress'];
+        } else {
+            $config = Manager::getService('config');
+            $rubedoMail = $config['rubedo_config']['fromEmailNotification'];
+            $from[$rubedoMail] = 'Rubedo';
+        }
+        $this->swiftMessage->setFrom($from);
     }
 
 

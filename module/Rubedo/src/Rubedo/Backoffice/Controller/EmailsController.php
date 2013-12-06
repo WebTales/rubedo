@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Controller providing CRUD API for the emails JSON
@@ -42,8 +43,33 @@ class EmailsController extends DataAccessController
 
     public function previewAction()
     {
-        $row =$this->_dataService->findById($this->getRequest()->getQuery('id'));
+        $mail =$this->_dataService->findById($this->getRequest()->getQuery('id'));
 
-        return $this->getResponse()->setContent($this->_dataService->htmlConstructor($row['text'], $row["bodyProperties"], $row["rows"], false)) ;
+        return $this->getResponse()->setContent($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], false)) ;
+    }
+
+    public function sendAction()
+    {
+        $mail = $this->_dataService->findById($this->getRequest()->getQuery('id'));
+        $list = Manager::getService('MailingList')->findById($this->getRequest()->getQuery('list'));
+
+        $this->_dataService->setSubject($mail['text']);
+        $this->_dataService->setMessageHTML($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"]));
+        $this->_dataService->setFrom($list);
+
+        $filters =  Filter::factory()
+            ->addFilter(Filter::factory('Value')
+                ->setName('mailingLists.' . $list['id'] . '.status')
+                ->setValue(true));
+        $users = Manager::getService('Users')->getList($filters);
+
+        $to = array();
+        //@todo : refactor
+        foreach ($users['data'] as $user) {
+            $to[$user['email']] = ($user['name'])?:$user['login'];
+        }
+        $this->_dataService->setTo($to);
+        $this->_dataService->send();
+        exit();
     }
 }

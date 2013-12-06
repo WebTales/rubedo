@@ -16,7 +16,7 @@
                                 {% if col.config.styles is not empty %} style="{{ col.config.styles }}"{% endif %}>
                             {% for component in col.components %}
                                 {% if component.type == 'imageComponent' %}
-                                    <img src="{{ component.config.image }}" />
+                                    <img src="{{ component.config.image }}"{% if col.width is not null and col.width > 0 %} width="{{ col.width }}"{% endif %} />
                                 {% elseif component.type == 'textComponent' %}
                                     {{ component.config.html|raw }}
                                 {% else %}
