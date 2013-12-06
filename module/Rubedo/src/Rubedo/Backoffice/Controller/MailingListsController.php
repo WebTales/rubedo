@@ -17,6 +17,9 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
+use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the mailing lists JSON
@@ -40,18 +43,43 @@ class MailingListsController extends DataAccessController
         $this->_dataService = Manager::getService('MailingList');
     }
 
-    public function subscribeUserAction(){
-        $userId=$this->params()->fromPost("userId",null);
+    public function subscribeUsersAction(){
+        $userEmailArray=$this->params()->fromPost("userEmailArray","[ ]");
+        $userEmailArray=Json::decode($userEmailArray, Json::TYPE_ARRAY);
         $mlId=$this->params()->fromPost("mlId",null);
-        $result=$this->_dataService->subscribe($mlId,$userId);
+        $result=array();
+        $result['success']=true;
+        foreach ($userEmailArray as $userEmail){
+            $resultInter=$this->_dataService->subscribe($mlId,$userEmail);
+            $result['success']==$result['success']&&$resultInter['success'];
+        }
         return $this->_returnJson($result);
     }
 
-    public function unsubscribeUserAction(){
-        $userId=$this->params()->fromPost("userId",null);
+    public function unsubscribeUsersAction(){
+        $userEmailArray=$this->params()->fromPost("userEmailArray","[ ]");
+        $userEmailArray=Json::decode($userEmailArray, Json::TYPE_ARRAY);
         $mlId=$this->params()->fromPost("mlId",null);
         $result=array();
-        $result['success']=$this->_dataService->unSubscribe($mlId,$userId);
+        $result['success']=true;
+        foreach ($userEmailArray as $userEmail){
+            $resultInter=$this->_dataService->unSubscribe($mlId,$userEmail);
+            $result['success']==$result['success']&&$resultInter;
+        }
         return $this->_returnJson($result);
+    }
+
+    public function getUsersAction(){
+        $usersService = Manager::getService('Users');
+        $params = $this->params()->fromQuery();
+        $sortJson =$this->params()->fromQuery("sort",null);
+        if (isset($sortJson)) {
+            $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
+        } else {
+            $sort = null;
+        }
+        $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(true));
+        $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
+        return $this->_returnJson($results);
     }
 }
