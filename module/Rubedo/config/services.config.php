@@ -49,7 +49,6 @@ return array(
     'Localisation' => 'Rubedo\\Collection\\Localisation',
     'Mailer' => 'Rubedo\\Mail\\Mailer',
     'MailingList' => 'Rubedo\\Collection\\MailingList',
-    'Newsletter' => 'Rubedo\\Mail\\Newsletter',
     'Masks' => 'Rubedo\\Collection\\Masks',
     'MongoDataAccess' => 'Rubedo\\Mongo\\DataAccess',
     'MongoFileAccess' => 'Rubedo\\Mongo\\FileAccess',
