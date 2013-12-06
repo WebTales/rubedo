@@ -29,21 +29,22 @@ class Context
 
     /**
      * Set to true if a request expects JSON without isXmlHttpRequest
-     * 
+     *
      * @var bool
      */
     protected static $expectJson = false;
 
     /**
      * Do we preview draft contents
-     * 
+     *
      * @var bool
      */
     protected static $isDraft = false;
 
     /**
+     * Get the expectJson
      *
-     * @return the $expectJson
+     * @return boolean $expectJson
      */
     public static function getExpectJson()
     {
@@ -51,8 +52,9 @@ class Context
     }
 
     /**
+     * Set the expectJson
      *
-     * @param boolean $expectJson            
+     * @param boolean $expectJson
      */
     public static function setExpectJson($expectJson = true)
     {
@@ -81,7 +83,7 @@ class Context
 
     /**
      *
-     * @param boolean $isDraft            
+     * @param boolean $isDraft
      */
     public static function setIsDraft($isDraft = true)
     {

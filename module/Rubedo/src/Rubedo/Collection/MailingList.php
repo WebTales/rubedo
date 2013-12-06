@@ -43,6 +43,7 @@ class MailingList extends AbstractCollection implements IMailingList
      * @param string $email
      * @param boolean $doNotDuplicate
      *
+     * @throws \Rubedo\Exceptions\User
      * @return array
      *
      * @see \Rubedo\Interfaces\Collection\IMailingList::subscribe()
