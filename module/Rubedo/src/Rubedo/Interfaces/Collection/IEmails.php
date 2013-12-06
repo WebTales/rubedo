@@ -26,4 +26,15 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface IEmails extends IAbstractCollection
 {
+    /**
+     * Build the html from body properties and rows
+     *
+     * @param string $title
+     * @param array $bodyProperties
+     * @param array $rows
+     * @param bool $cid transform image in cid or link ?
+     *
+     * @return String html
+     */
+    public function htmlConstructor($title, array $bodyProperties, array $rows, $cid = true);
 }
