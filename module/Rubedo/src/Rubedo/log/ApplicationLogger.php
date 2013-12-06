@@ -14,14 +14,14 @@
 namespace Rubedo\Log;
 
 use Monolog\Handler\MongoDBHandler;
+use Monolog\Handler\NullHandler;
 use Monolog\Logger as monologger;
-use Rubedo\Services\Manager;
-use Rubedo\Mongo\DataAccess;
-use Zend\EventManager\EventInterface;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
+use Rubedo\Mongo\DataAccess;
+use Rubedo\Services\Manager;
 use Rubedo\User\Authentication;
-use Monolog\Handler\NullHandler;
+use Zend\EventManager\EventInterface;
 
 /**
  * Logger Service for security Issues
@@ -35,40 +35,52 @@ use Monolog\Handler\NullHandler;
 class ApplicationLogger extends Logger
 {
 
+    /**
+     * The log name
+     *
+     * @var string
+     */
     protected static $logName = 'rubedo';
 
+    /**
+     * The log collection
+     *
+     * @var string
+     */
     protected static $logCollection = 'ApplicationLog';
 
+    /**
+     * Construct this object
+     */
     public function __construct()
     {
         $this->logger = new monologger(static::$logName);
         //ensure that if no logger is set, nothing is logged !
         $this->logger->pushHandler(new NullHandler());
-        
-        $config = $this->getConfig();
+
         $level = monologger::INFO;
-        try{
+        try {
             $mongoClient = Manager::getService('MongoDataAccess')->getAdapter(DataAccess::getDefaultMongo());
             $handler = new MongoDBHandler($mongoClient, DataAccess::getDefaultDb(), static::$logCollection, $level);
             $this->logger->pushHandler($handler);
-        }catch(\MongoConnectionException $e){
-            
+        } catch (\MongoConnectionException $e) {
+
         }
-        
+
     }
 
     /**
      * listener to log writing on collections
      *
-     * @param EventInterface $e            
+     * @param EventInterface $e
      */
     public function logCollectionEvent(EventInterface $e)
     {
         $params = $e->getParams();
-        
+
         $collection = $e->getTarget()->getCollectionName();
         $userSummary = Manager::getService('CurrentUser')->getCurrentUserSummary();
-        if (! $userSummary['fullName']) {
+        if (!$userSummary['fullName']) {
             // do not log anonymous writing
             return;
         }
@@ -95,43 +107,45 @@ class ApplicationLogger extends Logger
             'user' => $userSummary,
             'event' => $e->getName()
         );
-        if (isset($params['data'])){
-            $context['data']=$params['data'];
+        if (isset($params['data'])) {
+            $context['data'] = $params['data'];
         }
         $this->info($action . ' on ' . $collection . ' by ' . $userSummary['fullName'], $context);
     }
 
+    /**
+     * Listener to log when authentification is trigger.
+     *
+     * @param EventInterface $e
+     */
     public function logAuthenticationEvent(EventInterface $e)
     {
         $serverParams = Manager::getService('Application')->getRequest()->getServer();
         $context = array(
             'remote_ip' => $serverParams->get('X-Forwarded-For', $serverParams->get('REMOTE_ADDR')),
             'uri' => Manager::getService('Application')->getRequest()
-                ->getUri()
-                ->toString(),
-            'type'=> 'authentication',
-            'event' => $e->getName(),            
+                    ->getUri()
+                    ->toString(),
+            'type' => 'authentication',
+            'event' => $e->getName(),
         );
-        
-        $userSummary = Manager::getService('CurrentUser')->getCurrentUserSummary();
-        
+
         switch ($e->getName()) {
             case Authentication::FAIL:
                 $message = 'Failed authentication';
                 $params = $e->getParams();
                 $login = $params['login'];
                 $level = \Monolog\Logger::WARNING;
-                $context['error']=$params['error'];
+                $context['error'] = $params['error'];
                 break;
             case Authentication::SUCCESS:
                 $message = 'Successful authentication';
-                $action = 'Update';
                 $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
                 $login = $currentUser['login'];
                 $level = \Monolog\Logger::INFO;
                 break;
         }
         $context['login'] = $login;
-        $this->addRecord($level,$message, $context);
+        $this->addRecord($level, $message, $context);
     }
 }

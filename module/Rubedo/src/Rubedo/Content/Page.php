@@ -51,10 +51,25 @@ class Page implements IPage
      */
     protected static $_title = '';
 
+    /**
+     * Description
+     *
+     * @var string
+     */
     protected static $_description = '';
 
+    /**
+     * Keywords
+     *
+     * @var array
+     */
     protected static $_keywords = array();
 
+    /**
+     * The current page
+     *
+     * @var string
+     */
     protected static $_currentPage = null;
 
     /**
@@ -70,21 +85,26 @@ class Page implements IPage
      * @var string
      */
     protected static $_currentSite = '';
-    
+
+    /**
+     * Lifetime max
+     *
+     * @var int
+     */
     protected static $maxLifeTime = 86400;
 
     /**
      * append a css file to the file list
-     * 
+     *
      * @param string $cssFile
      *            URL of the CSS added
      */
-    public function appendCss ($cssFile)
+    public function appendCss($cssFile)
     {
-        if(strpos($cssFile,'http')!==0){
+        if (strpos($cssFile, 'http') !== 0) {
             $cssFile = Manager::getService('Url')->staticUrl($cssFile);
         }
-        if (! in_array($cssFile, self::$_css)) {
+        if (!in_array($cssFile, self::$_css)) {
             self::$_css[] = $cssFile;
         }
     }
@@ -92,34 +112,34 @@ class Page implements IPage
     /**
      * clear the included css files list
      */
-    public function clearCss ()
+    public function clearCss()
     {
         self::$_css = array();
     }
 
     /**
      * Return the list of css files
-     * 
+     *
      * @return array list of URL
      */
-    public function getCss ()
+    public function getCss()
     {
         return self::$_css;
     }
 
     /**
      * append a js file to the file list
-     * 
+     *
      * @param string $jsFile
      *            URL of the js added
      */
-    public function appendJs ($jsFile)
+    public function appendJs($jsFile)
     {
-        if(strpos($jsFile,'http')!==0){
+        if (strpos($jsFile, 'http') !== 0) {
             $jsFile = Manager::getService('Url')->staticUrl($jsFile);
         }
-        
-        if (! in_array($jsFile, self::$_js)) {
+
+        if (!in_array($jsFile, self::$_js)) {
             self::$_js[] = $jsFile;
         }
     }
@@ -127,17 +147,17 @@ class Page implements IPage
     /**
      * clear the included js files list
      */
-    public function clearJs ()
+    public function clearJs()
     {
         self::$_js = array();
     }
 
     /**
      * Return the list of js files
-     * 
+     *
      * @return array list of URL
      */
-    public function getJs ()
+    public function getJs()
     {
         return self::$_js;
     }
@@ -148,7 +168,7 @@ class Page implements IPage
      * @param string $pageTitle
      *            page title
      */
-    public function setPageTitle ($pageTitle)
+    public function setPageTitle($pageTitle)
     {
         self::$_title = $pageTitle;
     }
@@ -158,7 +178,7 @@ class Page implements IPage
      *
      * @return string page title
      */
-    public function getPageTitle ()
+    public function getPageTitle()
     {
         return self::$_title;
     }
@@ -168,7 +188,7 @@ class Page implements IPage
      *
      * @return string current site
      */
-    public function getCurrentSite ()
+    public function getCurrentSite()
     {
         return self::$_currentSite;
     }
@@ -179,99 +199,109 @@ class Page implements IPage
      * @param string $siteId
      *            current site
      */
-    public function setCurrentSite ($siteId)
+    public function setCurrentSite($siteId)
     {
         self::$_currentSite = $siteId;
     }
 
     /**
+     * Get description
      *
      * @return the $_description
      */
-    public function getDescription ()
+    public function getDescription()
     {
         return Page::$_description;
     }
 
     /**
+     * Get keywords
      *
      * @return the $_keywords
      */
-    public function getKeywords ()
+    public function getKeywords()
     {
         return Page::$_keywords;
     }
 
     /**
+     * Set the description
      *
-     * @param string $_description            
+     * @param string $_description
+     * @return void
      */
-    public function setDescription ($_description)
+    public function setDescription($_description)
     {
         Page::$_description = $_description;
     }
 
     /**
+     * Set keywords
      *
-     * @param multitype: $_keywords            
+     * @param multitype : $_keywords
+     * @return void
      */
-    public function setKeywords ($_keywords)
+    public function setKeywords($_keywords)
     {
         Page::$_keywords = $_keywords;
     }
 
     /**
+     * get the current page
      *
-     * @return the $_currentPage
+     * @return String $_currentPage
      */
-    public static function getCurrentPage ()
+    public static function getCurrentPage()
     {
         return Page::$_currentPage;
     }
 
     /**
+     * Set the current page
      *
-     * @param field_type $_currentPage            
+     * @param String $_currentPage
+     * @return void
      */
-    public static function setCurrentPage ($_currentPage)
+    public static function setCurrentPage($_currentPage)
     {
         Page::$_currentPage = $_currentPage;
     }
 
     /**
-     *
-     * @return the $_author
+     * Return the author
+     * @return mixed|string $_author
      */
-    public static function getAuthor ()
+    public static function getAuthor()
     {
         return Page::$_author;
     }
 
     /**
+     * Set the author
      *
-     * @param string $_author            
+     * @param string $_author
+     * @return mixed|void
      */
-    public static function setAuthor ($_author)
+    public static function setAuthor($_author)
     {
         Page::$_author = $_author;
     }
-    
-	/**
-     * @return the $maxLifeTime
+
+    /**
+     * @return int $maxLifeTime
      */
-    public static function getMaxLifeTime ()
+    public static function getMaxLifeTime()
     {
         return Page::$maxLifeTime;
     }
 
-	/**
-     * @param field_type $maxLifeTime
+    /**
+     * @param int $maxLifeTime
      */
-    public static function setMaxLifeTime ($maxLifeTime)
+    public static function setMaxLifeTime($maxLifeTime)
     {
         Page::$maxLifeTime = $maxLifeTime;
     }
 
-    
-    
+
 }

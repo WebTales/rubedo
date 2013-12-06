@@ -14,7 +14,6 @@
 namespace Rubedo\Log;
 
 
-
 /**
  * Logger Service for security Issues
  *
