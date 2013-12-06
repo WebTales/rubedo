@@ -18,6 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the emails JSON
@@ -53,8 +54,11 @@ class EmailsController extends DataAccessController
         $mail = $this->_dataService->findById($this->getRequest()->getQuery('id'));
         $list = Manager::getService('MailingList')->findById($this->getRequest()->getQuery('list'));
 
-        $this->_dataService->setSubject($mail['text']);
+        $this->_dataService->setSubject(!empty($mail['subject']) ? $mail['subject'] : $mail['text']);
         $this->_dataService->setMessageHTML($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"]));
+        if (!empty($mail['plainText'])) {
+            $this->_dataService->setMessageTXT($mail['plainText']);
+        }
         $this->_dataService->setFrom($list);
 
         $filters =  Filter::factory()
@@ -69,7 +73,6 @@ class EmailsController extends DataAccessController
             $to[$user['email']] = ($user['name'])?:$user['login'];
         }
         $this->_dataService->setTo($to);
-        $this->_dataService->send();
-        exit();
+        return new JsonModel(array('success' => $this->_dataService->send() > 0 ? true : false));
     }
 }
