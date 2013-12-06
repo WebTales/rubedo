@@ -51,8 +51,8 @@ class EmailsController extends DataAccessController
 
     public function sendAction()
     {
-        $mail = $this->_dataService->findById($this->getRequest()->getQuery('id'));
-        $list = Manager::getService('MailingList')->findById($this->getRequest()->getQuery('list'));
+        $mail = $this->_dataService->findById($this->params()->fromPost('id'));
+        $list = Manager::getService('MailingList')->findById($this->params()->fromPost('list'));
 
         $this->_dataService->setSubject(!empty($mail['subject']) ? $mail['subject'] : $mail['text']);
         $this->_dataService->setMessageHTML($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"]));
