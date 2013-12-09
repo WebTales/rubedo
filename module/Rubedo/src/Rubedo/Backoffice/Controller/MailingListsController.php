@@ -82,6 +82,7 @@ class MailingListsController extends DataAccessController
         $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
         return $this->_returnJson($results);
     }
+    
     public function exportUsersAction(){
         $usersService = Manager::getService('Users');
         $fileName = 'export_csv_' . date('Ymd') . '.csv';
@@ -91,13 +92,13 @@ class MailingListsController extends DataAccessController
         $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(true));
         $list=$usersService->getList($filters);
         $fieldsArray = array(
-            "name",
             "email",
+            "name",
             "subscription"
         );
         $headerArray = array(
-            "name"=>"Name",
             "email"=>"Email",
+            "name"=>"Name",
             "subscription"=>"Date of subscription"
         );
         $csvLine = array();
