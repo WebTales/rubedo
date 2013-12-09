@@ -17,6 +17,12 @@
                                 "name":"profilePage"
                             }
                         },{
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"Redirect page",
+                                "name":"redirectPage"
+                            }
+                        },{
                             "type":"Ext.form.field.ComboBox",
                             "isAutoStored":true,
                             "autoStoreData":[
