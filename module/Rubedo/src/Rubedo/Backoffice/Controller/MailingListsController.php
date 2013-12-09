@@ -18,6 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\View\Model\JsonModel;
 use Zend\Debug\Debug;
 use Zend\Json\Json;
 
@@ -134,6 +135,44 @@ class MailingListsController extends DataAccessController
         
         $response->setContent(utf8_decode($content));
         return $response;
+    }
+    
+    public function importUsersAction(){
+        $mlId=$this->params()->fromPost("id",null);
+        $returnArray = array();
+        $fileInfos = $this->params()->fromFiles('csvFile');
+        if (! isset($fileInfos)) {
+            $returnArray['success'] = false;
+            $returnArray['message'] = "Pas de fichier reçu.";
+            $this->getResponse()->setStatusCode(500);
+            return new JsonModel($returnArray);
+        }
+        $mimeType = mime_content_type($fileInfos['tmp_name']);
+        $contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
+        if (($contentType != "text/plain") && ($contentType!= "text/csv")) {
+            $returnArray['success'] = false;
+            $returnArray['message'] = "Le fichier doit doit être au format CSV.";
+            $this->getResponse()->setStatusCode(500);
+            return new JsonModel($returnArray);
+        }
+        $recievedFile = fopen($fileInfos['tmp_name'], 'r');
+        // Read the first line to start at the second line
+        fgetcsv($recievedFile, 1000000, ';', '"', '\\');
+        $lineCounter = 0;
+        $success=true;
+        while (($currentLine = fgetcsv($recievedFile, 1000000, ';', '"', '\\')) !== false) {
+            if (isset($currentLine[1])){
+                $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0], true, $currentLine[1]);
+            } else {
+                $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0]);
+            }
+            $success==$success&&$resultInter['success'];
+            $lineCounter=$lineCounter+1;
+        }
+        fclose($recievedFile);
+        $returnArray['importedContentsCount'] = $lineCounter;
+        $returnArray['success'] = $success;
+        return new JsonModel($returnArray);
     }
     
 }

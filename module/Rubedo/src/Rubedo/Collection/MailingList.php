@@ -48,7 +48,7 @@ class MailingList extends AbstractCollection implements IMailingList
      *
      * @see \Rubedo\Interfaces\Collection\IMailingList::subscribe()
      */
-    public function subscribe($mailingListId, $email, $doNotDuplicate = true)
+    public function subscribe($mailingListId, $email, $doNotDuplicate = true, $userName = null)
     {
         // Get mailing list
         $mailingList = $this->findById($mailingListId);
@@ -118,13 +118,17 @@ class MailingList extends AbstractCollection implements IMailingList
             $filters->addFilter(Filter::factory('Value')->setName('UTType')
                 ->setValue("email"));
             $emailUserType = Manager::getService("UserTypes")->findOne($filters);
+            $newName=$email;
+            if (($userName)&&(!empty($userName))){
+                $newName=$userName;
+            }
             $user = array(
                 "login" => $email,
                 "typeId" => $emailUserType['id'],
                 "fields" => array(),
                 "taxonomy" => array(),
                 "email" => $email,
-                "name" => $email,
+                "name" => $newName,
                 "workspace" => $mailingList["workspaces"],
                 "mailingListHash" => $hash,
                 "mailingLists" => array(
