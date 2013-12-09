@@ -82,4 +82,57 @@ class MailingListsController extends DataAccessController
         $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
         return $this->_returnJson($results);
     }
+    public function exportUsersAction(){
+        $usersService = Manager::getService('Users');
+        $fileName = 'export_csv_' . date('Ymd') . '.csv';
+        $filePath = sys_get_temp_dir() . '/' . $fileName;
+        $csvResource = fopen($filePath, 'w+');
+        $params = $this->params()->fromQuery();
+        $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(true));
+        $list=$usersService->getList($filters);
+        $fieldsArray = array(
+            "name",
+            "email",
+            "subscription"
+        );
+        $headerArray = array(
+            "name"=>"Name",
+            "email"=>"Email",
+            "subscription"=>"Date of subscription"
+        );
+        $csvLine = array();
+        
+        foreach ($fieldsArray as $field) {
+            $csvLine[] = $headerArray[$field];
+        }
+        fputcsv($csvResource, $csvLine, ';');
+        
+        foreach ($list['data'] as $client) {
+            $csvLine = array();
+        
+            foreach ($fieldsArray as $field) {
+                switch ($field) {
+                    case 'subscription':
+                        $csvLine[] = date('d-m-Y H:i:s', $client["mailingLists"][$params['id']]["date"]);
+                        break;
+                    default:
+                        $csvLine[] = isset($client[$field]) ? $client[$field] : 'null';
+                        break;
+                }
+            }
+            fputcsv($csvResource, $csvLine, ';');
+        }
+        
+        $content = file_get_contents($filePath);
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'text/csv');
+        $headers->addHeaderLine('Content-Disposition', "attachment; filename=\"$fileName\"");
+        $headers->addHeaderLine('Accept-Ranges', 'bytes');
+        $headers->addHeaderLine('Content-Length', strlen($content));
+        
+        $response->setContent(utf8_decode($content));
+        return $response;
+    }
+    
 }

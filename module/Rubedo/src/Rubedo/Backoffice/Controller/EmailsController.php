@@ -55,7 +55,7 @@ class EmailsController extends DataAccessController
         $list = Manager::getService('MailingList')->findById($this->params()->fromPost('list'));
 
         $this->_dataService->setSubject(!empty($mail['subject']) ? $mail['subject'] : $mail['text']);
-        $this->_dataService->setMessageHTML($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"]));
+        $this->_dataService->setMessageHTML($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], true));
         if (!empty($mail['plainText'])) {
             $this->_dataService->setMessageTXT($mail['plainText']);
         }
