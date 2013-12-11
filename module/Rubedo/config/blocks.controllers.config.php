@@ -51,5 +51,6 @@ return array(
     'Rubedo\\Blocks\\Controller\\Video' => 'Rubedo\\Blocks\\Controller\\VideoController',
     'Rubedo\\Blocks\\Controller\\Directory' => 'Rubedo\\Blocks\\Controller\\DirectoryController',
     'Rubedo\\Blocks\\Controller\\SignUp' => 'Rubedo\\Blocks\\Controller\\SignUpController',
-    'Rubedo\\Blocks\\Controller\\UserProfile' => 'Rubedo\\Blocks\\Controller\\UserProfileController'
+    'Rubedo\\Blocks\\Controller\\UserProfile' => 'Rubedo\\Blocks\\Controller\\UserProfileController',
+    'Rubedo\\Blocks\\Controller\\Unsubscribe' => 'Rubedo\\Blocks\\Controller\\UnsubscribeController'
 );

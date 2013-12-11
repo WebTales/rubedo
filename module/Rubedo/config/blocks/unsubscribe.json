@@ -1,0 +1,23 @@
+{
+	"type":"Unsubscribe",
+	"description":"",
+	"configBasique":{
+		"title":"Unsubscribe",
+		"bType":"unsubscribe",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+				
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"#ext-gen1150#",
+	"bType":"unsubscribe",
+	"id":"506441f8c64804d514696997"
+}
