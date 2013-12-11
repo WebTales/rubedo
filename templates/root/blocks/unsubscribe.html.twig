@@ -1,0 +1,13 @@
+{% extends "@Root/block.html.twig" %}
+
+{% block mainContent %}
+    <div class="block newsletter">
+                <form method="post" class="form-inline">
+                        <div class="input-append">
+                            <input id="unsubscribeEmail" class="input-medium" type="email" name="email" placeholder="{{ "Label.Email" | fotrans }}" required/>
+                            <input class="btn btn-primary" type="submit" value="Se désinscrire" />
+                        </div>
+                </form>
+         
+        </div>
+{% endblock %}

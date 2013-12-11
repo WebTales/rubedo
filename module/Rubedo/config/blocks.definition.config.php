@@ -32,6 +32,11 @@ return array(
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/advancedSearchForm.json'
     ),
+    'unsubscribe' => array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\Unsubscribe',
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/unsubscribe.json'
+    ),
     'audio' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Audio',
         'maxlifeTime' => 86400,
