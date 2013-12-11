@@ -14,7 +14,8 @@
 							"type":"Rubedo.view.MailingListPickerField",
 							"config":{
 								"fieldLabel":"#ext-gen1155#",
-								"name":"mailingListId"
+								"name":"mailingListId",
+								"multiSelect":true
 							}
 						}
 					]

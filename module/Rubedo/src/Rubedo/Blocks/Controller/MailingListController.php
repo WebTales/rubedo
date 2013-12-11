@@ -18,6 +18,8 @@ namespace Rubedo\Blocks\Controller;
 
 use \Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
+use Zend\Debug\Debug;
+use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the MailingList JSON
@@ -38,12 +40,24 @@ class MailingListController extends AbstractController
     public function indexAction ()
     {
         $blockConfig = $this->params()->fromQuery('block-config');
-        
+        $mailingListService = Manager::getService("MailingList");
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
         
         $output = $this->params()->fromQuery();
         $output['blockConfig'] = $blockConfig;
+        $mailingListArray=array();
+        foreach ($blockConfig['mailingListId'] as $value){
+            $myList=$mailingListService->findById($value);
+            if ($myList){
+                $mailingListArray[]=array(
+                    "label"=>$myList['name'],
+                    "value"=>$value
+                );
+            }
+        }
         
+        
+        $output['mailingListArray']=$mailingListArray;
         $css = array();
         $js = array(
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/mailingList.js")
@@ -60,8 +74,9 @@ class MailingListController extends AbstractController
     public function xhrAddEmailAction ()
     {
         // Default mailing list
-        $mailingListId = $this->params()->fromPost("mailing-list-id");
-        if (! $mailingListId) {
+        $mailingListIdArray = $this->params()->fromPost("mailing-list-id", "[ ]");
+        $mailingListIdArray = Json::decode( $mailingListIdArray, Json::TYPE_ARRAY);
+        if (empty($mailingListIdArray)) {
             throw new \Rubedo\Exceptions\User("No newsletter associeted to this form.", "Exception18");
         }
         
@@ -77,8 +92,15 @@ class MailingListController extends AbstractController
         // Validate email
         if ($emailValidator->isValid($email)) {
             // Register user
-            $suscribeResult = $mailingListService->subscribe($mailingListId, $email);
-            return new JsonModel($suscribeResult);
+            $response = array(
+                "success" => true,
+                "msg" => "Inscription réussie"
+            );
+            foreach ($mailingListIdArray as $mailingListId){
+                $suscribeResult = $mailingListService->subscribe($mailingListId, $email, false);
+                $response['success']=$response['success']&&$suscribeResult['success'];
+            }
+            return new JsonModel($response);
         } else {
             return new JsonModel(array(
                 "success" => false,

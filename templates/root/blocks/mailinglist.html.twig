@@ -1,16 +1,40 @@
-{% extends "@Root/block.html.twig" %}
-
-{% block mainContent %}
-    <div class="block newsletter">
-		<form class="form-inline">
-			<div class="input-append">
-    			<input id="email" class="input-medium" type="text" placeholder="{{ "Label.Email" | fotrans }}"/>
-    			<input class="btn btn-primary" type="button" value="{{ "Label.Subscribe" | fotrans }}" onclick="addEmail(jQuery('#email').val(), '{{ blockConfig.mailingListId }}');"/>
+{% extends "@Root/block.html.twig" %} {% block mainContent %}
+<div class="block newsletter">
+	<form method="post" class="form-horizontal" id="mailingListForm">
+		<div class="control-group">
+			<label class="control-label">{{ "Label.Email" | fotrans }} *</label>
+			<div class="controls">
+				<input type="email" name="email" id="mailingListEmail" required>
 			</div>
-		</form>
-		
-		<div class="alert hidden" id="mailingListAlert">
-			<span id="mailinglist-message"></span>
 		</div>
+		<div class="control-group">
+		<label class="control-label">Listes de diffusion</label>
+			<div class="controls">
+			{% for mailinglist in mailingListArray %}
+    			<label class="checkbox">
+                    <input type="checkbox" class="mailingListCheck" name="{{ mailinglist.value }}" >
+                    {{ mailinglist.label }}
+                </label>
+		    {% endfor %}
+			</div>
+		</div>
+		<div class="form-actions">
+            <input class="btn btn-primary" type="button" value="{{ "Label.Subscribe" | fotrans }}" onclick="addEmail();"/>
+        </div>
+		
+	</form>
+
+
+
+	{# <form class="form-inline">#} {# <div class="input-append">#} {#
+	<input id="email" class="input-medium" type="text" placeholder="{{
+	"Label.Email" | fotrans }}"/>#} {# <input class="btn btn-primary"
+	type="button" value="{{ "Label.Subscribe" | fotrans }}"
+	onclick="addEmail(jQuery('#email').val(), '{{ blockConfig.mailingListId
+	}}');"/>#} {# </div>#} {# </form>#}
+
+	<div class="alert hidden" id="mailingListAlert">
+		<span id="mailinglist-message"></span>
 	</div>
+</div>
 {% endblock %}
