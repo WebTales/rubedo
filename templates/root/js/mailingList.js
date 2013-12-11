@@ -1,9 +1,23 @@
-function addEmail(email, mailingListId) {
+function addEmail() {
+	
+	
+	var email=jQuery("#mailingListEmail").val();
+	var mailingLists= [ ];
+	var canContinue=false;
+	jQuery(".mailingListCheck").each(function(thing, thing2){
+		if (jQuery(this).is(":checked")) {
+			mailingLists.push(jQuery(this).attr("name"));
+			canContinue=true;
+		}
+	});
+	if (canContinue){
+		
+	
 	var request = jQuery.ajax({
 		url : "/blocks/"+jQuery('html').attr('lang')+"/mailing-list/xhr-add-email",
 		type : "POST",
 		data : {
-			'mailing-list-id' : mailingListId,
+			'mailing-list-id' : JSON.stringify(mailingLists),
 			'email' : email,
 			'current-page':jQuery('body').attr('data-current-page')
 		},
@@ -35,4 +49,6 @@ function addEmail(email, mailingListId) {
 		jQuery("#mailingListAlert").removeClass("alert-success");
 		jQuery("#mailingListAlert").addClass("alert-danger");
 	});
+	
+	}
 }
