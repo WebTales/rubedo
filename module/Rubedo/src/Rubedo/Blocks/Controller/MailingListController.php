@@ -20,6 +20,7 @@ use \Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
 use Zend\Debug\Debug;
 use Zend\Json\Json;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Controller providing CRUD API for the MailingList JSON
@@ -55,9 +56,12 @@ class MailingListController extends AbstractController
                 );
             }
         }
-        
-        
         $output['mailingListArray']=$mailingListArray;
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("email"));
+        $emailUserType = Manager::getService("UserTypes")->findOne($filters);
+        $output['fields']=$emailUserType['fields'];
         $css = array();
         $js = array(
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/mailingList.js")
@@ -79,6 +83,9 @@ class MailingListController extends AbstractController
         if (empty($mailingListIdArray)) {
             throw new \Rubedo\Exceptions\User("No newsletter associeted to this form.", "Exception18");
         }
+        $name = $this->params()->fromPost("name");
+        $fieldsArray= $this->params()->fromPost("fields", "[ ]");
+        $fieldsArray = Json::decode( $fieldsArray, Json::TYPE_ARRAY);
         
         // Declare email validator
         $emailValidator = new \Zend\Validator\EmailAddress();
@@ -97,7 +104,7 @@ class MailingListController extends AbstractController
                 "msg" => "Inscription réussie"
             );
             foreach ($mailingListIdArray as $mailingListId){
-                $suscribeResult = $mailingListService->subscribe($mailingListId, $email, false);
+                $suscribeResult = $mailingListService->subscribe($mailingListId, $email, false, $name, $fieldsArray);
                 $response['success']=$response['success']&&$suscribeResult['success'];
             }
             return new JsonModel($response);

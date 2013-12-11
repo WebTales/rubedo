@@ -7,8 +7,30 @@
 				<input type="email" name="email" id="mailingListEmail" required>
 			</div>
 		</div>
+		
+		
+    		<div class="control-group">
+                <label class="control-label" >Nom *</label>
+                <div class="controls">
+                  <input type="text" name="name" id="mailingListName" required>
+                </div>
+            </div>
+    	<div id="malingListFields">
+    		
+    		{% for field in fields %}
+                {% if not field['config']['allowBlank'] %}
+                    {% if field['cType']=='Ext.form.field.Text' %}
+                        {% include '@Root/blocks/inputFields/text.html.twig' %}
+                    {% elseif field['cType']=='Ext.form.field.TextArea' %}
+                        {% include '@Root/blocks/inputFields/textarea.html.twig' %}
+                    {% endif %}
+                {%  endif %}
+            {% endfor %}
+        
+        </div>
+		
 		<div class="control-group">
-		<label class="control-label">Listes de diffusion</label>
+		<label class="control-label">Listes de diffusion *</label>
 			<div class="controls">
 			{% for mailinglist in mailingListArray %}
     			<label class="checkbox">

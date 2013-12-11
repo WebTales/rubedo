@@ -48,7 +48,7 @@ class MailingList extends AbstractCollection implements IMailingList
      *
      * @see \Rubedo\Interfaces\Collection\IMailingList::subscribe()
      */
-    public function subscribe($mailingListId, $email, $doNotDuplicate = true, $userName = null)
+    public function subscribe($mailingListId, $email, $doNotDuplicate = true, $userName = null, $fieldsArray=array())
     {
         // Get mailing list
         $mailingList = $this->findById($mailingListId);
@@ -125,7 +125,7 @@ class MailingList extends AbstractCollection implements IMailingList
             $user = array(
                 "login" => $email,
                 "typeId" => $emailUserType['id'],
-                "fields" => array(),
+                "fields" => $fieldsArray,
                 "taxonomy" => array(),
                 "email" => $email,
                 "name" => $newName,
