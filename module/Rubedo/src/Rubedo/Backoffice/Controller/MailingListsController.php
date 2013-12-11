@@ -102,6 +102,17 @@ class MailingListsController extends DataAccessController
             "name"=>"Name",
             "subscription"=>"Date of subscription"
         );
+        
+        $filters2 = Filter::factory();
+        $filters2->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("email"));
+        $emailUserType = Manager::getService("UserTypes")->findOne($filters2);
+        foreach ($emailUserType['fields'] as $typeField){
+            if ((!$typeField['config']['allowBlank'])&&(($typeField['cType']=='Ext.form.field.Text')||($typeField['cType']=='Ext.form.field.TextArea'))){
+                $fieldsArray[]=$typeField['config']['name'];
+                $headerArray[$typeField['config']['name']]=$typeField['config']['fieldLabel'];
+            }
+        }
         $csvLine = array();
         
         foreach ($fieldsArray as $field) {
@@ -117,8 +128,12 @@ class MailingListsController extends DataAccessController
                     case 'subscription':
                         $csvLine[] = date('d-m-Y H:i:s', $client["mailingLists"][$params['id']]["date"]);
                         break;
-                    default:
+                    case 'email':
+                    case 'name':
                         $csvLine[] = isset($client[$field]) ? $client[$field] : 'null';
+                        break;
+                    default:
+                        $csvLine[] = isset($client['fields'][$field]) ? $client['fields'][$field] : 'null';
                         break;
                 }
             }
