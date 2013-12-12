@@ -1,0 +1,12 @@
+{
+    "id": "emailsReader",
+    "label": {
+        "fr": "Visualisation des emails",
+        "en": "Can read emails"
+    },
+    "rights":[
+        "read.ui.emailTemplates",
+        "read.ui.emails",
+        "execute.controller.emails.index.backoffice"
+    ]
+}

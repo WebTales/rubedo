@@ -1,0 +1,16 @@
+{
+    "id":"emailsWriter",
+    "label":{
+        "fr":"Edition des emails",
+        "en":"Can write emails"
+    },
+    "rights":[
+        "write.ui.emailTemplates",
+        "write.ui.emails",
+        "execute.controller.emails.update.backoffice",
+        "execute.controller.emails.create.backoffice"
+    ],
+    "includes":[
+        "emailsReader"
+    ]
+}

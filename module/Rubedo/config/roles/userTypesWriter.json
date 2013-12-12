@@ -1,0 +1,16 @@
+{
+    "id":"userTypesWriter",
+    "label":{
+        "fr":"Edition des types d'utilisateur",
+        "en":"Can write user types"
+    },
+    "rights":[
+        "write.ui.userTypes",
+        "execute.controller.usertypes.create.backoffice",
+        "execute.controller.usertypes.update.backoffice",
+        "execute.controller.usertypes.delete.backoffice"
+    ],
+    "includes":[
+        "userTypesReader"
+    ]
+}
