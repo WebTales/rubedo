@@ -18,13 +18,13 @@
     	<div id="malingListFields">
     		
     		{% for field in fields %}
-                {% if not field['config']['allowBlank'] %}
+                
                     {% if field['cType']=='Ext.form.field.Text' %}
                         {% include '@Root/blocks/inputFields/text.html.twig' %}
                     {% elseif field['cType']=='Ext.form.field.TextArea' %}
                         {% include '@Root/blocks/inputFields/textarea.html.twig' %}
                     {% endif %}
-                {%  endif %}
+                
             {% endfor %}
         
         </div>
@@ -45,15 +45,6 @@
         </div>
 		
 	</form>
-
-
-
-	{# <form class="form-inline">#} {# <div class="input-append">#} {#
-	<input id="email" class="input-medium" type="text" placeholder="{{
-	"Label.Email" | fotrans }}"/>#} {# <input class="btn btn-primary"
-	type="button" value="{{ "Label.Subscribe" | fotrans }}"
-	onclick="addEmail(jQuery('#email').val(), '{{ blockConfig.mailingListId
-	}}');"/>#} {# </div>#} {# </form>#}
 
 	<div class="alert hidden" id="mailingListAlert">
 		<span id="mailinglist-message"></span>
