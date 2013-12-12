@@ -17,7 +17,7 @@ function addEmail() {
 	var fields={ };
 	jQuery("#malingListFields input").each(function(){
 		fields[jQuery(this).attr("name")]=jQuery(this).val();
-		if (jQuery.isEmptyObject(jQuery(this).val())){
+		if ((jQuery(this).is(":required"))&&(jQuery.isEmptyObject(jQuery(this).val()))){
 			canContinue=false;
 		}
 	});

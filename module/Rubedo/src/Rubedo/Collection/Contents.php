@@ -731,9 +731,17 @@ class Contents extends WorkflowAbstractCollection implements IContents
                         $obj['readOnly'] = false;
                     }
                 }
-                //dirty dirty fix
-                if (((isset($obj['pageId'])) && ($obj['pageId'] != "")) || ((isset($obj['maskId'])) && ($obj['maskId'] != ""))) {
-                    $obj['readOnly'] = false;
+                if ((isset($obj['pageId'])) && ($obj['pageId'] != "")) {
+                    $myPage=Manager::getService("Pages")->findById($obj['pageId']);
+                    if (in_array($myPage['workspace'], $writeWorkspaces)) {
+                        $obj['readOnly'] = false;
+                    }
+                if ((isset($obj['maskId'])) && ($obj['maskId'] != "")) {
+                    $myMask=Manager::getService("Masks")->findById($obj['maskId']);
+                    $mySite=Manager::getService("Sites")->findById($myMask['site']);
+                    if (in_array($mySite['workspace'], $writeWorkspaces)) {
+                        $obj['readOnly'] = false;
+                    }
                 }
             }
 
@@ -742,6 +750,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
 
         return $obj;
+    }
     }
 
     public function getListByTypeId($typeId)

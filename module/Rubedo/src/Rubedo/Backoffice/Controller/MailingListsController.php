@@ -108,7 +108,7 @@ class MailingListsController extends DataAccessController
             ->setValue("email"));
         $emailUserType = Manager::getService("UserTypes")->findOne($filters2);
         foreach ($emailUserType['fields'] as $typeField){
-            if ((!$typeField['config']['allowBlank'])&&(($typeField['cType']=='Ext.form.field.Text')||($typeField['cType']=='Ext.form.field.TextArea'))){
+            if (($typeField['cType']=='Ext.form.field.Text')||($typeField['cType']=='Ext.form.field.TextArea')){
                 $fieldsArray[]=$typeField['config']['name'];
                 $headerArray[$typeField['config']['name']]=$typeField['config']['fieldLabel'];
             }
