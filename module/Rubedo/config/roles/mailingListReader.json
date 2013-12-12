@@ -1,0 +1,12 @@
+{
+    "id": "mailingListReader",
+    "label": {
+        "fr": "Visualisation des listes de diffusion",
+        "en": "Can read mailing lists"
+    },
+    "rights":[
+        "read.ui.mailingLists",
+        "execute.controller.mailinglists.get-users.backoffice",
+        "execute.controller.mailinglists.export-users.backoffice"
+    ]
+}

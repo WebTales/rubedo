@@ -1,0 +1,15 @@
+{
+    "id":"customThemesWriter",
+    "label":{
+        "fr":"Edition des thèmes personnalisés",
+        "en":"Can write custom themes"
+    },
+    "rights":[
+        "write.ui.customThemes",
+        "execute.controller.customthemes.create.backoffice",
+        "execute.controller.customthemes.update.backoffice"
+    ],
+    "includes":[
+        "customThemesReader"
+    ]
+}
