@@ -133,7 +133,10 @@ class IndexController extends AbstractActionController
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        
+        $wasFiltered1 = AbstractCollection::disableUserFilter();
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
+        AbstractCollection::disableUserFilter($wasFiltered1);
         
         // ensure protocol is authorized for this site
         if (! is_array($this->_site['protocol']) || count($this->_site['protocol']) == 0) {
@@ -340,7 +343,10 @@ class IndexController extends AbstractActionController
      */
     protected function _getPageInfo($pageId)
     {
+        $wasFiltered = AbstractCollection::disableUserFilter();
         $this->_mask = Manager::getService('Masks')->findById($this->_pageInfo['maskId']); // maskId
+        AbstractCollection::disableUserFilter($wasFiltered);
+        
         if (! $this->_mask) {
             throw new \Rubedo\Exceptions\Server('No mask found.', "Exception24");
         }
