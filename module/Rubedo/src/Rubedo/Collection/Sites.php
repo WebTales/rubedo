@@ -235,9 +235,9 @@ class Sites extends AbstractLocalizableCollection implements ISites
         $obj = $this->_initContent($obj);
 
         $return = parent::update($obj, $options);
-        if ($return['success'] == true) {
-            Manager::getService('Pages')->propagateWorkspace('root', $return['data']['workspace'], $return['data']['id']);
-        }
+//         if ($return['success'] == true) {
+//             Manager::getService('Pages')->propagateWorkspace('root', $return['data']['workspace'], $return['data']['id']);
+//         }
         return $return;
     }
 
