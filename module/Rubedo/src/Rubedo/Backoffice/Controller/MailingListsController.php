@@ -205,7 +205,12 @@ class MailingListsController extends DataAccessController
         fclose($recievedFile);
         $returnArray['importedContentsCount'] = $lineCounter;
         $returnArray['success'] = $success;
-        return new JsonModel($returnArray);
+        $content = Json::encode($returnArray);
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'text/html');
+        $response->setContent($content);
+        return $response;
     }
     
 }

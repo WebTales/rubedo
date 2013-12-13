@@ -224,7 +224,12 @@ class DamController extends DataAccessController
         if (! $returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
-        return new JsonModel($returnArray);
+        $content = Json::encode($returnArray);
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'text/html');
+        $response->setContent($content);
+        return $response;
     }
     /*
      * Method used by Back Office mass uploader for each file
