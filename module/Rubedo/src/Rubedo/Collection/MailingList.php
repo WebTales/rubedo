@@ -176,7 +176,9 @@ class MailingList extends AbstractCollection implements IMailingList
         $wasFiltered = AbstractCollection::disableUserFilter();
         $user = Manager::getService("Users")->findByEmail($email);
         AbstractCollection::disableUserFilter($wasFiltered);
+        $date = Manager::getService("CurrentTime")->getCurrentTime();
         $user["mailingLists"][$mailingList["id"]]['status']=false;
+        $user["mailingLists"][$mailingList["id"]]['date']=$date;
         $updateResult=Manager::getService("Users")->update($user);
         if ($updateResult["success"]) {
             $response = true;
@@ -197,7 +199,14 @@ class MailingList extends AbstractCollection implements IMailingList
             $response['msg']="Adresse email inconnue";
             return($response);
         }
-        $user["mailingLists"]=array();
+        $date = Manager::getService("CurrentTime")->getCurrentTime();
+        if ((isset($user["mailingLists"]))&&(is_array($user["mailingLists"]))){
+            foreach ($user["mailingLists"] as $key => $value){
+                $user["mailingLists"][$key]['status']=false;
+                $user["mailingLists"][$key]['date']=$date;
+            }
+        }
+        
         $updateResult=Manager::getService("Users")->update($user);
         if ($updateResult["success"]) {
             $response['success']=true;

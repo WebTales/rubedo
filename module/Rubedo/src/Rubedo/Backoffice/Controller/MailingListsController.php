@@ -84,6 +84,20 @@ class MailingListsController extends DataAccessController
         return $this->_returnJson($results);
     }
     
+    public function getUnsubscribedUsersAction(){
+        $usersService = Manager::getService('Users');
+        $params = $this->params()->fromQuery();
+        $sortJson =$this->params()->fromQuery("sort",null);
+        if (isset($sortJson)) {
+            $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
+        } else {
+            $sort = null;
+        }
+        $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(false));
+        $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
+        return $this->_returnJson($results);
+    }
+    
     public function exportUsersAction(){
         $usersService = Manager::getService('Users');
         $fileName = 'export_csv_' . date('Ymd') . '.csv';
