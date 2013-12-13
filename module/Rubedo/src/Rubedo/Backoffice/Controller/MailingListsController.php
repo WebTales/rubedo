@@ -94,13 +94,11 @@ class MailingListsController extends DataAccessController
         $list=$usersService->getList($filters);
         $fieldsArray = array(
             "email",
-            "name",
-            "subscription"
+            "name"
         );
         $headerArray = array(
             "email"=>"Email",
-            "name"=>"Name",
-            "subscription"=>"Date of subscription"
+            "name"=>"Name"
         );
         
         $filters2 = Filter::factory();
@@ -113,6 +111,8 @@ class MailingListsController extends DataAccessController
                 $headerArray[$typeField['config']['name']]=$typeField['config']['fieldLabel'];
             }
         }
+        $fieldsArray[]="subscription";
+        $headerArray["subscription"]="Date of subscription";
         $csvLine = array();
         
         foreach ($fieldsArray as $field) {
@@ -170,13 +170,31 @@ class MailingListsController extends DataAccessController
             $this->getResponse()->setStatusCode(500);
             return new JsonModel($returnArray);
         }
+        $fieldsArray=array();
+        $filters2 = Filter::factory();
+        $filters2->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("email"));
+        $emailUserType = Manager::getService("UserTypes")->findOne($filters2);
+        foreach ($emailUserType['fields'] as $typeField){
+            if (($typeField['cType']=='Ext.form.field.Text')||($typeField['cType']=='Ext.form.field.TextArea')){
+                $fieldsArray[]=$typeField['config']['name'];
+            }
+        }
         $recievedFile = fopen($fileInfos['tmp_name'], 'r');
         // Read the first line to start at the second line
         fgetcsv($recievedFile, 1000000, ';', '"', '\\');
         $lineCounter = 0;
         $success=true;
         while (($currentLine = fgetcsv($recievedFile, 1000000, ';', '"', '\\')) !== false) {
-            if (isset($currentLine[1])){
+            if ((isset($currentLine[1]))&&(isset($currentLine[2]))){
+                $myFields=array();
+                foreach ($fieldsArray as $key => $value){
+                    if (isset($currentLine[$key+2])) {
+                        $myFields[$value]=$currentLine[$key+2];
+                    }
+                }
+                $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0], true, $currentLine[1], $myFields);
+            } else if (isset($currentLine[1])){
                 $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0], true, $currentLine[1]);
             } else {
                 $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0]);
