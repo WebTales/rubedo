@@ -116,7 +116,7 @@
     	<div class="navbar hide navbar-inverse" id="contentToolBar">
     		<div class="navbar-inner">
     			<div class="container-fluid">
-    				<a class="brand" href="/backoffice/" target="_blank">{{ "FO.Administration.Toolbar.Title.Administration" | botrans }}</a>
+    				{% if hasAccessToBO %}<a class="brand" href="/backoffice/" target="_blank">{{ "FO.Administration.Toolbar.Title.Administration" | botrans }}</a>{% endif %}
     				<div id='viewmode'>
     				    <div class="btn-toolbar pull-left">
         					<div class="btn-group">
