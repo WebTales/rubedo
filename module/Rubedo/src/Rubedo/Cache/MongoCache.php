@@ -96,11 +96,14 @@ class MongoCache extends AbstractAdapter
         
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
-        
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
         
-        $ttl = $this->options->getTtl();
+        if (strpos($normalizedKey,"htmlcleaner")!==FALSE){
+            $ttl=60;
+        } else {
+            $ttl = $this->options->getTtl();
+        }
         $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $ttl;
         
         // if ($specificLifetime) {
