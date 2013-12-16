@@ -736,6 +736,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     if (in_array($myPage['workspace'], $writeWorkspaces)) {
                         $obj['readOnly'] = false;
                     }
+                }
                 if ((isset($obj['maskId'])) && ($obj['maskId'] != "")) {
                     $myMask=Manager::getService("Masks")->findById($obj['maskId']);
                     $mySite=Manager::getService("Sites")->findById($myMask['site']);
@@ -750,7 +751,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
 
         return $obj;
-    }
+    
     }
 
     public function getListByTypeId($typeId)
