@@ -38,8 +38,7 @@ class ImageMapController extends AbstractController
         $output = $this->params()->fromQuery();
         $output['image'] = $blockConfig['image'];
         if (! isset($output['image'])) {
-            $this->_sendResponse(array(), "block.html.twig");
-            return;
+            return $this->_sendResponse(array(), "block.html.twig");
         }
         $output['map'] = Json::decode($blockConfig['map'], Json::TYPE_ARRAY);
         foreach ($output['map'] as &$mapElement) {
