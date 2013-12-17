@@ -7,6 +7,7 @@
     "rights":[
         "read.ui.users",
         "execute.controller.users.index.backoffice",
+        "execute.controller.usertypes.index.backoffice",
         "execute.controller.delegations.index.backoffice",
         "execute.controller.xhrauthentication.logout.default",
         "execute.controller.groups.index.backoffice"
