@@ -110,7 +110,7 @@ class Notification implements INotification
 
     protected function directUrl ($id)
     {
-        return ($this->getOptions('isBackofficeSsl') ? 'https' : 'http') . '://' . $this->getOptions('defaultBackofficeHost') . '/backoffice/?content=' . $id;
+        return ($this->getOptions('isBackofficeSsl') ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . '/backoffice/?content=' . $id;
     }
 
     protected function notifyPublished ($obj)
