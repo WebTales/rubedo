@@ -6,6 +6,8 @@
     },
     "rights":[
         "read.ui.mailingLists",
+        "execute.controller.mailinglists.index.backoffice",
+        "execute.controller.mailinglists.get-unsubscribed-users.backoffice",
         "execute.controller.mailinglists.get-users.backoffice",
         "execute.controller.mailinglists.export-users.backoffice"
     ]
