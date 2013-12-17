@@ -21,6 +21,7 @@ use Rubedo\Collection\AbstractCollection;
 use Rubedo\Content\Context;
 use Rubedo\Templates\Twig\TwigViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Debug\Debug;
 
 /**
  * Front Office Defautl Controller
@@ -133,6 +134,20 @@ class IndexController extends AbstractActionController
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+        if ($this->_pageInfo===NULL){
+            $wasFiltered1 = AbstractCollection::disableUserFilter();
+            $attemptedPage = Manager::getService('Pages')->findById($this->_pageId);
+            $site = Manager::getService('Sites')->findById($attemptedPage['site']);
+            $homePageId=$site['homePage'];
+            AbstractCollection::disableUserFilter($wasFiltered1);
+            
+            if ($this->_pageId==$homePageId){
+                throw new \Rubedo\Exceptions\Server('You do not have access to the current site');
+            }
+            $uri = $this->getRequest()->getUri();
+            $domain = $uri->getHost();
+            return $this->redirect()->toUrl(strtolower(array_pop($site['protocol'])) . '://' . $domain );
+        }
         
         $wasFiltered1 = AbstractCollection::disableUserFilter();
         $this->_site = Manager::getService('Sites')->findById($this->_pageInfo['site']);
