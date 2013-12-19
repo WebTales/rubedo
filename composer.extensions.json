@@ -1,18 +1,18 @@
 {
-	"name": "rubedo/extensions",
-	"require": {
-		"webtales/survey": "dev-master"
-	},
-	"require-dev": {},
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "git://github.com/WebTales/Survey.git"
-		}
-	],
-	"minimum-stability": "stable",
-	"config": {
-		"process-timeout": 600,
-		"vendor-dir": "extensions"
-	}
+    "name": "rubedo/extensions",
+    "require": {
+        "WebTales/MyExtension": "dev-master"
+    },
+    "require-dev": { },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git://github.com/WebTales/Extension.git"
+        }
+    ],
+    "minimum-stability": "dev",
+    "config": {
+        "process-timeout": 600,
+        "vendor-dir": "extensions"
+    }
 }

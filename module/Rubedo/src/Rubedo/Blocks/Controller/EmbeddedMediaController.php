@@ -46,14 +46,14 @@ class EmbeddedMediaController extends AbstractController
             
             if (isset($blockConfig['maxWidth'])) {
                 $oembedParams['maxWidth'] = $blockConfig['maxWidth'];
-                $options['maxWidth'] = $blockConfig['maxWidth'];
+                $options['maxwidth'] = $blockConfig['maxWidth'];
             } else {
                 $oembedParams['maxWidth'] = 0;
             }
             
             if (isset($blockConfig['maxHeight'])) {
                 $oembedParams['maxHeight'] = $blockConfig['maxHeight'];
-                $options['maxHeight'] = $blockConfig['maxHeight'];
+                $options['maxheight'] = $blockConfig['maxHeight'];
             } else {
                 $oembedParams['maxHeight'] = 0;
             }
@@ -83,9 +83,8 @@ class EmbeddedMediaController extends AbstractController
                     
                     $oembedParams['url'] = implode("/", $decomposedUrl);
                 }
-                
+
                 $response = OEmbed\Simple::request($oembedParams['url'], $options);
-                
                 $item['width'] = $oembedParams['maxWidth'];
                 $item['height'] = $oembedParams['maxHeight'];
                 if (! stristr($oembedParams['url'], 'www.flickr.com')) {
