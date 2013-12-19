@@ -1,0 +1,54 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "7f03e7facc99e29bda89f4c51f86680c",
+    "packages": [
+        {
+            "name": "WebTales/Myextension",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WebTales/Extension.git",
+                "reference": "e0cdab6f0d941b0e2e9a6ceec4175b8e54f49f26"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/WebTales/Extension/zipball/e0cdab6f0d941b0e2e9a6ceec4175b8e54f49f26",
+                "reference": "e0cdab6f0d941b0e2e9a6ceec4175b8e54f49f26",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/Myextension"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/WebTales/Extension/tree/master",
+                "issues": "https://github.com/WebTales/Extension/issues"
+            },
+            "time": "2013-12-03 11:10:06"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "webtales/myextension": 20
+    },
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
+}
