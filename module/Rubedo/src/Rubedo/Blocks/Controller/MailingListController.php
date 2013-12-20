@@ -47,6 +47,9 @@ class MailingListController extends AbstractController
         $output = $this->params()->fromQuery();
         $output['blockConfig'] = $blockConfig;
         $mailingListArray=array();
+        if ((! isset($blockConfig['mailingListId']))||(!is_array($blockConfig['mailingListId']))) {
+            return $this->_sendResponse(array(), "block.html.twig");
+        }
         foreach ($blockConfig['mailingListId'] as $value){
             $myList=$mailingListService->findById($value);
             if ($myList){
