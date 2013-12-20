@@ -15,9 +15,15 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Content\Context;
+use Rubedo\Exceptions\Access;
+use Rubedo\Exceptions\Server;
+use Rubedo\Exceptions\User;
 use Rubedo\Interfaces\Collection\IContents;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\CompositeFilter;
 use WebTales\MongoFilters\Filter;
+use WebTales\MongoFilters\IFilter;
+use WebTales\MongoFilters\InUidFilter;
 use Zend\EventManager\EventInterface;
 use Zend\Json\Json;
 
@@ -176,7 +182,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     /**
      * Return the visible contents list
      *
-     * @param \WebTales\MongoFilters\IFilter $filters
+     * @param IFilter $filters
      *            filters
      * @param array $sort
      *            array of sorting fields
@@ -186,7 +192,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      *            max number of items in the list
      * @return array:
      */
-    public function getOnlineList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
+    public function getOnlineList(IFilter $filters = null, $sort = null, $start = null, $limit = null)
     {
         if (is_null($filters)) {
             $filters = Filter::factory();
@@ -241,7 +247,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $origObj = $this->findById($obj['id'], $live, false);
         if (!self::isUserFilterDisabled()) {
             if (isset($origObj['readOnly']) && $origObj['readOnly']) {
-                throw new \Rubedo\Exceptions\Access('No rights to update this content', "Exception33");
+                throw new Access('No rights to update this content', "Exception33");
             }
         }
         if (!is_array($obj['target'])) {
@@ -283,7 +289,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $origObj = $this->findById($obj['id'], false, false);
         if (!self::isUserFilterDisabled()) {
             if ($origObj['readOnly']) {
-                throw new \Rubedo\Exceptions\Access('No rights to destroy this content', "Exception34");
+                throw new Access('No rights to destroy this content', "Exception34");
             }
         }
         $returnArray = parent::destroy($obj, $options);
@@ -296,7 +302,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function unsetTerms($vocId, $termId)
     {
         if (!$termId) {
-            throw new \Rubedo\Exceptions\Server("You can not unset a term without its id", "Exception92");
+            throw new Server("You can not unset a term without its id", "Exception92");
         }
 
         $data = array(
@@ -312,29 +318,30 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
     /**
      * Push the content to Elastic Search
-     *
+     * @todo : move into an event
      * @param array $obj
      */
     protected function _indexContent($obj)
     {
+
         $contentType = Manager::getService('ContentTypes')->findById($obj['typeId']);
         if (!$contentType || (isset($contentType['system']) && $contentType['system'] == true)) {
             return;
         }
 
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->indexContent($obj);
     }
 
     /**
      * Remove the content from Indexed Search
-     *
+     * @todo : move into an event
      * @param array $obj
      */
     protected function _unIndexContent($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+        $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
         $ElasticDataIndexService->init();
         $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id']);
     }
@@ -352,19 +359,21 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
             if (!in_array($obj['writeWorkspace'], $writeWorkspaces)) {
-                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception35");
+                throw new Access('You can not assign to this workspace', "Exception35");
             }
 
             $readWorkspaces = Manager::getService('CurrentUser')->getReadWorkspaces();
             if ((!in_array('all', $readWorkspaces)) && count(array_intersect($obj['target'], $readWorkspaces)) == 0) {
-                throw new \Rubedo\Exceptions\Access('You can not assign as target to this workspace', "Exception36");
+                throw new Access('You can not assign as target to this workspace', "Exception36");
             }
         }
 
         $contentTypeId = $obj['typeId'];
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
-        if (!self::isUserFilterDisabled() && !in_array($obj['writeWorkspace'], $contentType['workspaces']) && !in_array('all', $contentType['workspaces'])) {
-            throw new \Rubedo\Exceptions\Access('You can not assign this content type to this workspace', "Exception37");
+        if (!self::isUserFilterDisabled()
+            && !in_array($obj['writeWorkspace'], $contentType['workspaces'])
+            && !in_array('all', $contentType['workspaces'])) {
+            throw new Access('You can not assign this content type to this workspace', "Exception37");
         }
         $contentTypeFields = $contentType['fields'];
 
@@ -377,18 +386,72 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
         }
 
-
         $fieldsArray = array();
         $missingField = array();
-
         $tempFields = array();
+
         $tempFields['text'] = $obj['text'];
         if (isset($obj['i18n'][$obj['nativeLanguage']]['fields']['summary'])) {
             $tempFields['summary'] = $obj['i18n'][$obj['nativeLanguage']]['fields']['summary'];
         } else {
             $tempFields['summary'] = "";
         }
+        foreach ($contentTypeFields as $value) {
+            $fieldsArray[$value['config']['name']] = $value;
+            if (!isset($value['config']['allowBlank']) || !$value['config']['allowBlank']) {
+                $result = false;
+                if ($value['config']['name'] == "text" || $value['config']['name'] == "summary") {
+                    $field = $value['config']['name'];
+                    $result = $this->_controlAllowBlank($tempFields[$field], false);
+                }
+                if ($result == false) {
+                    $missingField[$value['config']['name']] = $value['config']['name'];
+                }
+            }
+        }
 
+        $fieldsList = array_keys($fieldsArray);
+
+        foreach ($obj['fields'] as $key => $value) {
+            if (in_array($key, array(
+                'text',
+                'summary'
+            ))
+            ) {
+                continue;
+            }
+            if (!in_array($key, $fieldsList)) {
+                unset($obj["fields"][$key]);
+                // $this->_inputDataErrors[$key] = 'unknown field';
+            } else {
+                unset($missingField[$key]);
+
+                if (isset($fieldsArray[$key]['config']['multivalued']) && $fieldsArray[$key]['config']['multivalued'] == true) {
+                    $tempFields[$key] = array();
+                    if (!is_array($value)) {
+                        $value = array(
+                            $value
+                        );
+                    }
+                    foreach ($value as $valueItem) {
+                        $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
+                        $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
+                    }
+                } else {
+                    $this->_validateFieldValue($value, $fieldsArray[$key]['config'], $key);
+
+                    $tempFields[$key] = $this->_filterFieldValue($value, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
+                }
+            }
+        }
+
+        $obj['fields'] = $tempFields;
+
+        if (count($missingField) > 0) {
+            foreach ($missingField as $value) {
+                $this->_inputDataErrors[$value] = 'missing field';
+            }
+        }
         if (count($this->_inputDataErrors) === 0) {
             $this->_isValidInput = true;
         }
@@ -521,17 +584,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _controlAllowBlank($value, $allowBlank)
     {
-        if ($allowBlank == false) {
-            if ($value == "" || $value == null) {
-                $response = false;
-            } else {
-                $response = true;
-            }
+        if (!$allowBlank && empty($value)) {
+            return false;
         } else {
-            $response = true;
+            return true;
         }
-
-        return $response;
     }
 
     /**
@@ -546,12 +603,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected function _controlMinLength($value, $minLength)
     {
         if (mb_strlen($value) > 0 && mb_strlen($value) < $minLength) {
-            $response = false;
+            return false;
         } else {
-            $response = true;
+            return true;
         }
-
-        return $response;
     }
 
     /**
@@ -566,12 +621,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected function _controlMaxLength($value, $maxLength)
     {
         if (mb_strlen($value) > $maxLength) {
-            $response = false;
+            return false;
         } else {
-            $response = true;
+            return true;
         }
-
-        return $response;
     }
 
     protected function _controlVtype($value, $vtype)
@@ -678,7 +731,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     $content['writeWorkspace']
                 ), $readWorkspaces)) == 0 && $readWorkspaces[0] != "all"
             ) {
-                throw new \Rubedo\Exceptions\Access("You don't have access to this workspace", "Exception38");
+                throw new Access("You don't have access to this workspace", "Exception38");
             }
         }
 
@@ -707,10 +760,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
             // Set the workspace/target for old items in database
-            if (!isset($obj['writeWorkspace']) || $obj['writeWorkspace'] == "" || $obj['writeWorkspace'] == array()) {
+            if (!array_key_exists('writeWorkspace', $obj) || empty($obj['writeWorkspace'])) {
                 $obj['writeWorkspace'] = "";
             }
-            if (!isset($obj['target']) || $obj['target'] == "" || $obj['target'] == array()) {
+            if (!array_key_exists('target', $obj) || empty($obj['target'])) {
                 $obj['target'] = array(
                     'global'
                 );
@@ -788,7 +841,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $inUidFilter = $this->_getInUidFilter($filters);
         if ($inUidFilter !== null) {
             $order = $inUidFilter->getValue();
-            $orderedContents = array();
 
             $unorderedResults = $this->getList($filters, $sort, $start, $limit, $live);
 
@@ -806,7 +858,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
             return $orderedContents;
         } else {
-            throw new \Rubedo\Exceptions\User("Invalid filter", "Exception39");
+            throw new User("Invalid filter", "Exception39");
         }
     }
 
@@ -815,15 +867,15 @@ class Contents extends WorkflowAbstractCollection implements IContents
      *
      * Return null if not found
      *
-     * @param \WebTales\MongoFilters\IFilter $filter
-     * @return \WebTales\MongoFilters\InUidFilter null
+     * @param IFilter $filter
+     * @return InUidFilter null
      */
-    protected function _getInUidFilter(\WebTales\MongoFilters\IFilter $filter)
+    protected function _getInUidFilter(IFilter $filter)
     {
-        if ($filter instanceof \WebTales\MongoFilters\InUidFilter) {
+        if ($filter instanceof InUidFilter) {
             return $filter;
         }
-        if ($filter instanceof \WebTales\MongoFilters\CompositeFilter) {
+        if ($filter instanceof CompositeFilter) {
             foreach ($filter->getFilters() as $subFilter) {
                 $subResult = $this->_getInUidFilter($subFilter);
                 if ($subResult) {
@@ -837,12 +889,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
     public function deleteByContentType($contentTypeId)
     {
         if (!is_string($contentTypeId)) {
-            throw new \Rubedo\Exceptions\User('ContentTypeId should be a string', "Exception40", "ContentTypeId");
+            throw new User('ContentTypeId should be a string', "Exception40", "ContentTypeId");
         }
         $contentTypeService = Manager::getService('ContentTypes');
         $contentType = $contentTypeService->findById($contentTypeId);
         if (!$contentType) {
-            throw new \Rubedo\Exceptions\User('ContentType not found', "Exception41");
+            throw new User('ContentType not found', "Exception41");
         }
 
         $deleteCond = Filter::factory('Value')->setName('typeId')->setValue($contentTypeId);
@@ -855,7 +907,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 'success' => true
             );
         } else {
-            throw new \Rubedo\Exceptions\Server($result['err']);
+            throw new Server($result['err']);
         }
     }
 
@@ -907,7 +959,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 unset($obj[$key]);
             }
             foreach ($obj['fields'] as $field => $value) {
-                if (in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))) {
+                $localizableField = $this->getLocalizableFieldForCType($obj['typeId']);
+                if ($localizableField && in_array($field, $localizableField)) {
                     unset($obj['fields'][$field]);
                 }
             }
@@ -921,7 +974,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
                         unset($obj['i18n'][$locale][$key]);
                     }
                     foreach ($obj['i18n'][$locale]['fields'] as $field => $value) {
-                        if (!in_array($field, $this->getLocalizableFieldForCType($obj['typeId']))) {
+                        $localizableField = $this->getLocalizableFieldForCType($obj['typeId']);
+                        if ($localizableField && !in_array($field, $localizableField)) {
                             unset($obj['i18n'][$locale]['fields'][$field]);
                         }
                     }
@@ -1033,7 +1087,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
                     $item = $this->addlocalization($item);
 
-                    //$this->customUpdate($item, Filter::factory('Uid')->setValue($item['id']));
                     $this->update($item, array(), false);
 
                     if ($item['status'] == 'published') {

@@ -207,7 +207,9 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($result['success']) {
             $result['data'] = $this->localizeOutput($result['data']);
         }
-        Events::getEventManager()->trigger(AbstractCollection::POST_CREATE_COLLECTION, $this, $result);
+        if ($result !== null) {
+            Events::getEventManager()->trigger(AbstractCollection::POST_CREATE_COLLECTION, $this, $result);
+        }
         return $result;
     }
 
@@ -228,7 +230,9 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($result['success']) {
             $result['data'] = $this->localizeOutput($result['data']);
         }
-        Events::getEventManager()->trigger(AbstractCollection::POST_UPDATE_COLLECTION, $this, $result);
+        if ($result != null) {
+            Events::getEventManager()->trigger(AbstractCollection::POST_UPDATE_COLLECTION, $this, $result);
+        }
         return $result;
     }
 
