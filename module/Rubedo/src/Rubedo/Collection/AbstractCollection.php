@@ -126,7 +126,9 @@ abstract class AbstractCollection implements IAbstractCollection
         $dataValues = $this->_dataService->read($filters);
         if ($dataValues && is_array($dataValues)) {
             foreach ($dataValues['data'] as &$obj) {
-                $obj = $this->_addReadableProperty($obj);
+                if (is_array($obj)) {
+                    $obj = $this->_addReadableProperty($obj);
+                }
             }
         }
 
@@ -287,7 +289,9 @@ abstract class AbstractCollection implements IAbstractCollection
 
         unset($obj['readOnly']);
         $result = $this->_dataService->create($obj, $options);
-        Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION, $this, $result);
+        if ($result !== null) {
+            Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION, $this, $result);
+        }
         return $result;
     }
 
@@ -449,7 +453,9 @@ abstract class AbstractCollection implements IAbstractCollection
         if ($result['success']) {
             $result['data'] = $this->_addReadableProperty($result['data']);
         }
-        Events::getEventManager()->trigger(self::POST_UPDATE_COLLECTION, $this, $result);
+        if ($result !== null) {
+            Events::getEventManager()->trigger(self::POST_UPDATE_COLLECTION, $this, $result);
+        }
         return $result;
     }
 

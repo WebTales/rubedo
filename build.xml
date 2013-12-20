@@ -55,8 +55,8 @@
 	
 	<target name="phpunit">
 		<exec
-		command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/tests/phpunit.xml"
-		dir="${project.basedir}/tests"
+		command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/module/Rubedo/test/phpunit.xml"
+		dir="${project.basedir}/module/Rubedo/test"
 		passthru="true"
 		/>
 	</target>

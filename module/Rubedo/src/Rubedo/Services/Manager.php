@@ -68,6 +68,9 @@ class Manager
      */
     public static function getService($serviceName)
     {
+        if (array_key_exists($serviceName, self::$_mockServicesArray)) {
+            return self::$_mockServicesArray[$serviceName];
+        }
         return self::getServiceLocator()->get($serviceName);
     }
 

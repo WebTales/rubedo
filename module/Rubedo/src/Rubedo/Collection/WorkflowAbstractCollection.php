@@ -62,7 +62,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
             $this->_dataService->setWorkspace();
         }
 
-        if ($obj['status'] == "pending") {
+        if (array_key_exists('status', $obj) && $obj['status'] == "pending") {
             $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
             $obj['lastPendingUser'] = $currentUser;
             $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
@@ -105,7 +105,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
 
         $this->_dataService->setWorkspace();
 
-        if ($obj['status'] == "pending") {
+        if (array_key_exists('status', $obj) && $obj['status'] == "pending") {
             $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
             $obj['lastPendingUser'] = $currentUser;
             $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
@@ -114,7 +114,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
 
         $returnArray = parent::create($obj, $options);
         if ($returnArray['success']) {
-            if ($returnArray['data']['status'] === 'published') {
+            if (array_key_exists('status', $returnArray['data']) && $returnArray['data']['status'] === 'published') {
                 $result = $this->publish($returnArray['data']['id'], $ignoreIndex);
 
                 if (!$result['success']) {
@@ -220,7 +220,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
 
     protected function _transitionEvent($obj, $previousStatus)
     {
-        if ($obj['status'] === 'published') {
+        if (array_key_exists('status', $obj) && $obj['status'] === 'published') {
             $returnArray = array();
             $result = $this->publish($obj['id']);
 
@@ -229,16 +229,16 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
                 $returnArray['msg'] = "failed to publish the content";
                 unset($returnArray['data']);
             }
-        } elseif ($previousStatus != 'pending' && $obj['status'] == "pending") {
+        } elseif ($previousStatus != 'pending' && array_key_exists('status', $obj) && $obj['status'] == "pending") {
             $this->_notify($obj, 'pending');
         } else {
             $returnArray = null;
         }
 
-        if ($previousStatus == 'pending' && $obj['status'] == 'refused') {
+        if ($previousStatus == 'pending' && array_key_exists('status', $obj) && $obj['status'] == 'refused') {
             $this->_notify($obj, 'refused');
         }
-        if ($previousStatus == 'pending' && $obj['status'] == 'published') {
+        if ($previousStatus == 'pending' && array_key_exists('status', $obj) && $obj['status'] == 'published') {
             $this->_notify($obj, 'published');
         }
 
