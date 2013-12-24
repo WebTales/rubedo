@@ -432,7 +432,9 @@ class Module
             $saveHandler = new MongoDB($adapter, $options);
             
             $this->sessionManager = new SessionManager($sessionConfig);
-            $this->sessionManager->setSaveHandler($saveHandler);
+            if ($adapter->connected) {
+                $this->sessionManager->setSaveHandler($saveHandler);
+            }
             
             Container::setDefaultManager($this->sessionManager);
         } catch (\MongoConnectionException $e) {
