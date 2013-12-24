@@ -260,7 +260,11 @@ class DataAccess implements IDataAccess
         if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \MongoClient) {
             return self::$_adapterArray[$mongo];
         } else {
-            $adapter = new \MongoClient($mongo);
+            try {
+                $adapter = new \MongoClient($mongo);
+            } catch (\Exception $e) {
+                $adapter = new \MongoClient($mongo, array("connect" => FALSE));
+            }
             self::$_adapterArray[$mongo] = $adapter;
             return $adapter;
         }
@@ -269,8 +273,8 @@ class DataAccess implements IDataAccess
     /**
      * Getter of MongoDB object : should only be instanciated once for each DB
      *
-     * @param string $dbName            
-     * @param string $mongo            
+     * @param string $dbName
+     * @param string $mongo
      * @return \MongoDB
      */
     protected function _getDB ($dbName, $mongo)
@@ -289,9 +293,9 @@ class DataAccess implements IDataAccess
      * Getter of MongoDB collection : should only be instanciated once for each
      * collection
      *
-     * @param string $collection            
-     * @param string $dbName            
-     * @param string $mongo            
+     * @param string $collection
+     * @param string $dbName
+     * @param string $mongo
      * @return \MongoCollection
      */
     protected function _getCollection ($collection, $dbName, $mongo)
@@ -309,7 +313,7 @@ class DataAccess implements IDataAccess
     /**
      * Set the main MongoDB connection string
      *
-     * @param string $mongo            
+     * @param string $mongo
      * @throws \Exception
      */
     public static function setDefaultMongo ($mongo)
@@ -323,7 +327,7 @@ class DataAccess implements IDataAccess
     /**
      * Set the main Database name
      *
-     * @param string $dbName            
+     * @param string $dbName
      * @throws \Exception
      */
     public static function setDefaultDb ($dbName)
@@ -343,7 +347,7 @@ class DataAccess implements IDataAccess
             default :
                 throw new \Rubedo\Exceptions\Server('$dbName should be a array or string', "Exception40", '$dbName');
         }
-    
+
     }
 
     /**
@@ -356,18 +360,18 @@ class DataAccess implements IDataAccess
     {
         // get the UI parameters
         $localFilter = clone $this->getFilters();
-        
+
         // add Read Filters
         if ($filters) {
             $localFilter->addFilter($filters);
         }
-        
+
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-        
+
         // merge the two fields array to obtain only one array with all the
         // conditions
         if (! empty($includedFields) && ! empty($excludedFields)) {
@@ -377,21 +381,25 @@ class DataAccess implements IDataAccess
         }
         // get the cursor
         $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
-        $nbItems = $cursor->count();
-        
+        try {
+            $nbItems = $cursor->count();
+        } catch (\Exception $e) {
+            $nbItems = 0;
+        }
+
         // apply sort, paging, filter
         $cursor->sort($sort);
         $cursor->skip($firstResult);
         $cursor->limit($numberOfResults);
-        
+
         // switch from cursor to actual array
-        if ($cursor->count() > 0) {
+        if ($nbItems > 0) {
             $data = iterator_to_array($cursor);
         } else {
             $data = array();
         }
-        
-        // iterate throught data to convert ID to string and add version nulmber
+
+        // iterate through data to convert ID to string and add version number
         // if none
         foreach ($data as &$value) {
             $value['id'] = (string) $value['_id'];
