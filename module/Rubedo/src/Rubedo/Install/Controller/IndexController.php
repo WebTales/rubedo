@@ -200,10 +200,10 @@ class IndexController extends AbstractActionController
                 unset($params['buttonGroup']);
                 $mongo = $this->buildConnectionString($params);
                 $dbName = $params['db'];
-                $initCollection = $mongoAccess->init('Users', $dbName, $mongo);
-                $connectionValid = true;
+                $mongoAccess->init('Users', $dbName, $mongo);
+                $connectionValid = $mongoAccess->isConnected($mongo);
             } else {
-                $initCollection = $mongoAccess->init('Users');
+                $mongoAccess->init('Users');
                 if (isset($this->config["datastream"]["mongo"])) {
                     $params = $this->config["datastream"]["mongo"];
                     $connectionValid = true;
