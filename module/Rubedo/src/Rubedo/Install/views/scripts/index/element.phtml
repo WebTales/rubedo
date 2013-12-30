@@ -1,24 +1,25 @@
 <?php
 use Zend\Form\Element\Captcha;
+
 $element = $this->element;
 
 $messages = $element->getMessages();
-$hasError = ! empty($messages);
+$hasError = !empty($messages);
 $classError = $hasError ? 'error' : '';
 echo '<div class="control-group ' . $classError . '">';
 echo '<div>';
 echo $this->FormLabel($element);
 echo '</div>';
 echo '<div class="controls">';
-if($element instanceof Captcha){
+if ($element instanceof Captcha) {
     $helperName = $element->getCaptcha()->getHelperName();
     $helper = $this->plugin($helperName);
-    if($helper instanceof Zend\Form\View\Helper\Captcha\Image){
+    if ($helper instanceof Zend\Form\View\Helper\Captcha\Image) {
         $helper->setSeparator('<br/><br/>');
         $helper->setCaptchaPosition(Zend\Form\View\Helper\Captcha\Image::CAPTCHA_PREPEND);
     }
     echo $this->plugin($helperName)->render($element);
-}else{
+} else {
     echo $this->FormElement()->render($element);
 }
 

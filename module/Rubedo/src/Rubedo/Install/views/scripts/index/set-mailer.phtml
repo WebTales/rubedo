@@ -1,14 +1,14 @@
 <h1>Mailer Configuration</h1>
 <p>Configure a SMTP server so that Rubedo can sent email through it.</p>
 <p>This isn't needed for main CMS features, only for advanced use with mailer service.</p>
-<br />
+<br/>
 <div id="alerts">
-    <?php if($this->hasError){?>
-    <div class="alert alert-warning"><?php echo $this->errorMsgs;?></div>
-    <?php }?>
-    <?php if($this->isSet){?>
-    <div class="alert alert-success">Connection to SMTP server is set</div>
-    <?php }?>
+    <?php if ($this->hasError) { ?>
+        <div class="alert alert-warning"><?php echo $this->errorMsgs; ?></div>
+    <?php } ?>
+    <?php if ($this->isSet) { ?>
+        <div class="alert alert-success">Connection to SMTP server is set</div>
+    <?php } ?>
 </div>
 <?php
-echo $this->partial('rubedo/install/controller/index/form',array('form'=>$this->form));
+echo $this->partial('rubedo/install/controller/index/form', array('form' => $this->form));

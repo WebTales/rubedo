@@ -1,15 +1,15 @@
-<?php 
+<?php
 //form.phtml
 $form = $this->form;
 $form->prepare();
 
 echo $this->form()->openTag($form);
 foreach ($form as $element) {
-    
-if ($element instanceof Zend\Form\FieldsetInterface) {
-         echo $this->partial('rubedo/install/controller/index/fieldset', array(
-                'element' => $element
-            )); 
+
+    if ($element instanceof Zend\Form\FieldsetInterface) {
+        echo $this->partial('rubedo/install/controller/index/fieldset', array(
+            'element' => $element
+        ));
     } else {
         echo $this->partial('rubedo/install/controller/index/element', array(
             'element' => $element

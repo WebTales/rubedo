@@ -1,21 +1,20 @@
-
 <h1>DataBase Configuration</h1>
 <p>
-	A mongoDB database is required to run Rubedo. <a
-		href="http://www.mongodb.org">See www.mongodb.org</a> if needed.
+    A mongoDB database is required to run Rubedo. <a
+        href="http://www.mongodb.org">See www.mongodb.org</a> if needed.
 </p>
 <p>This tool cannot create login/password for a database, this should be
-	done by database administrator.</p>
+    done by database administrator.</p>
 <p>For testing environnement, a connection without login nor password
-	can be used.</p>
-<br />
+    can be used.</p>
+<br/>
 <div id="alerts">
-    <?php if($this->hasError){?>
-    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
-    <?php }?>
-    <?php if($this->isReady){?>
-    <div class="alert alert-success">Connection to DB is set</div>
-    <?php }?>
+    <?php if ($this->hasError) { ?>
+        <div class="alert alert-error"><?php echo $this->errorMsgs; ?></div>
+    <?php } ?>
+    <?php if ($this->isReady) { ?>
+        <div class="alert alert-success">Connection to DB is set</div>
+    <?php } ?>
 </div>
 <?php
-echo $this->partial('rubedo/install/controller/index/form',array('form'=>$this->form));
+echo $this->partial('rubedo/install/controller/index/form', array('form' => $this->form));

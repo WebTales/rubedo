@@ -8,24 +8,22 @@ if ($element->getName() == 'buttonGroup') {
 } else {
     echo '<fieldset>';
     $legend = $element->getAttribute('legend');
-    if($legend){
-        echo '<legend>'.$legend.'</legend>';
+    if ($legend) {
+        echo '<legend>' . $legend . '</legend>';
     }
     foreach ($element as $subElements) {
-        
+
         //getAttribute
         if ($subElements instanceof Zend\Form\FieldsetInterface) {
             echo $this->partial('rubedo/install/controller/index/fieldset', array(
                 'element' => $subElements
-            )); 
-        }
-        
-        else{
+            ));
+        } else {
             echo $this->partial('rubedo/install/controller/index/element', array(
                 'element' => $subElements
             ));
         }
-        
+
     }
     echo '</fieldset>';
 }
