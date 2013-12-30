@@ -551,7 +551,15 @@ class DataAccess implements IDataAccess
 
         // switch from cursor to actual array
         if ($nbItems > 0) {
-            $data = iterator_to_array($cursor);
+            try {
+                $data = iterator_to_array($cursor);
+            } catch(\MongoCursorException $e) {
+                if (strpos($e->getMessage(), 'unauthorized db')) {
+                    throw new Server('Unauthorized DB Access', 'Exception102');
+                } else {
+                    throw $e;
+                }
+            }
         } else {
             $data = array();
         }

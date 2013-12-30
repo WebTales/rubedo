@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,23 +16,28 @@
  */
 namespace Rubedo\Install\Controller;
 
-use Rubedo\Mongo\DataAccess;
 use Rubedo\Collection\AbstractCollection;
-use Rubedo\Services\Manager;
+use Rubedo\Collection\Pages;
 use Rubedo\Elastic\DataAbstract;
-use Rubedo\Update\Install;
-use Rubedo\Install\Model\NavObject;
+use Rubedo\Exceptions\Server;
+use Rubedo\Exceptions\User;
+use Rubedo\Install\Model\AdminConfigForm;
 use Rubedo\Install\Model\DbConfigForm;
+use Rubedo\Install\Model\DomainAliasForm;
 use Rubedo\Install\Model\EsConfigForm;
 use Rubedo\Install\Model\LanguagesConfigForm;
-use Rubedo\Install\Model\AdminConfigForm;
 use Rubedo\Install\Model\MailConfigForm;
-use Rubedo\Install\Model\DomainAliasForm;
+use Rubedo\Install\Model\NavObject;
 use Rubedo\Install\Model\PhpSettingsForm;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
+use Rubedo\Interfaces\config;
+use Rubedo\Services\Manager;
+use Rubedo\Update\Install;
+use Rubedo\Update\Update;
+use Rubedo\User\CurrentUser;
 use WebTales\MongoFilters\Filter;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 
 
 /**
@@ -60,32 +65,37 @@ class IndexController extends AbstractActionController
     protected $viewData;
 
     /**
+     * @var \Zend\View\Model\ViewModel
+     */
+    protected $viewDataModel;
+
+    /**
      * Init installation context
      *
      * Set a navigation for install tool screens
      * Set the installation object
      *
-     * @throws \Rubedo\Exceptions\User
+     * @throws User
      */
     public function __construct()
     {
         $this->viewData = new \stdClass();
-        \Rubedo\User\CurrentUser::setIsInstallerUser(true);
-        
+        CurrentUser::setIsInstallerUser(true);
+
         AbstractCollection::disableUserFilter();
-        
+
         $this->navigation = NavObject::getNav();
         $this->setWizardSteps();
         $this->viewData->navigationContainer = $this->navigation;
-        
+
         $this->installObject = new Install();
-        if (! $this->installObject->isConfigWritable()) {
-            throw new \Rubedo\Exceptions\User('Local config file %1$s should be writable', "Exception29", $this->localConfigFile);
+        if (!$this->installObject->isConfigWritable()) {
+            throw new User('Local config file %1$s should be writable', "Exception29", $this->localConfigFile);
         }
-        
+
         $this->installObject->loadLocalConfig();
         $this->config = $this->installObject->getLocalConfig();
-        if (! isset($this->config['installed'])) {
+        if (!isset($this->config['installed'])) {
             $this->config['installed'] = array();
         }
     }
@@ -114,8 +124,8 @@ class IndexController extends AbstractActionController
     {
         $this->layout('layout/install');
         $this->config = $this->installObject->getLocalConfig();
-        if (! isset($this->config['installed']) || $this->config['installed']['status'] != 'finished') {
-            if (! isset($this->config['installed']['action'])) {
+        if (!isset($this->config['installed']) || $this->config['installed']['status'] != 'finished') {
+            if (!isset($this->config['installed']['action'])) {
                 $this->config['installed']['action'] = 'start-wizard';
                 $this->installObject->saveLocalConfig($this->config);
             }
@@ -125,10 +135,10 @@ class IndexController extends AbstractActionController
             );
             return $this->redirect()->toRoute('install', $redirectParams);
         }
-        
+
         $this->viewData->localConfigFile = $this->installObject->getConfigFilePath();
-        
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/index');
         return $this->viewDataModel;
     }
@@ -137,7 +147,7 @@ class IndexController extends AbstractActionController
     {
         Manager::getService('UrlCache')->drop();
         Manager::getService('Cache')->drop();
-        $servicesArray = \Rubedo\Interfaces\config::getCollectionServices();
+        $servicesArray = config::getCollectionServices();
         $result = array();
         foreach ($servicesArray as $service) {
             $result[] = Manager::getService($service)->dropIndexes();
@@ -148,14 +158,14 @@ class IndexController extends AbstractActionController
     public function startWizardAction()
     {
         $this->layout('layout/install');
-        
+
         $this->config['installed'] = array(
             'status' => 'begin',
             'action' => 'start-wizard'
         );
         $this->viewData->displayMode = "start-wizard";
         $this->installObject->saveLocalConfig($this->config);
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/start-wizard');
         return $this->viewDataModel;
     }
@@ -190,7 +200,7 @@ class IndexController extends AbstractActionController
 
         $dbForm = DbConfigForm::getForm($mongoOptions);
 
-        $mongoAccess = new DataAccess();
+        $mongoAccess = Manager::getService("MongoDataAccess");
 
         try {
             $dbForm->setData($this->params()
@@ -201,6 +211,7 @@ class IndexController extends AbstractActionController
                 $mongo = $this->buildConnectionString($params);
                 $dbName = $params['db'];
                 $mongoAccess->init('Users', $dbName, $mongo);
+                $mongoAccess->read();
                 $connectionValid = $mongoAccess->isConnected($mongo);
             } else {
                 $mongoAccess->init('Users');
@@ -212,22 +223,27 @@ class IndexController extends AbstractActionController
                     $connectionValid = false;
                 }
             }
-        } catch (\Exception $exception) {
-            $connectionValid = false;
+        } catch (Server $e) {
+            $connectionValid = $e->getMessage();
+        } catch (\Exception $e) {
+            $connectionValid = $e->getMessage();
         }
-        if ($connectionValid) {
+        if ($connectionValid === true) {
             $this->viewData->isReady = true;
             $this->config["datastream"]["mongo"] = $params;
             $this->installObject->saveLocalConfig($this->config);
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified DB';
+            if ($connectionValid !== false) { // Because may content string
+                $this->viewData->errorMsgs .= ' : ' . $connectionValid;
+            }
         }
 
         $this->viewData->form = $dbForm;
 
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-db');
         return $this->viewDataModel;
     }
@@ -256,11 +272,11 @@ class IndexController extends AbstractActionController
                 unset($params['buttonGroup']);
                 DataAbstract::lazyLoadConfig();
                 DataAbstract::setOptions($params);
-                $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+                $query = Manager::getService('ElasticDataIndex');
                 $query->init();
             } else {
                 $params = $esOptions;
-                $query = \Rubedo\Services\Manager::getService('ElasticDataIndex');
+                $query = Manager::getService('ElasticDataIndex');
                 $query->init();
             }
             $connectionValid = true;
@@ -277,11 +293,11 @@ class IndexController extends AbstractActionController
             $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified ES'
                 . (isset($this->viewData->errorMsgs) ? ' : ' . $this->viewData->errorMsgs : '');
         }
-        
+
         $this->viewData->form = $dbForm;
-        
+
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-elastic-search');
         return $this->viewDataModel;
     }
@@ -298,17 +314,17 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'define-languages';
             $this->installObject->saveLocalConfig($this->config);
         }
-        
+
         $params = array();
         $ok = false;
-        
+
         $languageService = Manager::getService('Languages');
-        
+
         $defaultLocale = $languageService->getDefaultLanguage();
         if ($defaultLocale) {
             $ok = true;
         }
-        
+
         $languageListResult = $languageService->getList(null, array(
             array(
                 'property' => 'label',
@@ -327,15 +343,15 @@ class IndexController extends AbstractActionController
         $languageList = $languageListResult["data"];
         $languageSelectList = array();
         $languageSelectList[] = "";
-        
+
         foreach ($languageList as $value) {
             list ($label) = explode(';', $value['label']);
-            $languageSelectList[$value['locale']] = isset($value['ownLabel']) && ! empty($value['ownLabel']) ? $value['ownLabel'] : $label;
+            $languageSelectList[$value['locale']] = isset($value['ownLabel']) && !empty($value['ownLabel']) ? $value['ownLabel'] : $label;
         }
-        
+
         $params['languages'] = $languageSelectList;
         $params['defaultLanguage'] = isset($defaultLocale) ? $defaultLocale : 'en';
-        
+
         $dbForm = LanguagesConfigForm::getForm($params);
         $dbForm->setData($this->params()
             ->fromPost());
@@ -347,7 +363,7 @@ class IndexController extends AbstractActionController
                 $ok = true;
             }
         }
-        
+
         if ($ok) {
             $this->viewData->isReady = true;
             $this->installObject->saveLocalConfig($this->config);
@@ -355,11 +371,11 @@ class IndexController extends AbstractActionController
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'A default language should be activated';
         }
-        
+
         $this->viewData->form = $dbForm;
-        
+
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/define-languages');
         return $this->viewDataModel;
     }
@@ -372,17 +388,17 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'set-mailer';
             $this->installObject->saveLocalConfig($this->config);
         }
-        
+
         $mailerOptions = isset($this->config["swiftmail"]["smtp"]) ? $this->config["swiftmail"]["smtp"] : array(
             'server' => null,
             'port' => null,
             'ssl' => null
         );
-        
+
         $dbForm = MailConfigForm::getForm($mailerOptions);
         $dbForm->setData($this->params()
             ->fromPost());
-        
+
         try {
             if ($this->getRequest()->isPost() && $dbForm->isValid()) {
                 $params = $dbForm->getData();
@@ -411,9 +427,9 @@ class IndexController extends AbstractActionController
         }
         $this->viewData->isReady = true;
         $this->viewData->form = $dbForm;
-        
+
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-mailer');
         return $this->viewDataModel;
     }
@@ -425,13 +441,13 @@ class IndexController extends AbstractActionController
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-local-domains';
         }
-        
+
         $dbForm = DomainAliasForm::getForm();
-        
-        if (! isset($this->config['site']['override'])) {
+
+        if (!isset($this->config['site']['override'])) {
             $this->config['site']['override'] = array();
         }
-        
+
         $key = $this->params()->fromQuery('delete-domain');
         if ($key) {
             unset($this->config['site']['override'][$key]);
@@ -456,15 +472,15 @@ class IndexController extends AbstractActionController
                 $this->installObject->saveLocalConfig($this->config);
             }
         }
-        
+
         $this->viewData->isReady = true;
-        
+
         $this->viewData->overrideList = $this->config['site']['override'];
-        
+
         $this->viewData->form = $dbForm;
-        
+
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-local-domains');
         return $this->viewDataModel;
     }
@@ -477,13 +493,13 @@ class IndexController extends AbstractActionController
             $this->config['installed']['action'] = 'set-php-settings';
             $this->installObject->saveLocalConfig($this->config);
         }
-        
+
         $applicationConfig = Manager::getService('application')->getConfig();
-        
+
         $dbForm = PhpSettingsForm::getForm($applicationConfig);
         $dbForm->setData($this->params()
             ->fromPost());
-        
+
         if ($this->getRequest()->isPost() && $dbForm->isValid()) {
             $params = $dbForm->getData();
             unset($params['buttonGroup']);
@@ -493,13 +509,13 @@ class IndexController extends AbstractActionController
             $this->config = array_merge($this->config, $params);
             $this->installObject->saveLocalConfig($this->config);
         }
-        
+
         $this->viewData->isReady = true;
-        
+
         $this->viewData->form = $dbForm;
-        
+
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-php-settings');
         return $this->viewDataModel;
     }
@@ -510,37 +526,37 @@ class IndexController extends AbstractActionController
         $this->viewData->isReady = false;
         $this->viewData->shouldIndex = false;
         $this->viewData->shouldInitialize = false;
-        
+
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-db-contents';
         }
-        
+
         if ($this->params()->fromQuery('doEnsureIndex', false)) {
             $this->viewData->isIndexed = $this->doEnsureIndexes();
-            if (! $this->viewData->isIndexed) {
+            if (!$this->viewData->isIndexed) {
                 $this->viewData->shouldIndex = true;
             }
         } else {
             $this->viewData->shouldIndex = $this->shouldIndex();
         }
-        
+
         if ($this->params()->fromQuery('initContents', false)) {
             $this->viewData->isContentsInitialized = $this->doInsertContents();
         } else {
             $this->viewData->shouldInitialize = $this->shouldInitialize();
         }
-        
+
         if ($this->params()->fromQuery('doInsertGroups', false)) {
             $this->viewData->groupCreated = $this->docreateDefaultsGroup();
         }
-        if ($this->isDefaultGroupsExists() && ! $this->viewData->shouldIndex && ! $this->viewData->shouldInitialize) {
+        if ($this->isDefaultGroupsExists() && !$this->viewData->shouldIndex && !$this->viewData->shouldInitialize) {
             $this->viewData->isReady = true;
         }
-        
+
         $this->installObject->saveLocalConfig($this->config);
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-db-contents');
         return $this->viewDataModel;
     }
@@ -553,44 +569,44 @@ class IndexController extends AbstractActionController
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-admin';
         }
-        
+
         $form = AdminConfigForm::getForm();
         $form->setData($this->params()
             ->fromPost());
-        
+
         if ($this->getRequest()->isPost() && $form->isValid()) {
-            
+
             $params = $form->getData();
             unset($params['buttonGroup']);
-            $hashService = \Rubedo\Services\Manager::getService('Hash');
-            
+            $hashService = Manager::getService('Hash');
+
             unset($params["confirmPassword"]);
-            
+
             $params['salt'] = $hashService->generateRandomString();
             $params['password'] = $hashService->derivatePassword($params['password'], $params['salt']);
             $adminGroup = Manager::getService('Groups')->findByName('admin');
             $params['defaultGroup'] = $adminGroup['id'];
-            $filters=Filter::factory();
+            $filters = Filter::factory();
             $filters->addFilter(Filter::factory('Value')->setName('UTType')
                 ->setValue("default"));
-            $defaultUserType=Manager::getService("UserTypes")->findOne($filters);
-            $params['typeId']=$defaultUserType["id"];
-            $params['status']="approved";
-            $params['taxonomy']=array();
-            $params['fields']=array();
+            $defaultUserType = Manager::getService("UserTypes")->findOne($filters);
+            $params['typeId'] = $defaultUserType["id"];
+            $params['status'] = "approved";
+            $params['taxonomy'] = array();
+            $params['fields'] = array();
             $wasFiltered = AbstractCollection::disableUserFilter();
             $userService = Manager::getService('Users');
             $response = $userService->create($params);
             $result = $response['success'];
-            
+
             AbstractCollection::disableUserFilter($wasFiltered);
-            
-            if (! $result) {
+
+            if (!$result) {
                 $this->viewData->hasError = true;
                 $this->viewData->errorMsg = $response['msg'];
             } else {
                 $userId = $response['data']['id'];
-                
+
                 $groupService = Manager::getService('Groups');
                 $adminGroup['members'][] = $userId;
                 $groupService->update($adminGroup);
@@ -608,14 +624,14 @@ class IndexController extends AbstractActionController
             $this->viewData->adminAccounts = $listAdminUsers['data'];
             $this->viewData->isReady = true;
         } else {
-            
+
             $this->viewData->errorMsgs = 'No Admin Account Set';
         }
-        
+
         $this->viewData->form = $form;
-        
+
         $this->layout('layout/install');
-        $this->viewDataModel = new ViewModel((array) $this->viewData);
+        $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-admin');
         return $this->viewDataModel;
     }
@@ -623,7 +639,7 @@ class IndexController extends AbstractActionController
     protected function buildConnectionString($options)
     {
         $connectionString = 'mongodb://';
-        if (! empty($options['login'])) {
+        if (!empty($options['login'])) {
             $connectionString .= $options['login'];
             $connectionString .= ':' . $options['password'] . '@';
         }
@@ -673,13 +689,13 @@ class IndexController extends AbstractActionController
             $this->viewData->isDefaultGroupsExists = false;
         }
         $success = $this->installObject->doCreateDefaultsGroups();
-        if (! $success) {
+        if (!$success) {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'failed to create default groups';
         } else {
             $this->viewData->isGroupsCreated = true;
         }
-        
+
         return $success;
     }
 
@@ -692,21 +708,21 @@ class IndexController extends AbstractActionController
 
     protected function doInsertContents()
     {
-        $success = \Rubedo\Update\Install::doInsertContents();
-        
+        $success = Install::doInsertContents();
+
         if ($success) {
-            \Rubedo\Update\Update::update();
-            \Rubedo\Collection\Pages::localizeAllCollection();
+            Update::update();
+            Pages::localizeAllCollection();
         }
-        
-        if (! $success) {
+
+        if (!$success) {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'failed to initialize contents';
         } else {
             $this->config['installed']['contents'] = $this->config["datastream"]["mongo"]["server"] . '/' . $this->config["datastream"]["mongo"]['db'];
             $this->viewData->isContentInitialized = true;
         }
-        
+
         return $success;
     }
 }
