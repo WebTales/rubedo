@@ -1,15 +1,17 @@
 <h1>elasticsearch Configuration</h1>
-<p>An elasticsearch server is required to run Rubedo. <a href="http://www.elasticsearch.org">See www.elasticsearch.org</a> if needed.</p>
+<p>An elasticsearch server is required to run Rubedo. <a href="http://www.elasticsearch.org">See
+        www.elasticsearch.org</a> if needed.</p>
 <p>Two indexes are used, one for contents and one for digital documents.</p>
-<p>This tool cannot do not manage securing access to elasticsearch, protections should be set by elasticsearch Administrator</p>
-<br />
+<p>This tool cannot do not manage securing access to elasticsearch, protections should be set by elasticsearch
+    Administrator</p>
+<br/>
 <div id="alerts">
-    <?php if($this->hasError){?>
-    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
-    <?php }?>
-    <?php if($this->isReady){?>
-    <div class="alert alert-success">Connection to ES is set</div>
-    <?php }?>
+    <?php if ($this->hasError) { ?>
+        <div class="alert alert-error"><?php echo $this->errorMsgs; ?></div>
+    <?php } ?>
+    <?php if ($this->isReady) { ?>
+        <div class="alert alert-success">Connection to ES is set</div>
+    <?php } ?>
 </div>
 <?php
-echo $this->partial('rubedo/install/controller/index/form',array('form'=>$this->form));
+echo $this->partial('rubedo/install/controller/index/form', array('form' => $this->form));

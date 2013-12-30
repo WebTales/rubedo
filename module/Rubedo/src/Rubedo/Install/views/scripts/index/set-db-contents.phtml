@@ -1,63 +1,63 @@
 <h1>Initialize DB Contents</h1>
-<br />
+<br/>
 <div id="alerts">
-    <?php if($this->hasError){?>
-    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
-    <?php }?>
-    <?php if($this->isIndexed){?>
-    <div class="alert alert-success">Indexes had been applied</div>
-    <?php }?>
-    
-    <?php if($this->isGroupsCreated){?>
-    <div class="alert alert-success">Groups had been created</div>
-    <?php }?>
-    
-    <?php if($this->isContentInitialized){?>
-    <div class="alert alert-success">Contents had been initialized</div>
-    <?php }?>
-    
-    
-    <?php if(!$this->isDefaultGroupsExists){?>
-    <div class="alert alert-error">Default groups are not set</div>
-    <?php }?>
-    
-    <?php if($this->isReady){?>
-    <div class="alert alert-success">
-		<h4>All contents are set!</h4>
-	</div>
-	<?php }?>
+    <?php if ($this->hasError) { ?>
+        <div class="alert alert-error"><?php echo $this->errorMsgs; ?></div>
+    <?php } ?>
+    <?php if ($this->isIndexed) { ?>
+        <div class="alert alert-success">Indexes had been applied</div>
+    <?php } ?>
+
+    <?php if ($this->isGroupsCreated) { ?>
+        <div class="alert alert-success">Groups had been created</div>
+    <?php } ?>
+
+    <?php if ($this->isContentInitialized) { ?>
+        <div class="alert alert-success">Contents had been initialized</div>
+    <?php } ?>
+
+
+    <?php if (!$this->isDefaultGroupsExists) { ?>
+        <div class="alert alert-error">Default groups are not set</div>
+    <?php } ?>
+
+    <?php if ($this->isReady) { ?>
+        <div class="alert alert-success">
+            <h4>All contents are set!</h4>
+        </div>
+    <?php } ?>
 </div>
 
-<?php if(!$this->isDefaultGroupsExists){?>
-<div class="row-fluid">
-	<h4>Initialize default groups</h4>
-	<a
-		href="<?php echo $this->url('install',array('controller'=>'index','action'=>'set-db-contents'),array('query'=>array('doInsertGroups'=>'1')));?>"
-		class="btn btn-large btn-primary" type="button"><i
-		class="icon-user icon-white"></i> Create groups</a>
-</div>
+<?php if (!$this->isDefaultGroupsExists) { ?>
+    <div class="row-fluid">
+        <h4>Initialize default groups</h4>
+        <a
+            href="<?php echo $this->url('install', array('controller' => 'index', 'action' => 'set-db-contents'), array('query' => array('doInsertGroups' => '1'))); ?>"
+            class="btn btn-large btn-primary" type="button"><i
+                class="icon-user icon-white"></i> Create groups</a>
+    </div>
 
-<?php }elseif($this->shouldIndex){?>
-<div class="row-fluid">
+<?php } elseif ($this->shouldIndex) { ?>
+    <div class="row-fluid">
 
-	<h4>Apply indexes</h4>
-	<a
-		href="<?php echo $this->url('install',array('controller'=>'index','action'=>'set-db-contents'),array('query'=>array('doEnsureIndex'=>'1')));?>"
-		class="btn btn-large btn-primary" type="button"><i
-		class="icon-bookmark icon-white"></i> Run Indexes</a>
+        <h4>Apply indexes</h4>
+        <a
+            href="<?php echo $this->url('install', array('controller' => 'index', 'action' => 'set-db-contents'), array('query' => array('doEnsureIndex' => '1'))); ?>"
+            class="btn btn-large btn-primary" type="button"><i
+                class="icon-bookmark icon-white"></i> Run Indexes</a>
 
-</div>
-<?php }elseif($this->shouldInitialize){?>
-<div class="row-fluid">
+    </div>
+<?php } elseif ($this->shouldInitialize) { ?>
+    <div class="row-fluid">
 
-	<h4>Initialize Db Contents</h4>
-	<a
-		href="<?php echo $this->url('install',array('controller'=>'index','action'=>'set-db-contents'),array('query'=>array('initContents'=>'1')));?>"
-		class="btn btn-large btn-primary" type="button"><i
-		class="icon-user icon-white"></i> Initialize Contents</a>
-</div>
+        <h4>Initialize Db Contents</h4>
+        <a
+            href="<?php echo $this->url('install', array('controller' => 'index', 'action' => 'set-db-contents'), array('query' => array('initContents' => '1'))); ?>"
+            class="btn btn-large btn-primary" type="button"><i
+                class="icon-user icon-white"></i> Initialize Contents</a>
+    </div>
 <?php } ?>
 
 
-<br />
-<br />
+<br/>
+<br/>

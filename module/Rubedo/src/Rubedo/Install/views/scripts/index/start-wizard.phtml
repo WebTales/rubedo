@@ -1,26 +1,32 @@
 <h1>Rubedo installer</h1>
 <h4>Thank you for installing Rubedo.</h4>
-<p>This wizard will guide you through the process of defining all information mandatory for a full install of Rubedo.</p>
+<p>This wizard will guide you through the process of defining all information mandatory for a full install of
+    Rubedo.</p>
 <h5>PreRequisites</h5>
 <ul>
-<li>A full PHP 5.3+ stack (i.e. <a href="http://www.zend.com/products/server/">http://www.zend.com/products/server/</a>)</li>
-<li>Composer (<a href="http://getcomposer.org">http://getcomposer.org</a>)</li>
-<li>Phing (<a href="http://www.phing.info">http://www.phing.info</a>)</li>
-<li>MongoDB (<a href="http://www.mongodb.org">http://www.mongodb.org</a>)</li>
-<li>ElasticSearch (<a href="http://www.elasticsearch.org">http://www.elasticsearch.org</a>)</li>
-<li>Mapper Attachments Type for ElasticSearch (<a href="https://github.com/elasticsearch/elasticsearch-mapper-attachments">https://github.com/elasticsearch/elasticsearch-mapper-attachments</a>) </li>
+    <li>A full PHP 5.3+ stack (i.e. <a
+            href="http://www.zend.com/products/server/">http://www.zend.com/products/server/</a>)
+    </li>
+    <li>Composer (<a href="http://getcomposer.org">http://getcomposer.org</a>)</li>
+    <li>Phing (<a href="http://www.phing.info">http://www.phing.info</a>)</li>
+    <li>MongoDB (<a href="http://www.mongodb.org">http://www.mongodb.org</a>)</li>
+    <li>ElasticSearch (<a href="http://www.elasticsearch.org">http://www.elasticsearch.org</a>)</li>
+    <li>Mapper Attachments Type for ElasticSearch (<a
+            href="https://github.com/elasticsearch/elasticsearch-mapper-attachments">https://github.com/elasticsearch/elasticsearch-mapper-attachments</a>)
+    </li>
 </ul>
-<p>All parameters written through this wizard could be found in <code><?php echo $this->localConfigFile;?></code></p>
-<p>When the whole process is done, you should add a protection against someone accessing this installer URL. This can be done by adding a rule on your webserver, in .htacces (or Apache httpd.conf
+<p>All parameters written through this wizard could be found in <code><?php echo $this->localConfigFile; ?></code></p>
+<p>When the whole process is done, you should add a protection against someone accessing this installer URL. This can be
+    done by adding a rule on your webserver, in .htacces (or Apache httpd.conf
 <pre>RewriteRule install$ - [F,L]
 RewriteRule install/ - [F,L]</pre>
-or by removing the install module from your server: <code><?php echo $this->moduleDir;?></code></p>
+or by removing the install module from your server: <code><?php echo $this->moduleDir; ?></code></p>
 
 
 <div class='pull-right'>
-	<a
-		href="<?php echo $this->url('install',array('action'=>'set-db','controller'=>'index'));?>"
-		class="btn btn-large btn-primary" type="button"><i
-		class="icon-wrench icon-white"></i> Start Install</a>
+    <a
+        href="<?php echo $this->url('install', array('action' => 'set-db', 'controller' => 'index')); ?>"
+        class="btn btn-large btn-primary" type="button"><i
+            class="icon-wrench icon-white"></i> Start Install</a>
 </div>
 

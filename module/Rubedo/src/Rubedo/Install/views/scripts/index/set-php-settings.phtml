@@ -1,14 +1,14 @@
 <h1>Application settings</h1>
 <p>Define specific parameters for this instance of Rubedo.</p>
 <p>Parameters are shared between sites</p>
-<br />
+<br/>
 <div id="alerts">
-    <?php if($this->hasError){?>
-    <div class="alert alert-error"><?php echo $this->errorMsgs;?></div>
-    <?php }?>
-    
-    
+    <?php if ($this->hasError) { ?>
+        <div class="alert alert-error"><?php echo $this->errorMsgs; ?></div>
+    <?php } ?>
+
+
 </div>
 
 <?php
-echo $this->partial('rubedo/install/controller/index/form',array('form'=>$this->form));
+echo $this->partial('rubedo/install/controller/index/form', array('form' => $this->form));

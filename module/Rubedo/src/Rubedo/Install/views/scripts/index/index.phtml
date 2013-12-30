@@ -1,33 +1,37 @@
 <div class="hero-unit">
-	<h2>Installation of Rubedo</h2>
-	<h4>Configuration Wizard had been run.</h4>
-	<p>
-		All parameters written through this wizard could be found in
-		<code><?php echo $this->localConfigFile;?></code>
-	</p>
-	<p>You should add a protection against someone accessing this installer
-		URL. This can be done by adding a rule on your webserver, in .htacces
-		(or Apache httpd.conf</p>
+    <h2>Installation of Rubedo</h2>
+    <h4>Configuration Wizard had been run.</h4>
+
+    <p>
+        All parameters written through this wizard could be found in
+        <code><?php echo $this->localConfigFile; ?></code>
+    </p>
+
+    <p>You should add a protection against someone accessing this installer
+        URL. This can be done by adding a rule on your webserver, in .htacces
+        (or Apache httpd.conf</p>
 
 
 	<pre>RewriteRule install$ - [F,L]
 RewriteRule install/ - [F,L]</pre>
-	<p>
-		or by removing the install module from your server:
-		<code>rm -rf <?php echo $this->moduleDir;?></code>
-	</p>
-	<hr />
-	<h4>Running Rubedo</h4>
-	<p>You can now access to the backoffice and create site and contents.
-		You need to define at least one website in order to have an accessible
-		frontoffice.</p>
-	<p>
-		<a
-			href="<?php echo $this->url('backoffice/default',array('action'=>'index','controller'=>'login'));?>"
-			class="btn btn-large btn-success"><i class="icon-user icon-white"></i>
-			Access to Back Office</a> <a
-			href="<?php echo $this->url('install',array('action'=>'start-wizard','controller'=>'index'));?>"
-			class="btn btn-large btn-danger"><i class="icon-wrench icon-white"></i>
-			Run wizard again</a>
-	</p>
+    <p>
+        or by removing the install module from your server:
+        <code>rm -rf <?php echo $this->moduleDir; ?></code>
+    </p>
+    <hr/>
+    <h4>Running Rubedo</h4>
+
+    <p>You can now access to the backoffice and create site and contents.
+        You need to define at least one website in order to have an accessible
+        frontoffice.</p>
+
+    <p>
+        <a
+            href="<?php echo $this->url('backoffice/default', array('action' => 'index', 'controller' => 'login')); ?>"
+            class="btn btn-large btn-success"><i class="icon-user icon-white"></i>
+            Access to Back Office</a> <a
+            href="<?php echo $this->url('install', array('action' => 'start-wizard', 'controller' => 'index')); ?>"
+            class="btn btn-large btn-danger"><i class="icon-wrench icon-white"></i>
+            Run wizard again</a>
+    </p>
 </div>
