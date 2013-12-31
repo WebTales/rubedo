@@ -19,7 +19,6 @@ namespace Rubedo\Install\Controller;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\Pages;
 use Rubedo\Elastic\DataAbstract;
-use Rubedo\Exceptions\Server;
 use Rubedo\Exceptions\User;
 use Rubedo\Install\Model\AdminConfigForm;
 use Rubedo\Install\Model\DbConfigForm;
@@ -202,29 +201,35 @@ class IndexController extends AbstractActionController
 
         $mongoAccess = Manager::getService("MongoDataAccess");
 
+        $params = array();
         try {
             $dbForm->setData($this->params()
                 ->fromPost());
             if ($this->getRequest()->isPost() && $dbForm->isValid()) {
                 $params = $dbForm->getData();
-                unset($params['buttonGroup']);
-                $mongo = $this->buildConnectionString($params);
-                $dbName = $params['db'];
-                $mongoAccess->init('Users', $dbName, $mongo);
-                $mongoAccess->read();
-                $connectionValid = $mongoAccess->isConnected($mongo);
-            } else {
-                $mongoAccess->init('Users');
-                if (isset($this->config["datastream"]["mongo"])) {
-                    $params = $this->config["datastream"]["mongo"];
-                    $connectionValid = true;
-                } else {
-                    $params = array();
-                    $connectionValid = false;
-                }
+            } elseif (isset($this->config["datastream"]["mongo"])) {
+                $params = $this->config["datastream"]["mongo"];
             }
-        } catch (Server $e) {
-            $connectionValid = $e->getMessage();
+            if (!empty($params['adminLogin']) && !empty($params['adminPassword'])) {
+                $mongoAdmin = $this->buildConnectionString($this->switchUser($params));
+                $mongoCreateDb = new \Mongo($mongoAdmin);
+                $createDb = $mongoCreateDb->selectDB($params['db']);
+                $createDb->execute(
+                    'db.addUser(\''
+                    . addslashes($params['login'])
+                    . '\',\''
+                    . addslashes($params['password'])
+                    . '\')'
+                );
+            }
+            unset($params['buttonGroup']);
+
+            $mongo = $this->buildConnectionString($params);
+
+            $dbName = $params['db'];
+            $mongoAccess->init('Users', $dbName, $mongo);
+            $mongoAccess->read();
+            $connectionValid = $mongoAccess->isConnected($mongo, $dbName);
         } catch (\Exception $e) {
             $connectionValid = $e->getMessage();
         }
@@ -648,6 +653,15 @@ class IndexController extends AbstractActionController
             $connectionString .= ':' . $options['port'];
         }
         return $connectionString;
+    }
+
+    protected function switchUser(&$options)
+    {
+        $optionsToReturn = $options;
+        $optionsToReturn['login'] = $options['adminLogin'];
+        $optionsToReturn['password'] = $options['adminPassword'];
+        unset($options['adminLogin'], $options['adminPassword']);
+        return $optionsToReturn;
     }
 
     protected function doEnsureIndexes()

@@ -45,21 +45,31 @@ class DbConfigForm extends BootstrapForm
         $dbNameField->setValue(isset($params['db']) ? $params['db'] : 'rubedo');
         $dbNameField->setLabel('Db Name');
         
+        $serverAdminLoginField = new Text('adminLogin');
+        $serverAdminLoginField->setValue(isset($params['adminLogin']) ? $params['adminLogin'] : null);
+        $serverAdminLoginField->setLabel('Admin username (not saved)');
+        
+        $serverAdminPasswordField = new Text('adminPassword');
+        $serverAdminPasswordField->setValue(isset($params['adminPassword']) ? $params['adminPassword'] : null);
+        $serverAdminPasswordField->setLabel('Admin password (not saved)');
+
         $serverLoginField = new Text('login');
         $serverLoginField->setValue(isset($params['login']) ? $params['login'] : null);
         $serverLoginField->setLabel('Username');
-        
+
         $serverPasswordField = new Text('password');
         $serverPasswordField->setValue(isset($params['password']) ? $params['password'] : null);
         $serverPasswordField->setLabel('Password');
- 
+
         $dbForm = new Form();
         $dbForm->add($serverNameField);
         $dbForm->add($serverPortField);
         $dbForm->add($dbNameField);
+        $dbForm->add($serverAdminLoginField);
+        $dbForm->add($serverAdminPasswordField);
         $dbForm->add($serverLoginField);
         $dbForm->add($serverPasswordField);
-        
+
         $dbForm = self::setForm($dbForm);
         
         return $dbForm;

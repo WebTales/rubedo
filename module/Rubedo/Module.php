@@ -419,13 +419,11 @@ class Module
         $sessionConfig->setOptions($config['session']);
         $this->sessionName = $config['session']['name'];
         
-        $mongoInfos = Mongo\DataAccess::getDefaultMongo();
         try {
-            $adapter = Manager::getService('MongoDataAccess')->getAdapter($mongoInfos);
-            $dbName = Mongo\DataAccess::getDefaultDb();
-            
+            $adapter = Manager::getService('MongoDataAccess')->getAdapter();
+
             $options = new MongoDBOptions(array(
-                'database' => $dbName,
+                'database' => Mongo\DataAccess::getDefaultDb(),
                 'collection' => 'sessions'
             ));
             

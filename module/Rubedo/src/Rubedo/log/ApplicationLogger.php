@@ -60,7 +60,7 @@ class ApplicationLogger extends Logger
 
         $level = monologger::INFO;
         try {
-            $mongoClient = Manager::getService('MongoDataAccess')->getAdapter(DataAccess::getDefaultMongo());
+            $mongoClient = Manager::getService('MongoDataAccess')->getAdapter();
             $handler = new MongoDBHandler($mongoClient, DataAccess::getDefaultDb(), static::$logCollection, $level);
             $this->logger->pushHandler($handler);
         } catch (\MongoConnectionException $e) {

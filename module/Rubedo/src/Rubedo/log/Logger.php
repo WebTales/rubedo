@@ -63,14 +63,17 @@ class Logger
                         $handler = new $className($handler['path'], $level);
                         break;
                     case 'Monolog\\Handler\\MongoDBHandler':
+
+                        /** @var $dataAccess \Rubedo\Mongo\DataAccess */
                         $dataAccess = Manager::getService('MongoDataAccess');
+
                         if ($handler['database'] == 'inherit') {
                             $handler['database'] = $dataAccess::getDefaultDb();
                         }
                         if (!isset($handler['connectionPath'])) {
                             $handler['connectionPath'] = $dataAccess::getDefaultMongo();
                         }
-                        $mongoClient = $dataAccess->getAdapter($handler['connectionPath']);
+                        $mongoClient = $dataAccess->getAdapter($handler['connectionPath'], $handler['database']);
                         $handler = new $className($mongoClient, $handler['database'], $handler['collection'], $level);
                         break;
                     default:
