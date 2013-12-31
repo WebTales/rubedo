@@ -13,50 +13,50 @@
  */
 namespace Rubedo;
 
+use Rubedo\Cache\MongoCache;
+use Rubedo\Collection\AbstractCollection;
+use Rubedo\Collection\AbstractLocalizableCollection;
+use Rubedo\Collection\SessionData;
+use Rubedo\Collection\WorkflowAbstractCollection;
+use Rubedo\Exceptions\Access as AccessException;
+use Rubedo\Exceptions\JsonExceptionStrategy;
+use Rubedo\Router\Url;
+use Rubedo\Security\HtmlCleaner;
+use Rubedo\Services\Cache;
+use Rubedo\Services\Events;
+use Rubedo\Services\Manager;
+use Rubedo\User\Authentication;
+use Zend\EventManager\EventManager;
+use Zend\Http\Response;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Config\SessionConfig;
-use Zend\Session\SessionManager;
 use Zend\Session\Container;
 use Zend\Session\SaveHandler\MongoDB;
 use Zend\Session\SaveHandler\MongoDBOptions;
-use Rubedo\Services\Manager;
-use Rubedo\Services\Events;
-use Rubedo\Collection\AbstractLocalizableCollection;
-use Rubedo\Exceptions\JsonExceptionStrategy;
-use Rubedo\Exceptions\Access as AccessException;
-use Rubedo\Collection\SessionData;
-use Rubedo\Router\Url;
-use Rubedo\Security\HtmlCleaner;
-use Zend\EventManager\EventManager;
-use Rubedo\Cache\MongoCache;
-use Rubedo\Collection\AbstractCollection;
-use Rubedo\Collection\WorkflowAbstractCollection;
-use Rubedo\User\Authentication;
-use Rubedo\Services\Cache;
-use Zend\Http\Response;
+use Zend\Session\SessionManager;
 
 /**
  * Loading class for the Rubedo Main module
  *
  * Handle initialization, configuration and events
- * 
+ *
  * @author jbourdin
- *        
+ *
  */
 class Module
 {
 
     /**
      * Do we use cache for web page
-     * 
+     *
      * @var boolean
      */
     protected static $cachePageIsActive = true;
 
     /**
      * Did the cache for current page had been found
-     * 
+     *
      * @var unknown
      */
     protected $pageHit = false;
@@ -64,40 +64,41 @@ class Module
     /**
      * Initialize Services, session, listeners for Rubedo
      *
-     * @param MvcEvent $e            
+     * @param MvcEvent $e
      */
     public function onBootstrap(MvcEvent $e)
     {
         // register serviceLocator for global access by Rubedo
         Manager::setServiceLocator($e->getApplication()->getServiceManager());
-        
         // register eventManager for global access by Rubedo
         $eventManager = $e->getApplication()->getEventManager();
         Events::setEventManager($eventManager);
-        
+
         $message = 'Running Rubedo for ' . $e->getRequest()->getUri();
         Manager::getService('Logger')->info($message);
-        
+
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        
+
         $application = $e->getApplication();
         $config = $application->getConfig();
-        
+
+        if (isset($config['rubedo_config']['cachePage']))
+            self::$cachePageIsActive = filter_var($config['rubedo_config']['cachePage'], FILTER_VALIDATE_BOOLEAN);
         SessionData::setSessionName($config['session']['name']);
-        
+
         $this->initializeSession($e);
-        
+
         Interfaces\config::initInterfaces();
-        
+
         // define all the events that should be handled
         $this->setListeners($eventManager);
-        
+
         // Config json enabled exceptionStrategy
         $exceptionStrategy = new JsonExceptionStrategy();
-        
+
         $displayExceptions = $config['view_manager']['display_exceptions'];
-        
+
         $exceptionStrategy->setDisplayExceptions($displayExceptions);
         $exceptionStrategy->attach($application->getEventManager());
     }
@@ -105,7 +106,7 @@ class Module
     /**
      * Define needed event listeners
      *
-     * @param EventManager $eventManager            
+     * @param EventManager $eventManager
      */
     public function setListeners(EventManager $eventManager)
     {
@@ -114,31 +115,31 @@ class Module
             $this,
             'preRouting'
         ));
-        
+
         // add page cache (GET only, based onUser)
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
             $this,
             'preDispatch'
         ), 100);
-        
+
         $eventManager->attach(MvcEvent::EVENT_FINISH, array(
             $this,
             'postDispatch'
-        ), - 100);
-        
+        ), -100);
+
         // handle URL caching
         $urlCacheService = Manager::getService('UrlCache');
         $eventManager->attach(Url::URL_TO_PAGE_READ_CACHE_PRE, array(
             $urlCacheService,
             'urlToPageReadCacheEvent'
-        ), - 100);
-        
+        ), -100);
+
         $urlCacheService = Manager::getService('UrlCache');
         $eventManager->attach(Url::PAGE_TO_URL_READ_CACHE_PRE, array(
             $urlCacheService,
             'PageToUrlReadCacheEvent'
-        ), - 100);
-        
+        ), -100);
+
         $eventManager->attach(array(
             Url::URL_TO_PAGE_READ_CACHE_POST,
             Url::PAGE_TO_URL_READ_CACHE_POST
@@ -146,18 +147,18 @@ class Module
             $urlCacheService,
             'urlToPageWriteCacheEvent'
         ), 100);
-        
+
         // add some cache on HtmlCleaner method
         $eventManager->attach(HtmlCleaner::PRE_HTMLCLEANER, array(
             'Rubedo\Services\Cache',
             'getFromCache'
         ), 100);
-        
+
         $eventManager->attach(HtmlCleaner::POST_HTMLCLEANER, array(
             'Rubedo\Services\Cache',
             'setToCache'
         ), 100);
-        
+
         // log hit & miss on Rubedo cache
         $eventManager->attach(array(
             MongoCache::CACHE_HIT,
@@ -166,7 +167,7 @@ class Module
             'Rubedo\Services\Cache',
             'logCacheHit'
         ), 1);
-        
+
         // log Rubedo writing on MongoDB collections
         $eventManager->attach(array(
             AbstractCollection::POST_CREATE_COLLECTION,
@@ -214,7 +215,7 @@ class Module
 
     /**
      * Standard autoloader configuration
-     * 
+     *
      * @return multitype:multitype:multitype:string
      */
     public function getAutoloaderConfig()
@@ -233,45 +234,45 @@ class Module
      *
      * Session, User, Rights, Language
      *
-     * @param MvcEvent $event            
+     * @param MvcEvent $event
      * @throws \Rubedo\Exceptions\Access
      */
     public function preRouting(MvcEvent $event)
     {
         $controller = $event->getRouteMatch()->getParam('controller');
         $action = $event->getRouteMatch()->getParam('action');
-        
+
         $router = $event->getRouter();
         $matches = $event->getRouteMatch();
-        
+
         // store this route in URL service
         Url::setRouter($router);
         Url::setRouteName($matches->getMatchedRouteName());
-        
+
         // prevent normal session if checking for session remaining lifetime
         if ($controller == 'Rubedo\\Backoffice\\Controller\\XhrAuthentication' && $action == 'is-session-expiring') {
             return;
         }
-        
+
         $config = $event->getApplication()
             ->getServiceManager()
             ->get('Config');
-        
-        if (! isset($config['installed']) || ($config['installed']['status'] !== 'finished' && $controller !== 'Rubedo\Install\Controller\Index')) {
+
+        if (!isset($config['installed']) || ($config['installed']['status'] !== 'finished' && $controller !== 'Rubedo\Install\Controller\Index')) {
             $routeMatches = $event->getRouteMatch();
             $routeMatches->setParam('controller', 'Rubedo\Install\Controller\Index');
             $routeMatches->setParam('action', 'index');
         }
-        
+
         // init the session params and session itself
         $this->startSession();
-        
+
         // @todo forward if no language initialized
-        
+
         // check access
-        
+
         if ($controller) {
-            
+
             list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
             $controllerName = strtolower($controllerName);
             $moduleName = strtolower($moduleName);
@@ -282,11 +283,11 @@ class Module
                 $aclService = Manager::getService('Acl');
                 $hasAccess = $aclService->hasAccess($ressourceName);
             }
-            
-            if (! $hasAccess) {
+
+            if (!$hasAccess) {
                 $this->toDeadEnd($event, new AccessException('Can\'t access %1$s', "Exception30", $ressourceName));
             }
-            
+
             // check BO Token
             $isBackoffice = strpos($controller, 'Rubedo\\Backoffice\\Controller') === 0;
             $doNotCheckTokenControllers = array(
@@ -294,24 +295,24 @@ class Module
                 'Rubedo\\Backoffice\\Controller\\XhrAuthentication',
                 'Rubedo\\Backoffice\\Controller\\Logout'
             );
-            if ($isBackoffice && $event->getRequest()->isPost() && ! in_array($controller, $doNotCheckTokenControllers)) {
+            if ($isBackoffice && $event->getRequest()->isPost() && !in_array($controller, $doNotCheckTokenControllers)) {
                 $user = Manager::getService('Session')->get('user');
                 $token = $event->getRequest()->getPost('token');
-                if (! isset($token)) {
+                if (!isset($token)) {
                     $token = $event->getRequest()->getQuery('token');
                 }
-                
+
                 if ($token !== $user['token']) {
                     $this->toDeadEnd($event, new AccessException("The token given in the request doesn't match with the token in session", "Exception6"));
                 }
             }
-            
+
             if ($isBackoffice) {
                 // initialize localization for collections
                 $serviceLanguages = Manager::getService('Languages');
                 if ($serviceLanguages->isActivated()) {
                     $workingLanguage = $event->getRequest()->getPost('workingLanguage', false);
-                    if (! $workingLanguage) {
+                    if (!$workingLanguage) {
                         $workingLanguage = $event->getRequest()->getQuery('workingLanguage', null);
                     }
                     if ($workingLanguage && $serviceLanguages->isActive($workingLanguage)) {
@@ -327,7 +328,7 @@ class Module
     /**
      * Log dispatching and check for cached page
      *
-     * @param MvcEvent $event            
+     * @param MvcEvent $event
      * @return void Response
      */
     public function preDispatch(MvcEvent $event)
@@ -360,7 +361,7 @@ class Module
     /**
      * Add post dispatching logging and cache writing
      *
-     * @param MvcEvent $event            
+     * @param MvcEvent $event
      */
     public function postDispatch(MvcEvent $event)
     {
@@ -369,16 +370,16 @@ class Module
         } else {
             return;
         }
-        
+
         if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
-            
+
             if ($this->pageHit) {
                 $message = 'returning cache for ' . $controller;
                 Manager::getService('Logger')->info($message);
                 return;
             }
             $cache = Cache::getCache();
-            
+
             $maxLifeTime = Manager::getService('PageContent')->getMaxLifeTime();
             if ($maxLifeTime >= 0) {
                 if ($maxLifeTime > 0) {
@@ -386,9 +387,9 @@ class Module
                         'ttl' => $maxLifeTime
                     ));
                 }
-                
+
                 $response = $event->getResponse();
-                
+
                 if ($response->isOk()) {
                     $uri = $event->getRequest()->getUri();
                     $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
@@ -407,18 +408,18 @@ class Module
     /**
      * If correct context, initialize user session
      *
-     * @param MvcEvent $e            
+     * @param MvcEvent $e
      */
     protected function initializeSession(MvcEvent $e)
     {
         $config = $e->getApplication()
             ->getServiceManager()
             ->get('Config');
-        
+
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config['session']);
         $this->sessionName = $config['session']['name'];
-        
+
         try {
             $adapter = Manager::getService('MongoDataAccess')->getAdapter();
 
@@ -426,26 +427,26 @@ class Module
                 'database' => Mongo\DataAccess::getDefaultDb(),
                 'collection' => 'sessions'
             ));
-            
+
             $saveHandler = new MongoDB($adapter, $options);
-            
+
             $this->sessionManager = new SessionManager($sessionConfig);
             if ($adapter->connected) {
                 $this->sessionManager->setSaveHandler($saveHandler);
             }
-            
+
             Container::setDefaultManager($this->sessionManager);
         } catch (\MongoConnectionException $e) {
             static::$cachePageIsActive = false;
         }
     }
-    
+
     /**
      * Actually start the session
-     * 
+     *
      * Not called in special cases, even if initialize session was called
      */
-    protected function startSession ()
+    protected function startSession()
     {
         if (isset($_COOKIE[$this->sessionName])) {
             $this->sessionManager->start();
@@ -454,11 +455,11 @@ class Module
 
     /**
      * Dispatch to a special controller to return dispatching exceptions the same way as later exceptions
-     * 
+     *
      * @param MvcEvent $event
      * @param \Exception $exception
      */
-    protected function toDeadEnd (MvcEvent $event,\Exception $exception)
+    protected function toDeadEnd(MvcEvent $event, \Exception $exception)
     {
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
