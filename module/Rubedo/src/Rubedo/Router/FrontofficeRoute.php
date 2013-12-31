@@ -75,7 +75,7 @@ class FrontofficeRoute implements RouteInterface
     public function match(\Zend\Stdlib\RequestInterface $request)
     {
         try {
-            Manager::getService('MongoDataAccess')->getAdapter(DataAccess::getDefaultMongo());
+            Manager::getService('MongoDataAccess')->getAdapter();
             
         }catch(\MongoConnectionException $e){
             return false;

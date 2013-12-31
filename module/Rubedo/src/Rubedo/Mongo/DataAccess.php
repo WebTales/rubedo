@@ -174,6 +174,15 @@ class DataAccess implements IDataAccess
     }
 
     /**
+     * Return the data stream (default mongo + default db)
+     *
+     * @return string
+     */
+    public static function getDefaultDataStream() {
+        return self::getDefaultMongo() . '/' . self::getDefaultDb();
+    }
+
+    /**
      * Read configuration from global application config and load it for the current class
      */
     public static function lazyLoadConfig()
@@ -418,7 +427,7 @@ class DataAccess implements IDataAccess
         if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
             return self::$_dbArray[$mongo . '_' . $dbName];
         } else {
-            $this->_adapter = $this->getAdapter($mongo . '/' . $dbName);
+            $this->_adapter = $this->getAdapter($mongo,  $dbName);
             $db = $this->_adapter->$dbName;
             self::$_dbArray[$mongo . '_' . $dbName] = $db;
             return $db;
@@ -431,10 +440,16 @@ class DataAccess implements IDataAccess
      *
      * @param string $mongo
      *            mongoDB connection string
+     * @param String|null $db
      * @return \Mongo
      */
-    public function getAdapter($mongo)
+    public function getAdapter($mongo = null, $db = null)
     {
+        if ($mongo === null) {
+            $mongo = self::getDefaultDataStream();
+        } else if ($mongo == self::getDefaultMongo() || preg_match('#^mongodb://.+:\d+$#', $mongo)) {
+            $mongo .= '/' . ($db ?:DataAccess::getDefaultDb());
+        }
         if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \MongoClient) {
             return self::$_adapterArray[$mongo];
         } else {
@@ -1422,10 +1437,14 @@ class DataAccess implements IDataAccess
     /**
      * Return status of connection
      * @param String $mongoConnectionString
+     * @param String|null $db
      *
      * @return bool
      */
-    public function isConnected($mongoConnectionString = null) {
+    public function isConnected($mongoConnectionString = null, $db = null) {
+        if ($db != null && preg_match('#^mongodb://.+:\d+$#', $mongoConnectionString)) {
+            $mongoConnectionString .= '/' . $db;
+        }
         if ($mongoConnectionString !== null && array_key_exists($mongoConnectionString, self::$_adapterArray)) {
             $adapter = self::$_adapterArray[$mongoConnectionString];
         } else {
