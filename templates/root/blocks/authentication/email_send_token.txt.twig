@@ -1,0 +1,13 @@
+{{ 'Blocks.Auth.Email.Hi' | fotrans({"%name%": name}, lang) }}
+
+{{ 'Blocks.Auth.Email.sendToken.requestSended.Line1' | fotrans(lang) }}
+{{ 'Blocks.Auth.Email.sendToken.requestSended.Line2' | fotrans(lang) }}
+{{ 'Blocks.Auth.EmailTxt.sendToken.requestSended.Line3' | fotrans(lang) }}
+
+{{ (siteUrl ~ URI ~ link)|raw }}
+
+{{ 'Blocks.Auth.Email.Thanks' | fotrans(lang) }}
+{{ 'Blocks.Auth.Email.Sign' | fotrans({'%siteName%': siteName}, lang) }}
+-----
+{{ 'Blocks.Auth.EmailTxt.BackToSite' | fotrans({'%siteLink%':siteUrl, '%siteName%': siteName}, lang) }}
+{{ 'Blocks.Auth.Email.SendedAuto' | fotrans(lang) }}

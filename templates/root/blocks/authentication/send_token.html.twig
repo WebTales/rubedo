@@ -1,0 +1,27 @@
+{% extends "@Root/block.html.twig" %}
+
+{% block mainContent %}
+    <h5>{{ 'Blocks.Auth.Title.RecoverPassword' | fotrans }}</h5>
+    <form class="form-horizontal" method="get">
+        <div class="control-group{% if recoverEmail is defined and user is null %} error{% elseif mailSended %} success{% endif %}">
+            <label class="control-label" for="email">{{ "Blocks.Auth.Label.Email" | fotrans }} *</label>
+            <div class="controls">
+                <input
+                        type="email"
+                        id="email"
+                        class="input-medium"
+                        placeholder="{{ "Blocks.Auth.Label.Email" | fotrans }}"
+                        value="{{ recoverEmail }}"
+                        required="required"
+                        name="recoverEmail"
+                        />
+                {% if recoverEmail is defined and user is null %}
+                    <span class="help-block">{{ 'Blocks.Auth.Msg.EmailNotFound' | fotrans }}</span>
+                {% elseif mailSended %}
+                    <span class="help-block">{{ 'Blocks.Auth.Msg.EmailSended' | fotrans }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary" value="{{ 'Blocks.Auth.Label.Recover' | fotrans }}" />
+    </form>
+{% endblock %}
