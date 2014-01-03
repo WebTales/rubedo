@@ -1,0 +1,16 @@
+{
+    "id": "import",
+    "label": {
+        "fr": "Importer des contenus",
+        "en": "Import contents"
+    },
+    "rights": [
+        "exe.ui.import",
+        "execute.controller.import.analyse.backoffice",
+        "execute.controller.import.import.backoffice"
+    ],
+    "includes": [
+        "contentTypeWriter",
+        "contentWriter"
+    ]
+}
