@@ -18,7 +18,7 @@
                 <li><a href="#" onclick="logout()"><i class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | fotrans }}</a></li>
             </ul>
         </div>
-    {%else%}
+    {% else %}
     	{% if displayMode == 'pop-in' %}
         <a href="#auth-modal" role="button" class="btn" data-toggle="modal">{{ "Blocks.Auth.Label.Connection" | fotrans }}</a>
         <div id="auth-modal" class="modal hide fade">
@@ -41,6 +41,7 @@
 	            			<input type="password" id="password" class="input-medium" placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}"  required>
 	            		</div>
 					</div>
+                    <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
 				</div>
 				
 				<div id="error-msg" class="alert alert-error hidden-rubedo"></div>
@@ -66,6 +67,7 @@
             			<input type="password" id="password" class="input-medium" placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}"  required>
             		</div>
 				</div>
+                <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
              	<div class="control-group">
              		<div class="controls">
              			<input type="submit" onclick="loggin();return false;" class="btn btn-primary" value="{{ "Blocks.Auth.Label.LogIn" | fotrans }}">

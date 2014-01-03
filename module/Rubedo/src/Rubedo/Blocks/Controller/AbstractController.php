@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,11 +16,11 @@
  */
 namespace Rubedo\Blocks\Controller;
 
-use Rubedo\Services\Manager;
-use Rubedo\Content\Context;
-use Zend\Mvc\Controller\AbstractActionController;
-use Rubedo\Templates\Raw\RawViewModel;
 use Rubedo\Collection\AbstractLocalizableCollection;
+use Rubedo\Content\Context;
+use Rubedo\Services\Manager;
+use Rubedo\Templates\Raw\RawViewModel;
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  *
@@ -46,20 +46,20 @@ abstract class AbstractController extends AbstractActionController
     {
         $templateService = Manager::getService('FrontOfficeTemplates');
         \Rubedo\Collection\AbstractCollection::setIsFrontEnd(true);
-        
+
         // handle preview for ajax request, only if user is a backoffice user
         if (Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $isDraft = $this->getParamFromQuery('is-draft', false);
-            if (! is_null($isDraft)) {
+            if (!is_null($isDraft)) {
                 Context::setIsDraft($isDraft);
             }
         }
-        
+
         // get current page property
         $this->currentPage = $this->getParamFromQuery('current-page');
-        
+
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
-        
+
         if (is_null($currentPage)) {
             throw new \Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
         } else {
@@ -67,16 +67,16 @@ abstract class AbstractController extends AbstractActionController
         }
         $this->siteId = $currentPage['site'];
         Manager::getService('PageContent')->setCurrentSite($this->siteId);
-        $locale = $this->params('locale',AbstractLocalizableCollection::getWorkingLocale());
+        $locale = $this->params('locale', AbstractLocalizableCollection::getWorkingLocale());
         $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->siteId, $locale);
 
-        
-        if (! $templateService->themeHadBeenSet()) {
+
+        if (!$templateService->themeHadBeenSet()) {
             $currentSite = Manager::getService('Sites')->findById($currentPage['site']);
             $theme = $currentSite['theme'];
             $templateService->setCurrentTheme($theme);
         }
-        
+
         // set current workspace
         $this->_workspace = $currentPage['workspace'];
     }
@@ -100,11 +100,11 @@ abstract class AbstractController extends AbstractActionController
     {
         $output['classHtml'] = $this->getParamFromQuery('classHtml', '');
         $output['idHtml'] = $this->getParamFromQuery('idHtml', '');
-        
+
         $output['lang'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $this->_serviceTemplate = Manager::getService('FrontOfficeTemplates');
         $this->_servicePage = Manager::getService('PageContent');
-        
+
         if (is_array($css)) {
             foreach ($css as $value) {
                 $this->_servicePage->appendCss($value);
@@ -115,7 +115,7 @@ abstract class AbstractController extends AbstractActionController
                 $this->_servicePage->appendJs($value);
             }
         }
-        
+
         $viewModel = new RawViewModel($output);
         $viewModel->setTemplate($template);
         $viewModel->setTerminal(true);
