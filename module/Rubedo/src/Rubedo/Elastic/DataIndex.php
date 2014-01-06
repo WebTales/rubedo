@@ -226,12 +226,13 @@ class DataIndex extends DataAbstract implements IDataIndex
                         )
                 );
             }
-            SearchableInterface
+
             // unmapped fields are not allowed in fields and i18n
             $mapping['fields'] = array(
                     'dynamic' => false,
                     'type' => 'object'
             );
+            
             foreach ($activeLanguages as $lang) {
                 $mapping['i18n']['properties'][$lang['locale']]['properties']['fields'] = array(
                         'dynamic' => false,
@@ -246,13 +247,25 @@ class DataIndex extends DataAbstract implements IDataIndex
                     
                     $name = $field['config']['name'];
                     $store = (isset($field['config']['returnInSearch']) && $field['config']['returnInSearch']==FALSE) ? "no" : "yes";
+                    $notAnalyzed = (isset($field['config']['notAnalyzed']) && $field['config']['notAnalyzed']==TRUE) ? TRUE : FALSE;
                     
+                    // Initialize config array for indexing
+                    $config = array(
+                        'store' => $store
+                    );
+                    if ($notAnalyzed) {
+                        $config['index'] = 'not_analyzed';
+                    }
+
                     switch ($field['cType']) {
                         case 'datefield':
                             $config = array(
                                     'type' => 'string',
                                     'store' => $store
                             );
+                            if ($notAnalyzed) {
+                                $config['index'] = 'not_analyzed';
+                            }
                             if (! $field['config']['localizable']) {
                                 $mapping['fields']['properties'][$name] = $config;
                             } else {
@@ -264,8 +277,11 @@ class DataIndex extends DataAbstract implements IDataIndex
                         case 'document':
                             $config = array(
                                     'type' => 'attachment',
-                                    'store' => 'no'
+                                    'store' => $store
                             );
+                            if ($notAnalyzed) {
+                                $config['index'] = 'not_analyzed';
+                            }
                             if (! $field['config']['localizable']) {
                                 $mapping['fields']['properties'][$name] = $config;
                             } else {
@@ -313,13 +329,13 @@ class DataIndex extends DataAbstract implements IDataIndex
                                                 ),
                                                 $_all => array(
                                                         "type" => "string",
-                                                        "analyzer" => "default_analyzer",
+                                                        "analyzer" => (!$notAnalyzed) ? "default_analyzer" : "not_analyzed",
                                                         "store" => $store
                                                 ),
                                                 $_autocomplete => array(
                                                         "type" => "string",
                                                         "analyzer" => "autocomplete",
-                                                        'store' => $store
+                                                        "store" => $store
                                                 )
                                         )
                                 );
@@ -330,7 +346,9 @@ class DataIndex extends DataAbstract implements IDataIndex
                                     $fieldName = $name . '_' . $locale;
                                     $_all = 'all_' . $locale;
                                     $_autocomplete = 'autocomplete_' . $locale;
-                                    if (in_array($locale . '_analyzer', 
+                                    if ($notAnalyzed) {
+                                        $lg_analyser = "not_analyzed";
+                                    } elseif (in_array($locale . '_analyzer', 
                                             $activeAnalysers)) {
                                         $lg_analyser = $locale . '_analyzer';
                                     } else {
