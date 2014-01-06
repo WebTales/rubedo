@@ -288,7 +288,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     public function templateFileExists($path)
     {
-        return is_file($this->getTemplateDir() . '/' . $path);
+        return is_file('theme/' . $this->getCurrentTheme() .'/' . $path);
     }
 
     /**
