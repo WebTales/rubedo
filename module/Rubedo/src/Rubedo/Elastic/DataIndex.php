@@ -245,7 +245,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 if ($field['config']['searchable']) {
                     
                     $name = $field['config']['name'];
-                    $store = "yes";
+                    $store = (isset($field['config']['returnInSearch']) && $field['config']['returnInSearch']==FALSE) ? "no" : "yes";
                     
                     switch ($field['cType']) {
                         case 'datefield':
@@ -482,7 +482,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 if ($field['config']['searchable']) {
                     
                     $name = $field['config']['name'];
-                    $store = "yes";
+                    $store = (isset($field['config']['returnInSearch']) && $field['config']['returnInSearch']==FALSE) ? "no" : "yes";
                     
                     switch ($field['cType']) {
                         case 'datefield':
