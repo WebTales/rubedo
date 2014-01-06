@@ -17,6 +17,7 @@
  */
 namespace Rubedo\Elastic;
 use Rubedo\Interfaces\Elastic\IDataIndex, Rubedo\Services\Manager, WebTales\MongoFilters\Filter;
+use Elastica\SearchableInterface;
 
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using
@@ -135,7 +136,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $specific_mapping = array(
                         'summary' => array(
                                 'type' => 'string',
-                                'index' => 'not_analyzed',
                                 'store' => 'yes'
                         ),
                         'contentType' => array(
@@ -226,7 +226,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                         )
                 );
             }
-            
+            SearchableInterface
             // unmapped fields are not allowed in fields and i18n
             $mapping['fields'] = array(
                     'dynamic' => false,
