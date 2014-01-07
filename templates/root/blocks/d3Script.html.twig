@@ -1,0 +1,29 @@
+{% extends "@Root/block.html.twig" %}
+{% block mainContent %}
+<script>
+predfinedFacets='{{ predefinedFacets | raw}}';
+retrieveData=function(params, successFunction, failureFunction ){
+	params.predefinedFacets=predfinedFacets;
+	params['current-page'] = jQuery('body').attr('data-current-page');
+	var request = jQuery.ajax({
+		url : window.location.protocol + '//' + window.location.host
+				+ '/blocks/'+jQuery('html').attr('lang')+'/d3-script/get-data',
+		type : "POST",
+		data : params,
+		dataType : "json"
+	});
+
+	request.done(function(data){
+		successFunction(data);
+	});
+
+	request.fail(function(jqXHR, textStatus){
+		failureFunction(jqXHR, textStatus);
+	});	
+}
+
+
+</script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+{{ d3Code | raw}}
+{% endblock %}

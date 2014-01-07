@@ -1,0 +1,45 @@
+{
+	"type":"D3 Script",
+	"description":"not yet written",
+	"configBasique":{
+		"title":"D3 Script",
+		"bType":"d3Script",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+			    {
+					"categorie":"Settings",
+					"champs":[
+					    {
+							"type":"Rubedo.view.ESQfield",
+							"config":{
+								"fieldLabel":"#ext-gen1056#",
+								"name":"predefinedFacets",
+								"queryMode":true
+							}
+						},
+						{
+							"type":"Rubedo.view.ACEField",
+							"config":{
+								"fieldLabel":"Code",
+								"name":"d3Code"
+								
+							}
+						}
+					]
+				}
+			
+
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":[
+
+		]
+	},
+	"category":"Data visualization",
+	"bType":"d3Script",
+	"id":"52cbd7b0f05c1d741e000001"
+}
