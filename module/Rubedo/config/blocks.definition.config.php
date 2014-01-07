@@ -191,5 +191,10 @@ return array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Video',
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/video.json'
+    ),
+    'd3Script' => array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\D3Script',
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/d3Script.json'
     )
 );
