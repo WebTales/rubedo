@@ -19,7 +19,7 @@
 							}
 						},
 						{
-							"type":"Ext.form.field.TextArea",
+							"type":"Rubedo.view.ACEField",
 							"config":{
 								"fieldLabel":"Code",
 								"name":"d3Code"

@@ -40,6 +40,7 @@
         "execute.controller.languages.index.backoffice",
         "execute.controller.css.index.default",
         "execute.controller.queue.index.default",
-        "execute.controller.image.get-user-avatar.default"
+        "execute.controller.image.get-user-avatar.default",
+        "execute.controller.d3-script.get-data.blocks"
  	]
 }
