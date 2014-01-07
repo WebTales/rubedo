@@ -503,21 +503,14 @@ class DataIndex extends DataAbstract implements IDataIndex
                     $store = (isset($field['config']['returnInSearch']) && $field['config']['returnInSearch']==FALSE) ? "no" : "yes";
                     
                     switch ($field['cType']) {
-                        case 'datefield':
+                        case 'Ext.form.field.Date':
                             $config = array(
                                     'type' => 'string',
                                     'store' => $store
                             );
                             $mapping['fields']['properties'][$name] = $config;
                             break;
-                        case 'document':
-                            $config = array(
-                                    'type' => 'attachment',
-                                    'store' => 'no'
-                            );
-                            $mapping['fields']['properties'][$name] = $config;
-                            break;
-                        case 'localiserField':
+                        case 'Rubedo.view.localiserField':
                             $config = array(
                                     'properties' => array(
                                             'location' => array(
@@ -693,7 +686,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
             $indexMappingObject->disableSource();
             $type->setMapping($indexMappingObject);
-            
+
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
         } else {
@@ -1038,7 +1031,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         if (! isset($data['fields'])) {
             return;
         }
-        
+
         $typeId = $data['typeId'];
         
         // Load ES type
@@ -1095,7 +1088,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
             }
         }
-        
+
         // Add document
         $currentDocument = new \Elastica\Document($data['id'], $indexData);
         
