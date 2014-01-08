@@ -10,7 +10,9 @@
 	           {% for assignedField in col.fields %}
 	               <div class="{{ assignedField.responsiveClass }} {{ assignedField.classHTML }}" style="{{ assignedField.elementStyle }}">
 	               {% if assignedField.showLabel %}
-	                   <span class="label"> {{ type[assignedField.name]["config"]["fieldLabel"] }}</span>
+	               <dl class="dl-horizontal">
+                     <dt>{{ type[assignedField.name]["config"]["fieldLabel"] }}</dt>
+                     <dd>
 	               {% endif %}
 	               {% if assignedField.name=="text"%}
 	                   <h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h1>
@@ -62,6 +64,10 @@
           					{%endif%}
     	               {% endif %}
     	           {% endif %}
+    	           {% if assignedField.showLabel %}
+    	                </dd>
+	                   </dl>
+	               {% endif %}
     	           </div>
 	           {% endfor %}
 	       </div>
