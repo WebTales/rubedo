@@ -41,6 +41,6 @@
         "execute.controller.css.index.default",
         "execute.controller.queue.index.default",
         "execute.controller.image.get-user-avatar.default",
-        "execute.controller.d3-script.get-data.blocks"
+        "execute.controller.d3script.get-data.blocks"
  	]
 }
