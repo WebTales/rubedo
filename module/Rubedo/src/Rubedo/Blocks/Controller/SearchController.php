@@ -15,7 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Blocks\Controller;
-
 use Rubedo\Services\Manager;
 use Rubedo\Elastic\DataSearch;
 use Zend\Json\Json;
@@ -45,7 +44,7 @@ class SearchController extends AbstractController
                         unset($params[$key][$subkey]);
                     }
                 }
-                if(count($params[$key])==0){
+                if (count($params[$key]) == 0) {
                     unset($params[$key]);
                 }
             }
@@ -54,9 +53,9 @@ class SearchController extends AbstractController
         $params['pagesize'] = $this->params()->fromQuery('pagesize', 10);
         $params['pager'] = $this->params()->fromQuery('pager', 0);
         
-        if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
-            $site = $this->getRequest()
-                ->params()
+        if (isset($params['block-config']['constrainToSite']) &&
+                 $params['block-config']['constrainToSite']) {
+            $site = $this->params()
                 ->fromQuery('site');
             $siteId = $site['id'];
             $params['navigation'][] = $siteId;
@@ -65,7 +64,9 @@ class SearchController extends AbstractController
         // apply predefined facets
         $facetsToHide = array();
         if (isset($params['block-config']['predefinedFacets'])) {
-            $predefParamsArray = Json::decode($params['block-config']['predefinedFacets'], Json::TYPE_ARRAY);
+            $predefParamsArray = Json::decode(
+                    $params['block-config']['predefinedFacets'], 
+                    Json::TYPE_ARRAY);
             if (is_array($predefParamsArray)) {
                 foreach ($predefParamsArray as $key => $value) {
                     $params[$key][] = $value;
@@ -82,48 +83,60 @@ class SearchController extends AbstractController
         $results = $query->search($params);
         $results['searchParams'] = Json::encode($params, Json::TYPE_ARRAY);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
-        if (isset($params['block-config']['constrainToSite']) && $params['block-config']['constrainToSite']) {
+        if (isset($params['block-config']['constrainToSite']) &&
+                 $params['block-config']['constrainToSite']) {
             $results['constrainToSite'] = true;
         }
         
         // Pagination
         if ($params['pagesize'] != "all") {
-            $pagecount = intval(($results['total'] - 1) / $params['pagesize'] + 1);
+            $pagecount = intval(
+                    ($results['total'] - 1) / $params['pagesize'] + 1);
         } else {
             $pagecount = 1;
         }
         $results['displayMode'] = isset($params['block-config']['displayMode']) ? $params['block-config']['displayMode'] : 'standard';
-        $results['autoComplete'] = isset($params['block-config']['autoComplete']) ? $params['block-config']['autoComplete'] : false;
+        $results['autoComplete'] = isset(
+                $params['block-config']['autoComplete']) ? $params['block-config']['autoComplete'] : false;
         $results['facetsToHide'] = $facetsToHide;
         $results['current'] = $params['pager'];
         $results['pagecount'] = $pagecount;
-        $results['limit'] = min(array(
-            $pagecount - 1,
-            10
-        ));
+        $results['limit'] = min(
+                array(
+                        $pagecount - 1,
+                        10
+                ));
         $results['profilePage'] = isset($params['block-config']['profilePage']) ? $params['block-config']['profilePage'] : false;
-        if ($results["profilePage"]){
+        if ($results["profilePage"]) {
             $urlOptions = array(
-                'encode' => true,
-                'reset' => true
+                    'encode' => true,
+                    'reset' => true
             );
-
-            $results['profilePageUrl'] = $this->url()->fromRoute(null, array(
-                'pageId' => $results["profilePage"]
-            ), $urlOptions);
+            
+            $results['profilePageUrl'] = $this->url()->fromRoute(null, 
+                    array(
+                            'pageId' => $results["profilePage"]
+                    ), $urlOptions);
         }
-        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->params()->fromQuery('current-page');
-        $results['singlePage'] = $this->params()->fromQuery('single-page', $singlePage);
+        $singlePage = isset($params['block-config']['singlePage']) ? $params['block-config']['singlePage'] : $this->params()->fromQuery(
+                'current-page');
+        $results['singlePage'] = $this->params()->fromQuery('single-page', 
+                $singlePage);
         
         $results['displayTitle'] = $this->params()->fromQuery('displayTitle');
         $results['blockTitle'] = $this->params()->fromQuery('blockTitle');
         
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/search.html.twig");
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                "blocks/search.html.twig");
         
         $css = array();
         $js = array(
-            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/facetsCheckBox.js"),
-            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/autocomplete.js")
+                $this->getRequest()->getBasePath() . '/' .
+                         Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                                "js/facetsCheckBox.js"),
+                        $this->getRequest()->getBasePath() . '/' .
+                         Manager::getService('FrontOfficeTemplates')->getFileThemePath(
+                                "js/autocomplete.js")
         );
         
         return $this->_sendResponse($results, $template, $css, $js);
@@ -131,18 +144,19 @@ class SearchController extends AbstractController
 
     public function xhrGetSuggestsAction ()
     {
+        
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $this->init();
+        }
+        
         // get search parameters
-        $params = Json::decode($this->getRequest()
-            ->params()
-            ->fromQuery('searchParams'), Json::TYPE_ARRAY);
+        $params = Json::decode($this->params()->fromPost('searchParams'), Json::TYPE_ARRAY);
         
         // get current language
         $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         
         // set query
-        $params['query'] = $this->getRequest()
-            ->params()
-            ->fromQuery('query');
+        $params['query'] = $this->params()->fromPost('query');
         
         // set field for autocomplete
         $params['field'] = 'autocomplete_' . $currentLocale;
@@ -153,9 +167,9 @@ class SearchController extends AbstractController
         $elasticaQuery->init();
         
         $suggestTerms = $elasticaQuery->search($params, 'suggest');
-        
+               
         $data = array(
-            'terms' => $suggestTerms
+                'terms' => $suggestTerms
         );
         return new JsonModel($data);
     }

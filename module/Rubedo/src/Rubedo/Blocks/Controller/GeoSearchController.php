@@ -131,6 +131,11 @@ class GeoSearchController extends AbstractController
 
     public function xhrGetSuggestsAction ()
     {
+        
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $this->init();
+        }
+        
         // get search parameters
         $params = Json::decode($this->params()->fromPost('searchParams'), Json::TYPE_ARRAY);
         
