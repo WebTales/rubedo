@@ -36,6 +36,7 @@ class D3ScriptController extends AbstractController
         $output=array();
         $output["d3Code"]=$blockConfig["d3Code"];
         $output["predefinedFacets"] = isset($blockConfig["predefinedFacets"]) ? $blockConfig["predefinedFacets"] : "{ }" ;
+        $output["pageSize"] = isset($blockConfig["pageSize"]) ? $blockConfig["pageSize"] : 5000 ;
         $css = array();
         $js = array();
         return $this->_sendResponse($output, $template, $css, $js);

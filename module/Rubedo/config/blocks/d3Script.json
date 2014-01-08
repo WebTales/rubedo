@@ -25,6 +25,15 @@
 								"name":"d3Code"
 								
 							}
+						},
+						{
+							"type":"Ext.form.field.Number",
+							"config":{
+								"fieldLabel":"Max results",
+								"name":"pageSize",
+								"allowDecimals":false,
+								"minValue":0
+							}
 						}
 					]
 				}
@@ -35,9 +44,11 @@
 
 			]
 		},
-		"configBloc":[
+		"configBloc":{
+		    "pageSize":5000
+		}
 
-		]
+		
 	},
 	"category":"Data visualization",
 	"bType":"d3Script",
