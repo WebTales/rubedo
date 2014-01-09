@@ -1,12 +1,12 @@
 
 {%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
 	{% for item in data[key] %}
-        <p><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+        <p>
             <span class="currentTime" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">{{ item }}</span>
         </p>
 	{% endfor %}
 {% else %}
-    <p><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+    <p>
         <span class="currentTime" id="{{ data.id }}_{{ key }}">{{ data[key] }}</span>
     </p>
 {% endif %}

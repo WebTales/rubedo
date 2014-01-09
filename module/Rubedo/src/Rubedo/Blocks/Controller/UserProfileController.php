@@ -34,6 +34,7 @@ class UserProfileController extends AbstractController
     public function indexAction ()
     {
         $output = $this->params()->fromQuery();
+        $site = $this->params()->fromQuery('site');
         if ((isset($output['userprofile']))&&(!empty($output['userprofile']))){
             $currentUser=Manager::getService("Users")->findById($output['userprofile']);
         } else {
@@ -169,10 +170,27 @@ class UserProfileController extends AbstractController
         $output["type"] = $cTypeArray;
         $output["CKEFields"] = $CKEConfigArray;
         $output["contentTitles"] = $contentTitlesArray;
+        $hasCustomLayout=false;
+        $customLayoutRows=array();
+        if ((isset($userType['layouts']))&&(is_array($userType['layouts']))){
+            foreach ($userType['layouts'] as $key => $value) {
+                if (($value['type']=="Detail")&&($value['active'])&&($value['site']==$site['id'])){
+                    $hasCustomLayout=true;
+                    $customLayoutRows=$value['rows'];
+                }
+            }
+        }
+        
         $output["data"] = $data;
+        $output["customLayoutRows"]=$customLayoutRows;
         $blockConfig = $this->params()->fromQuery('block-config');
         $output["blockConfig"] = $blockConfig;
+        
+        if ($hasCustomLayout) {
+            $template = $frontOfficeTemplatesService->getFileThemePath("blocks/userProfile/customLayout.html.twig");
+        } else {
         $template = $frontOfficeTemplatesService->getFileThemePath("blocks/userProfile.html.twig");
+        }
         $css = array(
             "/components/jquery/timepicker/jquery.ui.timepicker.css",
             "/components/jquery/jqueryui/themes/base/jquery-ui.css"

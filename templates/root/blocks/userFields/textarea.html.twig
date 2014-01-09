@@ -1,9 +1,9 @@
 {%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
 	{% for item in data[key] %}
 	    <div class="clear-right">
-	        <p  id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}"><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>{{ item }}</p>
+	        <p  id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">{{ item }}</p>
 	    </div>
 	{% endfor %}
 {% else %}
-    <div class="clear-right"><p  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}"><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>{{ data[key] }}</p></div>
+    <div class="clear-right"><p  id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">{{ data[key] }}</p></div>
 {% endif %}

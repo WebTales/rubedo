@@ -1,14 +1,14 @@
 {%  if(type[key]["config"]["multivalued"]) and data[key] is iterable%}
 	{% for item in data[key] %}
         {% if item %}
-            <p><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+            <p>
                 <a href="{{ displayUrl(item) }}" id="{{ data.id }}_{{ key }}-{{ loop.index-1 }}">{{ contentTitles[type[key]["config"]["name"]][loop.index-1] }}</a>
             </p>
         {% endif %}
 	{% endfor %}
 {% else %}
   {% if data[key] %}
-      <p><strong>{{ type[key]["config"]['fieldLabel']}} : </strong>
+      <p>
           <a href="{{ displayUrl(data[key]) }}" id="{{ data.id }}_{{ key }}">{{ contentTitles[type[key]["config"]["name"]] }}</a>
       </p>
   {% endif %}
