@@ -172,6 +172,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $this->_twig->addFunction('staticUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::staticUrl'));
         $this->_twig->addFunction('flagUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::flagUrl'));
         $this->_twig->addFunction('userAvatar', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatar'));
+        $this->_twig->addFunction('userAvatarThumbnail', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatarThumbnail'));
         $this->_twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
     }
 
@@ -402,6 +403,21 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public static function userAvatar($userId)
     {
         return Manager::getService('Url')->userAvatar($userId);
+    }
+
+    /**
+     * Twig function to get user thumbnail
+     *
+     * @param $userId
+     * @param int $width
+     * @param int $height
+     * @param string $mode crop|morph|boxed
+     *
+     * @return mixed the url
+     */
+    public static function userAvatarThumbnail($userId, $width = null, $height = null, $mode = 'morph')
+    {
+        return Manager::getService('Url')->userAvatar($userId, $width, $height, $mode);
     }
 
     public static function getPageTitle($contentId)

@@ -13,6 +13,8 @@
  */
 namespace Rubedo\Router;
 
+use Rubedo\Exceptions\NotFound;
+use Rubedo\Exceptions\Server;
 use Rubedo\Interfaces\Router\IUrl;
 use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
@@ -57,7 +59,7 @@ class Url implements IUrl
     /**
      * MVC Router
      *
-     * @var Zend\Mvc\Router\RouteInterface
+     * @var \Zend\Mvc\Router\RouteInterface
      */
     protected static $router = null;
 
@@ -90,7 +92,7 @@ class Url implements IUrl
 
     /**
      *
-     * @return Zend\Mvc\Router\RouteInterface
+     * @return \Zend\Mvc\Router\RouteInterface
      */
     public function getRouter()
     {
@@ -100,7 +102,7 @@ class Url implements IUrl
     /**
      * Set the current Route
      *
-     * @param Zend\Mvc\Router\RouteInterface $route            
+     * @param \Zend\Mvc\Router\RouteInterface $route
      */
     public static function setRouter(RouteInterface $router)
     {
@@ -597,7 +599,7 @@ class Url implements IUrl
             } elseif ($type == "canonical") {
                 $pageId = $this->_getDefaultSingleBySiteID($siteId);
             } else {
-                throw new \Rubedo\Exceptions\Server("You must specify a good type of URL : default or canonical", "Exception94");
+                throw new Server("You must specify a good type of URL : default or canonical", "Exception94");
             }
         }
         
@@ -613,7 +615,7 @@ class Url implements IUrl
                 // @todo refactor this
                 $pageUrl = $this->url($data, null, true);
             } else {
-                throw new \Rubedo\Exceptions\Server("You must specify a good type of URL : default or canonical", "Exception94");
+                throw new Server("You must specify a good type of URL : default or canonical", "Exception94");
             }
             
             if ($doNotAddSite) {
@@ -756,30 +758,48 @@ class Url implements IUrl
         return $this->staticUrl($url);
     }
 
-    public function userAvatar($userId)
+    /**
+     * Get the url for user's avatar
+     *
+     * @param $userId
+     * @param int $width
+     * @param int $height
+     * @param string $mode crop|morph
+     * @return mixed
+     * @throws NotFound
+     */
+    public function userAvatar($userId, $width = null, $height = null, $mode = 'morph')
     {
-        if(!isset(self::$avatarUrls[$userId])){
+        if (!isset(self::$avatarUrls[$userId])) {
             $user = Manager::getService('Users')->findById($userId);
-            if (! $user || ! isset($user['photo']) || empty($user['photo'])) {
-                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+            if (!$user || !isset($user['photo']) || empty($user['photo'])) {
+                throw new NotFound("No Image Found", "Exception8");
             }
             $fileId = $user['photo'];
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof \MongoGridFSFile) {
-                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+            if (!$obj instanceof \MongoGridFSFile) {
+                throw new NotFound("No Image Found", "Exception8");
             }
             $meta = $obj->file;
-            $params = array('filename'=>$meta['filename'],'version'=>$meta['version'],'userId'=>$userId);
-            $options = array(
-                'name' => 'avatar'
+            $params = array(
+                'filename' => $meta['filename'],
+                'version' => $meta['version'],
+                'userId' => $userId,
+                'width' => $width,
+                'height' => $height,
+                'mode' => $mode,
             );
+
+            $options = array(
+                'name' => 'avatar',
+            );
+
             $router = Manager::getService('Router');
             $url = $router->assemble($params, $options);
             $url = $this->staticUrl($url);
             self::$avatarUrls[$userId] = $url;
         }
         return self::$avatarUrls[$userId];
-        
     }
 }

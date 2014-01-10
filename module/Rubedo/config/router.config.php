@@ -133,7 +133,7 @@ return array(
         'avatar' => array(
             'type' => 'Segment',
             'options' => array(
-                'route' => '/user-avatar/:userId/:version/:filename',
+                'route' => '/user-avatar/:userId/:version[/:width/:height/:mode]/:filename',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
                     'controller' => 'Image',
