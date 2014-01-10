@@ -15,7 +15,7 @@
 {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
     <ul>
     {% for option in data[key] %}
-            {% for dataelement in type[key]["store"]["data"] %}
+            {% for dataelement in type[key]["config"]["store"]["data"] %}
                 {% if dataelement['valeur']==option %}
                     <li>{{ dataelement['nom'] }}</li>
                 {% endif %}
