@@ -29,6 +29,7 @@
 							"type":"Rubedo.view.ESQfield",
 							"config":{
 								"fieldLabel":"#ext-gen1056#",
+								"advancedESQMode":true,
 								"name":"predefinedFacets"
 							}
 						},
