@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,9 +16,9 @@
  */
 namespace Rubedo\Security;
 
+use Rubedo\Collection\AbstractCollection;
 use Rubedo\Interfaces\Security\IAcl;
 use Rubedo\Services\Manager;
-use Rubedo\Collection\AbstractCollection;
 use Zend\Json\Json;
 
 /**
@@ -45,9 +45,9 @@ class Acl implements IAcl
      *
      * @return the $rolesDirectory
      */
-    public static function getRolesDirectories ()
+    public static function getRolesDirectories()
     {
-        if (! isset(self::$rolesDirectories)) {
+        if (!isset(self::$rolesDirectories)) {
             self::lazyloadConfig();
         }
         return self::$rolesDirectories;
@@ -55,16 +55,17 @@ class Acl implements IAcl
 
     /**
      *
-     * @param string $rolesDirectory            
+     * @param $rolesDirectories
+     * @internal param string $rolesDirectory
      */
-    public static function setRolesDirectories ($rolesDirectories)
+    public static function setRolesDirectories($rolesDirectories)
     {
         self::$rolesDirectories = $rolesDirectories;
     }
 
-    public function __construct ()
+    public function __construct()
     {
-        if (! isset(self::$rolesDirectories)) {
+        if (!isset(self::$rolesDirectories)) {
             self::lazyloadConfig();
         }
     }
@@ -77,15 +78,15 @@ class Acl implements IAcl
      *            resource name
      * @return boolean
      */
-    public function hasAccess ($resource)
+    public function hasAccess($resource)
     {
-        if (! isset(self::$hasAccessRults[$resource])) {
+        if (!isset(self::$hasAccessRults[$resource])) {
             $result = false;
             $currentUserService = Manager::getService('CurrentUser');
             $wasFiltered = AbstractCollection::disableUserFilter();
             $groups = $currentUserService->getGroups();
             AbstractCollection::disableUserFilter($wasFiltered);
-            
+
             $roleArray = array();
             foreach ($groups as $group) {
                 $roleArray = $this->addGroupToRoleArray($roleArray, $group);
@@ -93,7 +94,7 @@ class Acl implements IAcl
             $wasFiltered = AbstractCollection::disableUserFilter();
             $roleArray = $this->addGroupToRoleArray($roleArray, Manager::getService('Groups')->getPublicGroup());
             AbstractCollection::disableUserFilter($wasFiltered);
-            
+
             foreach ($roleArray as $role) {
                 if ($this->roleHasAccess($resource, $role)) {
                     $result = true || $result;
@@ -108,16 +109,16 @@ class Acl implements IAcl
     /**
      * add role of the group to the current role Array
      *
-     * @param array $roleArray            
-     * @param array $group            
+     * @param array $roleArray
+     * @param array $group
      * @return array
      */
-    protected function addGroupToRoleArray (array $roleArray, array $group = null)
+    protected function addGroupToRoleArray(array $roleArray, array $group = null)
     {
         if (is_null($group)) {
             return $roleArray;
         }
-        
+
         if (isset($group['roles']) && is_array($group['roles'])) {
             $groupRoleArray = array_values($group['roles']);
             $roleArray = array_merge($roleArray, $groupRoleArray);
@@ -128,26 +129,26 @@ class Acl implements IAcl
     /**
      * Check if a given role has access to the ressource
      *
-     * @param string $resource            
-     * @param string $role            
+     * @param string $resource
+     * @param string $role
      * @return boolean
      */
-    protected function roleHasAccess ($resource, $role)
+    protected function roleHasAccess($resource, $role)
     {
         // @todo temporary disabling workflow components
         if (strpos($resource, 'workflows') !== false) {
             return false;
         }
-        
+
         // @todo temporary disabling nested contents
         if (strpos($resource, 'dependantTypes') !== false) {
             return false;
         }
-        
+
         if (is_null($role)) {
             return false;
         }
-        
+
         $rightsArray = $this->getRightsByRoleName($role);
         foreach ($rightsArray as $rightAccess) {
             $rightAccess = str_replace('.', '\.', $rightAccess);
@@ -156,7 +157,7 @@ class Acl implements IAcl
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -165,10 +166,10 @@ class Acl implements IAcl
      *
      * Read infos from configs/role/Jsonfile
      *
-     * @param string $name            
+     * @param string $name
      * @return array null
      */
-    protected function getRoleByName ($name)
+    protected function getRoleByName($name)
     {
         foreach (self::$rolesDirectories as $directory) {
             $pathName = $directory . '/' . $name . '.json';
@@ -183,10 +184,12 @@ class Acl implements IAcl
     /**
      * Return the array of rights of a given role
      *
-     * @param string $name            
+     * @param string $name
+     * @param int $max
+     *
      * @return array
      */
-    protected function getRightsByRoleName ($name, $max = 5)
+    protected function getRightsByRoleName($name, $max = 5)
     {
         $rightsArray = array();
         $roleInfos = $this->getRoleByName($name);
@@ -208,7 +211,7 @@ class Acl implements IAcl
      *            array of ressources
      * @return array the array of boolean with ressource as key name
      */
-    public function accessList (array $ressourceArray)
+    public function accessList(array $ressourceArray)
     {
         $aclArray = array();
         if (isset($this->_service)) {
@@ -223,25 +226,23 @@ class Acl implements IAcl
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Rubedo\Interfaces\Security\IAcl::getAvailaibleRoles()
+     * @inherit
      */
-    public function getAvailaibleRoles ()
+    public function getAvailaibleRoles()
     {
         $userLang = 'en'; // default value
         $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
-        if (! empty($currentUserLanguage)) {
+        if (!empty($currentUserLanguage)) {
             $userLang = $currentUserLanguage;
         }
         $rolesInfosArray = array();
-        
+
         foreach (self::$rolesDirectories as $directory) {
             $templateDirIterator = new \DirectoryIterator($directory);
-            if (! $templateDirIterator) {
+            if (empty($templateDirIterator)) {
                 throw new \Rubedo\Exceptions\Server('Can not instanciate iterator for role dir', "Exception67");
             }
-            
+
             foreach ($templateDirIterator as $file) {
                 if ($file->isDot() || $file->isDir()) {
                     continue;
@@ -256,24 +257,24 @@ class Acl implements IAcl
                 }
             }
         }
-        
+
         $response = array();
         $response['total'] = count($rolesInfosArray);
         $response['data'] = $rolesInfosArray;
-        $response['success'] = TRUE;
+        $response['success'] = true;
         $response['message'] = 'OK';
-        
+
         return $response;
     }
 
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyloadConfig ()
+    public static function lazyloadConfig()
     {
         $config = Manager::getService('config');
         self::setRolesDirectories($config['rolesDirectories']);
     }
-    
-    
+
+
 }
