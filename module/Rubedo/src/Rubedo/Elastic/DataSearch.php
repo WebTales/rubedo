@@ -352,7 +352,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
         
-        if (! in_array('all', $readWorkspaceArray) && ! empty($readWorkspaceArray)) {
+        if (($option!="user") && (! in_array('all', $readWorkspaceArray)) && (! empty($readWorkspaceArray))) {
             
             $workspacesFilter = new \Elastica\Filter\BoolOr();
             foreach ($readWorkspaceArray as $wsTerm) {
