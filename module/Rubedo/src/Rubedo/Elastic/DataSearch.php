@@ -500,37 +500,46 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         $elasticaQueryString = new \Elastica\Query\QueryString();
         
-        // Setting fields from localization strategy
-        switch ($localizationStrategy) {
-            case 'backOffice' :
-                $this->setLocaleFilter(Manager::getService('Languages')->getActiveLocales());
-                $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
-                break;
-            case 'onlyOne' :
-                $this->setLocaleFilter(array($currentLocale));
-                if (!in_array($option,array('suggest','geosuggest'))) {
-                	$elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
-                } else {
-                    $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
-                }
-                break;
-            case 'fallback':
-            default:
-                $this->setLocaleFilter(array($currentLocale,$fallBackLocale));
-                if ($currentLocale!=$fallBackLocale) {
-                    if (!in_array($option,array('suggest','geosuggest'))) {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","all_nonlocalized^0.1"));
-                    } else {
-                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1","autocomplete_nonlocalized"));
-                    }
-                } else {
-                    if (!in_array($option,array('suggest','geosuggest'))) {
-                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
-                    } else {
-                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
-                    }
-                }
-                break;              
+        // Setting fields from localization strategy for content or dam search only
+        
+        if ($option!="user") {
+        
+	        switch ($localizationStrategy) {
+	            case 'backOffice' :
+	                $this->setLocaleFilter(Manager::getService('Languages')->getActiveLocales());
+	                $elasticaQueryString->setFields(array("all_".$currentLocale,"_all^0.1"));
+	                break;
+	            case 'onlyOne' :
+	                $this->setLocaleFilter(array($currentLocale));
+	                if (!in_array($option,array('suggest','geosuggest'))) {
+	                	$elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
+	                } else {
+	                    $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
+	                }
+	                break;
+	            case 'fallback':
+	            default:
+	                $this->setLocaleFilter(array($currentLocale,$fallBackLocale));
+	                if ($currentLocale!=$fallBackLocale) {
+	                    if (!in_array($option,array('suggest','geosuggest'))) {
+	                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_".$fallBackLocale."^0.1","all_nonlocalized^0.1"));
+	                    } else {
+	                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_".$fallBackLocale."^0.1","autocomplete_nonlocalized"));
+	                    }
+	                } else {
+	                    if (!in_array($option,array('suggest','geosuggest'))) {
+	                        $elasticaQueryString->setFields(array("all_".$currentLocale,"all_nonlocalized"));
+	                    } else {
+	                        $elasticaQueryString->setFields(array("autocomplete_".$currentLocale,"autocomplete_nonlocalized"));
+	                    }
+	                }
+	                break;              
+	        }
+        } else {
+        	
+        	// user search do not use localization
+        	$elasticaQueryString->setFields(array("all_nonlocalized"));   
+        	    	
         }
 
         // add user query
