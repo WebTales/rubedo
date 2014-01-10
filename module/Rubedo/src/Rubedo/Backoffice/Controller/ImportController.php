@@ -316,6 +316,7 @@ class ImportController extends DataAccessController
                 );
                 $contentTypeParams = array(
                     "dependant" => false,
+                    "code"=>$configs['ContentTypeType'],
                     "dependantTypes" => array(),
                     "type" => $configs['ContentTypeType'],
                     "fields" => $CTfields,
