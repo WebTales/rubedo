@@ -14,12 +14,12 @@
                 {% if displayRootPage %}
 			    <li><a class="brand"
 				href="{% if rootPage  %}{{ url({'pageId':rootPage.id},true) }}{% endif %}"
-				title="{{ rootPage.title }}" rel="home">{{ rootPage.title }}</a></li>
+				title="{{ rootPage.text }}" rel="home">{{ rootPage.text }}</a></li>
             {% endif %}
             {% for page in pages %}
             	<li id="menu-item-{{page.id}}"
             		class="{% if page.id in rootline %}active{% endif %}">
-            		<a href="{{page.url}}">{{page.title}}</a> 
+            		<a href="{{page.url}}">{{page.text}}</a> 
             	</li> 
             {% endfor %}
         </ul>
