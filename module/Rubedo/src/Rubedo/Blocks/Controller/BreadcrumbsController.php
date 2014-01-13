@@ -61,6 +61,12 @@ class BreadcrumbsController extends AbstractController
         
         $output['rootPage'] = $rootPage;
         $output['rootline'] = $rootlineArray;
+        if ($this->params()->fromQuery('content-id')){
+            $currentContent=Manager::getService("Contents")->findById("52cc2322f05c1d8c1100000c", true, false);
+            if ($currentContent){
+                $output['text']=$currentContent['text'];
+            }
+        }
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
