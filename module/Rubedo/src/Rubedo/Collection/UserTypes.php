@@ -17,7 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IUserTypes;
-
+use Rubedo\Services\Events;
 /**
  * Service to handle UserTypes
  *
@@ -32,5 +32,22 @@ class UserTypes extends AbstractCollection implements IUserTypes
     {
         $this->_collectionName = 'UserTypes';
         parent::__construct();
+    }
+    
+    
+    public function destroy(array $obj, $options = array())
+    {
+        if ((isset($obj["UTType"]))&&(($obj["UTType"]=="default")||($obj["UTType"]=="email"))){
+            $result= array(
+                    'success' => false,
+                    "msg" => 'Cannot destroy system user type'
+                );
+            return($result);
+        }
+        $result = $this->_dataService->destroy($obj, $options);
+        $args = $result;
+        $args['data'] = $obj;
+        Events::getEventManager()->trigger(self::POST_DELETE_COLLECTION, $this, $args);
+        return $result;
     }
 }
