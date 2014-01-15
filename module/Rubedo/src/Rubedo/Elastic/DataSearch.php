@@ -305,6 +305,10 @@ class DataSearch extends DataAbstract implements IDataSearch
         $collection = Manager::getService('Taxonomy');
         $taxonomyList = $collection->getList();
         $taxonomies = $taxonomyList['data'];
+
+        // Get faceted fields
+        $collection = Manager::getService('ContentTypes');
+        $facetedFields = $collection->GetFacetedFields();
         
         // Default parameters
         $defaultVars = array(
