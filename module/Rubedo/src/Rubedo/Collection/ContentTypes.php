@@ -336,7 +336,11 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
             $fields = $contentType["fields"];
             foreach ($fields as $field) {
                 if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
-                    $facetedFieldsList[$contentType['id']][] = $field['config']['name'];
+                    $facetedFieldsList[] = array(
+                        "contentTypeId" => $contentType['id'],
+                        "name" => $field['config']['name'],
+                        "localizable" => $field['config']['localizable']
+                    );
                 }
             }
         }
