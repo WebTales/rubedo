@@ -34,9 +34,8 @@
 							}
 						},
 						{
-							"type":"Rubedo.view.FTDComboField",
+							"type":"Ext.form.field.Hidden",
 							"config":{
-								"fieldLabel":"#ext-gen1371#",
 								"itemId":"displayedFacetsBrotherField",
 								"name":"displayedFacets"
 							}
@@ -62,13 +61,6 @@
 				{
 					"categorie":"#ext-gen1372#",
 					"champs":[
-						{
-							"type":"Rubedo.view.FacetOverriderField",
-							"config":{
-								"fieldLabel":"#ext-gen1373#",
-								"name":"facetOverrides"
-							}
-						},
 						{
 							"type":"Ext.form.field.ComboBox",
 							"isAutoStored":true,
@@ -96,9 +88,7 @@
 		},
 		"configBloc":{
 			"constrainToSite":true,
-			"displayedFacets":[
-				"all"
-			],
+			"displayedFacets":"['all']",
 			"displayMode":"default",
 			"autoComplete":false
 		}
