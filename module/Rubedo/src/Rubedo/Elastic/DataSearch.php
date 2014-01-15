@@ -310,6 +310,8 @@ class DataSearch extends DataAbstract implements IDataSearch
         $collection = Manager::getService('ContentTypes');
         $facetedFields = $collection->GetFacetedFields();
         
+       print_r($facetedFields);
+       exit;
         // Default parameters
         $defaultVars = array(
             'query' => '',
