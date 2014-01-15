@@ -37,6 +37,7 @@
 							"type":"Rubedo.view.FTDComboField",
 							"config":{
 								"fieldLabel":"#ext-gen1371#",
+								"itemId":"displayedFacetsBrotherField",
 								"name":"displayedFacets"
 							}
 						},
@@ -50,7 +51,7 @@
                         {
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Profile page",
+                                "fieldLabel":"#ext-gen1409#",
                                 "name":"profilePage"
                             }
                         }

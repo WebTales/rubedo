@@ -1,14 +1,14 @@
 {
-	"type":"D3 Script",
-	"description":"not yet written",
+	"type":"#ext-gen1422#",
+	"description":"",
 	"configBasique":{
-		"title":"D3 Script",
+		"title":"#ext-gen1422#",
 		"bType":"d3Script",
 		"flex":1,
 		"champsConfig":{
 			"simple":[
 			    {
-					"categorie":"Settings",
+					"categorie":"#ext-gen1143#",
 					"champs":[
 					    {
 							"type":"Rubedo.view.ESQfield",
@@ -21,7 +21,7 @@
 						{
 							"type":"Rubedo.view.ACEField",
 							"config":{
-								"fieldLabel":"Code",
+								"fieldLabel":"#ext-gen1423#",
 								"name":"d3Code"
 								
 							}
@@ -29,7 +29,7 @@
 						{
 							"type":"Ext.form.field.Number",
 							"config":{
-								"fieldLabel":"Max results",
+								"fieldLabel":"#ext-gen1424#",
 								"name":"pageSize",
 								"allowDecimals":false,
 								"minValue":0
@@ -50,7 +50,7 @@
 
 		
 	},
-	"category":"Data visualization",
+	"category":"#ext-gen1425#",
 	"bType":"d3Script",
 	"id":"52cbd7b0f05c1d741e000001"
 }

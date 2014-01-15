@@ -1,8 +1,8 @@
 {
-	"type":"Sign up",
-	"description":"not yet written",
+	"type":"#ext-gen1415#",
+	"description":"",
 	"configBasique":{
-		"title":"Sign up",
+		"title":"#ext-gen1415#",
 		"bType":"signUp",
 		"flex":1,
 		"champsConfig":{
@@ -13,7 +13,7 @@
 						{
 							"type":"Rubedo.view.UTCField",
 							"config":{
-								"fieldLabel":"User type",
+								"fieldLabel":"#ext-gen1413#",
 								"name":"userType"
 							}
 						},
@@ -28,7 +28,7 @@
 						},{
                             "type":"Ext.form.field.Checkbox",
                             "config":{
-                                "fieldLabel":"Password field",
+                                "fieldLabel":"#ext-gen1414#",
                                 "name":"collectPassword"
                             }
                         }

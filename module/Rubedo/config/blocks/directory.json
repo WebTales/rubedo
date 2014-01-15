@@ -1,8 +1,8 @@
 {
-	"type":"Directory",
-	"description":"Directory block description",
+	"type":"#ext-gen1417#",
+	"description":"",
 	"configBasique":{
-		"title":"Directory",
+		"title":"#ext-gen1417#",
 		"bType":"directory",
 		"flex":1,
 		"champsConfig":{
@@ -29,7 +29,7 @@
 						{
 							"type":"Ext.form.field.Checkbox",
 							"config":{
-								"fieldLabel":"Alphabetic index",
+								"fieldLabel":"#ext-gen1418#",
 								"name":"alphabeticIndex",
 								"inputValue":true
 							}
@@ -40,15 +40,15 @@
 							"autoStoreData":[
 								{
 									"value":"list",
-									"label":"List"
+									"label":"#ext-gen1419#"
 								},
 								{
 									"value":"vcard",
-									"label":"Vcard"
+									"label":"#ext-gen1420#"
 								}
 							],
 							"config":{
-								"fieldLabel":"User display mode",
+								"fieldLabel":"#ext-gen1421#",
 								"name":"userDisplayMode",
 								"editable":false,
 								"forceSelection":true,
@@ -77,7 +77,7 @@
 						{
 							"type":"Ext.ux.TreePicker",
 							"config":{
-								"fieldLabel":"Profile page",
+								"fieldLabel":"#ext-gen1409#",
 								"name":"profilePage"
 							}
 						}

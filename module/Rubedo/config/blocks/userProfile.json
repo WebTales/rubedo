@@ -1,8 +1,8 @@
 {
-	"type":"Profile page",
-	"description":"not yet written",
+	"type":"#ext-gen1409#",
+	"description":"",
 	"configBasique":{
-		"title":"Profile page",
+		"title":"#ext-gen1409#",
 		"bType":"userProfile",
 		"flex":1,
 		"champsConfig":{

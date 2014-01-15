@@ -13,13 +13,13 @@
                         {
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Profile page",
+                                "fieldLabel":"#ext-gen1409#",
                                 "name":"profilePage"
                             }
                         },{
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Redirect page",
+                                "fieldLabel":"#ext-gen1410#",
                                 "name":"redirectPage"
                             }
                         },{
@@ -28,15 +28,15 @@
                             "autoStoreData":[
                                 {
                                     "value":"pop-in",
-                                    "label":"Pop-in"
+                                    "label":"#ext-gen1411#"
                                 },
                                 {
                                     "value":"form",
-                                    "label":"Form"
+                                    "label":"#ext-gen1412#"
                                 }
                             ],
                             "config":{
-                                "fieldLabel":"Display mode",
+                                "fieldLabel":"#ext-gen1374#",
                                 "name":"displayMode",
                                 "editable":false,
                                 "forceSelection":true,
