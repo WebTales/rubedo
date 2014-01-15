@@ -4,6 +4,8 @@
 		<div class="editable" id="{{ data.id }}_{{key}}-{{ loop.index-1 }}" data-field-type="{{ type[key].cType }}">
             {% if (type[key]["config"]['vtype']=="url")  %}
                 <a href="{{ item }}" target="_blank">{{ item }}</a>
+            {% else  if (type[key]["config"]['vtype']=="email")  %}
+                <a href="mailto:{{ item }}" >{{ item }}</a>
             {% else %}
                 {{ item }}
             {% endif %}
@@ -14,6 +16,8 @@
 	<div class="editable" id="{{ data.id }}_{{key}}" data-field-type="{{ type[key].cType }}">
         {% if (type[key]["config"]['vtype']=="url")  %}
             <a href="{{ data[key] }}" target="_blank">{{ data[key] }}</a>
+        {% else if (type[key]["config"]['vtype']=="email")  %}
+            <a href="mailto:{{ data[key] }}">{{ data[key] }}</a>
         {% else %}
             {{ data[key] }}
         {% endif %}
