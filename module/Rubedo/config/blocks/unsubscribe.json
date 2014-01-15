@@ -1,8 +1,8 @@
 {
-	"type":"Unsubscribe",
+	"type":"#ext-gen1416#",
 	"description":"",
 	"configBasique":{
-		"title":"Unsubscribe",
+		"title":"#ext-gen1416#",
 		"bType":"unsubscribe",
 		"flex":1,
 		"champsConfig":{
