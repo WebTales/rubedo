@@ -339,12 +339,14 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                     $facetedFieldsList[] = array(
                         "contentTypeId" => $contentType['id'],
                         "name" => $field['config']['name'],
-                        "localizable" => $field['config']['localizable']
+                        "label" => $field['config']['fieldLabel'],
+                        "localizable" => $field['config']['localizable'],
+                        "facetOperator" => isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and"
                     );
                 }
             }
         }
-        return $facetedFieldsList;        
+        return $facetedFieldsList;
     }
     
     public function isChangeableContentType($originalType, $newType)
