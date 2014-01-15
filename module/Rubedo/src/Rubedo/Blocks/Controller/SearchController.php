@@ -34,7 +34,7 @@ class SearchController extends AbstractController
         
         // get search parameters
         $params = $this->params()->fromQuery();
-        
+               
         // remove empty facets from criteria
         foreach ($params as $key => $value) {
             

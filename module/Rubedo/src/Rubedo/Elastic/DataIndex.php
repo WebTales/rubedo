@@ -226,7 +226,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                         )
                 );
             }
-
+            
             // unmapped fields are not allowed in fields and i18n
             $mapping['fields'] = array(
                     'dynamic' => false,
@@ -246,17 +246,19 @@ class DataIndex extends DataAbstract implements IDataIndex
                 if ($field['config']['searchable']) {
                     
                     $name = $field['config']['name'];
-                    $store = (isset($field['config']['returnInSearch']) && $field['config']['returnInSearch']==FALSE) ? "no" : "yes";
-                    $notAnalyzed = (isset($field['config']['notAnalyzed']) && $field['config']['notAnalyzed']==TRUE) ? TRUE : FALSE;
+                    $store = (isset($field['config']['returnInSearch']) &&
+                             $field['config']['returnInSearch'] == FALSE) ? "no" : "yes";
+                    $notAnalyzed = (isset($field['config']['notAnalyzed']) &&
+                             $field['config']['notAnalyzed']) ? TRUE : FALSE;
                     
                     // Initialize config array for indexing
                     $config = array(
-                        'store' => $store
+                            'store' => $store
                     );
                     if ($notAnalyzed) {
                         $config['index'] = 'not_analyzed';
                     }
-
+                    
                     switch ($field['cType']) {
                         case 'datefield':
                             $config = array(
@@ -325,11 +327,13 @@ class DataIndex extends DataAbstract implements IDataIndex
                                         "fields" => array(
                                                 $name => array(
                                                         "type" => "string",
+                                                        "index" => (! $notAnalyzed) ? "analyzed" : "not_analyzed",
                                                         "store" => $store
                                                 ),
                                                 $_all => array(
                                                         "type" => "string",
-                                                        "analyzer" => (!$notAnalyzed) ? "default_analyzer" : "not_analyzed",
+                                                        "index" => (! $notAnalyzed) ? "analyzed" : "not_analyzed",
+                                                        "analyser" => "default_analyser",
                                                         "store" => $store
                                                 ),
                                                 $_autocomplete => array(
@@ -346,9 +350,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                                     $fieldName = $name . '_' . $locale;
                                     $_all = 'all_' . $locale;
                                     $_autocomplete = 'autocomplete_' . $locale;
-                                    if ($notAnalyzed) {
-                                        $lg_analyser = "not_analyzed";
-                                    } elseif (in_array($locale . '_analyzer', 
+                                    if (in_array($locale . '_analyzer', 
                                             $activeAnalysers)) {
                                         $lg_analyser = $locale . '_analyzer';
                                     } else {
@@ -360,11 +362,13 @@ class DataIndex extends DataAbstract implements IDataIndex
                                             "fields" => array(
                                                     $fieldName => array(
                                                             "type" => "string",
+                                                            "index" => (! $notAnalyzed) ? "analyzed" : "not_analyzed",
                                                             "analyzer" => $lg_analyser,
                                                             'store' => $store
                                                     ),
                                                     $_all => array(
                                                             "type" => "string",
+                                                            "index" => (! $notAnalyzed) ? "analyzed" : "not_analyzed",
                                                             "analyzer" => $lg_analyser,
                                                             'store' => $store
                                                     ),
@@ -382,7 +386,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
             }
         }
-        
         return $mapping;
     }
 
@@ -500,7 +503,8 @@ class DataIndex extends DataAbstract implements IDataIndex
                 if ($field['config']['searchable']) {
                     
                     $name = $field['config']['name'];
-                    $store = (isset($field['config']['returnInSearch']) && $field['config']['returnInSearch']==FALSE) ? "no" : "yes";
+                    $store = (isset($field['config']['returnInSearch']) &&
+                             $field['config']['returnInSearch'] == FALSE) ? "no" : "yes";
                     
                     switch ($field['cType']) {
                         case 'Ext.form.field.Date':
@@ -686,7 +690,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
             $indexMappingObject->disableSource();
             $type->setMapping($indexMappingObject);
-
+            
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
         } else {
@@ -773,8 +777,8 @@ class DataIndex extends DataAbstract implements IDataIndex
         $mapping = self::$_user_index->getMapping();
         if (array_key_exists($id, $mapping[self::$_user_index->getName()])) {
             $type = new \Elastica\Type(self::$_user_index, $id);
-            $type->delete();  
-        }    
+            $type->delete();
+        }
     }
 
     /**
@@ -1031,7 +1035,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         if (! isset($data['fields'])) {
             return;
         }
-
+        
         $typeId = $data['typeId'];
         
         // Load ES type
@@ -1088,7 +1092,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
             }
         }
-
+        
         // Add document
         $currentDocument = new \Elastica\Document($data['id'], $indexData);
         
