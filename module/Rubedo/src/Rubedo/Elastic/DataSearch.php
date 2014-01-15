@@ -124,7 +124,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             );
         }
         // get mode for this facet
-        $operator = isset($this->_facetOperators[$name]) ? $this->_facetOperators[$name] : 'and';
+        $operator = isset($this->_facetOperators[$name]) ? strtolower($this->_facetOperators[$name]) : 'and';
         
         $filterEmpty = true;
         switch ($operator) {
@@ -262,7 +262,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                         $this->_params['block-config']['facetOverrides'], 
                         Json::TYPE_ARRAY)) : array();
                 
-                if (! empty($facetOverrides)) {
+                if (! empty($facetOverrides)) { // This code is only for 2.0.x backward compatibility
                     
                     foreach ($facetOverrides as $facet) {
                         if ($this->_displayedFacets ==
@@ -329,7 +329,10 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Get faceted fields
         $collection = Manager::getService('ContentTypes');
         $facetedFields = $collection->GetFacetedFields();
-        
+        foreach ($facetedFields as $facetedField) {
+            $this->_facetOperators[$facetedField['name']]=$facetedField['facetOperator'];
+        }
+
         // Default parameters
         $defaultVars = array(
                 'query' => '',
@@ -1113,7 +1116,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Add label to Facets, hide empty facets,
         $elasticaFacets = $elasticaResultSet->getFacets();
         $result['facets'] = array();
-        
+
         foreach ($elasticaFacets as $id => $facet) {
             $temp = (array) $facet;
             $renderFacet = true;
@@ -1267,7 +1270,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                             }
                         } else {
                             // faceted field
-                            $temp['label'] = $id;
+
+                            $temp['label'] = $this->searchLabel($facetedFields,"name",$id)[0]['label'];
                             
                             if (array_key_exists('terms', $temp) and
                                      count($temp['terms']) > 0) {
@@ -1497,4 +1501,20 @@ class DataSearch extends DataAbstract implements IDataSearch
     {
         DataSearch::$_isFrontEnd = $_isFrontEnd;
     }
+
+    protected function searchLabel ($array, $key, $value)
+    {
+        $results = array();
+        
+        if (is_array($array)) {
+            if (isset($array[$key]) && $array[$key] == $value)
+                $results[] = $array;
+            
+            foreach ($array as $subarray)
+                $results = array_merge($results, 
+                        $this->searchLabel($subarray, $key, $value));
+         }
+        
+        return $results; 
+    } 
 }
