@@ -1,19 +1,36 @@
+##########
+# Global #
+##########
 *~
-library/Zend
-build
 .DS_Store
-cache
+Thumbs.db
+
+#######
+# IDE #
+#######
 .project
 .settings
-.zfproject.xml
-.buildpath
-/vendor
-/composer.lock
-composer.front.lock
-/public/theme
-/public/generate-image
-Thumbs.db
+/.idea
+/atlassian-ide-plugin.xml
+
+##########
+# Rubedo #
+##########
 extensions/*
 !extensions/readme.txt
+
+cache
+library/Zend
+.zfproject.xml
+
+build
+.buildpath
+
+/public/theme
+/public/generate-image
+
+/vendor
+# Composer
+/composer.phar
+/composer*.lock
 /composer.extension.*
-.idea*
