@@ -101,4 +101,48 @@ class ElasticSearchController extends AbstractActionController
         $returnArray['data'] = $esOptions;
         return new JsonModel($returnArray);
     }
+    
+    public function getDefaultOperatorsAction ()
+    {
+        $data=array();
+        $contentTypesList = Manager::getService("ContentTypes")->getList();
+        foreach ($contentTypesList['data'] as $contentType) {
+            $fields = $contentType["fields"];
+            foreach ($fields as $field) {
+                if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
+                    $data[$field['config']['name']]=isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
+                }
+            }
+        }
+        $mediaTypesList = Manager::getService("DamTypes")->getList();
+        foreach ($mediaTypesList['data'] as $contentType) {
+            $fields = $contentType["fields"];
+            foreach ($fields as $field) {
+                if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
+                    $data[$field['config']['name']]=isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
+                }
+            }
+        }
+        $userTypesList = Manager::getService("UserTypes")->getList();
+        foreach ($userTypesList['data'] as $contentType) {
+            $fields = $contentType["fields"];
+            foreach ($fields as $field) {
+                if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
+                    $data[$field['config']['name']]=isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
+                }
+            }
+        }
+        $taxonomyList = Manager::getService("Taxonomy")->getList();
+        
+        foreach ($taxonomyList['data'] as $taxonomy) {
+            $data[$taxonomy['id']] = isset(
+                $taxonomy['facetOperator']) ? strtolower(
+                    $taxonomy['facetOperator']) : 'and';
+        }
+        
+        $returnArray = array();
+        $returnArray['success'] = true;
+        $returnArray['data'] = $data;
+        return new JsonModel($returnArray);
+    }
 }
