@@ -22,8 +22,16 @@
 							"config":{
 								"fieldLabel":"#ext-gen1056#",
 								"name":"predefinedFacets",
+								"advancedESQMode":true,
 								"queryMode":false,
 								"geoQueryMode":true
+							}
+						},{
+							"type":"Ext.form.field.Hidden",
+							"config":{
+								"fieldLabel":"#ext-gen1371#",
+								"itemId":"displayedFacetsBrotherField",
+								"name":"displayedFacets"
 							}
 						}
 					]
@@ -94,13 +102,6 @@
 							}
 						},
 						{
-							"type":"Rubedo.view.FTDComboField",
-							"config":{
-								"fieldLabel":"#ext-gen1371#",
-								"name":"displayedFacets"
-							}
-						},
-						{
 							"type":"Ext.form.field.Checkbox",
 							"config":{
 								"fieldLabel":"#ext-gen1370#",
@@ -152,13 +153,6 @@
 					"categorie":"#ext-gen1372#",
 					"champs":[
 						{
-							"type":"Rubedo.view.FacetOverriderField",
-							"config":{
-								"fieldLabel":"#ext-gen1373#",
-								"name":"facetOverrides"
-							}
-						},
-						{
 							"type":"Ext.form.field.ComboBox",
 							"isAutoStored":true,
 							"autoStoreData":[
@@ -192,9 +186,7 @@
 			"pageSize":5000,
 			"showCenterMarker":false,
 			"showPlacesSearch":true,
-			"displayedFacets":[
-				"all"
-			],
+			"displayedFacets":"['all']",
 			"displayMode":"default",
 			"autoComplete":false
 		}
