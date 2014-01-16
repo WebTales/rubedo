@@ -17,6 +17,7 @@
         "execute.controller.contenttypes.index.backoffice",
         "execute.controller.taxonomy.index.backoffice",
         "execute.controller.elasticsearch.index.backoffice",
+        "execute.controller.elasticsearch.get-default-operators.backoffice",
         "execute.controller.mailinglists.index.backoffice",
         "execute.controller.taxonomyterms.navigation-tree.backoffice",
         "execute.controller.rubedoversion.index.backoffice",
