@@ -201,7 +201,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     {
         if (! self::$_isFrontEnd or $this->_displayedFacets == array(
                 "all"
-        ) or in_array($name, $this->_displayedFacets)) {
+        ) or in_array($name, $this->_displayedFacets) or in_array(array("name"=>$name, "operator"=>"AND"), $this->_displayedFacets) or in_array(array("name"=>$name, "operator"=>"OR"), $this->_displayedFacets)) {
             return true;
         } else {
             return false;
@@ -239,6 +239,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                         $this->_params['block-config']['displayedFacets']) ? $this->_params['block-config']['displayedFacets'] : array();
             } else {
                 $this->_displayedFacets = array();
+            }
+            if (is_string($this->_displayedFacets)){
+                $this->_displayedFacets=Json::decode($this->_displayedFacets, Json::TYPE_ARRAY);
             }
             
             // get current user language
@@ -296,14 +299,18 @@ class DataSearch extends DataAbstract implements IDataSearch
                         
                         // otherwise get facets operators from displayed facets
                         // only
-                        foreach ($this->_displayedFacets as $facetId) {
-                            if (preg_match('/[\dabcdef]{24}/', $facetId) == 1 ||
-                                     $facetId == 'navigation') {
-                                $taxonomy = $taxonomyService->findById($facetId);
-                                if ($taxonomy) {
-                                    $this->_facetOperators[$facetId] = isset(
-                                            $taxonomy['facetOperator']) ? strtolower(
-                                            $taxonomy['facetOperator']) : 'and';
+                        foreach ($this->_displayedFacets as $facet) {
+                            if (preg_match('/[\dabcdef]{24}/', $facet['name']) == 1 ||
+                                     $facet['name'] == 'navigation') {
+                                if ($facet['operator']){
+                                    $this->_facetOperators[$facet['name']]=strtolower($facet['operator']);
+                                } else {
+                                    $taxonomy = $taxonomyService->findById($facet['name']);
+                                    if ($taxonomy) {
+                                        $this->_facetOperators[$facet['name']] = isset(
+                                                $taxonomy['facetOperator']) ? strtolower(
+                                                $taxonomy['facetOperator']) : 'and';
+                                    }
                                 }
                             }
                         }
@@ -663,7 +670,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Define the type facet
         
-        if ($this->_isFacetDisplayed('contentType')) {
+        if (($this->_isFacetDisplayed('contentType'))||($this->_isFacetDisplayed('type')))  {
             $elasticaFacetType = new \Elastica\Facet\Terms('type');
             $elasticaFacetType->setField('contentType');
             
@@ -1114,7 +1121,19 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         
         // Add label to Facets, hide empty facets,
-        $elasticaFacets = $elasticaResultSet->getFacets();
+        $elasticaFacetsTemp = $elasticaResultSet->getFacets();
+        $elasticaFacets=array();
+        if ((is_array($this->_displayedFacets))&&(!empty($this->_displayedFacets))&&(!is_string($this->_displayedFacets[0]))){
+            foreach ($this->_displayedFacets as $requestedFacet){
+                foreach ($elasticaFacetsTemp as $id=>$obtainedFacet){
+                    if ($id==$requestedFacet["name"]){
+                        $elasticaFacets[$id]=$obtainedFacet;
+                    }
+                }
+            }
+        } else {
+            $elasticaFacets=$elasticaFacetsTemp;
+        }
         $result['facets'] = array();
 
         foreach ($elasticaFacets as $id => $facet) {
