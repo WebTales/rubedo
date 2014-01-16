@@ -200,8 +200,16 @@ class DataSearch extends DataAbstract implements IDataSearch
     protected function _isFacetDisplayed ($name)
     {
         if (! self::$_isFrontEnd or $this->_displayedFacets == array(
-                "all"
-        ) or in_array($name, $this->_displayedFacets) or in_array(array("name"=>$name, "operator"=>"AND"), $this->_displayedFacets) or in_array(array("name"=>$name, "operator"=>"OR"), $this->_displayedFacets)) {
+                        "all"
+                ) or in_array($name, $this->_displayedFacets) or
+                 in_array(array(
+                        "name" => $name,
+                        "operator" => "AND"
+                ), $this->_displayedFacets) or
+                 in_array(array(
+                        "name" => $name,
+                        "operator" => "OR"
+                ), $this->_displayedFacets)) {
             return true;
         } else {
             return false;
@@ -252,7 +260,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             
             // get locale fall back
             $fallBackLocale = $taxonomyService->getFallbackLocale();
-            
+           
             // if there is any facet to display, get overrides
             if (! empty($this->_displayedFacets)) {
                 
@@ -296,21 +304,19 @@ class DataSearch extends DataAbstract implements IDataSearch
                                     $taxonomy['facetOperator']) : 'and';
                         }
                     } else {
-                        
-                        // otherwise get facets operators from displayed facets
-                        // only
+                        // otherwise get facets operators from displayed facets only
                         foreach ($this->_displayedFacets as $facet) {
-                            if (preg_match('/[\dabcdef]{24}/', $facet['name']) == 1 ||
-                                     $facet['name'] == 'navigation') {
-                                if ($facet['operator']){
-                                    $this->_facetOperators[$facet['name']]=strtolower($facet['operator']);
-                                } else {
+                            
+                            // Get facet operator from block
+                            if ($facet['operator']){
+                                $this->_facetOperators[$facet['name']] = strtolower($facet['operator']);
+                            } else {
+                                // Get default facet operator from taxonomy if not present in block configuration
+                                if (preg_match('/[\dabcdef]{24}/', $facet['name']) == 1 || $facet['name'] == 'navigation') {
                                     $taxonomy = $taxonomyService->findById($facet['name']);
                                     if ($taxonomy) {
-                                        $this->_facetOperators[$facet['name']] = isset(
-                                                $taxonomy['facetOperator']) ? strtolower(
-                                                $taxonomy['facetOperator']) : 'and';
-                                    }
+                                        $this->_facetOperators[$facet['name']] = isset($taxonomy['facetOperator']) ? strtolower($taxonomy['facetOperator']) : 'and';
+                                    }                               
                                 }
                             }
                         }
@@ -324,10 +330,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $currentUser = Manager::getService('CurrentUser')->getCurrentUser();
             $currentLocale = $currentUser["workingLanguage"];
         }
-        
-        $result = array();
-        $result['data'] = array();
-        
+
         // Get taxonomies
         $collection = Manager::getService('Taxonomy');
         $taxonomyList = $collection->getList();
@@ -337,8 +340,14 @@ class DataSearch extends DataAbstract implements IDataSearch
         $collection = Manager::getService('ContentTypes');
         $facetedFields = $collection->GetFacetedFields();
         foreach ($facetedFields as $facetedField) {
-            $this->_facetOperators[$facetedField['name']]=$facetedField['facetOperator'];
+            // get default facet operator from faceted field if not present in block configuration
+            if (!isset($this->_facetOperators[$facetedField['name']])) {
+                $this->_facetOperators[$facetedField['name']] = $facetedField['facetOperator'];
+            }
         }
+        
+        $result = array();
+        $result['data'] = array();      
 
         // Default parameters
         $defaultVars = array(
