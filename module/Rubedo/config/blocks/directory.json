@@ -59,6 +59,7 @@
 							"type":"Rubedo.view.ESQfield",
 							"config":{
 								"fieldLabel":"#ext-gen1056#",
+								"advancedESQMode":true,
 								"userQueryMode":true,
 								"queryMode":false,
 								"geoQueryMode":false,
@@ -67,10 +68,10 @@
 							}
 						},
 						{
-							"type":"Rubedo.view.FTDComboField",
+							"type":"Ext.form.field.Hidden",
 							"config":{
 								"fieldLabel":"#ext-gen1371#",
-								"onlyUserFacets":true,
+								"itemId":"displayedFacetsBrotherField",
 								"name":"displayedFacets"
 							}
 						},
@@ -88,13 +89,6 @@
 				{
 					"categorie":"#ext-gen1372#",
 					"champs":[
-						{
-							"type":"Rubedo.view.FacetOverriderField",
-							"config":{
-								"fieldLabel":"#ext-gen1373#",
-								"name":"facetOverrides"
-							}
-						},
 						{
 							"type":"Ext.form.field.ComboBox",
 							"isAutoStored":true,
@@ -121,9 +115,7 @@
 			]
 		},
 		"configBloc":{
-			"displayedFacets":[
-				"all"
-			],
+			"displayedFacets":"['all']",
 			"displayMode":"default",
 			"autoComplete":false,
 			"activateSearch":true,
