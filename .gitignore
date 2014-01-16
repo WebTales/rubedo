@@ -33,4 +33,4 @@ build
 # Composer
 /composer.phar
 /composer*.lock
-/composer.extension.*
+/composer.extensions.json
