@@ -9,26 +9,26 @@
     {% endif %}
 	<form method="post" class="form-horizontal" id="form-{{ prefix }}" >
     	<div class="control-group">
-            <label class="control-label" >Email *</label>
+            <label class="control-label" >{{ 'Label.Email'|fotrans }} *</label>
             <div class="controls">
               <input type="email" name="email" required>
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" >Name *</label>
+            <label class="control-label" >{{ 'Blocks.SignUp.label.name'|fotrans }} *</label>
             <div class="controls">
               <input type="text" name="name" required>
             </div>
         </div>
         {% if collectPassword %}
             <div class="control-group">
-                <label class="control-label" >Password *</label>
+                <label class="control-label" >{{ 'Blocks.SignUp.label.password'|fotrans }} *</label>
                 <div class="controls">
                     <input type="password" name="password" required>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" >Confirm password *</label>
+                <label class="control-label" >{{ 'Blocks.SignUp.label.confirmPassword'|fotrans }} *</label>
                 <div class="controls">
                     <input type="password" name="confirmPassword" required>
                 </div>
@@ -55,7 +55,7 @@
             <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
             
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary signupformtrigger" data-formid="form-{{ prefix }}" >SIGN UP</button>
+            <button type="submit" class="btn btn-primary signupformtrigger" data-formid="form-{{ prefix }}" >{{ 'Blocks.SignUp.label.signUp'|fotrans }}</button>
         </div>
 	</form>
 	</div>
