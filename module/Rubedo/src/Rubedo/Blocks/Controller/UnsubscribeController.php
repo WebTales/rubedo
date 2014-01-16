@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,11 +16,7 @@
  */
 namespace Rubedo\Blocks\Controller;
 
-use \Rubedo\Services\Manager;
-use Zend\View\Model\JsonModel;
-use Zend\Debug\Debug;
-use Zend\Json\Json;
-use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
 
 /**
  * Controller providing CRUD API for the MailingList JSON
@@ -31,34 +27,34 @@ use WebTales\MongoFilters\Filter;
  * @author mgoncalves
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class UnsubscribeController extends AbstractController
 {
 
     protected $_defaultTemplate = 'unsubscribe';
 
-    public function indexAction ()
+    public function indexAction()
     {
         $output = $this->params()->fromQuery();
-        if ($this->getRequest()->isPost()){
+        if ($this->getRequest()->isPost()) {
             $email = $this->params()->fromPost("email");
-        
-            if ((!isset($email))||(empty($email))){
-                $output['signupMessage']="Email invalide";
+
+            if ((!isset($email)) || (empty($email))) {
+                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.invalidEmail";
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             }
-            $result=Manager::getService("MailingList")->unsubscribeFromAll($email);
-            if (!$result['success']){
-                $output['signupMessage']=$result['msg'];
+            $result = Manager::getService("MailingList")->unsubscribeFromAll($email);
+            if (!$result['success']) {
+                $output['signupMessage'] = $result['msg'];
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             } else {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/unsubscribeok.html.twig");
                 return $this->_sendResponse($output, $template);
             }
-            
+
         }
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
         $css = array();

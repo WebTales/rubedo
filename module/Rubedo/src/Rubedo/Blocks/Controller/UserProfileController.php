@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,11 +16,9 @@
  */
 namespace Rubedo\Blocks\Controller;
 
-use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
+use Alb\OEmbed;
 use Rubedo\Services\Cache;
-Use Alb\OEmbed;
-use Zend\View\Model\JsonModel;
+use Rubedo\Services\Manager;
 
 /**
  *
@@ -31,34 +29,34 @@ use Zend\View\Model\JsonModel;
 class UserProfileController extends AbstractController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $output = $this->params()->fromQuery();
         $site = $this->params()->fromQuery('site');
-        if ((isset($output['userprofile']))&&(!empty($output['userprofile']))){
-            $currentUser=Manager::getService("Users")->findById($output['userprofile']);
+        if ((isset($output['userprofile'])) && (!empty($output['userprofile']))) {
+            $currentUser = Manager::getService("Users")->findById($output['userprofile']);
         } else {
-            $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+            $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
         }
 
-        if (!$currentUser){
-            $output['errorMessage']="No connected user or supplied user id";
+        if (!$currentUser) {
+            $output['errorMessage'] = "Blocks.UserProfile.error.noUser";
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userProfile/error.html.twig");
             return $this->_sendResponse($output, $template);
         }
 
-        $user=$currentUser;
-        $userType=Manager::getService("UserTypes")->findById($user['typeId']);
-        $output['user']=$user;
-        $output['fieldTypes']=$userType['fields'];
+        $user = $currentUser;
+        $userType = Manager::getService("UserTypes")->findById($user['typeId']);
+        $output['user'] = $user;
+        $output['fieldTypes'] = $userType['fields'];
         $frontOfficeTemplatesService = Manager::getService('FrontOfficeTemplates');
         $cTypeArray = array();
         $CKEConfigArray = array();
         $contentTitlesArray = array();
-        $data=$user['fields'];
-        $data["id"] =$user['id'];
+        $data = $user['fields'];
+        $data["id"] = $user['id'];
         $data['locale'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
-        $contentsReader=Manager::getService('Contents');
+        $contentsReader = Manager::getService('Contents');
         foreach ($userType["fields"] as $value) {
 
             $cTypeArray[$value['config']['name']] = $value;
@@ -76,10 +74,10 @@ class UserProfileController extends AbstractController
                     }
                 }
             } else
-                if (($value["cType"] == "Rubedo.view.CKEField")&&(isset($value["config"]["CKETBConfig"]))) {
+                if (($value["cType"] == "Rubedo.view.CKEField") && (isset($value["config"]["CKETBConfig"]))) {
                     $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
                 } else
-                    if (($value["cType"] == "Rubedo.view.externalMediaField")&&(isset( $data[$value["config"]["name"]]))) {
+                    if (($value["cType"] == "Rubedo.view.externalMediaField") && (isset($data[$value["config"]["name"]]))) {
                         $mediaConfig = $data[$value["config"]["name"]];
 
                         if (isset($mediaConfig['url'])) {
@@ -106,7 +104,7 @@ class UserProfileController extends AbstractController
 
                             $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
                             $loaded = false;
-                            $item = $cache->getItem($cacheKey,$loaded);
+                            $item = $cache->getItem($cacheKey, $loaded);
 
                             if (!$loaded) {
                                 // If the URL come from flickr, we check the URL
@@ -134,7 +132,7 @@ class UserProfileController extends AbstractController
 
                                 $item['width'] = $oembedParams['maxWidth'];
                                 $item['height'] = $oembedParams['maxHeight'];
-                                if (! stristr($oembedParams['url'], 'www.flickr.com')) {
+                                if (!stristr($oembedParams['url'], 'www.flickr.com')) {
                                     $item['html'] = $response->getHtml();
                                 } else {
                                     $raw = $response->getRaw();
@@ -159,7 +157,7 @@ class UserProfileController extends AbstractController
                                     $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
                                 }
 
-                                $cache->setItem($cacheKey,$item);
+                                $cache->setItem($cacheKey, $item);
                             }
 
                             $output['item'] = $item;
@@ -170,26 +168,26 @@ class UserProfileController extends AbstractController
         $output["type"] = $cTypeArray;
         $output["CKEFields"] = $CKEConfigArray;
         $output["contentTitles"] = $contentTitlesArray;
-        $hasCustomLayout=false;
-        $customLayoutRows=array();
-        if ((isset($userType['layouts']))&&(is_array($userType['layouts']))){
+        $hasCustomLayout = false;
+        $customLayoutRows = array();
+        if ((isset($userType['layouts'])) && (is_array($userType['layouts']))) {
             foreach ($userType['layouts'] as $key => $value) {
-                if (($value['type']=="Detail")&&($value['active'])&&($value['site']==$site['id'])){
-                    $hasCustomLayout=true;
-                    $customLayoutRows=$value['rows'];
+                if (($value['type'] == "Detail") && ($value['active']) && ($value['site'] == $site['id'])) {
+                    $hasCustomLayout = true;
+                    $customLayoutRows = $value['rows'];
                 }
             }
         }
-        
+
         $output["data"] = $data;
-        $output["customLayoutRows"]=$customLayoutRows;
+        $output["customLayoutRows"] = $customLayoutRows;
         $blockConfig = $this->params()->fromQuery('block-config');
         $output["blockConfig"] = $blockConfig;
-        
+
         if ($hasCustomLayout) {
             $template = $frontOfficeTemplatesService->getFileThemePath("blocks/userProfile/customLayout.html.twig");
         } else {
-        $template = $frontOfficeTemplatesService->getFileThemePath("blocks/userProfile.html.twig");
+            $template = $frontOfficeTemplatesService->getFileThemePath("blocks/userProfile.html.twig");
         }
         $css = array(
             "/components/jquery/timepicker/jquery.ui.timepicker.css",
