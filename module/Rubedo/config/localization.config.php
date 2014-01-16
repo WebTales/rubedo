@@ -34,5 +34,13 @@ return array(
     'public/components/webtales/rubedo-localization/languagekey/Notification/refusedBody.json',
     'public/components/webtales/rubedo-localization/languagekey/Notification/publishedBody.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Single/single.json',
-    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/confirmEmail.json'
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/confirmEmail.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/done.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/emailConfirmed.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/emailConfirmError.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/fail.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/signUp.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/unsubscribeOk.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Unsubscribe/unsubscribe.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/UserProfile/error.json'
 );

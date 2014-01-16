@@ -7,7 +7,6 @@
                 <img src="{{ userAvatarThumbnail(user.id, 140, 180, 'boxed') }}"  alt="{{user.name}} photo" style="margin-right:20px;" class="img-polaroid pull-left">
             {% endif %}
             <h2>{{ user.name }}</h2>
-            {#<p><strong>Email : </strong> {{ user.email }}</p>#}
             {% for key, value in data %}
                 {% if value is not null %}
                     {%for cKey,cValue in type %}

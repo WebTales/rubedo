@@ -39,19 +39,19 @@ class SignUpController extends AbstractController
             $collectPassword = isset($output['block-config']['collectPassword']) ? $output['block-config']['collectPassword'] : false;
             if ($collectPassword) {
                 if ((!isset($params['password'])) || (!isset($params['confirmPassword']))) {
-                    $output['signupMessage'] = "Missing password parameters";
+                    $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.missingPasswordParameters";
                     $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                     return $this->_sendResponse($output, $template);
                 }
                 if ($params['password'] != $params['confirmPassword']) {
-                    $output['signupMessage'] = "Password parameters don't match";
+                    $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.passwordParametersDontMatch";
                     $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                     return $this->_sendResponse($output, $template);
                 }
             }
             $alreadyExistingUser = Manager::getService("Users")->findByEmail($params['email']);
             if ($alreadyExistingUser) {
-                $output['signupMessage'] = "Email already in use.";
+                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.emailInUse";
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             }
@@ -130,7 +130,7 @@ class SignUpController extends AbstractController
                     $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/confirmEmail.html.twig");
                     return $this->_sendResponse($output, $template);
                 } else {
-                    $output['signupMessage'] = "Unable to send confirmation email";
+                    $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.unableToSendConfirmMail";
                     $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                     return $this->_sendResponse($output, $template);
                 }
@@ -148,30 +148,30 @@ class SignUpController extends AbstractController
             $userId = $this->params()->fromQuery("userId");
             $signupTime = $this->params()->fromQuery("signupTime");
             if ((!isset($userId)) || (!isset($signupTime))) {
-                $output['signupMessage'] = "Missing required parameters";
+                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.missingRequiredParameters";
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             }
             $user = Manager::getService("Users")->findById($userId);
             if (!$user) {
-                $output['signupMessage'] = "Unknown user";
+                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.unknownUser";
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             }
             if ($user['status'] != "emailUnconfirmed") {
-                $output['signupMessage'] = "Account email already confimred";
+                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.emailAlreadyConfirmed";
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             }
             if ($user['signupTime'] != $signupTime) {
-                $output['signupMessage'] = "Invalid sign up time";
+                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.invalidSignUpTime";
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             }
             $user["status"] = "approved";
             $update = Manager::getService("Users")->update($user);
             if (!$update['success']) {
-                $output['signupMessage'] = "Error during user update";
+                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.userUpdateFailed";
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                 return $this->_sendResponse($output, $template);
             } else {
