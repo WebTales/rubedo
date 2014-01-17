@@ -5,7 +5,7 @@ predfinedFacets='{{ predefinedFacets | raw}}';
 pageSize={{ pageSize | raw}};
 retrieveData=function(params, successFunction, failureFunction ){
 	params.predefinedFacets=predfinedFacets;
-	params.pageSize=pageSize;
+	params.pagesize=pageSize;
 	params['current-page'] = jQuery('body').attr('data-current-page');
 	var request = jQuery.ajax({
 		url : window.location.protocol + '//' + window.location.host
