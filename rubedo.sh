@@ -1,18 +1,21 @@
 #!/bin/bash
 
 #Try if CMDS exist
-CMDS="php curl"
-for i in $CMDS
-do
-	command -v $i >/dev/null && continue || { echo "$i command not found."; exit 1; }
-done
+command -v php > /dev/null || { echo "php command not found."; exit 1; }
+HASCURL=1;
+command -v curl > /dev/null || HASCURL=0;
 
 # Get last composer
 if [ -f composer.phar ]
     then
         php composer.phar self-update
     else
-        curl -sS https://getcomposer.org/installer | php
+        if [[ HASCURL == 1 ]]
+            then
+                curl -sS https://getcomposer.org/installer | php
+            else
+                php -r "eval('?>'.file_get_contents('https://getcomposer.org/installer'));"
+        fi
 fi
 
 # Install or update with composer

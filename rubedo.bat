@@ -1,10 +1,5 @@
 IF NOT EXIST "composer.phar" (
-    SET bits_job=tigbits%RANDOM%
-    bitsadmin.exe /CREATE /DOWNLOAD %bits_job%
-    bitsadmin.exe /ADDFILE %bits_job% "http://getcomposer.org/installer" "installer.php"
-    bitsadmin.exe /RESUME %bits_job%
-    php installer.php
-    DEL installer.php
+    php -r "eval('?>' . file_get_contents('https://getcomposer.org/installer'));"
 ) ELSE (
     php composer.phar self-update
 )
