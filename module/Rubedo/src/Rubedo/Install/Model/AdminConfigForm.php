@@ -63,8 +63,7 @@ class AdminConfigForm extends BootstrapForm
                     'name' => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min' => 8,
-                        'max' => 100
+                        'min' => 2,
                     )
                 )
             )
