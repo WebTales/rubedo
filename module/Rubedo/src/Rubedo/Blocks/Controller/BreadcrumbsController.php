@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 
 /**
  *
@@ -62,7 +63,7 @@ class BreadcrumbsController extends AbstractController
         $output['rootPage'] = $rootPage;
         $output['rootline'] = $rootlineArray;
         if ($this->params()->fromQuery('content-id')){
-            $currentContent=Manager::getService("Contents")->findById("52cc2322f05c1d8c1100000c", true, false);
+            $currentContent=Manager::getService("Contents")->findById($this->params()->fromQuery('content-id'), true, false);
             if ($currentContent){
                 $output['text']=$currentContent['text'];
             }
