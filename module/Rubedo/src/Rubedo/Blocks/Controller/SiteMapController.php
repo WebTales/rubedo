@@ -55,7 +55,7 @@ class SiteMapController extends AbstractController
             "url" => $this->url()->fromRoute(null, array(
                 'pageId' => $rootPage['id']
             ), $urlOptions),
-            "title" => $rootPage["title"],
+            "title" => $rootPage["text"],
             "id" => $rootPage["id"]
         );
         
@@ -65,7 +65,7 @@ class SiteMapController extends AbstractController
                 'pageId' => $page['id']
             ), $urlOptions);
             
-            $tempArray['title'] = $page['title'];
+            $tempArray['title'] = $page['text'];
             $tempArray['id'] = $page['id'];
             
             $levelTwoPages = Manager::getService('Pages')->readChild($page['id'], $filters);
@@ -102,7 +102,7 @@ class SiteMapController extends AbstractController
             $tempSubArray['url'] = $this->url()->fromRoute(null, array(
                 'pageId' => $subPage['id']
             ), $urlOptions);
-            $tempSubArray['title'] = $subPage['title'];
+            $tempSubArray['title'] = $subPage['text'];
             $tempSubArray['id'] = $subPage['id'];
             
             $filters = Filter::factory('Not')->setName('excludeFromMenu')->setValue(false);
