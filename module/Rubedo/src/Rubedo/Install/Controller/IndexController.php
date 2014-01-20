@@ -226,7 +226,7 @@ class IndexController extends AbstractActionController
 
             $mongo = $this->buildConnectionString($params);
 
-            $dbName = $params['db'];
+            $dbName = isset($params['db']) ? $params['db'] : "rubedo";
             $mongoAccess->init('Users', $dbName, $mongo);
             $mongoAccess->read();
             $connectionValid = $mongoAccess->isConnected($mongo, $dbName);
@@ -648,7 +648,7 @@ class IndexController extends AbstractActionController
             $connectionString .= $options['login'];
             $connectionString .= ':' . $options['password'] . '@';
         }
-        $connectionString .= $options['server'];
+        $connectionString .= isset($options['server']) ? $options['server'] : "localhost";
         if (isset($options['port'])) {
             $connectionString .= ':' . $options['port'];
         }

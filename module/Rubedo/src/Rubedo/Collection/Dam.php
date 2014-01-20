@@ -284,7 +284,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
         if (!self::isUserFilterDisabled()) {
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
-            if (!in_array($obj['writeWorkspace'], $writeWorkspaces)) {
+            if ((!in_array('all', $writeWorkspaces))&&(!in_array($obj['writeWorkspace'], $writeWorkspaces))) {
                 throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception36");
             }
 
