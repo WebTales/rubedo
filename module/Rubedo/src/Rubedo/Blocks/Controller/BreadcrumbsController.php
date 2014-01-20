@@ -17,7 +17,6 @@
 namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
 
 /**
  *
