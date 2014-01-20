@@ -258,7 +258,7 @@ class Module
             ->getServiceManager()
             ->get('Config');
 
-        if (!isset($config['installed']) || ($config['installed']['status'] !== 'finished' && $controller !== 'Rubedo\Install\Controller\Index')) {
+        if (!isset($config['installed'])||((!isset($config['installed']['status'])||$config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index')) {
             $routeMatches = $event->getRouteMatch();
             $routeMatches->setParam('controller', 'Rubedo\Install\Controller\Index');
             $routeMatches->setParam('action', 'index');
