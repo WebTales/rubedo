@@ -22,65 +22,69 @@
 		
 		{% for facet in facets %}
 
-			{% if facet.terms|length > 0 %}
-
+			{% if facet._type == 'terms' and facet.terms|length > 0 %}
+                
     			{% if facet.id == 'type' %}
     			<p>
-    				<i class="icon-file"></i> {{"Search.Facets.Label.ContentType"|fotrans}}
+    				<i class="icon-file"></i> {{ "Search.Facets.Label.ContentType"|fotrans }}
     			</p>	
     			{% elseif facet.id == 'damType' %}
     			<p>
-    				<i class="icon-file"></i> {{"Search.Facets.Label.MediaType"|fotrans}}
+    				<i class="icon-file"></i> {{ "Search.Facets.Label.MediaType"|fotrans }}
     			</p>	
     			{% elseif facet.id == 'author' %}
     			<p>
-    				<i class="icon-user"></i> {{"Search.Facets.Label.Author"|fotrans}}
+    				<i class="icon-user"></i> {{ "Search.Facets.Label.Author"|fotrans }}
     			</p>		
-    			{% elseif facet.id == 'lastupdatetime' %}
-    			<p>
-    				<i class="icon-calendar"></i> {{"Search.Facets.Label.Date"|fotrans}}
-    			</p>	
     			{% else %}
     			<p>
-    				<i class="icon-tags"></i> {{facet.label}}
+    				<i class="icon-tags"></i> {{ facet.label }}
     			</p>			
-    			{% endif %}	
-    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'lastupdatetime' %}
-    	          <ul>
+				{% endif %}	
+
+    	        <ul>
     				{% for term in facet.terms %}
-    				    {% if displayMode == 'checkbox' %}
-            				<label class="checkbox">
-              					<input type="checkbox" class="facetCheckbox"  data-facet-id="{{ facet.id }}" data-facet-term="{{ term.term }}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
-            				</label>
+    				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
+    				{% if displayMode == 'checkbox' %}
+    				<label class="checkbox">
+						<input type="checkbox" class="facetCheckbox"  data-facet-id="{{ facet.id }}" data-facet-term="{{ term.term }}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+    				</label>
     				{% else %}
     				<li>
     					<a class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',true)" >{{ term.label }} ({{ term.count }})</a>
     				</li>
     				{% endif %}
-    				{% endfor %}
-			    </ul>
-    	        {% else %}
-    	        <ul>
-    				{% for term in facet.terms %}
-    				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
-    				    {% if displayMode == 'checkbox' %}
-            				<label class="checkbox">
-              					<input type="checkbox" class="facetCheckbox" data-facet-id="{{ facet.id }}" data-facet-term="{{ term.term }}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
-            				</label>    				    
-    				    {% else %}
-            				<li>
-            					<a class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ term.term }}',true)" >{{ term.label }} ({{ term.count }})</a>
-            				</li>
-    				    {% endif %}
     				{% endif %}
     				{% endfor %}
-			    </ul>
-    					
-    			{% endif %}	
-			
+			    </ul>	
 			
 			{% endif %}
-		
+			
+			{% if facet._type == 'range' and facet.ranges|length > 0 %}
+    			{% if facet.id == 'lastupdatetime' %}
+    				{% for range in facet.ranges %}
+
+    						{% if loop.first %}
+     							<p>
+    								<i class="icon-calendar"></i> {{"Search.Facets.Label.ModificationDate"|fotrans}}
+    							</p>
+    	        				<ul>
+    	        			{% endif %}
+                            {% if displayMode == 'checkbox' %}
+            				<label class="checkbox">
+								<input type="checkbox" class="facetCheckbox"  data-facet-id="{{ facet.id }}" data-facet-term="{{ range.from }}" {% if range.from in activeFacetsList %}checked{% endif %}> {{ range.label }} ({{ range.count }})
+            				</label>                            
+                            {% else %}
+    						<li>
+    							<a class="cursor-pointer" onClick="window.updateFacets('{{ facet.id }}','{{ range.from }}',true)" >{{ range.label }} ({{ range.count }})</a>
+    						</li>
+                            {% endif %}
+
+    				{% endfor %}
+			    	</ul>
+    			{% endif %}			
+			{% endif %}			
+			
 		{% endfor %}
 		
 </div>
