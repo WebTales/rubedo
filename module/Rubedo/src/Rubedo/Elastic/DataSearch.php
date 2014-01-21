@@ -355,7 +355,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 'type' => '',
                 'lang' => '',
                 'author' => '',
-                'date' => '',
+                'lastupdatetime' => '',
                 'pager' => 0,
                 'orderby' => '_score',
                 'orderbyDirection' => 'desc',
@@ -501,7 +501,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $this->_addFilter('userName', 'first_letter');
         }
         
-        // filter on date
+        // filter on lastupdatetime
         if (array_key_exists('lastupdatetime', $this->_params)) {
             $filter = new \Elastica\Filter\Range('lastUpdateTime', 
                     array(
@@ -812,9 +812,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // Define the date facet.
         
-        if ($this->_isFacetDisplayed('date')) {
+        if ($this->_isFacetDisplayed('lastupdatetime')) {
             
-            $elasticaFacetDate = new \Elastica\Facet\Range('date');
+            $elasticaFacetDate = new \Elastica\Facet\Range('lastupdatetime');
             $elasticaFacetDate->setField('lastUpdateTime');
             $d = Manager::getService('CurrentTime')->getCurrentTime();
             
@@ -860,7 +860,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetDate->setRanges($ranges);
             
             // Apply filters from other facets
-            $facetFilter = $this->_getFacetFilter('date');
+            $facetFilter = $this->_getFacetFilter('lastupdatetime');
             if (! is_null($facetFilter)) {
                 $elasticaFacetDate->setFilter($facetFilter);
             }
@@ -1247,7 +1247,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                         
                         break;
                     
-                    case 'date':
+                    case 'lastupdatetime':
                         
                         $temp['label'] = Manager::getService('Translate')->translate(
                                 "Search.Facets.Label.ModificationDate", 
