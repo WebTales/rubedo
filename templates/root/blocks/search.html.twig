@@ -113,7 +113,7 @@
     				<i class="icon-tags"></i> {{ facet.label }}
     			</p>			
     			{% endif %}	
-    	        {% if facet.id == 'date' %}
+    	        {% if facet.id == 'lastupdatetime' %}
     	          <ul>
     				{% for term in facet.terms %}
     				
@@ -145,7 +145,7 @@
 			{% endif %}
 			
 			{% if facet._type == 'range' and facet.ranges|length > 0 %}
-    			{% if facet.id == 'date' %}
+    			{% if facet.id == 'lastupdatetime' %}
     				{% for range in facet.ranges %}
 
     						{% if loop.first %}
