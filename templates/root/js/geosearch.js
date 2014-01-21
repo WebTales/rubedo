@@ -258,7 +258,7 @@ function initialize() {
 	// facet updating function, modifies active facets and fires the query
 	window.updateFacets = updateFacets;
 	function updateFacets(id, term, add) {
-		if ((id == "author") || (id == "date") || (id == "query")) {
+		if ((id == "author") || (id == "lastupdatetime") || (id == "query")) {
 
 			if (add) {
 				window.activeFacets[id] = term;
