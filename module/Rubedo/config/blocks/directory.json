@@ -21,14 +21,6 @@
 						{
 							"type":"Ext.form.field.Checkbox",
 							"config":{
-								"fieldLabel":"#ext-gen1381#",
-								"name":"autoComplete",
-								"inputValue":true
-							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
 								"fieldLabel":"#ext-gen1418#",
 								"name":"alphabeticIndex",
 								"inputValue":true
