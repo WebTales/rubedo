@@ -29,7 +29,8 @@ class SignUpController extends AbstractController
 
     public function indexAction()
     {
-        if ($this->getRequest()->isPost()) {
+        $postConfirmer=$this->params()->fromPost('userTypeId');
+        if (($this->getRequest()->isPost())&&(isset($postConfirmer))) {
             $params = $this->params()->fromPost();
             $output = $this->params()->fromQuery();
             if ((!isset($params['name'])) || (!isset($params['email'])) || (!isset($params['userTypeId']))) {

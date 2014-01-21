@@ -37,8 +37,9 @@ class UnsubscribeController extends AbstractController
     public function indexAction()
     {
         $output = $this->params()->fromQuery();
-        if ($this->getRequest()->isPost()) {
-            $email = $this->params()->fromPost("email");
+        $email = $this->params()->fromPost("email");
+        if (($this->getRequest()->isPost())&&(isset($email))) {
+
 
             if ((!isset($email)) || (empty($email))) {
                 $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.invalidEmail";
