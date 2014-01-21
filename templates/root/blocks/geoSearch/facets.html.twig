@@ -36,7 +36,7 @@
     			<p>
     				<i class="icon-user"></i> {{"Search.Facets.Label.Author"|fotrans}}
     			</p>		
-    			{% elseif facet.id == 'date' %}
+    			{% elseif facet.id == 'lastupdatetime' %}
     			<p>
     				<i class="icon-calendar"></i> {{"Search.Facets.Label.Date"|fotrans}}
     			</p>	
@@ -45,7 +45,7 @@
     				<i class="icon-tags"></i> {{facet.label}}
     			</p>			
     			{% endif %}	
-    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'date' %}
+    	        {% if facet.id == 'type' or facet.id == 'damType' or facet.id == 'author' or facet.id == 'lastupdatetime' %}
     	          <ul>
     				{% for term in facet.terms %}
     				    {% if displayMode == 'checkbox' %}
