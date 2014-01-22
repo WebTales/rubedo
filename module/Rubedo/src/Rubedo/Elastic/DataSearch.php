@@ -1298,8 +1298,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                             }
                         } else {
                             // faceted field
-
-                            $temp['label'] = $this->searchLabel($facetedFields,"name",$id)[0]['label'];
+                            $intermediaryVal=$this->searchLabel($facetedFields,"name",$id);
+                            $temp['label'] = $intermediaryVal[0]['label'];
                             
                             if (array_key_exists('terms', $temp) and
                                      count($temp['terms']) > 0) {

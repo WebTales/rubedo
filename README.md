@@ -37,8 +37,8 @@ Installation
 * Extract them on your server
 * Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot
-* If on Unix server : Inside project root, run `./install.sh`
-* If on Windows server : Inside project root, run `install`
+* If on Unix server : Inside project root, run `./rubedo.sh`
+* If on Windows server : Inside project root, run `rubedo`
 * Access the */install* URL and run the config wizard
 
 ### For Developpers
