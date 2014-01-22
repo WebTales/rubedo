@@ -46,7 +46,6 @@ class GalleryController extends ContentListController
 
     public function xhrGetImagesAction ()
     {
-        $this->init();
         $twigVars = $this->_getList();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/gallery/items.html.twig");
         $html = Manager::getService('FrontOfficeTemplates')->render($template, $twigVars);
@@ -63,32 +62,31 @@ class GalleryController extends ContentListController
      */
     protected function _getList ()
     {
+        $this->init();
         $currentPage = $this->getParamFromQuery('page', 1);
         if ($this->getRequest()->isXmlHttpRequest()) {
             $limit = (int) $this->getParamFromQuery('itemsPerPage', 5);
-            $prefix = $this->getParamFromQuery('prefix');
+            $query = Json::decode($this->getParamFromQuery("query", Json::encode(null)), Json::TYPE_ARRAY);
             $imgWidth = $this->getParamFromQuery('width', null);
             $imgHeight = $this->getParamFromQuery('height', null);
-            $query = Json::decode($this->getParamFromQuery("query", Json::encode(null)), Json::TYPE_ARRAY);
-            $filter = $this->setFilters($query);
         } else {
             // Get queryId, blockConfig and Datalist
             $blockConfig = $this->getParamFromQuery('block-config');
-            $limit = (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
-            
+
+            $limit = (int) (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
             $query = Json::decode($blockConfig["query"], Json::TYPE_ARRAY);
-            $filter = $this->setFilters($query);
             $imgWidth = $blockConfig['imageThumbnailWidth'];
             $imgHeight = $blockConfig['imageThumbnailHeight'];
-            $prefix = $this->getParamFromQuery('prefix');
         }
-        
+            $prefix = $this->getParamFromQuery('prefix');
+            $filter = $this->setFilters($query);
+
         $this->_dataService = Manager::getservice('Dam');
         if (!isset($filter['filter'])){
-            $filter['filter']=null;
+            $filter['filter'] = null;
         }
         if (!isset($filter['sort'])){
-            $filter['sort']=null;
+            $filter['sort'] = null;
         }
         
         // Get the number of pictures in database
