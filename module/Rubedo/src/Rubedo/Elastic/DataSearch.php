@@ -248,7 +248,8 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $this->_displayedFacets = array();
             }
-            if (is_string($this->_displayedFacets)){
+
+            if (is_string($this->_displayedFacets)) {
                 $this->_displayedFacets=Json::decode($this->_displayedFacets, Json::TYPE_ARRAY);
             }
             
@@ -415,16 +416,22 @@ class DataSearch extends DataAbstract implements IDataSearch
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             // filter on start
-            $beginFilterValue = new \Elastica\Filter\NumericRange(
+			$beginFilter = new \Elastica\Filter\BoolOr();	
+            $beginFilterWithValue = new \Elastica\Filter\NumericRange(
                     'startPublicationDate', 
                     array(
                             'to' => $now
                     ));
-            $beginFilterNotExists = new \Elastica\Filter\BoolNot(
-                    new \Elastica\Filter\Exists('startPublicationDate'));
+			$beginFilterWithoutValue = new \Elastica\Filter\Term();		
+			$beginFilterWithoutValue->setTerm('startPublicationDate', 0);
+			$beginFilterNotExists = new \Elastica\Filter\Missing();
+			$beginFilterNotExists->setField('startPublicationDate');
+			$beginFilterNotExists->setParam('existence', true);
+			$beginFilterNotExists->setParam('null_value', true);
             $beginFilter = new \Elastica\Filter\BoolOr();
             $beginFilter->addFilter($beginFilterNotExists);
-            $beginFilter->addFilter($beginFilterValue);
+			$beginFilter->addFilter($beginFilterWithoutValue);
+            $beginFilter->addFilter($beginFilterWithValue);
             
             // filter on end : not set or not ended
             $endFilter = new \Elastica\Filter\BoolOr();
@@ -435,8 +442,10 @@ class DataSearch extends DataAbstract implements IDataSearch
                     ));
             $endFilterWithoutValue = new \Elastica\Filter\Term();
             $endFilterWithoutValue->setTerm('endPublicationDate', 0);
-            $endFilterNotExists = new \Elastica\Filter\BoolNot(
-                    new \Elastica\Filter\Exists('endPublicationDate'));
+			$endFilterNotExists = new \Elastica\Filter\Missing();
+			$endFilterNotExists->setField('endPublicationDate');
+			$endFilterNotExists->setParam('existence', true);
+			$endFilterNotExists->setParam('null_value', true);
             $endFilter->addFilter($endFilterNotExists);
             $endFilter->addFilter($endFilterWithoutValue);
             $endFilter->addFilter($endFilterWithValue);
@@ -445,7 +454,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $frontEndFilter = new \Elastica\Filter\BoolAnd();
             $frontEndFilter->addFilter($beginFilter);
             $frontEndFilter->addFilter($endFilter);
-            
+			
             // push filter to global
             $this->_globalFilterList['frontend'] = $frontEndFilter;
             $this->_setFilter = true;
@@ -455,6 +464,11 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($this->_params['query'] != '') {
             $this->_filters['query'] = $this->_params['query'];
         }
+        
+        // filter on object type : content, dam or user
+        if (array_key_exists('objectType', $this->_params)) {
+        	$this->_addFilter('objectType', 'objectType');
+        }        
         
         // filter on content type
         if (array_key_exists('type', $this->_params)) {
@@ -561,7 +575,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $fieldName = $field['name'] . "_" . $currentLocale;
             }
             
-            if (array_key_exists(urlencode($fieldName), $this->_params)) {
+            if (array_key_exists(urlencode($field['name']), $this->_params)) {
                 $this->_addFilter($field['name'], $fieldName);
             }
         }
@@ -677,6 +691,35 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaQuery->setFilter($globalFilter);
         }
         
+        // Define the objectType facet (content, dam or user)
+        
+        if ($this->_isFacetDisplayed('objectType')) {
+
+        	$elasticaFacetObjectType = new \Elastica\Facet\Terms('objectType');
+        	$elasticaFacetObjectType->setField('objectType');
+        	
+        	// Exclude active Facets for this vocabulary
+        	if ($this->_facetDisplayMode != 'checkbox' and
+        	isset($this->_filters['objectType'])) {
+        		$elasticaFacetObjectType->setExclude(
+        				array(
+        						$this->_filters['objectType']
+        				));
+        	}
+        	$elasticaFacetObjectType->setSize(1000);
+        	$elasticaFacetObjectType->setOrder('count');
+        	
+        	// Apply filters from other facets
+        	$facetFilter = $this->_getFacetFilter('objectType');
+        	if (! is_null($facetFilter)) {
+        		$elasticaFacetObjectType->setFilter($facetFilter);
+        	}
+        	
+        	// Add type facet to the search query object
+        	$elasticaQuery->addFacet($elasticaFacetObjectType);
+        	
+        }
+        
         // Define the type facet
         
         if (($this->_isFacetDisplayed('contentType'))||($this->_isFacetDisplayed('type')))  {
@@ -763,9 +806,8 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         
         // Define the author facet
-        
+
         if ($this->_isFacetDisplayed('author')) {
-            
             $elasticaFacetAuthor = new \Elastica\Facet\Terms('author');
             $elasticaFacetAuthor->setField('createUser.id');
             
@@ -906,8 +948,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $fieldName = $field['name'] . "_" . $currentLocale;
             }
-            
-            if ($this->_isFacetDisplayed($fieldName)) {
+            if ($this->_isFacetDisplayed($field['name'])) {
                 
                 $elasticaFacetField = new \Elastica\Facet\Terms($field['name']);
                 $elasticaFacetField->setField("$fieldName");
@@ -928,6 +969,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 
                 // Add that facet to the search query object.
                 $elasticaQuery->addFacet($elasticaFacetField);
+
             }
         }
         
@@ -1183,7 +1225,17 @@ class DataSearch extends DataAbstract implements IDataSearch
                             $renderFacet = false;
                         }
                         break;
-                    
+
+                    case 'objectType' :
+                    	
+                    	$temp['label'] = Manager::getService('Translate')->translate(
+                                "Search.Facets.Label.DataType", 'Data type');
+                    	foreach ($temp['terms'] as $key => $value) {
+                    		$temp['terms'][$key]['label'] = strtoupper(
+                    				$value["term"]);
+                    	}
+                    	break;
+                    	                    	
                     case 'type':
                         
                         $temp['label'] = Manager::getService('Translate')->translate(
@@ -1219,12 +1271,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                         break;
                     
                     case 'author':
-                        
+                         
                         $temp['label'] = Manager::getService('Translate')->translate(
                                 "Search.Facets.Label.Author", 'Author');
                         if ($this->_facetDisplayMode == 'checkbox' or
                                  (array_key_exists('terms', $temp) and
-                                 count($temp['terms']) > 1)) {
+                                 count($temp['terms']) > 0)) {
                             $collection = Manager::getService('Users');
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $collection->findById(
@@ -1300,7 +1352,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                             // faceted field
                             $intermediaryVal=$this->searchLabel($facetedFields,"name",$id);
                             $temp['label'] = $intermediaryVal[0]['label'];
-                            
+
                             if (array_key_exists('terms', $temp) and
                                      count($temp['terms']) > 0) {
                                 foreach ($temp['terms'] as $key => $value) {
@@ -1500,7 +1552,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $result['activeFacets'][] = $temp;
             }
         }
-        
+
         return ($result);
     }
 
