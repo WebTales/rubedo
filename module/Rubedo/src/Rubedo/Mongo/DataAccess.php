@@ -564,32 +564,40 @@ class DataAccess implements IDataAccess
             $nbItems = 0;
         }
 
-        // switch from cursor to actual array
         if ($nbItems > 0) {
             try {
-                $data = iterator_to_array($cursor);
+                $cursor->rewind();
+                $currentResult=$cursor->current();
+                $currentResult['id'] = (string)$currentResult['_id'];
+                unset($currentResult['_id']);
+                if (!isset($currentResult['version'])) {
+                    $currentResult['version'] = 1;
+                }
+                $data[]=$currentResult;
+                $incrementor=1;
+                while (($incrementor<$nbItems)&&(($numberOfResults==0)||($incrementor<$numberOfResults))&&($cursor->hasNext())){
+                    $cursor->next();
+                    $currentResult=$cursor->current();
+                    $currentResult['id'] = (string)$currentResult['_id'];
+                    unset($currentResult['_id']);
+                    if (!isset($currentResult['version'])) {
+                        $currentResult['version'] = 1;
+                    }
+                    $data[]=$currentResult;
+                    $incrementor++;
+                }
             } catch(\MongoCursorException $e) {
                 if (strpos($e->getMessage(), 'unauthorized db')) {
                     throw new Server('Unauthorized DB Access', 'Exception102');
                 } else {
                     throw $e;
                 }
+            } catch (\Exception $e) {
+
             }
         } else {
             $data = array();
         }
-
-        // iterate through data to convert ID to string and add version number
-        // if none
-        foreach ($data as &$value) {
-            $value['id'] = (string)$value['_id'];
-            unset($value['_id']);
-            if (!isset($value['version'])) {
-                $value['version'] = 1;
-            }
-        }
-
-        // return data as simple array with no keys
         $datas = array_values($data);
         $returnArray = array(
             "data" => $datas,
@@ -1011,18 +1019,45 @@ class DataAccess implements IDataAccess
         // apply sort, paging, filter
         $cursor->sort($sort);
 
-
+        try {
+            $nbItems = $cursor->count();
+        } catch (\Exception $e) {
+            $nbItems = 0;
+        }
         // switch from cursor to actual array
-        $data = iterator_to_array($cursor);
+        if ($nbItems > 0) {
+            try {
+                $cursor->rewind();
+                $currentResult=$cursor->current();
+                $currentResult['id'] = (string)$currentResult['_id'];
+                unset($currentResult['_id']);
+                if (!isset($currentResult['version'])) {
+                    $currentResult['version'] = 1;
+                }
+                $data[]=$currentResult;
+                $incrementor=1;
+                while (($incrementor<$nbItems)&&($cursor->hasNext())){
+                    $cursor->next();
+                    $currentResult=$cursor->current();
+                    $currentResult['id'] = (string)$currentResult['_id'];
+                    unset($currentResult['_id']);
+                    if (!isset($currentResult['version'])) {
+                        $currentResult['version'] = 1;
+                    }
+                    $data[]=$currentResult;
+                    $incrementor++;
+                }
+            } catch(\MongoCursorException $e) {
+                if (strpos($e->getMessage(), 'unauthorized db')) {
+                    throw new Server('Unauthorized DB Access', 'Exception102');
+                } else {
+                    throw $e;
+                }
+            } catch (\Exception $e) {
 
-        // iterate throught data to convert ID to string and add version number
-        // if none
-        foreach ($data as &$value) {
-            $value['id'] = (string)$value['_id'];
-            unset($value['_id']);
-            if (!isset($value['version'])) {
-                $value['version'] = 1;
             }
+        } else {
+            $data = array();
         }
 
         // return data as simple array with no keys
