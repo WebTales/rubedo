@@ -248,6 +248,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $this->_displayedFacets = array();
             }
+			
             if (is_string($this->_displayedFacets)){
                 $this->_displayedFacets=Json::decode($this->_displayedFacets, Json::TYPE_ARRAY);
             }
@@ -561,7 +562,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $fieldName = $field['name'] . "_" . $currentLocale;
             }
             
-            if (array_key_exists(urlencode($fieldName), $this->_params)) {
+            if (array_key_exists(urlencode($field['name']), $this->_params)) {
                 $this->_addFilter($field['name'], $fieldName);
             }
         }
@@ -763,9 +764,8 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         
         // Define the author facet
-        
+
         if ($this->_isFacetDisplayed('author')) {
-            
             $elasticaFacetAuthor = new \Elastica\Facet\Terms('author');
             $elasticaFacetAuthor->setField('createUser.id');
             
@@ -906,8 +906,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $fieldName = $field['name'] . "_" . $currentLocale;
             }
-            
-            if ($this->_isFacetDisplayed($fieldName)) {
+            if ($this->_isFacetDisplayed($field['name'])) {
                 
                 $elasticaFacetField = new \Elastica\Facet\Terms($field['name']);
                 $elasticaFacetField->setField("$fieldName");
@@ -928,6 +927,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 
                 // Add that facet to the search query object.
                 $elasticaQuery->addFacet($elasticaFacetField);
+
             }
         }
         
@@ -1219,12 +1219,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                         break;
                     
                     case 'author':
-                        
+                         
                         $temp['label'] = Manager::getService('Translate')->translate(
                                 "Search.Facets.Label.Author", 'Author');
                         if ($this->_facetDisplayMode == 'checkbox' or
                                  (array_key_exists('terms', $temp) and
-                                 count($temp['terms']) > 1)) {
+                                 count($temp['terms']) > 0)) {
                             $collection = Manager::getService('Users');
                             foreach ($temp['terms'] as $key => $value) {
                                 $termItem = $collection->findById(
@@ -1300,7 +1300,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                             // faceted field
                             $intermediaryVal=$this->searchLabel($facetedFields,"name",$id);
                             $temp['label'] = $intermediaryVal[0]['label'];
-                            
+
                             if (array_key_exists('terms', $temp) and
                                      count($temp['terms']) > 0) {
                                 foreach ($temp['terms'] as $key => $value) {
@@ -1500,7 +1500,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $result['activeFacets'][] = $temp;
             }
         }
-        
+
         return ($result);
     }
 
