@@ -416,16 +416,22 @@ class DataSearch extends DataAbstract implements IDataSearch
             $now = Manager::getService('CurrentTime')->getCurrentTime();
             
             // filter on start
-            $beginFilterValue = new \Elastica\Filter\NumericRange(
+			$beginFilter = new \Elastica\Filter\BoolOr();	
+            $beginFilterWithValue = new \Elastica\Filter\NumericRange(
                     'startPublicationDate', 
                     array(
                             'to' => $now
                     ));
-            $beginFilterNotExists = new \Elastica\Filter\BoolNot(
-                    new \Elastica\Filter\Exists('startPublicationDate'));
+			$beginFilterWithoutValue = new \Elastica\Filter\Term();		
+			$beginFilterWithoutValue->setTerm('startPublicationDate', 0);
+			$beginFilterNotExists = new \Elastica\Filter\Missing();
+			$beginFilterNotExists->setField('startPublicationDate');
+			$beginFilterNotExists->setParam('existence', true);
+			$beginFilterNotExists->setParam('null_value', true);
             $beginFilter = new \Elastica\Filter\BoolOr();
             $beginFilter->addFilter($beginFilterNotExists);
-            $beginFilter->addFilter($beginFilterValue);
+			$beginFilter->addFilter($beginFilterWithoutValue);
+            $beginFilter->addFilter($beginFilterWithValue);
             
             // filter on end : not set or not ended
             $endFilter = new \Elastica\Filter\BoolOr();
@@ -436,8 +442,10 @@ class DataSearch extends DataAbstract implements IDataSearch
                     ));
             $endFilterWithoutValue = new \Elastica\Filter\Term();
             $endFilterWithoutValue->setTerm('endPublicationDate', 0);
-            $endFilterNotExists = new \Elastica\Filter\BoolNot(
-                    new \Elastica\Filter\Exists('endPublicationDate'));
+			$endFilterNotExists = new \Elastica\Filter\Missing();
+			$endFilterNotExists->setField('endPublicationDate');
+			$endFilterNotExists->setParam('existence', true);
+			$endFilterNotExists->setParam('null_value', true);
             $endFilter->addFilter($endFilterNotExists);
             $endFilter->addFilter($endFilterWithoutValue);
             $endFilter->addFilter($endFilterWithValue);
@@ -446,7 +454,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $frontEndFilter = new \Elastica\Filter\BoolAnd();
             $frontEndFilter->addFilter($beginFilter);
             $frontEndFilter->addFilter($endFilter);
-            
+			
             // push filter to global
             $this->_globalFilterList['frontend'] = $frontEndFilter;
             $this->_setFilter = true;
