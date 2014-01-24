@@ -248,8 +248,8 @@ class DataSearch extends DataAbstract implements IDataSearch
             } else {
                 $this->_displayedFacets = array();
             }
-			
-            if (is_string($this->_displayedFacets)){
+
+            if (is_string($this->_displayedFacets)) {
                 $this->_displayedFacets=Json::decode($this->_displayedFacets, Json::TYPE_ARRAY);
             }
             
@@ -464,6 +464,11 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($this->_params['query'] != '') {
             $this->_filters['query'] = $this->_params['query'];
         }
+        
+        // filter on object type : content, dam or user
+        if (array_key_exists('objectType', $this->_params)) {
+        	$this->_addFilter('objectType', 'objectType');
+        }        
         
         // filter on content type
         if (array_key_exists('type', $this->_params)) {
@@ -684,6 +689,35 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $globalFilter->addFilter($filter);
             }
             $elasticaQuery->setFilter($globalFilter);
+        }
+        
+        // Define the objectType facet (content, dam or user)
+        
+        if ($this->_isFacetDisplayed('objectType')) {
+
+        	$elasticaFacetObjectType = new \Elastica\Facet\Terms('objectType');
+        	$elasticaFacetObjectType->setField('objectType');
+        	
+        	// Exclude active Facets for this vocabulary
+        	if ($this->_facetDisplayMode != 'checkbox' and
+        	isset($this->_filters['objectType'])) {
+        		$elasticaFacetObjectType->setExclude(
+        				array(
+        						$this->_filters['objectType']
+        				));
+        	}
+        	$elasticaFacetObjectType->setSize(1000);
+        	$elasticaFacetObjectType->setOrder('count');
+        	
+        	// Apply filters from other facets
+        	$facetFilter = $this->_getFacetFilter('objectType');
+        	if (! is_null($facetFilter)) {
+        		$elasticaFacetObjectType->setFilter($facetFilter);
+        	}
+        	
+        	// Add type facet to the search query object
+        	$elasticaQuery->addFacet($elasticaFacetObjectType);
+        	
         }
         
         // Define the type facet
@@ -1191,7 +1225,17 @@ class DataSearch extends DataAbstract implements IDataSearch
                             $renderFacet = false;
                         }
                         break;
-                    
+
+                    case 'objectType' :
+                    	
+                    	$temp['label'] = Manager::getService('Translate')->translate(
+                                "Search.Facets.Label.DataType", 'Data type');
+                    	foreach ($temp['terms'] as $key => $value) {
+                    		$temp['terms'][$key]['label'] = strtoupper(
+                    				$value["term"]);
+                    	}
+                    	break;
+                    	                    	
                     case 'type':
                         
                         $temp['label'] = Manager::getService('Translate')->translate(
