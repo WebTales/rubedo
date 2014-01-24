@@ -127,7 +127,17 @@ class DataIndex extends DataAbstract implements IDataIndex
                             'type' => 'string',
                             'index' => 'not_analyzed',
                             'store' => 'yes'
-                    )
+                    ),
+					'startPublicationDate' => array(
+							'type' => 'integer',
+							'index' => 'not_analyzed',
+							'store' => 'yes'
+					),
+					'endPublicationDate' => array(
+							'type' => 'integer',
+							'index' => 'not_analyzed',
+							'store' => 'yes'
+					)
             );
             
             // Set specific mapping for contents
@@ -140,16 +150,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                         ),
                         'contentType' => array(
                                 'type' => 'string',
-                                'index' => 'not_analyzed',
-                                'store' => 'yes'
-                        ),
-                        'startPublicationDate' => array(
-                                'type' => 'integer',
-                                'index' => 'not_analyzed',
-                                'store' => 'yes'
-                        ),
-                        'endPublicationDate' => array(
-                                'type' => 'integer',
                                 'index' => 'not_analyzed',
                                 'store' => 'yes'
                         )
@@ -456,7 +456,17 @@ class DataIndex extends DataAbstract implements IDataIndex
                                             'store' => 'no'
                                     )
                             )
-                    )
+                    ),
+					'startPublicationDate' => array(
+							'type' => 'integer',
+							'index' => 'not_analyzed',
+							'store' => 'yes'
+					),
+					'endPublicationDate' => array(
+							'type' => 'integer',
+							'index' => 'not_analyzed',
+							'store' => 'yes'
+					)
             );
             
             // Add Taxonomies
