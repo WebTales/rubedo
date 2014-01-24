@@ -250,7 +250,12 @@ class DataSearch extends DataAbstract implements IDataSearch
             }
 
             if (is_string($this->_displayedFacets)) {
-                $this->_displayedFacets=Json::decode($this->_displayedFacets, Json::TYPE_ARRAY);
+                if( (empty($this->_displayedFacets))||($this->_displayedFacets=="['all']")){
+                    $this->_displayedFacets=array("all");
+                } else {
+                    $this->_displayedFacets=Json::decode($this->_displayedFacets, Json::TYPE_ARRAY);
+                }
+
             }
             
             // get current user language
