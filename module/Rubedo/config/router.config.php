@@ -59,7 +59,7 @@ return array(
         'install' => array(
             'type' => 'Segment',
             'options' => array(
-                'route' => '/install[/:controller[/:action]]',
+                'route' => '/install[/[:controller[/:action]]]',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\Install\Controller',
                     'controller' => 'Index',
