@@ -215,6 +215,10 @@ class Pages extends AbstractLocalizableCollection implements IPages
         if ($this->hasDefaultPageAsChild($obj['id'])) {
             throw new \Rubedo\Exceptions\User("This page is the default single page or father of the default single page", "Exception47");
         }
+
+        if ($this->hasHomePageAsChild($obj['id'])) {
+            throw new \Rubedo\Exceptions\User("This page is the homepage or father of the homepage", "Exception102");
+        }
         $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
 
         $resultArray = $this->_dataService->customDelete($deleteCond);
@@ -242,11 +246,11 @@ class Pages extends AbstractLocalizableCollection implements IPages
     }
 
     /**
-     * Check if page is or is the father of the default page of its site
-     *
-     * @return bool
-     *
-     */
+ * Check if page is or is the father of the default page of its site
+ *
+ * @return bool
+ *
+ */
     public function hasDefaultPageAsChild($pageId)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
@@ -262,6 +266,38 @@ class Pages extends AbstractLocalizableCollection implements IPages
             $sitedId = $page['site'];
             $site = $sitesService->findById($sitedId);
             $defaultPage = $site['defaultSingle'];
+            // find children
+            $children = $service->_getChildToDelete($pageId);
+            // do site default page match a child ?
+            $response = in_array($defaultPage, $children);
+        } else {
+            $response = false;
+        }
+
+        return ($response);
+    }
+
+    /**
+     * Check if page is or is the father of the site homepage
+     *
+     * @return bool
+     *
+     */
+    public function hasHomePageAsChild($pageId)
+    {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $service = Manager::getService('Pages');
+        $sitesService = Manager::getService('Sites');
+        AbstractCollection::disableUserFilter($wasFiltered);
+
+        // find site for $page ID
+        $page = $service->findById($pageId);
+
+        if ($page) {
+            // find site
+            $sitedId = $page['site'];
+            $site = $sitesService->findById($sitedId);
+            $defaultPage = $site['homePage'];
             // find children
             $children = $service->_getChildToDelete($pageId);
             // do site default page match a child ?

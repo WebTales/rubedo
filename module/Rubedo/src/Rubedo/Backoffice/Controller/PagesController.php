@@ -62,9 +62,9 @@ class PagesController extends DataAccessController
      */
     public function holdsSiteDefaultAction()
     {
-        $id = $this->params()->fromQuery('id');
+        $id = $this->params()->fromPost('id');
         $result = array();
-        $result['holdsDefault'] = $this->_dataService->hasDefaultPageAsChild($id);
+        $result['holdsDefault'] = $this->_dataService->hasDefaultPageAsChild($id) || $this->_dataService->hasHomePageAsChild($id);
         $result['success'] = true;
         return $this->_returnJson($result);
     }
