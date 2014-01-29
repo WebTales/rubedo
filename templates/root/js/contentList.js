@@ -1,4 +1,4 @@
-function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType,skip,columnsNb) {
+function contentListChangePage(page, prefix, query, url, singlePage,limit,displayType,skip,columnsNb, showOnlyTitle, summaryHeight) {
 	if (jQuery('#list-' + prefix + ' > #list-' + prefix + '-' + page).length == 0) {
 		if (jQuery('body').attr('data-is-draft')){
 			var isDraft = true;
@@ -18,7 +18,9 @@ function contentListChangePage(page, prefix, query, url, singlePage,limit,displa
 				'is-draft':isDraft,
 				'skip':skip,
 				'columnsNb':columnsNb,
-				'current-page':jQuery('body').attr('data-current-page')
+				'current-page':jQuery('body').attr('data-current-page'),
+                'showOnlyTitle':showOnlyTitle,
+                'summaryHeight':summaryHeight
 			},
 			dataType : "json"
 		});
