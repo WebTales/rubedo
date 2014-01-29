@@ -38,6 +38,8 @@ class ContentListController extends AbstractController
         if (! $output["blockConfig"]['columns']) {
             $output["blockConfig"]['columns'] = 1;
         }
+        $output['blockConfig']['showOnlyTitle']=isset($output['blockConfig']['showOnlyTitle']) ? $output['blockConfig']['showOnlyTitle'] : false;
+        $output['blockConfig']['summaryHeight']=isset($output['blockConfig']['summaryHeight']) ? $output['blockConfig']['summaryHeight'] : false;
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
@@ -134,6 +136,8 @@ class ContentListController extends AbstractController
                 $data[] = $fields;
             }
             $output['blockConfig'] = $blockConfig;
+            $output['blockConfig']['showOnlyTitle']=isset($output['blockConfig']['showOnlyTitle']) ? $output['blockConfig']['showOnlyTitle'] : false;
+            $output['blockConfig']['summaryHeight']=isset($output['blockConfig']['summaryHeight']) ? $output['blockConfig']['summaryHeight'] : false;
             $output["data"] = $data;
             $output["query"]['type'] = $queryType;
             $output["query"]['id'] = $queryId;
@@ -165,7 +169,13 @@ class ContentListController extends AbstractController
         $columnsNb = $this->getParamFromQuery('columnsNb', '1');
         
         $twigVars["columnNb"] = $columnsNb;
-        
+        $twigVars['blockConfig']= array();
+        $twigVars['blockConfig']['showOnlyTitle']=$this->getParamFromQuery('showOnlyTitle', false);
+        $twigVars['blockConfig']['summaryHeight']=$this->getParamFromQuery('summaryHeight', false);
+        if ($twigVars['blockConfig']['showOnlyTitle']==="false"){
+            $twigVars['blockConfig']['showOnlyTitle']=false;
+        }
+
         if ($displayType) {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/" . $displayType . ".html.twig");
         } else {
