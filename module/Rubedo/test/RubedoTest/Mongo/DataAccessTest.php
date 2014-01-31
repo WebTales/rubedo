@@ -7,13 +7,21 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace RubedoTest\Mongo;
+
+use Phactory\Mongo\Phactory;
+use Rubedo\Mongo\DataAccess;
+use Rubedo\Services\Manager;
+use WebTales\MongoFilters\AndFilter;
+use WebTales\MongoFilters\OperatorToValueFilter;
+use WebTales\MongoFilters\ValueFilter;
 
 /**
  * Test suite of the service handling read and write to mongoDB :
@@ -21,24 +29,35 @@
  * @category Rubedo-Test
  * @package Rubedo-Test
  */
-class DataAccessTest extends PHPUnit_Framework_TestCase
+class DataAccessTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Phactory : database fixture handler
-     * @var \Phactory\Mongo\Phactory
+     * @var Phactory
      */
     protected static $phactory;
+
+    /**
+     * @var array
+     */
+    private $fakeUser = array();
+
+    /**
+     * @var integer
+     */
+    private $fakeTime;
 
     /**
      * Fixture : MongoDB dataset for tests
      * Create an "item" blueprint for testing purpose
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass()
+    {
         // create a db connection and tell Phactory to use it
-        $mongo = new Mongo(\Rubedo\Mongo\DataAccess::getDefaultMongo());
+        $mongo = new \Mongo(DataAccess::getDefaultMongo());
         $mongoDb = $mongo->test_db;
 
-        static::$phactory = new \Phactory\Mongo\Phactory($mongoDb);
+        static::$phactory = new Phactory($mongoDb);
 
         // reset any existing blueprints and empty any tables Phactory has used
         static::$phactory->reset();
@@ -50,21 +69,22 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * clear the DB of the previous test data
      */
-    public function tearDown() {
+    public function tearDown()
+    {
         static::$phactory->recall();
-        Rubedo\Services\Manager::resetMocks();
+        Manager::resetMocks();
     }
 
     /**
      * init the Zend Application for tests
      */
-    public function setUp() {
-        testBootstrap();
+    public function setUp()
+    {
         $mockUserService = $this->getMock('Rubedo\User\CurrentUser');
-        Rubedo\Services\Manager::setMockService('CurrentUser', $mockUserService);
+        Manager::setMockService('CurrentUser', $mockUserService);
 
         $mockTimeService = $this->getMock('Rubedo\Time\CurrentTime');
-        Rubedo\Services\Manager::setMockService('CurrentTime', $mockTimeService);
+        Manager::setMockService('CurrentTime', $mockTimeService);
 
         parent::setUp();
     }
@@ -72,21 +92,25 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Initialize a mock CurrentUser service
      */
-    public function initUser() {
-        $this->_fakeUser = array('id' => 1, 'login' => (string) rand(21, 128));
+    public function initUser()
+    {
+        $this->fakeUser = array('id' => 1, 'login' => (string)rand(21, 128));
         $mockService = $this->getMock('Rubedo\User\CurrentUser');
-        $mockService->expects($this->once())->method('getCurrentUserSummary')->will($this->returnValue($this->_fakeUser));
-        Rubedo\Services\Manager::setMockService('CurrentUser', $mockService);
+        $mockService
+            ->expects($this->once())->method('getCurrentUserSummary')
+            ->will($this->returnValue($this->fakeUser));
+        Manager::setMockService('CurrentUser', $mockService);
     }
 
     /**
      * Initialize a mock CurrentTime service
      */
-    public function initTime() {
-        $this->_fakeTime = time();
+    public function initTime()
+    {
+        $this->fakeTime = time();
         $mockService = $this->getMock('Rubedo\Time\CurrentTime');
-        $mockService->expects($this->once())->method('getCurrentTime')->will($this->returnValue($this->_fakeTime));
-        Rubedo\Services\Manager::setMockService('CurrentTime', $mockService);
+        $mockService->expects($this->once())->method('getCurrentTime')->will($this->returnValue($this->fakeTime));
+        Manager::setMockService('CurrentTime', $mockService);
     }
 
     /**
@@ -95,8 +119,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Create 3 items through Phactory and read them with the service
      * a version number is added on the fly
      */
-    public function testRead() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testRead()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
@@ -114,9 +139,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * test of the read feature
-     *	Case with a simple filter
+     *    Case with a simple filter
      */
-    public function testReadWithFilter() {
+    public function testReadWithFilter()
+    {
         $items = array();
 
         $item = static::$phactory->create('item', array('criteria' => 'jack'));
@@ -126,12 +152,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $items[] = $item;
 
-        $otherItem = static::$phactory->create('item');
+        static::$phactory->create('item');
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter = new ValueFilter();
         $filter->setName('criteria')->setValue('jack');
         $dataAccessObject->addFilter($filter);
 
@@ -146,7 +172,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Case of a lesser than filter
      *
      */
-    public function testReadWithFilterLesserThan() {
+    public function testReadWithFilterLesserThan()
+    {
         $items = array();
         $item = static::$phactory->create('item', array('criteria' => 1));
         $item['id'] = (string)$item['_id'];
@@ -154,14 +181,14 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $items[] = $item;
 
-        $otherItem = static::$phactory->create('item', array('criteria' => 2));
+        static::$phactory->create('item', array('criteria' => 2));
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter = new OperatorToValueFilter();
         $filter->setName('criteria')->setValue(1)->setOperator('$lte');
-        
+
         $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->read();
@@ -172,10 +199,11 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * test of the read feature
-     * 	case with a regexp filter
+     *    case with a regexp filter
      *
      */
-    public function testReadWithFilterRegexp() {
+    public function testReadWithFilterRegexp()
+    {
         $items = array();
         $item = static::$phactory->create('item', array('criteria' => 'mammouth'));
         $item['id'] = (string)$item['_id'];
@@ -183,16 +211,16 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $items[] = $item;
 
-        $otherItem = static::$phactory->create('item', array('criteria' => 'bear'));
+        static::$phactory->create('item', array('criteria' => 'bear'));
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter = new OperatorToValueFilter();
         $filter->setName('criteria')->setValue(new \MongoRegex('/mam.*/i'))->setOperator('$regex');
-        
+
         $dataAccessObject->addFilter($filter);
-        
+
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
         $this->assertEquals($items, $readArray);
@@ -201,9 +229,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * test of the read feature
-     *	Case with a simple filter
+     *    Case with a simple filter
      */
-    public function testReadWithTwoFilter() {
+    public function testReadWithTwoFilter()
+    {
         $items = array();
         $item = static::$phactory->create('item', array('criteria' => 'jack', 'otherCriteria' => 1));
         $item['id'] = (string)$item['_id'];
@@ -211,18 +240,18 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item['_id']);
         $items[] = $item;
 
-        $otherItem = static::$phactory->create('item', array('criteria' => 'john', 'otherCriteria' => 1));
-        $againAnotherItem = static::$phactory->create('item', array('criteria' => 'jack', 'otherCriteria' => 2));
+        static::$phactory->create('item', array('criteria' => 'john', 'otherCriteria' => 1));
+        static::$phactory->create('item', array('criteria' => 'jack', 'otherCriteria' => 2));
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+
+        $filter = new ValueFilter();
         $filter->setName('criteria')->setValue('jack');
         $dataAccessObject->addFilter($filter);
-        
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+
+        $filter = new ValueFilter();
         $filter->setName('otherCriteria')->setValue(1);
         $dataAccessObject->addFilter($filter);
 
@@ -237,8 +266,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with a simple ascendant sort by user name
      */
-    public function testReadWithAscSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithAscSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('user' => 'john', 'version' => '1'));
@@ -267,8 +297,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with a simple descendant sort by user name
      */
-    public function testReadWithDescSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithDescSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('user' => 'john', 'version' => '1'));
@@ -297,23 +328,48 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with two ascendant sort by user name and user first name
      */
-    public function testReadWithTwoAscSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithTwoAscSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $item = static::$phactory->create('item', array('name' => 'john', 'firstname' => 'carter', 'version' => '1'));
+        $item = static::$phactory->create('item',
+            array(
+                'name' => 'john',
+                'firstname' => 'carter',
+                'version' => '1',
+            )
+        );
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('name' => 'marie', 'firstname' => 'lyne', 'version' => '1'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'name' => 'marie',
+                'firstname' => 'lyne',
+                'version' => '1',
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('name' => 'alice', 'firstname' => 'wonderland', 'version' => '1'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'name' => 'alice',
+                'firstname' => 'wonderland',
+                'version' => '1'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
-        $item4 = static::$phactory->create('item', array('name' => 'alice', 'firstname' => 'ecila', 'version' => '1'));
+        $item4 = static::$phactory->create('item',
+            array(
+                'name' => 'alice',
+                'firstname' => 'ecila',
+                'version' => '1'
+            )
+        );
         $item4['id'] = (string)$item4['_id'];
         unset($item4['_id']);
 
@@ -332,8 +388,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with two descendant sort by user name and user first name
      */
-    public function testReadWithTwoDescSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithTwoDescSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('name' => 'john', 'firstname' => 'carter', 'version' => '1'));
@@ -344,7 +401,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('name' => 'alice', 'firstname' => 'wonderland', 'version' => '1'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'name' => 'alice',
+                'firstname' => 'wonderland',
+                'version' => '1'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -367,15 +430,30 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * The result doesn't contain the password and first name field
      */
-    public function testReadWithIncludedField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithIncludedField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $item = static::$phactory->create('item', array('name' => 'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+        $item = static::$phactory->create('item',
+            array(
+                'name' => 'john',
+                'firstname' => 'carter',
+                'password' => 'blabla',
+                'version' => '1'
+            )
+        );
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('name' => 'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'name' => 'marie',
+                'firstname' => 'lyne',
+                'password' => 'titi',
+                'version' => '1',
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
@@ -385,7 +463,18 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->addToFieldList($includedFields);
         $dataAccessObject->addSort($sort);
 
-        $expectedResult = array( array('name' => 'john', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'id' => $item2['id'], 'version' => $item2['version']));
+        $expectedResult = array(
+            array(
+                'name' => 'john',
+                'id' => $item['id'],
+                'version' => $item['version']
+            ),
+            array(
+                'name' => 'marie',
+                'id' => $item2['id'],
+                'version' => $item2['version']
+            )
+        );
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
         $this->assertEquals($expectedResult, $readArray);
@@ -396,15 +485,30 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * The result doesn't contain only the password field
      */
-    public function testReadWithExcludedField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithExcludedField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $item = static::$phactory->create('item', array('name' => 'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => '1'));
+        $item = static::$phactory->create('item',
+            array(
+                'name' => 'john',
+                'firstname' => 'carter',
+                'password' => 'blabla',
+                'version' => '1'
+            )
+        );
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('name' => 'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => '1'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'name' => 'marie',
+                'firstname' => 'lyne',
+                'password' => 'titi',
+                'version' => '1'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
@@ -414,7 +518,20 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->addToExcludeFieldList($includedFields);
         $dataAccessObject->addSort($sort);
 
-        $expectedResult = array( array('name' => 'john', 'firstname' => 'carter', 'id' => $item['id'], 'version' => $item['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item2['id'], 'version' => $item2['version']));
+        $expectedResult = array(
+            array(
+                'name' => 'john',
+                'firstname' => 'carter',
+                'id' => $item['id'],
+                'version' => $item['version']
+            ),
+            array(
+                'name' => 'marie',
+                'firstname' => 'lyne',
+                'id' => $item2['id'],
+                'version' => $item2['version']
+            )
+        );
         $readArray = $dataAccessObject->read();
         $readArray = $readArray['data'];
         $this->assertEquals($expectedResult, $readArray);
@@ -423,8 +540,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Read with a specified number for the first result
      */
-    public function testReadWithFirstResult() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithFirstResult()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('name' => 'john', 'version' => '1'));
@@ -442,7 +560,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item2);
         $result = $dataAccessObject->read();
-		$result = $result['data'];
+        $result = $result['data'];
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -450,8 +568,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Read with a specified number of results
      */
-    public function testReadWithNumberOfResults() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithNumberOfResults()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('name' => 'john', 'version' => '1'));
@@ -469,7 +588,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item);
         $result = $dataAccessObject->read();
-		$result = $result['data'];
+        $result = $result['data'];
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -477,8 +596,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Read with a specified number of results and a specified number for the first result
      */
-    public function testReadWithFirstNumberAndNumberOfResult() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadWithFirstNumberAndNumberOfResult()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('name' => 'john', 'version' => '1'));
@@ -501,7 +621,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item);
         $result = $dataAccessObject->read();
-		$result = $result['data'];
+        $result = $result['data'];
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -512,9 +632,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Create an item through the service and read it with Phactory
      * Check if a version property add been added
      */
-    public function testCreate() {
+    public function testCreate()
+    {
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = array('name' => 'created item 1');
@@ -537,13 +658,14 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Check if version property add been added
      */
-    public function testCreateVersionMetaData() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testCreateVersionMetaData()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = array('name' => 'created item 1');
 
-        $createArray = $dataAccessObject->create($item);
+        $dataAccessObject->create($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
@@ -556,10 +678,11 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Try to create an item with forbiden keys like lastUpdateUSer or lastUpdateTime
      */
-    public function testCreateWithForbidenKeys() {
+    public function testCreateWithForbidenKeys()
+    {
         $this->initUser();
         $this->initTime();
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = array('name' => 'created item 1', 'lastUpdateUser' => 'test', 'lastUpdateTime' => 'test');
@@ -567,7 +690,6 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $createArray = $dataAccessObject->create($item);
 
         $this->assertTrue($createArray["success"]);
-        $writtenItem = $createArray["data"];
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $this->assertEquals(1, count($readItems));
@@ -581,45 +703,47 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Check if  createUser and lastUpdateUser properties had been added
      * The CurrentUser service should be called once
      */
-    public function testCreateUserMetaData() {
+    public function testCreateUserMetaData()
+    {
         $this->initUser();
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = array('name' => 'created item 1');
 
-        $createArray = $dataAccessObject->create($item);
+        $dataAccessObject->create($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
 
         $this->assertArrayHasKey('createUser', $readItem);
-        $this->assertEquals($readItem['createUser'], $this->_fakeUser);
+        $this->assertEquals($readItem['createUser'], $this->fakeUser);
         $this->assertArrayHasKey('lastUpdateUser', $readItem);
-        $this->assertEquals($readItem['lastUpdateUser'], $this->_fakeUser);
+        $this->assertEquals($readItem['lastUpdateUser'], $this->fakeUser);
     }
 
     /**
      * Check if  createTime and lastUpdateTime properties had been added
      * The CurrentTime service should be called once
      */
-    public function testCreateTimeMetaData() {
+    public function testCreateTimeMetaData()
+    {
         $this->initTime();
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = array('name' => 'created item 1');
 
-        $createArray = $dataAccessObject->create($item);
+        $dataAccessObject->create($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
         $this->assertArrayHasKey('createTime', $readItem);
-        $this->assertEquals($readItem['createTime'], $this->_fakeTime);
+        $this->assertEquals($readItem['createTime'], $this->fakeTime);
         $this->assertArrayHasKey('lastUpdateTime', $readItem);
-        $this->assertEquals($readItem['lastUpdateTime'], $this->_fakeTime);
+        $this->assertEquals($readItem['lastUpdateTime'], $this->fakeTime);
     }
 
     /**
@@ -630,7 +754,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Read it again with phactory
      * Check if the version add been incremented
      */
-    public function testUpdate() {
+    public function testUpdate()
+    {
         $version = rand(1, 25);
         $item = static::$phactory->create('item', array('version' => $version));
 
@@ -642,7 +767,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['name'] .= ' updated';
 
         //actual begin of the application run
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $updateArray = $dataAccessObject->update($item);
@@ -660,7 +785,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($writtenItem, $readItem);
         $this->assertEquals($readItem['name'], $name . ' updated');
     }
-    
+
     /**
      * Test of the update feature with partial update (some field aren't send for update
      *
@@ -669,33 +794,34 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Read it again with phactory
      * Check if the version add been incremented
      */
-    public function testPartialUpdate() {
+    public function testPartialUpdate()
+    {
         $version = rand(1, 25);
-        $item = static::$phactory->create('item', array('version' => $version,'another field'=>'another value'));
+        $item = static::$phactory->create('item', array('version' => $version, 'another field' => 'another value'));
         unset($item['another field']);
         $itemId = (string)$item['_id'];
         $name = $item['name'];
-    
+
         $item['id'] = $itemId;
         unset($item['_id']);
         $item['name'] .= ' updated';
-    
+
         //actual begin of the application run
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
-    
+
         $updateArray = $dataAccessObject->update($item);
         //end of application run
-    
+
         $this->assertTrue($updateArray["success"]);
         $writtenItem = $updateArray["data"];
-    
+
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $this->assertEquals(1, count($readItems));
         $readItem = array_pop($readItems);
         $readItem['id'] = (string)$readItem['_id'];
         unset($readItem['_id']);
-    
+
         $this->assertEquals($writtenItem, $readItem);
         $this->assertEquals($readItem['name'], $name . ' updated');
     }
@@ -708,22 +834,22 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Read it again with phactory
      * Check if the version had been incremented
      */
-    public function testUpdateVersionMetaData() {
+    public function testUpdateVersionMetaData()
+    {
         $version = rand(1, 25);
         $item = static::$phactory->create('item', array('version' => $version));
 
         $itemId = (string)$item['_id'];
-        $name = $item['name'];
 
         $item['id'] = $itemId;
         unset($item['_id']);
         $item['name'] .= ' updated';
 
         //actual begin of the application run
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item);
+        $dataAccessObject->update($item);
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
@@ -738,7 +864,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Check if createUser is preserved
      *
      */
-    public function testUpdateUserMetaData() {
+    public function testUpdateUserMetaData()
+    {
         $this->initUser();
 
         $version = rand(1, 25);
@@ -746,24 +873,24 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item = static::$phactory->create('item', array('version' => $version, 'createUser' => $testUser));
 
         $itemId = (string)$item['_id'];
-        $name = $item['name'];
+        $item['name'];
 
         $item['id'] = $itemId;
         unset($item['_id']);
         $item['name'] .= ' updated';
 
         //actual begin of the application run
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item);
+        $dataAccessObject->update($item);
         //end of application run
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
 
         $this->assertArrayHasKey('lastUpdateUser', $readItem);
-        $this->assertEquals($readItem['lastUpdateUser'], $this->_fakeUser);
+        $this->assertEquals($readItem['lastUpdateUser'], $this->fakeUser);
         $this->assertEquals($readItem['createUser'], $testUser);
     }
 
@@ -771,7 +898,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Check if lastUpdateTime property had been updated
      *
      */
-    public function testUpdateTimeMetaData() {
+    public function testUpdateTimeMetaData()
+    {
         $this->initTime();
         $testTime = array('test', 'shouldNotChange');
         $version = rand(1, 25);
@@ -784,23 +912,24 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['name'] .= ' updated';
 
         //actual begin of the application run
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $updateArray = $dataAccessObject->update($item);
+        $dataAccessObject->update($item);
 
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $readItem = array_pop($readItems);
 
         $this->assertArrayHasKey('lastUpdateTime', $readItem);
-        $this->assertEquals($readItem['lastUpdateTime'], $this->_fakeTime);
+        $this->assertEquals($readItem['lastUpdateTime'], $this->fakeTime);
         $this->assertEquals($readItem['createTime'], $testTime);
     }
 
     /**
      * Test to update an item with forbiden keys like createUser or createTime
      */
-    public function testUpdateWithForbidenKeys() {
+    public function testUpdateWithForbidenKeys()
+    {
         $version = rand(1, 25);
         $item = static::$phactory->create('item', array('version' => $version));
 
@@ -814,7 +943,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['createTime'] = 'test';
 
         //actual begin of the application run
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $updateArray = $dataAccessObject->update($item);
@@ -843,22 +972,22 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Update it with the service
      * @expectedException \Rubedo\Exceptions\Access
      */
-    public function testNoVersionUpdate() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testNoVersionUpdate()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $version = rand(1, 25);
         $item = static::$phactory->create('item', array('version' => $version));
 
         $itemId = (string)$item['_id'];
-        $name = $item['name'];
 
         $item['id'] = $itemId;
         unset($item['_id']);
         unset($item['version']);
         $item['name'] .= ' updated';
 
-        $updateArray = $dataAccessObject->update($item);
+        $dataAccessObject->update($item);
     }
 
     /**
@@ -869,18 +998,18 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Should fail
      *
      */
-    public function testConflictUpdate() {
+    public function testConflictUpdate()
+    {
 
         //$this->initUser();
 
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $version = rand(1, 25);
         $item = static::$phactory->create('item', array('version' => $version + 1));
 
         $itemId = (string)$item['_id'];
-        $name = $item['name'];
 
         $item['id'] = $itemId;
         $item['version'] = $version;
@@ -890,7 +1019,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $updateArray = $dataAccessObject->update($item);
 
         $this->assertFalse($updateArray['success']);
-        $this->assertEquals('Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.', $updateArray['msg']);
+        $this->assertEquals(
+            'Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.',
+            $updateArray['msg']
+        );
 
     }
 
@@ -901,8 +1033,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Delete one with the service
      * Check if the remaining items are OK and the deleted is no longer in DB
      */
-    public function testDestroy() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testDestroy()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
@@ -927,7 +1060,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $this->assertEquals(3, count($readItems));
 
-        $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new mongoId($itemId)));
+        $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new \mongoId($itemId)));
 
         $this->assertNull($readItem);
     }
@@ -940,8 +1073,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * @expectedException \Rubedo\Exceptions\Access
      */
-    public function testNoVersionDestroy() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testNoVersionDestroy()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
@@ -959,7 +1093,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item['id'] = $itemId;
         unset($item['_id']);
 
-        $updateArray = $dataAccessObject->destroy($item);
+        $dataAccessObject->destroy($item);
     }
 
     /**
@@ -970,8 +1104,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * Should fail
      *
      */
-    public function testConflictDestroy() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testConflictDestroy()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $items = array();
@@ -1001,12 +1136,11 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * 2 levels of items, 2 child on second level
      * check tree is as expected
      */
-    public function testReadTreeOneLevelTwoElements() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadTreeOneLevelTwoElements()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $items = array();
-		
         $item = static::$phactory->create('item', array("parentId" => "root", 'version' => 1));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
@@ -1023,15 +1157,15 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item3['children'] = array();
         unset($item3['_id']);
         unset($item3['parentId']);
-		
-		$dataAccessObject->addSort(array('id' => 'asc'));
 
-		$items = array('id'=>'root');
-		$item['children'] = array($item2, $item3);
-      	$items['children'] = array($item);
+        $dataAccessObject->addSort(array('id' => 'asc'));
+
+        $items = array('id' => 'root');
+        $item['children'] = array($item2, $item3);
+        $items['children'] = array($item);
 
         $readArray = $dataAccessObject->readTree();
-        
+
         $this->assertEquals($items, $readArray);
 
     }
@@ -1043,12 +1177,11 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * 3 levels of items, 1 child on second level, 1 on third
      * check tree is as expected
      */
-    public function testReadTreeTwoLevelOneElements() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadTreeTwoLevelOneElements()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $items = array();
-        
         $item = static::$phactory->create('item', array("parentId" => "root", 'version' => 1));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
@@ -1068,7 +1201,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $item2['children'] = array($item3);
         $item['children'] = array($item2);
-        $items = array('id'=>'root');
+        $items = array('id' => 'root');
         $items["children"] = array($item);
 
         $readArray = $dataAccessObject->readTree();
@@ -1079,17 +1212,16 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     /**
      * test of the read as tree feature with 2 root
-     * 
+     *
      * We can only have 1 root
-     * 
+     *
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testReadTreeRootWithParentCalledRoot() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadTreeRootWithParentCalledRoot()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $items = array();
-        
         $item = static::$phactory->create('item', array('version' => 1));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
@@ -1106,7 +1238,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         unset($item3['_id']);
         unset($item3['parentId']);
 
-        $readArray = $dataAccessObject->readTree();
+        $dataAccessObject->readTree();
     }
 
     /**
@@ -1117,11 +1249,11 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testReadTreeMoreThanOneRoot() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadTreeMoreThanOneRoot()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $items = array();
         $item = static::$phactory->create('item', array('version' => 1));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
@@ -1134,7 +1266,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
-        $readArray = $dataAccessObject->readTree();
+        $dataAccessObject->readTree();
 
     }
 
@@ -1145,11 +1277,10 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * 2 levels of items, 2 child on second level
      * Should return an array of items
      */
-    public function testReadChild() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChild()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
-
-        $items = array();
 
         $item = static::$phactory->create('item', array('version' => 1));
         $item['id'] = (string)$item['_id'];
@@ -1178,8 +1309,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with a simple filter
      */
-    public function testReadChildWithFilter() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithFilter()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
@@ -1198,8 +1330,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item3);
 
-        
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+
+        $filter = new ValueFilter();
         $filter->setName('name')->setValue($item3['name']);
         $dataAccessObject->addFilter($filter);
 
@@ -1213,8 +1345,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with a greater than filter
      */
-    public function testReadChildWithFilterGreaterThan() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithFilterGreaterThan()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
@@ -1232,8 +1365,8 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $testId = $item['id'];
 
         $expectedResult = array($item2);
-        
-        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+
+        $filter = new OperatorToValueFilter();
         $filter->setName('version')->setValue(1)->setOperator('$gt');
         $dataAccessObject->addFilter($filter);
 
@@ -1247,19 +1380,32 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with a regexp filter
      */
-    public function testReadChildWithFilterRegexp() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithFilterRegexp()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'Update'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 1,
+                'name' => 'Update'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'Creation'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 1,
+                'name' => 'Creation'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -1267,7 +1413,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item2);
 
-        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter = new OperatorToValueFilter();
         $filter->setName('name')->setValue(new \MongoRegex('/Up.*/i'))->setOperator('$regex');
         $dataAccessObject->addFilter($filter);
 
@@ -1282,19 +1428,32 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with two filter
      */
-    public function testReadChildWithTwoFilter() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithTwoFilter()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'Update'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 1,
+                'name' => 'Update'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'Creation'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'Creation'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -1302,12 +1461,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array($item3);
 
-        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+        $filter = new OperatorToValueFilter();
         $filter->setName('version')->setValue(5)->setOperator('$lte');
         $dataAccessObject->addFilter($filter);
-        
-        
-        $filter = new \WebTales\MongoFilters\OperatorToValueFilter();
+
+
+        $filter = new OperatorToValueFilter();
         $filter->setName('name')->setValue(new \MongoRegex('/Cre.*/i'))->setOperator('$regex');
         $dataAccessObject->addFilter($filter);
 
@@ -1320,19 +1479,32 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Try to delete a parent and all its children
      */
-    public function testDeleteChild() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testDeleteChild()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'parent'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'child1'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 1,
+                'name' => 'child1'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'child2'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'child2'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -1355,19 +1527,32 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with ascendant sort
      */
-    public function testReadChildWithAscSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithAscSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'Update'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'Update'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 2, 'name' => 'Creation'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 2,
+                'name' => 'Creation'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -1388,19 +1573,32 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with descendant sort
      */
-    public function testReadChildWithDescSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithDescSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'Update'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 1,
+                'name' => 'Update'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'Creation'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'Creation'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -1421,23 +1619,42 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with two ascendant sort
      */
-    public function testReadChildWithTwoAscSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithTwoAscSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'Creation'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'Creation'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'Update'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'Update'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
-        $item4 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 2, 'name' => 'Creation'));
+        $item4 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 2,
+                'name' => 'Creation'
+            )
+        );
         $item4['id'] = (string)$item4['_id'];
         unset($item4['_id']);
 
@@ -1459,23 +1676,42 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      *
      * Case with two descendant sort
      */
-    public function testReadChildWithTwoDescSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithTwoDescSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'Creation'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'Creation'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 3, 'name' => 'Update'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 3,
+                'name' => 'Update'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
-        $item4 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 2, 'name' => 'Creation'));
+        $item4 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 2,
+                'name' => 'Creation'
+            )
+        );
         $item4['id'] = (string)$item4['_id'];
         unset($item4['_id']);
 
@@ -1495,19 +1731,32 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * test if readChild function works fine with included fields
      */
-    public function testReadChildWithIncludedField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithIncludedField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'Creation'));
+        $item2 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 1,
+                'name' => 'Creation'
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'version' => 1, 'name' => 'Update'));
+        $item3 = static::$phactory->create('item',
+            array(
+                'parentId' => $item['id'],
+                'version' => 1,
+                'name' => 'Update'
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -1518,7 +1767,18 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->addSort($sort);
 
         //contain the expected result of readChild fonction
-        $expectedResult = array( array('name' => 'Creation', 'id' => $item2['id'], 'version' => $item2['version']), array('name' => 'Update', 'id' => $item3['id'], 'version' => $item3['version']));
+        $expectedResult = array(
+            array(
+                'name' => 'Creation',
+                'id' => $item2['id'],
+                'version' => $item2['version']
+            ),
+            array(
+                'name' => 'Update',
+                'id' => $item3['id'],
+                'version' => $item3['version']
+            )
+        );
         $readArray = $dataAccessObject->readChild($item['id']);
 
         $this->assertEquals($expectedResult, $readArray);
@@ -1527,19 +1787,38 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * test if readChild function works fine with excluded fields
      */
-    public function testReadChildWithExcludedField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testReadChildWithExcludedField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
         $item['id'] = (string)$item['_id'];
         unset($item['_id']);
 
-        $item2 = static::$phactory->create('item', array('parentId' => $item['id'], 'name' => 'john', 'firstname' => 'carter', 'password' => 'blabla', 'version' => 1));
+        $item2 = static::$phactory->create(
+            'item',
+            array(
+                'parentId' => $item['id'],
+                'name' => 'john',
+                'firstname' => 'carter',
+                'password' => 'blabla',
+                'version' => 1
+            )
+        );
         $item2['id'] = (string)$item2['_id'];
         unset($item2['_id']);
 
-        $item3 = static::$phactory->create('item', array('parentId' => $item['id'], 'name' => 'marie', 'firstname' => 'lyne', 'password' => 'titi', 'version' => 1));
+        $item3 = static::$phactory->create(
+            'item',
+            array(
+                'parentId' => $item['id'],
+                'name' => 'marie',
+                'firstname' => 'lyne',
+                'password' => 'titi',
+                'version' => 1
+            )
+        );
         $item3['id'] = (string)$item3['_id'];
         unset($item3['_id']);
 
@@ -1549,7 +1828,20 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $dataAccessObject->addToExcludeFieldList($excludedFields);
         $dataAccessObject->addSort($sort);
 
-        $expectedResult = array( array('name' => 'john', 'firstname' => 'carter', 'id' => $item2['id'], 'version' => $item2['version']), array('name' => 'marie', 'firstname' => 'lyne', 'id' => $item3['id'], 'version' => $item3['version']));
+        $expectedResult = array(
+            array(
+                'name' => 'john',
+                'firstname' => 'carter',
+                'id' => $item2['id'],
+                'version' => $item2['version']
+            ),
+            array(
+                'name' => 'marie',
+                'firstname' => 'lyne',
+                'id' => $item3['id'],
+                'version' => $item3['version']
+            )
+        );
         $readArray = $dataAccessObject->readChild($item['id']);
 
         $this->assertEquals($expectedResult, $readArray);
@@ -1558,8 +1850,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * test of findOne
      */
-    public function testFindOne() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testFindOne()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
@@ -1573,7 +1866,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
         $expectedResult = $item;
 
         //$value = array('name' => $item['name']);
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter = new ValueFilter();
         $filter->setName('name')->setValue($item['name']);
         $readArray = $dataAccessObject->findOne($filter);
 
@@ -1583,8 +1876,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Test included fields with findOne
      */
-    public function testFindOneWithIncludedField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testFindOneWithIncludedField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
@@ -1600,20 +1894,21 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array('name' => $item['name'], 'id' => $item['id']);
 
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter = new ValueFilter();
         $filter->setName('name')->setValue($item['name']);
         $readArray = $dataAccessObject->findOne($filter);
 
         $this->assertEquals($expectedResult, $readArray);
     }
-	
-	/**
+
+    /**
      * Test findOne with included and excluded fields
-	 * 
-	 * The ecludedField array should be ignored
+     *
+     * The ecludedField array should be ignored
      */
-    public function testFindOneWithIncludedAndExcludedFields() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testFindOneWithIncludedAndExcludedFields()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1', 'value' => 'test1'));
@@ -1626,13 +1921,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $includedFields = array('name', 'value');
         $dataAccessObject->addToFieldList($includedFields);
-		
-		$excludedFields = array('value');
+
+        $excludedFields = array('value');
         $dataAccessObject->addToExcludeFieldList($excludedFields);
-		
+
         $expectedResult = array('id' => $item['id'], 'name' => $item['name'], 'value' => 'test1');
 
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter = new ValueFilter();
         $filter->setName('name')->setValue($item['name']);
         $readArray = $dataAccessObject->findOne($filter);
 
@@ -1642,8 +1937,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Test excluded fields with findOne
      */
-    public function testFindOneWithExcludedField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testFindOneWithExcludedField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $item = static::$phactory->create('item', array('version' => 1, 'name' => 'item1'));
@@ -1659,7 +1955,7 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
         $expectedResult = array('name' => $item['name'], 'id' => $item['id']);
 
-        $filter = new \WebTales\MongoFilters\ValueFilter();
+        $filter = new ValueFilter();
         $filter->setName('name')->setValue($item['name']);
         $readArray = $dataAccessObject->findOne($filter);
 
@@ -1669,8 +1965,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Check if getFilters return an array
      */
-    public function testGetEmptyFilterArray() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testGetEmptyFilterArray()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
         $this->assertEquals('array', gettype($dataAccessObject->getFilters()->toArray()));
     }
@@ -1678,12 +1975,13 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Simple add filter and read it again test
      */
-    public function testAddFilter() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddFilter()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         //$filterExample = array('name' => 'value');
-        $filterExample = new \WebTales\MongoFilters\ValueFilter();
+        $filterExample = new ValueFilter();
         $filterExample->setName('name')->setValue('value');
         $dataAccessObject->addFilter($filterExample);
 
@@ -1694,21 +1992,22 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * two conditions case for add filter
      */
-    public function testAddFilterTwoItems() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddFilterTwoItems()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filters = new \WebTales\MongoFilters\AndFilter();
-        
-        $filterExample = new \WebTales\MongoFilters\ValueFilter();
+        $filters = new AndFilter();
+
+        $filterExample = new ValueFilter();
         $filterExample->setName('name')->setValue('value');
-        
-        $filterExample2 = new \WebTales\MongoFilters\ValueFilter();
+
+        $filterExample2 = new ValueFilter();
         $filterExample2->setName('name2')->setValue('value2');
-        
+
         $filters->addFilter($filterExample);
         $filters->addFilter($filterExample2);
-        
+
         $dataAccessObject->addFilter($filterExample);
         $dataAccessObject->addFilter($filterExample2);
 
@@ -1716,19 +2015,19 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
 
     }
 
-    
 
     /**
      * Simple clear Filter Test
      */
-    public function testClearFilter() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testClearFilter()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $filterExample = new \WebTales\MongoFilters\ValueFilter();
+        $filterExample = new ValueFilter();
         $filterExample->setName('name')->setValue('value');
-        
-        $filterExample2 = new \WebTales\MongoFilters\ValueFilter();
+
+        $filterExample2 = new ValueFilter();
         $filterExample2->setName('name2')->setValue('value2');
         $dataAccessObject->addFilter($filterExample);
         $dataAccessObject->addFilter($filterExample2);
@@ -1740,13 +2039,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     }
 
 
-
-
     /**
      * Check if getSortArray return an array
      */
-    public function testGetEmptySortArray() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testGetEmptySortArray()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
         $this->assertEquals('array', gettype($dataAccessObject->getSortArray()));
     }
@@ -1754,8 +2052,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Simple add sort and read it again test
      */
-    public function testAddSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $sortExample = array('name' => 1);
@@ -1768,8 +2067,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * two conditions case for add sort
      */
-    public function testAddSortTwoItems() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddSortTwoItems()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $sortExample = array('name' => 1);
@@ -1785,8 +2085,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Simple clear Sort Test
      */
-    public function testClearSort() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testClearSort()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $sortExample = array('name' => 1);
@@ -1804,8 +2105,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * sort should not be empty
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddSortNotBeEmpty() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddSortNotBeEmpty()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $sortExample = array();
@@ -1817,8 +2119,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * sort should not have more than one item
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddSortNotTwoArgs() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddSortNotTwoArgs()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $sortExample = array('toto', 'titi');
@@ -1830,8 +2133,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * sort should not be empty
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddSortOnlyOneArrayChild() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddSortOnlyOneArrayChild()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $sortExample = array("key" => array('titi', 'toto'));
@@ -1843,11 +2147,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * sort should not be empty
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddSortOnlyArrayOrScalarChild() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddSortOnlyArrayOrScalarChild()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $sortExample = array("key" => array(new stdClass()));
+        $sortExample = array("key" => array(new \stdClass()));
         $dataAccessObject->addSort($sortExample);
 
     }
@@ -1855,8 +2160,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Try to set the number of the first result
      */
-    public function testSetFirstResult() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testSetFirstResult()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->setFirstResult(5);
@@ -1870,8 +2176,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Try to set the number of results
      */
-    public function testSetNumberOfResults() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testSetNumberOfResults()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->setNumberOfResults(20);
@@ -1885,8 +2192,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Try to clear the number of the first result
      */
-    public function testClearFirstResult() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testClearFirstResult()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->setFirstResult(5);
@@ -1901,8 +2209,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Try to clear the number of results
      */
-    public function testClearNumberOfResults() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testClearNumberOfResults()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->setNumberOfResults(20);
@@ -1918,8 +2227,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * FirstResult should be an integer
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testSetFirstResultWithNoInteger() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testSetFirstResultWithNoInteger()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->setFirstResult("test");
@@ -1929,8 +2239,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Simple test to add a field in the array and read it after
      */
-    public function testAddFieldInList() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddFieldInList()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $fieldExemple = array('name' => true);
@@ -1945,8 +2256,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Simple test to add two fields in the array and read it after
      */
-    public function testAddTwoFieldsInList() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddTwoFieldsInList()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $fieldExemple = array('name' => true);
@@ -1964,8 +2276,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Remove one field in the fieldList array
      */
-    public function testRemoveField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testRemoveField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->addToFieldList(array('name'));
@@ -1979,8 +2292,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Clear the field list
      */
-    public function testClearFieldList() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testClearFieldList()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->clearFieldList();
@@ -1990,11 +2304,12 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * fieldList can't be an array in another array
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddFieldOnlyStringOrBool() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddFieldOnlyStringOrBool()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
-        $fieldExample = array("key" => array(new stdClass()));
+        $fieldExample = array("key" => array(new \stdClass()));
         $dataAccessObject->addToFieldList($fieldExample);
 
     }
@@ -2003,8 +2318,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * id field is included by default
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddIdField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddIdField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $fieldExample = array("id");
@@ -2015,8 +2331,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Simple test to add a field list in the excludeFieldList array and read it after
      */
-    public function testAddExcludeFieldInList() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddExcludeFieldInList()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $excludeFieldExemple = array('password', 'dateOfBirth');
@@ -2032,8 +2349,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Simple test to add two fields list in the excludeFieldList array and read it after
      */
-    public function testAddTwoExcludeFieldsInList() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddTwoExcludeFieldsInList()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $excludeFieldExemple = array('password', 'dateOfBirth');
@@ -2051,8 +2369,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Remove a field list in the excludeFieldList array
      */
-    public function testRemoveExcludeField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testRemoveExcludeField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $excludeFieldExemple = array('password', 'firstname');
@@ -2070,8 +2389,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
     /**
      * Clear the exclude field list
      */
-    public function testClearExcludeFieldList() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testClearExcludeFieldList()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $excludeFieldExemple = array('password', 'firstname');
@@ -2089,8 +2409,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * excludeFieldList can't be an array in another array
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddExcludeFieldOnlyStringOrBool() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddExcludeFieldOnlyStringOrBool()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $excludeFieldExemple = array("key" => array('toto', 'titi'));
@@ -2101,8 +2422,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * excludeFieldList can't be an empty array
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddExcludeFieldNotempty() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddExcludeFieldNotempty()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $dataAccessObject->addToExcludeFieldList(array());
@@ -2113,8 +2435,9 @@ class DataAccessTest extends PHPUnit_Framework_TestCase
      * id field can't be excluded
      * @expectedException \Rubedo\Exceptions\Server
      */
-    public function testAddExcludedIdField() {
-        $dataAccessObject = new \Rubedo\Mongo\DataAccess();
+    public function testAddExcludedIdField()
+    {
+        $dataAccessObject = new DataAccess();
         $dataAccessObject->init('items', 'test_db');
 
         $excludedFieldExample = array("id");
