@@ -74,7 +74,5 @@ return array(
     'Rubedo\\Backoffice\\Controller\\XhrGetPageUrl' => 'Rubedo\\Backoffice\\Controller\\XhrGetPageUrlController',
     'Rubedo\\Backoffice\\Controller\\UserTypes' => 'Rubedo\\Backoffice\\Controller\\UserTypesController',
     'Rubedo\\Backoffice\\Controller\\Emails' => 'Rubedo\\Backoffice\\Controller\\EmailsController',
-    'Rubedo\\Backoffice\\Controller\\EmailTemplates' => 'Rubedo\\Backoffice\\Controller\\EmailTemplatesController',
-    'Rubedo\\Backoffice\\Controller\\Products' => 'Rubedo\\Backoffice\\Controller\\ProductsController',
-    'Rubedo\\Backoffice\\Controller\\ProductTypes' => 'Rubedo\\Backoffice\\Controller\\ProductTypesController'
+    'Rubedo\\Backoffice\\Controller\\EmailTemplates' => 'Rubedo\\Backoffice\\Controller\\EmailTemplatesController'
 );
