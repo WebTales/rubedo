@@ -23,6 +23,8 @@
                         {% include '@Root/blocks/inputFields/text.html.twig' %}
                     {% elseif field['cType']=='Ext.form.field.TextArea' %}
                         {% include '@Root/blocks/inputFields/textarea.html.twig' %}
+                    {% elseif field['cType']=='Ext.form.field.ComboBox' %}
+                        {% include '@Root/blocks/inputFields/combobox.html.twig' %}
                     {% endif %}
                 
             {% endfor %}
