@@ -82,5 +82,7 @@ return array(
     'Workspaces' => 'Rubedo\\Collection\\Workspaces',
     'UserTypes' => 'Rubedo\\Collection\\UserTypes',
     'Emails' => 'Rubedo\\Collection\\Emails',
-    'EmailTemplates' => 'Rubedo\\Collection\\EmailTemplates'
+    'EmailTemplates' => 'Rubedo\\Collection\\EmailTemplates',
+    'Products' => 'Rubedo\\Collection\\Products',
+    'ProductTypes' => 'Rubedo\\Collection\\ProductTypes'
 );
