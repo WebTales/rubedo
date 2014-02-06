@@ -34,12 +34,15 @@ class Session implements ISession
 
     protected static $_sessionName = 'Default';
 
+    /**
+     * @var \Zend\Session\Container
+     */
     protected $_sessionObject = null;
 
     /**
      * Returns a session object
      *
-     * @return SessionContainer
+     * @return \Zend\Session\Container
      */
     public function getSessionObject ()
     {
