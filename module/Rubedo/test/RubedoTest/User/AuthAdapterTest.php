@@ -7,13 +7,18 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+namespace RubedoTest\User;
+use Rubedo\Services\Manager;
+use Rubedo\User\AuthAdapter;
+use Zend\Authentication\Result;
+
 
 /**
  * Tests suite for the authentication Adapter for Mongo
@@ -23,13 +28,12 @@
  * @category Rubedo-Test
  * @package Rubedo-Test
  */
-class AuthAdapterTest extends PHPUnit_Framework_TestCase
+class AuthAdapterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Init
      */
     public function setUp() {
-        testBootstrap();
         parent::setUp();
     }
 
@@ -37,7 +41,7 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
      * Cleaning
      */
     public function tearDown() {
-        Rubedo\Services\Manager::resetMocks();
+        Manager::resetMocks();
         parent::tearDown();
     }
 
@@ -55,19 +59,19 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
 		$mockService->expects($this->once())->method('init')->with($this->equalTo('Users'));
 
         $mockService->expects($this->once())->method('read')->will($this->returnValue($dataUser));
-        Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
+        Manager::setMockService('MongoDataAccess', $mockService);
 
         $mockService = $this->getMock('Rubedo\Security\Hash');
         $mockService->expects($this->once())->method('checkPassword')->with($this->equalTo('expected'), $this->equalTo($password), $this->equalTo('grainDeSel'))->will($this->returnValue(true));
-        Rubedo\Services\Manager::setMockService('Hash', $mockService);
+        Manager::setMockService('Hash', $mockService);
 
-        $authAdapter = new Rubedo\User\AuthAdapter($login, $password);
+        $authAdapter = new AuthAdapter($login, $password);
         $result = $authAdapter->authenticate();
 
         unset($user['password']);
-        $this->assertInstanceOf('\Zend_Auth_Result', $result);
+        $this->assertInstanceOf('\Zend\Authentication\Result', $result);
         $this->assertEquals($user, $result->getIdentity());
-        $this->assertEquals(\Zend_Auth_Result::SUCCESS, $result->getCode());
+        $this->assertEquals(Result::SUCCESS, $result->getCode());
     }
 
     /**
@@ -80,21 +84,21 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
         $mockService = $this->getMock('Rubedo\Mongo\DataAccess');
 
         $mockService->expects($this->once())->method('read')->will($this->returnValue($dataUser));
-        Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
+        Manager::setMockService('MongoDataAccess', $mockService);
 
         $mockService = $this->getMock('Rubedo\Security\Hash');
         $mockService->expects($this->once())->method('checkPassword')->will($this->returnValue(false));
-        Rubedo\Services\Manager::setMockService('Hash', $mockService);
+        Manager::setMockService('Hash', $mockService);
 
         $login = "johnDoe";
         $password = "verySecret";
 
-        $authAdapter = new Rubedo\User\AuthAdapter($login, $password);
+        $authAdapter = new AuthAdapter($login, $password);
         $result = $authAdapter->authenticate();
 
-        $this->assertInstanceOf('\Zend_Auth_Result', $result);
+        $this->assertInstanceOf('\Zend\Authentication\Result', $result);
         $this->assertEquals(null, $result->getIdentity());
-        $this->assertEquals(\Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, $result->getCode());
+        $this->assertEquals(Result::FAILURE_CREDENTIAL_INVALID, $result->getCode());
     }
 
     /**
@@ -105,20 +109,19 @@ class AuthAdapterTest extends PHPUnit_Framework_TestCase
 
         $mockService = $this->getMock('Rubedo\Mongo\DataAccess');
         $mockService->expects($this->once())->method('read')->will($this->returnValue(array('data'=>array())));
-        Rubedo\Services\Manager::setMockService('MongoDataAccess', $mockService);
+        Manager::setMockService('MongoDataAccess', $mockService);
 
         $mockService = $this->getMock('Rubedo\Security\Hash');
-        Rubedo\Services\Manager::setMockService('Hash', $mockService);
+        Manager::setMockService('Hash', $mockService);
 
         $login = "johnDoe";
         $password = "verySecret";
 
-        $authAdapter = new Rubedo\User\AuthAdapter($login, $password);
+        $authAdapter = new AuthAdapter($login, $password);
         $result = $authAdapter->authenticate();
-
-        $this->assertInstanceOf('\Zend_Auth_Result', $result);
+        $this->assertInstanceOf('\Zend\Authentication\Result', $result);
         $this->assertEquals(null, $result->getIdentity());
-        $this->assertEquals(\Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND, $result->getCode());
+        $this->assertEquals(Result::FAILURE_IDENTITY_NOT_FOUND, $result->getCode());
     }
 
 }
