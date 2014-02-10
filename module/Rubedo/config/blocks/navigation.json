@@ -100,7 +100,7 @@
 		"configBloc":{
 			"style":"Horizontal",
 			"displayRootPage":true,
-			"menuLevel":0
+			"menuLevel":1
 		}
 	},
 	"category":"#ext-gen1277#",

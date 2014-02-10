@@ -53,5 +53,6 @@ return array(
     'Rubedo\\Blocks\\Controller\\SignUp' => 'Rubedo\\Blocks\\Controller\\SignUpController',
     'Rubedo\\Blocks\\Controller\\UserProfile' => 'Rubedo\\Blocks\\Controller\\UserProfileController',
     'Rubedo\\Blocks\\Controller\\Unsubscribe' => 'Rubedo\\Blocks\\Controller\\UnsubscribeController',
-    'Rubedo\\Blocks\\Controller\\D3Script' => 'Rubedo\\Blocks\\Controller\\D3ScriptController'
+    'Rubedo\\Blocks\\Controller\\D3Script' => 'Rubedo\\Blocks\\Controller\\D3ScriptController',
+    'Rubedo\\Blocks\\Controller\\Category' => 'Rubedo\\Blocks\\Controller\\CategoryController'
 );

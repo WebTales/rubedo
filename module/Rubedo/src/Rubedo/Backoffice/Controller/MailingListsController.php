@@ -81,6 +81,7 @@ class MailingListsController extends DataAccessController
         }
         $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(true));
         $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
+        $results['total']=$results['count'];
         return $this->_returnJson($results);
     }
     
@@ -95,6 +96,7 @@ class MailingListsController extends DataAccessController
         }
         $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(false));
         $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
+        $results['total']=$results['count'];
         return $this->_returnJson($results);
     }
     
@@ -178,7 +180,7 @@ class MailingListsController extends DataAccessController
         }
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         $contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
-        if (($contentType != "text/plain") && ($contentType!= "text/csv")) {
+        if (($contentType != "text/plain") && ($contentType!= "text/csv")&& ($contentType!= "text/x-c")) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             $this->getResponse()->setStatusCode(500);
