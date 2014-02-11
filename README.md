@@ -17,7 +17,7 @@ http://www.gnu.org/licenses/gpl.html
 Installation
 ------------------------------------------------------------------------------------------
 ### PreRequisites
-* A full PHP 5.3+ stack (i.e. http://www.zend.com/products/server/)
+* A full PHP 5.3.6+ stack (i.e. http://www.zend.com/products/server/)
 * MongoDB (http://www.mongodb.org) >= 2.2
 * PHP MongoDB Driver >= 1.3.0
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
