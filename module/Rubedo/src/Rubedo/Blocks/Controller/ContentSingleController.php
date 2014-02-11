@@ -18,6 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 Use Rubedo\Services\Manager;
 Use Alb\OEmbed;
+use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 use Rubedo\Services\Cache;
 
@@ -85,12 +86,18 @@ class ContentSingleController extends AbstractController
             
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
+            $variantTypeArray = array();
             $CKEConfigArray = array();
             $contentTitlesArray = array();
             $output = $this->params()->fromQuery();
             foreach ($type["fields"] as $value) {
-                
-                $cTypeArray[$value['config']['name']] = $value;
+
+                if ((isset($value['config']['useAsVariation']))&&($value['config']['useAsVariation']===true)){
+                    $variantTypeArray[$value['config']['name']] = $value;
+                } else {
+                    $cTypeArray[$value['config']['name']] = $value;
+                }
+
                 if ($value["cType"] == "DCEField") {
                     if (is_array($data[$value['config']['name']])) {
                         $contentTitlesArray[$value['config']['name']] = array();
@@ -212,9 +219,16 @@ class ContentSingleController extends AbstractController
                 }
             }
             $output["data"] = $data;
+            $output["isProduct"]=false;
+            if ((isset($content['isProduct']))&&($content['isProduct']===true)){
+                $output["isProduct"]=true;
+                $output["productProperties"]=$content['productProperties'];
+                $output["initialVariant"]=$content['productProperties']['variations'][0];
+            }
             $output["customLayoutRows"]=$customLayoutRows;
             $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
             $output["type"] = $cTypeArray;
+            $output["variantType"] = $variantTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
             $output["contentTitles"] = $contentTitlesArray;
             
@@ -245,7 +259,6 @@ class ContentSingleController extends AbstractController
             "/components/jquery/timepicker/jquery.ui.timepicker.css",
             "/components/jquery/jqueryui/themes/base/jquery-ui.css"
         );
-        
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
