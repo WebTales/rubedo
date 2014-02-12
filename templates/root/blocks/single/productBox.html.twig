@@ -1,6 +1,13 @@
 {% extends "@Root/block.html.twig" %}
 {% block mainContent %}
-    <div class="well">
-        <h4>Product box under construction</h4>
+    <div class="well productbuybox" data-productproperties="{{ productProperties|json_encode }}">
+
+        {% for field in variantType %}
+            {% include '@Root/blocks/inputFields/combobox.html.twig' %}
+        {% endfor %}
+        <h3 class="productpricetext"></h3>
+        <button class="btn btn-primary productbuybtn">
+            Add to cart
+        </button>
     </div>
 {% endblock %}

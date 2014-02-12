@@ -220,24 +220,26 @@ class ContentSingleController extends AbstractController
             }
             $output["data"] = $data;
             $output["isProduct"]=false;
-            if ((isset($content['isProduct']))&&($content['isProduct']===true)){
-                $output["isProduct"]=true;
-                $output["productProperties"]=$content['productProperties'];
-                $output["initialVariant"]=$content['productProperties']['variations'][0];
-            }
+
             $output["customLayoutRows"]=$customLayoutRows;
             $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
             $output["type"] = $cTypeArray;
             $output["variantType"] = $variantTypeArray;
             $output["CKEFields"] = $CKEConfigArray;
             $output["contentTitles"] = $contentTitlesArray;
-            
+
             $js = array(
                 $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
                 $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
                 $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js")
             );
-            
+            if ((isset($content['isProduct']))&&($content['isProduct']===true)){
+                $output["isProduct"]=true;
+                $output["productProperties"]=$content['productProperties'];
+                $output["initialVariant"]=$content['productProperties']['variations'][0];
+                $js[]=$this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/productdetail.js");
+            }
+
             if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
             } else if ($hasCustomLayout) {

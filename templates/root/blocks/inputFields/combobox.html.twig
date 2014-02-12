@@ -1,7 +1,7 @@
 <div class="control-group">
 	<label class="control-label">{{ field['config']['fieldLabel'] }}</label>
 	<div class="controls">
-		<select name="{{ field['config']['name'] }}" {% if not field['config']['allowBlank'] %}required{% endif %}>
+		<select name="{{ field['config']['name'] }}" {% if not field['config']['allowBlank'] %}required{% endif %} data-fieldindex="{{ loop.index }}">
             {% for option in  field['config']['store']['data'] %}
                 <option value="{{ option['valeur'] }}">{{ option['nom'] }}</option>
             {% endfor %}
