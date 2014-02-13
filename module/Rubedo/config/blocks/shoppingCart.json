@@ -1,0 +1,23 @@
+{
+	"type":"Shopping Cart",
+	"description":"",
+	"configBasique":{
+		"title":"Shopping Cart",
+		"bType":"shoppingCart",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":{}
+
+
+	},
+	"category":"E-Commerce",
+	"bType":"shoppingCart",
+	"id":"52fca239f05c1d7416000000"
+}
