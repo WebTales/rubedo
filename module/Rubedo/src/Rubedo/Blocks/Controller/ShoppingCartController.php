@@ -32,8 +32,12 @@ class ShoppingCartController extends AbstractController
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/shoppingCart.html.twig");
-        $css = array();
-        $js = array();
+        $css = array(
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("css/shoppingcart.css")
+        );
+        $js = array(
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/shoppingcart.js")
+        );
         return $this->_sendResponse($output, $template, $css, $js);
     }
 }

@@ -1,4 +1,19 @@
 {% extends "@Root/block.html.twig" %}
 {% block mainContent %}
-<h2>TEST Shopping Cart</h2>
+    <div class="btn-group">
+        <button class="btn"><i class="icon-shopping-cart"></i> Shopping Cart (2)</button>
+        <button class="btn dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu shoppingcartmenu">
+            <div id="shoppingcartholder">
+                    {% include '/blocks/shoppingCart/productList.html.twig' %}
+            </div>
+            <div>
+                <button class="btn pull-right scartbtn">Checkout</button>
+                <button class="btn pull-right scartbtn">View cart</button>
+            </div>
+
+        </div>
+    </div>
 {% endblock %}
