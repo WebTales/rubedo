@@ -59,11 +59,49 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
         if ((!isset($currentUser['shoppingCart']))||(!is_array($currentUser['shoppingCart']))) {
             $currentUser['shoppingCart']=array();
         }
-        $currentUser['shoppingCart'][]=array(
-            "productId" => $productId,
-            "variationId" => $variationId,
-            "amount" => $amount
-        );
+        $notFound=true;
+        foreach ($currentUser['shoppingCart'] as &$value){
+            if ($notFound&&($value['productId']==$productId)&&($value['variationId']==$variationId)){
+                $value['amount']=$value['amount']+$amount;
+                $notFound=false;
+            }
+        }
+        if ($notFound){
+            $currentUser['shoppingCart'][]=array(
+                "productId" => $productId,
+                "variationId" => $variationId,
+                "amount" => $amount
+            );
+        }
+        $updatedUser=Manager::getService("Users")->update($currentUser);
+        if (!$updatedUser['success']) {
+            return $updatedUser['success'];
+        } else {
+            return $updatedUser['data']['shoppingCart'];
+        }
+    }
+
+    public function removeItemFromCart ($productId, $variationId, $amount=1) {
+        if ((!isset($productId))||(!isset($variationId))){
+            throw new \Rubedo\Exceptions\User('Product id and variation id missing');
+        }
+        $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser) {
+            return false;
+        }
+        if ((!isset($currentUser['shoppingCart']))||(!is_array($currentUser['shoppingCart']))) {
+            $currentUser['shoppingCart']=array();
+        }
+        $notFound=true;
+        foreach ($currentUser['shoppingCart'] as $key => &$value){
+            if ($notFound&&($value['productId']==$productId)&&($value['variationId']==$variationId)){
+                $value['amount']=$value['amount']-$amount;
+                $notFound=false;
+                if ($value['amount']<=0){
+                    unset($currentUser['shoppingCart'][$key]);
+                }
+            }
+        }
         $updatedUser=Manager::getService("Users")->update($currentUser);
         if (!$updatedUser['success']) {
             return $updatedUser['success'];
