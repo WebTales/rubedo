@@ -1,18 +1,14 @@
 <table class="table table-condensed table-striped table-hover">
+    {% for item in cartItems %}
     <tr>
-        <td><a href="#">Product title</a></td>
-        <td>x 1</td>
-        <td>100€</td>
+        <td><a href="#">{{ item.title }}</a></td>
+        <td>x {{ item.amount }}</td>
+        <td>{{ item.price }} €</td>
         <td><a href="#"><i class="icon-remove"></i></a></td>
     </tr>
-    <tr>
-        <td><a href="#">Product2 title</a></td>
-        <td>x 2</td>
-        <td>80€</td>
-        <td><a href="#"><i class="icon-remove"></i></a></td>
-    </tr>
+    {% endfor %}
 </table>
 <dl class="dl-horizontal">
     <dt>Total :</dt>
-    <dd> 180 € </dd>
+    <dd> {{ totalAmount }} €</dd>
 </dl>

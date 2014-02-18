@@ -291,7 +291,8 @@ class Users extends AbstractCollection implements IUsers
             }
         }
 
-        $this->propagateUserUpdate($obj['id']);
+        //$this->propagateUserUpdate($obj['id']);
+        //this needs to be fixed later
 
         return $result;
     }
