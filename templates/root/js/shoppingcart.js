@@ -17,8 +17,7 @@ function addProductToCart (productId, variationId, amount) {
         jQuery("#shoppingcartholder").empty();
         jQuery("#shoppingcartholder").append(data.html);
         jQuery("#spcnboitems").text(data.totalItems);
-        jQuery("#shoppingcart").effect("bounce");
-        handleProductRemoveBtns();
+        handleProductCartBtns();
     });
 
     request2.fail(function(jqXHR, textStatus) {
@@ -46,7 +45,7 @@ function removeProductFromCart (productId, variationId, amount) {
         jQuery("#shoppingcartholder").empty();
         jQuery("#shoppingcartholder").append(data.html);
         jQuery("#spcnboitems").text(data.totalItems);
-        handleProductRemoveBtns();
+        handleProductCartBtns();
     });
 
     request2.fail(function(jqXHR, textStatus) {
@@ -61,11 +60,12 @@ jQuery(".productbuybtn").click(function(){
     if ((!jQuery.isEmptyObject(productId))&&(!jQuery.isEmptyObject(variationId))){
         jQuery(this).effect("transfer",{to:"#shoppingcart",className: "ui-effects-transfer"},500,function(){
             addProductToCart (productId, variationId, amount);
+            jQuery("#shoppingcart").effect("bounce");
         });
     }
 });
 
-function handleProductRemoveBtns (){
+function handleProductCartBtns (){
     jQuery(".productremovelingnbtn").click(function(){
         var productId=jQuery(this).attr("data-productid");
         var variationId=jQuery(this).attr("data-variationid");
@@ -77,5 +77,23 @@ function handleProductRemoveBtns (){
         }
         return false;
     });
+    jQuery(".productincreasebtn").click(function(){
+        var productId=jQuery(this).attr("data-productid");
+        var variationId=jQuery(this).attr("data-variationid");
+        var amount=1;
+        if ((!jQuery.isEmptyObject(productId))&&(!jQuery.isEmptyObject(variationId))){
+            addProductToCart (productId, variationId, amount);
+        }
+        return false;
+    });
+    jQuery(".productdecreasebtn").click(function(){
+        var productId=jQuery(this).attr("data-productid");
+        var variationId=jQuery(this).attr("data-variationid");
+        var amount=1;
+        if ((!jQuery.isEmptyObject(productId))&&(!jQuery.isEmptyObject(variationId))){
+            removeProductFromCart (productId, variationId, amount);
+        }
+        return false;
+    });
 }
-handleProductRemoveBtns();
+handleProductCartBtns();

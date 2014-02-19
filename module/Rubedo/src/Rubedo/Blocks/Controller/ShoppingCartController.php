@@ -49,7 +49,12 @@ class ShoppingCartController extends AbstractController
                 'pageId' => $output["cartDetailPage"]
             ), $urlOptions);
         }
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/shoppingCart.html.twig");
+        $output['displayMode'] = isset($output['block-config']['displayMode']) ? $output['block-config']['displayMode'] : "button";
+        if ($output['displayMode']=="detail"){
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/shoppingCartDetail.html.twig");
+        } else {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/shoppingCart.html.twig");
+        }
         $css = array(
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("css/shoppingcart.css")
         );

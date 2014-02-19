@@ -7,13 +7,18 @@
     <tr>
         <td><a href='{{ displayUrl(item.productId,"default",null) }}?variation={{ item.variationId}}'>{{ item.title }} <small class="muted">{{ item.subtitle }}</small></a></td>
         <td>x {{ item.amount }}</td>
+            <td>
+                <i class="icon-plus productincreasebtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}"></i>
+                <i class="icon-minus productdecreasebtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}"></i>
+            </td>
         <td>{{ item.price }} €</td>
         <td><i class="icon-remove productremovelingnbtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}" data-amount="{{ item.amount }}"></i></td>
     </tr>
     {% endfor %}
 </table>
-<dl class="dl-horizontal">
+<dl class="dl-horizontal pull-right">
     <dt>Total :</dt>
     <dd> {{ totalAmount }} €</dd>
 </dl>
+<div class="clearfix"></div>
 {% endif %}
