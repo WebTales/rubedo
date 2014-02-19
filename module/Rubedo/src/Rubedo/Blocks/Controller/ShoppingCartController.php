@@ -104,17 +104,24 @@ class ShoppingCartController extends AbstractController
     private function addCartInfos ($cart) {
         $totalPrice=0;
         $totalItems=0;
+        $ignoredArray=array("price","amount","id","sku","stock");
         $contentsService=Manager::getService("Contents");
         foreach ($cart as &$value){
             $myContent=$contentsService->findById($value["productId"], true, false);
             if ($myContent){
                 $value['title']=$myContent['text'];
+                $value['subtitle']="";
                 $price=0;
                 foreach ($myContent["productProperties"]['variations'] as $variation){
                     if ($variation['id']==$value['variationId']){
                         $price=$variation["price"]*$value["amount"];
                         $totalPrice=$totalPrice+$price;
                         $totalItems=$totalItems+$value["amount"];
+                        foreach ($variation as $varkey => $varvalue){
+                            if (!in_array($varkey,$ignoredArray)){
+                                $value['subtitle']=$value['subtitle']." ".$varvalue;
+                            }
+                        }
                     }
                 }
                 $value['price']=$price;
