@@ -2,7 +2,18 @@ jQuery(document).ready(function(e) {
     jQuery(".productbuybox").each(function(){
         var mainBox=jQuery(this);
         var configData=JSON.parse(mainBox.attr("data-productproperties"));
-        var initialVariation=configData.variations[0];
+        var initialVariationIdentifier=getParameterByName("variation");
+        var initialVariation=false;
+        if (!jQuery.isEmptyObject(initialVariationIdentifier)){
+            configData.variations.forEach(function(variation){
+                if (variation.id==initialVariationIdentifier){
+                    initialVariation=variation;
+                }
+            });
+        }
+        if (!initialVariation){
+            var initialVariation=configData.variations[0];
+        }
         mainBox.find(".productpricetext").text(initialVariation.price+" €");
         mainBox.find(".productbuybtn").attr("data-variationid",initialVariation.id);
         var currentConstraints={ };
@@ -85,4 +96,11 @@ function adaptToProductOptionsChange (productBox, changedIndex,variations) {
         productBox.find(".productpricetext").text(newVariation.price+" €");
         productBox.find(".productbuybtn").attr("data-variationid",newVariation.id);
     }
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }

@@ -5,7 +5,7 @@
 <table class="table table-condensed table-striped table-hover">
     {% for item in cartItems %}
     <tr>
-        <td><a href="#">{{ item.title }} <small class="muted">{{ item.subtitle }}</small></a></td>
+        <td><a href='{{ displayUrl(item.productId,"default",null) }}?variation={{ item.variationId}}'>{{ item.title }} <small class="muted">{{ item.subtitle }}</small></a></td>
         <td>x {{ item.amount }}</td>
         <td>{{ item.price }} €</td>
         <td><i class="icon-remove productremovelingnbtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}" data-amount="{{ item.amount }}"></i></td>
