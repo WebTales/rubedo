@@ -1,7 +1,7 @@
 {% extends "@Root/block.html.twig" %}
 {% block mainContent %}
-    <div class="btn-group">
-        <button class="btn"><i class="icon-shopping-cart"></i> Shopping Cart ({{ totalItems }})</button>
+    <div class="btn-group" id="shoppingcart">
+        <button class="btn"><i class="icon-shopping-cart"></i> Shopping Cart <span class="badge" id="spcnboitems">{{ totalItems }}</span></button>
         <button class="btn dropdown-toggle" data-toggle="dropdown">
             <span class="caret"></span>
         </button>
@@ -9,11 +9,6 @@
             <div id="shoppingcartholder">
                     {% include '/blocks/shoppingCart/productList.html.twig' %}
             </div>
-            <div>
-                <button class="btn pull-right scartbtn">Checkout</button>
-                <button class="btn pull-right scartbtn">View cart</button>
-            </div>
-
         </div>
     </div>
 {% endblock %}

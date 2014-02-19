@@ -4,3 +4,6 @@
 .scartbtn{
     margin-right:10px;
 }
+.ui-effects-transfer {
+    border: 2px dashed gray;
+}

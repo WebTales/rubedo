@@ -5,13 +5,15 @@ jQuery(document).ready(function(e) {
         var initialVariation=configData.variations[0];
         mainBox.find(".productpricetext").text(initialVariation.price+" €");
         mainBox.find(".productbuybtn").attr("data-variationid",initialVariation.id);
+        var currentConstraints={ };
         mainBox.find("select").each(function(){
-            var possibilities = extractOptionPossibilities(configData.variations, jQuery(this).attr("name"));
+            var possibilities = extractOptionPossibilities(configData.variations, jQuery(this).attr("name"),currentConstraints);
             var theCombo=jQuery(this);
             possibilities.forEach(function(possibility){
                 theCombo.append("<option>"+possibility+"</option>");
             });
             theCombo.val(initialVariation[theCombo.attr("name")]);
+            currentConstraints[theCombo.attr("name")]=theCombo.val();
             theCombo.change(function(){
                 adaptToProductOptionsChange(mainBox,theCombo.attr("data-fieldindex"),configData.variations);
             });

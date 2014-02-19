@@ -18,6 +18,8 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Debug\Debug;
+use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 
 /**
  *
@@ -45,6 +47,32 @@ class ShoppingCartController extends AbstractController
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/shoppingcart.js")
         );
         return $this->_sendResponse($output, $template, $css, $js);
+    }
+
+    public function addItemToCartAction () {
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $this->init();
+        }
+        $templateService = Manager::getService('FrontOfficeTemplates');
+        $params=$this->params()->fromPost();
+        $cartUpdate = Manager::getService("ShoppingCart")->addItemToCart($params["productId"], $params["variationId"], $params["amount"]);
+        if (!$cartUpdate){
+            $result=array("success"=>false);
+            return new JsonModel($result);
+        }
+        $templateService = Manager::getService('FrontOfficeTemplates');
+        $template = $templateService->getFileThemePath("blocks/shoppingCart/productList.html.twig");
+        $output = array();
+        $processedCart=$this->addCartInfos($cartUpdate);
+        $output["cartItems"]=$processedCart['cart'];
+        $output["totalAmount"]=$processedCart['totalAmount'];
+        $output["totalItems"]=$processedCart['totalItems'];
+        $results=array();
+        $results['html']=$templateService->render($template, $output);
+        $results['totalItems']=$output["totalItems"];
+        $results['success'] = true;
+        return new JsonModel($results);
+
     }
 
     private function addCartInfos ($cart) {
