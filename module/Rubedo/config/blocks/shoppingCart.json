@@ -7,13 +7,46 @@
 		"flex":1,
 		"champsConfig":{
 			"simple":[
-
+                {
+                    "categorie":"#ext-gen1287#",
+                    "champs":[
+                        {
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"Cart detail page",
+                                "name":"cartDetailPage"
+                            }
+                        },{
+                            "type":"Ext.form.field.ComboBox",
+                            "isAutoStored":true,
+                            "autoStoreData":[
+                                {
+                                    "value":"detail",
+                                    "label":"Detail"
+                                },
+                                {
+                                    "value":"button",
+                                    "label":"Button"
+                                }
+                            ],
+                            "config":{
+                                "fieldLabel":"#ext-gen1374#",
+                                "name":"displayMode",
+                                "editable":false,
+                                "forceSelection":true,
+                                "queryMode":"local"
+                            }
+                        }
+                    ]
+                }
 			],
 			"avance":[
 
 			]
 		},
-		"configBloc":{}
+		"configBloc":{
+            "displayMode":"button"
+        }
 
 
 	},

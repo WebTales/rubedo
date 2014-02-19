@@ -32,13 +32,23 @@ class ShoppingCartController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
         $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
         $processedCart=$this->addCartInfos($myCart);
         $output["cartItems"]=$processedCart['cart'];
         $output["totalAmount"]=$processedCart['totalAmount'];
         $output["totalItems"]=$processedCart['totalItems'];
+        $output['cartDetailPage'] = isset($output['block-config']['cartDetailPage']) ? $output['block-config']['cartDetailPage'] : false;
+        if ($output["cartDetailPage"]) {
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $output['cartDetailPageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $output["cartDetailPage"]
+            ), $urlOptions);
+        }
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/shoppingCart.html.twig");
         $css = array(
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("css/shoppingcart.css")

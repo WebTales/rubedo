@@ -7,3 +7,6 @@
 .ui-effects-transfer {
     border: 2px dashed gray;
 }
+.productremovelingnbtn{
+    cursor:pointer;
+}
