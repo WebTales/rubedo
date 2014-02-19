@@ -19,6 +19,8 @@ namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IShoppingCart;
 use Rubedo\Services\Events;
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
+
 /**
  * Service to handle UserTypes
  *

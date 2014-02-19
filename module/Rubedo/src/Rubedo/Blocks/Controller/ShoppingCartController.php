@@ -56,7 +56,33 @@ class ShoppingCartController extends AbstractController
         $templateService = Manager::getService('FrontOfficeTemplates');
         $params=$this->params()->fromPost();
         $cartUpdate = Manager::getService("ShoppingCart")->addItemToCart($params["productId"], $params["variationId"], $params["amount"]);
-        if (!$cartUpdate){
+        if ($cartUpdate===false){
+            $result=array("success"=>false);
+            return new JsonModel($result);
+        }
+        $templateService = Manager::getService('FrontOfficeTemplates');
+        $template = $templateService->getFileThemePath("blocks/shoppingCart/productList.html.twig");
+        $output = array();
+        $processedCart=$this->addCartInfos($cartUpdate);
+        $output["cartItems"]=$processedCart['cart'];
+        $output["totalAmount"]=$processedCart['totalAmount'];
+        $output["totalItems"]=$processedCart['totalItems'];
+        $results=array();
+        $results['html']=$templateService->render($template, $output);
+        $results['totalItems']=$output["totalItems"];
+        $results['success'] = true;
+        return new JsonModel($results);
+
+    }
+
+    public function removeItemFromCartAction () {
+        if ($this->getRequest()->isXmlHttpRequest()){
+            $this->init();
+        }
+        $templateService = Manager::getService('FrontOfficeTemplates');
+        $params=$this->params()->fromPost();
+        $cartUpdate = Manager::getService("ShoppingCart")->removeItemFromCart($params["productId"], $params["variationId"], $params["amount"]);
+        if ($cartUpdate===false){
             $result=array("success"=>false);
             return new JsonModel($result);
         }
