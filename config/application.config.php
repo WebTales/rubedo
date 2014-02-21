@@ -1,5 +1,7 @@
 <?php
 // define a constant for the root dir of the application
+use Zend\Debug\Debug;
+
 defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(__DIR__ . '/..'));
 defined('CONFIG_CACHE_DIR') || define('CONFIG_CACHE_DIR', realpath(__DIR__ . '/../cache/config'));
 //$configCacheDir = realpath(__DIR__ . '/../cache/config');
@@ -32,7 +34,17 @@ if (file_exists(CONFIG_CACHE_DIR . '/extensions.array.php')) {
                     continue;
                 }
                 if (file_exists($subItem->getRealPath() . '/Module.php')) {
-                    $extensionsArray[] = ucfirst($subItem->getFilename());
+                    $namespace = array();
+                    preg_match(
+                        '#\/(\w+)\/\w+.php#Ui',
+                        file_get_contents($subItem->getRealPath() . '/Module.php'),
+                        $namespace
+                    );
+                    if ($namespace[1]) {
+                        $extensionsArray[] = $namespace[1];
+                    } else {
+                        $extensionsArray[] = ucfirst($subItem->getFilename());
+                    }
                 }
             }
         }
