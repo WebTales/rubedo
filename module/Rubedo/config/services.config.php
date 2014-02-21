@@ -83,5 +83,8 @@ return array(
     'UserTypes' => 'Rubedo\\Collection\\UserTypes',
     'Emails' => 'Rubedo\\Collection\\Emails',
     'EmailTemplates' => 'Rubedo\\Collection\\EmailTemplates',
-    'ShoppingCart' => 'Rubedo\\Collection\\ShoppingCart'
+    'ShoppingCart' => 'Rubedo\\Collection\\ShoppingCart',
+    'Countries' => 'Rubedo\\Collection\\Countries',
+    'Taxes' => 'Rubedo\\Collection\\Taxes',
+    'Shippers' => 'Rubedo\\Collection\\Shippers'
 );
