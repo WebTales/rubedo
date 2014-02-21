@@ -1,0 +1,17 @@
+{% extends "@Root/block.html.twig" %}
+{% block mainContent %}
+    <div id="shoppingcart">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand">Shopping Cart <span class="badge" id="spcnboitems">{{ totalItems }}</span></a>
+            </div>
+        </div>
+        <div id="shoppingcartholder">
+            {% include '/blocks/shoppingCart/productList.html.twig' %}
+        </div>
+        <div>
+            <button class="btn pull-right scartbtn">Checkout</button>
+        </div>
+    </div>
+
+{% endblock %}

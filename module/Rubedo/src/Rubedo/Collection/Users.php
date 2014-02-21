@@ -240,7 +240,7 @@ class Users extends AbstractCollection implements IUsers
             foreach ($groupList['data'] as $group) {
                 $obj['groups'][] = $group['id'];
             }
-            if (!in_array($obj['defaultGroup'], $obj['groups'])){
+            if ((!isset($obj['defaultGroup']))||(!in_array($obj['defaultGroup'], $obj['groups']))){
                 if (isset($obj['groups'][0])){
                     $obj['defaultGroup']=$obj['groups'][0];
                 } else {
@@ -291,7 +291,8 @@ class Users extends AbstractCollection implements IUsers
             }
         }
 
-        $this->propagateUserUpdate($obj['id']);
+        //$this->propagateUserUpdate($obj['id']);
+        //this needs to be fixed later
 
         return $result;
     }

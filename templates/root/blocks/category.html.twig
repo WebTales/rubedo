@@ -1,0 +1,43 @@
+{% extends "@Root/block.html.twig" %}
+
+{% block mainContent %}
+
+    {% if nbOfColumns is defined and nbOfColumns != "" %}
+        {% set columnNb =nbOfColumns %}
+    {% else %}
+        {% set columnNb = 1 %}
+    {% endif %}
+
+    {% for page in pages %}
+        {% if loop.first or (loop.index-1)%columnNb == 0 %}
+            <div class="row-fluid">
+        {% endif %}
+        <div class="span{{ (12/columnNb) }}">
+            <header class="entry-header">
+                <h3 class="post-title-small">
+                    <a title="{{ page.title }}" href="{{page.url}}">{{page.title}}</a>
+                </h3>
+            </header>
+            {% if page.image %}
+                <img class="pull-left" src="{{ imageUrl(page.image,imageWidth,imageHeight,"boxed") }}" alt="{{page.title}}" title="{{page.title}}" />
+            {% endif %}
+            {% if page.description %}
+            <div class="entry-content" style="padding-left:20px;">
+                <p>{{ page.description }}</p>
+                <ul>
+                    {% for subpage in page.pages %}
+                        <li><a title="{{ subpage.title }}" href="{{subpage.url}}">{{subpage.title}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+
+
+        </div>
+        {% if loop.last or loop.index%columnNb == 0 %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}

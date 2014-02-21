@@ -18,6 +18,10 @@
 	                   <h1 class="editable" id="{{ data.id }}_text" data-field-type="title">{{ data.text }}</h1>
 	               {% elseif assignedField.name=="summary"%}
 	                   {% include "/blocks/fields/CKEfield.html.twig" with {"data": data, "key": "summary"} %}
+                   {% elseif assignedField.name=="productBox"%}
+                       {% if isProduct %}
+                           {% include "/blocks/single/productBox.html.twig" %}
+                       {% endif %}
 	               {% else %}
 	                   {% set key=assignedField.name %}
     	               {% set value=data[assignedField.name] %}

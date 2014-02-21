@@ -1,9 +1,9 @@
 {
-	"type":"#ext-gen1366#",
-	"description":"#ext-gen1367#",
+	"type":"Shopping Cart",
+	"description":"",
 	"configBasique":{
-		"title":"#ext-gen1366#",
-		"bType":"authentication",
+		"title":"Shopping Cart",
+		"bType":"shoppingCart",
 		"flex":1,
 		"champsConfig":{
 			"simple":[
@@ -13,20 +13,20 @@
                         {
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"#ext-gen1409#",
-                                "name":"profilePage"
+                                "fieldLabel":"Cart detail page",
+                                "name":"cartDetailPage"
                             }
                         },{
                             "type":"Ext.form.field.ComboBox",
                             "isAutoStored":true,
                             "autoStoreData":[
                                 {
-                                    "value":"pop-in",
-                                    "label":"#ext-gen1411#"
+                                    "value":"detail",
+                                    "label":"Detail"
                                 },
                                 {
-                                    "value":"form",
-                                    "label":"#ext-gen1412#"
+                                    "value":"button",
+                                    "label":"Button"
                                 }
                             ],
                             "config":{
@@ -37,7 +37,7 @@
                                 "queryMode":"local"
                             }
                         }
-                        ]
+                    ]
                 }
 			],
 			"avance":[
@@ -45,12 +45,12 @@
 			]
 		},
 		"configBloc":{
-            "displayMode":"pop-in"
+            "displayMode":"button"
         }
 
 
 	},
-	"category":"#ext-gen1211#",
-	"bType":"authentication",
-	"id":"511e6508c0e051bd12000001"
+	"category":"E-Commerce",
+	"bType":"shoppingCart",
+	"id":"52fca239f05c1d7416000000"
 }

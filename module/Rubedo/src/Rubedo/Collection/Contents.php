@@ -99,6 +99,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
             'keys' => array(
                 'live.endPublicationDate' => 1
             )
+        ),
+        array(
+            'keys' => array(
+                'isProduct' => 1
+            )
         )
     );
 
@@ -129,7 +134,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
         'pageId',
         'maskId',
         'blockId',
-        'taxonomy'
+        'taxonomy',
+        'isProduct',
+        'productProperties'
     );
 
     protected static $localizableFiledForCType = array();
