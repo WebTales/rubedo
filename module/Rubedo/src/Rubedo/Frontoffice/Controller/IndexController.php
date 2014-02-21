@@ -230,21 +230,21 @@ class IndexController extends AbstractActionController
         $canEdit = ! $isPreview && $isLoggedIn && Manager::getService('Acl')->hasAccess('write.frontoffice.contents');
         
         // load the javaScripts files
+        $this->_servicePage->appendJs('/components/jquery/jqueryui/ui/minified/jquery-ui.min.js');
         if ($canEdit) {
             $this->_servicePage->appendJs('/components/webtales/ckeditor/ckeditor.js');
             $this->_servicePage->appendJs($this->getRequest()
                 ->getBasePath() . '/' . $this->_serviceTemplate->getFileThemePath('js/rubedo-edit.js'));
             $this->_servicePage->appendJs($this->getRequest()
                 ->getBasePath() . '/' . $this->_serviceTemplate->getFileThemePath('js/authentication.js'));
-            
+
             if (Manager::getService('CurrentUser')->getLanguage() == 'en') {
                 $datepickerJs = 'jquery.ui.datepicker-en-GB.js';
             } else {
                 $datepickerJs = 'jquery.ui.datepicker-' . Manager::getService('CurrentUser')->getLanguage() . '.js';
             }
-            
+
             $js = array(
-                '/components/jquery/jqueryui/ui/minified/jquery-ui.min.js',
                 '/components/jquery/jqueryui/ui/i18n/' . $datepickerJs,
                 '/components/jquery/timepicker/jquery.ui.timepicker.js'
             );
@@ -254,7 +254,7 @@ class IndexController extends AbstractActionController
                 }
             }
         }
-        
+
         
         
         // Build Twig context

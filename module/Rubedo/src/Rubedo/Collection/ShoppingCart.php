@@ -16,10 +16,10 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Exceptions\User;
 use Rubedo\Interfaces\Collection\IShoppingCart;
-use Rubedo\Services\Events;
 use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
+use Zend\Http\Header\SetCookie;
 
 /**
  * Service to handle UserTypes
@@ -30,86 +30,159 @@ use Zend\Debug\Debug;
  */
 class ShoppingCart extends AbstractCollection implements IShoppingCart
 {
+    /**
+     * @var \Rubedo\Interfaces\User\ICurrentUser
+     */
+    protected $currentUserService;
+
+    /**
+     * @var \Rubedo\Interfaces\Collection\IUsers
+     */
+    protected $usersService;
+
+    /**
+     * @var \Zend\Http\PhpEnvironment\Request
+     */
+    protected $requestService;
+
+    /**
+     * @var \Zend\Http\PhpEnvironment\Response
+     */
+    protected $responseService;
+
+    const COOKIE = 'rubedoShoppingCart';
+    const KEY = 'shoppingCart';
 
     public function __construct()
     {
         $this->_collectionName = 'TemporaryShoppingCart';
+        $this->currentUserService = Manager::getService("CurrentUser");
+        $this->usersService = Manager::getService("Users");
+        $this->requestService = Manager::getService('Request');
+        $this->responseService = Manager::getService('Response');
         parent::__construct();
     }
 
-    public function getCurrentCart () {
-        $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
-        if (!$currentUser) {
-            return array();
-        }
-        if ((isset($currentUser['shoppingCart']))&&(is_array($currentUser['shoppingCart']))) {
-            return $currentUser['shoppingCart'];
+    public function getCurrentCart()
+    {
+        $currentUser = $this->getCurrentUser();
+        if ($currentUser && $this->hasShoppingCart($currentUser)) {
+            return $currentUser[static::KEY];
+        } elseif ($this->hasCookie()) {
+            $tempCart = $this->findById($this->getCookie(), true);
+            return $tempCart?$tempCart[static::KEY]:array();
         } else {
             return array();
         }
-
     }
 
-    public function addItemToCart ($productId, $variationId, $amount=1) {
-        if ((!isset($productId))||(!isset($variationId))){
-            throw new \Rubedo\Exceptions\User('Product id and variation id missing');
+    protected function setCurrentCart($cart)
+    {
+        $currentUser = $this->getCurrentUser();
+        if ($currentUser && $this->hasShoppingCart($currentUser)) {
+            $currentUser[static::KEY] = $cart;
+            return $this->usersService->update($currentUser);
+        } else {
+            $tempCart = null;
+            $new = false;
+            if ($this->hasCookie()) {
+                $tempCart = $this->findById($this->getCookie());
+            }
+            if (!$tempCart) {
+                $new = true;
+                $tempCart = array();
+            }
+            $tempCart[static::KEY] = $cart;
+            if ($new) {
+                $result = $this->create($tempCart);
+            } else {
+                $result = $this->update($tempCart);
+            }
+            $this->setCookie($result['data']['id']);
+            return $result;
         }
-        $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
-        if (!$currentUser) {
-            return false;
+    }
+
+    protected function hasShoppingCart($array)
+    {
+        return isset($array[static::KEY]) && is_array($array[static::KEY]);
+    }
+
+    public function addItemToCart($productId, $variationId, $amount = 1)
+    {
+        if (!isset($productId, $variationId)) {
+            throw new User('Product id or variation id missing');
         }
-        if ((!isset($currentUser['shoppingCart']))||(!is_array($currentUser['shoppingCart']))) {
-            $currentUser['shoppingCart']=array();
-        }
-        $notFound=true;
-        foreach ($currentUser['shoppingCart'] as &$value){
-            if ($notFound&&($value['productId']==$productId)&&($value['variationId']==$variationId)){
-                $value['amount']=$value['amount']+$amount;
-                $notFound=false;
+
+        $cart = $this->getCurrentCart();
+        $cart = $this->editItemToArray($cart, $productId, $variationId, $amount);
+        $update = $this->setCurrentCart($cart);
+
+        return !$update['success']?$update['success']:$update['data'][static::KEY];
+    }
+
+    protected function editItemToArray($cart, $productId, $variationId, $amount = 1) {
+        $match = false;
+        foreach ($cart as $key => &$value) {
+            if (!$match && $value['productId'] == $productId && $value['variationId'] == $variationId) {
+                $value['amount'] += $amount;
+                if ($value['amount'] < 1) {
+                    unset($cart[$key]);
+                }
+                $match = true;
+                break;
             }
         }
-        if ($notFound){
-            $currentUser['shoppingCart'][]=array(
+        if (!$match) {
+            $cart[] = array(
                 "productId" => $productId,
                 "variationId" => $variationId,
                 "amount" => $amount
             );
         }
-        $updatedUser=Manager::getService("Users")->update($currentUser);
-        if (!$updatedUser['success']) {
-            return $updatedUser['success'];
-        } else {
-            return $updatedUser['data']['shoppingCart'];
-        }
+        return $cart;
     }
 
-    public function removeItemFromCart ($productId, $variationId, $amount=1) {
-        if ((!isset($productId))||(!isset($variationId))){
-            throw new \Rubedo\Exceptions\User('Product id and variation id missing');
-        }
-        $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
-        if (!$currentUser) {
-            return false;
-        }
-        if ((!isset($currentUser['shoppingCart']))||(!is_array($currentUser['shoppingCart']))) {
-            $currentUser['shoppingCart']=array();
-        }
-        $notFound=true;
-        foreach ($currentUser['shoppingCart'] as $key => &$value){
-            if ($notFound&&($value['productId']==$productId)&&($value['variationId']==$variationId)){
-                $value['amount']=$value['amount']-$amount;
-                $notFound=false;
-                if ($value['amount']<=0){
-                    unset($currentUser['shoppingCart'][$key]);
-                }
-            }
-        }
-        $updatedUser=Manager::getService("Users")->update($currentUser);
-        if (!$updatedUser['success']) {
-            return $updatedUser['success'];
-        } else {
-            return $updatedUser['data']['shoppingCart'];
-        }
+
+
+    public function removeItemFromCart($productId, $variationId, $amount = 1)
+    {
+        $cart = $this->getCurrentCart();
+        $cart = $this->editItemToArray($cart, $productId, $variationId, - $amount);
+        $update = $this->setCurrentCart($cart);
+        return !$update['success']?$update['success']:$update['data'][static::KEY];
     }
 
+    /**
+     * get current user
+     *
+     * @return array
+     */
+    protected function getCurrentUser() {
+        return $this->currentUserService->getCurrentUser();
+    }
+
+    /**
+     * has cookie
+     *
+     * @return boolean
+     */
+    protected function hasCookie() {
+        $cookies = $this->requestService->getCookie();
+        return $cookies?$cookies->offsetExists(static::COOKIE):false;
+    }
+
+    /**
+     * get cookie
+     *
+     * @return string
+     */
+    protected function getCookie() {
+        return $this->requestService->getCookie()->offsetGet(static::COOKIE);
+    }
+
+    protected function setCookie($value) {
+        $cookie = new SetCookie(static::COOKIE, $value, time() + 3600, '/');
+        return $this->responseService->getHeaders()->addHeader($cookie);
+    }
 }
