@@ -84,5 +84,7 @@ return array(
     'Emails' => 'Rubedo\\Collection\\Emails',
     'EmailTemplates' => 'Rubedo\\Collection\\EmailTemplates',
     'ShoppingCart' => 'Rubedo\\Collection\\ShoppingCart',
-    'Countries' => 'Rubedo\\Collection\\Countries'
+    'Countries' => 'Rubedo\\Collection\\Countries',
+    'Taxes' => 'Rubedo\\Collection\\Taxes',
+    'Shippers' => 'Rubedo\\Collection\\Shippers'
 );
