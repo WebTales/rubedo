@@ -16,6 +16,7 @@
  */
 namespace Rubedo\User;
 
+use Rubedo\Exceptions\Server;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\Authentication\Adapter\AdapterInterface;
@@ -155,10 +156,10 @@ class AuthAdapter implements AdapterInterface
     public function __construct ($name, $password)
     {
         if (! is_string($name)) {
-            throw new \Rubedo\Exceptions\Server('$name should be a string', "Exception40", '$name');
+            throw new Server('$name should be a string', "Exception40", '$name');
         }
         if (! is_string($password)) {
-            throw new \Rubedo\Exceptions\Server('$password should be a string', "Exception40", '$password');
+            throw new Server('$password should be a string', "Exception40", '$password');
         }
         $this->_authenticateResultInfo['identity'] = null;
         $this->_login = $name;
