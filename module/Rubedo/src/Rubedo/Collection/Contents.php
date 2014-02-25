@@ -440,6 +440,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
                             $value
                         );
                     }
+                    if ($value[0]==""){
+                        $value=array();
+                    }
                     foreach ($value as $valueItem) {
                         $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
                         $tempFields[$key][] = $this->_filterFieldValue($valueItem, $fieldsArray[$key]['cType'], $fieldsArray[$key]["config"], $key);
