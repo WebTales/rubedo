@@ -29,7 +29,7 @@ use WebTales\MongoFilters\Filter;
  */
 class ContentTypes extends AbstractLocalizableCollection implements IContentTypes
 {
-    protected static $nonLocalizableFields = array("manageStock","shippers","productType","fields", "layouts", "vocabularies", "dependant", "activateDisqus", "dependantTypes", "readOnly", "workspaces", "workflow", "system", "CTType", "code");
+    protected static $nonLocalizableFields = array("notifyForQuantityBelow","outOfStockLimit","preparationDelay","resupplyDelay","canOrderNotInStock","manageStock","shippers","productType","fields", "layouts", "vocabularies", "dependant", "activateDisqus", "dependantTypes", "readOnly", "workspaces", "workflow", "system", "CTType", "code");
     protected static $labelField = 'type';
 
     protected $_indexes = array(
