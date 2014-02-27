@@ -11,7 +11,7 @@
 		"monolog/monolog": "1.6.*",
 		"ruflin/Elastica": "0.90.*",
 		"ezyang/htmlpurifier": "4.5.*",
-		"zendframework/zendframework": "2.*",
+		"zendframework/zendframework": "~2.2",
 		"zendframework/zendservice-flickr":"dev-master",
 		"alb/oembed": "1.1.*",
 		"swiftmailer/swiftmailer": "5.0.*",
