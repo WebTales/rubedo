@@ -1,0 +1,36 @@
+{
+    "type":"Development",
+    "description":"",
+    "configBasique":{
+        "title":"Development",
+        "bType":"development",
+        "flex":1,
+        "champsConfig":{
+            "simple":[
+                {
+                    "categorie":"Code",
+                    "champs":[
+                        {
+                            "type":"Rubedo.view.ACEField",
+                            "config":{
+                                "fieldLabel":"Twig code",
+                                "name":"code",
+                                "twigMode":true
+
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance":[
+
+            ]
+        },
+        "configBloc":{
+        }
+
+    },
+    "category":"#ext-gen1135#",
+    "bType":"development",
+    "id":"530f265ef05c1dd81b000000"
+}
