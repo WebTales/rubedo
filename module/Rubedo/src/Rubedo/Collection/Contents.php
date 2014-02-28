@@ -1144,7 +1144,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             );
         } else {
             return array(
-                "msg"=>$response['errmsg'],
+                "message"=>$response['errmsg'],
                 "success"=>false
             );
         }
