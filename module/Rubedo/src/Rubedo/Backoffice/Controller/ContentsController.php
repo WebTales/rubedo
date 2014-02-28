@@ -233,7 +233,7 @@ class ContentsController extends DataAccessController
     {
         $result = $this->_dataService->countOrphanContents();
         
-        return $this->_returnJson($result);
+        return $this->_returnJson(array("orphanContents"=>$result));
     }
 
     public function deleteByContentTypeIdAction ()
@@ -245,5 +245,15 @@ class ContentsController extends DataAccessController
         $deleteResult = $this->_dataService->deleteByContentType($typeId);
         
         return $this->_returnJson($deleteResult);
+    }
+    public function getStockAction ()
+    {
+        $typeId = $this->params()->fromQuery('type-id');
+        $workingLanguage=$this->params()->fromQuery('workingLanguage',"en");
+        if (! $typeId) {
+            throw new \Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
+        }
+        $result=$this->_dataService->getStock($typeId,$workingLanguage);
+        return $this->_returnJson($result);
     }
 }

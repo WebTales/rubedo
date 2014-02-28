@@ -1109,4 +1109,46 @@ class Contents extends WorkflowAbstractCollection implements IContents
         parent::disableUserFilter($wasFiltered);
     }
 
+    /**
+     * Get stock from products using aggregation
+     */
+    public function getStock($typeId, $workingLanguage){
+        $pipeline=array();
+        $pipeline[]=array(
+            '$match'=>array(
+                'typeId'=>$typeId
+            )
+        );
+        $pipeline[]=array(
+            '$project'=>array(
+                'productId'=>'$_id',
+                '_id'=>0,
+                'variation'=>'$live.productProperties.variations',
+                'title'=>'$live.i18n.'.$workingLanguage.'.fields.text'
+            )
+        );
+        $pipeline[]=array(
+            '$unwind'=>'$variation'
+        );
+        $response=$this->_dataService->aggregate($pipeline);
+        if ($response['ok']){
+            foreach( $response['result'] as &$value){
+                $value['productId']=(string)$value['productId'];
+                $value=array_merge($value, $value['variation']);
+                unset ($value['variation']);
+            }
+            return array(
+                "data"=>$response['result'],
+                "total"=>count($response['result']),
+                "success"=>true
+            );
+        } else {
+            return array(
+                "msg"=>$response['errmsg'],
+                "success"=>false
+            );
+        }
+
+    }
+
 }
