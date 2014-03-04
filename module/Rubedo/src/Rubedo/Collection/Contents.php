@@ -1123,7 +1123,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             '$project'=>array(
                 'productId'=>'$_id',
                 '_id'=>0,
-                'variation'=>'$live.productProperties.variations',
+                'variation'=>'$productProperties.variations',
                 'title'=>'$live.i18n.'.$workingLanguage.'.fields.text'
             )
         );

@@ -49,7 +49,9 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         'lastPendingUser',
         'version',
         'online',
-        'text'
+        'text',
+        'isProduct',
+        'productProperties'
     );
 
     /**
