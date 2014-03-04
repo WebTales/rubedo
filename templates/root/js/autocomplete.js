@@ -1,4 +1,6 @@
 $(function(){
+	var searchItems = {};
+    var searchLabels = [];
 	$('.typeahead').typeahead({
 	    source: function (query, process) {
 			var request = jQuery.ajax({
@@ -12,13 +14,42 @@ $(function(){
 				dataType : "json"
 			});
 			request.done(function(data) {
-				return process(data.terms);
+				
+				searchItems = {};
+	            searchLabels = [];
+
+	            $.each(data.terms, function(index, value) {
+	            	searchLabels.push( value.text );
+	            	searchItems[ value.text ] = value.payload;
+	            });
+
+				return process(searchLabels);
 			});
 			
 	    },
-	    matcher: function(item) {
-	    	var strlength = this.query.length;
-	    	return this.query.toLowerCase() == item.toLowerCase().substring(0,strlength);
+	    matcher: function(selectedName) {
+	    	
+	    	return selectedName;
+	    },
+	    highlighter: function( item ){
+	    	var suggest = searchItems[ item ];
+	        switch (suggest.type) {
+	        case 'content':
+	        	result = '<h4 class="media-heading">' + item + '</h4>';
+	        	break;
+	        case 'dam':
+	        case 'user':
+	        	result = '<div class="media">'
+	                +'<a class="pull-left" href="' + suggest.id + '" />'
+	                +'<img class="media-object" src="' + suggest.thumbnail + '" width="40px" />'
+	                +'</a>'
+	                +'<div class="media-body">'
+	                +'<h4 class="media-heading">' + item + '</h4>'
+	                +'</div>'
+	                +'</div>';
+	        	break;
+	        }
+	        return result;
 	    },
 	    items:10,
 	    minLength:3
