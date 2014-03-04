@@ -891,7 +891,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         		'payload' => "{ \"type\" : \"content\",  \"id\" : \"".$data['id']."\"}"
         	);
         }
-        var_dump($indexData);
+
         // Add document
         $currentDocument = new \Elastica\Document($data['id'], $indexData);
         
