@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
@@ -255,5 +256,74 @@ class ContentsController extends DataAccessController
         }
         $result=$this->_dataService->getStock($typeId,$workingLanguage);
         return $this->_returnJson($result);
+    }
+    public function updateStockAction ()
+    {
+        $data = $this->params()->fromPost('data', null);
+        if (empty($data)){
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'No Data'
+            ));
+        }
+        $updateData = Json::decode($data,Json::TYPE_ARRAY);
+        if (!is_array($updateData)) {
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Not an array'
+            ));
+        }
+        $product=$this->_dataService->findById($updateData['productId'], true, false);
+        if ($product==null){
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'No product found'
+            ));
+        }
+        $notFound=true;
+        foreach($product['productProperties']['variations'] as $key=>$value){
+            if ($notFound){
+                if ($value['id']==$updateData['id']){
+                    $product['productProperties']['variations'][$key]['stock']=$updateData['stock'];
+                    $notFound=false;
+                }
+            }
+        }
+        if ($notFound){
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Variation not found'
+            ));
+        }
+        $updatedProduct = $this->_dataService->update($product, array(), true);
+        if (!$updatedProduct['success']){
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Update error on main product'
+            ));
+        }
+        $notFound=true;
+        foreach($updatedProduct['data']['productProperties']['variations'] as $value){
+            if ($notFound){
+                if ($value['id']==$updateData['id']){
+                    return $this->_returnJson(array(
+                        'success' => true,
+                        "data" => $value
+                    ));
+                }
+            }
+        }
+        if ($notFound){
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Variation not found after update'
+            ));
+        }
     }
 }
