@@ -9,7 +9,7 @@
 		"webtales/mongo-filters": "2.0.*",
 		"twig/extensions": "1.0.*",
 		"monolog/monolog": "1.6.*",
-		"ruflin/Elastica": "0.90.*",
+		"ruflin/Elastica": "1.0.*",
 		"ezyang/htmlpurifier": "4.5.*",
 		"zendframework/zendframework": "~2.2",
 		"zendframework/zendservice-flickr":"dev-master",
