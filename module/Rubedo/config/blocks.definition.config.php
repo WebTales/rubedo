@@ -206,5 +206,10 @@ return array(
         'controller' => 'Rubedo\\Blocks\\Controller\\ShoppingCart',
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/shoppingCart.json'
-    )
+    ),
+    'development'=>array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\Development',
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/development.json'
+    ),
 );

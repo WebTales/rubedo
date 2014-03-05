@@ -18,6 +18,7 @@ namespace Rubedo\Elastic;
 use Rubedo\Interfaces\Elastic\IDataSearch;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\Debug\Debug;
 
 /**
  * Class implementing the Rubedo API to Elastic Search using Elastica API
@@ -155,7 +156,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     {
         $filter = new \Elastica\Filter\Terms();
         $filter->setTerms('availableLanguages', $values);
-        // $this->_globalFilterList['availableLanguages'] = $filter;
+        $this->_globalFilterList['availableLanguages'] = $filter;
         $this->_setFilter = true;
     }
 
@@ -231,7 +232,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
         
         $this->_params = $params;
-        
+
         $this->_facetDisplayMode = isset(
                 $this->_params['block-config']['displayMode']) ? $this->_params['block-config']['displayMode'] : 'standard';
         
@@ -537,12 +538,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                  isset($this->_params['inflon']) &&
                  isset($this->_params['suplon'])) {
             $topleft = array(
-                    $this->_params['inflon'],
-                    $this->_params['suplat']
+                    $this->_params['inflon']+0,
+                    $this->_params['suplat']+0
             );
             $bottomright = array(
-                    $this->_params['suplon'],
-                    $this->_params['inflat']
+                    $this->_params['suplon']+0,
+                    $this->_params['inflat']+0
             );
             $filter = new \Elastica\Filter\GeoBoundingBox(
                     'fields.position.location.coordinates', 
@@ -593,7 +594,6 @@ class DataSearch extends DataAbstract implements IDataSearch
         // only
         
         if ($option != "user") {
-            
             switch ($localizationStrategy) {
                 case 'backOffice':
                     $this->setLocaleFilter(
@@ -614,8 +614,8 @@ class DataSearch extends DataAbstract implements IDataSearch
                     ))) {
                         $elasticaQueryString->setFields(
                                 array(
-                                        "all_" . $currentLocale,
-                                        "all_nonlocalized"
+                                        //"all_" . $currentLocale,
+                                        //"all_nonlocalized"
                                 ));
                     } else {
                         $elasticaQueryString->setFields(
@@ -625,6 +625,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                                 ));
                     }
                     break;
+                    
                 case 'fallback':
                 default:
                     $this->setLocaleFilter(
@@ -996,19 +997,22 @@ class DataSearch extends DataAbstract implements IDataSearch
                 "*"
         );
         $elasticaQuery->setFields($returnedFieldsArray);
-        
+
         // run query
         switch ($option) {
             case 'content':
-                $elasticaResultSet = self::$_content_index->search(
-                        $elasticaQuery);
+            	$client = self::$_content_index->getClient();
+            	$search = new \Elastica\Search($client);
                 break;
             case 'dam':
-                $elasticaResultSet = self::$_dam_index->search($elasticaQuery);
+            	$client = self::$_dam_index->getClient();
+                $search = new \Elastica\Search($client);
                 break;
             case 'user':
-                $elasticaResultSet = self::$_user_index->search($elasticaQuery);
+            	$client = self::$_user_index->getClient();
+            	$search = new \Elastica\Search($client);
                 break;
+            case 'geo':
             case 'all':
                 $client = self::$_content_index->getClient();
                 $client->setLogger(
@@ -1017,71 +1021,35 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_content_index);
                 $search->addIndex(self::$_user_index);
-                $elasticaResultSet = $search->search($elasticaQuery);
-                break;
-            case 'geo':
-                $elasticaResultSet = self::$_content_index->search(
-                        $elasticaQuery);
-                break;
+                
+                $suggest = new \Elastica\Suggest();
+                $suggestTerm = new \Elastica\Suggest\Term('suggest1', '_all');
+                $suggest->addSuggestion($suggestTerm->setText($this->_params['query']));
+                $search->setSuggest($suggest);
+                 break;
             case 'suggest':
             case 'geosuggest':
-                $suggestTerms = array();
-                $elasticaQuery->setHighlight(
-                        array(
-                                "pre_tags" => array(
-                                        "<term>"
-                                ),
-                                "post_tags" => array(
-                                        "</term>"
-                                ),
-                                "fields" => array(
-                                        'autocomplete_' . $currentLocale => array(
-                                                "fragment_offset" => 0,
-                                                "fragment_size" => 18,
-                                                "number_of_fragments" => 1
-                                        ),
-                                        'autocomplete_' . $fallBackLocale => array(
-                                                "fragment_offset" => 0,
-                                                "fragment_size" => 18,
-                                                "number_of_fragments" => 1
-                                        ),
-                                        'autocomplete_nonlocalized' => array(
-                                                "fragment_offset" => 0,
-                                                "fragment_size" => 18,
-                                                "number_of_fragments" => 1
-                                        )
-                                )
-                        ));
-                
-                $client = self::$_content_index->getClient();
-                $client->setLogger(
-                        Manager::getService('SearchLogger')->getLogger());
-                $search = new \Elastica\Search($client);
-                $search->addIndex(self::$_dam_index);
-                $search->addIndex(self::$_content_index);
-                
-                $elasticaResultSet = $search->search($elasticaQuery);
-                foreach ($elasticaResultSet as $result) {
-                    $highlights = $result->getHighlights();
-                    if (isset($highlights['autocomplete_' . $currentLocale][0])) {
-                        $suggestTerms[] = $this->cleanSuggest(
-                                $highlights['autocomplete_' . $currentLocale][0]);
-                    }
-                    if (isset($highlights['autocomplete_' . $fallBackLocale][0])) {
-                        $suggestTerms[] = $this->cleanSuggest(
-                                $highlights['autocomplete_' . $fallBackLocale][0]);
-                    }
-                    if (isset($highlights['autocomplete_nonlocalized'][0])) {
-                        $suggestTerms[] = $this->cleanSuggest(
-                                $highlights['autocomplete_nonlocalized'][0]);
-                    }
-                }
-                return (array_values(array_unique($suggestTerms)));
+            	$client = self::$_content_index->getClient();
+            	$search = new \Elastica\Search($client);
+            	$suggest = new \Elastica\Suggest();
+            	$suggestTerm = new \Elastica\Suggest\Term('suggest1', 'text');
+            	$suggest->addSuggestion($suggestTerm->setText($this->_params['query']));
+            	
+            	$search->setSuggest($suggest);
+            	
+            	$elasticaResultSet = $search->search($suggest);
+            	var_dump ($elasticaResultSet->getSuggests());
+            	exit;
+
                 break;
         }
         
+        // Get resultset
+        $elasticaResultSet = $search->search($elasticaQuery);
+
         // Update data
         $resultsList = $elasticaResultSet->getResults();
+
         $result['total'] = $elasticaResultSet->getTotalHits();
         $result['query'] = $this->_params['query'];
         $userWriteWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
@@ -1094,88 +1062,97 @@ class DataSearch extends DataAbstract implements IDataSearch
         foreach ($resultsList as $resultItem) {
             
             $data = $resultItem->getData();
-            
-            $data['id'] = $resultItem->getId();
-            $data['typeId'] = $resultItem->getType();
+
+            $resultData['id'] = $resultItem->getId();
+            $resultData['typeId'] = $resultItem->getType();
             $score = $resultItem->getScore();
             if (! is_float($score))
                 $score = 1;
-            $data['score'] = round($score * 100);
-            $data['authorName'] = isset($data['createUser.fullName']) ? $data['createUser.fullName'] : null;
-            $data['author'] = isset($data['createUser.id']) ? $data['createUser.id'] : null;
-            $data['version'] = isset($data['version']) ? $data['version'] : null;
-            $data['photo'] = isset($data['photo']) ? $data['photo'] : null;
+            $resultData['score'] = round($score * 100);
+            $resultData['authorName'] = isset($data['createUser.fullName'][0]) ? $data['createUser.fullName'][0] : null;
+            $resultData['author'] = isset($data['createUser.id'][0]) ? $data['createUser.id'][0] : null;
+            $resultData['version'] = isset($data['version'][0]) ? $data['version'][0] : null;
+            $resultData['photo'] = isset($data['photo'][0]) ? $data['photo'][0] : null;
+            $resultData['objectType'] = $data['objectType'][0];
+            unset($data['objectType']);
+            unset($data['photo']);
             
-            if (isset($data['availableLanguages']) &&
-                     ! is_array($data['availableLanguages'])) {
-                $data['availableLanguages'] = array(
-                        $data['availableLanguages']
-                );
+            if (isset($data['availableLanguages'][0])) {
+            	if (! is_array($data['availableLanguages'][0])) {
+            		$resultData['availableLanguages'] = array(
+            				$data['availableLanguages'][0]
+            		);                                        
+            	} else {
+            		$resultData = $data['availableLanguages'][0];
+            	}
             }
             
-            switch ($data['objectType']) {
+            switch ($resultData['objectType']) {
                 case 'content':
-                    if (isset($data["text_" . $currentLocale])) {
-                        $data['title'] = $data["text_" . $currentLocale];
+                    if (isset($data["text_" . $currentLocale][0])) {
+                        $resultData['title'] = $data["text_" . $currentLocale][0];
                         if ($withSummary) {
-                            $data['summary'] = (isset(
-                                    $data["summary_" . $currentLocale])) ? $data["summary_" .
-                                     $currentLocale] : $data["text_" .
-                                     $currentLocale];
+                            $resultData['summary'] = (isset(
+                                    $data["summary_" . $currentLocale][0])) ? $data["summary_" .
+                                     $currentLocale][0] : $data["text_" .
+                                     $currentLocale][0];
                         }
                     } else {
-                        $data['title'] = $data['text'];
+                        $resultData['title'] = $data['text'][0];
                     }
-                    $contentType = $this->_getContentType($data['contentType']);
+                    $contentType = $this->_getContentType($data['contentType'][0]);
                     if (! $userCanWriteContents || $contentType['readOnly']) {
-                        $data['readOnly'] = true;
+                        $resultData['readOnly'] = true;
                     } elseif (! in_array($resultItem->writeWorkspace, 
                             $userWriteWorkspaces)) {
-                        $data['readOnly'] = true;
+                        $resultData['readOnly'] = true;
                     }
-                    $data['type'] = $contentType['type'];
+                    $resultData['type'] = $contentType['type'];
                     break;
                 case 'dam':
-                    if (isset($data["title_" . $currentLocale])) {
-                        $data['title'] = $data["title_" . $currentLocale];
+                    if (isset($data["title_" . $currentLocale][0])) {
+                        $resultData['title'] = $data["title_" . $currentLocale][0];
                     } else {
-                        $data['title'] = $data['text'];
+                        $resultData['title'] = $data['text'][0];
                     }
-                    $damType = $this->_getDamType($data['damType']);
+                    $damType = $this->_getDamType($data['damType'][0]);
                     if (! $userCanWriteDam || $damType['readOnly']) {
-                        $data['readOnly'] = true;
+                        $resultData['readOnly'] = true;
                     } elseif (! in_array($resultItem->writeWorkspace, 
                             $userWriteWorkspaces)) {
-                        $data['readOnly'] = true;
+                        $resultData['readOnly'] = true;
                     }
-                    $data['type'] = $damType['type'];
+                    $resultData['type'] = $damType['type'];
                     break;
                 case 'user':
-                    if (isset($data["name"])) {
-                        $data['title'] = $data['name'];
+                	
+                    if (isset($data["fields.name"][0])) {
+                        $resultData['name'] = $data["fields.name"][0];
                     } else {
-                        $data['title'] = $data['email'];
+                        $resultData['name'] = $data['email'][0];
                     }
-                    $userType = $this->_getUserType($data['userType']);
-                    $data['type'] = $userType['type'];
+                    $userType = $this->_getUserType($data['userType'][0]);
+                    $resultData['type'] = $userType['type'];
                     break;
             }
             
             // ensure that date is formated as timestamp while handled as date
             // type for ES
-            $data['lastUpdateTime'] = strtotime($data['lastUpdateTime']);
+            $data['lastUpdateTime'] = strtotime($data['lastUpdateTime'][0]);
             
             // Set read only
             
-            if (! isset($data['writeWorkspace']) or
-                     in_array($data['writeWorkspace'], $writeWorkspaceArray)) {
-                $data['readOnly'] = false;
+            if (! isset($data['writeWorkspace'][0]) or
+                     in_array($data['writeWorkspace'][0], $writeWorkspaceArray)) {
+                $resultData['readOnly'] = false;
             } else {
-                $data['readOnly'] = true;
+                $resultData['readOnly'] = true;
             }
-            $result['data'][] = $data;
+            
+            $result['data'][]  = array_merge($resultData, $data);
+
         }
-        
+
         // Add label to Facets, hide empty facets,
         $elasticaFacetsTemp = $elasticaResultSet->getFacets();
         $elasticaFacets=array();
@@ -1562,20 +1539,69 @@ class DataSearch extends DataAbstract implements IDataSearch
     }
 
     /**
-     * extract term from highlight
+     * get autocomplete suggestion
      *
-     * @param string $string            
-     * @return string
+     * @param
+     *            array $params search parameters : query
+     * @return array
      */
-    protected function cleanSuggest ($string)
+    public function suggest (array $params)
     {
-        $newstring = mb_strtolower(
-                html_entity_decode(
-                        preg_replace(
-                                "#^(.*)<term>(.*)</term>(\\w*)([^\\w].*)?$#msuU", 
-                                "$2$3", $string)), 'UTF-8');
-        $newstring = strip_tags($newstring);
-        return $newstring;
+    	
+    	// init response
+    	$response = array();
+    	
+    	// get params
+    	$this->_params = $params;
+
+    	// get current user language
+    	$currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+
+    	// query
+    	$query = array(
+    			'autocomplete' => array(
+    					'text' => $this->_params['query'],
+    					'completion' => array(
+    							'field' => 'autocomplete_'.$currentLocale,
+    					)
+    			)
+    	);
+    	
+    	$nonlocalizedquery = array(
+    			'autocomplete' => array(
+    					'text' => $this->_params['query'],
+    					'completion' => array(
+    							'field' => 'autocomplete_nonlocalized',
+    					)
+    			)
+    	);
+    	
+    	// get suggest from content
+    	$client = self::$_content_index->getClient();
+    	$path = self::$_content_index->getName() . '/_suggest';
+    	$suggestion = $client->request($path, 'GET', $query);
+    	$responseArray = $suggestion->getData()["autocomplete"][0]["options"];
+    	
+    	// get suggest from dam
+    	$client = self::$_dam_index->getClient();
+    	$path = self::$_dam_index->getName() . '/_suggest';
+    	$suggestion = $client->request($path, 'GET', $query);
+    	if (isset($suggestion->getData()["autocomplete"][0]["options"])) {
+    		$responseArray = array_merge($responseArray,$suggestion->getData()["autocomplete"][0]["options"]);
+    	}
+    	
+    	// get suggest from user
+    	$client = self::$_user_index->getClient();
+    	$path = self::$_user_index->getName() . '/_suggest';
+    	$suggestion = $client->request($path, 'GET', $nonlocalizedquery);
+    	if (isset($suggestion->getData()["autocomplete"][0]["options"])) {
+    		$responseArray = array_merge($responseArray,$suggestion->getData()["autocomplete"][0]["options"]);
+    	}
+    	
+    	foreach ($responseArray as $suggest) {
+    		$response[] = $suggest;
+		}
+		return $response;
     }
 
     /**

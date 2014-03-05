@@ -41,6 +41,13 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     protected $_twig;
 
     /**
+     * twig environnelent object
+     *
+     * @var \Twig_Environment
+     */
+    protected $twigString;
+
+    /**
      * Twig options array
      *
      * @var array
@@ -124,56 +131,37 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             'overrideThemes' => $config['overrideThemes'],
             'rootTemplateDir' => $config['rootTemplateDir']
         );
-        
-        if($this->getCurrentTheme()!='customtheme'){
-            $loader = new \Twig_Loader_Filesystem($config['themes'][$this->getCurrentTheme()]['basePath']);
-        }else{
-            $loader = new \Twig_Loader_Filesystem($config['templateDir'].'/customtheme');
+
+        $fileSystem = $config['templateDir'].'/customtheme';
+        if ($this->getCurrentTheme()!='customtheme') {
+            $fileSystem = $config['themes'][$this->getCurrentTheme()]['basePath'];
         }
-        
+        $loader = new \Twig_Loader_Filesystem($fileSystem);
+
         //basePath
         $loader->addPath($this->options['templateDir'] . '/root', 'Root');
         $loader->addPath($this->options['templateDir'] . '/root');
         $this->_twig = new \Twig_Environment($loader, $this->options);
-        
+        $this
+            ->addExtensions($this->_twig)
+            ->addFilters($this->_twig)
+            ->addFunctions($this->_twig);
+        $stringLoader = new \Twig_Loader_String();
+        $this->twigString = new \Twig_Environment($stringLoader, $this->options);
+        $this
+            ->addExtensions($this->twigString)
+            ->addFilters($this->twigString)
+            ->addFunctions($this->twigString);
+
+
+
         foreach ($config['namespaces'] as $name => $path) {
             $loader->prependPath($path, $name);
         }
-        
+
         if (isset($this->options['overrideThemes']) && isset($this->options['overrideThemes'][$this->getCurrentTheme()])) {
             $loader->prependPath($this->options['overrideThemes'][$this->getCurrentTheme()]);
         }
-        
-        $this->_twig->addExtension(new \Twig_Extension_Debug());
-        
-        $this->_twig->addExtension(new BackOfficeTranslate());
-        $this->_twig->addExtension(new FrontOfficeTranslate());
-        
-        $this->_twig->addExtension(new \Twig_Extensions_Extension_Intl());
-        
-        $this->_twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml', array(
-            'is_safe' => array(
-                'html'
-            )
-        )));
-        
-        $this->_twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
-        $this->_twig->addFunction('displayUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayUrl'));
-        $this->_twig->addFunction('getPageTitle', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getPageTitle'));
-        $this->_twig->addFunction('getLinkedContents', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getLinkedContents'));
-        $this->_twig->addFunction('getTaxonomyTerm', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getTaxonomyTerm'));
-        $this->_twig->addFunction('getDam', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getDam'));
-        $this->_twig->addFunction('getContent', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getContent'));
-        $this->_twig->addFunction('isInRootline', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::isInRootline'));
-        $this->_twig->addFunction('getMediaType', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getMediaType'));
-        $this->_twig->addFunction('imageUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::imageUrl'));
-        $this->_twig->addFunction('mediaUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaUrl'));
-        $this->_twig->addFunction('mediaThumbnailUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaThumbnailUrl'));
-        $this->_twig->addFunction('staticUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::staticUrl'));
-        $this->_twig->addFunction('flagUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::flagUrl'));
-        $this->_twig->addFunction('userAvatar', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatar'));
-        $this->_twig->addFunction('userAvatarThumbnail', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatarThumbnail'));
-        $this->_twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
     }
 
     /**
@@ -189,6 +177,14 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         $templateObj = $this->_twig->loadTemplate($template);
         return $templateObj->render($vars);
+    }
+
+    public function renderString($string, array $vars)
+    {
+        return $this
+            ->twigString
+            ->loadTemplate($string)
+            ->render($vars);
     }
 
     /**
@@ -549,6 +545,46 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return $string;
     }
 
+    public function addExtensions(\Twig_Environment &$twig) {
+        $twig->addExtension(new \Twig_Extension_Debug());
+
+        $twig->addExtension(new BackOfficeTranslate());
+        $twig->addExtension(new FrontOfficeTranslate());
+
+        $twig->addExtension(new \Twig_Extensions_Extension_Intl());
+        return $this;
+    }
+
+    public function addFilters(\Twig_Environment &$twig) {
+        $twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml', array(
+            'is_safe' => array(
+                'html'
+            )
+        )));
+        $twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
+        return $this;
+    }
+
+    public function addFunctions(\Twig_Environment &$twig) {
+        $twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
+        $twig->addFunction('displayUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayUrl'));
+        $twig->addFunction('getPageTitle', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getPageTitle'));
+        $twig->addFunction('getLinkedContents', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getLinkedContents'));
+        $twig->addFunction('getTaxonomyTerm', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getTaxonomyTerm'));
+        $twig->addFunction('getDam', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getDam'));
+        $twig->addFunction('getContent', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getContent'));
+        $twig->addFunction('isInRootline', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::isInRootline'));
+        $twig->addFunction('getMediaType', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getMediaType'));
+        $twig->addFunction('imageUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::imageUrl'));
+        $twig->addFunction('mediaUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaUrl'));
+        $twig->addFunction('mediaThumbnailUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::mediaThumbnailUrl'));
+        $twig->addFunction('staticUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::staticUrl'));
+        $twig->addFunction('flagUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::flagUrl'));
+        $twig->addFunction('userAvatar', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatar'));
+        $twig->addFunction('userAvatarThumbnail', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatarThumbnail'));
+        return $this;
+    }
+    
     /**
      * Read configuration from global application config and load it for the current class
      */

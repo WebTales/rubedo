@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
@@ -233,7 +234,7 @@ class ContentsController extends DataAccessController
     {
         $result = $this->_dataService->countOrphanContents();
         
-        return $this->_returnJson($result);
+        return $this->_returnJson(array("orphanContents"=>$result));
     }
 
     public function deleteByContentTypeIdAction ()
@@ -245,5 +246,50 @@ class ContentsController extends DataAccessController
         $deleteResult = $this->_dataService->deleteByContentType($typeId);
         
         return $this->_returnJson($deleteResult);
+    }
+
+    public function getStockAction ()
+    {
+        $typeId = $this->params()->fromQuery('type-id');
+        $workingLanguage=$this->params()->fromQuery('workingLanguage',"en");
+        if (! $typeId) {
+            throw new \Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
+        }
+        $result=$this->_dataService->getStock($typeId,$workingLanguage);
+        return $this->_returnJson($result);
+    }
+
+    public function updateStockAction (){
+        $data = $this->params()->fromPost('data', null);
+        $actionToApply=$this->params()->fromPost('actionToApply', null);
+        $amountToApply=$this->params()->fromPost('amountToApply', null);
+        if ((empty($data))||(empty($actionToApply))||(empty($amountToApply))){
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Missing parameters'
+            ));
+        }
+        $updateData = Json::decode($data,Json::TYPE_ARRAY);
+        if (!is_array($updateData)) {
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Not an array'
+            ));
+        }
+        if ($actionToApply=="add"){
+            $result=$this->_dataService->increaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+        } else {
+            $result=$this->_dataService->decreaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+        }
+        if (!$result['success']){
+            return $this->_returnJson($result);
+        }
+        $updateData['stock']=$result['newStock'];
+        return $this->_returnJson(array(
+            'success' => true,
+            "data" => $updateData
+        ));
     }
 }
