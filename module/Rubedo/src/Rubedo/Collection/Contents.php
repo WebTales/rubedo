@@ -1150,5 +1150,93 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
 
     }
+    /**
+     * Add a specific amount to stock of a product variation
+     */
+    public function increaseStock ($productId, $variationId, $amount)
+    {
+        $product=$this->findById($productId, false, false);
+        if (!$product){
+            return array(
+                "msg"=>"Product not found",
+                "success"=>false
+            );
+        }
+        $newStock=0;
+        $notFound=true;
+        foreach ($product['productProperties']['variations'] as &$variation){
+            if ($variation['id']==$variationId){
+                $variation['stock']=$variation['stock']+$amount;
+                $newStock=$variation['stock'];
+                $notFound=false;
+                break;
+            }
+        }
+        if ($notFound){
+            return array(
+                "msg"=>"Variation not found",
+                "success"=>false
+            );
+        }
+        $updatedProduct=$this->update($product, array(), false);
+        if (!$updatedProduct['success']){
+            return array(
+                "msg"=>"Error updating product",
+                "success"=>false
+            );
+        }
+        return array(
+            "newStock"=>$newStock,
+            "success"=>true
+        );
+
+    }
+
+    /**
+     * Remove a specific amount from stock of a product variation
+     */
+    public function decreaseStock ($productId, $variationId, $amount)
+    {
+        $product=$this->findById($productId, false, false);
+        if (!$product){
+            return array(
+                "msg"=>"Product not found",
+                "success"=>false
+            );
+        }
+        $newStock=0;
+        $notFound=true;
+        foreach ($product['productProperties']['variations'] as &$variation){
+            if ($variation['id']==$variationId){
+                if ($variation['stock']<$amount){
+                    return array(
+                        "msg"=>"Insufficient stock",
+                        "success"=>false
+                    );
+                }
+                $variation['stock']=$variation['stock']-$amount;
+                $newStock=$variation['stock'];
+                $notFound=false;
+                break;
+            }
+        }
+        if ($notFound){
+            return array(
+                "msg"=>"Variation not found",
+                "success"=>false
+            );
+        }
+        $updatedProduct=$this->update($product, array(), false);
+        if (!$updatedProduct['success']){
+            return array(
+                "msg"=>"Error updating product",
+                "success"=>false
+            );
+        }
+        return array(
+            "newStock"=>$newStock,
+            "success"=>true
+        );
+    }
 
 }

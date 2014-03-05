@@ -247,6 +247,7 @@ class ContentsController extends DataAccessController
         
         return $this->_returnJson($deleteResult);
     }
+
     public function getStockAction ()
     {
         $typeId = $this->params()->fromQuery('type-id');
@@ -256,5 +257,39 @@ class ContentsController extends DataAccessController
         }
         $result=$this->_dataService->getStock($typeId,$workingLanguage);
         return $this->_returnJson($result);
+    }
+
+    public function updateStockAction (){
+        $data = $this->params()->fromPost('data', null);
+        $actionToApply=$this->params()->fromPost('actionToApply', null);
+        $amountToApply=$this->params()->fromPost('amountToApply', null);
+        if ((empty($data))||(empty($actionToApply))||(empty($amountToApply))){
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Missing parameters'
+            ));
+        }
+        $updateData = Json::decode($data,Json::TYPE_ARRAY);
+        if (!is_array($updateData)) {
+            $this->getResponse()->setStatusCode(500);
+            return $this->_returnJson(array(
+                'success' => false,
+                "msg" => 'Not an array'
+            ));
+        }
+        if ($actionToApply=="add"){
+            $result=$this->_dataService->increaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+        } else {
+            $result=$this->_dataService->decreaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+        }
+        if (!$result['success']){
+            return $this->_returnJson($result);
+        }
+        $updateData['stock']=$result['newStock'];
+        return $this->_returnJson(array(
+            'success' => true,
+            "data" => $updateData
+        ));
     }
 }
