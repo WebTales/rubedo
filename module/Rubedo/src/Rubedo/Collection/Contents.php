@@ -1124,6 +1124,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 'productId'=>'$_id',
                 '_id'=>0,
                 'variation'=>'$productProperties.variations',
+                'outOfStockLimit'=>'$productProperties.outOfStockLimit',
+                'notifyForQuantityBelow'=>'$productProperties.notifyForQuantityBelow',
                 'title'=>'$live.i18n.'.$workingLanguage.'.fields.text'
             )
         );
