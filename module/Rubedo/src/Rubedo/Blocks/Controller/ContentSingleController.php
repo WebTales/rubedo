@@ -236,6 +236,7 @@ class ContentSingleController extends AbstractController
             if ((isset($content['isProduct']))&&($content['isProduct']===true)){
                 $output["isProduct"]=true;
                 $output["productProperties"]=$content['productProperties'];
+                $output["productProperties"]["manageStock"]=$type["manageStock"];
                 $output["initialVariant"]=$content['productProperties']['variations'][0];
                 $js[]=$this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/productdetail.js");
             }
