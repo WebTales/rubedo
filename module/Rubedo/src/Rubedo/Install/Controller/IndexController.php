@@ -403,9 +403,9 @@ class IndexController extends AbstractActionController
         $dbForm = MailConfigForm::getForm($mailerOptions);
         $dbForm->setData($this->params()
             ->fromPost());
-
+        $formValid = $this->getRequest()->isPost() && $dbForm->isValid();
         try {
-            if ($this->getRequest()->isPost() && $dbForm->isValid()) {
+            if ($formValid) {
                 $params = $dbForm->getData();
                 unset($params['buttonGroup']);
             } else {
@@ -421,14 +421,23 @@ class IndexController extends AbstractActionController
             $connectionValid = true;
         } catch (\Exception $exception) {
             $connectionValid = false;
+            $error = $exception->getMessage();
+        }
+        if ($formValid) {
+            $this->config["swiftmail"]["smtp"] = $params;
+            $this->installObject->saveLocalConfig($this->config);
         }
         if ($connectionValid) {
             $this->viewData->isSet = true;
-            $this->config["swiftmail"]["smtp"] = $params;
-            $this->installObject->saveLocalConfig($this->config);
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect to SMTP server';
+            if ($formValid) {
+                $this->viewData->errorMsgs .= ' (by the way, data has been setted)';
+            }
+            if (!empty($error)) {
+                $this->viewData->errorMsgs .= ' : ' . $error;
+            }
         }
         $this->viewData->isReady = true;
         $this->viewData->form = $dbForm;
