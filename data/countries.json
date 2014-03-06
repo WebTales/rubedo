@@ -2221,5 +2221,14 @@
         "iso_3166-2": "ISO 3166-2:ZW",
         "region-code": "002",
         "sub-region-code": "014"
+    },
+    {
+        "name": "*",
+        "alpha-2": "*",
+        "alpha-3": "*",
+        "country-code": "*",
+        "iso_3166-2": "*",
+        "region-code": "*",
+        "sub-region-code": "*"
     }
 ]

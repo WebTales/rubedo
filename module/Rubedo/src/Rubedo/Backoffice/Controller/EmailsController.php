@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,50 +29,81 @@ use Zend\View\Model\JsonModel;
  * @author adobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class EmailsController extends DataAccessController
 {
+    const NUM_BY_MAIL = 500;
+
+    /**
+     * Data Access Service
+     *
+     * @var \Rubedo\Collection\Emails
+     */
+    protected $_dataService;
 
     public function __construct()
     {
         parent::__construct();
-        
         // init the data access service
         $this->_dataService = Manager::getService('Emails');
     }
 
     public function previewAction()
     {
-        $mail =$this->_dataService->findById($this->getRequest()->getQuery('id'));
-
-        return $this->getResponse()->setContent($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], false)) ;
+        $mail = $this->_dataService->findById($this->getRequest()->getQuery('id'));
+        $html = $this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], false);
+        return $this->getResponse()->setContent($html);
     }
 
     public function sendAction()
     {
+        /**
+         * @var $mailingListService \Rubedo\Interfaces\Collection\IMailingList
+         * @var $usersService \Rubedo\Interfaces\Collection\IUsers
+         * @var $valueFilter \WebTales\MongoFilters\ValueFilter
+         */
+        $mailingListService = Manager::getService('MailingList');
+        $usersService = Manager::getService('Users');
+
         $mail = $this->_dataService->findById($this->params()->fromPost('id'));
-        $list = Manager::getService('MailingList')->findById($this->params()->fromPost('list'));
+        $list = $mailingListService->findById($this->params()->fromPost('list'));
 
-        $this->_dataService->setSubject(!empty($mail['subject']) ? $mail['subject'] : $mail['text']);
-        $this->_dataService->setMessageHTML($this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], true));
-        if (!empty($mail['plainText'])) {
-            $this->_dataService->setMessageTXT($mail['plainText']);
-        }
-        $this->_dataService->setFrom($list);
-
-        $filters =  Filter::factory()
-            ->addFilter(Filter::factory('Value')
-                ->setName('mailingLists.' . $list['id'] . '.status')
-                ->setValue(true));
-        $users = Manager::getService('Users')->getList($filters);
+        //Get Recipients
+        $valueFilter = Filter::factory('Value');
+        $valueFilter
+            ->setName('mailingLists.' . $list['id'] . '.status')
+            ->setValue(true);
+        $filters = Filter::factory()
+            ->addFilter($valueFilter);
+        $users = $usersService->getList($filters);
 
         $to = array();
-        //@todo : refactor
+        $allSendResult = true;
+        $count = 0;
         foreach ($users['data'] as $user) {
-            $to[$user['email']] = ($user['name'])?:$user['login'];
+            $index = (int) floor($count++/static::NUM_BY_MAIL);
+            $to[$index][$user['email']] = ($user['name']) ? : $user['login'];
         }
-        $this->_dataService->setTo($to);
-        return new JsonModel(array('success' => $this->_dataService->send() > 0 ? true : false));
+
+        $html = $this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], true);
+        foreach ($to as $recipients) {
+            $this->_dataService
+                ->setSubject(!empty($mail['subject']) ? $mail['subject'] : $mail['text'])
+                ->setMessageHTML($html)
+                ->setFrom($list)
+                ->setTo($recipients);
+
+            if (!empty($mail['plainText'])) {
+                $this->_dataService->setMessageTXT($mail['plainText']);
+            }
+            $sendResult = $this->_dataService->send();
+            if ($sendResult <= 0) {
+                $allSendResult = false;
+                break;
+            }
+        }
+
+        return new JsonModel(array('success' => $allSendResult));
     }
 }

@@ -166,10 +166,10 @@ class SearchController extends AbstractController
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
         
-        $suggestTerms = $elasticaQuery->search($params, 'suggest');
-               
+        $suggestTerms = $elasticaQuery->suggest($params);
+
         $data = array(
-                'terms' => $suggestTerms
+        	'terms' => $suggestTerms
         );
         return new JsonModel($data);
     }

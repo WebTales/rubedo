@@ -168,6 +168,7 @@ class Emails extends AbstractCollection implements IEmails
     public function setTo(array $to)
     {
         $this->swiftMessage->setTo($to);
+        return $this;
     }
 
     public function setFrom(array $list)
@@ -183,6 +184,7 @@ class Emails extends AbstractCollection implements IEmails
             $from[$rubedoMail] = 'Rubedo';
         }
         $this->swiftMessage->setFrom($from);
+        return $this;
     }
 
 

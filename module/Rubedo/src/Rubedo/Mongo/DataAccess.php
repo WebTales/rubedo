@@ -1490,4 +1490,15 @@ class DataAccess implements IDataAccess
         }
         return $adapter->connected;
     }
+    /**
+     * Performs aggregation on collection
+     * @param array $pipeline
+     *
+     * @return array
+     */
+    public function aggregate ($pipeline)
+    {
+        $result=$this->_collection->aggregate($pipeline);
+        return $result;
+    }
 }

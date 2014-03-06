@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use Rubedo\Elastic\DataSearch;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
@@ -33,7 +34,7 @@ class GeoSearchController extends AbstractController
 
     public function init ()
     {
-        \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        DataSearch::setIsFrontEnd(true);
         parent::init();
     }
 
@@ -103,11 +104,13 @@ class GeoSearchController extends AbstractController
         
         $facetsToHide = array_unique($facetsToHide);
         
-        \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
+        DataSearch::setIsFrontEnd(true);
         
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
+
         $results = $query->search($params, $this->_option, false);
+
         $results = $this->_clusterResults($results);
         
         $results['displayMode'] = $params['block-config']['displayMode'];
@@ -148,13 +151,15 @@ class GeoSearchController extends AbstractController
         // set field for autocomplete
         $params['field'] = 'autocomplete_' . $currentLocale;
         
+        Datasearch::setIsFrontEnd(true);
+        
         $elasticaQuery = Manager::getService('ElasticDataSearch');
         $elasticaQuery->init();
         
-        $suggestTerms = $elasticaQuery->search($params, 'geosuggest');
-        
+        $suggestTerms = $elasticaQuery->suggest($params);
+
         $data = array(
-            'terms' => $suggestTerms
+        	'terms' => $suggestTerms
         );
         return new JsonModel($data);
     }
@@ -164,13 +169,14 @@ class GeoSearchController extends AbstractController
         // return $results;
         $tmpResults = array();
         foreach ($results['data'] as $item) {
-            $subkey = $item['fields.position.location.coordinates'];
+
+            $subkey = $item['fields.position.location.coordinates'][0];
             if (! isset($tmpResults[$subkey])) {
-                $tmpResults[$subkey]['position_location'] = $item['fields.position.location.coordinates'];
+                $tmpResults[$subkey]['position_location'] = $item['fields.position.location.coordinates'][0];
                 $tmpResults[$subkey]['count'] = 0;
                 $tmpResults[$subkey]['id'] = '';
             }
-            unset($item['fields.position.location.coordinates']);
+            unset($item['fields.position.location.coordinates'][0]);
             $tmpResults[$subkey]['count'] ++;
             if ($tmpResults[$subkey]['count'] > 1) {
                 $tmpResults[$subkey]['title'] = $tmpResults[$subkey]['count'];

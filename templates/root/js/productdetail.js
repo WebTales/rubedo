@@ -16,6 +16,25 @@ jQuery(document).ready(function(e) {
         }
         mainBox.find(".productpricetext").text(initialVariation.price+" €");
         mainBox.find(".productbuybtn").attr("data-variationid",initialVariation.id);
+        mainBox.find(".productbuybtn").removeAttr("disabled");
+        mainBox.find(".productavailabilitytext").text("");
+        mainBox.find(".productavailabilitytext").addClass("text-info");
+        mainBox.find(".productavailabilitytext").removeClass("text-error");
+        if (configData.manageStock){
+            var stock=initialVariation.stock;
+            if (stock < configData.outOfStockLimit){
+                var complement=configData.resupplyDelay > 1 ? " days" : " day";
+                mainBox.find(".productavailabilitytext").text("Out of stock : ressuplied before "+configData.resupplyDelay+ complement);
+                if (configData.canOrderNotInStock=="false"){
+                    mainBox.find(".productavailabilitytext").removeClass("text-info");
+                    mainBox.find(".productavailabilitytext").addClass("text-error");
+                    mainBox.find(".productbuybtn").attr("disabled","disabled");
+                }
+            } else {
+                var complement=configData.preparationDelay > 1 ? " days" : " day";
+                mainBox.find(".productavailabilitytext").text("In stock : sent before "+configData.preparationDelay + complement);
+            }
+        }
         var currentConstraints={ };
         mainBox.find("select").each(function(){
             var possibilities = extractOptionPossibilities(configData.variations, jQuery(this).attr("name"),currentConstraints);
@@ -26,7 +45,7 @@ jQuery(document).ready(function(e) {
             theCombo.val(initialVariation[theCombo.attr("name")]);
             currentConstraints[theCombo.attr("name")]=theCombo.val();
             theCombo.change(function(){
-                adaptToProductOptionsChange(mainBox,theCombo.attr("data-fieldindex"),configData.variations);
+                adaptToProductOptionsChange(mainBox,theCombo.attr("data-fieldindex"),configData);
             });
         })
     });
@@ -55,8 +74,9 @@ function extractOptionPossibilities (variations, optionName, constraints) {
 
 }
 
-function adaptToProductOptionsChange (productBox, changedIndex,variations) {
+function adaptToProductOptionsChange (productBox, changedIndex,configData) {
     var currentConstraints={ };
+    var variations=configData.variations;
     productBox.find("select").each(function(){
         var theCombo=jQuery(this);
         if (theCombo.attr("data-fieldindex")<=changedIndex){
@@ -95,6 +115,24 @@ function adaptToProductOptionsChange (productBox, changedIndex,variations) {
         var newVariation=newVariations[0];
         productBox.find(".productpricetext").text(newVariation.price+" €");
         productBox.find(".productbuybtn").attr("data-variationid",newVariation.id);
+        productBox.find(".productbuybtn").removeAttr("disabled");
+        productBox.find(".productavailabilitytext").text("");
+        productBox.find(".productavailabilitytext").addClass("text-info");
+        productBox.find(".productavailabilitytext").removeClass("text-error");
+        if (configData.manageStock){
+            var stock=newVariation.stock;
+            if (stock < configData.outOfStockLimit){
+                productBox.find(".productavailabilitytext").text("Out of stock : ressuplied before "+configData.resupplyDelay+" days");
+                if (configData.canOrderNotInStock=="false"){
+                    productBox.find(".productavailabilitytext").removeClass("text-info");
+                    productBox.find(".productavailabilitytext").addClass("text-error");
+                    productBox.find(".productbuybtn").attr("disabled","disabled");
+                }
+            } else {
+                productBox.find(".productavailabilitytext").text("In stock : sent before "+configData.preparationDelay+" days");
+            }
+        }
+
     }
 }
 
