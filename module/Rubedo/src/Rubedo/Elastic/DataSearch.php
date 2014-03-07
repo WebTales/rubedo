@@ -999,48 +999,24 @@ class DataSearch extends DataAbstract implements IDataSearch
         $elasticaQuery->setFields($returnedFieldsArray);
 
         // run query
+        $client = $this->_client;
+        $client->setLogger(Manager::getService('SearchLogger')->getLogger());
+        $search = new \Elastica\Search($client);
         switch ($option) {
             case 'content':
-            	$client = self::$_content_index->getClient();
-            	$search = new \Elastica\Search($client);
+            	$search->addIndex(self::$_content_index);
                 break;
             case 'dam':
-            	$client = self::$_dam_index->getClient();
-                $search = new \Elastica\Search($client);
+                $search->addIndex(self::$_dam_index);
                 break;
             case 'user':
-            	$client = self::$_user_index->getClient();
-            	$search = new \Elastica\Search($client);
+            	$search->addIndex(self::$_user_index);
                 break;
             case 'geo':
             case 'all':
-                $client = self::$_content_index->getClient();
-                $client->setLogger(
-                        Manager::getService('SearchLogger')->getLogger());
-                $search = new \Elastica\Search($client);
-                $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_content_index);
+                $search->addIndex(self::$_dam_index);
                 $search->addIndex(self::$_user_index);
-                
-                $suggest = new \Elastica\Suggest();
-                $suggestTerm = new \Elastica\Suggest\Term('suggest1', '_all');
-                $suggest->addSuggestion($suggestTerm->setText($this->_params['query']));
-                $search->setSuggest($suggest);
-                 break;
-            case 'suggest':
-            case 'geosuggest':
-            	$client = self::$_content_index->getClient();
-            	$search = new \Elastica\Search($client);
-            	$suggest = new \Elastica\Suggest();
-            	$suggestTerm = new \Elastica\Suggest\Term('suggest1', 'text');
-            	$suggest->addSuggestion($suggestTerm->setText($this->_params['query']));
-            	
-            	$search->setSuggest($suggest);
-            	
-            	$elasticaResultSet = $search->search($suggest);
-            	var_dump ($elasticaResultSet->getSuggests());
-            	exit;
-
                 break;
         }
         
@@ -1576,14 +1552,16 @@ class DataSearch extends DataAbstract implements IDataSearch
     			)
     	);
     	
+    	// Get search client
+    	$client = $this->_client;
+    	
     	// get suggest from content
-    	$client = self::$_content_index->getClient();
+    	
     	$path = self::$_content_index->getName() . '/_suggest';
     	$suggestion = $client->request($path, 'GET', $query);
     	$responseArray = $suggestion->getData()["autocomplete"][0]["options"];
     	
     	// get suggest from dam
-    	$client = self::$_dam_index->getClient();
     	$path = self::$_dam_index->getName() . '/_suggest';
     	$suggestion = $client->request($path, 'GET', $query);
     	if (isset($suggestion->getData()["autocomplete"][0]["options"])) {
@@ -1591,7 +1569,6 @@ class DataSearch extends DataAbstract implements IDataSearch
     	}
     	
     	// get suggest from user
-    	$client = self::$_user_index->getClient();
     	$path = self::$_user_index->getName() . '/_suggest';
     	$suggestion = $client->request($path, 'GET', $nonlocalizedquery);
     	if (isset($suggestion->getData()["autocomplete"][0]["options"])) {

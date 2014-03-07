@@ -1111,13 +1111,13 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
 
         // Add autocompletion fields and title
-		$userThumbnail = Manager::getService('Url')->userAvatar($data['id'],40,40,"boxed");
+		$userThumbnail = (is_numeric($photo)) ? Manager::getService('Url')->userAvatar($data['id'],40,40,"boxed") : null;
         $indexData['autocomplete_nonlocalized'] = array(
         	'input' => $data['name'],
         	'output' => $data['name'],
         	'payload' => "{ \"type\" : \"user\",  \"id\" : \"".$data['id']."\", \"thumbnail\" : \"".$userThumbnail."\"}"
         );
-		
+
         // Add document
         $currentDocument = new \Elastica\Document($data['id'], $indexData);
         
