@@ -1,0 +1,53 @@
+{
+	"type":"Checkout",
+	"description":"",
+	"configBasique":{
+		"title":"Checkout",
+		"bType":"checkout",
+		"flex":1,
+		"champsConfig":{
+			"simple":[
+                {
+                    "categorie":"#ext-gen1287#",
+                    "champs":[
+                        {
+                            "type":"Rubedo.view.UTCField",
+                            "config":{
+                                "fieldLabel":"#ext-gen1413#",
+                                "name":"userType"
+                            }
+                        },
+                        {
+                            "type":"Rubedo.view.MailingListPickerField",
+                            "config":{
+                                "fieldLabel":"#ext-gen1155#",
+                                "name":"mailingListId",
+                                "multiSelect":true
+                            }
+                        },
+                        {
+                            "type":"Rubedo.view.DCEField",
+                            "config":{
+                                "fieldLabel":"Sign-up text",
+                                "name":"signupContentId",
+                                "allowedCT":"richText",
+                                "addOnly":true
+                            }
+                        }
+
+                    ]
+                }
+			],
+			"avance":[
+
+			]
+		},
+		"configBloc":{
+        }
+
+
+	},
+	"category":"E-Commerce",
+	"bType":"checkout",
+	"id":"53184e22f05c1d2810000001"
+}

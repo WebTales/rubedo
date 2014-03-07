@@ -212,4 +212,9 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/development.json'
     ),
+    'checkout'=>array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\Checkout',
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/checkout.json'
+    ),
 );

@@ -16,6 +16,13 @@
                                 "fieldLabel":"Cart detail page",
                                 "name":"cartDetailPage"
                             }
+                        },
+                        {
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"Cart detail page",
+                                "name":"checkoutPage"
+                            }
                         },{
                             "type":"Ext.form.field.ComboBox",
                             "isAutoStored":true,

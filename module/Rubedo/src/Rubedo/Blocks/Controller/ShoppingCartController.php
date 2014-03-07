@@ -39,6 +39,7 @@ class ShoppingCartController extends AbstractController
         $output["totalAmount"]=$processedCart['totalAmount'];
         $output["totalItems"]=$processedCart['totalItems'];
         $output['cartDetailPage'] = isset($output['block-config']['cartDetailPage']) ? $output['block-config']['cartDetailPage'] : false;
+        $output['checkoutPage'] = isset($output['block-config']['checkoutPage']) ? $output['block-config']['checkoutPage'] : false;
         if ($output["cartDetailPage"]) {
             $urlOptions = array(
                 'encode' => true,
@@ -47,6 +48,16 @@ class ShoppingCartController extends AbstractController
 
             $output['cartDetailPageUrl'] = $this->url()->fromRoute(null, array(
                 'pageId' => $output["cartDetailPage"]
+            ), $urlOptions);
+        }
+        if ($output["checkoutPage"]) {
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $output['checkoutPageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $output["checkoutPage"]
             ), $urlOptions);
         }
         $output['displayMode'] = isset($output['block-config']['displayMode']) ? $output['block-config']['displayMode'] : "button";

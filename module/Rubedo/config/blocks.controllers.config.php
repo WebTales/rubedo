@@ -56,5 +56,6 @@ return array(
     'Rubedo\\Blocks\\Controller\\D3Script' => 'Rubedo\\Blocks\\Controller\\D3ScriptController',
     'Rubedo\\Blocks\\Controller\\Category' => 'Rubedo\\Blocks\\Controller\\CategoryController',
     'Rubedo\\Blocks\\Controller\\ShoppingCart' => 'Rubedo\\Blocks\\Controller\\ShoppingCartController',
-    'Rubedo\\Blocks\\Controller\\Development' => 'Rubedo\\Blocks\\Controller\\DevelopmentController'
+    'Rubedo\\Blocks\\Controller\\Development' => 'Rubedo\\Blocks\\Controller\\DevelopmentController',
+    'Rubedo\\Blocks\\Controller\\Checkout' => 'Rubedo\\Blocks\\Controller\\CheckoutController'
 );
