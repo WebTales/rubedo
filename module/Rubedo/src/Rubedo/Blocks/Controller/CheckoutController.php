@@ -40,12 +40,21 @@ class CheckoutController extends AbstractController
                 $output['introContentText'] = $introContent["fields"]["body"];
             }
         }
+        $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser){
+            $output['currentStep']=1;
+        } else {
+            $output['currentStep']=2;
+        }
+
 
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/checkout.html.twig");
         $css = array(
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("css/checkout.css")
         );
-        $js = array();
+        $js = array(
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/checkout.js")
+        );
         return $this->_sendResponse($output, $template, $css, $js);
     }
 }

@@ -2,16 +2,15 @@
 {% block mainContent %}
     <h2>Checkout</h2>
     <div class="progress checkout-progress">
-        <div class="bar" style="width: 17%"></div>
+        <div class="bar" id="checkoutmainprogress" style="width: 17%"></div>
     </div>
-    <div class="accordion" id="accordioncheckout1">
+    <div class="accordion" id="accordioncheckout" data-currentstep="{{ currentStep }}">
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
+                <a class="checkouteditlink" data-targetstep="1" onclick="setCheckoutStep(1);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
                 <h5>Step 1 : Checkout Options</h5>
-                {#<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordioncheckout1" href="checkoutstep1">#}
-                {#</a>#}
             </div>
-            <div id="checkoutstep1" class="accordion-body collapse in checkout-holder">
+            <div id="checkoutstep1" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
                     {{ include('blocks/checkout/step1.html.twig') }}
                 </div>
@@ -19,11 +18,10 @@
         </div>
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
+                <a class="checkouteditlink" data-targetstep="2" onclick="setCheckoutStep(2);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
                 <h5>Step 2 : Account & Billing Details</h5>
-                {#<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordioncheckout1" href="checkoutstep2">#}
-                {#</a>#}
             </div>
-            <div id="checkoutstep2" class="accordion-body collapse checkout-holder">
+            <div id="checkoutstep2" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
                     Interior area
                 </div>
@@ -31,11 +29,10 @@
         </div>
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
+                <a class="checkouteditlink" data-targetstep="3" onclick="setCheckoutStep(3);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
                 <h5>Step 3 : Delivery Details</h5>
-                {#<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordioncheckout1" href="checkoutstep3">#}
-                {#</a>#}
             </div>
-            <div id="checkoutstep3" class="accordion-body collapse checkout-holder">
+            <div id="checkoutstep3" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
                     Interior area
                 </div>
@@ -43,11 +40,10 @@
         </div>
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
+                <a class="checkouteditlink" data-targetstep="4" onclick="setCheckoutStep(4);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
                 <h5>Step 4 : Delivery Method</h5>
-                {#<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordioncheckout1" href="checkoutstep4">#}
-                {#</a>#}
             </div>
-            <div id="checkoutstep4" class="accordion-body collapse checkout-holder">
+            <div id="checkoutstep4" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
                     Interior area
                 </div>
@@ -55,11 +51,10 @@
         </div>
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
+                <a class="checkouteditlink" data-targetstep="5" onclick="setCheckoutStep(5);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
                 <h5>Step 5 : Payment Method</h5>
-                {#<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordioncheckout1" href="checkoutstep5">#}
-                {#</a>#}
             </div>
-            <div id="checkoutstep5" class="accordion-body collapse checkout-holder">
+            <div id="checkoutstep5" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
                     Interior area
                 </div>
@@ -67,11 +62,10 @@
         </div>
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
+                <a class="checkouteditlink" data-targetstep="5" onclick="setCheckoutStep(5);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
                 <h5>Step 6 : Confirm Order</h5>
-                {#<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordioncheckout1" href="checkoutstep6">#}
-                {#</a>#}
             </div>
-            <div id="checkoutstep6" class="accordion-body collapse checkout-holder">
+            <div id="checkoutstep6" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
                     Interior area
                 </div>
