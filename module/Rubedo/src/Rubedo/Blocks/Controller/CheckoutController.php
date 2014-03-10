@@ -45,7 +45,35 @@ class CheckoutController extends AbstractController
             $output['currentStep']=1;
         } else {
             $output['currentStep']=2;
+            $output['currentUser']=$currentUser;
         }
+        if (!isset($blockConfig['userType'])) {
+            return $this->_sendResponse(array(), "block.html.twig");
+        }
+        $output['userTypeId'] = $blockConfig['userType'];
+        $userType = Manager::getService('UserTypes')->findById($blockConfig['userType']);
+        if ($userType['signUpType'] == "none") {
+            return $this->_sendResponse(array(), "block.html.twig");
+        }
+        $output['fields'] = $userType['fields'];
+
+        $mailingListArray=array();
+        if ((! isset($blockConfig['mailingListId']))||(!is_array($blockConfig['mailingListId']))) {
+            $mailingListArray=false;
+        }
+        if ($mailingListArray!==false){
+            $mailingListService = Manager::getService("MailingList");
+            foreach ($blockConfig['mailingListId'] as $value){
+                $myList=$mailingListService->findById($value);
+                if ($myList){
+                    $mailingListArray[]=array(
+                        "label"=>$myList['name'],
+                        "value"=>$value
+                    );
+                }
+            }
+        }
+        $output['mailingListArray']=$mailingListArray;
 
 
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/checkout.html.twig");

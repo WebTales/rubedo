@@ -23,7 +23,7 @@
             </div>
             <div id="checkoutstep2" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
-                    Interior area
+                    {{ include('blocks/checkout/step2.html.twig') }}
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
         </div>
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
-                <a class="checkouteditlink" data-targetstep="5" onclick="setCheckoutStep(5);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
+                <a class="checkouteditlink" data-targetstep="6" onclick="setCheckoutStep(6);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
                 <h5>Step 6 : Confirm Order</h5>
             </div>
             <div id="checkoutstep6" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">

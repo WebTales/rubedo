@@ -1,0 +1,130 @@
+<div class="row-fluid">
+
+        <form method="post" class="form-horizontal" id="form-{{ prefix }}" >
+            <div class="span6">
+                <h4 class="text-center">Your personal details</h4>
+                <div class="control-group">
+                    <label class="control-label" >{{ 'Label.Email'|fotrans }} *</label>
+                    <div class="controls">
+                        <input type="email" name="email" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >{{ 'Blocks.SignUp.label.name'|fotrans }} *</label>
+                    <div class="controls">
+                        <input type="text" name="name" required>
+                    </div>
+                </div>
+
+
+                {% for field in fields %}
+                        {% if field['cType']=='Ext.form.field.Text' %}
+                            {% include '@Root/blocks/inputFields/text.html.twig' %}
+                        {% elseif field['cType']=='Ext.form.field.TextArea' %}
+                            {% include '@Root/blocks/inputFields/textarea.html.twig' %}
+                        {% elseif field['cType']=='Ext.form.field.Checkbox' %}
+                            {% include '@Root/blocks/inputFields/checkbox.html.twig' %}
+                        {% elseif field['cType']=='Ext.form.CheckboxGroup' %}
+                            {% include '@Root/blocks/inputFields/checkboxgroup.html.twig' %}
+                        {% elseif field['cType']=='Ext.form.RadioGroup' %}
+                            {% include '@Root/blocks/inputFields/radiogroup.html.twig' %}
+                        {% elseif field['cType']=='Ext.form.field.ComboBox' %}
+                            {% include '@Root/blocks/inputFields/combobox.html.twig' %}
+                        {% endif %}
+                {% endfor %}
+                <h4 class="text-center">Your password</h4>
+                <div class="control-group">
+                    <label class="control-label" >{{ 'Blocks.SignUp.label.password'|fotrans }} *</label>
+                    <div class="controls">
+                        <input type="password" name="password" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >{{ 'Blocks.SignUp.label.confirmPassword'|fotrans }} *</label>
+                    <div class="controls">
+                        <input type="password" name="confirmPassword" required>
+                    </div>
+                </div>
+                <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
+                {% if mailingListArray %}
+                <h4 class="text-center">Mailing lists</h4>
+                <div class="control-group">
+                    <label class="control-label">I wish to subscribed to the following mailing lists</label>
+                    <div class="controls">
+                        {% for mailinglist in mailingListArray %}
+                            <label class="checkbox">
+                                <input type="checkbox" class="mailingListCheck" name="{{ mailinglist.value }}" >
+                                {{ mailinglist.label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+
+            </div>
+            <div class="span6">
+                <h4 class="text-center">Your address</h4>
+
+                <div class="control-group">
+                    <label class="control-label" >Company </label>
+                    <div class="controls">
+                        <input type="text" name="company">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >Address 1 *</label>
+                    <div class="controls">
+                        <input type="text" name="address1" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >Address 2 </label>
+                    <div class="controls">
+                        <input type="text" name="address2">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >City *</label>
+                    <div class="controls">
+                        <input type="text" name="city" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >Post Code *</label>
+                    <div class="controls">
+                        <input type="text" name="postCode" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >Country *</label>
+                    <div class="controls">
+                        <input type="text" name="country" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" >Region / State *</label>
+                    <div class="controls">
+                        <input type="text" name="regionState" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" class="mailingListCheck" name="useSameAddress" >
+                            Use same address for billing and delivery
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" class="mailingListCheck" name="readTermsAndConds" >
+                            I have read and agree to the <a>Terms and Conditions</a>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary signupformtrigger" data-formid="form-{{ prefix }}" >{{ 'Blocks.SignUp.label.signUp'|fotrans }}</button>
+                </div>
+            </div>
+
+        </form>
+
+</div>
