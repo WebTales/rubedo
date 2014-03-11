@@ -33,6 +33,12 @@
                                 "allowedCT":"richText",
                                 "addOnly":true
                             }
+                        },{
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"Terms & Conditions page",
+                                "name":"tCPage"
+                            }
                         }
 
                     ]

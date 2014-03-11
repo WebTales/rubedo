@@ -43,18 +43,27 @@ class CheckoutController extends AbstractController
         $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
         if (!$currentUser){
             $output['currentStep']=1;
+            if (!isset($blockConfig['userType'])) {
+                return $this->_sendResponse(array(), "block.html.twig");
+            }
+            $output['userTypeId'] = $blockConfig['userType'];
         } else {
-            $output['currentStep']=2;
+            $output['currentStep']=3;
             $output['currentUser']=$currentUser;
+            $output['userTypeId'] = $currentUser['typeId'];
         }
-        if (!isset($blockConfig['userType'])) {
-            return $this->_sendResponse(array(), "block.html.twig");
+        $output["tCPage"]=isset($blockConfig["tCPage"]) ? $blockConfig["tCPage"] : false;
+        if ($output["tCPage"]) {
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $output['tCPageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $output["tCPage"]
+            ), $urlOptions);
         }
-        $output['userTypeId'] = $blockConfig['userType'];
-        $userType = Manager::getService('UserTypes')->findById($blockConfig['userType']);
-        if ($userType['signUpType'] == "none") {
-            return $this->_sendResponse(array(), "block.html.twig");
-        }
+        $userType = Manager::getService('UserTypes')->findById($output['userTypeId']);
         $output['fields'] = $userType['fields'];
 
         $mailingListArray=array();
@@ -74,8 +83,7 @@ class CheckoutController extends AbstractController
             }
         }
         $output['mailingListArray']=$mailingListArray;
-
-
+        $output['countries']=Manager::getService("Countries")->getList();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/checkout.html.twig");
         $css = array(
             $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("css/checkout.css")
