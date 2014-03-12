@@ -31,6 +31,14 @@
                                 "fieldLabel":"#ext-gen1414#",
                                 "name":"collectPassword"
                             }
+                        },
+                        {
+                            "type":"Rubedo.view.MailingListPickerField",
+                            "config":{
+                                "fieldLabel":"#ext-gen1155#",
+                                "name":"mailingListId",
+                                "multiSelect":true
+                            }
                         }
 					]
 				}

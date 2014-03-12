@@ -61,6 +61,7 @@ class SignUpController extends AbstractController
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
                 return $this->_sendResponse($output, $template);
             }
+            $mailingListsToSubscribe=array();
             $newUser = array();
             $newUser['name'] = $params['name'];
             $newUser['email'] = $params['email'];
@@ -77,6 +78,12 @@ class SignUpController extends AbstractController
                 unset($params['password']);
                 unset($params['confirmPassword']);
             }
+            foreach ($params as $key => $value){
+                if (strpos($key,"mlSubscr_")!==FALSE){
+                    $mailingListsToSubscribe[]=str_replace("mlSubscr_","",$key);
+                    unset($params[$key]);
+                }
+            }
             $newUser['fields'] = $params;
             if ($userType['signUpType'] == "open") {
                 $newUser['status'] = "approved";
@@ -88,10 +95,15 @@ class SignUpController extends AbstractController
                 $currentTime = $currentTimeService->getCurrentTime();
                 $newUser['signupTime'] = $currentTime;
             }
-
             $createdUser = Manager::getService('Users')->create($newUser);
             if (($createdUser['success']) && ($collectPassword)) {
                 Manager::getService('Users')->changePassword($newPassword, $createdUser['data']['version'], $createdUser['data']['id']);
+            }
+            if (($createdUser['success']) && ($mailingListsToSubscribe)) {
+                $mailingListService=Manager::getService("MailingList");
+                foreach ($mailingListsToSubscribe as $mailingListId){
+                     $mailingListService->subscribe($mailingListId, $newUser['email'], false);
+                }
             }
             if (!$createdUser['success']) {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
@@ -197,6 +209,20 @@ class SignUpController extends AbstractController
             $output['text'] = $content["fields"]["body"];
             $output["locale"] = isset($content["locale"]) ? $content["locale"] : null;
         }
+        $mailingListArray=array();
+        if (( isset($blockConfig['mailingListId']))&&(is_array($blockConfig['mailingListId']))) {
+            $mailingListService=Manager::getService("MailingList");
+            foreach ($blockConfig['mailingListId'] as $value){
+                $myList=$mailingListService->findById($value);
+                if ($myList){
+                    $mailingListArray[]=array(
+                        "label"=>$myList['name'],
+                        "value"=>$value
+                    );
+                }
+            }
+        }
+        $output['mailingListArray']=$mailingListArray;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signUp.html.twig");
         $css = array();
         $js = array();

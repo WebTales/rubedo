@@ -20,6 +20,23 @@
               <input type="text" name="name" required>
             </div>
         </div>
+
+        
+        {% for field in fields %}
+                {% if field['cType']=='Ext.form.field.Text' %}
+                    {% include '@Root/blocks/inputFields/text.html.twig' %}
+                {% elseif field['cType']=='Ext.form.field.TextArea' %}
+                    {% include '@Root/blocks/inputFields/textarea.html.twig' %}
+                {% elseif field['cType']=='Ext.form.field.Checkbox' %}
+                    {% include '@Root/blocks/inputFields/checkbox.html.twig' %}
+                {% elseif field['cType']=='Ext.form.CheckboxGroup' %}
+                    {% include '@Root/blocks/inputFields/checkboxgroup.html.twig' %}
+                {% elseif field['cType']=='Ext.form.RadioGroup' %}
+                    {% include '@Root/blocks/inputFields/radiogroup.html.twig' %}
+                {% elseif field['cType']=='Ext.form.field.ComboBox' %}
+                    {% include '@Root/blocks/inputFields/combobox.html.twig' %}
+                {% endif %}
+        {% endfor %}
         {% if collectPassword %}
             <div class="control-group">
                 <label class="control-label" >{{ 'Blocks.SignUp.label.password'|fotrans }} *</label>
@@ -34,26 +51,19 @@
                 </div>
             </div>
         {% endif %}
-        
-        {% for field in fields %}
-            {% if not field['config']['allowBlank'] %}
-                {% if field['cType']=='Ext.form.field.Text' %}
-                    {% include '@Root/blocks/inputFields/text.html.twig' %}
-                {% elseif field['cType']=='Ext.form.field.TextArea' %}
-                    {% include '@Root/blocks/inputFields/textarea.html.twig' %}
-                {% elseif field['cType']=='Ext.form.field.Checkbox' %}
-                    {% include '@Root/blocks/inputFields/checkbox.html.twig' %}
-                {% elseif field['cType']=='Ext.form.CheckboxGroup' %}
-                    {% include '@Root/blocks/inputFields/checkboxgroup.html.twig' %}
-                {% elseif field['cType']=='Ext.form.RadioGroup' %}
-                    {% include '@Root/blocks/inputFields/radiogroup.html.twig' %}
-                {% elseif field['cType']=='Ext.form.field.ComboBox' %}
-                    {% include '@Root/blocks/inputFields/combobox.html.twig' %}
-                {% endif %}
-            {%  endif %}
-        {% endfor %}
-        
-
+        {% if  mailingListArray%}
+        <div class="control-group">
+            <label class="control-label">Subscribe to the following mailing lists</label>
+            <div class="controls">
+                {% for mailinglist in mailingListArray %}
+                    <label class="checkbox">
+                        <input type="checkbox" class="" name="mlSubscr_{{ mailinglist.value }}" >
+                        {{ mailinglist.label }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
             <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
             
         <div class="form-actions">
