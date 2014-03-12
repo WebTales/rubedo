@@ -1,0 +1,64 @@
+<div class="row-fluid">
+    <form method="post" class="form-horizontal">
+        <div class="span12">
+            <h4 class="text-center">Shipping address</h4>
+            <div class="control-group">
+                <label class="control-label" >Company /Organization </label>
+                <div class="controls">
+                    <input type="text" name="company">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >Attention </label>
+                <div class="controls">
+                    <input type="text" name="attention">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >Address 1 *</label>
+                <div class="controls">
+                    <input type="text" name="address1" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >Address 2 </label>
+                <div class="controls">
+                    <input type="text" name="address2">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >City *</label>
+                <div class="controls">
+                    <input type="text" name="city" required>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" >Country *</label>
+                <div class="controls">
+                    <select name="country" required="">
+                        {% for country in countries['data'] %}
+                            <option value="{{ country['alpha-2'] }}">{{ country['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >State / Province</label>
+                <div class="controls">
+                    <input type="text" name="regionState">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >Zip / Postal Code *</label>
+                <div class="controls">
+                    <input type="text" name="postCode" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" >Edit</button>
+                <button class="btn btn-primary" onclick="setCheckoutStep(5);return false;">Continue</button>
+            </div>
+        </div>
+    </form>
+</div>

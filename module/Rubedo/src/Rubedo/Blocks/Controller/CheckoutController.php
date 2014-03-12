@@ -48,7 +48,7 @@ class CheckoutController extends AbstractController
             }
             $output['userTypeId'] = $blockConfig['userType'];
         } else {
-            $output['currentStep']=3;
+            $output['currentStep']=2;
             $output['currentUser']=$currentUser;
             $output['userTypeId'] = $currentUser['typeId'];
         }

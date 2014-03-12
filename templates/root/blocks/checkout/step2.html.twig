@@ -1,7 +1,7 @@
 {% if isLoggedIn %}
     <div class="row-fluid">
 
-        <form method="post" class="form-horizontal" id="form-{{ prefix }}" >
+        <form method="post" class="form-horizontal">
             <div class="span6">
                 <h4 class="text-center">Your personal details</h4>
                 <div class="control-group">
@@ -40,7 +40,7 @@
 
             </div>
             <div class="span6">
-                <h4 class="text-center">Your address</h4>
+                <h4 class="text-center">Address</h4>
                 <div class="control-group">
                     <label class="control-label" >Company /Organization </label>
                     <div class="controls">
@@ -95,7 +95,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary signupformtrigger" data-formid="form-{{ prefix }}" >Edit</button>
+                    <button type="submit" class="btn btn-primary" >Edit</button>
                     <button class="btn btn-primary" onclick="setCheckoutStep(3);return false;">Continue</button>
                 </div>
             </div>
@@ -109,7 +109,7 @@
 
         <form method="post" class="form-horizontal" id="form-{{ prefix }}" >
             <div class="span6">
-                <h4 class="text-center">Your personal details</h4>
+                <h4 class="text-center">Personal details</h4>
                 <div class="control-group">
                     <label class="control-label" >{{ 'Label.Email'|fotrans }} *</label>
                     <div class="controls">
@@ -238,7 +238,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary signupformtrigger" data-formid="form-{{ prefix }}" >{{ 'Blocks.SignUp.label.signUp'|fotrans }}</button>
+                    <button type="submit" class="btn btn-primary"  >{{ 'Blocks.SignUp.label.signUp'|fotrans }}</button>
                 </div>
             </div>
 
