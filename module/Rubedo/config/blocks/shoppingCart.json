@@ -20,7 +20,7 @@
                         {
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Cart detail page",
+                                "fieldLabel":"Checkout page",
                                 "name":"checkoutPage"
                             }
                         },{

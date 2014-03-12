@@ -10,7 +10,7 @@
             {% include '/blocks/shoppingCart/productList.html.twig' %}
         </div>
         <div>
-            <button class="btn pull-right scartbtn">Checkout</button>
+            {% if checkoutPage %}<a href="{{ checkoutPageUrl }}"><button class="btn pull-right scartbtn">Checkout</button></a>{% endif %}
         </div>
     </div>
 

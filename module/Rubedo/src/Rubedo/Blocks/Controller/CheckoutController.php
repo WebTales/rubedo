@@ -33,6 +33,12 @@ class CheckoutController extends AbstractController
     {
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
+        $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
+        if (empty($myCart)) {
+            $output['errorText'] = "Your cart is empty.";
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/genericError.html.twig");
+            return $this->_sendResponse($output, $template);
+        }
         if ((isset($blockConfig["signupContentId"]))&&(!empty($blockConfig["signupContentId"]))) {
             $introContent = Manager::getService('Contents')->findById($blockConfig["signupContentId"], true, false);
             if ($introContent){
