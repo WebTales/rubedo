@@ -18,6 +18,7 @@ namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
+use WebTales\MongoFilters\Filter;
 
 /**
  *
@@ -65,9 +66,18 @@ class ContentListController extends AbstractController
         $queryId = $this->getParamFromQuery('query-id', $blockConfig['query']);
         
         $output = $this->getParamFromQuery();
-        
         // build query
         $filters = $this->_queryReader->getFilterArrayById($queryId);
+        if ((isset($blockConfig['filterByUser']))&&($blockConfig['filterByUser'])){
+            $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+            if ($currentUser){
+                $filters['filter']->addFilter(Filter::factory('Value')->setName('createUser.id')
+                    ->setValue($currentUser['id']));
+            } else {
+                return array();
+            }
+        }
+
         if ($filters !== false) {
             $queryType = $filters["queryType"];
             $query = $this->_queryReader->getQueryById($queryId);

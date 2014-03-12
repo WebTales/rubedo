@@ -56,7 +56,14 @@
 								"fieldLabel":"#ext-gen1075#",
 								"name":"query"
 							}
-						}
+						},{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Filter by user",
+                                "name":"filterByUser",
+                                "inputValue":true
+                            }
+                        }
 					]
 				},
 				{
@@ -110,7 +117,8 @@
 			"columns":1,
 			"showOnlyTitle":false,
             "summaryHeight":80,
-            "showPager":true
+            "showPager":true,
+            "filterByUser":false
 		}
 	},
 	"category":"#ext-gen1068#",

@@ -122,9 +122,8 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         } elseif ($filters instanceof \WebTales\MongoFilters\ValueFilter) { // adapt simple filters
             $key = $filters->getName();
             //$value = $filters->getValue();
-            
-            
-            if (! in_array($key, $this->_metaDataFields) && strpos($key, $this->_currentWs) === false && substr($key, 0, 1) != '$') {
+
+            if (! in_array($key, $this->_metaDataFields) && $key!='createUser.id' && strpos($key, $this->_currentWs) === false && substr($key, 0, 1) != '$') {
                 if(strpos($key, $otherWorkspace)!==false){
                     $newKey = str_replace($otherWorkspace, $this->_currentWs, $key);
                 }else{
@@ -296,12 +295,10 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     {
         // Adaptation of the conditions for the workflow
         $localFilter = $this->getFilters();
-        
         // add Read Filters
         if ($filters) {
             $this->_adaptFilter($filters);
         }
-        
         $this->_adaptFilter($localFilter);
         
         $sort = $this->getSortArray();
