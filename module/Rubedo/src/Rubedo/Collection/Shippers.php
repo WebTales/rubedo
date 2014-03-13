@@ -30,4 +30,46 @@ class Shippers extends AbstractCollection
         $this->_collectionName = 'Shippers';
         parent::__construct();
     }
+
+    public function getApplicableShippers($country){
+        $pipeline=array();
+        $pipeline[]=array(
+            '$project'=>array(
+                'shipperId'=>'$_id',
+                '_id'=>0,
+                'name'=>'$name',
+                'rateType'=>'$rateType',
+                'rates'=>'$rates'
+            )
+        );
+        $pipeline[]=array(
+            '$unwind'=>'$rates'
+        );
+        $pipeline[]=array(
+            '$match'=>array(
+                'rates.country'=>array(
+                    '$in'=>array($country,'*')
+                )
+            )
+        );
+        $response=$this->_dataService->aggregate($pipeline);
+        if ($response['ok']){
+            foreach( $response['result'] as &$value){
+                $value['shipperId']=(string)$value['shipperId'];
+                $value=array_merge($value, $value['rates']);
+                unset ($value['rates']);
+            }
+            return array(
+                "data"=>$response['result'],
+                "total"=>count($response['result']),
+                "success"=>true
+            );
+        } else {
+            return array(
+                "msg"=>$response['errmsg'],
+                "success"=>false
+            );
+        }
+
+    }
 }
