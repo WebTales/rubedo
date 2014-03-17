@@ -21,7 +21,6 @@ use Rubedo\Collection\AbstractCollection;
 use Rubedo\Content\Context;
 use Rubedo\Templates\Twig\TwigViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Debug\Debug;
 
 /**
  * Front Office Defautl Controller
