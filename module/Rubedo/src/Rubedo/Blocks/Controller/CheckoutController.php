@@ -218,4 +218,21 @@ class CheckoutController extends AbstractController
 
     }
 
+    public function xhrUpdateShippingAction()
+    {
+        $params = $this->params()->fromPost('data','[ ]');
+        $data=Json::decode($params, Json::TYPE_ARRAY);
+        $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser){
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Unable to get current user"
+            ));
+        }
+        $currentUser['shippingAddress']=$data;
+        $result=Manager::getService("Users")->update($currentUser);
+        return new JsonModel($result);
+
+    }
+
 }

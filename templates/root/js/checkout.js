@@ -130,7 +130,7 @@ function checkoutUpdateBillingAddress (){
             request.done(function(data) {
                 if(data['success']) {
                     jQuery("#chk3Alert").addClass("hidden");
-                    adaptToUserData(data);
+                    adaptToUserData(data['data']);
                     setCheckoutStep(4);
                 } else {
                     jQuery("#chk3-message").html("<strong>"+data['msg']+"</strong>");
@@ -159,6 +159,56 @@ function checkoutUpdateBillingAddress (){
         jQuery("#chk3Alert").removeClass("hidden");
         jQuery("#chk3Alert").removeClass("alert-success");
         jQuery("#chk3Alert").addClass("alert-danger");
+    }
+}
+
+function checkoutUpdateShippingAddress (){
+    var canContinue=checkoutCheckFormValid("checkoutShippingAddressFrom");
+    if (canContinue){
+        var data=checkoutGetFormData(jQuery("#checkoutShippingAddressFrom"));
+
+        var request = jQuery.ajax({
+            url : "/blocks/"+jQuery('html').attr('lang')+"/checkout/xhr-update-shipping",
+            type : "POST",
+            data : {
+                'data':JSON.stringify(data),
+                'current-page':jQuery('body').attr('data-current-page')
+            },
+            dataType : "json"
+        });
+
+        request.done(function(data) {
+            if(data['success']) {
+                jQuery("#chk4Alert").addClass("hidden");
+                adaptToUserData(data['data']);
+                setCheckoutStep(5);
+            } else {
+                jQuery("#chk4-message").html("<strong>"+data['msg']+"</strong>");
+                jQuery("#chk4Alert").removeClass("hidden");
+                jQuery("#chk4Alert").removeClass("alert-success");
+                jQuery("#chk4Alert").addClass("alert-danger");
+            }
+        });
+
+        request.fail(function(jqXHR, textStatus, errorThrown) {
+            try {
+                var responseText = jQuery.parseJSON(jqXHR.responseText);
+            } catch(err) {
+                var responseText = jqXHR.responseText;
+            }
+            jQuery("#chk4-message").html("<strong>"+responseText['msg']+"</strong>");
+            jQuery("#chk4Alert").removeClass("hidden");
+            jQuery("#chk4Alert").removeClass("alert-success");
+            jQuery("#chk4Alert").addClass("alert-danger");
+        });
+
+
+
+    } else {
+        jQuery("#chk4-message").html("<strong>Please fill in all required fields</strong>");
+        jQuery("#chk4Alert").removeClass("hidden");
+        jQuery("#chk4Alert").removeClass("alert-success");
+        jQuery("#chk4Alert").addClass("alert-danger");
     }
 }
 
