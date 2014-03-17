@@ -1,7 +1,7 @@
 {% if isLoggedIn %}
     <div class="row-fluid">
 
-        <form method="post" class="form-horizontal">
+        <form method="post" class="form-horizontal" id="checkoutEditUserForm">
             <div class="span6">
                 <h4 class="text-center">Your personal details</h4>
                 <div class="control-group">
@@ -16,8 +16,6 @@
                         <input type="text" name="name" required>
                     </div>
                 </div>
-
-
                 {% for field in fields %}
                     {% if field['cType']=='Ext.form.field.Text' %}
                         {% include '@Root/blocks/inputFields/text.html.twig' %}
@@ -33,49 +31,44 @@
                         {% include '@Root/blocks/inputFields/combobox.html.twig' %}
                     {% endif %}
                 {% endfor %}
-
                 <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
-
-
-
             </div>
             <div class="span6">
                 <h4 class="text-center">Address</h4>
                 <div class="control-group">
                     <label class="control-label" >Company /Organization </label>
                     <div class="controls">
-                        <input type="text" name="company">
+                        <input type="text" name="address_company">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Attention </label>
                     <div class="controls">
-                        <input type="text" name="attention">
+                        <input type="text" name="address_attention">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Address 1 *</label>
                     <div class="controls">
-                        <input type="text" name="address1" required>
+                        <input type="text" name="address_address1" required>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Address 2 </label>
                     <div class="controls">
-                        <input type="text" name="address2">
+                        <input type="text" name="address_address2">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >City *</label>
                     <div class="controls">
-                        <input type="text" name="city" required>
+                        <input type="text" name="address_city" required>
                     </div>
                 </div>
-
                 <div class="control-group">
                     <label class="control-label" >Country *</label>
                     <div class="controls">
-                        <select name="country" required="">
+                        <select name="address_country" required="">
                             {% for country in countries['data'] %}
                             <option value="{{ country['alpha-2'] }}">{{ country['name'] }}</option>
                             {% endfor %}
@@ -85,13 +78,13 @@
                 <div class="control-group">
                     <label class="control-label" >State / Province</label>
                     <div class="controls">
-                        <input type="text" name="regionState">
+                        <input type="text" name="address_regionState">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Zip / Postal Code *</label>
                     <div class="controls">
-                        <input type="text" name="postCode" required>
+                        <input type="text" name="address_postCode" required>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -106,8 +99,10 @@
 {% else %}
 
 <div class="row-fluid">
-
-        <form method="post" class="form-horizontal" id="form-{{ prefix }}" >
+        <div class="alert hidden" id="chk2Alert">
+            <span id="chk2-message"></span>
+        </div>
+        <form method="post" class="form-horizontal" id="checkoutSignupForm" >
             <div class="span6">
                 <h4 class="text-center">Personal details</h4>
                 <div class="control-group">
@@ -160,7 +155,7 @@
                     <div class="controls">
                         {% for mailinglist in mailingListArray %}
                             <label class="checkbox">
-                                <input type="checkbox" class="mailingListCheck" name="{{ mailinglist.value }}" >
+                                <input type="checkbox" class="mailingListCheck" name="chkmlSubscribe_{{ mailinglist.value }}" >
                                 {{ mailinglist.label }}
                             </label>
                         {% endfor %}
@@ -175,38 +170,38 @@
                 <div class="control-group">
                     <label class="control-label" >Company /Organization </label>
                     <div class="controls">
-                        <input type="text" name="company">
+                        <input type="text" name="address_company">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Attention </label>
                     <div class="controls">
-                        <input type="text" name="attention">
+                        <input type="text" name="address_attention">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Address 1 *</label>
                     <div class="controls">
-                        <input type="text" name="address1" required>
+                        <input type="text" name="address_address1" required>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Address 2 </label>
                     <div class="controls">
-                        <input type="text" name="address2">
+                        <input type="text" name="address_address2">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >City *</label>
                     <div class="controls">
-                        <input type="text" name="city" required>
+                        <input type="text" name="address_city" required>
                     </div>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label" >Country *</label>
                     <div class="controls">
-                        <select name="country" required="">
+                        <select name="address_country" required>
                             {% for country in countries['data'] %}
                                 <option value="{{ country['alpha-2'] }}">{{ country['name'] }}</option>
                             {% endfor %}
@@ -216,13 +211,13 @@
                 <div class="control-group">
                     <label class="control-label" >State / Province</label>
                     <div class="controls">
-                        <input type="text" name="regionState">
+                        <input type="text" name="address_regionState">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" >Zip / Postal Code *</label>
                     <div class="controls">
-                        <input type="text" name="postCode" required>
+                        <input type="text" name="address_postCode" required>
                     </div>
                 </div>
                 <div class="control-group">
@@ -238,7 +233,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary"  >{{ 'Blocks.SignUp.label.signUp'|fotrans }}</button>
+                    <button onclick="checkoutSignup();return false;" class="btn btn-primary"  >{{ 'Blocks.SignUp.label.signUp'|fotrans }}</button>
                 </div>
             </div>
 

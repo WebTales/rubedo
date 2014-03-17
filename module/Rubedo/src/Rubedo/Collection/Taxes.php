@@ -18,9 +18,9 @@ namespace Rubedo\Collection;
 
 use WebTales\MongoFilters\Filter;
 /**
- * Service to handle Delegations
+ * Service to handle Taxes
  *
- * @author jbourdin
+ * @author adobre
  * @category Rubedo
  * @package Rubedo
  */

@@ -20,12 +20,12 @@ use Rubedo\Services\Manager;
 use Zend\Json\Json;
 
 /**
- * Controller providing CRUD API for the Languages JSON
+ * Controller providing CRUD API for the Taxes JSON
  *
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
  *
- * @author jbourdin
+ * @author adobre
  * @category Rubedo
  * @package Rubedo
  *         

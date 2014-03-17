@@ -4,7 +4,7 @@
     <div class="progress checkout-progress">
         <div class="bar" id="checkoutmainprogress" style="width: 17%"></div>
     </div>
-    <div class="accordion" id="accordioncheckout" data-currentstep="{{ currentStep }}">
+    <div class="accordion" id="accordioncheckout" data-currentstep="{{ currentStep }}" {% if isLoggedIn %} data-current-user="{{ currentUser |json_encode }}" {% endif %}>
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
                 <a class="checkouteditlink" data-targetstep="1" onclick="setCheckoutStep(1);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>

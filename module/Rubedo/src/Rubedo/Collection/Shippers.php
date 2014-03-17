@@ -17,9 +17,9 @@
 namespace Rubedo\Collection;
 
 /**
- * Service to handle Delegations
+ * Service to handle Shippers
  *
- * @author jbourdin
+ * @author adobre
  * @category Rubedo
  * @package Rubedo
  */

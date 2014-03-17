@@ -17,13 +17,12 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
 /**
  *
- * @author dfanchon
+ * @author adobre
  * @category Rubedo
  * @package Rubedo
  */
@@ -99,4 +98,106 @@ class CheckoutController extends AbstractController
         );
         return $this->_sendResponse($output, $template, $css, $js);
     }
+
+    public function xhrCreateAccountAction()
+    {
+        $params = $this->params()->fromPost('data','[ ]');
+        $params=Json::decode($params, Json::TYPE_ARRAY);
+        if ((!isset($params['name'])) || (!isset($params['email'])) || (!isset($params['userTypeId']))) {
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Missing params"
+            ));
+        }
+
+            if ((!isset($params['password'])) || (!isset($params['confirmPassword']))) {
+                return new JsonModel(array(
+                    "success"=>false,
+                    "msg"=>"Missing password"
+                ));
+            }
+            if ($params['password'] != $params['confirmPassword']) {
+                return new JsonModel(array(
+                    "success"=>false,
+                    "msg"=>"Passwords do not match"
+                ));
+            }
+
+        $alreadyExistingUser = Manager::getService("Users")->findByEmail($params['email']);
+        if ($alreadyExistingUser) {
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Email already used"
+            ));
+        }
+        $userType = Manager::getService('UserTypes')->findById($params['userTypeId']);
+        if ($userType['signUpType'] == "none") {
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Unknown user type"
+            ));
+        }
+        $useSameAddress=isset($params['useSameAddress']) ? true : false;
+        unset($params['useSameAddress']);
+        unset($params['readTermsAndConds']);
+        $mailingListsToSubscribe=array();
+        $userAddress=array();
+        $newUser = array();
+        $newUser['name'] = $params['name'];
+        $newUser['email'] = $params['email'];
+        $newUser['login'] = $params['email'];
+        $newUser['typeId'] = $params['userTypeId'];
+        $newUser['defaultGroup'] = $userType['defaultGroup'];
+        $newUser['groups'] = array($userType['defaultGroup']);
+        $newUser['taxonomy'] = array();
+        unset($params['name']);
+        unset($params['email']);
+        unset($params['userTypeId']);
+        $newPassword = $params['password'];
+        unset($params['password']);
+        unset($params['confirmPassword']);
+        foreach ($params as $key => $value){
+            if (strpos($key,"chkmlSubscribe_")!==FALSE){
+                $mailingListsToSubscribe[]=str_replace("chkmlSubscribe_","",$key);
+                unset($params[$key]);
+            }
+        }
+        foreach ($params as $key => $value){
+            if (strpos($key,"address_")!==FALSE){
+                $userAddress[str_replace("address_","",$key)]=$value;
+                unset($params[$key]);
+            }
+        }
+        $newUser['address']= $userAddress;
+        $newUser['billingAddress']=array();
+        $newUser['shippingAddress']=array();
+        if ($useSameAddress){
+            $newUser['billingAddress']=$userAddress;
+            $newUser['shippingAddress']=$userAddress;
+        }
+        $newUser['fields'] = $params;
+        $newUser['status'] = "approved";
+        $createdUser = Manager::getService('Users')->create($newUser);
+        if ($createdUser['success']) {
+            Manager::getService('Users')->changePassword($newPassword, $createdUser['data']['version'], $createdUser['data']['id']);
+        }
+        if (($createdUser['success']) && ($mailingListsToSubscribe)) {
+            $mailingListService=Manager::getService("MailingList");
+            foreach ($mailingListsToSubscribe as $mailingListId){
+                $mailingListService->subscribe($mailingListId, $newUser['email'], false);
+            }
+        }
+        if (!$createdUser['success']) {
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"User creation failed"
+            ));
+        } else {
+            return new JsonModel(array(
+                "success"=>true,
+                "msg"=>"Account created"
+            ));
+        }
+    }
+
 }
