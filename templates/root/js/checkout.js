@@ -47,9 +47,10 @@ function setCheckoutStep(step){
 }
 
 jQuery(".checkout-holder").collapse({toggle:false});
-setCheckoutStep(jQuery("#accordioncheckout").attr("data-currentstep"));
 if (jQuery("#accordioncheckout").attr("data-currentstep")>1){
-    adaptToUserData(JSON.parse(jQuery("#accordioncheckout").attr("data-current-user")));
+    setCheckoutStep(adaptToUserData(JSON.parse(jQuery("#accordioncheckout").attr("data-current-user"))));
+} else {
+    setCheckoutStep(jQuery("#accordioncheckout").attr("data-currentstep"));
 }
 
 function checkoutSignup() {
@@ -240,6 +241,7 @@ function checkoutSetFormData(formId, data){
 }
 
 function adaptToUserData(userData){
+    var goodstep=2;
     var step2Data=userData;
     for (var attrname in step2Data.fields) {
         step2Data[attrname] = step2Data['fields'][attrname];
@@ -259,19 +261,27 @@ function adaptToUserData(userData){
     checkoutSetFormData("checkoutEditUserForm",step2Data);
     if (checkoutCheckFormValid("checkoutEditUserForm")){
         jQuery("#chkStep2Continue").removeAttr("disabled");
+        goodstep=goodstep+1;
     } else {
         jQuery("#chkStep2Continue").attr("disabled","disabled");
     }
     checkoutSetFormData("checkoutBillingAddressFrom",step2Data.billingAddress);
     if (checkoutCheckFormValid("checkoutBillingAddressFrom")){
+        if (goodstep==3){
+            goodstep=goodstep+1;
+        }
         jQuery("#chkStep3Continue").removeAttr("disabled");
     } else {
         jQuery("#chkStep3Continue").attr("disabled","disabled");
     }
     checkoutSetFormData("checkoutShippingAddressFrom",step2Data.shippingAddress);
     if (checkoutCheckFormValid("checkoutShippingAddressFrom")){
+        if (goodstep==4){
+            goodstep=goodstep+1;
+        }
         jQuery("#chkStep4Continue").removeAttr("disabled");
     } else {
         jQuery("#chkStep4Continue").attr("disabled","disabled");
     }
+    return(goodstep);
 }
