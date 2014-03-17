@@ -1,4 +1,7 @@
 <div class="row-fluid">
+    <div class="alert hidden" id="chk3Alert">
+        <span id="chk3-message"></span>
+    </div>
      <form method="post" class="form-horizontal" id="checkoutBillingAddressFrom">
          <div class="span12">
              <h4 class="text-center">Billing address</h4>
@@ -62,7 +65,7 @@
                  </div>
              </div>
              <div class="form-actions">
-                 <button type="submit" class="btn btn-primary" >Edit</button>
+                 <button onclick="checkoutUpdateBillingAddress();return false;" class="btn btn-primary" >Edit</button>
                  <button class="btn btn-primary" id="chkStep3Continue" onclick="setCheckoutStep(4);return false;">Continue</button>
              </div>
          </div>

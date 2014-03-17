@@ -44,6 +44,7 @@
         "execute.controller.d3script.get-data.blocks",
         "execute.controller.shoppingcart.add-item-to-cart.blocks",
         "execute.controller.shoppingcart.remove-item-from-cart.blocks",
-        "execute.controller.checkout.xhr-create-account.blocks"
+        "execute.controller.checkout.xhr-create-account.blocks",
+        "execute.controller.checkout.xhr-update-billing.blocks"
  	]
 }

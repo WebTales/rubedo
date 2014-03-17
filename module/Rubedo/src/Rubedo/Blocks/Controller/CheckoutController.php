@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
@@ -198,6 +199,23 @@ class CheckoutController extends AbstractController
                 "msg"=>"Account created"
             ));
         }
+    }
+
+    public function xhrUpdateBillingAction()
+    {
+        $params = $this->params()->fromPost('data','[ ]');
+        $data=Json::decode($params, Json::TYPE_ARRAY);
+        $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser){
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Unable to get current user"
+            ));
+        }
+        $currentUser['billingAddress']=$data;
+        $result=Manager::getService("Users")->update($currentUser);
+        return new JsonModel($result);
+
     }
 
 }
