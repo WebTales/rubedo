@@ -144,11 +144,34 @@ function adaptToUserData(userData){
     for (var attrname in step2Data.fields) {
         step2Data[attrname] = step2Data['fields'][attrname];
     }
-    if (jQuery.isEmptyObject(step2Data).address){
-        jQuery.isEmptyObject(step2Data).address={ };
+    if (jQuery.isEmptyObject(step2Data.address)){
+        step2Data.address={ };
+    }
+    if (jQuery.isEmptyObject(step2Data.billingAddress)){
+        step2Data.billingAddress={ };
+    }
+    if (jQuery.isEmptyObject(step2Data.shippingAddress)){
+        step2Data.shippingAddress={ };
     }
     for (var attrname in step2Data.address) {
         step2Data["address_"+attrname] = step2Data['address'][attrname];
     }
     checkoutSetFormData("checkoutEditUserForm",step2Data);
+    if (checkoutCheckFormValid("checkoutEditUserForm")){
+        jQuery("#chkStep2Continue").removeAttr("disabled");
+    } else {
+        jQuery("#chkStep2Continue").attr("disabled","disabled");
+    }
+    checkoutSetFormData("checkoutBillingAddressFrom",step2Data.billingAddress);
+    if (checkoutCheckFormValid("checkoutBillingAddressFrom")){
+        jQuery("#chkStep3Continue").removeAttr("disabled");
+    } else {
+        jQuery("#chkStep3Continue").attr("disabled","disabled");
+    }
+    checkoutSetFormData("checkoutShippingAddressFrom",step2Data.shippingAddress);
+    if (checkoutCheckFormValid("checkoutShippingAddressFrom")){
+        jQuery("#chkStep4Continue").removeAttr("disabled");
+    } else {
+        jQuery("#chkStep4Continue").attr("disabled","disabled");
+    }
 }
