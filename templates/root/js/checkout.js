@@ -347,6 +347,7 @@ function adaptToUserData(userData){
         if(data['success']) {
             jQuery("#shippingMethodsHolder").empty();
             jQuery("#shippingMethodsHolder").append(data.html);
+            checkShipperStatus();
         } else {
             console.log("error in shippers retrieval");
         }
@@ -358,3 +359,16 @@ function adaptToUserData(userData){
 
     return(goodstep);
 }
+
+function checkShipperStatus(){
+    if (checkoutGetFormData(jQuery("#checkoutShippingMethodForm")).shipper){
+        jQuery("#chkStep5Continue").removeAttr("disabled");
+    } else {
+        jQuery("#chkStep5Continue").attr("disabled","disabled");
+
+    }
+}
+
+jQuery("#shippingMethodsHolder").click(function(){
+    checkShipperStatus();
+})
