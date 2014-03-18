@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
@@ -294,6 +295,78 @@ class CheckoutController extends AbstractController
             ));
         }
 
+    }
+
+    public function xhrGetSummaryAction()
+    {
+        $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser){
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Unable to get current user"
+            ));
+        }
+        if (isset($currentUser['billingAddress'])){
+            $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
+            $myCart=$this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['billingAddress']['country'], $currentUser['billingAddress']['regionState'], $currentUser['billingAddress']['postCode']);
+            return new JsonModel(array(
+                "success"=>true,
+                "html"=>$myCart
+            ));
+        } else {
+            return new JsonModel(array(
+                "success"=>true,
+                "html"=>""
+            ));
+        }
+
+    }
+
+
+    private function addCartInfos ($cart, $userTypeId, $country, $region, $postalCode) {
+        $totalPrice=0;
+        $totalTaxedPrice=0;
+        $totalItems=0;
+        $ignoredArray=array("price","amount","id","sku","stock");
+        $contentsService=Manager::getService("Contents");
+        $taxService=Manager::getService("Taxes");
+        foreach ($cart as &$value){
+            $myContent=$contentsService->findById($value["productId"], true, false);
+            if ($myContent){
+                $value['title']=$myContent['text'];
+                $value['subtitle']="";
+                $unitPrice=0;
+                $taxedPrice=0;
+                $unitTaxedPrice=0;
+                $price=0;
+                foreach ($myContent["productProperties"]['variations'] as $variation){
+                    if ($variation['id']==$value['variationId']){
+                        $unitPrice=$variation["price"];
+                        $unitTaxedPrice=$taxService->getTaxValue($value['productId'],$userTypeId, $country, $region, $postalCode,$unitPrice);
+                        $price=$unitPrice*$value["amount"];
+                        $taxedPrice=$unitTaxedPrice*$value["amount"];
+                        $totalTaxedPrice=$totalTaxedPrice+$taxedPrice;
+                        $totalPrice=$totalPrice+$price;
+                        $totalItems=$totalItems+$value["amount"];
+                        foreach ($variation as $varkey => $varvalue){
+                            if (!in_array($varkey,$ignoredArray)){
+                                $value['subtitle']=$value['subtitle']." ".$varvalue;
+                            }
+                        }
+                    }
+                }
+                $value['price']=$price;
+                $value['unitPrice']=$unitPrice;
+                $value['unitTaxedPrice']=$unitTaxedPrice;
+                $value['taxedPrice']=$taxedPrice;
+            }
+        }
+        return (array(
+            "cart"=>$cart,
+            "totalPrice"=>$totalPrice,
+            "totalTaxedPrice"=>$totalTaxedPrice,
+            "totalItems"=>$totalItems
+        ));
     }
 
 }

@@ -48,6 +48,7 @@
         "execute.controller.checkout.xhr-update-billing.blocks",
         "execute.controller.checkout.xhr-update-shipping.blocks",
         "execute.controller.checkout.xhr-update-account-data.blocks",
-        "execute.controller.checkout.xhr-get-shipping-options.blocks"
+        "execute.controller.checkout.xhr-get-shipping-options.blocks",
+        "execute.controller.checkout.xhr-get-summary.blocks"
  	]
 }
