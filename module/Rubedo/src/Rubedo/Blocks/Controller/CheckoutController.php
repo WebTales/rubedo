@@ -311,9 +311,11 @@ class CheckoutController extends AbstractController
             $twigVars=$this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['shippingAddress']['country'], $currentUser['shippingAddress']['regionState'], $currentUser['shippingAddress']['postCode']);
             $twigVars['billingAddress']=$currentUser['billingAddress'];
             $twigVars['shippingAddress']=$currentUser['shippingAddress'];
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/checkout/checkoutSummary.html.twig");
+            $html=Manager::getService('FrontOfficeTemplates')->render($template,$twigVars);
             return new JsonModel(array(
                 "success"=>true,
-                "html"=>$twigVars
+                "html"=>$html
             ));
         } else {
             return new JsonModel(array(

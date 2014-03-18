@@ -1,0 +1,68 @@
+<div class="row-fluid">
+    <div class="span6">
+        <h4>Billing address</h4>
+        <p><strong>VAT number / EIN  : </strong>{{ billingAddress.vatEin }}</p>
+        <p><strong>Company /Organization  : </strong>{{ billingAddress.company }}</p>
+        <p><strong>Attention : </strong>{{ billingAddress.attention }}</p>
+        <p><strong>Address 1 : </strong>{{ billingAddress.address1 }}</p>
+        <p><strong>Address 2 : </strong>{{ billingAddress.address2 }}</p>
+        <p><strong>City : </strong>{{ billingAddress.city }}</p>
+        <p><strong>Country : </strong>{{ billingAddress.country }}</p>
+        <p><strong>State / Province : </strong>{{ billingAddress.regionState }}</p>
+        <p><strong>Zip / Postal Code : </strong>{{ billingAddress.postCode }}</p>
+    </div>
+    <div class="span6">
+        <h4>Shipping address</h4>
+        <p><strong>Company /Organization  : </strong>{{ shippingAddress.company }}</p>
+        <p><strong>Attention : </strong>{{ shippingAddress.attention }}</p>
+        <p><strong>Address 1 : </strong>{{ shippingAddress.address1 }}</p>
+        <p><strong>Address 2 : </strong>{{ shippingAddress.address2 }}</p>
+        <p><strong>City : </strong>{{ shippingAddress.city }}</p>
+        <p><strong>Country : </strong>{{ shippingAddress.country }}</p>
+        <p><strong>State / Province : </strong>{{ shippingAddress.regionState }}</p>
+        <p><strong>Zip / Postal Code : </strong>{{ shippingAddress.postCode }}</p>
+    </div>
+</div>
+<div class="row-fluid">
+    <h4>Order review</h4>
+    {% if cart is empty %}
+        <p class="text-center">Your cart is empty</p>
+    {% else %}
+
+        <table class="table table-condensed table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Price (includes taxes)</th>
+                <th>Amount</th>
+                <th>Total Price (includes taxes)</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in cart %}
+                <tr>
+                    <td><a href='{{ displayUrl(item.productId,"default",null) }}?variation={{ item.variationId}}'>{{ item.title }} <small class="muted">{{ item.subtitle }}</small></a></td>
+                    <td>{{ item.unitTaxedPrice }} €</td>
+                    <td>x {{ item.amount }}</td>
+                    <td>{{ item.taxedPrice }} €</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <dl class="dl-horizontal pull-right">
+            <dt>Tax-free total :</dt>
+            <dd> {{ totalPrice}} €</dd>
+        </dl>
+        <div class="clearfix"></div>
+        <dl class="dl-horizontal pull-right">
+            <dt>Taxes :</dt>
+            <dd> {{  totalTaxedPrice -  totalPrice}} €</dd>
+        </dl>
+        <div class="clearfix"></div>
+        <dl class="dl-horizontal pull-right">
+            <dt>Total :</dt>
+            <dd> {{ totalTaxedPrice }} €</dd>
+        </dl>
+        <div class="clearfix"></div>
+    {% endif %}
+</div>

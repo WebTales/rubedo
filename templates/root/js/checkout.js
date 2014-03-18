@@ -44,6 +44,9 @@ function setCheckoutStep(step){
             jQuery(this).hide();
         }
     });
+    if (step==6){
+        getCheckoutSummary();
+    }
 }
 
 jQuery(".checkout-holder").collapse({toggle:false});
@@ -372,3 +375,28 @@ function checkShipperStatus(){
 jQuery("#shippingMethodsHolder").click(function(){
     checkShipperStatus();
 })
+
+function getCheckoutSummary(){
+    var request = jQuery.ajax({
+        url : "/blocks/"+jQuery('html').attr('lang')+"/checkout/xhr-get-summary",
+        type : "POST",
+        data : {
+            'current-choice': checkoutGetFormData(jQuery("#checkoutShippingMethodForm")).shipper,
+            'current-page':jQuery('body').attr('data-current-page')
+        },
+        dataType : "json"
+    });
+
+    request.done(function(data) {
+        if(data['success']) {
+            jQuery("#checkoutSummaryHolder").empty();
+            jQuery("#checkoutSummaryHolder").append(data.html);
+        } else {
+            console.log("error in summary retrieval");
+        }
+    });
+
+    request.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("error in summary retrieval");
+    });
+}
