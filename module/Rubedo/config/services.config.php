@@ -86,5 +86,7 @@ return array(
     'ShoppingCart' => 'Rubedo\\Collection\\ShoppingCart',
     'Countries' => 'Rubedo\\Collection\\Countries',
     'Taxes' => 'Rubedo\\Collection\\Taxes',
-    'Shippers' => 'Rubedo\\Collection\\Shippers'
+    'Shippers' => 'Rubedo\\Collection\\Shippers',
+    'PaymentConfigs' => 'Rubedo\\Collection\\PaymentConfigs',
+    'Orders' => 'Rubedo\\Collection\\Orders'
 );
