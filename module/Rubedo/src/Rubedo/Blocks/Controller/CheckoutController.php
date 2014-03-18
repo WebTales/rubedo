@@ -306,12 +306,14 @@ class CheckoutController extends AbstractController
                 "msg"=>"Unable to get current user"
             ));
         }
-        if (isset($currentUser['billingAddress'])){
+        if (isset($currentUser['shippingAddress'])){
             $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
-            $myCart=$this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['billingAddress']['country'], $currentUser['billingAddress']['regionState'], $currentUser['billingAddress']['postCode']);
+            $twigVars=$this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['shippingAddress']['country'], $currentUser['shippingAddress']['regionState'], $currentUser['shippingAddress']['postCode']);
+            $twigVars['billingAddress']=$currentUser['billingAddress'];
+            $twigVars['shippingAddress']=$currentUser['shippingAddress'];
             return new JsonModel(array(
                 "success"=>true,
-                "html"=>$myCart
+                "html"=>$twigVars
             ));
         } else {
             return new JsonModel(array(
