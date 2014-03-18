@@ -213,6 +213,56 @@ function checkoutUpdateShippingAddress (){
     }
 }
 
+function checkoutUpdateAccountData (){
+    var canContinue=checkoutCheckFormValid("checkoutEditUserForm");
+    if (canContinue){
+        var data=checkoutGetFormData(jQuery("#checkoutEditUserForm"));
+
+        var request = jQuery.ajax({
+            url : "/blocks/"+jQuery('html').attr('lang')+"/checkout/xhr-update-account-data",
+            type : "POST",
+            data : {
+                'data':JSON.stringify(data),
+                'current-page':jQuery('body').attr('data-current-page')
+            },
+            dataType : "json"
+        });
+
+        request.done(function(data) {
+            if(data['success']) {
+                jQuery("#chk5Alert").addClass("hidden");
+                adaptToUserData(data['data']);
+                setCheckoutStep(3);
+            } else {
+                jQuery("#chk5-message").html("<strong>"+data['msg']+"</strong>");
+                jQuery("#chk5Alert").removeClass("hidden");
+                jQuery("#chk5Alert").removeClass("alert-success");
+                jQuery("#chk5Alert").addClass("alert-danger");
+            }
+        });
+
+        request.fail(function(jqXHR, textStatus, errorThrown) {
+            try {
+                var responseText = jQuery.parseJSON(jqXHR.responseText);
+            } catch(err) {
+                var responseText = jqXHR.responseText;
+            }
+            jQuery("#chk5-message").html("<strong>"+responseText['msg']+"</strong>");
+            jQuery("#chk5Alert").removeClass("hidden");
+            jQuery("#chk5Alert").removeClass("alert-success");
+            jQuery("#chk5Alert").addClass("alert-danger");
+        });
+
+
+
+    } else {
+        jQuery("#chk5-message").html("<strong>Please fill in all required fields</strong>");
+        jQuery("#chk5Alert").removeClass("hidden");
+        jQuery("#chk5Alert").removeClass("alert-success");
+        jQuery("#chk5Alert").addClass("alert-danger");
+    }
+}
+
 function checkoutGetFormData(form){
     var formData=form.serializeArray();
     var params={};

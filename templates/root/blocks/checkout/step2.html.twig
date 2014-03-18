@@ -1,6 +1,8 @@
 {% if isLoggedIn %}
     <div class="row-fluid">
-
+        <div class="alert hidden" id="chk5Alert">
+            <span id="chk5-message"></span>
+        </div>
         <form method="post" class="form-horizontal" id="checkoutEditUserForm">
             <div class="span6">
                 <h4 class="text-center">Your personal details</h4>
@@ -82,7 +84,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" >Edit</button>
+                    <button onclick="checkoutUpdateAccountData();return false;" class="btn btn-primary" >Edit</button>
                     <button class="btn btn-primary" id="chkStep2Continue" onclick="setCheckoutStep(3);return false;">Continue</button>
                 </div>
             </div>
