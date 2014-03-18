@@ -17,6 +17,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
@@ -41,6 +42,9 @@ class PaymentMeansController extends AbstractActionController
         $refinedData=array();
         foreach($data as $key => $value){
             $value['id']=$key;
+            $pmJsonData = file_get_contents($value['definitionFile']);
+            $value['configFields'] = Json::decode($pmJsonData, Json::TYPE_ARRAY);
+            unset ($value['definitionFile']);
             $refinedData[]=$value;
         }
         return new JsonModel(array(

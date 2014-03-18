@@ -11,17 +11,21 @@
  * @copyright Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+$paymentMeansPath = realpath(__DIR__ . "/paymentMeans/");
 /**
  * List default Rubedo payment means
  */
 return array(
     'check' => array(
-        'name'=>"Check"
+        'name'=>"Check",
+        'definitionFile' => $paymentMeansPath . '/check.json'
     ),
     'paypal' => array(
-        'name'=>"PayPal"
+        'name'=>"PayPal",
+        'definitionFile' => $paymentMeansPath . '/paypal.json'
     ),
     'creditTransfer' => array(
-        'name'=>"Credit Transfer"
+        'name'=>"Credit Transfer",
+        'definitionFile' => $paymentMeansPath . '/creditTransfer.json'
     )
 );

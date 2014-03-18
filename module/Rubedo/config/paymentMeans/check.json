@@ -1,0 +1,9 @@
+[
+    {
+        "type":"Ext.form.field.Text",
+        "config":{
+            "fieldLabel":"Test",
+            "name":"test"
+        }
+    }
+]
