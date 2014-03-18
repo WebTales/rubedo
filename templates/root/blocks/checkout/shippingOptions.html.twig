@@ -1,0 +1,6 @@
+{% for shipper in data %}
+    <label class="radio">
+        <input type="radio" name="shipper"  value="{{ shipper.shipperId }}" {% if shipper.shipperId==currentChoice %} checked {% endif %} >
+        {{ shipper.name }} - Delivered under {{ shipper.hRDelay }} {{ shipper.hRUnit }} for {{ shipper.rate }} €
+    </label>
+{% endfor %}

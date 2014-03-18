@@ -17,7 +17,6 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
@@ -267,6 +266,7 @@ class CheckoutController extends AbstractController
     public function xhrGetShippingOptionsAction()
     {
         $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        $currentChoice=$this->params()->fromPost("current-choice","");
         if (!$currentUser){
             return new JsonModel(array(
                 "success"=>false,
@@ -280,9 +280,12 @@ class CheckoutController extends AbstractController
                 $items=$items+$value['amount'];
             }
             $myShippers=Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'],$items);
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/checkout/shippingOptions.html.twig");
+            $myShippers['currentChoice']=$currentChoice;
+            $html=Manager::getService('FrontOfficeTemplates')->render($template,$myShippers);
             return new JsonModel(array(
                 "success"=>true,
-                "html"=>$myShippers
+                "html"=>$html
             ));
         } else {
             return new JsonModel(array(

@@ -333,5 +333,28 @@ function adaptToUserData(userData){
     } else {
         jQuery("#chkStep4Continue").attr("disabled","disabled");
     }
+    var request = jQuery.ajax({
+        url : "/blocks/"+jQuery('html').attr('lang')+"/checkout/xhr-get-shipping-options",
+        type : "POST",
+        data : {
+            'current-choice': checkoutGetFormData(jQuery("#checkoutShippingMethodForm")).shipper,
+            'current-page':jQuery('body').attr('data-current-page')
+        },
+        dataType : "json"
+    });
+
+    request.done(function(data) {
+        if(data['success']) {
+            jQuery("#shippingMethodsHolder").empty();
+            jQuery("#shippingMethodsHolder").append(data.html);
+        } else {
+            console.log("error in shippers retrieval");
+        }
+    });
+
+    request.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("error in shippers retrieval");
+    });
+
     return(goodstep);
 }
