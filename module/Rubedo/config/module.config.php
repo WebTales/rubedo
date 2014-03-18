@@ -25,6 +25,7 @@ $blocksDefinition = include (__DIR__ . '/blocks.definition.config.php');
 $templateConfig = include (__DIR__ . '/templates.config.php');
 $appExtension = include (__DIR__ . '/app.extensions.config.php');
 $loggerConfig = include (__DIR__ . '/logger.config.php');
+$paymentMeans=include (__DIR__ . '/payment.means.config.php');
 
 foreach ($serviceMapArray as $key => $value) {
     if (in_array($key, $sharedService)) {
@@ -116,5 +117,7 @@ $config['templates'] = $templateConfig;
 $config['appExtension'] = $appExtension;
 
 $config['logger'] = $loggerConfig;
+
+$config['paymentMeans'] = $paymentMeans;
 
 return $config;

@@ -77,5 +77,6 @@ return array(
     'Rubedo\\Backoffice\\Controller\\EmailTemplates' => 'Rubedo\\Backoffice\\Controller\\EmailTemplatesController',
     'Rubedo\\Backoffice\\Controller\\Countries' => 'Rubedo\\Backoffice\\Controller\\CountriesController',
     'Rubedo\\Backoffice\\Controller\\Taxes' => 'Rubedo\\Backoffice\\Controller\\TaxesController',
-    'Rubedo\\Backoffice\\Controller\\Shippers' => 'Rubedo\\Backoffice\\Controller\\ShippersController'
+    'Rubedo\\Backoffice\\Controller\\Shippers' => 'Rubedo\\Backoffice\\Controller\\ShippersController',
+    'Rubedo\\Backoffice\\Controller\\PaymentMeans' => 'Rubedo\\Backoffice\\Controller\\PaymentMeansController'
 );
