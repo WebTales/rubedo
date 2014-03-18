@@ -264,4 +264,33 @@ class CheckoutController extends AbstractController
 
     }
 
+    public function xhrGetShippingOptionsAction()
+    {
+        $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser){
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Unable to get current user"
+            ));
+        }
+        if ((isset($currentUser['shippingAddress']))&&(isset($currentUser['shippingAddress']['country']))){
+            $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
+            $items=0;
+            foreach($myCart as $value){
+                $items=$items+$value['amount'];
+            }
+            $myShippers=Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'],$items);
+            return new JsonModel(array(
+                "success"=>true,
+                "html"=>$myShippers
+            ));
+        } else {
+            return new JsonModel(array(
+                "success"=>true,
+                "html"=>""
+            ));
+        }
+
+    }
+
 }

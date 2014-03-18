@@ -31,7 +31,7 @@ class Shippers extends AbstractCollection
         parent::__construct();
     }
 
-    public function getApplicableShippers($country){
+    public function getApplicableShippers($country, $items){
         $pipeline=array();
         $pipeline[]=array(
             '$project'=>array(
@@ -58,6 +58,9 @@ class Shippers extends AbstractCollection
                 $value['shipperId']=(string)$value['shipperId'];
                 $value=array_merge($value, $value['rates']);
                 unset ($value['rates']);
+                if ($value['rateType']=='flatPerItem'){
+                    $value['rate']=$value['rate']*$items;
+                }
             }
             return array(
                 "data"=>$response['result'],
