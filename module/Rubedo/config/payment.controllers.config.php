@@ -13,11 +13,10 @@
  */
 
 /**
- * Combine all controllers lists
+ * Payment controllers list
  */
-$backControllers = include 'backoffice.controllers.config.php';
-$frontControllers = include 'frontoffice.controllers.config.php';
-$installControllers = include 'install.controllers.config.php';
-$blocksControllers = include 'blocks.controllers.config.php';
-$paymentControllers = include 'payment.controllers.config.php';
-return array_merge($backControllers, $frontControllers, $installControllers, $blocksControllers, $paymentControllers);
+return array(
+    'Rubedo\\Payment\\Controller\\Check' => 'Rubedo\\Payment\\Controller\\CheckController',
+    'Rubedo\\Payment\\Controller\\CreditTransfer' => 'Rubedo\\Payment\\Controller\\CreditTransferController',
+    'Rubedo\\Payment\\Controller\\Paypal' => 'Rubedo\\Payment\\Controller\\PaypalController'
+);

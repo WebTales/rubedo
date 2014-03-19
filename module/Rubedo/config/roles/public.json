@@ -49,6 +49,9 @@
         "execute.controller.checkout.xhr-update-shipping.blocks",
         "execute.controller.checkout.xhr-update-account-data.blocks",
         "execute.controller.checkout.xhr-get-shipping-options.blocks",
-        "execute.controller.checkout.xhr-get-summary.blocks"
+        "execute.controller.checkout.xhr-get-summary.blocks",
+        "execute.controller.check.index.payment",
+        "execute.controller.paypal.index.payment",
+        "execute.controller.credittransfer.index.payment"
  	]
 }

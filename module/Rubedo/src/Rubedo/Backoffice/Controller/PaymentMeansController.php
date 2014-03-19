@@ -45,6 +45,7 @@ class PaymentMeansController extends AbstractActionController
             $pmJsonData = file_get_contents($value['definitionFile']);
             $value['configFields'] = Json::decode($pmJsonData, Json::TYPE_ARRAY);
             unset ($value['definitionFile']);
+            unset ($value['controller']);
             $refinedData[]=$value;
         }
         return new JsonModel(array(

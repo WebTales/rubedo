@@ -18,14 +18,17 @@ $paymentMeansPath = realpath(__DIR__ . "/paymentMeans/");
 return array(
     'check' => array(
         'name'=>"Check",
+        'controller' => 'Rubedo\\Payment\\Controller\\Check',
         'definitionFile' => $paymentMeansPath . '/check.json'
     ),
     'paypal' => array(
         'name'=>"PayPal",
+        'controller' => 'Rubedo\\Payment\\Controller\\Paypal',
         'definitionFile' => $paymentMeansPath . '/paypal.json'
     ),
     'creditTransfer' => array(
         'name'=>"Credit Transfer",
+        'controller' => 'Rubedo\\Payment\\Controller\\CreditTransfer',
         'definitionFile' => $paymentMeansPath . '/creditTransfer.json'
     )
 );
