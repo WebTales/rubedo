@@ -300,6 +300,7 @@ class CheckoutController extends AbstractController
     public function xhrGetSummaryAction()
     {
         $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+        $currentChoice=$this->params()->fromPost("current-choice","");
         if (!$currentUser){
             return new JsonModel(array(
                 "success"=>false,
@@ -308,9 +309,31 @@ class CheckoutController extends AbstractController
         }
         if (isset($currentUser['shippingAddress'])){
             $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
+            $items=0;
+            foreach($myCart as $value){
+                $items=$items+$value['amount'];
+            }
+            $myShippers=Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'],$items);
+            $shippingPrice=0;
+            foreach ($myShippers['data'] as $shipper){
+                if ($shipper['shipperId']==$currentChoice){
+                    $shippingPrice=$shipper['rate'];
+                }
+            }
             $twigVars=$this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['shippingAddress']['country'], $currentUser['shippingAddress']['regionState'], $currentUser['shippingAddress']['postCode']);
+            $twigVars['shippingPrice']=$shippingPrice;
             $twigVars['billingAddress']=$currentUser['billingAddress'];
             $twigVars['shippingAddress']=$currentUser['shippingAddress'];
+            $activePaymentMeans=Manager::getService("PaymentConfigs")->getActivePMConfigs();
+            $twigVars['paymentMeans']=array();
+            $twigVars['shippingMethod']=$currentChoice;
+            foreach ($activePaymentMeans['data'] as $value){
+                $twigVars['paymentMeans'][]=array(
+                    "displayName"=>$value['displayName'],
+                    "paymentMeans"=>$value['paymentMeans'],
+                    "logo"=>$value['logo']
+                );
+            }
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/checkout/checkoutSummary.html.twig");
             $html=Manager::getService('FrontOfficeTemplates')->render($template,$twigVars);
             return new JsonModel(array(

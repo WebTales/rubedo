@@ -73,4 +73,14 @@ class PaymentConfigs extends AbstractCollection
             'data'=>$configForPM
         ));
     }
+
+    public function getActivePMConfigs(){
+        $rConfig = Manager::getService('config');
+        $installedPM=array_keys($rConfig['paymentMeans']);
+        $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('active')->setValue(true))
+            ->addFilter(Filter::factory('In')->setName('paymentMeans')->setValue($installedPM));
+        $result=$this->getList($filters);
+        return $result;
+    }
+
 }

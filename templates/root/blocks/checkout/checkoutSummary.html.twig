@@ -50,8 +50,13 @@
             </tbody>
         </table>
         <dl class="dl-horizontal pull-right">
-            <dt>Tax-free total :</dt>
+            <dt>Sub-total :</dt>
             <dd> {{ totalPrice}} €</dd>
+        </dl>
+        <div class="clearfix"></div>
+        <dl class="dl-horizontal pull-right">
+            <dt>Shipping :</dt>
+            <dd> {{ shippingPrice}} €</dd>
         </dl>
         <div class="clearfix"></div>
         <dl class="dl-horizontal pull-right">
@@ -61,8 +66,23 @@
         <div class="clearfix"></div>
         <dl class="dl-horizontal pull-right">
             <dt>Total :</dt>
-            <dd> {{ totalTaxedPrice }} €</dd>
+            <dd> {{ totalTaxedPrice + shippingPrice}} €</dd>
         </dl>
         <div class="clearfix"></div>
     {% endif %}
+</div>
+<div class="row-fluid">
+    <h4>Payment method</h4>
+    <form method="post" class="form-horizontal" id="checkoutConfirm" >
+        <input type="hidden" name="isConfirmOrderPost" value="Confirm">
+        <input type="hidden" name="shippingMethod" value="{{ shippingMethod }}">
+
+        {% for pm in paymentMeans %}
+            <label class="radio">
+                <input type="radio" name="paymentMeans"  value="{{ pm.paymentMeans }}" {% if loop.index==1 %} checked {% endif %} >
+                {{ pm.displayName }}
+            </label>
+        {% endfor %}
+        <button class="btn btn-primary" id="chkStep6Finish" type="submit">Confirm order</button>
+    </form>
 </div>
