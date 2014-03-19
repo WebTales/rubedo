@@ -15,6 +15,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
+use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Payment Configs
@@ -29,5 +31,46 @@ class PaymentConfigs extends AbstractCollection
     {
         $this->_collectionName = 'PaymentConfigs';
         parent::__construct();
+    }
+
+    /**
+     * Gets the config for a specific payment means, makes sure payment means is installed, autocreates an inactive one if non existent
+     *
+     * @param $pmName
+     * @return array
+     */
+
+    public function getConfigForPM ($pmName){
+        $rConfig = Manager::getService('config');
+        $installedPM=$rConfig['paymentMeans'];
+        if (!isset($installedPM[$pmName])){
+            return(array(
+                'success'=>false,
+                'msg'=>"Payment means not installed"
+            ));
+        }
+        $filter = Filter::factory('Value');
+        $filter->setName('paymentMeans')->setValue($pmName);
+        $configForPM=$this->findOne($filter);
+        if (!$configForPM){
+            $configForPM=$this->create(array(
+                "paymentMeans"=>$pmName,
+                "active"=>false,
+                "displayName"=>$installedPM[$pmName]["name"],
+                "logo"=>null,
+                "nativePMConfig"=>array()
+            ));
+            if (!$configForPM['success']){
+                return(array(
+                    'success'=>false,
+                    'msg'=>"Failed to autocreate config"
+                ));
+            }
+            $configForPM=$configForPM['data'];
+        }
+        return(array(
+            'success'=>true,
+            'data'=>$configForPM
+        ));
     }
 }

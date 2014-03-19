@@ -18,6 +18,7 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing CRUD API for the PaymentConfigs JSON
@@ -39,6 +40,18 @@ class PaymentConfigsController extends DataAccessController
         
         // init the data access service
         $this->_dataService = Manager::getService('PaymentConfigs');
+    }
+
+    public function getConfigForPaymentMeansAction(){
+        $paymentMeans=$this->params()->fromQuery("paymentMeans", null);
+        if (!$paymentMeans){
+            return new JsonModel(array(
+                "success"=>false,
+                "msg"=>"Missing required parameter"
+            ));
+        }
+        $result=$this->_dataService->getConfigForPM($paymentMeans);
+        return new JsonModel($result);
     }
 
 }
