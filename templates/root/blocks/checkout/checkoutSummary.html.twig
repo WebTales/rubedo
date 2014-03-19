@@ -61,12 +61,12 @@
         <div class="clearfix"></div>
         <dl class="dl-horizontal pull-right">
             <dt>Taxes :</dt>
-            <dd> {{  totalTaxedPrice -  totalPrice}} €</dd>
+            <dd> {{  totalTaxedPrice -  totalPrice + shippingTax}} € </dd>
         </dl>
         <div class="clearfix"></div>
         <dl class="dl-horizontal pull-right">
             <dt>Total :</dt>
-            <dd> {{ totalTaxedPrice + shippingPrice}} €</dd>
+            <dd> {{ totalTaxedPrice + shippingTaxedPrice}} € </dd>
         </dl>
         <div class="clearfix"></div>
     {% endif %}

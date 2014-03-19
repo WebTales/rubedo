@@ -315,13 +315,19 @@ class CheckoutController extends AbstractController
             }
             $myShippers=Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'],$items);
             $shippingPrice=0;
+            $shippingTaxedPrice=0;
+            $shippingTax=0;
             foreach ($myShippers['data'] as $shipper){
                 if ($shipper['shipperId']==$currentChoice){
                     $shippingPrice=$shipper['rate'];
+                    $shippingTax=$shippingPrice*($shipper['tax']/100);
+                    $shippingTaxedPrice=$shippingPrice+$shippingTax;
                 }
             }
             $twigVars=$this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['shippingAddress']['country'], $currentUser['shippingAddress']['regionState'], $currentUser['shippingAddress']['postCode']);
             $twigVars['shippingPrice']=$shippingPrice;
+            $twigVars['shippingTaxedPrice']=$shippingTaxedPrice;
+            $twigVars['shippingTax']=$shippingTax;
             $twigVars['billingAddress']=$currentUser['billingAddress'];
             $twigVars['shippingAddress']=$currentUser['shippingAddress'];
             $activePaymentMeans=Manager::getService("PaymentConfigs")->getActivePMConfigs();
