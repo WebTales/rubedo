@@ -16,14 +16,14 @@
  */
 namespace Rubedo\Payment\Controller;
 
-use Rubedo\Blocks\Controller\AbstractController;
+use Zend\Mvc\Controller\AbstractActionController;
 /**
  *
  * @author adobre
  * @category Rubedo
  * @package Rubedo
  */
-class CheckController extends AbstractController
+class CheckController extends AbstractActionController
 {
 
     public function indexAction ()
