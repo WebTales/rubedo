@@ -16,18 +16,26 @@
  */
 namespace Rubedo\Payment\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 /**
  *
  * @author adobre
  * @category Rubedo
  * @package Rubedo
  */
-class PaypalController extends AbstractActionController
+class PaypalController extends AbstractController
 {
+
+    public function __construct()
+    {
+        $this->paymentMeans = 'paypal';
+
+        parent::__construct();
+    }
+
 
     public function indexAction ()
     {
+        $this->initOrder();
         die("test paypal controller");
     }
 }

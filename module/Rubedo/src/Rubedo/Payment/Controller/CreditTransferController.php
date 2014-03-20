@@ -16,18 +16,26 @@
  */
 namespace Rubedo\Payment\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 /**
  *
  * @author adobre
  * @category Rubedo
  * @package Rubedo
  */
-class CreditTransferController extends AbstractActionController
+class CreditTransferController extends AbstractController
 {
+
+    public function __construct()
+    {
+        $this->paymentMeans = 'creditTransfer';
+
+        parent::__construct();
+    }
+
 
     public function indexAction ()
     {
+        $this->initOrder();
         die("test credit transfer controller");
     }
 }

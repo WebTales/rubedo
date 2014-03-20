@@ -15,19 +15,27 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Payment\Controller;
+use Zend\Debug\Debug;
 
-use Zend\Mvc\Controller\AbstractActionController;
 /**
  *
  * @author adobre
  * @category Rubedo
  * @package Rubedo
  */
-class CheckController extends AbstractActionController
+class CheckController extends AbstractController
 {
+    public function __construct()
+    {
+        $this->paymentMeans = 'check';
+
+        parent::__construct();
+    }
+
 
     public function indexAction ()
     {
+        $this->initOrder();
         die("test check controller");
     }
 }
