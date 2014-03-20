@@ -100,7 +100,7 @@ abstract class AbstractController extends AbstractActionController
     }
 
     protected function initOrder (){
-        $orderId=$this->params()->fromPost("orderId", null);
+        $orderId=$this->params()->fromPost("order-id", null);
         if (empty($orderId)) {
             throw new \Rubedo\Exceptions\Server("Missing order param");
         }

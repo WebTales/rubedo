@@ -17,7 +17,6 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 
@@ -37,6 +36,14 @@ class CheckoutController extends AbstractController
             if ((!isset($params['shippingMethod']))||(!isset($params['paymentMeans']))){
                 throw new \Rubedo\Exceptions\User('Missing required parameters');
             }
+            $config = Manager::getService('config');
+            $pmConfig=$config['paymentMeans'];
+            if (!isset($pmConfig[$params['paymentMeans']])){
+                if (empty($myCart)) {
+                    throw new \Rubedo\Exceptions\User('Unknown payment method');
+                }
+            }
+            $myPaymentMeans=$pmConfig[$params['paymentMeans']];
             $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
             if (empty($myCart)) {
                 throw new \Rubedo\Exceptions\User('Shopping cart is empty');
@@ -87,10 +94,18 @@ class CheckoutController extends AbstractController
             $order['shippingAddress']=$currentUser['shippingAddress'];
             $order['hasStockDecrementIssues']=false;
             $order['stockDecrementIssues']=array();
+            $order['paymentMeans']=$params['paymentMeans'];
+            $order['status']="pendingPayment";
 
-
-            Debug::dump($order);
-            die("test");
+            $registeredOrder=Manager::getService("Orders")->createOrder($order);
+            if (!$registeredOrder['success']){
+                throw new \Rubedo\Exceptions\Server('Order creation failed');
+            }
+            $postParams=$this->getRequest()->getPost();
+            $postParams->set("order-id",$registeredOrder['data']['id']);
+            return $this->forward()->dispatch($myPaymentMeans['controller'], array(
+                'action' => 'index'
+            ));
         }
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
@@ -436,7 +451,7 @@ class CheckoutController extends AbstractController
                 foreach ($myContent["productProperties"]['variations'] as $variation){
                     if ($variation['id']==$value['variationId']){
                         $unitPrice=$variation["price"];
-                        $unitTaxedPrice=$taxService->getTaxValue($value['productId'],$userTypeId, $country, $region, $postalCode,$unitPrice);
+                        $unitTaxedPrice=$taxService->getTaxValue($myContent['typeId'],$userTypeId, $country, $region, $postalCode,$unitPrice);
                         $price=$unitPrice*$value["amount"];
                         $taxedPrice=$unitTaxedPrice*$value["amount"];
                         $totalTaxedPrice=$totalTaxedPrice+$taxedPrice;

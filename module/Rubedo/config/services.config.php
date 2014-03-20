@@ -88,5 +88,6 @@ return array(
     'Taxes' => 'Rubedo\\Collection\\Taxes',
     'Shippers' => 'Rubedo\\Collection\\Shippers',
     'PaymentConfigs' => 'Rubedo\\Collection\\PaymentConfigs',
-    'Orders' => 'Rubedo\\Collection\\Orders'
+    'Orders' => 'Rubedo\\Collection\\Orders',
+    'Stock' => 'Rubedo\\Collection\\Stock'
 );

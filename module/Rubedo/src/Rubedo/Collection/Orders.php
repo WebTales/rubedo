@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Orders
@@ -30,4 +31,36 @@ class Orders extends AbstractCollection
         $this->_collectionName = 'Orders';
         parent::__construct();
     }
+
+    /**
+     * Creates order, performs stock decrement
+     *
+     * @param $orderData
+     * @return array
+     */
+    public function createOrder ($orderData)
+    {
+        $createdOrder=$this->create($orderData);
+        if (!$createdOrder['success']){
+            return $createdOrder;
+        }
+        $orderData=$createdOrder['data'];
+        $contentTypesService=Manager::getService("ContentTypes");
+        $contentsService=Manager::getService("Contents");
+        $stockService=Manager::getService("Stock");
+        foreach ($orderData['detailedCart']['cart'] as $value){
+            $content=$contentsService->findById($value['productId'], true, false);
+            $productType=$contentTypesService->findById($content['typeId']);
+            if ($productType['manageStock']){
+                $stockExtraction=$stockService->decreaseStock($value['productId'],$value['variationId'],$value['amount']);
+                if (!$stockExtraction['success']){
+                    $orderData['hasStockDecrementIssues']=true;
+                    $orderData['stockDecrementIssues'][]=$value;
+                }
+            }
+        }
+        $updatedOrder=$this->update($orderData);
+        return $updatedOrder;
+    }
+
 }

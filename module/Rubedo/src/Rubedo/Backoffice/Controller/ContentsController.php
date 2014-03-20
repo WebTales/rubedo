@@ -255,7 +255,7 @@ class ContentsController extends DataAccessController
         if (! $typeId) {
             throw new \Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
         }
-        $result=$this->_dataService->getStock($typeId,$workingLanguage);
+        $result=Manager::getService("Stock")->getStock($typeId,$workingLanguage);
         return $this->_returnJson($result);
     }
 
@@ -279,9 +279,9 @@ class ContentsController extends DataAccessController
             ));
         }
         if ($actionToApply=="add"){
-            $result=$this->_dataService->increaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+            $result=Manager::getService("Stock")->increaseStock($updateData['productId'],$updateData['id'],$amountToApply);
         } else {
-            $result=$this->_dataService->decreaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+            $result=Manager::getService("Stock")->decreaseStock($updateData['productId'],$updateData['id'],$amountToApply);
         }
         if (!$result['success']){
             return $this->_returnJson($result);
