@@ -115,7 +115,7 @@ abstract class AbstractController extends AbstractActionController
         if (empty($this->currentOrder)) {
             throw new \Rubedo\Exceptions\Server("Order not set");
         }
-        return $this->currentOrder['totalPrice'];
+        return $this->currentOrder['finalPrice'];
     }
 
 

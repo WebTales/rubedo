@@ -31,6 +31,67 @@ class CheckoutController extends AbstractController
 {
     public function indexAction ()
     {
+        $postConfirmer=$this->params()->fromPost('isConfirmOrderPost');
+        if (($this->getRequest()->isPost())&&(isset($postConfirmer))) {
+            $params=$this->params()->fromPost();
+            if ((!isset($params['shippingMethod']))||(!isset($params['paymentMeans']))){
+                throw new \Rubedo\Exceptions\User('Missing required parameters');
+            }
+            $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
+            if (empty($myCart)) {
+                throw new \Rubedo\Exceptions\User('Shopping cart is empty');
+            }
+            $currentUser=Manager::getService("CurrentUser")->getCurrentUser();
+            if (!$currentUser){
+                throw new \Rubedo\Exceptions\User('No authenticated user');
+            }
+            if ((!isset($currentUser['shippingAddress']))||(!isset($currentUser['shippingAddress']['country']))){
+                throw new \Rubedo\Exceptions\User('Missing shipping address country');
+            }
+            $order=array();
+            $items=0;
+            foreach($myCart as $value){
+                $items=$items+$value['amount'];
+            }
+            $myShippers=Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'],$items);
+            $shippingPrice=0;
+            $shippingTaxedPrice=0;
+            $shippingTax=0;
+            $shipperNotFound=true;
+            $usedShipper=array();
+            foreach ($myShippers['data'] as $shipper){
+                if ($shipper['shipperId']==$params['shippingMethod']){
+                    $shippingPrice=$shipper['rate'];
+                    $shippingTax=$shippingPrice*($shipper['tax']/100);
+                    $shippingTaxedPrice=$shippingPrice+$shippingTax;
+                    $shipperNotFound=false;
+                    $usedShipper=$shipper;
+                }
+            }
+            if ($shipperNotFound){
+                if ((!isset($currentUser['shippingAddress']))||(!isset($currentUser['shippingAddress']['country']))){
+                    throw new \Rubedo\Exceptions\User('Shipper not found');
+                }
+            }
+            $order['detailedCart']=$this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['shippingAddress']['country'], $currentUser['shippingAddress']['regionState'], $currentUser['shippingAddress']['postCode']);
+            $order['shippingPrice']=$shippingPrice;
+            $order['shippingTaxedPrice']=$shippingTaxedPrice;
+            $order['shippingTax']=$shippingTax;
+            $order['finalTFPrice']=$order['detailedCart']['totalPrice']+$order['shippingPrice'];
+            $order['finalTaxes']=$order['detailedCart']['totalTaxedPrice']-$order['detailedCart']['totalPrice']+$order['shippingTax'];
+            $order['finalPrice']=$order['detailedCart']['totalTaxedPrice']+$order['shippingTaxedPrice'];
+            $order['shipper']=$usedShipper;
+            $order['userId']=$currentUser['id'];
+            $order['userName']=$currentUser['name'];
+            $order['billingAddress']=$currentUser['billingAddress'];
+            $order['shippingAddress']=$currentUser['shippingAddress'];
+            $order['hasStockDecrementIssues']=false;
+            $order['stockDecrementIssues']=array();
+
+
+            Debug::dump($order);
+            die("test");
+        }
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
         $myCart = Manager::getService("ShoppingCart")->getCurrentCart();

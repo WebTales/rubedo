@@ -41,7 +41,7 @@
             <tbody>
             {% for item in cart %}
                 <tr>
-                    <td><a href='{{ displayUrl(item.productId,"default",null) }}?variation={{ item.variationId}}'>{{ item.title }} <small class="muted">{{ item.subtitle }}</small></a></td>
+                    <td>{{ item.title }} <small class="muted">{{ item.subtitle }}</small></td>
                     <td>{{ item.unitTaxedPrice }} €</td>
                     <td>x {{ item.amount }}</td>
                     <td>{{ item.taxedPrice }} €</td>
