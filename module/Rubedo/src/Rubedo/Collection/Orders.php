@@ -40,6 +40,13 @@ class Orders extends AbstractCollection
      */
     public function createOrder ($orderData)
     {
+        $date = new \DateTime();
+        $date=$date->format('Y-m-d');
+        $date=str_replace("-","",$date);
+        $incremental=$this->getIncrement($date);
+        $orderData['dateCode']=$date;
+        $orderData['incrementalCode']=$incremental;
+        $orderData['orderNumber']=$date.$incremental;
         $createdOrder=$this->create($orderData);
         if (!$createdOrder['success']){
             return $createdOrder;
@@ -61,6 +68,29 @@ class Orders extends AbstractCollection
         }
         $updatedOrder=$this->update($orderData);
         return $updatedOrder;
+    }
+
+    public function getIncrement($dateCode){
+        $pipeline=array();
+        $pipeline[]=array(
+            '$match'=>array(
+                'dateCode'=>$dateCode
+            )
+        );
+        $pipeline[]=array(
+            '$group'=>array(
+                '_id'=>'$dateCode',
+                'latestCode'=>array(
+                    '$max'=>'$incrementalCode'
+                ),
+            )
+        );
+        $response=$this->_dataService->aggregate($pipeline);
+        if (empty($response['result'])){
+            return 1;
+        }
+        return($response['result'][0]['latestCode']+1);
+
     }
 
 }
