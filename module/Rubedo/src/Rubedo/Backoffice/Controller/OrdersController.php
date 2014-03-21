@@ -17,12 +17,11 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
-use Zend\Json\Json;
 
 /**
  * Controller providing CRUD API for the Orders JSON
  *
- * Receveive Ajax Calls for read & write from the UI to the Mongo DB
+ * Receive Ajax Calls for read & write from the UI to the Mongo DB
  *
  *
  * @author adobre
@@ -36,7 +35,6 @@ class OrdersController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
         // init the data access service
         $this->_dataService = Manager::getService('Orders');
     }

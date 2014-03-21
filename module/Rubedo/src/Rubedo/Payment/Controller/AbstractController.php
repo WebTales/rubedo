@@ -18,6 +18,7 @@ namespace Rubedo\Payment\Controller;
 
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
+use Rubedo\Templates\Raw\RawViewModel;
 
 /**
  *

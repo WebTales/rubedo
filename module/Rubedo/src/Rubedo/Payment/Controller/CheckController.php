@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Payment\Controller;
-use Zend\Debug\Debug;
+use Rubedo\Services\Manager;
 
 /**
  *
@@ -28,7 +28,6 @@ class CheckController extends AbstractController
     public function __construct()
     {
         $this->paymentMeans = 'check';
-
         parent::__construct();
     }
 
@@ -36,6 +35,22 @@ class CheckController extends AbstractController
     public function indexAction ()
     {
         $this->initOrder();
-        die("test check controller");
+        $content = array();
+        if ($this->nativePMConfig["contentId"]) {
+            $content = Manager::getService('Contents')->findById($this->nativePMConfig["contentId"], true, false);
+        }
+        if (! $content) {
+            return $this->sendResponse(array(), "block.html.twig");
+        }
+        $output = $this->params()->fromQuery();
+        $output['contentId'] = $this->nativePMConfig["contentId"];
+        $price=$this->getOrderPrice();
+        $output['price']=$price;
+        $output['text'] = str_replace("###price###", $price." €", $content["fields"]["body"]);
+        $output["locale"] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/richtext.html.twig");
+        $css = array();
+        $js = array();
+        return $this->sendResponse($output, $template, $css, $js);
     }
 }

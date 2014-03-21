@@ -1,9 +1,11 @@
 [
     {
-        "type":"Ext.form.field.Text",
+        "type":"Rubedo.view.DCEField",
         "config":{
-            "fieldLabel":"Test",
-            "name":"test"
+            "fieldLabel":"Displayed payment info",
+            "name":"contentId",
+            "allowedCT":"richText",
+            "addOnly":true
         }
     }
 ]
