@@ -39,9 +39,7 @@ class CheckoutController extends AbstractController
             $config = Manager::getService('config');
             $pmConfig=$config['paymentMeans'];
             if (!isset($pmConfig[$params['paymentMeans']])){
-                if (empty($myCart)) {
                     throw new \Rubedo\Exceptions\User('Unknown payment method');
-                }
             }
             $myPaymentMeans=$pmConfig[$params['paymentMeans']];
             $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
@@ -101,6 +99,7 @@ class CheckoutController extends AbstractController
             if (!$registeredOrder['success']){
                 throw new \Rubedo\Exceptions\Server('Order creation failed');
             }
+            Manager::getService("ShoppingCart")->setCurrentCart(array());
             $postParams=$this->getRequest()->getPost();
             $postParams->set("order-id",$registeredOrder['data']['id']);
             return $this->forward()->dispatch($myPaymentMeans['controller'], array(

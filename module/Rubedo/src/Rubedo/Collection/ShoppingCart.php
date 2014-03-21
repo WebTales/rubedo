@@ -22,7 +22,7 @@ use Rubedo\Services\Manager;
 use Zend\Http\Header\SetCookie;
 
 /**
- * Service to handle UserTypes
+ * Service to handle shopping cart
  *
  * @author aDobre
  * @category Rubedo
@@ -76,7 +76,7 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
         }
     }
 
-    protected function setCurrentCart($cart)
+    public function setCurrentCart($cart)
     {
         $currentUser = $this->getCurrentUser();
         if ($currentUser && $this->hasShoppingCart($currentUser)) {
