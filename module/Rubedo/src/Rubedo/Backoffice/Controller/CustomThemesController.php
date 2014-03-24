@@ -25,7 +25,7 @@ use Zend\Json\Json;
  * Receveive Ajax Calls for read & write from the UI to the Mongo DB
  *
  *
- * @author jbourdin
+ * @author adobre
  * @category Rubedo
  * @package Rubedo
  *         
@@ -42,7 +42,6 @@ class CustomThemesController extends DataAccessController
     public function __construct ()
     {
         parent::__construct();
-        
         // init the data access service
         $this->_dataService = Manager::getService('CustomThemes');
     }
@@ -61,7 +60,6 @@ class CustomThemesController extends DataAccessController
     
     public function getColorPaletteBoAction ()
     {
-
         $values=$this->params()->fromPost('values');
         $curl = curl_init();
         $offset=rand(1, 1000);

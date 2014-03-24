@@ -52,6 +52,8 @@
         "execute.controller.checkout.xhr-get-summary.blocks",
         "execute.controller.check.index.payment",
         "execute.controller.paypal.index.payment",
-        "execute.controller.credittransfer.index.payment"
+        "execute.controller.credittransfer.index.payment",
+        "execute.controller.credittransfer.success.payment",
+        "execute.controller.credittransfer.cancel.payment"
  	]
 }

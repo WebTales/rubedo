@@ -50,6 +50,12 @@ abstract class AbstractController extends AbstractActionController
      */
     protected $currentOrder;
 
+    /**
+     * service for handling orders
+     *
+     */
+    protected $ordersService;
+
     public function __construct()
     {
         if (empty($this->paymentMeans)) {
@@ -63,6 +69,7 @@ abstract class AbstractController extends AbstractActionController
             throw new \Rubedo\Exceptions\Server("Payment means is not activated");
         }
         $this->nativePMConfig=$pmConfig['data']['nativePMConfig'];
+        $this->ordersService=Manager::getService("Orders");
     }
 
     protected function getParamFromQuery($name = null, $default = null)
@@ -105,7 +112,7 @@ abstract class AbstractController extends AbstractActionController
         if (empty($orderId)) {
             throw new \Rubedo\Exceptions\Server("Missing order param");
         }
-        $order=Manager::getService("Orders")->findById($orderId);
+        $order=$this->ordersService->findById($orderId);
         if (empty($order)) {
             throw new \Rubedo\Exceptions\Server("Order not found");
         }
