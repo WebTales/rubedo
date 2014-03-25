@@ -44,7 +44,7 @@ class PaypalController extends AbstractController
             "receiverList"=>array(
                 "receiver"=>array(
                     array(
-                        "amount"=>$this-getOrderPrice(),
+                        "amount"=>$this->getOrderPrice(),
                         "email"=>$this->nativePMConfig['userEmail']
                     )
                 )
@@ -83,7 +83,8 @@ class PaypalController extends AbstractController
         if (!$updatedOrder['success']){
             throw new \Rubedo\Exceptions\Server("Error updating order");
         }
-        return $this->redirect()->toUrl($this->nativePMConfig['customerRedirect']."?cmd=_ap-payment&paykey=".$result["payKey"]);
+        $this->redirect()->toUrl($this->nativePMConfig['customerRedirect']."?cmd=_ap-payment&paykey=".$result["payKey"]);
+        return FALSE;
     }
 
     public function successAction ()
