@@ -21,6 +21,7 @@ use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 use Zend\Http\Client;
 use Zend\Http\Request;
+
 /**
  * Controller providing data import for csv
  *
@@ -190,7 +191,7 @@ class ImportController extends DataAccessController
         return new JsonModel($returnArray);
     }
 
-    public function importAction ()
+    public function importActionOld ()
     {
         //Zend_Registry::set('Expects_Json', true); not yet ZF2
         
@@ -652,4 +653,175 @@ class ImportController extends DataAccessController
         $response->setContent($content);
         return $response;
     }
+
+
+public function importAction ()
+{
+	//Zend_Registry::set('Expects_Json', true); not yet ZF2
+
+	set_time_limit(5000);
+	$options = array();
+	
+	$options['separator'] = $this->params()->fromPost('separator', ";");
+	$options['userEncoding'] = $this->params()->fromPost('encoding');
+	$options['workingLanguage'] = $this->params()->fromPost('workingLanguage', 'en');
+	$options['importKey'] = (string) new \MongoId();
+
+	if (! isset($options['userEncoding'])) {
+		throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
+	}
+	
+	$returnArray = array();
+	$taxonomyService = Manager::getService('Taxonomy');
+	$taxonomyTermsService = Manager::getService('TaxonomyTerms');
+	$contentsService = Manager::getService('Contents');
+	$damService = Manager::getService('Dam');
+	$fileService = Manager::getService('Files');
+	$languagesService =  Manager::getService('Languages');
+
+	// get active locales for automatic dam translation
+	$languagesService = Manager::getService('Languages');
+	$activeLocales = $languagesService->getActiveLocales();
+
+	$brokenLines = array();
+
+	$fileInfos = $this->params()->fromFiles('csvFile');
+	if (! isset($fileInfos)) {
+		$returnArray['success'] = false;
+		$returnArray['message'] = "Pas de fichier reçu.";
+	} else {
+		$mimeType = mime_content_type($fileInfos['tmp_name']);
+		$contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
+
+
+		if (($contentType != "text/plain") && ($contentType!= "text/csv")) {
+			$returnArray['success'] = false;
+			$returnArray['message'] = "Le fichier doit doit être au format CSV.";
+		} else {
+			// receive params
+			$configs = Json::decode($this->params()->fromPost('configs', "[ ]"), Json::TYPE_ARRAY);
+			$options['importAsField'] = Json::decode($this->params()->fromPost('inportAsField', "[ ]"), Json::TYPE_ARRAY);
+			$options['importAsFieldTranslation'] = Json::decode($this->params()->fromPost('inportAsFieldTranslation', "[ ]"), Json::TYPE_ARRAY);
+			$options['importAsTaxo'] = Json::decode($this->params()->fromPost('inportAsTaxo', "[ ]"), Json::TYPE_ARRAY);
+			$options['importAsTaxoTranslation'] = Json::decode($this->params()->fromPost('inportAsTaxoTranslation', "[ ]"), Json::TYPE_ARRAY);
+			$options['contentsNavTaxo'] = isset($configs['ContentsNavTaxo']) ? $configs['ContentsNavTaxo'] : "";
+			$options['contentsTarget'] = $configs['ContentsTarget'];
+			
+			// create vocabularies
+			$newTaxos = array();
+			$options['vocabularies'] = array();
+			$options['vocabularies'][] = "navigation";
+			foreach ($options['importAsTaxo'] as $key => $value) {
+				$newTaxoi18n = array();
+				$newTaxoi18n[$options['workingLanguage']] = array(
+						"name" => $value['newName'],
+						"description" => "",
+						"helpText" => "",
+						"locale" => $options['workingLanguage']
+				);
+				
+				// translate vocabulary if terms are translated
+				foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
+					if ($transValue["translatedElement"] == $value['csvIndex']) {
+						$newTaxoLang=$transValue["translateToLanguage"];
+						$newTaxoi18n[$newTaxoLang] = array(
+								"name" => $value['newName'],
+								"description" => "",
+								"helpText" => "",
+								"locale" => $newTaxoLang
+						);
+					}
+				}
+				$newTaxoParams = array(
+						"name" => $value['newName'],
+						"description" => "",
+						"helpText" => "",
+						"expandable" => false,
+						"multiSelect" => true,
+						"mandatory" => $value['mandatory'],
+						"nativeLanguage" => $options['workingLanguage'],
+						"i18n" => $newTaxoi18n
+				);
+				$newTaxo = $taxonomyService->create($newTaxoParams);
+				$newTaxos[] = $newTaxo;
+				$options['vocabularies'][] = $newTaxo['data']['id'];
+			}
+			
+			// create content type
+			$CTfields = array();
+			foreach ($options['importAsField'] as $key => $value) {
+				if ($value['protoId']!='text' && $value['protoId']!='summary') {
+					if ($value['cType'] == "localiserField") {
+						$value['newName'] = "position";
+					}
+					$newFieldForCT = array(
+							"cType" => $value['cType'],
+							"config" => array(
+									"name" => $value['newName'],
+									"fieldLabel" => $value['label'],
+									"allowBlank" => ! $value['mandatory'],
+									"localizable" => $value['localizable'],
+									"searchable" => $value['searchable'],
+									"multivalued" => false,
+									"tooltip" => "",
+									"labelSeparator" => " "
+							),
+							"protoId" => $value['protoId'],
+							"openWindow" => null
+					);
+					$CTfields[] = $newFieldForCT;
+				}
+			}
+
+			$newCTi18n = array();
+			$newCTi18n[$options['workingLanguage']] = array(
+					"type" => $configs['ContentTypeType']
+			);
+			$contentTypeParams = array(
+					"dependant" => false,
+					"code"=>$configs['ContentTypeType'],
+					"dependantTypes" => array(),
+					"type" => $configs['ContentTypeType'],
+					"fields" => $CTfields,
+					"vocabularies" => $options['vocabularies'],
+					"workspaces" => $configs['ContentTypeWorkspaces'],
+					"workflow" => $configs['ContentTypeWorkflow'],
+					"activateDisqus" => false,
+					"nativeLanguage" => $options['workingLanguage'],
+					"i18n" => $newCTi18n
+			);
+			$contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
+
+			$options['typeId'] = $contentType['data']['id'];
+			
+			// Run Import
+			$ImportService = Manager::getService('Import');
+			$lineCounter=$ImportService->run($fileInfos['tmp_name'], $options);
+			
+			// Indexing
+			$ElasticDataIndexService = Manager::getService('ElasticDataIndex');
+			$ElasticDataIndexService->init();
+			$ElasticDataIndexService->indexByType('content', $contentType['data']['id']);
+
+			// Return result
+			$returnArray['importedContentsCount'] = $lineCounter;
+			$returnArray['success'] = true;
+			$returnArray['message'] = "OK";
+			$returnArray['errors'] = $brokenLines;
+		}
+	}
+
+	if (! $returnArray['success']) {
+		$this->getResponse()->setStatusCode(500);
+	}
+	$content = Json::encode($returnArray);
+	$response = $this->getResponse();
+	$headers = $response->getHeaders();
+	$headers->addHeaderLine('Content-Type', 'text/html');
+	$response->setContent($content);
+	return $response;
 }
+
+}
+
+

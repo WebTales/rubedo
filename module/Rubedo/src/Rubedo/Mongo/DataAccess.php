@@ -281,7 +281,7 @@ class DataAccess implements IDataAccess
                 Manager::getService('Logger')->addRecord($level, ucfirst($target->function) . " Request on MongoDB collection: '" . $target->collection->getName() . "'", array(
                     'Collection' => $target->collection->getName(),
                     'Function' => $target->function,
-                    'Query' => $target->args[0],
+                    'Query' => isset($target->args[0]) ? $target->args[0] : 'undefined',
                 ));
                 break;
             default:
@@ -1500,5 +1500,58 @@ class DataAccess implements IDataAccess
     {
         $result=$this->_collection->aggregate($pipeline);
         return $result;
+    }
+    /**
+     * Empty collection
+     *
+     * @return array
+     */
+    public function emptyCollection ()
+    {
+    	$return = $this->_collection->remove();
+    	return $return;
+    }
+    /**
+     * Batch Insert
+     *
+     * @return array
+     */
+    public function batchInsert ($array, $options = array() )
+    {
+    	$return = $this->_collection->batchInsert($array,$options);
+    	return $return;
+    }
+    /**
+     * Direct insert
+     *
+     * @return array
+     */
+    public function insert ($obj, $options = array())
+    {
+    	$return = $this->_collection->insert($obj, $options);
+    	return $return;
+    }
+    /**
+     * Execute a mongo command
+     *
+     * @return array
+     */
+    public function command ($params)
+    {
+    	$return = $this->_dbName->command($params);
+    	
+    	return $return;
+    }
+    
+    /**
+     * Execute a javascript code on the mongo database
+     *
+     * @return array
+     */
+    public function execute ($code, $args = array())
+    {
+    	$return = $this->_dbName->command(array('$eval' => $code, 'args' => $args));
+    	 
+    	return $return;
     }
 }
