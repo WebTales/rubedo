@@ -89,5 +89,6 @@ return array(
     'Shippers' => 'Rubedo\\Collection\\Shippers',
     'PaymentConfigs' => 'Rubedo\\Collection\\PaymentConfigs',
     'Orders' => 'Rubedo\\Collection\\Orders',
-    'Stock' => 'Rubedo\\Collection\\Stock'
+    'Stock' => 'Rubedo\\Collection\\Stock',
+    'PaypalIPN' => 'Rubedo\\Collection\\PaypalIPN'
 );

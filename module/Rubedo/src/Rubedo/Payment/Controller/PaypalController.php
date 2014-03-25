@@ -15,6 +15,8 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Payment\Controller;
+use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\Json\Json;
 
 /**
@@ -51,6 +53,7 @@ class PaypalController extends AbstractController
             ),
             "returnUrl"=>"http://".$_SERVER['HTTP_HOST']."/payment/paypal/success",
             "cancelUrl"=>"http://".$_SERVER['HTTP_HOST']."/payment/paypal/cancel",
+            "ipnNotificationUrl"=>"http://".$_SERVER['HTTP_HOST']."/payment/paypal/ipn",
             "requestEnvelope"=>array(
                 "errorLanguage"=>"en_US",
                 "detailLevel"=>"ReturnAll"
@@ -99,6 +102,14 @@ class PaypalController extends AbstractController
         Debug::dump($this->params()->fromQuery());
         Debug::dump($this->params()->fromPost());
         die("test paypal payment cancel");
+    }
+
+    public function ipnAction ()
+    {
+        $params=$this->params()->fromPost();
+        Manager::getService("PaypalIPN")->create(array(
+            "recievedParams"=>$params
+        ));
     }
 
     protected function extractParamsFromString($string)
