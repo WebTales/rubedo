@@ -222,4 +222,9 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/userOrders.json'
     ),
+    'orderDetail'=>array(
+        'controller' => 'Rubedo\\Blocks\\Controller\\OrderDetail',
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/orderDetail.json'
+    ),
 );

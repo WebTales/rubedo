@@ -58,5 +58,6 @@ return array(
     'Rubedo\\Blocks\\Controller\\ShoppingCart' => 'Rubedo\\Blocks\\Controller\\ShoppingCartController',
     'Rubedo\\Blocks\\Controller\\Development' => 'Rubedo\\Blocks\\Controller\\DevelopmentController',
     'Rubedo\\Blocks\\Controller\\Checkout' => 'Rubedo\\Blocks\\Controller\\CheckoutController',
-    'Rubedo\\Blocks\\Controller\\UserOrders' => 'Rubedo\\Blocks\\Controller\\UserOrdersController'
+    'Rubedo\\Blocks\\Controller\\UserOrders' => 'Rubedo\\Blocks\\Controller\\UserOrdersController',
+    'Rubedo\\Blocks\\Controller\\OrderDetail' => 'Rubedo\\Blocks\\Controller\\OrderDetailController'
 );

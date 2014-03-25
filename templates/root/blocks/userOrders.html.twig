@@ -21,7 +21,7 @@
                 <td>{{ item.paymentMeans }}</td>
                 <td>{{ item.status }}</td>
                 {% if orderDetailPage %}
-                    <a href="{{ orderDetailPageUrl }}?order={{ item.orderNumber }}" ><td><button class="btn btn-primary"><i class="icon-search icon-chevron-right icon-white"></i> View detail</button> </td></a>
+                    <td><a href="{{ orderDetailPageUrl }}?order={{ item.orderNumber }}" ><button class="btn btn-primary"><i class="icon-search icon-chevron-right icon-white"></i> View detail</button></a></td>
                 {% endif %}
             </tr>
         {% endfor %}
