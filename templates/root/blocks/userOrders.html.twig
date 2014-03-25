@@ -1,4 +1,27 @@
 {% extends "@Root/block.html.twig" %}
 {% block mainContent %}
-TEST USER ORDERS
+    <table class="table table-condensed table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Order number</th>
+            <th>Date</th>
+            <th>Price (includes taxes)</th>
+            <th>Shipper</th>
+            <th>Payment means</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in orders %}
+            <tr>
+                <td>{{ item.orderNumber }}</td>
+                <td>{{ item.hrDate }}</td>
+                <td>{{ item.finalPrice }} €</td>
+                <td>{{ item.shipper.name }}</td>
+                <td>{{ item.paymentMeans }}</td>
+                <td>{{ item.status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

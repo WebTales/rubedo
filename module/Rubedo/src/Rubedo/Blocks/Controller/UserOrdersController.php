@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  *
@@ -31,6 +32,19 @@ class UserOrdersController extends AbstractController
     {
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $output=$this->params()->fromQuery();
+        $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser) {
+            $output['errorMessage'] = "Blocks.UserProfile.error.noUser";
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userProfile/error.html.twig");
+            return $this->_sendResponse($output, $template);
+        }
+        $filter=Filter::factory()->addFilter(Filter::factory('Value')->setName('userId')->setValue($currentUser['id']));
+        $orders=Manager::getService("Orders")->getList($filter);
+        $output['orders']=$orders['data'];
+        $dateService=Manager::getService("Date");
+        foreach($output['orders'] as &$value){
+            $value['hrDate']=$dateService->convertToYmd($value['createTime']);
+        }
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userOrders.html.twig");
         $css = array();
         $js = array();
