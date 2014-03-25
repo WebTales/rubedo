@@ -5,7 +5,7 @@
         <tr>
             <th>Order number</th>
             <th>Date</th>
-            <th>Price (includes taxes)</th>
+            <th>Price</th>
             <th>Shipper</th>
             <th>Payment means</th>
             <th>Status</th>
@@ -20,6 +20,9 @@
                 <td>{{ item.shipper.name }}</td>
                 <td>{{ item.paymentMeans }}</td>
                 <td>{{ item.status }}</td>
+                {% if orderDetailPage %}
+                    <a href="{{ orderDetailPageUrl }}?order={{ item.orderNumber }}" ><td><button class="btn btn-primary"><i class="icon-search icon-chevron-right icon-white"></i> View detail</button> </td></a>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>

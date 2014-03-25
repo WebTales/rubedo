@@ -45,6 +45,17 @@ class UserOrdersController extends AbstractController
         foreach($output['orders'] as &$value){
             $value['hrDate']=$dateService->convertToYmd($value['createTime']);
         }
+        $output['orderDetailPage'] = isset($blockConfig['orderDetailPage']) ? $blockConfig['orderDetailPage'] : false;
+        if ($output["orderDetailPage"]) {
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $output['orderDetailPageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $output["orderDetailPage"]
+            ), $urlOptions);
+        }
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userOrders.html.twig");
         $css = array();
         $js = array();
