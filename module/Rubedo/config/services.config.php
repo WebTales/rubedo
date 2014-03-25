@@ -90,5 +90,6 @@ return array(
     'PaymentConfigs' => 'Rubedo\\Collection\\PaymentConfigs',
     'Orders' => 'Rubedo\\Collection\\Orders',
     'Stock' => 'Rubedo\\Collection\\Stock',
-    'PaypalIPN' => 'Rubedo\\Collection\\PaypalIPN'
+    'PaypalIPN' => 'Rubedo\\Collection\\PaypalIPN',
+    'Import' => 'Rubedo\\Collection\\Import'
 );
