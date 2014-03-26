@@ -525,10 +525,15 @@ class DataSearch extends DataAbstract implements IDataSearch {
 		
 		// filter on fields
 		foreach ( $facetedFields as $field ) {
-			if (! $field ['localizable']) {
-				$fieldName = $field ['name'];
+			
+			if ($field ['useAsVariation']) {
+				$fieldName = "productProperties.variations.".$field ['name'];
 			} else {
-				$fieldName = $field ['name'] . "_" . $currentLocale;
+				if (! $field ['localizable']) {
+					$fieldName = $field ['name'];
+				} else {
+					$fieldName = $field ['name'] . "_" . $currentLocale;
+				}
 			}
 			
 			if (array_key_exists ( urlencode ( $field ['name'] ), $this->_params )) {
@@ -837,11 +842,17 @@ class DataSearch extends DataAbstract implements IDataSearch {
 		// Define the fields facets
 		foreach ( $facetedFields as $field ) {
 			
-			if (! $field ['localizable']) {
-				$fieldName = $field ['name'];
+			if ($field ['useAsVariation']) {
+				$fieldName = "productProperties.variations.".$field ['name'];
 			} else {
-				$fieldName = $field ['name'] . "_" . $currentLocale;
+			
+				if (! $field ['localizable']) {
+					$fieldName = $field ['name'];
+				} else {
+					$fieldName = $field ['name'] . "_" . $currentLocale;
+				}
 			}
+
 			if ($this->_isFacetDisplayed ( $field ['name'] )) {
 				
 				$elasticaFacetField = new \Elastica\Facet\Terms ( $field ['name'] );
@@ -910,7 +921,7 @@ class DataSearch extends DataAbstract implements IDataSearch {
 		
 		// Update data
 		$resultsList = $elasticaResultSet->getResults ();
-		
+
 		$result ['total'] = $elasticaResultSet->getTotalHits ();
 		$result ['query'] = $this->_params ['query'];
 		$userWriteWorkspaces = Manager::getService ( 'CurrentUser' )->getWriteWorkspaces ();

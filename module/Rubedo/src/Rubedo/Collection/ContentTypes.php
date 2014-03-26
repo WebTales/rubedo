@@ -346,8 +346,10 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                         "name" => $field['config']['name'],
                         "label" => $field['config']['fieldLabel'],
                         "localizable" => $field['config']['localizable'],
-                        "facetOperator" => isset($field['config']['facetOperator']) ? strtolower($field['config']['facetOperator']) : "and"
+                        "facetOperator" => isset($field['config']['facetOperator']) ? strtolower($field['config']['facetOperator']) : "and",
+                    	"useAsVariation" => isset($field['config']['useAsVariation']) ? $field['config']['useAsVariation'] : false
                     );
+
                 }
             }
         }
