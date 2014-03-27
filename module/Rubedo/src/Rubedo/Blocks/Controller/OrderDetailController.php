@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  *
@@ -29,8 +30,26 @@ class OrderDetailController extends AbstractController
 
     public function indexAction ()
     {
-        $blockConfig = $this->params()->fromQuery('block-config', array());
         $output = $this->params()->fromQuery();
+        $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
+        if (!$currentUser) {
+            $output['errorText'] = "Authenticated user required to view order.";
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/genericError.html.twig");
+            return $this->_sendResponse($output, $template);
+        }
+        if ((!isset($output['order']))||(empty($output['order']))){
+            $output['errorText'] = "Missing order parameter.";
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/genericError.html.twig");
+            return $this->_sendResponse($output, $template);
+        }
+        $filters=Filter::factory()->addFilter(Filter::factory('Value')->setName('userId')->setValue($currentUser['id']))->addFilter(Filter::factory('Value')->setName('orderNumber')->setValue($output['order']));
+        $order=Manager::getService("Orders")->findOne($filters);
+        if (!$order){
+            $output['errorText'] = "Order not found.";
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/genericError.html.twig");
+            return $this->_sendResponse($output, $template);
+        }
+        $output['order']=$order;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/orderDetail.html.twig");
         $css = array();
         $js = array();
