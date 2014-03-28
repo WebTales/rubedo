@@ -57,11 +57,8 @@ class Import extends AbstractCollection
     	// Extract taxonomy to ImportTaxonomy collection
     	$this->extractTaxonomy($importKeyValue,$importAsTaxo,$importAsTaxoTranslation,$workingLanguage, $vocabularies);
     	
-    	// Turn taxonomy terms string to array if needed
-    	$this->turnTaxoToArray ($importAsTaxo);
-    	
-    	// Turn localisation to array
-    	$this->turnLocalizationToArray($importAsField);
+    	// Processing Import data taxonomy and localisation fields
+    	$this->preProcess ($importAsTaxo, $importAsField);
     	
     	// Transform taxonomy terms into id
     	$this->turnTermsToId ($importAsTaxo);
@@ -425,51 +422,34 @@ class Import extends AbstractCollection
 	}
 	
 	/**
-	 * Transform the comma separated string into array in Import collection
+	 * Preprocessing Data inti Import collection :
+	 * Transform the taxnonomy comma separated string into array 
+	 * Transform the localization comma separated lat,lon string into array
 	 *
 	 * @param array $importAsTaxo
 	 *           
 	 */	
-	protected function turnTaxoToArray ($importAsTaxo) {
+	protected function preProcess ($importAsTaxo, $importAsField) {
 		
+		$code = "db.Import.find().snapshot().forEach(function(e){";
+			
 		foreach($importAsTaxo as $taxo) {
-			
-			$code = "db.Import.find().forEach(
-			function(foo){
-				db.Import.update(foo,{\$set:{col".$taxo['csvIndex'].":foo.col".$taxo['csvIndex'].".split(',')}})
-			}
-			)";
-			$response = $this->_dataService->execute($code);
-
+			$code.= "e.col".$taxo['csvIndex']." = e.col".$taxo['csvIndex'].".split(',');";
 		}
-		
-		return true;
-	}
-
-	/**
-	 * Transform the comma separated lat,lon string into array in Import collection
-	 *
-	 * @param array $importAsField
-	 *
-	 */
-	protected function turnLocalizationToArray($importAsField) {
-
+			
 		foreach ($importAsField as $field) {
-			
-			if ($field['cType']=='localiserField') {
 				
-				$code = "db.Import.find().forEach(
-				function(foo){
-					db.Import.update(foo,{\$set:{col".$field['csvIndex'].":foo.col".$field['csvIndex'].".split(',').map(parseFloat)}})
-				}
-				)";
-				$response = $this->_dataService->execute($code);
-
+			if ($field['cType']=='localiserField') {
+				$code.= "e.col".$field['csvIndex']."= e.col".$field['csvIndex'].".split(',').map(parseFloat);";
 			}
-		}
 		
+		}
+			
+		$code.= "db.Import.save(e);})";
+			
+		$response = $this->_dataService->execute($code);
+		return $response;
 	}
-	
 	
 	/**
 	 * Transform the array of terms into array of terms id
@@ -482,9 +462,9 @@ class Import extends AbstractCollection
 		foreach($importAsTaxo as $taxo) {
 			
 			$code = "db.ImportTaxo.find().forEach(
-			function(foo) {
-				var text = foo._id;
-				var id = foo.value._id;
+			function(e) {
+				var text = e._id;
+				var id = e.value._id;
 				db.Import.update({col".$taxo['csvIndex'].": text},{\$set: {\"col".$taxo['csvIndex'].".\$\" : id.str}},{ multi: true });
 			})";
 			$response = $this->_dataService->execute($code);
