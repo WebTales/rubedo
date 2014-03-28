@@ -29,6 +29,10 @@ use Zend\Json\Json;
  */
 class Import extends AbstractCollection
 {
+	protected $currentUser;
+	
+	protected $currentTime;
+	
     public function __construct()
     {
         $this->_collectionName = 'Import';
@@ -51,6 +55,14 @@ class Import extends AbstractCollection
     	$target = $options['contentsTarget'];
     	$typeId = $options['typeId'];
 
+    	// Get current user and time
+    	
+    	$currentUserService = Manager::getService('CurrentUser');
+    	$this->currentUser = $currentUserService->getCurrentUserSummary();
+    	
+    	$currentTimeService = Manager::getService('CurrentTime');
+    	$this->currentTime = $currentTimeService->getCurrentTime();
+    	
     	// Write file to import into Import collection
     	$this->writeImportFile ($fileName, $importKeyValue, $userEncoding, $separator);
     	
@@ -188,12 +200,6 @@ class Import extends AbstractCollection
     		}
     	}
     	
-    	$currentUserService = Manager::getService('CurrentUser');
-    	$currentUser = $currentUserService->getCurrentUserSummary();
-    		
-    	$currentTimeService = Manager::getService('CurrentTime');
-    	$currentTime = $currentTimeService->getCurrentTime();
-    	
     	// add taxonomy
     	
     	$taxonomy = array();
@@ -226,12 +232,6 @@ class Import extends AbstractCollection
     	$patterns = array ('/\"(this.col[^\"]*)\"/');
     	$replace = array('\1');
     	$live = preg_replace($patterns, $replace, $live);
-    	
-    	$user = array(
-    			'id' => $currentUser['id'],
-    			'login' => $currentUser['login'],
-    			'fullName' => $currentUser['fullName']
-    	);
 
     	$mapCode =	"
     	function() {
@@ -265,8 +265,8 @@ class Import extends AbstractCollection
     	
     	// global JavaScript variables passed to map, reduce and finalize functions
     	$scope = array(
-    			"currentTime" => $currentTime,
-    			"currentUser" => $currentUser,
+    			"currentTime" => $this->currentTime,
+    			"currentUser" => $this->currentUser,
     			"typeId" => $typeId,
     			"target" => $target
     	);
@@ -298,14 +298,6 @@ class Import extends AbstractCollection
 	 *
 	 */
 	protected function extractTaxonomy ($importKeyValue,$importAsTaxo,$importAsTaxoTranslation,$workingLanguage, $vocabularies) {	
-
-		// Get current time and user
-		
-		$currentUserService = Manager::getService('CurrentUser');
-		$currentUser = $currentUserService->getCurrentUserSummary();
-			
-		$currentTimeService = Manager::getService('CurrentTime');
-		$currentTime = $currentTimeService->getCurrentTime();
 		
 		// Create map reduce
 		foreach ($importAsTaxo as $key => $value) {
@@ -393,8 +385,8 @@ class Import extends AbstractCollection
 			// global JavaScript variables passed to map, reduce and finalize functions
 			$scope = array(
 					"workingLanguage" => $workingLanguage,
-					"currentTime" => $currentTime,
-					"currentUser" => $currentUser,
+					"currentTime" => $this->currentTime,
+					"currentUser" => $this->currentUser,
 					"vocabularyId" => $vocabularyId
 			);
 				
