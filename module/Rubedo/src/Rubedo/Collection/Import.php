@@ -54,6 +54,21 @@ class Import extends AbstractCollection
     	$navigationTaxonomy = $options['contentsNavTaxo'];
     	$target = $options['contentsTarget'];
     	$typeId = $options['typeId'];
+    	
+    	// Product options
+    	$isProduct = $options['isProduct'];
+    	if ($isProduct) {
+	    	$productOptions = array(
+	    		'importAsVariation' => $options['importAsVariation'],
+	    		'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
+	    		'basePriceFieldIndex' => $options['basePriceFieldIndex'],
+	    		'skuFieldIndex' => $options['skuFieldIndex'],
+	    		'priceFieldIndex' => $options['priceFieldIndex'],
+	    		'stockFieldIndex' => $options['stockFieldIndex']
+	    	);
+    	} else {
+    		$productOptions = null;
+    	}
 
     	// Get current user and time
     	
@@ -79,7 +94,7 @@ class Import extends AbstractCollection
     	$this->writeTaxonomy ($importAsTaxo);
     	
     	// Extract contents to ImportContents collection
-    	$this->extractContents ($importKeyValue, $importAsField, $importAsFieldTranslation, $importAsTaxo, $workingLanguage, $vocabularies, $navigationTaxonomy, $target, $typeId);
+    	$this->extractContents ($importKeyValue, $importAsField, $importAsFieldTranslation, $importAsTaxo, $workingLanguage, $vocabularies, $navigationTaxonomy, $target, $typeId,$isProduct,$productOptions);
     	
     	// Finally write contents
     	$response = $this->writeContents();
@@ -121,7 +136,7 @@ class Import extends AbstractCollection
     	return  true;
     }
 	
-    protected function extractContents ($importKeyValue, $importAsField, $importAsFieldTranslation, $importAsTaxo, $workingLanguage, $vocabularies, $navigationTaxonomy, $target, $typeId) {
+    protected function extractContents ($importKeyValue, $importAsField, $importAsFieldTranslation, $importAsTaxo, $workingLanguage, $vocabularies, $navigationTaxonomy, $target, $typeId,$isProduct,$productOptions) {
     	
     	// Create fields
     	$fields = array();
@@ -232,7 +247,9 @@ class Import extends AbstractCollection
     	$patterns = array ('/\"(this.col[^\"]*)\"/');
     	$replace = array('\1');
     	$live = preg_replace($patterns, $replace, $live);
-
+		
+    	$mapKey = $isProduct ? "this.col".$skuFieldIndex : "this._id";
+    	
     	$mapCode =	"
     	function() {
     		var value = {
@@ -256,12 +273,34 @@ class Import extends AbstractCollection
 				live: ".$live.",
 				workspace: ".$live."
 			};
-			emit(this._id, value);
+			emit(".$mapKey.", value);
 		};";
 
     	$map = new \MongoCode($mapCode);
     	
-    	$reduce = new \MongoCode("function(key, values) { return {key: values[0]} }");
+    	if (!$isProduct) {
+    		$reduceCode = "function(key, values) { return {key: values[0]} }";
+    	} else {
+    		$reduceCode = "function(key, values) {
+    			var value = values[0];
+    			var productProperties = {
+    				sku : value.col".$productOptions['skuFieldIndex'].",
+					basePrice: 5,
+					preparationDelay: 1,
+					canOrderNotInStock: false,
+					outOfStockLimit: 1,
+					notifyForQuantityBelow : 1,
+					resupplyDelay : 1
+    			};
+    			var variations = new Array();
+    			values.forEach(function(v){";
+    		foreach ($productOptions['importAsVariation'] as $variation) {
+    			$reduceCode.= "";
+    		}
+    		$reduceCode.="});";	
+    	}
+    	
+    	$reduce = new \MongoCode($reduceCode);
     	
     	// global JavaScript variables passed to map, reduce and finalize functions
     	$scope = array(

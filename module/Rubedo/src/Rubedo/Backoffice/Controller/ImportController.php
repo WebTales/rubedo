@@ -28,7 +28,8 @@ use Zend\Http\Request;
  *
  *
  *
- * @author jbourdin
+ * @author adobre
+ * @author dfanchons
  * @category Rubedo
  * @package Rubedo
  *         
@@ -706,6 +707,7 @@ public function importAction ()
 			$options['importAsTaxoTranslation'] = Json::decode($this->params()->fromPost('inportAsTaxoTranslation', "[ ]"), Json::TYPE_ARRAY);
 			$options['contentsNavTaxo'] = isset($configs['ContentsNavTaxo']) ? $configs['ContentsNavTaxo'] : "";
 			$options['contentsTarget'] = $configs['ContentsTarget'];
+			$options['isProduct'] = isset($config['isProduct']) ? $config['isProduct'] : false;
 			
 			// create vocabularies
 			$newTaxos = array();
@@ -769,6 +771,10 @@ public function importAction ()
 							"protoId" => $value['protoId'],
 							"openWindow" => null
 					);
+					// For products only
+					if ($options['isProduct']) {
+						$newFieldForCT['config']['useAsVariation'] = $value['useAsVariation'];
+					}
 					$CTfields[] = $newFieldForCT;
 				}
 			}
@@ -790,6 +796,22 @@ public function importAction ()
 					"nativeLanguage" => $options['workingLanguage'],
 					"i18n" => $newCTi18n
 			);
+			
+			// For products only 
+			if ($options['isProduct']) {
+				$productTypeParams = array(
+					"canOrderNotInStock" => false,
+					"manageStock" => true,
+					"notifyForQuantityBelow" => 1,
+					"outOfStockLimit" => 1,
+					"preparationDelay" => 0,
+					"productType" => "configurable",
+					"resupplyDelay" => 0,
+					"shippers" => ""
+				);
+				$contentTypeParams = array_merge($contentTypeParams, $productTypeParams);
+			}
+			
 			$contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
 
 			$options['typeId'] = $contentType['data']['id'];
