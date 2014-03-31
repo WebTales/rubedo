@@ -453,7 +453,10 @@ class Import extends AbstractCollection
 		
 		foreach($importAsTaxo as $taxo) {
 			
-			$code = "db.ImportTaxo.find().forEach(
+			$code = "db.Import.ensureIndex({col".$taxo['csvIndex'].":1});";
+			$response = $this->_dataService->execute($code);
+			
+			$code = "db.ImportTaxo.find().snapshot().forEach(
 			function(e) {
 				var text = e._id;
 				var id = e.value._id;
@@ -480,7 +483,7 @@ class Import extends AbstractCollection
 	
 		foreach($importAsTaxo as $taxo) {
 				
-			$code = "db.ImportTaxo.find().forEach(
+			$code = "db.ImportTaxo.find().snapshot().forEach(
 			function(foo) {
 				if (foo.value.text > '') {
 					db.TaxonomyTerms.insert(foo.value);
@@ -505,7 +508,7 @@ class Import extends AbstractCollection
 	protected function writeContents () {
 	
 		$code = "var counter = 0;
-				db.ImportContents.find().forEach(function(foo) {
+				db.ImportContents.find().snapshot().forEach(function(foo) {
 					db.Contents.insert(foo.value);
 					counter++;
 				});
