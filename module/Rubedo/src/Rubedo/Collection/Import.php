@@ -55,11 +55,30 @@ class Import extends AbstractCollection
     	$target = $options['contentsTarget'];
     	$typeId = $options['typeId'];
     	
+    	// for testing only
+    	/*
+    	$options['isProduct'] = true;
+    	$options['baseSkuFieldIndex'] = 6;
+    	$options['basePriceFieldIndex'] = 7;
+    	$options['skuFieldIndex'] = 12;
+    	$options['priceFieldIndex'] = 11;
+    	$options['stockFieldIndex'] = 13;
+    	$importAsField[] = array(
+    		"newName" => "Taille",
+    		"csvIndex" => 9,
+    		"useAsVariation" => true
+    	);
+    	$importAsField[] = array(
+    			"newName" => "Couleur",
+    			"csvIndex" => 10,
+    			"useAsVariation" => true
+    	);
+    	*/    	
+    	
     	// Product options
     	$isProduct = $options['isProduct'];
     	if ($isProduct) {
 	    	$productOptions = array(
-	    		'importAsVariation' => $options['importAsVariation'],
 	    		'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
 	    		'basePriceFieldIndex' => $options['basePriceFieldIndex'],
 	    		'skuFieldIndex' => $options['skuFieldIndex'],
@@ -80,7 +99,7 @@ class Import extends AbstractCollection
     	
     	// Write file to import into Import collection
     	$this->writeImportFile ($fileName, $importKeyValue, $userEncoding, $separator);
-    	
+
     	// Extract taxonomy to ImportTaxonomy collection
     	$this->extractTaxonomy($importKeyValue,$importAsTaxo,$importAsTaxoTranslation,$workingLanguage, $vocabularies);
     	
@@ -130,6 +149,7 @@ class Import extends AbstractCollection
     		$data[] = $currentLine;
     	
     	}
+
     	$this->_dataService->batchInsert($data, array());
 
     	fclose($receivedFile);
@@ -141,32 +161,36 @@ class Import extends AbstractCollection
     	// Create fields
     	$fields = array();
     	foreach ($importAsField as $key => $value) {
-    		switch ($value['protoId']) {
-    			case 'text':
-    				$textFieldIndex = $value['csvIndex'];
-    				$fields['text'] = 'this.col'.$value['csvIndex'];
-    				break;
-    			case 'summary':
-    				$fields['summary'] = 'this.col'.$value['csvIndex'];
-    				break;
-    			default:
-    				if ($value['cType']!='localiserField') {
-    					$fields[$value['newName']] = 'this.col'.$value['csvIndex'];
-    				} else {
-	    				$fields['position'] = array(
-		    				'address' => '',
-		    				'altitude' => '',
-	    					'lat' => 'this.col'.$value['csvIndex'].'[0]',
-	    					'lon' => 'this.col'.$value['csvIndex'].'[1]',
-		    				'location' => array(
-		    					'type' => 'Point',
-		    					'coordinates' => array('this.col'.$value['csvIndex'].'[1]','this.col'.$value['csvIndex'].'[0]')
-		    				)
-	    				);
-    				}
-    				break;
-    		}
-    	
+    		
+    			// Fields that are not product variations
+	    		if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
+	    			
+	    		switch ($value['protoId']) {
+	    			case 'text':
+	    				$textFieldIndex = $value['csvIndex'];
+	    				$fields['text'] = 'this.col'.$value['csvIndex'];
+	    				break;
+	    			case 'summary':
+	    				$fields['summary'] = 'this.col'.$value['csvIndex'];
+	    				break;
+	    			default:
+	    				if ($value['cType']!='localiserField') {
+	    					$fields[$value['newName']] = 'this.col'.$value['csvIndex'];
+	    				} else {
+		    				$fields['position'] = array(
+			    				'address' => '',
+			    				'altitude' => '',
+		    					'lat' => 'this.col'.$value['csvIndex'].'[0]',
+		    					'lon' => 'this.col'.$value['csvIndex'].'[1]',
+			    				'location' => array(
+			    					'type' => 'Point',
+			    					'coordinates' => array('this.col'.$value['csvIndex'].'[1]','this.col'.$value['csvIndex'].'[0]')
+			    				)
+		    				);
+	    				}
+	    				break;
+	    		}
+	    	}
     	}
 
     	// Copy in i18n
@@ -247,11 +271,8 @@ class Import extends AbstractCollection
     	$patterns = array ('/\"(this.col[^\"]*)\"/');
     	$replace = array('\1');
     	$live = preg_replace($patterns, $replace, $live);
-		
-    	$mapKey = $isProduct ? "this.col".$skuFieldIndex : "this._id";
     	
-    	$mapCode =	"
-    	function() {
+    	$mapCode =	"function() {
     		var value = {
  				online: true,
 				version: '1',
@@ -271,11 +292,29 @@ class Import extends AbstractCollection
 				typeId: typeId,
 				target: target,
 				live: ".$live.",
-				workspace: ".$live."
-			};
-			emit(".$mapKey.", value);
-		};";
+				workspace: ".$live;
+			
+    	
+    	if ($isProduct) {
+    		$mapCode.=",isProduct:true, 
+    				baseSku: this.col".$productOptions['baseSkuFieldIndex'].",
+    				basePrice: this.col".$productOptions['basePriceFieldIndex'].",
+    				sku: this.col".$productOptions['skuFieldIndex'].",
+    				price: this.col".$productOptions['priceFieldIndex'].",
+    				stock: this.col".$productOptions['stockFieldIndex'];
+    				// add variation fields
+    				foreach ($importAsField as $key => $value) {
+    					if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    						$mapCode.=",".$value['newName'].": this.col".$value['csvIndex'];
+    					}
+    				}
+    	}
 
+    	$mapCode.= "};";
+		$mapKey = $isProduct ? "this.col".$productOptions['baseSkuFieldIndex'] : "this._id";
+
+		$mapCode.="emit(".$mapKey.", value);};";
+		
     	$map = new \MongoCode($mapCode);
     	
     	if (!$isProduct) {
@@ -284,8 +323,8 @@ class Import extends AbstractCollection
     		$reduceCode = "function(key, values) {
     			var value = values[0];
     			var productProperties = {
-    				sku : value.col".$productOptions['skuFieldIndex'].",
-					basePrice: 5,
+    				sku : value.baseSku,
+					basePrice: value.basePrice,
 					preparationDelay: 1,
 					canOrderNotInStock: false,
 					outOfStockLimit: 1,
@@ -293,11 +332,44 @@ class Import extends AbstractCollection
 					resupplyDelay : 1
     			};
     			var variations = new Array();
-    			values.forEach(function(v){";
-    		foreach ($productOptions['importAsVariation'] as $variation) {
-    			$reduceCode.= "";
+    			values.forEach(function(v) {
+					oid = ObjectId();
+					var variation = {
+    					price: v.price,
+    					stock: v.stock,
+    					sku: v.sku,
+    					id: oid.valueOf()
+					};";
+    		
+    		// add variation fields
+    		foreach ($importAsField as $key => $value) {    		
+    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    				$reduceCode.="variation['".$value['newName']."']=v.".$value['newName'].";";    				
+    			}	   			
     		}
-    		$reduceCode.="});";	
+    		
+    		$reduceCode.="
+    				variations.push(variation);
+    			});
+    			
+    			productProperties['variations'] = variations;	
+    			value['productProperties'] = productProperties;
+    				
+    			delete value['baseSku'];
+    			delete value['basePrice'];
+    			delete value['sku'];
+    			delete value['price'];
+    			delete value['stock'];";
+    		
+    		foreach ($importAsField as $key => $value) {
+    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    				$reduceCode.="delete value['".$value['newName']."'];";
+    			}
+    		}
+    				
+    		$reduceCode.="	return value;
+    			
+    		};";	
     	}
     	
     	$reduce = new \MongoCode($reduceCode);
@@ -470,7 +542,7 @@ class Import extends AbstractCollection
 			
 		foreach ($importAsField as $field) {
 				
-			if ($field['cType']=='localiserField') {
+			if (isset($field['cType']) && ($field['cType']=='localiserField')) {
 				$code.= "e.col".$field['csvIndex']."= e.col".$field['csvIndex'].".split(',').map(parseFloat);";
 			}
 		

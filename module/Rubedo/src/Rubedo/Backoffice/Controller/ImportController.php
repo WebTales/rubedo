@@ -708,6 +708,8 @@ public function importAction ()
 			$options['contentsNavTaxo'] = isset($configs['ContentsNavTaxo']) ? $configs['ContentsNavTaxo'] : "";
 			$options['contentsTarget'] = $configs['ContentsTarget'];
 			$options['isProduct'] = isset($config['isProduct']) ? $config['isProduct'] : false;
+			// for test only
+			//$options['isProduct'] = true;
 			
 			// create vocabularies
 			$newTaxos = array();
@@ -773,7 +775,7 @@ public function importAction ()
 					);
 					// For products only
 					if ($options['isProduct']) {
-						$newFieldForCT['config']['useAsVariation'] = $value['useAsVariation'];
+						$newFieldForCT['config']['useAsVariation'] = isset($value['useAsVariation']) ? $value['useAsVariation'] : false;
 					}
 					$CTfields[] = $newFieldForCT;
 				}
