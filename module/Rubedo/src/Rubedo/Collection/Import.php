@@ -29,56 +29,158 @@ use Zend\Json\Json;
  */
 class Import extends AbstractCollection
 {
-	protected $currentUser;
 	
+	/**
+	 * Import file name
+	 *
+	 * @var string
+	 */
+	protected $_fileName;
+	/**
+     * Unique key to define the current import process
+     *
+     * @var string
+     */
+	protected $_importKeyValue;
+	/**
+	 * User running the import process
+	 *
+	 * @var array
+	 */	
+	protected $currentUser;
+	/**
+	 * Current Time
+	 *
+	 * @var string
+	 */	
 	protected $currentTime;
+	/**
+	 * User encoding : UTF8, ...
+	 *
+	 * @var string
+	 */	
+	protected $_userEncoding;
+	/**
+	 * List of fields to import
+	 *
+	 * @var array
+	 */
+	protected $_importAsField;
+	/**
+	 * List of fields translation
+	 *
+	 * @var array
+	 */
+	protected $_importAsFieldTranslation;
+	/**
+	 * List of taxonomy terms to import
+	 *
+	 * @var array
+	 */
+	protected $_importAsTaxo;
+	/**
+	 * List of taxonomy terms translations
+	 *
+	 * @var array
+	 */
+	protected $_importAsTaxoTranslation;
+	/**
+	 * Current BO working language
+	 *
+	 * @var string
+	 */
+	protected $_workingLanguage;
+	/**
+	 * File separator
+	 *
+	 * @var string
+	 */
+	protected $_separator;
+	/**
+	 * List of vocabularies to import
+	 *
+	 * @var array
+	 */
+	protected $_vocabularies;
+	/**
+	 * Default navigation taxonomy to create contents
+	 *
+	 * @var string
+	 */
+	protected $_contentsNavTaxo;
+	/**
+	 * Default target workspace to create contents
+	 *
+	 * @var string
+	 */
+	protected $_contentsTarget;
+	/**
+	 * Content Type Id
+	 *
+	 * @var string
+	 */
+	protected $_typeId;
+	/**
+	 * List of product Options
+	 *
+	 * @var array
+	 */
+	protected $_productOptions;
+	/**
+	 * Is it a product import
+	 *
+	 * @var boolean
+	 */
+	protected $_isProduct;
 	
     public function __construct()
     {
         $this->_collectionName = 'Import';
         parent::__construct();
     }
-    
+    /**
+     * Run the complete import process
+     */
     public function run($fileName, $options) {
 
     	// Get import settings
-    	$importKeyValue = $options['importKey'];
-    	$userEncoding = $options['userEncoding'];
-    	$importAsField = $options['importAsField'];
-    	$importAsFieldTranslation = $options['importAsFieldTranslation'];
-    	$importAsTaxo = $options['importAsTaxo'];
-    	$importAsTaxoTranslation = $options['importAsTaxoTranslation'];
-    	$workingLanguage = $options['workingLanguage'];
-    	$separator = isset($options['separator']) ? $options['separator'] : ';';
-    	$vocabularies = $options['vocabularies'];
-    	$navigationTaxonomy = $options['contentsNavTaxo'];
-    	$target = $options['contentsTarget'];
-    	$typeId = $options['typeId'];
+    	$this->_importKeyValue = $options['importKey'];
+    	$this->_userEncoding = $options['userEncoding'];
+    	$this->_importAsField = $options['importAsField'];
+    	$this->_importAsFieldTranslation = $options['importAsFieldTranslation'];
+    	$this->_importAsTaxo = $options['importAsTaxo'];
+    	$this->_importAsTaxoTranslation = $options['importAsTaxoTranslation'];
+    	$this->_workingLanguage = $options['workingLanguage'];
+    	$this->_separator = isset($options['separator']) ? $options['separator'] : ';';
+    	$this->_vocabularies = $options['vocabularies'];
+    	$this->_navigationTaxonomy = $options['contentsNavTaxo'];
+    	$this->_target = $options['contentsTarget'];
+    	$this->_typeId = $options['typeId'];
+    	$this->fileName = $fileName;
     	
     	// for testing only
     	/*
     	$options['isProduct'] = true;
-    	$options['baseSkuFieldIndex'] = 6;
+    	$options['baseSkuFieldIndex'] = 2;
     	$options['basePriceFieldIndex'] = 7;
-    	$options['skuFieldIndex'] = 12;
-    	$options['priceFieldIndex'] = 11;
-    	$options['stockFieldIndex'] = 13;
-    	$importAsField[] = array(
+    	$options['skuFieldIndex'] = 2;
+    	$options['priceFieldIndex'] = 7;
+    	$options['stockFieldIndex'] = 8;
+    	$this->_importAsField[] = array(
     		"newName" => "Taille",
-    		"csvIndex" => 9,
+    		"csvIndex" => 6,
     		"useAsVariation" => true
     	);
-    	$importAsField[] = array(
+    	$this->_importAsField[] = array(
     			"newName" => "Couleur",
-    			"csvIndex" => 10,
+    			"csvIndex" => 5,
     			"useAsVariation" => true
     	);
-    	*/    	
-    	
+    	*/    	   	
     	// Product options
-    	$isProduct = $options['isProduct'];
-    	if ($isProduct) {
-	    	$productOptions = array(
+    	$this->_isProduct = $options['isProduct'];
+    	if ($this->_isProduct) {
+	    	$this->_productOptions = array(
 	    		'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
 	    		'basePriceFieldIndex' => $options['basePriceFieldIndex'],
 	    		'skuFieldIndex' => $options['skuFieldIndex'],
@@ -86,7 +188,7 @@ class Import extends AbstractCollection
 	    		'stockFieldIndex' => $options['stockFieldIndex']
 	    	);
     	} else {
-    		$productOptions = null;
+    		$this->_productOptions = null;
     	}
 
     	// Get current user and time
@@ -98,22 +200,22 @@ class Import extends AbstractCollection
     	$this->currentTime = $currentTimeService->getCurrentTime();
     	
     	// Write file to import into Import collection
-    	$this->writeImportFile ($fileName, $importKeyValue, $userEncoding, $separator);
+    	$this->writeImportFile ();
 
     	// Extract taxonomy to ImportTaxonomy collection
-    	$this->extractTaxonomy($importKeyValue,$importAsTaxo,$importAsTaxoTranslation,$workingLanguage, $vocabularies);
+    	$this->extractTaxonomy();
     	
     	// Processing Import data taxonomy and localisation fields
-    	$this->preProcess ($importAsTaxo, $importAsField);
+    	$this->preProcess ();
     	
     	// Transform taxonomy terms into id
-    	$this->turnTermsToId ($importAsTaxo);
+    	$this->turnTermsToId ();
     	
     	// write taxonomy terms
-    	$this->writeTaxonomy ($importAsTaxo);
+    	$this->writeTaxonomy ();
     	
     	// Extract contents to ImportContents collection
-    	$this->extractContents ($importKeyValue, $importAsField, $importAsFieldTranslation, $importAsTaxo, $workingLanguage, $vocabularies, $navigationTaxonomy, $target, $typeId,$isProduct,$productOptions);
+    	$this->extractContents ();
     	
     	// Finally write contents
     	$response = $this->writeContents();
@@ -121,30 +223,33 @@ class Import extends AbstractCollection
     	return $response;
     	
     }
-    
-    protected function writeImportFile ($fileName, $importKeyValue, $userEncoding, $separator) {
+
+    /**
+     * Write file to Import collection
+     */
+    protected function writeImportFile () {
     	
     	// Read file to import
-    	$receivedFile = fopen($fileName, 'r');
+    	$receivedFile = fopen($this->_fileName, 'r');
     	
     	// Read the first line to start at the second line
-    	fgetcsv($receivedFile, 1000000, $separator, '"', '\\');
+    	fgetcsv($receivedFile, 1000000, $this->_separator, '"', '\\');
     	   	
 		$this->_dataService->emptyCollection();
 		
 		$data = array();
 		
-    	while (($currentLine = fgetcsv($receivedFile, 1000000, $separator, '"', '\\')) !== false) {
+    	while (($currentLine = fgetcsv($receivedFile, 1000000, $this->_separator, '"', '\\')) !== false) {
     		   	
     		// Encode fields
     		foreach ($currentLine as $key => $string) {
-    			$utf8String = $this->forceUtf8($string, $userEncoding);
+    			$utf8String = $this->forceUtf8($string, $this->_userEncoding);
     			$currentLine['col'.$key] = $utf8String;
     			unset($currentLine[$key]);
     		}
     		
     		// Add import unique key to handle multiple imports
-    		$currentLine['importKey'] = $importKeyValue;
+    		$currentLine['importKey'] = $this->_importKeyValue;
     	
     		$data[] = $currentLine;
     	
@@ -153,65 +258,90 @@ class Import extends AbstractCollection
     	$this->_dataService->batchInsert($data, array());
 
     	fclose($receivedFile);
+    	
+    	// create index on importKey
+    	
+    	$this->_dataService->ensureIndex('importKey');
+    	
     	return  true;
     }
-	
-    protected function extractContents ($importKeyValue, $importAsField, $importAsFieldTranslation, $importAsTaxo, $workingLanguage, $vocabularies, $navigationTaxonomy, $target, $typeId,$isProduct,$productOptions) {
+
+    /**
+     * Extract medias from Import
+     * to ImportMedias collection
+     */
+    protected function extractMedia () {
+
+    	$filter = Filter::Factory('Value',array(
+    			'name' => 'importKey',
+    			'value' => $this->_importKeyValue
+    	));
+    	$this->_dataService->addFilter($filter);
+    	$this->_dataService->addToFieldList(array("col1"));
+    	var_dump($this->_dataService->read());
+    	
+    }
+    
+    /**
+     * Extract contents from Import 
+     * to ImportContents collection
+     */
+    protected function extractContents () {
     	
     	// Create fields
     	$fields = array();
-    	foreach ($importAsField as $key => $value) {
+    	foreach ($this->_importAsField as $key => $value) {
     		
-    			// Fields that are not product variations
-	    		if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
+    		// Fields that are not product variations
+	    	if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
 	    			
-	    		switch ($value['protoId']) {
-	    			case 'text':
-	    				$textFieldIndex = $value['csvIndex'];
-	    				$fields['text'] = 'this.col'.$value['csvIndex'];
-	    				break;
-	    			case 'summary':
-	    				$fields['summary'] = 'this.col'.$value['csvIndex'];
-	    				break;
-	    			default:
-	    				if ($value['cType']!='localiserField') {
-	    					$fields[$value['newName']] = 'this.col'.$value['csvIndex'];
-	    				} else {
-		    				$fields['position'] = array(
+		    	switch ($value['protoId']) {
+		    		case 'text':
+		    			$textFieldIndex = $value['csvIndex'];
+		    			$fields['text'] = 'this.col'.$value['csvIndex'];
+		    			break;
+		    		case 'summary':
+		    			$fields['summary'] = 'this.col'.$value['csvIndex'];
+		    			break;
+		    		default:
+		    			if ($value['cType']!='localiserField') {
+		    				$fields[$value['newName']] = 'this.col'.$value['csvIndex'];
+		    			} else {
+			   				$fields['position'] = array(
 			    				'address' => '',
 			    				'altitude' => '',
-		    					'lat' => 'this.col'.$value['csvIndex'].'[0]',
-		    					'lon' => 'this.col'.$value['csvIndex'].'[1]',
+			   					'lat' => 'this.col'.$value['csvIndex'].'[0]',
+			   					'lon' => 'this.col'.$value['csvIndex'].'[1]',
 			    				'location' => array(
 			    					'type' => 'Point',
 			    					'coordinates' => array('this.col'.$value['csvIndex'].'[1]','this.col'.$value['csvIndex'].'[0]')
 			    				)
-		    				);
-	    				}
-	    				break;
-	    		}
+			   				);
+		    			}
+		    			break;
+		    	}
 	    	}
     	}
 
     	// Copy in i18n
     	$contenti18n = array(
-    			$workingLanguage => array(
+    			$this->_workingLanguage => array(
     					'fields' => $fields,
-    					'locale' => $workingLanguage
+    					'locale' => $this->_workingLanguage
     			)
     	);
 
     	// Add translations
     	$languages = array();
-    	foreach ($importAsFieldTranslation as $fieldKey => $value) {
+    	foreach ($this->_importAsFieldTranslation as $fieldKey => $value) {
     	
-    		foreach ($importAsField as $key => $importedField) {
+    		foreach ($this->_importAsField as $key => $importedField) {
     			if ($importedField["csvIndex"] == $value["translatedElement"]) {
     				$importedFieldKey = $key;
     				break;
     			}
     		}
-    		$translatedElement = $importAsField[$importedFieldKey];
+    		$translatedElement = $this->_importAsField[$importedFieldKey];
     		switch ($translatedElement['protoId']) {
     			case 'text':
     				$fieldName = "text";
@@ -242,10 +372,10 @@ class Import extends AbstractCollection
     	// add taxonomy
     	
     	$taxonomy = array();
-    	$taxonomy['navigation'] = $navigationTaxonomy;
+    	$taxonomy['navigation'] = $this->_navigationTaxonomy;
     	
-    	foreach ($importAsTaxo as $key => $value) {
-    		$taxonomy[$vocabularies[$key+1]] = 'this.col'.$value['csvIndex'];
+    	foreach ($this->_importAsTaxo as $key => $value) {
+    		$taxonomy[$this->_vocabularies[$key+1]] = 'this.col'.$value['csvIndex'];
     	}
     	
     	$live = array(
@@ -256,7 +386,7 @@ class Import extends AbstractCollection
     			'writeWorkspace' =>  'global',
     			'startPublicationDate' =>  '',
     			'endPublicationDate' =>  '',
-    			'nativeLanguage' =>  $workingLanguage,
+    			'nativeLanguage' =>  $this->_workingLanguage,
     			'readOnly' => false,
     			'i18n' => $contenti18n,
     			'taxonomy' => $taxonomy
@@ -295,15 +425,15 @@ class Import extends AbstractCollection
 				workspace: ".$live;
 			
     	
-    	if ($isProduct) {
+    	if ($this->_isProduct) {
     		$mapCode.=",isProduct:true, 
-    				baseSku: this.col".$productOptions['baseSkuFieldIndex'].",
-    				basePrice: this.col".$productOptions['basePriceFieldIndex'].",
-    				sku: this.col".$productOptions['skuFieldIndex'].",
-    				price: this.col".$productOptions['priceFieldIndex'].",
-    				stock: this.col".$productOptions['stockFieldIndex'];
+    				baseSku: this.col".$this->_productOptions['baseSkuFieldIndex'].",
+    				basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",
+    				sku: this.col".$this->_productOptions['skuFieldIndex'].",
+    				price: this.col".$this->_productOptions['priceFieldIndex'].",
+    				stock: this.col".$this->_productOptions['stockFieldIndex'];
     				// add variation fields
-    				foreach ($importAsField as $key => $value) {
+    				foreach ($this->_importAsField as $key => $value) {
     					if (isset($value['useAsVariation']) && $value['useAsVariation']) {
     						$mapCode.=",".$value['newName'].": this.col".$value['csvIndex'];
     					}
@@ -311,13 +441,13 @@ class Import extends AbstractCollection
     	}
 
     	$mapCode.= "};";
-		$mapKey = $isProduct ? "this.col".$productOptions['baseSkuFieldIndex'] : "this._id";
+		$mapKey = $this->_isProduct ? "this.col".$this->_productOptions['baseSkuFieldIndex'] : "this._id";
 
 		$mapCode.="emit(".$mapKey.", value);};";
 		
     	$map = new \MongoCode($mapCode);
     	
-    	if (!$isProduct) {
+    	if (!$this->_isProduct) {
     		$reduceCode = "function(key, values) { return {key: values[0]} }";
     	} else {
     		$reduceCode = "function(key, values) {
@@ -342,7 +472,7 @@ class Import extends AbstractCollection
 					};";
     		
     		// add variation fields
-    		foreach ($importAsField as $key => $value) {    		
+    		foreach ($this->_importAsField as $key => $value) {    		
     			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
     				$reduceCode.="variation['".$value['newName']."']=v.".$value['newName'].";";    				
     			}	   			
@@ -361,7 +491,7 @@ class Import extends AbstractCollection
     			delete value['price'];
     			delete value['stock'];";
     		
-    		foreach ($importAsField as $key => $value) {
+    		foreach ($this->_importAsField as $key => $value) {
     			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
     				$reduceCode.="delete value['".$value['newName']."'];";
     			}
@@ -378,13 +508,13 @@ class Import extends AbstractCollection
     	$scope = array(
     			"currentTime" => $this->currentTime,
     			"currentUser" => $this->currentUser,
-    			"typeId" => $typeId,
-    			"target" => $target
+    			"typeId" => $this->_typeId,
+    			"target" => $this->_target
     	);
     	
     	$params = array(
     			"mapreduce" => "Import", // collection
-    			"query" => array("importKey" => $importKeyValue), // query
+    			"query" => array("importKey" => $this->_importKeyValue), // query
     			"map" => $map, // map
     			"reduce" => $reduce, // reduce
     			"scope" => $scope, // scope
@@ -402,35 +532,31 @@ class Import extends AbstractCollection
     
 	/**
 	 * Extract tanonomy terms from Import collection
-	 *
 	 * and copy it to ImporTaxo collection
-	 * 
-	 * @param array $options
-	 *
 	 */
-	protected function extractTaxonomy ($importKeyValue,$importAsTaxo,$importAsTaxoTranslation,$workingLanguage, $vocabularies) {	
+	protected function extractTaxonomy () {	
 		
 		// Create map reduce
-		foreach ($importAsTaxo as $key => $value) {
+		foreach ($this->_importAsTaxo as $key => $value) {
 				
-			$vocabularyId = $vocabularies[$key+1];
+			$vocabularyId = $this->_vocabularies[$key+1];
 		
 			$mapCode =	"
 					function() {
-					var terms_".$workingLanguage." = this.col".$value["csvIndex"].".split(',');";
+					var terms_".$this->_workingLanguage." = this.col".$value["csvIndex"].".split(',');";
 				
-			foreach ($importAsTaxoTranslation as $transKey => $transValue) {
+			foreach ($this->_importAsTaxoTranslation as $transKey => $transValue) {
 				if ($transValue["translatedElement"] == $value['csvIndex']) {
 					$mapCode.=	"var terms_".$transValue["translateToLanguage"]." = this.col".$transValue["csvIndex"].".split(',');";
 				}
 			}
 		
 			$mapCode.=	"
-						for (var i = 0; i < terms_".$workingLanguage.".length; i++) {
-						var key = terms_".$workingLanguage."[i];
+						for (var i = 0; i < terms_".$this->_workingLanguage.".length; i++) {
+						var key = terms_".$this->_workingLanguage."[i];
 						if (key) { 
-								var value = {".$workingLanguage.": terms_".$workingLanguage."[i]};";
-				foreach ($importAsTaxoTranslation as $transKey => $transValue) {
+								var value = {".$this->_workingLanguage.": terms_".$this->_workingLanguage."[i]};";
+				foreach ($this->_importAsTaxoTranslation as $transKey => $transValue) {
 					if ($transValue["translatedElement"] == $value['csvIndex']) {
 						$mapCode.= "if (terms_".$transValue["translateToLanguage"]."[i]) {";
 						$mapCode.=	"value.".$transValue["translateToLanguage"]." = terms_".$transValue["translateToLanguage"]."[i];";
@@ -471,14 +597,14 @@ class Import extends AbstractCollection
 							'fullName': currentUser['fullName']
 						},
 						i18n: {
-							".$workingLanguage.": {
+							".$this->_workingLanguage.": {
 							'text':key,
 							'locale': workingLanguage
 							}
 						}
 					};";
 			
-			foreach ($importAsTaxoTranslation as $transKey => $transValue) {
+			foreach ($this->_importAsTaxoTranslation as $transKey => $transValue) {
 				
 				if ($transValue["translatedElement"] == $value['csvIndex']) {
 					
@@ -495,7 +621,7 @@ class Import extends AbstractCollection
 
 			// global JavaScript variables passed to map, reduce and finalize functions
 			$scope = array(
-					"workingLanguage" => $workingLanguage,
+					"workingLanguage" => $this->_workingLanguage,
 					"currentTime" => $this->currentTime,
 					"currentUser" => $this->currentUser,
 					"vocabularyId" => $vocabularyId
@@ -503,7 +629,7 @@ class Import extends AbstractCollection
 				
 			$params = array(
 					"mapreduce" => "Import", // collection
-					"query" => array("importKey" => $importKeyValue), // query
+					"query" => array("importKey" => $this->_importKeyValue), // query
 					"map" => $map, // map
 					"reduce" => $reduce, // reduce
 					"finalize" => $finalize, // finalyse
@@ -525,22 +651,19 @@ class Import extends AbstractCollection
 	}
 	
 	/**
-	 * Preprocessing Data inti Import collection :
+	 * Preprocessing Data in Import collection :
 	 * Transform the taxnonomy comma separated string into array 
-	 * Transform the localization comma separated lat,lon string into array
-	 *
-	 * @param array $importAsTaxo
-	 *           
+	 * Transform the localization comma separated lat,lon string into array       
 	 */	
-	protected function preProcess ($importAsTaxo, $importAsField) {
+	protected function preProcess () {
 		
 		$code = "db.Import.find().snapshot().forEach(function(e){";
 			
-		foreach($importAsTaxo as $taxo) {
+		foreach($this->_importAsTaxo as $taxo) {
 			$code.= "e.col".$taxo['csvIndex']." = e.col".$taxo['csvIndex'].".split(',');";
 		}
 			
-		foreach ($importAsField as $field) {
+		foreach ($this->_importAsField as $field) {
 				
 			if (isset($field['cType']) && ($field['cType']=='localiserField')) {
 				$code.= "e.col".$field['csvIndex']."= e.col".$field['csvIndex'].".split(',').map(parseFloat);";
@@ -556,13 +679,10 @@ class Import extends AbstractCollection
 	
 	/**
 	 * Transform the array of terms into array of terms id
-	 *
-	 * @param array $importAsTaxo
-	 *
 	 */
-	protected function turnTermsToId ($importAsTaxo) {
+	protected function turnTermsToId () {
 		
-		foreach($importAsTaxo as $taxo) {
+		foreach($this->_importAsTaxo as $taxo) {
 			
 			$code = "db.Import.ensureIndex({col".$taxo['csvIndex'].":1});";
 			$response = $this->_dataService->execute($code);
@@ -586,13 +706,10 @@ class Import extends AbstractCollection
 
 	/**
 	 * Write taxonomy terms and flush import collection
-	 *
-	 * @param array $importAsTaxo
-	 *
 	 */
-	protected function writeTaxonomy ($importAsTaxo) {
+	protected function writeTaxonomy () {
 	
-		foreach($importAsTaxo as $taxo) {
+		foreach($this->_importAsTaxo as $taxo) {
 				
 			$code = "db.ImportTaxo.find().snapshot().forEach(
 			function(foo) {
@@ -612,9 +729,6 @@ class Import extends AbstractCollection
 
 	/**
 	 * Write contents and flush import collection
-	 *
-	 * @param array $importAsTaxo
-	 *
 	 */
 	protected function writeContents () {
 	
