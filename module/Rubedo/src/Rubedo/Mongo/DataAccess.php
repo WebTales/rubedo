@@ -1440,7 +1440,7 @@ class DataAccess implements IDataAccess
     /**
      * Add index to collection
      *
-     * @param string|arrau $keys
+     * @param string|array $keys
      * @param array $options
      */
     public function ensureIndex($keys, $options = array())
