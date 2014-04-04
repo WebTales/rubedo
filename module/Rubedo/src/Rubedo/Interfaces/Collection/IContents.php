@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Interfaces\Collection;
+use WebTales\MongoFilters\IFilter;
 
 /**
  * Interface of service handling Contents
@@ -55,4 +56,19 @@ interface IContents extends IAbstractCollection
      * @return array Return the contents list
      */
     public function getOrderedList ($filters = null, $sort = null, $start = null, $limit = null, $live = true);
+
+    /**
+     * Return the visible contents list
+     *
+     * @param IFilter $filters
+     *            filters
+     * @param array $sort
+     *            array of sorting fields
+     * @param integer $start
+     *            offset of the list
+     * @param integer $limit
+     *            max number of items in the list
+     * @return array:
+     */
+    public function getOnlineList(IFilter $filters = null, $sort = null, $start = null, $limit = null);
 }
