@@ -38,8 +38,8 @@ class TwitterController extends AbstractController
         } else {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
         }
-        
-        $output = $blockConfig;
+
+        $output = array_merge($this->params()->fromQuery(), $blockConfig);
         
         $css = array();
         $js = array();
