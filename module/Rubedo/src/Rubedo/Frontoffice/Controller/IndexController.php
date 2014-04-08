@@ -268,7 +268,11 @@ class IndexController extends AbstractActionController
             if ($singleContent) {
                 $twigVar['contentId'] = $directContentId;
                 $this->_servicePage->setPageTitle($singleContent['fields']['text']);
-                $this->_servicePage->setDescription($singleContent['fields']['summary']);
+                if (isset($singleContent['fields']['summary'])) {
+                	$this->_servicePage->setDescription($singleContent['fields']['summary']);
+                } else {
+                	$this->_servicePage->setDescription("");
+                }
             }
         }
         $twigVar['currentPage'] = $this->_pageId;
