@@ -156,7 +156,7 @@ class Import extends AbstractCollection
     	$this->_navigationTaxonomy = $options['contentsNavTaxo'];
     	$this->_target = $options['contentsTarget'];
     	$this->_typeId = $options['typeId'];
-    	$this->fileName = $fileName;
+    	$this->_fileName = $fileName;
     	
     	// for testing only
     	/*
