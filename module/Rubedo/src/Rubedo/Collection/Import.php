@@ -535,7 +535,7 @@ class Import extends AbstractCollection
 	 * and copy it to ImporTaxo collection
 	 */
 	protected function extractTaxonomy () {	
-		
+			
 		// Create map reduce
 		foreach ($this->_importAsTaxo as $key => $value) {
 				
@@ -626,7 +626,9 @@ class Import extends AbstractCollection
 					"currentUser" => $this->currentUser,
 					"vocabularyId" => $vocabularyId
 			);
-				
+			
+			$outAction = ($key==0) ? "replace" : "merge";
+			
 			$params = array(
 					"mapreduce" => "Import", // collection
 					"query" => array("importKey" => $this->_importKeyValue), // query
@@ -634,20 +636,16 @@ class Import extends AbstractCollection
 					"reduce" => $reduce, // reduce
 					"finalize" => $finalize, // finalyse
 					"scope" => $scope, // scope
-					"out" => array("replace" => "ImportTaxo") // out
+					"out" => array($outAction => "ImportTaxo") // out
 			);
+			
 			$response = $this->_dataService->command($params);
 
 			if ($response['ok']!=1) {
 				throw new \Rubedo\Exceptions\Server("Extracting Taxonomy error",$response["errmsg"]);
 			}
-			
-			
-			
-			return true;
-
 		}
-	
+		return true;
 	}
 	
 	/**
