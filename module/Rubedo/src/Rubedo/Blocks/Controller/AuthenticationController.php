@@ -193,6 +193,17 @@ class AuthenticationController extends AbstractController
                 'pageId' => $output["profilePage"]
             ), $urlOptions);
         }
+        $output['signUpPage'] = isset($output['block-config']['signUpPage']) ? $output['block-config']['signUpPage'] : false;
+        if ($output["signUpPage"]) {
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true
+            );
+
+            $output['signUpPageUrl'] = $this->url()->fromRoute(null, array(
+                'pageId' => $output["signUpPage"]
+            ), $urlOptions);
+        }
         return $output;
     }
 

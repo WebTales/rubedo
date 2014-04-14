@@ -16,6 +16,13 @@
                                 "fieldLabel":"#ext-gen1409#",
                                 "name":"profilePage"
                             }
+                        },
+                        {
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"Sign up page",
+                                "name":"signUpPage"
+                            }
                         },{
                             "type":"Ext.form.field.ComboBox",
                             "isAutoStored":true,
