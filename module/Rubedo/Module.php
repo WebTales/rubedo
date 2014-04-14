@@ -448,6 +448,9 @@ class Module
      */
     protected function startSession()
     {
+        if (isset($_POST['remember-me']) && filter_var($_POST['remember-me'], FILTER_VALIDATE_BOOLEAN)) {
+            $this->sessionManager->rememberMe(31556926); //Remember one year
+        }
         if (isset($_COOKIE[$this->sessionName])) {
             $this->sessionManager->start();
         }

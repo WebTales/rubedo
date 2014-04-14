@@ -5,78 +5,108 @@
         <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                 {% if currentUser.photo %}
-			        <img src="{{ userAvatar(currentUser.id) }}" class="user-picture" alt="{{currentUser.name}}" style="height:18px;">
-			    {% else %}
+                    <img src="{{ userAvatar(currentUser.id) }}" class="user-picture" alt="{{ currentUser.name }}"
+                         style="height:18px;">
+                {% else %}
                     <i class="icon-user"></i>
-                {% endif %} {{currentUser.name}}
+                {% endif %} {{ currentUser.name }}
                 <span class="caret"></span>
             </a>
-            
+
             <ul class="dropdown-menu">
-                {% if hasAccessToBO %}<li><a href="/backoffice" target="_blank"><i class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | fotrans }}</a></li>{% endif %}
-                {% if profilePage %}<li><a href="{{ profilePageUrl }}"><i class="icon-user"></i> Profile</a></li>{% endif %}
-                <li><a href="#" onclick="logout()"><i class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | fotrans }}</a></li>
+                {% if hasAccessToBO %}
+                    <li><a href="/backoffice" target="_blank"><i
+                                class="icon-edit"></i> {{ "FO.Administration.Toolbar.Button.User.Backoffice" | fotrans }}
+                    </a></li>{% endif %}
+                {% if profilePage %}
+                    <li><a href="{{ profilePageUrl }}"><i class="icon-user"></i> Profile</a></li>{% endif %}
+                <li><a href="#" onclick="logout()"><i
+                                class="icon-off"></i> {{ "FO.Administration.Toolbar.Button.User.Logout" | fotrans }}</a>
+                </li>
             </ul>
         </div>
-    {% else %}
-    	{% if displayMode == 'pop-in' %}
-        <a href="#auth-modal" role="button" class="btn" data-toggle="modal">{{ "Blocks.Auth.Label.Connection" | fotrans }}</a>
+    {% elseif displayMode == 'pop-in' %}
+        <a href="#auth-modal" role="button" class="btn"
+           data-toggle="modal">{{ "Blocks.Auth.Label.Connection" | fotrans }}</a>
         <div id="auth-modal" class="modal hide fade">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h3>{{ "Blocks.Auth.Label.LogIn" | fotrans }}</h3>
             </div>
- 			
-   			<form class="form-horizontal">
-   				<div class="modal-body">
-					<div class="control-group">
-						<label class="control-label" for="login">{{ "Blocks.Auth.Label.Login" | fotrans }} *</label>
-	          	        <div class="controls">
-	         	 	    	<input type="text" id="login" class="input-medium" placeholder="{{ "Blocks.Auth.Label.LoginOrEmail" | fotrans }}" required>
-	         	 	    </div>
-	             	</div>
-	             	<div class="control-group">   	
-	             	 	<label class="control-label" for="password">{{ "Blocks.Auth.Label.Password" | fotrans }} *</label>
-	 					<div class="controls">
-	            			<input type="password" id="password" class="input-medium" placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}"  required>
-	            		</div>
-					</div>
+
+            <form class="form-horizontal rubedo-login">
+                <div class="modal-body">
+                    <div class="control-group">
+                        <label class="control-label" for="login">{{ "Blocks.Auth.Label.Login" | fotrans }} *</label>
+
+                        <div class="controls">
+                            <input type="text" id="login" name="login" class="input-medium"
+                                   placeholder="{{ "Blocks.Auth.Label.LoginOrEmail" | fotrans }}" required>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="password">{{ "Blocks.Auth.Label.Password" | fotrans }}
+                            *</label>
+
+                        <div class="controls">
+                            <input type="password" id="password" name="password" class="input-medium"
+                                   placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}" required>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox"
+                                       name="remember-me"> {{ "Blocks.Auth.Label.RememberMe" | fotrans }}
+                            </label>
+                        </div>
+                    </div>
                     <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
-				</div>
-				
-				<div id="error-msg" class="alert alert-error hidden-rubedo"></div>
-				
-				<div class="modal-footer">
-                     <a href="#"  data-dismiss="modal" class="btn">{{ "Label.Cancel" | fotrans }}</a>
-                     <input type="submit" onclick="loggin();return false;" class="btn btn-primary" value="{{ "Blocks.Auth.Label.LogIn" | fotrans }}">
-		        </div>     
-             </form> 
+                </div>
+
+                <div id="error-msg" class="alert alert-error hidden-rubedo"></div>
+
+                <div class="modal-footer">
+                    <a href="#" data-dismiss="modal" class="btn">{{ "Label.Cancel" | fotrans }}</a>
+                    <input type="submit" class="btn btn-primary" value="{{ "Blocks.Auth.Label.LogIn" | fotrans }}">
+                </div>
+            </form>
         </div>
-        {% endif %}
-        {% if displayMode == 'form' %}
- 			<form class="form-horizontal">
-				<div class="control-group">
-					<label class="control-label" for="login">{{ "Blocks.Auth.Label.Login" | fotrans }} *</label>
-          	        <div class="controls">
-         	 	    	<input type="text" id="login" class="input-medium" placeholder="{{ "Blocks.Auth.Label.LoginOrEmail" | fotrans }}" required>
-         	 	    </div>
-             	</div>
-             	<div class="control-group">   	
-             	 	<label class="control-label" for="password">{{ "Blocks.Auth.Label.Password" | fotrans }} *</label>
- 					<div class="controls">
-            			<input type="password" id="password" class="input-medium" placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}"  required>
-            		</div>
-				</div>
-                <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
-             	<div class="control-group">
-             		<div class="controls">
-             			<input type="submit" onclick="loggin();return false;" class="btn btn-primary" value="{{ "Blocks.Auth.Label.LogIn" | fotrans }}">
-             		</div>
-             	</div>
-	            <div id="error-msg" class="alert alert-error hidden-rubedo"></div> 
-             </form>       
-        {% endif %}
-    {%endif%}
+    {% elseif displayMode == 'form' %}
+        <form class="form-horizontal rubedo-login">
+            <div class="control-group">
+                <label class="control-label" for="login">{{ "Blocks.Auth.Label.Login" | fotrans }} *</label>
+
+                <div class="controls">
+                    <input type="text" id="login" name="login" class="input-medium"
+                           placeholder="{{ "Blocks.Auth.Label.LoginOrEmail" | fotrans }}" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="password">{{ "Blocks.Auth.Label.Password" | fotrans }} *</label>
+
+                <div class="controls">
+                    <input type="password" id="password" name="password" class="input-medium"
+                           placeholder="{{ "Blocks.Auth.Label.Password" | fotrans }}" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <label class="checkbox">
+                        <input type="checkbox" name="remember-me"> {{ "Blocks.Auth.Label.RememberMe" | fotrans }}
+                    </label>
+                </div>
+            </div>
+            <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
+
+            <div class="control-group">
+                <div class="controls">
+                    <input type="submit" class="btn btn-primary" value="{{ "Blocks.Auth.Label.LogIn" | fotrans }}">
+                </div>
+            </div>
+            <div id="error-msg" class="alert alert-error hidden-rubedo"></div>
+        </form>
+    {% endif %}
 {% endblock %}
 
 

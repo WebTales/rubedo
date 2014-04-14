@@ -136,7 +136,7 @@ class Authentication implements IAuthentication
             ->clear();
         $config = Manager::getService('Application')->getConfig();
         $cookieName = $config['session']['name'];
-        setcookie($cookieName, "");
+        setcookie($cookieName, null, -1, '/');
     }
 
     /**
