@@ -31,6 +31,7 @@ class AddthisfollowController extends AbstractController
     {
         $blockConfig = $this->params()->fromQuery('block-config', array());
         $networks = $blockConfig;
+        $data = array();
         unset($networks["disposition"]);
         unset($networks["small"]);
         foreach ($networks as $name => $user) {
