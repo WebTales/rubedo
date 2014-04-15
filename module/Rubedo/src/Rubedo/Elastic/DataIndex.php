@@ -1138,7 +1138,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
 
         // Add autocompletion fields and title
-		$userThumbnail = (is_string($photo)) ? Manager::getService('Url')->userAvatar($data['id'],40,40,"boxed") : null;
+		$userThumbnail = (!empty($photo)) ? Manager::getService('Url')->userAvatar($data['id'],40,40,"boxed") : null;
 
         $indexData['autocomplete_nonlocalized'] = array(
         	'input' => $data['name'],
