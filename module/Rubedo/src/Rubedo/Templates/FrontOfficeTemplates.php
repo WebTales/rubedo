@@ -286,7 +286,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function templateFileExists($path)
     {
         try {
-            $this->_twig->resolveTemplate( $path);
+            $this->_twig->resolveTemplate($path);
         } catch (\Exception $e){
             return false;
         }
