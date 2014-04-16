@@ -33,9 +33,9 @@ if [ -f composer.extensions.json ]
     then
         if [ -f composer.extensions.lock ]
             then
-                COMPOSER=composer.extensions.json php composer.phar install -o;
-            else
                 COMPOSER=composer.extensions.json php composer.phar update -o;
+            else
+                COMPOSER=composer.extensions.json php composer.phar install -o;
         fi
 fi
 
