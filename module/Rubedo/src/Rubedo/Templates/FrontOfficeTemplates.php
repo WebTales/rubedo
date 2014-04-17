@@ -286,7 +286,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function templateFileExists($path)
     {
         try {
-            $this->_twig->resolveTemplate( $path);
+            $this->_twig->resolveTemplate($path);
         } catch (\Exception $e){
             return false;
         }
@@ -512,7 +512,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         $contentService = Manager::getService("Contents");
         
-        $return = $contentService->findById($contentId, true, false);
+        $return = $contentService->findById($contentId,contentId, true, false);
         return $return;
     }
 
