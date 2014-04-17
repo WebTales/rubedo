@@ -567,6 +567,15 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             )
         )));
         $twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
+        $twig->addFilter( new \Twig_SimpleFilter('ensureIsArray', function ($value) {
+            return (array)$value;
+        }));
+        $twig->addFilter( new \Twig_SimpleFilter('ensureIsMultivalued', function ($value, $multiple = false) {
+            if (is_array($value) && ($multiple || !is_numeric(key($value)))) {
+                return array($value);
+            }
+            return (array)$value;
+        }));
         return $this;
     }
 

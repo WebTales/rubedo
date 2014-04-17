@@ -1,0 +1,73 @@
+<div class="control-group">
+    {%  if type[key]["config"]["multivalued"] %}
+        <label class="control-label" for="{{ type[key]['config']['name'] }}">{{ type[key]['config']['fieldLabel'] }} <i class="icon-plus user-field-add"></i></label>
+        <ul class="controls unstyled" data-prototype="{{ ('
+        <input
+            placeholder="' ~ 'Label.Url'|fotrans ~ '"
+            type="text"
+            name="' ~ type[key]['config']['name'] ~ '[__index__][url]" />
+        <input
+            placeholder="' ~ 'Label.MaxWidth'|fotrans ~ '"
+            type="number"
+            name="' ~ type[key]['config']['name'] ~ '[__index__][maxWidth]" />
+        <input
+            placeholder="' ~ 'Label.MaxHeight'|fotrans ~ '"
+            type="number"
+            name="' ~ type[key]['config']['name'] ~ '[__index__][MaxHeight]" />
+        ')|e('html_attr') }}">
+            {% for i, item in data[key]|ensureIsMultivalued if item %}
+                <li data-index="{{ i }}">
+                    <input
+                            placeholder="{{ 'Label.Url'|fotrans }}"
+                            value="{{ item.url }}"
+                            type="text"
+                            id="{{ type[key]['config']['name'] }}"
+                            name="{{ type[key]['config']['name'] }}[{{ i }}][url]"
+                            {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+                    <input
+                            placeholder="{{ 'Label.MaxWidth'|fotrans }}"
+                            value="{{ item.maxWidth }}"
+                            type="number"
+                            id="{{ type[key]['config']['name'] }}"
+                            name="{{ type[key]['config']['name'] }}[{{ i }}][maxWidth]"
+                            {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+                    <input
+                            placeholder="{{ 'Label.MaxHeight'|fotrans }}"
+                            value="{{ item.maxHeight }}"
+                            type="number"
+                            id="{{ type[key]['config']['name'] }}"
+                            name="{{ type[key]['config']['name'] }}[{{ i }}][maxHeight]"
+                            {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+                    <i class="icon-minus user-field-remove"></i>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <label class="control-label" for="{{ type[key]['config']['name'] }}">
+            {{ type[key]['config']['fieldLabel'] }}
+        </label>
+        <div class="controls">
+            <input
+                    placeholder="{{ 'Label.Url'|fotrans }}"
+                    value="{{ data[key]['url'] }}"
+                    type="text"
+                    id="{{ type[key]['config']['name'] }}"
+                    name="{{ type[key]['config']['name'] }}[url]"
+                    {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+            <input
+                    placeholder="{{ 'Label.MaxWidth'|fotrans }}"
+                    value="{{ data[key]['maxWidth'] }}"
+                    type="number"
+                    id="{{ type[key]['config']['name'] }}"
+                    name="{{ type[key]['config']['name'] }}[maxWidth]"
+                    {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+            <input
+                    placeholder="{{ 'Label.MaxHeight'|fotrans }}"
+                    value="{{ data[key]['maxHeight'] }}"
+                    type="number"
+                    id="{{ type[key]['config']['name'] }}"
+                    name="{{ type[key]['config']['name'] }}[maxHeight]"
+                    {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+        </div>
+    {% endif %}
+</div>

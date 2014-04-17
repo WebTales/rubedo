@@ -1,0 +1,59 @@
+<div class="control-group">
+    {#{%  if type[key]["config"]["multivalued"] %}
+        todo in future release
+        <label class="control-label" for="{{ type[key]['config']['name'] }}">
+            {{ type[key]['config']['fieldLabel'] }}
+            <i class="icon-plus user-field-add"></i>
+        </label>
+        {% spaceless %}
+            {% if type[key]['config']['multiSelect'] %}
+                {% set multiple = ' multiple="multiple"' %}
+                {% set name = ' name="' ~ type[key]['config']['name'] ~ '[__index__][]"' %}
+            {% else %}
+                {% set multiple = '' %}
+                {% set name = ' name="' ~ type[key]['config']['name'] ~ '[__index__]"' %}
+            {% endif %}
+
+            {% set select = '<select' ~ multiple ~ name ~ '>' %}
+            {% for option in  type[key]['config']['store']['data'] %}
+                {% set select = select ~ '<option value="' ~ option['valeur'] ~ '">' ~ option['nom'] ~ '</option>' %}
+            {% endfor %}
+            {% set select = select ~ '</select>' %}
+        {% endspaceless %}
+        <ul class="controls unstyled" data-prototype="{{ select|e('html_attr') }}">
+            {% for i, item in data[key]|ensureIsMultivalued(type[key]['config']['multiSelect']) if item %}
+                <li data-index="{{ i }}">
+                    <select
+                            {% if type[key]['config']['multiSelect'] %}multiple="multiple"{% endif %}
+                            name="{{ type[key]['config']['name'] }}[{{ i }}]{% if type[key]['config']['multiSelect'] %}[]{% endif %}"
+                            id="{{ type[key]['config']['name'] }}"
+                            {% if not type[key]['config']['allowBlank'] %}required{% endif %} data-fieldindex="{{ loop.index }}">
+                        {% for option in  type[key]['config']['store']['data'] %}
+                            <option
+                                    {% if option['valeur'] == item or option['valeur'] in item %}selected="selected"{% endif %}
+                                    value="{{ option['valeur'] }}"
+                                    >{{ option['nom'] }}</option>
+                        {% endfor %}
+                    </select>
+                    <i class="icon-minus user-field-remove"></i>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}#}
+    <label class="control-label" for="{{ type[key]['config']['name'] }}">{{ type[key]['config']['fieldLabel'] }}</label>
+    <div class="controls">
+        <select
+                {% if type[key]['config']['multiSelect'] %}multiple="multiple"{% endif %}
+                name="{{ type[key]['config']['name'] }}{% if type[key]['config']['multiSelect'] %}[]{% endif %}"
+                id="{{ type[key]['config']['name'] }}"
+                {% if not type[key]['config']['allowBlank'] %}required{% endif %} data-fieldindex="{{ loop.index }}">
+            {% for option in  type[key]['config']['store']['data'] %}
+                <option
+                        {% if option['valeur'] == data[key] or option['valeur'] in data[key] %}selected="selected"{% endif %}
+                        value="{{ option['valeur'] }}"
+                        >{{ option['nom'] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {#{% endif %}#}
+</div>

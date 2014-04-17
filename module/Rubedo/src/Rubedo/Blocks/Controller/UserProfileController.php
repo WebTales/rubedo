@@ -28,176 +28,247 @@ use Rubedo\Services\Manager;
  */
 class UserProfileController extends AbstractController
 {
+    /**
+     * @var \Rubedo\Interfaces\Templates\IFrontOfficeTemplates
+     */
+    protected $frontOfficeTemplatesService;
+
+    /**
+     * @var \Rubedo\Interfaces\Collection\IUserTypes
+     */
+    protected $userTypesService;
+
+    /**
+     * @var \Rubedo\Interfaces\Collection\IUsers
+     */
+    protected $usersService;
+
+    /**
+     * @var \Rubedo\Interfaces\User\ICurrentUser
+     */
+    protected $currentUserService;
+
+    /**
+     * @var \Rubedo\Interfaces\Collection\IContents
+     */
+    protected $contentsService;
+
+    /**
+     * @var \Rubedo\Interfaces\Internationalization\ICurrent
+     */
+    protected $currentLocalizationService;
+
+
+    function __construct()
+    {
+        $this->frontOfficeTemplatesService = Manager::getService('FrontOfficeTemplates');
+        $this->userTypesService = Manager::getService('UserTypes');
+        $this->usersService = Manager::getService('Users');
+        $this->currentUserService = Manager::getService('CurrentUser');
+        $this->contentsService = Manager::getService('Contents');
+        $this->currentLocalizationService = Manager::getService('CurrentLocalization');
+    }
 
     public function indexAction()
     {
         $output = $this->params()->fromQuery();
-        $site = $this->params()->fromQuery('site');
-        if ((isset($output['userprofile'])) && (!empty($output['userprofile']))) {
-            $currentUser = Manager::getService("Users")->findById($output['userprofile']);
-        } else {
-            $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
-        }
 
-        if (!$currentUser) {
-            $output['errorMessage'] = "Blocks.UserProfile.error.noUser";
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userProfile/error.html.twig");
+        if (
+            !(
+            $user =
+                !empty($output['userprofile'])
+                    ? $this->usersService->findById($output['userprofile'])
+                    : $user = $this->currentUserService->getCurrentUser()
+            )
+        ) {
+            $output['errorMessage'] = 'Blocks.UserProfile.error.noUser';
+            $template = $this->frontOfficeTemplatesService->getFileThemePath('blocks/userProfile/error.html.twig');
             return $this->_sendResponse($output, $template);
         }
-
-        $user = $currentUser;
-        $userType = Manager::getService("UserTypes")->findById($user['typeId']);
-        $output['user'] = $user;
-        $output['fieldTypes'] = $userType['fields'];
-        $frontOfficeTemplatesService = Manager::getService('FrontOfficeTemplates');
-        $cTypeArray = array();
-        $CKEConfigArray = array();
-        $contentTitlesArray = array();
-        $data = $user['fields'];
-        $data["id"] = $user['id'];
-        $data['locale'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
-        $contentsReader = Manager::getService('Contents');
-        foreach ($userType["fields"] as $value) {
-
-            $cTypeArray[$value['config']['name']] = $value;
-            if ($value["cType"] == "Rubedo.view.DCEField") {
-                if (is_array($data[$value['config']['name']])) {
-                    $contentTitlesArray[$value['config']['name']] = array();
-                    foreach ($data[$value['config']['name']] as $intermedValue) {
-                        $intermedContent = $contentsReader->findById($intermedValue, true, false);
-                        $contentTitlesArray[$value['config']['name']][] = $intermedContent['fields']['text'];
-                    }
-                } else {
-                    if (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1) {
-                        $intermedContent = $contentsReader->findById($data[$value['config']['name']], true, false);
-                        $contentTitlesArray[$value['config']['name']] = $intermedContent['fields']['text'];
-                    }
-                }
-            } else
-                if (($value["cType"] == "Rubedo.view.CKEField") && (isset($value["config"]["CKETBConfig"]))) {
-                    $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
-                } else
-                    if (($value["cType"] == "Rubedo.view.externalMediaField") && (isset($data[$value["config"]["name"]]))) {
-                        $mediaConfig = $data[$value["config"]["name"]];
-
-                        if (isset($mediaConfig['url'])) {
-
-                            $oembedParams['url'] = $mediaConfig['url'];
-
-                            $cache = Cache::getCache('oembed');
-
-                            $options = array();
-
-                            if (isset($blockConfig['maxWidth'])) {
-                                $oembedParams['maxWidth'] = $blockConfig['maxWidth'];
-                                $options['maxWidth'] = $blockConfig['maxWidth'];
-                            } else {
-                                $oembedParams['maxWidth'] = 0;
-                            }
-
-                            if (isset($blockConfig['maxHeight'])) {
-                                $oembedParams['maxHeight'] = $blockConfig['maxHeight'];
-                                $options['maxHeight'] = $blockConfig['maxHeight'];
-                            } else {
-                                $oembedParams['maxHeight'] = 0;
-                            }
-
-                            $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
-                            $loaded = false;
-                            $item = $cache->getItem($cacheKey, $loaded);
-
-                            if (!$loaded) {
-                                // If the URL come from flickr, we check the URL
-                                if (stristr($oembedParams['url'], 'www.flickr.com')) {
-                                    $decomposedUrl = explode("/", $oembedParams['url']);
-
-                                    $end = false;
-
-                                    // We search the photo identifiant and we remove all parameters after it
-                                    foreach ($decomposedUrl as $key => $value) {
-                                        if (is_numeric($value) && strlen($value) === 10) {
-                                            $end = true;
-                                            continue;
-                                        }
-
-                                        if ($end) {
-                                            unset($decomposedUrl[$key]);
-                                        }
-                                    }
-
-                                    $oembedParams['url'] = implode("/", $decomposedUrl);
-                                }
-
-                                $response = OEmbed\Simple::request($oembedParams['url'], $options);
-
-                                $item['width'] = $oembedParams['maxWidth'];
-                                $item['height'] = $oembedParams['maxHeight'];
-                                if (!stristr($oembedParams['url'], 'www.flickr.com')) {
-                                    $item['html'] = $response->getHtml();
-                                } else {
-                                    $raw = $response->getRaw();
-                                    if ($oembedParams['maxWidth'] > 0) {
-                                        $width_ratio = $raw->width / $oembedParams['maxWidth'];
-                                    } else {
-                                        $width_ratio = 1;
-                                    }
-                                    if ($oembedParams['maxHeight'] > 0) {
-                                        $height_ratio = $raw->height / $oembedParams['maxHeight'];
-                                    } else {
-                                        $height_ratio = 1;
-                                    }
-
-                                    $size = "";
-                                    if ($width_ratio > $height_ratio) {
-                                        $size = "width='" . $oembedParams['maxWidth'] . "'";
-                                    }
-                                    if ($width_ratio < $height_ratio) {
-                                        $size = "height='" . $oembedParams['maxHeight'] . "'";
-                                    }
-                                    $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
-                                }
-
-                                $cache->setItem($cacheKey, $item);
-                            }
-
-                            $output['item'] = $item;
-                        }
-                    }
+        $output['canEdit'] = $this->currentUserService->getCurrentUser() == $user;
+        $userType = $this->userTypesService->findById($user['typeId']);
+        if (isset($output['editProfile']) && $this->getRequest()->isPost() && $output['canEdit']) {
+            $post = $this->params()->fromPost();
+            $user['fields'] = $this->filterFields($userType['fields'], $post); //todo make an intelligent merge !
+            $this->usersService->update($user);
         }
+        $output['user'] = &$user;
+        $output['fieldTypes'] = &$userType['fields'];
 
-        $output["type"] = $cTypeArray;
-        $output["CKEFields"] = $CKEConfigArray;
-        $output["contentTitles"] = $contentTitlesArray;
+        $data = $user['fields'];
+        $data['id'] = $user['id'];
+        $data['locale'] = $this->currentLocalizationService->getCurrentLocalization();
+
+        list(
+            $output['type'],
+            $output['CKEFields'],
+            $output['contentTitles']
+            ) = $this->renderFields($userType['fields'], $data);
+
         $hasCustomLayout = false;
         $customLayoutRows = array();
-        if ((isset($userType['layouts'])) && (is_array($userType['layouts']))) {
-            foreach ($userType['layouts'] as $key => $value) {
-                if (($value['type'] == "Detail") && ($value['active']) && ($value['site'] == $site['id'])) {
+        if (isset($userType['layouts']) && is_array($userType['layouts'])) {
+            foreach ($userType['layouts'] as $layout) {
+                if ($layout['type'] == 'Detail' && $layout['active'] && $layout['site'] == $output['site']['id']) {
                     $hasCustomLayout = true;
-                    $customLayoutRows = $value['rows'];
+                    $customLayoutRows = $layout['rows'];
                 }
             }
         }
 
-        $output["data"] = $data;
-        $output["customLayoutRows"] = $customLayoutRows;
+        $output['data'] = $data;
+        $output['customLayoutRows'] = $customLayoutRows;
         $blockConfig = $this->params()->fromQuery('block-config');
-        $output["blockConfig"] = $blockConfig;
+        $output['blockConfig'] = $blockConfig;
 
-        if ($hasCustomLayout) {
-            $template = $frontOfficeTemplatesService->getFileThemePath("blocks/userProfile/customLayout.html.twig");
-        } else {
-            $template = $frontOfficeTemplatesService->getFileThemePath("blocks/userProfile.html.twig");
-        }
+        $template = $this
+            ->frontOfficeTemplatesService
+            ->getFileThemePath(
+                $hasCustomLayout
+                    ? 'blocks/userProfile/customLayout.html.twig'
+                    : 'blocks/userProfile.html.twig'
+            );
         $css = array(
-            "/components/jquery/timepicker/jquery.ui.timepicker.css",
-            "/components/jquery/jqueryui/themes/base/jquery-ui.css"
+            '/components/jquery/timepicker/jquery.ui.timepicker.css',
+            '/components/jquery/jqueryui/themes/base/jquery-ui.css'
         );
         $js = array(
-            $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/rubedo-map.js"),
-            $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
-            $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js")
+            $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/rubedo-map.js'),
+            $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/map.js'),
+            $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/rating.js'),
+            $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/fields.js'),
+            $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/userfields.js'),
         );
         return $this->_sendResponse($output, $template, $css, $js);
+    }
+
+    protected function renderFields($userTypefields, $userFields)
+    {
+        $cTypeArray = array();
+        $CKEConfigArray = array();
+        $contentTitlesArray = array();
+
+        foreach ($userTypefields as $value) {
+            $cTypeArray[$value['config']['name']] = $value;
+            if ($value['cType'] == 'Rubedo.view.DCEField') {
+                if (is_array($userFields[$value['config']['name']])) {
+                    $contentTitlesArray[$value['config']['name']] = array();
+                    foreach ($userFields[$value['config']['name']] as $intermedValue) {
+                        $intermedContent = $this->contentsService->findById($intermedValue, true, false);
+                        $contentTitlesArray[$value['config']['name']][] = $intermedContent['fields']['text'];
+                    }
+                } elseif (
+                    is_string($userFields[$value['config']['name']])
+                    && preg_match('/[\dabcdef]{24}/', $userFields[$value['config']['name']]) == 1
+                ) {
+                    $intermedContent = $this->contentsService->findById($userFields[$value['config']['name']], true, false);
+                    $contentTitlesArray[$value['config']['name']] = $intermedContent['fields']['text'];
+                }
+            } elseif ($value['cType'] == 'Rubedo.view.CKEField' && isset($value['config']['CKETBConfig'])) {
+                $CKEConfigArray[$value['config']['name']] = $value['config']['CKETBConfig'];
+            } elseif ($value['cType'] == 'Rubedo.view.externalMediaField' && isset($data[$value['config']['name']])) {
+                $mediaConfig = $data[$value['config']['name']];
+
+                if (isset($mediaConfig['url'])) {
+
+                    $oembedParams['url'] = $mediaConfig['url'];
+                    $cache = Cache::getCache('oembed');
+                    $options = array();
+
+                    if (isset($blockConfig['maxWidth'])) {
+                        $oembedParams['maxWidth'] = $blockConfig['maxWidth'];
+                        $options['maxWidth'] = $blockConfig['maxWidth'];
+                    } else {
+                        $oembedParams['maxWidth'] = 0;
+                    }
+
+                    if (isset($blockConfig['maxHeight'])) {
+                        $oembedParams['maxHeight'] = $blockConfig['maxHeight'];
+                        $options['maxHeight'] = $blockConfig['maxHeight'];
+                    } else {
+                        $oembedParams['maxHeight'] = 0;
+                    }
+
+                    $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
+                    $loaded = false;
+                    $item = $cache->getItem($cacheKey, $loaded);
+
+                    if (!$loaded) {
+                        // If the URL come from flickr, we check the URL
+                        if (stristr($oembedParams['url'], 'www.flickr.com')) {
+                            $decomposedUrl = explode('/', $oembedParams['url']);
+                            $end = false;
+                            // We search the photo identifiant and we remove all parameters after it
+                            foreach ($decomposedUrl as $key => $value) {
+                                if ($end) {
+                                    unset($decomposedUrl[$key]);
+                                } elseif (is_numeric($value) && strlen($value) === 10) {
+                                    $end = true;
+                                    continue;
+                                }
+                            }
+                            $oembedParams['url'] = implode('/', $decomposedUrl);
+                        }
+
+                        $response = OEmbed\Simple::request($oembedParams['url'], $options);
+                        $item['width'] = $oembedParams['maxWidth'];
+                        $item['height'] = $oembedParams['maxHeight'];
+                        if (!stristr($oembedParams['url'], 'www.flickr.com')) {
+                            $item['html'] = $response->getHtml();
+                        } else {
+                            $raw = $response->getRaw();
+                            $width_ratio = $oembedParams['maxWidth'] > 0 ? $raw->width / $oembedParams['maxWidth'] : 1;
+                            $height_ratio = $oembedParams['maxHeight'] > 0 ? $raw->height / $oembedParams['maxHeight'] : 1;
+                            if ($width_ratio > $height_ratio) {
+                                $size = 'width="' . $oembedParams['maxWidth'] . '"';
+                            } elseif ($width_ratio < $height_ratio) {
+                                $size = 'height="' . $oembedParams['maxHeight'] . '"';
+                            } else {
+                                $size = '';
+                            }
+                            $item['html'] = '<img src="' . $raw->url . '" ' . $size . ' title="' . $raw->title . '">';
+                        }
+
+                        $cache->setItem($cacheKey, $item);
+                    }
+                    $output['item'] = $item;
+                }
+            }
+        }
+        return array($cTypeArray, $CKEConfigArray, $contentTitlesArray);
+    }
+
+    protected function filterFields($userTypefields, $fields)
+    {
+        foreach ($fields as $fieldName => &$field) {
+            $config = $this->isInConfigName($userTypefields, $fieldName);
+            if (!$config) {
+                unset($field);
+            } elseif ($config['cType'] == 'Ext.form.field.Date') {
+                if (is_array($field)) {
+                    foreach($field as &$date) {
+                        $date = strtotime($date);
+                    }
+                } else {
+                    $date = strtotime($field);
+                }
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Search a value in array config
+     *
+     * @param $fields Array to scan
+     * @param $name value searched
+     * @return bool
+     */
+    protected function isInConfigName($fields, $name)
+    {
+        foreach ($fields as $field) {
+            if ($field['config']['name'] == $name) return $field;
+        }
+        return false;
     }
 }

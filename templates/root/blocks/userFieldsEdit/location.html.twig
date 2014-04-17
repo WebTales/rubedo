@@ -1,0 +1,35 @@
+<div class="control-group">
+    <label class="control-label" for="{{ type[key]['config']['name'] }}">
+        {{ type[key]['config']['fieldLabel'] }}
+    </label>
+    <div class="controls">
+        <input
+                placeholder="{{ 'Label.Address'|fotrans }}"
+                value="{{ data[key]['address'] }}"
+                type="text"
+                id="{{ type[key]['config']['name'] }}"
+                name="{{ type[key]['config']['name'] }}[address]"
+                {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+        <input
+                placeholder="{{ 'Label.Latitude'|fotrans }}"
+                value="{{ data[key]['lat'] }}"
+                type="number"
+                id="{{ type[key]['config']['name'] }}"
+                name="{{ type[key]['config']['name'] }}[lat]"
+                {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+        <input
+                placeholder="{{ 'Label.Longitude'|fotrans }}"
+                value="{{ data[key]['lon'] }}"
+                type="number"
+                id="{{ type[key]['config']['name'] }}"
+                name="{{ type[key]['config']['name'] }}[lon]"
+                {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+        <input
+                placeholder="{{ 'Label.Altitude'|fotrans }}"
+                value="{{ data[key]['altitude'] }}"
+                type="number"
+                id="{{ type[key]['config']['name'] }}"
+                name="{{ type[key]['config']['name'] }}[altitude]"
+                {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+    </div>
+</div>

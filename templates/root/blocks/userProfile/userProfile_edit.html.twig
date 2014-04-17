@@ -1,0 +1,52 @@
+<form action="?editProfile" method="post">
+    {% for key, cValue in type %}
+        {% set cType = cValue['cType'] %}
+        {% if key in data|keys %}
+            {% set value = data[key] %}
+        {% else %}
+            {% set value = null %}
+        {% endif %}
+        {{ cType }}
+        {% if cType == 'Rubedo.view.ImagePickerField' %}
+            {# Do nothing, todo in future release
+            {% if value != "" %}
+                {% include '@Root/blocks/userFieldsEdit/mediaField.html.twig' %}
+            {% endif %}#}
+        {% elseif cType == 'Rubedo.view.CKEField' %}
+            {% include '@Root/blocks/userFieldsEdit/richtext.html.twig' %}
+        {% elseif cType == 'Ext.ux.widget.Rating' %}
+            {% include '@Root/blocks/userFieldsEdit/rating.html.twig' %}
+        {% elseif cType == 'Ext.form.field.TextArea' %}
+            {% include '@Root/blocks/userFieldsEdit/textarea.html.twig' %}
+        {% elseif cType == 'Ext.slider.Single' %}
+            {% include '@Root/blocks/userFieldsEdit/slider.html.twig' %}
+        {% elseif cType == 'Ext.ux.TreePicker' %}
+            {# Do nothing, todo in future release
+            {% include '@Root/blocks/userFields/link-to-page.html.twig' %}
+            #}
+        {% elseif cType == 'Rubedo.view.localiserField' %}
+            {% include '@Root/blocks/userFieldsEdit/location.html.twig' %}
+        {% elseif cType == 'Ext.form.field.Date' %}
+            {% include '@Root/blocks/userFieldsEdit/date.html.twig' %}
+        {% elseif cType == 'Ext.form.field.ComboBox' %}
+            {% include '@Root/blocks/userFieldsEdit/combobox.html.twig' %}
+        {% elseif cType == 'Ext.form.field.Time' %}
+            {% include '@Root/blocks/userFieldsEdit/time.html.twig' %}
+        {% elseif cType == 'Ext.form.field.Number' %}
+            {% include '@Root/blocks/userFieldsEdit/number.html.twig' %}
+        {% elseif cType == 'Rubedo.view.externalMediaField' %}
+            {% include '@Root/blocks/userFieldsEdit/external-media.html.twig' %}
+        {% elseif cType == 'Ext.form.field.Checkbox' %}
+            {% include '@Root/blocks/userFieldsEdit/checkbox.html.twig' %}
+        {% elseif cType == 'Ext.form.CheckboxGroup' %}
+            {% include '@Root/blocks/userFieldsEdit/checkboxgroup.html.twig' %}
+        {% elseif cType == 'Ext.form.RadioGroup' %}
+            {% include '@Root/blocks/userFieldsEdit/radiogroup.html.twig' %}
+        {% elseif cType == 'Ext.ux.ColorField' %}
+            {% include '@Root/blocks/userFieldsEdit/color.html.twig' %}
+        {% else %}
+            {% include '@Root/blocks/userFieldsEdit/text.html.twig' %}
+        {% endif %}
+    {% endfor %}
+    <button type="submit">Send</button>
+</form>

@@ -1,0 +1,42 @@
+<div class="control-group">
+    {%  if type[key]["config"]["multivalued"] %}
+        <label class="control-label">
+            {{ type[key]['config']['fieldLabel'] }}
+            <i class="icon-plus user-field-add"></i>
+        </label>
+        <ul class="controls unstyled" data-prototype="{{ ('
+        <textarea
+            id="' ~ type[key]['config']['name'] ~ '___index__"
+            data-richtext="true"
+            placeholder="' ~ type[key]['config']['fieldLabel'] ~ '"
+            name="' ~ type[key]['config']['name'] ~ '[]"></textarea>')|e('html_attr') }}">
+        {% for i, item in data[key]|ensureIsArray if item %}
+            <li data-index="{{ i }}">
+                <textarea
+                        data-richtext="true"
+                        placeholder="{{ type[key]['config']['fieldLabel'] }}"
+                        id="{{ type[key]['config']['name'] }}_{{ i }}"
+                        name="{{ type[key]['config']['name'] }}[]"
+                        {% if not type[key]['config']['allowBlank'] %}required{% endif %}>{% spaceless %}
+                    {{ item }}
+                {% endspaceless %}</textarea>
+                <i class="icon-minus user-field-remove"></i>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <label class="control-label" for="{{ type[key]['config']['name'] }}">
+            {{ type[key]['config']['fieldLabel'] }}
+        </label>
+        <div class="controls">
+            <textarea
+                    data-richtext="true"
+                    placeholder="{{ type[key]['config']['fieldLabel'] }}"
+                    id="{{ type[key]['config']['name'] }}"
+                    name="{{ type[key]['config']['name'] }}"
+                    {% if not type[key]['config']['allowBlank'] %}required{% endif %}>{% spaceless %}
+                {{ data[key] }}
+            {% endspaceless %}</textarea>
+        </div>
+    {% endif %}
+</div>

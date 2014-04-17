@@ -1,0 +1,15 @@
+<div class="control-group">
+	<label class="control-label">{{ type[key]['config']['fieldLabel'] }}</label>
+	    <div class="controls">
+        {% for checkbox in type[key]["config"]["items"] %}
+            <label>
+                <input
+                        type="checkbox"
+                        name="{{ type[key]['config']['name'] }}[{{ checkbox.name }}][]"
+                        value="{{ checkbox.inputValue }}"
+                        {% if checkbox.inputValue in data[type[key].config.name][checkbox.name] or checkbox.inputValue == data[type[key].config.name][checkbox.name] %}checked="checked" {% endif %} />
+                {{ checkbox.boxLabel }}
+            </label>
+        {% endfor %}
+        </div>
+</div>

@@ -121,4 +121,11 @@ abstract class AbstractController extends AbstractActionController
         $viewModel->setTerminal(true);
         return $viewModel;
     }
+
+    /**
+     * @return \Zend\Http\PhpEnvironment\Request
+     */
+    public function getRequest() {
+        return parent::getRequest();
+    }
 }
