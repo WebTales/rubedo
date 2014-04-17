@@ -1,5 +1,6 @@
 jQuery(document).ready(function(){
     jQuery('.rubedo-login').bind('submit', function () {
+        var form = this;
         jQuery.ajax({
             type: 'POST',
             url: '/xhr-authentication/login',
@@ -8,12 +9,12 @@ jQuery(document).ready(function(){
             data: jQuery(this).serialize(),
             success: function(msg){
                 if(msg.success == false) {
-                    jQuery('#error-msg', this).show();
-                    jQuery('#error-msg', this).html(msg.msg);
+                    jQuery('#error-msg', form).show();
+                    jQuery('#error-msg', form).html(msg.msg);
                 } else {
-                    jQuery('#password', this).val('');
-                    jQuery('#login', this).val('');
-                    jQuery('#auth-modal', this).modal('hide');
+                    jQuery('#password', form).val('');
+                    jQuery('#login', form).val('');
+                    jQuery('#auth-modal', form).modal('hide');
                     window.location.reload();
                 }
             }
@@ -22,13 +23,15 @@ jQuery(document).ready(function(){
     });
 });
 
+function loggin() {/*Legacy, may be removed in future release*/}
+
 function logout()
 {	 
 		jQuery.ajax({
 		   type: "POST",
 		   async:false, 
 		   url: "/xhr-authentication/logout",
-		   success: function(msg){
+		   success: function(){
 				window.location.reload(); 
 		   }
 		});
