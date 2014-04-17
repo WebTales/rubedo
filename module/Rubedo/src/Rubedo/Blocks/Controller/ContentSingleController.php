@@ -247,8 +247,8 @@ class ContentSingleController extends AbstractController
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/customLayout.html.twig");
             } else{
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/" . $templateName);
-                
-                if (! is_file($frontOfficeTemplatesService->getTemplateDir() . '/' . $template)) {
+
+                if (!Manager::getService('FrontOfficeTemplates')->templateFileExists($template)) {
                     $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/default.html.twig");
                 }
             }
