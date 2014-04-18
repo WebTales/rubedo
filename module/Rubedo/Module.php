@@ -431,7 +431,8 @@ class Module
             $saveHandler = new MongoDB($adapter, $options);
 
             $this->sessionManager = new SessionManager($sessionConfig);
-            if ($adapter->connected) {
+            $connections = $adapter->getConnections();
+            if (!empty($connections)) {
                 $this->sessionManager->setSaveHandler($saveHandler);
             }
 
