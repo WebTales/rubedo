@@ -65,7 +65,6 @@ function initialize() {
 	var predefinedFacets = blockConfig.predefinedFacets;
 	var displayedFacets = blockConfig.displayedFacets;
 	var displayMode = blockConfig.displayMode;
-	displayedFacets = displayedFacets;
 	var facetOverrides = blockConfig.facetOverrides;
 	var pagesize = blockConfig.pageSize;
 	// set initial map position (geoloc or address or coordinates in this order)
