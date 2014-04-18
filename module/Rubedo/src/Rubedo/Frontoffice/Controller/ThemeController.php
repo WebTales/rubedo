@@ -104,12 +104,16 @@ class ThemeController extends AbstractActionController
         }
         
         $response = new \Zend\Http\Response\Stream();
-        $response->getHeaders()->addHeaders(array(
+        $headers = array(
             'Content-type' => $mimeType,
             'Pragma' => 'Public',
-            'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
-            'Expires' => date(DATE_RFC822, strtotime("7 day"))
-        ));
+        );
+        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == true) {
+            $headers['Cache-Control'] = 'public, max-age=' . 7 * 24 * 3600;
+            $headers['Expires'] = date(DATE_RFC822, strtotime("7 day"));
+        }
+
+        $response->getHeaders()->addHeaders($headers);
         
         $response->setStream($stream);
         return $response;
