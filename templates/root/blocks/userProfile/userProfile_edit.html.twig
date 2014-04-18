@@ -48,5 +48,6 @@
             {% include '@Root/blocks/userFieldsEdit/text.html.twig' %}
         {% endif %}
     {% endfor %}
-    <button type="submit">Send</button>
+    <button type="submit" class="btn btn-primary">{{ 'Label.Submit'|fotrans }}</button>
+    <a href="?" class="btn btn-danger">{{ 'Label.Cancel'|fotrans }}</a>
 </form>

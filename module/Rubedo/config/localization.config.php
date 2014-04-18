@@ -42,5 +42,6 @@ return array(
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/signUp.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/SignUp/unsubscribeOk.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Unsubscribe/unsubscribe.json',
-    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/UserProfile/error.json'
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/UserProfile/error.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/UserProfile/label.json'
 );

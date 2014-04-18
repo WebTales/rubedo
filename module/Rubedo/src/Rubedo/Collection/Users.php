@@ -98,12 +98,15 @@ class Users extends AbstractCollection implements IUsers
      * Change the password of the user given by its id
      * Check version conflict
      *
-     * @param string $$password
+     * @param string $password
      *            new password
      * @param int $version
      *            version number
      * @param string $userId
      *            id of the user to be changed
+     * @throws \Rubedo\Exceptions\User
+     *
+     * @return bool
      */
     public function changePassword($password, $version, $userId)
     {

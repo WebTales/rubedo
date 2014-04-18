@@ -1,0 +1,85 @@
+<form action="?editLogin" method="post">
+    <div class="control-group">
+        <label class="control-label" for="email">
+            {{ 'Blocks.UserProfile.Label.Email'|fotrans }}
+        </label>
+        <div class="controls">
+            <input
+                    placeholder="{{ 'Blocks.UserProfile.Label.Email'|fotrans }}"
+                    type="text"
+                    value="{{ user.email }}"
+                    id="email"
+                    name="email" />
+            {% if editLogin.success.email %}
+                <span class="text-success">{{ 'Blocks.UserProfile.Success.EmailChanged'|fotrans }}</span>
+            {% elseif editLogin.validation.email is not empty %}
+            {% spaceless %}
+                {% for eKey, eValue in editLogin.validation.email %}
+                    {% set editLogin = editLogin|merge({'validation': {'email': { eKey: eValue|fotrans }}}) %}
+                {% endfor %}
+            {% endspaceless %}
+            <span class="text-error">{{ editLogin.validation.email|join(', ') }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="password-old">
+            {{ 'Blocks.UserProfile.Label.OldPassword'|fotrans }}
+        </label>
+        <div class="controls">
+            <input
+                    placeholder="{{ 'Blocks.UserProfile.Label.OldPassword'|fotrans }}"
+                    type="password"
+                    value=""
+                    id="password-old"
+                    name="password-old" />
+            {% if editLogin.validation['password-old'] is not empty %}
+                {% spaceless %}
+                    {% for eKey, eValue in editLogin.validation['password-old'] %}
+                        {% set editLogin = editLogin|merge({'validation': {'password-old': { eKey: eValue|fotrans }}}) %}
+                    {% endfor %}
+                {% endspaceless %}
+                <span class="text-error">{{ editLogin.validation['password-old']|join(', ') }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="password">
+            {{ 'Blocks.SignUp.label.password'|fotrans }}
+        </label>
+        <div class="controls">
+            <input
+                    placeholder="{{ 'Blocks.SignUp.label.password'|fotrans }}"
+                    type="password"
+                    value=""
+                    id="password"
+                    name="password" />
+            {% if editLogin.success.password %}
+                <span class="text-success">{{ 'Blocks.UserProfile.Success.PasswordChanged'|fotrans }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="password-confirm">
+            {{ 'Blocks.SignUp.label.confirmPassword'|fotrans }}
+        </label>
+        <div class="controls">
+            <input
+                    placeholder="{{ 'Blocks.SignUp.label.confirmPassword'|fotrans }}"
+                    type="password"
+                    value=""
+                    id="password-confirm"
+                    name="password-confirm" />
+            {% if editLogin.validation['password-confirm'] is not empty %}
+                {% spaceless %}
+                    {% for eKey, eValue in editLogin.validation['password-confirm'] %}
+                        {% set editLogin = editLogin|merge({'validation': {'password-confirm': { eKey: eValue|fotrans }}}) %}
+                    {% endfor %}
+                {% endspaceless %}
+                <span class="text-error">{{ editLogin.validation['password-confirm']|join(', ') }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">{{ 'Label.Submit'|fotrans }}</button>
+    <a href="?" class="btn btn-danger">{{ 'Label.Cancel'|fotrans }}</a>
+</form>

@@ -3,10 +3,23 @@
 {% block mainContent %}
     {% if canEdit and editProfile is defined %}
         {% include '@Root/blocks/userProfile/userProfile_edit.html.twig' %}
+    {% elseif canEdit and editLogin is defined %}
+        {% include '@Root/blocks/userProfile/userLogin_edit.html.twig' %}
     {% else %}
         <div class="block headline">
         {% include "/blocks/edition/full-edition-button.html.twig" %}
-        {% if canEdit %}<p><a class="btn pull-right" href="?editProfile"><i class="icon-edit"></i> {{ 'Label.Edit'|fotrans }}</a></p>{% endif %}
+        {% if canEdit %}
+            <div class="btn-group pull-right">
+                <a href="?editProfile" class="btn"><i class="icon-edit"></i> {{ 'Label.Edit'|fotrans }}</a>
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="?editProfile">{{ 'Blocks.UserProfile.Edit.Profile'|fotrans }}</a></li>
+                    <li><a href="?editLogin">{{ 'Blocks.UserProfile.Edit.Login'|fotrans }}</a></li>
+                </ul>
+            </div>
+        {% endif %}
         {% for row in customLayoutRows %}
            <div class="row-fluid {{ row.responsiveClass }} {{ row.classHTML }}" style="{{ row.elementStyle }}">
            {% for col in row.columns %}

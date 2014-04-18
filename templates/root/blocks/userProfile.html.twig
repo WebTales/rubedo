@@ -3,6 +3,8 @@
 {% block mainContent %}
     {% if canEdit and editProfile is defined %}
         {% include '@Root/blocks/userProfile/userProfile_edit.html.twig' %}
+    {% elseif canEdit and editLogin is defined %}
+        {% include '@Root/blocks/userProfile/userLogin_edit.html.twig' %}
     {% else %}
         <div class="row-fluid">
             <div class="span12">
@@ -10,7 +12,18 @@
                     <img src="{{ userAvatarThumbnail(user.id, 140, 180, 'boxed') }}" alt="{{ user.name }} photo"
                          style="margin-right:20px;" class="img-polaroid pull-left">
                 {% endif %}
-                {% if canEdit %}<p><a class="btn pull-right" href="?editProfile"><i class="icon-edit"></i> {{ 'Label.Edit'|fotrans }}</a></p>{% endif %}
+                {% if canEdit %}
+                    <div class="btn-group pull-right">
+                        <a href="?editProfile" class="btn"><i class="icon-edit"></i> {{ 'Label.Edit'|fotrans }}</a>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="?editProfile">{{ 'Blocks.UserProfile.Edit.Profile'|fotrans }}</a></li>
+                            <li><a href="?editLogin">{{ 'Blocks.UserProfile.Edit.Login'|fotrans }}</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
                 <h2>{{ user.name }}</h2>
                 {% for key, value in data %}
                     {% if value is not null %}

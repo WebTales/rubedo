@@ -17,6 +17,7 @@
 namespace Rubedo\Blocks\Controller;
 
 use Alb\OEmbed;
+use Rubedo\Exceptions\User as EUser;
 use Rubedo\Services\Cache;
 use Rubedo\Services\Manager;
 
@@ -87,10 +88,39 @@ class UserProfileController extends AbstractController
         }
         $output['canEdit'] = $this->currentUserService->getCurrentUser() == $user;
         $userType = $this->userTypesService->findById($user['typeId']);
-        if (isset($output['editProfile']) && $this->getRequest()->isPost() && $output['canEdit']) {
+        if ($this->getRequest()->isPost() && $output['canEdit']) {
             $post = $this->params()->fromPost();
-            $user['fields'] = $this->filterFields($userType['fields'], $post); //todo make an intelligent merge !
-            $this->usersService->update($user);
+            if (isset($output['editProfile'])){
+                $user['fields'] = $this->filterFields($userType['fields'], $post); //todo make an intelligent merge !
+                $this->usersService->update($user);
+            } elseif (isset($output['editLogin'])) {
+                if (!empty($post['password']) && !empty($post['password-old']) && !empty($post['password-confirm'])) {
+                    if ($post['password-confirm'] != $post['password']) {
+                            $output['editLogin']['validation']['password-confirm'][] = 'Blocks.UserProfile.Error.PasswordConfirmNotMatch';
+                    } else {
+                        try {
+                            $this->currentUserService->changePassword($post['password-old'], $post['password']);
+                            $output['editLogin']['success']['password'] = true;
+                        } catch(EUser $e) {
+                            $output['editLogin']['validation']['password-old'][] = 'Blocks.UserProfile.Error.OldPasswordIsWrong';
+                        }
+                    }
+                }
+                if (!empty($post['email']) && $user['email'] != $post['email']) {
+                    if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+                        $output['editLogin']['validation']['email'][] = 'Blocks.UserProfile.Error.EmailNotValid';
+                    } else {
+                        $searchUser = $this->usersService->findByEmail($post['email']);
+                        if (!empty($searchUser)) {
+                            $output['editLogin']['validation']['email'][] = 'Blocks.UserProfile.Error.EmailAlreadyInDB';
+                        } else {
+                            $user['email'] = $post['email'];
+                            $this->usersService->update($user);
+                            $output['editLogin']['success']['email'] = true;
+                        }
+                    }
+                }
+            }
         }
         $output['user'] = &$user;
         $output['fieldTypes'] = &$userType['fields'];
