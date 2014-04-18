@@ -97,7 +97,7 @@ class ThemeController extends AbstractActionController
             }
         }
         
-        if (file_put_contents($targetPath, $content)) {
+        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == true && file_put_contents($targetPath, $content)) {
             $stream = fopen($targetPath, 'r');
         } else {
             $stream = fopen($consolidatedFilePath, 'r');
