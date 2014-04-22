@@ -65,7 +65,22 @@
         </div>
         {% endif %}
             <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
-            
+        {% if captcha is not empty %}
+            <div class="control-group">
+                <label for="captcha" class="control-label">
+                    {{ 'Blocks.SignUp.Label.Captcha'|fotrans }} *
+                </label>
+                <div class="controls">
+                    {% if captcha.html is not empty %}
+                        {{ captcha.html|raw }}
+                    {% else %}
+                        <img src="/captcha/{{ captcha.id }}.png" alt="{{ 'Blocks.SignUp.Label.Captcha'|fotrans }}" /><br />
+                        <input name="captcha[input]" id="captcha" type="text" />
+                        <input name="captcha[id]" type="hidden" value="{{ captcha.id }}" />
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
         <div class="form-actions">
             <button type="submit" class="btn btn-primary signupformtrigger" data-formid="form-{{ prefix }}" >{{ 'Blocks.SignUp.label.signUp'|fotrans }}</button>
         </div>

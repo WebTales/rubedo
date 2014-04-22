@@ -6,6 +6,9 @@
 	<div class="alert alert-error">
 	   <button type="button" class="close" data-dismiss="alert">&times;</button>
 	   <strong>{{ 'Blocks.SignUp.fail.error'|fotrans }}</strong> {{ 'Blocks.SignUp.fail.creationFailed'|fotrans }}
+        {% if signupMessage is not empty %}
+            {{ signupMessage|fotrans }}
+        {% endif %}
 	</div>
 	</div>
 </div>

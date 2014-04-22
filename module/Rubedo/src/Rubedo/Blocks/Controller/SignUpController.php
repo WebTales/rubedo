@@ -17,6 +17,9 @@
 namespace Rubedo\Blocks\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Captcha\ReCaptcha;
+use Zend\Captcha\Image as CaptchaImage;
+use Zend\Session\Container as SessionContainer;
 
 /**
  *
@@ -29,17 +32,28 @@ class SignUpController extends AbstractController
 
     public function indexAction()
     {
+        $blockConfig = $this->params()->fromQuery('block-config', array());
+        $output = $this->params()->fromQuery();
+
         $postConfirmer=$this->params()->fromPost('userTypeId');
-        if (($this->getRequest()->isPost())&&(isset($postConfirmer))) {
+        if (isset($blockConfig['captcha']) && $blockConfig['captcha']) {
+            $output['captcha'] = $this->generateCaptcha();
+        }
+
+        if ($this->getRequest()->isPost() && isset($postConfirmer)) {
             $params = $this->params()->fromPost();
-            $output = $this->params()->fromQuery();
-            if ((!isset($params['name'])) || (!isset($params['email'])) || (!isset($params['userTypeId']))) {
+            if (isset($blockConfig['captcha']) && $blockConfig['captcha'] && !$this->captchaIsValid($params)) {
+                $output['signupMessage'] = "Blocks.SignUp.fail.captchaIsWrong";
+                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
+                return $this->_sendResponse($output, $template);
+            }
+            if (!isset($params['name'], $params['email'], $params['userTypeId'])) {
                 $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/fail.html.twig");
                 return $this->_sendResponse($output, $template);
             }
             $collectPassword = isset($output['block-config']['collectPassword']) ? $output['block-config']['collectPassword'] : false;
             if ($collectPassword) {
-                if ((!isset($params['password'])) || (!isset($params['confirmPassword']))) {
+                if (!isset($params['password'], $params['confirmPassword'])) {
                     $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.missingPasswordParameters";
                     $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
                     return $this->_sendResponse($output, $template);
@@ -154,8 +168,7 @@ class SignUpController extends AbstractController
                 return $this->_sendResponse($output, $template);
             }
         }
-        $blockConfig = $this->params()->fromQuery('block-config', array());
-        $output = $this->params()->fromQuery();
+
         if (isset($output["confirmingEmail"])) {
 
             $userId = $this->params()->fromQuery("userId");
@@ -229,4 +242,70 @@ class SignUpController extends AbstractController
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
+    /**
+     * Generate captcha html or id
+     *
+     * @return array
+     */
+    protected function generateCaptcha ()
+    {
+        $recaptchaService = Manager::getService('Recaptcha');
+        $recaptchaKey = $recaptchaService->getKeyPair();
+        $captcha = array();
+        if ($recaptchaKey) {
+            $captchaInstance = new ReCaptcha($recaptchaKey);
+            $captcha['html'] = $captchaInstance->getService()->getHtml();
+        } else {
+            $captchaOptions = array(
+                'wordLen' => 6,
+                'font' => APPLICATION_PATH . '/data/fonts/fonts-japanese-gothic.ttf',
+                'height' => 100,
+                'width' => 220,
+                'fontSize' => 50,
+                'imgDir' => APPLICATION_PATH . '/public/captcha/',
+                'imgUrl' => '/captcha',
+                'dotNoiseLevel' => 200,
+                'lineNoiseLevel' => 20
+            );
+            $captchaInstance = new CaptchaImage($captchaOptions);
+            $captchaInstance->generate();
+            $captcha['id'] = $captchaInstance->getId();
+        }
+        return $captcha;
+
+    }
+
+    /**
+     * Check if captcha is valid
+     *
+     * @param array $params
+     * @return bool
+     */
+    function captchaIsValid(array $params) {
+        $recaptchaService = Manager::getService('Recaptcha');
+        $recaptchaKey = $recaptchaService->getKeyPair();
+        if ($recaptchaKey) {
+            if (empty($params['recaptcha_challenge_field']) || empty($params['recaptcha_response_field'])) {
+                return false;
+            }
+            $captchaInstance = new ReCaptcha($recaptchaKey);
+            return $captchaInstance->getService()
+                ->verify(
+                    $params['recaptcha_challenge_field'],
+                    $params['recaptcha_response_field']
+                )
+                ->isValid();
+        } else {
+            $captcha = $params['captcha'];
+            if (empty($captcha)) {
+                return false;
+            }
+            $captchaId = $captcha['id'];
+            $captchaInput = $captcha['input'];
+            $captchaSession = new SessionContainer('Zend_Form_Captcha_' . $captchaId);
+            $captchaIterator = $captchaSession->getIterator();
+            $captchaWord = $captchaIterator['word'];
+            return $captchaWord && $captchaInput == $captchaWord;
+        }
+    }
 }
