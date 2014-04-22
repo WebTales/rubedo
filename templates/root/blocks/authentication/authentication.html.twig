@@ -62,6 +62,9 @@
                         </div>
                     </div>
                     <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
+                    {% if signUpPage %}
+                        | <a href="{{ signUpPageUrl }}">{{ 'Blocks.Auth.Register'|fotrans }}</a>
+                    {% endif %}
                 </div>
 
                 <div id="error-msg" class="alert alert-error hidden-rubedo"></div>
@@ -98,6 +101,9 @@
                 </div>
             </div>
             <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
+            {% if signUpPage %}
+                | <a href="{{ signUpPageUrl }}">{{ 'Blocks.Auth.Register'|fotrans }}</a>
+            {% endif %}
 
             <div class="control-group">
                 <div class="controls">
