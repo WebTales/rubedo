@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
+use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
@@ -46,7 +47,7 @@ class XhrGetPageUrlController extends AbstractActionController
         if (! $page) {
             throw new \Rubedo\Exceptions\NotFound("The page-id doesn't match a page.", "Exception13");
         }
-        $pageUrl = Manager::getService('Url')->getPageUrl($pageId,$locale);
+        $pageUrl = Manager::getService('Url')->getPageUrl($pageId,$page['locale']);
         
         $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
         $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
