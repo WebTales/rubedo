@@ -165,7 +165,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
             if (!in_array('all', $readWorkspaceArray)) {
                 $readWorkspaceArray[] = null;
                 $readWorkspaceArray[] = 'all';
-                $filter = Filter::factory('In')->setName('target')->setValue($readWorkspaceArray);
+                $filter = Filter::factory('OperatorToValue')->setName('target')
+                    ->setOperator('$in')
+                    ->setValue($readWorkspaceArray);
                 $this->_dataService->addFilter($filter);
             }
         }
