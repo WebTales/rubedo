@@ -117,7 +117,7 @@ class XhrAuthenticationController extends AbstractActionController
 
     public function sendTokenAction()
     {
-        $params = $login = $this->params()->fromPost();
+        $params = $this->params()->fromPost();
         $output = array();
         $blockController = new AuthBlock();
         try {
@@ -125,16 +125,34 @@ class XhrAuthenticationController extends AbstractActionController
             $output['success'] = true;
             $output['msg'] = 'Blocks.Auth.Email.SendedAuto';
         } catch (\Exception $e) {
-            $params['mailSent'] = false;
             $output['success'] = false;
+            $output['msg'] = 'Blocks.Auth.Xhr.SendToken.MailNotSent';
         }
 
         if (!isset($params['user'])) {
             $output['success'] = false;
             $output['msg'] = 'Blocks.Auth.Xhr.SendToken.UserNotExist';
-        } elseif (!$params['mailSent']) {
+        }
+        if (isset($output['msg'])) {
+            $output['msg'] = $this->translateService->translate($output['msg']);
+        }
+        return new JsonModel($output);
+    }
+
+    public function changePasswordAction()
+    {
+        $params = $this->params()->fromPost();
+        $output = array();
+        $blockController = new AuthBlock();
+        try {
+            $params = $blockController->xhrChangePassword($params);
+            $output['success'] = isset($params['success']) && $params['success'] == true;
+            $output['msg'] = $output['success'] ? 'Blocks.Auth.Email.SendedAuto' : $params['error'];
+        } catch (\Exception $e) {
+            $output['success'] = false;
             $output['msg'] = 'Blocks.Auth.Xhr.SendToken.MailNotSent';
         }
+
         if (isset($output['msg'])) {
             $output['msg'] = $this->translateService->translate($output['msg']);
         }

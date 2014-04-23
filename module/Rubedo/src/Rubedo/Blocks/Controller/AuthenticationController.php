@@ -59,18 +59,22 @@ class AuthenticationController extends AbstractController
     public function indexAction()
     {
         $output = $this->params()->fromQuery();
+        $output['displayMode'] = isset($output['block-config']['displayMode']) ? $output['block-config']['displayMode'] : 'pop-in';
+
         if (isset($output['recoverEmail'], $output['token'])) {
             $output = $this->changePassword($output);
-            $template = $this->templateService->getFileThemePath("blocks/authentication/change_password.html.twig");
+            $tplFile = $output['block-config']['displayMode'] == 'form' ? 'change_password' : 'authentication';
+            $template = $this->templateService
+                ->getFileThemePath('blocks/authentication/' . $tplFile . '.html.twig');
         } elseif (isset($output['recoverPassword']) || isset($output['recoverEmail'])) {
             $output = $this->recoverPassword($output);
             $template = $this->templateService->getFileThemePath("blocks/authentication/send_token.html.twig");
         } else {
             $output = $this->login($output);
-            $this->js[] = $this->getRequest()->getBasePath()
-                . '/' . $this->templateService->getFileThemePath("js/authentication.js");
             $template = $this->templateService->getFileThemePath("blocks/authentication/authentication.html.twig");
         }
+        $this->js[] = $this->getRequest()->getBasePath()
+            . '/' . $this->templateService->getFileThemePath("js/authentication.js");
         return $this->_sendResponse($output, $template, $this->css, $this->js);
     }
 
@@ -121,7 +125,7 @@ class AuthenticationController extends AbstractController
      * @return array
      * @throws \Rubedo\Exceptions\Server
      */
-    private function changePassword($output)
+    private function changePassword($output, $isXHR = false)
     {
         AbstractCollection::disableUserFilter();
         //Disable filters, else we can't get full user.
@@ -134,10 +138,12 @@ class AuthenticationController extends AbstractController
             $output['error'] = 'Blocks.Auth.Error.TokenIsWrong';
             return $output;
         }
-        if ($this->getRequest()->isPost()) {
+        if ($this->getRequest()->isPost() || $isXHR) {
 
-            $password = $output['password'] = $this->params()->fromPost('password');
-            $passwordConfirm = $output['passwordConfirm'] = $this->params()->fromPost('passwordConfirm');
+            $output['password'] = isset($output['password']) ? $output['password'] : $this->params()->fromPost('password');
+            $output['passwordConfirm'] = isset($output['passwordConfirm']) ? $output['passwordConfirm'] : $this->params()->fromPost('passwordConfirm');
+            $password = $output['password'];
+            $passwordConfirm = $output['passwordConfirm'];
 
             if (empty($password) || $password != $passwordConfirm) {
                 $output['error'] = 'Blocks.Auth.Error.PasswordsNotMatch';
@@ -167,6 +173,11 @@ class AuthenticationController extends AbstractController
         return $output;
     }
 
+    public function xhrChangePassword($output)
+    {
+        return $this->changePassword($output, true);
+    }
+
     /**
      * Show login box
      *
@@ -183,7 +194,6 @@ class AuthenticationController extends AbstractController
             $this->redirect()->toRoute(null, array('pageId' => $output['block-config']['redirectPage']));
         }
 
-        $output['displayMode'] = isset($output['block-config']['displayMode']) ? $output['block-config']['displayMode'] : 'pop-in';
         $output['enforceHTTPS'] = in_array('HTTPS', $output['site']['protocol']) ? true : false;
         $output['currentUser'] = $currentUser;
         $output['profilePage'] = isset($output['block-config']['profilePage']) ? $output['block-config']['profilePage'] : false;
@@ -229,7 +239,7 @@ class AuthenticationController extends AbstractController
             . $currentSite['text'];
         $vars['lang'] = $user['language'];
         $vars['name'] = (!empty($user['name'])) ? $user['name'] : $user['login'];
-        $vars['URI'] = $_SERVER['REDIRECT_URL'];
+        $vars['URI'] = $_SERVER['HTTP_REFERER'];
 
         $templateHtml = $this->templateService->getFileThemePath("blocks/authentication/" . $template . ".html.twig");
         $templateTxt = $this->templateService->getFileThemePath("blocks/authentication/" . $template . ".txt.twig");
