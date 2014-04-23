@@ -39,6 +39,14 @@
                                 "name":"mailingListId",
                                 "multiSelect":true
                             }
+                        },
+                        {
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"#ext-gen1162#",
+                                "name":"captcha",
+                                "inputValue":true
+                            }
                         }
 					]
 				}
