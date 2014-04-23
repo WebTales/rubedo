@@ -82,7 +82,7 @@ class AuthenticationController extends AbstractController
      * @throws \Rubedo\Exceptions\Server
      *
      */
-    private function recoverPassword($output)
+    protected function recoverPassword($output)
     {
         $user = null;
         if (isset($output['recoverEmail'])) {
@@ -100,7 +100,7 @@ class AuthenticationController extends AbstractController
                     'link' => '?recoverEmail=' . $user['email'] . '&token=' . $user['recoverToken'],
                 );
                 if ($this->sendMail('Blocks.Auth.Email.sendToken.subject', 'email_send_token', $emailVars, $user)) {
-                    $output['mailSended'] = true;
+                    $output['mailSent'] = true;
                 } else {
                     throw new Server('Can\'t send email with token', 'Exception23');
                 }
@@ -110,6 +110,10 @@ class AuthenticationController extends AbstractController
         return $output;
     }
 
+    public function xhrRecoverPassword($output)
+    {
+        return $this->recoverPassword($output);
+    }
     /**
      * Change the password
      *
@@ -218,7 +222,7 @@ class AuthenticationController extends AbstractController
         $translationService = Manager::getService('Translate');
         $config = Manager::getService('config');
         $options = $config['rubedo_config'];
-        $currentSite = Manager::getService('Sites')->findById(Manager::getService('PageContent')->getCurrentSite());
+        $currentSite = Manager::getService('Sites')->getCurrent();
 
         $vars['siteName'] = !empty($currentSite['title']) ? $currentSite['title'] : $currentSite['text'];
         $vars['siteUrl'] = (in_array('HTTPS', $currentSite['protocol']) ? 'https://' : 'http://')

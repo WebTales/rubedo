@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Frontoffice\Controller;
 
+use Rubedo\Blocks\Controller\AuthenticationController as AuthBlock;
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
@@ -33,10 +34,14 @@ class XhrAuthenticationController extends AbstractActionController
     /**
      * Variable for Authentication service
      *
-     * @param
-     *            Rubedo\Interfaces\User\IAuthentication
+     * @var \Rubedo\Interfaces\User\IAuthentication
      */
     protected $_auth;
+
+    /**
+     * @var \Rubedo\Interfaces\Internationalization\ITranslate
+     */
+    protected $translateService;
 
     /**
      * Init the authentication service
@@ -44,6 +49,7 @@ class XhrAuthenticationController extends AbstractActionController
     public function __construct()
     {
         $this->_auth = Manager::getService('Authentication');
+        $this->translateService = Manager::getService('Translate');
     }
 
     /**
@@ -55,21 +61,24 @@ class XhrAuthenticationController extends AbstractActionController
         $password = $this->params()->fromPost('password');
         if ($this->getRequest()->isPost()) {
             if (! empty($login) && ! empty($password)) {
-                $loginResult = $this->_auth->authenticate($login, $password);
-                
-                if ($loginResult) {
+                try {
+                    $this->_auth->authenticate($login, $password);
                     $response['success'] = true;
-                } else {
+                } catch (\Exception $e) {
                     $response['success'] = false;
-                    $response['msg'] = 'Wrong crendentials';
+                    $response['msg'] = 'Blocks.Auth.Xhr.Login.CredentialsWrong';
                 }
             } else {
                 $response['success'] = false;
-                $response['msg'] = 'The login and the password should not be empty';
+                $response['msg'] = 'Blocks.Auth.Xhr.Login.CredentialsEmpty';
             }
         } else {
             $response['succes'] = false;
-            $response['msg'] = 'The login and the password should be sent in a POST request !';
+            $response['msg'] = 'Blocks.Auth.Xhr.Login.POSTRequired';
+        }
+
+        if (isset($response['msg'])) {
+            $response['msg'] = $this->translateService->translate($response['msg']);
         }
         return new JsonModel($response);
     }
@@ -90,9 +99,12 @@ class XhrAuthenticationController extends AbstractActionController
      */
     public function isLoggedInAction()
     {
+        /**
+         * @var $currentUserService \Rubedo\Interfaces\User\ICurrentUser
+         */
         $currentUserService = Manager::getService('CurrentUser');
         
-        if (! $currentUserService->isAuthenticated()) {
+        if (!$currentUserService->isAuthenticated()) {
             $response['loggedIn'] = false;
         } else {
             $response['loggedIn'] = true;
@@ -100,6 +112,32 @@ class XhrAuthenticationController extends AbstractActionController
             $response['username'] = $user['login'];
         }
         
-        return $this->_helper->json($response);
+        return new JsonModel($response);
+    }
+
+    public function sendTokenAction()
+    {
+        $params = $login = $this->params()->fromPost();
+        $output = array();
+        $blockController = new AuthBlock();
+        try {
+            $params = $blockController->xhrRecoverPassword($params);
+            $output['success'] = true;
+            $output['msg'] = 'Blocks.Auth.Email.SendedAuto';
+        } catch (\Exception $e) {
+            $params['mailSent'] = false;
+            $output['success'] = false;
+        }
+
+        if (!isset($params['user'])) {
+            $output['success'] = false;
+            $output['msg'] = 'Blocks.Auth.Xhr.SendToken.UserNotExist';
+        } elseif (!$params['mailSent']) {
+            $output['msg'] = 'Blocks.Auth.Xhr.SendToken.MailNotSent';
+        }
+        if (isset($output['msg'])) {
+            $output['msg'] = $this->translateService->translate($output['msg']);
+        }
+        return new JsonModel($output);
     }
 }

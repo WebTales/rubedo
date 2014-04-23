@@ -45,4 +45,6 @@ interface ISites extends IAbstractCollection
     public function findByHost ($host);
 
     public function deleteById ($id);
+
+    public function getCurrent();
 }

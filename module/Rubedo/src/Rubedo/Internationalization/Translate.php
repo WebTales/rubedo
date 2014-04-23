@@ -94,7 +94,7 @@ class Translate implements ITranslate
      * @param string $defaultLabel            
      * @return string
      */
-    public function translate ($code, $defaultLabel = "")
+    public function translate ($code, $defaultLabel = '')
     {
         $language = Manager::getService('CurrentUser')->getLanguage();
         if ($language === null) {
@@ -103,7 +103,7 @@ class Translate implements ITranslate
         
         $translatedValue = $this->getTranslation($code, $language);
         if ($translatedValue == null) {
-            $translatedValue = $this->getTranslation($code, "en");
+            $translatedValue = $this->getTranslation($code, 'en');
         }
         
         if ($translatedValue == null) {
@@ -120,7 +120,7 @@ class Translate implements ITranslate
      * @param string $defaultLabel
      * @return string
      */
-    public function translateInWorkingLanguage ($code, $defaultLabel = "")
+    public function translateInWorkingLanguage ($code, $defaultLabel = '')
     {
         $language = \Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
         if ($language === null) {
@@ -129,7 +129,7 @@ class Translate implements ITranslate
     
         $translatedValue = $this->getTranslation($code, $language);
         if ($translatedValue == null) {
-            $translatedValue = $this->getTranslation($code, "en");
+            $translatedValue = $this->getTranslation($code, 'en');
         }
     
         if ($translatedValue == null) {

@@ -28,6 +28,7 @@
     {% elseif displayMode == 'pop-in' %}
         <a href="#auth-modal" role="button" class="btn"
            data-toggle="modal">{{ "Blocks.Auth.Label.Connection" | fotrans }}</a>
+        <!--Login modal-->
         <div id="auth-modal" class="modal hide fade">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -61,7 +62,8 @@
                             </label>
                         </div>
                     </div>
-                    <a href="?recoverPassword=true">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
+                    <a href="#recoverpwd-modal" role="button"
+                       data-toggle="modal" data-dismiss="modal">{{ 'Blocks.Auth.ForgotPassword' | fotrans }}</a>
                     {% if signUpPage %}
                         | <a href="{{ signUpPageUrl }}">{{ 'Blocks.Auth.Register'|fotrans }}</a>
                     {% endif %}
@@ -75,6 +77,8 @@
                 </div>
             </form>
         </div>
+        {% include '@Root/blocks/authentication/modal_send_token.html.twig' %}
+
     {% elseif displayMode == 'form' %}
         <form class="form-horizontal rubedo-login">
             <div class="control-group">

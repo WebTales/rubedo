@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Exceptions\Server;
 use Rubedo\Interfaces\Collection\ISites;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
@@ -175,6 +176,23 @@ class Sites extends AbstractLocalizableCollection implements ISites
         }
 
         return $site;
+    }
+
+    public function getCurrent()
+    {
+        $currentSiteId = Manager::getService('PageContent')->getCurrentSite();
+        if (!empty($currentSiteId)) {
+            return $this->findById($currentSiteId);
+        }
+        $config = Manager::getService('config');
+        $host = $_SERVER['HTTP_HOST'];
+        if (isset($config['site']['override']) && in_array($host, $config['site']['override'])) {
+            $site = $this->findByName(array_search($host, $config['site']['override']));
+            if (!empty($site)) {
+                return $site;
+            }
+        }
+        throw new Server('No site found');
     }
 
     /**
