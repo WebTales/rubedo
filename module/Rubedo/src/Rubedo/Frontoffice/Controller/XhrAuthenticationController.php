@@ -123,7 +123,7 @@ class XhrAuthenticationController extends AbstractActionController
         try {
             $params = $blockController->xhrRecoverPassword($params);
             $output['success'] = true;
-            $output['msg'] = 'Blocks.Auth.Email.SendedAuto';
+            $output['msg'] = 'Blocks.Auth.Email.SentAuto';
         } catch (\Exception $e) {
             $output['success'] = false;
             $output['msg'] = 'Blocks.Auth.Xhr.SendToken.MailNotSent';
@@ -147,7 +147,7 @@ class XhrAuthenticationController extends AbstractActionController
         try {
             $params = $blockController->xhrChangePassword($params);
             $output['success'] = isset($params['success']) && $params['success'] == true;
-            $output['msg'] = $output['success'] ? 'Blocks.Auth.Email.SendedAuto' : $params['error'];
+            $output['msg'] = $output['success'] ? 'Blocks.Auth.Email.SentAuto' : $params['error'];
         } catch (\Exception $e) {
             $output['success'] = false;
             $output['msg'] = 'Blocks.Auth.Xhr.SendToken.MailNotSent';

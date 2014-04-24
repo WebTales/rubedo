@@ -110,7 +110,7 @@ class AuthenticationController extends AbstractController
                 }
             }
         }
-        $output['user'] = $user;
+        $output['user'] = &$user;
         return $output;
     }
 
@@ -239,7 +239,7 @@ class AuthenticationController extends AbstractController
             . $currentSite['text'];
         $vars['lang'] = $user['language'];
         $vars['name'] = (!empty($user['name'])) ? $user['name'] : $user['login'];
-        $vars['URI'] = $_SERVER['HTTP_REFERER'];
+        $vars['URI'] = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ($vars['siteUrl'] . $_SERVER['REDIRECT_URL']);
 
         $templateHtml = $this->templateService->getFileThemePath("blocks/authentication/" . $template . ".html.twig");
         $templateTxt = $this->templateService->getFileThemePath("blocks/authentication/" . $template . ".txt.twig");
