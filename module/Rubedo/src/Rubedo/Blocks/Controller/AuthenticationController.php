@@ -31,17 +31,17 @@ class AuthenticationController extends AbstractController
     /**
      * @var \Rubedo\Templates\FrontOfficeTemplates
      */
-    private $templateService;
+    protected $templateService;
 
     /**
      * @var array
      */
-    private $css = array();
+    protected $css = array();
 
     /**
      * @var array
      */
-    private $js = array();
+    protected $js = array();
 
     /**
      * Init class vars
@@ -125,7 +125,7 @@ class AuthenticationController extends AbstractController
      * @return array
      * @throws \Rubedo\Exceptions\Server
      */
-    private function changePassword($output, $isXHR = false)
+    protected function changePassword($output, $isXHR = false)
     {
         AbstractCollection::disableUserFilter();
         //Disable filters, else we can't get full user.
@@ -184,7 +184,7 @@ class AuthenticationController extends AbstractController
      * @param array $output
      * @return array
      */
-    private function login($output)
+    protected function login($output)
     {
         /** @var $currentUserService \Rubedo\User\CurrentUser */
         $currentUserService = Manager::getService('CurrentUser');
@@ -224,7 +224,7 @@ class AuthenticationController extends AbstractController
     /**
      * Send mail
      */
-    private function sendMail($title, $template, $vars, $user)
+    protected function sendMail($title, $template, $vars, $user)
     {
         /** @var $mailService \Rubedo\Mail\Mailer */
         $mailService = Manager::getService('Mailer');
