@@ -5,8 +5,22 @@
 	{% include "/blocks/edition/full-edition-button.html.twig" %}
 	{% for row in customLayoutRows %} 
 	   <div class="row-fluid {{ row.responsiveClass }} {{ row.classHTML }}" style="{{ row.elementStyle }}">
+       {% if row.displayAsTabs %}
+           {% set indexFixer = loop.index %}
+           <ul class="nav nav-tabs">
+           {% for col in row.columns %}
+               <li class="{{ col.responsiveClass }}"><a href="#detailTabCol{{ indexFixer }}{{ loop.index }}" data-toggle="tab">{{ col.eTitle }}</a></li>
+           {% endfor %}
+           </ul>
+           <div class="tab-content">
+       {% endif %}
 	   {% for col in row.columns %}
-	       <div class="span{{ col.span }} offset{{ col.offset }} {{ col.responsiveClass }} {{ col.classHTML }}" style="{{ col.elementStyle }}">
+               {% if row.displayAsTabs %}
+               <div class="tab-pane {% if loop.index == 1 %}active{% endif %} {{ col.responsiveClass }} {{ col.classHTML }}" id="detailTabCol{{ indexFixer }}{{ loop.index }}" style="{{ col.elementStyle }}" >
+               {% else %}
+                   <div class="span{{ col.span }} offset{{ col.offset }} {{ col.responsiveClass }} {{ col.classHTML }}" style="{{ col.elementStyle }}">
+               {% endif %}
+
 	           {% for assignedField in col.fields %}
 	               <div class="{{ assignedField.responsiveClass }} {{ assignedField.classHTML }}" style="{{ assignedField.elementStyle }}">
 	               {% if assignedField.showLabel %}
@@ -76,6 +90,9 @@
 	           {% endfor %}
 	       </div>
 	   {% endfor %}
+       {% if row.displayAsTabs %}
+            </div>
+       {% endif %}
 	   </div>
 	{% endfor %}
     
