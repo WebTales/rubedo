@@ -707,9 +707,16 @@ public function importAction ()
 			$options['importAsTaxoTranslation'] = Json::decode($this->params()->fromPost('inportAsTaxoTranslation', "[ ]"), Json::TYPE_ARRAY);
 			$options['contentsNavTaxo'] = isset($configs['ContentsNavTaxo']) ? $configs['ContentsNavTaxo'] : "";
 			$options['contentsTarget'] = $configs['ContentsTarget'];
-			$options['isProduct'] = isset($config['isProduct']) ? $config['isProduct'] : false;
-			// for test only
-			//$options['isProduct'] = true;
+			$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
+			
+			// For products only
+			if ($options['isProduct']) {
+				$options['baseSkuFieldIndex'] = $configs['baseSkuFieldIndex'];
+				$options['basePriceFieldIndex'] = $configs['basePriceFieldIndex'];
+				$options['skuFieldIndex'] = $configs['skuFieldIndex'];
+				$options['priceFieldIndex'] = $configs['priceFieldIndex'];
+				$options['stockFieldIndex'] = $configs['stockFieldIndex'];
+			}
 			
 			// create vocabularies
 			$newTaxos = array();

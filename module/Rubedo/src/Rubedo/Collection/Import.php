@@ -176,9 +176,10 @@ class Import extends AbstractCollection
     			"csvIndex" => 5,
     			"useAsVariation" => true
     	);
-    	*/    	   	
+    	*/
+    	    	   	
     	// Product options
-    	$this->_isProduct = $options['isProduct'];
+    	$this->_isProduct = isset($options['isProduct']) ? $options['isProduct'] : false;
     	if ($this->_isProduct) {
 	    	$this->_productOptions = array(
 	    		'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
