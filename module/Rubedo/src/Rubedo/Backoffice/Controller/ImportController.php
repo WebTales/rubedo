@@ -709,6 +709,15 @@ public function importAction ()
 			$options['contentsTarget'] = $configs['ContentsTarget'];
 			$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
 			
+			// For products only
+			if ($options['isProduct']) {
+				$options['baseSkuFieldIndex'] = $configs['baseSkuFieldIndex'];
+				$options['basePriceFieldIndex'] = $configs['basePriceFieldIndex'];
+				$options['skuFieldIndex'] = $configs['skuFieldIndex'];
+				$options['priceFieldIndex'] = $configs['priceFieldIndex'];
+				$options['stockFieldIndex'] = $configs['stockFieldIndex'];
+			}
+			
 			// create vocabularies
 			$newTaxos = array();
 			$options['vocabularies'] = array();
