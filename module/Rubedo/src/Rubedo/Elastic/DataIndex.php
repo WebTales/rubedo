@@ -106,6 +106,16 @@ class DataIndex extends DataAbstract implements IDataIndex
 							'index' => 'not_analyzed',
 							'store' => 'yes' 
 					),
+					'author' => array (
+							'type' => 'string',
+							'index' => 'not_analyzed',
+							'store' => 'yes'
+					),
+					'typeId' => array (
+							'type' => 'string',
+							'index' => 'not_analyzed',
+							'store' => 'yes'
+					),
 					'target' => array (
 							'type' => 'string',
 							'index' => 'not_analyzed',
@@ -441,6 +451,16 @@ class DataIndex extends DataAbstract implements IDataIndex
                             'index' => 'not_analyzed',
                             'store' => 'yes'
                     ),
+            		'author' => array (
+            				'type' => 'string',
+            				'index' => 'not_analyzed',
+            				'store' => 'yes'
+            		),
+            		'typeId' => array (
+            				'type' => 'string',
+            				'index' => 'not_analyzed',
+            				'store' => 'yes'
+            		),
                     'lastUpdateTime' => array(
                             'type' => 'date',
                             'store' => 'yes'
