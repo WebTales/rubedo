@@ -11,7 +11,7 @@
 		"monolog/monolog": "~1.8",
 		"ruflin/Elastica": "1.0.*",
 		"ezyang/htmlpurifier": "~4.6",
-		"zendframework/zendframework": "~2.3",
+		"zendframework/zendframework": "dev-master",
 		"zendframework/zendservice-flickr":"dev-master",
 		"alb/oembed": "1.1.*",
 		"swiftmailer/swiftmailer": "~5.1",
@@ -34,8 +34,12 @@
 		{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/MongoFilters.git"
-		}
-	],
+		},
+        {
+            "type": "vcs",
+            "url": "git://github.com/zendframework/zf2.git"
+        }
+    ],
 	"autoload": {
         "classmap": ["module/Rubedo/src/Rubedo"]
     }
