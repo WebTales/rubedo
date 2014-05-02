@@ -157,27 +157,7 @@ class Import extends AbstractCollection
     	$this->_target = $options['contentsTarget'];
     	$this->_typeId = $options['typeId'];
     	$this->_fileName = $fileName;
-    	
-    	// for testing only
-    	/*
-    	$options['isProduct'] = true;
-    	$options['baseSkuFieldIndex'] = 2;
-    	$options['basePriceFieldIndex'] = 7;
-    	$options['skuFieldIndex'] = 2;
-    	$options['priceFieldIndex'] = 7;
-    	$options['stockFieldIndex'] = 8;
-    	$this->_importAsField[] = array(
-    		"newName" => "Taille",
-    		"csvIndex" => 6,
-    		"useAsVariation" => true
-    	);
-    	$this->_importAsField[] = array(
-    			"newName" => "Couleur",
-    			"csvIndex" => 5,
-    			"useAsVariation" => true
-    	);
-    	*/
-    	    	   	
+    	    	    	   	
     	// Product options
     	$this->_isProduct = isset($options['isProduct']) ? $options['isProduct'] : false;
     	if ($this->_isProduct) {
