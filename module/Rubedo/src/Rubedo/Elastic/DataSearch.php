@@ -884,8 +884,8 @@ class DataSearch extends DataAbstract implements IDataSearch {
 		
 		// add sort
 		$elasticaQuery->setSort ( array (
-				$this->_params ['orderby'] => strtolower ( $this->_params ['orderbyDirection'] ) 
-		) );
+				$this->_params ['orderby'] => array( 'order' => strtolower ( $this->_params ['orderbyDirection'] ), "ignore_unmapped" => true )
+		));
 		
 		$returnedFieldsArray = array (
 				"*" 
