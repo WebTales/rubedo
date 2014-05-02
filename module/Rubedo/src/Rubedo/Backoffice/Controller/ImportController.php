@@ -707,9 +707,7 @@ public function importAction ()
 			$options['importAsTaxoTranslation'] = Json::decode($this->params()->fromPost('inportAsTaxoTranslation', "[ ]"), Json::TYPE_ARRAY);
 			$options['contentsNavTaxo'] = isset($configs['ContentsNavTaxo']) ? $configs['ContentsNavTaxo'] : "";
 			$options['contentsTarget'] = $configs['ContentsTarget'];
-			$options['isProduct'] = isset($config['isProduct']) ? $config['isProduct'] : false;
-			// for test only
-			//$options['isProduct'] = true;
+			$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
 			
 			// create vocabularies
 			$newTaxos = array();
