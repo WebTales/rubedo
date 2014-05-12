@@ -27,7 +27,7 @@ use Zend\View\Model\JsonModel;
  *
  *
  * @author adobre
- * @author dfanchons
+ * @author dfanchon
  * @category Rubedo
  * @package Rubedo
  *         
@@ -200,7 +200,7 @@ public function importAction ()
 	$options['userEncoding'] = $this->params()->fromPost('encoding');
 	$options['workingLanguage'] = $this->params()->fromPost('workingLanguage', 'en');
 	$options['importKey'] = (string) new \MongoId();
-
+	
 	if (! isset($options['userEncoding'])) {
 		throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
 	}
@@ -229,8 +229,12 @@ public function importAction ()
 			$options['importAsTaxo'] = Json::decode($this->params()->fromPost('inportAsTaxo', "[ ]"), Json::TYPE_ARRAY);
 			$options['importAsTaxoTranslation'] = Json::decode($this->params()->fromPost('inportAsTaxoTranslation', "[ ]"), Json::TYPE_ARRAY);
 			$options['contentsNavTaxo'] = isset($configs['ContentsNavTaxo']) ? $configs['ContentsNavTaxo'] : "";
-			$options['contentsTarget'] = $configs['ContentsTarget'];
+			$options['contentsTarget'] = isset($configs['ContentsTarget']) ? $configs['ContentsTarget'] : "";
 			$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
+			$options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
+			$options['uniqueKeyIndex'] = isset($configs['uniqueKeyIndex']) ? $configs['uniqueKeyIndex'] : null;
+			$options['uniqueKeyField'] = isset($configs['uniqueKeyField']) ? $configs['uniqueKeyField'] : null;
+			$options['vocabularies'] = array();
 			
 			// For products only
 			if ($options['isProduct']) {
@@ -241,112 +245,136 @@ public function importAction ()
 				$options['stockFieldIndex'] = $configs['stockFieldIndex'];
 			}
 			
-			// create vocabularies
-			$newTaxos = array();
-			$options['vocabularies'] = array();
-			$options['vocabularies'][] = "navigation";
-			foreach ($options['importAsTaxo'] as $key => $value) {
-				$newTaxoi18n = array();
-				$newTaxoi18n[$options['workingLanguage']] = array(
-						"name" => $value['newName'],
-						"description" => "",
-						"helpText" => "",
-						"locale" => $options['workingLanguage']
+			// INSERT MODE : create vocabularies and content type
+			
+			if (is_null($options['typeId'])) {
+				
+				$options['importMode'] = "insert";
+				$newTaxos = array();
+				$options['vocabularies'][] = "navigation";
+				foreach ($options['importAsTaxo'] as $key => $value) {
+					$newTaxoi18n = array();
+					$newTaxoi18n[$options['workingLanguage']] = array(
+							"name" => $value['newName'],
+							"description" => "",
+							"helpText" => "",
+							"locale" => $options['workingLanguage']
+					);
+					
+					// translate vocabulary if terms are translated
+					foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
+						if ($transValue["translatedElement"] == $value['csvIndex']) {
+							$newTaxoLang=$transValue["translateToLanguage"];
+							$newTaxoi18n[$newTaxoLang] = array(
+									"name" => $value['newName'],
+									"description" => "",
+									"helpText" => "",
+									"locale" => $newTaxoLang
+							);
+						}
+					}
+					$newTaxoParams = array(
+							"name" => $value['newName'],
+							"description" => "",
+							"helpText" => "",
+							"expandable" => false,
+							"multiSelect" => true,
+							"mandatory" => $value['mandatory'],
+							"nativeLanguage" => $options['workingLanguage'],
+							"i18n" => $newTaxoi18n
+					);
+					$newTaxo = $taxonomyService->create($newTaxoParams);
+					$newTaxos[] = $newTaxo;
+					$options['vocabularies'][] = $newTaxo['data']['id'];
+				}
+				
+				// create content type
+				$CTfields = array();
+				foreach ($options['importAsField'] as $key => $value) {
+					if ($value['protoId']!='text' && $value['protoId']!='summary') {
+						if ($value['cType'] == "localiserField") {
+							$value['newName'] = "position";
+						}
+						$newFieldForCT = array(
+								"cType" => $value['cType'],
+								"config" => array(
+										"name" => $value['newName'],
+										"fieldLabel" => $value['label'],
+										"allowBlank" => ! $value['mandatory'],
+										"localizable" => $value['localizable'],
+										"searchable" => $value['searchable'],
+										"multivalued" => false,
+										"tooltip" => "",
+										"labelSeparator" => " "
+								),
+								"protoId" => $value['protoId'],
+								"openWindow" => null
+						);
+						// For products only
+						if ($options['isProduct']) {
+							$newFieldForCT['config']['useAsVariation'] = isset($value['useAsVariation']) ? $value['useAsVariation'] : false;
+						}
+						$CTfields[] = $newFieldForCT;
+					}
+				}
+	
+				$newCTi18n = array();
+				$newCTi18n[$options['workingLanguage']] = array(
+						"type" => $configs['ContentTypeType']
+				);
+				$contentTypeParams = array(
+						"dependant" => false,
+						"code"=>$configs['ContentTypeType'],
+						"dependantTypes" => array(),
+						"type" => $configs['ContentTypeType'],
+						"fields" => $CTfields,
+						"vocabularies" => $options['vocabularies'],
+						"workspaces" => $configs['ContentTypeWorkspaces'],
+						"workflow" => $configs['ContentTypeWorkflow'],
+						"activateDisqus" => false,
+						"nativeLanguage" => $options['workingLanguage'],
+						"i18n" => $newCTi18n
 				);
 				
-				// translate vocabulary if terms are translated
-				foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
-					if ($transValue["translatedElement"] == $value['csvIndex']) {
-						$newTaxoLang=$transValue["translateToLanguage"];
-						$newTaxoi18n[$newTaxoLang] = array(
-								"name" => $value['newName'],
-								"description" => "",
-								"helpText" => "",
-								"locale" => $newTaxoLang
+				// For products only 
+				if ($options['isProduct']) {
+					$productTypeParams = array(
+						"canOrderNotInStock" => false,
+						"manageStock" => true,
+						"notifyForQuantityBelow" => 1,
+						"outOfStockLimit" => 1,
+						"preparationDelay" => 0,
+						"productType" => "configurable",
+						"resupplyDelay" => 0,
+						"shippers" => ""
+					);
+					$contentTypeParams = array_merge($contentTypeParams, $productTypeParams);
+				}
+				
+				$contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
+				$options['typeId'] = $contentType['data']['id'];
+			
+			} else { // UPDATE MODE, get fields to update from content type structure
+
+				$options['importMode'] = "update";
+				$fieldsToUpdate = array();
+				$contentType = Manager::getService('ContentTypes')->findById($options['typeId']);
+				foreach ($contentType['fields'] as $field) {
+					$fieldConfig = $field['config'];
+					if (isset($configs[$fieldConfig['name']]) && is_numeric($configs[$fieldConfig['name']])) {
+						$fieldsToUpdate[] = array(
+							'name' => $fieldConfig['name'],
+							'csvIndex' => $configs[$fieldConfig['name']],
+							'newName' => '',
+							'protoId' => $field['protoId'],
+							'cType' => $field['cType']
 						);
 					}
 				}
-				$newTaxoParams = array(
-						"name" => $value['newName'],
-						"description" => "",
-						"helpText" => "",
-						"expandable" => false,
-						"multiSelect" => true,
-						"mandatory" => $value['mandatory'],
-						"nativeLanguage" => $options['workingLanguage'],
-						"i18n" => $newTaxoi18n
-				);
-				$newTaxo = $taxonomyService->create($newTaxoParams);
-				$newTaxos[] = $newTaxo;
-				$options['vocabularies'][] = $newTaxo['data']['id'];
+				$options['importAsField'] = $fieldsToUpdate;
 			}
 			
-			// create content type
-			$CTfields = array();
-			foreach ($options['importAsField'] as $key => $value) {
-				if ($value['protoId']!='text' && $value['protoId']!='summary') {
-					if ($value['cType'] == "localiserField") {
-						$value['newName'] = "position";
-					}
-					$newFieldForCT = array(
-							"cType" => $value['cType'],
-							"config" => array(
-									"name" => $value['newName'],
-									"fieldLabel" => $value['label'],
-									"allowBlank" => ! $value['mandatory'],
-									"localizable" => $value['localizable'],
-									"searchable" => $value['searchable'],
-									"multivalued" => false,
-									"tooltip" => "",
-									"labelSeparator" => " "
-							),
-							"protoId" => $value['protoId'],
-							"openWindow" => null
-					);
-					// For products only
-					if ($options['isProduct']) {
-						$newFieldForCT['config']['useAsVariation'] = isset($value['useAsVariation']) ? $value['useAsVariation'] : false;
-					}
-					$CTfields[] = $newFieldForCT;
-				}
-			}
-
-			$newCTi18n = array();
-			$newCTi18n[$options['workingLanguage']] = array(
-					"type" => $configs['ContentTypeType']
-			);
-			$contentTypeParams = array(
-					"dependant" => false,
-					"code"=>$configs['ContentTypeType'],
-					"dependantTypes" => array(),
-					"type" => $configs['ContentTypeType'],
-					"fields" => $CTfields,
-					"vocabularies" => $options['vocabularies'],
-					"workspaces" => $configs['ContentTypeWorkspaces'],
-					"workflow" => $configs['ContentTypeWorkflow'],
-					"activateDisqus" => false,
-					"nativeLanguage" => $options['workingLanguage'],
-					"i18n" => $newCTi18n
-			);
 			
-			// For products only 
-			if ($options['isProduct']) {
-				$productTypeParams = array(
-					"canOrderNotInStock" => false,
-					"manageStock" => true,
-					"notifyForQuantityBelow" => 1,
-					"outOfStockLimit" => 1,
-					"preparationDelay" => 0,
-					"productType" => "configurable",
-					"resupplyDelay" => 0,
-					"shippers" => ""
-				);
-				$contentTypeParams = array_merge($contentTypeParams, $productTypeParams);
-			}
-			
-			$contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
-
-			$options['typeId'] = $contentType['data']['id'];
 			
 			// Run Import
 			$ImportService = Manager::getService('Import');
@@ -355,7 +383,7 @@ public function importAction ()
 			// Indexing
 			$ElasticDataIndexService = Manager::getService('ElasticDataIndex');
 			$ElasticDataIndexService->init();
-			$ElasticDataIndexService->indexByType('content', $contentType['data']['id']);
+			$ElasticDataIndexService->indexByType('content', $options['typeId']);
 
 			// Return result
 			$returnArray['importedContentsCount'] = $lineCounter;
