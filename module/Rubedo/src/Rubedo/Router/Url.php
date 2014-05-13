@@ -368,17 +368,10 @@ class Url implements IUrl
         $content = Manager::getService('Contents')->findById($contentId, true, false);
         AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
-        $nativeLocale = $content['nativeLanguage'];
-        if (isset($content['i18n'][$locale]['fields']['urlSegment']) && urlencode($content['i18n'][$locale]['fields']['urlSegment']) == $encodedText) {
-            return $contentId;
-        } elseif (isset($content['i18n'][$nativeLocale]['fields']['urlSegment']) && urlencode($content['i18n'][$nativeLocale]['fields']['urlSegment']) == $encodedText) {
-            return $contentId;
-        } elseif (isset($content['i18n'][$locale]['fields']['text']) && urlencode($content['i18n'][$locale]['fields']['text']) == $encodedText) {
-            return $contentId;
-        } elseif (isset($content['i18n'][$nativeLocale]['fields']['text']) && urlencode($content['i18n'][$nativeLocale]['fields']['text']) == $encodedText) {
-            return $contentId;
-        } else {
+        if (!$content){
             return null;
+        } else {
+            return $contentId;
         }
     }
 
