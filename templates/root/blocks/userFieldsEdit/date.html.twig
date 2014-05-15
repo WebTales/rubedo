@@ -11,7 +11,7 @@
     {% else %}
         <label class="control-label" for="{{ type[key]['config']['name'] }}">{{ type[key]['config']['fieldLabel'] }}</label>
         <div class="controls">
-            <input placeholder="{{ type[key]['config']['fieldLabel'] }}" value="{{ data[key] }}" type="date" id="{{ type[key]['config']['name'] }}" name="{{ type[key]['config']['name'] }}" {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
+            <input placeholder="{{ type[key]['config']['fieldLabel'] }}" value="{{ data[key]|date('Y-m-d') }}" type="date" id="{{ type[key]['config']['name'] }}" name="{{ type[key]['config']['name'] }}" {% if not type[key]['config']['allowBlank'] %}required{% endif %} />
         </div>
     {% endif %}
 </div>
