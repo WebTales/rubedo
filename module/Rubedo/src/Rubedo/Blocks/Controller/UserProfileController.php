@@ -280,7 +280,7 @@ class UserProfileController extends AbstractController
                         $date = strtotime($date);
                     }
                 } else {
-                    $date = strtotime($field);
+                    $field = strtotime($field);
                 }
             }
         }
