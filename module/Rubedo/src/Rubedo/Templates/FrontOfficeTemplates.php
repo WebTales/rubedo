@@ -431,6 +431,16 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
     }
 
+    public static function getCountryName($alpha2)
+    {
+        $country = Manager::getService('Countries')->findOneByAlpha2($alpha2);
+        if ($country) {
+            return $country['name'];
+        } else {
+            return $alpha2;
+        }
+    }
+
     public static function getLinkedContents($contentId, $typeId, $fieldName, $sort = null)
     {
         return Manager::getService('Contents')->getReflexiveLinkedContents($contentId, $typeId, $fieldName, $sort);
@@ -567,6 +577,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             )
         )));
         $twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
+        $twig->addFilter(new \Twig_SimpleFilter('getCountryName', '\\Rubedo\\Templates\\FrontOfficeTemplates::getCountryName'));
         $twig->addFilter( new \Twig_SimpleFilter('ensureIsArray', function ($value) {
             return (array)$value;
         }));

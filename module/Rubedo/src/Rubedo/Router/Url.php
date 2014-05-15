@@ -368,17 +368,10 @@ class Url implements IUrl
         $content = Manager::getService('Contents')->findById($contentId, true, false);
         AbstractCollection::disableUserFilter($wasFiltered);
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
-        $nativeLocale = $content['nativeLanguage'];
-        if (isset($content['i18n'][$locale]['fields']['urlSegment']) && urlencode($content['i18n'][$locale]['fields']['urlSegment']) == $encodedText) {
-            return $contentId;
-        } elseif (isset($content['i18n'][$nativeLocale]['fields']['urlSegment']) && urlencode($content['i18n'][$nativeLocale]['fields']['urlSegment']) == $encodedText) {
-            return $contentId;
-        } elseif (isset($content['i18n'][$locale]['fields']['text']) && urlencode($content['i18n'][$locale]['fields']['text']) == $encodedText) {
-            return $contentId;
-        } elseif (isset($content['i18n'][$nativeLocale]['fields']['text']) && urlencode($content['i18n'][$nativeLocale]['fields']['text']) == $encodedText) {
-            return $contentId;
-        } else {
+        if (!$content){
             return null;
+        } else {
+            return $contentId;
         }
     }
 
@@ -773,13 +766,13 @@ class Url implements IUrl
         if (!isset(self::$avatarUrls[$userId])) {
             $user = Manager::getService('Users')->findById($userId);
             if (!$user || !isset($user['photo']) || empty($user['photo'])) {
-                throw new NotFound("No Image Found", "Exception8");
+                return " ";
             }
             $fileId = $user['photo'];
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
             if (!$obj instanceof \MongoGridFSFile) {
-                throw new NotFound("No Image Found", "Exception8");
+                return " ";
             }
             $meta = $obj->file;
             $params = array(

@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Delegations
@@ -30,5 +31,15 @@ class Countries extends AbstractCollection
     {
         $this->_collectionName = 'Countries';
         parent::__construct();
+    }
+
+    public function findOneByAlpha2($alpha2)
+    {
+        $filter = Filter::factory('Value')->setValue($alpha2)->setName('alpha-2');
+        $result = $this->_dataService->findOne($filter);
+        if ($result) {
+            $result = $this->_addReadableProperty($result);
+        }
+        return $result;
     }
 }

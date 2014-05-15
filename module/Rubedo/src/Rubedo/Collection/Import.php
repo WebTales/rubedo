@@ -37,6 +37,12 @@ class Import extends AbstractCollection
 	 */
 	protected $_fileName;
 	/**
+	 * Current import mode : insert or import
+	 *
+	 * @var string
+	 */
+	protected $_importMode;
+	/**
      * Unique key to define the current import process
      *
      * @var string
@@ -144,6 +150,7 @@ class Import extends AbstractCollection
     public function run($fileName, $options) {
 
     	// Get import settings
+    	$this->_importMode = $options['importMode'];
     	$this->_importKeyValue = $options['importKey'];
     	$this->_userEncoding = $options['userEncoding'];
     	$this->_importAsField = $options['importAsField'];
@@ -156,29 +163,12 @@ class Import extends AbstractCollection
     	$this->_navigationTaxonomy = $options['contentsNavTaxo'];
     	$this->_target = $options['contentsTarget'];
     	$this->_typeId = $options['typeId'];
+    	$this->uniqueKeyIndex = $options['uniqueKeyIndex'];
+    	$this->uniqueKeyField = $options['uniqueKeyField'];
     	$this->_fileName = $fileName;
-    	
-    	// for testing only
-    	/*
-    	$options['isProduct'] = true;
-    	$options['baseSkuFieldIndex'] = 2;
-    	$options['basePriceFieldIndex'] = 7;
-    	$options['skuFieldIndex'] = 2;
-    	$options['priceFieldIndex'] = 7;
-    	$options['stockFieldIndex'] = 8;
-    	$this->_importAsField[] = array(
-    		"newName" => "Taille",
-    		"csvIndex" => 6,
-    		"useAsVariation" => true
-    	);
-    	$this->_importAsField[] = array(
-    			"newName" => "Couleur",
-    			"csvIndex" => 5,
-    			"useAsVariation" => true
-    	);
-    	*/    	   	
+
     	// Product options
-    	$this->_isProduct = $options['isProduct'];
+    	$this->_isProduct = isset($options['isProduct']) ? $options['isProduct'] : false;
     	if ($this->_isProduct) {
 	    	$this->_productOptions = array(
 	    		'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
@@ -204,21 +194,33 @@ class Import extends AbstractCollection
 
     	// Extract taxonomy to ImportTaxonomy collection
     	$this->extractTaxonomy();
-    	
+    	  	
     	// Processing Import data taxonomy and localisation fields
     	$this->preProcess ();
-    	
+
     	// Transform taxonomy terms into id
     	$this->turnTermsToId ();
     	
-    	// write taxonomy terms
-    	$this->writeTaxonomy ();
-    	
-    	// Extract contents to ImportContents collection
-    	$this->extractContents ();
-    	
-    	// Finally write contents
-    	$response = $this->writeContents();
+    	if ($this->_importMode == 'insert') { // INSERT mode
+
+	       	// write taxonomy terms
+	    	$this->writeTaxonomy ();
+	    	
+	    	// Extract contents to ImportContents collection
+	    	$this->extractContentsToInsert ();
+	    	
+	    	// Finally write contents
+	    	$response = $this->writeContents();
+	   
+    	} else { // UPDATE mode
+
+    		// Extract contents to ImportContents collection
+    		$this->extractContentsToUpdate ();
+    		
+    		// Finally update contents
+    		$response = $this->updateContents();
+
+    	}
     	
     	return $response;
     	
@@ -283,10 +285,10 @@ class Import extends AbstractCollection
     }
     
     /**
-     * Extract contents from Import 
+     * Extract contents to insert from Import 
      * to ImportContents collection
      */
-    protected function extractContents () {
+    protected function extractContentsToInsert () {
     	
     	// Create fields
     	$fields = array();
@@ -396,7 +398,7 @@ class Import extends AbstractCollection
     	
     	$live = Json::encode($live);
     	
-    	// get rid off "" around javascript vars
+    	// gets rid off "" around javascript vars
     	
     	$patterns = array ('/\"(this.col[^\"]*)\"/');
     	$replace = array('\1');
@@ -529,6 +531,168 @@ class Import extends AbstractCollection
     	return true;
 
     }
+
+    /**
+     * Extract contents to update from Import
+     * to ImportContents collection
+     */
+    protected function extractContentsToUpdate () {
+    	 
+    	// Create fields
+    	$fields = array();
+    	foreach ($this->_importAsField as $key => $value) {
+    
+    		// Fields that are not product variations
+    		if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
+    
+    			switch ($value['protoId']) {
+    				case 'text':
+    					$textFieldIndex = $value['csvIndex'];
+    					$fields['text'] = 'this.col'.$value['csvIndex'];
+    					break;
+    				case 'summary':
+    					$fields['summary'] = 'this.col'.$value['csvIndex'];
+    					break;
+    				default:
+    					if ($value['cType']!='localiserField') {
+    						$fields[$value['newName']] = 'this.col'.$value['csvIndex'];
+    					} else {
+    						$fields['position'] = array(
+    								'address' => '',
+    								'altitude' => '',
+    								'lat' => 'this.col'.$value['csvIndex'].'[0]',
+    								'lon' => 'this.col'.$value['csvIndex'].'[1]',
+    								'location' => array(
+    										'type' => 'Point',
+    										'coordinates' => array('this.col'.$value['csvIndex'].'[1]','this.col'.$value['csvIndex'].'[0]')
+    								)
+    						);
+    					}
+    					break;
+    			}
+    		}
+    	}
+           	 
+    	// add taxonomy
+    	 
+    	$taxonomy = array();
+    	 
+    	foreach ($this->_importAsTaxo as $key => $value) {
+    		$taxonomy[$this->_vocabularies[$key+1]] = 'this.col'.$value['csvIndex'];
+    	}
+    	 
+   	 
+    	$mapCode =	"function() {
+    		var value = {";
+    	
+    	foreach ($this->_importAsField as $key => $value) {
+    		$mapCode.= $value['name'].": this.col".$value['csvIndex'].",";
+    	}
+    	 
+    	if ($this->_isProduct) {
+    		$mapCode.=",isProduct:true,
+    				baseSku: this.col".$this->_productOptions['baseSkuFieldIndex'].",
+    				basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",
+    				sku: this.col".$this->_productOptions['skuFieldIndex'].",
+    				price: this.col".$this->_productOptions['priceFieldIndex'].",
+    				stock: this.col".$this->_productOptions['stockFieldIndex'];
+    		// add variation fields
+    		foreach ($this->_importAsField as $key => $value) {
+    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    				$mapCode.=",".$value['newName'].": this.col".$value['csvIndex'];
+    			}
+    		}
+    	}
+    
+    	$mapCode.= "};";
+    	$mapKey = $this->_isProduct ? "this.col".$this->_productOptions['baseSkuFieldIndex'] : "this.col".$this->uniqueKeyIndex;
+    
+    	$mapCode.="emit(".$mapKey.", value);};";
+    
+    	$map = new \MongoCode($mapCode);
+    	 
+    	if (!$this->_isProduct) {
+    		$reduceCode = "function(key, values) { return {key: values[0]} }";
+    	} else {
+    		$reduceCode = "function(key, values) {
+    			var value = values[0];
+    			var productProperties = {
+    				sku : value.baseSku,
+					basePrice: value.basePrice,
+					preparationDelay: 1,
+					canOrderNotInStock: false,
+					outOfStockLimit: 1,
+					notifyForQuantityBelow : 1,
+					resupplyDelay : 1
+    			};
+    			var variations = new Array();
+    			values.forEach(function(v) {
+					oid = ObjectId();
+					var variation = {
+    					price: v.price,
+    					stock: v.stock,
+    					sku: v.sku,
+    					id: oid.valueOf()
+					};";
+    
+    		// add variation fields
+    		foreach ($this->_importAsField as $key => $value) {
+    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    				$reduceCode.="variation['".$value['newName']."']=v.".$value['newName'].";";
+    			}
+    		}
+    
+    		$reduceCode.="
+    				variations.push(variation);
+    			});
+    
+    			productProperties['variations'] = variations;
+    			value['productProperties'] = productProperties;
+    
+    			delete value['baseSku'];
+    			delete value['basePrice'];
+    			delete value['sku'];
+    			delete value['price'];
+    			delete value['stock'];";
+    
+    		foreach ($this->_importAsField as $key => $value) {
+    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    				$reduceCode.="delete value['".$value['newName']."'];";
+    			}
+    		}
+    
+    		$reduceCode.="	return value;
+    
+    		};";
+    	}
+    	 
+    	$reduce = new \MongoCode($reduceCode);
+    	 
+    	// global JavaScript variables passed to map, reduce and finalize functions
+    	$scope = array(
+    			"currentTime" => $this->currentTime,
+    			"currentUser" => $this->currentUser,
+    			"typeId" => $this->_typeId,
+    			"target" => $this->_target
+    	);
+    	 
+    	$params = array(
+    			"mapreduce" => "Import", // collection
+    			"query" => array("importKey" => $this->_importKeyValue), // query
+    			"map" => $map, // map
+    			"reduce" => $reduce, // reduce
+    			"scope" => $scope, // scope
+    			"out" => array("replace" => "ImportContents") // out
+    	);
+    	$response = $this->_dataService->command($params);
+    
+    	if ($response['ok']!=1) {
+    		throw new \Rubedo\Exceptions\Server("Extracting Contents error");
+    	}
+    
+    	return true;
+    
+    }
     
 	/**
 	 * Extract tanonomy terms from Import collection
@@ -654,7 +818,7 @@ class Import extends AbstractCollection
 	 * Transform the localization comma separated lat,lon string into array       
 	 */	
 	protected function preProcess () {
-		
+			
 		$code = "db.Import.find().snapshot().forEach(function(e){";
 			
 		foreach($this->_importAsTaxo as $taxo) {
@@ -741,6 +905,41 @@ class Import extends AbstractCollection
 		
 		if ($response['ok']!=1) {
 			throw new \Rubedo\Exceptions\Server("Writing Contents error");
+		}
+			
+		return $response['retval'];
+	
+	}
+	
+	/**
+	 * Update contents and flush import collection
+	 */
+	protected function updateContents () {
+	
+		$query = "typeId: '".$this->_typeId."',".$this->uniqueKeyField.": foo._id";
+		
+		$update = "\$set: {";
+		
+		foreach ($this->_importAsField as $key => $value) {
+		
+			$update.= "'live.fields.".$value['name']."': foo.".$value['name'].","; // live fields
+			$update.= "'live.i18n.".$this->_workingLanguage.".fields.".$value['name']."': foo.".$value['name'].","; // i18n fields in working language
+		
+		}
+		
+		$update.="}";
+		
+		$code = "var counter = 0;
+				db.ImportContents.find().snapshot().forEach(function(foo) {
+					db.Contents.findAndModify({query:{".$query."},update:{".$update."}});
+					counter++;
+				});
+				return counter;
+				";
+		$response = $this->_dataService->execute($code);
+
+		if ($response['ok']!=1) {
+			throw new \Rubedo\Exceptions\Server($code);
 		}
 			
 		return $response['retval'];
