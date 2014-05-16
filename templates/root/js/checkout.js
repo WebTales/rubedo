@@ -278,10 +278,14 @@ function checkoutGetFormData(form){
 }
 
 function checkoutCheckFormValid(formId){
-    var canContinue=true;
+    var canContinue = true;
     jQuery("#"+formId+" input").each(function(){
-        if ((jQuery(this).is(":required"))&&(jQuery.isEmptyObject(jQuery(this).val()))){
-            canContinue=false;
+        jQuery(this).closest('.error').removeClass('error');
+        jQuery(this).siblings(".help-inline").remove();
+        if (jQuery(this).is(":required") && jQuery.isEmptyObject(jQuery(this).val())){
+            canContinue = false;
+            jQuery(this).closest('.control-group').addClass('error');
+            jQuery(this).after('<span class="help-inline">This field is required.</span>');
         }
     });
     return canContinue;
