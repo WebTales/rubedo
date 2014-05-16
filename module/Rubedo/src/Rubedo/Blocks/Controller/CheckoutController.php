@@ -192,6 +192,7 @@ class CheckoutController extends AbstractController
                 "msg" => "Missing password"
             ));
         }
+
         if ($params['password'] != $params['confirmPassword']) {
             return new JsonModel(array(
                 "success" => false,
@@ -206,6 +207,7 @@ class CheckoutController extends AbstractController
                 "msg" => "Email already used"
             ));
         }
+
         $userType = Manager::getService('UserTypes')->findById($params['userTypeId']);
         if ($userType['signUpType'] == "none") {
             return new JsonModel(array(
@@ -213,8 +215,11 @@ class CheckoutController extends AbstractController
                 "msg" => "Unknown user type"
             ));
         }
-        $useSameAddress = isset($params['useSameAddress']) ? true : false;
-        unset($params['useSameAddress']);
+
+        $useSameAddressBilling = isset($params['useSameAddressBilling']);
+        $useSameAddressDelivery = isset($params['useSameAddressDelivery']);
+        unset($params['useSameAddressBilling']);
+        unset($params['useSameAddressDelivery']);
         unset($params['readTermsAndConds']);
         $mailingListsToSubscribe = array();
         $userAddress = array();
@@ -247,8 +252,10 @@ class CheckoutController extends AbstractController
         $newUser['address'] = $userAddress;
         $newUser['billingAddress'] = array();
         $newUser['shippingAddress'] = array();
-        if ($useSameAddress) {
+        if ($useSameAddressBilling) {
             $newUser['billingAddress'] = $userAddress;
+        }
+        if ($useSameAddressDelivery) {
             $newUser['shippingAddress'] = $userAddress;
         }
         $newUser['fields'] = $params;
@@ -256,22 +263,30 @@ class CheckoutController extends AbstractController
         $createdUser = Manager::getService('Users')->create($newUser);
         if ($createdUser['success']) {
             Manager::getService('Users')->changePassword($newPassword, $createdUser['data']['version'], $createdUser['data']['id']);
-        }
-        if (($createdUser['success']) && ($mailingListsToSubscribe)) {
-            $mailingListService = Manager::getService("MailingList");
-            foreach ($mailingListsToSubscribe as $mailingListId) {
-                $mailingListService->subscribe($mailingListId, $newUser['email'], false);
+            if ($mailingListsToSubscribe) {
+                $mailingListService = Manager::getService("MailingList");
+                foreach ($mailingListsToSubscribe as $mailingListId) {
+                    $mailingListService->subscribe($mailingListId, $newUser['email'], false);
+                }
             }
-        }
-        if (!$createdUser['success']) {
+            try {
+                /** @var \Rubedo\Interfaces\User\IAuthentication $authService */
+                $authService = Manager::getService('Authentication');
+                $authService->authenticate($newUser['login'], $newPassword);
+            } catch (\Exception $e) {
+                return new JsonModel(array(
+                    "success" => false,
+                    "msg" => "Account created but login failed",
+                ));
+            }
             return new JsonModel(array(
-                "success" => false,
-                "msg" => "User creation failed"
+                "success" => true,
+                "msg" => "Account created",
             ));
         } else {
             return new JsonModel(array(
-                "success" => true,
-                "msg" => "Account created"
+                "success" => false,
+                "msg" => "User creation failed",
             ));
         }
     }

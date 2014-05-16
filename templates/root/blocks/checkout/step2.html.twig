@@ -65,6 +65,7 @@
                     <label class="control-label" >Country *</label>
                     <div class="controls">
                         <select name="address_country" required="">
+                            <option disabled="disabled" selected="selected">Choose your country</option>
                             {% for country in countries['data'] %}
                             <option value="{{ country['alpha-2'] }}">{{ country['name'] }}</option>
                             {% endfor %}
@@ -198,6 +199,7 @@
                     <label class="control-label" >Country *</label>
                     <div class="controls">
                         <select name="address_country" required>
+                            <option disabled="disabled" selected="selected">Choose your country</option>
                             {% for country in countries['data'] %}
                                 <option value="{{ country['alpha-2'] }}">{{ country['name'] }}</option>
                             {% endfor %}
@@ -219,8 +221,12 @@
                 <div class="control-group">
                     <div class="controls">
                         <label class="checkbox">
-                            <input type="checkbox"  name="useSameAddress" >
-                            Use same address for billing and delivery
+                            <input checked="checked" type="checkbox"  name="useSameAddressBilling" >
+                            Use same address for billing.
+                        </label>
+                        <label class="checkbox">
+                            <input checked="checked" type="checkbox"  name="useSameAddressDelivery" >
+                            Use same address for delivery.
                         </label>
                         <label class="checkbox">
                             <input type="checkbox"  name="readTermsAndConds" >

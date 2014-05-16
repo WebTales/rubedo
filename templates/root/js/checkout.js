@@ -83,7 +83,7 @@ function checkoutSignup() {
 
             request.done(function(data) {
                 if(data['success']) {
-                    setCheckoutStep(1);
+                    window.location.reload();
                 } else {
                     jQuery("#chk2-message").html("<strong>"+data['msg']+"</strong>");
                     jQuery("#chk2Alert").removeClass("hidden");

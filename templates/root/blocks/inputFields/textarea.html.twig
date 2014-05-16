@@ -1,5 +1,5 @@
 <div class="control-group">
-	<label class="control-label">{{ field['config']['fieldLabel'] }}</label>
+	<label class="control-label">{{ field['config']['fieldLabel'] }} {% if not field['config']['allowBlank'] %}*{% endif %}</label>
 	<div class="controls">
 		<textarea rows=3 name="{{ field['config']['name'] }}" {% if not field['config']['allowBlank'] %}required{% endif %}></textarea>
 	</div>
