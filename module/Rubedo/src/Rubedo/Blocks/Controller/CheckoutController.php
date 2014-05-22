@@ -423,6 +423,7 @@ class CheckoutController extends AbstractController
             $activePaymentMeans = Manager::getService("PaymentConfigs")->getActivePMConfigs();
             $twigVars['paymentMeans'] = array();
             $twigVars['shippingMethod'] = $currentChoice;
+            $twigVars['shipper'] = Manager::getService("Shippers")->findById($currentChoice);
             foreach ($activePaymentMeans['data'] as $value) {
                 $twigVars['paymentMeans'][] = array(
                     "displayName" => $value['displayName'],
