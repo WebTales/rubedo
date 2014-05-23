@@ -127,13 +127,14 @@ class NavBarController extends AbstractController
         
         $css = array();
         $js = array();
+        $test = $this->_sendResponse($output, $template, $css, $js);
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
     protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1)
     {
         $pages = $this->pageService->readChild($rootPage, $this->excludeFromMenuCondition);
-        if ($currentLevel === $targetLevel) {
+        if ($currentLevel == $targetLevel) {
             return $pages;
         }
         foreach ($pages as $page) {
