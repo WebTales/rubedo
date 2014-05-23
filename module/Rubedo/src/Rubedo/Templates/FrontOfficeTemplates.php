@@ -587,6 +587,9 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             }
             return (array)$value;
         }));
+        $twig->addFilter( new \Twig_SimpleFilter('getClass', function ($value) {
+            return get_class($value);
+        }));
         return $this;
     }
 
