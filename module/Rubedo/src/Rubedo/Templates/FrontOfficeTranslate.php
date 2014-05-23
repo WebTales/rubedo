@@ -88,6 +88,9 @@ class FrontOfficeTranslate extends \Twig_Extension
                 $this->fallbackLang,
                 $placeholders
             );
+        if (empty($label)){
+            return $text;
+        }
         return $label;
     }
 }
