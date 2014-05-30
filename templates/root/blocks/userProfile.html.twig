@@ -14,14 +14,8 @@
                 {% endif %}
                 {% if canEdit %}
                     <div class="btn-group pull-right">
-                        <a href="?editProfile" class="btn"><i class="icon-edit"></i> {{ 'Label.Edit'|fotrans }}</a>
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="?editProfile">{{ 'Blocks.UserProfile.Edit.Profile'|fotrans }}</a></li>
-                            <li><a href="?editLogin">{{ 'Blocks.UserProfile.Edit.Login'|fotrans }}</a></li>
-                        </ul>
+                        <a href="?editProfile" class="btn"><i class="icon-edit"></i> {{ 'Blocks.UserProfile.Edit.Profile'|fotrans }}</a>
+                        <a href="?editLogin" class="btn"><i class="icon-edit"></i> {{ 'Blocks.UserProfile.Edit.Login'|fotrans }}</a>
                     </div>
                 {% endif %}
                 <h2>{{ user.name }}</h2>
