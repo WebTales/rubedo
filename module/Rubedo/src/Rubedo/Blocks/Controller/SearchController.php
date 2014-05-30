@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Blocks\Controller;
 use Rubedo\Services\Manager;
-use Rubedo\Elastic\DataSearch;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
@@ -74,12 +73,12 @@ class SearchController extends AbstractController
                 }
             }
         }
-        
-        Datasearch::setIsFrontEnd(true);
-        
+
+        /** @var \Rubedo\Interfaces\Elastic\IDataSearch $query */
         $query = Manager::getService('ElasticDataSearch');
+        $query::setIsFrontEnd(true);
         $query->init();
-        
+
         $results = $query->search($params);
         $results['searchParams'] = Json::encode($params, Json::TYPE_ARRAY);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
@@ -160,10 +159,10 @@ class SearchController extends AbstractController
         
         // set field for autocomplete
         $params['field'] = 'autocomplete_' . $currentLocale;
-        
-        Datasearch::setIsFrontEnd(true);
-        
+
+        /** @var \Rubedo\Interfaces\Elastic\IDataSearch $elasticaQuery */
         $elasticaQuery = Manager::getService('ElasticDataSearch');
+        $elasticaQuery::setIsFrontEnd(true);
         $elasticaQuery->init();
         
         $suggestTerms = $elasticaQuery->suggest($params);
