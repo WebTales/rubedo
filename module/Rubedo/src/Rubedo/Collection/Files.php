@@ -86,6 +86,14 @@ class Files extends AbstractFileCollection implements IFiles
             }
         }
         switch ($fileObj ['mainFileType']) {
+            case 'DocumentOrImage' :
+                if ((!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes))&&(!in_array($fileObj ['Content-Type'], $this->_allowedIllustrationMimeTypes))) {
+                    return array(
+                        'success' => false,
+                        'msg' => 'Not authorized file extension ' . $fileObj ['Content-Type']
+                    );
+                }
+                break;
             case 'Document' :
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes)) {
                     return array(

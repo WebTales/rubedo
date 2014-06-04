@@ -11,7 +11,7 @@ function addEmail() {
 			canContinue=true;
 		}
 	});
-	if ((jQuery.isEmptyObject(email))||(jQuery.isEmptyObject(name))){
+	if (jQuery.isEmptyObject(email)) {
 		canContinue=false;
 	}
 	var fields={ };

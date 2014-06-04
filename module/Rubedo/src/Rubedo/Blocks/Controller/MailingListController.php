@@ -102,6 +102,9 @@ class MailingListController extends AbstractController
         // Validate email
         if ($emailValidator->isValid($email)) {
             // Register user
+            if (empty($name)){
+                $name=$email;
+            }
             $response = array(
                 "success" => true,
                 "msg" => "Inscription réussie"
