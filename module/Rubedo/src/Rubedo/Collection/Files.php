@@ -86,6 +86,8 @@ class Files extends AbstractFileCollection implements IFiles
             }
         }
         switch ($fileObj ['mainFileType']) {
+            case 'Any' :
+                break;
             case 'Document' :
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes)) {
                     return array(
