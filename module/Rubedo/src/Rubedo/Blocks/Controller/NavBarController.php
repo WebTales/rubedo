@@ -127,7 +127,6 @@ class NavBarController extends AbstractController
         
         $css = array();
         $js = array();
-        $test = $this->_sendResponse($output, $template, $css, $js);
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
