@@ -127,7 +127,7 @@ class ShoppingCartController extends AbstractController
 
     }
 
-    private function addCartInfos ($cart) {
+    protected function addCartInfos ($cart) {
         $totalPrice=0;
         $totalItems=0;
         $ignoredArray=array("price","amount","id","sku","stock");
@@ -136,6 +136,7 @@ class ShoppingCartController extends AbstractController
             $myContent=$contentsService->findById($value["productId"], true, false);
             if ($myContent){
                 $value['title']=$myContent['text'];
+                $value['product'] = &$myContent;
                 $value['subtitle']="";
                 $price=0;
                 foreach ($myContent["productProperties"]['variations'] as $variation){
