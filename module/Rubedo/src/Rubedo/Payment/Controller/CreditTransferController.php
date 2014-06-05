@@ -46,7 +46,9 @@ class CreditTransferController extends AbstractController
         $output['contentId'] = $this->nativePMConfig["contentId"];
         $price=$this->getOrderPrice();
         $output['price']=$price;
-        $output['text'] = str_replace("###price###", $price." €", $content["fields"]["body"]);
+        $toReplace = array('###price###', '###orderId###');
+        $replacedBy = array($price . ' €', $this->currentOrder['id']);
+        $output['text'] = str_replace($toReplace, $replacedBy, $content['fields']['body']);
         $output["locale"] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/richtext.html.twig");
         $css = array();
