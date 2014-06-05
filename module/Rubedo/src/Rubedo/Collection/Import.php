@@ -437,7 +437,7 @@ class Import extends AbstractCollection
     				// add variation fields
     				foreach ($this->_importAsField as $key => $value) {
     					if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-    						$mapCode.=",".$value['newName'].": this.col".$value['csvIndex'];
+    						$mapCode.=",'".$value['newName']."': this.col".$value['csvIndex'];
     					}
     				}
     	}
@@ -476,7 +476,7 @@ class Import extends AbstractCollection
     		// add variation fields
     		foreach ($this->_importAsField as $key => $value) {    		
     			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-    				$reduceCode.="variation['".$value['newName']."']=v.".$value['newName'].";";    				
+    				$reduceCode.="variation['".$value['newName']."']=v['".$value['newName']."'];";    				
     			}	   			
     		}
     		
@@ -522,6 +522,7 @@ class Import extends AbstractCollection
     			"scope" => $scope, // scope
     			"out" => array("replace" => "ImportContents") // out
     	);
+    	
     	$response = $this->_dataService->command($params);
 
     	if ($response['ok']!=1) {

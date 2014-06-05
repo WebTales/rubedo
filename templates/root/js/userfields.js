@@ -17,3 +17,22 @@ var userFieldAdd = function() {
 };
 
 jQuery('.user-field-add').on('click', userFieldAdd);
+
+var geocoder = new google.maps.Geocoder();
+jQuery(".position-adress-field").change(function(){
+    var value=jQuery(this).val();
+    var parent=jQuery(this).parent();
+    geocoder.geocode({
+        'address' : value
+    }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            var target=results[0].geometry.location;
+            var lat=target.lat();
+            var lon=target.lng();
+            parent.find(".position-latitude-field").val(lat);
+            parent.find(".position-longitude-field").val(lon);
+        } else {
+            console.log("geocoding error");
+        }
+    });
+});
