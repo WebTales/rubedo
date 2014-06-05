@@ -163,6 +163,7 @@ class UserProfileController extends AbstractController
             '/components/jquery/jqueryui/themes/base/jquery-ui.css'
         );
         $js = array(
+            "https://maps.googleapis.com/maps/api/js?sensor=false",
             $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/rubedo-map.js'),
             $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/map.js'),
             $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/rating.js'),
@@ -283,6 +284,12 @@ class UserProfileController extends AbstractController
                     $field = strtotime($field);
                 }
             }
+        }
+        if (isset($fields['position'])){
+            $fields['position']['location']=array(
+                "type"=>"Point",
+                "coordinates"=>array($fields['position']['lon'],$fields['position']['lat'])
+            );
         }
         return $fields;
     }
