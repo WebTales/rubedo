@@ -644,6 +644,9 @@ class DataAccess implements IDataAccess
      */
     public function setFirstResult($firstResult)
     {
+        if (gettype($firstResult) == 'double') {
+            $firstResult = intval($firstResult);
+        }
         if (gettype($firstResult) !== 'integer') {
             throw new Server("firstResult should be an integer", "Exception84", '$firstResult');
         }
