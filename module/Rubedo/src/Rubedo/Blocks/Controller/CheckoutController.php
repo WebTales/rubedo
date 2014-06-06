@@ -446,36 +446,35 @@ class CheckoutController extends AbstractController
 
     }
 
-
-    private function addCartInfos($cart, $userTypeId, $country, $region, $postalCode)
+    protected function addCartInfos($cart, $userTypeId, $country, $region, $postalCode)
     {
         $totalPrice = 0;
         $totalTaxedPrice = 0;
         $totalItems = 0;
-        $ignoredArray = array("price", "amount", "id", "sku", "stock");
-        $contentsService = Manager::getService("Contents");
-        $taxService = Manager::getService("Taxes");
+        $ignoredArray = array('price', 'amount', 'id', 'sku', 'stock');
+        $contentsService = Manager::getService('Contents');
+        $taxService = Manager::getService('Taxes');
         foreach ($cart as &$value) {
-            $myContent = $contentsService->findById($value["productId"], true, false);
+            $myContent = $contentsService->findById($value['productId'], true, false);
             if ($myContent) {
                 $value['title'] = $myContent['text'];
-                $value['subtitle'] = "";
+                $value['subtitle'] = '';
                 $unitPrice = 0;
                 $taxedPrice = 0;
                 $unitTaxedPrice = 0;
                 $price = 0;
-                foreach ($myContent["productProperties"]['variations'] as $variation) {
+                foreach ($myContent['productProperties']['variations'] as $variation) {
                     if ($variation['id'] == $value['variationId']) {
-                        $unitPrice = $variation["price"];
+                        $unitPrice = $variation['price'];
                         $unitTaxedPrice = $taxService->getTaxValue($myContent['typeId'], $userTypeId, $country, $region, $postalCode, $unitPrice);
-                        $price = $unitPrice * $value["amount"];
-                        $taxedPrice = $unitTaxedPrice * $value["amount"];
+                        $price = $unitPrice * $value['amount'];
+                        $taxedPrice = $unitTaxedPrice * $value['amount'];
                         $totalTaxedPrice = $totalTaxedPrice + $taxedPrice;
                         $totalPrice = $totalPrice + $price;
-                        $totalItems = $totalItems + $value["amount"];
+                        $totalItems = $totalItems + $value['amount'];
                         foreach ($variation as $varkey => $varvalue) {
                             if (!in_array($varkey, $ignoredArray)) {
-                                $value['subtitle'] = $value['subtitle'] . " " . $varvalue;
+                                $value['subtitle'] .= ' ' . $varvalue;
                             }
                         }
                     }
@@ -486,12 +485,12 @@ class CheckoutController extends AbstractController
                 $value['taxedPrice'] = $taxedPrice;
             }
         }
-        return (array(
-            "cart" => $cart,
-            "totalPrice" => $totalPrice,
-            "totalTaxedPrice" => $totalTaxedPrice,
-            "totalItems" => $totalItems
-        ));
+        return array(
+            'cart' => $cart,
+            'totalPrice' => $totalPrice,
+            'totalTaxedPrice' => $totalTaxedPrice,
+            'totalItems' => $totalItems
+        );
     }
 
 }
