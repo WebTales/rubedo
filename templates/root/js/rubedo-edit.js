@@ -116,6 +116,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 	
 	editor.config.filebrowserImageBrowseUrl = "/backoffice/ext-finder?type=Image";
 	editor.config.filebrowserImageUploadUrl = null;
+    editor.config.allowedContent=true;
 	
 });
 
