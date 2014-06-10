@@ -38,7 +38,7 @@ CKEDITOR.on('instanceCreated', function(event) {
 			
 			// Make toolbar
 			editor.config.toolbar = [
-				{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
+				{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] }
 			];
 		});
 		
