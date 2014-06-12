@@ -182,7 +182,7 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
     }
 
     protected function setCookie($value) {
-        $cookie = new SetCookie(static::COOKIE, $value, time() + 3600, '/');
+        $cookie = new SetCookie(static::COOKIE, $value, time() + 3600 * 24 * 30, '/');
         return $this->responseService->getHeaders()->addHeader($cookie);
     }
 }
