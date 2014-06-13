@@ -451,7 +451,7 @@ class CheckoutController extends AbstractController
         $totalPrice = 0;
         $totalTaxedPrice = 0;
         $totalItems = 0;
-        $ignoredArray = array('price', 'amount', 'id', 'sku', 'stock');
+        $ignoredArray = array('price', 'amount', 'id', 'sku', 'stock', 'basePrice', 'specialOffers');
         $contentsService = Manager::getService('Contents');
         $taxService = Manager::getService('Taxes');
         foreach ($cart as &$value) {
@@ -465,6 +465,10 @@ class CheckoutController extends AbstractController
                 $price = 0;
                 foreach ($myContent['productProperties']['variations'] as $variation) {
                     if ($variation['id'] == $value['variationId']) {
+                        if (array_key_exists('specialOffers', $variation)) {
+                            $variation["price"] = $this->getBetterSpecialOffer($variation['specialOffers'], $variation["price"]);
+                            $value['unitPrice'] = $variation["price"];
+                        }
                         $unitPrice = $variation['price'];
                         $unitTaxedPrice = $taxService->getTaxValue($myContent['typeId'], $userTypeId, $country, $region, $postalCode, $unitPrice);
                         $price = $unitPrice * $value['amount'];
