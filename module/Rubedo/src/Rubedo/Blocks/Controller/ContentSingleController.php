@@ -235,13 +235,18 @@ class ContentSingleController extends AbstractController
             );
             if ((isset($content['isProduct']))&&($content['isProduct']===true)){
                 $output["isProduct"]=true;
+                foreach($content['productProperties']['variations'] as &$variation) {
+                    if (isset($variation['specialOffers'])) {
+                        $variation['specialOffer'] = $this->getBetterSpecialOffer($variation['specialOffers'], $variation['price']);
+                    }
+                }
                 $output["productProperties"]=$content['productProperties'];
                 $output["productProperties"]["manageStock"]=$type["manageStock"];
                 $output["initialVariant"]=$content['productProperties']['variations'][0];
                 $js[]=$this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/productdetail.js");
             }
 
-            if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
+            if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
             } else if ($hasCustomLayout) {
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/customLayout.html.twig");
@@ -285,5 +290,24 @@ class ContentSingleController extends AbstractController
             );
         }
         return new JsonModel($returnArray);
+    }
+    protected function getBetterSpecialOffer($offers, $basePrice) {
+        $offerPrice = null;
+        $actualDate = new \DateTime();
+        if (empty($offers))
+            return null;
+        foreach($offers as $offer) {
+            $offer['beginDate'] = new \DateTime($offer['beginDate']);
+            $offer['endDate'] = new \DateTime($offer['endDate']);
+            if (
+                $offer['beginDate'] <= $actualDate
+                && $offer['beginDate'] <= $actualDate
+                && $basePrice > $offer['price']
+                && (null == $offerPrice || $offerPrice > $offer['price'])
+            ) {
+                $offerPrice = $offer['price'];
+            }
+        }
+        return $offerPrice;
     }
 }

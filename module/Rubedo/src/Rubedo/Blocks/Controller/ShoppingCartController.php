@@ -130,7 +130,7 @@ class ShoppingCartController extends AbstractController
     protected function addCartInfos ($cart) {
         $totalPrice=0;
         $totalItems=0;
-        $ignoredArray=array("price","amount","id","sku","stock");
+        $ignoredArray=array("price","amount","id","sku","stock", 'basePrice', 'specialOffers');
         $contentsService=Manager::getService("Contents");
         foreach ($cart as &$value){
             $myContent=$contentsService->findById($value["productId"], true, false);
@@ -139,14 +139,19 @@ class ShoppingCartController extends AbstractController
                 $value['product'] = &$myContent;
                 $value['subtitle']="";
                 $price=0;
-                foreach ($myContent["productProperties"]['variations'] as $variation){
-                    if ($variation['id']==$value['variationId']){
+                $value['unitPrice'] = $myContent["productProperties"]['basePrice'];
+                foreach ($myContent["productProperties"]['variations'] as &$variation) {
+                    if ($variation['id']==$value['variationId']) {
+                        if (array_key_exists('specialOffers', $variation)) {
+                            $variation["price"] = $this->getBetterSpecialOffer($variation['specialOffers'], $variation["price"]);
+                            $value['unitPrice'] = $variation["price"];
+                        }
                         $price=$variation["price"]*$value["amount"];
-                        $totalPrice=$totalPrice+$price;
-                        $totalItems=$totalItems+$value["amount"];
-                        foreach ($variation as $varkey => $varvalue){
-                            if (!in_array($varkey,$ignoredArray)){
-                                $value['subtitle']=$value['subtitle']." ".$varvalue;
+                        $totalPrice += $price;
+                        $totalItems += $value["amount"];
+                        foreach ($variation as $varkey => $varvalue) {
+                            if (!in_array($varkey,$ignoredArray)) {
+                                $value['subtitle'] .= " " . $varvalue;
                             }
                         }
                     }
@@ -159,5 +164,25 @@ class ShoppingCartController extends AbstractController
             "totalAmount"=>$totalPrice,
             "totalItems"=>$totalItems
         ));
+    }
+
+    protected function getBetterSpecialOffer($offers, $basePrice) {
+        $offerPrice = null;
+        $actualDate = new \DateTime();
+        if (empty($offers))
+            return null;
+        foreach($offers as $offer) {
+            $offer['beginDate'] = new \DateTime($offer['beginDate']);
+            $offer['endDate'] = new \DateTime($offer['endDate']);
+            if (
+                $offer['beginDate'] <= $actualDate
+                && $offer['beginDate'] <= $actualDate
+                && $basePrice > $offer['price']
+                && (null == $offerPrice || $offerPrice > $offer['price'])
+            ) {
+                $offerPrice = $offer['price'];
+            }
+        }
+        return $offerPrice;
     }
 }
