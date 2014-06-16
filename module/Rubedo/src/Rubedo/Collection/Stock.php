@@ -15,8 +15,6 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
 
 /**
  * Special service to handle stock through aggregation or direct access (no workflow) to contents
