@@ -167,10 +167,7 @@ class ShoppingCartController extends AbstractController
     }
 
     protected function getBetterSpecialOffer($offers, $basePrice) {
-        $offerPrice = null;
         $actualDate = new \DateTime();
-        if (empty($offers))
-            return null;
         foreach($offers as $offer) {
             $offer['beginDate'] = new \DateTime($offer['beginDate']);
             $offer['endDate'] = new \DateTime($offer['endDate']);
@@ -178,11 +175,10 @@ class ShoppingCartController extends AbstractController
                 $offer['beginDate'] <= $actualDate
                 && $offer['beginDate'] <= $actualDate
                 && $basePrice > $offer['price']
-                && (null == $offerPrice || $offerPrice > $offer['price'])
             ) {
-                $offerPrice = $offer['price'];
+                $basePrice = $offer['price'];
             }
         }
-        return $offerPrice;
+        return $basePrice;
     }
 }
