@@ -302,7 +302,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             }
         }
         $returnArray = parent::destroy($obj, $options);
-        if ($returnArray["success"]) {
+        if ($returnArray["success"] && (isset($origObj['status']) && $origObj['status'] == 'published')) {
             $this->_unIndexContent($obj);
         }
         return $returnArray;
