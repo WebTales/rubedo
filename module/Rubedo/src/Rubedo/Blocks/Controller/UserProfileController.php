@@ -288,7 +288,7 @@ class UserProfileController extends AbstractController
         if (isset($fields['position'])){
             $fields['position']['location']=array(
                 "type"=>"Point",
-                "coordinates"=>array($fields['position']['lon'],$fields['position']['lat'])
+                "coordinates"=>array((float) $fields['position']['lon'], (float) $fields['position']['lat'])
             );
         }
         return $fields;
