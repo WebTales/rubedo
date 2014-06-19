@@ -113,7 +113,9 @@
     <form method="post" class="form-horizontal" id="checkoutConfirm" >
         <input type="hidden" name="isConfirmOrderPost" value="Confirm">
         <input type="hidden" name="shippingMethod" value="{{ shippingMethod }}">
-
+        {% if shippingComments is not empty %}
+            <input type="hidden" name="shippingComments" value="{{ shippingComments|e }}">
+        {% endif %}
         {% for pm in paymentMeans %}
             <label class="radio">
                 <input type="radio" name="paymentMeans"  value="{{ pm.paymentMeans }}" {% if loop.index==1 %} checked {% endif %} >

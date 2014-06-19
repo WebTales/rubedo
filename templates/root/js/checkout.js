@@ -345,6 +345,7 @@ function adaptToUserData(userData){
         type : "POST",
         data : {
             'current-choice': checkoutGetFormData(jQuery("#checkoutShippingMethodForm")).shipper,
+            'comments': checkoutGetFormData(jQuery("#checkoutShippingMethodForm")).comments,
             'current-page':jQuery('body').attr('data-current-page')
         },
         dataType : "json"
@@ -386,6 +387,7 @@ function getCheckoutSummary(){
         type : "POST",
         data : {
             'current-choice': checkoutGetFormData(jQuery("#checkoutShippingMethodForm")).shipper,
+            'comments': checkoutGetFormData(jQuery("#checkoutShippingMethodForm")).comments,
             'current-page':jQuery('body').attr('data-current-page')
         },
         dataType : "json"

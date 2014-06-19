@@ -79,6 +79,9 @@ class CheckoutController extends AbstractController
                 }
             }
             $order['detailedCart'] = $this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['shippingAddress']['country'], $currentUser['shippingAddress']['regionState'], $currentUser['shippingAddress']['postCode']);
+            if (isset($params['shippingComments'])) {
+                $order['shippingComments'] = $params['shippingComments'];
+            }
             $order['shippingPrice'] = $shippingPrice;
             $order['shippingTaxedPrice'] = $shippingTaxedPrice;
             $order['shippingTax'] = $shippingTax;
@@ -391,6 +394,7 @@ class CheckoutController extends AbstractController
     {
         $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
         $currentChoice = $this->params()->fromPost("current-choice", "");
+        $comments = $this->params()->fromPost("comments", "");
         if (!$currentUser) {
             return new JsonModel(array(
                 "success" => false,
@@ -423,6 +427,7 @@ class CheckoutController extends AbstractController
             $activePaymentMeans = Manager::getService("PaymentConfigs")->getActivePMConfigs();
             $twigVars['paymentMeans'] = array();
             $twigVars['shippingMethod'] = $currentChoice;
+            $twigVars['shippingComments'] = $comments;
             $twigVars['shipper'] = Manager::getService("Shippers")->findById($currentChoice);
             foreach ($activePaymentMeans['data'] as $value) {
                 $twigVars['paymentMeans'][] = array(
