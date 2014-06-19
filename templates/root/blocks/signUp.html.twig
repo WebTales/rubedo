@@ -75,7 +75,7 @@
                         {{ captcha.html|raw }}
                     {% else %}
                         <img src="/captcha/{{ captcha.id }}.png" alt="{{ 'Blocks.SignUp.Label.Captcha'|fotrans }}" /><br />
-                        <input name="captcha[input]" id="captcha" type="text" />
+                        <input name="captcha[input]" id="captcha" type="text" required="required" />
                         <input name="captcha[id]" type="hidden" value="{{ captcha.id }}" />
                     {% endif %}
                 </div>
