@@ -79,12 +79,11 @@ $config = array(
     )
 );
 
-$sessionLifeTime = 3600;
+$sessionLifeTime = 3600 * 48;
 
 $config['session'] = array(
     'remember_me_seconds' => $sessionLifeTime,
     'use_cookies' => true,
-    'cookie_httponly' => false,
     'gc_maxlifetime' => $sessionLifeTime,
     'name' => 'rubedo',
     'cookie_httponly' => true,

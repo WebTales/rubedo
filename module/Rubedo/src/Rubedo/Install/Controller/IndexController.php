@@ -518,7 +518,6 @@ class IndexController extends AbstractActionController
             $params = $dbForm->getData();
             unset($params['buttonGroup']);
             $params['session']['remember_me_seconds'] = $params['session']["authLifetime"];
-            $params['session']['cookie_httponly'] = $params['session']["authLifetime"];
             unset($params["session"]["authLifetime"]);
             $this->config = array_merge($this->config, $params);
             $this->installObject->saveLocalConfig($this->config);

@@ -264,8 +264,9 @@ class Module
             $routeMatches->setParam('action', 'index');
         }
 
+        $sessionDuration = $config['session']['remember_me_seconds'] ?: 3600;
         // init the session params and session itself
-        $this->startSession();
+        $this->startSession($sessionDuration);
 
         // @todo forward if no language initialized
 
@@ -447,10 +448,10 @@ class Module
      *
      * Not called in special cases, even if initialize session was called
      */
-    protected function startSession()
+    protected function startSession($duration)
     {
         if (isset($_POST['remember-me']) && filter_var($_POST['remember-me'], FILTER_VALIDATE_BOOLEAN)) {
-            $this->sessionManager->rememberMe(31556926); //Remember one year
+            $this->sessionManager->rememberMe($duration);
         }
         if (isset($_COOKIE[$this->sessionName])) {
             $this->sessionManager->start();
