@@ -38,14 +38,13 @@ abstract class AbstractExtLoaderController extends AbstractActionController
      */
     protected function loadExtApps() {
         $this->viewData = array();
-        $extjsOptions = array();//Zend_Registry::get('extjs');
+        $config=Manager::getService("config");
+        $extjsOptions = array();
+        $extjsOptions['debug']=$config['rubedo_config']['extDebug'];
         $this->viewData['baseUrl'] = $this->request->getBasePath();
         
-        if (isset($extjsOptions['network']) && $extjsOptions['network'] == 'cdn') {
-            $this->viewData['extJsPath'] = 'http://cdn.sencha.com/ext-' . $extjsOptions['version'] . '-gpl';
-        } else {
+
             $this->viewData['extJsPath'] = $this->request->getBasePath().'/components/sencha/extjs';
-        }
         // setting user language for loading proper extjs locale file
         $this->viewData['userLang'] = 'en'; // default value
         $currentUserLanguage = Manager::getService('CurrentUser')->getLanguage();
@@ -53,7 +52,7 @@ abstract class AbstractExtLoaderController extends AbstractActionController
             $this->viewData['userLang'] = $currentUserLanguage;
         }
         
-        if (! isset($extjsOptions['debug']) || $extjsOptions['debug'] == true) {
+        if ( isset($extjsOptions['debug']) && $extjsOptions['debug'] == "1") {
             $this->viewData['extJsScript'] = 'ext-all-debug.js';
         } else {
             $this->viewData['extJsScript'] = 'ext-all.js';
